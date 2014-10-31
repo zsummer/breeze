@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>20000</MinNo>
+  <MaxNo>20100</MaxNo>
+  <UseLog4z>0</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+  <proto from="C" to="AS" name="AuthReq" desc= "认证请求">
+    <member name="user" type="string"   desc=""/>
+    <member name="pwd"  type="string" desc=""/>
+  </proto>
+
+  <proto from="AS" to="C" name="AuthAck" desc= "认证回复" >
+  	<member name="retCode" type="int"   desc=""/>
+    <member name="info" type="AccountInfo"   desc=""/>
+  </proto>
+
+  <!-- 客户端存活脉冲  该协议属于需要认证的协议 所以如果客户端连接到服务器在一个脉冲周期内未能认证成功 就会被踢掉-->
+  <proto from="C" to="AS" name="ClientPulse" desc= "客户端存活脉冲">
+  </proto>
+
+  <!-- 客户端存活脉冲应答 -->
+  <proto from="AS" to="C" name="ClientPulseAck" desc= "客户端存活脉冲应答">
+    <member name="svrTimeStamp" type="ui64"   desc="服务器当前UTC时间戳"/>
+  </proto>
+
+</Proto>
+

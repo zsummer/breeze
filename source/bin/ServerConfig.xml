@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<traits platid="1000" areaid="1000" />
+
+<mongo>
+	<auth ip="127.0.0.1" port="27017" db="db_auth" user="zhangyawei" pwd="123" needAuth="true" />
+	<info ip="127.0.0.1" port="27017" db="db_info" user="zhangyawei" pwd="123" needAuth="true" />
+	<log ip="127.0.0.1" port="27017" db="db_info" user="zhangyawei" pwd="123" needAuth="true" />
+</mongo>
+
+<listen>
+	<logic ip="0.0.0.0" port="21010" index="0" />
+	<auth ip="0.0.0.0" port="21030" index="0" />
+	<auth ip="0.0.0.0" port="21031" index="1" />
+	<center ip="0.0.0.0" port="21020" index="0" />
+	<agent ip="0.0.0.0" port="21040" index="0" />
+	<agent ip="0.0.0.0" port="21041" index="1" />
+</listen>
+
+<connect>
+	<center dstNode="logic" ip="127.0.0.1" port="21010"  />
+	<center dstNode="auth" ip="127.0.0.1" port="21030"  />
+	<center dstNode="auth" ip="127.0.0.1" port="21031"  />
+	<agent dstNode="center" ip="127.0.0.1" port="21020"  />
+</connect>
+

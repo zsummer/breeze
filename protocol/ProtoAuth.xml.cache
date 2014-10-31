@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<md5>8017fd125abcba26fd1a937a49466349</md5>
+
+<CacheNo>
+	<cache key = "ID_AS2C_AuthAck" No = "20001" /> 
+	<cache key = "ID_AS2C_ClientPulseAck" No = "20003" /> 
+	<cache key = "ID_C2AS_AuthReq" No = "20000" /> 
+	<cache key = "ID_C2AS_ClientPulse" No = "20002" /> 
+</CacheNo>

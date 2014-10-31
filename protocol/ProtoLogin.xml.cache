@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<md5>df98c5695937d44778eb6e83cb1a3b96</md5>
+
+<CacheNo>
+	<cache key = "ID_C2LS_CharacterLoginReq" No = "20202" /> 
+	<cache key = "ID_C2LS_CreateCharacterReq" No = "20200" /> 
+	<cache key = "ID_LS2C_CharacterLoginAck" No = "20203" /> 
+	<cache key = "ID_LS2C_CreateCharacterAck" No = "20201" /> 
+</CacheNo>

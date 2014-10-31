@@ -1,0 +1,21 @@
+HISTORY for proto4z
+   
+/* 
+ * UPDATES LOG
+ * 
+ * VERSION 0.1.0 <DATE: 2013.07.04>
+ * 	create the first project.  
+ * 	support big-endian or little-endian
+ * VERSION 0.3.0 <DATE: 2014.03.17>
+ *  support user-defined header
+ *  WriteStream support auto alloc memory or attach exist memory
+ *  proto4z support stl container
+ * VERSION 0.4.0 <DATE: 2014.05.16>
+ *  Add some useful interface method
+ * VERSION 0.5.0 <DATE: 2014.08.19>
+ *  Add static buff for optimize
+ *  Add genProto tools
+ * 
+ */
+   
+(end of HISTORY)

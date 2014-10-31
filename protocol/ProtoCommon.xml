@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>0</MinNo>
+  <MaxNo>0</MaxNo>
+  <UseLog4z>0</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+  <!-- 这里是配置统一的错误代码 -->
+  <const name="BEC_SUCCESS" value="0" type="ui16"  desc="成功"/>
+  <const name="BEC_UNKOWN_ERROR" value="1"  type="ui16" desc="未知错误"/>
+  <const name="BEC_SERVER_ERROR"  value="2" type="ui16" desc="服务器内部错误"/>
+  <const name="BEC_DB_ERROR"  value="3" type="ui16" desc="服务器内部错误"/>
+  <const name="BEC_INVALIDE_CHAR_ID"  value="4" type="ui16" desc="角色ID无效"/>
+  <const name="BEC_INVALIDE_ACC_ID"  value="5" type="ui16" desc="帐号ID无效"/>
+
+  <const name="BEC_AUTH_NOT_FOUND_USER" value="20"  type="ui16" desc="认证错误:找不到用户名"/>
+  <const name="BEC_AUTH_PWD_INCORRECT"  value="21" type="ui16" desc="认证错误:密码错误"/>
+  <const name="BEC_AUTH_ING"  value="22" type="ui16" desc="认证错误:正在认证中..."/>
+  <const name="BEC_AUTH_AREADY_AUTH"  value="23" type="ui16" desc="认证错误:重复认证"/>
+  <const name="BEC_AUTH_LIMITE_COUNT"  value="24" type="ui16" desc="认证错误:认证次数超过限制"/>
+  <const name="BEC_LOGIN_CHAR_ID_NOT_FOUND"  value="25" type="ui16" desc="角色ID不存在"/>
+  <const name="BEC_LOGIN_CHAR_ID_INCORRECT"  value="26" type="ui16" desc="角色ID错误"/>
+  <const name="BEC_LOGIN_CHAR_NAME_INCORRECT"  value="27" type="ui16" desc="角色名冲突"/>
+
+  <struct name="LittleCharInfo" desc="简要角色信息">
+    <member name="charID" type="ui64"   desc="角色ID"/>
+    <member name="iconID"  type="ui32" desc="头像"/>
+    <member name="level"  type="ui32" desc="等级"/>
+    <member name="charName"  type="string" desc="昵称"/>
+  </struct>
+  <array name="LittleCharInfoVec" type="LittleCharInfo" desc="角色数组类型" />
+
+  <struct name="AccountInfo" desc="帐号信息">
+    <member name="accName" type="string"   desc=""/>
+    <member name="accID" type="ui64"   desc=""/>
+    <member name="diamond"  type="ui32" desc="当前剩余的充值钻石"/>
+    <member name="hisDiamond"  type="ui32" desc="历史充值钻石总额"/>
+    <member name="giftDmd"  type="ui32" desc="当前剩余的赠送钻石"/>
+    <member name="hisGiftDmd"  type="ui32" desc="历往赠送钻石总额"/>
+    <member name="charInfos"  type="LittleCharInfoVec" desc="角色信息"/>
+  </struct>
+
+
+  <!-- 用户角色信息 -->
+  <struct name="CharacterInfo" desc="角色信息">
+    <member name="accID" type="ui64"   desc=""/>
+    <member name="charID" type="ui64"   desc="角色ID"/>
+    <member name="iconID"  type="ui32" desc="头像"/>
+    <member name="level"  type="ui32" desc="等级"/>
+    <member name="charName"  type="string" desc="昵称"/>
+  </struct>
+
+
+
+
+</Proto>
+

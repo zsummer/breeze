@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="main">
+      <UniqueIdentifier>{90323d0d-a637-4874-8f5e-bf757167f244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{39638b08-90e6-42d8-8f50-0ed66591d23c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="core\GlobalFacade.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="core\NetManager.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="core\GlobalFacade.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="core\NetManager.h">
+      <Filter>core</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

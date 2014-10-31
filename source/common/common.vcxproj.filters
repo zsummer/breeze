@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="BaseHander.h" />
+    <ClInclude Include="ProtoDefine.h" />
+    <ClInclude Include="ServerConfig.h" />
+    <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="MongoManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ServerConfig.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="MongoManager.cpp" />
+  </ItemGroup>
+</Project>
