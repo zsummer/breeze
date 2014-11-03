@@ -5,11 +5,9 @@
     <ClInclude Include="ProtoDefine.h" />
     <ClInclude Include="ServerConfig.h" />
     <ClInclude Include="tinyxml2.h" />
-    <ClInclude Include="MongoManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ServerConfig.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
-    <ClCompile Include="MongoManager.cpp" />
   </ItemGroup>
 </Project>

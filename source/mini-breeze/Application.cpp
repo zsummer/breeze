@@ -28,41 +28,16 @@ Appliction & Appliction::getRef()
 
 bool Appliction::Init(std::string filename, unsigned int index)
 {
-	bool ret = false;
-
-
-	ret = GlobalFacade::getRef().getServerConfig().Parse(filename, AgentNode, index);
-	if (!ret)
+	bool ret = GlobalFacade::getRef().init(filename, AgentNode, index);
+	if (ret)
 	{
-		LOGE("getServerConfig failed.");
-		return ret;
+		LOGI("Appliction Init success.");
 	}
-	ret = CTcpSessionManager::getRef().Start();
-	if (!ret)
+	else
 	{
-		LOGE("CTcpSessionManager Start false.");
-		return ret;
+		LOGE("Appliction Init fales.");
 	}
-	ret = GlobalFacade::getRef().getNetManger().Start();
-	if (!ret)
-	{
-		LOGE("NetManager Start false.");
-		return ret;
-	}
-
-
-	std::vector<CBaseHandler*> handlers;
-	for (auto ptr : handlers)
-	{
-		if (!ptr->Init())
-		{
-			LOGW("Appliction Init handler false");
-			return false;
-		}
-	}
-
-	LOGI("Appliction Init success.");
-	return true;
+	return ret;
 }
 
 void Appliction::RunPump()

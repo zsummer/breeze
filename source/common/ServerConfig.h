@@ -18,8 +18,8 @@
 */
 
 /*
-*  文件说明
-*  所有服务节点务必在这里写节点的启动配置信息.
+*  file desc
+*  all server configure for start and configure defined from this.
 */
 
 
@@ -49,17 +49,16 @@ struct ConnectorConfig
 
 
 
-//数据库
-const std::string AuthMongoDB = "auth";
-const std::string InfoMongoDB = "info";
-const std::string LogMongoDB = "log";
+//db name list.  db name same as db config name.
+const std::string AuthDBName = "auth";
+const std::string InfoDBName = "info";
+const std::string LogDBName = "log";
 
-struct MongoConfig 
+struct DBConfig 
 {
 	std::string ip;
-	unsigned short port = 28017;
+	unsigned short port = 3306;
 	std::string db;
-	bool needAuth = true;
 	std::string user;
 	std::string pwd;
 };
@@ -78,9 +77,9 @@ public:
 	PlatID getPlatID() { return m_platid; }
 	AreaID getAreaID() { return m_areaid; }
 
-	inline const MongoConfig & getAuthMongoDB(){ return m_authMongo; }
-	inline const MongoConfig & getInfoMongoDB(){ return m_infoMongo; }
-	inline const MongoConfig & getLogMongoDB(){ return m_logMongo; }
+	inline const DBConfig & getAuthDBConfig(){ return m_authDBConfig; }
+	inline const DBConfig & getInfoDBConfig(){ return m_infoDBConfig; }
+	inline const DBConfig & getLogDBConfig(){ return m_logDBConfig; }
 
 private:
 	ServerNode m_ownServerNode = InvalideServerNode;
@@ -91,9 +90,9 @@ private:
 	std::vector<ListenConfig> m_configListen;
 	std::vector<ConnectorConfig> m_configConnect;
 
-	MongoConfig m_authMongo;
-	MongoConfig m_infoMongo;
-	MongoConfig m_logMongo;
+	DBConfig m_authDBConfig;
+	DBConfig m_infoDBConfig;
+	DBConfig m_logDBConfig;
 };
 
 

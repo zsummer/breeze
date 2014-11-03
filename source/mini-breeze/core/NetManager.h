@@ -29,8 +29,8 @@
 
 #ifndef _NET_MANAGER_H_
 #define _NET_MANAGER_H_
-#include <ServerConfig.h>
 #include <ProtoDefine.h>
+#include <ServerConfig.h>
 #include <ProtoAuth.h>
 #include "GlobalFacade.h"
 #include <unordered_map>
@@ -59,16 +59,12 @@ public:
 
 	void msg_SessionServerAuth(SessionID sID, ProtoID pID, ReadStreamPack &rs);
 
-	void msg_DefaultSessionReq(SessionID sID, ProtoID pID, ReadStreamPack & rs);
-
 
 	void msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs);
-	void msg_AuthAck(SessionID cID, ProtoID pID, ReadStreamPack &rs);
 	void msg_CharacterLogin(SessionID cID, ProtoID pID, ReadStreamPack &rs);
 
 	void event_OnSessionPulse(SessionID sID, unsigned int pulseInterval);
 	void event_OnConnectorPulse(SessionID cID, unsigned int pulseInterval);
-	void msg_OnDirectServerPulse(SessionID cID, ProtoID pID, ReadStreamPack &rs);
 	void msg_OnClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs);
 
 private:

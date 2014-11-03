@@ -190,24 +190,23 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 				return false;
 			}
 
-			MongoConfig lconfig;
+			DBConfig lconfig;
 			lconfig.ip = elmMongoChild->Attribute("ip");
 			lconfig.port = elmMongoChild->IntAttribute("port");
 			lconfig.db = elmMongoChild->Attribute("db");
 			lconfig.user = elmMongoChild->Attribute("user");
 			lconfig.pwd = elmMongoChild->Attribute("pwd");
-			lconfig.needAuth = elmMongoChild->BoolAttribute("needAuth");
-			if (strNode == AuthMongoDB)
+			if (strNode == AuthDBName)
 			{
-				m_authMongo = lconfig;
+				m_authDBConfig = lconfig;
 			}
-			else if (strNode == InfoMongoDB)
+			else if (strNode == InfoDBName)
 			{
-				m_infoMongo = lconfig;
+				m_infoDBConfig = lconfig;
 			}
-			else if (strNode == LogMongoDB)
+			else if (strNode == LogDBName)
 			{
-				m_logMongo = lconfig;
+				m_logDBConfig = lconfig;
 			}
 			elmMongoChild = elmMongoChild->NextSiblingElement();
 		} while (elmMongoChild);

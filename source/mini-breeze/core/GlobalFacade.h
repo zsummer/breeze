@@ -25,7 +25,7 @@
 
 #ifndef _GLOBAL_FACADE_H_
 #define _GLOBAL_FACADE_H_
-
+#include <ProtoDefine.h>
 #include <BaseHander.h>
 class ServerConfig;
 class CNetManager;
@@ -38,6 +38,7 @@ public:
 	static GlobalFacade & getRef();
 	static GlobalFacade * getPtr(){ return &getRef(); }
 	
+	bool init(std::string configFile, ServerNode node, NodeIndex index);
 	inline ServerConfig & getServerConfig(){ return *m_serverConfig; }
 
 	inline CNetManager & getNetManger(){ return *m_netManger; }
