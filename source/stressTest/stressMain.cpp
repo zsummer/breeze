@@ -17,7 +17,6 @@
 
 
 //! 测试
-#include <MongoManager.h>
 #include <ServerConfig.h>
 #include <ProtoDefine.h>
 #include <ProtoCommon.h>
@@ -61,28 +60,28 @@ public:
 	CStressHeartBeatManager()
 	{
 		//! 注册事件和消息
-		CMessageDispatcher::getRef().RegisterOnSessionEstablished(std::bind(&CStressHeartBeatManager::OnConnecotrConnected, this,
+		CMessageDispatcher::getRef().RegisterOnSessionEstablished(std::bind(&CStressHeartBeatManager::OnSessionEstablished, this,
 			std::placeholders::_1));
-		CMessageDispatcher::getRef().RegisterOnSessionPulse(std::bind(&CStressHeartBeatManager::OnConnecotrPulse, this,
+		CMessageDispatcher::getRef().RegisterOnSessionPulse(std::bind(&CStressHeartBeatManager::OnSessionPulse, this,
 			std::placeholders::_1, std::placeholders::_2));
-		CMessageDispatcher::getRef().RegisterOnSessionDisconnect(std::bind(&CStressHeartBeatManager::OnConnecotrDisconnect, this,
+		CMessageDispatcher::getRef().RegisterOnSessionDisconnect(std::bind(&CStressHeartBeatManager::OnSessionDisconnect, this,
 			std::placeholders::_1));
 	}
 	
-	void OnConnecotrConnected(SessionID cID)
+	void OnSessionEstablished(SessionID sID)
 	{
-		LOGI("connect sucess. cID=" << cID);
+		LOGI("connect sucess. sID=" << sID);
 	}
-	void OnConnecotrPulse(SessionID cID, unsigned int pulseInterval)
+	void OnSessionPulse(SessionID sID, unsigned int pulseInterval)
 	{
 		WriteStreamPack ws;
 		ws << ID_C2AS_ClientPulse << C2AS_ClientPulse();
-		CTcpSessionManager::getRef().SendOrgSessionData(cID, ws.GetStream(), ws.GetStreamLen());
+		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
 		g_totalSendCount++;
 	}
-	void OnConnecotrDisconnect(SessionID cID)
+	void OnSessionDisconnect(SessionID sID)
 	{
-		LOGI("Disconnect. cID=" << cID);
+		LOGI("Disconnect. sID=" << sID);
 	}
 };
 
@@ -96,46 +95,44 @@ public:
 		CMessageDispatcher::getRef().RegisterOnSessionEstablished(std::bind(&CStressClientHandler::OnConnected, this, std::placeholders::_1));
 		CMessageDispatcher::getRef().RegisterSessionMessage(ID_AS2C_AuthAck,
 			std::bind(&CStressClientHandler::msg_AuthAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		CMessageDispatcher::getRef().RegisterSessionMessage(ID_LS2C_LoadAccountInfoAck,
-			std::bind(&CStressClientHandler::msg_LoadAccountInfoAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		CMessageDispatcher::getRef().RegisterSessionMessage(ID_LS2C_CreateCharacterAck,
-			std::bind(&CStressClientHandler::msg_CreateCharacterAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		CMessageDispatcher::getRef().RegisterSessionMessage(ID_LS2C_CharacterCreateAck,
+			std::bind(&CStressClientHandler::msg_CharacterCreateAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		CMessageDispatcher::getRef().RegisterSessionMessage(ID_LS2C_CharacterLoginAck,
 			std::bind(&CStressClientHandler::msg_CharacterLoginAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		CMessageDispatcher::getRef().RegisterOnSessionDisconnect(std::bind(&CStressClientHandler::OnConnectDisconnect, this, std::placeholders::_1));
 	}
 
-	void OnConnected(SessionID cID)
+	void OnConnected(SessionID sID)
 	{
-		LOGI("OnConnected. ConnectorID=" << cID);
+		LOGI("OnConnected. SessionID=" << sID);
 		char userName[100];
-		sprintf(userName, "zhangyawei%04d", (unsigned int)cID - __MIDDLE_SEGMENT_VALUE);
+		sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
 		WriteStreamPack ws;
 		C2AS_AuthReq req;
-		req.info.user = userName;
-		req.info.pwd = "123";
+		req.user = userName;
+		req.pwd = "123";
 		ws << ID_C2AS_AuthReq << req;
-		CTcpSessionManager::getRef().SendOrgSessionData(cID, ws.GetStream(), ws.GetStreamLen());
-		LOGI("OnConnected. Send AuthReq. cID=" << cID << ", user=" << req.info.user << ", pwd=" << req.info.pwd);
+		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		LOGI("OnConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
 		g_totalSendCount++;
 	};
-	void OnConnectDisconnect(SessionID cID)
+	void OnConnectDisconnect(SessionID sID)
 	{
-		m_sessionStatus[cID] = false;
+		m_sessionStatus[sID] = false;
 	}
 
-	inline void msg_AuthAck_fun(SessionID cID, ProtoID pID, ReadStreamPack & rs)
+	inline void msg_AuthAck_fun(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	{
 
 		AS2C_AuthAck ack;
 		rs >> ack;
-		if (ack.retCode == EC_SUCCESS)
+		if (ack.retCode == BEC_SUCCESS)
 		{
-			LOGD("Auth Success. cID=" << cID);
+			LOGD("Auth Success. sID=" << sID);
 		}
 		else
 		{
-			LOGE("Auth Failed. cID=" << cID);
+			LOGE("Auth Failed. sID=" << sID);
 			return;
 		}
 
@@ -143,57 +140,17 @@ public:
 		g_totalRecvCount++;
 		g_totalEchoCount++;
 
-		if (g_stressType == ST_NORMAL)
-		{
-			WriteStreamPack ws;
-			C2LS_LoadAccountInfoReq req;
-			ws << ID_C2LS_LoadAccountInfoReq << req;
-			CTcpSessionManager::getRef().SendOrgSessionData(cID, ws.GetStream(), ws.GetStreamLen());
-			LOGD("msg_AuthAck. Send LoginReq. cID=" << cID);
-			g_totalSendCount++;
-		}
-		else if (g_stressType == ST_AUTH)
-		{
-			char userName[100];
-			sprintf(userName, "zhangyawei%04d", (int)cID);
-			WriteStreamPack ws;
-			C2AS_AuthReq req;
-			req.info.user = userName;
-			req.info.pwd = "123";
-			ws << ID_C2AS_AuthReq << req;
-			CTcpSessionManager::getRef().SendOrgSessionData(cID, ws.GetStream(), ws.GetStreamLen());
-			LOGD("msg_AuthAck. Send AuthReq. cID=" << cID << ", user=" << req.info.user << ", pwd=" << req.info.pwd);
-			g_totalSendCount++;
-			return;
-		}
-
-	};
-
-	inline void msg_LoadAccountInfoAck_fun(SessionID cID, ProtoID pID, ReadStreamPack & rs)
-	{
-		LS2C_LoadAccountInfoAck ack;
-		rs >> ack;
-
-		g_totalRecvCount++;
-		g_totalEchoCount++;
-		if (ack.retCode != EC_SUCCESS)
-		{
-			LOGE("msg_LoadAccountInfoAck_fun Failed. cID=" << cID << ", retCode=" <<ack.retCode);
-			return;
-		}
-
-		LOGD("msg_LoadAccountInfoAck_fun Success. cID=" << cID << ", accID=" << ack.info.accID << ", diamond=" << ack.info.diamond);
 		if (g_stressType == ST_NORMAL)
 		{
 			//create character
 			if (ack.info.charInfos.empty())
 			{
 				WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
-				C2LS_CreateCharacterReq req;
+				C2LS_CharacterCreateReq req;
 				req.charName = "test";
-				ws << ID_C2LS_CreateCharacterReq << req;
-				CTcpSessionManager::getRef().SendOrgSessionData(cID, ws.GetStream(), ws.GetStreamLen());
-				LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_CreateCharacterReq. cID=" << cID);
+				ws << ID_C2LS_CharacterCreateReq << req;
+				CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+				LOGD("Send ID_C2LS_CharacterCreateReq. sID=" << sID);
 				g_totalSendCount++;
 			}
 			//login
@@ -203,48 +160,52 @@ public:
 				C2LS_CharacterLoginReq req;
 				req.charID = ack.info.charInfos.at(0).charID;
 				ws << ID_C2LS_CharacterLoginReq << req;
-				CTcpSessionManager::getRef().SendOrgSessionData(cID, ws.GetStream(), ws.GetStreamLen());
-				LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_CharacterLoginReq. cID=" << cID);
+				CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+				LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_CharacterLoginReq. sID=" << sID);
 				g_totalSendCount++;
 			}
 		}
-		else if (g_stressType == ST_LOAD_ACCOUNT)
+		else if (g_stressType == ST_AUTH)
 		{
-			WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
-			C2LS_LoadAccountInfoReq req;
-			ws << ID_C2LS_LoadAccountInfoReq << req;
-			CTcpSessionManager::getRef().SendOrgSessionData(cID, ws.GetStream(), ws.GetStreamLen());
-			LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_LoadAccountInfoReq. cID=" << cID);
+			char userName[100];
+			sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
+			WriteStreamPack ws;
+			C2AS_AuthReq req;
+			req.user = userName;
+			req.pwd = "123";
+			ws << ID_C2AS_AuthReq << req;
+			CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+			LOGI("OnConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
 			g_totalSendCount++;
-		}
-	}
-	inline void msg_CreateCharacterAck_fun(SessionID cID, ProtoID pID, ReadStreamPack & rs)
-	{
-		LS2C_CreateCharacterAck ack;
-		rs >> ack;
-
-		g_totalRecvCount++;
-		g_totalEchoCount++;
-
-		if (ack.retCode != EC_SUCCESS)
-		{
-			LOGE("msg_CreateCharacterAck_fun Failed. cID=" << cID << ", retCode=" << ack.retCode);
 			return;
 		}
 
-		LOGD("msg_CreateCharacterAck_fun Success. cID=" << cID << ", charName=" << ack.lci.charName << ", charID=" << ack.lci.charID);
-		if (g_stressType == ST_NORMAL)
+	};
+
+	inline void msg_CharacterCreateAck_fun(SessionID sID, ProtoID pID, ReadStreamPack & rs)
+	{
+		LS2C_CharacterCreateAck ack;
+		rs >> ack;
+		g_totalRecvCount++;
+		g_totalEchoCount++;
+
+		if (ack.retCode != BEC_SUCCESS)
 		{
-			WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
-			C2LS_CharacterLoginReq req;
-			req.charID = ack.lci.charID;
-			ws << ID_C2LS_CharacterLoginReq << req;
-			CTcpSessionManager::getRef().SendOrgSessionData(cID, ws.GetStream(), ws.GetStreamLen());
-			LOGD("msg_CreateCharacterAck_fun. Send ID_C2LS_CharacterLoginReq. cID=" << cID);
-			g_totalSendCount++;
+			LOGE("msg_CharacterCreateAck_fun Failed. sID=" << sID << ", retCode=" << ack.retCode);
+			return;
 		}
+		LOGD("msg_CharacterCreateAck_fun Success. sID=" << sID << ", charName=" << ack.info.charName << ", charID=" << ack.info.charID);
+
+		WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
+		C2LS_CharacterLoginReq req;
+		req.charID = ack.info.charID;
+		ws << ID_C2LS_CharacterLoginReq << req;
+		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_CharacterLoginReq. sID=" << sID);
+		g_totalSendCount++;
+
 	}
-	inline void msg_CharacterLoginAck_fun(SessionID cID, ProtoID pID, ReadStreamPack & rs)
+	inline void msg_CharacterLoginAck_fun(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	{
 		LS2C_CharacterLoginAck ack;
 		rs >> ack;
@@ -252,13 +213,12 @@ public:
 		g_totalRecvCount++;
 		g_totalEchoCount++;
 
-		if (ack.retCode != EC_SUCCESS)
+		if (ack.retCode != BEC_SUCCESS)
 		{
-			LOGE("msg_CharacterLoginAck_fun Failed. cID=" << cID << ", retCode=" << ack.retCode);
+			LOGE("msg_CharacterLoginAck_fun Failed. sID=" << sID << ", retCode=" << ack.retCode);
 			return;
 		}
-
-		LOGD("msg_CharacterLoginAck_fun Success. cID=" << cID << ", charName=" << ack.info.charName << ", charID=" << ack.info.charID);
+		LOGD("msg_CharacterLoginAck_fun Success. sID=" << sID );
 	}
 
 private:
@@ -295,15 +255,13 @@ int main(int argc, char* argv[])
 		|| strcmp(argv[1], "/?") == 0))
 	{
 		cout << "please input like example:" << endl;
-		cout << "tcpTest agentIndex maxClient" << endl;
+		cout << "tcpTest maxClient" << endl;
 		cout << "./tcpTest 0 1" << endl;
 		cout << "maxClient: limit max" << endl;
 		return 0;
 	}
 	if (argc > 1)
-		g_agentIndex = atoi(argv[1]);
-	if (argc > 2)
-		g_maxClient = atoi(argv[2]);
+		g_maxClient = atoi(argv[1]);
 	if (g_maxClient > 6000)
 	{
 		g_maxClient = 6000;
@@ -311,45 +269,40 @@ int main(int argc, char* argv[])
 	
 		
 		
-
-
 	ILog4zManager::GetInstance()->Config("../log.config");
 	ILog4zManager::GetInstance()->Start();
 
 
-
-
-
 	ServerConfig serverConfig;
-	if (!serverConfig.Parse("../ServerConfig.xml", AgentNode, g_agentIndex))
+	if (!serverConfig.Parse("../ServerConfig.xml", MiniBreezeNode, g_agentIndex))
 	{
 		LOGE("serverConfig.Parse failed");
 		return 0;
 	}
-	LOGI("g_remoteIP=" << "127.0.0.1" << ", g_remotePort=" << serverConfig.getConfigListen(AgentNode).port << ", g_maxClient=" << g_maxClient);
+	LOGI("g_remoteIP=" << "127.0.0.1" << ", g_remotePort=" << serverConfig.getConfigListen(MiniBreezeNode).port << ", g_maxClient=" << g_maxClient);
 
 
-	CMongoManager mongoMgr;
-	if (!mongoMgr.ConnectMongo(mongoMgr.getAuthMongo(), serverConfig.getAuthMongoDB()))
-	{
-		LOGE("connect mongo error");
-		return 0;
-	}
-
-	for (size_t i = 0; i < 6000; i++)
-	{
-		char buf[100];
-		sprintf(buf, "zhangyawei%04d", (int)i);
-		std::string dbcl = serverConfig.getAuthMongoDB().db;
-		dbcl += ".cl_auth";
-		mongoMgr.getAuthMongo()->update(dbcl, QUERY("_id" << buf), BSON("pwd" << "123" << "accID" << (long long)i), true);
-		std::string errMsg = mongoMgr.getAuthMongo()->getLastError();
-		if (!errMsg.empty())
-		{
-			LOGE("update auth db error: " << errMsg);
-			return 0;
-		}
-	}
+// 	CMongoManager mongoMgr;
+// 	if (!mongoMgr.ConnectMongo(mongoMgr.getAuthMongo(), serverConfig.getAuthMongoDB()))
+// 	{
+// 		LOGE("connect mongo error");
+// 		return 0;
+// 	}
+// 
+// 	for (size_t i = 0; i < 6000; i++)
+// 	{
+// 		char buf[100];
+// 		sprintf(buf, "zhangyawei%04d", (int)i);
+// 		std::string dbcl = serverConfig.getAuthMongoDB().db;
+// 		dbcl += ".cl_auth";
+// 		mongoMgr.getAuthMongo()->update(dbcl, QUERY("_id" << buf), BSON("pwd" << "123" << "accID" << (long long)i), true);
+// 		std::string errMsg = mongoMgr.getAuthMongo()->getLastError();
+// 		if (!errMsg.empty())
+// 		{
+// 			LOGE("update auth db error: " << errMsg);
+// 			return 0;
+// 		}
+// 	}
 	
 	
 
@@ -370,7 +323,7 @@ int main(int argc, char* argv[])
 	{
 		tagConnctorConfigTraits traits;
 		traits.remoteIP = "127.0.0.1";
-		traits.remotePort = serverConfig.getConfigListen(AgentNode).port;
+		traits.remotePort = serverConfig.getConfigListen(MiniBreezeNode).port;
 		traits.reconnectInterval = 5000;
 		traits.reconnectMaxCount = 50;
 		CTcpSessionManager::getRef().AddConnector(traits);

@@ -60,4 +60,5 @@ bool GlobalFacade::init(std::string configFile, ServerNode node, NodeIndex index
 	LOGI("NetManager Start Success.");
 
 	LOGI("GlobalFacade Init success.");
+	return true;
 }

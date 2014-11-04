@@ -17,83 +17,6 @@
  const unsigned short BEC_LOGIN_CHAR_ID_INCORRECT = 26; //角色ID错误 
  const unsigned short BEC_LOGIN_CHAR_NAME_INCORRECT = 27; //角色名冲突 
   
- struct LittleCharInfo //简要角色信息 
- { 
- 	unsigned long long charID; //角色ID 
- 	unsigned int iconID; //头像 
- 	unsigned int level; //等级 
- 	std::string charName; //昵称 
- 	LittleCharInfo() 
- 	{ 
- 		charID = 0; 
- 		iconID = 0; 
- 		level = 0; 
- 	} 
- }; 
- template<class T> 
- T & operator << (T & t, const LittleCharInfo & data) 
- { 
- 	t << data.charID; 
- 	t << data.iconID; 
- 	t << data.level; 
- 	t << data.charName; 
- 	return t; 
- } 
- template<class T> 
- T & operator >> (T & t, LittleCharInfo & data) 
- { 
- 	t >> data.charID; 
- 	t >> data.iconID; 
- 	t >> data.level; 
- 	t >> data.charName; 
- 	return t; 
- } 
-  
- typedef std::vector<LittleCharInfo> LittleCharInfoVec; //角色数组类型 
-  
- struct AccountInfo //帐号信息 
- { 
- 	std::string accName;  
- 	unsigned long long accID;  
- 	unsigned int diamond; //当前剩余的充值钻石 
- 	unsigned int hisDiamond; //历史充值钻石总额 
- 	unsigned int giftDmd; //当前剩余的赠送钻石 
- 	unsigned int hisGiftDmd; //历往赠送钻石总额 
- 	LittleCharInfoVec charInfos; //角色信息 
- 	AccountInfo() 
- 	{ 
- 		accID = 0; 
- 		diamond = 0; 
- 		hisDiamond = 0; 
- 		giftDmd = 0; 
- 		hisGiftDmd = 0; 
- 	} 
- }; 
- template<class T> 
- T & operator << (T & t, const AccountInfo & data) 
- { 
- 	t << data.accName; 
- 	t << data.accID; 
- 	t << data.diamond; 
- 	t << data.hisDiamond; 
- 	t << data.giftDmd; 
- 	t << data.hisGiftDmd; 
- 	t << data.charInfos; 
- 	return t; 
- } 
- template<class T> 
- T & operator >> (T & t, AccountInfo & data) 
- { 
- 	t >> data.accName; 
- 	t >> data.accID; 
- 	t >> data.diamond; 
- 	t >> data.hisDiamond; 
- 	t >> data.giftDmd; 
- 	t >> data.hisGiftDmd; 
- 	t >> data.charInfos; 
- 	return t; 
- } 
-  
  struct CharacterInfo //角色信息 
  { 
  	unsigned long long accID;  
@@ -129,6 +52,53 @@
  	t >> data.charName; 
  	return t; 
  } 
+  
+ typedef std::vector<CharacterInfo> CharacterInfoVct;  
+  
+ struct AccountInfo //帐号信息 
+ { 
+ 	std::string accName;  
+ 	unsigned long long accID;  
+ 	unsigned int diamond; //当前剩余的充值钻石 
+ 	unsigned int hisDiamond; //历史充值钻石总额 
+ 	unsigned int giftDmd; //当前剩余的赠送钻石 
+ 	unsigned int hisGiftDmd; //历往赠送钻石总额 
+ 	CharacterInfoVct charInfos; //角色信息 
+ 	AccountInfo() 
+ 	{ 
+ 		accID = 0; 
+ 		diamond = 0; 
+ 		hisDiamond = 0; 
+ 		giftDmd = 0; 
+ 		hisGiftDmd = 0; 
+ 	} 
+ }; 
+ template<class T> 
+ T & operator << (T & t, const AccountInfo & data) 
+ { 
+ 	t << data.accName; 
+ 	t << data.accID; 
+ 	t << data.diamond; 
+ 	t << data.hisDiamond; 
+ 	t << data.giftDmd; 
+ 	t << data.hisGiftDmd; 
+ 	t << data.charInfos; 
+ 	return t; 
+ } 
+ template<class T> 
+ T & operator >> (T & t, AccountInfo & data) 
+ { 
+ 	t >> data.accName; 
+ 	t >> data.accID; 
+ 	t >> data.diamond; 
+ 	t >> data.hisDiamond; 
+ 	t >> data.giftDmd; 
+ 	t >> data.hisGiftDmd; 
+ 	t >> data.charInfos; 
+ 	return t; 
+ } 
+  
+ typedef std::vector<AccountInfo> AccountInfoVct;  
   
  #endif 
  

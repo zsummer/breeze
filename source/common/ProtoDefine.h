@@ -33,6 +33,7 @@
 #include <string>
 #include <algorithm>
 #include <zsummerX/frameX.h>
+#include <ProtoCommon.h>
 
 
 //! 基本类型
@@ -58,10 +59,9 @@ const NodeIndex InvalidNodeIndex = (NodeIndex)-1;
 //服务节点类型
 typedef ui32 ServerNode;
 const ServerNode InvalideServerNode = (ServerNode)-1;
-const ServerNode AgentNode = 0;
-const ServerNode AuthNode = 1;
-const ServerNode CenterNode = 2;
-const ServerNode LogicNode = 3;
+const ServerNode MiniBreezeNode = 0;
+const ServerNode StressNode = 1;
+
 //服务节点编号
 typedef ui32 NodeIndex;
 const NodeIndex InvalideNodeIndex = (NodeIndex)-1;
@@ -71,104 +71,60 @@ typedef ui16 AreaID;
 
 
 
-// 服务器内部控制用通讯协议区间为[)
-const ui16 MIN_SERVER_CONTROL_PROTO_ID = 0;
-const ui16 MAX_SERVER_CONTROL_PROTO_ID = 1000;
-
-// 服务器内部逻辑用通讯协议区间为[)
-const ui16 MIN_IN_PROTO_ID = 1000;
-const ui16 MAX_IN_PROTO_ID = 20000;
 
 //非认证情况下客户端通讯协议[)
-const ui16 MIN_OUT_UNAUTH_PROTO_ID = 20000;
-const ui16 MAX_OUT_UNAUTH_PROTO_ID = 20100;
+const ui16 MIN_OUT_UNAUTH_PROTO_ID = 0;
+const ui16 MAX_OUT_UNAUTH_PROTO_ID = 100;
 
 //认证后的通讯协议区间为[)
-const ui16 MIN_OUT_PROTO_ID = 20100;
-
-const ui16 MAX_OUT_LOGIC_PROTO_ID = 30000;
-
-const ui16 MAX_OUT_PROTO_ID = 40000;
-
-
-
+const ui16 MIN_OUT_PROTO_ID = 100;
+const ui16 MAX_OUT_PROTO_ID = 30000;
 
 //客户端的请求协议可以根据以下函数判断
-inline bool isClientPROTO(ui16 protoID) { return protoID >= MIN_OUT_UNAUTH_PROTO_ID && protoID < MAX_OUT_PROTO_ID; }
 inline bool isNeedAuthClientPROTO(ui16 protoID) { return protoID >= MIN_OUT_PROTO_ID && protoID < MAX_OUT_PROTO_ID; }
 
 
-//服务器内部传输添加这个信息
+
+
+//session info
 struct SessionInfo 
 {
 	//client
 	AccountID accID = InvalidAccountID;
 	CharacterID charID = InvalidCharacterID;
-	NodeIndex agentIndex = InvalideNodeIndex;
 	SessionID sID = InvalidSeesionID;
-	//internal
-	ServerNode srcNode = InvalideServerNode;
-	NodeIndex srcIndex = InvalideNodeIndex;
 	//login time
 	ui64 loginTime = time(NULL);
-};
-
-template <class STM>
-inline STM & operator << (STM & stm, const SessionInfo & info)
-{
-	stm << info.accID << info.charID
-		<< info.agentIndex  << info.sID
-		<< info.srcNode << info.srcIndex
-		<< info.loginTime;
-	return stm;
-}
-template <class STM>
-inline STM & operator >> (STM & stm, SessionInfo & info)
-{
-	stm >> info.accID >> info.charID
-		>> info.agentIndex >> info.sID
-		>> info.srcNode >> info.srcIndex
-		>> info.loginTime;
-	return stm;
-}
-
-template <>
-inline zsummer::log4z::CStringStream & operator << (zsummer::log4z::CStringStream & stm, const SessionInfo & info)
-{
-	stm << "accID=" << info.accID << ", charID=" << info.charID
-		<< ",agentIndex=" << info.agentIndex
-		<< ", sID=" << info.sID
-		<< ",srcNode=" << info.srcNode
-		<< ", loginTime=" << info.loginTime;
-	return stm;
-}
-
-
-
-//agent保存session信息
-struct AgentSessionInfo
-{
-	SessionInfo sInfo;
 	time_t lastLoginTime = time(NULL);
 	time_t lastActiveTime = time(NULL);
 };
 
 
-inline zsummer::log4z::CStringStream & operator << (zsummer::log4z::CStringStream & stm, const AgentSessionInfo & info)
+struct InnerCharInfo
 {
-	stm << info.sInfo
+	SessionInfo sesionInfo;
+	AccountInfo accInfo;
+	CharacterInfo charInfo;
+	enum InnerCharInfoType
+	{
+		ICIT_UNAUTH = 0,
+		ICIT_AUTHING,
+		ICIT_AUTHED,
+		ICIT_LOGINING,
+		ICIT_LOGINED,
+	};
+	InnerCharInfoType status = ICIT_UNAUTH;
+};
+
+
+inline zsummer::log4z::CStringStream & operator << (zsummer::log4z::CStringStream & stm, const SessionInfo & info)
+{
+	stm << "accID=" << info.accID << ", charID=" << info.charID
+		<< ", sID=" << info.sID
+		<< ", loginTime=" << info.loginTime
 		<< ",lastLoginTime=" << info.lastActiveTime << ", lastActiveTime=" << info.lastActiveTime;
 	return stm;
 }
-
-struct ServerAuthSession
-{
-	SessionID sID = InvalidSeesionID;
-	ServerNode node = InvalideServerNode;
-	NodeIndex index = InvalidNodeIndex;
-	time_t  lastActiveTime = time(NULL);
-};
-
 
 class GenObjectID
 {
@@ -209,10 +165,6 @@ private:
 
 
 
-
-
-
-#include <ProtoCommon.h>
 
 
 

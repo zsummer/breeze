@@ -34,6 +34,8 @@ public:
 	CBaseHandler(){}
 	virtual ~CBaseHandler(){};
 	virtual bool Init() = 0;
+	virtual void CharLogin(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
+	virtual void CharLogout(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
 };
 
 

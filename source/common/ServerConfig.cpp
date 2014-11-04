@@ -63,21 +63,13 @@ std::vector<ConnectorConfig > ServerConfig::getConfigConnect(ServerNode node)
 
 static ServerNode toServerNode(std::string strNode)
 {
-	if (strNode == "agent")
+	if (strNode == "mini-breeze")
 	{
-		return AgentNode;
+		return MiniBreezeNode;
 	}
-	else if (strNode == "center")
+	else if (strNode == "stress")
 	{
-		return CenterNode;
-	}
-	else if (strNode == "auth")
-	{
-		return AuthNode;
-	}
-	else if (strNode == "logic")
-	{
-		return LogicNode;
+		return StressNode;
 	}
 	return InvalideServerNode;
 }
@@ -169,7 +161,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 
 	//////////////////////////////////////////////////////////////////////////
 	{
-		auto elmMongo = doc.FirstChildElement("mongo");
+		auto elmMongo = doc.FirstChildElement("db");
 		if (!elmMongo || !elmMongo->FirstChildElement())
 		{
 			LOGE(filename << " Parse ServerConfig Error. not have mongo");
@@ -183,8 +175,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 				|| !elmMongoChild->Attribute("port")
 				|| !elmMongoChild->Attribute("db")
 				|| !elmMongoChild->Attribute("user")
-				|| !elmMongoChild->Attribute("pwd")
-				|| !elmMongoChild->Attribute("needAuth"))
+				|| !elmMongoChild->Attribute("pwd"))
 			{
 				LOGE(filename << " Parse ServerConfig Error. mongo have invalide config.");
 				return false;

@@ -26,25 +26,6 @@
   <const name="BEC_LOGIN_CHAR_ID_INCORRECT"  value="26" type="ui16" desc="角色ID错误"/>
   <const name="BEC_LOGIN_CHAR_NAME_INCORRECT"  value="27" type="ui16" desc="角色名冲突"/>
 
-  <struct name="LittleCharInfo" desc="简要角色信息">
-    <member name="charID" type="ui64"   desc="角色ID"/>
-    <member name="iconID"  type="ui32" desc="头像"/>
-    <member name="level"  type="ui32" desc="等级"/>
-    <member name="charName"  type="string" desc="昵称"/>
-  </struct>
-  <array name="LittleCharInfoVec" type="LittleCharInfo" desc="角色数组类型" />
-
-  <struct name="AccountInfo" desc="帐号信息">
-    <member name="accName" type="string"   desc=""/>
-    <member name="accID" type="ui64"   desc=""/>
-    <member name="diamond"  type="ui32" desc="当前剩余的充值钻石"/>
-    <member name="hisDiamond"  type="ui32" desc="历史充值钻石总额"/>
-    <member name="giftDmd"  type="ui32" desc="当前剩余的赠送钻石"/>
-    <member name="hisGiftDmd"  type="ui32" desc="历往赠送钻石总额"/>
-    <member name="charInfos"  type="LittleCharInfoVec" desc="角色信息"/>
-  </struct>
-
-
   <!-- 用户角色信息 -->
   <struct name="CharacterInfo" desc="角色信息">
     <member name="accID" type="ui64"   desc=""/>
@@ -53,6 +34,21 @@
     <member name="level"  type="ui32" desc="等级"/>
     <member name="charName"  type="string" desc="昵称"/>
   </struct>
+  <array name="CharacterInfoVct" type="CharacterInfo" desc="" />
+  
+
+  <struct name="AccountInfo" desc="帐号信息">
+    <member name="accName" type="string"   desc=""/>
+    <member name="accID" type="ui64"   desc=""/>
+    <member name="diamond"  type="ui32" desc="当前剩余的充值钻石"/>
+    <member name="hisDiamond"  type="ui32" desc="历史充值钻石总额"/>
+    <member name="giftDmd"  type="ui32" desc="当前剩余的赠送钻石"/>
+    <member name="hisGiftDmd"  type="ui32" desc="历往赠送钻石总额"/>
+    <member name="charInfos"  type="CharacterInfoVct" desc="角色信息"/>
+  </struct>
+  <array name="AccountInfoVct" type="AccountInfo" desc="" />
+
+
 
 
 

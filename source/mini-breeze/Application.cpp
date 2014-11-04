@@ -28,7 +28,7 @@ Appliction & Appliction::getRef()
 
 bool Appliction::Init(std::string filename, unsigned int index)
 {
-	bool ret = GlobalFacade::getRef().init(filename, AgentNode, index);
+	bool ret = GlobalFacade::getRef().init(filename, MiniBreezeNode, index);
 	if (ret)
 	{
 		LOGI("Appliction Init success.");

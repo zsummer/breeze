@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
-  <MinNo>20200</MinNo>
-  <MaxNo>20300</MaxNo>
+  <MinNo>100</MinNo>
+  <MaxNo>200</MaxNo>
   <UseLog4z>0</UseLog4z>
 </ProtoTraits>
 
 
 <Proto>
 
-  <proto from="C" to="LS" name="CreateCharacterReq" desc= "创建角色">
+  <proto from="C" to="LS" name="CharacterCreateReq" desc= "创建角色">
     <member name="charName"  type="string" desc="昵称"/>
   </proto>
 
-  <proto from="LS" to="C" name="CreateCharacterAck" desc= "创建角色应答" >
+  <proto from="LS" to="C" name="CharacterCreateAck" desc= "创建角色应答" >
   	<member name="retCode" type="ui16"   desc=""/>
-    <member name="lci" type="LittleCharInfo"   desc=""/>
+    <member name="info" type="CharacterInfo"   desc=""/>
   </proto>
 
   <proto from="C" to="LS" name="CharacterLoginReq" desc= "角色登录">
@@ -24,7 +24,6 @@
 
   <proto from="LS" to="C" name="CharacterLoginAck" desc= "角色登录应答" >
   	<member name="retCode" type="ui16"   desc=""/>
-    <member name="info" type="CharacterInfo"   desc="角色信息"/>
   </proto>
 
 
