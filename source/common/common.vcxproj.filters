@@ -5,9 +5,11 @@
     <ClInclude Include="ProtoDefine.h" />
     <ClInclude Include="ServerConfig.h" />
     <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="DBClient.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ServerConfig.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="DBClient.cpp" />
   </ItemGroup>
 </Project>

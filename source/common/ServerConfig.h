@@ -63,6 +63,14 @@ struct DBConfig
 	std::string pwd;
 };
 
+template<class OS>
+OS & operater <<(OS &os, const DBConfig & config)
+{
+	os << "[ip=" << config.ip << ", port=" << config.port << ", db=" << config.db << ", user=" << config.user << ", pwd=" << config.pwd << "]";
+	return os;
+}
+
+
 
 class ServerConfig
 {

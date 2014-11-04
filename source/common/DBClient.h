@@ -18,8 +18,7 @@
 
 /*
 *  文件说明
-*  CMongoManager为mongodb的操作管理类, 并提供一个简单的异步操作mongodb方案.
-*  如果某个服务节点需要访问mongodb 可以在这里添加一个mongodb句柄 并进行相应的初始化.
+*  如果某个服务节点需要访问db 可以在这里添加一个db句柄 并进行相应的初始化.
 *  该服务开辟一个单独的线程去做mongodb的阻塞操作, 因此程序使用该类的时候 要进行启动, 并在程序退出时调用停止接口.
 *  该服务提供的异步方式是并非为完全隔离的异步封装, 为了简化逻辑书写, 只对query,update等操作的阻塞部分进行异步, 实现方式为在调用原生query时候 
 *    把原生querry所需的参数和mongodb句柄,handler回调句柄一起传给async_query. 在回调中得到的数据为原生query返回后的所有数据.
@@ -32,16 +31,119 @@
 
 #include <ProtoDefine.h>
 #include <ServerConfig.h>
+#include <mysqlclient/mysql.h>
 
-
-class CMongoManager
+class CDBHelper
 {
 public:
-	typedef std::shared_ptr<mongo::DBClientConnection> MongoPtr;
-	typedef std::vector<mongo::BSONObj> MongoRetDatas;
+	CDBHelper(const bool & isRuning): m_isRuning = isRuning
+	{
+	}
+	~CDBHelper()
+	{
+		if (m_mysql)
+		{
+			mysql_close(m_mysql);
+			m_mysql = nullptr;
+		}
+	}
+	inline bool Init(const DBConfig & dbconfig){ m_config = dbconfig; }
+	inline bool Connect()
+	{
+		if (m_mysql)
+		{
+			mysql_close(m_mysql);
+			m_mysql = nullptr;
+		}
+		m_mysql = mysql_init(nullptr);
+		if (!m_mysql)
+		{
+			LOGE("mysql_init false. mysql config=" << m_config);
+			return false;
+		}
+
+		MYSQL * ret = mysql_real_connect(m_mysql, m_config.ip.c_str(), m_config.user.c_str(), m_config.pwd.c_str(), m_config.db.c_str(),
+			m_config.port, nullptr, 0);
+		if (!ret)
+		{
+			return false;
+		}
+		mysql_options(m_mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
+		mysql_options(m_mysql, MYSQL_OPT_CONNECT_TIMEOUT, "5");
+		mysql_set_character_set(m_mysql, "UTF8");
+		return true;
+	}
+	inline bool WaitEnable()
+	{
+		size_t lastTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		do 
+		{
+			if (Connect())
+			{
+				return true;
+			}
+			size_t now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			if (now - lastTime < 5000)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(now - lastTime));
+			}
+			lastTime += now - lastTime;
+		} while (m_isRuning);
+		return false;
+	}
+
+	inline std::string EscapeString(std::string const & str){ return EscapeString(str.c_str(), str.length()); }
+	inline std::string EscapeString(const char * str, size_t len)
+	{
+		std::string ret;
+		if (len == 0 || !m_mysql)
+		{
+			return ret;
+		}
+		ret.resize(len * 2 + 10, '\0');
+		unsigned long newlen = mysql_real_escape_string(m_mysql, &ret[0], str, (unsigned long)len);
+		ret.assign(ret.c_str(), newlen);
+		return ret;
+	}
+
+	inline bool Execute(const char * sql, unsigned long length)
+	{
+		if (m_mysql == NULL)
+		{
+			return false;
+		}
+		if (mysql_real_query(m_mysql, sql, length) != 0)
+		{
+			//retry
+			if (mysql_errno(m_mysql) == CR_SERVER_LOST || mysql_errno(m_mysql) == CR_SERVER_GONE_ERROR)
+			{
+				if (WaitEnable())
+				{
+					if (mysql_real_query(m_mysql, sql, length) == 0)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+	//mysql_store_result  mysql_affected_rows  mysql_error
+
+protected:
+private:
+	MYSQL * m_mysql = nullptr;
+	DBConfig m_config;
+	const bool & m_isRuning;
+};
+
+
+class CDBClient
+{
 public:
-	CMongoManager();
-	~CMongoManager();
+	CDBClient();
+	~CDBClient();
 	bool StartPump();
 	bool StopPump();
 	bool ConnectMongo(MongoPtr &mongoPtr, const MongoConfig & mc);
@@ -73,9 +175,7 @@ protected:
 	inline void Run();
 
 private:
-	std::shared_ptr<mongo::DBClientConnection> m_authMongo;
-	std::shared_ptr<mongo::DBClientConnection> m_infoMongo;
-	std::shared_ptr<mongo::DBClientConnection> m_logMongo;
+	MYSQL *m_mysql;
 	std::shared_ptr<std::thread> m_thread;
 	zsummer::network::ZSummerPtr m_summer;
 
