@@ -26,8 +26,8 @@
 #ifndef _SERVER_CONFIG_H_
 #define _SERVER_CONFIG_H_
 
-#include <ProtoDefine.h>
-
+#include <InnerTypeDefine.h>
+#include <tinyxml2.h>
 
 
 
@@ -63,8 +63,8 @@ struct DBConfig
 	std::string pwd;
 };
 
-template<class OS>
-OS & operater <<(OS &os, const DBConfig & config)
+
+inline zsummer::log4z::CStringStream & operator << (zsummer::log4z::CStringStream &os, const DBConfig & config)
 {
 	os << "[ip=" << config.ip << ", port=" << config.port << ", db=" << config.db << ", user=" << config.user << ", pwd=" << config.pwd << "]";
 	return os;

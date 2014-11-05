@@ -1,11 +1,11 @@
 ﻿#include "GlobalFacade.h"
-#include <ServerConfig.h>
 #include "NetManager.h"
-
+#include <DBClient.h>
 GlobalFacade::GlobalFacade()
 {
 	m_serverConfig = new ServerConfig;
 	m_netManger = new CNetManager();
+	m_dbclient = new CDBClientManager();
 }
 
 GlobalFacade::~GlobalFacade()
@@ -29,6 +29,42 @@ bool GlobalFacade::init(std::string configFile, ServerNode node, NodeIndex index
 		return ret;
 	}
 	LOGI("Parse ServerConfig success. configFile=" << configFile << ", node=" <<node << ", index=" << index);
+
+
+
+
+	if (!getDBManager().Start())
+	{
+		LOGE("DBManager Start false. " );
+		return false;
+	}
+	LOGI("DBManager Start success. ");
+	
+	
+	getDBManager().getAuthDB().Init(getServerConfig().getAuthDBConfig());
+	getDBManager().getInfoDB().Init(getServerConfig().getInfoDBConfig());
+	getDBManager().getLogDB().Init(getServerConfig().getLogDBConfig());
+
+	if (!getDBManager().getAuthDB().Connect())
+	{
+		LOGE("Connect Auth DB false. db config=" << getServerConfig().getAuthDBConfig());
+		return false;
+	}
+	LOGI("Connect Auth DB success. db config=" << getServerConfig().getAuthDBConfig());
+
+	if (!getDBManager().getInfoDB().Connect())
+	{
+		LOGE("Connect Info DB false. db config=" << getServerConfig().getInfoDBConfig());
+		return false;
+	}
+	LOGI("Connect Info DB success. db config=" << getServerConfig().getInfoDBConfig());
+
+	if (!getDBManager().getLogDB().Connect())
+	{
+		LOGE("Connect Log DB false. db config=" << getServerConfig().getLogDBConfig());
+		return false;
+	}
+	LOGI("Connect Log DB success. db config=" << getServerConfig().getLogDBConfig());
 
 
 	std::vector<CBaseHandler*> handlers;

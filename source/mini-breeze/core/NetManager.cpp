@@ -1,5 +1,5 @@
 ﻿#include "NetManager.h"
-
+#include <DBClient.h>
 
 CNetManager::CNetManager()
 {
@@ -52,6 +52,7 @@ bool CNetManager::Start()
 	m_configListen.listenIP = GlobalFacade::getRef().getServerConfig().getConfigListen(MiniBreezeNode).ip;
 	m_configListen.listenPort = GlobalFacade::getRef().getServerConfig().getConfigListen(MiniBreezeNode).port;
 	m_configListen.maxSessions = 5000;
+
 	// if have some connector need connect success. do open accept in event_OnSessionEstablished when all connector is success.
 	//other open acceoter in here.
 	m_accepterID = CTcpSessionManager::getRef().AddAcceptor(m_configListen);
@@ -160,6 +161,18 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	
 	iinfoPtr->status = InnerCharInfo::ICIT_AUTHING;
 
+	
+	//
+	{
+		std::string auth_sql = "SELECT accID, pwd FROM `tb_auth` where account = '";
+		auto & db = GlobalFacade::getRef().getDBManager().getAuthDB();
+		auth_sql += db.EscapeString(req.user);
+		auth_sql += "'";
+		GlobalFacade::getRef().getDBManager().async_query(db, auth_sql, std::bind(&CNetManager::db_AuthSelect, this,
+			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
+			sID, req));
+		return;
+	}
 
 	//do someting with asynchronization
 	//callback do something.
@@ -202,6 +215,135 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 			}
 		} while (0);
 
+		WriteStreamPack ws;
+		ws << ID_AS2C_AuthAck << ack;
+		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+	}
+}
+
+void CNetManager::db_AuthSelect(MYSQL_RES * res, unsigned long long affects, unsigned int errNo, std::string errMsg, SessionID sID, C2AS_AuthReq req)
+{
+	//error
+	AS2C_AuthAck ack;
+	ack.retCode = BEC_DB_ERROR;
+	AccountID accID = InvalidAccountID;
+	do 
+	{
+		if (errNo != 0)
+		{
+			LOGE("db_AuthSelect error. errno=" << errNo << ", error msg=" << errMsg << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
+			break;
+		}
+
+		if (res == nullptr)
+		{
+			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+			break;
+		}
+
+		unsigned int fields = mysql_num_fields(res);
+		if (fields != 2)
+		{
+			LOGE("db_AuthSelect error. fields != 1, req.user=" << req.user << ", req.pwd=" << req.pwd);
+			break;
+		}
+		MYSQL_ROW row = mysql_fetch_row(res);
+		if (!row || !row[0] || ! row[1])
+		{
+			LOGE("db_AuthSelect error. have not any field, req.user=" << req.user << ", req.pwd=" << req.pwd);
+			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+			break;
+		}
+		
+		accID = atoll(row[0]);
+		const char * pwd = row[1];
+		if (req.pwd != pwd)
+		{
+			ack.retCode = BEC_AUTH_PWD_INCORRECT;
+			break;
+		}
+		ack.retCode = BEC_SUCCESS;
+	} while (0);
+	
+	if (res)
+	{
+		mysql_free_result(res);
+	}
+	if (ack.retCode != BEC_SUCCESS)
+	{
+		auto founder = m_mapSession.find(sID);
+		if (founder != m_mapSession.end() && founder->second)
+		{
+			founder->second->status = InnerCharInfo::ICIT_UNAUTH;
+		}
+
+		WriteStreamPack ws;
+		ws << ID_AS2C_AuthAck << ack;
+		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+	}
+	else
+	{
+		{
+			auto & db = GlobalFacade::getRef().getDBManager().getInfoDB();
+			std::string selectAccountInfo_sql = "call AutoSelectAccount(";
+			selectAccountInfo_sql += toString(accID);
+			selectAccountInfo_sql += ")";
+			GlobalFacade::getRef().getDBManager().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AuthSelect, this,
+				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
+				sID, req));
+		}
+	}
+}
+
+void CNetManager::db_AccountSelect(MYSQL_RES * res, unsigned long long affects, unsigned int errNo, std::string errMsg, SessionID sID, AccountID accID, C2AS_AuthReq req)
+{
+	//error
+	AS2C_AuthAck ack;
+	ack.retCode = BEC_DB_ERROR;
+	do
+	{
+		if (errNo != 0)
+		{
+			LOGE("db_AccountSelect error. errno=" << errNo << ", error msg=" << errMsg << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
+			break;
+		}
+
+		if (res == nullptr)
+		{
+			break;
+		}
+
+		unsigned int fields = mysql_num_fields(res);
+		MYSQL_ROW row;
+		while (row = mysql_fetch_row(res))
+		{
+			if (!row)
+			{
+				LOGE("db_AccountSelect error. have not any field, req.user=" << req.user << ", req.pwd=" << req.pwd);
+				break;
+			}
+		}
+		
+		ack.retCode = BEC_SUCCESS;
+	} while (0);
+
+	if (res)
+	{
+		mysql_free_result(res);
+	}
+	if (ack.retCode != BEC_SUCCESS)
+	{
+		auto founder = m_mapSession.find(sID);
+		if (founder != m_mapSession.end() && founder->second)
+		{
+			founder->second->status = InnerCharInfo::ICIT_UNAUTH;
+		}
+		WriteStreamPack ws;
+		ws << ID_AS2C_AuthAck << ack;
+		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+	}
+	else
+	{
 		WriteStreamPack ws;
 		ws << ID_AS2C_AuthAck << ack;
 		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());

@@ -1,11 +1,8 @@
 ﻿#include "Application.h"
-
-
 #include <log4z/log4z.h>
-#include <BaseHander.h>
-#include <ServerConfig.h>
 #include "core/NetManager.h"
 #include "core/GlobalFacade.h"
+#include <DBClient.h>
 using namespace zsummer::log4z;
 //文件说明
 //应用程序类
@@ -40,7 +37,7 @@ bool Appliction::Init(std::string filename, unsigned int index)
 	return ret;
 }
 
-void Appliction::RunPump()
+void Appliction::Run()
 {
 	return CTcpSessionManager::getRef().Run();
 }
@@ -53,4 +50,5 @@ void Appliction::Stop()
 void Appliction::_Stop()
 {
 	GlobalFacade::getRef().getNetManger().Stop();
+	GlobalFacade::getRef().getDBManager().Stop();
 }

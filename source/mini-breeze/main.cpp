@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 		LOGE("Appliction init false.");
 		return 1;
 	}
-	Appliction::getRef().RunPump();
+	Appliction::getRef().Run();
 
 	LOGI("Appliction exit.");
 

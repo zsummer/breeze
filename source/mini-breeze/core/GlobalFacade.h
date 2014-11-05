@@ -25,10 +25,10 @@
 
 #ifndef _GLOBAL_FACADE_H_
 #define _GLOBAL_FACADE_H_
-#include <ProtoDefine.h>
-#include <BaseHander.h>
+#include <Common.h>
 class ServerConfig;
 class CNetManager;
+class CDBClientManager;
 
 class GlobalFacade
 {
@@ -43,10 +43,13 @@ public:
 
 	inline CNetManager & getNetManger(){ return *m_netManger; }
 
+	inline CDBClientManager & getDBManager(){ return *m_dbclient; }
+
 	std::vector<CBaseHandler*> & getAllHandler(){ return m_vctHandler; }
 private:
-	ServerConfig * m_serverConfig;
-	CNetManager * m_netManger;
+	ServerConfig * m_serverConfig = nullptr;
+	CNetManager * m_netManger = nullptr;
+	CDBClientManager * m_dbclient = nullptr;
 	std::vector<CBaseHandler*> m_vctHandler;
 };
 

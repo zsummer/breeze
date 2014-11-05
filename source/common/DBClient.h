@@ -29,14 +29,14 @@
 #ifndef _MONGO_MANAGER_H_
 #define _MONGO_MANAGER_H_
 
-#include <ProtoDefine.h>
-#include <ServerConfig.h>
+#include <Common.h>
+#include <mysqlclient/errmsg.h>
 #include <mysqlclient/mysql.h>
 
-class CDBHelper
+class CDBHelper :public std::enable_shared_from_this<CDBHelper>
 {
 public:
-	CDBHelper(const bool & isRuning): m_isRuning = isRuning
+	CDBHelper(const bool & isRuning): m_isRuning(isRuning)
 	{
 	}
 	~CDBHelper()
@@ -47,7 +47,7 @@ public:
 			m_mysql = nullptr;
 		}
 	}
-	inline bool Init(const DBConfig & dbconfig){ m_config = dbconfig; }
+	inline void Init(const DBConfig & dbconfig){ m_config = dbconfig; }
 	inline bool Connect()
 	{
 		if (m_mysql)
@@ -61,23 +61,27 @@ public:
 			LOGE("mysql_init false. mysql config=" << m_config);
 			return false;
 		}
-
+		mysql_options(m_mysql, MYSQL_OPT_CONNECT_TIMEOUT, "5");
+		mysql_options(m_mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
+		mysql_set_character_set(m_mysql, "UTF8");
 		MYSQL * ret = mysql_real_connect(m_mysql, m_config.ip.c_str(), m_config.user.c_str(), m_config.pwd.c_str(), m_config.db.c_str(),
 			m_config.port, nullptr, 0);
 		if (!ret)
 		{
 			return false;
 		}
-		mysql_options(m_mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
-		mysql_options(m_mysql, MYSQL_OPT_CONNECT_TIMEOUT, "5");
-		mysql_set_character_set(m_mysql, "UTF8");
 		return true;
 	}
 	inline bool WaitEnable()
 	{
+		if (!m_isRuning)
+		{
+			return false;
+		}
 		size_t lastTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 		do 
 		{
+			LOGE("try reconnect mysql. mysql=" << m_mysql);
 			if (Connect())
 			{
 				return true;
@@ -106,7 +110,7 @@ public:
 		return ret;
 	}
 
-	inline bool Execute(const char * sql, unsigned long length)
+	inline bool Query(const char * sql, unsigned long length)
 	{
 		if (m_mysql == NULL)
 		{
@@ -129,53 +133,69 @@ public:
 		}
 		return true;
 	}
-	//mysql_store_result  mysql_affected_rows  mysql_error
 
+	inline MYSQL_RES * getResult(){return mysql_store_result(m_mysql);}
+
+	inline unsigned long long getAffectedRows(){return mysql_affected_rows(m_mysql);}
+
+	inline std::string getLastError(){return mysql_error(m_mysql);}
+	inline unsigned int getLastErrNo(){ return mysql_errno(m_mysql); }
+
+	//后续会完善这套操作封装 现在暂时没时间继续搞
+	inline void ExampleFore()
+	{
+		MYSQL_RES * res = getResult();
+		if (!res)
+		{
+			return;
+		}
+		int num_fields = mysql_num_fields(res);
+		MYSQL_ROW row;
+		while (row = mysql_fetch_row(res))
+		{
+			for (int i = 0; i < num_fields; ++i)
+			{
+				const char * field = row[i] ? row[i] : "";
+				//dosomething.
+			}
+		}
+		mysql_free_result(res); // must call this method to free memmory.
+	}
 protected:
 private:
 	MYSQL * m_mysql = nullptr;
 	DBConfig m_config;
 	const bool & m_isRuning;
 };
+typedef std::shared_ptr<CDBHelper> CDBHelperPtr;
 
-
-class CDBClient
+class CDBClientManager
 {
 public:
-	CDBClient();
-	~CDBClient();
-	bool StartPump();
-	bool StopPump();
-	bool ConnectMongo(MongoPtr &mongoPtr, const MongoConfig & mc);
-
+	CDBClientManager();
+	~CDBClientManager();
+	bool Start();
+	bool Stop();
 public:
-	inline MongoPtr & getAuthMongo(){ return m_authMongo; }
-	inline MongoPtr & getInfoMongo(){ return m_infoMongo; }
-	inline MongoPtr & getLogMongo(){ return m_logMongo; }
+	inline CDBHelper & getAuthDB(){ return m_authDB; }
+	inline CDBHelper & getInfoDB(){ return m_infoDB; }
+	inline CDBHelper & getLogDB(){ return m_logDB; }
+
 	inline const std::atomic_ullong & getPostCount(){ return m_uPostCount; }
 	inline const std::atomic_ullong & getFinalCount(){ return m_uFinalCount; }
 public:
-	void async_query(MongoPtr &mongoPtr, const string &ns, const mongo::Query &query,
-		const std::function<void(std::shared_ptr<MongoRetDatas> , std::string )> & handler);
-	void async_update(MongoPtr &mongoPtr, const string &ns, const mongo::Query &query, const mongo::BSONObj &obj, bool upsert,
-		const std::function<void(std::string )> & handler);
-	void async_insert(MongoPtr &mongoPtr, const string &ns, const mongo::BSONObj &obj, 
-		const std::function<void(std::string )> & handler);
-
+	void async_query(CDBHelper &dbhelper, const string &sql, 
+		const std::function<void(MYSQL_RES *, unsigned long long, unsigned int, std::string)> & handler);
 protected:
-	void _async_query(MongoPtr &mongoPtr, const string &ns, const mongo::Query &query,
-		std::function<void(std::shared_ptr<MongoRetDatas>, std::string )> &handler);
-
-	void _async_update(MongoPtr &mongoPtr, const string &ns, const mongo::Query &query, const mongo::BSONObj &obj, bool upsert,
-		const std::function<void(std::string )> & handler);
-
-	void _async_insert(MongoPtr &mongoPtr, const string &ns, const mongo::BSONObj &obj, 
-		const std::function<void(std::string )> & handler);
+	void _async_query(CDBHelper &dbhelper, const string &sql,
+		const std::function<void(MYSQL_RES *, unsigned long long, unsigned int, std::string)> & handler);
 
 	inline void Run();
 
 private:
-	MYSQL *m_mysql;
+	CDBHelperPtr m_infoDB;
+	CDBHelperPtr m_logDB;
+	CDBHelperPtr m_authDB;
 	std::shared_ptr<std::thread> m_thread;
 	zsummer::network::ZSummerPtr m_summer;
 
@@ -195,7 +215,7 @@ private:
 
 
 
-void CMongoManager::Run()
+void CDBClientManager::Run()
 {
 	do
 	{

@@ -3,9 +3,9 @@
 <traits platid="1000" areaid="1000" />
 
 <db>
-	<auth ip="127.0.0.1" port="3306" db="db_auth" user="zhangyawei" pwd="123" />
-	<info ip="127.0.0.1" port="3306" db="db_info" user="zhangyawei" pwd="123" />
-	<log ip="127.0.0.1" port="3306" db="db_info" user="zhangyawei" pwd="123" />
+	<auth ip="10.0.7.21" port="3306" db="db_auth" user="root" pwd="123456" />
+	<info ip="10.0.7.21" port="3306" db="db_info" user="root" pwd="123456" />
+	<log ip="10.0.7.21" port="3306" db="db_log" user="root" pwd="123456" />
 </db>
 
 <listen>

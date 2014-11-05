@@ -27,13 +27,12 @@
 
 #ifndef _NET_MANAGER_H_
 #define _NET_MANAGER_H_
-#include <ProtoDefine.h>
-#include <ServerConfig.h>
+#include <Common.h>
 #include "GlobalFacade.h"
 #include <unordered_map>
 #include <ProtoAuth.h>
 #include <ProtoLogin.h>
-
+#include <DBClient.h>
 
 
 
@@ -55,6 +54,11 @@ public:
 
 
 	void msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs);
+	void db_AuthSelect(MYSQL_RES * res, unsigned long long affects, unsigned int errNo, std::string errMsg, SessionID sID, C2AS_AuthReq req);
+	void db_AccountSelect(MYSQL_RES * res, unsigned long long affects, unsigned int errNo, std::string errMsg, SessionID sID,AccountID accID, C2AS_AuthReq req);
+
+
+
 	void msg_CharacterLoginReq(SessionID sID, ProtoID pID, ReadStreamPack &rs);
 	void msg_CharacterCreateReq(SessionID sID, ProtoID pID, ReadStreamPack &rs);
 

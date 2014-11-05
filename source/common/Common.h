@@ -1,4 +1,5 @@
 ﻿
+
 /*
 * mini-breeze License
 * Copyright (C) 2014 YaweiZhang <yawei_zhang@foxmail.com>.
@@ -16,55 +17,35 @@
 * limitations under the License.
 */
 
-
 /*
- *  file desc
- *  CBaseHandler provide a unified way to manager message handler.
- */
+*  文件说明
+*  所有服务通用的定义可以放在这里
+*
+*/
+
+#ifndef _COMMON_H_
+#define _COMMON_H_
+
+#include "InnerTypeDefine.h"
+#include "GenObjectID.h"
+#include "tinyxml2.h"
+#include "ServerConfig.h"
+#include "BaseHander.h"
+#include <log4z/log4z.h>
 
 
-#ifndef _BASE_HANDLER_H_
-#define _BASE_HANDLER_H_
-#include <Common.h>
 
 
-class CBaseHandler
+
+
+
+template<class T>
+std::string toString(const T &t)
 {
-public:
-	CBaseHandler(){}
-	virtual ~CBaseHandler(){};
-	virtual bool Init() = 0;
-	virtual void CharLogin(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
-	virtual void CharLogout(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	std::stringstream os;
+	os << t;
+	return os.str();
+}
 
 
 

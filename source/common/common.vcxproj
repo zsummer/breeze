@@ -20,8 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseHander.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="DBClient.h" />
-    <ClInclude Include="ProtoDefine.h" />
+    <ClInclude Include="GenObjectID.h" />
+    <ClInclude Include="InnerTypeDefine.h" />
     <ClInclude Include="ServerConfig.h" />
     <ClInclude Include="tinyxml2.h" />
   </ItemGroup>
@@ -117,7 +119,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>STATIC_LIBMONGOCLIENT;_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../../depends_win/include;../../protocol/C++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../../depends_win/include;../../protocol/C++;../../depends_win/include/mysqlclient;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -161,7 +163,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_DEPRECATE;STATIC_LIBMONGOCLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../../depends_win/include;../../protocol/C++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../../depends_win/include;../../protocol/C++;../../depends_win/include/mysqlclient;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>

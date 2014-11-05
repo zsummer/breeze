@@ -17,9 +17,8 @@
 
 
 //! 测试
-#include <ServerConfig.h>
-#include <ProtoDefine.h>
-#include <ProtoCommon.h>
+
+#include <Common.h>
 #include <ProtoAuth.h>
 #include <ProtoLogin.h>
 #include <unordered_map>
