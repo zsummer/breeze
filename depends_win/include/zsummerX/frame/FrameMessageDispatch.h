@@ -57,7 +57,7 @@ public:
 	inline void RegisterSessionMessage(ProtoID protocolID, const OnMessageFunction & msgfun){ m_mapSessionDispatch[protocolID].push_back(msgfun); }
 	inline void RegisterSessionDefaultMessage(const OnMessageFunction & msgfun){ m_vctDefaultSessionDispatch.push_back(msgfun); }
 
-	//event
+	//event. can use method IsSessionID or IsConnectID to resolution who is the sessionID
 	inline void RegisterOnSessionEstablished(const OnSessionEstablished & fun){m_vctOnSessionEstablished.push_back(fun); }
 	inline void RegisterOnSessionDisconnect(const OnSessionDisconnect & fun){ m_vctOnSessionDisconnect.push_back(fun); }
 
@@ -72,7 +72,7 @@ public:
 	inline void DispatchOnSessionEstablished(SessionID sID);
 	inline void DispatchOnSessionDisconnect(SessionID sID);
 	inline void DispatchOnSessionPulse(SessionID sID, unsigned int pulseInterval);
-	inline bool DispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body);
+	inline bool DispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body);
 
 	private:
 		//!message
@@ -245,17 +245,15 @@ inline void CMessageDispatcher::DispatchOnSessionPulse(SessionID sID, unsigned i
 }
 
 
-inline bool  CMessageDispatcher::DispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body)
+inline bool  CMessageDispatcher::DispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body)
 {
 	try
 	{
 		for (auto & fun : m_vctSessionHTTPMessage)
 		{
-			LCT("Entry DispatchSessionHTTPMessage  SessionID=" << sID << ", head count=" << head.size() << ", bodySize=" << body.length());
-			if (!fun(sID, head, body))
-			{
-				return false;
-			}
+			LCT("Entry DispatchSessionHTTPMessage  SessionID=" << sID << ", commond=" << commonLine.first << ", commondValue=" << commonLine.second
+				<< ", head count=" << head.size() << ", bodySize=" << body.length());
+			fun(sID, commonLine, head, body);
 			LCT("Leave DispatchSessionHTTPMessage  SessionID=" << sID);
 		}
 		return true;

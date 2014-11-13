@@ -164,10 +164,12 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	
 	//
 	{
+
 		std::string auth_sql = "SELECT accID, pwd FROM `tb_auth` where account = '";
 		auto & db = GlobalFacade::getRef().getDBManager().getAuthDB();
-		auth_sql += db.EscapeString(req.user);
+		auth_sql += db->EscapeString(req.user);
 		auth_sql += "'";
+
 		GlobalFacade::getRef().getDBManager().async_query(db, auth_sql, std::bind(&CNetManager::db_AuthSelect, this,
 			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
 			sID, req));
@@ -244,7 +246,7 @@ void CNetManager::db_AuthSelect(MYSQL_RES * res, unsigned long long affects, uns
 		unsigned int fields = mysql_num_fields(res);
 		if (fields != 2)
 		{
-			LOGE("db_AuthSelect error. fields != 1, req.user=" << req.user << ", req.pwd=" << req.pwd);
+			LOGE("db_AuthSelect error. fields != 2, req.user=" << req.user << ", req.pwd=" << req.pwd);
 			break;
 		}
 		MYSQL_ROW row = mysql_fetch_row(res);
@@ -288,9 +290,9 @@ void CNetManager::db_AuthSelect(MYSQL_RES * res, unsigned long long affects, uns
 			std::string selectAccountInfo_sql = "call AutoSelectAccount(";
 			selectAccountInfo_sql += toString(accID);
 			selectAccountInfo_sql += ")";
-			GlobalFacade::getRef().getDBManager().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AuthSelect, this,
+			GlobalFacade::getRef().getDBManager().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AccountSelect, this,
 				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
-				sID, req));
+				sID, accID, req));
 		}
 	}
 }

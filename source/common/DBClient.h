@@ -33,6 +33,33 @@
 #include <mysqlclient/errmsg.h>
 #include <mysqlclient/mysql.h>
 
+class CDBQuery
+{
+public:
+	CDBQuery(){}
+	~CDBQuery()
+	{
+		if (m_res)
+		{
+			mysql_free_result(m_res);
+			m_res = nullptr;
+		}
+	}
+protected:
+
+private:
+	//query sql string
+	std::string m_querySQL;
+	//res
+	MYSQL_RES * m_res = nullptr;
+	std::string m_lastErrorMsg;
+	unsigned int m_lastErrorNo = 0;
+	unsigned long long m_affectedRows = 0;
+};
+
+
+
+
 class CDBHelper :public std::enable_shared_from_this<CDBHelper>
 {
 public:
@@ -177,17 +204,17 @@ public:
 	bool Start();
 	bool Stop();
 public:
-	inline CDBHelper & getAuthDB(){ return m_authDB; }
-	inline CDBHelper & getInfoDB(){ return m_infoDB; }
-	inline CDBHelper & getLogDB(){ return m_logDB; }
+	inline CDBHelperPtr & getAuthDB(){ return m_authDB; }
+	inline CDBHelperPtr & getInfoDB(){ return m_infoDB; }
+	inline CDBHelperPtr & getLogDB(){ return m_logDB; }
 
 	inline const std::atomic_ullong & getPostCount(){ return m_uPostCount; }
 	inline const std::atomic_ullong & getFinalCount(){ return m_uFinalCount; }
 public:
-	void async_query(CDBHelper &dbhelper, const string &sql, 
+	void async_query(CDBHelperPtr &dbhelper, const string &sql, 
 		const std::function<void(MYSQL_RES *, unsigned long long, unsigned int, std::string)> & handler);
 protected:
-	void _async_query(CDBHelper &dbhelper, const string &sql,
+	void _async_query(CDBHelperPtr &dbhelper, const string &sql,
 		const std::function<void(MYSQL_RES *, unsigned long long, unsigned int, std::string)> & handler);
 
 	inline void Run();

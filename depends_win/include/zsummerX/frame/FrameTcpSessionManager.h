@@ -69,6 +69,7 @@ public:
 public:
 	//! add acceptor under the configure.
 	AccepterID AddAcceptor(const tagAcceptorConfigTraits &traits);
+	AccepterID GetAccepterID(SessionID sID);
 
 	//! add connector under the configure.
 	SessionID AddConnector(const tagConnctorConfigTraits & traits);
@@ -81,6 +82,8 @@ public:
 
 	//close session socket.
 	void KickSession(SessionID sID);
+
+
 
 private:
 	void SafeStop();

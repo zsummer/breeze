@@ -41,25 +41,25 @@ bool GlobalFacade::init(std::string configFile, ServerNode node, NodeIndex index
 	LOGI("DBManager Start success. ");
 	
 	
-	getDBManager().getAuthDB().Init(getServerConfig().getAuthDBConfig());
-	getDBManager().getInfoDB().Init(getServerConfig().getInfoDBConfig());
-	getDBManager().getLogDB().Init(getServerConfig().getLogDBConfig());
+	getDBManager().getAuthDB()->Init(getServerConfig().getAuthDBConfig());
+	getDBManager().getInfoDB()->Init(getServerConfig().getInfoDBConfig());
+	getDBManager().getLogDB()->Init(getServerConfig().getLogDBConfig());
 
-	if (!getDBManager().getAuthDB().Connect())
+	if (!getDBManager().getAuthDB()->Connect())
 	{
 		LOGE("Connect Auth DB false. db config=" << getServerConfig().getAuthDBConfig());
 		return false;
 	}
 	LOGI("Connect Auth DB success. db config=" << getServerConfig().getAuthDBConfig());
 
-	if (!getDBManager().getInfoDB().Connect())
+	if (!getDBManager().getInfoDB()->Connect())
 	{
 		LOGE("Connect Info DB false. db config=" << getServerConfig().getInfoDBConfig());
 		return false;
 	}
 	LOGI("Connect Info DB success. db config=" << getServerConfig().getInfoDBConfig());
 
-	if (!getDBManager().getLogDB().Connect())
+	if (!getDBManager().getLogDB()->Connect())
 	{
 		LOGE("Connect Log DB false. db config=" << getServerConfig().getLogDBConfig());
 		return false;

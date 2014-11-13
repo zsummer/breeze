@@ -66,6 +66,9 @@
  *  Add genProto tools
  * VERSION 1.0.0 <DATE: 2014.08.20>
  *  Add HTTP proto
+ * VERSION 1.1.0 <DATE: 2014.11.11>
+ *  support http chunked header
+ *  support http decode and encode method
  * 
  */
 #pragma once
@@ -959,7 +962,7 @@ ReadStream<StreamHeadTrait>::ReadStream(const char *pAttachData, Integer attachD
 template<class StreamHeadTrait>
 inline void ReadStream<StreamHeadTrait>::CheckMoveCursor(Integer unit)
 {
-	if (m_cursor >= m_maxDataLen)
+	if (m_cursor > m_maxDataLen)
 	{
 		throw std::runtime_error("bound over. cursor in end-of-data.");
 	}
@@ -1061,13 +1064,22 @@ inline void ReadStream<StreamHeadTrait>::SkipOriginalData(Integer unit)
 
 
 
-
-
-const char * const CRLF = "\r\n";
+/////////////////////////
+//http proto 
+/////////////////////////
+const char *const CRLF = "\r\n";
+const char CR = '\r'; //CRLF
+const char LF = '\n';
+const char SEGM = ':';
+const char BLANK = ' ';
+typedef std::pair<std::string, std::string> PairString;
 typedef std::map<std::string, std::string> HTTPHeadMap;
 
-inline INTEGRITY_RET_TYPE CheckHTTPBuffIntegrity(const char * buff, unsigned int curBuffLen, unsigned int maxBuffLen,
-										HTTPHeadMap & head, std::string & body, unsigned int &usedCount);
+inline INTEGRITY_RET_TYPE CheckHTTPBuffIntegrity(const char * buff, unsigned int curBuffLen, unsigned int maxBuffLen, 
+							bool hadHeader, bool & isChunked, PairString& commonLine, HTTPHeadMap & head, std::string & body, unsigned int &usedCount);
+
+std::string urlEncode(const std::string& orgString);
+std::string urlDecode(const std::string& orgString);
 class WriteHTTP
 {
 public:
@@ -1118,111 +1130,288 @@ private:
 };
 
 
-inline INTEGRITY_RET_TYPE CheckHTTPBuffIntegrity(const char * buff, unsigned int curBuffLen, unsigned int maxBuffLen, 
-										 HTTPHeadMap & head, std::string & body, unsigned int &usedCount)
+inline std::string urlEncode(const std::string & orgString)
 {
-	//check head
-	unsigned int cursor = 0;
-	do 
+	std::string ret;
+	for (int i = 0; i < (int)orgString.length(); ++i)
 	{
-		if (cursor == curBuffLen) return IRT_SHORTAGE;
-		if (cursor == maxBuffLen) return IRT_CORRUPTION;
-
-		std::string content;
-		do 
-		{
-			if (cursor == curBuffLen) return IRT_SHORTAGE;
-			if (cursor == maxBuffLen) return IRT_CORRUPTION;
-			content.append(buff + cursor, 1);
-			cursor++;
-			// post  get result
-			if (content.find(CRLF) != std::string::npos )
-			{
-				break;
-			}
-		} while (true);
-		if (content.size() == 2)
+		char ch = orgString[i];
+		if (ch == '\0')
 		{
 			break;
 		}
-		std::string::size_type pos = content.find(":");
-		if (pos == std::string::npos)
+		if ((ch >= 'A' && ch <= 'Z')
+			|| (ch >= 'a' && ch <= 'z')
+			|| (ch >= '0' && ch <= '9')
+			|| ch == '-' || ch == '_' || ch == '.' || ch == '~')
 		{
-			pos = content.find(" ");
-			if (pos == std::string::npos)
-			{
-				return IRT_CORRUPTION;
-			}
-			std::string key;
-			if (content.find("GET") != std::string::npos)
-			{
-				key = "GET";
-			}
-			else if (content.find("POST") != std::string::npos)
-			{
-				key = "POST";
-			}
-			else if (content.substr(0, 4) == "HTTP")
-			{
-				key = "RESPONSE";
-			}
-			else
-			{
-				return IRT_CORRUPTION;
-			}
-			
-			std::string value = content.substr(pos+1);
-			std::string::size_type posEnd = value.find(" ");
-			if (posEnd == std::string::npos)
-			{
-				posEnd = value.find(CRLF);
-				if (posEnd == std::string::npos)
-				{
-					return IRT_CORRUPTION;
-				}
-			}
-				
-			value = value.substr(0, posEnd - 0);
-			if (value.empty()) return IRT_CORRUPTION;
-			head.insert(std::make_pair(key, value));
+			ret += ch;
+		}
+		else if (ch == ' ')
+		{
+			ret += '+';
 		}
 		else
 		{
-			std::string key = content.substr(0, pos - 0);
-			std::string value = content.substr(pos+1);
-			if (value.size() < 2 || value.find(CRLF) == std::string::npos) return IRT_CORRUPTION;
-			value = value.substr(0, value.size()-2);
-			if (value.empty())return IRT_CORRUPTION;
-			head.insert(std::make_pair(key, value));
+			ret += '%';
+			unsigned char tmp = ch / 16;
+			ret += tmp > 9 ? tmp + 55 : tmp + 48;
+			tmp = ch % 16;
+			ret += tmp > 9 ? tmp + 55 : tmp + 48;
 		}
-	} while (true);
+	}
+	return ret;
+}
+inline std::string urlDecode(const std::string & orgString)
+{
+	std::string ret;
+	unsigned int count = (unsigned int)orgString.length();
+	unsigned int cursor = 0;
+	while (cursor < count)
+	{
+		char ch = orgString[cursor];
+		if (ch == '\0')
+		{
+			break;
+		}
+		if (ch == '+')
+		{
+			ret += ' ';
+			cursor++;
+			continue;
+		}
+		if (ch == '%')
+		{
+			if (count - cursor < 2)
+			{
+				break; //error
+			}
+			unsigned char och;
+			unsigned char x = orgString[cursor + 1];
+			if (x >= 'A' && x <= 'Z') x = x - 'A' + 10;
+			else if (x >= 'a' && x <= 'z') x = x - 'a' + 10;
+			else if (x >= '0' && x <= '9') x = x - '0';
+			och = x * 16;
+			x = orgString[cursor + 2];
+			if (x >= 'A' && x <= 'Z') x = x - 'A' + 10;
+			else if (x >= 'a' && x <= 'z') x = x - 'a' + 10;
+			else if (x >= '0' && x <= '9') x = x - '0';
+			och += x;
+			ret += och;
+			cursor += 3;
+			continue;
+		}
+		ret += ch;
+		cursor++;
+	}
+	return ret;
+}
 
-	//check unsupport chunked
-	HTTPHeadMap::iterator iter = head.find("Transfer-Encoding");
-	if (iter != head.end() && iter->second.find("chunked") != std::string::npos)
+
+inline unsigned int InnerReadLine(const char * buff, unsigned int curBuffLen, unsigned int maxBuffLen,  bool isKV, bool isCommondLine,
+	std::string & outStringKey, std::string &outStringValue)
+{
+	if (curBuffLen == 0)
 	{
 		return IRT_CORRUPTION;
 	}
 	
-	//check body
-	iter = head.find("Content-Length");
-	if (iter == head.end() || atoi(iter->second.c_str()) == 0)
+	unsigned int cursor = 0;
+	short readStatus = 0;
+	INTEGRITY_RET_TYPE isIntegrityData = IRT_SHORTAGE;
+
+	outStringKey.clear();
+	outStringValue.clear();
+
+	while (cursor < curBuffLen)
 	{
-		usedCount = cursor;
-		return IRT_SUCCESS;
+		if (cursor >= maxBuffLen)
+		{
+			isIntegrityData = IRT_CORRUPTION;
+			break;
+		}
+		if (buff[cursor] == CR)
+		{
+			cursor++;
+			continue;
+		}
+		if (buff[cursor] == LF)
+		{
+			cursor++;
+			isIntegrityData = IRT_SUCCESS;
+			break;
+		}
+		if (!isKV)
+		{
+			outStringKey.push_back(buff[cursor]);
+			cursor++;
+			continue;
+		}
+		else
+		{
+			if (isCommondLine)
+			{
+				if (buff[cursor] == BLANK)
+				{
+					readStatus++;
+					cursor++;
+					continue;
+				}
+			}
+			else // ! isCommondLine
+			{
+				if (buff[cursor] == SEGM)
+				{
+					readStatus++;
+					cursor++;
+					continue;
+				}
+				if (buff[cursor] == BLANK && readStatus == 0)
+				{
+					cursor++;
+					continue;
+				}
+				if (buff[cursor] == BLANK && readStatus == 1 && outStringValue.empty())
+				{
+					cursor++;
+					continue;
+				}
+			}//end. !isCommondLine
+			if (readStatus == 0)
+			{
+				outStringKey.push_back(buff[cursor]);
+			}
+			else if (readStatus == 1)
+			{
+				outStringValue.push_back(buff[cursor]);
+			}
+			cursor++;
+			continue;
+		}//end. isKV
+	}//extract character loop
+
+	if (isIntegrityData != IRT_SUCCESS)
+	{
+		throw isIntegrityData;
 	}
-	unsigned int len = atoi(iter->second.c_str());
-	if (cursor + len > maxBuffLen)
+	return cursor;
+}
+
+inline INTEGRITY_RET_TYPE CheckHTTPBuffIntegrity(const char * buff, unsigned int curBuffLen, unsigned int maxBuffLen,
+	bool hadHeader, bool &isChunked, PairString& commonLine, HTTPHeadMap & head, std::string & body, unsigned int &usedCount)
+{
+	if (!hadHeader)
+	{
+		isChunked = false;
+	}
+	int bodyLenght = -1;
+	usedCount = 0;
+	PairString keyValue;
+
+	//extract head
+	if (!hadHeader)
+	{
+
+		//extract common line
+		try
+		{
+			usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, true, true, commonLine.first, commonLine.second);
+		}
+		catch (INTEGRITY_RET_TYPE t)
+		{
+			return t;
+		}
+
+		//extract head line
+		head.clear();
+		try
+		{
+			do
+			{
+				keyValue.first.clear();
+				keyValue.second.clear();
+				usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, true, false, keyValue.first, keyValue.second);
+				if (keyValue.first.empty() && keyValue.second.empty())
+				{
+					break;
+				}
+				if (keyValue.first == "Content-Length")
+				{
+					bodyLenght = atoi(keyValue.second.c_str());
+				}
+				else if (keyValue.first == "Transfer-Encoding")
+				{
+					isChunked = true;
+				}
+				head.insert(keyValue);
+			} while (true);
+		}
+		catch (INTEGRITY_RET_TYPE t)
+		{
+			return t;
+		}
+	}
+	
+
+
+	//read chunked header
+	if (isChunked)
+	{
+		try
+		{
+			keyValue.first.clear();
+			keyValue.second.clear();
+			usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, false, false, keyValue.first, keyValue.second);
+			//chunked end. need closed.
+			if (keyValue.first.empty())
+			{
+				return IRT_CORRUPTION;
+			}
+			sscanf(keyValue.first.c_str(), "%x", &bodyLenght);
+			if (bodyLenght == 0)
+			{
+				//http socket end.
+				return IRT_CORRUPTION;
+			}
+			
+		}
+		catch (INTEGRITY_RET_TYPE t)
+		{
+			return t;
+		}
+	}
+	
+	if (bodyLenght == -1 || usedCount + bodyLenght > maxBuffLen)
 	{
 		return IRT_CORRUPTION;
 	}
-	if (cursor + len > curBuffLen)
+	if (bodyLenght + usedCount > curBuffLen)
 	{
 		return IRT_SHORTAGE;
 	}
+	body.assign(buff + usedCount, bodyLenght);
+	usedCount += bodyLenght;
+
+	if (isChunked)//clean chunked end CRLF
+	{
+		try
+		{
+			keyValue.first.clear();
+			keyValue.second.clear();
+			usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, false, false, keyValue.first, keyValue.second);
+			//chunked end. need closed.
+			if (!keyValue.first.empty())
+			{
+				return IRT_CORRUPTION;
+			}
+		}
+		catch (INTEGRITY_RET_TYPE t)
+		{
+			return t;
+		}
+	}
 	
-	body.assign(buff + cursor, len);
-	usedCount = cursor + len;
+
 	return IRT_SUCCESS;
 }
 

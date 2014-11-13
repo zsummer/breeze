@@ -20,8 +20,11 @@
 #include "DBClient.h"
 
 
-CDBClientManager::CDBClientManager() : m_authDB(m_bRuning), m_infoDB(m_bRuning), m_logDB(m_bRuning)
+CDBClientManager::CDBClientManager()
 {
+	m_authDB = std::make_shared<CDBHelper>(m_bRuning);
+	m_infoDB = std::make_shared<CDBHelper>(m_bRuning);
+	m_logDB = std::make_shared<CDBHelper>(m_bRuning);
 	m_summer = std::make_shared<zsummer::network::ZSummer>();
 }
 
@@ -60,29 +63,29 @@ bool CDBClientManager::Stop()
 }
 
 
-void CDBClientManager::async_query(CDBHelper &dbhelper, const string &sql,
+void CDBClientManager::async_query(CDBHelperPtr &dbhelper, const string &sql,
 	const std::function<void(MYSQL_RES *, unsigned long long, unsigned int, std::string)> & handler)
 {
 	m_uPostCount++;
 	m_summer->Post(std::bind(&CDBClientManager::_async_query, this, dbhelper, sql, handler));
 }
 
-void CDBClientManager::_async_query(CDBHelper &dbhelper, const string &sql,
+void CDBClientManager::_async_query(CDBHelperPtr &dbhelper, const string &sql,
 	const std::function<void(MYSQL_RES *, unsigned long long, unsigned int, std::string)> & handler)
 {
 	std::string errMsg;
 	unsigned int errNo = 0;
 	unsigned long long affectRows = 0;
 	MYSQL_RES * res = nullptr;
-	if (dbhelper.Query(sql.c_str(), (unsigned long)sql.length()))
+	if (dbhelper->Query(sql.c_str(), (unsigned long)sql.length()))
 	{
-		affectRows = dbhelper.getAffectedRows();
-		res = dbhelper.getResult();
+		affectRows = dbhelper->getAffectedRows();
+		res = dbhelper->getResult();
 	}
 	else
 	{
-		errNo = dbhelper.getLastErrNo();
-		errMsg = dbhelper.getLastError();
+		errNo = dbhelper->getLastErrNo();
+		errMsg = dbhelper->getLastError();
 	}
 	m_uPostCount--;
 	CTcpSessionManager::getRef().Post(std::bind(handler, res, affectRows, errNo, errMsg));

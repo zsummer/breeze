@@ -41,17 +41,20 @@ int main()
 	cout << "check http proto ..." << endl;
 	TestHTTP th;
 	WriteHTTP whGet;
+	whGet.AddHead("Content-Type", "application/x-www-form-urlencoded");
 	whGet.AddHead("Host", "www.google.com");
 	whGet.Get("/");
 	th.Test(whGet);
 
 	WriteHTTP whPost;
+	whPost.AddHead("Content-Type", "application/x-www-form-urlencoded");
 	whPost.AddHead("Host", "www.google.com");
 	whPost.Post("/", "index.php?aaa=333");
 	th.Test(whPost);
 
 	WriteHTTP whResult;
 	whResult.AddHead("test", "test");
+	whResult.AddHead("Content-Type", "application/x-www-form-urlencoded");
 	whResult.AddHead("Host", "www.google.com");
 	whResult.Response("200", "");
 	th.Test(whResult);
