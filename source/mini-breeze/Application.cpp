@@ -2,7 +2,7 @@
 #include <log4z/log4z.h>
 #include "core/NetManager.h"
 #include "core/GlobalFacade.h"
-#include <DBClient.h>
+#include <DBHelper.h>
 using namespace zsummer::log4z;
 //文件说明
 //应用程序类

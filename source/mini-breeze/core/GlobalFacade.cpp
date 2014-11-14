@@ -1,11 +1,13 @@
 ﻿#include "GlobalFacade.h"
 #include "NetManager.h"
-#include <DBClient.h>
+#include <DBHelper.h>
+
+
 GlobalFacade::GlobalFacade()
 {
 	m_serverConfig = new ServerConfig;
 	m_netManger = new CNetManager();
-	m_dbclient = new CDBClientManager();
+	m_dbclient = new zsummer::mysql::CDBClientManager();
 }
 
 GlobalFacade::~GlobalFacade()

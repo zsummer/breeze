@@ -17,14 +17,15 @@
 */
 
 
-#include "DBClient.h"
+#include "DBHelper.h"
+using namespace zsummer::mysql;
 
 
 CDBClientManager::CDBClientManager()
 {
-	m_authDB = std::make_shared<CDBHelper>(m_bRuning);
-	m_infoDB = std::make_shared<CDBHelper>(m_bRuning);
-	m_logDB = std::make_shared<CDBHelper>(m_bRuning);
+	m_authDB = std::make_shared<DBHelper>(m_bRuning);
+	m_infoDB = std::make_shared<DBHelper>(m_bRuning);
+	m_logDB = std::make_shared<DBHelper>(m_bRuning);
 	m_summer = std::make_shared<zsummer::network::ZSummer>();
 }
 
@@ -63,32 +64,19 @@ bool CDBClientManager::Stop()
 }
 
 
-void CDBClientManager::async_query(CDBHelperPtr &dbhelper, const string &sql,
-	const std::function<void(MYSQL_RES *, unsigned long long, unsigned int, std::string)> & handler)
+void CDBClientManager::async_query(DBHelperPtr &dbhelper, const string &sql,
+	const std::function<void(DBResultPtr)> & handler)
 {
 	m_uPostCount++;
 	m_summer->Post(std::bind(&CDBClientManager::_async_query, this, dbhelper, sql, handler));
 }
 
-void CDBClientManager::_async_query(CDBHelperPtr &dbhelper, const string &sql,
-	const std::function<void(MYSQL_RES *, unsigned long long, unsigned int, std::string)> & handler)
+void CDBClientManager::_async_query(DBHelperPtr &dbhelper, const string &sql,
+	const std::function<void(DBResultPtr)> & handler)
 {
-	std::string errMsg;
-	unsigned int errNo = 0;
-	unsigned long long affectRows = 0;
-	MYSQL_RES * res = nullptr;
-	if (dbhelper->Query(sql.c_str(), (unsigned long)sql.length()))
-	{
-		affectRows = dbhelper->getAffectedRows();
-		res = dbhelper->getResult();
-	}
-	else
-	{
-		errNo = dbhelper->getLastErrNo();
-		errMsg = dbhelper->getLastError();
-	}
+	DBResultPtr ret = dbhelper->Query(sql);
 	m_uPostCount--;
-	CTcpSessionManager::getRef().Post(std::bind(handler, res, affectRows, errNo, errMsg));
+	CTcpSessionManager::getRef().Post(std::bind(handler, ret));
 }
 
 

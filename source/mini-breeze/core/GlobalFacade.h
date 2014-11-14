@@ -28,7 +28,14 @@
 #include <Common.h>
 class ServerConfig;
 class CNetManager;
-class CDBClientManager;
+namespace zsummer
+{
+	namespace mysql
+	{
+		class CDBClientManager;
+	}
+}
+
 
 class GlobalFacade
 {
@@ -43,13 +50,13 @@ public:
 
 	inline CNetManager & getNetManger(){ return *m_netManger; }
 
-	inline CDBClientManager & getDBManager(){ return *m_dbclient; }
+	inline zsummer::mysql::CDBClientManager & getDBManager(){ return *m_dbclient; }
 
 	std::vector<CBaseHandler*> & getAllHandler(){ return m_vctHandler; }
 private:
 	ServerConfig * m_serverConfig = nullptr;
 	CNetManager * m_netManger = nullptr;
-	CDBClientManager * m_dbclient = nullptr;
+	zsummer::mysql::CDBClientManager * m_dbclient = nullptr;
 	std::vector<CBaseHandler*> m_vctHandler;
 };
 

@@ -32,7 +32,8 @@
 #include <unordered_map>
 #include <ProtoAuth.h>
 #include <ProtoLogin.h>
-#include <DBClient.h>
+#include <DBHelper.h>
+using namespace zsummer::mysql;
 
 
 
@@ -54,8 +55,8 @@ public:
 
 
 	void msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs);
-	void db_AuthSelect(MYSQL_RES * res, unsigned long long affects, unsigned int errNo, std::string errMsg, SessionID sID, C2AS_AuthReq req);
-	void db_AccountSelect(MYSQL_RES * res, unsigned long long affects, unsigned int errNo, std::string errMsg, SessionID sID,AccountID accID, C2AS_AuthReq req);
+	void db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req);
+	void db_AccountSelect(DBResultPtr res, SessionID sID, AccountID accID, C2AS_AuthReq req);
 
 
 

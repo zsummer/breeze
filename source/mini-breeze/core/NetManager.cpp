@@ -1,5 +1,6 @@
 ﻿#include "NetManager.h"
-#include <DBClient.h>
+#include <DBHelper.h>
+using namespace zsummer::mysql;
 
 CNetManager::CNetManager()
 {
@@ -167,12 +168,12 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 
 		std::string auth_sql = "SELECT accID, pwd FROM `tb_auth` where account = '";
 		auto & db = GlobalFacade::getRef().getDBManager().getAuthDB();
-		auth_sql += db->EscapeString(req.user);
+		auth_sql += EscapeString(req.user);
 		auth_sql += "'";
 
+
 		GlobalFacade::getRef().getDBManager().async_query(db, auth_sql, std::bind(&CNetManager::db_AuthSelect, this,
-			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
-			sID, req));
+			std::placeholders::_1,sID, req));
 		return;
 	}
 
@@ -223,54 +224,46 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	}
 }
 
-void CNetManager::db_AuthSelect(MYSQL_RES * res, unsigned long long affects, unsigned int errNo, std::string errMsg, SessionID sID, C2AS_AuthReq req)
+void CNetManager::db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req)
 {
 	//error
 	AS2C_AuthAck ack;
 	ack.retCode = BEC_DB_ERROR;
 	AccountID accID = InvalidAccountID;
-	do 
-	{
-		if (errNo != 0)
-		{
-			LOGE("db_AuthSelect error. errno=" << errNo << ", error msg=" << errMsg << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
-			break;
-		}
 
-		if (res == nullptr)
-		{
-			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
-			break;
-		}
-
-		unsigned int fields = mysql_num_fields(res);
-		if (fields != 2)
-		{
-			LOGE("db_AuthSelect error. fields != 2, req.user=" << req.user << ", req.pwd=" << req.pwd);
-			break;
-		}
-		MYSQL_ROW row = mysql_fetch_row(res);
-		if (!row || !row[0] || ! row[1])
-		{
-			LOGE("db_AuthSelect error. have not any field, req.user=" << req.user << ", req.pwd=" << req.pwd);
-			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
-			break;
-		}
-		
-		accID = atoll(row[0]);
-		const char * pwd = row[1];
-		if (req.pwd != pwd)
-		{
-			ack.retCode = BEC_AUTH_PWD_INCORRECT;
-			break;
-		}
-		ack.retCode = BEC_SUCCESS;
-	} while (0);
-	
-	if (res)
+	if (res->GetErrorCode() != QueryErrorCode::QEC_SUCCESS)
 	{
-		mysql_free_result(res);
+		LOGE("db_AuthSelect error.  error msg=" << res->GetLastError() << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
 	}
+	else if (!res->HaveRow())
+	{
+		ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+	}
+	else
+	{
+		try
+		{
+			while (res->HaveRow())
+			{
+				accID = atoll(res->ExtractOneField());
+				const char * pwd = res->ExtractOneField();
+				if (req.pwd != pwd)
+				{
+					ack.retCode = BEC_AUTH_PWD_INCORRECT;
+					break;
+				}
+				ack.retCode = BEC_SUCCESS;
+				break;
+			}
+		}
+		catch (const std::string & err)
+		{
+			LOGE("db_AuthSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd);
+			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+		}
+	}
+	
+
 	if (ack.retCode != BEC_SUCCESS)
 	{
 		auto founder = m_mapSession.find(sID);
@@ -291,48 +284,45 @@ void CNetManager::db_AuthSelect(MYSQL_RES * res, unsigned long long affects, uns
 			selectAccountInfo_sql += toString(accID);
 			selectAccountInfo_sql += ")";
 			GlobalFacade::getRef().getDBManager().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AccountSelect, this,
-				std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
-				sID, accID, req));
+				std::placeholders::_1,sID, accID, req));
 		}
 	}
 }
 
-void CNetManager::db_AccountSelect(MYSQL_RES * res, unsigned long long affects, unsigned int errNo, std::string errMsg, SessionID sID, AccountID accID, C2AS_AuthReq req)
+void CNetManager::db_AccountSelect(DBResultPtr res, SessionID sID, AccountID accID, C2AS_AuthReq req)
 {
 	//error
 	AS2C_AuthAck ack;
 	ack.retCode = BEC_DB_ERROR;
-	do
+	
+
+	if (res->GetErrorCode() != QueryErrorCode::QEC_SUCCESS)
 	{
-		if (errNo != 0)
+		LOGE("db_AuthSelect error.  error msg=" << res->GetLastError() << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
+	}
+	else if (!res->HaveRow())
+	{
+		ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+	}
+	else
+	{
+		try
 		{
-			LOGE("db_AccountSelect error. errno=" << errNo << ", error msg=" << errMsg << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
-			break;
-		}
-
-		if (res == nullptr)
-		{
-			break;
-		}
-
-		unsigned int fields = mysql_num_fields(res);
-		MYSQL_ROW row;
-		while (row = mysql_fetch_row(res))
-		{
-			if (!row)
+			while (res->HaveRow())
 			{
-				LOGE("db_AccountSelect error. have not any field, req.user=" << req.user << ", req.pwd=" << req.pwd);
+				ack.retCode = BEC_SUCCESS;
 				break;
 			}
 		}
-		
-		ack.retCode = BEC_SUCCESS;
-	} while (0);
-
-	if (res)
-	{
-		mysql_free_result(res);
+		catch (const std::string & err)
+		{
+			LOGE("db_AuthSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd);
+			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+		}
 	}
+
+
+
 	if (ack.retCode != BEC_SUCCESS)
 	{
 		auto founder = m_mapSession.find(sID);
