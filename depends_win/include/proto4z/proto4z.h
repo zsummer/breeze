@@ -1380,6 +1380,14 @@ inline INTEGRITY_RET_TYPE CheckHTTPBuffIntegrity(const char * buff, unsigned int
 			return t;
 		}
 	}
+	else if (hadHeader)
+	{
+		return IRT_SHORTAGE;
+	}
+	else if (commonLine.first == "GET")
+	{
+		return IRT_SUCCESS;
+	}
 	
 	if (bodyLenght == -1 || usedCount + bodyLenght > maxBuffLen)
 	{
