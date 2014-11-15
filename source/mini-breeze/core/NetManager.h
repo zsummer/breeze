@@ -72,7 +72,7 @@ private:
 	std::unordered_map<SessionID, std::shared_ptr<InnerCharInfo>> m_mapSession;
 	std::unordered_map<CharacterID, std::shared_ptr<InnerCharInfo>> m_mapCharInfo;
 
-	tagAcceptorConfigTraits m_configListen; //保存监听配置
+	tagAcceptorConfigTraits m_configListen; 
 	bool m_bListening = false;
 	AccountID m_accepterID = InvalidAccepterID;
 };

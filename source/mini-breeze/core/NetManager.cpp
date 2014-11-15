@@ -4,7 +4,7 @@ using namespace zsummer::mysql;
 
 CNetManager::CNetManager()
 {
-	//认证逻辑 支持帐号多点认证
+	//auth request process
 	CMessageDispatcher::getRef().RegisterSessionMessage(ID_C2AS_AuthReq,
 		std::bind(&CNetManager::msg_AuthReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
@@ -15,11 +15,11 @@ CNetManager::CNetManager()
 		std::bind(&CNetManager::msg_CharacterLoginReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	
-	//注册事件
+	//register event
 	CMessageDispatcher::getRef().RegisterOnSessionEstablished(std::bind(&CNetManager::event_OnSessionEstablished, this, std::placeholders::_1));
 	CMessageDispatcher::getRef().RegisterOnSessionDisconnect(std::bind(&CNetManager::event_OnSessionDisconnect, this, std::placeholders::_1));
 
-	//注册心跳
+	//
 	CMessageDispatcher::getRef().RegisterOnSessionPulse(std::bind(&CNetManager::event_OnSessionPulse, this, std::placeholders::_1, std::placeholders::_2));
 	CMessageDispatcher::getRef().RegisterSessionMessage(ID_C2AS_ClientPulse,
 		std::bind(&CNetManager::msg_OnClientPulse, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -243,22 +243,25 @@ void CNetManager::db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req
 	{
 		try
 		{
-			while (res->HaveRow())
+			if (res->HaveRow())
 			{
-				accID = atoll(res->ExtractOneField());
-				const char * pwd = res->ExtractOneField();
+				std::string pwd;
+				*res >> accID;
+				*res >> pwd;
 				if (req.pwd != pwd)
 				{
 					ack.retCode = BEC_AUTH_PWD_INCORRECT;
-					break;
 				}
-				ack.retCode = BEC_SUCCESS;
-				break;
+				else
+				{
+					ack.retCode = BEC_SUCCESS;
+				}
+
 			}
 		}
 		catch (const std::string & err)
 		{
-			LOGE("db_AuthSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd);
+			LOGE("db_AuthSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd << ", error=" << err);
 			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
 		}
 	}
@@ -316,7 +319,7 @@ void CNetManager::db_AccountSelect(DBResultPtr res, SessionID sID, AccountID acc
 		}
 		catch (const std::string & err)
 		{
-			LOGE("db_AuthSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd);
+			LOGE("db_AuthSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd << ", error=" << err);
 			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
 		}
 	}

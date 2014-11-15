@@ -18,8 +18,8 @@
 */
 
 /*
-*  文件说明
-*  所有服务通用的定义可以放在这里
+*  file desc
+*  common header file.
 *
 */
 
