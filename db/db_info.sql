@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2014-11-16 00:43:09
+Date: 2014-11-17 00:47:56
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -37,6 +37,8 @@ INSERT INTO tb_account VALUES ('5', '', '0', '0', '0', '0');
 INSERT INTO tb_account VALUES ('6', '', '0', '0', '0', '0');
 INSERT INTO tb_account VALUES ('8', '', '0', '0', '0', '0');
 INSERT INTO tb_account VALUES ('3', 'zhangyawei0000', '0', '0', '0', '0');
+INSERT INTO tb_account VALUES ('4', '', '0', '0', '0', '0');
+INSERT INTO tb_account VALUES ('7', '', '0', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for `tb_character`
