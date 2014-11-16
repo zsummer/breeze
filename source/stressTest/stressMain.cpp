@@ -103,7 +103,7 @@ public:
 
 	void OnConnected(SessionID sID)
 	{
-		LOGI("OnConnected. SessionID=" << sID);
+		LOGD("OnConnected. SessionID=" << sID);
 		char userName[100];
 		sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
 		WriteStreamPack ws;
@@ -112,7 +112,7 @@ public:
 		req.pwd = "123";
 		ws << ID_C2AS_AuthReq << req;
 		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
-		LOGI("OnConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
+		LOGD("OnConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
 		g_totalSendCount++;
 	};
 	void OnConnectDisconnect(SessionID sID)
@@ -174,7 +174,7 @@ public:
 			req.pwd = "123";
 			ws << ID_C2AS_AuthReq << req;
 			CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
-			LOGI("OnConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
+			LOGD("OnConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
 			g_totalSendCount++;
 			return;
 		}

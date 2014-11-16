@@ -21,20 +21,25 @@
 using namespace zsummer::mysql;
 
 
-const char * DBResult::ExtractOneField()
+const std::string& DBResult::ExtractOneField()
 {
-	if (!m_row)
+	if (m_curIter == m_result.end())
 	{
 		throw std::string("result have not any row.");
 	}
-	const char * fieldptr = m_row[m_fieldCursor];
-	m_fieldCursor++;
-	if (m_fieldCursor == m_fieldCount)
+	if (m_fieldCursor >= m_curIter->size())
 	{
-		m_row = mysql_fetch_row(m_res);
+		throw std::string("result read field over");
+	}
+	
+	const std::string & field = m_curIter->at(m_fieldCursor);
+	m_fieldCursor++;
+	if (m_fieldCursor == m_curIter->size())
+	{
+		m_curIter++;
 		m_fieldCursor = 0;
 	}
-	return fieldptr ? fieldptr : "";
+	return field;
 }
 
 
@@ -52,18 +57,39 @@ void DBResult::_SetQueryResult(QueryErrorCode qec, const std::string & sql, MYSQ
 	}
 	else if (qec == QueryErrorCode::QEC_SUCCESS)
 	{
-		m_res = mysql_store_result(db);
 		m_affectedRows = mysql_affected_rows(db);
-		if (m_res)
+		MYSQL_RES * res = mysql_store_result(db);
+		if (res)
 		{
-			m_fieldCount = mysql_num_fields(m_res);
-			m_row = mysql_fetch_row(m_res);
-			if (m_fieldCount == 0)
+			unsigned int fieldCount = mysql_num_fields(res);
+			MYSQL_ROW row;
+			while (row = mysql_fetch_row(res))
 			{
-				m_row = nullptr;
+				m_result.push_back(std::vector<std::string>());
+				auto & vct = m_result.back();
+				for (unsigned int i = 0; i < fieldCount; ++i)
+				{
+					vct.push_back(row[i] == nullptr ? "" : row[i]);
+				}
 			}
+			mysql_free_result(res);
+			res = nullptr;
 		}
+		while (!mysql_next_result(db))
+		{
+			res = mysql_store_result(db);
+			mysql_free_result(res);
+			res = nullptr;
+			//LOGW("db have other result (multi-result).");
+		}
+		
 	}
+	else
+	{
+		LOGA("db have error.");
+	}
+	m_curIter = m_result.begin();
+	m_fieldCursor = 0;
 }
 
 
@@ -138,6 +164,7 @@ DBResultPtr DBHelper::Query(const std::string & sql)
 			}
 		}
 		ret->_SetQueryResult(QueryErrorCode::QEC_MYSQLERROR, sql, m_mysql);
+		return ret;
 	}
 	ret->_SetQueryResult(QueryErrorCode::QEC_SUCCESS, sql, m_mysql);
 	return ret;

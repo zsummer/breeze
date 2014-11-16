@@ -49,12 +49,12 @@ namespace  zsummer
 		{
 		public:
 			DBResult(){}
-			~DBResult(){if (m_res){mysql_free_result(m_res);m_res = nullptr;}}
+			~DBResult(){}
 		public:
 			inline QueryErrorCode GetErrorCode(){ return m_ec; }
 			inline std::string GetLastError(){ return m_lastErrorMsg; }
 			inline unsigned long long GetAffectedRows(){ return m_affectedRows; }
-			inline bool HaveRow(){ return m_row != nullptr; }
+			inline bool HaveRow(){ return m_curIter != m_result.end(); }
 			const std::string & SQLString(){ return m_sql; }
 			template<class T>
 			inline DBResult & operator >>(T & t){t = _FromeString<T>(ExtractOneField());return *this;}
@@ -62,11 +62,11 @@ namespace  zsummer
 		public:
 			void _SetQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db);
 		private:
-			const char * ExtractOneField();
+			const std::string& ExtractOneField();
 			template<class RET>
-			inline RET _FromeString(const char * str)
+			inline RET _FromeString(const std::string& field)
 			{
-				std::stringstream ss(str);
+				std::stringstream ss(field);
 				RET ret;
 				ss >> ret;
 				return std::move(ret);
@@ -86,11 +86,15 @@ namespace  zsummer
 			std::string m_lastErrorMsg;
 
 			//res
-			MYSQL_RES * m_res = nullptr;
-			MYSQL_ROW  m_row = nullptr;
 			unsigned long long m_affectedRows = 0;
-			unsigned int m_fieldCount = 0;
+
+			typedef std::list<std::vector<std::string> > MysqlResult;
+			MysqlResult m_result;
+			MysqlResult::iterator m_curIter = m_result.begin();
 			unsigned int m_fieldCursor = 0;
+			
+			
+
 		};
 		typedef std::shared_ptr<DBResult> DBResultPtr;
 
