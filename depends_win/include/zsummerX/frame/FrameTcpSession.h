@@ -61,13 +61,13 @@ class CTcpSession : public std::enable_shared_from_this<CTcpSession>
 public:
 	CTcpSession();
 	~CTcpSession();
-	bool BindTcpSocketPrt(CTcpSocketPtr sockptr, AccepterID aID, SessionID sID, const tagAcceptorConfigTraits &traits);
-	void BindTcpConnectorPtr(CTcpSocketPtr sockptr, const std::pair<tagConnctorConfigTraits, tagConnctorInfo> & config);
+	bool BindTcpSocketPrt(const CTcpSocketPtr &sockptr, AccepterID aID, SessionID sID, const tagAcceptorConfigTraits &traits);
+	void BindTcpConnectorPtr(const CTcpSocketPtr &sockptr, const std::pair<tagConnctorConfigTraits, tagConnctorInfo> & config);
 	void DoSend(const char *buf, unsigned int len);
 	void Close();
 	SessionID GetAcceptID(){ return m_acceptID; }
 private:
-	void CleanSession(bool isCleanAllData, std::string rc4TcpEncryption);
+	void CleanSession(bool isCleanAllData, const std::string &rc4TcpEncryption);
 
 	bool DoRecv();
 

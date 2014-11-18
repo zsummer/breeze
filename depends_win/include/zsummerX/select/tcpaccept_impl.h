@@ -53,9 +53,9 @@ namespace zsummer
 		public:
 			CTcpAccept();
 			~CTcpAccept();
-			bool Initialize(ZSummerPtr summer);
-			bool OpenAccept(std::string listenIP, unsigned short listenPort);
-			bool DoAccept(CTcpSocketPtr &s, const _OnAcceptHandler &handle);
+			bool Initialize(const ZSummerPtr &summer);
+			bool OpenAccept(const std::string& listenIP, unsigned short listenPort);
+			bool DoAccept(const CTcpSocketPtr &s, _OnAcceptHandler && handle);
 			void OnSelectMessage();
 			bool Close();
 

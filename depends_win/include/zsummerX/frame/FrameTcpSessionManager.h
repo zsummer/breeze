@@ -59,11 +59,11 @@ public:
 	//handle: std::function<void()>
 	//switch initiative, in the multi-thread it's switch call thread simultaneously.
 	template<class H>
-	void Post(const H &h){ m_summer->Post(h); }
+	void Post(H &&h){ m_summer->Post(std::move(h)); }
 
 public:
 	template <class H>
-	zsummer::network::TimerID CreateTimer(unsigned int delayms, const H &h){ return m_summer->CreateTimer(delayms, h); }
+	zsummer::network::TimerID CreateTimer(unsigned int delayms, H &&h){ return m_summer->CreateTimer(delayms, std::move(h)); }
 	bool CancelTimer(unsigned long long timerID){ return m_summer->CancelTimer(timerID); }
 
 public:
@@ -91,8 +91,8 @@ private:
 	// socket(from accept) on close 
 	void OnSessionClose(AccepterID aID, SessionID sID);
 	// socket(from connect) on close 
-	void OnConnect(SessionID cID, bool bConnected, CTcpSessionPtr session);
-	void OnAcceptNewClient(zsummer::network::ErrorCode ec, CTcpSocketPtr s, CTcpAcceptPtr accepter, AccepterID aID);
+	void OnConnect(SessionID cID, bool bConnected, const CTcpSessionPtr &session);
+	void OnAcceptNewClient(zsummer::network::ErrorCode ec, const CTcpSocketPtr & s, const CTcpAcceptPtr & accepter, AccepterID aID);
 private:
 	ZSummerPtr m_summer;
 	bool  m_bRunning = true;

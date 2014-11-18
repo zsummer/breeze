@@ -25,7 +25,7 @@
 
 #ifndef _BASE_HANDLER_H_
 #define _BASE_HANDLER_H_
-#include <Common.h>
+#include <InnerTypeDefine.h>
 
 
 class CBaseHandler
@@ -39,6 +39,25 @@ public:
 };
 
 
+
+template<class T>
+class Singleton
+{
+public:
+	virtual ~Singleton(){}
+	static T * Instantiate(){if (m_pInstance)return m_pInstance;else return m_pInstance = new T();}
+	//warning.  a single instance must new by user. 
+	static T & getRef(){ return *Instantiate(); }
+	static T * getPtr(){ return Instantiate(); }
+public:
+	Singleton() = default;
+private:
+	static T * m_pInstance;
+	Singleton(const Singleton<T> &) = delete;
+};
+
+template<class T>
+T *  Singleton<T>::m_pInstance = nullptr;
 
 
 

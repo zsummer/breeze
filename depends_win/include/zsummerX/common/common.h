@@ -130,10 +130,10 @@ namespace zsummer
 			inline unsigned int GetCreatedSocketCount(){ return m_totalCreatedCTcpSocketObjs; }
 			inline unsigned int GetClosedSocketCount(){ return m_totalClosedCTcpSocketObjs; }
 
-			inline void AddCreatedSessionCount(){ m_totalCreatedCTcpSocketObjs++; }
-			inline void AddClosedSessionCount(){ m_totalClosedCTcpSocketObjs++; }
-			inline unsigned int GetCreatedSessionCount(){ return m_totalCreatedCTcpSocketObjs; }
-			inline unsigned int GetClosedSessionCount(){ return m_totalClosedCTcpSocketObjs; }
+			inline void AddCreatedSessionCount(){ m_totalCreatedCTcpSessionObjs++; }
+			inline void AddClosedSessionCount(){ m_totalClosedCTcpSessionObjs++; }
+			inline unsigned int GetCreatedSessionCount(){ return m_totalCreatedCTcpSessionObjs; }
+			inline unsigned int GetClosedSessionCount(){ return m_totalClosedCTcpSessionObjs; }
 
 			inline LoggerId GetNetCoreLogger(){ return m_netLoggerID; }
 		private:

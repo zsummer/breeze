@@ -53,8 +53,8 @@ namespace zsummer
 			// const char * remoteIP, unsigned short remotePort, nTranslate
 			CUdpSocket();
 			~CUdpSocket();
-			bool Initialize(ZSummerPtr summer, const char *localIP, unsigned short localPort);
-			bool DoRecvFrom(char * buf, unsigned int len, const _OnRecvFromHandler& handler);
+			bool Initialize(const ZSummerPtr& summer, const char *localIP, unsigned short localPort);
+			bool DoRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler && handler);
 			bool DoSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
 			bool OnSelectMessage(int type, bool rd, bool wt);
 		public:

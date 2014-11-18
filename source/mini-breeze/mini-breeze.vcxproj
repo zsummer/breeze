@@ -163,14 +163,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="core\GlobalFacade.cpp" />
-    <ClCompile Include="core\NetManager.cpp" />
+    <ClCompile Include="logic\NetManager.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="core\GlobalFacade.h" />
-    <ClInclude Include="core\NetManager.h" />
+    <ClInclude Include="logic\NetManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -26,7 +26,9 @@
 
 #ifndef _DB_HELPER_H_
 #define _DB_HELPER_H_
-#include <Common.h>
+#include <InnerTypeDefine.h>
+#include <BaseHander.h>
+#include <ServerConfig.h>
 #include <mysqlclient/errmsg.h>
 #include <mysqlclient/mysql.h>
 
@@ -120,7 +122,7 @@ namespace  zsummer
 
 
 
-		class CDBClientManager
+		class CDBClientManager : public Singleton<CDBClientManager>
 		{
 		public:
 			CDBClientManager();

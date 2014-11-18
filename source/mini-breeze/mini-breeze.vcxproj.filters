@@ -4,33 +4,27 @@
     <Filter Include="main">
       <UniqueIdentifier>{90323d0d-a637-4874-8f5e-bf757167f244}</UniqueIdentifier>
     </Filter>
-    <Filter Include="core">
-      <UniqueIdentifier>{39638b08-90e6-42d8-8f50-0ed66591d23c}</UniqueIdentifier>
+    <Filter Include="logic">
+      <UniqueIdentifier>{f9cdd186-985b-4536-b830-420c0d6f254c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="core\GlobalFacade.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="core\NetManager.cpp">
-      <Filter>core</Filter>
+    <ClCompile Include="logic\NetManager.cpp">
+      <Filter>logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="core\GlobalFacade.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>main</Filter>
     </ClInclude>
-    <ClInclude Include="core\NetManager.h">
-      <Filter>core</Filter>
+    <ClInclude Include="logic\NetManager.h">
+      <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

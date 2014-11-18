@@ -27,6 +27,7 @@
 #define _SERVER_CONFIG_H_
 
 #include <InnerTypeDefine.h>
+#include <BaseHander.h>
 #include <tinyxml2.h>
 
 
@@ -72,7 +73,7 @@ inline zsummer::log4z::CStringStream & operator << (zsummer::log4z::CStringStrea
 
 
 
-class ServerConfig
+class ServerConfig : public Singleton<ServerConfig>
 {
 public:
 	bool Parse(std::string filename, ServerNode ownNode,NodeIndex ownIndex);

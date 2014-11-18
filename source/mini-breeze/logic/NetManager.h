@@ -28,7 +28,6 @@
 #ifndef _NET_MANAGER_H_
 #define _NET_MANAGER_H_
 #include <Common.h>
-#include "GlobalFacade.h"
 #include <unordered_map>
 #include <ProtoAuth.h>
 #include <ProtoLogin.h>
@@ -37,7 +36,7 @@ using namespace zsummer::mysql;
 
 
 
-class CNetManager
+class CNetManager :public Singleton<CNetManager>
 {
 public:
 	CNetManager();
@@ -69,6 +68,10 @@ public:
 	void msg_OnClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs);
 
 private:
+	//
+	std::vector<CBaseHandler*> m_handlers;
+
+	//
 	std::unordered_map<SessionID, std::shared_ptr<InnerCharInfo>> m_mapSession;
 	std::unordered_map<CharacterID, std::shared_ptr<InnerCharInfo>> m_mapCharInfo;
 

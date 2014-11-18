@@ -53,13 +53,13 @@ namespace zsummer
 			void RunOnce();
 
 			template <typename handle>
-			inline void Post(const handle &h)
+			inline void Post(handle &&h)
 			{
-				PostMessage(h);
+				PostMessage(std::move(h));
 			}
-			inline unsigned long long CreateTimer(unsigned int delayms, const _OnTimerHandler &handle)
+			inline unsigned long long CreateTimer(unsigned int delayms, _OnTimerHandler &&handle)
 			{
-				return m_timer.CreateTimer(delayms, handle);
+				return m_timer.CreateTimer(delayms, std::move(handle));
 			}
 			inline bool CancelTimer(unsigned long long timerID)
 			{
@@ -68,7 +68,7 @@ namespace zsummer
 
 		public:
 			bool RegisterEvent(int op/* 0 add,  1 mod, 2 del*/, tagRegister &reg);
-			void PostMessage(const _OnPostHandler &handle);
+			void PostMessage(_OnPostHandler &&handle);
 		private:
 			std::string ZSummerSection();
 		private:

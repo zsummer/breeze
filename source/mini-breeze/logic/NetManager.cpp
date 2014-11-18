@@ -27,7 +27,18 @@ CNetManager::CNetManager()
 
 bool CNetManager::Start()
 {
-	auto connecters = GlobalFacade::getRef().getServerConfig().getConfigConnect(MiniBreezeNode);
+	//init
+	for (auto ptr : m_handlers)
+	{
+		if (!ptr->Init())
+		{
+			LOGW("Init handler false");
+			return false;
+		}
+	}
+	LOGI("Init handler all Success. handler size=" << m_handlers.size());
+	//end
+	auto connecters = ServerConfig::getRef().getConfigConnect(MiniBreezeNode);
 	for (auto con : connecters)
 	{
 		tagConnctorConfigTraits tag;
@@ -50,8 +61,8 @@ bool CNetManager::Start()
 		// ...
 	}
 
-	m_configListen.listenIP = GlobalFacade::getRef().getServerConfig().getConfigListen(MiniBreezeNode).ip;
-	m_configListen.listenPort = GlobalFacade::getRef().getServerConfig().getConfigListen(MiniBreezeNode).port;
+	m_configListen.listenIP = ServerConfig::getRef().getConfigListen(MiniBreezeNode).ip;
+	m_configListen.listenPort = ServerConfig::getRef().getConfigListen(MiniBreezeNode).port;
 	m_configListen.maxSessions = 5000;
 
 	// if have some connector need connect success. do open accept in event_OnSessionEstablished when all connector is success.
@@ -78,14 +89,14 @@ bool CNetManager::Stop()
 
 void CNetManager::CharLogin(std::shared_ptr<InnerCharInfo> iinfoPtr)
 {
-	for (auto ptr : GlobalFacade::getRef().getAllHandler())
+	for (auto ptr : m_handlers)
 	{
 		ptr->CharLogin(iinfoPtr);
 	}
 }
 void CNetManager::CharLogout(std::shared_ptr<InnerCharInfo> iinfoPtr)
 {
-	for (auto ptr : GlobalFacade::getRef().getAllHandler())
+	for (auto ptr : m_handlers)
 	{
 		ptr->CharLogout(iinfoPtr);
 	}
@@ -167,12 +178,12 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	{
 
 		std::string auth_sql = "SELECT accID, pwd FROM `tb_auth` where account = '";
-		auto & db = GlobalFacade::getRef().getDBManager().getAuthDB();
+		auto & db = CDBClientManager::getRef().getAuthDB();
 		auth_sql += EscapeString(req.user);
 		auth_sql += "'";
 
 
-		GlobalFacade::getRef().getDBManager().async_query(db, auth_sql, std::bind(&CNetManager::db_AuthSelect, this,
+		CDBClientManager::getRef().async_query(db, auth_sql, std::bind(&CNetManager::db_AuthSelect, this,
 			std::placeholders::_1,sID, req));
 		return;
 	}
@@ -282,11 +293,11 @@ void CNetManager::db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req
 	else
 	{
 		{
-			auto & db = GlobalFacade::getRef().getDBManager().getInfoDB();
+			auto & db = CDBClientManager::getRef().getInfoDB();
 			std::string selectAccountInfo_sql = "call AutoSelectAccount(";
 			selectAccountInfo_sql += toString(accID);
 			selectAccountInfo_sql += ")";
-			GlobalFacade::getRef().getDBManager().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AccountSelect, this,
+			CDBClientManager::getRef().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AccountSelect, this,
 				std::placeholders::_1,sID, accID, req));
 		}
 	}

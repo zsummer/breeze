@@ -1239,7 +1239,7 @@ bool CLogerManager::PushLog(LoggerId id, int level, const char * log)
 		now <<= 32;
 		now |= ft.dwLowDateTime;
 		now /=10;
-		now -=11644473600000000Ui64;
+		now -=11644473600000000ULL;
 		now /=1000;
 		pLog->_time = now/1000;
 		pLog->_precise = (unsigned int)(now%1000);

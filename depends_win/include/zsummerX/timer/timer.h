@@ -76,9 +76,9 @@ namespace zsummer
 				return dwDelayMs;
 			}
 
-			inline TimerID CreateTimer(unsigned int delayms, const _OnTimerHandler &handle)
+			inline TimerID CreateTimer(unsigned int delayms, _OnTimerHandler &&handle)
 			{
-				_OnTimerHandler *pfunc= new _OnTimerHandler(handle);
+				_OnTimerHandler *pfunc= new _OnTimerHandler(std::move(handle));
 				unsigned int now = GetNowMilliTick();
 				unsigned int expire = now+delayms;
 				unsigned long long timerID = expire;

@@ -58,13 +58,13 @@ namespace zsummer
 			void RunOnce();
 			//handle: std::function<void()>
 			//switch initiative, in the multi-thread it's switch call thread simultaneously.
-			inline void Post(const _OnPostHandler &h){ PostMsg(PCK_USER_DATA, h); }
-			inline unsigned long long CreateTimer(unsigned int delayms, const _OnTimerHandler &handle){return m_timer.CreateTimer(delayms, handle);}
+			inline void Post(_OnPostHandler &&h){ PostMsg(PCK_USER_DATA, std::move(h)); }
+			inline unsigned long long CreateTimer(unsigned int delayms, _OnTimerHandler &&handle){return m_timer.CreateTimer(delayms, std::move(handle));}
 			inline bool CancelTimer(unsigned long long timerID){return m_timer.CancelTimer(timerID);}
 		private:
-			inline void PostMsg(POST_COM_KEY pck, const _OnPostHandler &handle)
+			inline void PostMsg(POST_COM_KEY pck, _OnPostHandler &&handle)
 			{
-				_OnPostHandler *ptr = new _OnPostHandler(handle);
+				_OnPostHandler *ptr = new _OnPostHandler(std::move(handle));
 				PostQueuedCompletionStatus(m_io, 0, pck, (LPOVERLAPPED)(ptr));
 			}
 			inline std::string ZSummerSection()

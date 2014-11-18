@@ -51,7 +51,7 @@ namespace zsummer
 			//! Initialize an attach socket to zsummer pump.
 			//if the socket is used to connect,  It's need initialize before call DoConnect 
 			// if the socket is used to accept new socket, It's need initialize after OnAccept. 
-			bool Initialize(ZSummerPtr summer);
+			bool Initialize(const ZSummerPtr& summer);
 			inline bool GetPeerInfo(std::string& remoteIP, unsigned short &remotePort)
 			{
 				remoteIP = m_remoteIP;
@@ -60,20 +60,20 @@ namespace zsummer
 			}
 			//! handle: void(zsummer::network::ErrorCode);
 			//! handle: ErrorCode: 0 success. other code is failed  and can see error code in enum ErrorCode 
-			bool DoConnect(std::string remoteIP, unsigned short remotePort, const _OnConnectHandler & handler);
+			bool DoConnect(const std::string& remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
 			//!handle:  void(ErrorCode, int)
 			//!handle:  ErrorCode: 0 success. other code is failed  and can see error code in enum ErrorCode 
 			//!handle:  int: is transfer length. if not all data already transfer that you need call DoSend transfer the remnant data.
 			//! warning: when  handler is not callback ,  the function can not call repeat. if you have some question maybe you need read the test or implementation .
 			//!          so,  when you want  repeat send data without care the callback , you need encapsulate the send operate via a send queue like the StressTest/FrameTest source code
-			bool DoSend(char * buf, unsigned int len, const _OnSendHandler &handler);
+			bool DoSend(char * buf, unsigned int len, _OnSendHandler &&handler);
 			//!handle:  void(ErrorCode, int)
 			//!handle:  ErrorCode: 0 success. other code is failed  and can see error code in enum ErrorCode 
 			//!handle:  int: is received data  length. it maybe short than you want received data (len).
 			//! buf: you recv buffer memory address . you would block the buffer still the handler callback .
 			//! len: you want recv data for max bytes .
 			//! warning: when  handler is not callback ,  the function can not call repeat. if you have some question maybe you need read the test or implementation .
-			bool DoRecv(char * buf, unsigned int len, const _OnRecvHandler & handler);
+			bool DoRecv(char * buf, unsigned int len, _OnRecvHandler && handler);
 			//close this socket.
 			//warning : at a safe close method , if you have DoConnect/DoRecv/DoSend request and not all callback. you need wait callback .  the callback will return with a error code.
 			//         if you have not the operate and when you DoClose the socket and immediate destroy this class object . in next do zsummerx's RunOnce(), callback may be return and call operate in the bad memory . 

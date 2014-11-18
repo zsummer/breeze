@@ -48,9 +48,9 @@ namespace zsummer
 		public:
 			CTcpAccept();
 			~CTcpAccept();
-			bool Initialize(ZSummerPtr summer);
+			bool Initialize(ZSummerPtr& summer);
 			bool OpenAccept(const char * ip, unsigned short port);
-			bool DoAccept(CTcpSocketPtr& s, const _OnAcceptHandler &handler);
+			bool DoAccept(const CTcpSocketPtr& s, _OnAcceptHandler &&handler);
 			bool OnIOCPMessage(BOOL bSuccess);
 
 			//config
