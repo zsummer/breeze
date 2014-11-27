@@ -1,5 +1,5 @@
 ﻿#include "NetManager.h"
-#include <DBHelper.h>
+#include "DBManager.h"
 using namespace zsummer::mysql;
 
 CNetManager::CNetManager()
@@ -28,6 +28,7 @@ CNetManager::CNetManager()
 bool CNetManager::Start()
 {
 	//init
+	m_handlers.push_back(CDBManager::Instantiate());
 	for (auto ptr : m_handlers)
 	{
 		if (!ptr->Init())
@@ -178,12 +179,12 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	{
 
 		std::string auth_sql = "SELECT accID, pwd FROM `tb_auth` where account = '";
-		auto & db = CDBClientManager::getRef().getAuthDB();
+		auto & db = CDBManager::getRef().getAuthDB();
 		auth_sql += EscapeString(req.user);
 		auth_sql += "'";
 
 
-		CDBClientManager::getRef().async_query(db, auth_sql, std::bind(&CNetManager::db_AuthSelect, this,
+		CDBAsync::getRef().async_query(db, auth_sql, std::bind(&CNetManager::db_AuthSelect, this,
 			std::placeholders::_1,sID, req));
 		return;
 	}
@@ -293,11 +294,11 @@ void CNetManager::db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req
 	else
 	{
 		{
-			auto & db = CDBClientManager::getRef().getInfoDB();
+			auto & db = CDBManager::getRef().getInfoDB();
 			std::string selectAccountInfo_sql = "call AutoSelectAccount(";
 			selectAccountInfo_sql += toString(accID);
 			selectAccountInfo_sql += ")";
-			CDBClientManager::getRef().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AccountSelect, this,
+			CDBAsync::getRef().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AccountSelect, this,
 				std::placeholders::_1,sID, accID, req));
 		}
 	}

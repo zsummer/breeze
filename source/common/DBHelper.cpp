@@ -175,20 +175,17 @@ DBResultPtr DBHelper::Query(const std::string & sql)
 
 
 
-CDBClientManager::CDBClientManager()
+CDBAsync::CDBAsync()
 {
-	m_authDB = std::make_shared<DBHelper>(m_bRuning);
-	m_infoDB = std::make_shared<DBHelper>(m_bRuning);
-	m_logDB = std::make_shared<DBHelper>(m_bRuning);
 	m_summer = std::make_shared<zsummer::network::ZSummer>();
 }
 
-CDBClientManager::~CDBClientManager()
+CDBAsync::~CDBAsync()
 {
 	Stop();
 }
 
-bool CDBClientManager::Start()
+bool CDBAsync::Start()
 {
 	bool ret = m_summer->Initialize();
 	if (!ret)
@@ -202,10 +199,10 @@ bool CDBClientManager::Start()
 	m_bRuning = true;
 	m_uPostCount.store(0);
 	m_uFinalCount.store(0);
-	m_thread = std::shared_ptr<std::thread>(new std::thread(std::bind(&CDBClientManager::Run, this)));
+	m_thread = std::shared_ptr<std::thread>(new std::thread(std::bind(&CDBAsync::Run, this)));
 	return true;
 }
-bool CDBClientManager::Stop()
+bool CDBAsync::Stop()
 {
 	if (m_thread)
 	{
@@ -218,14 +215,14 @@ bool CDBClientManager::Stop()
 }
 
 
-void CDBClientManager::async_query(DBHelperPtr &dbhelper, const string &sql,
+void CDBAsync::async_query(DBHelperPtr &dbhelper, const string &sql,
 	const std::function<void(DBResultPtr)> & handler)
 {
 	m_uPostCount++;
-	m_summer->Post(std::bind(&CDBClientManager::_async_query, this, dbhelper, sql, handler));
+	m_summer->Post(std::bind(&CDBAsync::_async_query, this, dbhelper, sql, handler));
 }
 
-void CDBClientManager::_async_query(DBHelperPtr &dbhelper, const string &sql,
+void CDBAsync::_async_query(DBHelperPtr &dbhelper, const string &sql,
 	const std::function<void(DBResultPtr)> & handler)
 {
 	DBResultPtr ret = dbhelper->Query(sql);
@@ -234,7 +231,7 @@ void CDBClientManager::_async_query(DBHelperPtr &dbhelper, const string &sql,
 }
 
 
-void CDBClientManager::Run()
+void CDBAsync::Run()
 {
 	do
 	{

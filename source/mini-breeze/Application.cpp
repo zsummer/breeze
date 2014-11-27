@@ -29,39 +29,6 @@ bool Appliction::Init(std::string filename, unsigned int index)
 	}
 	LOGI("Parse ServerConfig success. configFile=" << filename << ", node=" << MiniBreezeNode << ", index=" << index);
 
-	if (!CDBClientManager::getRef().Start())
-	{
-		LOGE("DBManager Start false. ");
-		return false;
-	}
-	LOGI("DBManager Start success. ");
-
-
-	CDBClientManager::getRef().getAuthDB()->Init(ServerConfig::getRef().getAuthDBConfig());
-	CDBClientManager::getRef().getInfoDB()->Init(ServerConfig::getRef().getInfoDBConfig());
-	CDBClientManager::getRef().getLogDB()->Init(ServerConfig::getRef().getLogDBConfig());
-
-	if (!CDBClientManager::getRef().getAuthDB()->Connect())
-	{
-		LOGE("Connect Auth DB false. db config=" << ServerConfig::getRef().getAuthDBConfig());
-		return false;
-	}
-	LOGI("Connect Auth DB success. db config=" << ServerConfig::getRef().getAuthDBConfig());
-
-	if (!CDBClientManager::getRef().getInfoDB()->Connect())
-	{
-		LOGE("Connect Info DB false. db config=" << ServerConfig::getRef().getInfoDBConfig());
-		return false;
-	}
-	LOGI("Connect Info DB success. db config=" << ServerConfig::getRef().getInfoDBConfig());
-
-	if (!CDBClientManager::getRef().getLogDB()->Connect())
-	{
-		LOGE("Connect Log DB false. db config=" << ServerConfig::getRef().getLogDBConfig());
-		return false;
-	}
-	LOGI("Connect Log DB success. db config=" << ServerConfig::getRef().getLogDBConfig());
-
 
 
 
@@ -98,5 +65,4 @@ void Appliction::Stop()
 void Appliction::_Stop()
 {
 	CNetManager::getRef().Stop();
-	CDBClientManager::getRef().Stop();
 }

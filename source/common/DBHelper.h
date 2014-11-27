@@ -106,33 +106,33 @@ namespace  zsummer
 		class DBHelper :public std::enable_shared_from_this<DBHelper>
 		{
 		public:
-			DBHelper(const bool & isRuning) : m_isRuning(isRuning){}
+			DBHelper(){}
 			~DBHelper(){if (m_mysql){ mysql_close(m_mysql); m_mysql = nullptr; } }
 			inline void Init(const DBConfig & dbconfig){ m_config = dbconfig; }
 			inline bool Connect();
 			bool WaitEnable();
 			DBResultPtr Query(const std::string & sql);
+		public:
+			void Stop(){ m_isRuning = false; }
 		private:
+			DBHelper(const DBHelper &) = delete;
 			MYSQL * m_mysql = nullptr;
 			DBConfig m_config;
-			const bool & m_isRuning;
+			bool  m_isRuning = true;
 		};
 		typedef std::shared_ptr<DBHelper> DBHelperPtr;
 
 
 
 
-		class CDBClientManager : public Singleton<CDBClientManager>
+		class CDBAsync : public Singleton<CDBAsync>
 		{
 		public:
-			CDBClientManager();
-			~CDBClientManager();
+			CDBAsync();
+			~CDBAsync();
 			bool Start();
 			bool Stop();
 		public:
-			inline DBHelperPtr & getAuthDB(){ return m_authDB; }
-			inline DBHelperPtr & getInfoDB(){ return m_infoDB; }
-			inline DBHelperPtr & getLogDB(){ return m_logDB; }
 
 			inline const std::atomic_ullong & getPostCount(){ return m_uPostCount; }
 			inline const std::atomic_ullong & getFinalCount(){ return m_uFinalCount; }
@@ -146,18 +146,11 @@ namespace  zsummer
 			inline void Run();
 
 		private:
-			DBHelperPtr m_infoDB;
-			DBHelperPtr m_logDB;
-			DBHelperPtr m_authDB;
 			std::shared_ptr<std::thread> m_thread;
 			zsummer::network::ZSummerPtr m_summer;
-
 			bool m_bRuning = false;
-			char __tmpAlignas1[128];
 			std::atomic_ullong m_uPostCount;
-			char __tmpAlignas2[128];
 			std::atomic_ullong m_uFinalCount;
-			char __tmpAlignas3[128];
 		};
 
 
