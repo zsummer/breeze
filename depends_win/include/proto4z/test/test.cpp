@@ -41,22 +41,22 @@ int main()
 	cout << "check http proto ..." << endl;
 	TestHTTP th;
 	WriteHTTP whGet;
-	whGet.AddHead("Content-Type", "application/x-www-form-urlencoded");
-	whGet.AddHead("Host", "www.google.com");
-	whGet.Get("/");
+	whGet.addHead("Content-Type", "application/x-www-form-urlencoded");
+	whGet.addHead("Host", "www.google.com");
+	whGet.get("/");
 	th.Test(whGet);
 
 	WriteHTTP whPost;
-	whPost.AddHead("Content-Type", "application/x-www-form-urlencoded");
-	whPost.AddHead("Host", "www.google.com");
-	whPost.Post("/", "index.php?aaa=333");
+	whPost.addHead("Content-Type", "application/x-www-form-urlencoded");
+	whPost.addHead("Host", "www.google.com");
+	whPost.post("/", "index.php?aaa=333");
 	th.Test(whPost);
 
 	WriteHTTP whResult;
-	whResult.AddHead("test", "test");
-	whResult.AddHead("Content-Type", "application/x-www-form-urlencoded");
-	whResult.AddHead("Host", "www.google.com");
-	whResult.Response("200", "");
+	whResult.addHead("test", "test");
+	whResult.addHead("Content-Type", "application/x-www-form-urlencoded");
+	whResult.addHead("Host", "www.google.com");
+	whResult.response("200", "");
 	th.Test(whResult);
 
 	cout << "press any key to continue." << endl;

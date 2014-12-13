@@ -66,10 +66,10 @@ const ProtoID InvalidProtoID = -1;
 
 // const unsigned int __MIDDLE_SEGMENT_VALUE = ((unsigned int)-1) / (unsigned int)2;
 const unsigned int __MIDDLE_SEGMENT_VALUE = 300*1000*1000;
-inline bool IsSessionID(unsigned int unknowID){ return unknowID < __MIDDLE_SEGMENT_VALUE ? true : false; }
-inline bool IsConnectID(unsigned int unknowID){ return unknowID != InvalidSeesionID && !IsSessionID(unknowID); }
-inline unsigned int NextSessionID(unsigned int curSessionID){ return (curSessionID + 1) % __MIDDLE_SEGMENT_VALUE; }
-inline unsigned int NextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSeesionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
+inline bool isSessionID(unsigned int unknowID){ return unknowID < __MIDDLE_SEGMENT_VALUE ? true : false; }
+inline bool isConnectID(unsigned int unknowID){ return unknowID != InvalidSeesionID && !isSessionID(unknowID); }
+inline unsigned int nextSessionID(unsigned int curSessionID){ return (curSessionID + 1) % __MIDDLE_SEGMENT_VALUE; }
+inline unsigned int nextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSeesionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
 
 
 
@@ -127,11 +127,11 @@ struct tagConnctorInfo
 
 
 //----------------------------------------
-class CTcpSession;
-typedef std::shared_ptr<zsummer::network::CTcpSocket> CTcpSocketPtr;
-typedef std::shared_ptr<zsummer::network::CTcpAccept> CTcpAcceptPtr;
+class TcpSession;
+typedef std::shared_ptr<zsummer::network::TcpSocketImpl> TcpSocketPtr;
+typedef std::shared_ptr<zsummer::network::TcpAcceptImpl> TcpAcceptPtr;
 typedef std::shared_ptr<zsummer::network::ZSummer> ZSummerPtr;
-typedef std::shared_ptr<CTcpSession> CTcpSessionPtr;
+typedef std::shared_ptr<TcpSession> CTcpSessionPtr;
 
 
 

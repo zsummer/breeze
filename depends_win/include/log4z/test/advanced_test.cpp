@@ -16,53 +16,51 @@ using namespace zsummer::log4z;
 
 
 
-LoggerId g_idFromConfig;
-LoggerId g_idDynamic;
+LoggerId logid_fromfile;
+LoggerId logid_dynamic;
 
 bool g_quit;
-void SignalFunc(int id)
+void signalFunc(int id)
 {
 	g_quit = false;
 #ifdef WIN32
-	signal(id, &SignalFunc);
+	signal(id, &signalFunc);
 #endif
 }
 int main(int argc, char *argv[])
 {
 	g_quit = true;
-	signal(SIGINT, &SignalFunc);
+	signal(SIGINT, &signalFunc);
 
-	ILog4zManager::GetInstance()->Config("config.cfg");
-	g_idDynamic = ILog4zManager::GetInstance()->CreateLogger("Dynamic");
-	g_idFromConfig = ILog4zManager::GetInstance()->FindLogger("FileConfig");
+	ILog4zManager::getRef().config("config.cfg");
+	logid_dynamic = ILog4zManager::getRef().createLogger("dynamic");
+	logid_fromfile = ILog4zManager::getRef().findLogger("fromfile");
 	//start log4z
-	ILog4zManager::GetInstance()->Start();
+	ILog4zManager::getRef().start();
 
-	//设置屏幕输出
-	ILog4zManager::GetInstance()->SetLoggerDisplay(LOG4Z_MAIN_LOGGER_ID, true);
-	ILog4zManager::GetInstance()->SetLoggerDisplay(g_idDynamic, true);
-	//设置日志输出级别
-	ILog4zManager::GetInstance()->SetLoggerLevel(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_DEBUG);
-	ILog4zManager::GetInstance()->SetLoggerLevel(g_idDynamic, LOG_LEVEL_DEBUG);
-	//设置使用月目录
-	ILog4zManager::GetInstance()->SetLoggerMonthdir(g_idDynamic, true);
+	//configure the output behaviour
+	ILog4zManager::getRef().setLoggerDisplay(LOG4Z_MAIN_LOGGER_ID, true);
+	ILog4zManager::getRef().setLoggerDisplay(logid_dynamic, true);
+	ILog4zManager::getRef().setLoggerLevel(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_DEBUG);
+	ILog4zManager::getRef().setLoggerLevel(logid_dynamic, LOG_LEVEL_DEBUG);
+	ILog4zManager::getRef().setLoggerMonthdir(logid_dynamic, true);
 
-	//virtual the main logic in project.
+	//hot update configure
 	while(g_quit)
 	{
-		LOG_DEBUG(g_idFromConfig, "FileConfig LOG_DEBUG");
-		LOG_INFO(g_idFromConfig, "FileConfig LOG_INFO");
-		LOG_WARN(g_idFromConfig, "FileConfig LOG_WARN");
-		LOG_ERROR(g_idFromConfig, "FileConfig LOG_ERROR");
-		LOG_ALARM(g_idFromConfig, "FileConfig LOG_ALARM");
-		LOG_FATAL(g_idFromConfig, "FileConfig LOG_FATAL");
+		LOG_DEBUG(logid_fromfile, "fromfile LOG_DEBUG");
+		LOG_INFO(logid_fromfile, "fromfile LOG_INFO");
+		LOG_WARN(logid_fromfile, "fromfile LOG_WARN");
+		LOG_ERROR(logid_fromfile, "fromfile LOG_ERROR");
+		LOG_ALARM(logid_fromfile, "fromfile LOG_ALARM");
+		LOG_FATAL(logid_fromfile, "fromfile LOG_FATAL");
 
-		LOG_DEBUG(g_idDynamic, "Dynamic LOG_DEBUG");
-		LOG_INFO(g_idDynamic, "Dynamic LOG_INFO");
-		LOG_WARN(g_idDynamic, "Dynamic LOG_WARN");
-		LOG_ERROR(g_idDynamic, "Dynamic LOG_ERROR");
-		LOG_ALARM(g_idDynamic, "Dynamic LOG_ALARM");
-		LOG_FATAL(g_idDynamic, "Dynamic LOG_FATAL");
+		LOG_DEBUG(logid_dynamic, "dynamic LOG_DEBUG");
+		LOG_INFO(logid_dynamic, "dynamic LOG_INFO");
+		LOG_WARN(logid_dynamic, "dynamic LOG_WARN");
+		LOG_ERROR(logid_dynamic, "dynamic LOG_ERROR");
+		LOG_ALARM(logid_dynamic, "dynamic LOG_ALARM");
+		LOG_FATAL(logid_dynamic, "dynamic LOG_FATAL");
 
 		LOGD("main LOGD");
 		LOGI("main LOGI");
@@ -71,7 +69,7 @@ int main(int argc, char *argv[])
 		LOGA("main LOGA");
 		LOGF("main LOGF");
 		LOGF(" = = = = = = = = = = = = = = =  = = = = = ")
-		ILog4zManager::GetInstance()->UpdateConfig();
+		ILog4zManager::getRef().updateConfig();
 #ifdef WIN32
 		::Sleep(rand()%10000);
 #else

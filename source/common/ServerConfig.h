@@ -65,7 +65,7 @@ struct DBConfig
 };
 
 
-inline zsummer::log4z::CStringStream & operator << (zsummer::log4z::CStringStream &os, const DBConfig & config)
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
 {
 	os << "[ip=" << config.ip << ", port=" << config.port << ", db=" << config.db << ", user=" << config.user << ", pwd=" << config.pwd << "]";
 	return os;
@@ -76,32 +76,32 @@ inline zsummer::log4z::CStringStream & operator << (zsummer::log4z::CStringStrea
 class ServerConfig : public Singleton<ServerConfig>
 {
 public:
-	bool Parse(std::string filename, ServerNode ownNode,NodeIndex ownIndex);
+	bool parse(std::string filename, ServerNode ownNode,NodeIndex ownIndex);
 public:
 	const ListenConfig getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
 	std::vector<ConnectorConfig > getConfigConnect(ServerNode node);
 
-	ServerNode getOwnServerNode(){ return m_ownServerNode; }
-	NodeIndex getOwnNodeIndex(){ return m_ownNodeIndex; }
-	PlatID getPlatID() { return m_platid; }
-	AreaID getAreaID() { return m_areaid; }
+	ServerNode getOwnServerNode(){ return _ownServerNode; }
+	NodeIndex getOwnNodeIndex(){ return _ownNodeIndex; }
+	PlatID getPlatID() { return _platid; }
+	AreaID getAreaID() { return _areaid; }
 
-	inline const DBConfig & getAuthDBConfig(){ return m_authDBConfig; }
-	inline const DBConfig & getInfoDBConfig(){ return m_infoDBConfig; }
-	inline const DBConfig & getLogDBConfig(){ return m_logDBConfig; }
+	inline const DBConfig & getAuthDBConfig(){ return _authDBConfig; }
+	inline const DBConfig & getInfoDBConfig(){ return _infoDBConfig; }
+	inline const DBConfig & getLogDBConfig(){ return _logDBConfig; }
 
 private:
-	ServerNode m_ownServerNode = InvalideServerNode;
-	NodeIndex m_ownNodeIndex = InvalidNodeIndex;
-	PlatID m_platid = 0;
-	AreaID m_areaid = 0;
+	ServerNode _ownServerNode = InvalideServerNode;
+	NodeIndex _ownNodeIndex = InvalidNodeIndex;
+	PlatID _platid = 0;
+	AreaID _areaid = 0;
 
-	std::vector<ListenConfig> m_configListen;
-	std::vector<ConnectorConfig> m_configConnect;
+	std::vector<ListenConfig> _configListen;
+	std::vector<ConnectorConfig> _configConnect;
 
-	DBConfig m_authDBConfig;
-	DBConfig m_infoDBConfig;
-	DBConfig m_logDBConfig;
+	DBConfig _authDBConfig;
+	DBConfig _infoDBConfig;
+	DBConfig _logDBConfig;
 };
 
 

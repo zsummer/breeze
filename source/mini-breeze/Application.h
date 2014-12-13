@@ -8,11 +8,11 @@ class Appliction : public Singleton<Appliction>
 public:
 	Appliction();
 	~Appliction();
-	bool Init(std::string filename, unsigned int index);
-	void Run();
-	void Stop();
+	bool init(std::string filename, unsigned int index);
+	void run();
+	void stop();
 protected:
-	void _Stop();
+	void _stop();
 };
 
 

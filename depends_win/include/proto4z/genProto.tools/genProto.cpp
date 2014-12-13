@@ -198,12 +198,12 @@ bool genCppFileContent(std::string path, std::string filename, std::string attr,
 }
 
 
-ParseCode genProto::ParseCache()
+ParseCode genProto::parseCache()
 {
-	std::string cachename = m_fileName + m_fileCacheAttr;
+	std::string cachename = _fileName + _fileCacheAttr;
 	if (!zsummer::utility::GetFileStatus(cachename, 6))
 	{
-		LOGD("ParseCache [" << cachename << " not found.");
+		LOGD("parseCache [" << cachename << " not found.");
 		return PC_SUCCESS;
 	}
 
@@ -211,7 +211,7 @@ ParseCode genProto::ParseCache()
 	tinyxml2::XMLDocument doc;
 	if (doc.LoadFile(cachename.c_str()) != tinyxml2::XML_SUCCESS)
 	{
-		LOGE(cachename << " ParseCache Error. ");
+		LOGE(cachename << " parseCache Error. ");
 		doc.PrintError();
 		return PC_ERROR;
 	}
@@ -219,7 +219,7 @@ ParseCode genProto::ParseCache()
 	XMLElement * md5 = doc.FirstChildElement("md5");
 	if (md5 && md5->GetText())
 	{
-		m_md5 = md5->GetText();
+		_md5 = md5->GetText();
 	}
 
 
@@ -251,10 +251,10 @@ ParseCode genProto::ParseCache()
 		DataCache dc;
 		dc.protoName = key;
 		dc.protoValue = atoi(No);
-		m_mapCacheNo.insert(std::make_pair(key, dc));
-		if (m_curNo <= atoi(No))
+		_mapCacheNo.insert(std::make_pair(key, dc));
+		if (_curNo <= atoi(No))
 		{
-			m_curNo = atoi(No) + 1;
+			_curNo = atoi(No) + 1;
 		}
 
 		next = next->NextSiblingElement("cache");
@@ -263,9 +263,9 @@ ParseCode genProto::ParseCache()
 }
 
 
-ParseCode genProto::ParseConfig()
+ParseCode genProto::parseConfig()
 {
-	std::string filename = m_fileName + m_fileConfigAttr;
+	std::string filename = _fileName + _fileConfigAttr;
 	//检测文件状态
 	if (!zsummer::utility::GetFileStatus(filename, 6))
 	{
@@ -300,19 +300,19 @@ ParseCode genProto::ParseConfig()
 				doc.PrintError();
 				return PC_ERROR;
 			}
-			m_minNo = atoi(MinNo->GetText());
-			m_maxNo = atoi(MaxNo->GetText());
-			if (m_curNo < m_minNo)
+			_minNo = atoi(MinNo->GetText());
+			_maxNo = atoi(MaxNo->GetText());
+			if (_curNo < _minNo)
 			{
-				m_curNo = m_minNo;
+				_curNo = _minNo;
 			}
-			if (m_curNo > m_maxNo)
+			if (_curNo > _maxNo)
 			{
-				LOGE("Current cache Proto No Error. CurNo=" << m_curNo << ", minNo=" << m_minNo << ", maxNo=" << m_maxNo);
+				LOGE("Current cache Proto No Error. CurNo=" << _curNo << ", minNo=" << _minNo << ", maxNo=" << _maxNo);
 				return PC_ERROR;
 			}
 		}
-	LOGI("ParseConfig [" << filename << "] CurProtoNo=" << m_curNo << ", minProtoNo=" << m_minNo << ", maxProtoNo=" << m_maxNo);
+	LOGI("parseConfig [" << filename << "] CurProtoNo=" << _curNo << ", minProtoNo=" << _minNo << ", maxProtoNo=" << _maxNo);
 
 
 	//解析proto
@@ -348,7 +348,7 @@ ParseCode genProto::ParseConfig()
 				StoreInfo info;
 				info._include = dc;
 				info._type = GT_DataInclude;
-				m_vctStoreInfo.push_back(info);
+				_vctStoreInfo.push_back(info);
 			}
 			else if (stype == "const")
 			{
@@ -369,7 +369,7 @@ ParseCode genProto::ParseConfig()
 				StoreInfo info;
 				info._const = dc;
 				info._type = GT_DataConstValue;
-				m_vctStoreInfo.push_back(info);
+				_vctStoreInfo.push_back(info);
 			}
 			//数组类型
 			else if (stype == "array")
@@ -389,7 +389,7 @@ ParseCode genProto::ParseConfig()
 				StoreInfo info;
 				info._type = GT_DataArray;
 				info._array = ar;
-				m_vctStoreInfo.push_back(info);
+				_vctStoreInfo.push_back(info);
 			}
 			//K-V类型
 			if (stype == "map")
@@ -410,7 +410,7 @@ ParseCode genProto::ParseConfig()
 				StoreInfo info;
 				info._type = GT_DataMap;
 				info._map = dm;
-				m_vctStoreInfo.push_back(info);
+				_vctStoreInfo.push_back(info);
 			}
 			//结构体类型
 			else if (stype == "struct" || stype == "proto")
@@ -435,27 +435,27 @@ ParseCode genProto::ParseConfig()
 					dp._const._type = ProtoIDType;
 					dp._const._name = "ID_" + from + "2" + to + "_" + name;
 					dp._const._desc = desc;
-					unsigned int No = m_curNo;
+					unsigned int No = _curNo;
 					dp._struct._name = from + "2" + to + "_" + name;
 					dp._struct._desc = desc;
 
-					auto iterNo = m_mapCacheNo.find(dp._const._name);
-					if (iterNo == m_mapCacheNo.end())
+					auto iterNo = _mapCacheNo.find(dp._const._name);
+					if (iterNo == _mapCacheNo.end())
 					{
 						DataCache cache;
 						cache.protoName = dp._const._name;
-						cache.protoValue = m_curNo;
-						m_mapCacheNo[dp._const._name] = cache;
-						m_curNo++;
+						cache.protoValue = _curNo;
+						_mapCacheNo[dp._const._name] = cache;
+						_curNo++;
 					}
 					else
 					{
 						No = iterNo->second.protoValue;
 					}
 					dp._const._value = boost::lexical_cast<std::string>(No);
-					if (No >= m_maxNo)
+					if (No >= _maxNo)
 					{
-						LOGE("proto No. overflow. curNo=" << m_curNo << ", maxNo=" << m_maxNo);
+						LOGE("proto No. overflow. curNo=" << _curNo << ", maxNo=" << _maxNo);
 						return PC_ERROR;
 					}
 				}
@@ -503,7 +503,7 @@ ParseCode genProto::ParseConfig()
 				{
 					info._type = GT_DataProto;
 				}
-				m_vctStoreInfo.push_back(info);
+				_vctStoreInfo.push_back(info);
 			}
 			
 			ele = ele->NextSiblingElement();
@@ -519,30 +519,30 @@ ParseCode genProto::ParseConfig()
 
 
 
-ParseCode genProto::GenCode()
+ParseCode genProto::genCode()
 {
-	std::string xmlmd5 = genFileMD5(m_fileName + m_fileConfigAttr);
+	std::string xmlmd5 = genFileMD5(_fileName + _fileConfigAttr);
 
 	{
 		if (!zsummer::utility::IsDirectory("C++") && !zsummer::utility::CreateDir("C++"))
 		{
 			LOGE("CreateDir C++ Error. ");
 		}
-		std::string cppFileName = "C++/" + m_fileName + ".h";
-		if (xmlmd5 != m_md5 || !zsummer::utility::GetFileStatus(cppFileName, 6))
+		std::string cppFileName = "C++/" + _fileName + ".h";
+		if (xmlmd5 != _md5 || !zsummer::utility::GetFileStatus(cppFileName, 6))
 		{
-			if (!genCppFileContent("C++/", m_fileName, ".h", m_vctStoreInfo))
+			if (!genCppFileContent("C++/", _fileName, ".h", _vctStoreInfo))
 			{
 				return PC_ERROR;
 			}
 		}
 		else
 		{
-			LOGD("Skip WriteCppFile. filename=" << m_fileName);
+			LOGD("Skip WriteCppFile. filename=" << _fileName);
 		}
 	}
 
-	if (xmlmd5 == m_md5)
+	if (xmlmd5 == _md5)
 	{
 		return PC_NEEDSKIP;
 	}
@@ -551,13 +551,13 @@ ParseCode genProto::GenCode()
 
 
 
-ParseCode genProto::WriteCache()
+ParseCode genProto::writeCache()
 {
-	std::string filename = m_fileName;
-	std::string md5 = genFileMD5(m_fileName + m_fileConfigAttr);
-	filename += m_fileCacheAttr;
+	std::string filename = _fileName;
+	std::string md5 = genFileMD5(_fileName + _fileConfigAttr);
+	filename += _fileCacheAttr;
 
-	LOGI("WriteCache [" << filename + ".cache" << "] ...");
+	LOGI("writeCache [" << filename + ".cache" << "] ...");
 	std::ofstream os;
 	os.open(filename, std::ios::binary);
 	if (!os.is_open())
@@ -570,7 +570,7 @@ ParseCode genProto::WriteCache()
 	text += boost::lexical_cast<std::string>(md5);
 	text += "</md5>\n\n";
 	text += "<CacheNo>\n";
-	for (auto &pr : m_mapCacheNo)
+	for (auto &pr : _mapCacheNo)
 	{
 		text += "\t<cache key = \"" + pr.first +
 			"\" No = \"" + boost::lexical_cast<std::string>(pr.second.protoValue) + "\" /> \n";

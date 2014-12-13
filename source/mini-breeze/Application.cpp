@@ -17,52 +17,52 @@ Appliction::~Appliction()
 
 
 
-bool Appliction::Init(std::string filename, unsigned int index)
+bool Appliction::init(std::string filename, unsigned int index)
 {
 	bool ret = false;
 
-	ret = ServerConfig::getRef().Parse(filename, MiniBreezeNode, index);
+	ret = ServerConfig::getRef().parse(filename, MiniBreezeNode, index);
 	if (!ret)
 	{
-		LOGE("Parse ServerConfig failed.");
+		LOGE("parse ServerConfig failed.");
 		return ret;
 	}
-	LOGI("Parse ServerConfig success. configFile=" << filename << ", node=" << MiniBreezeNode << ", index=" << index);
+	LOGI("parse ServerConfig success. configFile=" << filename << ", node=" << MiniBreezeNode << ", index=" << index);
 
 
 
 
-	ret = CTcpSessionManager::getRef().Start();
+	ret = TcpSessionManager::getRef().start();
 	if (!ret)
 	{
-		LOGE("CTcpSessionManager Start false.");
+		LOGE("TcpSessionManager start false.");
 		return ret;
 	}
-	LOGI("CTcpSessionManager Start success.");
+	LOGI("TcpSessionManager start success.");
 
 
-	if (!CNetManager::getRef().Start())
+	if (!NetManager::getRef().start())
 	{
-		LOGE("NetManager Start false.");
+		LOGE("NetManager start false.");
 		return ret;
 	}
-	LOGI("NetManager Start Success.");
+	LOGI("NetManager start Success.");
 
-	LOGI("Appliction Init success.");
+	LOGI("Appliction init success.");
 	return ret;
 }
 
-void Appliction::Run()
+void Appliction::run()
 {
-	return CTcpSessionManager::getRef().Run();
+	return TcpSessionManager::getRef().run();
 }
 
-void Appliction::Stop()
+void Appliction::stop()
 {
-	CTcpSessionManager::getRef().CreateTimer(100, std::bind(&Appliction::_Stop, this));
+	TcpSessionManager::getRef().createTimer(100, std::bind(&Appliction::_stop, this));
 }
 
-void Appliction::_Stop()
+void Appliction::_stop()
 {
-	CNetManager::getRef().Stop();
+	NetManager::getRef().stop();
 }

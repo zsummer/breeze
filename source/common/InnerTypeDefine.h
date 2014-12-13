@@ -118,7 +118,7 @@ struct InnerCharInfo
 };
 
 
-inline zsummer::log4z::CStringStream & operator << (zsummer::log4z::CStringStream & stm, const SessionInfo & info)
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SessionInfo & info)
 {
 	stm << "accID=" << info.accID << ", charID=" << info.charID
 		<< ", sID=" << info.sID

@@ -19,7 +19,7 @@
 
 /*
  *  file desc
- *  CBaseHandler provide a unified way to manager message handler.
+ *  BaseHandler provide a unified way to manager message handler.
  */
 
 
@@ -28,14 +28,14 @@
 #include <InnerTypeDefine.h>
 
 
-class CBaseHandler
+class BaseHandler
 {
 public:
-	CBaseHandler(){}
-	virtual ~CBaseHandler(){};
-	virtual bool Init() = 0;
-	virtual void CharLogin(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
-	virtual void CharLogout(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
+	BaseHandler(){}
+	virtual ~BaseHandler(){};
+	virtual bool init() = 0;
+	virtual void charLogin(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
+	virtual void charLogout(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
 };
 
 
@@ -45,19 +45,19 @@ class Singleton
 {
 public:
 	virtual ~Singleton(){}
-	static T * Instantiate(){if (m_pInstance)return m_pInstance;else return m_pInstance = new T();}
+	static T * instantiate(){if (_pInstance)return _pInstance;else return _pInstance = new T();}
 	//warning.  a single instance must new by user. 
-	static T & getRef(){ return *Instantiate(); }
-	static T * getPtr(){ return Instantiate(); }
+	static T & getRef(){ return *instantiate(); }
+	static T * getPtr(){ return instantiate(); }
 public:
 	Singleton() = default;
 private:
-	static T * m_pInstance;
+	static T * _pInstance;
 	Singleton(const Singleton<T> &) = delete;
 };
 
 template<class T>
-T *  Singleton<T>::m_pInstance = nullptr;
+T *  Singleton<T>::_pInstance = nullptr;
 
 
 

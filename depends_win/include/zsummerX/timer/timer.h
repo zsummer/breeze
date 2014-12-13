@@ -47,28 +47,28 @@ namespace zsummer
 	{
 		typedef unsigned long long TimerID;
 		const unsigned long long   InvalidTimerID = 0;
-		class CTimer
+		class Timer
 		{
 		public:
-			CTimer()
+			Timer()
 			{
-				m_queSeq = 0;
-				m_nextExpire = (unsigned int)-1;
+				_queSeq = 0;
+				_nextExpire = (unsigned int)-1;
 			}
-			~CTimer()
+			~Timer()
 			{
 			}
 			//get current time tick. unit is millisecond.
-			inline unsigned  int GetNowMilliTick()
+			inline unsigned  int getNowMilliTick()
 			{
 				return (unsigned int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 			}
 
 			//get next expire time  be used to set timeout when calling select / epoll_wait / GetQueuedCompletionStatus.
-			inline unsigned int GetNextExpireTime()
+			inline unsigned int getNextExpireTime()
 			{
-				unsigned int now = GetNowMilliTick();
-				unsigned int dwDelayMs = m_nextExpire - now;
+				unsigned int now = getNowMilliTick();
+				unsigned int dwDelayMs = _nextExpire - now;
 				if (dwDelayMs > 100)
 				{
 					dwDelayMs = 100;
@@ -76,61 +76,61 @@ namespace zsummer
 				return dwDelayMs;
 			}
 
-			inline TimerID CreateTimer(unsigned int delayms, _OnTimerHandler &&handle)
+			inline TimerID createTimer(unsigned int delayms, _OnTimerHandler &&handle)
 			{
 				_OnTimerHandler *pfunc= new _OnTimerHandler(std::move(handle));
-				unsigned int now = GetNowMilliTick();
+				unsigned int now = getNowMilliTick();
 				unsigned int expire = now+delayms;
 				unsigned long long timerID = expire;
 				timerID <<= 32;
-				timerID |= m_queSeq++; //timerID is merge expire time and a sequence. sequence assure the ID is single.
-				m_queTimer.insert(std::make_pair(timerID, pfunc));
-				if (m_nextExpire > expire)
+				timerID |= _queSeq++; //timerID is merge expire time and a sequence. sequence assure the ID is single.
+				_queTimer.insert(std::make_pair(timerID, pfunc));
+				if (_nextExpire > expire)
 				{
-					m_nextExpire = expire;
+					_nextExpire = expire;
 				}
 				return timerID;
 			}
-			inline bool CancelTimer(TimerID timerID)
+			inline bool cancelTimer(TimerID timerID)
 			{
-				std::map<unsigned long long, _OnTimerHandler* >::iterator iter = m_queTimer.find(timerID);
-				if (iter != m_queTimer.end())
+				std::map<unsigned long long, _OnTimerHandler* >::iterator iter = _queTimer.find(timerID);
+				if (iter != _queTimer.end())
 				{
 					delete iter->second;
-					m_queTimer.erase(iter);
+					_queTimer.erase(iter);
 					return true;
 				}
 				return false;
 			}
 			// if have expired timer. the timer will trigger.
-			inline void CheckTimer()
+			inline void checkTimer()
 			{
-				if (!m_queTimer.empty())
+				if (!_queTimer.empty())
 				{
-					unsigned int now = GetNowMilliTick();
-					if (m_nextExpire > now)
+					unsigned int now = getNowMilliTick();
+					if (_nextExpire > now)
 					{
 						return;
 					}
 
 					while(1)
 					{
-						if (m_queTimer.empty())
+						if (_queTimer.empty())
 						{
-							m_nextExpire = (unsigned int)-1;
+							_nextExpire = (unsigned int)-1;
 							break;
 						}
-						auto iter = m_queTimer.begin();
+						auto iter = _queTimer.begin();
 						unsigned long long timerID = iter->first;
 						_OnTimerHandler * handler = iter->second;
 						unsigned int nextexpire = timerID>>32;
 						if (nextexpire > now)
 						{
-							m_nextExpire = nextexpire;
+							_nextExpire = nextexpire;
 							break;
 						}
 						//erase the pointer from timer queue before call handler.
-						m_queTimer.erase(iter);
+						_queTimer.erase(iter);
 						try
 						{
 							(*handler)();
@@ -148,12 +148,12 @@ namespace zsummer
 					
 				}
 			}
-			inline std::map<TimerID, _OnTimerHandler* >::size_type GetTimersCount(){ return m_queTimer.size(); }
+			inline std::map<TimerID, _OnTimerHandler* >::size_type GetTimersCount(){ return _queTimer.size(); }
 		private:
 			//! timer queue
-			std::map<TimerID, _OnTimerHandler* > m_queTimer;
-			unsigned int m_queSeq; //! single sequence . assure timer ID is global single.
-			unsigned int m_nextExpire; //! cache the next expire time for check timer with   performance 
+			std::map<TimerID, _OnTimerHandler* > _queTimer;
+			unsigned int _queSeq; //! single sequence . assure timer ID is global single.
+			unsigned int _nextExpire; //! cache the next expire time for check timer with   performance 
 		};
 	}
 }

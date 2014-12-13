@@ -56,38 +56,38 @@ struct MessageChunk
 
 struct rc4_state;
 
-class CTcpSession : public std::enable_shared_from_this<CTcpSession>
+class TcpSession : public std::enable_shared_from_this<TcpSession>
 {
 public:
-	CTcpSession();
-	~CTcpSession();
-	bool BindTcpSocketPrt(const CTcpSocketPtr &sockptr, AccepterID aID, SessionID sID, const tagAcceptorConfigTraits &traits);
-	void BindTcpConnectorPtr(const CTcpSocketPtr &sockptr, const std::pair<tagConnctorConfigTraits, tagConnctorInfo> & config);
-	void DoSend(const char *buf, unsigned int len);
-	void Close();
-	SessionID GetAcceptID(){ return m_acceptID; }
+	TcpSession();
+	~TcpSession();
+	bool bindTcpSocketPrt(const TcpSocketPtr &sockptr, AccepterID aID, SessionID sID, const tagAcceptorConfigTraits &traits);
+	void bindTcpConnectorPtr(const TcpSocketPtr &sockptr, const std::pair<tagConnctorConfigTraits, tagConnctorInfo> & config);
+	void doSend(const char *buf, unsigned int len);
+	void close();
+	SessionID GetAcceptID(){ return _acceptID; }
 private:
-	void CleanSession(bool isCleanAllData, const std::string &rc4TcpEncryption);
+	void cleanSession(bool isCleanAllData, const std::string &rc4TcpEncryption);
 
-	bool DoRecv();
+	bool doRecv();
 
-	void OnConnected(zsummer::network::ErrorCode ec, const std::pair<tagConnctorConfigTraits, tagConnctorInfo> & config);
+	void onConnected(zsummer::network::ErrorCode ec, const std::pair<tagConnctorConfigTraits, tagConnctorInfo> & config);
 
-	void OnRecv(zsummer::network::ErrorCode ec, int nRecvedLen);
+	void onRecv(zsummer::network::ErrorCode ec, int nRecvedLen);
 	
-	void OnSend(zsummer::network::ErrorCode ec, int nSentLen);
+	void onSend(zsummer::network::ErrorCode ec, int nSentLen);
 
-	void OnPulseTimer();
+	void onPulseTimer();
 	
-	void OnClose();
+	void onClose();
 
 private:
-	CTcpSocketPtr  m_sockptr;
-	SessionID m_sessionID = InvalidSeesionID; 
-	AccepterID m_acceptID = InvalidAccepterID;
-	ProtoType m_protoType = PT_TCP;
-	unsigned int m_pulseInterval = 0;
-	zsummer::network::TimerID m_pulseTimerID = zsummer::network::InvalidTimerID;
+	TcpSocketPtr  _sockptr;
+	SessionID _sessionID = InvalidSeesionID; 
+	AccepterID _acceptID = InvalidAccepterID;
+	ProtoType _protoType = PT_TCP;
+	unsigned int _pulseInterval = 0;
+	zsummer::network::TimerID _pulseTimerID = zsummer::network::InvalidTimerID;
 
 	enum SessionStatus
 	{
@@ -97,28 +97,28 @@ private:
 	};
 	
 	//! 
-	MessageChunk m_recving;
-	MessageChunk m_sending;
-	unsigned int m_sendingCurIndex = 0;
+	MessageChunk _recving;
+	MessageChunk _sending;
+	unsigned int _sendingCurIndex = 0;
 
 	//! send data queue
-	std::queue<MessagePack *> m_sendque;
-	std::queue<MessagePack *> m_freeCache;
+	std::queue<MessagePack *> _sendque;
+	std::queue<MessagePack *> _freeCache;
 
 	//! rc encrypt
-	std::string m_rc4Encrypt;
-	CRC4Encryption m_rc4StateRead;
-	CRC4Encryption m_rc4StateWrite;
+	std::string _rc4Encrypt;
+	RC4Encryption _rc4StateRead;
+	RC4Encryption _rc4StateWrite;
 
 	//! flash policy 
-	bool m_bFirstRecvData = true;
-	bool m_bOpenFlashPolicy = false;
+	bool _bFirstRecvData = true;
+	bool _bOpenFlashPolicy = false;
 
 	//! http status data
-	bool m_httpHadHeader = false;
-	bool m_httpIsChunked = false;
-	zsummer::proto4z::PairString  m_httpCommonLine;
-	zsummer::proto4z::HTTPHeadMap m_httpHeader;
+	bool _httpHadHeader = false;
+	bool _httpIsChunked = false;
+	zsummer::proto4z::PairString  _httpCommonLine;
+	zsummer::proto4z::HTTPHeadMap _httpHeader;
 };
 
 #endif

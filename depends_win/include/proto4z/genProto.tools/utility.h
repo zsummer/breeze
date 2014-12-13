@@ -153,7 +153,7 @@ struct _FileInfo
 	unsigned long long filesize;
 	bool bDir;
 };
-bool SearchFiles(std::string path, std::vector<_FileInfo> & files);
+bool searchFiles(std::string path, std::vector<_FileInfo> & files);
 
 
 //进程

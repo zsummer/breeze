@@ -2,62 +2,62 @@
 #include "DBManager.h"
 using namespace zsummer::mysql;
 
-CDBManager::CDBManager()
+DBManager::DBManager()
 {
-	m_authDB = std::make_shared<DBHelper>();
-	m_infoDB = std::make_shared<DBHelper>();
-	m_logDB = std::make_shared<DBHelper>();
+	_authDB = std::make_shared<DBHelper>();
+	_infoDB = std::make_shared<DBHelper>();
+	_logDB = std::make_shared<DBHelper>();
 }
-CDBManager::~CDBManager()
+DBManager::~DBManager()
 {
-	CDBAsync::getRef().Stop();
-	m_authDB->Stop();
-	m_infoDB->Stop();
-	m_logDB->Stop();
+	DBAsync::getRef().stop();
+	_authDB->stop();
+	_infoDB->stop();
+	_logDB->stop();
 }
 
-bool CDBManager::Init()
+bool DBManager::init()
 {
 
-	if (!CDBAsync::Instantiate()->Start())
+	if (!DBAsync::instantiate()->start())
 	{
-		LOGE("DBManager Start false. ");
+		LOGE("DBManager start false. ");
 		return false;
 	}
-	LOGI("DBManager Start success. ");
+	LOGI("DBManager start success. ");
 
 
-	m_authDB->Init(ServerConfig::getRef().getAuthDBConfig());
-	m_infoDB->Init(ServerConfig::getRef().getInfoDBConfig());
-	m_logDB->Init(ServerConfig::getRef().getLogDBConfig());
+	_authDB->init(ServerConfig::getRef().getAuthDBConfig());
+	_infoDB->init(ServerConfig::getRef().getInfoDBConfig());
+	_logDB->init(ServerConfig::getRef().getLogDBConfig());
 
-	if (!m_authDB->Connect())
+	if (!_authDB->connect())
 	{
-		LOGE("Connect Auth DB false. db config=" << ServerConfig::getRef().getAuthDBConfig());
+		LOGE("connect Auth DB false. db config=" << ServerConfig::getRef().getAuthDBConfig());
 		return false;
 	}
-	LOGI("Connect Auth DB success. db config=" << ServerConfig::getRef().getAuthDBConfig());
+	LOGI("connect Auth DB success. db config=" << ServerConfig::getRef().getAuthDBConfig());
 
-	if (!m_infoDB->Connect())
+	if (!_infoDB->connect())
 	{
-		LOGE("Connect Info DB false. db config=" << ServerConfig::getRef().getInfoDBConfig());
+		LOGE("connect Info DB false. db config=" << ServerConfig::getRef().getInfoDBConfig());
 		return false;
 	}
-	LOGI("Connect Info DB success. db config=" << ServerConfig::getRef().getInfoDBConfig());
+	LOGI("connect Info DB success. db config=" << ServerConfig::getRef().getInfoDBConfig());
 
-	if (!m_logDB->Connect())
+	if (!_logDB->connect())
 	{
-		LOGE("Connect Log DB false. db config=" << ServerConfig::getRef().getLogDBConfig());
+		LOGE("connect Log DB false. db config=" << ServerConfig::getRef().getLogDBConfig());
 		return false;
 	}
-	LOGI("Connect Log DB success. db config=" << ServerConfig::getRef().getLogDBConfig());
+	LOGI("connect Log DB success. db config=" << ServerConfig::getRef().getLogDBConfig());
 	return true;
 }
-void CDBManager::CharLogin(std::shared_ptr<InnerCharInfo> iinfoPtr)
+void DBManager::charLogin(std::shared_ptr<InnerCharInfo> iinfoPtr)
 {
 
 }
-void CDBManager::CharLogout(std::shared_ptr<InnerCharInfo> iinfoPtr)
+void DBManager::charLogout(std::shared_ptr<InnerCharInfo> iinfoPtr)
 {
 
 }

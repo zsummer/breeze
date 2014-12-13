@@ -51,45 +51,45 @@ namespace zsummer
 		class ZSummer :public std::enable_shared_from_this<ZSummer>
 		{
 		public:
-			ZSummer(){m_io = NULL;}
+			ZSummer(){_io = NULL;}
 			~ZSummer(){}
 
-			inline bool Initialize();
-			void RunOnce();
+			inline bool initialize();
+			void runOnce();
 			//handle: std::function<void()>
 			//switch initiative, in the multi-thread it's switch call thread simultaneously.
-			inline void Post(_OnPostHandler &&h){ PostMsg(PCK_USER_DATA, std::move(h)); }
-			inline unsigned long long CreateTimer(unsigned int delayms, _OnTimerHandler &&handle){return m_timer.CreateTimer(delayms, std::move(handle));}
-			inline bool CancelTimer(unsigned long long timerID){return m_timer.CancelTimer(timerID);}
+			inline void post(_OnPostHandler &&h){ postMsg(PCK_USER_DATA, std::move(h)); }
+			inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle){return _timer.createTimer(delayms, std::move(handle));}
+			inline bool cancelTimer(unsigned long long timerID){return _timer.cancelTimer(timerID);}
 		private:
-			inline void PostMsg(POST_COM_KEY pck, _OnPostHandler &&handle)
+			inline void postMsg(POST_COM_KEY pck, _OnPostHandler &&handle)
 			{
 				_OnPostHandler *ptr = new _OnPostHandler(std::move(handle));
-				PostQueuedCompletionStatus(m_io, 0, pck, (LPOVERLAPPED)(ptr));
+				PostQueuedCompletionStatus(_io, 0, pck, (LPOVERLAPPED)(ptr));
 			}
-			inline std::string ZSummerSection()
+			inline std::string zsummerSection()
 			{
 				std::stringstream os;
-				os << " ZSummerSection: m_iocp=" << (void*)m_io << ", current total timer=" << m_timer.GetTimersCount();
+				os << " zsummerSection: _iocp=" << (void*)_io << ", current total timer=" << _timer.GetTimersCount();
 				return os.str();
 			}
 		public:
-			HANDLE m_io;
-			CTimer m_timer;
+			HANDLE _io;
+			Timer _timer;
 		};
 
 		typedef std::shared_ptr<ZSummer> ZSummerPtr;
-		inline bool ZSummer::Initialize()
+		inline bool ZSummer::initialize()
 		{
-			if (m_io != NULL)
+			if (_io != NULL)
 			{
-				LCF("ZSummer::RunOnce[this0x" << this << "] iocp is craeted !" << ZSummerSection());
+				LCF("ZSummer::runOnce[this0x" << this << "] iocp is craeted !" << zsummerSection());
 				return false;
 			}
-			m_io = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 1);
-			if (!m_io)
+			_io = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 1);
+			if (!_io)
 			{
-				LCF("ZSummer::RunOnce[this0x" << this << "] CreateIoCompletionPort False!" << ZSummerSection());
+				LCF("ZSummer::runOnce[this0x" << this << "] CreateIoCompletionPort False!" << zsummerSection());
 				return false;
 			}
 			return true;

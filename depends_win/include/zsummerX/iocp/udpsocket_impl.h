@@ -43,31 +43,31 @@ namespace zsummer
 {
 	namespace network
 	{
-		class CUdpSocket : public std::enable_shared_from_this<CUdpSocket>
+		class UdpSocketImpl : public std::enable_shared_from_this<UdpSocketImpl>
 		{
 		public:
-			CUdpSocket();
-			~CUdpSocket();
-			bool Initialize(const ZSummerPtr &summer, const char *localIP, unsigned short localPort);
-			bool DoSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
-			bool OnIOCPMessage(BOOL bSuccess, DWORD dwTranceCount, unsigned char cType);
-			bool DoRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler &&handler);
+			UdpSocketImpl();
+			~UdpSocketImpl();
+			bool initialize(const ZSummerPtr &summer, const char *localIP, unsigned short localPort);
+			bool doSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
+			bool onIOCPMessage(BOOL bSuccess, DWORD dwTranceCount, unsigned char cType);
+			bool doRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler &&handler);
 		public:
 			//private
-			ZSummerPtr m_summer;
+			ZSummerPtr _summer;
 			
-			SOCKET		m_socket;
-			SOCKADDR_IN	m_addr;
+			SOCKET		_socket;
+			SOCKADDR_IN	_addr;
 
 			//recv
-			tagReqHandle m_recvHandle;
-			WSABUF		 m_recvWSABuf;
-			sockaddr_in  m_recvFrom;
-			int			 m_recvFromLen;
-			_OnRecvFromHandler m_onRecvHander;
-			LINK_STATUS m_nLinkStatus;
+			tagReqHandle _recvHandle;
+			WSABUF		 _recvWSABuf;
+			sockaddr_in  _recvFrom;
+			int			 _recvFromLen;
+			_OnRecvFromHandler _onRecvHander;
+			LINK_STATUS _nLinkStatus;
 		};
-		typedef std::shared_ptr<CUdpSocket> CUdpSocketPtr;
+		typedef std::shared_ptr<UdpSocketImpl> UdpSocketPtr;
 	}
 }
 

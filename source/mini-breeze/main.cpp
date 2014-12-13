@@ -27,7 +27,7 @@ using namespace zsummer::log4z;
 void sigInt(int sig)
 {
 	LOGI("catch SIGINT.");
-	Appliction::getRef().Stop();
+	Appliction::getRef().stop();
 }
 
 int main(int argc, char* argv[])
@@ -62,8 +62,8 @@ int main(int argc, char* argv[])
 		filename = argv[2];
 	}
 	bool ret = false;
-	ILog4zManager::GetInstance()->Config("../log.config");
-	ret = ILog4zManager::GetInstance()->Start();
+	ILog4zManager::getPtr()->config("../log.config");
+	ret = ILog4zManager::getPtr()->start();
 	if (!ret)
 	{
 		std::cout << "ILog4zManager start false." << std::endl;
@@ -71,12 +71,12 @@ int main(int argc, char* argv[])
 	}
 
 
-	if (!Appliction::getRef().Init(filename, serverIndex))
+	if (!Appliction::getRef().init(filename, serverIndex))
 	{
 		LOGE("Appliction init false.");
 		return 1;
 	}
-	Appliction::getRef().Run();
+	Appliction::getRef().run();
 
 	LOGI("Appliction exit.");
 

@@ -248,10 +248,10 @@ public:
 
 
 			//analog recv msg
-			std::pair<INTEGRITY_RET_TYPE, UDStreamHeadTraits::Integer> ret = CheckBuffIntegrity<UDStreamHeadTraits>(ws.GetStream(), ws.GetStreamLen(), UDStreamHeadTraits::MaxPackLen);
+			std::pair<INTEGRITY_RET_TYPE, UDStreamHeadTraits::Integer> ret = checkBuffIntegrity<UDStreamHeadTraits>(ws.GetStream(), ws.GetStreamLen(), UDStreamHeadTraits::MaxPackLen);
 			if (ret.first == IRT_CORRUPTION || ret.first == IRT_SHORTAGE)
 			{
-				cout << "CheckRouteProtocol -> " << className << "  CheckBuffIntegrity error" << endl;
+				cout << "CheckRouteProtocol -> " << className << "  checkBuffIntegrity error" << endl;
 				return false;
 			}
 
@@ -278,7 +278,7 @@ public:
 			//check route
 			WriteStream<UDStreamHeadTraits> ws2;
 			ws2.SetStreamHead((const char*)&rsHead);
-			ws2.AppendOriginalData(rs.GetStreamUnread(), rs.GetStreamUnreadLen());
+			ws2.appendOriginalData(rs.GetStreamUnread(), rs.GetStreamUnreadLen());
 			ReadStream<UDStreamHeadTraits> rs2(ws2.GetStream(), ws2.GetStreamLen());
 			tagTestData testData;
 			rs2 >> testData;
@@ -357,24 +357,24 @@ bool TestBase<StreamHeadTrait>::CheckProtocol(WriteStream<StreamHeadTrait> &ws, 
 	}
 
 
-	std::pair<INTEGRITY_RET_TYPE, typename StreamHeadTrait::Integer> ret = CheckBuffIntegrity<StreamHeadTrait>(ws.GetStream(), 1, m_packLen);
+	std::pair<INTEGRITY_RET_TYPE, typename StreamHeadTrait::Integer> ret = checkBuffIntegrity<StreamHeadTrait>(ws.GetStream(), 1, m_packLen);
 	if (ret.first == IRT_SHORTAGE && ret.second == StreamHeadTrait::HeadLen - 1)
 	{
-		cout << desc << " CheckBuffIntegrity check write header len OK" << endl;
+		cout << desc << " checkBuffIntegrity check write header len OK" << endl;
 	}
 	else
 	{
-		cout << desc << " CheckBuffIntegrity check write header len failed" << endl;
+		cout << desc << " checkBuffIntegrity check write header len failed" << endl;
 		return false;
 	}
-	ret = CheckBuffIntegrity<StreamHeadTrait>(ws.GetStream(), ws.GetStreamLen(), ws.GetStreamLen());
+	ret = checkBuffIntegrity<StreamHeadTrait>(ws.GetStream(), ws.GetStreamLen(), ws.GetStreamLen());
 	if (ret.first == IRT_SUCCESS && ret.second == m_packLen)
 	{
-		cout << desc << " CheckBuffIntegrity check write  OK" << endl;
+		cout << desc << " checkBuffIntegrity check write  OK" << endl;
 	}
 	else
 	{
-		cout << desc << " CheckBuffIntegrity check write  failed" << endl;
+		cout << desc << " checkBuffIntegrity check write  failed" << endl;
 		return false;
 	}
 

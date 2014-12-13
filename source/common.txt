@@ -12,9 +12,9 @@ set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/bin/${PROJECT_NAME}/)
 add_executable(${BINNAME} ${source1} ${source2} ${source3})
 
 if(WIN32)
-  target_link_libraries(${BINNAME} common${LIB_SUFFIX} mongoclient zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX})
+  target_link_libraries(${BINNAME} common${LIB_SUFFIX} libmysqlclient.lib zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX})
 else()
-  target_link_libraries(${BINNAME} common${LIB_SUFFIX} mongoclient boost_thread boost_filesystem boost_program_options boost_system zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread rt)
+  target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread rt dl)
 endif()
 
 

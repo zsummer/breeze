@@ -2,42 +2,42 @@
 #include "DBManager.h"
 using namespace zsummer::mysql;
 
-CNetManager::CNetManager()
+NetManager::NetManager()
 {
 	//auth request process
-	CMessageDispatcher::getRef().RegisterSessionMessage(ID_C2AS_AuthReq,
-		std::bind(&CNetManager::msg_AuthReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_C2AS_AuthReq,
+		std::bind(&NetManager::msg_authReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	CMessageDispatcher::getRef().RegisterSessionMessage(ID_C2LS_CharacterCreateReq,
-		std::bind(&CNetManager::msg_CharacterCreateReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_C2LS_CharacterCreateReq,
+		std::bind(&NetManager::msg_characterCreateReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	CMessageDispatcher::getRef().RegisterSessionMessage(ID_C2LS_CharacterLoginReq,
-		std::bind(&CNetManager::msg_CharacterLoginReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_C2LS_CharacterLoginReq,
+		std::bind(&NetManager::msg_characterLoginReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	
 	//register event
-	CMessageDispatcher::getRef().RegisterOnSessionEstablished(std::bind(&CNetManager::event_OnSessionEstablished, this, std::placeholders::_1));
-	CMessageDispatcher::getRef().RegisterOnSessionDisconnect(std::bind(&CNetManager::event_OnSessionDisconnect, this, std::placeholders::_1));
+	MessageDispatcher::getRef().registerOnSessionEstablished(std::bind(&NetManager::event_onSessionEstablished, this, std::placeholders::_1));
+	MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&NetManager::event_onSessionDisconnect, this, std::placeholders::_1));
 
 	//
-	CMessageDispatcher::getRef().RegisterOnSessionPulse(std::bind(&CNetManager::event_OnSessionPulse, this, std::placeholders::_1, std::placeholders::_2));
-	CMessageDispatcher::getRef().RegisterSessionMessage(ID_C2AS_ClientPulse,
-		std::bind(&CNetManager::msg_OnClientPulse, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerOnSessionPulse(std::bind(&NetManager::event_onSessionPulse, this, std::placeholders::_1, std::placeholders::_2));
+	MessageDispatcher::getRef().registerSessionMessage(ID_C2AS_ClientPulse,
+		std::bind(&NetManager::msg_onClientPulse, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
-bool CNetManager::Start()
+bool NetManager::start()
 {
 	//init
-	m_handlers.push_back(CDBManager::Instantiate());
-	for (auto ptr : m_handlers)
+	_handlers.push_back(DBManager::instantiate());
+	for (auto ptr : _handlers)
 	{
-		if (!ptr->Init())
+		if (!ptr->init())
 		{
-			LOGW("Init handler false");
+			LOGW("init handler false");
 			return false;
 		}
 	}
-	LOGI("Init handler all Success. handler size=" << m_handlers.size());
+	LOGI("init handler all Success. handler size=" << _handlers.size());
 	//end
 	auto connecters = ServerConfig::getRef().getConfigConnect(MiniBreezeNode);
 	for (auto con : connecters)
@@ -51,106 +51,106 @@ bool CNetManager::Start()
 		{
 			continue;
 		}
-		SessionID sID = CTcpSessionManager::getRef().AddConnector(tag);
+		SessionID sID = TcpSessionManager::getRef().addConnector(tag);
 
 		if (sID == InvalidSeesionID)
 		{
-			LOGE("AddConnector failed. remoteIP=" << tag.remoteIP << ", remotePort=" << tag.remotePort);
+			LOGE("addConnector failed. remoteIP=" << tag.remoteIP << ", remotePort=" << tag.remotePort);
 			return false;
 		}
 		// save sID. do something after.
 		// ...
 	}
 
-	m_configListen.listenIP = ServerConfig::getRef().getConfigListen(MiniBreezeNode).ip;
-	m_configListen.listenPort = ServerConfig::getRef().getConfigListen(MiniBreezeNode).port;
-	m_configListen.maxSessions = 5000;
+	_configListen.listenIP = ServerConfig::getRef().getConfigListen(MiniBreezeNode).ip;
+	_configListen.listenPort = ServerConfig::getRef().getConfigListen(MiniBreezeNode).port;
+	_configListen.maxSessions = 5000;
 
-	// if have some connector need connect success. do open accept in event_OnSessionEstablished when all connector is success.
+	// if have some connector need connect success. do open accept in event_onSessionEstablished when all connector is success.
 	//other open acceoter in here.
-	m_accepterID = CTcpSessionManager::getRef().AddAcceptor(m_configListen);
-	if (m_accepterID == InvalidAccepterID)
+	_accepterID = TcpSessionManager::getRef().addAcceptor(_configListen);
+	if (_accepterID == InvalidAccepterID)
 	{
-		LOGE("OPEN Accepter false. ip=" << m_configListen.listenIP << ", port=" << m_configListen.listenPort);
+		LOGE("OPEN Accepter false. ip=" << _configListen.listenIP << ", port=" << _configListen.listenPort);
 		return false;
 	}
 	else
 	{
-		LOGI("OPEN Accepter true. ip=" << m_configListen.listenIP << ", port=" << m_configListen.listenPort);
+		LOGI("OPEN Accepter true. ip=" << _configListen.listenIP << ", port=" << _configListen.listenPort);
 	}
 	return true;
 }
-bool CNetManager::Stop()
+bool NetManager::stop()
 {
-	CTcpSessionManager::getRef().Stop();
+	TcpSessionManager::getRef().stop();
 	return true;
 }
 
 
 
-void CNetManager::CharLogin(std::shared_ptr<InnerCharInfo> iinfoPtr)
+void NetManager::charLogin(std::shared_ptr<InnerCharInfo> iinfoPtr)
 {
-	for (auto ptr : m_handlers)
+	for (auto ptr : _handlers)
 	{
-		ptr->CharLogin(iinfoPtr);
+		ptr->charLogin(iinfoPtr);
 	}
 }
-void CNetManager::CharLogout(std::shared_ptr<InnerCharInfo> iinfoPtr)
+void NetManager::charLogout(std::shared_ptr<InnerCharInfo> iinfoPtr)
 {
-	for (auto ptr : m_handlers)
+	for (auto ptr : _handlers)
 	{
-		ptr->CharLogout(iinfoPtr);
+		ptr->charLogout(iinfoPtr);
 	}
 }
 
 
-void CNetManager::event_OnSessionEstablished(SessionID sID)
+void NetManager::event_onSessionEstablished(SessionID sID)
 {
-	if (IsConnectID(sID))
+	if (isConnectID(sID))
 	{
-		LOGT("CNetManager::event_OnSessionEstablished. SessionID=" << sID);
+		LOGT("NetManager::event_onSessionEstablished. SessionID=" << sID);
 	}
 	else
 	{
-		LOGT("CNetManager::event_OnSessionEstablished. SessionID=" << sID);
+		LOGT("NetManager::event_onSessionEstablished. SessionID=" << sID);
 	}
 }
 
-void CNetManager::event_OnSessionDisconnect(SessionID sID)
+void NetManager::event_onSessionDisconnect(SessionID sID)
 {
-	if (IsConnectID(sID))
+	if (isConnectID(sID))
 	{
-		LOGI("CNetManager::event_OnSessionDisconnect. sID=" << sID);
+		LOGI("NetManager::event_onSessionDisconnect. sID=" << sID);
 	}
 	else
 	{
-		LOGI("CNetManager::event_OnSessionDisconnect. sID=" << sID);
-		auto founder = m_mapSession.find(sID);
-		if (founder == m_mapSession.end())
+		LOGI("NetManager::event_onSessionDisconnect. sID=" << sID);
+		auto founder = _mapSession.find(sID);
+		if (founder == _mapSession.end())
 		{
 			return;
 		}
 		auto iinfoPtr = founder->second;
 		if (iinfoPtr->status == InnerCharInfo::ICIT_LOGINED)
 		{
-			CharLogin(iinfoPtr);
-			m_mapCharInfo.erase(iinfoPtr->charInfo.charID);
+			charLogin(iinfoPtr);
+			_mapCharInfo.erase(iinfoPtr->charInfo.charID);
 		}
-		m_mapSession.erase(sID);
+		_mapSession.erase(sID);
 	}
 }
 
 
 
 
-void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
+void NetManager::msg_authReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 {
 	C2AS_AuthReq req;
 	rs >> req;
 	LOGD("ID_C2AS_AuthReq user=" << req.user << ", pwd=" << req.pwd);
 	std::shared_ptr<InnerCharInfo> iinfoPtr;
-	auto founder = m_mapSession.find(sID);
-	if (founder != m_mapSession.end())
+	auto founder = _mapSession.find(sID);
+	if (founder != _mapSession.end())
 	{
 		iinfoPtr = founder->second;
 	}
@@ -159,7 +159,7 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 		iinfoPtr = std::shared_ptr<InnerCharInfo>(new InnerCharInfo);
 		iinfoPtr->sesionInfo.sID = sID;
 		iinfoPtr->status = InnerCharInfo::ICIT_UNAUTH;
-		m_mapSession.insert(std::make_pair(sID, iinfoPtr));
+		_mapSession.insert(std::make_pair(sID, iinfoPtr));
 	}
 
 	if (iinfoPtr->status != InnerCharInfo::ICIT_UNAUTH)
@@ -168,7 +168,7 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 		AS2C_AuthAck ack;
 		ack.retCode = BEC_AUTH_ING;
 		ws << ID_AS2C_AuthAck << ack;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		return;
 	}
 	
@@ -179,12 +179,12 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	{
 
 		std::string auth_sql = "SELECT accID, pwd FROM `tb_auth` where account = '";
-		auto & db = CDBManager::getRef().getAuthDB();
-		auth_sql += EscapeString(req.user);
+		auto & db = DBManager::getRef().getAuthDB();
+		auth_sql += escapeString(req.user);
 		auth_sql += "'";
 
 
-		CDBAsync::getRef().async_query(db, auth_sql, std::bind(&CNetManager::db_AuthSelect, this,
+		DBAsync::getRef().asyncQuery(db, auth_sql, std::bind(&NetManager::db_authSelect, this,
 			std::placeholders::_1,sID, req));
 		return;
 	}
@@ -199,8 +199,8 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 
 		do 
 		{
-			auto founder = m_mapSession.find(sID);
-			if (founder == m_mapSession.end())
+			auto founder = _mapSession.find(sID);
+			if (founder == _mapSession.end())
 			{
 				break;
 			}
@@ -232,22 +232,22 @@ void CNetManager::msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 
 		WriteStreamPack ws;
 		ws << ID_AS2C_AuthAck << ack;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
 
-void CNetManager::db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req)
+void NetManager::db_authSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req)
 {
 	//error
 	AS2C_AuthAck ack;
 	ack.retCode = BEC_DB_ERROR;
 	AccountID accID = InvalidAccountID;
 
-	if (res->GetErrorCode() != QueryErrorCode::QEC_SUCCESS)
+	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 	{
-		LOGE("db_AuthSelect error.  error msg=" << res->GetLastError() << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
+		LOGE("db_authSelect error.  error msg=" << res->getLastError() << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
 	}
-	else if (!res->HaveRow())
+	else if (!res->haveRow())
 	{
 		ack.retCode = BEC_AUTH_NOT_FOUND_USER;
 	}
@@ -255,7 +255,7 @@ void CNetManager::db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req
 	{
 		try
 		{
-			if (res->HaveRow())
+			if (res->haveRow())
 			{
 				std::string pwd;
 				*res >> accID;
@@ -273,7 +273,7 @@ void CNetManager::db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req
 		}
 		catch (const std::string & err)
 		{
-			LOGE("db_AuthSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd << ", error=" << err);
+			LOGE("db_authSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd << ", error=" << err);
 			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
 		}
 	}
@@ -281,41 +281,41 @@ void CNetManager::db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req
 
 	if (ack.retCode != BEC_SUCCESS)
 	{
-		auto founder = m_mapSession.find(sID);
-		if (founder != m_mapSession.end() && founder->second)
+		auto founder = _mapSession.find(sID);
+		if (founder != _mapSession.end() && founder->second)
 		{
 			founder->second->status = InnerCharInfo::ICIT_UNAUTH;
 		}
 
 		WriteStreamPack ws;
 		ws << ID_AS2C_AuthAck << ack;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 	else
 	{
 		{
-			auto & db = CDBManager::getRef().getInfoDB();
+			auto & db = DBManager::getRef().getInfoDB();
 			std::string selectAccountInfo_sql = "call AutoSelectAccount(";
 			selectAccountInfo_sql += toString(accID);
 			selectAccountInfo_sql += ")";
-			CDBAsync::getRef().async_query(db, selectAccountInfo_sql, std::bind(&CNetManager::db_AccountSelect, this,
+			DBAsync::getRef().asyncQuery(db, selectAccountInfo_sql, std::bind(&NetManager::db_accountSelect, this,
 				std::placeholders::_1,sID, accID, req));
 		}
 	}
 }
 
-void CNetManager::db_AccountSelect(DBResultPtr res, SessionID sID, AccountID accID, C2AS_AuthReq req)
+void NetManager::db_accountSelect(DBResultPtr res, SessionID sID, AccountID accID, C2AS_AuthReq req)
 {
 	//error
 	AS2C_AuthAck ack;
 	ack.retCode = BEC_DB_ERROR;
 	
 
-	if (res->GetErrorCode() != QueryErrorCode::QEC_SUCCESS)
+	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 	{
-		LOGE("db_AuthSelect error.  error msg=" << res->GetLastError() << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
+		LOGE("db_authSelect error.  error msg=" << res->getLastError() << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
 	}
-	else if (!res->HaveRow())
+	else if (!res->haveRow())
 	{
 		ack.retCode = BEC_AUTH_NOT_FOUND_USER;
 	}
@@ -323,7 +323,7 @@ void CNetManager::db_AccountSelect(DBResultPtr res, SessionID sID, AccountID acc
 	{
 		try
 		{
-			while (res->HaveRow())
+			while (res->haveRow())
 			{
 				ack.retCode = BEC_SUCCESS;
 				break;
@@ -331,7 +331,7 @@ void CNetManager::db_AccountSelect(DBResultPtr res, SessionID sID, AccountID acc
 		}
 		catch (const std::string & err)
 		{
-			LOGE("db_AuthSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd << ", error=" << err);
+			LOGE("db_authSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd << ", error=" << err);
 			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
 		}
 	}
@@ -340,30 +340,30 @@ void CNetManager::db_AccountSelect(DBResultPtr res, SessionID sID, AccountID acc
 
 	if (ack.retCode != BEC_SUCCESS)
 	{
-		auto founder = m_mapSession.find(sID);
-		if (founder != m_mapSession.end() && founder->second)
+		auto founder = _mapSession.find(sID);
+		if (founder != _mapSession.end() && founder->second)
 		{
 			founder->second->status = InnerCharInfo::ICIT_UNAUTH;
 		}
 		WriteStreamPack ws;
 		ws << ID_AS2C_AuthAck << ack;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 	else
 	{
 		WriteStreamPack ws;
 		ws << ID_AS2C_AuthAck << ack;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
 
-void CNetManager::msg_CharacterCreateReq(SessionID sID, ProtoID pID, ReadStreamPack &rs)
+void NetManager::msg_characterCreateReq(SessionID sID, ProtoID pID, ReadStreamPack &rs)
 {
 	C2LS_CharacterCreateReq req;
 	rs >> req;
 
-	auto fouder = m_mapSession.find(sID);
-	if (fouder == m_mapSession.end())
+	auto fouder = _mapSession.find(sID);
+	if (fouder == _mapSession.end())
 	{
 		return;
 	}
@@ -398,16 +398,16 @@ void CNetManager::msg_CharacterCreateReq(SessionID sID, ProtoID pID, ReadStreamP
 		
 		WriteStreamPack ws;
 		ws << ID_LS2C_CharacterCreateAck << ack;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
 
-void CNetManager::msg_CharacterLoginReq(SessionID sID, ProtoID pID, ReadStreamPack &rs)
+void NetManager::msg_characterLoginReq(SessionID sID, ProtoID pID, ReadStreamPack &rs)
 {
 	C2LS_CharacterLoginReq req;
 	rs >> req;
-	auto fouder = m_mapSession.find(sID);
-	if (fouder == m_mapSession.end())
+	auto fouder = _mapSession.find(sID);
+	if (fouder == _mapSession.end())
 	{
 		return;
 	}
@@ -426,45 +426,45 @@ void CNetManager::msg_CharacterLoginReq(SessionID sID, ProtoID pID, ReadStreamPa
 			return;
 		}
 
-		auto foundOldChar = m_mapCharInfo.find(foundChar->charID);
-		if (foundOldChar != m_mapCharInfo.end())
+		auto foundOldChar = _mapCharInfo.find(foundChar->charID);
+		if (foundOldChar != _mapCharInfo.end())
 		{
 			auto oldIInfoPtr = foundOldChar->second;
-			CharLogout(oldIInfoPtr);
-			CTcpSessionManager::getRef().KickSession(oldIInfoPtr->sesionInfo.sID);
-			m_mapSession.erase(oldIInfoPtr->sesionInfo.sID);
-			m_mapCharInfo.erase(oldIInfoPtr->charInfo.charID);
+			charLogout(oldIInfoPtr);
+			TcpSessionManager::getRef().kickSession(oldIInfoPtr->sesionInfo.sID);
+			_mapSession.erase(oldIInfoPtr->sesionInfo.sID);
+			_mapCharInfo.erase(oldIInfoPtr->charInfo.charID);
 		}
 		
 		iinfo.charInfo = *foundChar;
-		m_mapCharInfo.insert(std::make_pair(iinfo.charInfo.charID, iinfoPtr));
-		CharLogin(iinfoPtr);
+		_mapCharInfo.insert(std::make_pair(iinfo.charInfo.charID, iinfoPtr));
+		charLogin(iinfoPtr);
 
 		LS2C_CharacterLoginAck ack;
 		ack.retCode = BEC_SUCCESS;
 		WriteStreamPack ws;
 		ws << ID_LS2C_CharacterLoginAck << ack;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
 
-void CNetManager::event_OnSessionPulse(SessionID sID, unsigned int pulseInterval)
+void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
 {
-	if (IsConnectID(sID))
+	if (isConnectID(sID))
 	{
 	}
 	else
 	{
-		auto founder = m_mapSession.find(sID);
-		if (founder == m_mapSession.end())
+		auto founder = _mapSession.find(sID);
+		if (founder == _mapSession.end())
 		{
-			CTcpSessionManager::getRef().KickSession(sID);
-			LOGW("kick session because session not found in m_mapSession.  sID=" << sID);
+			TcpSessionManager::getRef().kickSession(sID);
+			LOGW("kick session because session not found in _mapSession.  sID=" << sID);
 			return;
 		}
 		if (founder->second->sesionInfo.lastActiveTime + pulseInterval * 2 / 1000 < time(NULL))
 		{
-			CTcpSessionManager::getRef().KickSession(sID);
+			TcpSessionManager::getRef().kickSession(sID);
 			LOGW("kick session because session heartbeat timeout.  sID=" << sID << ", lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);
 			return;
 		}
@@ -472,18 +472,18 @@ void CNetManager::event_OnSessionPulse(SessionID sID, unsigned int pulseInterval
 		AS2C_ClientPulseAck ack;
 		ack.svrTimeStamp = time(NULL);
 		ws << ID_AS2C_ClientPulseAck << ack;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
 
 
-void CNetManager::msg_OnClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs)
+void NetManager::msg_onClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 {
-	auto founder = m_mapSession.find(sID);
-	if (founder != m_mapSession.end())
+	auto founder = _mapSession.find(sID);
+	if (founder != _mapSession.end())
 	{
 		founder->second->sesionInfo.lastActiveTime = time(NULL);
-		LOGD("msg_OnClientPulse lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);
+		LOGD("msg_onClientPulse lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);
 		return;
 	}
 }

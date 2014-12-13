@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2013 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2014 YaweiZhang <yawei_zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,18 +37,17 @@
 
 /*
  * AUTHORS:  YaweiZhang <yawei_zhang@foxmail.com>
- * VERSION:  2.6.0
+ * VERSION:  2.8.3
  * PURPOSE:  A lightweight library for error reporting and logging to file and screen .
  * CREATION: 2010.10.4
- * LCHANGE:  2014.07.03
+ * LCHANGE:  2014.12.11
  * LICENSE:  Expat/MIT License, See Copyright Notice at the begin of this file.
  */
 
 
 /*
- *
- * QQ Group: 19811947
- * Web Site: www.zsummer.net
+ * contact me:
+ * tencent qq group: 19811947
  * mail: yawei_zhang@foxmail.com
  */
 
@@ -133,11 +132,24 @@
  *  optimize std::string, binary log input, and support std::wstring.
  *  clean code, better readability
  *  
- * VERSION 2.6 <DATE: 2014.07.03>
+ * VERSION 2.6 <DATE: 2014.08.19>
  *  add PrePushLog 
  *  better performance when log is filter out.
  *  interface replace std::string because it's in shared library is unsafe.
  *  add log level 'trace'
+ * 
+ * VERSION 2.6.1 <DATE: 2014.08.22>
+ *  fix bug from defined _MSC_VER 
+ *
+ * VERSION 2.7 <DATE: 2014.09.21>
+ *  compatible mac machine,  now  log4z can working in linux/windows/mac.
+ *
+ * VERSION 2.8 <DATE: 2014.09.27>
+ *  support synchronous written to file and thread-safe
+ *  fix compatibility on MinGW. a constent value suffix.
+ *  ignore utf-8 file BOM when load configure file
+ *  use macro WIN32_LEAN_AND_MEAN replace head file winsock2.h
+ *  new naming notations
  *  
  */
 
@@ -151,7 +163,7 @@
 #include <errno.h>
 #include <stdio.h>
 #ifdef WIN32
-#include <WinSock2.h>
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #endif
 
@@ -164,8 +176,8 @@ const int LOG4Z_INVALID_LOGGER_ID = -1;
 //! the main logger id. DO NOT TOUCH
 //! can use this id to set the main logger's attribute.
 //! example:
-//! ILog4zManager::GetInstance()->SetLoggerLevel(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN);
-//! ILog4zManager::GetInstance()->SetLoggerDisplay(LOG4Z_MAIN_LOGGER_ID, false);
+//! ILog4zManager::getPtr()->SetLoggerLevel(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN);
+//! ILog4zManager::getPtr()->SetLoggerDisplay(LOG4Z_MAIN_LOGGER_ID, false);
 const int LOG4Z_MAIN_LOGGER_ID = 0;
 
 //! the main logger name. DO NOT TOUCH
@@ -202,9 +214,9 @@ const int LOG4Z_LOGGER_MAX = 10;
 const int LOG4Z_LOG_BUF_SIZE = 2048;
 
 //! all logger synchronous output or not
-const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = true;
+const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = false;
 //! all logger write log to file or not
-const bool LOG4Z_ALL_WRITE_TO_FILE = false;
+const bool LOG4Z_ALL_WRITE_TO_FILE = true;
 //! all logger synchronous display to the windows debug output
 const bool LOG4Z_ALL_DEBUGOUTPUT_DISPLAY = false;
 
@@ -245,54 +257,84 @@ class ILog4zManager
 public:
 	ILog4zManager(){};
 	virtual ~ILog4zManager(){};
-	virtual std::string GetExampleConfig() = 0;
 
 	//! Log4z Singleton
-	static ILog4zManager * GetInstance();
+	
+	static ILog4zManager * getInstance();
+	inline static ILog4zManager & getRef(){return *getInstance();}
+	inline static ILog4zManager * getPtr(){return getInstance();}
 
 	//! Config or overwrite configure
 	//! Needs to be called before ILog4zManager::Start,, OR Do not call.
-	virtual bool Config(const char * strCfgPath) = 0;
+	virtual bool config(const char * configPath) = 0;
 
 	//! Create or overwrite logger, Total count limited by LOG4Z_LOGGER_MAX.
 	//! Needs to be called before ILog4zManager::Start, OR Do not call.
-	virtual LoggerId CreateLogger(const char* strName, 
-		const char* strPath = LOG4Z_DEFAULT_PATH,
-		int nLevel = LOG4Z_DEFAULT_LEVEL,
+	virtual LoggerId createLogger(const char* loggerName, 
+		const char* path = LOG4Z_DEFAULT_PATH,
+		int level = LOG4Z_DEFAULT_LEVEL,
 		bool display = LOG4Z_DEFAULT_DISPLAY,
 		bool monthdir = LOG4Z_DEFAULT_MONTHDIR,
 		unsigned int limitsize = LOG4Z_DEFAULT_LIMITSIZE /*million byte, rolling file*/) = 0;
 
 	//! Start Log Thread. This method can only be called once by one process.
-	virtual bool Start() = 0;
+	virtual bool start() = 0;
 
 	//! Default the method will be calling at process exit auto.
 	//! Default no need to call and no recommended.
-	virtual bool Stop() = 0;
+	virtual bool stop() = 0;
 
 	//! Find logger. thread safe.
-	virtual LoggerId FindLogger(const char* strName) =0;
+	virtual LoggerId findLogger(const char* strName) =0;
 
 	//pre-check the log filter. if filter out return false. 
-	virtual bool PrePushLog(LoggerId id, int level) = 0;
+	virtual bool prePushLog(LoggerId id, int level) = 0;
 	//! Push log, thread safe.
-	virtual bool PushLog(LoggerId id, int level, const char * log) = 0;
+	virtual bool pushLog(LoggerId id, int level, const char * log) = 0;
 
 	//! Set logger's attribute, thread safe.
-	virtual bool SetLoggerLevel(LoggerId nLoggerID, int nLevel) = 0;
-	virtual bool SetLoggerDisplay(LoggerId nLoggerID, bool enable) = 0;
-	virtual bool SetLoggerMonthdir(LoggerId nLoggerID, bool use) = 0;
-	virtual bool SetLoggerLimitSize(LoggerId nLoggerID, unsigned int limitsize) = 0;
+	virtual bool setLoggerLevel(LoggerId id, int nLevel) = 0;
+	virtual bool setLoggerDisplay(LoggerId id, bool enable) = 0;
+	virtual bool setLoggerMonthdir(LoggerId id, bool enable) = 0;
+	virtual bool setLoggerLimitsize(LoggerId id, unsigned int limitsize) = 0;
 	//! Update logger's attribute from config file, thread safe.
-	virtual bool UpdateConfig() = 0;
+	virtual bool updateConfig() = 0;
 
 	//! Log4z status statistics, thread safe.
-	virtual unsigned long long GetStatusTotalWriteCount() = 0;
-	virtual unsigned long long GetStatusTotalWriteBytes() = 0;
-	virtual unsigned long long GetStatusWaitingCount() = 0;
-	virtual unsigned int GetStatusActiveLoggers() = 0;
+	virtual unsigned long long getStatusTotalWriteCount() = 0;
+	virtual unsigned long long getStatusTotalWriteBytes() = 0;
+	virtual unsigned long long getStatusWaitingCount() = 0;
+	virtual unsigned int getStatusActiveLoggers() = 0;
 
+	//! old interface compatibility
+#define LOG4Z_OLD_INTERFACE static ILog4zManager * GetInstance(){return getInstance();} \
+	inline bool Config(const char * configPath){return config(configPath);} \
+	inline LoggerId CreateLogger(const char* loggerName,  \
+		const char* path = LOG4Z_DEFAULT_PATH, \
+		int level = LOG4Z_DEFAULT_LEVEL, \
+		bool display = LOG4Z_DEFAULT_DISPLAY, \
+		bool monthdir = LOG4Z_DEFAULT_MONTHDIR, \
+		unsigned int limitsize = LOG4Z_DEFAULT_LIMITSIZE /*million byte, rolling file*/) \
+	{return createLogger(loggerName, path, level, display, monthdir, limitsize);} \
+	inline bool Start() {return start();} \
+	inline bool Stop() {return stop();} \
+	inline LoggerId FindLogger(const char* loggerName){return findLogger(loggerName);} \
+	inline bool PrePushLog(LoggerId id, int level) {return prePushLog(id, level);} \
+	inline bool PushLog(LoggerId id, int level, const char * log) {return pushLog(id, level, log);} \
+	inline bool SetLoggerLevel(LoggerId id, int level) {return setLoggerLevel(id, level);} \
+	inline bool SetLoggerDisplay(LoggerId id, bool enable) {return setLoggerDisplay(id, enable);} \
+	inline bool SetLoggerMonthdir(LoggerId id, bool enable) {return setLoggerMonthdir(id, enable);} \
+	inline bool SetLoggerLimitSize(LoggerId id, unsigned int limitsize) {return setLoggerLimitsize(id, limitsize);} \
+	inline bool UpdateConfig() {return updateConfig();} \
+	inline unsigned long long GetStatusTotalWriteCount() {return getStatusTotalWriteCount();} \
+	inline unsigned long long GetStatusTotalWriteBytes() {return getStatusTotalWriteBytes();} \
+	inline unsigned long long GetStatusWaitingCount() {return getStatusWaitingCount();} \
+	inline unsigned int GetStatusActiveLoggers() {return getStatusActiveLoggers();} 
+	//LOG4Z_OLD_INTERFACE
 };
+
+class Log4zStream;
+class Log4zBinary;
 
 #ifndef _ZSUMMER_END
 #define _ZSUMMER_END }
@@ -304,9 +346,11 @@ public:
 _ZSUMMER_LOG4Z_END
 _ZSUMMER_END
 
-class CStringStream;
+//! old interface compatibility
+#define CStringStream Log4zStream
+#define BinaryBlock Log4zBinary
 
-//! optimize by TLS
+
 #ifndef WIN32
 extern __thread char g_log4zstreambuf[LOG4Z_LOG_BUF_SIZE];
 #endif
@@ -315,24 +359,24 @@ extern __thread char g_log4zstreambuf[LOG4Z_LOG_BUF_SIZE];
 #ifdef  WIN32
 #define LOG_STREAM(id, level, log)\
 {\
-	if (zsummer::log4z::ILog4zManager::GetInstance()->PrePushLog(id,level)) \
+	if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
 	{\
 		char logbuf[LOG4Z_LOG_BUF_SIZE];\
-		zsummer::log4z::CStringStream ss(logbuf, LOG4Z_LOG_BUF_SIZE);\
+		zsummer::log4z::Log4zStream ss(logbuf, LOG4Z_LOG_BUF_SIZE);\
 		ss << log;\
 		ss << " ( " << __FILE__ << " ) : "  << __LINE__;\
-		zsummer::log4z::ILog4zManager::GetInstance()->PushLog(id, level, logbuf);\
+		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf);\
 	}\
 }
 #else
 #define LOG_STREAM(id, level, log)\
 {\
-	if (zsummer::log4z::ILog4zManager::GetInstance()->PrePushLog(id,level)) \
+	if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
 	{\
-		zsummer::log4z::CStringStream ss(g_log4zstreambuf, LOG4Z_LOG_BUF_SIZE);\
+		zsummer::log4z::Log4zStream ss(g_log4zstreambuf, LOG4Z_LOG_BUF_SIZE);\
 		ss << log;\
 		ss << " ( " << __FILE__ << " ) : "  << __LINE__;\
-		zsummer::log4z::ILog4zManager::GetInstance()->PushLog(id, level, g_log4zstreambuf);\
+		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, g_log4zstreambuf);\
 	}\
 }
 #endif
@@ -361,7 +405,7 @@ extern __thread char g_log4zstreambuf[LOG4Z_LOG_BUF_SIZE];
 #ifdef WIN32
 #define LOG_FORMAT(id, level, logformat, ...) \
 { \
-	if (zsummer::log4z::ILog4zManager::GetInstance()->PrePushLog(id,level)) \
+	if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
 	{\
 		char logbuf[LOG4Z_LOG_BUF_SIZE]; \
 		int ret = _snprintf_s(logbuf, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, logformat, ##__VA_ARGS__); \
@@ -369,20 +413,20 @@ extern __thread char g_log4zstreambuf[LOG4Z_LOG_BUF_SIZE];
 				{\
 		_snprintf_s(logbuf + ret, LOG4Z_LOG_BUF_SIZE - ret, _TRUNCATE, " (%s) : %d", __FILE__, __LINE__);\
 				}\
-		zsummer::log4z::ILog4zManager::GetInstance()->PushLog(id, level, logbuf); \
+		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf); \
 	}\
  }
 #else
 #define LOG_FORMAT(id, level, logformat, ...) \
 { \
-	if (zsummer::log4z::ILog4zManager::GetInstance()->PrePushLog(id,level)) \
+	if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
 	{\
 		int ret = snprintf(g_log4zstreambuf, LOG4Z_LOG_BUF_SIZE,logformat, ##__VA_ARGS__); \
 		if (ret >= 0 && ret < LOG4Z_LOG_BUF_SIZE - 1) \
 				{\
 		snprintf(g_log4zstreambuf + ret, LOG4Z_LOG_BUF_SIZE - ret, " (%s) : %d", __FILE__, __LINE__); \
 				}\
-		zsummer::log4z::ILog4zManager::GetInstance()->PushLog(id, level, g_log4zstreambuf); \
+		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, g_log4zstreambuf); \
 	} \
 }
 #endif
@@ -424,14 +468,15 @@ inline void empty_log_format_function2(const char*, ...){}
 _ZSUMMER_BEGIN
 _ZSUMMER_LOG4Z_BEGIN
 
-//! optimze from std::stringstream to CStringStream
+//! optimze from std::stringstream to Log4zStream
 #ifdef WIN32
 #pragma warning(push)
 #pragma warning(disable:4996)
 #endif
-struct BinaryBlock
+class Log4zBinary
 {
-	BinaryBlock(const char * buf, int len)
+public:
+	Log4zBinary(const char * buf, int len)
 	{
 		_buf = buf;
 		_len = len;
@@ -439,157 +484,157 @@ struct BinaryBlock
 	const char * _buf;
 	int  _len;
 };
-class CStringStream
+class Log4zStream
 {
 public:
-	inline CStringStream(char * buf, int len);
+	inline Log4zStream(char * buf, int len);
 private:
 	template<class T>
-	inline CStringStream & WriteData(const char * ft, T t);
-	inline CStringStream & WriteLongLong(long long t);
-	inline CStringStream & WriteULongLong(unsigned long long t);
-	inline CStringStream & WritePointer(const void * t);
-	inline CStringStream & WriteString(const wchar_t* t){ return WriteData("%s", t); }
-	inline CStringStream & WriteWString(const wchar_t* t);
-	inline CStringStream & WriteBinary(const BinaryBlock & t);
+	inline Log4zStream & writeData(const char * ft, T t);
+	inline Log4zStream & writeLongLong(long long t);
+	inline Log4zStream & writeULongLong(unsigned long long t);
+	inline Log4zStream & writePointer(const void * t);
+	inline Log4zStream & writeString(const wchar_t* t){ return writeData("%s", t); }
+	inline Log4zStream & writeWString(const wchar_t* t);
+	inline Log4zStream & writeBinary(const Log4zBinary & t);
 public:
-	inline CStringStream & operator <<(const void * t){ return  WritePointer(t); }
+	inline Log4zStream & operator <<(const void * t){ return  writePointer(t); }
 
-	inline CStringStream & operator <<(const char * t){return WriteData("%s", t);}
+	inline Log4zStream & operator <<(const char * t){return writeData("%s", t);}
 #ifdef WIN32
-	inline CStringStream & operator <<(const wchar_t * t){ return WriteWString(t);}
+	inline Log4zStream & operator <<(const wchar_t * t){ return writeWString(t);}
 #endif
-	inline CStringStream & operator <<(bool t){ return (t ? WriteData("%s", "true") : WriteData("%s", "false"));}
+	inline Log4zStream & operator <<(bool t){ return (t ? writeData("%s", "true") : writeData("%s", "false"));}
 
-	inline CStringStream & operator <<(char t){return WriteData("%c", t);}
+	inline Log4zStream & operator <<(char t){return writeData("%c", t);}
 
-	inline CStringStream & operator <<(unsigned char t){return WriteData("%u",(unsigned int)t);}
+	inline Log4zStream & operator <<(unsigned char t){return writeData("%u",(unsigned int)t);}
 
-	inline CStringStream & operator <<(short t){ return WriteData("%d", (int)t); }
+	inline Log4zStream & operator <<(short t){ return writeData("%d", (int)t); }
 
-	inline CStringStream & operator <<(unsigned short t){ return WriteData("%u", (unsigned int)t); }
+	inline Log4zStream & operator <<(unsigned short t){ return writeData("%u", (unsigned int)t); }
 
-	inline CStringStream & operator <<(int t){return WriteData("%d", t);}
+	inline Log4zStream & operator <<(int t){return writeData("%d", t);}
 
-	inline CStringStream & operator <<(unsigned int t){return WriteData("%u", t);}
+	inline Log4zStream & operator <<(unsigned int t){return writeData("%u", t);}
 
-	inline CStringStream & operator <<(long t) { return WriteLongLong(t); }
+	inline Log4zStream & operator <<(long t) { return writeLongLong(t); }
 
-	inline CStringStream & operator <<(unsigned long t){ return WriteULongLong(t); }
+	inline Log4zStream & operator <<(unsigned long t){ return writeULongLong(t); }
 
-	inline CStringStream & operator <<(long long t) { return WriteLongLong(t); }
+	inline Log4zStream & operator <<(long long t) { return writeLongLong(t); }
 
-	inline CStringStream & operator <<(unsigned long long t){ return WriteULongLong(t); }
+	inline Log4zStream & operator <<(unsigned long long t){ return writeULongLong(t); }
 
-	inline CStringStream & operator <<(float t){return WriteData("%.4f", t);}
+	inline Log4zStream & operator <<(float t){return writeData("%.4f", t);}
 
-	inline CStringStream & operator <<(double t){return WriteData("%.4lf", t);}
+	inline Log4zStream & operator <<(double t){return writeData("%.4lf", t);}
 
 	template<class _Elem,class _Traits,class _Alloc> //support std::string, std::wstring
-	inline CStringStream & operator <<(const std::basic_string<_Elem, _Traits, _Alloc> & t){ return *this << t.c_str(); }
+	inline Log4zStream & operator <<(const std::basic_string<_Elem, _Traits, _Alloc> & t){ return *this << t.c_str(); }
 
-	inline CStringStream & operator << (const zsummer::log4z::BinaryBlock & binary){ return WriteBinary(binary); }
+	inline Log4zStream & operator << (const zsummer::log4z::Log4zBinary & binary){ return writeBinary(binary); }
 
 private:
-	CStringStream(){}
-	CStringStream(CStringStream &){}
-	char *  m_pBegin;
-	char *  m_pEnd;
-	char *  m_pCur;
+	Log4zStream(){}
+	Log4zStream(Log4zStream &){}
+	char *  _begin;
+	char *  _end;
+	char *  _cur;
 };
 
-inline CStringStream::CStringStream(char * buf, int len)
+inline Log4zStream::Log4zStream(char * buf, int len)
 {
-	m_pBegin = buf;
-	m_pEnd = buf + len;
-	m_pCur = m_pBegin;
+	_begin = buf;
+	_end = buf + len;
+	_cur = _begin;
 }
 
 template<class T>
-inline CStringStream& CStringStream::WriteData(const char * ft, T t)
+inline Log4zStream& Log4zStream::writeData(const char * ft, T t)
 {
-	if (m_pCur < m_pEnd)
+	if (_cur < _end)
 	{
 		int len = 0;
-		int count = (int)(m_pEnd - m_pCur);
+		int count = (int)(_end - _cur);
 #ifdef WIN32
-		len = _snprintf(m_pCur, count, ft, t);
+		len = _snprintf(_cur, count, ft, t);
 		if (len == count || (len == -1 && errno == ERANGE))
 		{
 			len = count;
-			*(m_pEnd - 1) = '\0';
+			*(_end - 1) = '\0';
 		}
 		else if (len < 0)
 		{
-			*m_pCur = '\0';
+			*_cur = '\0';
 			len = 0;
 		}
 #else
-		len = snprintf(m_pCur, count, ft, t);
+		len = snprintf(_cur, count, ft, t);
 		if (len < 0)
 		{
-			*m_pCur = '\0';
+			*_cur = '\0';
 			len = 0;
 		}
 		else if (len >= count)
 		{
 			len = count;
-			*(m_pEnd - 1) = '\0';
+			*(_end - 1) = '\0';
 		}
 #endif
-		m_pCur += len;
+		_cur += len;
 	}
 	return *this;
 }
 
-inline CStringStream & CStringStream::WriteLongLong(long long t)
+inline Log4zStream & Log4zStream::writeLongLong(long long t)
 {
 #ifdef WIN32  
-	WriteData("%I64d", t);
+	writeData("%I64d", t);
 #else
-	WriteData("%lld", t);
+	writeData("%lld", t);
 #endif
 	return *this;
 }
 
-inline CStringStream & CStringStream::WriteULongLong(unsigned long long t)
+inline Log4zStream & Log4zStream::writeULongLong(unsigned long long t)
 {
 #ifdef WIN32  
-	WriteData("%I64u", t);
+	writeData("%I64u", t);
 #else
-	WriteData("%llu", t);
+	writeData("%llu", t);
 #endif
 	return *this;
 }
 
-inline CStringStream & CStringStream::WritePointer(const void * t)
+inline Log4zStream & Log4zStream::writePointer(const void * t)
 {
 #ifdef WIN32
-	sizeof(t) == 8 ? WriteData("%016I64x", (unsigned long long)t) : WriteData("%08I64x", (unsigned long long)t);
+	sizeof(t) == 8 ? writeData("%016I64x", (unsigned long long)t) : writeData("%08I64x", (unsigned long long)t);
 #else
-	sizeof(t) == 8 ? WriteData("%016llx", (unsigned long long)t) : WriteData("%08llx", (unsigned long long)t);
+	sizeof(t) == 8 ? writeData("%016llx", (unsigned long long)t) : writeData("%08llx", (unsigned long long)t);
 #endif
 	return *this;
 }
 
-inline CStringStream & CStringStream::WriteBinary(const BinaryBlock & t)
+inline Log4zStream & Log4zStream::writeBinary(const Log4zBinary & t)
 {
-	WriteData("%s", "\r\n\t[");
+	writeData("%s", "\r\n\t[");
 	for (int i = 0; i < t._len; i++)
 	{
 		if (i % 16 == 0)
 		{
-			WriteData("%s", "\r\n\t");
+			writeData("%s", "\r\n\t");
 			*this << (void*)(t._buf + i);
-			WriteData("%s", ": ");
+			writeData("%s", ": ");
 		}
-		WriteData("%02x ", (unsigned char)t._buf[i]);
+		writeData("%02x ", (unsigned char)t._buf[i]);
 	}
-	WriteData("%s", "\r\n\t]\r\n\t");
+	writeData("%s", "\r\n\t]\r\n\t");
 	return *this;
 }
 
-inline zsummer::log4z::CStringStream & zsummer::log4z::CStringStream::WriteWString(const wchar_t* t)
+inline zsummer::log4z::Log4zStream & zsummer::log4z::Log4zStream::writeWString(const wchar_t* t)
 {
 #ifdef WIN32
 	DWORD dwLen = WideCharToMultiByte(CP_ACP, 0, t, -1, NULL, 0, NULL, NULL);
@@ -600,7 +645,7 @@ inline zsummer::log4z::CStringStream & zsummer::log4z::CStringStream::WriteWStri
 		dwLen = WideCharToMultiByte(CP_ACP, 0, t, -1, &str[0], dwLen, NULL, NULL);
 		if (dwLen > 0)
 		{
-			WriteData("%s", str.c_str());
+			writeData("%s", str.c_str());
 		}
 	}
 #else

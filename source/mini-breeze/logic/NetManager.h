@@ -36,48 +36,47 @@ using namespace zsummer::mysql;
 
 
 
-class CNetManager :public Singleton<CNetManager>
+class NetManager :public Singleton<NetManager>
 {
 public:
-	CNetManager();
-	bool Start();
-	bool Stop();
+	NetManager();
+	bool start();
+	bool stop();
 
-	//in this method don't add/or del m_mapSession,m_mapCharInfo.
-	void CharLogin(std::shared_ptr<InnerCharInfo> iinfoPtr);
-	void CharLogout(std::shared_ptr<InnerCharInfo> iinfoPtr);
+	//in this method don't add/or del _mapSession,_mapCharInfo.
+	void charLogin(std::shared_ptr<InnerCharInfo> iinfoPtr);
+	void charLogout(std::shared_ptr<InnerCharInfo> iinfoPtr);
 
-	void event_OnSessionEstablished(SessionID);
-	void event_OnSessionDisconnect(SessionID);
-
-	void msg_SessionServerAuth(SessionID sID, ProtoID pID, ReadStreamPack &rs);
-
-
-	void msg_AuthReq(SessionID sID, ProtoID pID, ReadStreamPack & rs);
-	void db_AuthSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req);
-	void db_AccountSelect(DBResultPtr res, SessionID sID, AccountID accID, C2AS_AuthReq req);
+	void event_onSessionEstablished(SessionID);
+	void event_onSessionDisconnect(SessionID);
 
 
 
-	void msg_CharacterLoginReq(SessionID sID, ProtoID pID, ReadStreamPack &rs);
-	void msg_CharacterCreateReq(SessionID sID, ProtoID pID, ReadStreamPack &rs);
+	void msg_authReq(SessionID sID, ProtoID pID, ReadStreamPack & rs);
+	void db_authSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req);
+	void db_accountSelect(DBResultPtr res, SessionID sID, AccountID accID, C2AS_AuthReq req);
 
 
 
-	void event_OnSessionPulse(SessionID sID, unsigned int pulseInterval);
-	void msg_OnClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs);
+	void msg_characterLoginReq(SessionID sID, ProtoID pID, ReadStreamPack &rs);
+	void msg_characterCreateReq(SessionID sID, ProtoID pID, ReadStreamPack &rs);
+
+
+
+	void event_onSessionPulse(SessionID sID, unsigned int pulseInterval);
+	void msg_onClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs);
 
 private:
 	//
-	std::vector<CBaseHandler*> m_handlers;
+	std::vector<BaseHandler*> _handlers;
 
 	//
-	std::unordered_map<SessionID, std::shared_ptr<InnerCharInfo>> m_mapSession;
-	std::unordered_map<CharacterID, std::shared_ptr<InnerCharInfo>> m_mapCharInfo;
+	std::unordered_map<SessionID, std::shared_ptr<InnerCharInfo>> _mapSession;
+	std::unordered_map<CharacterID, std::shared_ptr<InnerCharInfo>> _mapCharInfo;
 
-	tagAcceptorConfigTraits m_configListen; 
-	bool m_bListening = false;
-	AccountID m_accepterID = InvalidAccepterID;
+	tagAcceptorConfigTraits _configListen; 
+	bool _bListening = false;
+	AccountID _accepterID = InvalidAccepterID;
 };
 
 

@@ -43,38 +43,38 @@ namespace zsummer
 {
 	namespace network
 	{
-		class CTcpAccept : public std::enable_shared_from_this<CTcpAccept>
+		class TcpAcceptImpl : public std::enable_shared_from_this<TcpAcceptImpl>
 		{
 		public:
-			CTcpAccept();
-			~CTcpAccept();
-			bool Initialize(ZSummerPtr summer);
-			bool OpenAccept(const char * ip, unsigned short port);
-			bool DoAccept(CTcpSocketPtr& s, const _OnAcceptHandler &handler);
-			bool OnIOCPMessage(BOOL bSuccess);
+			TcpAcceptImpl();
+			~TcpAcceptImpl();
+			bool initialize(ZSummerPtr& summer);
+			bool openAccept(const char * ip, unsigned short port);
+			bool doAccept(const TcpSocketPtr& s, _OnAcceptHandler &&handler);
+			bool onIOCPMessage(BOOL bSuccess);
 
 			//config
-			ZSummerPtr m_summer;
+			ZSummerPtr _summer;
 
 
-			std::string		m_ip;
-			unsigned short			m_port = 0;
+			std::string		_ip;
+			unsigned short	_port = 0;
 			//listen
-			SOCKET			m_server = INVALID_SOCKET;
-			SOCKADDR_IN		m_addr;
+			SOCKET			_server = INVALID_SOCKET;
+			SOCKADDR_IN		_addr;
 
 			//client
-			SOCKET m_socket = INVALID_SOCKET;
-			char m_recvBuf[200];
-			DWORD m_recvLen = 0;
-			tagReqHandle m_handle;
-			_OnAcceptHandler m_onAcceptHandler;
-			CTcpSocketPtr m_client;
+			SOCKET _socket = INVALID_SOCKET;
+			char _recvBuf[200];
+			DWORD _recvLen = 0;
+			tagReqHandle _handle;
+			_OnAcceptHandler _onAcceptHandler;
+			TcpSocketPtr _client;
 
 			//status
-			int m_nLinkStatus;
+			int _nLinkStatus;
 		};
-		typedef std::shared_ptr<CTcpAccept> CTcpAcceptPtr;
+		typedef std::shared_ptr<TcpAcceptImpl> TcpAcceptPtr;
 
 	}
 

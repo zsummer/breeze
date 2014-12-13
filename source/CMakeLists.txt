@@ -1,15 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(breeze)
 
-
-include_directories(/boost/include)
-link_directories(/boost/lib)
-
-
-
 include_directories(${breeze_SOURCE_DIR}/../depends_linux/include)
-include_directories(${breeze_SOURCE_DIR}/../protocol/in/C++)
-include_directories(${breeze_SOURCE_DIR}/../protocol/out/C++)
+include_directories(${breeze_SOURCE_DIR}/../depends_linux/include/mysqlclient)
+include_directories(${breeze_SOURCE_DIR}/../protocol/C++)
 include_directories(${breeze_SOURCE_DIR}/common)
 
 link_directories(${breeze_SOURCE_DIR}/../depends_linux/lib/)
@@ -45,9 +39,6 @@ endif(WIN32)
 
 
 add_subdirectory(common)
-add_subdirectory(agent)
-add_subdirectory(auth)
-add_subdirectory(center)
-add_subdirectory(logic)
+add_subdirectory(mini-breeze)
 add_subdirectory(stressTest)
 

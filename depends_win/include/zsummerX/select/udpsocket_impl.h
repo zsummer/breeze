@@ -47,24 +47,24 @@ namespace zsummer
 	namespace network
 	{
 
-		class CUdpSocket : public std::enable_shared_from_this<CUdpSocket>
+		class UdpSocketImpl : public std::enable_shared_from_this<UdpSocketImpl>
 		{
 		public:
 			// const char * remoteIP, unsigned short remotePort, nTranslate
-			CUdpSocket();
-			~CUdpSocket();
-			bool Initialize(const ZSummerPtr& summer, const char *localIP, unsigned short localPort);
-			bool DoRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler && handler);
-			bool DoSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
-			bool OnSelectMessage(int type, bool rd, bool wt);
+			UdpSocketImpl();
+			~UdpSocketImpl();
+			bool initialize(const ZSummerPtr& summer, const char *localIP, unsigned short localPort);
+			bool doRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler && handler);
+			bool doSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
+			bool onSelectMessage(int type, bool rd, bool wt);
 		public:
-			ZSummerPtr m_summer;
-			tagRegister m_register;
-			_OnRecvFromHandler m_onRecvFromHandler;
-			unsigned int m_iRecvLen;
-			char	*	 m_pRecvBuf;
+			ZSummerPtr _summer;
+			tagRegister _register;
+			_OnRecvFromHandler _onRecvFromHandler;
+			unsigned int _iRecvLen;
+			char	*	 _pRecvBuf;
 		};
-		typedef std::shared_ptr<CUdpSocket> CUdpSocketPtr;
+		typedef std::shared_ptr<UdpSocketImpl> UdpSocketPtr;
 	}
 
 }

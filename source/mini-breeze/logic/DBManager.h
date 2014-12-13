@@ -33,22 +33,22 @@
 
 
 
-class CDBManager :public CBaseHandler, public Singleton<CDBManager>
+class DBManager :public BaseHandler, public Singleton<DBManager>
 {
 public:
-	CDBManager();
-	~CDBManager();
-	virtual bool Init() final override;
-	virtual void CharLogin(std::shared_ptr<InnerCharInfo> iinfoPtr) final override;
-	virtual void CharLogout(std::shared_ptr<InnerCharInfo> iinfoPtr) final override;
+	DBManager();
+	~DBManager();
+	virtual bool init() final override;
+	virtual void charLogin(std::shared_ptr<InnerCharInfo> iinfoPtr) final override;
+	virtual void charLogout(std::shared_ptr<InnerCharInfo> iinfoPtr) final override;
 public:
-	inline DBHelperPtr & getAuthDB(){ return m_authDB; }
-	inline DBHelperPtr & getInfoDB(){ return m_infoDB; }
-	inline DBHelperPtr & getLogDB(){ return m_logDB; }
+	inline DBHelperPtr & getAuthDB(){ return _authDB; }
+	inline DBHelperPtr & getInfoDB(){ return _infoDB; }
+	inline DBHelperPtr & getLogDB(){ return _logDB; }
 private:
-	DBHelperPtr m_infoDB;
-	DBHelperPtr m_logDB;
-	DBHelperPtr m_authDB;
+	DBHelperPtr _infoDB;
+	DBHelperPtr _logDB;
+	DBHelperPtr _authDB;
 };
 
 

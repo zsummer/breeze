@@ -49,37 +49,37 @@ namespace zsummer
 			typedef std::vector<void*> MessageStack;
 			ZSummer(){}
 			~ZSummer(){}
-			bool Initialize();
-			void RunOnce();
+			bool initialize();
+			void runOnce();
 
 			template <typename handle>
-			inline void Post(handle &&h)
+			inline void post(handle &&h)
 			{
 				PostMessage(std::move(h));
 			}
-			inline unsigned long long CreateTimer(unsigned int delayms, _OnTimerHandler &&handle)
+			inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle)
 			{
-				return m_timer.CreateTimer(delayms, std::move(handle));
+				return _timer.createTimer(delayms, std::move(handle));
 			}
-			inline bool CancelTimer(unsigned long long timerID)
+			inline bool cancelTimer(unsigned long long timerID)
 			{
-				return m_timer.CancelTimer(timerID);
+				return _timer.cancelTimer(timerID);
 			}
 
 		public:
-			bool RegisterEvent(int op/* 0 add,  1 mod, 2 del*/, tagRegister &reg);
+			bool registerEvent(int op/* 0 add,  1 mod, 2 del*/, tagRegister &reg);
 			void PostMessage(_OnPostHandler &&handle);
 		private:
-			std::string ZSummerSection();
+			std::string zsummerSection();
 		private:
 			//线程消息
-			SOCKET		m_sockpair[2];
-			PoolReggister m_poolRegister;
-			MessageStack m_stackMessages;
-			std::mutex	 m_stackMessagesLock;
+			SOCKET		_sockpair[2];
+			PoolReggister _poolRegister;
+			MessageStack _stackMessages;
+			std::mutex	 _stackMessagesLock;
 
 			//! timmer
-			CTimer m_timer;
+			Timer _timer;
 		};
 		typedef std::shared_ptr<ZSummer> ZSummerPtr;
 	}

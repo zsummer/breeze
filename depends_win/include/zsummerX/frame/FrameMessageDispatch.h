@@ -42,69 +42,69 @@
 #include <zsummerX/frame/FrameHeader.h>
 
 
-class CMessageDispatcher
+class MessageDispatcher
 {
 private:
-	CMessageDispatcher(){}
+	MessageDispatcher(){}
 	typedef std::unordered_map<ProtoID, std::vector<OnMessageFunction> > MapProtoDispatch;
 public:
-	static CMessageDispatcher & getRef();
-	static CMessageDispatcher * getPtr(){ return &getRef(); }
-	~CMessageDispatcher(){};
+	static MessageDispatcher & getRef();
+	inline static MessageDispatcher * getPtr(){ return &getRef(); }
+	~MessageDispatcher(){};
 
 	//message
-	inline void RegisterSessionOrgMessage(const OnOrgMessageFunction & msgfun){ m_vctOrgSessionDispatch.push_back(msgfun); }
-	inline void RegisterSessionMessage(ProtoID protocolID, const OnMessageFunction & msgfun){ m_mapSessionDispatch[protocolID].push_back(msgfun); }
-	inline void RegisterSessionDefaultMessage(const OnMessageFunction & msgfun){ m_vctDefaultSessionDispatch.push_back(msgfun); }
+	inline void registerSessionOrgMessage(const OnOrgMessageFunction & msgfun){ _vctOrgSessionDispatch.push_back(msgfun); }
+	inline void registerSessionMessage(ProtoID protocolID, const OnMessageFunction & msgfun){ _mapSessionDispatch[protocolID].push_back(msgfun); }
+	inline void registerSessionDefaultMessage(const OnMessageFunction & msgfun){ _vctDefaultSessionDispatch.push_back(msgfun); }
 
-	//event. can use method IsSessionID or IsConnectID to resolution who is the sessionID
-	inline void RegisterOnSessionEstablished(const OnSessionEstablished & fun){m_vctOnSessionEstablished.push_back(fun); }
-	inline void RegisterOnSessionDisconnect(const OnSessionDisconnect & fun){ m_vctOnSessionDisconnect.push_back(fun); }
+	//event. can use method isSessionID or isConnectID to resolution who is the sessionID
+	inline void registerOnSessionEstablished(const OnSessionEstablished & fun){_vctOnSessionEstablished.push_back(fun); }
+	inline void registerOnSessionDisconnect(const OnSessionDisconnect & fun){ _vctOnSessionDisconnect.push_back(fun); }
 
 	//heartbeat
-	inline void RegisterOnSessionPulse(const OnSessionPulseTimer & fun) { m_vctOnSessionPulse.push_back(fun); }
+	inline void registerOnSessionPulse(const OnSessionPulseTimer & fun) { _vctOnSessionPulse.push_back(fun); }
 	//http
-	inline void RegisterOnSessionHTTPMessage(const OnHTTPMessageFunction & fun) { m_vctSessionHTTPMessage.push_back(fun); }
+	inline void registerOnSessionHTTPMessage(const OnHTTPMessageFunction & fun) { _vctSessionHTTPMessage.push_back(fun); }
 
 public:
-	inline bool DispatchOrgSessionMessage(SessionID sID, const char * blockBegin, FrameStreamTraits::Integer blockSize);
-	inline void DispatchSessionMessage(SessionID sID, ProtoID pID, ReadStreamPack & msg);
-	inline void DispatchOnSessionEstablished(SessionID sID);
-	inline void DispatchOnSessionDisconnect(SessionID sID);
-	inline void DispatchOnSessionPulse(SessionID sID, unsigned int pulseInterval);
-	inline bool DispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body);
+	inline bool dispatchOrgSessionMessage(SessionID sID, const char * blockBegin, FrameStreamTraits::Integer blockSize);
+	inline void dispatchSessionMessage(SessionID sID, ProtoID pID, ReadStreamPack & msg);
+	inline void dispatchOnSessionEstablished(SessionID sID);
+	inline void dispatchOnSessionDisconnect(SessionID sID);
+	inline void dispatchOnSessionPulse(SessionID sID, unsigned int pulseInterval);
+	inline bool dispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body);
 
 	private:
 		//!message
-		MapProtoDispatch m_mapSessionDispatch;
-		std::vector<OnOrgMessageFunction> m_vctOrgSessionDispatch;
-		std::vector<OnMessageFunction> m_vctDefaultSessionDispatch;
+		MapProtoDispatch _mapSessionDispatch;
+		std::vector<OnOrgMessageFunction> _vctOrgSessionDispatch;
+		std::vector<OnMessageFunction> _vctDefaultSessionDispatch;
 
 		//http
-		std::vector<OnHTTPMessageFunction> m_vctSessionHTTPMessage;
+		std::vector<OnHTTPMessageFunction> _vctSessionHTTPMessage;
 
 		//event
-		std::vector<OnSessionEstablished> m_vctOnSessionEstablished;
-		std::vector<OnSessionDisconnect> m_vctOnSessionDisconnect;
+		std::vector<OnSessionEstablished> _vctOnSessionEstablished;
+		std::vector<OnSessionDisconnect> _vctOnSessionDisconnect;
 
-		std::vector<OnSessionPulseTimer> m_vctOnSessionPulse;
+		std::vector<OnSessionPulseTimer> _vctOnSessionPulse;
 };
 
 
 
 
-inline bool CMessageDispatcher::DispatchOrgSessionMessage(SessionID sID, const char * blockBegin, FrameStreamTraits::Integer blockSize)
+inline bool MessageDispatcher::dispatchOrgSessionMessage(SessionID sID, const char * blockBegin, FrameStreamTraits::Integer blockSize)
 {
-	if (m_vctOrgSessionDispatch.empty())
+	if (_vctOrgSessionDispatch.empty())
 	{
 		return true;
 	}
 
 	try
 	{
-		for (auto & fun : m_vctOrgSessionDispatch)
+		for (auto & fun : _vctOrgSessionDispatch)
 		{
-			LCT("Entry DispatchOrgSessionMessage  SessionID=" << sID << ", blockSize=" << blockSize);
+			LCT("Entry dispatchOrgSessionMessage  SessionID=" << sID << ", blockSize=" << blockSize);
 			if (!fun(sID, blockBegin, blockSize))
 			{
 				return false;
@@ -113,158 +113,158 @@ inline bool CMessageDispatcher::DispatchOrgSessionMessage(SessionID sID, const c
 	}
 	catch (std::runtime_error e)
 	{
-		LCE("Leave DispatchOrgSessionMessage With Runtime Error:  SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
+		LCE("Leave dispatchOrgSessionMessage With Runtime Error:  SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
 		return false;
 	}
 	catch (...)
 	{
-		LCE("Leave DispatchOrgSessionMessage With Unknown Runtime Error: SessionID=" << sID);
+		LCE("Leave dispatchOrgSessionMessage With Unknown Runtime Error: SessionID=" << sID);
 		return false;
 	}
 	return true;
 }
 
-inline void CMessageDispatcher::DispatchSessionMessage(SessionID sID, ProtoID pID, ReadStreamPack & msg)
+inline void MessageDispatcher::dispatchSessionMessage(SessionID sID, ProtoID pID, ReadStreamPack & msg)
 {
-	MapProtoDispatch::iterator iter = m_mapSessionDispatch.find(pID);
-	if ((iter == m_mapSessionDispatch.end() || iter->second.empty()) && m_vctDefaultSessionDispatch.empty())
+	MapProtoDispatch::iterator iter = _mapSessionDispatch.find(pID);
+	if ((iter == _mapSessionDispatch.end() || iter->second.empty()) && _vctDefaultSessionDispatch.empty())
 	{
-		LCE("Entry DispatchSessionMessage[" << pID << "] Failed: UNKNOWN ProtoID.  SessionID=" << sID << ", ProtoID=" << pID);
+		LCE("Entry dispatchSessionMessage[" << pID << "] Failed: UNKNOWN ProtoID.  SessionID=" << sID << ", ProtoID=" << pID);
 		return;
 	}
 	try
 	{
-		if (iter != m_mapSessionDispatch.end() && !iter->second.empty())
+		if (iter != _mapSessionDispatch.end() && !iter->second.empty())
 		{
 			for (auto & fun : iter->second)
 			{
-				LCT("Entry DispatchSessionMessage[" << pID << "]  SessionID=" << sID);
-				msg.ResetMoveCursor();
+				LCT("Entry dispatchSessionMessage[" << pID << "]  SessionID=" << sID);
+				msg.resetMoveCursor();
 				msg >> pID;
 				fun(sID, pID, msg);
 			}	
 		}
 		else
 		{
-			for (auto & fun : m_vctDefaultSessionDispatch)
+			for (auto & fun : _vctDefaultSessionDispatch)
 			{
-				msg.ResetMoveCursor();
+				msg.resetMoveCursor();
 				msg >> pID;
 				fun(sID, pID, msg);
 			}
 		}
-		LCT("Leave DispatchSessionMessage[" << pID << "]  SessionID=" << sID);
+		LCT("Leave dispatchSessionMessage[" << pID << "]  SessionID=" << sID);
 	}
 	catch (std::runtime_error e)
 	{
-		LCE("Leave DispatchSessionMessage[" << pID << "] With Runtime Error: SessionID=" << sID << ", rsLen=" << msg.GetStreamLen() << ", Error Message=\"" << e.what() << "\"");
+		LCE("Leave dispatchSessionMessage[" << pID << "] With Runtime Error: SessionID=" << sID << ", rsLen=" << msg.getStreamLen() << ", Error Message=\"" << e.what() << "\"");
 	}
 	catch (...)
 	{
-		LCE("Leave DispatchSessionMessage[" << pID << "] With Unknown Runtime Error: SessionID=" << sID);
+		LCE("Leave dispatchSessionMessage[" << pID << "] With Unknown Runtime Error: SessionID=" << sID);
 	}
 }
 
 
-inline void CMessageDispatcher::DispatchOnSessionEstablished(SessionID sID)
+inline void MessageDispatcher::dispatchOnSessionEstablished(SessionID sID)
 {
-	if (m_vctOnSessionEstablished.empty())
+	if (_vctOnSessionEstablished.empty())
 	{
 		return;
 	}
-	for (auto &fun : m_vctOnSessionEstablished)
+	for (auto &fun : _vctOnSessionEstablished)
 	{
 		try
 		{
-			LCT("Entry DispatchOnSessionEstablished SessionID=" << sID);
+			LCT("Entry dispatchOnSessionEstablished SessionID=" << sID);
 			fun(sID);
-			LCT("Leave DispatchOnSessionEstablished SessionID=" << sID);
+			LCT("Leave dispatchOnSessionEstablished SessionID=" << sID);
 		}
 
 		catch (std::runtime_error e)
 		{
-			LCE("Leave DispatchOnSessionEstablished Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
+			LCE("Leave dispatchOnSessionEstablished Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
 		}
 		catch (...)
 		{
-			LCE("Leave DispatchOnSessionEstablished Unknown Runtime Error: SessionID=" << sID);
+			LCE("Leave dispatchOnSessionEstablished Unknown Runtime Error: SessionID=" << sID);
 		}
 	}
 
 
 }
-inline void CMessageDispatcher::DispatchOnSessionDisconnect(SessionID sID)
+inline void MessageDispatcher::dispatchOnSessionDisconnect(SessionID sID)
 {
-	if (m_vctOnSessionDisconnect.empty())
+	if (_vctOnSessionDisconnect.empty())
 	{
 		return;
 	}
-	for (auto & fun : m_vctOnSessionDisconnect)
+	for (auto & fun : _vctOnSessionDisconnect)
 	{
 		try
 		{
-			LCT("Entry DispatchOnSessionDisconnect SessionID=" << sID);
+			LCT("Entry dispatchOnSessionDisconnect SessionID=" << sID);
 			fun(sID);
-			LCT("Leave DispatchOnSessionDisconnect SessionID=" << sID);
+			LCT("Leave dispatchOnSessionDisconnect SessionID=" << sID);
 		}
 		catch (std::runtime_error e)
 		{
-			LCE("Leave DispatchOnSessionDisconnect Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
+			LCE("Leave dispatchOnSessionDisconnect Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
 		}
 		catch (...)
 		{
-			LCE("Leave DispatchOnSessionDisconnect Unknown Runtime Error: SessionID=" << sID);
+			LCE("Leave dispatchOnSessionDisconnect Unknown Runtime Error: SessionID=" << sID);
 		}
 	}
 }
 
 
-inline void CMessageDispatcher::DispatchOnSessionPulse(SessionID sID, unsigned int pulseInterval)
+inline void MessageDispatcher::dispatchOnSessionPulse(SessionID sID, unsigned int pulseInterval)
 {
-	if (m_vctOnSessionPulse.empty())
+	if (_vctOnSessionPulse.empty())
 	{
 		return;
 	}
-	for (auto & fun : m_vctOnSessionPulse)
+	for (auto & fun : _vctOnSessionPulse)
 	{
 		try
 		{
-			LCT("Entry DispatchOnSessionPulse SessionID=" << sID);
+			LCT("Entry dispatchOnSessionPulse SessionID=" << sID);
 			fun(sID, pulseInterval);
-			LCT("Leave DispatchOnSessionPulse SessionID=" << sID);
+			LCT("Leave dispatchOnSessionPulse SessionID=" << sID);
 		}
 		catch (std::runtime_error e)
 		{
-			LCE("Leave DispatchOnSessionPulse Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
+			LCE("Leave dispatchOnSessionPulse Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
 		}
 		catch (...)
 		{
-			LCE("Leave DispatchOnSessionPulse Unknown Runtime Error: SessionID=" << sID);
+			LCE("Leave dispatchOnSessionPulse Unknown Runtime Error: SessionID=" << sID);
 		}
 	}
 }
 
 
-inline bool  CMessageDispatcher::DispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body)
+inline bool  MessageDispatcher::dispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body)
 {
 	try
 	{
-		for (auto & fun : m_vctSessionHTTPMessage)
+		for (auto & fun : _vctSessionHTTPMessage)
 		{
-			LCT("Entry DispatchSessionHTTPMessage  SessionID=" << sID << ", commond=" << commonLine.first << ", commondValue=" << commonLine.second
+			LCT("Entry dispatchSessionHTTPMessage  SessionID=" << sID << ", commond=" << commonLine.first << ", commondValue=" << commonLine.second
 				<< ", head count=" << head.size() << ", bodySize=" << body.length());
 			fun(sID, commonLine, head, body);
-			LCT("Leave DispatchSessionHTTPMessage  SessionID=" << sID);
+			LCT("Leave dispatchSessionHTTPMessage  SessionID=" << sID);
 		}
 		return true;
 	}
 	catch (std::runtime_error e)
 	{
-		LCE("Leave DispatchSessionHTTPMessage With Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
+		LCE("Leave dispatchSessionHTTPMessage With Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
 	}
 	catch (...)
 	{
-		LCE("Leave DispatchSessionHTTPMessage With Unknown Runtime Error: SessionID=" << sID);
+		LCE("Leave dispatchSessionHTTPMessage With Unknown Runtime Error: SessionID=" << sID);
 	}
 	return false;
 }

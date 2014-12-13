@@ -39,71 +39,74 @@
 #define ZSUMMER_TCPSESSION_MANAGER_H_
 
 #include "FrameHeader.h"
-class CTcpSession;
-typedef  std::shared_ptr<CTcpSession> CTcpSessionPtr;
+class TcpSession;
+typedef  std::shared_ptr<TcpSession> CTcpSessionPtr;
 
-class CTcpSessionManager
+class TcpSessionManager
 {
 private:
-	CTcpSessionManager();
+	TcpSessionManager();
 
 public://!get the single and global object pointer   
-	static CTcpSessionManager & getRef();
-	static CTcpSessionManager * getPtr(){ return &getRef(); };
+	static TcpSessionManager & getRef();
+	inline static TcpSessionManager * getPtr(){ return &getRef(); };
 public:
-	bool Start();
-	void Stop();
-	void Run();
+	bool start();
+	void stop();
+	void run();
 
 public:
 	//handle: std::function<void()>
 	//switch initiative, in the multi-thread it's switch call thread simultaneously.
 	template<class H>
-	void Post(const H &h){ m_summer->Post(h); }
+	void post(H &&h){ _summer->post(std::move(h)); }
 
 public:
 	template <class H>
-	zsummer::network::TimerID CreateTimer(unsigned int delayms, const H &h){ return m_summer->CreateTimer(delayms, h); }
-	bool CancelTimer(unsigned long long timerID){ return m_summer->CancelTimer(timerID); }
+	zsummer::network::TimerID createTimer(unsigned int delayms, H &&h){ return _summer->createTimer(delayms, std::move(h)); }
+	bool cancelTimer(unsigned long long timerID){ return _summer->cancelTimer(timerID); }
 
 public:
 	//! add acceptor under the configure.
-	AccepterID AddAcceptor(const tagAcceptorConfigTraits &traits);
+	AccepterID addAcceptor(const tagAcceptorConfigTraits &traits);
+	AccepterID getAccepterID(SessionID sID);
 
 	//! add connector under the configure.
-	SessionID AddConnector(const tagConnctorConfigTraits & traits);
+	SessionID addConnector(const tagConnctorConfigTraits & traits);
 
 public:
 	//send original data. can repeat call because it's used send queue in internal implementation.
-	void SendOrgSessionData(SessionID sID, const char * orgData, unsigned int orgDataLen);
+	void sendOrgSessionData(SessionID sID, const char * orgData, unsigned int orgDataLen);
 	//send LCIc data with protocol id 
-	void SendSessionData(SessionID sID, ProtoID pID, const char * userData, unsigned int userDataLen);
+	void sendSessionData(SessionID sID, ProtoID pID, const char * userData, unsigned int userDataLen);
 
 	//close session socket.
-	void KickSession(SessionID sID);
+	void kickSession(SessionID sID);
+
+
 
 private:
-	void SafeStop();
-	friend class CTcpSession;
+	void safeStop();
+	friend class TcpSession;
 	// socket(from accept) on close 
-	void OnSessionClose(AccepterID aID, SessionID sID);
+	void onSessionClose(AccepterID aID, SessionID sID);
 	// socket(from connect) on close 
-	void OnConnect(SessionID cID, bool bConnected, CTcpSessionPtr session);
-	void OnAcceptNewClient(zsummer::network::ErrorCode ec, CTcpSocketPtr s, CTcpAcceptPtr accepter, AccepterID aID);
+	void onConnect(SessionID cID, bool bConnected, const CTcpSessionPtr &session);
+	void onAcceptNewClient(zsummer::network::ErrorCode ec, const TcpSocketPtr & s, const TcpAcceptPtr & accepter, AccepterID aID);
 private:
-	ZSummerPtr m_summer;
-	bool  m_bRunning = true;
-	unsigned int  m_onlineConnectCounts = 0;//counts online connect when zsummerx will exit
+	ZSummerPtr _summer;
+	bool  _running = true;
+	unsigned int  _onlineConnectCounts = 0;//counts online connect when zsummerx will exit
 
-	SessionID m_lastAcceptID = 0; //accept ID sequence. range  [0 - -1)
-	SessionID m_lastSessionID = 0;//session ID sequence. range  [0 - __MIDDLE_SEGMENT_VALUE)
-	SessionID m_lastConnectID = 0;//connect ID sequence. range  [__MIDDLE_SEGMENT_VALUE - -1)
+	SessionID _lastAcceptID = 0; //accept ID sequence. range  [0 - -1)
+	SessionID _lastSessionID = 0;//session ID sequence. range  [0 - __MIDDLE_SEGMENT_VALUE)
+	SessionID _lastConnectID = 0;//connect ID sequence. range  [__MIDDLE_SEGMENT_VALUE - -1)
 
-	std::unordered_map<AccepterID, CTcpAcceptPtr> m_mapAccepterPtr;
-	std::unordered_map<SessionID, CTcpSessionPtr> m_mapTcpSessionPtr;
+	std::unordered_map<AccepterID, TcpAcceptPtr> _mapAccepterPtr;
+	std::unordered_map<SessionID, CTcpSessionPtr> _mapTcpSessionPtr;
 
-	std::unordered_map<SessionID, std::pair<tagConnctorConfigTraits, tagConnctorInfo> > m_mapConnectorConfig;
-	std::unordered_map<AccepterID, std::pair<tagAcceptorConfigTraits, tagAcceptorInfo> > m_mapAccepterConfig;
+	std::unordered_map<SessionID, std::pair<tagConnctorConfigTraits, tagConnctorInfo> > _mapConnectorConfig;
+	std::unordered_map<AccepterID, std::pair<tagAcceptorConfigTraits, tagAcceptorInfo> > _mapAccepterConfig;
 public:
 };
 

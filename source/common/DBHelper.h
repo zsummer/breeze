@@ -44,8 +44,8 @@ namespace  zsummer
 		};
 		
 
-		inline std::string EscapeString(const char * orgBuff, size_t lenght);
-		inline std::string EscapeString(const std::string &orgField){ return EscapeString(orgField.c_str(), orgField.length()); }
+		inline std::string escapeString(const char * orgBuff, size_t lenght);
+		inline std::string escapeString(const std::string &orgField){ return escapeString(orgField.c_str(), orgField.length()); }
 		
 		class DBResult : public std::enable_shared_from_this<DBResult>
 		{
@@ -53,20 +53,20 @@ namespace  zsummer
 			DBResult(){}
 			~DBResult(){}
 		public:
-			inline QueryErrorCode GetErrorCode(){ return m_ec; }
-			inline std::string GetLastError(){ return m_lastErrorMsg; }
-			inline unsigned long long GetAffectedRows(){ return m_affectedRows; }
-			inline bool HaveRow(){ return m_curIter != m_result.end(); }
-			const std::string & SQLString(){ return m_sql; }
+			inline QueryErrorCode getErrorCode(){ return _ec; }
+			inline std::string getLastError(){ return _lastErrorMsg; }
+			inline unsigned long long getAffectedRows(){ return _affectedRows; }
+			inline bool haveRow(){ return _curIter != _result.end(); }
+			const std::string & SQLString(){ return _sql; }
 			template<class T>
-			inline DBResult & operator >>(T & t){t = _FromeString<T>(ExtractOneField());return *this;}
+			inline DBResult & operator >>(T & t){t = _fromeString<T>(extractOneField());return *this;}
 
 		public:
-			void _SetQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db);
+			void _setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db);
 		private:
-			const std::string& ExtractOneField();
+			const std::string& extractOneField();
 			template<class RET>
-			inline RET _FromeString(const std::string& field)
+			inline RET _fromeString(const std::string& field)
 			{
 				std::stringstream ss(field);
 				RET ret;
@@ -74,26 +74,26 @@ namespace  zsummer
 				return std::move(ret);
 			}
 			template<class T>
-			inline std::string _ToString(const T & t)
+			inline std::string _toString(const T & t)
 			{
 				std::stringstream ss;
 				ss << t;
 				return ss.str();
 			}
 		private:
-			QueryErrorCode m_ec = QueryErrorCode::QEC_UNQUERY;
+			QueryErrorCode _ec = QueryErrorCode::QEC_UNQUERY;
 			//sql
-			std::string m_sql;
+			std::string _sql;
 			//error
-			std::string m_lastErrorMsg;
+			std::string _lastErrorMsg;
 
 			//res
-			unsigned long long m_affectedRows = 0;
+			unsigned long long _affectedRows = 0;
 
 			typedef std::list<std::vector<std::string> > MysqlResult;
-			MysqlResult m_result;
-			MysqlResult::iterator m_curIter = m_result.begin();
-			unsigned int m_fieldCursor = 0;
+			MysqlResult _result;
+			MysqlResult::iterator _curIter = _result.begin();
+			unsigned int _fieldCursor = 0;
 			
 			
 
@@ -107,50 +107,50 @@ namespace  zsummer
 		{
 		public:
 			DBHelper(){}
-			~DBHelper(){if (m_mysql){ mysql_close(m_mysql); m_mysql = nullptr; } }
-			inline void Init(const DBConfig & dbconfig){ m_config = dbconfig; }
-			inline bool Connect();
-			bool WaitEnable();
-			DBResultPtr Query(const std::string & sql);
+			~DBHelper(){if (_mysql){ mysql_close(_mysql); _mysql = nullptr; } }
+			inline void init(const DBConfig & dbconfig){ _config = dbconfig; }
+			bool connect();
+			bool waitEnable();
+			DBResultPtr query(const std::string & sql);
 		public:
-			void Stop(){ m_isRuning = false; }
+			void stop(){ _isRuning = false; }
 		private:
 			DBHelper(const DBHelper &) = delete;
-			MYSQL * m_mysql = nullptr;
-			DBConfig m_config;
-			bool  m_isRuning = true;
+			MYSQL * _mysql = nullptr;
+			DBConfig _config;
+			bool  _isRuning = true;
 		};
 		typedef std::shared_ptr<DBHelper> DBHelperPtr;
 
 
 
 
-		class CDBAsync : public Singleton<CDBAsync>
+		class DBAsync : public Singleton<DBAsync>
 		{
 		public:
-			CDBAsync();
-			~CDBAsync();
-			bool Start();
-			bool Stop();
+			DBAsync();
+			~DBAsync();
+			bool start();
+			bool stop();
 		public:
 
-			inline const std::atomic_ullong & getPostCount(){ return m_uPostCount; }
-			inline const std::atomic_ullong & getFinalCount(){ return m_uFinalCount; }
+			inline const std::atomic_ullong & getPostCount(){ return _uPostCount; }
+			inline const std::atomic_ullong & getFinalCount(){ return _uFinalCount; }
 		public:
-			void async_query(DBHelperPtr &dbhelper, const string &sql,
+			void asyncQuery(DBHelperPtr &dbhelper, const string &sql,
 				const std::function<void(DBResultPtr)> & handler);
 		protected:
-			void _async_query(DBHelperPtr &dbhelper, const string &sql,
+			void _asyncQuery(DBHelperPtr &dbhelper, const string &sql,
 				const std::function<void(DBResultPtr)> & handler);
 
-			inline void Run();
+			inline void run();
 
 		private:
-			std::shared_ptr<std::thread> m_thread;
-			zsummer::network::ZSummerPtr m_summer;
-			bool m_bRuning = false;
-			std::atomic_ullong m_uPostCount;
-			std::atomic_ullong m_uFinalCount;
+			std::shared_ptr<std::thread> _thread;
+			zsummer::network::ZSummerPtr _summer;
+			bool _bRuning = false;
+			std::atomic_ullong _uPostCount;
+			std::atomic_ullong _uFinalCount;
 		};
 
 
@@ -165,7 +165,7 @@ namespace  zsummer
 
 
 
-		inline std::string EscapeString(const char * orgBuff, size_t lenght)
+		inline std::string escapeString(const char * orgBuff, size_t lenght)
 		{
 			std::string ret;
 			if (lenght == 0)

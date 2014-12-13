@@ -196,37 +196,37 @@ enum ParseCode
 class genProto
 {
 	//init
-	std::string m_fileName;
-	std::string m_fileConfigAttr = ".xml";
-	std::string m_fileCacheAttr = ".xml.cache";
+	std::string _fileName;
+	std::string _fileConfigAttr = ".xml";
+	std::string _fileCacheAttr = ".xml.cache";
 
 	//cache data
-	unsigned short m_curNo = 0;
-	std::string m_md5;
+	unsigned short _curNo = 0;
+	std::string _md5;
 	struct DataCache
 	{
 		std::string protoName;
 		unsigned int protoValue;
 	};
-	std::map<std::string, DataCache> m_mapCacheNo;
+	std::map<std::string, DataCache> _mapCacheNo;
 
 	//xml data
-	unsigned short m_minNo = 0;
-	unsigned short m_maxNo = 0;
-	std::vector<StoreInfo> m_vctStoreInfo;
+	unsigned short _minNo = 0;
+	unsigned short _maxNo = 0;
+	std::vector<StoreInfo> _vctStoreInfo;
 
 public:
 	//filename without suffix
-	genProto(std::string filename){	m_fileName = filename;}
+	genProto(std::string filename){	_fileName = filename;}
 
 	//parse cache
-	ParseCode ParseCache();
+	ParseCode parseCache();
 	//parse config
-	ParseCode ParseConfig();
+	ParseCode parseConfig();
 	//gen code
-	ParseCode GenCode();
+	ParseCode genCode();
 	//write cache
-	ParseCode WriteCache();
+	ParseCode writeCache();
 };
 
 

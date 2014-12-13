@@ -49,36 +49,36 @@ void MonitorFunc()
 	LOGI("per seconds Echos Count=" << (g_totalEchoCount - g_lastEchoCount) / 5
 		<< ", g_totalSendCount[" << g_totalSendCount << "] g_totalRecvCount[" << g_totalRecvCount << "]");
 	g_lastEchoCount = g_totalEchoCount;
-	CTcpSessionManager::getRef().CreateTimer(5000, MonitorFunc);
+	TcpSessionManager::getRef().createTimer(5000, MonitorFunc);
 };
 
 
-class CStressHeartBeatManager
+class StressHeartbeatManager
 {
 public:
-	CStressHeartBeatManager()
+	StressHeartbeatManager()
 	{
 		//! 注册事件和消息
-		CMessageDispatcher::getRef().RegisterOnSessionEstablished(std::bind(&CStressHeartBeatManager::OnSessionEstablished, this,
+		MessageDispatcher::getRef().registerOnSessionEstablished(std::bind(&StressHeartbeatManager::onSessionEstablished, this,
 			std::placeholders::_1));
-		CMessageDispatcher::getRef().RegisterOnSessionPulse(std::bind(&CStressHeartBeatManager::OnSessionPulse, this,
+		MessageDispatcher::getRef().registerOnSessionPulse(std::bind(&StressHeartbeatManager::onSessionPulse, this,
 			std::placeholders::_1, std::placeholders::_2));
-		CMessageDispatcher::getRef().RegisterOnSessionDisconnect(std::bind(&CStressHeartBeatManager::OnSessionDisconnect, this,
+		MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&StressHeartbeatManager::onSessionDisconnect, this,
 			std::placeholders::_1));
 	}
 	
-	void OnSessionEstablished(SessionID sID)
+	void onSessionEstablished(SessionID sID)
 	{
 		LOGI("connect sucess. sID=" << sID);
 	}
-	void OnSessionPulse(SessionID sID, unsigned int pulseInterval)
+	void onSessionPulse(SessionID sID, unsigned int pulseInterval)
 	{
 		WriteStreamPack ws;
 		ws << ID_C2AS_ClientPulse << C2AS_ClientPulse();
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		g_totalSendCount++;
 	}
-	void OnSessionDisconnect(SessionID sID)
+	void onSessionDisconnect(SessionID sID)
 	{
 		LOGI("Disconnect. sID=" << sID);
 	}
@@ -86,24 +86,24 @@ public:
 
 
 
-class CStressClientHandler
+class StressClientHandler
 {
 public:
-	CStressClientHandler()
+	StressClientHandler()
 	{
-		CMessageDispatcher::getRef().RegisterOnSessionEstablished(std::bind(&CStressClientHandler::OnConnected, this, std::placeholders::_1));
-		CMessageDispatcher::getRef().RegisterSessionMessage(ID_AS2C_AuthAck,
-			std::bind(&CStressClientHandler::msg_AuthAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		CMessageDispatcher::getRef().RegisterSessionMessage(ID_LS2C_CharacterCreateAck,
-			std::bind(&CStressClientHandler::msg_CharacterCreateAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		CMessageDispatcher::getRef().RegisterSessionMessage(ID_LS2C_CharacterLoginAck,
-			std::bind(&CStressClientHandler::msg_CharacterLoginAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		CMessageDispatcher::getRef().RegisterOnSessionDisconnect(std::bind(&CStressClientHandler::OnConnectDisconnect, this, std::placeholders::_1));
+		MessageDispatcher::getRef().registerOnSessionEstablished(std::bind(&StressClientHandler::onConnected, this, std::placeholders::_1));
+		MessageDispatcher::getRef().registerSessionMessage(ID_AS2C_AuthAck,
+			std::bind(&StressClientHandler::msg_AuthAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		MessageDispatcher::getRef().registerSessionMessage(ID_LS2C_CharacterCreateAck,
+			std::bind(&StressClientHandler::msg_CharacterCreateAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		MessageDispatcher::getRef().registerSessionMessage(ID_LS2C_CharacterLoginAck,
+			std::bind(&StressClientHandler::msg_CharacterLoginAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&StressClientHandler::onConnectDisconnect, this, std::placeholders::_1));
 	}
 
-	void OnConnected(SessionID sID)
+	void onConnected(SessionID sID)
 	{
-		LOGD("OnConnected. SessionID=" << sID);
+		LOGD("onConnected. SessionID=" << sID);
 		char userName[100];
 		sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
 		WriteStreamPack ws;
@@ -111,13 +111,13 @@ public:
 		req.user = userName;
 		req.pwd = "123";
 		ws << ID_C2AS_AuthReq << req;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
-		LOGD("OnConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+		LOGD("onConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
 		g_totalSendCount++;
 	};
-	void OnConnectDisconnect(SessionID sID)
+	void onConnectDisconnect(SessionID sID)
 	{
-		m_sessionStatus[sID] = false;
+		_sessionStatus[sID] = false;
 	}
 
 	inline void msg_AuthAck_fun(SessionID sID, ProtoID pID, ReadStreamPack & rs)
@@ -148,7 +148,7 @@ public:
 				C2LS_CharacterCreateReq req;
 				req.charName = "test";
 				ws << ID_C2LS_CharacterCreateReq << req;
-				CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 				LOGD("Send ID_C2LS_CharacterCreateReq. sID=" << sID);
 				g_totalSendCount++;
 			}
@@ -159,7 +159,7 @@ public:
 				C2LS_CharacterLoginReq req;
 				req.charID = ack.info.charInfos.at(0).charID;
 				ws << ID_C2LS_CharacterLoginReq << req;
-				CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 				LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_CharacterLoginReq. sID=" << sID);
 				g_totalSendCount++;
 			}
@@ -173,8 +173,8 @@ public:
 			req.user = userName;
 			req.pwd = "123";
 			ws << ID_C2AS_AuthReq << req;
-			CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
-			LOGD("OnConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
+			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			LOGD("onConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
 			g_totalSendCount++;
 			return;
 		}
@@ -199,7 +199,7 @@ public:
 		C2LS_CharacterLoginReq req;
 		req.charID = ack.info.charID;
 		ws << ID_C2LS_CharacterLoginReq << req;
-		CTcpSessionManager::getRef().SendOrgSessionData(sID, ws.GetStream(), ws.GetStreamLen());
+		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_CharacterLoginReq. sID=" << sID);
 		g_totalSendCount++;
 
@@ -221,13 +221,13 @@ public:
 	}
 
 private:
-	std::unordered_map<SessionID, bool> m_sessionStatus;
+	std::unordered_map<SessionID, bool> _sessionStatus;
 };
 
 void sigInt(int sig)
 {
 	LOGI("catch SIGINT.");
-	CTcpSessionManager::getRef().Stop();
+	TcpSessionManager::getRef().stop();
 }
 
 
@@ -268,14 +268,14 @@ int main(int argc, char* argv[])
 	
 		
 		
-	ILog4zManager::GetInstance()->Config("../log.config");
-	ILog4zManager::GetInstance()->Start();
+	ILog4zManager::getPtr()->config("../log.config");
+	ILog4zManager::getPtr()->start();
 
 
 	ServerConfig serverConfig;
-	if (!serverConfig.Parse("../ServerConfig.xml", MiniBreezeNode, g_agentIndex))
+	if (!serverConfig.parse("../ServerConfig.xml", MiniBreezeNode, g_agentIndex))
 	{
-		LOGE("serverConfig.Parse failed");
+		LOGE("serverConfig.parse failed");
 		return 0;
 	}
 	LOGI("g_remoteIP=" << "127.0.0.1" << ", g_remotePort=" << serverConfig.getConfigListen(MiniBreezeNode).port << ", g_maxClient=" << g_maxClient);
@@ -307,15 +307,15 @@ int main(int argc, char* argv[])
 
 
 
-	CTcpSessionManager::getRef().Start();
+	TcpSessionManager::getRef().start();
 	
-	CTcpSessionManager::getRef().CreateTimer(5000, MonitorFunc);
+	TcpSessionManager::getRef().createTimer(5000, MonitorFunc);
 
 	//创建心跳管理handler的实例 只要创建即可, 构造函数中会注册对应事件
-	CStressHeartBeatManager statusManager;
+	StressHeartbeatManager statusManager;
 
 	//这里创建服务handler和客户端handler 根据启动参数不同添加不同角色.
-	CStressClientHandler client;
+	StressClientHandler client;
 	
 	//添加多个connector.
 	for (int i = 0; i < g_maxClient; ++i)
@@ -325,11 +325,11 @@ int main(int argc, char* argv[])
 		traits.remotePort = serverConfig.getConfigListen(MiniBreezeNode).port;
 		traits.reconnectInterval = 5000;
 		traits.reconnectMaxCount = 50;
-		CTcpSessionManager::getRef().AddConnector(traits);
+		TcpSessionManager::getRef().addConnector(traits);
 	}
 	
 	//启动主循环.
-	CTcpSessionManager::getRef().Run();
+	TcpSessionManager::getRef().run();
 
 	return 0;
 }

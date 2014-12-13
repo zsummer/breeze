@@ -139,13 +139,10 @@ struct tagStreamHead
 struct UDStreamHeadTraits
 {
 	typedef unsigned int Integer;
-	const static Integer PreOffset = sizeof(unsigned int);
-	const static Integer PostOffset = sizeof(unsigned int)*2;
 	const static Integer MaxPackLen = 1024*1024*10;//10M
 	const static bool PackLenIsContainHead = true;
 	const static ZSummer_EndianType EndianType = LittleEndian;
-	const static Integer IntegerTypeSize = sizeof(Integer); // Don't Touch. PackLenSize and sizeof(Integer) must be equal. 
-	const static Integer HeadLen = PreOffset + IntegerTypeSize + PostOffset; //Don't Touch.
+	const static Integer HeadLen = sizeof(Integer); //Don't Touch.
 };
 
 
@@ -195,8 +192,8 @@ public:
 		try
 		{
 			testWS << m_testData;
-			m_packLen = testWS.GetStreamLen();
-			m_bodyLen = testWS.GetBodyStreamLen();
+			m_packLen = testWS.getStreamLen();
+			m_bodyLen = testWS.getStreamBodyLen();
 		}
 		catch (std::runtime_error e)
 		{
@@ -238,35 +235,21 @@ public:
 			//analog recv message buff.
 			WriteStream<UDStreamHeadTraits> ws;
 			unsigned int _roomID = 1;
-			tagStreamHead _head;
-			_head._agentID = 67;
-			_head._protocolID = 65530;
-			_head._sessionID = 343;
-			ws.SetStreamHead((const char*)&_head);
 			ws << _roomID << m_testData;
 			
 
 
 			//analog recv msg
-			std::pair<INTEGRITY_RET_TYPE, UDStreamHeadTraits::Integer> ret = CheckBuffIntegrity<UDStreamHeadTraits>(ws.GetStream(), ws.GetStreamLen(), UDStreamHeadTraits::MaxPackLen);
+			std::pair<INTEGRITY_RET_TYPE, UDStreamHeadTraits::Integer> ret = checkBuffIntegrity<UDStreamHeadTraits>(ws.getStream(), ws.getStreamLen(), UDStreamHeadTraits::MaxPackLen);
 			if (ret.first == IRT_CORRUPTION || ret.first == IRT_SHORTAGE)
 			{
-				cout << "CheckRouteProtocol -> " << className << "  CheckBuffIntegrity error" << endl;
+				cout << "CheckRouteProtocol -> " << className << "  checkBuffIntegrity error" << endl;
 				return false;
 			}
 
 			//check
-			ReadStream<UDStreamHeadTraits> rs(ws.GetStream(), ws.GetStreamLen());
-			//check user-defined head
-			tagStreamHead rsHead;
-			rs.GetStreamHead((char*)&rsHead);
-			if (rsHead._agentID != _head._agentID
-				|| rsHead._protocolID != _head._protocolID
-				|| rsHead._sessionID != _head._sessionID)
-			{
-				cout << "CheckRouteProtocol -> " << className << "  check head  error" << endl;
-				return false;
-			}
+			ReadStream<UDStreamHeadTraits> rs(ws.getStream(), ws.getStreamLen());
+
 			//check user data
 			unsigned int roomID2 = 0;
 			rs >> roomID2;
@@ -277,9 +260,8 @@ public:
 			}
 			//check route
 			WriteStream<UDStreamHeadTraits> ws2;
-			ws2.SetStreamHead((const char*)&rsHead);
-			ws2.AppendOriginalData(rs.GetStreamUnread(), rs.GetStreamUnreadLen());
-			ReadStream<UDStreamHeadTraits> rs2(ws2.GetStream(), ws2.GetStreamLen());
+			ws2.appendOriginalData(rs.getStreamUnread(), rs.getStreamUnreadLen());
+			ReadStream<UDStreamHeadTraits> rs2(ws2.getStream(), ws2.getStreamLen());
 			tagTestData testData;
 			rs2 >> testData;
 			if (testData != m_testData)
@@ -318,24 +300,24 @@ bool TestBase<StreamHeadTrait>::CheckProtocol(WriteStream<StreamHeadTrait> &ws, 
 	{
 		ws << m_testData;
 		cout << desc << " write all data OK." << endl;
-		if (ws.GetStreamLen() == m_packLen)
+		if (ws.getStreamLen() == m_packLen)
 		{
 			cout << desc << " WriteStreamLen OK." << endl;
 		}
 		else
 		{
-			cout << desc << " WriteStreamLen Failed. GetStreamLen()="
-				<< ws.GetStreamLen() << ", m_packLen=" << m_packLen << endl;
+			cout << desc << " WriteStreamLen Failed. getStreamLen()="
+				<< ws.getStreamLen() << ", m_packLen=" << m_packLen << endl;
 			return false;
 		}
-		if (ws.GetBodyStreamLen() == m_bodyLen)
+		if (ws.getStreamBodyLen() == m_bodyLen)
 		{
 			cout << desc << " WriteBodyStreamLen OK." << endl;
 		}
 		else
 		{
-			cout << desc << " WriteBodyStreamLen Failed. GetBodyStreamLen()="
-				<< ws.GetBodyStreamLen() << ", m_bodyLen=" << m_bodyLen << endl;
+			cout << desc << " WriteBodyStreamLen Failed. getStreamBodyLen()="
+				<< ws.getStreamBodyLen() << ", m_bodyLen=" << m_bodyLen << endl;
 			return false;
 		}
 	}
@@ -347,8 +329,8 @@ bool TestBase<StreamHeadTrait>::CheckProtocol(WriteStream<StreamHeadTrait> &ws, 
 	try
 	{
 		ws << 'c';
-		cout << desc << " check Write bound Failed. GetBodyStreamLen()="
-			<< ws.GetBodyStreamLen() << ", m_bodyLen=" << m_bodyLen << endl;
+		cout << desc << " check Write bound Failed. getStreamBodyLen()="
+			<< ws.getStreamBodyLen() << ", m_bodyLen=" << m_bodyLen << endl;
 		return false;
 	}
 	catch (std::runtime_error e)
@@ -357,30 +339,30 @@ bool TestBase<StreamHeadTrait>::CheckProtocol(WriteStream<StreamHeadTrait> &ws, 
 	}
 
 
-	std::pair<INTEGRITY_RET_TYPE, typename StreamHeadTrait::Integer> ret = CheckBuffIntegrity<StreamHeadTrait>(ws.GetStream(), 1, m_packLen);
-	if (ret.first == IRT_SHORTAGE && ret.second == StreamHeadTrait::HeadLen - 1)
+	std::pair<INTEGRITY_RET_TYPE, typename StreamHeadTrait::Integer> ret = checkBuffIntegrity<StreamHeadTrait>(ws.getStream(), 1, m_packLen);
+	if (ret.first == IRT_SHORTAGE && ret.second == sizeof(typename StreamHeadTrait::Integer) - 1)
 	{
-		cout << desc << " CheckBuffIntegrity check write header len OK" << endl;
+		cout << desc << " checkBuffIntegrity check write header len OK" << endl;
 	}
 	else
 	{
-		cout << desc << " CheckBuffIntegrity check write header len failed" << endl;
+		cout << desc << " checkBuffIntegrity check write header len failed" << endl;
 		return false;
 	}
-	ret = CheckBuffIntegrity<StreamHeadTrait>(ws.GetStream(), ws.GetStreamLen(), ws.GetStreamLen());
+	ret = checkBuffIntegrity<StreamHeadTrait>(ws.getStream(), ws.getStreamLen(), ws.getStreamLen());
 	if (ret.first == IRT_SUCCESS && ret.second == m_packLen)
 	{
-		cout << desc << " CheckBuffIntegrity check write  OK" << endl;
+		cout << desc << " checkBuffIntegrity check write  OK" << endl;
 	}
 	else
 	{
-		cout << desc << " CheckBuffIntegrity check write  failed" << endl;
+		cout << desc << " checkBuffIntegrity check write  failed" << endl;
 		return false;
 	}
 
 
 	tagTestData readTestData;
-	ReadStream<StreamHeadTrait> rs(ws.GetStream(), ws.GetStreamLen());
+	ReadStream<StreamHeadTrait> rs(ws.getStream(), ws.getStreamLen());
 
 	try
 	{

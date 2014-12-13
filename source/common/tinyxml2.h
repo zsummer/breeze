@@ -1055,25 +1055,25 @@ public:
         QueryIntValue( &i );
         return i;
     }
-    /// Query as an unsigned integer. See IntValue()
+    /// query as an unsigned integer. See IntValue()
     unsigned UnsignedValue() const			{
         unsigned i=0;
         QueryUnsignedValue( &i );
         return i;
     }
-    /// Query as a boolean. See IntValue()
+    /// query as a boolean. See IntValue()
     bool	 BoolValue() const				{
         bool b=false;
         QueryBoolValue( &b );
         return b;
     }
-    /// Query as a double. See IntValue()
+    /// query as a double. See IntValue()
     double 	 DoubleValue() const			{
         double d=0;
         QueryDoubleValue( &d );
         return d;
     }
-    /// Query as a float. See IntValue()
+    /// query as a float. See IntValue()
     float	 FloatValue() const				{
         float f=0;
         QueryFloatValue( &f );
@@ -1343,7 +1343,7 @@ public:
     const XMLAttribute* FirstAttribute() const {
         return _rootAttribute;
     }
-    /// Query a specific attribute in the list.
+    /// query a specific attribute in the list.
     const XMLAttribute* FindAttribute( const char* name ) const;
 
     /** Convenience function for easy access to the text inside an element. Although easy

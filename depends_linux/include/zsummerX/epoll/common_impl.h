@@ -67,9 +67,9 @@ namespace zsummer
 			epoll_data_t data;//      User data variable 
 		};
 #endif
-		class CTcpSocket;
-		class CTcpAccept;
-		class CUdpSocket;
+		class TcpSocketImpl;
+		class TcpAcceptImpl;
+		class UdpSocketImpl;
 		const int InvalideFD = -1;
 		struct tagRegister
 		{
@@ -86,17 +86,17 @@ namespace zsummer
 			unsigned char _type = REG_INVALID; //register type
 			unsigned char _linkstat = LS_UNINITIALIZE;
 			int			  _fd = InvalideFD;   //file descriptor
-			std::shared_ptr<CTcpSocket> _tcpSocketSendPtr;
-			std::shared_ptr<CTcpSocket> _tcpSocketRecvPtr;
-			std::shared_ptr<CTcpSocket> _tcpSocketConnectPtr;
-			std::shared_ptr<CTcpAccept> _tcpacceptPtr;
-			std::shared_ptr<CUdpSocket> _udpsocketPtr;
+			std::shared_ptr<TcpSocketImpl> _tcpSocketSendPtr;
+			std::shared_ptr<TcpSocketImpl> _tcpSocketRecvPtr;
+			std::shared_ptr<TcpSocketImpl> _tcpSocketConnectPtr;
+			std::shared_ptr<TcpAcceptImpl> _tcpacceptPtr;
+			std::shared_ptr<UdpSocketImpl> _udpsocketPtr;
 		};
 
 		template <class T>
 		T& operator <<(T &t, const tagRegister & reg)
 		{
-			t << "RegisterEvent Info: epoll_event.events[" << reg._event.events
+			t << "registerEvent Info: epoll_event.events[" << reg._event.events
 				<< "] _type[" << (int)reg._type << "] _linkstat[" << (int)reg._linkstat
 				<< "] _fd[" << reg._fd << "]  Notes: REG_INVALID[" << tagRegister::REG_INVALID << "] REG_ZSUMMER[" << tagRegister::REG_ZSUMMER
 				<< "] REG_TCP_SOCKET[" << tagRegister::REG_TCP_SOCKET << "] REG_TCP_ACCEPT[" << tagRegister::REG_TCP_ACCEPT

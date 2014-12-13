@@ -21,43 +21,43 @@
 using namespace zsummer::mysql;
 
 
-const std::string& DBResult::ExtractOneField()
+const std::string& DBResult::extractOneField()
 {
-	if (m_curIter == m_result.end())
+	if (_curIter == _result.end())
 	{
 		throw std::string("result have not any row.");
 	}
-	if (m_fieldCursor >= m_curIter->size())
+	if (_fieldCursor >= _curIter->size())
 	{
 		throw std::string("result read field over");
 	}
 	
-	const std::string & field = m_curIter->at(m_fieldCursor);
-	m_fieldCursor++;
-	if (m_fieldCursor == m_curIter->size())
+	const std::string & field = _curIter->at(_fieldCursor);
+	_fieldCursor++;
+	if (_fieldCursor == _curIter->size())
 	{
-		m_curIter++;
-		m_fieldCursor = 0;
+		_curIter++;
+		_fieldCursor = 0;
 	}
 	return field;
 }
 
 
-void DBResult::_SetQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db)
+void DBResult::_setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db)
 {
-	m_ec = qec;
-	m_sql = sql;
+	_ec = qec;
+	_sql = sql;
 	if (qec == QueryErrorCode::QEC_MYSQLERROR)
 	{
-		m_lastErrorMsg = "[MYSQL_ERRNO:";
-		m_lastErrorMsg += _ToString(mysql_errno(db));
-		m_lastErrorMsg += "]";
+		_lastErrorMsg = "[MYSQL_ERRNO:";
+		_lastErrorMsg += _toString(mysql_errno(db));
+		_lastErrorMsg += "]";
 		const char * msg = mysql_error(db);
-		m_lastErrorMsg += msg == NULL ? "" : msg;
+		_lastErrorMsg += msg == NULL ? "" : msg;
 	}
 	else if (qec == QueryErrorCode::QEC_SUCCESS)
 	{
-		m_affectedRows = mysql_affected_rows(db);
+		_affectedRows = mysql_affected_rows(db);
 		MYSQL_RES * res = mysql_store_result(db);
 		if (res)
 		{
@@ -65,8 +65,8 @@ void DBResult::_SetQueryResult(QueryErrorCode qec, const std::string & sql, MYSQ
 			MYSQL_ROW row;
 			while (row = mysql_fetch_row(res))
 			{
-				m_result.push_back(std::vector<std::string>());
-				auto & vct = m_result.back();
+				_result.push_back(std::vector<std::string>());
+				auto & vct = _result.back();
 				for (unsigned int i = 0; i < fieldCount; ++i)
 				{
 					vct.push_back(row[i] == nullptr ? "" : row[i]);
@@ -88,29 +88,29 @@ void DBResult::_SetQueryResult(QueryErrorCode qec, const std::string & sql, MYSQ
 	{
 		LOGA("db have error.");
 	}
-	m_curIter = m_result.begin();
-	m_fieldCursor = 0;
+	_curIter = _result.begin();
+	_fieldCursor = 0;
 }
 
 
-bool DBHelper::Connect()
+bool DBHelper::connect()
 {
-	if (m_mysql)
+	if (_mysql)
 	{
-		mysql_close(m_mysql);
-		m_mysql = nullptr;
+		mysql_close(_mysql);
+		_mysql = nullptr;
 	}
-	m_mysql = mysql_init(nullptr);
-	if (!m_mysql)
+	_mysql = mysql_init(nullptr);
+	if (!_mysql)
 	{
-		LOGE("mysql_init false. mysql config=" << m_config);
+		LOGE("mysql_init false. mysql config=" << _config);
 		return false;
 	}
-	mysql_options(m_mysql, MYSQL_OPT_CONNECT_TIMEOUT, "5");
-	mysql_options(m_mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
-	mysql_set_character_set(m_mysql, "UTF8");
-	MYSQL * ret = mysql_real_connect(m_mysql, m_config.ip.c_str(), m_config.user.c_str(), m_config.pwd.c_str(), m_config.db.c_str(),
-		m_config.port, nullptr, 0);
+	mysql_options(_mysql, MYSQL_OPT_CONNECT_TIMEOUT, "5");
+	mysql_options(_mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
+	mysql_set_character_set(_mysql, "UTF8");
+	MYSQL * ret = mysql_real_connect(_mysql, _config.ip.c_str(), _config.user.c_str(), _config.pwd.c_str(), _config.db.c_str(),
+		_config.port, nullptr, 0);
 	if (!ret)
 	{
 		return false;
@@ -118,17 +118,17 @@ bool DBHelper::Connect()
 	return true;
 }
 
-bool DBHelper::WaitEnable()
+bool DBHelper::waitEnable()
 {
-	if (!m_isRuning)
+	if (!_isRuning)
 	{
 		return false;
 	}
 	size_t lastTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	do
 	{
-		LOGE("try reconnect mysql. mysql=" << m_mysql);
-		if (Connect())
+		LOGE("try reconnect mysql. mysql=" << _mysql);
+		if (connect())
 		{
 			return true;
 		}
@@ -138,35 +138,35 @@ bool DBHelper::WaitEnable()
 			std::this_thread::sleep_for(std::chrono::milliseconds(now - lastTime));
 		}
 		lastTime += now - lastTime;
-	} while (m_isRuning);
+	} while (_isRuning);
 	return false;
 }
 
-DBResultPtr DBHelper::Query(const std::string & sql)
+DBResultPtr DBHelper::query(const std::string & sql)
 {
 	auto ret = std::make_shared<DBResult>();
-	if (m_mysql == nullptr)
+	if (_mysql == nullptr)
 	{
 		return ret;
 	}
-	if (mysql_real_query(m_mysql, sql.c_str(), (unsigned long)sql.length()) != 0)
+	if (mysql_real_query(_mysql, sql.c_str(), (unsigned long)sql.length()) != 0)
 	{
 		//retry
-		if (mysql_errno(m_mysql) == CR_SERVER_LOST || mysql_errno(m_mysql) == CR_SERVER_GONE_ERROR)
+		if (mysql_errno(_mysql) == CR_SERVER_LOST || mysql_errno(_mysql) == CR_SERVER_GONE_ERROR)
 		{
-			if (WaitEnable())
+			if (waitEnable())
 			{
-				if (mysql_real_query(m_mysql, sql.c_str(), (unsigned long)sql.length()) == 0)
+				if (mysql_real_query(_mysql, sql.c_str(), (unsigned long)sql.length()) == 0)
 				{
-					ret->_SetQueryResult(QueryErrorCode::QEC_SUCCESS, sql, m_mysql);
+					ret->_setQueryResult(QueryErrorCode::QEC_SUCCESS, sql, _mysql);
 					return ret;
 				}
 			}
 		}
-		ret->_SetQueryResult(QueryErrorCode::QEC_MYSQLERROR, sql, m_mysql);
+		ret->_setQueryResult(QueryErrorCode::QEC_MYSQLERROR, sql, _mysql);
 		return ret;
 	}
-	ret->_SetQueryResult(QueryErrorCode::QEC_SUCCESS, sql, m_mysql);
+	ret->_setQueryResult(QueryErrorCode::QEC_SUCCESS, sql, _mysql);
 	return ret;
 }
 
@@ -175,73 +175,73 @@ DBResultPtr DBHelper::Query(const std::string & sql)
 
 
 
-CDBAsync::CDBAsync()
+DBAsync::DBAsync()
 {
-	m_summer = std::make_shared<zsummer::network::ZSummer>();
+	_summer = std::make_shared<zsummer::network::ZSummer>();
 }
 
-CDBAsync::~CDBAsync()
+DBAsync::~DBAsync()
 {
-	Stop();
+	stop();
 }
 
-bool CDBAsync::Start()
+bool DBAsync::start()
 {
-	bool ret = m_summer->Initialize();
+	bool ret = _summer->initialize();
 	if (!ret)
 	{
 		return false;
 	}
-	if (m_thread)
+	if (_thread)
 	{
 		return false;
 	}
-	m_bRuning = true;
-	m_uPostCount.store(0);
-	m_uFinalCount.store(0);
-	m_thread = std::shared_ptr<std::thread>(new std::thread(std::bind(&CDBAsync::Run, this)));
+	_bRuning = true;
+	_uPostCount.store(0);
+	_uFinalCount.store(0);
+	_thread = std::shared_ptr<std::thread>(new std::thread(std::bind(&DBAsync::run, this)));
 	return true;
 }
-bool CDBAsync::Stop()
+bool DBAsync::stop()
 {
-	if (m_thread)
+	if (_thread)
 	{
-		m_bRuning = false;
-		m_thread->join();
-		m_thread.reset();
+		_bRuning = false;
+		_thread->join();
+		_thread.reset();
 		return true;
 	}
 	return false;
 }
 
 
-void CDBAsync::async_query(DBHelperPtr &dbhelper, const string &sql,
+void DBAsync::asyncQuery(DBHelperPtr &dbhelper, const string &sql,
 	const std::function<void(DBResultPtr)> & handler)
 {
-	m_uPostCount++;
-	m_summer->Post(std::bind(&CDBAsync::_async_query, this, dbhelper, sql, handler));
+	_uPostCount++;
+	_summer->post(std::bind(&DBAsync::_asyncQuery, this, dbhelper, sql, handler));
 }
 
-void CDBAsync::_async_query(DBHelperPtr &dbhelper, const string &sql,
+void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const string &sql,
 	const std::function<void(DBResultPtr)> & handler)
 {
-	DBResultPtr ret = dbhelper->Query(sql);
-	m_uPostCount--;
-	CTcpSessionManager::getRef().Post(std::bind(handler, ret));
+	DBResultPtr ret = dbhelper->query(sql);
+	_uPostCount--;
+	TcpSessionManager::getRef().post(std::bind(handler, ret));
 }
 
 
-void CDBAsync::Run()
+void DBAsync::run()
 {
 	do
 	{
-		if (!m_bRuning)
+		if (!_bRuning)
 		{
 			break;
 		}
 		try
 		{
-			m_summer->RunOnce();
+			_summer->runOnce();
 		}
 		catch (...)
 		{

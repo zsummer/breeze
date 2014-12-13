@@ -28,11 +28,11 @@ const ListenConfig ServerConfig::getConfigListen(ServerNode node, NodeIndex inde
 {
 	if (index == InvalidNodeIndex)
 	{
-		index = m_ownNodeIndex;
+		index = _ownNodeIndex;
 	}
-	auto founder = std::find_if(m_configListen.begin(), m_configListen.end(),
+	auto founder = std::find_if(_configListen.begin(), _configListen.end(),
 		[node, index](const ListenConfig & lc){return lc.node == node && lc.index == index; });
-	if (founder == m_configListen.end())
+	if (founder == _configListen.end())
 	{
 		static ListenConfig lc;
 		return lc;
@@ -44,7 +44,7 @@ const ListenConfig ServerConfig::getConfigListen(ServerNode node, NodeIndex inde
 std::vector<ConnectorConfig > ServerConfig::getConfigConnect(ServerNode node)
 {
 	std::vector<ConnectorConfig > ret;
-	for (const auto & cc : m_configConnect)
+	for (const auto & cc : _configConnect)
 	{
 		if (cc.srcNode != node)
 		{
@@ -74,14 +74,14 @@ static ServerNode toServerNode(std::string strNode)
 	return InvalideServerNode;
 }
 
-bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex ownIndex)
+bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex ownIndex)
 {
-	m_ownServerNode = ownNode;
-	m_ownNodeIndex = ownIndex;
+	_ownServerNode = ownNode;
+	_ownNodeIndex = ownIndex;
 	tinyxml2::XMLDocument doc;
 	if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS)
 	{
-		LOGE(filename << " Parse ServerConfig Error. ");
+		LOGE(filename << " parse ServerConfig Error. ");
 		doc.PrintError();
 		return false;
 	}
@@ -90,18 +90,18 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 	auto elmTraits = doc.FirstChildElement("traits");
 	if (!elmTraits || ! elmTraits->Attribute("platid") || ! elmTraits->Attribute("areaid"))
 	{
-		LOGE(filename << " Parse ServerConfig Error. not have traits");
+		LOGE(filename << " parse ServerConfig Error. not have traits");
 		return false;
 	}
-	m_platid = elmTraits->IntAttribute("platid");
-	m_areaid = elmTraits->IntAttribute("areaid");
+	_platid = elmTraits->IntAttribute("platid");
+	_areaid = elmTraits->IntAttribute("areaid");
 
 	//////////////////////////////////////////////////////////////////////////
 	{
 		auto elmListen = doc.FirstChildElement("listen");
 		if (!elmListen || !elmListen->FirstChildElement())
 		{
-			LOGE(filename << " Parse ServerConfig Error. not have listen");
+			LOGE(filename << " parse ServerConfig Error. not have listen");
 			return false;
 		}
 		auto elmListenChild = elmListen->FirstChildElement();
@@ -110,7 +110,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 			std::string strNode = elmListenChild->Name();
 			if (!elmListenChild->Attribute("ip") || !elmListenChild->Attribute("port") || !elmListenChild->Attribute("index"))
 			{
-				LOGE(filename << " Parse ServerConfig Error. listen have invalide config.");
+				LOGE(filename << " parse ServerConfig Error. listen have invalide config.");
 				return false;
 			}
 
@@ -119,7 +119,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 			lconfig.port = elmListenChild->IntAttribute("port");
 			lconfig.index = elmListenChild->IntAttribute("index");
 			lconfig.node = toServerNode(strNode);
-			m_configListen.push_back(lconfig);
+			_configListen.push_back(lconfig);
 			LOGD("strNode=" << strNode << ", ip=" << lconfig.ip << ", port=" << lconfig.port << ", lconfig.index=" << lconfig.index);
 			elmListenChild = elmListenChild->NextSiblingElement();
 		} while (elmListenChild);
@@ -131,7 +131,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 		auto elmConnect = doc.FirstChildElement("connect");
 		if (!elmConnect || !elmConnect->FirstChildElement())
 		{
-			LOGE(filename << " Parse ServerConfig Error. not have connect");
+			LOGE(filename << " parse ServerConfig Error. not have connect");
 			return false;
 		}
 		auto elmConnectChild = elmConnect->FirstChildElement();
@@ -142,7 +142,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 				|| !elmConnectChild->Attribute("port")
 				|| !elmConnectChild->Attribute("dstNode"))
 			{
-				LOGE(filename << " Parse ServerConfig Error. connect have invalide config.");
+				LOGE(filename << " parse ServerConfig Error. connect have invalide config.");
 				return false;
 			}
 
@@ -153,7 +153,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 			lconfig.remotePort = elmConnectChild->IntAttribute("port");
 			lconfig.srcNode = toServerNode(srcStrNode);
 			lconfig.dstNode = toServerNode(dstStrNode);
-			m_configConnect.push_back(lconfig);
+			_configConnect.push_back(lconfig);
 			LOGD("srcStrNode=" << srcStrNode << ", remoteIP=" << lconfig.remoteIP << ", remotePort=" << lconfig.remotePort << ", dstStrNode=" << dstStrNode);
 			elmConnectChild = elmConnectChild->NextSiblingElement();
 		} while (elmConnectChild);
@@ -164,7 +164,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 		auto elmMongo = doc.FirstChildElement("db");
 		if (!elmMongo || !elmMongo->FirstChildElement())
 		{
-			LOGE(filename << " Parse ServerConfig Error. not have mongo");
+			LOGE(filename << " parse ServerConfig Error. not have mongo");
 			return false;
 		}
 		auto elmMongoChild = elmMongo->FirstChildElement();
@@ -177,7 +177,7 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 				|| !elmMongoChild->Attribute("user")
 				|| !elmMongoChild->Attribute("pwd"))
 			{
-				LOGE(filename << " Parse ServerConfig Error. mongo have invalide config.");
+				LOGE(filename << " parse ServerConfig Error. mongo have invalide config.");
 				return false;
 			}
 
@@ -189,15 +189,15 @@ bool ServerConfig::Parse(std::string filename, ServerNode ownNode, NodeIndex own
 			lconfig.pwd = elmMongoChild->Attribute("pwd");
 			if (strNode == AuthDBName)
 			{
-				m_authDBConfig = lconfig;
+				_authDBConfig = lconfig;
 			}
 			else if (strNode == InfoDBName)
 			{
-				m_infoDBConfig = lconfig;
+				_infoDBConfig = lconfig;
 			}
 			else if (strNode == LogDBName)
 			{
-				m_logDBConfig = lconfig;
+				_logDBConfig = lconfig;
 			}
 			elmMongoChild = elmMongoChild->NextSiblingElement();
 		} while (elmMongoChild);

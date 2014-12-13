@@ -95,8 +95,8 @@ namespace zsummer
 		typedef std::function<void()> _OnTimerHandler;
 
 		//accept callback
-		class CTcpSocket;
-		typedef std::function<void(ErrorCode, std::shared_ptr<CTcpSocket>)> _OnAcceptHandler;
+		class TcpSocketImpl;
+		typedef std::function<void(ErrorCode, std::shared_ptr<TcpSocketImpl>)> _OnAcceptHandler;
 		//connect callback
 		typedef std::function<void(ErrorCode)> _OnConnectHandler;
 
@@ -120,43 +120,43 @@ namespace zsummer
 			LS_CLOSED, // socket is closed. don't use it again.
 		};
 
-		class CEnvironment
+		class ZSummerEnvironment
 		{
 		public:
-			CEnvironment();
-			~CEnvironment();
-			inline void AddCreatedSocketCount(){ m_totalCreatedCTcpSocketObjs++; }
-			inline void AddClosedSocketCount(){ m_totalClosedCTcpSocketObjs++; }
-			inline unsigned int GetCreatedSocketCount(){ return m_totalCreatedCTcpSocketObjs; }
-			inline unsigned int GetClosedSocketCount(){ return m_totalClosedCTcpSocketObjs; }
+			ZSummerEnvironment();
+			~ZSummerEnvironment();
+			inline void addCreatedSocketCount(){ _totalCreatedCTcpSocketObjs++; }
+			inline void addClosedSocketCount(){ _totalClosedCTcpSocketObjs++; }
+			inline unsigned int getCreatedSocketCount(){ return _totalCreatedCTcpSocketObjs; }
+			inline unsigned int getClosedSocketCount(){ return _totalClosedCTcpSocketObjs; }
 
-			inline void AddCreatedSessionCount(){ m_totalCreatedCTcpSessionObjs++; }
-			inline void AddClosedSessionCount(){ m_totalClosedCTcpSessionObjs++; }
-			inline unsigned int GetCreatedSessionCount(){ return m_totalCreatedCTcpSessionObjs; }
-			inline unsigned int GetClosedSessionCount(){ return m_totalClosedCTcpSessionObjs; }
+			inline void addCreatedSessionCount(){ _totalCreatedCTcpSessionObjs++; }
+			inline void addClosedSessionCount(){ _totalClosedCTcpSessionObjs++; }
+			inline unsigned int getCreatedSessionCount(){ return _totalCreatedCTcpSessionObjs; }
+			inline unsigned int getClosedSessionCount(){ return _totalClosedCTcpSessionObjs; }
 
-			inline LoggerId GetNetCoreLogger(){ return m_netLoggerID; }
+			inline LoggerId getNetCoreLogger(){ return _netLoggerID; }
 		private:
-			std::atomic_uint m_totalCreatedCTcpSocketObjs;
-			std::atomic_uint m_totalClosedCTcpSocketObjs;
-			std::atomic_uint m_totalCreatedCTcpSessionObjs;
-			std::atomic_uint m_totalClosedCTcpSessionObjs;
-			LoggerId m_netLoggerID = 0;
+			std::atomic_uint _totalCreatedCTcpSocketObjs;
+			std::atomic_uint _totalClosedCTcpSocketObjs;
+			std::atomic_uint _totalCreatedCTcpSessionObjs;
+			std::atomic_uint _totalClosedCTcpSessionObjs;
+			LoggerId _netLoggerID = 0;
 		};
 
-		extern CEnvironment g_appEnvironment;
+		extern ZSummerEnvironment g_appEnvironment;
 #ifndef WIN32
-		inline bool SetNonBlock(int fd) 
+		inline bool setNonBlock(int fd) 
 		{
 			return fcntl((fd), F_SETFL, fcntl(fd, F_GETFL)|O_NONBLOCK) == 0;
 		}
-		inline bool SetNoDelay(int fd)
+		inline bool setNoDelay(int fd)
 		{
 			int bTrue = true?1:0;
 			return setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) == 0;
 		}
 #else
-		inline bool SetNonBlock(SOCKET s) 
+		inline bool setNonBlock(SOCKET s) 
 		{		
 			unsigned long val = 1;
 			int nb = ioctlsocket(s, FIONBIO, &val);
@@ -166,7 +166,7 @@ namespace zsummer
 			}
 			return true;
 		}
-		inline bool SetNoDelay(SOCKET s)
+		inline bool setNoDelay(SOCKET s)
 		{
 			BOOL bTrue = TRUE;
 			if (setsockopt(s,IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) != 0)
@@ -180,13 +180,13 @@ namespace zsummer
 }
 
 
-#define LCT( log ) LOG_TRACE( zsummer::network::g_appEnvironment.GetNetCoreLogger(), __FUNCTION__ << ": "<< log )
-#define LCD( log ) LOG_DEBUG( zsummer::network::g_appEnvironment.GetNetCoreLogger(), __FUNCTION__ <<": "<< log )
-#define LCI( log ) LOG_INFO( zsummer::network::g_appEnvironment.GetNetCoreLogger(), __FUNCTION__ <<": "<<  log )
-#define LCW( log ) LOG_WARN( zsummer::network::g_appEnvironment.GetNetCoreLogger(), __FUNCTION__ << ": "<< log )
-#define LCE( log ) LOG_ERROR( zsummer::network::g_appEnvironment.GetNetCoreLogger(), __FUNCTION__ << ": "<< log )
-#define LCA( log ) LOG_ALARM( zsummer::network::g_appEnvironment.GetNetCoreLogger(), __FUNCTION__ << ": "<< log )
-#define LCF( log ) LOG_FATAL( zsummer::network::g_appEnvironment.GetNetCoreLogger(), __FUNCTION__ << ": "<< log )
+#define LCT( log ) LOG_TRACE( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
+#define LCD( log ) LOG_DEBUG( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ <<": "<< log )
+#define LCI( log ) LOG_INFO( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ <<": "<<  log )
+#define LCW( log ) LOG_WARN( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
+#define LCE( log ) LOG_ERROR( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
+#define LCA( log ) LOG_ALARM( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
+#define LCF( log ) LOG_FATAL( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
 
 
 

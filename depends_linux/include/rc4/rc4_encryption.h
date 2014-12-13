@@ -40,10 +40,10 @@
 #ifndef _RC4_ENCRYPTION_H 
 #define _RC4_ENCRYPTION_H
 
-class CRC4Encryption
+class RC4Encryption
 {
 public:
-	void MakeSBox(std::string obscure)
+	void makeSBox(std::string obscure)
 	{
 		m_x = 0;
 		m_y = 0;
@@ -71,7 +71,7 @@ public:
 		}
 	}
 
-	void RC4Encryption(unsigned char * data, int length)
+	void encryption(unsigned char * data, int length)
 	{
 		int  x, y;
 

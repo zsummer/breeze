@@ -64,9 +64,9 @@ namespace zsummer
 #define OSTREAM_GET_LASTERROR  "WSAGetLastError()=" << WSAGetLastError()
 
 #endif
-		class CTcpSocket;
-		class CTcpAccept;
-		class CUdpSocket;
+		class TcpSocketImpl;
+		class TcpAcceptImpl;
+		class UdpSocketImpl;
 		const int InvalideFD = -1;
 		struct tagRegister
 		{
@@ -82,18 +82,18 @@ namespace zsummer
 			bool _rd = false;
 			bool _wt = false;
 			SOCKET _fd = InvalideFD;
-			std::shared_ptr<CTcpSocket> _tcpSocketSendPtr;
-			std::shared_ptr<CTcpSocket> _tcpSocketRecvPtr;
-			std::shared_ptr<CTcpSocket> _tcpSocketConnectPtr;
-			std::shared_ptr<CTcpAccept> _tcpacceptPtr;
-			std::shared_ptr<CUdpSocket> _udpsocketPtr;
+			std::shared_ptr<TcpSocketImpl> _tcpSocketSendPtr;
+			std::shared_ptr<TcpSocketImpl> _tcpSocketRecvPtr;
+			std::shared_ptr<TcpSocketImpl> _tcpSocketConnectPtr;
+			std::shared_ptr<TcpAcceptImpl> _tcpacceptPtr;
+			std::shared_ptr<UdpSocketImpl> _udpsocketPtr;
 		};
 		typedef std::vector<tagRegister> PoolReggister;
 
 		template <class T>
 		T& operator <<(T &t, const tagRegister & reg)
 		{
-			t << "RegisterEvent Info: register._fd[" << reg._fd << "] _rd[" << reg._rd
+			t << "registerEvent Info: register._fd[" << reg._fd << "] _rd[" << reg._rd
 				<< "] _wt[" << reg._wt << "] _linkstat[" << (int)reg._linkstat << "], _type=[" << reg._type << "]";
 				
 			return t;

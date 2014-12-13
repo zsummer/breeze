@@ -57,11 +57,11 @@ using namespace zsummer::utility;
 
 int main(int argc, char *argv[])
 {
-	zsummer::log4z::ILog4zManager::GetInstance()->Start();
+	zsummer::log4z::ILog4zManager::getRef().start();
 	std::vector<_FileInfo> files;
-	if (!SearchFiles("./", files))
+	if (!searchFiles("./", files))
 	{
-		LOGE("SearchFiles error.");
+		LOGE("searchFiles error.");
 		return 0;
 	}
 	LOGA("FOUND FILE COUNT = " << files.size());
@@ -84,22 +84,20 @@ int main(int argc, char *argv[])
 		filename = filename.substr(0, filename.size() - 4);
 		
 		genProto gen(filename);
-		ParseCode pc = gen.ParseCache();
+		ParseCode pc = gen.parseCache();
 		if (pc == PC_ERROR)
 		{
 			LOGE("LoadCache Error. filename=" << filename);
 			return 0;
 		}
-		zsummer::utility::SleepMillisecond(150);
-		pc = gen.ParseConfig();
+		pc = gen.parseConfig();
 		if (pc == PC_ERROR)
 		{
 			LOGE("LoadConfig Error. filename=" << filename);
 			return 0;
 		}
-		zsummer::utility::SleepMillisecond(120);
 
-		pc = gen.GenCode();
+		pc = gen.genCode();
 		if (pc == PC_ERROR)
 		{
 			LOGE("GenCPP Error. filename=" << filename);
@@ -107,25 +105,23 @@ int main(int argc, char *argv[])
 		}
 		else if (pc == PC_NEEDSKIP)
 		{
-			LOGD("SKIP WriteCache. filename=" << filename);
+			LOGD("SKIP writeCache. filename=" << filename);
 			zsummer::utility::SleepMillisecond(120);
 			continue;
 		}
-		zsummer::utility::SleepMillisecond(120);
 
-		pc = gen.WriteCache();
+		pc = gen.writeCache();
 		if (pc == PC_ERROR)
 		{
 			LOGE("WriteNoCache Error. filename=" << filename);
 			return 0;
 		}
 		std::cout << "\r\n\r\n" << std::endl;
-		zsummer::utility::SleepMillisecond(222);
 
 	}
 	
 	LOGA("All Success..");
-	zsummer::utility::SleepMillisecond(2000);
+	zsummer::utility::SleepMillisecond(500);
 
 	return 0;
 }

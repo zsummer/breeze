@@ -1914,7 +1914,7 @@ void XMLPrinter::Print( const char* format, ... )
 #else
         int len = vsnprintf( 0, 0, format, va );
 #endif
-        // Close out and re-start the va-args
+        // close out and re-start the va-args
         va_end( va );
         va_start( va, format );
         char* p = _buffer.PushArr( len ) - 1;	// back up over the null terminator.

@@ -28,28 +28,28 @@ class GenObjectID
 {
 public:
 	GenObjectID(){}
-	inline void InitConfig(PlatID pID, AreaID aID)
+	inline void initConfig(PlatID pID, AreaID aID)
 	{
-		m_platID = pID;
-		m_areaID = aID;
-		m_minObjID = (((ui64)m_platID << 48) | (ui64)m_areaID) << 32;
-		m_maxObjID = m_minObjID | (ui64)((ui32)-1);
-		m_seqObjID = m_minObjID;
+		_platID = pID;
+		_areaID = aID;
+		_minObjID = (((ui64)_platID << 48) | (ui64)_areaID) << 32;
+		_maxObjID = _minObjID | (ui64)((ui32)-1);
+		_seqObjID = _minObjID;
 	}
-	inline void SetCurObjID(ui64 seq){ m_seqObjID = seq; }
+	inline void setCurObjID(ui64 seq){ _seqObjID = seq; }
 
-	inline ui64 GetMinObjID(){ return m_minObjID; }
-	inline ui64 GetMaxObjID(){ return m_maxObjID; }
-	inline ui64 GetCurObjID(){ return m_seqObjID; }
+	inline ui64 getMinObjID(){ return _minObjID; }
+	inline ui64 getMaxObjID(){ return _maxObjID; }
+	inline ui64 getCurObjID(){ return _seqObjID; }
 
-	inline ui64 GenNewObjID(){ return ++m_seqObjID; }
+	inline ui64 genNewObjID(){ return ++_seqObjID; }
 	
 protected:
 private:
-	PlatID m_platID = 0;
-	AreaID m_areaID = 0;
-	ui64 m_minObjID = 0;
-	ui64 m_maxObjID = 0;
-	ui64 m_seqObjID = 0;
+	PlatID _platID = 0;
+	AreaID _areaID = 0;
+	ui64 _minObjID = 0;
+	ui64 _maxObjID = 0;
+	ui64 _seqObjID = 0;
 };
 #endif

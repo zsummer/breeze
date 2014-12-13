@@ -682,7 +682,6 @@ bool zs_ut_s::CreateRecursionDir(std::string path)
 {
 	if (path.length() == 0) return true;
 	std::string sub;
-	char lastchar=0;
 	//预处理
 	FixPath(path);
 	std::string::size_type pos = path.find('/');
@@ -705,7 +704,7 @@ bool zs_ut_s::CreateRecursionDir(std::string path)
 bool zs_ut_s::DeleteRecursionDir(std::string path)
 {
 	std::vector<_FileInfo> files;
-	SearchFiles(path, files);
+	searchFiles(path, files);
 
 	for (std::vector<_FileInfo>::const_reverse_iterator iter =files.rbegin(); iter != files.rend(); ++iter)
 	{
@@ -809,7 +808,7 @@ static bool tmpSearchPath(std::string  path, std::vector<zs_ut_s::_FileInfo> & f
 	return true;
 }
 
-bool zs_ut_s::SearchFiles(std::string path, std::vector<_FileInfo> & files)
+bool zs_ut_s::searchFiles(std::string path, std::vector<_FileInfo> & files)
 {
 	if (files.capacity() < 2000)
 	{

@@ -47,52 +47,52 @@ namespace zsummer
 	namespace network
 	{
 
-		class CTcpSocket : public std::enable_shared_from_this<CTcpSocket>
+		class TcpSocketImpl : public std::enable_shared_from_this<TcpSocketImpl>
 		{
 		public:
-			CTcpSocket();
-			~CTcpSocket();
-			bool Initialize(const ZSummerPtr &summer);
-			inline bool GetPeerInfo(std::string & remoteIP, unsigned short &remotePort)
+			TcpSocketImpl();
+			~TcpSocketImpl();
+			bool initialize(const ZSummerPtr &summer);
+			inline bool getPeerInfo(std::string & remoteIP, unsigned short &remotePort)
 			{
-				remoteIP = m_remoteIP;
-				remotePort = m_remotePort;
+				remoteIP = _remoteIP;
+				remotePort = _remotePort;
 				return true;
 			}
-			bool DoConnect(const std::string & remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
-			bool DoSend(char * buf, unsigned int len, _OnSendHandler && handler);
-			bool DoRecv(char * buf, unsigned int len, _OnRecvHandler && handler);
-			bool DoClose();
+			bool doConnect(const std::string & remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
+			bool doSend(char * buf, unsigned int len, _OnSendHandler && handler);
+			bool doRecv(char * buf, unsigned int len, _OnRecvHandler && handler);
+			bool doClose();
 
 			
 
 			void OnPostClose();
 
-			void OnSelectMessage(bool rd, bool wt, bool err);
-			bool AttachSocket(SOCKET s, const std::string& remoteIP, unsigned short remotePort);
+			void onSelectMessage(bool rd, bool wt, bool err);
+			bool attachSocket(SOCKET s, const std::string& remoteIP, unsigned short remotePort);
 
 		private:
-			std::string SocketSection();
+			std::string socketSection();
 		private:
-			ZSummerPtr m_summer;
-			std::string m_remoteIP;
-			unsigned short m_remotePort = 0;
-			tagRegister m_register;
+			ZSummerPtr _summer;
+			std::string _remoteIP;
+			unsigned short _remotePort = 0;
+			tagRegister _register;
 			
 			
-			_OnConnectHandler m_onConnectHandler;
+			_OnConnectHandler _onConnectHandler;
 
-			_OnRecvHandler m_onRecvHandler;
-			unsigned int m_iRecvLen = 0;
-			char	*	 m_pRecvBuf = NULL;
+			_OnRecvHandler _onRecvHandler;
+			unsigned int _iRecvLen = 0;
+			char	*	 _pRecvBuf = NULL;
 
 
-			_OnSendHandler m_onSendHandler;
-			unsigned int m_iSendLen = 0;
-			char *		 m_pSendBuf = NULL;
+			_OnSendHandler _onSendHandler;
+			unsigned int _iSendLen = 0;
+			char *		 _pSendBuf = NULL;
 		};
 
-		typedef std::shared_ptr<CTcpSocket> CTcpSocketPtr;
+		typedef std::shared_ptr<TcpSocketImpl> TcpSocketPtr;
 	}
 
 }

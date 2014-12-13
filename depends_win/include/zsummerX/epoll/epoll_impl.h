@@ -49,27 +49,27 @@ namespace zsummer
 			typedef std::vector<void*> MessageStack;
 			ZSummer(){}
 			~ZSummer(){}
-			bool Initialize();
-			void RunOnce();
+			bool initialize();
+			void runOnce();
 
 			template <typename handle>
-			inline void Post(handle &&h){PostMessage(std::move(h));}
-			inline unsigned long long CreateTimer(unsigned int delayms, _OnTimerHandler &&handle){return m_timer.CreateTimer(delayms, std::move(handle));}
-			inline bool CancelTimer(unsigned long long timerID){return m_timer.CancelTimer(timerID);}
+			inline void post(handle &&h){PostMessage(std::move(h));}
+			inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle){return _timer.createTimer(delayms, std::move(handle));}
+			inline bool cancelTimer(unsigned long long timerID){return _timer.cancelTimer(timerID);}
 
 		public:
-			bool RegisterEvent(int op, tagRegister &reg);
+			bool registerEvent(int op, tagRegister &reg);
 			void PostMessage(_OnPostHandler &&handle);
 		private:
-			std::string ZSummerSection();
+			std::string zsummerSection();
 		private:
-			int	m_epoll = InvalideFD;
-			epoll_event m_events[5000] = {};
-			int		m_sockpair[2] = {};
-			tagRegister m_register;
-			MessageStack m_stackMessages;
-			std::mutex	 m_stackMessagesLock;
-			CTimer m_timer;
+			int	_epoll = InvalideFD;
+			epoll_event _events[5000] = {};
+			int		_sockpair[2] = {};
+			tagRegister _register;
+			MessageStack _stackMessages;
+			std::mutex	 _stackMessagesLock;
+			Timer _timer;
 		};
 		typedef std::shared_ptr<ZSummer> ZSummerPtr;
 	}

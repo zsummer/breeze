@@ -12,19 +12,19 @@ int main(int argc, char *argv[])
 {
 
 	//start log4z
-	ILog4zManager::GetInstance()->Start();
-	ILog4zManager::GetInstance()->SetLoggerLevel(LOG4Z_MAIN_LOGGER_ID,LOG_LEVEL_TRACE);
+	ILog4zManager::getRef().start();
+	ILog4zManager::getRef().setLoggerLevel(LOG4Z_MAIN_LOGGER_ID,LOG_LEVEL_TRACE);
+
 	//LOGD: LOG WITH level LOG_DEBUG
 	//LOGI: LOG WITH level LOG_INFO
-	//...
 #ifdef WIN32
-	LOGI("begin test stream log utf-16 string input....");
-	WCHAR wChar[100] = L"check unicode log string";
-	std::wstring wStr = L"check wstring log";
-	LOGF(L"PATH=" << wChar << ":" << wStr);
+	//begin test wstring(utf-16) log  string input....
+	WCHAR checkWCHAR[100] = L"check unicode WCHAR log";
+	std::wstring check_wstring = L"check wstring log";
+	LOGF(L"PATH=" << checkWCHAR << ":" << check_wstring);
 #endif
 
-	LOGI("begin test stream log input....");
+	//begin test stream log input....
 	LOGT("stream input *** " << "LOGT LOGT LOGT LOGT" << " *** ");
 	LOGD("stream input *** " << "LOGD LOGD LOGD LOGD" << " *** ");
 	LOGI("stream input *** " << "LOGI LOGI LOGI LOGI" << " *** ");
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 	LOGF("stream input *** " << "LOGF LOGF LOGF LOGF" << " *** ");
 
 
-	LOGI("begin test stream log all types input....");
+	//begin test stream log all types input....
 	LOGD("char:" <<'c'
 		<< ", unsigned char:" << (unsigned char) 'c'
 		<< ", short:" << (short) -1
@@ -53,16 +53,15 @@ int main(int argc, char *argv[])
 		<< ", constant:" << 1000 
 		<< ", constant:" << 100.12345678
 		<< ", bool:" << true
-		<< ", show hex data:" << BinaryBlock("1234567890abcdefghigklmnopqrstuvwxyz_zyw_zsummer_log4z", 50));
+		<< ", show hex data:" << Log4zBinary("1234567890abcdefghigklmnopqrstuvwxyz_zyw_zsummer_log4z", 50));
 
 	
 	std::string str;
 	str.resize(3000, 's');
 
-
 	// cannot support VC6 or VS2003
-	LOGFMTI("begin test format log big string more than buff size input....");
-	LOGFMTI("begin test format log input....");
+	
+	//begin test format log input....
 	LOGFMTT("format input *** %s *** %d ***", "LOGFMTT", 123456);
 	LOGFMTD("format input *** %s *** %d ***", "LOGFMTD", 123456);
 	LOGFMTI("format input *** %s *** %d ***", "LOGFMTI", 123456);
@@ -70,10 +69,11 @@ int main(int argc, char *argv[])
 	LOGFMTE("format input *** %s *** %d ***", "LOGFMTE", 123456);
 	LOGFMTA("format input *** %s *** %d ***", "LOGFMTA", 123456);
 	LOGFMTF("format input *** %s *** %d ***", "LOGFMTF", 123456);
-	LOGFMT_DEBUG(LOG4Z_MAIN_LOGGER_ID, "%s", str.c_str());
-	// end
 
-	LOGI("begin test stream log big string more than buff size input....");
+	//begin test format log big string more than buff size input....
+	LOGFMT_DEBUG(LOG4Z_MAIN_LOGGER_ID, "%s", str.c_str());
+
+	//begin test stream log big string more than buff size input....
 	LOGD(str);
 	LOGA("main quit ...");
 	return 0;
