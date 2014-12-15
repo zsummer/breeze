@@ -141,13 +141,9 @@ const unsigned int SEND_RECV_CHUNK_SIZE = 64 * 1024 -1;
 struct FrameStreamTraits
 {
 	typedef unsigned short Integer;
-	const static Integer PreOffset = 0;  
-	const static Integer PostOffset = 0;  
 	const static Integer MaxPackLen = (Integer)48*1024; 
 	const static bool	 PackLenIsContainHead = true; 
 	const static zsummer::proto4z::ZSummer_EndianType EndianType = zsummer::proto4z::LittleEndian;
-	const static Integer IntegerTypeSize = sizeof(Integer);
-	const static Integer HeadLen = PreOffset + IntegerTypeSize + PostOffset; 
 };
 
 

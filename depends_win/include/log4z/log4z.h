@@ -317,7 +317,7 @@ public:
 		unsigned int limitsize = LOG4Z_DEFAULT_LIMITSIZE /*million byte, rolling file*/) \
 	{return createLogger(loggerName, path, level, display, monthdir, limitsize);} \
 	inline bool Start() {return start();} \
-	inline bool stop() {return stop();} \
+	inline bool Stop() {return stop();} \
 	inline LoggerId FindLogger(const char* loggerName){return findLogger(loggerName);} \
 	inline bool PrePushLog(LoggerId id, int level) {return prePushLog(id, level);} \
 	inline bool PushLog(LoggerId id, int level, const char * log) {return pushLog(id, level, log);} \
