@@ -12,43 +12,34 @@
   <!-- 这里是配置统一的错误代码 -->
   <const name="BEC_SUCCESS" value="0" type="ui16"  desc="成功"/>
   <const name="BEC_UNKOWN_ERROR" value="1"  type="ui16" desc="未知错误"/>
-  <const name="BEC_SERVER_ERROR"  value="2" type="ui16" desc="服务器内部错误"/>
-  <const name="BEC_DB_ERROR"  value="3" type="ui16" desc="服务器内部错误"/>
-  <const name="BEC_INVALIDE_CHAR_ID"  value="4" type="ui16" desc="角色ID无效"/>
-  <const name="BEC_INVALIDE_ACC_ID"  value="5" type="ui16" desc="帐号ID无效"/>
+  <const name="BEC_INNER_ERROR"  value="2" type="ui16" desc="内部错误"/>
+  <const name="BEC_DB_ERROR"  value="3" type="ui16" desc="数据库错误"/>
+  <const name="BEC_PARAM_DENIED"  value="4" type="ui16" desc="非法参数"/>
+  <const name="BEC_PERMISSION_DENIED"  value="5" type="ui16" desc="权限非法"/>
+  <const name="BEC_SYSTEM_ERROR"  value="6" type="ui16" desc="系统错误"/>
 
-  <const name="BEC_AUTH_NOT_FOUND_USER" value="20"  type="ui16" desc="认证错误:找不到用户名"/>
-  <const name="BEC_AUTH_PWD_INCORRECT"  value="21" type="ui16" desc="认证错误:密码错误"/>
-  <const name="BEC_AUTH_ING"  value="22" type="ui16" desc="认证错误:正在认证中..."/>
-  <const name="BEC_AUTH_AREADY_AUTH"  value="23" type="ui16" desc="认证错误:重复认证"/>
-  <const name="BEC_AUTH_LIMITE_COUNT"  value="24" type="ui16" desc="认证错误:认证次数超过限制"/>
-  <const name="BEC_LOGIN_CHAR_ID_NOT_FOUND"  value="25" type="ui16" desc="角色ID不存在"/>
-  <const name="BEC_LOGIN_CHAR_ID_INCORRECT"  value="26" type="ui16" desc="角色ID错误"/>
-  <const name="BEC_LOGIN_CHAR_NAME_INCORRECT"  value="27" type="ui16" desc="角色名冲突"/>
+  <const name="BEC_INVALIDE_USERID"  value="50" type="ui16" desc="用户ID无效"/>
 
-  <!-- 用户角色信息 -->
-  <struct name="CharacterInfo" desc="角色信息">
-    <member name="accID" type="ui64"   desc=""/>
-    <member name="charID" type="ui64"   desc="角色ID"/>
-    <member name="iconID"  type="ui32" desc="头像"/>
-    <member name="level"  type="ui32" desc="等级"/>
-    <member name="charName"  type="string" desc="昵称"/>
+  <const name="BEC_AUTH_USER_NOT_EXIST" value="60"  type="ui16" desc="认证错误:用户不存在"/>
+  <const name="BEC_AUTH_PASSWD_INCORRECT"  value="61" type="ui16" desc="认证错误:密码错误"/>
+  <const name="BEC_AUTH_ING"  value="62" type="ui16" desc="认证错误:正在认证中..."/>
+  <const name="BEC_AUTH_AREADY_AUTH"  value="63" type="ui16" desc="认证错误:已认证"/>
+  <const name="BEC_AUTH_LIMITE_COUNT"  value="64" type="ui16" desc="认证错误:认证次数超过限制"/>
+
+
+  <!-- 用户信息 -->
+  <struct name="UserInfo" desc="用户信息">
+    <member name="uid" type="ui64"   desc=""/>
+    <member name="nickName" type="string"   desc="用户昵称"/>
+    <member name="iconID"  type="i32" desc="头像"/>
+    <member name="level"  type="i32" desc="等级"/>
+    <member name="diamond"  type="i32" desc="当前剩余的充值钻石"/>
+    <member name="hisotryDiamond"  type="i32" desc="历史充值钻石总额"/>
+    <member name="giftDiamond"  type="i32" desc="当前剩余的赠送钻石"/>
+    <member name="joinTime"  type="ui32" desc="加入时间"/>
   </struct>
-  <array name="CharacterInfoVct" type="CharacterInfo" desc="" />
+  <array name="UserInfoVct" type="UserInfo" desc="" />
   
-
-  <struct name="AccountInfo" desc="帐号信息">
-    <member name="accName" type="string"   desc=""/>
-    <member name="accID" type="ui64"   desc=""/>
-    <member name="diamond"  type="ui32" desc="当前剩余的充值钻石"/>
-    <member name="hisDiamond"  type="ui32" desc="历史充值钻石总额"/>
-    <member name="giftDmd"  type="ui32" desc="当前剩余的赠送钻石"/>
-    <member name="hisGiftDmd"  type="ui32" desc="历往赠送钻石总额"/>
-    <member name="charInfos"  type="CharacterInfoVct" desc="角色信息"/>
-  </struct>
-  <array name="AccountInfoVct" type="AccountInfo" desc="" />
-
-
 
 
 

@@ -1,7 +1,7 @@
-﻿#include "Application.h"
+﻿#include "application.h"
 #include <log4z/log4z.h>
-#include "logic/NetManager.h"
-#include <DBHelper.h>
+#include "logic/netmanager.h"
+#include <dbhelper.h>
 using namespace zsummer::log4z;
 
 

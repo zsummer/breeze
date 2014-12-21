@@ -10,75 +10,50 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2014-11-17 00:47:56
+Date: 2014-12-21 23:45:46
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
--- Table structure for `tb_account`
+-- Table structure for `tb_user`
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_account`;
-CREATE TABLE `tb_account` (
-  `accID` bigint(20) unsigned NOT NULL,
-  `accName` varchar(255) NOT NULL DEFAULT '',
-  `diamond` int(10) unsigned NOT NULL DEFAULT '0',
-  `giftDmd` int(10) unsigned NOT NULL DEFAULT '0',
-  `hisDiamond` int(10) unsigned NOT NULL DEFAULT '0',
-  `hisGiftDmd` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`accID`)
+DROP TABLE IF EXISTS `tb_user`;
+CREATE TABLE `tb_user` (
+  `uid` bigint(20) unsigned NOT NULL,
+  `nickname` varchar(255) NOT NULL DEFAULT '',
+  `iconID` int(10) NOT NULL DEFAULT '0',
+  `level` int(10) NOT NULL DEFAULT '0',
+  `diamond` int(10) NOT NULL DEFAULT '0',
+  `giftDiamond` int(10) NOT NULL DEFAULT '0',
+  `historyDiamond` int(10) NOT NULL DEFAULT '0',
+  `joinTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of tb_account
+-- Records of tb_user
 -- ----------------------------
-INSERT INTO tb_account VALUES ('1', 'zhangyawei', '0', '0', '0', '0');
-INSERT INTO tb_account VALUES ('2', 'zhangyawei2', '0', '0', '0', '0');
-INSERT INTO tb_account VALUES ('5', '', '0', '0', '0', '0');
-INSERT INTO tb_account VALUES ('6', '', '0', '0', '0', '0');
-INSERT INTO tb_account VALUES ('8', '', '0', '0', '0', '0');
-INSERT INTO tb_account VALUES ('3', 'zhangyawei0000', '0', '0', '0', '0');
-INSERT INTO tb_account VALUES ('4', '', '0', '0', '0', '0');
-INSERT INTO tb_account VALUES ('7', '', '0', '0', '0', '0');
+INSERT INTO tb_user VALUES ('1', '', '0', '0', '0', '0', '0', '2014-12-20 13:22:23');
+INSERT INTO tb_user VALUES ('2', 'wo', '2', '0', '0', '0', '0', '2014-12-21 22:54:32');
+INSERT INTO tb_user VALUES ('3', 'summer41', '100', '0', '0', '0', '0', '2014-12-21 23:42:04');
 
 -- ----------------------------
--- Table structure for `tb_character`
+-- Procedure structure for `CreateUser`
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_character`;
-CREATE TABLE `tb_character` (
-  `charID` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `accID` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `charName` varchar(255) NOT NULL DEFAULT '',
-  `iconID` int(10) unsigned NOT NULL DEFAULT '0',
-  `level` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`charID`),
-  KEY `accID` (`accID`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
--- ----------------------------
--- Records of tb_character
--- ----------------------------
-INSERT INTO tb_character VALUES ('0', '3', 'fd', '0', '0');
-INSERT INTO tb_character VALUES ('2', '3', 'ddd', '0', '0');
-INSERT INTO tb_character VALUES ('3', '3', 'eeee', '0', '0');
-
--- ----------------------------
--- Procedure structure for `AutoSelectAccount`
--- ----------------------------
-DROP PROCEDURE IF EXISTS `AutoSelectAccount`;
+DROP PROCEDURE IF EXISTS `CreateUser`;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AutoSelectAccount`(IN `v_accID` bigint)
+CREATE DEFINER=`root`@`%` PROCEDURE `CreateUser`(IN `v_uid` bigint,IN `v_nickname` varchar(20),IN `v_iconID` int)
 tag:BEGIN 
-	declare v_accName varchar(20);
+	declare v_temp varchar(20);
 
-	select a.accName into v_accName from tb_account a where a.accID = v_accID;
+	select nickname into v_temp from tb_user where uid = v_uid or nickname = v_nickname;
 
 
-	if( v_accName is NULL) THEN
-		 insert into tb_account(accID, accName, diamond, giftDmd, hisDiamond, hisGiftDmd) values(v_accID, "", 0,0,0,0);
+	if( v_temp is NULL) THEN
+		 insert into tb_user(uid, nickname, iconID, joinTime) values(v_uid, v_nickname, v_iconID, now());
 	end if;
-				
-	select a.accName, a.diamond, a.giftDmd, a.hisDiamond, a.hisGiftDmd, c.charID, c.charName, c.iconID, c.`level` 
-		from tb_account a  left join tb_character c on a.accID = c.accID where a.accID = v_accID;
+
+	select uid, nickname, iconID, `level`, diamond, giftDiamond,historyDiamond, UNIX_TIMESTAMP(joinTime) from tb_user where uid = v_uid;
 END
 ;;
 DELIMITER ;

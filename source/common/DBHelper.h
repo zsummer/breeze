@@ -26,9 +26,10 @@
 
 #ifndef _DB_HELPER_H_
 #define _DB_HELPER_H_
-#include <InnerTypeDefine.h>
-#include <BaseHander.h>
-#include <ServerConfig.h>
+#include <inner_defined.h>
+#include <base_message_handler.h>
+#include <single.h>
+#include <serverconfig.h>
 #include <mysqlclient/errmsg.h>
 #include <mysqlclient/mysql.h>
 
@@ -57,7 +58,7 @@ namespace  zsummer
 			inline std::string getLastError(){ return _lastErrorMsg; }
 			inline unsigned long long getAffectedRows(){ return _affectedRows; }
 			inline bool haveRow(){ return _curIter != _result.end(); }
-			const std::string & SQLString(){ return _sql; }
+			const std::string & sqlString(){ return _sql; }
 			template<class T>
 			inline DBResult & operator >>(T & t){t = _fromeString<T>(extractOneField());return *this;}
 

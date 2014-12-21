@@ -5,14 +5,12 @@ using namespace zsummer::mysql;
 NetManager::NetManager()
 {
 	//auth request process
-	MessageDispatcher::getRef().registerSessionMessage(ID_C2AS_AuthReq,
-		std::bind(&NetManager::msg_authReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_C2LS_LoginReq,
+		std::bind(&NetManager::msg_onLoginReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	MessageDispatcher::getRef().registerSessionMessage(ID_C2LS_CharacterCreateReq,
-		std::bind(&NetManager::msg_characterCreateReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_C2LS_CreateUserReq,
+		std::bind(&NetManager::msg_onCreateUserReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	MessageDispatcher::getRef().registerSessionMessage(ID_C2LS_CharacterLoginReq,
-		std::bind(&NetManager::msg_characterLoginReq, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	
 	//register event
@@ -88,18 +86,18 @@ bool NetManager::stop()
 
 
 
-void NetManager::charLogin(std::shared_ptr<InnerCharInfo> iinfoPtr)
+void NetManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
 {
 	for (auto ptr : _handlers)
 	{
-		ptr->charLogin(iinfoPtr);
+		ptr->userLogin(innerInfo);
 	}
 }
-void NetManager::charLogout(std::shared_ptr<InnerCharInfo> iinfoPtr)
+void NetManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)
 {
 	for (auto ptr : _handlers)
 	{
-		ptr->charLogout(iinfoPtr);
+		ptr->userLogout(innerInfo);
 	}
 }
 
@@ -125,131 +123,100 @@ void NetManager::event_onSessionDisconnect(SessionID sID)
 	else
 	{
 		LOGI("NetManager::event_onSessionDisconnect. sID=" << sID);
-		auto founder = _mapSession.find(sID);
-		if (founder == _mapSession.end())
+		auto founder = _mapUserSession.find(sID);
+		if (founder == _mapUserSession.end())
 		{
 			return;
 		}
-		auto iinfoPtr = founder->second;
-		if (iinfoPtr->status == InnerCharInfo::ICIT_LOGINED)
+		auto innerInfo = founder->second;
+		_mapUserSession.erase(sID);
+
+		if (innerInfo->status == InnerUserInfo::IUIT_LOGINED)
 		{
-			charLogin(iinfoPtr);
-			_mapCharInfo.erase(iinfoPtr->charInfo.charID);
+			userLogin(innerInfo);
 		}
-		_mapSession.erase(sID);
+		if (innerInfo->status == InnerUserInfo::IUIT_LOGINING)
+		{
+			_mapUserInfo.erase(innerInfo->sesionInfo.uid);
+		}
+		innerInfo->sesionInfo.sID = InvalidSeesionID;
 	}
 }
 
 
 
 
-void NetManager::msg_authReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
+void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 {
-	C2AS_AuthReq req;
+	C2LS_LoginReq req;
 	rs >> req;
-	LOGD("ID_C2AS_AuthReq user=" << req.user << ", pwd=" << req.pwd);
-	std::shared_ptr<InnerCharInfo> iinfoPtr;
-	auto founder = _mapSession.find(sID);
-	if (founder != _mapSession.end())
+	LOGD("enter msg_loginReq user=" << req.user << ", passwd=" << req.passwd);
+	std::shared_ptr<InnerUserInfo> innerInfo;
+	auto founder = _mapUserSession.find(sID);
+	if (founder != _mapUserSession.end())
 	{
-		iinfoPtr = founder->second;
+		innerInfo = founder->second;
 	}
 	else
 	{
-		iinfoPtr = std::shared_ptr<InnerCharInfo>(new InnerCharInfo);
-		iinfoPtr->sesionInfo.sID = sID;
-		iinfoPtr->status = InnerCharInfo::ICIT_UNAUTH;
-		_mapSession.insert(std::make_pair(sID, iinfoPtr));
+		innerInfo = std::shared_ptr<InnerUserInfo>(new InnerUserInfo);
+		innerInfo->sesionInfo.sID = sID;
+		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
+		_mapUserSession.insert(std::make_pair(sID, innerInfo));
 	}
 
-	if (iinfoPtr->status != InnerCharInfo::ICIT_UNAUTH)
+	if (innerInfo->status != InnerUserInfo::IUIT_UNAUTH)
 	{
 		WriteStreamPack ws;
-		AS2C_AuthAck ack;
-		ack.retCode = BEC_AUTH_ING;
-		ws << ID_AS2C_AuthAck << ack;
+		LS2C_LoginAck ack;
+		ack.retCode = BEC_AUTH_LIMITE_COUNT;
+		ws << ID_LS2C_LoginAck << ack;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		return;
 	}
 	
-	iinfoPtr->status = InnerCharInfo::ICIT_AUTHING;
+	innerInfo->sesionInfo.user = req.user;
+	innerInfo->sesionInfo.passwd = req.passwd;
+	innerInfo->status = InnerUserInfo::IUIT_AUTHING;
 
 	
-	//
-	{
 
-		std::string auth_sql = "SELECT accID, pwd FROM `tb_auth` where account = '";
-		auto & db = DBManager::getRef().getAuthDB();
-		auth_sql += escapeString(req.user);
-		auth_sql += "'";
+	std::string auth_sql = "SELECT uid, passwd FROM `tb_auth` where user = '";
+	auth_sql += escapeString(req.user);
+	auth_sql += "'";
 
+	auto & db = DBManager::getRef().getAuthDB();
+	DBAsync::getRef().asyncQuery(db, auth_sql, std::bind(&NetManager::db_onAuthSelect, this,
+		std::placeholders::_1, sID));
 
-		DBAsync::getRef().asyncQuery(db, auth_sql, std::bind(&NetManager::db_authSelect, this,
-			std::placeholders::_1,sID, req));
-		return;
-	}
-
-	//do someting with asynchronization
-	//callback do something.
-
-	{
-		
-		AS2C_AuthAck ack;
-		ack.retCode = BEC_AUTH_NOT_FOUND_USER;
-
-		do 
-		{
-			auto founder = _mapSession.find(sID);
-			if (founder == _mapSession.end())
-			{
-				break;
-			}
-			auto & iinfo = *founder->second;
-			if (iinfo.status != InnerCharInfo::ICIT_AUTHING)
-			{
-				ack.retCode = BEC_AUTH_AREADY_AUTH;
-				break;
-			}
-			if (true)
-			{
-				iinfo.status = InnerCharInfo::ICIT_AUTHED;
-				iinfo.accInfo.accID = InvalidAccountID;
-				iinfo.accInfo.accName = "default";
-				iinfo.accInfo.diamond = 0;
-				iinfo.accInfo.giftDmd = 0;
-				iinfo.accInfo.hisDiamond = 0;
-				iinfo.accInfo.hisGiftDmd = 0;
-
-				ack.retCode = BEC_SUCCESS;
-				ack.info = iinfo.accInfo;
-			}
-			else
-			{
-				iinfo.status = InnerCharInfo::ICIT_UNAUTH;
-				ack.retCode = BEC_AUTH_PWD_INCORRECT;
-			}
-		} while (0);
-
-		WriteStreamPack ws;
-		ws << ID_AS2C_AuthAck << ack;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-	}
 }
 
-void NetManager::db_authSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req)
+void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 {
-	//error
-	AS2C_AuthAck ack;
+	LOGD("enter db_authSelect. sID=" << sID);
+	LS2C_LoginAck ack;
 	ack.retCode = BEC_DB_ERROR;
-	AccountID accID = InvalidAccountID;
 
+	auto founder = _mapUserSession.find(sID);
+	if (founder == _mapUserSession.end())
+	{
+		LOGE("db auth callback not found session. sID=" << sID);
+		return;
+	}
+	auto & innerInfo = founder->second;
+	if (!innerInfo)
+	{
+		LOGE("db auth callback found session but InnerInfo is NULL . sID=" << sID);
+		return;
+	}
+	
 	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 	{
-		LOGE("db_authSelect error.  error msg=" << res->getLastError() << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
+		LOGE("db_authSelect error.  db error, msg=" << res->getLastError() << ", req.user=" << innerInfo->sesionInfo.user << ", req.passwd=" << innerInfo->sesionInfo.passwd);
 	}
 	else if (!res->haveRow())
 	{
-		ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+		ack.retCode = BEC_AUTH_USER_NOT_EXIST;
 	}
 	else
 	{
@@ -257,206 +224,281 @@ void NetManager::db_authSelect(DBResultPtr res, SessionID sID, C2AS_AuthReq req)
 		{
 			if (res->haveRow())
 			{
-				std::string pwd;
-				*res >> accID;
-				*res >> pwd;
-				if (req.pwd != pwd)
+				UserID uid = 0;
+				std::string passwd;
+				*res >> uid;
+				*res >> passwd;
+				if (innerInfo->sesionInfo.passwd != passwd)
 				{
-					ack.retCode = BEC_AUTH_PWD_INCORRECT;
+					ack.retCode = BEC_AUTH_PASSWD_INCORRECT;
 				}
 				else
 				{
 					ack.retCode = BEC_SUCCESS;
+					innerInfo->sesionInfo.uid = uid;
 				}
 
 			}
 		}
 		catch (const std::string & err)
 		{
-			LOGE("db_authSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd << ", error=" << err);
-			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+			LOGE("db_onAuthSelect catch error. err=" << err << ", sql=" << res->sqlString());
+			ack.retCode = BEC_DB_ERROR;
 		}
 	}
 	
 
 	if (ack.retCode != BEC_SUCCESS)
 	{
-		auto founder = _mapSession.find(sID);
-		if (founder != _mapSession.end() && founder->second)
-		{
-			founder->second->status = InnerCharInfo::ICIT_UNAUTH;
-		}
-
+		LOGD("user auth fail. sID=" << sID << " req.user = " << innerInfo->sesionInfo.user << ", req.passwd = " << innerInfo->sesionInfo.passwd );
+		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
 		WriteStreamPack ws;
-		ws << ID_AS2C_AuthAck << ack;
+		ws << ID_LS2C_LoginAck << ack;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 	else
 	{
+		LOGD("user auth success. sID=" << sID << " req.user = " << innerInfo->sesionInfo.user << ", req.passwd = " << innerInfo->sesionInfo.passwd);
+		//检测用户状态 判断是否需要踢人, 重新拉取DB数据
+
+		auto fder = _mapUserInfo.find(innerInfo->sesionInfo.uid);
+		if (fder != _mapUserInfo.end())
 		{
-			auto & db = DBManager::getRef().getInfoDB();
-			std::string selectAccountInfo_sql = "call AutoSelectAccount(";
-			selectAccountInfo_sql += toString(accID);
-			selectAccountInfo_sql += ")";
-			DBAsync::getRef().asyncQuery(db, selectAccountInfo_sql, std::bind(&NetManager::db_accountSelect, this,
-				std::placeholders::_1,sID, accID, req));
+			if (fder->second->status != InnerUserInfo::IUIT_LOGINED)
+			{
+				TcpSessionManager::getRef().kickSession(sID);
+			}
+			else
+			{
+				if (fder->second->sesionInfo.sID != InvalidSeesionID)
+				{
+					TcpSessionManager::getRef().kickSession(fder->second->sesionInfo.sID);
+					userLogout(fder->second);
+					_mapUserSession.erase(fder->second->sesionInfo.sID);
+					fder->second->sesionInfo.sID = InvalidSeesionID;
+				}
+				
+				fder->second->sesionInfo = innerInfo->sesionInfo;
+				innerInfo = fder->second;
+				innerInfo->sesionInfo.lastLoginTime = time(NULL);
+				ack.needCreateUser = false;
+				ack.info = innerInfo->userInfo;
+				WriteStreamPack ws;
+				ws << ID_LS2C_LoginAck << ack;
+				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+
+				userLogin(innerInfo);
+
+
+			}
+			return;
 		}
+		
+		_mapUserInfo.insert(std::make_pair(innerInfo->sesionInfo.uid, innerInfo));
+		innerInfo->status = InnerUserInfo::IUIT_LOGINING;
+		auto & db = DBManager::getRef().getInfoDB();
+		std::string selectUserInfo_sql = "select uid, nickname, iconID, `level`, diamond, giftDiamond,historyDiamond, UNIX_TIMESTAMP(joinTime) from tb_user where uid = ";
+		selectUserInfo_sql += toString(innerInfo->sesionInfo.uid);
+		DBAsync::getRef().asyncQuery(db, selectUserInfo_sql, std::bind(&NetManager::db_onUserSelect, this,
+			std::placeholders::_1, sID, false));
 	}
 }
 
-void NetManager::db_accountSelect(DBResultPtr res, SessionID sID, AccountID accID, C2AS_AuthReq req)
+void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUser)
 {
-	//error
-	AS2C_AuthAck ack;
+	LOGD("enter db_onUserSelect. sID=" << sID);
+	LS2C_LoginAck ack;
 	ack.retCode = BEC_DB_ERROR;
+	ack.needCreateUser = false;
+
+	auto founder = _mapUserSession.find(sID);
+	if (founder == _mapUserSession.end())
+	{
+		LOGE("db_onUserSelect callback not found session. sID=" << sID);
+		return;
+	}
+	auto & innerInfo = founder->second;
+	if (!innerInfo)
+	{
+		LOGE("db_onUserSelect callback found session but InnerInfo is NULL . sID=" << sID);
+		return;
+	}
 	
 
 	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 	{
-		LOGE("db_authSelect error.  error msg=" << res->getLastError() << ", req.user=" << req.user << ", req.pwd=" << req.pwd);
+		LOGE("db_onUserSelect error.  error msg=" << res->getLastError() << ", req.user=" << innerInfo->sesionInfo.user << ", req.passwd=" << innerInfo->sesionInfo.passwd);
 	}
-	else if (!res->haveRow())
-	{
-		ack.retCode = BEC_AUTH_NOT_FOUND_USER;
-	}
-	else
+	else if (res->haveRow())
 	{
 		try
 		{
 			while (res->haveRow())
 			{
+				*res >> innerInfo->userInfo.uid;
+				*res >> innerInfo->userInfo.nickName;
+				*res >> innerInfo->userInfo.iconID;
+				*res >> innerInfo->userInfo.level;
+				*res >> innerInfo->userInfo.diamond;
+				*res >> innerInfo->userInfo.giftDiamond;
+				*res >> innerInfo->userInfo.hisotryDiamond;
+				*res >> innerInfo->userInfo.joinTime;
+				ack.info = innerInfo->userInfo;
 				ack.retCode = BEC_SUCCESS;
+				ack.needCreateUser = false;
 				break;
 			}
 		}
 		catch (const std::string & err)
 		{
-			LOGE("db_authSelect catch error.  req.user=" << req.user << ", req.pwd=" << req.pwd << ", error=" << err);
-			ack.retCode = BEC_AUTH_NOT_FOUND_USER;
+			LOGE("db_onUserSelect catch error. err=" << err << ", sql=" << res->sqlString());
 		}
 	}
-
-
+	else
+	{
+		ack.retCode = BEC_SUCCESS;
+		ack.needCreateUser = true;
+	}
 
 	if (ack.retCode != BEC_SUCCESS)
 	{
-		auto founder = _mapSession.find(sID);
-		if (founder != _mapSession.end() && founder->second)
-		{
-			founder->second->status = InnerCharInfo::ICIT_UNAUTH;
-		}
+		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
 		WriteStreamPack ws;
-		ws << ID_AS2C_AuthAck << ack;
+		ws << ID_LS2C_LoginAck << ack;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 	else
 	{
-		WriteStreamPack ws;
-		ws << ID_AS2C_AuthAck << ack;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-	}
-}
-
-void NetManager::msg_characterCreateReq(SessionID sID, ProtoID pID, ReadStreamPack &rs)
-{
-	C2LS_CharacterCreateReq req;
-	rs >> req;
-
-	auto fouder = _mapSession.find(sID);
-	if (fouder == _mapSession.end())
-	{
-		return;
-	}
-	auto iinfoPtr = fouder->second;
-	auto & iinfo = *iinfoPtr;
-	if (iinfo.status != InnerCharInfo::ICIT_AUTHED)
-	{
-		return;
-	}
-	//do someting with asynchronization
-	//callback do something.
-	
-	{
-		LS2C_CharacterCreateAck ack;
-		ack.retCode = BEC_DB_ERROR;
-		do 
+		LOGD("user auth success. sID=" << sID << " req.user = " << innerInfo->sesionInfo.user << ", req.passwd = " << innerInfo->sesionInfo.passwd);
+		auto fder = _mapUserInfo.find(innerInfo->sesionInfo.uid);
+		if (fder == _mapUserInfo.end())
 		{
-			if (true)
-			{
-				CharacterInfo info;
-				info.accID = iinfo.accInfo.accID;
-				info.charID = 100;
-				info.charName = req.charName;
-				info.iconID = 100;
-				info.level = 1;
-				iinfo.accInfo.charInfos.push_back(info);
-
-				ack.info = info;
-				ack.retCode = BEC_SUCCESS;
-			}
-		} while (0);
-		
-		WriteStreamPack ws;
-		ws << ID_LS2C_CharacterCreateAck << ack;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-	}
-}
-
-void NetManager::msg_characterLoginReq(SessionID sID, ProtoID pID, ReadStreamPack &rs)
-{
-	C2LS_CharacterLoginReq req;
-	rs >> req;
-	auto fouder = _mapSession.find(sID);
-	if (fouder == _mapSession.end())
-	{
-		return;
-	}
-	auto iinfoPtr = fouder->second;
-	auto & iinfo = *iinfoPtr;
-	if (iinfo.status != InnerCharInfo::ICIT_AUTHED)
-	{
-		return;
-	}
-	
-	{
-		auto foundChar = std::find_if(iinfo.accInfo.charInfos.begin(), iinfo.accInfo.charInfos.end(),
-			[&req](const CharacterInfo & charInfo){return charInfo.charID == req.charID; });
-		if (foundChar == iinfo.accInfo.charInfos.end())
-		{
+			TcpSessionManager::getRef().kickSession(sID);
 			return;
 		}
-
-		auto foundOldChar = _mapCharInfo.find(foundChar->charID);
-		if (foundOldChar != _mapCharInfo.end())
+		else
 		{
-			auto oldIInfoPtr = foundOldChar->second;
-			charLogout(oldIInfoPtr);
-			TcpSessionManager::getRef().kickSession(oldIInfoPtr->sesionInfo.sID);
-			_mapSession.erase(oldIInfoPtr->sesionInfo.sID);
-			_mapCharInfo.erase(oldIInfoPtr->charInfo.charID);
+			WriteStreamPack ws;
+			ack.info = innerInfo->userInfo;
+			ws << ID_LS2C_LoginAck << ack;
+			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			if (!ack.needCreateUser)
+			{
+				innerInfo->status = InnerUserInfo::IUIT_LOGINED;
+				innerInfo->sesionInfo.lastLoginTime = time(NULL);
+				userLogin(innerInfo);
+			}
 		}
-		
-		iinfo.charInfo = *foundChar;
-		_mapCharInfo.insert(std::make_pair(iinfo.charInfo.charID, iinfoPtr));
-		charLogin(iinfoPtr);
-
-		LS2C_CharacterLoginAck ack;
-		ack.retCode = BEC_SUCCESS;
-		WriteStreamPack ws;
-		ws << ID_LS2C_CharacterLoginAck << ack;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
+
+
+void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStreamPack &rs)
+{
+	C2LS_CreateUserReq req;
+	rs >> req;
+	auto fouder = _mapUserSession.find(sID);
+	if (fouder == _mapUserSession.end() || fouder->second->status != InnerUserInfo::IUIT_LOGINING)
+	{
+		TcpSessionManager::getRef().kickSession(sID);
+		return;
+	}
+
+	auto & db = DBManager::getRef().getInfoDB();
+	std::string sql = "call CreateUser(";
+	sql += toString(fouder->second->sesionInfo.uid);
+	sql += ", \"";
+	sql += zsummer::mysql::escapeString(req.nickName);
+	sql += "\", ";
+	sql += toString(req.iconID);
+	sql += ")";
+	DBAsync::getRef().asyncQuery(db, sql, std::bind(&NetManager::db_onUserCreate, this,
+		std::placeholders::_1, sID));
+}
+void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
+{
+	LOGD("enter db_onUserCreate. sID=" << sID);
+	auto fouder = _mapUserSession.find(sID);
+	if (fouder == _mapUserSession.end() || fouder->second->status != InnerUserInfo::IUIT_LOGINING)
+	{
+		TcpSessionManager::getRef().kickSession(sID);
+		return;
+	}
+	auto & innerInfo = fouder->second;
+	
+	LS2C_CreateUserAck ack;
+	ack.retCode = BEC_DB_ERROR;
+	ack.needCreateUser = false;
+
+	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
+	{
+		LOGE("db_onUserCreate error.  error msg=" << res->getLastError() << ",  sql=" << res->sqlString());
+	}
+	else if (res->haveRow())
+	{
+		try
+		{
+			while (res->haveRow())
+			{
+				*res >> innerInfo->userInfo.uid;
+				*res >> innerInfo->userInfo.nickName;
+				*res >> innerInfo->userInfo.iconID;
+				*res >> innerInfo->userInfo.level;
+				*res >> innerInfo->userInfo.diamond;
+				*res >> innerInfo->userInfo.giftDiamond;
+				*res >> innerInfo->userInfo.hisotryDiamond;
+				*res >> innerInfo->userInfo.joinTime;
+				ack.info = innerInfo->userInfo;
+				ack.retCode = BEC_SUCCESS;
+				ack.needCreateUser = false;
+				break;
+			}
+		}
+		catch (const std::string & err)
+		{
+			LOGE("db_onUserCreate catch error. err=" << err << ", sql=" << res->sqlString());
+		}
+	}
+	else
+	{
+		ack.retCode = BEC_SUCCESS;
+		ack.needCreateUser = true;
+	}
+
+	if (ack.retCode != BEC_SUCCESS)
+	{
+		TcpSessionManager::getRef().kickSession(sID);
+	}
+	else
+	{
+		if (!ack.needCreateUser)
+		{
+			ack.info = innerInfo->userInfo;
+			WriteStreamPack ws;
+			ws << ID_LS2C_CreateUserAck << ack;
+			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			innerInfo->sesionInfo.lastLoginTime = time(NULL);
+			userLogin(innerInfo);
+
+		}
+		else
+		{
+			WriteStreamPack ws;
+			ws << ID_LS2C_CreateUserAck << ack;
+			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+		}
+		
+	}
+}
+
+
 
 void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
 {
-	if (isConnectID(sID))
+	if (isSessionID(sID))
 	{
-	}
-	else
-	{
-		auto founder = _mapSession.find(sID);
-		if (founder == _mapSession.end())
+		auto founder = _mapUserSession.find(sID);
+		if (founder == _mapUserSession.end())
 		{
 			TcpSessionManager::getRef().kickSession(sID);
 			LOGW("kick session because session not found in _mapSession.  sID=" << sID);
@@ -469,9 +511,10 @@ void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
 			return;
 		}
 		WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
-		AS2C_ClientPulseAck ack;
-		ack.svrTimeStamp = time(NULL);
-		ws << ID_AS2C_ClientPulseAck << ack;
+		AS2C_ServerPulse sp;
+		sp.timeStamp = (ui32)time(NULL);
+		sp.timeTick = 0;
+		ws << ID_AS2C_ServerPulse << sp;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
@@ -479,8 +522,8 @@ void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
 
 void NetManager::msg_onClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 {
-	auto founder = _mapSession.find(sID);
-	if (founder != _mapSession.end())
+	auto founder = _mapUserSession.find(sID);
+	if (founder != _mapUserSession.end())
 	{
 		founder->second->sesionInfo.lastActiveTime = time(NULL);
 		LOGD("msg_onClientPulse lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);

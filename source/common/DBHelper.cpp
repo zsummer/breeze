@@ -17,7 +17,7 @@
 */
 
 
-#include "DBHelper.h"
+#include "dbhelper.h"
 using namespace zsummer::mysql;
 
 

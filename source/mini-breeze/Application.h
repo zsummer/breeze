@@ -1,7 +1,7 @@
 ﻿#ifndef _APPLICATION_H_
 #define _APPLICATION_H_
 #include <string>
-#include <Common.h>
+#include <common.h>
 
 class Appliction : public Singleton<Appliction>
 {

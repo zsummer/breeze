@@ -9,21 +9,40 @@
 
 <Proto>
 
-  <proto from="C" to="LS" name="CharacterCreateReq" desc= "创建角色">
-    <member name="charName"  type="string" desc="昵称"/>
+
+  <proto from="C" to="LS" name="LoginReq" desc= "登录请求">
+    <member name="user" type="string"   desc=""/>
+    <member name="passwd"  type="string" desc=""/>
   </proto>
 
-  <proto from="LS" to="C" name="CharacterCreateAck" desc= "创建角色应答" >
+  <proto from="LS" to="C" name="LoginAck" desc= "登录结果" >
+  	<member name="retCode" type="i32"   desc=""/>
+  	<member name="needCreateUser" type="i32"   desc=""/>
+    <member name="info" type="UserInfo"   desc="认证成功但昵称为空 则说明需要创建用户信息"/>
+  </proto>
+
+
+
+  <proto from="C" to="LS" name="CreateUserReq" desc= "填写用户信息">
+    <member name="nickName"  type="string" desc="昵称"/>
+    <member name="iconID"  type="i32" desc="头像"/>
+  </proto>
+
+  <proto from="LS" to="C" name="CreateUserAck" desc= "返回" >
   	<member name="retCode" type="ui16"   desc=""/>
-    <member name="info" type="CharacterInfo"   desc=""/>
+  	<member name="needCreateUser" type="i32"   desc="nickname冲突需要重新创建"/>
+    <member name="info" type="UserInfo"   desc=""/>
   </proto>
 
-  <proto from="C" to="LS" name="CharacterLoginReq" desc= "角色登录">
-    <member name="charID"  type="ui64" desc="要登录的角色ID"/>
+
+   <!-- 客户端脉冲  -->
+  <proto from="C" to="AS" name="ClientPulse" desc= "客户端存活脉冲">
   </proto>
 
-  <proto from="LS" to="C" name="CharacterLoginAck" desc= "角色登录应答" >
-  	<member name="retCode" type="ui16"   desc=""/>
+  <!-- 服务端脉冲 -->
+  <proto from="AS" to="C" name="ServerPulse" desc= "服务端存活脉冲">
+    <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
+    <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
   </proto>
 
 

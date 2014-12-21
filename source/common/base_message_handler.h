@@ -23,41 +23,21 @@
  */
 
 
-#ifndef _BASE_HANDLER_H_
-#define _BASE_HANDLER_H_
-#include <InnerTypeDefine.h>
+#ifndef _BASE_MESSAGE_HANDLER_H_
+#define _BASE_MESSAGE_HANDLER_H_
+#include <inner_defined.h>
 
 
-class BaseHandler
+class BaseMessageHandler
 {
 public:
-	BaseHandler(){}
-	virtual ~BaseHandler(){};
+	BaseMessageHandler(){}
+	virtual ~BaseMessageHandler(){};
 	virtual bool init() = 0;
-	virtual void charLogin(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
-	virtual void charLogout(std::shared_ptr<InnerCharInfo> iinfoPtr) = 0;
+	virtual void userLogin(std::shared_ptr<InnerUserInfo> innerInfo) = 0;
+	virtual void userLogout(std::shared_ptr<InnerUserInfo> innerInfo) = 0;
 };
 
-
-
-template<class T>
-class Singleton
-{
-public:
-	virtual ~Singleton(){}
-	static T * instantiate(){if (_pInstance)return _pInstance;else return _pInstance = new T();}
-	//warning.  a single instance must new by user. 
-	static T & getRef(){ return *instantiate(); }
-	static T * getPtr(){ return instantiate(); }
-public:
-	Singleton() = default;
-private:
-	static T * _pInstance;
-	Singleton(const Singleton<T> &) = delete;
-};
-
-template<class T>
-T *  Singleton<T>::_pInstance = nullptr;
 
 
 

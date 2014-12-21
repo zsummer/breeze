@@ -47,12 +47,10 @@ typedef long long i64;
 typedef unsigned long long ui64;
 
 //! 逻辑类型
-typedef ui64 AccountID;
-const ui64 InvalidAccountID = (AccountID) -1;
-typedef ui64 CharacterID;
-const ui64 InvalidCharacterID = (CharacterID)-1;
-typedef ui64 ItemID;
-const ui64 InvalidItemID = (ItemID)-1;
+typedef ui64 UserID;
+const ui64 InvalidUserID = (UserID)-1;
+
+
 typedef ui32 NodeIndex;
 const NodeIndex InvalidNodeIndex = (NodeIndex)-1;
 
@@ -73,26 +71,15 @@ typedef ui16 AreaID;
 
 
 
-//非认证情况下客户端通讯协议[)
-const ui16 MIN_OUT_UNAUTH_PROTO_ID = 0;
-const ui16 MAX_OUT_UNAUTH_PROTO_ID = 100;
-
-//认证后的通讯协议区间为[)
-const ui16 MIN_OUT_PROTO_ID = 100;
-const ui16 MAX_OUT_PROTO_ID = 30000;
-
-//客户端的请求协议可以根据以下函数判断
-inline bool isNeedAuthClientPROTO(ui16 protoID) { return protoID >= MIN_OUT_PROTO_ID && protoID < MAX_OUT_PROTO_ID; }
-
-
 
 
 //session info
 struct SessionInfo 
 {
 	//client
-	AccountID accID = InvalidAccountID;
-	CharacterID charID = InvalidCharacterID;
+	std::string user;
+	std::string passwd;
+	UserID uid = InvalidUserID;
 	SessionID sID = InvalidSeesionID;
 	//login time
 	ui64 loginTime = time(NULL);
@@ -101,27 +88,26 @@ struct SessionInfo
 };
 
 
-struct InnerCharInfo
+struct InnerUserInfo
 {
 	SessionInfo sesionInfo;
-	AccountInfo accInfo;
-	CharacterInfo charInfo;
-	enum InnerCharInfoType
+	UserInfo userInfo;
+	enum InnerUserInfoType
 	{
-		ICIT_UNAUTH = 0,
-		ICIT_AUTHING,
-		ICIT_AUTHED,
-		ICIT_LOGINING,
-		ICIT_LOGINED,
+		IUIT_UNAUTH = 0,
+		IUIT_AUTHING,
+		IUIT_AUTHED,
+		IUIT_LOGINING,
+		IUIT_LOGINED,
 	};
-	InnerCharInfoType status = ICIT_UNAUTH;
+	InnerUserInfoType status = IUIT_UNAUTH;
 };
 
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SessionInfo & info)
 {
-	stm << "accID=" << info.accID << ", charID=" << info.charID
-		<< ", sID=" << info.sID
+	stm << "user=" << info.user << ", passwd=" << info.passwd
+		<< ", uid=" << info.uid << ", sID=" << info.sID
 		<< ", loginTime=" << info.loginTime
 		<< ",lastLoginTime=" << info.lastActiveTime << ", lastActiveTime=" << info.lastActiveTime;
 	return stm;

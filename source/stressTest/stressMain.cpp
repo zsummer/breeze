@@ -19,7 +19,6 @@
 //! 测试
 
 #include <Common.h>
-#include <ProtoAuth.h>
 #include <ProtoLogin.h>
 #include <unordered_map>
 
@@ -33,8 +32,7 @@ unsigned short g_maxClient = 1; //如启动的客户端总数.
 enum StressType
 {
 	ST_NORMAL = 0,
-	ST_AUTH,
-	ST_LOAD_ACCOUNT,
+	ST_LOGIN,
 };
 StressType g_stressType = ST_NORMAL;
 
@@ -92,12 +90,11 @@ public:
 	StressClientHandler()
 	{
 		MessageDispatcher::getRef().registerOnSessionEstablished(std::bind(&StressClientHandler::onConnected, this, std::placeholders::_1));
-		MessageDispatcher::getRef().registerSessionMessage(ID_AS2C_AuthAck,
-			std::bind(&StressClientHandler::msg_AuthAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		MessageDispatcher::getRef().registerSessionMessage(ID_LS2C_CharacterCreateAck,
-			std::bind(&StressClientHandler::msg_CharacterCreateAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		MessageDispatcher::getRef().registerSessionMessage(ID_LS2C_CharacterLoginAck,
-			std::bind(&StressClientHandler::msg_CharacterLoginAck_fun, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		MessageDispatcher::getRef().registerSessionMessage(ID_LS2C_LoginAck,
+			std::bind(&StressClientHandler::msg_onLoginAck, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		MessageDispatcher::getRef().registerSessionMessage(ID_LS2C_CreateUserAck,
+			std::bind(&StressClientHandler::msg_onCreateUserAck, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		
 		MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&StressClientHandler::onConnectDisconnect, this, std::placeholders::_1));
 	}
 
@@ -107,12 +104,12 @@ public:
 		char userName[100];
 		sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
 		WriteStreamPack ws;
-		C2AS_AuthReq req;
+		C2LS_LoginReq req;
 		req.user = userName;
-		req.pwd = "123";
-		ws << ID_C2AS_AuthReq << req;
+		req.passwd = "123";
+		ws << ID_C2LS_LoginReq << req;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-		LOGD("onConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
+		LOGD("onConnected. Send C2LS_LoginReq. sID=" << sID << ", user=" << req.user << ", passwd=" << req.passwd);
 		g_totalSendCount++;
 	};
 	void onConnectDisconnect(SessionID sID)
@@ -120,18 +117,18 @@ public:
 		_sessionStatus[sID] = false;
 	}
 
-	inline void msg_AuthAck_fun(SessionID sID, ProtoID pID, ReadStreamPack & rs)
+	inline void msg_onLoginAck(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	{
 
-		AS2C_AuthAck ack;
+		LS2C_LoginAck ack;
 		rs >> ack;
 		if (ack.retCode == BEC_SUCCESS)
 		{
-			LOGD("Auth Success. sID=" << sID);
+			LOGD("msg_onLoginAck Success. sID=" << sID);
 		}
 		else
 		{
-			LOGE("Auth Failed. sID=" << sID);
+			LOGE("msg_onLoginAck Failed. sID=" << sID);
 			return;
 		}
 
@@ -139,86 +136,69 @@ public:
 		g_totalRecvCount++;
 		g_totalEchoCount++;
 
-		if (g_stressType == ST_NORMAL)
+
+		if (ack.needCreateUser)
 		{
-			//create character
-			if (ack.info.charInfos.empty())
-			{
-				WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
-				C2LS_CharacterCreateReq req;
-				req.charName = "test";
-				ws << ID_C2LS_CharacterCreateReq << req;
-				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-				LOGD("Send ID_C2LS_CharacterCreateReq. sID=" << sID);
-				g_totalSendCount++;
-			}
-			//login
-			else
-			{
-				WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
-				C2LS_CharacterLoginReq req;
-				req.charID = ack.info.charInfos.at(0).charID;
-				ws << ID_C2LS_CharacterLoginReq << req;
-				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-				LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_CharacterLoginReq. sID=" << sID);
-				g_totalSendCount++;
-			}
-		}
-		else if (g_stressType == ST_AUTH)
-		{
-			char userName[100];
-			sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
+			C2LS_CreateUserReq req;
+			req.nickName = "summer";
+			req.nickName += toString(rand() % 100);
+			req.iconID = 100;
 			WriteStreamPack ws;
-			C2AS_AuthReq req;
-			req.user = userName;
-			req.pwd = "123";
-			ws << ID_C2AS_AuthReq << req;
+			ws << ID_C2LS_CreateUserReq << req;
 			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-			LOGD("onConnected. Send AuthReq. sID=" << sID << ", user=" << req.user << ", pwd=" << req.pwd);
 			g_totalSendCount++;
-			return;
 		}
+		else
+		{
+			LOGD("login success. sID=" << sID << ", nickname=" << ack.info.nickName);
+			if (g_stressType == ST_LOGIN)
+			{
+				char userName[100];
+				sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
+				WriteStreamPack ws;
+				C2LS_LoginReq req;
+				req.user = userName;
+				req.passwd = "123";
+				ws << ID_C2LS_LoginReq << req;
+				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+				LOGD("onConnected. Send C2LS_LoginReq. sID=" << sID << ", user=" << req.user << ", passwd=" << req.passwd);
+				g_totalSendCount++;
+			}
+			
+		}
+	}
 
-	};
-
-	inline void msg_CharacterCreateAck_fun(SessionID sID, ProtoID pID, ReadStreamPack & rs)
+	inline void msg_onCreateUserAck(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 	{
-		LS2C_CharacterCreateAck ack;
+		LS2C_CreateUserAck ack;
 		rs >> ack;
 		g_totalRecvCount++;
 		g_totalEchoCount++;
 
 		if (ack.retCode != BEC_SUCCESS)
 		{
-			LOGE("msg_CharacterCreateAck_fun Failed. sID=" << sID << ", retCode=" << ack.retCode);
+			LOGE("msg_onCreateUserAck Failed. sID=" << sID << ", retCode=" << ack.retCode);
 			return;
 		}
-		LOGD("msg_CharacterCreateAck_fun Success. sID=" << sID << ", charName=" << ack.info.charName << ", charID=" << ack.info.charID);
+	
 
-		WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
-		C2LS_CharacterLoginReq req;
-		req.charID = ack.info.charID;
-		ws << ID_C2LS_CharacterLoginReq << req;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-		LOGD("msg_LoadAccountInfoAck_fun. Send ID_C2LS_CharacterLoginReq. sID=" << sID);
-		g_totalSendCount++;
-
-	}
-	inline void msg_CharacterLoginAck_fun(SessionID sID, ProtoID pID, ReadStreamPack & rs)
-	{
-		LS2C_CharacterLoginAck ack;
-		rs >> ack;
-
-		g_totalRecvCount++;
-		g_totalEchoCount++;
-
-		if (ack.retCode != BEC_SUCCESS)
+		if (ack.needCreateUser)
 		{
-			LOGE("msg_CharacterLoginAck_fun Failed. sID=" << sID << ", retCode=" << ack.retCode);
-			return;
+			C2LS_CreateUserReq req;
+			req.nickName = "summer";
+			req.nickName += toString(rand() % 100);
+			req.iconID = 100;
+			WriteStreamPack ws;
+			ws << ID_C2LS_CreateUserReq << req;
+			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			g_totalSendCount++;
 		}
-		LOGD("msg_CharacterLoginAck_fun Success. sID=" << sID );
+		else
+		{
+			LOGD("msg_onCreateUserAck Success. sID=" << sID << ", nickname=" << ack.info.nickName << ", uid=" << ack.info.uid);
+		}
 	}
+	
 
 private:
 	std::unordered_map<SessionID, bool> _sessionStatus;

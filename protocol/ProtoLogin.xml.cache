@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<md5>571bc56b6262dd6f040ab55711dcd0f6</md5>
+<md5>b1eaa4ce38ee1bb60de9d2328c50d7f0</md5>
 
 <CacheNo>
-	<cache key = "ID_C2LS_CharacterCreateReq" No = "104" /> 
-	<cache key = "ID_C2LS_CharacterLoginReq" No = "102" /> 
-	<cache key = "ID_C2LS_CreateCharacterReq" No = "100" /> 
-	<cache key = "ID_LS2C_CharacterCreateAck" No = "105" /> 
-	<cache key = "ID_LS2C_CharacterLoginAck" No = "103" /> 
-	<cache key = "ID_LS2C_CreateCharacterAck" No = "101" /> 
+	<cache key = "ID_AS2C_ServerPulse" No = "107" /> 
+	<cache key = "ID_C2AS_ClientPulse" No = "106" /> 
+	<cache key = "ID_C2LS_ChangeUserInfoReq" No = "104" /> 
+	<cache key = "ID_C2LS_CreateUserInfoReq" No = "100" /> 
+	<cache key = "ID_C2LS_CreateUserReq" No = "108" /> 
+	<cache key = "ID_C2LS_LoginReq" No = "102" /> 
+	<cache key = "ID_LS2C_ChangeUserInfoAck" No = "105" /> 
+	<cache key = "ID_LS2C_CreateUserAck" No = "109" /> 
+	<cache key = "ID_LS2C_CreateUserInfoAck" No = "101" /> 
+	<cache key = "ID_LS2C_LoginAck" No = "103" /> 
 </CacheNo>

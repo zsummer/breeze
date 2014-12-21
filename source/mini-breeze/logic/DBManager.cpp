@@ -1,5 +1,5 @@
-﻿#include "NetManager.h"
-#include "DBManager.h"
+﻿#include "netmanager.h"
+#include "dbmanager.h"
 using namespace zsummer::mysql;
 
 DBManager::DBManager()
@@ -53,11 +53,11 @@ bool DBManager::init()
 	LOGI("connect Log DB success. db config=" << ServerConfig::getRef().getLogDBConfig());
 	return true;
 }
-void DBManager::charLogin(std::shared_ptr<InnerCharInfo> iinfoPtr)
+void DBManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
 {
 
 }
-void DBManager::charLogout(std::shared_ptr<InnerCharInfo> iinfoPtr)
+void DBManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)
 {
 
 }

@@ -26,8 +26,9 @@
 #ifndef _SERVER_CONFIG_H_
 #define _SERVER_CONFIG_H_
 
-#include <InnerTypeDefine.h>
-#include <BaseHander.h>
+#include <inner_defined.h>
+#include <base_message_handler.h>
+#include <single.h>
 #include <tinyxml2.h>
 
 
