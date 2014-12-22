@@ -25,7 +25,7 @@
 
 #ifndef _BASE_MESSAGE_HANDLER_H_
 #define _BASE_MESSAGE_HANDLER_H_
-#include <inner_defined.h>
+#include <InnerDefined.h>
 
 
 class BaseMessageHandler

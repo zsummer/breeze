@@ -26,13 +26,13 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#include <inner_defined.h>
+#include <InnerDefined.h>
 #include <log4z/log4z.h>
-#include <base_message_handler.h>
-#include <single.h>
-#include <gen_objectid.h>
+#include <BaseMessageHandler.h>
+#include <Single.h>
+#include <GenObjectID.h>
 #include <tinyxml2.h>
-#include <serverconfig.h>
+#include <ServerConfig.h>
 #include <dbhelper.h>
 
 

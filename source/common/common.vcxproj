@@ -19,18 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base_message_handler.h" />
-    <ClInclude Include="common.h" />
-    <ClInclude Include="dbhelper.h" />
-    <ClInclude Include="gen_objectid.h" />
-    <ClInclude Include="inner_defined.h" />
-    <ClInclude Include="serverconfig.h" />
-    <ClInclude Include="single.h" />
+    <ClInclude Include="BaseMessageHandler.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="DBHelper.h" />
+    <ClInclude Include="GenObjectID.h" />
+    <ClInclude Include="InnerDefined.h" />
+    <ClInclude Include="ServerConfig.h" />
+    <ClInclude Include="Single.h" />
     <ClInclude Include="tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dbhelper.cpp" />
-    <ClCompile Include="serverconfig.cpp" />
+    <ClCompile Include="DBHelper.cpp" />
+    <ClCompile Include="ServerConfig.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

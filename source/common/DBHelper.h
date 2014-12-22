@@ -26,10 +26,10 @@
 
 #ifndef _DB_HELPER_H_
 #define _DB_HELPER_H_
-#include <inner_defined.h>
-#include <base_message_handler.h>
-#include <single.h>
-#include <serverconfig.h>
+#include <InnerDefined.h>
+#include <BaseMessageHandler.h>
+#include <Single.h>
+#include <ServerConfig.h>
 #include <mysqlclient/errmsg.h>
 #include <mysqlclient/mysql.h>
 

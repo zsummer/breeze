@@ -18,7 +18,7 @@
 */
 
 #include "tinyxml2.h"
-#include "serverconfig.h"
+#include "ServerConfig.h"
 
 
 

@@ -63,7 +63,7 @@ void DBResult::_setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQ
 		{
 			unsigned int fieldCount = mysql_num_fields(res);
 			MYSQL_ROW row;
-			while (row = mysql_fetch_row(res))
+			while ((row = mysql_fetch_row(res)) == NULL)
 			{
 				_result.push_back(std::vector<std::string>());
 				auto & vct = _result.back();

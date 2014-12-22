@@ -12,24 +12,24 @@
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="logic\dbmanager.cpp">
+    <ClCompile Include="logic\DBManager.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="logic\netmanager.cpp">
+    <ClCompile Include="logic\NetManager.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="application.cpp">
+    <ClCompile Include="Application.cpp">
       <Filter>main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="logic\dbmanager.h">
+    <ClInclude Include="logic\DBManager.h">
       <Filter>logic</Filter>
     </ClInclude>
-    <ClInclude Include="logic\netmanager.h">
+    <ClInclude Include="logic\NetManager.h">
       <Filter>logic</Filter>
     </ClInclude>
-    <ClInclude Include="application.h">
+    <ClInclude Include="Application.h">
       <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>
