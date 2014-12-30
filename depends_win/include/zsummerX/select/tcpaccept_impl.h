@@ -41,18 +41,18 @@
 #include "select_impl.h"
 #include "tcpsocket_impl.h"
 /*
-*	TcpAcceptImpl: EPOLL LT EPOLLONESHOT模式 每次MOD accept一次 以尽量保持和IOCP的PROACTOR设计的一致性
+*	TcpAccept: EPOLL LT EPOLLONESHOT模式 每次MOD accept一次 以尽量保持和IOCP的PROACTOR设计的一致性
 */
 
 namespace zsummer
 {
 	namespace network
 	{
-		class TcpAcceptImpl :public std::enable_shared_from_this<TcpAcceptImpl>
+		class TcpAccept :public std::enable_shared_from_this<TcpAccept>
 		{
 		public:
-			TcpAcceptImpl();
-			~TcpAcceptImpl();
+			TcpAccept();
+			~TcpAccept();
 			bool initialize(const ZSummerPtr &summer);
 			bool openAccept(const std::string& listenIP, unsigned short listenPort);
 			bool doAccept(const TcpSocketPtr &s, _OnAcceptHandler && handle);
@@ -72,7 +72,7 @@ namespace zsummer
 			_OnAcceptHandler _onAcceptHandler;
 			TcpSocketPtr  _client;
 		};
-		typedef std::shared_ptr<TcpAcceptImpl> TcpAcceptPtr;
+		typedef std::shared_ptr<TcpAccept> TcpAcceptPtr;
 	}
 }
 

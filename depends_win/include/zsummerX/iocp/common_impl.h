@@ -47,17 +47,17 @@ namespace zsummer
 {
 	namespace network
 	{
-		class TcpSocketImpl;
-		class TcpAcceptImpl;
-		class UdpSocketImpl;
+		class TcpSocket;
+		class TcpAccept;
+		class UdpSocket;
 		const int InvalideFD = -1;
 		struct tagReqHandle 
 		{
 			OVERLAPPED	 _overlapped;
 			unsigned char _type;
-			std::shared_ptr<TcpSocketImpl> _tcpSocket;
-			std::shared_ptr<TcpAcceptImpl> _tcpAccept;
-			std::shared_ptr<UdpSocketImpl> _udpSocket;
+			std::shared_ptr<TcpSocket> _tcpSocket;
+			std::shared_ptr<TcpAccept> _tcpAccept;
+			std::shared_ptr<UdpSocket> _udpSocket;
 			enum HANDLE_TYPE
 			{
 				HANDLE_ACCEPT, 

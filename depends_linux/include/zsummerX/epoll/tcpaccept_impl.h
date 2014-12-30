@@ -45,11 +45,11 @@ namespace zsummer
 {
 	namespace network
 	{
-		class TcpAcceptImpl : public std::enable_shared_from_this<TcpAcceptImpl>
+		class TcpAccept : public std::enable_shared_from_this<TcpAccept>
 		{
 		public:
-			TcpAcceptImpl();
-			~TcpAcceptImpl();
+			TcpAccept();
+			~TcpAccept();
 			bool initialize(const ZSummerPtr &summer);
 			bool openAccept(const std::string & listenIP, unsigned short listenPort);
 			bool doAccept(const TcpSocketPtr &s, _OnAcceptHandler &&handle);
@@ -70,7 +70,7 @@ namespace zsummer
 			TcpSocketPtr  _client;
 
 		};
-		typedef std::shared_ptr<TcpAcceptImpl> TcpAcceptPtr;
+		typedef std::shared_ptr<TcpAccept> TcpAcceptPtr;
 	}
 }
 

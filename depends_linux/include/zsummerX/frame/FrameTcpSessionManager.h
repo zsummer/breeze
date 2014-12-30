@@ -54,6 +54,7 @@ public:
 	bool start();
 	void stop();
 	void run();
+	void runOnce(bool isImmediately = false);
 
 public:
 	//handle: std::function<void()>

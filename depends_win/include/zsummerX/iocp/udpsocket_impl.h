@@ -43,11 +43,11 @@ namespace zsummer
 {
 	namespace network
 	{
-		class UdpSocketImpl : public std::enable_shared_from_this<UdpSocketImpl>
+		class UdpSocket : public std::enable_shared_from_this<UdpSocket>
 		{
 		public:
-			UdpSocketImpl();
-			~UdpSocketImpl();
+			UdpSocket();
+			~UdpSocket();
 			bool initialize(const ZSummerPtr &summer, const char *localIP, unsigned short localPort);
 			bool doSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
 			bool onIOCPMessage(BOOL bSuccess, DWORD dwTranceCount, unsigned char cType);
@@ -67,7 +67,7 @@ namespace zsummer
 			_OnRecvFromHandler _onRecvHander;
 			LINK_STATUS _nLinkStatus;
 		};
-		typedef std::shared_ptr<UdpSocketImpl> UdpSocketPtr;
+		typedef std::shared_ptr<UdpSocket> UdpSocketPtr;
 	}
 }
 

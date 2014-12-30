@@ -167,10 +167,10 @@ void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 
 	if (innerInfo->status != InnerUserInfo::IUIT_UNAUTH)
 	{
-		WriteStreamPack ws;
+		WriteStreamPack ws(ID_LS2C_LoginAck);
 		LS2C_LoginAck ack;
 		ack.retCode = BEC_AUTH_LIMITE_COUNT;
-		ws << ID_LS2C_LoginAck << ack;
+		ws << ack;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		return;
 	}
@@ -252,8 +252,8 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 	{
 		LOGD("user auth fail. sID=" << sID << " req.user = " << innerInfo->sesionInfo.user << ", req.passwd = " << innerInfo->sesionInfo.passwd );
 		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
-		WriteStreamPack ws;
-		ws << ID_LS2C_LoginAck << ack;
+		WriteStreamPack ws(ID_LS2C_LoginAck);
+		ws << ack;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 	else
@@ -283,8 +283,8 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 				innerInfo->sesionInfo.lastLoginTime = time(NULL);
 				ack.needCreateUser = false;
 				ack.info = innerInfo->userInfo;
-				WriteStreamPack ws;
-				ws << ID_LS2C_LoginAck << ack;
+				WriteStreamPack ws(ID_LS2C_LoginAck);
+				ws << ack;
 				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 
 				userLogin(innerInfo);
@@ -363,8 +363,8 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 	if (ack.retCode != BEC_SUCCESS)
 	{
 		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
-		WriteStreamPack ws;
-		ws << ID_LS2C_LoginAck << ack;
+		WriteStreamPack ws(ID_LS2C_LoginAck);
+		ws << ack;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 	else
@@ -378,9 +378,9 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 		}
 		else
 		{
-			WriteStreamPack ws;
+			WriteStreamPack ws(ID_LS2C_LoginAck);
 			ack.info = innerInfo->userInfo;
-			ws << ID_LS2C_LoginAck << ack;
+			ws << ack;
 			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 			if (!ack.needCreateUser)
 			{
@@ -474,8 +474,8 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 		if (!ack.needCreateUser)
 		{
 			ack.info = innerInfo->userInfo;
-			WriteStreamPack ws;
-			ws << ID_LS2C_CreateUserAck << ack;
+			WriteStreamPack ws(ID_LS2C_CreateUserAck);
+			ws << ack;
 			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 			innerInfo->sesionInfo.lastLoginTime = time(NULL);
 			userLogin(innerInfo);
@@ -483,8 +483,8 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 		}
 		else
 		{
-			WriteStreamPack ws;
-			ws << ID_LS2C_CreateUserAck << ack;
+			WriteStreamPack ws(ID_LS2C_CreateUserAck);
+			ws << ack;
 			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		}
 		
@@ -510,11 +510,11 @@ void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
 			LOGW("kick session because session heartbeat timeout.  sID=" << sID << ", lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);
 			return;
 		}
-		WriteStreamPack ws(zsummer::proto4z::UBT_STATIC_AUTO);
+		WriteStreamPack ws(ID_AS2C_ServerPulse);
 		AS2C_ServerPulse sp;
 		sp.timeStamp = (ui32)time(NULL);
 		sp.timeTick = 0;
-		ws << ID_AS2C_ServerPulse << sp;
+		ws << sp;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }

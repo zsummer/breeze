@@ -42,12 +42,12 @@ namespace zsummer
 {
 	namespace network
 	{
-		class TcpSocketImpl : public std::enable_shared_from_this<TcpSocketImpl>
+		class TcpSocket : public std::enable_shared_from_this<TcpSocket>
 		{
 		public:
 
-			TcpSocketImpl();
-			~TcpSocketImpl();
+			TcpSocket();
+			~TcpSocket();
 			//! initialize an attach socket to zsummer pump.
 			//if the socket is used to connect,  It's need initialize before call doConnect 
 			// if the socket is used to accept new socket, It's need initialize after OnAccept. 
@@ -81,7 +81,7 @@ namespace zsummer
 		public:
 			bool attachSocket(SOCKET s, std::string remoteIP, unsigned short remotePort);
 			void onIOCPMessage(BOOL bSuccess, DWORD dwTranceCount, unsigned char cType);
-			std::string getTcpSocketImplStatus();
+			std::string getTcpSocketStatus();
 		public:
 			//private
 			ZSummerPtr  _summer;
@@ -107,7 +107,7 @@ namespace zsummer
 			//status
 			int _nLinkStatus = LS_UNINITIALIZE;
 		};
-		typedef std::shared_ptr<TcpSocketImpl> TcpSocketPtr;
+		typedef std::shared_ptr<TcpSocket> TcpSocketPtr;
 
 	}
 }

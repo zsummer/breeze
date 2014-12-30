@@ -27,7 +27,7 @@ HISTORY for Log4z
  * 	simplify the 'fast_test' demo projects.
  * 
  * VERSION 1.1.0 <DATE: 2013.01.24>
- * 	the method start will wait for the logger thread started.
+ * 	the method Start will wait for the logger thread started.
  * 	config and add method change. 
  * 	namespace change.
  * 
@@ -94,10 +94,16 @@ HISTORY for Log4z
  *
  * VERSION 2.8 <DATE: 2014.09.27>
  *  support synchronous written to file and thread-safe
- *  fix compatibility on MinGW. a constent value suffix.
+ *  fix compatibility on MinGW. a constant value suffix.
  *  ignore utf-8 file BOM when load configure file
  *  use macro WIN32_LEAN_AND_MEAN replace head file winsock2.h
  *  new naming notations
+ *
+ * VERSION 3.0 <DATE: 2014.12.19>
+ *  new naming notations
+ *  support for reading config from a string.
+ *  remove all TLS code, used dispatch_semaphore in apple OS.
+ *  support system: windows, linux, mac, iOS
  *  
  */
    

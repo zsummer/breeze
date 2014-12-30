@@ -43,11 +43,11 @@ namespace zsummer
 {
 	namespace network
 	{
-		class TcpAcceptImpl : public std::enable_shared_from_this<TcpAcceptImpl>
+		class TcpAccept : public std::enable_shared_from_this<TcpAccept>
 		{
 		public:
-			TcpAcceptImpl();
-			~TcpAcceptImpl();
+			TcpAccept();
+			~TcpAccept();
 			bool initialize(ZSummerPtr& summer);
 			bool openAccept(const char * ip, unsigned short port);
 			bool doAccept(const TcpSocketPtr& s, _OnAcceptHandler &&handler);
@@ -74,7 +74,7 @@ namespace zsummer
 			//status
 			int _nLinkStatus;
 		};
-		typedef std::shared_ptr<TcpAcceptImpl> TcpAcceptPtr;
+		typedef std::shared_ptr<TcpAccept> TcpAcceptPtr;
 
 	}
 

@@ -37,11 +37,11 @@
 
 /*
  * AUTHORS:  YaweiZhang <yawei_zhang@foxmail.com>
- * VERSION:  4.1.0
+ * VERSION:  4.6.0
  * PURPOSE:  A lightweight C++ library for network.
- * CREATION: 2014.8.19
+ * CREATION: 2014.12.19
  * LCHANGE:  -
- * LICENSE:  Expat/MIT License, See Copyright Notice at the begin of this file.
+ * LICENSE:  MIT License.
  */
 
 
@@ -60,7 +60,7 @@
 
 // default in windows use IOCP implementation
 // default in linux use EPOLL LT implementation 
-// default in mac use select implementaion
+// default in mac use select implementation
 // if can't compile on  some other system , you can try compile used ZSUMMERX_USE_SELECT.  It's be force compiled with select implementation.
 
 

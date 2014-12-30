@@ -37,10 +37,10 @@
 
 /*
  * AUTHORS:  YaweiZhang <yawei_zhang@foxmail.com>
- * VERSION:  2.8.3
+ * VERSION:  3.0.0
  * PURPOSE:  A lightweight library for error reporting and logging to file and screen .
  * CREATION: 2010.10.4
- * LCHANGE:  2014.12.11
+ * LCHANGE:  2014.12.19
  * LICENSE:  Expat/MIT License, See Copyright Notice at the begin of this file.
  */
 
@@ -146,10 +146,16 @@
  *
  * VERSION 2.8 <DATE: 2014.09.27>
  *  support synchronous written to file and thread-safe
- *  fix compatibility on MinGW. a constent value suffix.
+ *  fix compatibility on MinGW. a constant value suffix.
  *  ignore utf-8 file BOM when load configure file
  *  use macro WIN32_LEAN_AND_MEAN replace head file winsock2.h
  *  new naming notations
+ * 
+ * VERSION 3.0 <DATE: 2014.12.19>
+ *  new naming notations
+ *  support for reading config from a string.
+ *  remove all TLS code, used dispatch_semaphore in apple OS.
+ *  support system: windows, linux, mac, iOS
  *  
  */
 
@@ -176,8 +182,8 @@ const int LOG4Z_INVALID_LOGGER_ID = -1;
 //! the main logger id. DO NOT TOUCH
 //! can use this id to set the main logger's attribute.
 //! example:
-//! ILog4zManager::getPtr()->SetLoggerLevel(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN);
-//! ILog4zManager::getPtr()->SetLoggerDisplay(LOG4Z_MAIN_LOGGER_ID, false);
+//! ILog4zManager::getPtr()->setLoggerLevel(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN);
+//! ILog4zManager::getPtr()->setLoggerDisplay(LOG4Z_MAIN_LOGGER_ID, false);
 const int LOG4Z_MAIN_LOGGER_ID = 0;
 
 //! the main logger name. DO NOT TOUCH
@@ -293,7 +299,7 @@ public:
 	//! Push log, thread safe.
 	virtual bool pushLog(LoggerId id, int level, const char * log) = 0;
 
-	//! Set logger's attribute, thread safe.
+	//! set logger's attribute, thread safe.
 	virtual bool setLoggerLevel(LoggerId id, int nLevel) = 0;
 	virtual bool setLoggerDisplay(LoggerId id, bool enable) = 0;
 	virtual bool setLoggerMonthdir(LoggerId id, bool enable) = 0;

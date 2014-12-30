@@ -71,8 +71,8 @@ public:
 	}
 	void onSessionPulse(SessionID sID, unsigned int pulseInterval)
 	{
-		WriteStreamPack ws;
-		ws << ID_C2AS_ClientPulse << C2AS_ClientPulse();
+		WriteStreamPack ws(ID_C2AS_ClientPulse);
+		ws << C2AS_ClientPulse();
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		g_totalSendCount++;
 	}
@@ -103,11 +103,11 @@ public:
 		LOGD("onConnected. SessionID=" << sID);
 		char userName[100];
 		sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
-		WriteStreamPack ws;
+		WriteStreamPack ws(ID_C2LS_LoginReq);
 		C2LS_LoginReq req;
 		req.user = userName;
 		req.passwd = "123";
-		ws << ID_C2LS_LoginReq << req;
+		ws << req;
 		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		LOGD("onConnected. Send C2LS_LoginReq. sID=" << sID << ", user=" << req.user << ", passwd=" << req.passwd);
 		g_totalSendCount++;
@@ -143,8 +143,8 @@ public:
 			req.nickName = "summer";
 			req.nickName += toString(rand() % 100);
 			req.iconID = 100;
-			WriteStreamPack ws;
-			ws << ID_C2LS_CreateUserReq << req;
+			WriteStreamPack ws(ID_C2LS_CreateUserReq);
+			ws << req;
 			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 			g_totalSendCount++;
 		}
@@ -155,11 +155,11 @@ public:
 			{
 				char userName[100];
 				sprintf(userName, "zhangyawei%04d", (unsigned int)sID - __MIDDLE_SEGMENT_VALUE);
-				WriteStreamPack ws;
+				WriteStreamPack ws(ID_C2LS_LoginReq);
 				C2LS_LoginReq req;
 				req.user = userName;
 				req.passwd = "123";
-				ws << ID_C2LS_LoginReq << req;
+				ws << req;
 				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 				LOGD("onConnected. Send C2LS_LoginReq. sID=" << sID << ", user=" << req.user << ", passwd=" << req.passwd);
 				g_totalSendCount++;
@@ -188,8 +188,8 @@ public:
 			req.nickName = "summer";
 			req.nickName += toString(rand() % 100);
 			req.iconID = 100;
-			WriteStreamPack ws;
-			ws << ID_C2LS_CreateUserReq << req;
+			WriteStreamPack ws(ID_C2LS_CreateUserReq);
+			ws << req;
 			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 			g_totalSendCount++;
 		}

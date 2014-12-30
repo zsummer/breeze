@@ -95,8 +95,8 @@ namespace zsummer
 		typedef std::function<void()> _OnTimerHandler;
 
 		//accept callback
-		class TcpSocketImpl;
-		typedef std::function<void(ErrorCode, std::shared_ptr<TcpSocketImpl>)> _OnAcceptHandler;
+		class TcpSocket;
+		typedef std::function<void(ErrorCode, std::shared_ptr<TcpSocket>)> _OnAcceptHandler;
 		//connect callback
 		typedef std::function<void(ErrorCode)> _OnConnectHandler;
 

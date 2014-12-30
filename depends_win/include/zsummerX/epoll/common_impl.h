@@ -67,9 +67,9 @@ namespace zsummer
 			epoll_data_t data;//      User data variable 
 		};
 #endif
-		class TcpSocketImpl;
-		class TcpAcceptImpl;
-		class UdpSocketImpl;
+		class TcpSocket;
+		class TcpAccept;
+		class UdpSocket;
 		const int InvalideFD = -1;
 		struct tagRegister
 		{
@@ -86,11 +86,11 @@ namespace zsummer
 			unsigned char _type = REG_INVALID; //register type
 			unsigned char _linkstat = LS_UNINITIALIZE;
 			int			  _fd = InvalideFD;   //file descriptor
-			std::shared_ptr<TcpSocketImpl> _tcpSocketSendPtr;
-			std::shared_ptr<TcpSocketImpl> _tcpSocketRecvPtr;
-			std::shared_ptr<TcpSocketImpl> _tcpSocketConnectPtr;
-			std::shared_ptr<TcpAcceptImpl> _tcpacceptPtr;
-			std::shared_ptr<UdpSocketImpl> _udpsocketPtr;
+			std::shared_ptr<TcpSocket> _tcpSocketSendPtr;
+			std::shared_ptr<TcpSocket> _tcpSocketRecvPtr;
+			std::shared_ptr<TcpSocket> _tcpSocketConnectPtr;
+			std::shared_ptr<TcpAccept> _tcpacceptPtr;
+			std::shared_ptr<UdpSocket> _udpsocketPtr;
 		};
 
 		template <class T>

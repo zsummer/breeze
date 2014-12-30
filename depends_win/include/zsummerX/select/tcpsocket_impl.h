@@ -47,11 +47,11 @@ namespace zsummer
 	namespace network
 	{
 
-		class TcpSocketImpl : public std::enable_shared_from_this<TcpSocketImpl>
+		class TcpSocket : public std::enable_shared_from_this<TcpSocket>
 		{
 		public:
-			TcpSocketImpl();
-			~TcpSocketImpl();
+			TcpSocket();
+			~TcpSocket();
 			bool initialize(const ZSummerPtr &summer);
 			inline bool getPeerInfo(std::string & remoteIP, unsigned short &remotePort)
 			{
@@ -92,7 +92,7 @@ namespace zsummer
 			char *		 _pSendBuf = NULL;
 		};
 
-		typedef std::shared_ptr<TcpSocketImpl> TcpSocketPtr;
+		typedef std::shared_ptr<TcpSocket> TcpSocketPtr;
 	}
 
 }

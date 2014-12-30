@@ -55,7 +55,7 @@ namespace zsummer
 			~ZSummer(){}
 
 			inline bool initialize();
-			void runOnce();
+			void runOnce(bool isImmediately = false);
 			//handle: std::function<void()>
 			//switch initiative, in the multi-thread it's switch call thread simultaneously.
 			inline void post(_OnPostHandler &&h){ postMsg(PCK_USER_DATA, std::move(h)); }

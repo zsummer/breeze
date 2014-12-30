@@ -50,7 +50,7 @@ namespace zsummer
 			ZSummer(){}
 			~ZSummer(){}
 			bool initialize();
-			void runOnce();
+			void runOnce(bool isImmediately = false);
 
 			template <typename handle>
 			inline void post(handle &&h){PostMessage(std::move(h));}

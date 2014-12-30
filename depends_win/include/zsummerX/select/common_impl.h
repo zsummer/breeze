@@ -64,9 +64,9 @@ namespace zsummer
 #define OSTREAM_GET_LASTERROR  "WSAGetLastError()=" << WSAGetLastError()
 
 #endif
-		class TcpSocketImpl;
-		class TcpAcceptImpl;
-		class UdpSocketImpl;
+		class TcpSocket;
+		class TcpAccept;
+		class UdpSocket;
 		const int InvalideFD = -1;
 		struct tagRegister
 		{
@@ -82,11 +82,11 @@ namespace zsummer
 			bool _rd = false;
 			bool _wt = false;
 			SOCKET _fd = InvalideFD;
-			std::shared_ptr<TcpSocketImpl> _tcpSocketSendPtr;
-			std::shared_ptr<TcpSocketImpl> _tcpSocketRecvPtr;
-			std::shared_ptr<TcpSocketImpl> _tcpSocketConnectPtr;
-			std::shared_ptr<TcpAcceptImpl> _tcpacceptPtr;
-			std::shared_ptr<UdpSocketImpl> _udpsocketPtr;
+			std::shared_ptr<TcpSocket> _tcpSocketSendPtr;
+			std::shared_ptr<TcpSocket> _tcpSocketRecvPtr;
+			std::shared_ptr<TcpSocket> _tcpSocketConnectPtr;
+			std::shared_ptr<TcpAccept> _tcpacceptPtr;
+			std::shared_ptr<UdpSocket> _udpsocketPtr;
 		};
 		typedef std::vector<tagRegister> PoolReggister;
 
