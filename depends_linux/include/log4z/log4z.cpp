@@ -121,18 +121,18 @@ class Log4zFileHandler
 public:
 	Log4zFileHandler(){ _file = NULL; }
 	~Log4zFileHandler(){ close(); }
-	bool isOpen(){ return _file != NULL; }
-	bool open(const char *path, const char * mod)
+	inline bool isOpen(){ return _file != NULL; }
+	inline bool open(const char *path, const char * mod)
 	{
 		if (_file != NULL){fclose(_file);_file = NULL;}
 		_file = fopen(path, mod);
 		return _file != NULL;
 	}
-	void close()
+	inline void close()
 	{
 		if (_file != NULL){fclose(_file);_file = NULL;}
 	}
-	void write(const char * data, size_t len)
+	inline void write(const char * data, size_t len)
 	{
 		if (_file && len > 0)
 		{
@@ -142,9 +142,9 @@ public:
 			}
 		}
 	}
-	void flush(){ if (_file) fflush(_file); }
+	inline void flush(){ if (_file) fflush(_file); }
 
-	std::string readLine()
+	inline std::string readLine()
 	{
 		char buf[500] = { 0 };
 		if (_file && fgets(buf, 500, _file) != NULL)
@@ -153,7 +153,7 @@ public:
 		}
 		return std::string();
 	}
-	const std::string readContent();
+	inline const std::string readContent();
 public:
 	FILE *_file;
 };
@@ -183,9 +183,11 @@ struct LoggerInfo
 	std::string _path;	//path for log file.
 	int  _level;		//filter level
 	bool _display;		//display to screen 
+	bool _outfile;		//output to file
 	bool _monthdir;		//create directory per month 
 	unsigned int _limitsize; //limit file's size, unit Million byte.
 	bool _enable;		//logger is enable 
+	bool _fileLine;
 
 	//! runtime info
 	time_t _curFileCreateTime;	//file create time
@@ -199,15 +201,18 @@ struct LoggerInfo
 		_curFileCreateTime = 0;
 		_curFileIndex = 0;
 		_curWriteLen = 0;
+		_enable = false;
 	}
 	void setDefaultInfo()
 	{ 
 		_path = LOG4Z_DEFAULT_PATH; 
 		_level = LOG4Z_DEFAULT_LEVEL; 
 		_display = LOG4Z_DEFAULT_DISPLAY; 
-		_enable = false; 
+		_enable = true; 
 		_monthdir = LOG4Z_DEFAULT_MONTHDIR; 
 		_limitsize = LOG4Z_DEFAULT_LIMITSIZE;
+		_fileLine = true;
+		_outfile = true;
 	}
 };
 
@@ -221,7 +226,7 @@ static bool isSameDay(time_t t1, time_t t2);
 static void fixPath(std::string &path);
 static void trimLogConfig(std::string &str, std::string extIgnore = std::string());
 static std::pair<std::string, std::string> splitPairString(const std::string & str, const std::string & delimiter);
-static bool parseConfig(const std::string& file, std::map<std::string, LoggerInfo> & outInfo);
+
 
 static bool isDirectory(std::string path);
 static bool createRecursionDir(std::string path);
@@ -340,24 +345,29 @@ class LogerManager : public ThreadHelper, public ILog4zManager
 public:
 	LogerManager();
 	virtual ~LogerManager();
-
+	
+	bool configFromStringImpl(std::string content, bool isUpdate);
 	//! 读取配置文件并覆写
 	virtual bool config(const char* configPath);
 	virtual bool configFromString(const char* config);
 
 	//! 覆写式创建
-	virtual LoggerId createLogger(const char* loggerName, const char* path, int level, bool display, bool monthdir, unsigned int limitsize);
+	virtual LoggerId createLogger(const char* loggerName, const char* path);
 	virtual bool start();
 	virtual bool stop();
 	virtual bool prePushLog(LoggerId id, int level);
-	virtual bool pushLog(LoggerId id, int level, const char * log);
+	virtual bool pushLog(LoggerId id, int level, const char * log, const char * file, int line);
 	//! 查找ID
 	virtual LoggerId findLogger(const char*  loggerName);
+	virtual bool enableLogger(LoggerId id, bool enable);
 	virtual bool setLoggerLevel(LoggerId id, int nLevel);
 	virtual bool setLoggerDisplay(LoggerId id, bool enable);
+	virtual bool setLoggerOutFile(LoggerId id, bool enable);
 	virtual bool setLoggerMonthdir(LoggerId id, bool enable);
 	virtual bool setLoggerLimitsize(LoggerId id, unsigned int limitsize);
+	virtual bool setLoggerFileLine(LoggerId id, bool enable);
 	virtual bool updateConfig();
+	virtual bool isLoggerEnable(LoggerId id);
 	virtual unsigned long long getStatusTotalWriteCount(){return _ullStatusTotalWriteFileCount;}
 	virtual unsigned long long getStatusTotalWriteBytes(){return _ullStatusTotalWriteFileBytes;}
 	virtual unsigned long long getStatusWaitingCount(){return _ullStatusTotalPushLog - _ullStatusTotalPopLog;}
@@ -656,6 +666,18 @@ static bool parseConfigLine(const std::string& line, int curLineNum, std::string
 			iter->second._display = true;
 		}
 	}
+	//! output to file
+	else if (kv.first == "outfile")
+	{
+		if (kv.second == "false" || kv.second == "0")
+		{
+			iter->second._outfile = false;
+		}
+		else
+		{
+			iter->second._outfile = true;
+		}
+	}
 	//! monthdir
 	else if (kv.first == "monthdir")
 	{
@@ -672,6 +694,30 @@ static bool parseConfigLine(const std::string& line, int curLineNum, std::string
 	else if (kv.first == "limitsize")
 	{
 		iter->second._limitsize = atoi(kv.second.c_str());
+	}
+	//! display log in file line
+	else if (kv.first == "fileline")
+	{
+		if (kv.second == "false" || kv.second == "0")
+		{
+			iter->second._fileLine = false;
+		}
+		else
+		{
+			iter->second._fileLine = true;
+		}
+	}
+	//! enable/disable one logger
+	else if (kv.first == "enable")
+	{
+		if (kv.second == "false" || kv.second == "0")
+		{
+			iter->second._enable = false;
+		}
+		else
+		{
+			iter->second._enable = true;
+		}
 	}
 	return true;
 }
@@ -719,17 +765,7 @@ static bool parseConfigFromString(const char * config, std::map<std::string, Log
 	return true;
 }
 
-static bool parseConfig(const std::string& file, std::map<std::string, LoggerInfo> & outInfo)
-{
-	//! read file content
-	Log4zFileHandler f;
-	f.open(file.c_str(), "r");
-	if (!f.isOpen())
-	{
-		return false;
-	}
-	return parseConfigFromString(f.readContent().c_str(), outInfo);
-}
+
 
 bool isDirectory(std::string path)
 {
@@ -1031,7 +1067,7 @@ bool ThreadHelper::start()
 #ifdef WIN32
 	unsigned long long ret = _beginthreadex(NULL, 0, threadProc, (void *) this, 0, NULL);
 
-	if (ret == -1 || ret == 1  || ret == 0)
+	if (ret == -1 || ret == 0)
 	{
 		std::cout << "log4z: create log4z thread error! \r\n" <<std::endl;
 		return false;
@@ -1073,6 +1109,7 @@ LogerManager::LogerManager()
 	_lastId = LOG4Z_MAIN_LOGGER_ID;
 	getProcessInfo(_loggers[LOG4Z_MAIN_LOGGER_ID]._name, _loggers[LOG4Z_MAIN_LOGGER_ID]._pid);
 	_ids[LOG4Z_MAIN_LOGGER_NAME] = LOG4Z_MAIN_LOGGER_ID;
+	_loggers[LOG4Z_MAIN_LOGGER_ID]._enable = true;
 
 	_ullStatusTotalPushLog = 0;
 	_ullStatusTotalPopLog = 0;
@@ -1116,6 +1153,46 @@ void LogerManager::showColorText(const char *text, int level)
 	return;
 }
 
+bool LogerManager::configFromStringImpl(std::string content, bool isUpdate)
+{
+	std::map<std::string, LoggerInfo> loggerMap;
+	if (!parseConfigFromString(content.c_str(), loggerMap))
+	{
+		std::cout << " !!! !!! !!! !!!" << std::endl;
+		std::cout << " !!! !!! log4z load config file error" << std::endl;
+		std::cout << " !!! !!! !!! !!!" << std::endl;
+		return false;
+	}
+	for (std::map<std::string, LoggerInfo>::iterator iter = loggerMap.begin(); iter != loggerMap.end(); ++iter)
+	{
+		LoggerId id = LOG4Z_INVALID_LOGGER_ID;
+		if (isUpdate)
+		{
+			id = findLogger(iter->second._name.c_str());
+			if (id == LOG4Z_INVALID_LOGGER_ID)
+			{
+				continue;
+			}
+		}
+		else
+		{
+			id = createLogger(iter->second._name.c_str(),iter->second._path.c_str());
+			if (id == LOG4Z_INVALID_LOGGER_ID)
+			{
+				continue;
+			}
+		}
+		_loggers[id]._enable = iter->second._enable;
+		_loggers[id]._level = iter->second._level;
+		_loggers[id]._display = iter->second._display;
+		_loggers[id]._monthdir = iter->second._monthdir;
+		_loggers[id]._limitsize = iter->second._limitsize;
+		_loggers[id]._outfile = iter->second._outfile;
+		_loggers[id]._fileLine = iter->second._fileLine;
+		
+	}
+	return true;
+}
 
 //! read configure and create with overwriting
 bool LogerManager::config(const char* configPath)
@@ -1128,51 +1205,27 @@ bool LogerManager::config(const char* configPath)
 		return false;
 	}
 	_configFile = configPath;
-	std::map<std::string, LoggerInfo> loggerMap;
-	if (!parseConfig(configPath, loggerMap))
+
+	Log4zFileHandler f;
+	f.open(_configFile.c_str(), "r");
+	if (!f.isOpen())
 	{
 		std::cout << " !!! !!! !!! !!!" << std::endl;
 		std::cout << " !!! !!! log4z load config file error. filename=" << configPath << " !!! !!! " << std::endl;
 		std::cout << " !!! !!! !!! !!!" << std::endl;
 		return false;
 	}
-	for (std::map<std::string, LoggerInfo>::iterator iter = loggerMap.begin(); iter != loggerMap.end(); ++iter)
-	{
-		createLogger(iter->second._name.c_str(), 
-			iter->second._path.c_str(), 
-			iter->second._level, 
-			iter->second._display, 
-			iter->second._monthdir,
-			iter->second._limitsize);
-	}
-	return true;
+	return configFromStringImpl(f.readContent().c_str(), false);
 }
 
 //! read configure and create with overwriting
 bool LogerManager::configFromString(const char* config)
 {
-	std::map<std::string, LoggerInfo> loggerMap;
-	if (!parseConfigFromString(config, loggerMap))
-	{
-		std::cout << " !!! !!! !!! !!!" << std::endl;
-		std::cout << " !!! !!! log4z load config file error" << std::endl;
-		std::cout << " !!! !!! !!! !!!" << std::endl;
-		return false;
-	}
-	for (std::map<std::string, LoggerInfo>::iterator iter = loggerMap.begin(); iter != loggerMap.end(); ++iter)
-	{
-		createLogger(iter->second._name.c_str(),
-			iter->second._path.c_str(),
-			iter->second._level,
-			iter->second._display,
-			iter->second._monthdir,
-			iter->second._limitsize);
-	}
-	return true;
+	return configFromStringImpl(config, false);
 }
 
 //! create with overwriting
-LoggerId LogerManager::createLogger(const char* loggerName, const char* path, int nLevel, bool display, bool monthdir, unsigned int limitsize)
+LoggerId LogerManager::createLogger(const char* loggerName, const char* path)
 {
 	std::string _tmp;
 	std::string _pid;
@@ -1182,12 +1235,12 @@ LoggerId LogerManager::createLogger(const char* loggerName, const char* path, in
 	if (name.length() == 0)
 	{
 		showColorText("log4z: create logger error, name is empty ! \r\n", LOG_LEVEL_FATAL);
-		return -1;
+		return LOG4Z_INVALID_LOGGER_ID;
 	}
 	trimLogConfig(pathname);
 	fixPath(pathname);
 
-	LoggerId newID = -1;
+	LoggerId newID = LOG4Z_INVALID_LOGGER_ID;
 	{
 		std::map<std::string, LoggerId>::iterator iter = _ids.find(name);
 		if (iter != _ids.end())
@@ -1195,15 +1248,16 @@ LoggerId LogerManager::createLogger(const char* loggerName, const char* path, in
 			newID = iter->second;
 		}
 	}
-	if (newID == -1)
+	if (newID == LOG4Z_INVALID_LOGGER_ID)
 	{
 		if (_lastId +1 >= LOG4Z_LOGGER_MAX)
 		{
 			showColorText("log4z: CreateLogger can not create|writeover, because loggerid need < LOGGER_MAX! \r\n", LOG_LEVEL_FATAL);
-			return -1;
+			return LOG4Z_INVALID_LOGGER_ID;
 		}
 		newID = ++ _lastId;
 		_ids[name] = newID;
+		_loggers[newID].setDefaultInfo();
 	}
 
 	if (!pathname.empty())
@@ -1214,16 +1268,6 @@ LoggerId LogerManager::createLogger(const char* loggerName, const char* path, in
 	if (newID > LOG4Z_MAIN_LOGGER_ID)
 	{
 		_loggers[newID]._name = name;
-	}
-	_loggers[newID]._pid = _pid;
-	_loggers[newID]._level = nLevel;
-	_loggers[newID]._enable = true;
-	_loggers[newID]._display = display;
-	_loggers[newID]._monthdir = monthdir;
-	_loggers[newID]._limitsize = limitsize;
-	if (limitsize == 0)
-	{
-		_loggers[newID]._limitsize = 4000;
 	}
 
 	return newID;
@@ -1252,11 +1296,7 @@ bool LogerManager::stop()
 }
 bool LogerManager::prePushLog(LoggerId id, int level)
 {
-	if (id < 0 || id >= LOG4Z_LOGGER_MAX)
-	{
-		return false;
-	}
-	if (!_runing || !_loggers[id]._enable)
+	if (id < 0 || id > _lastId || !_runing || !_loggers[id]._enable)
 	{
 		return false;
 	}
@@ -1266,25 +1306,26 @@ bool LogerManager::prePushLog(LoggerId id, int level)
 	}
 	return true;
 }
-bool LogerManager::pushLog(LoggerId id, int level, const char * log)
+bool LogerManager::pushLog(LoggerId id, int level, const char * log, const char * file, int line)
 {
-	if (id < 0 || id >= LOG4Z_LOGGER_MAX)
+	// discard log
+	if (id < 0 || id > _lastId || !_runing || !_loggers[id]._enable)
 	{
 		return false;
 	}
-	if (!_runing || !_loggers[id]._enable)
-	{
-		return false;
-	}
+
+	//filter log
 	if (level < _loggers[id]._level)
 	{
 		return false;
 	}
 
+	//create log data
 	LogData * pLog = new LogData;
 	pLog->_id =id;
 	pLog->_level = level;
-
+	
+	//append precise time to log
 	{
 #ifdef WIN32
 		FILETIME ft;
@@ -1304,32 +1345,74 @@ bool LogerManager::pushLog(LoggerId id, int level, const char * log)
 		pLog->_precise = tm.tv_usec/1000;
 #endif
 	}
+
+	//format log
 	{
 		tm tt = timeToTm(pLog->_time);
+		if (file == NULL || !_loggers[pLog->_id]._fileLine)
+		{
 #ifdef WIN32
-		int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s \r\n",
-			tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
-			LOG_STRING[pLog->_level], log);
-		if (ret == -1)
-		{
-			ret = LOG4Z_LOG_BUF_SIZE - 1;
-		}
-		pLog->_contentLen = ret;
+			int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s \r\n",
+				tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
+				LOG_STRING[pLog->_level], log);
+			if (ret == -1)
+			{
+				ret = LOG4Z_LOG_BUF_SIZE - 1;
+			}
+			pLog->_contentLen = ret;
 #else
-		int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s \r\n",
-			tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
-			LOG_STRING[pLog->_level], log);
-		if (ret == -1)
-		{
-			ret = 0;
-		}
-		if (ret >= LOG4Z_LOG_BUF_SIZE)
-		{
-			ret = LOG4Z_LOG_BUF_SIZE-1;
-		}
-		
-		pLog->_contentLen = ret;
+			int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s \r\n",
+				tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
+				LOG_STRING[pLog->_level], log);
+			if (ret == -1)
+			{
+				ret = 0;
+			}
+			if (ret >= LOG4Z_LOG_BUF_SIZE)
+			{
+				ret = LOG4Z_LOG_BUF_SIZE-1;
+			}
+
+			pLog->_contentLen = ret;
 #endif
+		}
+		else
+		{
+			const char * pNameBegin = file+strlen(file);
+			do 
+			{
+				if (*pNameBegin == '\\' || *pNameBegin == '/'){ pNameBegin++; break;}
+				if (pNameBegin == file){break;}
+				pNameBegin--;
+			} while (true);
+			
+			
+#ifdef WIN32
+			int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s (%s):%d \r\n",
+				tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
+				LOG_STRING[pLog->_level], log, pNameBegin, line);
+			if (ret == -1)
+			{
+				ret = LOG4Z_LOG_BUF_SIZE - 1;
+			}
+			pLog->_contentLen = ret;
+#else
+			int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s (%s):%d \r\n",
+				tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
+				LOG_STRING[pLog->_level], log, pNameBegin, line);
+			if (ret == -1)
+			{
+				ret = 0;
+			}
+			if (ret >= LOG4Z_LOG_BUF_SIZE)
+			{
+				ret = LOG4Z_LOG_BUF_SIZE-1;
+			}
+
+			pLog->_contentLen = ret;
+#endif
+		}
+	
 		if (pLog->_contentLen >= 2)
 		{
 			pLog->_content[pLog->_contentLen - 2] = '\r';
@@ -1350,7 +1433,7 @@ bool LogerManager::pushLog(LoggerId id, int level, const char * log)
 #endif
 	}
 
-	if (LOG4Z_ALL_WRITE_TO_FILE && LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
+	if (_loggers[pLog->_id]._outfile && LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
 	{
 		AutoLock l(_lock);
 		if (openLogger(pLog))
@@ -1385,30 +1468,47 @@ LoggerId LogerManager::findLogger(const char * loggerName)
 	}
 	return LOG4Z_INVALID_LOGGER_ID;
 }
-
+bool LogerManager::enableLogger(LoggerId id, bool enable)
+{
+	if (id <0 || id > _lastId) return false;
+	_loggers[id]._enable = enable;
+	return true;
+}
 bool LogerManager::setLoggerLevel(LoggerId id, int level)
 {
-	if (id <0 || id >= LOG4Z_LOGGER_MAX || level < LOG_LEVEL_TRACE || level >LOG_LEVEL_FATAL) return false;
+	if (id <0 || id > _lastId || level < LOG_LEVEL_TRACE || level >LOG_LEVEL_FATAL) return false;
 	_loggers[id]._level = level;
 	return true;
 }
 bool LogerManager::setLoggerDisplay(LoggerId id, bool enable)
 {
-	if (id <0 || id >= LOG4Z_LOGGER_MAX) return false;
+	if (id <0 || id > _lastId) return false;
 	_loggers[id]._display = enable;
+	return true;
+}
+bool LogerManager::setLoggerOutFile(LoggerId id, bool enable)
+{
+	if (id <0 || id > _lastId) return false;
+	_loggers[id]._outfile = enable;
 	return true;
 }
 bool LogerManager::setLoggerMonthdir(LoggerId id, bool enable)
 {
-	if (id <0 || id >= LOG4Z_LOGGER_MAX) return false;
+	if (id <0 || id > _lastId) return false;
 	_loggers[id]._monthdir = enable;
 	return true;
 }
 bool LogerManager::setLoggerLimitsize(LoggerId id, unsigned int limitsize)
 {
-	if (id <0 || id >= LOG4Z_LOGGER_MAX) return false;
+	if (id <0 || id > _lastId) return false;
 	if (limitsize == 0 ) {limitsize = (unsigned int)-1;}
 	_loggers[id]._limitsize = limitsize;
+	return true;
+}
+bool LogerManager::setLoggerFileLine(LoggerId id, bool enable)
+{
+	if (id <0 || id > _lastId) return false;
+	_loggers[id]._fileLine = enable;
 	return true;
 }
 bool LogerManager::updateConfig()
@@ -1418,32 +1518,28 @@ bool LogerManager::updateConfig()
 		LOGW("log4z update config file error. filename is empty.");
 		return false;
 	}
-	std::map<std::string, LoggerInfo> loggerMap;
-	if (!parseConfig(_configFile, loggerMap))
+	Log4zFileHandler f;
+	f.open(_configFile.c_str(), "r");
+	if (!f.isOpen())
 	{
-		LOGW(" !!! !!! !!! !!!");
-		LOGW(" !!! !!! log4z update config file error. filename=" << _configFile << " !!! !!! ");
-		LOGW(" !!! !!! !!! !!!");
+		std::cout << " !!! !!! !!! !!!" << std::endl;
+		std::cout << " !!! !!! log4z load config file error. filename=" << _configFile << " !!! !!! " << std::endl;
+		std::cout << " !!! !!! !!! !!!" << std::endl;
 		return false;
 	}
-	for (std::map<std::string, LoggerInfo>::iterator iter = loggerMap.begin(); iter != loggerMap.end(); ++iter)
-	{
-		LoggerId id = findLogger(iter->first.c_str());
-		if (id != LOG4Z_INVALID_LOGGER_ID)
-		{
-			setLoggerDisplay(id, iter->second._display);
-			setLoggerLevel(id, iter->second._level);
-			setLoggerMonthdir(id, iter->second._monthdir);
-			setLoggerLimitsize(id, iter->second._limitsize);
-		}
-	}
-	return true;
+	return configFromStringImpl(f.readContent().c_str(), true);
+}
+
+bool LogerManager::isLoggerEnable(LoggerId id)
+{
+	if (id <0 || id > _lastId) return false;
+	return _loggers[id]._enable;
 }
 
 unsigned int LogerManager::getStatusActiveLoggers()
 {
 	unsigned int actives = 0;
-	for (int i=0; i<LOG4Z_LOGGER_MAX; i++)
+	for (int i=0; i<= _lastId; i++)
 	{
 		if (_loggers[i]._enable)
 		{
@@ -1545,9 +1641,9 @@ bool LogerManager::popLog(LogData *& log)
 void LogerManager::run()
 {
 	_runing = true;
-	_loggers[LOG4Z_MAIN_LOGGER_ID]._enable = true;
-	pushLog(0, LOG_LEVEL_ALARM, "-----------------  log4z thread started!   ----------------------------");
-	for (int i=0; i<LOG4Z_LOGGER_MAX; i++)
+	//_loggers[LOG4Z_MAIN_LOGGER_ID]._enable = true;
+	pushLog(0, LOG_LEVEL_ALARM, "-----------------  log4z thread started!   ----------------------------", NULL, 0);
+	for (int i = 0; i <= _lastId; i++)
 	{
 		if (_loggers[i]._enable)
 		{
@@ -1557,7 +1653,7 @@ void LogerManager::run()
 				<<" name=" <<_loggers[i]._name
 				<<" level=" << _loggers[i]._level
 				<<" display=" << _loggers[i]._display;
-			pushLog(0, LOG_LEVEL_ALARM, ss.str().c_str());
+			pushLog(0, LOG_LEVEL_ALARM, ss.str().c_str(), NULL, 0);
 		}
 	}
 
@@ -1594,7 +1690,7 @@ void LogerManager::run()
 			}
 
 
-			if (LOG4Z_ALL_WRITE_TO_FILE && !LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
+			if (curLogger._outfile && !LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
 			{
 				if (!openLogger(pLog))
 				{
@@ -1619,12 +1715,16 @@ void LogerManager::run()
 			pLog = NULL;
 		}
 
-		for (int i=0; i<LOG4Z_LOGGER_MAX; i++)
+		for (int i=0; i<=_lastId; i++)
 		{
 			if (_loggers[i]._enable && needFlush[i] > 0)
 			{
 				_loggers[i]._handle.flush();
 				needFlush[i] = 0;
+			}
+			if(!_loggers[i]._enable && _loggers[i]._handle.isOpen())
+			{
+				_loggers[i]._handle.close();
 			}
 		}
 
@@ -1639,7 +1739,7 @@ void LogerManager::run()
 
 	}
 
-	for (int i=0; i<LOG4Z_LOGGER_MAX; i++)
+	for (int i=0; i <= _lastId; i++)
 	{
 		if (_loggers[i]._enable)
 		{

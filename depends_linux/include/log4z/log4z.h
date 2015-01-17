@@ -221,8 +221,6 @@ const int LOG4Z_LOG_BUF_SIZE = 2048;
 
 //! all logger synchronous output or not
 const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = false;
-//! all logger write log to file or not
-const bool LOG4Z_ALL_WRITE_TO_FILE = true;
 //! all logger synchronous display to the windows debug output
 const bool LOG4Z_ALL_DEBUGOUTPUT_DISPLAY = false;
 
@@ -275,14 +273,9 @@ public:
 	virtual bool config(const char * configPath) = 0;
 	virtual bool configFromString(const char * config) = 0;
 
-	//! Create or overwrite logger, Total count limited by LOG4Z_LOGGER_MAX.
+	//! Create or overwrite logger.
 	//! Needs to be called before ILog4zManager::Start, OR Do not call.
-	virtual LoggerId createLogger(const char* loggerName, 
-		const char* path = LOG4Z_DEFAULT_PATH,
-		int level = LOG4Z_DEFAULT_LEVEL,
-		bool display = LOG4Z_DEFAULT_DISPLAY,
-		bool monthdir = LOG4Z_DEFAULT_MONTHDIR,
-		unsigned int limitsize = LOG4Z_DEFAULT_LIMITSIZE /*million byte, rolling file*/) = 0;
+	virtual LoggerId createLogger(const char* loggerName, const char* path = LOG4Z_DEFAULT_PATH) = 0;
 
 	//! Start Log Thread. This method can only be called once by one process.
 	virtual bool start() = 0;
@@ -297,17 +290,21 @@ public:
 	//pre-check the log filter. if filter out return false. 
 	virtual bool prePushLog(LoggerId id, int level) = 0;
 	//! Push log, thread safe.
-	virtual bool pushLog(LoggerId id, int level, const char * log) = 0;
+	virtual bool pushLog(LoggerId id, int level, const char * log, const char * file = NULL, int line = 0) = 0;
 
 	//! set logger's attribute, thread safe.
+	virtual bool enableLogger(LoggerId id, bool enable) = 0;
 	virtual bool setLoggerLevel(LoggerId id, int nLevel) = 0;
 	virtual bool setLoggerDisplay(LoggerId id, bool enable) = 0;
+	virtual bool setLoggerOutFile(LoggerId id, bool enable) = 0;
 	virtual bool setLoggerMonthdir(LoggerId id, bool enable) = 0;
 	virtual bool setLoggerLimitsize(LoggerId id, unsigned int limitsize) = 0;
+	virtual bool setLoggerFileLine(LoggerId id, bool enable) = 0;
 	//! Update logger's attribute from config file, thread safe.
 	virtual bool updateConfig() = 0;
 
 	//! Log4z status statistics, thread safe.
+	virtual bool isLoggerEnable(LoggerId id) = 0;
 	virtual unsigned long long getStatusTotalWriteCount() = 0;
 	virtual unsigned long long getStatusTotalWriteBytes() = 0;
 	virtual unsigned long long getStatusWaitingCount() = 0;
@@ -327,41 +324,20 @@ class Log4zBinary;
 _ZSUMMER_LOG4Z_END
 _ZSUMMER_END
 
-//! old interface compatibility
-#define CStringStream Log4zStream
-#define BinaryBlock Log4zBinary
 
-
-#ifndef WIN32
-extern __thread char g_log4zstreambuf[LOG4Z_LOG_BUF_SIZE];
-#endif
 
 //! base micro.
-#ifdef  WIN32
 #define LOG_STREAM(id, level, log)\
 {\
 	if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
 	{\
-		char logbuf[LOG4Z_LOG_BUF_SIZE];\
-		zsummer::log4z::Log4zStream ss(logbuf, LOG4Z_LOG_BUF_SIZE);\
+		char logBuf[LOG4Z_LOG_BUF_SIZE];\
+		zsummer::log4z::Log4zStream ss(logBuf, LOG4Z_LOG_BUF_SIZE);\
 		ss << log;\
-		ss << " ( " << __FILE__ << " ) : "  << __LINE__;\
-		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf);\
+		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logBuf, __FILE__, __LINE__);\
 	}\
 }
-#else
-#define LOG_STREAM(id, level, log)\
-{\
-	if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
-	{\
-		char logbuf[LOG4Z_LOG_BUF_SIZE];\
-		zsummer::log4z::Log4zStream ss(logbuf, LOG4Z_LOG_BUF_SIZE);\
-		ss << log;\
-		ss << " ( " << __FILE__ << " ) : "  << __LINE__;\
-		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf);\
-	}\
-}
-#endif
+
 
 //! fast micro
 #define LOG_TRACE(id, log) LOG_STREAM(id, LOG_LEVEL_TRACE, log)
@@ -390,12 +366,8 @@ extern __thread char g_log4zstreambuf[LOG4Z_LOG_BUF_SIZE];
 	if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
 	{\
 		char logbuf[LOG4Z_LOG_BUF_SIZE]; \
-		int ret = _snprintf_s(logbuf, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, logformat, ##__VA_ARGS__); \
-		if (ret >= 0 && ret<LOG4Z_LOG_BUF_SIZE-1) \
-				{\
-		_snprintf_s(logbuf + ret, LOG4Z_LOG_BUF_SIZE - ret, _TRUNCATE, " (%s) : %d", __FILE__, __LINE__);\
-				}\
-		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf); \
+		_snprintf_s(logbuf, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, logformat, ##__VA_ARGS__); \
+		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf, __FILE__, __LINE__); \
 	}\
  }
 #else
@@ -404,12 +376,8 @@ extern __thread char g_log4zstreambuf[LOG4Z_LOG_BUF_SIZE];
 	if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
 	{\
 		char logbuf[LOG4Z_LOG_BUF_SIZE]; \
-		int ret = snprintf(logbuf, LOG4Z_LOG_BUF_SIZE,logformat, ##__VA_ARGS__); \
-		if (ret >= 0 && ret < LOG4Z_LOG_BUF_SIZE - 1) \
-				{\
-		snprintf(logbuf + ret, LOG4Z_LOG_BUF_SIZE - ret, " (%s) : %d", __FILE__, __LINE__); \
-				}\
-		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf); \
+		snprintf(logbuf, LOG4Z_LOG_BUF_SIZE,logformat, ##__VA_ARGS__); \
+		zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf, __FILE__, __LINE__); \
 	} \
 }
 #endif
@@ -471,6 +439,7 @@ class Log4zStream
 {
 public:
 	inline Log4zStream(char * buf, int len);
+	inline int getCurrentLen(){return (int)(_cur - _begin);}
 private:
 	template<class T>
 	inline Log4zStream & writeData(const char * ft, T t);

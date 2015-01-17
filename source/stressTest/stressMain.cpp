@@ -21,6 +21,14 @@
 #include <Common.h>
 #include <ProtoLogin.h>
 #include <unordered_map>
+extern "C"
+{
+#include "lua/lua.h"
+#include "lua/lualib.h"
+#include "lua/lpack.h"
+}
+
+#include "lua/summer.h"
 
 using namespace zsummer::log4z;
 
@@ -226,30 +234,37 @@ int main(int argc, char* argv[])
 	signal( SIGQUIT, SIG_IGN );
 	signal( SIGCHLD, SIG_IGN);
 #endif
-	signal(SIGINT, &sigInt);
-	signal(SIGTERM, &sigInt);
+// 	signal(SIGINT, &sigInt);
+// 	signal(SIGTERM, &sigInt);
 
-	if (argc == 2 && 
-		(strcmp(argv[1], "--help") == 0 
-		|| strcmp(argv[1], "/?") == 0))
-	{
-		cout << "please input like example:" << endl;
-		cout << "tcpTest maxClient" << endl;
-		cout << "./tcpTest 0 1" << endl;
-		cout << "maxClient: limit max" << endl;
-		return 0;
-	}
-	if (argc > 1)
-		g_maxClient = atoi(argv[1]);
-	if (g_maxClient > 6000)
-	{
-		g_maxClient = 6000;
-	}
-	
 		
-		
-	ILog4zManager::getPtr()->config("../log.config");
+	ILog4zManager::getPtr()->config("log.config");
 	ILog4zManager::getPtr()->start();
+	ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);
+	int status;
+	lua_State *L = luaL_newstate();  /* create state */
+	if (L == NULL)
+	{
+		return EXIT_FAILURE;
+	}
+
+	lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
+	luaL_openlibs(L);  /* open libraries */
+	luaopen_summer(L);
+	luaopen_pack(L);
+
+	lua_gc(L, LUA_GCRESTART, 0);
+	status = luaL_dofile(L, "./main.lua");
+
+	if (status && !lua_isnil(L, -1))
+	{
+		const char *msg = lua_tostring(L, -1);
+		if (msg == NULL) msg = "(error object is not a string)";
+		LOGE(msg);
+		lua_pop(L, 1);
+	}
+	lua_close(L);
+	return (status) ? EXIT_FAILURE : EXIT_SUCCESS;
 
 
 	ServerConfig serverConfig;
