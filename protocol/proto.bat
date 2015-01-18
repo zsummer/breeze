@@ -1,2 +1,0 @@
-genProto.exe
-pause
