@@ -4,12 +4,13 @@
 aux_source_directory(./ source1)    
 aux_source_directory(./logic source2)    
 aux_source_directory(./core source3)    
+aux_source_directory(./lua source4)    
 set(BINNAME ${PROJECT_NAME})
 
 
 set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/bin/${BINNAME}/)
 
-add_executable(${BINNAME} ${source1} ${source2} ${source3})
+add_executable(${BINNAME} ${source1} ${source2} ${source3} ${source4})
 
 if(WIN32)
   target_link_libraries(${BINNAME} common${LIB_SUFFIX} libmysqlclient.lib zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX})
