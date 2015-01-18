@@ -1,51 +1,48 @@
 --require
 package.path = package.path .. ";" .. "../../../protocol/lua/?.lua"
+logd = summer.logd
 logi = summer.logi
---print = summer.logi
+logw = summer.logw
+loge = summer.loge
+print = summer.logi
 
-require("net")
+--process msg
+local handler = require("net")
 
-
--- 连接成功事件
+--event on connect
 function onConnect(sID)
-	logi("stressTest is on connected. sID=" .. sID)
-  	local data = Protoz.encode({user="zhangyawei0000", passwd="123"}, "C2LS_LoginReq")
-	summer.sendContent(sID, Protoz.C2LS_LoginReq.__getID, data)
+	handler:onConnect(sID)
 end
 summer.registerConnect(onConnect)
 
--- 收到消息
-function onMessage(sID, pID, content)
-	logi("onMessage. sID=" .. sID .. ", pID=" .. pID )
-	Protoz.putbin(content)
-	local msg = Protoz.decode(content, pID)
-	Protoz.dump(msg)
-
+--event on recv message
+function onMessage(sID, pID, binData)
+	handler:onMessage(sID, pID, binData)
 end
 summer.registerMessage(onMessage)
 
--- 连接断开事件
+--event on disconnect
 function onDisconnect(sID)
-	logi("session is on disconnect. sID=" .. sID)
+	handler:onDisconnect(sID)
 end
 summer.registerDisconnect(onDisconnect)
 
-
---启动网络
+--start summer
 summer.start()
 
---连接服务器
-local id = summer.addConnect({ip="127.0.0.1", port=21010, reconnect=2})
-if id == nil then
-	summer.logw("id == nil when addConnect")
+--add connector
+for i=1, 1 do
+	local id = summer.addConnect({ip="127.0.0.1", port=21010, reconnect=2})
+	if id == nil then
+		summer.logw("id == nil when addConnect")
+	end
+	summer.logi("new connect id=" .. id)
 end
-summer.logi("new connect id=" .. id)
 
---进入循环
---如果嵌入其他程序 例如cocos2dx, 可以吧runOnce设置true然后放入update中.
+--start summer event loop
 while 1 do
 	summer.runOnce()
---	summer.runOnce(true)
+--	summer.runOnce(true) -- call retuen is immediately.
 end
 
 
