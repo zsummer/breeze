@@ -6,6 +6,80 @@
 
 Protoz = {}
 
+
+
+--[[--
+encode protocol table to binary stream
+@param encode obj.  protocol table 
+@param encode name. protocol name
+@return binary stream
+]]
+function Protoz.encode(obj, name)
+	local data = {data=""}
+	Protoz.__encode(obj, name, data)
+	return data.data
+end
+
+--[[--
+decode binary stream to protocol table
+@param decode binData.  binary stream
+@param decode name.  dest protocol name
+@return protocol table
+]]
+function Protoz.decode(binData, name)
+	--print("decode id = " .. id)
+	local result = {}
+	Protoz.__decode(binData, 1, name, result)
+	return result
+end
+
+
+--[[--
+make map [protocol id = protocol name]
+@param register id.  protocol id 
+@param register name. protocol name
+@return  no result
+]]
+function Protoz.register(id, name)
+	if Protoz.__protos == nil then
+		Protoz.__protos = {}
+	end
+	if Protoz.__protos[id] ~= nil then
+		error("id already register. id=" .. id .. " registrered name=" .. Protoz.__protos[id]  .. ", new name=" .. protoName .. ": " .. debug.traceback())
+	end
+	if type(name) ~= "string" then
+		error("name ~= string " .. debug.traceback())
+	end
+	Protoz.__protos[id] = name
+end
+
+--[[--
+get the protocol name from protoco id.
+@param register id.  protocol id 
+@return  protocol name
+]]
+function Protoz.getName(id)
+	if Protoz.__protos == nil then
+		return nil
+	end
+	if Protoz.__protos[id] == nil then
+		return nil
+	end
+	return Protoz.__protos[id]
+end
+
+
+
+
+
+
+
+
+
+------------------------------------------------
+-- private impl
+------------------------------------------------
+
 --[[
 ]]
 function Protoz.__checkVal(val)
@@ -244,6 +318,67 @@ function Protoz.__unpack(binData, pos, tp)
 	return v, n
 end
 
+
+
+
+--[[--
+decode binary stream to protocol table
+@param __decode binData.  binary stream
+@param __decode pos.  current binary begin index
+@param __decode name.  dest protocol name
+@param __decode result. output protocol table.
+@return next begin index
+]]
+function Protoz.__decode(binData, pos, name, result)
+	Protoz.__checkType(name)
+	local proto = Protoz[name]
+
+	local v, p
+	p = pos
+
+	if proto.__getDesc == "array" then
+		local len
+
+		len, p = Protoz.__unpack(binData, p, "ui16")
+		for i=1, len do
+			v, p = Protoz.__unpack(binData, p, proto.__getTypeV)
+			if v ~= nil then
+				result[i] = v
+			else
+				result[i] = {}
+				p = Protoz.__decode(binData, p, proto.__getTypeV, result[i])
+			end
+		end
+	elseif proto.__getDesc == "map" then
+		local len
+		local k
+		len, p = Protoz.__unpack(binData, p, "ui16")
+		for j=1, len do
+			k, p = Protoz.__unpack(binData, p, proto.__getTypeK)
+			v, p = Protoz.__unpack(binData, p, proto.__getTypeV)
+			if v ~= nil then
+				result[k] = v
+			else
+				result[k] = {}
+				p = Protoz.__decode(binData, p, proto.__getTypeV, result[k])
+			end
+		end
+	else
+		for i = 1, #proto do
+			local desc = proto[i]
+			v, p = Protoz.__unpack(binData, p, desc.type)
+			if v ~= nil then
+				result[desc.name] = v
+			else
+				result[desc.name] = {}
+				p = Protoz.__decode(binData, p, desc.type, result[desc.name])
+			end
+		end
+	end
+	return p
+end
+
+
 --[[--
 encode protocol table to binary stream
 @param __encode obj.  protocol table 
@@ -312,130 +447,6 @@ function Protoz.__encode(obj, name, data)
 	end
 end
 
---[[--
-encode protocol table to binary stream
-@param encode obj.  protocol table 
-@param encode name. protocol name
-@return binary stream
-]]
-function Protoz.encode(obj, name)
-	local data = {data=""}
-	Protoz.__encode(obj, name, data)
-	return data.data
-end
-
-
---[[--
-make map [protocol id = protocol name]
-@param register id.  protocol id 
-@param register name. protocol name
-@return  no result
-]]
-function Protoz.register(id, name)
-	if Protoz.__protos == nil then
-		Protoz.__protos = {}
-	end
-	if Protoz.__protos[id] ~= nil then
-		error("id already register. id=" .. id .. " registrered name=" .. Protoz.__protos[id]  .. ", new name=" .. protoName .. ": " .. debug.traceback())
-	end
-	if type(name) ~= "string" then
-		error("name ~= string " .. debug.traceback())
-	end
-	Protoz.__protos[id] = name
-end
-
---[[--
-get the protocol name from protoco id.
-@param register id.  protocol id 
-@return  protocol name
-]]
-function Protoz.getName(id)
-	if Protoz.__protos == nil then
-		return nil
-	end
-	if Protoz.__protos[id] == nil then
-		return nil
-	end
-	return Protoz.__protos[id]
-end
-
---[[--
-decode binary stream to protocol table
-@param __decode binData.  binary stream
-@param __decode pos.  current binary begin index
-@param __decode name.  dest protocol name
-@param __decode result. output protocol table.
-@return next begin index
-]]
-function Protoz.__decode(binData, pos, name, result)
-	Protoz.__checkType(name)
-	local proto = Protoz[name]
-
-	local v, p
-	p = pos
-
-	if proto.__getDesc == "array" then
-		local len
-
-		len, p = Protoz.__unpack(binData, p, "ui16")
-		for i=1, len do
-			v, p = Protoz.__unpack(binData, p, proto.__getTypeV)
-			if v ~= nil then
-				result[i] = v
-			else
-				result[i] = {}
-				p = Protoz.__decode(binData, p, proto.__getTypeV, result[i])
-			end
-		end
-	elseif proto.__getDesc == "map" then
-		local len
-		local k
-		len, p = Protoz.__unpack(binData, p, "ui16")
-		for j=1, len do
-			k, p = Protoz.__unpack(binData, p, proto.__getTypeK)
-			v, p = Protoz.__unpack(binData, p, proto.__getTypeV)
-			if v ~= nil then
-				result[k] = v
-			else
-				result[k] = {}
-				p = Protoz.__decode(binData, p, proto.__getTypeV, result[k])
-			end
-		end
-	else
-		for i = 1, #proto do
-			local desc = proto[i]
-			v, p = Protoz.__unpack(binData, p, desc.type)
-			if v ~= nil then
-				result[desc.name] = v
-			else
-				result[desc.name] = {}
-				p = Protoz.__decode(binData, p, desc.type, result[desc.name])
-			end
-		end
-	end
-	return p
-end
-
---[[--
-decode binary stream to protocol table
-@param decode binData.  binary stream
-@param decode id.  dest protocol id
-@return protocol table
-]]
-function Protoz.decode(binData, id)
-	--print("decode id = " .. id)
-	local result = {}
-	protoName = Protoz.getName(id)
-	if  type(protoName) ~= "string" then
-		print("unknown id. id=" .. id)
-		return nil
-	end
-	Protoz.__decode(binData, 1, Protoz.__protos[id], result)
-	return result
-end
-
-
-
 
 
 --------------------------------------------------------------------------
@@ -454,7 +465,6 @@ function Protoz.putbin(binData)
 	end
 	print("[len:" .. #binData .. "]" .. str)
 end
-
 
 
 

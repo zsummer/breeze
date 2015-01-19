@@ -255,10 +255,15 @@ void _onConnecterCallback(lua_State * L, SessionID sID)
 		lua_settop(L, index);
 		return;
 	}
-	index = lua_gettop(L);
 	lua_pushnumber(L, sID);
-	index = lua_gettop(L);
-	lua_pcall(L, 1, 0, 0);
+	int status = lua_pcall(L, 1, 0, 0);
+	if (status && !lua_isnil(L, -1))
+	{
+		const char *msg = lua_tostring(L, -1);
+		if (msg == NULL) msg = "(error object is not a string)";
+		LOGE(msg);
+		lua_pop(L, 1);
+	}
 }
 
 static int registerConnect(lua_State * L)
@@ -307,12 +312,18 @@ void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStreamPac
 		lua_settop(L, index);
 		return;
 	}
-	index = lua_gettop(L);
+
 	lua_pushinteger(L, sID);
 	lua_pushinteger(L, pID);
 	lua_pushlstring(L, rs.getStreamBody(), rs.getStreamBodyLen());
-	index = lua_gettop(L);
-	lua_pcall(L, 3, 0, 0);
+	int status = lua_pcall(L, 3, 0, 0);
+	if (status && !lua_isnil(L, -1))
+	{
+		const char *msg = lua_tostring(L, -1);
+		if (msg == NULL) msg = "(error object is not a string)";
+		LOGE(msg);
+		lua_pop(L, 1);
+	}
 }
 
 static int registerMessage(lua_State * L)
@@ -365,7 +376,14 @@ void _onDisconnectCallback(lua_State * L, SessionID sID)
 	index = lua_gettop(L);
 	lua_pushinteger(L, sID);
 	index = lua_gettop(L);
-	lua_pcall(L, 1, 0, 0);
+	int status = lua_pcall(L, 1, 0, 0);
+	if (status && !lua_isnil(L, -1))
+	{
+		const char *msg = lua_tostring(L, -1);
+		if (msg == NULL) msg = "(error object is not a string)";
+		LOGE(msg);
+		lua_pop(L, 1);
+	}
 }
 
 static int registerDisconnect(lua_State * L)
