@@ -9,26 +9,10 @@ function messageHandler:ctor( ... )
 	self.__index = function(obj, key)  error("function messageHandler:" .. (key or "nil") .. " is not exsit.")  end
 end
 
-
-
-messageHandler:ctor()
-
-function messageHandler:onConnect(sID)
-	logd("stressTest is on connected. sID=" .. sID)
-	local user = string.format("zhangyawei%04d", sID%1000)
-  	local data = Protoz.encode({user=user, passwd="123"}, "C2LS_LoginReq")
-	summer.sendContent(sID, Protoz.C2LS_LoginReq.__getID, data)
-end
-
-function messageHandler:onDisconnect(sID)
-	logi("session is on disconnect. sID=" .. sID)
-end
-
 function messageHandler:onMessage(sID, pID, binData)
 	logd("onMessage. sID=" .. sID .. ", pID=" .. pID )
 	local name = Protoz.getName(pID)
 	local msg = Protoz.decode(binData, name)
-	if msg == nil then return nil end
 	self["on_"..name](self, msg)
 end
 
@@ -62,5 +46,16 @@ function messageHandler:on_AS2C_ServerPulse(msg)
 end
 
 
+function messageHandler:onConnect(sID)
+	logd("stressTest is on connected. sID=" .. sID)
+	local user = string.format("zhangyawei%04d", sID%1000)
+  	local data = Protoz.encode({user=user, passwd="123"}, "C2LS_LoginReq")
+	summer.sendContent(sID, Protoz.C2LS_LoginReq.__getID, data)
+end
 
+function messageHandler:onDisconnect(sID)
+	logi("session is on disconnect. sID=" .. sID)
+end
+
+messageHandler:ctor()
 return messageHandler
