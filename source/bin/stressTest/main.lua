@@ -31,7 +31,7 @@ summer.registerDisconnect(onDisconnect)
 summer.start()
 
 --add connector
-for i=1, 1 do
+for i=1, 3 do
 	local id = summer.addConnect({ip="127.0.0.1", port=21010, reconnect=2})
 	if id == nil then
 		summer.logw("id == nil when addConnect")

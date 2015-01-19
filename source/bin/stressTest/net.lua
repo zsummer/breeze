@@ -13,10 +13,10 @@ function messageHandler:onMessage(sID, pID, binData)
 	logd("onMessage. sID=" .. sID .. ", pID=" .. pID )
 	local name = Protoz.getName(pID)
 	local msg = Protoz.decode(binData, name)
-	self["on_"..name](self, msg)
+	self["on_"..name](self, sID, msg)
 end
 
-function messageHandler:on_LS2C_LoginAck(msg)
+function messageHandler:on_LS2C_LoginAck(sID, msg)
 	if msg.retCode ~= Protoz.BEC_SUCCESS then
 			loge("LS2C_LoginAck retcode ~= BEC_SUCCESS. ret=" .. msg.retCode)
 			return nil
@@ -32,7 +32,7 @@ function messageHandler:on_LS2C_LoginAck(msg)
 end
 
 
-function messageHandler:on_LS2C_CreateUserAck(msg)
+function messageHandler:on_LS2C_CreateUserAck(sID, msg)
 	if msg.retCode ~= Protoz.BEC_SUCCESS or msg.needCreateUser > 0 then
 		loge("create user error. ret=" .. msg.retCode .. ", need change name = " .. msg.needCreateUser)
 		return nil
@@ -41,7 +41,7 @@ function messageHandler:on_LS2C_CreateUserAck(msg)
 	Protoz.dump(msg.info, "user info:", 5)
 end
 
-function messageHandler:on_AS2C_ServerPulse(msg)
+function messageHandler:on_AS2C_ServerPulse(sID, msg)
 	summer.sendContent(sID, Protoz.C2AS_ClientPulse.__getID, "")
 end
 
