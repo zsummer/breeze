@@ -187,7 +187,7 @@ const int LOG4Z_INVALID_LOGGER_ID = -1;
 const int LOG4Z_MAIN_LOGGER_ID = 0;
 
 //! the main logger name. DO NOT TOUCH
-const char*const LOG4Z_MAIN_LOGGER_NAME = "Main";
+const char*const LOG4Z_MAIN_LOGGER_KEY = "Main";
 
 //! check VC VERSION. DO NOT TOUCH
 //! format micro cannot support VC6 or VS2003, please use stream input log, like LOGI, LOGD, LOG_DEBUG, LOG_STREAM ...
@@ -230,10 +230,14 @@ const char* const LOG4Z_DEFAULT_PATH = "./log/";
 const int LOG4Z_DEFAULT_LEVEL = LOG_LEVEL_DEBUG;
 //! default logger display
 const bool LOG4Z_DEFAULT_DISPLAY = true;
+//! default logger output to file
+const bool LOG4Z_DEFAULT_OUTFILE = true;
 //! default logger month dir used status
 const bool LOG4Z_DEFAULT_MONTHDIR = false;
 //! default logger output file limit size, unit M byte.
 const int LOG4Z_DEFAULT_LIMITSIZE = 100;
+//! default logger show suffix (file name and line number) 
+const bool LOG4Z_DEFAULT_SHOWSUFFIX = true;
 
 ///////////////////////////////////////////////////////////////////////////
 //! -----------------------------------------------------------------------
@@ -271,11 +275,11 @@ public:
 	//! Config or overwrite configure
 	//! Needs to be called before ILog4zManager::Start,, OR Do not call.
 	virtual bool config(const char * configPath) = 0;
-	virtual bool configFromString(const char * config) = 0;
+	virtual bool configFromString(const char * configContent) = 0;
 
 	//! Create or overwrite logger.
 	//! Needs to be called before ILog4zManager::Start, OR Do not call.
-	virtual LoggerId createLogger(const char* loggerName, const char* path = LOG4Z_DEFAULT_PATH) = 0;
+	virtual LoggerId createLogger(const char* key) = 0;
 
 	//! Start Log Thread. This method can only be called once by one process.
 	virtual bool start() = 0;
@@ -285,7 +289,7 @@ public:
 	virtual bool stop() = 0;
 
 	//! Find logger. thread safe.
-	virtual LoggerId findLogger(const char* strName) =0;
+	virtual LoggerId findLogger(const char* key) =0;
 
 	//pre-check the log filter. if filter out return false. 
 	virtual bool prePushLog(LoggerId id, int level) = 0;
@@ -294,13 +298,18 @@ public:
 
 	//! set logger's attribute, thread safe.
 	virtual bool enableLogger(LoggerId id, bool enable) = 0;
+	virtual bool setLoggerName(LoggerId id, const char * name) = 0;
+	virtual bool setLoggerPath(LoggerId id, const char * path) = 0;
 	virtual bool setLoggerLevel(LoggerId id, int nLevel) = 0;
+	virtual bool setLoggerFileLine(LoggerId id, bool enable) = 0;
 	virtual bool setLoggerDisplay(LoggerId id, bool enable) = 0;
 	virtual bool setLoggerOutFile(LoggerId id, bool enable) = 0;
-	virtual bool setLoggerMonthdir(LoggerId id, bool enable) = 0;
 	virtual bool setLoggerLimitsize(LoggerId id, unsigned int limitsize) = 0;
-	virtual bool setLoggerFileLine(LoggerId id, bool enable) = 0;
+	virtual bool setLoggerMonthdir(LoggerId id, bool enable) = 0;
+	
+
 	//! Update logger's attribute from config file, thread safe.
+	virtual bool setAutoUpdate(int interval/*per second, 0 is disable auto update*/) = 0;
 	virtual bool updateConfig() = 0;
 
 	//! Log4z status statistics, thread safe.
