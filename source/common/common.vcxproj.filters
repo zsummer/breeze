@@ -3,16 +3,27 @@
   <ItemGroup>
     <ClInclude Include="BaseMessageHandler.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="DBHelper.h" />
     <ClInclude Include="GenObjectID.h" />
     <ClInclude Include="InnerDefined.h" />
     <ClInclude Include="ServerConfig.h" />
     <ClInclude Include="Single.h" />
     <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="dbhelper\DBHelper.h">
+      <Filter>dbhelper</Filter>
+    </ClInclude>
+    <ClInclude Include="DBAsync.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DBHelper.cpp" />
     <ClCompile Include="ServerConfig.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="dbhelper\DBHelper.cpp">
+      <Filter>dbhelper</Filter>
+    </ClCompile>
+    <ClCompile Include="DBAsync.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="dbhelper">
+      <UniqueIdentifier>{37712797-5d3e-47d5-a0ac-8e5567e84c3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

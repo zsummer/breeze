@@ -33,7 +33,7 @@
 #include <GenObjectID.h>
 #include <tinyxml2.h>
 #include <ServerConfig.h>
-#include <dbhelper.h>
+#include <dbhelper/DBHelper.h>
 
 
 

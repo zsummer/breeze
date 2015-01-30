@@ -21,7 +21,8 @@
   <ItemGroup>
     <ClInclude Include="BaseMessageHandler.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="DBHelper.h" />
+    <ClInclude Include="DBAsync.h" />
+    <ClInclude Include="dbhelper\DBHelper.h" />
     <ClInclude Include="GenObjectID.h" />
     <ClInclude Include="InnerDefined.h" />
     <ClInclude Include="ServerConfig.h" />
@@ -29,7 +30,8 @@
     <ClInclude Include="tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DBHelper.cpp" />
+    <ClCompile Include="DBAsync.cpp" />
+    <ClCompile Include="dbhelper\DBHelper.cpp" />
     <ClCompile Include="ServerConfig.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>

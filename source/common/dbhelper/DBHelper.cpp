@@ -19,6 +19,7 @@
 
 #include "dbhelper.h"
 using namespace zsummer::mysql;
+using namespace zsummer::log4z;
 
 
 const std::string& DBResult::extractOneField()
@@ -67,6 +68,7 @@ void DBResult::_setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQ
 			{
 				_result.push_back(std::vector<std::string>());
 				auto & vct = _result.back();
+				vct.reserve(fieldCount);
 				for (unsigned int i = 0; i < fieldCount; ++i)
 				{
 					vct.push_back(row[i] == nullptr ? "" : row[i]);
@@ -103,14 +105,13 @@ bool DBHelper::connect()
 	_mysql = mysql_init(nullptr);
 	if (!_mysql)
 	{
-		LOGE("mysql_init false. mysql config=" << _config);
+		LOGE("mysql_init false. mysql ip = " << _ip << ", _port = " << _port << ", _user = " << _user << ", _pwd = " << _pwd << ", _db=" << _db );
 		return false;
 	}
 	mysql_options(_mysql, MYSQL_OPT_CONNECT_TIMEOUT, "5");
 	mysql_options(_mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
 	mysql_set_character_set(_mysql, "UTF8");
-	MYSQL * ret = mysql_real_connect(_mysql, _config.ip.c_str(), _config.user.c_str(), _config.pwd.c_str(), _config.db.c_str(),
-		_config.port, nullptr, 0);
+	MYSQL * ret = mysql_real_connect(_mysql, _ip.c_str(), _user.c_str(), _pwd.c_str(), _db.c_str(), _port, nullptr, 0);
 	if (!ret)
 	{
 		return false;
@@ -120,7 +121,7 @@ bool DBHelper::connect()
 
 bool DBHelper::waitEnable()
 {
-	if (!_isRuning)
+	if (!_waiting)
 	{
 		return false;
 	}
@@ -138,7 +139,7 @@ bool DBHelper::waitEnable()
 			std::this_thread::sleep_for(std::chrono::milliseconds(now - lastTime));
 		}
 		lastTime += now - lastTime;
-	} while (_isRuning);
+	} while (_waiting);
 	return false;
 }
 
@@ -171,84 +172,6 @@ DBResultPtr DBHelper::query(const std::string & sql)
 }
 
 
-
-
-
-
-DBAsync::DBAsync()
-{
-	_summer = std::make_shared<zsummer::network::ZSummer>();
-}
-
-DBAsync::~DBAsync()
-{
-	stop();
-}
-
-bool DBAsync::start()
-{
-	bool ret = _summer->initialize();
-	if (!ret)
-	{
-		return false;
-	}
-	if (_thread)
-	{
-		return false;
-	}
-	_bRuning = true;
-	_uPostCount.store(0);
-	_uFinalCount.store(0);
-	_thread = std::shared_ptr<std::thread>(new std::thread(std::bind(&DBAsync::run, this)));
-	return true;
-}
-bool DBAsync::stop()
-{
-	if (_thread)
-	{
-		_bRuning = false;
-		_thread->join();
-		_thread.reset();
-		return true;
-	}
-	return false;
-}
-
-
-void DBAsync::asyncQuery(DBHelperPtr &dbhelper, const string &sql,
-	const std::function<void(DBResultPtr)> & handler)
-{
-	_uPostCount++;
-	_summer->post(std::bind(&DBAsync::_asyncQuery, this, dbhelper, sql, handler));
-}
-
-void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const string &sql,
-	const std::function<void(DBResultPtr)> & handler)
-{
-	DBResultPtr ret = dbhelper->query(sql);
-	_uPostCount--;
-	TcpSessionManager::getRef().post(std::bind(handler, ret));
-}
-
-
-void DBAsync::run()
-{
-	do
-	{
-		if (!_bRuning)
-		{
-			break;
-		}
-		try
-		{
-			_summer->runOnce();
-		}
-		catch (...)
-		{
-		}
-
-	} while (true);
-}
 
 
 

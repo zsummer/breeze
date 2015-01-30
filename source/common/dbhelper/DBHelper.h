@@ -18,20 +18,24 @@
 
 /*
 *  file desc
-*  asynchronous operate db via multi-thread.
-*  利用线程异步化DB操作。
+*  mysql operations helper 
 *  
 */
 
 
 #ifndef _DB_HELPER_H_
 #define _DB_HELPER_H_
-#include <InnerDefined.h>
-#include <BaseMessageHandler.h>
-#include <Single.h>
-#include <ServerConfig.h>
 #include <mysqlclient/errmsg.h>
 #include <mysqlclient/mysql.h>
+#include <string>
+#include <iostream>
+#include <functional>
+#include <memory>
+#include <list>
+#include <vector>
+#include <chrono>
+#include <log4z/log4z.h>
+#include <thread>
 
 namespace  zsummer
 {
@@ -43,22 +47,99 @@ namespace  zsummer
 			QEC_UNQUERY,
 			QEC_MYSQLERROR,
 		};
+
+
 		
 
 		inline std::string escapeString(const char * orgBuff, size_t lenght);
 		inline std::string escapeString(const std::string &orgField){ return escapeString(orgField.c_str(), orgField.length()); }
+
+		// db request
+		class DBRequest
+		{
+		public:
+			DBRequest(const std::string & init)
+			{
+				_sql = init;
+			}
+			template <class T>
+			inline bool add(T t)
+			{
+				std::stringstream ss;
+				ss << t;
+				return insertParam(ss.str());
+			}
+			template <>
+			inline bool add(const char * param)
+			{
+				return insertParam(escapeString(param, strlen(param)), true);
+			}
+			template <>
+			inline bool add(const std::string & param)
+			{
+				return insertParam(escapeString(param), true);
+			}
+			inline const std::string & genSQL()
+			{
+				size_t pos = _sql.find('?');
+				if (pos != std::string::npos)
+				{
+					LOGE("DBRequest param is not enough. current sql=" << _sql);
+				}
+				return _sql;
+			}
+		protected:
+			inline bool insertParam(const std::string & param, bool isString)
+			{
+				size_t pos = _sql.find('?');
+				if (pos != std::string::npos)
+				{
+					std::string after = _sql.substr(pos + 1);
+					_sql.erase(pos);
+					if (isString)
+					{
+						_sql += "\"";
+						_sql += param;
+						_sql += "\"";
+					}
+					else
+					{
+						_sql += param;
+					}
+					_sql += after;
+				}
+				else
+				{
+					LOGE("DBRequest insert param error. too many param. current sql=" << _sql);
+					return false;
+				}
+				return true;
+			}
+		private:
+			std::string _sql;
+		};
 		
+		
+		// db operations result
 		class DBResult : public std::enable_shared_from_this<DBResult>
 		{
 		public:
 			DBResult(){}
 			~DBResult(){}
 		public:
+			//get sql string
+			const std::string & sqlString(){ return _sql; }
+
+			//get error info
 			inline QueryErrorCode getErrorCode(){ return _ec; }
 			inline std::string getLastError(){ return _lastErrorMsg; }
+
+			//get affected rows
 			inline unsigned long long getAffectedRows(){ return _affectedRows; }
+
+			//get result
 			inline bool haveRow(){ return _curIter != _result.end(); }
-			const std::string & sqlString(){ return _sql; }
+			
 			template<class T>
 			inline DBResult & operator >>(T & t){t = _fromeString<T>(extractOneField());return *this;}
 
@@ -95,9 +176,6 @@ namespace  zsummer
 			MysqlResult _result;
 			MysqlResult::iterator _curIter = _result.begin();
 			unsigned int _fieldCursor = 0;
-			
-			
-
 		};
 		typedef std::shared_ptr<DBResult> DBResultPtr;
 
@@ -109,52 +187,35 @@ namespace  zsummer
 		public:
 			DBHelper(){}
 			~DBHelper(){if (_mysql){ mysql_close(_mysql); _mysql = nullptr; } }
-			inline void init(const DBConfig & dbconfig){ _config = dbconfig; }
+			inline void init(const std::string & ip, unsigned short port, const std::string & db, const std::string & user, const std::string & pwd)
+			{
+				_ip = ip;
+				_port = port;
+				_db = db;
+				_user = user;
+				_pwd = pwd;
+			}
 			bool connect();
 			bool waitEnable();
 			DBResultPtr query(const std::string & sql);
 		public:
-			void stop(){ _isRuning = false; }
+			void stop(){ _waiting = false; }
 		private:
 			DBHelper(const DBHelper &) = delete;
 			MYSQL * _mysql = nullptr;
-			DBConfig _config;
-			bool  _isRuning = true;
+			bool  _waiting = true;
+			std::string _ip;
+			unsigned short _port = 3306;
+			std::string _db;
+			std::string _user;
+			std::string _pwd;
 		};
 		typedef std::shared_ptr<DBHelper> DBHelperPtr;
 
 
 
 
-		class DBAsync : public Singleton<DBAsync>
-		{
-		public:
-			DBAsync();
-			~DBAsync();
-			bool start();
-			bool stop();
-		public:
-
-			inline const std::atomic_ullong & getPostCount(){ return _uPostCount; }
-			inline const std::atomic_ullong & getFinalCount(){ return _uFinalCount; }
-		public:
-			void asyncQuery(DBHelperPtr &dbhelper, const string &sql,
-				const std::function<void(DBResultPtr)> & handler);
-		protected:
-			void _asyncQuery(DBHelperPtr &dbhelper, const string &sql,
-				const std::function<void(DBResultPtr)> & handler);
-
-			inline void run();
-
-		private:
-			std::shared_ptr<std::thread> _thread;
-			zsummer::network::ZSummerPtr _summer;
-			bool _bRuning = false;
-			std::atomic_ullong _uPostCount;
-			std::atomic_ullong _uFinalCount;
-		};
-
-
+		
 
 
 

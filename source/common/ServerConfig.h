@@ -56,22 +56,22 @@ const std::string AuthDBName = "auth";
 const std::string InfoDBName = "info";
 const std::string LogDBName = "log";
 
-struct DBConfig 
+
+struct DBConfig
 {
-	std::string ip;
-	unsigned short port = 3306;
-	std::string db;
-	std::string user;
-	std::string pwd;
+	std::string _ip;
+	unsigned short _port = 3306;
+	std::string _db;
+	std::string _user;
+	std::string _pwd;
 };
 
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
 {
-	os << "[ip=" << config.ip << ", port=" << config.port << ", db=" << config.db << ", user=" << config.user << ", pwd=" << config.pwd << "]";
+	os << "[ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
 	return os;
 }
-
 
 
 class ServerConfig : public Singleton<ServerConfig>

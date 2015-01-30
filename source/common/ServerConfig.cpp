@@ -182,11 +182,11 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
 			}
 
 			DBConfig lconfig;
-			lconfig.ip = elmMongoChild->Attribute("ip");
-			lconfig.port = elmMongoChild->IntAttribute("port");
-			lconfig.db = elmMongoChild->Attribute("db");
-			lconfig.user = elmMongoChild->Attribute("user");
-			lconfig.pwd = elmMongoChild->Attribute("pwd");
+			lconfig._ip = elmMongoChild->Attribute("ip");
+			lconfig._port = elmMongoChild->IntAttribute("port");
+			lconfig._db = elmMongoChild->Attribute("db");
+			lconfig._user = elmMongoChild->Attribute("user");
+			lconfig._pwd = elmMongoChild->Attribute("pwd");
 			if (strNode == AuthDBName)
 			{
 				_authDBConfig = lconfig;
