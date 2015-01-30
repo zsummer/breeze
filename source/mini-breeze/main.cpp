@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
 	
 	
-	std::string filename = "../ServerConfig.xml";
+	std::string filename = "../serverConfig.xml";
 	unsigned int serverIndex = 0;
 	if (argc > 1)
 	{

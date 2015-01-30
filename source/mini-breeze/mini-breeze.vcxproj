@@ -162,15 +162,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="logic\DBManager.cpp" />
-    <ClCompile Include="logic\NetManager.cpp" />
+    <ClCompile Include="application.cpp" />
+    <ClCompile Include="logic\dbManager.cpp" />
+    <ClCompile Include="logic\netManager.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="logic\DBManager.h" />
-    <ClInclude Include="logic\NetManager.h" />
+    <ClInclude Include="application.h" />
+    <ClInclude Include="logic\dbManager.h" />
+    <ClInclude Include="logic\netManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

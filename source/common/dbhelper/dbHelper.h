@@ -36,6 +36,7 @@
 #include <chrono>
 #include <log4z/log4z.h>
 #include <thread>
+#include <string.h>
 
 namespace  zsummer
 {
@@ -63,18 +64,17 @@ namespace  zsummer
 				_sql = init;
 			}
 			template <class T>
-			inline bool add(T t)
+			inline bool add(const T & t)
 			{
 				std::stringstream ss;
 				ss << t;
-				return insertParam(ss.str());
+				return insertParam(ss.str(), false);
 			}
-			template <>
-			inline bool add(const char * param)
+
+			inline bool add(const char *  param)
 			{
 				return insertParam(escapeString(param, strlen(param)), true);
 			}
-			template <>
 			inline bool add(const std::string & param)
 			{
 				return insertParam(escapeString(param), true);
