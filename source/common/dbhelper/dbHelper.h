@@ -63,21 +63,26 @@ namespace  zsummer
 			{
 				_sql = init;
 			}
+
+
+			inline bool add(const char *  param)
+			{
+				return insertParam(escapeString(param, strlen(param)), true);
+			}
+			inline bool add(char *  param)
+			{
+				return add((const char*)param);
+			}
+			inline bool add(const std::string & param)
+			{
+				return insertParam(escapeString(param), true);
+			}
 			template <class T>
 			inline bool add(const T & t)
 			{
 				std::stringstream ss;
 				ss << t;
 				return insertParam(ss.str(), false);
-			}
-
-			inline bool add(const char *  param)
-			{
-				return insertParam(escapeString(param, strlen(param)), true);
-			}
-			inline bool add(const std::string & param)
-			{
-				return insertParam(escapeString(param), true);
 			}
 			inline const std::string & genSQL()
 			{
