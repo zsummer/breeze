@@ -28,10 +28,12 @@ extern "C"
 #include "lua/lpack.h"
 }
 
+
+#include <dbhelper.h>
 #include "lua/summer.h"
 
 using namespace zsummer::log4z;
-
+using namespace zsummer::mysql;
 
 
 int main(int argc, char* argv[])
@@ -56,31 +58,64 @@ int main(int argc, char* argv[])
 	ILog4zManager::getPtr()->config("log.config");
 	ILog4zManager::getPtr()->start();
 	ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);
-	int status;
-	lua_State *L = luaL_newstate();  /* create state */
-	if (L == NULL)
+
+	// insert account
 	{
-		return EXIT_FAILURE;
+		DBHelper helper;
+		helper.init("192.168.1.101", 3306, "db_auth", "root", "123456");
+		if (helper.connect())
+		{
+			for (int i = 0; i < 1000; i++)
+			{
+				DBRequest req("insert ignore into tb_auth(`user`, passwd)values(?, ?)");
+				char buf[100];
+				sprintf(buf, "zhangyawei%04d", i);
+				std::string str(buf);
+				req.add(buf);
+				req.add("123");
+				DBResultPtr result = helper.query(req.genSQL());
+				if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
+				{
+					LOGE("mysql querry error. the error=" << result->getLastError() << ", sql=" << req.genSQL());
+					break;
+				}
+				if (result->getAffectedRows() == 0)
+				{
+					LOGW("mysql insert account not affect any rows. the user=" << buf);
+					continue;
+				}
+			}
+
+		}
 	}
 
-	lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
-	luaL_openlibs(L);  /* open libraries */
-	luaopen_summer(L);
-	luaopen_pack(L);
-
-	lua_gc(L, LUA_GCRESTART, 0);
-	status = luaL_dofile(L, "./main.lua");
-
-	if (status && !lua_isnil(L, -1))
+	// lua script
 	{
-		const char *msg = lua_tostring(L, -1);
-		if (msg == NULL) msg = "(error object is not a string)";
-		LOGE(msg);
-		lua_pop(L, 1);
-	}
-	lua_close(L);
-	return (status) ? EXIT_FAILURE : EXIT_SUCCESS;
+		int status;
+		lua_State *L = luaL_newstate();  /* create state */
+		if (L == NULL)
+		{
+			return EXIT_FAILURE;
+		}
 
+		lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
+		luaL_openlibs(L);  /* open libraries */
+		luaopen_summer(L);
+		luaopen_pack(L);
+
+		lua_gc(L, LUA_GCRESTART, 0);
+		status = luaL_dofile(L, "./main.lua");
+
+		if (status && !lua_isnil(L, -1))
+		{
+			const char *msg = lua_tostring(L, -1);
+			if (msg == NULL) msg = "(error object is not a string)";
+			LOGE(msg);
+			lua_pop(L, 1);
+		}
+		lua_close(L);
+		return (status) ? EXIT_FAILURE : EXIT_SUCCESS;
+	}
 
 	return 0;
 }
