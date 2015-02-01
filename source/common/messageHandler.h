@@ -25,14 +25,14 @@
 
 #ifndef _BASE_MESSAGE_HANDLER_H_
 #define _BASE_MESSAGE_HANDLER_H_
-#include <InnerDefined.h>
+#include <innerDefined.h>
 
 
-class BaseMessageHandler
+class MessageHandler
 {
 public:
-	BaseMessageHandler(){}
-	virtual ~BaseMessageHandler(){};
+	MessageHandler(){}
+	virtual ~MessageHandler(){};
 	virtual bool init() = 0;
 	virtual void userLogin(std::shared_ptr<InnerUserInfo> innerInfo) = 0;
 	virtual void userLogout(std::shared_ptr<InnerUserInfo> innerInfo) = 0;

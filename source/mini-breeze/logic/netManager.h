@@ -28,7 +28,7 @@
 #ifndef _NET_MANAGER_H_
 #define _NET_MANAGER_H_
 #include <common.h>
-#include <DBAsync.h>
+#include <dbAsync.h>
 #include <unordered_map>
 #include <ProtoLogin.h>
 using namespace zsummer::mysql;
@@ -68,7 +68,7 @@ public:
 
 private:
 	//
-	std::vector<BaseMessageHandler*> _handlers;
+	std::vector<MessageHandler*> _handlers;
 
 	//
 	std::unordered_map<SessionID, std::shared_ptr<InnerUserInfo>> _mapUserSession;

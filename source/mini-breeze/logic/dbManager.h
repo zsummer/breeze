@@ -29,11 +29,11 @@
 #define _DB_MANAGER_H_
 #include <common.h>
 #include <unordered_map>
-#include <DBAsync.h>
+#include <dbAsync.h>
 
 
 
-class DBManager :public BaseMessageHandler, public Singleton<DBManager>
+class DBManager :public MessageHandler, public Singleton<DBManager>
 {
 public:
 	DBManager();

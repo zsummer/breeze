@@ -23,7 +23,7 @@
 
 #ifndef _GEN_OBJECT_ID_H_
 #define _GEN_OBJECT_ID_H_
-#include <InnerDefined.h>
+#include <innerDefined.h>
 class GenObjectID
 {
 public:

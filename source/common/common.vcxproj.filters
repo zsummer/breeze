@@ -4,7 +4,6 @@
     <ClInclude Include="dbhelper\dbHelper.h">
       <Filter>dbhelper</Filter>
     </ClInclude>
-    <ClInclude Include="baseMessageHandler.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="dbAsync.h" />
     <ClInclude Include="genObjectID.h" />
@@ -89,6 +88,10 @@
     <ClInclude Include="lua\summer.h">
       <Filter>lua</Filter>
     </ClInclude>
+    <ClInclude Include="md5\md5.h">
+      <Filter>md5</Filter>
+    </ClInclude>
+    <ClInclude Include="messageHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbhelper\dbHelper.cpp">
@@ -195,6 +198,9 @@
     <ClCompile Include="lua\summer.cpp">
       <Filter>lua</Filter>
     </ClCompile>
+    <ClCompile Include="md5\md5.cpp">
+      <Filter>md5</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dbhelper">
@@ -205,6 +211,9 @@
     </Filter>
     <Filter Include="lua">
       <UniqueIdentifier>{6b7a7289-959d-49af-a43f-7448863917d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="md5">
+      <UniqueIdentifier>{98f9fd42-664c-4abc-806c-c9dbc104141c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

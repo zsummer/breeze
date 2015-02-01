@@ -25,7 +25,7 @@
 
 #ifndef _SINGLETON_H_
 #define _SINGLETON_H_
-#include <InnerDefined.h>
+#include <innerDefined.h>
 
 
 template<class T>

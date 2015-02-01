@@ -8,6 +8,7 @@ include_directories(${breeze_SOURCE_DIR}/common)
 include_directories(${breeze_SOURCE_DIR}/common/dbhelper)
 include_directories(${breeze_SOURCE_DIR}/common/lua)
 include_directories(${breeze_SOURCE_DIR}/common/tinyxml2)
+include_directories(${breeze_SOURCE_DIR}/common/md5)
 
 link_directories(${breeze_SOURCE_DIR}/../depends_linux/lib/)
 link_directories(${breeze_SOURCE_DIR}/lib/)
