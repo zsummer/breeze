@@ -16,7 +16,7 @@
 * limitations under the License.
 */
 
-#include "Application.h"
+#include "application.h"
 #include <zsummerX/frameX.h>
 #include <unordered_map>
 using namespace zsummer::log4z;

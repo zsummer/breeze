@@ -30,7 +30,7 @@
 #include <messageHandler.h>
 #include <single.h>
 #include <serverConfig.h>
-#include <dbhelper/DBHelper.h>
+#include <dbhelper/dbHelper.h>
 
 namespace  zsummer
 {

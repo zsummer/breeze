@@ -18,7 +18,7 @@
 
 //! 测试
 
-#include <Common.h>
+#include <common.h>
 #include <ProtoLogin.h>
 #include <unordered_map>
 extern "C"
@@ -29,7 +29,7 @@ extern "C"
 }
 
 
-#include <dbhelper.h>
+#include <dbHelper.h>
 #include "lua/summer.h"
 
 using namespace zsummer::log4z;
