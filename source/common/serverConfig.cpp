@@ -1,7 +1,7 @@
 ﻿
 
 /*
-* mini-breeze License
+* breeze License
 * Copyright (C) 2014 YaweiZhang <yawei_zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,9 +63,9 @@ std::vector<ConnectorConfig > ServerConfig::getConfigConnect(ServerNode node)
 
 static ServerNode toServerNode(std::string strNode)
 {
-	if (strNode == "mini-breeze")
+	if (strNode == "logic")
 	{
-		return MiniBreezeNode;
+		return LogicNode;
 	}
 	else if (strNode == "stress")
 	{

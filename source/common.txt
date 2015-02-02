@@ -8,7 +8,7 @@ aux_source_directory(./lua source4)
 set(BINNAME ${PROJECT_NAME})
 
 
-set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/bin/${BINNAME}/)
+set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/../bin/${BINNAME}/)
 
 add_executable(${BINNAME} ${source1} ${source2} ${source3} ${source4})
 

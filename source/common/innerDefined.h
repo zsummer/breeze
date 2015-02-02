@@ -1,7 +1,7 @@
 ﻿
 
 /*
-* mini-breeze License
+* breeze License
 * Copyright (C) 2014 YaweiZhang <yawei_zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,7 +57,7 @@ const NodeIndex InvalidNodeIndex = (NodeIndex)-1;
 //服务节点类型,服务如果改成多节点 在这里添加节点类型
 typedef ui32 ServerNode;
 const ServerNode InvalideServerNode = (ServerNode)-1;
-const ServerNode MiniBreezeNode = 0;
+const ServerNode LogicNode = 0;
 const ServerNode StressNode = 1;
 
 //服务节点编号

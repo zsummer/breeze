@@ -12,10 +12,10 @@
 </db>
 
 <listen>
-	<mini-breeze ip="0.0.0.0" port="21010" index="0" />
+	<logic ip="0.0.0.0" port="21010" index="0" />
 </listen>
 
 <connect>
-	<stress dstNode="mini-breeze" ip="127.0.0.1" port="21010"  />
+	<stress dstNode="logic" ip="127.0.0.1" port="21010"  />
 </connect>
 

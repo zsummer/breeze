@@ -42,6 +42,6 @@ endif(WIN32)
 
 message(STATUS  ${CMAKE_CXX_COMPILER})
 add_subdirectory(common)
-add_subdirectory(mini-breeze)
+add_subdirectory(logic)
 add_subdirectory(stressTest)
 

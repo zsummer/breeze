@@ -37,7 +37,7 @@ bool NetManager::start()
 	}
 	LOGI("init handler all Success. handler size=" << _handlers.size());
 	//end
-	auto connecters = ServerConfig::getRef().getConfigConnect(MiniBreezeNode);
+	auto connecters = ServerConfig::getRef().getConfigConnect(LogicNode);
 	for (auto con : connecters)
 	{
 		tagConnctorConfigTraits tag;
@@ -60,8 +60,8 @@ bool NetManager::start()
 		// ...
 	}
 
-	_configListen.listenIP = ServerConfig::getRef().getConfigListen(MiniBreezeNode).ip;
-	_configListen.listenPort = ServerConfig::getRef().getConfigListen(MiniBreezeNode).port;
+	_configListen.listenIP = ServerConfig::getRef().getConfigListen(LogicNode).ip;
+	_configListen.listenPort = ServerConfig::getRef().getConfigListen(LogicNode).port;
 	_configListen.maxSessions = 5000;
 
 	// if have some connector need connect success. do open accept in event_onSessionEstablished when all connector is success.
