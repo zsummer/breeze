@@ -1,5 +1,5 @@
 --require
-package.path = package.path .. ";" .. "../../../protocol/lua/?.lua"
+package.path = package.path .. ";" .. "../../protocol/lua/?.lua"
 logd = summer.logd
 logi = summer.logi
 logw = summer.logw
