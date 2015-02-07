@@ -1,7 +1,48 @@
+
+--[[
+/*
+ * proto4z License
+ * -----------
+ * 
+ * proto4z is licensed under the terms of the MIT license reproduced below.
+ * This means that proto4z is free software and can be used for both academic
+ * and commercial purposes at absolutely no cost.
+ * 
+ * 
+ * ===============================================================================
+ * 
+ * Copyright (C) 2013-2015 YaweiZhang <yawei_zhang@foxmail.com>.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * ===============================================================================
+ * 
+ * (end of COPYRIGHT)
+ */
+ ]]--
+
+
 -- proto4z core file
 -- Auther: zhangyawei
 -- mail:yawei_zhang@foxmail.com
 -- date: 2015-01-12
+
 
 
 Protoz = {}
@@ -187,20 +228,14 @@ function Protoz.__pack(val, tp)
 	elseif tp == "ui32" or tp == "unsigned int" then
 		return string.pack("<I", val)	
 	elseif tp == "i64" or tp == "long long" or tp == "ui64" or tp == "unsigned long long" then
-		local i = string.pack("<b", string.byte(val, 1))
-		i = i .. string.pack("<b", string.byte(val, 2))
-		i = i .. string.pack("<b", string.byte(val, 3))
-		i = i .. string.pack("<b", string.byte(val, 4))
-		i = i .. string.pack("<b", string.byte(val, 5))
-		i = i .. string.pack("<b", string.byte(val, 6))
-		i = i .. string.pack("<b", string.byte(val, 7))
-		i = i .. string.pack("<b", string.byte(val, 8))
-		return i
+		return string.sub(val, 1, 8)
 
 
 	-- string type
 	elseif tp == "string" then
-		return string.pack("<P", val)
+		local i = string.pack("<I", #val)
+		i = i .. string.pack("A", val)
+		return i
 
 	-- float type
 	elseif tp == "float" then
@@ -283,27 +318,12 @@ function Protoz.__unpack(binData, pos, tp)
 	elseif tp == "ui32" or tp == "unsigned int" then
 		n, v = string.unpack(binData, "<I", pos)
 	elseif tp == "i64" or tp == "long long" or tp == "ui64" or tp == "unsigned long long" then
-		local tmp
-		n, tmp = string.unpack(binData, "<b", pos)
-		v = tmp
-		n, tmp = string.unpack(binData, "<b", pos+1)
-		v = v .. tmp
-		n, tmp = string.unpack(binData, "<b", pos+2)
-		v = v .. tmp
-		n, tmp = string.unpack(binData, "<b", pos+3)
-		v = v .. tmp
-		n, tmp = string.unpack(binData, "<b", pos+4)
-		v = v .. tmp
-		n, tmp = string.unpack(binData, "<b", pos+5)
-		v = v .. tmp
-		n, tmp = string.unpack(binData, "<b", pos+6)
-		v = v .. tmp
-		n, tmp = string.unpack(binData, "<b", pos+7)
-		v = v .. tmp
-
+		v = string.sub(binData, pos, pos+7)
+		n = pos +8
 	-- string type
 	elseif tp == "string" then
-		n, v = string.unpack(binData, "<P", pos)
+		n, v = string.unpack(binData, "<I", pos)
+		n, v = string.unpack(binData, "<A" .. v, pos+4)
 
 	-- float type
 	elseif tp == "float" then
@@ -339,7 +359,7 @@ function Protoz.__decode(binData, pos, name, result)
 	if proto.__getDesc == "array" then
 		local len
 
-		len, p = Protoz.__unpack(binData, p, "ui16")
+		len, p = Protoz.__unpack(binData, p, "ui32")
 		for i=1, len do
 			v, p = Protoz.__unpack(binData, p, proto.__getTypeV)
 			if v ~= nil then
@@ -352,7 +372,7 @@ function Protoz.__decode(binData, pos, name, result)
 	elseif proto.__getDesc == "map" then
 		local len
 		local k
-		len, p = Protoz.__unpack(binData, p, "ui16")
+		len, p = Protoz.__unpack(binData, p, "ui32")
 		for j=1, len do
 			k, p = Protoz.__unpack(binData, p, proto.__getTypeK)
 			v, p = Protoz.__unpack(binData, p, proto.__getTypeV)
@@ -364,16 +384,23 @@ function Protoz.__decode(binData, pos, name, result)
 			end
 		end
 	else
+		local offset, tag
+		offset, p = Protoz.__unpack(binData, p, "ui32")
+		offset = p + offset
+		tag, p = Protoz.__unpack(binData, p, "ui64")
 		for i = 1, #proto do
-			local desc = proto[i]
-			v, p = Protoz.__unpack(binData, p, desc.type)
-			if v ~= nil then
-				result[desc.name] = v
-			else
-				result[desc.name] = {}
-				p = Protoz.__decode(binData, p, desc.type, result[desc.name])
+			if Protoz_bit.checkBitTrue(tag, i-1) ~= nil then
+				local desc = proto[i]
+				v, p = Protoz.__unpack(binData, p, desc.type)
+				if v ~= nil then
+					result[desc.name] = v
+				else
+					result[desc.name] = {}
+					p = Protoz.__decode(binData, p, desc.type, result[desc.name])
+				end
 			end
 		end
+		p = offset
 	end
 	return p
 end
@@ -395,7 +422,7 @@ function Protoz.__encode(obj, name, data)
 	--------------------------------------
 	if proto.__getDesc == "array" then
 		Protoz.__checkType(proto.__getTypeV)
-		data.data = data.data .. string.pack("<H", #obj) --this line lua5.3 or lua5.1+lpack all compatibility 
+		data.data = data.data .. string.pack("<I", #obj) --this line lua5.3 or lua5.1+lpack all compatibility 
 		for i =1, #obj do
 			if type(obj[i]) ~= "table" then
 				data.data = data.data .. Protoz.__pack(obj[i], proto.__getTypeV)
@@ -408,7 +435,7 @@ function Protoz.__encode(obj, name, data)
 	elseif proto.__getDesc == "map" then
 		Protoz.__checkType(proto.__getTypeK)
 		Protoz.__checkType(proto.__getTypeV)
-		data.data = data.data .. string.pack("<H", #obj)--this line lua5.3 or lua5.1+lpack all compatibility 
+		data.data = data.data .. string.pack("<I", #obj)--this line lua5.3 or lua5.1+lpack all compatibility 
 		for i =1, #obj do
 			if not Protoz.__isInnerType(proto.__getTypeK) or type(obj[i].k) == "table" then
 				error("unknown member type(obj[i].k)=" .. type(obj[i].k) .. ", type=" .. name .. "." .. proto.__getTypeK)
@@ -425,25 +452,36 @@ function Protoz.__encode(obj, name, data)
 	--base typ or struct or proto
 	--------------------------------------
 	else
+		local curdata, offset, tag
+		tag = ""
+		curdata = {data=""}
 		for i=1, #proto do
 			local desc = proto[i]
 			if type(desc) ~= "table" or type(desc.name) ~= "string" or type(desc.type) ~= "string" then
 				error("parse Proto error. name[" .. name .. "] " .. debug.traceback())
 			end
-
-			local val = obj[desc.name]
-			if val == nil then
-				error("not found the dest object. name[" ..name .. "." .. desc.name .. "] " .. debug.traceback())
-			end
-
-			if type(val) ~= "table" and Protoz.__isInnerType(desc.type) then
-				data.data = data.data .. Protoz.__pack(val, desc.type)
-			elseif type(val) == "table" and Protoz.__isUserType(desc.type) then
-				Protoz.__encode(val, desc.type, data)
+			if desc.del ~= nil then
+				tag = tag .. "0"
 			else
-				error("unknown member type(val)=" .. type(val) .. ", type=" .. name .. "." .. desc.type)
+				tag = tag .. "1"
+				local val = obj[desc.name]
+				if val == nil then
+					error("not found the dest object. name[" ..name .. "." .. desc.name .. "] " .. debug.traceback())
+				end
+
+				if type(val) ~= "table" and Protoz.__isInnerType(desc.type) then
+					curdata.data = curdata.data .. Protoz.__pack(val, desc.type)
+				elseif type(val) == "table" and Protoz.__isUserType(desc.type) then
+					Protoz.__encode(val, desc.type, curdata)
+				else
+					error("unknown member type(val)=" .. type(val) .. ", type=" .. name .. "." .. desc.type)
+				end
 			end
 		end
+		tag = Protoz_bit.checkStringToBit(tag)
+		offset = #curdata.data + #tag
+		offset = Protoz.__pack(offset, "ui32")
+		data.data = data.data .. offset .. tag .. curdata.data
 	end
 end
 

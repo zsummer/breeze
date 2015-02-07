@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2013-2014 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2013-2015 YaweiZhang <yawei_zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -132,35 +132,18 @@ enum ZSummer_EndianType
 //|-----   header  -----|-------  body  --------|
 //|--packlen-|-protoID--|-------  body  --------|
 
-//|---------------------------------------------| //PackLenIsContainHead
-//                      |-----------------------| //not PackLenIsContainHead
 
+typedef unsigned int Integer;
+typedef unsigned short ProtoInteger;
 
-struct DefaultStreamHeadTraits
-{
-	typedef unsigned short Integer; //User-Defined Integer Type must in [unsigned char, unsigned short, unsigned int, unsigned long long].
-	typedef unsigned short ProtoInteger;
-	const static Integer MaxPackLen = (Integer)-1; //User-Defined. example:  Integer = unsigned short(-1) ==>(65535)
-	const static bool	 PackLenIsContainHead = true; //User-Defined 
-	const static ZSummer_EndianType EndianType = LittleEndian;//User-Defined 
-};
-
-//protocol Traits example, User-Defined
-struct TestBigStreamHeadTraits
-{
-	typedef unsigned int Integer;
-	typedef unsigned short ProtoInteger;
-	const static Integer MaxPackLen = -1;
-	const static bool PackLenIsContainHead = false;
-	const static ZSummer_EndianType EndianType = BigEndian;
-};
+const static Integer MaxPackLen = 1024*1024;
 
 //stream translate to Integer with endian type.
-template<class Integer, class StreamHeadTrait>
+template<class Integer>
 Integer streamToInteger(const char stream[sizeof(Integer)]);
 
 //integer translate to stream with endian type.
-template<class Integer, class StreamHeadTrait>
+template<class Integer>
 void integerToStream(Integer integer, char *stream);
 
 //!get runtime local endian type. 
@@ -183,10 +166,8 @@ enum INTEGRITY_RET_TYPE
 //! first: IRT_SUCCESS data integrity. second: current integrity data lenght.
 //! first: IRT_SHORTAGE data not integrity. second: shortage lenght.
 //! first: IRT_CORRUPTION data corruption. second: data lenght
-template<class StreamHeadTrait>
-inline std::pair<INTEGRITY_RET_TYPE, typename StreamHeadTrait::Integer>
-checkBuffIntegrity(const char * buff, typename StreamHeadTrait::Integer curBuffLen, 
-typename StreamHeadTrait::Integer maxBuffLen /*= StreamHeadTrait::MaxPackLen*/);
+inline std::pair<INTEGRITY_RET_TYPE, Integer>
+checkBuffIntegrity(const char * buff, Integer curBuffLen, Integer maxBuffLen /*= MaxPackLen*/);
 
 
 
@@ -195,17 +176,13 @@ typename StreamHeadTrait::Integer maxBuffLen /*= StreamHeadTrait::MaxPackLen*/);
 //////////////////////////////////////////////////////////////////////////
 //StreamHeadTrait: User-Defined like DefaultStreamHeadTrait
 
-template<class StreamHeadTrait/*=DefaultStreamHeadTraits*/, class _Alloc = std::allocator<char> >
+
 class WriteStream
 {
 public:
-	typedef typename StreamHeadTrait::Integer Integer;
-	typedef typename StreamHeadTrait::ProtoInteger ProtoInteger;
-
-
 	//! bNoWrite : if true then WriteStream will not do any write operation.
 	//! attachData : Attach to the existing memory.
-	WriteStream(ProtoInteger pID, char * attachData = NULL, Integer maxStreamLen = 0, bool bNoWrite = false);
+	inline WriteStream(ProtoInteger pID, char * attachData = NULL, Integer maxStreamLen = 0, bool bNoWrite = false);
 	~WriteStream(){}
 public:
 	//get total stream buff, the pointer must be used immediately.
@@ -219,22 +196,22 @@ public:
 	inline Integer getStreamBodyLen(){ return _cursor - _headLen; }
 
 	//write original data.
-	inline WriteStream<StreamHeadTrait> & appendOriginalData(const void * data, Integer unit);
+	inline WriteStream & appendOriginalData(const void * data, Integer unit);
+	inline WriteStream & fixOriginalData(Integer offset, Integer unit);
 
-
-	inline WriteStream<StreamHeadTrait> & operator << (bool data) { return writeSimpleData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (char data) { return writeSimpleData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (unsigned char data) { return writeSimpleData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (short data) { return writeIntegerData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (unsigned short data) { return writeIntegerData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (int data) { return writeIntegerData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (unsigned int data) { return writeIntegerData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (long data) { return writeIntegerData((long long)data); }
-	inline WriteStream<StreamHeadTrait> & operator << (unsigned long data) { return writeIntegerData((unsigned long long)data); }
-	inline WriteStream<StreamHeadTrait> & operator << (long long data) { return writeIntegerData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (unsigned long long data) { return writeIntegerData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (float data) { return writeIntegerData(data); }
-	inline WriteStream<StreamHeadTrait> & operator << (double data) { return writeIntegerData(data); }
+	inline WriteStream & operator << (bool data) { return writeSimpleData(data); }
+	inline WriteStream & operator << (char data) { return writeSimpleData(data); }
+	inline WriteStream & operator << (unsigned char data) { return writeSimpleData(data); }
+	inline WriteStream & operator << (short data) { return writeIntegerData(data); }
+	inline WriteStream & operator << (unsigned short data) { return writeIntegerData(data); }
+	inline WriteStream & operator << (int data) { return writeIntegerData(data); }
+	inline WriteStream & operator << (unsigned int data) { return writeIntegerData(data); }
+	inline WriteStream & operator << (long data) { return writeIntegerData((long long)data); }
+	inline WriteStream & operator << (unsigned long data) { return writeIntegerData((unsigned long long)data); }
+	inline WriteStream & operator << (long long data) { return writeIntegerData(data); }
+	inline WriteStream & operator << (unsigned long long data) { return writeIntegerData(data); }
+	inline WriteStream & operator << (float data) { return writeIntegerData(data); }
+	inline WriteStream & operator << (double data) { return writeIntegerData(data); }
 
 protected:
 	//! check move cursor is valid. if invalid then throw exception.
@@ -245,14 +222,14 @@ protected:
 
 	//! write integer data with endian type.
 	template <class T>
-	inline WriteStream<StreamHeadTrait> & writeIntegerData(T t);
+	inline WriteStream & writeIntegerData(T t);
 
 	//! write some types of data with out endian type. It's relative to writeIntegerData method.
 	template <class T>
-	inline WriteStream<StreamHeadTrait> & writeSimpleData(T t);
+	inline WriteStream & writeSimpleData(T t);
 private:
 
-	std::basic_string<char, std::char_traits<char>, _Alloc > _data; //! If not attach any memory, class WriteStream will used this to managing memory.
+	std::string _data; //! If not attach any memory, class WriteStream will used this to managing memory.
 	char * _attachData;//! attach memory pointer
 	Integer _maxStreamLen; //! can write max size
 	Integer _cursor; //! current move cursor.
@@ -265,14 +242,11 @@ private:
 //class ReadStream: De-serialization the specified data from byte stream.
 //////////////////////////////////////////////////////////////////////////
 
-//StreamHeadTrait: User-Defined like DefaultStreamHeadTrait
-template<class StreamHeadTrait/*=DefaultStreamHeadTraits*/>
+
 class ReadStream
 {
 public:
-	typedef typename StreamHeadTrait::Integer Integer;
-	typedef typename StreamHeadTrait::ProtoInteger ProtoInteger;
-	ReadStream(const char *attachData, Integer attachDataLen, bool isHaveHeader = true);
+	inline ReadStream(const char *attachData, Integer attachDataLen, bool isHaveHeader = true);
 	~ReadStream(){}
 public:
 	//reset cursor
@@ -299,25 +273,25 @@ public:
 	inline void skipOriginalData(Integer unit);
 
 
-	inline ReadStream<StreamHeadTrait> & operator >> (bool & data) { return readSimpleData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (char & data) { return readSimpleData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (unsigned char & data) { return readSimpleData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (short & data) { return readIntegerData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (unsigned short & data) { return readIntegerData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (int & data) { return readIntegerData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (unsigned int & data) { return readIntegerData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (long & data){ long long tmp = 0;ReadStream & ret = readIntegerData(tmp);data =(long) tmp;return ret;}
-	inline ReadStream<StreamHeadTrait> & operator >> (unsigned long & data){ unsigned long long tmp = 0;ReadStream & ret = readIntegerData(tmp);data = (unsigned long)tmp;return ret;}
-	inline ReadStream<StreamHeadTrait> & operator >> (long long & data) { return readIntegerData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (unsigned long long & data) { return readIntegerData(data); }
-	inline ReadStream<StreamHeadTrait> & operator >> (float & data) { return readIntegerData(data); } 
-	inline ReadStream<StreamHeadTrait> & operator >> (double & data) { return readIntegerData(data); }
+	inline ReadStream & operator >> (bool & data) { return readSimpleData(data); }
+	inline ReadStream & operator >> (char & data) { return readSimpleData(data); }
+	inline ReadStream & operator >> (unsigned char & data) { return readSimpleData(data); }
+	inline ReadStream & operator >> (short & data) { return readIntegerData(data); }
+	inline ReadStream & operator >> (unsigned short & data) { return readIntegerData(data); }
+	inline ReadStream & operator >> (int & data) { return readIntegerData(data); }
+	inline ReadStream & operator >> (unsigned int & data) { return readIntegerData(data); }
+	inline ReadStream & operator >> (long & data){ long long tmp = 0;ReadStream & ret = readIntegerData(tmp);data =(long) tmp;return ret;}
+	inline ReadStream & operator >> (unsigned long & data){ unsigned long long tmp = 0;ReadStream & ret = readIntegerData(tmp);data = (unsigned long)tmp;return ret;}
+	inline ReadStream & operator >> (long long & data) { return readIntegerData(data); }
+	inline ReadStream & operator >> (unsigned long long & data) { return readIntegerData(data); }
+	inline ReadStream & operator >> (float & data) { return readIntegerData(data); } 
+	inline ReadStream & operator >> (double & data) { return readIntegerData(data); }
 protected:
 	inline void checkMoveCursor(Integer unit);
 	template <class T>
-	inline ReadStream<StreamHeadTrait> & readIntegerData(T & t);
+	inline ReadStream & readIntegerData(T & t);
 	template <class T>
-	inline ReadStream<StreamHeadTrait> & readSimpleData(T & t);
+	inline ReadStream & readSimpleData(T & t);
 
 private:
 	const char * _attachData;
@@ -333,29 +307,29 @@ private:
 //////////////////////////////////////////////////////////////////////////
 
 //write c-style string
-template<class StreamHeadTrait>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const char *const data)
+
+inline WriteStream & operator << (WriteStream & ws, const char *const data)
 {
-	typename StreamHeadTrait::Integer len = (typename StreamHeadTrait::Integer)strlen(data);
+	Integer len = (Integer)strlen(data);
 	ws << len;
 	ws.appendOriginalData(data, len);
 	return ws;
 }
 
 //write std::string
-template<class StreamHeadTrait, class _Traits, class _Alloc>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const std::basic_string<char, _Traits, _Alloc> & data)
+template<class _Traits, class _Alloc>
+inline WriteStream & operator << (WriteStream & ws, const std::basic_string<char, _Traits, _Alloc> & data)
 {
-	typename StreamHeadTrait::Integer len = (typename StreamHeadTrait::Integer)data.length();
+	Integer len = (Integer)data.length();
 	ws << len;
 	ws.appendOriginalData(data.c_str(), len);
 	return ws;
 }
 //read std::string
-template<class StreamHeadTrait, class _Traits, class _Alloc>
-inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & rs, std::basic_string<char, _Traits, _Alloc> & data)
+template<class _Traits, class _Alloc>
+inline ReadStream & operator >> (ReadStream & rs, std::basic_string<char, _Traits, _Alloc> & data)
 {
-	typename StreamHeadTrait::Integer len = 0;
+	Integer len = 0;
 	rs >> len;
 	data.assign(rs.peekOriginalData(len), len);
 	rs.skipOriginalData(len);
@@ -364,10 +338,10 @@ inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & 
 
 
 //std::vector
-template<class StreamHeadTrait, class T, class _Alloc>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const std::vector<T, _Alloc> & vct)
+template<class T, class _Alloc>
+inline WriteStream & operator << (WriteStream & ws, const std::vector<T, _Alloc> & vct)
 {
-	ws << (typename StreamHeadTrait::Integer)vct.size();
+	ws << (Integer)vct.size();
 	for (typename std::vector<T, _Alloc>::const_iterator iter = vct.begin(); iter != vct.end(); ++iter)
 	{
 		ws << *iter;
@@ -375,12 +349,12 @@ inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> 
 	return ws;
 }
 
-template<class StreamHeadTrait, typename T, class _Alloc>
-inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & rs, std::vector<T, _Alloc> & vct)
+template<typename T, class _Alloc>
+inline ReadStream & operator >> (ReadStream & rs, std::vector<T, _Alloc> & vct)
 {
-	typename StreamHeadTrait::Integer totalCount = 0;
+	Integer totalCount = 0;
 	rs >> totalCount;
-	for (typename StreamHeadTrait::Integer i = 0; i < totalCount; ++i)
+	for (Integer i = 0; i < totalCount; ++i)
 	{
 		T t;
 		rs >> t;
@@ -390,10 +364,10 @@ inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & 
 }
 
 //std::set
-template<class StreamHeadTrait, class Key, class _Pr, class _Alloc>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const std::set<Key, _Pr, _Alloc> & k)
+template<class Key, class _Pr, class _Alloc>
+inline WriteStream & operator << (WriteStream & ws, const std::set<Key, _Pr, _Alloc> & k)
 {
-	ws << (typename StreamHeadTrait::Integer)k.size();
+	ws << (Integer)k.size();
 	for (typename std::set<Key, _Pr, _Alloc>::const_iterator iter = k.begin(); iter != k.end(); ++iter)
 	{
 		ws << *iter;
@@ -401,12 +375,12 @@ inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> 
 	return ws;
 }
 
-template<class StreamHeadTrait, class Key, class _Pr, class _Alloc>
-inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & rs, std::set<Key, _Pr, _Alloc> & k)
+template<class Key, class _Pr, class _Alloc>
+inline ReadStream & operator >> (ReadStream & rs, std::set<Key, _Pr, _Alloc> & k)
 {
-	typename StreamHeadTrait::Integer totalCount = 0;
+	Integer totalCount = 0;
 	rs >> totalCount;
-	for (typename StreamHeadTrait::Integer i = 0; i < totalCount; ++i)
+	for (Integer i = 0; i < totalCount; ++i)
 	{
 		Key t;
 		rs >> t;
@@ -416,10 +390,10 @@ inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & 
 }
 
 //std::multiset
-template<class StreamHeadTrait, class Key, class _Pr, class _Alloc>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const std::multiset<Key, _Pr, _Alloc> & k)
+template<class Key, class _Pr, class _Alloc>
+inline WriteStream & operator << (WriteStream & ws, const std::multiset<Key, _Pr, _Alloc> & k)
 {
-	ws << (typename StreamHeadTrait::Integer)k.size();
+	ws << (Integer)k.size();
 	for (typename std::multiset<Key, _Pr, _Alloc>::const_iterator iter = k.begin(); iter != k.end(); ++iter)
 	{
 		ws << *iter;
@@ -427,12 +401,12 @@ inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> 
 	return ws;
 }
 
-template<class StreamHeadTrait, class Key, class _Pr, class _Alloc>
-inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & rs, std::multiset<Key, _Pr, _Alloc> & k)
+template<class Key, class _Pr, class _Alloc>
+inline ReadStream & operator >> (ReadStream & rs, std::multiset<Key, _Pr, _Alloc> & k)
 {
-	typename StreamHeadTrait::Integer totalCount = 0;
+	Integer totalCount = 0;
 	rs >> totalCount;
-	for (typename StreamHeadTrait::Integer i = 0; i < totalCount; ++i)
+	for (Integer i = 0; i < totalCount; ++i)
 	{
 		Key t;
 		rs >> t;
@@ -442,10 +416,10 @@ inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & 
 }
 
 //std::map
-template<class StreamHeadTrait, class Key, class Value, class _Pr, class _Alloc>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const std::map<Key, Value, _Pr, _Alloc> & kv)
+template<class Key, class Value, class _Pr, class _Alloc>
+inline WriteStream & operator << (WriteStream & ws, const std::map<Key, Value, _Pr, _Alloc> & kv)
 {
-	ws << (typename StreamHeadTrait::Integer)kv.size();
+	ws << (Integer)kv.size();
 	for (typename std::map<Key, Value, _Pr, _Alloc>::const_iterator iter = kv.begin(); iter != kv.end(); ++iter)
 	{
 		ws << iter->first;
@@ -454,12 +428,12 @@ inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> 
 	return ws;
 }
 
-template<class StreamHeadTrait, class Key, class Value, class _Pr, class _Alloc>
-inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & rs, std::map<Key, Value, _Pr, _Alloc> & kv)
+template<class Key, class Value, class _Pr, class _Alloc>
+inline ReadStream & operator >> (ReadStream & rs, std::map<Key, Value, _Pr, _Alloc> & kv)
 {
-	typename StreamHeadTrait::Integer totalCount = 0;
+	Integer totalCount = 0;
 	rs >> totalCount;
-	for (typename StreamHeadTrait::Integer i = 0; i < totalCount; ++i)
+	for (Integer i = 0; i < totalCount; ++i)
 	{
 		std::pair<Key, Value> pr;
 		rs >> pr.first;
@@ -470,10 +444,10 @@ inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & 
 }
 
 //std::multimap
-template<class StreamHeadTrait, class Key, class Value, class _Pr, class _Alloc>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const std::multimap<Key, Value, _Pr, _Alloc> & kv)
+template<class Key, class Value, class _Pr, class _Alloc>
+inline WriteStream & operator << (WriteStream & ws, const std::multimap<Key, Value, _Pr, _Alloc> & kv)
 {
-	ws << (typename StreamHeadTrait::Integer)kv.size();
+	ws << (Integer)kv.size();
 	for (typename std::multimap<Key, Value, _Pr, _Alloc>::const_iterator iter = kv.begin(); iter != kv.end(); ++iter)
 	{
 		ws << iter->first;
@@ -482,12 +456,12 @@ inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> 
 	return ws;
 }
 
-template<class StreamHeadTrait, class Key, class Value, class _Pr, class _Alloc>
-inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & rs, std::multimap<Key, Value, _Pr, _Alloc> & kv)
+template<class Key, class Value, class _Pr, class _Alloc>
+inline ReadStream & operator >> (ReadStream & rs, std::multimap<Key, Value, _Pr, _Alloc> & kv)
 {
-	typename StreamHeadTrait::Integer totalCount = 0;
+	Integer totalCount = 0;
 	rs >> totalCount;
-	for (typename StreamHeadTrait::Integer i = 0; i < totalCount; ++i)
+	for (Integer i = 0; i < totalCount; ++i)
 	{
 		std::pair<Key, Value> pr;
 		rs >> pr.first;
@@ -499,10 +473,10 @@ inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & 
 
 
 //std::list
-template<class StreamHeadTrait, class Value, class _Alloc>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const std::list<Value, _Alloc> & l)
+template<class Value, class _Alloc>
+inline WriteStream & operator << (WriteStream & ws, const std::list<Value, _Alloc> & l)
 {
-	ws << (typename StreamHeadTrait::Integer)l.size();
+	ws << (Integer)l.size();
 	for (typename std::list<Value,_Alloc>::const_iterator iter = l.begin(); iter != l.end(); ++iter)
 	{
 		ws << *iter;
@@ -510,12 +484,12 @@ inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> 
 	return ws;
 }
 
-template<class StreamHeadTrait, class Value, class _Alloc>
-inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & rs, std::list<Value, _Alloc> & l)
+template<class Value, class _Alloc>
+inline ReadStream & operator >> (ReadStream & rs, std::list<Value, _Alloc> & l)
 {
-	typename StreamHeadTrait::Integer totalCount = 0;
+	Integer totalCount = 0;
 	rs >> totalCount;
-	for (typename StreamHeadTrait::Integer i = 0; i < totalCount; ++i)
+	for (Integer i = 0; i < totalCount; ++i)
 	{
 		Value t;
 		rs >> t;
@@ -524,10 +498,10 @@ inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & 
 	return rs;
 }
 //std::deque
-template<class StreamHeadTrait, class Value, class _Alloc>
-inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> & ws, const std::deque<Value, _Alloc> & l)
+template<class Value, class _Alloc>
+inline WriteStream & operator << (WriteStream & ws, const std::deque<Value, _Alloc> & l)
 {
-	ws << (typename StreamHeadTrait::Integer)l.size();
+	ws << (Integer)l.size();
 	for (typename std::deque<Value,_Alloc>::const_iterator iter = l.begin(); iter != l.end(); ++iter)
 	{
 		ws << *iter;
@@ -535,12 +509,12 @@ inline WriteStream<StreamHeadTrait> & operator << (WriteStream<StreamHeadTrait> 
 	return ws;
 }
 
-template<class StreamHeadTrait, class Value, class _Alloc>
-inline ReadStream<StreamHeadTrait> & operator >> (ReadStream<StreamHeadTrait> & rs, std::deque<Value, _Alloc> & l)
+template<class Value, class _Alloc>
+inline ReadStream & operator >> (ReadStream & rs, std::deque<Value, _Alloc> & l)
 {
-	typename StreamHeadTrait::Integer totalCount = 0;
+	Integer totalCount = 0;
 	rs >> totalCount;
-	for (typename StreamHeadTrait::Integer i = 0; i < totalCount; ++i)
+	for (Integer i = 0; i < totalCount; ++i)
 	{
 		Value t;
 		rs >> t;
@@ -564,7 +538,7 @@ inline ZSummer_EndianType __localEndianType()
 	return BigEndian;
 }
 
-template<class Integer, class StreamHeadTrait>
+template<class Integer>
 Integer streamToInteger(const char stream[sizeof(Integer)])
 {
 	unsigned short integerLen = sizeof(Integer);
@@ -575,7 +549,7 @@ Integer streamToInteger(const char stream[sizeof(Integer)])
 	}
 	else
 	{
-		if (StreamHeadTrait::EndianType != __localEndianType())
+		if (LittleEndian != __localEndianType())
 		{
 			unsigned char *dst = (unsigned char*)&integer;
 			unsigned char *src = (unsigned char*)stream + integerLen;
@@ -593,7 +567,7 @@ Integer streamToInteger(const char stream[sizeof(Integer)])
 	return integer;
 }
 
-template<class Integer, class StreamHeadTrait>
+template<class Integer>
 void integerToStream(Integer integer, char *stream)
 {
 	unsigned short integerLen = sizeof(Integer);
@@ -603,7 +577,7 @@ void integerToStream(Integer integer, char *stream)
 	}
 	else
 	{
-		if (StreamHeadTrait::EndianType != __localEndianType())
+		if (LittleEndian != __localEndianType())
 		{
 			unsigned char *src = (unsigned char*)&integer + integerLen;
 			unsigned char *dst = (unsigned char*)stream;
@@ -625,27 +599,18 @@ void integerToStream(Integer integer, char *stream)
 //////////////////////////////////////////////////////////////////////////
 
 
-template<class StreamHeadTrait>
-inline std::pair<INTEGRITY_RET_TYPE, typename StreamHeadTrait::Integer> checkBuffIntegrity(const char * buff, typename StreamHeadTrait::Integer curBuffLen, typename StreamHeadTrait::Integer maxBuffLen)
+
+inline std::pair<INTEGRITY_RET_TYPE, Integer> checkBuffIntegrity(const char * buff, Integer curBuffLen, Integer maxBuffLen)
 {
 	//! 检查包头是否完整
-	unsigned short headLen = (unsigned short)sizeof(typename StreamHeadTrait::Integer) + (unsigned short)sizeof(typename StreamHeadTrait::ProtoInteger);
+	unsigned short headLen = (unsigned short)sizeof(Integer) + (unsigned short)sizeof(ProtoInteger);
 	if (curBuffLen < headLen)
 	{
 		return std::make_pair(IRT_SHORTAGE, headLen - curBuffLen);
 	}
 
 	//! 获取包长度
-	typename StreamHeadTrait::Integer packLen = streamToInteger<typename StreamHeadTrait::Integer, StreamHeadTrait>(buff);
-	if (!StreamHeadTrait::PackLenIsContainHead)
-	{
-		typename StreamHeadTrait::Integer oldInteger = packLen;
-		packLen += headLen;
-		if (packLen < oldInteger) //over range
-		{
-			return std::make_pair(IRT_CORRUPTION, curBuffLen);
-		}
-	}
+	Integer packLen = streamToInteger<Integer>(buff);
 
 	//! check
 	if (packLen > maxBuffLen)
@@ -669,8 +634,8 @@ inline std::pair<INTEGRITY_RET_TYPE, typename StreamHeadTrait::Integer> checkBuf
 //! implement 
 //////////////////////////////////////////////////////////////////////////
 
-template<class StreamHeadTrait, class AllocType>
-WriteStream<StreamHeadTrait, AllocType>::WriteStream(ProtoInteger pID, char * attachData, Integer maxStreamLen, bool bNoWrite)
+
+inline WriteStream::WriteStream(ProtoInteger pID, char * attachData, Integer maxStreamLen, bool bNoWrite)
 {
 	_pID = pID;
 	_attachData = attachData;
@@ -684,32 +649,28 @@ WriteStream<StreamHeadTrait, AllocType>::WriteStream(ProtoInteger pID, char * at
 		_data.reserve(1200);
 		_data.resize(_cursor, '\0');
 	}
-	if (_maxStreamLen < _headLen || _maxStreamLen > StreamHeadTrait::MaxPackLen)
+	if (_maxStreamLen < _headLen || _maxStreamLen > MaxPackLen)
 	{
-		_maxStreamLen = StreamHeadTrait::MaxPackLen;
+		_maxStreamLen = MaxPackLen;
 	}
 
 	//write header
-	Integer packLen = 0;
-	if (StreamHeadTrait::PackLenIsContainHead)
-	{
-		packLen = _headLen;
-	}
+	Integer packLen = _headLen;
 	if (_attachData)
 	{
-		integerToStream<Integer, StreamHeadTrait>(packLen, &_attachData[0]);
-		integerToStream<ProtoInteger, StreamHeadTrait>(pID, &_attachData[sizeof(Integer)]);
+		integerToStream<Integer>(packLen, &_attachData[0]);
+		integerToStream<ProtoInteger>(pID, &_attachData[sizeof(Integer)]);
 	}
 	else
 	{
-		integerToStream<Integer, StreamHeadTrait>(packLen, &_data[0]);
-		integerToStream<ProtoInteger, StreamHeadTrait>(pID, &_data[sizeof(Integer)]);
+		integerToStream<Integer>(packLen, &_data[0]);
+		integerToStream<ProtoInteger>(pID, &_data[sizeof(Integer)]);
 	}
 }
 
 
-template<class StreamHeadTrait, class AllocType>
-inline void WriteStream<StreamHeadTrait, AllocType>::checkMoveCursor(Integer unit)
+
+inline void WriteStream::checkMoveCursor(Integer unit)
 {
 	if (_maxStreamLen < _headLen)
 	{
@@ -729,32 +690,28 @@ inline void WriteStream<StreamHeadTrait, AllocType>::checkMoveCursor(Integer uni
 	}
 }
 
-template<class StreamHeadTrait, class AllocType>
-inline void WriteStream<StreamHeadTrait, AllocType>::fixPackLen()
+
+inline void WriteStream::fixPackLen()
 {
 	if (_isNoWrite)
 	{
 		return;
 	}
 	Integer packLen = _cursor;
-	if (!StreamHeadTrait::PackLenIsContainHead)
-	{
-		packLen -= _headLen;
-	}
 	if (_attachData)
 	{
-		integerToStream<Integer, StreamHeadTrait>(packLen, &_attachData[0]);
+		integerToStream<Integer>(packLen, &_attachData[0]);
 	}
 	else
 	{
-		integerToStream<Integer, StreamHeadTrait>(packLen, &_data[0]);
+		integerToStream<Integer>(packLen, &_data[0]);
 	}
 }
 
 
 
-template<class StreamHeadTrait, class AllocType>
-inline char* WriteStream<StreamHeadTrait, AllocType>::getStream()
+
+inline char* WriteStream::getStream()
 {
 	if (_isNoWrite)
 	{
@@ -771,8 +728,8 @@ inline char* WriteStream<StreamHeadTrait, AllocType>::getStream()
 	return NULL;
 }
 
-template<class StreamHeadTrait, class AllocType>
-inline char* WriteStream<StreamHeadTrait, AllocType>::getStreamBody()
+
+inline char* WriteStream::getStreamBody()
 {
 	if (_isNoWrite)
 	{
@@ -789,8 +746,8 @@ inline char* WriteStream<StreamHeadTrait, AllocType>::getStreamBody()
 	return NULL;
 }
 
-template<class StreamHeadTrait, class AllocType>
-inline WriteStream<StreamHeadTrait> & WriteStream<StreamHeadTrait, AllocType>::appendOriginalData(const void * data, Integer unit)
+
+inline WriteStream & WriteStream::appendOriginalData(const void * data, Integer unit)
 {
 	checkMoveCursor(unit);
 	if (!_isNoWrite)
@@ -808,9 +765,24 @@ inline WriteStream<StreamHeadTrait> & WriteStream<StreamHeadTrait, AllocType>::a
 	fixPackLen();
 	return *this;
 }
-
-template<class StreamHeadTrait, class AllocType> template <class T> 
-inline WriteStream<StreamHeadTrait> & WriteStream<StreamHeadTrait, AllocType>::writeIntegerData(T t)
+inline WriteStream & WriteStream::fixOriginalData(Integer offset, Integer unit)
+{
+	if (offset + sizeof(Integer) > _cursor)
+	{
+		throw std::runtime_error("fixOriginalData over stream.");
+	}
+	if (_attachData)
+	{
+		integerToStream<Integer>(unit, &_attachData[offset]);
+	}
+	else
+	{
+		integerToStream<Integer>(unit, &_data[offset]);
+	}
+	return *this;
+}
+ template <class T> 
+inline WriteStream & WriteStream::writeIntegerData(T t)
 {
 	Integer unit = sizeof(T);
 	checkMoveCursor(unit);
@@ -818,14 +790,14 @@ inline WriteStream<StreamHeadTrait> & WriteStream<StreamHeadTrait, AllocType>::w
 	{
 		if (_attachData)
 		{
-			integerToStream<T, StreamHeadTrait>(t, &_attachData[_cursor]);
+			integerToStream<T>(t, &_attachData[_cursor]);
 		}
 		else
 		{
 			_data.append((const char*)&t, unit);
-			if (StreamHeadTrait::EndianType != __localEndianType())
+			if (LittleEndian != __localEndianType())
 			{
-				integerToStream<T, StreamHeadTrait>(t, &_data[_cursor]);
+				integerToStream<T>(t, &_data[_cursor]);
 			}
 		}
 	}
@@ -835,8 +807,8 @@ inline WriteStream<StreamHeadTrait> & WriteStream<StreamHeadTrait, AllocType>::w
 }
 
 
-template<class StreamHeadTrait, class AllocType> template <class T>
-inline WriteStream<StreamHeadTrait> & WriteStream<StreamHeadTrait, AllocType>::writeSimpleData(T t)
+ template <class T>
+inline WriteStream & WriteStream::writeSimpleData(T t)
 {
 	Integer unit = sizeof(T);
 	checkMoveCursor(unit);
@@ -865,15 +837,15 @@ inline WriteStream<StreamHeadTrait> & WriteStream<StreamHeadTrait, AllocType>::w
 //////////////////////////////////////////////////////////////////////////
 //! implement 
 //////////////////////////////////////////////////////////////////////////
-template<class StreamHeadTrait>
-ReadStream<StreamHeadTrait>::ReadStream(const char *attachData, Integer attachDataLen, bool isHaveHeader)
+
+inline ReadStream::ReadStream(const char *attachData, Integer attachDataLen, bool isHaveHeader)
 {
 	_attachData = attachData;
 	_maxDataLen = attachDataLen;
 	_isHaveHeader = isHaveHeader;
-	if (_maxDataLen > StreamHeadTrait::MaxPackLen)
+	if (_maxDataLen > MaxPackLen)
 	{
-		_maxDataLen = StreamHeadTrait::MaxPackLen;
+		_maxDataLen = MaxPackLen;
 	}
 	if (_maxDataLen < sizeof(Integer) + sizeof(ProtoInteger))
 	{
@@ -883,12 +855,8 @@ ReadStream<StreamHeadTrait>::ReadStream(const char *attachData, Integer attachDa
 	if (_isHaveHeader)
 	{
 		_cursor = sizeof(Integer) + sizeof(ProtoInteger);
-		_pID = streamToInteger<ProtoInteger, StreamHeadTrait>(&_attachData[sizeof(Integer)]);
-		Integer len = streamToInteger<Integer, StreamHeadTrait>(&_attachData[0]);
-		if (!StreamHeadTrait::PackLenIsContainHead)
-		{
-			len += _cursor;
-		}
+		_pID = streamToInteger<ProtoInteger>(&_attachData[sizeof(Integer)]);
+		Integer len = streamToInteger<Integer>(&_attachData[0]);
 		if (len < _maxDataLen) // if stream invalid, ReadStream try read data as much as possible.
 		{
 			_maxDataLen = len;
@@ -904,8 +872,7 @@ ReadStream<StreamHeadTrait>::ReadStream(const char *attachData, Integer attachDa
 	
 }
 
-template<class StreamHeadTrait>
-inline void ReadStream<StreamHeadTrait>::resetMoveCursor()
+inline void ReadStream::resetMoveCursor()
 {
 	if (_isHaveHeader)
 	{
@@ -917,8 +884,8 @@ inline void ReadStream<StreamHeadTrait>::resetMoveCursor()
 	}
 }
 
-template<class StreamHeadTrait>
-inline void ReadStream<StreamHeadTrait>::checkMoveCursor(Integer unit)
+
+inline void ReadStream::checkMoveCursor(Integer unit)
 {
 	if (_cursor > _maxDataLen)
 	{
@@ -935,20 +902,20 @@ inline void ReadStream<StreamHeadTrait>::checkMoveCursor(Integer unit)
 }
 
 
-template<class StreamHeadTrait>
-inline const char* ReadStream<StreamHeadTrait>::getStream()
+
+inline const char* ReadStream::getStream()
 {
 	return _attachData;
 }
 
-template<class StreamHeadTrait>
-inline typename ReadStream<StreamHeadTrait>::Integer ReadStream<StreamHeadTrait>::getStreamLen()
+
+inline Integer ReadStream::getStreamLen()
 {
 	return _maxDataLen;
 }
 
-template<class StreamHeadTrait>
-inline const char* ReadStream<StreamHeadTrait>::getStreamBody()
+
+inline const char* ReadStream::getStreamBody()
 {
 	if (_isHaveHeader)
 	{
@@ -957,8 +924,8 @@ inline const char* ReadStream<StreamHeadTrait>::getStreamBody()
 	return _attachData;
 }
 
-template<class StreamHeadTrait>
-inline typename ReadStream<StreamHeadTrait>::Integer ReadStream<StreamHeadTrait>::getStreamBodyLen()
+
+inline Integer ReadStream::getStreamBodyLen()
 {
 	if (_isHaveHeader)
 	{
@@ -967,29 +934,29 @@ inline typename ReadStream<StreamHeadTrait>::Integer ReadStream<StreamHeadTrait>
 	return getStreamLen();
 }
 
-template<class StreamHeadTrait>
-inline const char* ReadStream<StreamHeadTrait>::getStreamUnread()
+
+inline const char* ReadStream::getStreamUnread()
 {
 	return &_attachData[_cursor];
 }
 
-template<class StreamHeadTrait>
-typename ReadStream<StreamHeadTrait>::Integer ReadStream<StreamHeadTrait>::getStreamUnreadLen()
+
+inline Integer ReadStream::getStreamUnreadLen()
 {
 	return getStreamLen()  - _cursor;
 }
 
-template<class StreamHeadTrait> template <class T>
-inline ReadStream<StreamHeadTrait> & ReadStream<StreamHeadTrait>::readIntegerData(T & t)
+ template <class T>
+inline ReadStream & ReadStream::readIntegerData(T & t)
 {
 	Integer unit = sizeof(T);
 	checkMoveCursor(unit);
-	t = streamToInteger<T, StreamHeadTrait>(&_attachData[_cursor]);
+	t = streamToInteger<T>(&_attachData[_cursor]);
 	_cursor += unit;
 	return * this;
 }
-template<class StreamHeadTrait> template <class T>
-inline ReadStream<StreamHeadTrait> & ReadStream<StreamHeadTrait>::readSimpleData(T & t)
+ template <class T>
+inline ReadStream & ReadStream::readSimpleData(T & t)
 {
 	Integer unit = sizeof(T);
 	checkMoveCursor(unit);
@@ -997,14 +964,14 @@ inline ReadStream<StreamHeadTrait> & ReadStream<StreamHeadTrait>::readSimpleData
 	_cursor += unit;
 	return * this;
 }
-template<class StreamHeadTrait>
-inline const char * ReadStream<StreamHeadTrait>::peekOriginalData(Integer unit)
+
+inline const char * ReadStream::peekOriginalData(Integer unit)
 {
 	checkMoveCursor(unit);
 	return &_attachData[_cursor];
 }
-template<class StreamHeadTrait>
-inline void ReadStream<StreamHeadTrait>::skipOriginalData(Integer unit)
+
+inline void ReadStream::skipOriginalData(Integer unit)
 {
 	checkMoveCursor(unit);
 	_cursor += unit;

@@ -81,6 +81,7 @@
     <ClCompile Include="lua\lvm.c" />
     <ClCompile Include="lua\lzio.c" />
     <ClCompile Include="lua\print.c" />
+    <ClCompile Include="lua\protoz_bit.c" />
     <ClCompile Include="lua\summer.cpp" />
     <ClCompile Include="md5\md5.cpp" />
     <ClCompile Include="serverConfig.cpp" />

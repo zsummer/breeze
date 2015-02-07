@@ -148,8 +148,8 @@ struct FrameStreamTraits
 };
 
 
-typedef zsummer::proto4z::ReadStream<FrameStreamTraits> ReadStreamPack;
-typedef zsummer::proto4z::WriteStream<FrameStreamTraits> WriteStreamPack;
+typedef zsummer::proto4z::ReadStream ReadStreamPack;
+typedef zsummer::proto4z::WriteStream WriteStreamPack;
 
 
 //!register message with original net pack, if return false other register will not receive this message.

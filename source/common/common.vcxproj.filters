@@ -201,6 +201,9 @@
     <ClCompile Include="md5\md5.cpp">
       <Filter>md5</Filter>
     </ClCompile>
+    <ClCompile Include="lua\protoz_bit.c">
+      <Filter>lua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dbhelper">
