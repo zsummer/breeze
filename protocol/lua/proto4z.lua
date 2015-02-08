@@ -452,18 +452,14 @@ function Protoz.__encode(obj, name, data)
 	--base typ or struct or proto
 	--------------------------------------
 	else
-		local curdata, offset, tag
-		tag = ""
+		local curdata, offset
 		curdata = {data=""}
 		for i=1, #proto do
 			local desc = proto[i]
 			if type(desc) ~= "table" or type(desc.name) ~= "string" or type(desc.type) ~= "string" then
 				error("parse Proto error. name[" .. name .. "] " .. debug.traceback())
 			end
-			if desc.del ~= nil then
-				tag = tag .. "0"
-			else
-				tag = tag .. "1"
+			if desc.del == nil or desc.del ~= true then
 				local val = obj[desc.name]
 				if val == nil then
 					error("not found the dest object. name[" ..name .. "." .. desc.name .. "] " .. debug.traceback())
@@ -478,7 +474,7 @@ function Protoz.__encode(obj, name, data)
 				end
 			end
 		end
-		tag = Protoz_bit.checkStringToBit(tag)
+		local tag = Protoz_bit.checkStringToBit(proto.__getTag)
 		offset = #curdata.data + #tag
 		offset = Protoz.__pack(offset, "ui32")
 		data.data = data.data .. offset .. tag .. curdata.data
