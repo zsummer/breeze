@@ -26,33 +26,33 @@ bool DBManager::init()
 	}
 	LOGI("DBManager start success. ");
 
-	const auto authConfig = ServerConfig::getRef().getAuthDBConfig();
-	const auto infoConfig = ServerConfig::getRef().getInfoDBConfig();
-	const auto logConfig = ServerConfig::getRef().getLogDBConfig();
+	const auto authConfig = ServerConfig::getRef().getDBConfig(AuthDB);
+	const auto infoConfig = ServerConfig::getRef().getDBConfig(InfoDB);
+	const auto logConfig = ServerConfig::getRef().getDBConfig(LogDB);
 	_authDB->init(authConfig._ip, authConfig._port, authConfig._db, authConfig._user, authConfig._pwd);
 	_infoDB->init(infoConfig._ip, infoConfig._port, infoConfig._db, infoConfig._user, infoConfig._pwd);
 	_logDB->init(logConfig._ip, logConfig._port, logConfig._db, logConfig._user, logConfig._pwd);
 
 	if (!_authDB->connect())
 	{
-		LOGE("connect Auth DB false. db config=" << ServerConfig::getRef().getAuthDBConfig());
+		LOGE("connect Auth DB false. db config=" << authConfig);
 		return false;
 	}
-	LOGI("connect Auth DB success. db config=" << ServerConfig::getRef().getAuthDBConfig());
+	LOGI("connect Auth DB success. db config=" << authConfig);
 
 	if (!_infoDB->connect())
 	{
-		LOGE("connect Info DB false. db config=" << ServerConfig::getRef().getInfoDBConfig());
+		LOGE("connect Info DB false. db config=" << infoConfig);
 		return false;
 	}
-	LOGI("connect Info DB success. db config=" << ServerConfig::getRef().getInfoDBConfig());
+	LOGI("connect Info DB success. db config=" << infoConfig);
 
 	if (!_logDB->connect())
 	{
-		LOGE("connect Log DB false. db config=" << ServerConfig::getRef().getLogDBConfig());
+		LOGE("connect Log DB false. db config=" << logConfig);
 		return false;
 	}
-	LOGI("connect Log DB success. db config=" << ServerConfig::getRef().getLogDBConfig());
+	LOGI("connect Log DB success. db config=" << logConfig);
 	return true;
 }
 void DBManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)

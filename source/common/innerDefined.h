@@ -50,19 +50,27 @@ typedef unsigned long long ui64;
 typedef ui64 UserID;
 const ui64 InvalidUserID = (UserID)-1;
 
-
-typedef ui32 NodeIndex;
-const NodeIndex InvalidNodeIndex = (NodeIndex)-1;
-
-//服务节点类型,服务如果改成多节点 在这里添加节点类型
-typedef ui32 ServerNode;
-const ServerNode InvalideServerNode = (ServerNode)-1;
+//服务节点类型
+typedef ui16 ServerNode;
+const ServerNode InvalidServerNode = (ServerNode)-1;
 const ServerNode LogicNode = 0;
 const ServerNode StressNode = 1;
 
-//服务节点编号
-typedef ui32 NodeIndex;
-const NodeIndex InvalideNodeIndex = (NodeIndex)-1;
+//节点索引ID
+typedef ui16 NodeIndex;
+const NodeIndex InvalidNodeIndex = (NodeIndex)-1;
+
+//DB类型
+typedef ui8 DBConfigID;
+const DBConfigID AuthDB = 0;
+const DBConfigID DictDB = 1;
+const DBConfigID InfoDB = 2;
+const DBConfigID LogDB = 3;
+const DBConfigID InvalidDB = (DBConfigID)-1;
+
+
+
+
 
 //分区分服的ID
 typedef ui16 PlatID;

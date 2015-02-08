@@ -20,18 +20,49 @@
 #include "tinyxml2.h"
 #include "serverConfig.h"
 
+static ServerNode toServerNode(std::string strNode)
+{
+	if (strNode == "logic")
+	{
+		return LogicNode;
+	}
+	else if (strNode == "stress")
+	{
+		return StressNode;
+	}
+	return InvalidServerNode;
+}
+
+static DBConfigID toDBConfigID(std::string db)
+{
+	if (db == "auth")
+	{
+		return AuthDB;
+	}
+	else if (db == "dict")
+	{
+		return DictDB;
+	}
+	else if (db == "info")
+	{
+		return InfoDB;
+	}
+	else if (db == "log")
+	{
+		return LogDB;
+	}
+	return InvalidDB;
+}
 
 
-
-
-const ListenConfig ServerConfig::getConfigListen(ServerNode node, NodeIndex index)
+const ListenConfig & ServerConfig::getConfigListen(ServerNode node, NodeIndex index)
 {
 	if (index == InvalidNodeIndex)
 	{
 		index = _ownNodeIndex;
 	}
 	auto founder = std::find_if(_configListen.begin(), _configListen.end(),
-		[node, index](const ListenConfig & lc){return lc.node == node && lc.index == index; });
+		[node, index](const ListenConfig & lc){return lc._node == node && lc._index == index; });
 	if (founder == _configListen.end())
 	{
 		static ListenConfig lc;
@@ -46,7 +77,7 @@ std::vector<ConnectorConfig > ServerConfig::getConfigConnect(ServerNode node)
 	std::vector<ConnectorConfig > ret;
 	for (const auto & cc : _configConnect)
 	{
-		if (cc.srcNode != node)
+		if (cc._srcNode != node)
 		{
 			continue;
 		}
@@ -57,22 +88,21 @@ std::vector<ConnectorConfig > ServerConfig::getConfigConnect(ServerNode node)
 }
 
 
-
-
-
-
-static ServerNode toServerNode(std::string strNode)
+const DBConfig & ServerConfig::getDBConfig(DBConfigID id)
 {
-	if (strNode == "logic")
+	auto founder = std::find_if(_configDB.begin(), _configDB.end(),
+		[id](const DBConfig & db){return db._id == id; });
+	if (founder == _configDB.end())
 	{
-		return LogicNode;
+		static DBConfig db;
+		return db;
 	}
-	else if (strNode == "stress")
-	{
-		return StressNode;
-	}
-	return InvalideServerNode;
+	return *founder;
 }
+
+
+
+
 
 bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex ownIndex)
 {
@@ -115,12 +145,20 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
 			}
 
 			ListenConfig lconfig;
-			lconfig.ip = elmListenChild->Attribute("ip");
-			lconfig.port = elmListenChild->IntAttribute("port");
-			lconfig.index = elmListenChild->IntAttribute("index");
-			lconfig.node = toServerNode(strNode);
-			_configListen.push_back(lconfig);
-			LOGD("strNode=" << strNode << ", ip=" << lconfig.ip << ", port=" << lconfig.port << ", lconfig.index=" << lconfig.index);
+			lconfig._ip = elmListenChild->Attribute("ip");
+			lconfig._port = elmListenChild->IntAttribute("port");
+			lconfig._index = elmListenChild->IntAttribute("index");
+			lconfig._node = toServerNode(strNode);
+			if (lconfig._node != InvalidServerNode)
+			{
+				_configListen.push_back(lconfig);
+				LOGI("ListenConfig=" << lconfig );
+			}
+			else
+			{
+				LOGE("UNKNOWN ListenConfig=" << lconfig);
+			}
+
 			elmListenChild = elmListenChild->NextSiblingElement();
 		} while (elmListenChild);
 	}
@@ -149,58 +187,63 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
 
 			ConnectorConfig lconfig;
 			std::string dstStrNode = elmConnectChild->Attribute("dstNode");
-			lconfig.remoteIP = elmConnectChild->Attribute("ip");
-			lconfig.remotePort = elmConnectChild->IntAttribute("port");
-			lconfig.srcNode = toServerNode(srcStrNode);
-			lconfig.dstNode = toServerNode(dstStrNode);
-			_configConnect.push_back(lconfig);
-			LOGD("srcStrNode=" << srcStrNode << ", remoteIP=" << lconfig.remoteIP << ", remotePort=" << lconfig.remotePort << ", dstStrNode=" << dstStrNode);
+			lconfig._remoteIP = elmConnectChild->Attribute("ip");
+			lconfig._remotePort = elmConnectChild->IntAttribute("port");
+			lconfig._srcNode = toServerNode(srcStrNode);
+			lconfig._dstNode = toServerNode(dstStrNode);
+			if (lconfig._srcNode != InvalidServerNode && lconfig._dstNode != InvalidServerNode)
+			{
+				_configConnect.push_back(lconfig);
+				LOGD("ConnectorConfig=" << lconfig);
+			}
+			else
+			{
+				LOGE("UNKNOWN ConnectorConfig=" << lconfig);
+			}
 			elmConnectChild = elmConnectChild->NextSiblingElement();
 		} while (elmConnectChild);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	{
-		auto elmMongo = doc.FirstChildElement("db");
-		if (!elmMongo || !elmMongo->FirstChildElement())
+		auto elmDB = doc.FirstChildElement("db");
+		if (!elmDB || !elmDB->FirstChildElement())
 		{
 			LOGE(filename << " parse ServerConfig Error. not have mongo");
 			return false;
 		}
-		auto elmMongoChild = elmMongo->FirstChildElement();
+		auto elmDBChild = elmDB->FirstChildElement();
 		do
 		{
-			std::string strNode = elmMongoChild->Name();
-			if (!elmMongoChild->Attribute("ip")
-				|| !elmMongoChild->Attribute("port")
-				|| !elmMongoChild->Attribute("db")
-				|| !elmMongoChild->Attribute("user")
-				|| !elmMongoChild->Attribute("pwd"))
+			std::string strNode = elmDBChild->Name();
+			if (!elmDBChild->Attribute("ip")
+				|| !elmDBChild->Attribute("port")
+				|| !elmDBChild->Attribute("db")
+				|| !elmDBChild->Attribute("user")
+				|| !elmDBChild->Attribute("pwd"))
 			{
 				LOGE(filename << " parse ServerConfig Error. mongo have invalide config.");
 				return false;
 			}
 
 			DBConfig lconfig;
-			lconfig._ip = elmMongoChild->Attribute("ip");
-			lconfig._port = elmMongoChild->IntAttribute("port");
-			lconfig._db = elmMongoChild->Attribute("db");
-			lconfig._user = elmMongoChild->Attribute("user");
-			lconfig._pwd = elmMongoChild->Attribute("pwd");
-			if (strNode == AuthDBName)
+			lconfig._ip = elmDBChild->Attribute("ip");
+			lconfig._port = elmDBChild->IntAttribute("port");
+			lconfig._db = elmDBChild->Attribute("db");
+			lconfig._user = elmDBChild->Attribute("user");
+			lconfig._pwd = elmDBChild->Attribute("pwd");
+			lconfig._id = toDBConfigID(strNode);
+			if (lconfig._id != InvalidDB)
 			{
-				_authDBConfig = lconfig;
+				_configDB.push_back(lconfig);
+				LOGI("DBConfig=" << lconfig);
 			}
-			else if (strNode == InfoDBName)
+			else
 			{
-				_infoDBConfig = lconfig;
+				LOGE("unknown DBConfig=" << lconfig);
 			}
-			else if (strNode == LogDBName)
-			{
-				_logDBConfig = lconfig;
-			}
-			elmMongoChild = elmMongoChild->NextSiblingElement();
-		} while (elmMongoChild);
+			elmDBChild = elmDBChild->NextSiblingElement();
+		} while (elmDBChild);
 	}
 	return true;
 }

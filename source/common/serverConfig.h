@@ -35,41 +35,42 @@
 
 struct ListenConfig 
 {
-	std::string ip;
-	unsigned short port = 0;
-	ServerNode node = InvalideServerNode;
-	NodeIndex index = InvalideNodeIndex;
+	std::string _ip;
+	unsigned short _port = 0;
+	ServerNode _node = InvalidServerNode;
+	NodeIndex _index = InvalidNodeIndex;
 };
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
+{
+	os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
+	return os;
+}
 
 struct ConnectorConfig 
 {
-	ServerNode srcNode = InvalideServerNode;
-	ServerNode dstNode = InvalideServerNode;
-	std::string remoteIP;
-	unsigned short remotePort = 0;
+	ServerNode _srcNode = InvalidServerNode;
+	ServerNode _dstNode = InvalidServerNode;
+	std::string _remoteIP;
+	unsigned short _remotePort = 0;
 };
-
-
-
-//db name list.  db name same as db config name.
-const std::string AuthDBName = "auth";
-const std::string InfoDBName = "info";
-const std::string LogDBName = "log";
-
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectorConfig & config)
+{
+	os << "[srcNode=" << config._srcNode << ", _dstNode=" << config._dstNode << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
+	return os;
+}
 
 struct DBConfig
 {
+	DBConfigID _id = InvalidDB;
 	std::string _ip;
 	unsigned short _port = 3306;
 	std::string _db;
 	std::string _user;
 	std::string _pwd;
 };
-
-
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
 {
-	os << "[ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
+	os << "[id=" << (int)config._id << ", ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
 	return os;
 }
 
@@ -79,30 +80,26 @@ class ServerConfig : public Singleton<ServerConfig>
 public:
 	bool parse(std::string filename, ServerNode ownNode,NodeIndex ownIndex);
 public:
-	const ListenConfig getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
+	const ListenConfig& getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
 	std::vector<ConnectorConfig > getConfigConnect(ServerNode node);
+	const DBConfig & getDBConfig(DBConfigID id);
 
 	ServerNode getOwnServerNode(){ return _ownServerNode; }
 	NodeIndex getOwnNodeIndex(){ return _ownNodeIndex; }
 	PlatID getPlatID() { return _platid; }
 	AreaID getAreaID() { return _areaid; }
 
-	inline const DBConfig & getAuthDBConfig(){ return _authDBConfig; }
-	inline const DBConfig & getInfoDBConfig(){ return _infoDBConfig; }
-	inline const DBConfig & getLogDBConfig(){ return _logDBConfig; }
+
 
 private:
-	ServerNode _ownServerNode = InvalideServerNode;
+	ServerNode _ownServerNode = InvalidServerNode;
 	NodeIndex _ownNodeIndex = InvalidNodeIndex;
 	PlatID _platid = 0;
 	AreaID _areaid = 0;
 
 	std::vector<ListenConfig> _configListen;
 	std::vector<ConnectorConfig> _configConnect;
-
-	DBConfig _authDBConfig;
-	DBConfig _infoDBConfig;
-	DBConfig _logDBConfig;
+	std::vector<DBConfig> _configDB;
 };
 
 

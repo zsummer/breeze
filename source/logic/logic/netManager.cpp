@@ -41,8 +41,8 @@ bool NetManager::start()
 	for (auto con : connecters)
 	{
 		tagConnctorConfigTraits tag;
-		tag.remoteIP = con.remoteIP;
-		tag.remotePort = con.remotePort;
+		tag.remoteIP = con._remoteIP;
+		tag.remotePort = con._remotePort;
 		tag.reconnectMaxCount = 120;
 		tag.reconnectInterval = 5000;
 		if (true)
@@ -60,8 +60,8 @@ bool NetManager::start()
 		// ...
 	}
 
-	_configListen.listenIP = ServerConfig::getRef().getConfigListen(LogicNode).ip;
-	_configListen.listenPort = ServerConfig::getRef().getConfigListen(LogicNode).port;
+	_configListen.listenIP = ServerConfig::getRef().getConfigListen(LogicNode)._ip;
+	_configListen.listenPort = ServerConfig::getRef().getConfigListen(LogicNode)._port;
 	_configListen.maxSessions = 5000;
 
 	// if have some connector need connect success. do open accept in event_onSessionEstablished when all connector is success.
