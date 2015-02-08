@@ -145,8 +145,8 @@ static int addConnect(lua_State *L)
 			const char * str = luaL_checklstring(L, -1, &len);
 			if (str && len > 0)
 			{
-				config.remoteIP.clear();
-				config.remoteIP.append(str, len);
+				config._remoteIP.clear();
+				config._remoteIP.append(str, len);
 			}
 		}
 
@@ -163,7 +163,7 @@ static int addConnect(lua_State *L)
 		}
 		else
 		{
-			config.remotePort = (unsigned short)luaL_checknumber(L, -1);
+			config._remotePort = (unsigned short)luaL_checknumber(L, -1);
 		}
 	}
 
@@ -175,8 +175,8 @@ static int addConnect(lua_State *L)
 			const char * str = luaL_checklstring(L, -1, &len);
 			if (str && len > 0)
 			{
-				config.rc4TcpEncryption.clear();
-				config.rc4TcpEncryption.append(str, len);
+				config._rc4TcpEncryption.clear();
+				config._rc4TcpEncryption.append(str, len);
 			}
 		}
 	}
@@ -185,7 +185,7 @@ static int addConnect(lua_State *L)
 		lua_getfield(L, 1, "reconnect");
 		if (!lua_isnil(L, -1))
 		{
-			config.reconnectMaxCount = (unsigned int)luaL_checknumber(L, -1);
+			config._reconnectMaxCount = (unsigned int)luaL_checknumber(L, -1);
 		}
 	}
 
@@ -193,7 +193,7 @@ static int addConnect(lua_State *L)
 		lua_getfield(L, 1, "interval");
 		if (!lua_isnil(L, -1))
 		{
-			config.pulseInterval = (unsigned int)luaL_checknumber(L, -1);
+			config._pulseInterval = (unsigned int)luaL_checknumber(L, -1);
 		}
 	}
 
@@ -422,13 +422,13 @@ static int sendContent(lua_State * L)
 		return 0;
 	}
 	SessionID sID = (SessionID)luaL_checkinteger(L, 1);
-	unsigned short pID = (unsigned short)luaL_checkinteger(L, 2);
+	zsummer::proto4z::ProtoInteger pID = (zsummer::proto4z::ProtoInteger)luaL_checkinteger(L, 2);
 
 
 	size_t len = 0;
 	const char * content = luaL_checklstring(L, 3, &len);
 	WriteStreamPack ws(pID);
-	ws.appendOriginalData(content, (unsigned short)len);
+	ws.appendOriginalData(content, (zsummer::proto4z::Integer)len);
 	TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 
 	return 0;

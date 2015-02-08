@@ -82,46 +82,74 @@ enum ProtoType
 
 struct tagAcceptorConfigTraits
 {
-	std::string listenIP = "0.0.0.0";
-	unsigned short listenPort = 81;
-	ProtoType protoType = PT_TCP;
-	std::string rc4TcpEncryption = ""; //empty is not encryption
-	bool openFlashPolicy = false;
-	unsigned int pulseInterval = 30000;
-	unsigned int maxSessions = 5000;
-	std::vector<std::string> whitelistIP;
+	std::string _listenIP = "0.0.0.0";
+	unsigned short _listenPort = 81;
+	ProtoType _protoType = PT_TCP;
+	std::string _rc4TcpEncryption = ""; //empty is not encryption
+	bool _openFlashPolicy = false;
+	unsigned int _pulseInterval = 30000;
+	unsigned int _maxSessions = 5000;
+	std::vector<std::string> _whitelistIP;
 };
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const tagAcceptorConfigTraits & config)
+{
+	std::string whitelist;
+	for (auto str : config._whitelistIP)
+	{
+		whitelist += str + ",";
+	}
+	
+	os << "[_listenIP=" << config._listenIP << ", _listenPort=" << config._listenPort << ", _protoType=" << (config._protoType == PT_TCP ? "PT_TCP" : "PT_HTTP") 
+		<< ", _rc4TcpEncryption=" << config._rc4TcpEncryption << ", _openFlashPolicy=" << config._openFlashPolicy << ", _pulseInterval=" << config._pulseInterval 
+		<< ", _maxSessions=" << config._maxSessions << ", _whitelistIP=" << whitelist << "]";
+	return os;
+}
 
 struct tagAcceptorInfo
 {
 	//limit max session.
-	AccepterID aID = InvalidAccepterID;
-	unsigned long long totalAcceptCount = 0; 
-	unsigned long long currentLinked = 0; 
+	AccepterID _aID = InvalidAccepterID;
+	unsigned long long _totalAcceptCount = 0; 
+	unsigned long long _currentLinked = 0; 
 };
-
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const tagAcceptorInfo & info)
+{
+	os << "[_aID=" << info._aID << ", _totalAcceptCount=" << info._totalAcceptCount << ", _currentLinked=" << info._currentLinked << "]";
+	return os;
+}
 
 
 struct tagConnctorConfigTraits
 {
-	std::string remoteIP = "127.0.0.1";
-	unsigned short remotePort = 81;
-	ProtoType protoType = PT_TCP;
-	std::string rc4TcpEncryption = ""; //empty is not encryption
-	unsigned int pulseInterval = 30000;
-	unsigned int reconnectMaxCount = 0; // try reconnect max count
-	unsigned int reconnectInterval =5000; //million seconds;
-	bool         reconnectCleanAllData = true ;//clean all data when reconnect;
+	std::string _remoteIP = "127.0.0.1";
+	unsigned short _remotePort = 81;
+	ProtoType _protoType = PT_TCP;
+	std::string _rc4TcpEncryption = ""; //empty is not encryption
+	unsigned int _pulseInterval = 30000;
+	unsigned int _reconnectMaxCount = 0; // try reconnect max count
+	unsigned int _reconnectInterval = 5000; //million seconds;
+	bool         _reconnectCleanAllData = true;//clean all data when reconnect;
 };
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const tagConnctorConfigTraits & config)
+{
+	os << "[_remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << ", _protoType=" << (config._protoType == PT_TCP ? "PT_TCP" : "PT_HTTP")
+		<< ", _rc4TcpEncryption=" << config._rc4TcpEncryption << ", _pulseInterval=" << config._pulseInterval << ", _reconnectMaxCount=" << config._reconnectMaxCount
+		<< ", _reconnectInterval=" << config._reconnectInterval << ", _reconnectCleanAllData=" << config._reconnectCleanAllData << "]";
+	return os;
+}
 
 struct tagConnctorInfo
 {
 	//implementation reconnect 
-	SessionID cID = InvalidSeesionID;
-	unsigned long long totalConnectCount = 0; 
-	unsigned long long curReconnectCount = 0; 
+	SessionID _cID = InvalidSeesionID;
+	unsigned long long _totalConnectCount = 0;
+	unsigned long long _curReconnectCount = 0;
 };
-
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const tagConnctorInfo & info)
+{
+	os << "[_cID=" << info._cID << ", _totalConnectCount=" << info._totalConnectCount << ", _curReconnectCount=" << info._curReconnectCount << "]";
+	return os;
+}
 
 
 
@@ -134,18 +162,8 @@ typedef std::shared_ptr<zsummer::network::ZSummer> ZSummerPtr;
 typedef std::shared_ptr<TcpSession> CTcpSessionPtr;
 
 
-
 //receive buffer length  and send buffer length 
-const unsigned int SEND_RECV_CHUNK_SIZE = 64 * 1024 -1;
-//proto traits 
-struct FrameStreamTraits
-{
-	typedef unsigned short Integer;
-	typedef unsigned short ProtoInteger;
-	const static Integer MaxPackLen = (Integer)48 * 1024;
-	const static bool	 PackLenIsContainHead = true; 
-	const static zsummer::proto4z::ZSummer_EndianType EndianType = zsummer::proto4z::LittleEndian;
-};
+const unsigned int SEND_RECV_CHUNK_SIZE = 1024 * 1024 - 1;
 
 
 typedef zsummer::proto4z::ReadStream ReadStreamPack;
@@ -153,7 +171,7 @@ typedef zsummer::proto4z::WriteStream WriteStreamPack;
 
 
 //!register message with original net pack, if return false other register will not receive this message.
-typedef std::function < bool(SessionID, const char * /*blockBegin*/, typename FrameStreamTraits::Integer /*blockSize*/) > OnOrgMessageFunction;
+typedef std::function < bool(SessionID, const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnOrgMessageFunction;
 
 //!register message 
 typedef std::function < void(SessionID, ProtoID, ReadStreamPack &) > OnMessageFunction;
@@ -168,28 +186,7 @@ typedef std::function < void (SessionID, const zsummer::proto4z::PairString &, c
 //register pulse timer .  you can register this to implement heartbeat . 
 typedef std::function < void(SessionID, unsigned int/*pulse interval*/) > OnSessionPulseTimer;
 
-//! print log
-template<class OS>
-OS & operator <<(OS & os, const tagAcceptorConfigTraits & traits)
-{
-	os << "[listenIP=" << traits.listenIP << "; listenPort=" << traits.listenPort
-		<< "; maxSessions=" << traits.maxSessions << "; whitelistIP=";
-	for (auto x : traits.whitelistIP)
-	{
-		os << x << ",";
-	}
-	os << "]";
-	return os;
-}
 
-//! print log
-template<class OS>
-OS & operator <<(OS & os, const tagConnctorConfigTraits & traits)
-{
-	os << "[remoteIP=" << traits.remoteIP << "; remotePort=" << traits.remotePort
-		<< "; reconnectMaxCount=" << traits.reconnectMaxCount << "; reconnectInterval=" << traits.reconnectInterval;
-	return os;
-}
 
 #endif
 

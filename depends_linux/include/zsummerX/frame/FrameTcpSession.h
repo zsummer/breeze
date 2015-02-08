@@ -44,7 +44,7 @@
 
 struct MessagePack
 {
-	char buff[FrameStreamTraits::MaxPackLen];
+	char buff[zsummer::proto4z::MaxPackLen];
 	unsigned int bufflen = 0;
 };
 

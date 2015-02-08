@@ -67,7 +67,7 @@ public:
 	inline void registerOnSessionHTTPMessage(const OnHTTPMessageFunction & fun) { _vctSessionHTTPMessage.push_back(fun); }
 
 public:
-	inline bool dispatchOrgSessionMessage(SessionID sID, const char * blockBegin, FrameStreamTraits::Integer blockSize);
+	inline bool dispatchOrgSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize);
 	inline void dispatchSessionMessage(SessionID sID, ProtoID pID, ReadStreamPack & msg);
 	inline void dispatchOnSessionEstablished(SessionID sID);
 	inline void dispatchOnSessionDisconnect(SessionID sID);
@@ -93,7 +93,7 @@ public:
 
 
 
-inline bool MessageDispatcher::dispatchOrgSessionMessage(SessionID sID, const char * blockBegin, FrameStreamTraits::Integer blockSize)
+inline bool MessageDispatcher::dispatchOrgSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize)
 {
 	if (_vctOrgSessionDispatch.empty())
 	{

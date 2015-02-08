@@ -41,10 +41,10 @@ bool NetManager::start()
 	for (auto con : connecters)
 	{
 		tagConnctorConfigTraits tag;
-		tag.remoteIP = con._remoteIP;
-		tag.remotePort = con._remotePort;
-		tag.reconnectMaxCount = 120;
-		tag.reconnectInterval = 5000;
+		tag._remoteIP = con._remoteIP;
+		tag._remotePort = con._remotePort;
+		tag._reconnectMaxCount = 120;
+		tag._reconnectInterval = 5000;
 		if (true)
 		{
 			continue;
@@ -53,28 +53,28 @@ bool NetManager::start()
 
 		if (sID == InvalidSeesionID)
 		{
-			LOGE("addConnector failed. remoteIP=" << tag.remoteIP << ", remotePort=" << tag.remotePort);
+			LOGE("addConnector failed. tagConnctorConfigTraits=" << tag);
 			return false;
 		}
 		// save sID. do something after.
 		// ...
 	}
 
-	_configListen.listenIP = ServerConfig::getRef().getConfigListen(LogicNode)._ip;
-	_configListen.listenPort = ServerConfig::getRef().getConfigListen(LogicNode)._port;
-	_configListen.maxSessions = 5000;
+	_configListen._listenIP = ServerConfig::getRef().getConfigListen(LogicNode)._ip;
+	_configListen._listenPort = ServerConfig::getRef().getConfigListen(LogicNode)._port;
+	_configListen._maxSessions = 5000;
 
 	// if have some connector need connect success. do open accept in event_onSessionEstablished when all connector is success.
 	//other open acceoter in here.
 	_accepterID = TcpSessionManager::getRef().addAcceptor(_configListen);
 	if (_accepterID == InvalidAccepterID)
 	{
-		LOGE("OPEN Accepter false. ip=" << _configListen.listenIP << ", port=" << _configListen.listenPort);
+		LOGE("OPEN Accepter false. tagAcceptorConfigTraits=" << _configListen);
 		return false;
 	}
 	else
 	{
-		LOGI("OPEN Accepter true. ip=" << _configListen.listenIP << ", port=" << _configListen.listenPort);
+		LOGI("OPEN Accepter true. tagAcceptorConfigTraits=" << _configListen);
 	}
 	return true;
 }
