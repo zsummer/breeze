@@ -32,13 +32,13 @@ bool Appliction::init(std::string filename, unsigned int index)
 
 
 
-	ret = TcpSessionManager::getRef().start();
+	ret = SessionManager::getRef().start();
 	if (!ret)
 	{
-		LOGE("TcpSessionManager start false.");
+		LOGE("SessionManager start false.");
 		return ret;
 	}
-	LOGI("TcpSessionManager start success.");
+	LOGI("SessionManager start success.");
 
 
 	if (!NetManager::getRef().start())
@@ -54,12 +54,12 @@ bool Appliction::init(std::string filename, unsigned int index)
 
 void Appliction::run()
 {
-	return TcpSessionManager::getRef().run();
+	return SessionManager::getRef().run();
 }
 
 void Appliction::stop()
 {
-	TcpSessionManager::getRef().createTimer(100, std::bind(&Appliction::_stop, this));
+	SessionManager::getRef().createTimer(100, std::bind(&Appliction::_stop, this));
 }
 
 void Appliction::_stop()

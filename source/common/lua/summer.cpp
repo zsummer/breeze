@@ -36,7 +36,9 @@
 
 #include "summer.h"
 
-#include <zsummerX/frameX.h>
+#include <zsummerX/zsummerX.h>
+using namespace zsummer::network;
+using namespace zsummer::proto4z;
 
 
 
@@ -94,13 +96,13 @@ static std::vector<lua_State*> _staticValidVM;
 
 static int start(lua_State *L)
 {
-	TcpSessionManager::getRef().start();
+	SessionManager::getRef().start();
 	return 0;
 }
 
 static int stop(lua_State *L)
 {
-	TcpSessionManager::getRef().stop();
+	SessionManager::getRef().stop();
 	return 0;
 }
 
@@ -111,7 +113,7 @@ static int runOnce(lua_State * L)
 	{
 		isImmediately = true;
 	}
-	TcpSessionManager::getRef().runOnce(isImmediately);
+	SessionManager::getRef().runOnce(isImmediately);
 	return 0;
 }
 
@@ -128,7 +130,7 @@ static int addConnect(lua_State *L)
 		return 1;
 	}
 
-	tagConnctorConfigTraits config;
+	ConnectConfig config;
 
 
 	{
@@ -200,7 +202,7 @@ static int addConnect(lua_State *L)
 
 	lua_settop(L, 0);
 	LOGD("lua: addConnect:" << config);
-	SessionID id = TcpSessionManager::getRef().addConnector(config);
+	SessionID id = SessionManager::getRef().addConnector(config);
 	if (id == InvalidSeesionID)
 	{
 		lua_pushnil(L);
@@ -292,7 +294,7 @@ static int registerConnect(lua_State * L)
 }
 
 
-void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStreamPack & rs)
+static void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStream & rs)
 {
 	if (!isConnectID(sID))
 	{
@@ -427,9 +429,9 @@ static int sendContent(lua_State * L)
 
 	size_t len = 0;
 	const char * content = luaL_checklstring(L, 3, &len);
-	WriteStreamPack ws(pID);
+	WriteStream ws(pID);
 	ws.appendOriginalData(content, (zsummer::proto4z::Integer)len);
-	TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 
 	return 0;
 }
@@ -453,7 +455,7 @@ static int sendData(lua_State * L)
 		return 0;
 	}
 
-	TcpSessionManager::getRef().sendOrgSessionData(sID, data, (unsigned short)len);
+	SessionManager::getRef().sendOrgSessionData(sID, data, (unsigned short)len);
 	return 0;
 }
 
@@ -468,7 +470,7 @@ static int kick(lua_State * L)
 	}
 	SessionID sID = (SessionID)luaL_checkinteger(L, 1);
 
-	TcpSessionManager::getRef().kickSession(sID);
+	SessionManager::getRef().kickSession(sID);
 	return 0;
 }
 

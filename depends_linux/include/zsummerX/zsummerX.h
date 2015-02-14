@@ -63,26 +63,13 @@
 // default in mac use select implementation
 // if can't compile on  some other system , you can try compile used ZSUMMERX_USE_SELECT.  It's be force compiled with select implementation.
 
+#include "frame/config.h"
+#include "frame/dispatch.h"
+#include "frame/manager.h"
 
 
-#ifdef WIN32
-#include "iocp/iocp_impl.h"
-#include "iocp/tcpsocket_impl.h"
-#include "iocp/udpsocket_impl.h"
-#include "iocp/tcpaccept_impl.h"
-#else
-#if __APPLE__ || ZSUMMERX_USE_SELECT
-#include "select/select_impl.h"
-#include "select/udpsocket_impl.h"
-#include "select/tcpsocket_impl.h"
-#include "select/tcpaccept_impl.h"
-#else
-#include "epoll/epoll_impl.h"
-#include "epoll/tcpsocket_impl.h"
-#include "epoll/udpsocket_impl.h"
-#include "epoll/tcpaccept_impl.h"
-#endif
-#endif
+
+
 
 
 

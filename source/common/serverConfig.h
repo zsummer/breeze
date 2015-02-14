@@ -40,7 +40,7 @@ struct ListenConfig
 	ServerNode _node = InvalidServerNode;
 	NodeIndex _index = InvalidNodeIndex;
 };
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ::ListenConfig & config)
 {
 	os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
 	return os;
@@ -80,7 +80,7 @@ class ServerConfig : public Singleton<ServerConfig>
 public:
 	bool parse(std::string filename, ServerNode ownNode,NodeIndex ownIndex);
 public:
-	const ListenConfig& getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
+	const ::ListenConfig& getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
 	std::vector<ConnectorConfig > getConfigConnect(ServerNode node);
 	const DBConfig & getDBConfig(DBConfigID id);
 
@@ -97,7 +97,7 @@ private:
 	PlatID _platid = 0;
 	AreaID _areaid = 0;
 
-	std::vector<ListenConfig> _configListen;
+	std::vector<::ListenConfig> _configListen;
 	std::vector<ConnectorConfig> _configConnect;
 	std::vector<DBConfig> _configDB;
 };

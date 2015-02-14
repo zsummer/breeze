@@ -51,20 +51,20 @@ public:
 
 
 
-	void msg_onLoginReq(SessionID sID, ProtoID pID, ReadStreamPack & rs);
+	void msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs);
 	void db_onAuthSelect(DBResultPtr res, SessionID sID);
 	void db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUser);
 
 	void db_updateUserInfo(const UserInfo & ui);
 
 
-	void msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStreamPack &rs);
+	void msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs);
 	void db_onUserCreate(DBResultPtr res, SessionID sID);
 
 
 
 	void event_onSessionPulse(SessionID sID, unsigned int pulseInterval);
-	void msg_onClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs);
+	void msg_onClientPulse(SessionID sID, ProtoID pID, ReadStream & rs);
 
 private:
 	//
@@ -74,7 +74,7 @@ private:
 	std::unordered_map<SessionID, std::shared_ptr<InnerUserInfo>> _mapUserSession;
 	std::unordered_map<UserID, std::shared_ptr<InnerUserInfo>> _mapUserInfo;
 
-	tagAcceptorConfigTraits _configListen; 
+	zsummer::network::ListenConfig _configListen; 
 	bool _bListening = false;
 	AccepterID _accepterID = InvalidAccepterID;
 };

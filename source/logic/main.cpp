@@ -17,7 +17,7 @@
 */
 
 #include "application.h"
-#include <zsummerX/frameX.h>
+#include <zsummerX/zsummerX.h>
 #include <unordered_map>
 using namespace zsummer::log4z;
 

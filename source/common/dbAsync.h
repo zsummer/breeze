@@ -49,10 +49,10 @@ namespace  zsummer
 			inline const std::atomic_ullong & getPostCount(){ return _uPostCount; }
 			inline const std::atomic_ullong & getFinalCount(){ return _uFinalCount; }
 		public:
-			void asyncQuery(DBHelperPtr &dbhelper, const string &sql,
+			void asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 				const std::function<void(DBResultPtr)> & handler);
 		protected:
-			void _asyncQuery(DBHelperPtr &dbhelper, const string &sql,
+			void _asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 				const std::function<void(DBResultPtr)> & handler);
 
 			inline void run();

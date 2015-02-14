@@ -45,11 +45,11 @@ class RC4Encryption
 public:
 	void makeSBox(std::string obscure)
 	{
-		m_x = 0;
-		m_y = 0;
+		_x = 0;
+		_y = 0;
 		for (int i = 0; i < 256; i++)
 		{
-			m_box[i] = i;
+			_box[i] = i;
 		}
 		if (!obscure.empty())
 		{
@@ -59,10 +59,10 @@ public:
 			int lenth = (int)obscure.length();
 			for (int i = 0; i < 256; i++)
 			{
-				int tmp = m_box[i];
+				int tmp = _box[i];
 				j = (unsigned char)(j + tmp + obs[k]);
-				m_box[i] = m_box[j];
-				m_box[j] = tmp;
+				_box[i] = _box[j];
+				_box[j] = tmp;
 				if (++k >= lenth)
 				{
 					k = 0;
@@ -75,27 +75,27 @@ public:
 	{
 		int  x, y;
 
-		x = m_x;
-		y = m_y;
+		x = _x;
+		y = _y;
 
 		for (int i = 0; i < length; i++)
 		{
 			x = (unsigned char)(x + 1);
-			int a = m_box[x];
+			int a = _box[x];
 			y = (unsigned char)(y + a);
-			int b = m_box[x] = m_box[y];
-			m_box[y] = a;
-			data[i] ^= m_box[(unsigned char)(a + b)];
+			int b = _box[x] = _box[y];
+			_box[y] = a;
+			data[i] ^= _box[(unsigned char)(a + b)];
 		}
 
-		m_x = x;
-		m_y = y;
+		_x = x;
+		_y = y;
 	}
 private:
 
-	int m_x;
-	int m_y;
-	int m_box[256];
+	int _x;
+	int _y;
+	int _box[256];
 };
 
 

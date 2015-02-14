@@ -1,6 +1,10 @@
 Welcome to the log4z wiki!  
 # Introduction:    
 
+[![Build Status](https://travis-ci.org/franramirez688/log4z.svg?branch=master)](https://travis-ci.org/franramirez688/log4z)
+
+[![Build Status](https://webapi.biicode.com/v1/badges/fenix/fenix/log4z/master)](https://www.biicode.com/fenix/log4z) 
+
 Log4z is an open source C++ lightweight & cross platform log library.   
 It provides in a C++ application log and trace debug function for 7*24h service program.  
 Support 64/32 of windows/linux/mac/android/iOS.   

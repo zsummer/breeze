@@ -63,19 +63,19 @@ bool DBAsync::stop()
 }
 
 
-void DBAsync::asyncQuery(DBHelperPtr &dbhelper, const string &sql,
+void DBAsync::asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 	const std::function<void(DBResultPtr)> & handler)
 {
 	_uPostCount++;
 	_summer->post(std::bind(&DBAsync::_asyncQuery, this, dbhelper, sql, handler));
 }
 
-void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const string &sql,
+void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 	const std::function<void(DBResultPtr)> & handler)
 {
 	DBResultPtr ret = dbhelper->query(sql);
 	_uPostCount--;
-	TcpSessionManager::getRef().post(std::bind(handler, ret));
+	SessionManager::getRef().post(std::bind(handler, ret));
 }
 
 

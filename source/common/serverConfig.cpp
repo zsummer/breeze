@@ -55,17 +55,17 @@ static DBConfigID toDBConfigID(std::string db)
 }
 
 
-const ListenConfig & ServerConfig::getConfigListen(ServerNode node, NodeIndex index)
+const ::ListenConfig & ServerConfig::getConfigListen(ServerNode node, NodeIndex index)
 {
 	if (index == InvalidNodeIndex)
 	{
 		index = _ownNodeIndex;
 	}
 	auto founder = std::find_if(_configListen.begin(), _configListen.end(),
-		[node, index](const ListenConfig & lc){return lc._node == node && lc._index == index; });
+		[node, index](const ::ListenConfig & lc){return lc._node == node && lc._index == index; });
 	if (founder == _configListen.end())
 	{
-		static ListenConfig lc;
+		static ::ListenConfig lc;
 		return lc;
 	}
 	return *founder;
@@ -144,7 +144,7 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
 				return false;
 			}
 
-			ListenConfig lconfig;
+			::ListenConfig lconfig;
 			lconfig._ip = elmListenChild->Attribute("ip");
 			lconfig._port = elmListenChild->IntAttribute("port");
 			lconfig._index = elmListenChild->IntAttribute("index");

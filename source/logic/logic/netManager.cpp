@@ -40,7 +40,7 @@ bool NetManager::start()
 	auto connecters = ServerConfig::getRef().getConfigConnect(LogicNode);
 	for (auto con : connecters)
 	{
-		tagConnctorConfigTraits tag;
+		ConnectConfig tag;
 		tag._remoteIP = con._remoteIP;
 		tag._remotePort = con._remotePort;
 		tag._reconnectMaxCount = 120;
@@ -49,7 +49,7 @@ bool NetManager::start()
 		{
 			continue;
 		}
-		SessionID sID = TcpSessionManager::getRef().addConnector(tag);
+		SessionID sID = SessionManager::getRef().addConnector(tag);
 
 		if (sID == InvalidSeesionID)
 		{
@@ -66,7 +66,7 @@ bool NetManager::start()
 
 	// if have some connector need connect success. do open accept in event_onSessionEstablished when all connector is success.
 	//other open acceoter in here.
-	_accepterID = TcpSessionManager::getRef().addAcceptor(_configListen);
+	_accepterID = SessionManager::getRef().addAcceptor(_configListen);
 	if (_accepterID == InvalidAccepterID)
 	{
 		LOGE("OPEN Accepter false. tagAcceptorConfigTraits=" << _configListen);
@@ -80,7 +80,7 @@ bool NetManager::start()
 }
 bool NetManager::stop()
 {
-	TcpSessionManager::getRef().stop();
+	SessionManager::getRef().stop();
 	return true;
 }
 
@@ -146,7 +146,7 @@ void NetManager::event_onSessionDisconnect(SessionID sID)
 
 
 
-void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
+void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs)
 {
 	C2LS_LoginReq req;
 	rs >> req;
@@ -167,11 +167,11 @@ void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStreamPack & rs)
 
 	if (innerInfo->status != InnerUserInfo::IUIT_UNAUTH)
 	{
-		WriteStreamPack ws(ID_LS2C_LoginAck);
+		WriteStream ws(ID_LS2C_LoginAck);
 		LS2C_LoginAck ack;
 		ack.retCode = BEC_AUTH_LIMITE_COUNT;
 		ws << ack;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		return;
 	}
 	
@@ -252,9 +252,9 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 	{
 		LOGD("user auth fail. sID=" << sID << " req.user = " << innerInfo->sesionInfo.user << ", req.passwd = " << innerInfo->sesionInfo.passwd );
 		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
-		WriteStreamPack ws(ID_LS2C_LoginAck);
+		WriteStream ws(ID_LS2C_LoginAck);
 		ws << ack;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 	else
 	{
@@ -266,13 +266,13 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 		{
 			if (fder->second->status != InnerUserInfo::IUIT_LOGINED)
 			{
-				TcpSessionManager::getRef().kickSession(sID);
+				SessionManager::getRef().kickSession(sID);
 			}
 			else
 			{
 				if (fder->second->sesionInfo.sID != InvalidSeesionID)
 				{
-					TcpSessionManager::getRef().kickSession(fder->second->sesionInfo.sID);
+					SessionManager::getRef().kickSession(fder->second->sesionInfo.sID);
 					userLogout(fder->second);
 					_mapUserSession.erase(fder->second->sesionInfo.sID);
 					fder->second->sesionInfo.sID = InvalidSeesionID;
@@ -283,9 +283,9 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 				innerInfo->sesionInfo.lastLoginTime = time(NULL);
 				ack.needCreateUser = false;
 				ack.info = innerInfo->userInfo;
-				WriteStreamPack ws(ID_LS2C_LoginAck);
+				WriteStream ws(ID_LS2C_LoginAck);
 				ws << ack;
-				TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+				SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 
 				userLogin(innerInfo);
 
@@ -363,9 +363,9 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 	if (ack.retCode != BEC_SUCCESS)
 	{
 		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
-		WriteStreamPack ws(ID_LS2C_LoginAck);
+		WriteStream ws(ID_LS2C_LoginAck);
 		ws << ack;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 	else
 	{
@@ -373,15 +373,15 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 		auto fder = _mapUserInfo.find(innerInfo->sesionInfo.uid);
 		if (fder == _mapUserInfo.end())
 		{
-			TcpSessionManager::getRef().kickSession(sID);
+			SessionManager::getRef().kickSession(sID);
 			return;
 		}
 		else
 		{
-			WriteStreamPack ws(ID_LS2C_LoginAck);
+			WriteStream ws(ID_LS2C_LoginAck);
 			ack.info = innerInfo->userInfo;
 			ws << ack;
-			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 			if (!ack.needCreateUser)
 			{
 				innerInfo->status = InnerUserInfo::IUIT_LOGINED;
@@ -393,14 +393,14 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 }
 
 
-void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStreamPack &rs)
+void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 {
 	C2LS_CreateUserReq req;
 	rs >> req;
 	auto fouder = _mapUserSession.find(sID);
 	if (fouder == _mapUserSession.end() || fouder->second->status != InnerUserInfo::IUIT_LOGINING)
 	{
-		TcpSessionManager::getRef().kickSession(sID);
+		SessionManager::getRef().kickSession(sID);
 		return;
 	}
 
@@ -421,7 +421,7 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 	auto fouder = _mapUserSession.find(sID);
 	if (fouder == _mapUserSession.end() || fouder->second->status != InnerUserInfo::IUIT_LOGINING)
 	{
-		TcpSessionManager::getRef().kickSession(sID);
+		SessionManager::getRef().kickSession(sID);
 		return;
 	}
 	auto & innerInfo = fouder->second;
@@ -467,25 +467,25 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 
 	if (ack.retCode != BEC_SUCCESS)
 	{
-		TcpSessionManager::getRef().kickSession(sID);
+		SessionManager::getRef().kickSession(sID);
 	}
 	else
 	{
 		if (!ack.needCreateUser)
 		{
 			ack.info = innerInfo->userInfo;
-			WriteStreamPack ws(ID_LS2C_CreateUserAck);
+			WriteStream ws(ID_LS2C_CreateUserAck);
 			ws << ack;
-			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 			innerInfo->sesionInfo.lastLoginTime = time(NULL);
 			userLogin(innerInfo);
 
 		}
 		else
 		{
-			WriteStreamPack ws(ID_LS2C_CreateUserAck);
+			WriteStream ws(ID_LS2C_CreateUserAck);
 			ws << ack;
-			TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		}
 		
 	}
@@ -500,27 +500,27 @@ void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
 		auto founder = _mapUserSession.find(sID);
 		if (founder == _mapUserSession.end())
 		{
-			TcpSessionManager::getRef().kickSession(sID);
+			SessionManager::getRef().kickSession(sID);
 			LOGW("kick session because session not found in _mapSession.  sID=" << sID);
 			return;
 		}
 		if (founder->second->sesionInfo.lastActiveTime + pulseInterval * 2 / 1000 < time(NULL))
 		{
-			TcpSessionManager::getRef().kickSession(sID);
+			SessionManager::getRef().kickSession(sID);
 			LOGW("kick session because session heartbeat timeout.  sID=" << sID << ", lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);
 			return;
 		}
-		WriteStreamPack ws(ID_AS2C_ServerPulse);
+		WriteStream ws(ID_AS2C_ServerPulse);
 		AS2C_ServerPulse sp;
 		sp.timeStamp = (ui32)time(NULL);
 		sp.timeTick = 0;
 		ws << sp;
-		TcpSessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
 
 
-void NetManager::msg_onClientPulse(SessionID sID, ProtoID pID, ReadStreamPack & rs)
+void NetManager::msg_onClientPulse(SessionID sID, ProtoID pID, ReadStream & rs)
 {
 	auto founder = _mapUserSession.find(sID);
 	if (founder != _mapUserSession.end())

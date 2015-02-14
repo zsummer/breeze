@@ -32,8 +32,11 @@
 
 #include <string>
 #include <algorithm>
-#include <zsummerX/frameX.h>
+#include <zsummerX/zsummerX.h>
 #include <ProtoCommon.h>
+using namespace zsummer::network;
+using namespace zsummer::proto4z;
+
 
 
 //! 基本类型
