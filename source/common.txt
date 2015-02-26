@@ -12,10 +12,12 @@ set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/../bin/${BINNAME}/)
 
 add_executable(${BINNAME} ${source1} ${source2} ${source3} ${source4})
 
-if(WIN32)
-  target_link_libraries(${BINNAME} common${LIB_SUFFIX} libmysqlclient.lib zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX})
+if(APPLE)
+  target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX_select${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread)
+  message(STATUS "apple")
 else()
   target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread rt dl)
+  message(STATUS "linux")
 endif()
 
 

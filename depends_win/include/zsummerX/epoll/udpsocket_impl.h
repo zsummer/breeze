@@ -53,12 +53,12 @@ namespace zsummer
 			// const char * remoteIP, unsigned short remotePort, nTranslate
 			UdpSocket();
 			~UdpSocket();
-			bool initialize(const ZSummerPtr &summer, const char *localIP, unsigned short localPort);
+			bool initialize(const EventLoopPtr &summer, const char *localIP, unsigned short localPort);
 			bool doRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler&& handler);
 			bool doSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
 			bool onEPOLLMessage(int type, int flag);
 		public:
-			ZSummerPtr _summer;
+			EventLoopPtr _summer;
 			tagRegister _register;
 
 			_OnRecvFromHandler _onRecvFromHandler;

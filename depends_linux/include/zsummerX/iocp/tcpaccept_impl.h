@@ -48,13 +48,13 @@ namespace zsummer
 		public:
 			TcpAccept();
 			~TcpAccept();
-			bool initialize(ZSummerPtr& summer);
+			bool initialize(EventLoopPtr& summer);
 			bool openAccept(const char * ip, unsigned short port);
 			bool doAccept(const TcpSocketPtr& s, _OnAcceptHandler &&handler);
 			bool onIOCPMessage(BOOL bSuccess);
 
 			//config
-			ZSummerPtr _summer;
+			EventLoopPtr _summer;
 
 
 			std::string		_ip;

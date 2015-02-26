@@ -59,7 +59,7 @@ namespace  zsummer
 
 		private:
 			std::shared_ptr<std::thread> _thread;
-			zsummer::network::ZSummerPtr _summer;
+			zsummer::network::EventLoopPtr _summer;
 			bool _bRuning = false;
 			std::atomic_ullong _uPostCount;
 			std::atomic_ullong _uFinalCount;

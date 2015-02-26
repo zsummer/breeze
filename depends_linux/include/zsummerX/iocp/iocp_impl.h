@@ -48,11 +48,11 @@ namespace zsummer
 	namespace network
 	{
 		//! ioserver, message loop.
-		class ZSummer :public std::enable_shared_from_this<ZSummer>
+		class EventLoop :public std::enable_shared_from_this<EventLoop>
 		{
 		public:
-			ZSummer(){_io = NULL;}
-			~ZSummer(){}
+			EventLoop(){_io = NULL;}
+			~EventLoop(){}
 
 			inline bool initialize();
 			void runOnce(bool isImmediately = false);
@@ -67,10 +67,10 @@ namespace zsummer
 				_OnPostHandler *ptr = new _OnPostHandler(std::move(handle));
 				PostQueuedCompletionStatus(_io, 0, pck, (LPOVERLAPPED)(ptr));
 			}
-			inline std::string zsummerSection()
+			inline std::string logSection()
 			{
 				std::stringstream os;
-				os << " zsummerSection: _iocp=" << (void*)_io << ", current total timer=" << _timer.GetTimersCount();
+				os << " logSection: _iocp=" << (void*)_io << ", current total timer=" << _timer.GetTimersCount();
 				return os.str();
 			}
 		public:
@@ -78,18 +78,18 @@ namespace zsummer
 			Timer _timer;
 		};
 
-		typedef std::shared_ptr<ZSummer> ZSummerPtr;
-		inline bool ZSummer::initialize()
+		typedef std::shared_ptr<EventLoop> EventLoopPtr;
+		inline bool EventLoop::initialize()
 		{
 			if (_io != NULL)
 			{
-				LCF("ZSummer::runOnce[this0x" << this << "] iocp is craeted !" << zsummerSection());
+				LCF("EventLoop::runOnce[this0x" << this << "] iocp is craeted !" << logSection());
 				return false;
 			}
 			_io = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 1);
 			if (!_io)
 			{
-				LCF("ZSummer::runOnce[this0x" << this << "] CreateIoCompletionPort False!" << zsummerSection());
+				LCF("EventLoop::runOnce[this0x" << this << "] CreateIoCompletionPort False!" << logSection());
 				return false;
 			}
 			return true;

@@ -51,7 +51,7 @@ namespace zsummer
 			//! initialize an attach socket to zsummer pump.
 			//if the socket is used to connect,  It's need initialize before call doConnect 
 			// if the socket is used to accept new socket, It's need initialize after OnAccept. 
-			bool initialize(const ZSummerPtr& summer);
+			bool initialize(const EventLoopPtr& summer);
 			inline bool getPeerInfo(std::string& remoteIP, unsigned short &remotePort)
 			{
 				remoteIP = _remoteIP;
@@ -84,7 +84,7 @@ namespace zsummer
 			std::string getTcpSocketStatus();
 		public:
 			//private
-			ZSummerPtr  _summer;
+			EventLoopPtr  _summer;
 			SOCKET		_socket = INVALID_SOCKET;
 			std::string _remoteIP;
 			unsigned short _remotePort = 0;

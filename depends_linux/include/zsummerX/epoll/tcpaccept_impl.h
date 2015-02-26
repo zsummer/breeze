@@ -50,16 +50,16 @@ namespace zsummer
 		public:
 			TcpAccept();
 			~TcpAccept();
-			bool initialize(const ZSummerPtr &summer);
+			bool initialize(const EventLoopPtr &summer);
 			bool openAccept(const std::string & listenIP, unsigned short listenPort);
 			bool doAccept(const TcpSocketPtr &s, _OnAcceptHandler &&handle);
 			void onEPOLLMessage(bool bSuccess);
 			bool close();
 
 		private:
-			std::string GetAcceptImplStatus();
+			std::string logSection();
 		private:
-			ZSummerPtr 		_summer;
+			EventLoopPtr 		_summer;
 			std::string		_listenIP;
 			short			_listenPort = 0;
 

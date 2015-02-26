@@ -52,7 +52,7 @@ namespace zsummer
 		public:
 			TcpSocket();
 			~TcpSocket();
-			bool initialize(const ZSummerPtr &summer);
+			bool initialize(const EventLoopPtr &summer);
 			inline bool getPeerInfo(std::string & remoteIP, unsigned short &remotePort)
 			{
 				remoteIP = _remoteIP;
@@ -72,9 +72,9 @@ namespace zsummer
 			bool attachSocket(SOCKET s, const std::string& remoteIP, unsigned short remotePort);
 
 		private:
-			std::string socketSection();
+			std::string logSection();
 		private:
-			ZSummerPtr _summer;
+			EventLoopPtr _summer;
 			std::string _remoteIP;
 			unsigned short _remotePort = 0;
 			tagRegister _register;

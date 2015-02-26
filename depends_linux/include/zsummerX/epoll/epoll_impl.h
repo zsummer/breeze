@@ -43,12 +43,12 @@ namespace zsummer
 {
 	namespace network
 	{
-		class ZSummer : public std::enable_shared_from_this<ZSummer>
+		class EventLoop : public std::enable_shared_from_this<EventLoop>
 		{
 		public:
 			typedef std::vector<void*> MessageStack;
-			ZSummer(){}
-			~ZSummer(){}
+			EventLoop(){}
+			~EventLoop(){}
 			bool initialize();
 			void runOnce(bool isImmediately = false);
 
@@ -61,7 +61,7 @@ namespace zsummer
 			bool registerEvent(int op, tagRegister &reg);
 			void PostMessage(_OnPostHandler &&handle);
 		private:
-			std::string zsummerSection();
+			std::string logSection();
 		private:
 			int	_epoll = InvalideFD;
 			epoll_event _events[5000] = {};
@@ -71,7 +71,7 @@ namespace zsummer
 			std::mutex	 _stackMessagesLock;
 			Timer _timer;
 		};
-		typedef std::shared_ptr<ZSummer> ZSummerPtr;
+		typedef std::shared_ptr<EventLoop> EventLoopPtr;
 	}
 
 }
