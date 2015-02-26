@@ -60,10 +60,25 @@ int main(int argc, char* argv[])
 	ILog4zManager::getPtr()->start();
 	ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);
 
+    //parse config
+    {
+        
+        std::string filename = "../serverConfig.xml";
+        bool ret = false;
+        ret = ServerConfig::getRef().parse(filename, StressNode, 0);
+        if (!ret)
+        {
+            LOGE("parse ServerConfig failed.");
+            return ret;
+        }
+        LOGI("parse ServerConfig success. configFile=" << filename << ", node=" << StressNode << ", index=" << 0);
+        
+    }
 	// insert account
 	{
+        const auto authConfig = ServerConfig::getRef().getDBConfig(AuthDB);
 		DBHelper helper;
-		helper.init("192.168.1.101", 3306, "db_auth", "root", "123456");
+		helper.init(authConfig._ip, authConfig._port, authConfig._db, authConfig._user, authConfig._pwd);
 		if (helper.connect())
 		{
 			for (int i = 0; i < 1000; i++)

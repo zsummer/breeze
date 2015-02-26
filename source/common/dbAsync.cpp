@@ -25,7 +25,7 @@ using namespace zsummer::mysql;
 
 DBAsync::DBAsync()
 {
-	_summer = std::make_shared<zsummer::network::EventLoop>();
+	_event = std::make_shared<zsummer::network::EventLoop>();
 }
 
 DBAsync::~DBAsync()
@@ -35,7 +35,7 @@ DBAsync::~DBAsync()
 
 bool DBAsync::start()
 {
-	bool ret = _summer->initialize();
+	bool ret = _event->initialize();
 	if (!ret)
 	{
 		return false;
@@ -67,7 +67,7 @@ void DBAsync::asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 	const std::function<void(DBResultPtr)> & handler)
 {
 	_uPostCount++;
-	_summer->post(std::bind(&DBAsync::_asyncQuery, this, dbhelper, sql, handler));
+	_event->post(std::bind(&DBAsync::_asyncQuery, this, dbhelper, sql, handler));
 }
 
 void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
@@ -89,7 +89,7 @@ void DBAsync::run()
 		}
 		try
 		{
-			_summer->runOnce();
+			_event->runOnce();
 		}
 		catch (...)
 		{

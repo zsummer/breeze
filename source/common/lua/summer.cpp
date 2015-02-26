@@ -37,8 +37,8 @@
 #include "summer.h"
 
 #include <zsummerX/zsummerX.h>
-using namespace zsummer::network;
 using namespace zsummer::proto4z;
+using namespace zsummer::network;
 
 
 
@@ -294,7 +294,7 @@ static int registerConnect(lua_State * L)
 }
 
 
-static void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStream & rs)
+void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStream & rs)
 {
 	if (!isConnectID(sID))
 	{

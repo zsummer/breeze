@@ -21,10 +21,10 @@ bool DBManager::init()
 
 	if (!DBAsync::instantiate()->start())
 	{
-		LOGE("DBManager start false. ");
+		LOGE("DBAsync start false. ");
 		return false;
 	}
-	LOGI("DBManager start success. ");
+	LOGI("DBAsync start success.  begin connect to db ...");
 
 	const auto authConfig = ServerConfig::getRef().getDBConfig(AuthDB);
 	const auto infoConfig = ServerConfig::getRef().getDBConfig(InfoDB);

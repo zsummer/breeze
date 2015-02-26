@@ -53,7 +53,7 @@ bool NetManager::start()
 
 		if (sID == InvalidSeesionID)
 		{
-			LOGE("addConnector failed. tagConnctorConfigTraits=" << tag);
+			LOGE("addConnector failed. ConnectConfig=" << tag);
 			return false;
 		}
 		// save sID. do something after.
@@ -69,12 +69,12 @@ bool NetManager::start()
 	_accepterID = SessionManager::getRef().addAcceptor(_configListen);
 	if (_accepterID == InvalidAccepterID)
 	{
-		LOGE("OPEN Accepter false. tagAcceptorConfigTraits=" << _configListen);
+		LOGE("OPEN Accepter false. ListenConfig=" << _configListen);
 		return false;
 	}
 	else
 	{
-		LOGI("OPEN Accepter true. tagAcceptorConfigTraits=" << _configListen);
+		LOGI("OPEN Accepter true. ListenConfig=" << _configListen);
 	}
 	return true;
 }
