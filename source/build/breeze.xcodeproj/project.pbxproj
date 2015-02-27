@@ -1,0 +1,2082 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		83115B6016EA447D8877E878 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 06665B4444ED4F928AF9F65A /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				93B85DE767E241A3A4496D04 /* CMake Rules */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		87A31CAE7A7A49F5B5451D78 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C677E9C4BE864B778A47FB2E /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				E5B2DDB6D6384A88B1DC56F1 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				23133E42E48546B6908076E9 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		E514611B848A4071863E0A4B /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = E1D076C10A794738A8001E2F /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				54D23D5DEBA843B5B4A4508E /* CMake Rules */,
+			);
+			dependencies = (
+				ABD4D53D228E48B698ECA27F /* PBXTargetDependency */,
+				1D32BBB2DCB543418F25B545 /* PBXTargetDependency */,
+				FF22B1C330604C96BDBF08FE /* PBXTargetDependency */,
+				4A6A106385E549859127E935 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		18132B98E7184EB0B376948A /* loslib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9D3F6BDBB4EE986CF3BE5 /* loslib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		19A172AE449B494CBF501240 /* lstrlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A447C53BA74DEB9E5BD97A /* lstrlib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		2A7676A468634E6ABB68DB77 /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 80292438507143E6B24786CB /* print.c */; settings = {COMPILER_FLAGS = ""; }; };
+		323335B852DB42D48E48C2E8 /* lgc.c in Sources */ = {isa = PBXBuildFile; fileRef = 86D56C6A03694A4392D1640C /* lgc.c */; settings = {COMPILER_FLAGS = ""; }; };
+		38804164355741CB90C21528 /* ldo.c in Sources */ = {isa = PBXBuildFile; fileRef = B06D2912A28F4B7C8271CC89 /* ldo.c */; settings = {COMPILER_FLAGS = ""; }; };
+		3C304B556FF1476DA4885072 /* lobject.c in Sources */ = {isa = PBXBuildFile; fileRef = 9C4CDDDB48C6478C8D2A37ED /* lobject.c */; settings = {COMPILER_FLAGS = ""; }; };
+		3C96CA46D53E4489A6A7A965 /* lparser.c in Sources */ = {isa = PBXBuildFile; fileRef = DE7C0970A3D8490B90EB46F0 /* lparser.c */; settings = {COMPILER_FLAGS = ""; }; };
+		4D3D2C980EBA46EEBEF96AE5 /* lmathlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 213AF8FA21E84D47BD7C2DFD /* lmathlib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		604EFCBBFA2F443FBFF2F4C6 /* lstate.c in Sources */ = {isa = PBXBuildFile; fileRef = AEBE56E126C647318073C051 /* lstate.c */; settings = {COMPILER_FLAGS = ""; }; };
+		61200E626C0C454DBC6038BC /* summer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4039EDDEEA344B4A9BD3D382 /* summer.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		6C4BD07CB7EB4A4087C22AE6 /* lmem.c in Sources */ = {isa = PBXBuildFile; fileRef = EC59522A737A48E2B136ACBD /* lmem.c */; settings = {COMPILER_FLAGS = ""; }; };
+		6D64E87A904D4FE387C3795E /* liolib.c in Sources */ = {isa = PBXBuildFile; fileRef = 18714760957A4F1BBB70895C /* liolib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		7792E58EF54A478495D16F0D /* application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7528207EB8439F88A7ED0E /* application.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		85A59D2FF2A24B8E9894E424 /* lzio.c in Sources */ = {isa = PBXBuildFile; fileRef = AFC3D234318343948FAB0EA5 /* lzio.c */; settings = {COMPILER_FLAGS = ""; }; };
+		8634B06CDBBF4B92BC2674E2 /* loadlib.c in Sources */ = {isa = PBXBuildFile; fileRef = FB6F0C607E1A4BEFA4AA908E /* loadlib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		8951895291514A09AF82DAF1 /* netManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D449CAFB6EC74CA186EFA7E5 /* netManager.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		8D79899ABFE04A8694653C60 /* lcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 47DC57DB41644F908CEEFCCF /* lcode.c */; settings = {COMPILER_FLAGS = ""; }; };
+		8F6343A4DB6C4DF3BAC6CBC2 /* dbManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19A5EAD2CF6F4824BA151CAA /* dbManager.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		94291F5D16634A3F898F27D0 /* protoz_bit.c in Sources */ = {isa = PBXBuildFile; fileRef = 5E9C45E00E7B4120BEB4F19A /* protoz_bit.c */; settings = {COMPILER_FLAGS = ""; }; };
+		986A4B68E7584AE68F647158 /* linit.c in Sources */ = {isa = PBXBuildFile; fileRef = D18395CD8C12486781446346 /* linit.c */; settings = {COMPILER_FLAGS = ""; }; };
+		9A7215A80139480A927274FF /* ltablib.c in Sources */ = {isa = PBXBuildFile; fileRef = 28491D9F47D0491FA8C40BC3 /* ltablib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		9B70B489B01743CEB978DFC2 /* llex.c in Sources */ = {isa = PBXBuildFile; fileRef = DC5D2655B50A438DBC37C355 /* llex.c */; settings = {COMPILER_FLAGS = ""; }; };
+		A5175C034FA64DD99BCD0313 /* dbAsync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78A743B997C64932870FB569 /* dbAsync.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		A980DDEAA12D4F3E94FFF945 /* lundump.c in Sources */ = {isa = PBXBuildFile; fileRef = 6DB13C42A0A448B5A19F6884 /* lundump.c */; settings = {COMPILER_FLAGS = ""; }; };
+		B239DDCE59014095A52E1D7F /* ltm.c in Sources */ = {isa = PBXBuildFile; fileRef = 52CFB6632D444106B6C256EB /* ltm.c */; settings = {COMPILER_FLAGS = ""; }; };
+		C05BE78D54914029A074FC97 /* ldblib.c in Sources */ = {isa = PBXBuildFile; fileRef = 4E51012670124C7E97236083 /* ldblib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		C0F26FC43CF44D8AA1C1C6D4 /* ldebug.c in Sources */ = {isa = PBXBuildFile; fileRef = EAF92729AD9E4CF4848F409F /* ldebug.c */; settings = {COMPILER_FLAGS = ""; }; };
+		C12CA125B05140C4AAE0D6CD /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 72B69138C61449AFBA92796D /* lauxlib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		C2D255718D154F8FA6EA217D /* ldump.c in Sources */ = {isa = PBXBuildFile; fileRef = F93F583DA75244289AD5A6DE /* ldump.c */; settings = {COMPILER_FLAGS = ""; }; };
+		C671455EAC48436BBB0F560A /* stressMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB5CC32239A84AE384D53CE1 /* stressMain.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		C6EB4548D0EC468086E7B6F4 /* ltable.c in Sources */ = {isa = PBXBuildFile; fileRef = 3215442701C144AD8AEFF3D2 /* ltable.c */; settings = {COMPILER_FLAGS = ""; }; };
+		C78398AB203F45A088A9AEAC /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29DAD028C85B41BE9951417F /* tinyxml2.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		CB2F3499A7DF46858FF84F20 /* dbHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF746ACBF4514FB5BF29F68B /* dbHelper.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		D0561878B1B044AE85559D10 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72D28985EB248A6B5131950 /* main.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		D2951A6013684D99AEB05147 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B9FF13ED1074D80BD405B3C /* md5.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		D35B36D56095402A974030DD /* lbaselib.c in Sources */ = {isa = PBXBuildFile; fileRef = E88889CB37B74A8E852C1763 /* lbaselib.c */; settings = {COMPILER_FLAGS = ""; }; };
+		E0386BEAFB574527B16E70B5 /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 52C28E90AB13416C98FA7D92 /* lapi.c */; settings = {COMPILER_FLAGS = ""; }; };
+		E744521365DF460BA1771DB9 /* lstring.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F8D0FD357C9406AB969206B /* lstring.c */; settings = {COMPILER_FLAGS = ""; }; };
+		EFC7723F4CE04651B7F0327C /* serverConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0E3613D46340E2AAFB66BA /* serverConfig.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		F6A480455655437D82CFC53E /* lpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 0507D20A8ECA4A14B4AF4F9E /* lpack.c */; settings = {COMPILER_FLAGS = ""; }; };
+		FB3E8D3759464B07B96473A6 /* lfunc.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB9527E2EA471DAF766D14 /* lfunc.c */; settings = {COMPILER_FLAGS = ""; }; };
+		FC2220EEC81A4EE3AEB828E8 /* lvm.c in Sources */ = {isa = PBXBuildFile; fileRef = 26C177A8905E44859B0DB35B /* lvm.c */; settings = {COMPILER_FLAGS = ""; }; };
+		FD1C0C5561464368A9C50356 /* lopcodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 2F957CCE300F400F8A779637 /* lopcodes.c */; settings = {COMPILER_FLAGS = ""; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		03F0F2587D92423CB9A1244B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9531B48BF8A34580847D1587 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 83AFAB780BB945E9926ACA88;
+			remoteInfo = common;
+		};
+		10539376290C43FC8F3D4B0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9531B48BF8A34580847D1587 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 83115B6016EA447D8877E878;
+			remoteInfo = ZERO_CHECK;
+		};
+		1C0AC4AB4CB8443A88EDF042 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9531B48BF8A34580847D1587 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 83AFAB780BB945E9926ACA88;
+			remoteInfo = common;
+		};
+		613E3251A6F04F55904A1814 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9531B48BF8A34580847D1587 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4AC74B7483A4169A2ADEBB3;
+			remoteInfo = logic;
+		};
+		931E6A4F6425496C8EBCDEF6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9531B48BF8A34580847D1587 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 83AFAB780BB945E9926ACA88;
+			remoteInfo = common;
+		};
+		CBD3D22261AE4F87892FEC68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9531B48BF8A34580847D1587 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E514611B848A4071863E0A4B;
+			remoteInfo = ALL_BUILD;
+		};
+		E9A959CFC5444CBEB67FA52F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9531B48BF8A34580847D1587 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9E2D166AD3564A7BB01BA193;
+			remoteInfo = stressTest;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0507D20A8ECA4A14B4AF4F9E /* lpack.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lpack.c; path = common/lua/lpack.c; sourceTree = SOURCE_ROOT; };
+		1000C0465B8244CC801B3C3F /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = logic/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		18714760957A4F1BBB70895C /* liolib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = liolib.c; path = common/lua/liolib.c; sourceTree = SOURCE_ROOT; };
+		19A5EAD2CF6F4824BA151CAA /* dbManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = dbManager.cpp; path = logic/logic/dbManager.cpp; sourceTree = SOURCE_ROOT; };
+		213AF8FA21E84D47BD7C2DFD /* lmathlib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lmathlib.c; path = common/lua/lmathlib.c; sourceTree = SOURCE_ROOT; };
+		26C177A8905E44859B0DB35B /* lvm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lvm.c; path = common/lua/lvm.c; sourceTree = SOURCE_ROOT; };
+		2712C9C1B90246489DAE9FEC /* logic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = logic; sourceTree = BUILT_PRODUCTS_DIR; };
+		28491D9F47D0491FA8C40BC3 /* ltablib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ltablib.c; path = common/lua/ltablib.c; sourceTree = SOURCE_ROOT; };
+		29DAD028C85B41BE9951417F /* tinyxml2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = tinyxml2.cpp; path = common/tinyxml2/tinyxml2.cpp; sourceTree = SOURCE_ROOT; };
+		2F957CCE300F400F8A779637 /* lopcodes.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lopcodes.c; path = common/lua/lopcodes.c; sourceTree = SOURCE_ROOT; };
+		3215442701C144AD8AEFF3D2 /* ltable.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ltable.c; path = common/lua/ltable.c; sourceTree = SOURCE_ROOT; };
+		381571D847CE47EF9729E1FE /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = stressTest/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		3A0B19A0D1E84614AF8AC20B /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = common/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		4039EDDEEA344B4A9BD3D382 /* summer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = summer.cpp; path = common/lua/summer.cpp; sourceTree = SOURCE_ROOT; };
+		47DC57DB41644F908CEEFCCF /* lcode.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lcode.c; path = common/lua/lcode.c; sourceTree = SOURCE_ROOT; };
+		4A0E3613D46340E2AAFB66BA /* serverConfig.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = serverConfig.cpp; path = common/serverConfig.cpp; sourceTree = SOURCE_ROOT; };
+		4D90BFA051C44CA1A37E4189 /* stressTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = stressTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E51012670124C7E97236083 /* ldblib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ldblib.c; path = common/lua/ldblib.c; sourceTree = SOURCE_ROOT; };
+		4F8D0FD357C9406AB969206B /* lstring.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lstring.c; path = common/lua/lstring.c; sourceTree = SOURCE_ROOT; };
+		52C28E90AB13416C98FA7D92 /* lapi.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lapi.c; path = common/lua/lapi.c; sourceTree = SOURCE_ROOT; };
+		52CFB6632D444106B6C256EB /* ltm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ltm.c; path = common/lua/ltm.c; sourceTree = SOURCE_ROOT; };
+		5D2EE61AA9584CA1B570BBC6 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		5E9C45E00E7B4120BEB4F19A /* protoz_bit.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = protoz_bit.c; path = common/lua/protoz_bit.c; sourceTree = SOURCE_ROOT; };
+		64A447C53BA74DEB9E5BD97A /* lstrlib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lstrlib.c; path = common/lua/lstrlib.c; sourceTree = SOURCE_ROOT; };
+		67A4B040893D4271BA5C6080 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		6DB13C42A0A448B5A19F6884 /* lundump.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lundump.c; path = common/lua/lundump.c; sourceTree = SOURCE_ROOT; };
+		72B69138C61449AFBA92796D /* lauxlib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lauxlib.c; path = common/lua/lauxlib.c; sourceTree = SOURCE_ROOT; };
+		78A743B997C64932870FB569 /* dbAsync.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = dbAsync.cpp; path = common/dbAsync.cpp; sourceTree = SOURCE_ROOT; };
+		7AF9D3F6BDBB4EE986CF3BE5 /* loslib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = loslib.c; path = common/lua/loslib.c; sourceTree = SOURCE_ROOT; };
+		80292438507143E6B24786CB /* print.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = print.c; path = common/lua/print.c; sourceTree = SOURCE_ROOT; };
+		86D56C6A03694A4392D1640C /* lgc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lgc.c; path = common/lua/lgc.c; sourceTree = SOURCE_ROOT; };
+		9B9FF13ED1074D80BD405B3C /* md5.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = md5.cpp; path = common/md5/md5.cpp; sourceTree = SOURCE_ROOT; };
+		9C4CDDDB48C6478C8D2A37ED /* lobject.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lobject.c; path = common/lua/lobject.c; sourceTree = SOURCE_ROOT; };
+		9DBB9527E2EA471DAF766D14 /* lfunc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lfunc.c; path = common/lua/lfunc.c; sourceTree = SOURCE_ROOT; };
+		9F7528207EB8439F88A7ED0E /* application.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = application.cpp; path = logic/application.cpp; sourceTree = SOURCE_ROOT; };
+		A72D28985EB248A6B5131950 /* main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cpp; path = logic/main.cpp; sourceTree = SOURCE_ROOT; };
+		AB5CC32239A84AE384D53CE1 /* stressMain.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = stressMain.cpp; path = stressTest/stressMain.cpp; sourceTree = SOURCE_ROOT; };
+		AEBE56E126C647318073C051 /* lstate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lstate.c; path = common/lua/lstate.c; sourceTree = SOURCE_ROOT; };
+		AFC3D234318343948FAB0EA5 /* lzio.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzio.c; path = common/lua/lzio.c; sourceTree = SOURCE_ROOT; };
+		B06D2912A28F4B7C8271CC89 /* ldo.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ldo.c; path = common/lua/ldo.c; sourceTree = SOURCE_ROOT; };
+		CF746ACBF4514FB5BF29F68B /* dbHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = dbHelper.cpp; path = common/dbhelper/dbHelper.cpp; sourceTree = SOURCE_ROOT; };
+		D18395CD8C12486781446346 /* linit.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = linit.c; path = common/lua/linit.c; sourceTree = SOURCE_ROOT; };
+		D449CAFB6EC74CA186EFA7E5 /* netManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = netManager.cpp; path = logic/logic/netManager.cpp; sourceTree = SOURCE_ROOT; };
+		D6F9E92674B4447583204CCE /* libcommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC5D2655B50A438DBC37C355 /* llex.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = llex.c; path = common/lua/llex.c; sourceTree = SOURCE_ROOT; };
+		DE7C0970A3D8490B90EB46F0 /* lparser.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lparser.c; path = common/lua/lparser.c; sourceTree = SOURCE_ROOT; };
+		E88889CB37B74A8E852C1763 /* lbaselib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lbaselib.c; path = common/lua/lbaselib.c; sourceTree = SOURCE_ROOT; };
+		EAF92729AD9E4CF4848F409F /* ldebug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ldebug.c; path = common/lua/ldebug.c; sourceTree = SOURCE_ROOT; };
+		EC59522A737A48E2B136ACBD /* lmem.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lmem.c; path = common/lua/lmem.c; sourceTree = SOURCE_ROOT; };
+		F93F583DA75244289AD5A6DE /* ldump.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ldump.c; path = common/lua/ldump.c; sourceTree = SOURCE_ROOT; };
+		FB6F0C607E1A4BEFA4AA908E /* loadlib.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = loadlib.c; path = common/lua/loadlib.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		127C3A8AF8BF41919AD0F6A0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D6F9E92674B4447583204CCE /* libcommon.a */,
+				2712C9C1B90246489DAE9FEC /* logic */,
+				4D90BFA051C44CA1A37E4189 /* stressTest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2786ED36662843AE94D37394 /* ZERO_CHECK */ = {
+			isa = PBXGroup;
+			children = (
+				EDB5D4403DA3498E8DCFA0F6 /* CMake Rules */,
+				5D2EE61AA9584CA1B570BBC6 /* CMakeLists.txt */,
+			);
+			name = ZERO_CHECK;
+			sourceTree = "<group>";
+		};
+		3E53934E93FF4BAE88EA6000 = {
+			isa = PBXGroup;
+			children = (
+				FD2A4697F6364D78BC2F8F5D /* Sources */,
+				DC2975E944E84FF1BA37C9B4 /* Resources */,
+				127C3A8AF8BF41919AD0F6A0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		79F12EBBBAB5498088D0AFE4 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				B0D2D946AA8F4BA2974BB943 /* CMake Rules */,
+				67A4B040893D4271BA5C6080 /* CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		9035FE0EE03B471EBD6F3BEF /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				9F7528207EB8439F88A7ED0E /* application.cpp */,
+				19A5EAD2CF6F4824BA151CAA /* dbManager.cpp */,
+				D449CAFB6EC74CA186EFA7E5 /* netManager.cpp */,
+				A72D28985EB248A6B5131950 /* main.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		A2FA32328E214739B5729EF1 /* logic */ = {
+			isa = PBXGroup;
+			children = (
+				9035FE0EE03B471EBD6F3BEF /* Source Files */,
+				1000C0465B8244CC801B3C3F /* CMakeLists.txt */,
+			);
+			name = logic;
+			sourceTree = "<group>";
+		};
+		B0D2D946AA8F4BA2974BB943 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		CDEACC465A0948D8AF9288F4 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				AB5CC32239A84AE384D53CE1 /* stressMain.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		D3E2AF7642784539A0C7A013 /* stressTest */ = {
+			isa = PBXGroup;
+			children = (
+				CDEACC465A0948D8AF9288F4 /* Source Files */,
+				381571D847CE47EF9729E1FE /* CMakeLists.txt */,
+			);
+			name = stressTest;
+			sourceTree = "<group>";
+		};
+		D40822710B474269A6DB7AD9 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				F3C138185F054FAFAD323F80 /* Source Files */,
+				3A0B19A0D1E84614AF8AC20B /* CMakeLists.txt */,
+			);
+			name = common;
+			sourceTree = "<group>";
+		};
+		DC2975E944E84FF1BA37C9B4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		EDB5D4403DA3498E8DCFA0F6 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		F3C138185F054FAFAD323F80 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				78A743B997C64932870FB569 /* dbAsync.cpp */,
+				CF746ACBF4514FB5BF29F68B /* dbHelper.cpp */,
+				52C28E90AB13416C98FA7D92 /* lapi.c */,
+				72B69138C61449AFBA92796D /* lauxlib.c */,
+				E88889CB37B74A8E852C1763 /* lbaselib.c */,
+				47DC57DB41644F908CEEFCCF /* lcode.c */,
+				4E51012670124C7E97236083 /* ldblib.c */,
+				EAF92729AD9E4CF4848F409F /* ldebug.c */,
+				B06D2912A28F4B7C8271CC89 /* ldo.c */,
+				F93F583DA75244289AD5A6DE /* ldump.c */,
+				9DBB9527E2EA471DAF766D14 /* lfunc.c */,
+				86D56C6A03694A4392D1640C /* lgc.c */,
+				D18395CD8C12486781446346 /* linit.c */,
+				18714760957A4F1BBB70895C /* liolib.c */,
+				DC5D2655B50A438DBC37C355 /* llex.c */,
+				213AF8FA21E84D47BD7C2DFD /* lmathlib.c */,
+				EC59522A737A48E2B136ACBD /* lmem.c */,
+				FB6F0C607E1A4BEFA4AA908E /* loadlib.c */,
+				9C4CDDDB48C6478C8D2A37ED /* lobject.c */,
+				2F957CCE300F400F8A779637 /* lopcodes.c */,
+				7AF9D3F6BDBB4EE986CF3BE5 /* loslib.c */,
+				0507D20A8ECA4A14B4AF4F9E /* lpack.c */,
+				DE7C0970A3D8490B90EB46F0 /* lparser.c */,
+				AEBE56E126C647318073C051 /* lstate.c */,
+				4F8D0FD357C9406AB969206B /* lstring.c */,
+				64A447C53BA74DEB9E5BD97A /* lstrlib.c */,
+				3215442701C144AD8AEFF3D2 /* ltable.c */,
+				28491D9F47D0491FA8C40BC3 /* ltablib.c */,
+				52CFB6632D444106B6C256EB /* ltm.c */,
+				6DB13C42A0A448B5A19F6884 /* lundump.c */,
+				26C177A8905E44859B0DB35B /* lvm.c */,
+				AFC3D234318343948FAB0EA5 /* lzio.c */,
+				80292438507143E6B24786CB /* print.c */,
+				5E9C45E00E7B4120BEB4F19A /* protoz_bit.c */,
+				4039EDDEEA344B4A9BD3D382 /* summer.cpp */,
+				9B9FF13ED1074D80BD405B3C /* md5.cpp */,
+				4A0E3613D46340E2AAFB66BA /* serverConfig.cpp */,
+				29DAD028C85B41BE9951417F /* tinyxml2.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		FD2A4697F6364D78BC2F8F5D /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				79F12EBBBAB5498088D0AFE4 /* ALL_BUILD */,
+				2786ED36662843AE94D37394 /* ZERO_CHECK */,
+				D40822710B474269A6DB7AD9 /* common */,
+				A2FA32328E214739B5729EF1 /* logic */,
+				D3E2AF7642784539A0C7A013 /* stressTest */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		83AFAB780BB945E9926ACA88 /* common */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6F59CDAF85B4CCEB41D2C6D /* Build configuration list for PBXNativeTarget "common" */;
+			buildPhases = (
+				B74E916354B4492AAE043A1D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = common;
+			productName = common;
+			productReference = D6F9E92674B4447583204CCE /* libcommon.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		9E2D166AD3564A7BB01BA193 /* stressTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E0ECF4E424E9499BA3952183 /* Build configuration list for PBXNativeTarget "stressTest" */;
+			buildPhases = (
+				07DB27D92F0046FD94F20066 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6F65888D586B4620AD0808C6 /* PBXTargetDependency */,
+			);
+			name = stressTest;
+			productName = stressTest;
+			productReference = 4D90BFA051C44CA1A37E4189 /* stressTest */;
+			productType = "com.apple.product-type.tool";
+		};
+		F4AC74B7483A4169A2ADEBB3 /* logic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3826718C931747A2B9532763 /* Build configuration list for PBXNativeTarget "logic" */;
+			buildPhases = (
+				743323AEA7124DB59DAC8D75 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F545D5A693C845549BD4DE86 /* PBXTargetDependency */,
+			);
+			name = logic;
+			productName = logic;
+			productReference = 2712C9C1B90246489DAE9FEC /* logic */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9531B48BF8A34580847D1587 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+			};
+			buildConfigurationList = 25A6D9D56AE04B998F17EB27 /* Build configuration list for PBXProject "breeze" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3E53934E93FF4BAE88EA6000;
+			projectDirPath = ..;
+			projectRoot = "";
+			targets = (
+				E514611B848A4071863E0A4B /* ALL_BUILD */,
+				83115B6016EA447D8877E878 /* ZERO_CHECK */,
+				87A31CAE7A7A49F5B5451D78 /* install */,
+				83AFAB780BB945E9926ACA88 /* common */,
+				F4AC74B7483A4169A2ADEBB3 /* logic */,
+				9E2D166AD3564A7BB01BA193 /* stressTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		54D23D5DEBA843B5B4A4508E /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/zhangyawei/Documents/github/breeze/source/build -f /Users/zhangyawei/Documents/github/breeze/source/build/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		93B85DE767E241A3A4496D04 /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/zhangyawei/Documents/github/breeze/source/build -f /Users/zhangyawei/Documents/github/breeze/source/build/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		E5B2DDB6D6384A88B1DC56F1 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/zhangyawei/Documents/github/breeze/source/build -f /Users/zhangyawei/Documents/github/breeze/source/build/CMakeScripts/install_postBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		07DB27D92F0046FD94F20066 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C671455EAC48436BBB0F560A /* stressMain.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		743323AEA7124DB59DAC8D75 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7792E58EF54A478495D16F0D /* application.cpp in Sources */,
+				8F6343A4DB6C4DF3BAC6CBC2 /* dbManager.cpp in Sources */,
+				8951895291514A09AF82DAF1 /* netManager.cpp in Sources */,
+				D0561878B1B044AE85559D10 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B74E916354B4492AAE043A1D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5175C034FA64DD99BCD0313 /* dbAsync.cpp in Sources */,
+				CB2F3499A7DF46858FF84F20 /* dbHelper.cpp in Sources */,
+				E0386BEAFB574527B16E70B5 /* lapi.c in Sources */,
+				C12CA125B05140C4AAE0D6CD /* lauxlib.c in Sources */,
+				D35B36D56095402A974030DD /* lbaselib.c in Sources */,
+				8D79899ABFE04A8694653C60 /* lcode.c in Sources */,
+				C05BE78D54914029A074FC97 /* ldblib.c in Sources */,
+				C0F26FC43CF44D8AA1C1C6D4 /* ldebug.c in Sources */,
+				38804164355741CB90C21528 /* ldo.c in Sources */,
+				C2D255718D154F8FA6EA217D /* ldump.c in Sources */,
+				FB3E8D3759464B07B96473A6 /* lfunc.c in Sources */,
+				323335B852DB42D48E48C2E8 /* lgc.c in Sources */,
+				986A4B68E7584AE68F647158 /* linit.c in Sources */,
+				6D64E87A904D4FE387C3795E /* liolib.c in Sources */,
+				9B70B489B01743CEB978DFC2 /* llex.c in Sources */,
+				4D3D2C980EBA46EEBEF96AE5 /* lmathlib.c in Sources */,
+				6C4BD07CB7EB4A4087C22AE6 /* lmem.c in Sources */,
+				8634B06CDBBF4B92BC2674E2 /* loadlib.c in Sources */,
+				3C304B556FF1476DA4885072 /* lobject.c in Sources */,
+				FD1C0C5561464368A9C50356 /* lopcodes.c in Sources */,
+				18132B98E7184EB0B376948A /* loslib.c in Sources */,
+				F6A480455655437D82CFC53E /* lpack.c in Sources */,
+				3C96CA46D53E4489A6A7A965 /* lparser.c in Sources */,
+				604EFCBBFA2F443FBFF2F4C6 /* lstate.c in Sources */,
+				E744521365DF460BA1771DB9 /* lstring.c in Sources */,
+				19A172AE449B494CBF501240 /* lstrlib.c in Sources */,
+				C6EB4548D0EC468086E7B6F4 /* ltable.c in Sources */,
+				9A7215A80139480A927274FF /* ltablib.c in Sources */,
+				B239DDCE59014095A52E1D7F /* ltm.c in Sources */,
+				A980DDEAA12D4F3E94FFF945 /* lundump.c in Sources */,
+				FC2220EEC81A4EE3AEB828E8 /* lvm.c in Sources */,
+				85A59D2FF2A24B8E9894E424 /* lzio.c in Sources */,
+				2A7676A468634E6ABB68DB77 /* print.c in Sources */,
+				94291F5D16634A3F898F27D0 /* protoz_bit.c in Sources */,
+				61200E626C0C454DBC6038BC /* summer.cpp in Sources */,
+				D2951A6013684D99AEB05147 /* md5.cpp in Sources */,
+				EFC7723F4CE04651B7F0327C /* serverConfig.cpp in Sources */,
+				C78398AB203F45A088A9AEAC /* tinyxml2.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1D32BBB2DCB543418F25B545 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 83AFAB780BB945E9926ACA88 /* common */;
+			targetProxy = 1C0AC4AB4CB8443A88EDF042 /* PBXContainerItemProxy */;
+		};
+		23133E42E48546B6908076E9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E514611B848A4071863E0A4B /* ALL_BUILD */;
+			targetProxy = CBD3D22261AE4F87892FEC68 /* PBXContainerItemProxy */;
+		};
+		4A6A106385E549859127E935 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 83115B6016EA447D8877E878 /* ZERO_CHECK */;
+			targetProxy = 10539376290C43FC8F3D4B0F /* PBXContainerItemProxy */;
+		};
+		6F65888D586B4620AD0808C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 83AFAB780BB945E9926ACA88 /* common */;
+			targetProxy = 03F0F2587D92423CB9A1244B /* PBXContainerItemProxy */;
+		};
+		ABD4D53D228E48B698ECA27F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9E2D166AD3564A7BB01BA193 /* stressTest */;
+			targetProxy = E9A959CFC5444CBEB67FA52F /* PBXContainerItemProxy */;
+		};
+		F545D5A693C845549BD4DE86 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 83AFAB780BB945E9926ACA88 /* common */;
+			targetProxy = 931E6A4F6425496C8EBCDEF6 /* PBXContainerItemProxy */;
+		};
+		FF22B1C330604C96BDBF08FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4AC74B7483A4169A2ADEBB3 /* logic */;
+			targetProxy = 613E3251A6F04F55904A1814 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		05C8CD6B132B4686B74BFF71 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/bin/stressTest;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib /Users/zhangyawei/Documents/github/breeze/source/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib,
+					"/Users/zhangyawei/Documents/github/breeze/source/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/lib,
+				);
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/Users/zhangyawei/Documents/github/breeze/source/lib/Release/libcommon.a,
+					"-lmysqlclient",
+					"-lzsummerX_select",
+					"-llog4z",
+					"-lpthread",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = stressTest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/stressTest;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		06B5E2EB0F8D4A229636DC58 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/bin/logic;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib /Users/zhangyawei/Documents/github/breeze/source/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib,
+					"/Users/zhangyawei/Documents/github/breeze/source/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/lib,
+				);
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/Users/zhangyawei/Documents/github/breeze/source/lib/Debug/libcommon.a,
+					"-lmysqlclient",
+					"-lzsummerX_select",
+					"-llog4z",
+					"-lpthread",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = logic;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/logic;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		1213CA85877B44F7AF2B0AFA /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/bin/stressTest/MinSizeRel;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib /Users/zhangyawei/Documents/github/breeze/source/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib,
+					"/Users/zhangyawei/Documents/github/breeze/source/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/lib,
+				);
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/Users/zhangyawei/Documents/github/breeze/source/lib/MinSizeRel/libcommon.a,
+					"-lmysqlclient",
+					"-lzsummerX_select",
+					"-llog4z",
+					"-lpthread",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = stressTest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/stressTest;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		292731A11F3B48E783390C04 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/bin/stressTest;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib /Users/zhangyawei/Documents/github/breeze/source/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib,
+					"/Users/zhangyawei/Documents/github/breeze/source/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/lib,
+				);
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/Users/zhangyawei/Documents/github/breeze/source/lib/Debug/libcommon.a,
+					"-lmysqlclient",
+					"-lzsummerX_select",
+					"-llog4z",
+					"-lpthread",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = stressTest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/stressTest;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		2E491E529BD945BA9A198B5F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		380B1CC38EA14D8095EFAD68 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/source/lib/MinSizeRel;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = common;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/common;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		45D016E4638B4F96B0CBD601 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk;
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/build;
+			};
+			name = Release;
+		};
+		5AFB4C33CC244B7A8A410E70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		6E9FE017D6364472A5B6CD3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		722BC57C0FC741B392FC2D43 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		8B3D8D7F4B1749C7954D1437 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/bin/stressTest/RelWithDebInfo;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib /Users/zhangyawei/Documents/github/breeze/source/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib,
+					"/Users/zhangyawei/Documents/github/breeze/source/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/lib,
+				);
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/Users/zhangyawei/Documents/github/breeze/source/lib/RelWithDebInfo/libcommon.a,
+					"-lmysqlclient",
+					"-lzsummerX_select",
+					"-llog4z",
+					"-lpthread",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = stressTest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/stressTest;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		93FD1CBF2E0746D69B3F16BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/bin/logic;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib /Users/zhangyawei/Documents/github/breeze/source/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib,
+					"/Users/zhangyawei/Documents/github/breeze/source/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/lib,
+				);
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/Users/zhangyawei/Documents/github/breeze/source/lib/Release/libcommon.a,
+					"-lmysqlclient",
+					"-lzsummerX_select",
+					"-llog4z",
+					"-lpthread",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = logic;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/logic;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		9615B794C37643E4A0DF1E9B /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		9FF3AF9C70F3465E9184CD44 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/source/lib/RelWithDebInfo;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = common;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/common;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		A2015E3CEFED4D078E3C775C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		A5153F17963C4451B3278185 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		AAECB1F2ED654DAF8F514EA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		AE9CD1C8D7EE487BBEEB1D92 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		BAAB8CE4391C49C8871554F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		C59C7240914342109D407A8D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/source/lib;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = common;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/common;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		C6C53FD5AF504D55844C5111 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		C89563C680EC43E181BCF6CF /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk;
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/build;
+			};
+			name = MinSizeRel;
+		};
+		CF1BCE12F8CF4CC29191863C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/bin/logic/RelWithDebInfo;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib /Users/zhangyawei/Documents/github/breeze/source/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib,
+					"/Users/zhangyawei/Documents/github/breeze/source/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/lib,
+				);
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/Users/zhangyawei/Documents/github/breeze/source/lib/RelWithDebInfo/libcommon.a,
+					"-lmysqlclient",
+					"-lzsummerX_select",
+					"-llog4z",
+					"-lpthread",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = logic;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/logic;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		D36F61B3A3DB4B0C8408333A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/source/lib;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = common;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/common;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		D3D7D830D503440D9E27E816 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk;
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/build;
+			};
+			name = Debug;
+		};
+		EDF2A554BD33456EB47ADAC9 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk;
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/build;
+			};
+			name = RelWithDebInfo;
+		};
+		F25A59A9B1E4406FA6ED9B54 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		FA54ED7554EF46BA9A3A5CFA /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/zhangyawei/Documents/github/breeze/bin/logic/MinSizeRel;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					NDEBUG,
+					_GLIBCXX_USE_NANOSLEEP,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include,
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/include/mysqlclient,
+					"/Users/zhangyawei/Documents/github/breeze/source/../protocol/C++",
+					/Users/zhangyawei/Documents/github/breeze/source/common,
+					/Users/zhangyawei/Documents/github/breeze/source/common/dbhelper,
+					/Users/zhangyawei/Documents/github/breeze/source/common/lua,
+					/Users/zhangyawei/Documents/github/breeze/source/common/tinyxml2,
+					/Users/zhangyawei/Documents/github/breeze/source/common/md5,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib /Users/zhangyawei/Documents/github/breeze/source/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/../depends_mac/lib,
+					"/Users/zhangyawei/Documents/github/breeze/source/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/zhangyawei/Documents/github/breeze/source/lib,
+				);
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-std=c++11",
+					"-DNDEBUG",
+					"-Wall",
+					"-O2",
+					"-fpermissive",
+					"-static",
+					"-Wno-deprecated-declarations",
+					"-Wno-strict-aliasing",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/Users/zhangyawei/Documents/github/breeze/source/lib/MinSizeRel/libcommon.a,
+					"-lmysqlclient",
+					"-lzsummerX_select",
+					"-llog4z",
+					"-lpthread",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = logic;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/logic;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		06665B4444ED4F928AF9F65A /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE9CD1C8D7EE487BBEEB1D92 /* Debug */,
+				A2015E3CEFED4D078E3C775C /* Release */,
+				F25A59A9B1E4406FA6ED9B54 /* MinSizeRel */,
+				A5153F17963C4451B3278185 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		25A6D9D56AE04B998F17EB27 /* Build configuration list for PBXProject "breeze" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3D7D830D503440D9E27E816 /* Debug */,
+				45D016E4638B4F96B0CBD601 /* Release */,
+				C89563C680EC43E181BCF6CF /* MinSizeRel */,
+				EDF2A554BD33456EB47ADAC9 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3826718C931747A2B9532763 /* Build configuration list for PBXNativeTarget "logic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				06B5E2EB0F8D4A229636DC58 /* Debug */,
+				93FD1CBF2E0746D69B3F16BF /* Release */,
+				FA54ED7554EF46BA9A3A5CFA /* MinSizeRel */,
+				CF1BCE12F8CF4CC29191863C /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C677E9C4BE864B778A47FB2E /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BAAB8CE4391C49C8871554F9 /* Debug */,
+				6E9FE017D6364472A5B6CD3E /* Release */,
+				2E491E529BD945BA9A198B5F /* MinSizeRel */,
+				9615B794C37643E4A0DF1E9B /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E0ECF4E424E9499BA3952183 /* Build configuration list for PBXNativeTarget "stressTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				292731A11F3B48E783390C04 /* Debug */,
+				05C8CD6B132B4686B74BFF71 /* Release */,
+				1213CA85877B44F7AF2B0AFA /* MinSizeRel */,
+				8B3D8D7F4B1749C7954D1437 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E1D076C10A794738A8001E2F /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAECB1F2ED654DAF8F514EA3 /* Debug */,
+				5AFB4C33CC244B7A8A410E70 /* Release */,
+				C6C53FD5AF504D55844C5111 /* MinSizeRel */,
+				722BC57C0FC741B392FC2D43 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F6F59CDAF85B4CCEB41D2C6D /* Build configuration list for PBXNativeTarget "common" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D36F61B3A3DB4B0C8408333A /* Debug */,
+				C59C7240914342109D407A8D /* Release */,
+				380B1CC38EA14D8095EFAD68 /* MinSizeRel */,
+				9FF3AF9C70F3465E9184CD44 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9531B48BF8A34580847D1587 /* Project object */;
+}
