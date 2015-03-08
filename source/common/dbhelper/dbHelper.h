@@ -59,11 +59,17 @@ namespace  zsummer
 		class DBRequest
 		{
 		public:
+			DBRequest()
+			{
+			}
 			DBRequest(const std::string & init)
 			{
 				_sql = init;
 			}
-
+			void init(const std::string & init)
+			{
+				_sql = init;
+			}
 
 			inline bool add(const char *  param)
 			{
@@ -160,6 +166,18 @@ namespace  zsummer
 				ss >> ret;
 				return std::move(ret);
 			}
+			template<>
+			inline std::string _fromeString(const std::string& field)
+			{
+				return field;
+			}
+			template<>
+			inline const std::string& _fromeString(const std::string& field)
+			{
+				return field;
+			}
+
+
 			template<class T>
 			inline std::string _toString(const T & t)
 			{

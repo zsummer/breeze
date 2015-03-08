@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50150
 File Encoding         : 65001
 
-Date: 2014-12-21 23:45:46
+Date: 2015-03-09 00:27:21
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,6 +26,7 @@ CREATE TABLE `tb_user` (
   `diamond` int(10) NOT NULL DEFAULT '0',
   `giftDiamond` int(10) NOT NULL DEFAULT '0',
   `historyDiamond` int(10) NOT NULL DEFAULT '0',
+  `bag` blob,
   `joinTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -33,9 +34,6 @@ CREATE TABLE `tb_user` (
 -- ----------------------------
 -- Records of tb_user
 -- ----------------------------
-INSERT INTO tb_user VALUES ('1', '', '0', '0', '0', '0', '0', '2014-12-20 13:22:23');
-INSERT INTO tb_user VALUES ('2', 'wo', '2', '0', '0', '0', '0', '2014-12-21 22:54:32');
-INSERT INTO tb_user VALUES ('3', 'summer41', '100', '0', '0', '0', '0', '2014-12-21 23:42:04');
 
 -- ----------------------------
 -- Procedure structure for `CreateUser`

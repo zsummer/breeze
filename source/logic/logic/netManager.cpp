@@ -180,13 +180,10 @@ void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs)
 	innerInfo->status = InnerUserInfo::IUIT_AUTHING;
 
 	
-
-	std::string auth_sql = "SELECT uid, passwd FROM `tb_auth` where user = '";
-	auth_sql += escapeString(req.user);
-	auth_sql += "'";
-
+	DBRequest dbreq("SELECT uid, passwd FROM `tb_auth` where user = ?");
+	dbreq.add(req.user);
 	auto & db = DBManager::getRef().getAuthDB();
-	DBAsync::getRef().asyncQuery(db, auth_sql, std::bind(&NetManager::db_onAuthSelect, this,
+	DBAsync::getRef().asyncQuery(db, dbreq.genSQL(), std::bind(&NetManager::db_onAuthSelect, this,
 		std::placeholders::_1, sID));
 
 }
@@ -296,10 +293,13 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 		
 		_mapUserInfo.insert(std::make_pair(innerInfo->sesionInfo.uid, innerInfo));
 		innerInfo->status = InnerUserInfo::IUIT_LOGINING;
+
+		//! 
 		auto & db = DBManager::getRef().getInfoDB();
-		std::string selectUserInfo_sql = "select uid, nickname, iconID, `level`, diamond, giftDiamond,historyDiamond, UNIX_TIMESTAMP(joinTime) from tb_user where uid = ";
-		selectUserInfo_sql += toString(innerInfo->sesionInfo.uid);
-		DBAsync::getRef().asyncQuery(db, selectUserInfo_sql, std::bind(&NetManager::db_onUserSelect, this,
+		DBRequest dbreq;
+		dbreq.init("select uid, nickname, iconID, `level`, diamond, giftDiamond,historyDiamond, UNIX_TIMESTAMP(joinTime) from tb_user where uid = ?");
+		dbreq.add(innerInfo->sesionInfo.uid);
+		DBAsync::getRef().asyncQuery(db, dbreq.genSQL(), std::bind(&NetManager::db_onUserSelect, this,
 			std::placeholders::_1, sID, false));
 	}
 }
@@ -405,14 +405,11 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	}
 
 	auto & db = DBManager::getRef().getInfoDB();
-	std::string sql = "call CreateUser(";
-	sql += toString(fouder->second->sesionInfo.uid);
-	sql += ", \"";
-	sql += zsummer::mysql::escapeString(req.nickName);
-	sql += "\", ";
-	sql += toString(req.iconID);
-	sql += ")";
-	DBAsync::getRef().asyncQuery(db, sql, std::bind(&NetManager::db_onUserCreate, this,
+	DBRequest dbreq("call CreateUser(?, ?, ?)");
+	dbreq.add(fouder->second->sesionInfo.uid);
+	dbreq.add(escapeString(req.nickName));
+	dbreq.add(req.iconID);
+	DBAsync::getRef().asyncQuery(db, dbreq.genSQL(), std::bind(&NetManager::db_onUserCreate, this,
 		std::placeholders::_1, sID));
 }
 void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
@@ -480,6 +477,18 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 			innerInfo->sesionInfo.lastLoginTime = time(NULL);
 			userLogin(innerInfo);
 
+			DBRequest dbreq;
+			dbreq.init("update tb_user set bag=? where uid=?");
+			WriteStream wsdb(0);
+			wsdb << ack.info;
+			std::string blob(wsdb.getStreamBody(), wsdb.getStreamBodyLen());
+			dbreq.add(blob);
+			dbreq.add(ack.info.uid);
+			auto & db = DBManager::getRef().getInfoDB();
+			DBAsync::getRef().asyncQuery(db, dbreq.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, false));
+			dbreq.init("select bag from tb_user where uid=?");
+			dbreq.add(ack.info.uid);
+			DBAsync::getRef().asyncQuery(db, dbreq.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, true));
 		}
 		else
 		{
@@ -491,7 +500,53 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 	}
 }
 
-
+void NetManager::db_onTestBlog(DBResultPtr res, bool isRead)
+{
+	LOGD("enter db_onTestBlog. isRead=" << isRead);
+	
+	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
+	{
+		LOGE("db_onTestBlog error.  error msg=" << res->getLastError() << ",  sql=" << res->sqlString());
+	}
+	else if (isRead)
+	{
+		if (res->haveRow())
+		{
+			try
+			{
+				std::string blob;
+				*res >> blob;
+				if (blob.length() > 0)
+				{
+					ReadStream rs(blob.c_str(), blob.length(), false);
+					UserInfo info;
+					rs >> info;
+					int a = 0;
+					a++;
+				}
+			}
+			catch (const std::runtime_error & e)
+			{
+				LOGE("test blog read error. catch:" << e.what());
+			}
+			catch (...)
+			{
+				LOGE("test blog read error. catch:other.");
+			}
+		}
+		else
+		{
+			LOGE("test blog read error");
+		}
+	}
+	else
+	{
+		if (res->getAffectedRows() == 0)
+		{
+			LOGE("test blog write error");
+		}
+	}
+}
 
 void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
 {

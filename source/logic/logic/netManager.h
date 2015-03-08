@@ -60,7 +60,7 @@ public:
 
 	void msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs);
 	void db_onUserCreate(DBResultPtr res, SessionID sID);
-
+	void db_onTestBlog(DBResultPtr res, bool isRead);
 
 
 	void event_onSessionPulse(SessionID sID, unsigned int pulseInterval);

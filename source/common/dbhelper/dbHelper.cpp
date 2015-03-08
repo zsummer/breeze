@@ -26,11 +26,11 @@ const std::string& DBResult::extractOneField()
 {
 	if (_curIter == _result.end())
 	{
-		throw std::string("result have not any row.");
+		throw std::runtime_error("result have not any row.");
 	}
 	if (_fieldCursor >= _curIter->size())
 	{
-		throw std::string("result read field over");
+		throw std::runtime_error("result read field over");
 	}
 	
 	const std::string & field = _curIter->at(_fieldCursor);
@@ -63,15 +63,28 @@ void DBResult::_setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQ
 		if (res)
 		{
 			unsigned int fieldCount = mysql_num_fields(res);
+			MYSQL_FIELD * fieldDesc = mysql_fetch_field(res);
 			MYSQL_ROW row;
 			while ((row = mysql_fetch_row(res)) != NULL)
 			{
 				_result.push_back(std::vector<std::string>());
 				auto & vct = _result.back();
 				vct.reserve(fieldCount);
+
+				unsigned long * fieldLength = mysql_fetch_lengths(res);
 				for (unsigned int i = 0; i < fieldCount; ++i)
 				{
-					vct.push_back(row[i] == nullptr ? "" : row[i]);
+					if (fieldDesc[i].type == MYSQL_TYPE_TINY_BLOB
+						|| fieldDesc[i].type == MYSQL_TYPE_MEDIUM_BLOB
+						|| fieldDesc[i].type == MYSQL_TYPE_LONG_BLOB
+						|| fieldDesc[i].type == MYSQL_TYPE_BLOB)
+					{
+						vct.push_back(std::string(row[i], fieldLength[i]));
+					}
+					else
+					{
+						vct.push_back(row[i] == nullptr ? "" : row[i]);
+					}
 				}
 			}
 			mysql_free_result(res);
