@@ -61,14 +61,17 @@ namespace  zsummer
 		public:
 			DBRequest()
 			{
+				_fmtPos = 0;
 			}
 			DBRequest(const std::string & init)
 			{
 				_sql = init;
+				_fmtPos = 0;
 			}
 			void init(const std::string & init)
 			{
 				_sql = init;
+				_fmtPos = 0;
 			}
 
 			inline bool add(const char *  param)
@@ -92,7 +95,7 @@ namespace  zsummer
 			}
 			inline const std::string & genSQL()
 			{
-				size_t pos = _sql.find('?');
+				size_t pos = _sql.find('?', _fmtPos);
 				if (pos != std::string::npos)
 				{
 					LOGE("DBRequest param is not enough. current sql=" << _sql);
@@ -102,7 +105,7 @@ namespace  zsummer
 		protected:
 			inline bool insertParam(const std::string & param, bool isString)
 			{
-				size_t pos = _sql.find('?');
+				size_t pos = _sql.find('?', _fmtPos);
 				if (pos != std::string::npos)
 				{
 					std::string after = _sql.substr(pos + 1);
@@ -117,6 +120,7 @@ namespace  zsummer
 					{
 						_sql += param;
 					}
+					_fmtPos = _sql.length();
 					_sql += after;
 				}
 				else
@@ -128,6 +132,7 @@ namespace  zsummer
 			}
 		private:
 			std::string _sql;
+			std::string::size_type _fmtPos;
 		};
 		
 		
@@ -279,9 +284,6 @@ namespace  zsummer
 					break;
 				case '"':
 					ret += "\\\"";
-					break;
-				case '\032':
-					ret += "Z";
 					break;
 				default:
 					ret += ch;

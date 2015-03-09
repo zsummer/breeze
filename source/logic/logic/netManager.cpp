@@ -477,10 +477,17 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 			innerInfo->sesionInfo.lastLoginTime = time(NULL);
 			userLogin(innerInfo);
 
+			//blob test
 			DBRequest dbreq;
 			dbreq.init("update tb_user set bag=? where uid=?");
+			std::string apendBin;
+			for (int i = 0; i < 256; i++)
+			{
+				apendBin.append(1, (char)i);
+			}
 			WriteStream wsdb(0);
 			wsdb << ack.info;
+			wsdb << apendBin;
 			std::string blob(wsdb.getStreamBody(), wsdb.getStreamBodyLen());
 			dbreq.add(blob);
 			dbreq.add(ack.info.uid);
@@ -518,9 +525,27 @@ void NetManager::db_onTestBlog(DBResultPtr res, bool isRead)
 				*res >> blob;
 				if (blob.length() > 0)
 				{
-					ReadStream rs(blob.c_str(), blob.length(), false);
+					ReadStream rs(blob.c_str(), (zsummer::proto4z::Integer)blob.length(), false);
 					UserInfo info;
 					rs >> info;
+					std::string appendBin;
+					rs >> appendBin;
+					if (appendBin.length() != 256)
+					{
+						LOGE("test blog read error. appendBin length not is 256");
+					}
+					else
+					{
+						for (unsigned int i = 0; i < 256; i++)
+						{
+							if ((unsigned int)(unsigned char)appendBin.at(i) != i )
+							{
+								LOGE("test blog read error. appendBin have error. the character is " << i);
+								break;
+							}
+						}		
+					}
+					
 					int a = 0;
 					a++;
 				}
