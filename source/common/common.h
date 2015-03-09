@@ -39,10 +39,6 @@
 
 
 
-
-
-
-
 template<class T>
 std::string toString(const T &t)
 {
@@ -51,7 +47,10 @@ std::string toString(const T &t)
 	return os.str();
 }
 
-
+inline unsigned  int getNowTick()
+{
+	return (unsigned int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
 
 
 

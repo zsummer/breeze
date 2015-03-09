@@ -18,7 +18,7 @@
   <proto from="LS" to="C" name="LoginAck" desc= "登录结果" >
   	<member name="retCode" type="i32"   desc=""/>
   	<member name="needCreateUser" type="i32"   desc=""/>
-    <member name="info" type="UserInfo"   desc="认证成功但昵称为空 则说明需要创建用户信息"/>
+    <member name="info" type="UserInfo"   desc="用户信息"/>
   </proto>
 
 
@@ -35,12 +35,9 @@
   </proto>
 
 
-   <!-- 客户端脉冲  -->
-  <proto from="C" to="AS" name="ClientPulse" desc= "客户端存活脉冲">
-  </proto>
 
-  <!-- 服务端脉冲 -->
-  <proto from="AS" to="C" name="ServerPulse" desc= "服务端存活脉冲">
+  <!-- 服务器脉冲, 客户端需要原样返回 -->
+  <proto from="X" to="X" name="ServerPulse" desc= "服务端存活脉冲">
     <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
     <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
   </proto>

@@ -14,7 +14,7 @@ Protoz.LS2C_LoginAck.__getName = "LS2C_LoginAck"
 Protoz.LS2C_LoginAck.__getTag = "111" 
 Protoz.LS2C_LoginAck[1] = {name="retCode", type="i32" }  
 Protoz.LS2C_LoginAck[2] = {name="needCreateUser", type="i32" }  
-Protoz.LS2C_LoginAck[3] = {name="info", type="UserInfo" } --认证成功但昵称为空 则说明需要创建用户信息 
+Protoz.LS2C_LoginAck[3] = {name="info", type="UserInfo" } --用户信息 
  
 Protoz.register(108,"C2LS_CreateUserReq") 
 Protoz.C2LS_CreateUserReq = {} --填写用户信息 
@@ -33,16 +33,10 @@ Protoz.LS2C_CreateUserAck[1] = {name="retCode", type="ui16" }
 Protoz.LS2C_CreateUserAck[2] = {name="needCreateUser", type="i32" } --nickname冲突需要重新创建 
 Protoz.LS2C_CreateUserAck[3] = {name="info", type="UserInfo" }  
  
-Protoz.register(106,"C2AS_ClientPulse") 
-Protoz.C2AS_ClientPulse = {} --客户端存活脉冲 
-Protoz.C2AS_ClientPulse.__getID = 106 
-Protoz.C2AS_ClientPulse.__getName = "C2AS_ClientPulse" 
-Protoz.C2AS_ClientPulse.__getTag = "" 
- 
-Protoz.register(107,"AS2C_ServerPulse") 
-Protoz.AS2C_ServerPulse = {} --服务端存活脉冲 
-Protoz.AS2C_ServerPulse.__getID = 107 
-Protoz.AS2C_ServerPulse.__getName = "AS2C_ServerPulse" 
-Protoz.AS2C_ServerPulse.__getTag = "11" 
-Protoz.AS2C_ServerPulse[1] = {name="timeStamp", type="ui32" } --服务器当前UTC时间戳 
-Protoz.AS2C_ServerPulse[2] = {name="timeTick", type="ui32" } --服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+Protoz.register(111,"X2X_ServerPulse") 
+Protoz.X2X_ServerPulse = {} --服务端存活脉冲 
+Protoz.X2X_ServerPulse.__getID = 111 
+Protoz.X2X_ServerPulse.__getName = "X2X_ServerPulse" 
+Protoz.X2X_ServerPulse.__getTag = "11" 
+Protoz.X2X_ServerPulse[1] = {name="timeStamp", type="ui32" } --服务器当前UTC时间戳 
+Protoz.X2X_ServerPulse[2] = {name="timeTick", type="ui32" } --服务器当前tick时间戳 毫秒, 服务启动时刻为0 

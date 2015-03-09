@@ -63,8 +63,8 @@ public:
 	void db_onTestBlog(DBResultPtr res, bool isRead);
 
 
-	void event_onSessionPulse(SessionID sID, unsigned int pulseInterval);
-	void msg_onClientPulse(SessionID sID, ProtoID pID, ReadStream & rs);
+	void event_onPulse(SessionID sID, unsigned int pulseInterval);
+	void msg_onServerPulse(SessionID sID, ProtoID pID, ReadStream & rs);
 
 private:
 	//

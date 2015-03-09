@@ -50,7 +50,7 @@ namespace Proto4z
 		static public string getProtoName() { return "LS2C_LoginAck"; } 
 		public Proto4z.i32 retCode;  
 		public Proto4z.i32 needCreateUser;  
-		public Proto4z.UserInfo info; //认证成功但昵称为空 则说明需要创建用户信息 
+		public Proto4z.UserInfo info; //用户信息 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
@@ -184,38 +184,10 @@ namespace Proto4z
 		} 
 	} 
  
-	class C2AS_ClientPulse: Proto4z.IProtoObject //客户端存活脉冲 
+	class X2X_ServerPulse: Proto4z.IProtoObject //服务端存活脉冲 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(106); } 
-		static public string getProtoName() { return "C2AS_ClientPulse"; } 
-		public System.Collections.Generic.List<byte> __encode() 
-		{ 
-			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 0; 
-			 
-			var data = new System.Collections.Generic.List<byte>(); 
-			sttLen = (System.UInt32)data.Count + 8; 
-			var ret = new System.Collections.Generic.List<byte>(); 
-			ret.AddRange(sttLen.__encode()); 
-			ret.AddRange(tag.__encode()); 
-			ret.AddRange(data); 
-			return ret; 
-		} 
-		public int __decode(byte[] binData, ref int pos) 
-		{ 
-			Proto4z.ui32 offset = 0; 
-			Proto4z.ui64 tag = 0; 
-			offset.__decode(binData, ref pos); 
-			offset.val += (System.UInt32)pos; 
-			tag.__decode(binData, ref pos); 
-			return (int)offset.val; 
-		} 
-	} 
- 
-	class AS2C_ServerPulse: Proto4z.IProtoObject //服务端存活脉冲 
-	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(107); } 
-		static public string getProtoName() { return "AS2C_ServerPulse"; } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(111); } 
+		static public string getProtoName() { return "X2X_ServerPulse"; } 
 		public Proto4z.ui32 timeStamp; //服务器当前UTC时间戳 
 		public Proto4z.ui32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
 		public System.Collections.Generic.List<byte> __encode() 

@@ -96,6 +96,7 @@ struct SessionInfo
 	ui64 loginTime = time(NULL);
 	time_t lastLoginTime = time(NULL);
 	time_t lastActiveTime = time(NULL);
+	unsigned int lastDelayTick = 0;
 };
 
 
@@ -120,7 +121,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	stm << "user=" << info.user << ", passwd=" << info.passwd
 		<< ", uid=" << info.uid << ", sID=" << info.sID
 		<< ", loginTime=" << info.loginTime
-		<< ",lastLoginTime=" << info.lastActiveTime << ", lastActiveTime=" << info.lastActiveTime;
+		<< ",lastLoginTime=" << info.lastActiveTime << ", lastActiveTime=" << info.lastActiveTime
+		<< ", lastDelayTick=" << info.lastDelayTick;
 	return stm;
 }
 

@@ -41,8 +41,10 @@ function messageHandler:on_LS2C_CreateUserAck(sID, msg)
 	Protoz.dump(msg.info, "user info:", 5)
 end
 
-function messageHandler:on_AS2C_ServerPulse(sID, msg)
-	summer.sendContent(sID, Protoz.C2AS_ClientPulse.__getID, "")
+function messageHandler:on_X2X_ServerPulse(sID, msg)
+	Protoz.dump(msg, "on_X2X_ServerPulse:", 5)
+	local data = Protoz.encode({timeStamp=msg.timeStamp, timeTick=msg.timeTick}, "X2X_ServerPulse")
+	summer.sendContent(sID, Protoz.X2X_ServerPulse.__getID, data)
 end
 
 

@@ -18,9 +18,9 @@ NetManager::NetManager()
 	MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&NetManager::event_onSessionDisconnect, this, std::placeholders::_1));
 
 	//
-	MessageDispatcher::getRef().registerOnSessionPulse(std::bind(&NetManager::event_onSessionPulse, this, std::placeholders::_1, std::placeholders::_2));
-	MessageDispatcher::getRef().registerSessionMessage(ID_C2AS_ClientPulse,
-		std::bind(&NetManager::msg_onClientPulse, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerOnSessionPulse(std::bind(&NetManager::event_onPulse, this, std::placeholders::_1, std::placeholders::_2));
+	MessageDispatcher::getRef().registerSessionMessage(ID_X2X_ServerPulse,
+		std::bind(&NetManager::msg_onServerPulse, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
 bool NetManager::start()
@@ -573,7 +573,7 @@ void NetManager::db_onTestBlog(DBResultPtr res, bool isRead)
 	}
 }
 
-void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
+void NetManager::event_onPulse(SessionID sID, unsigned int pulseInterval)
 {
 	if (isSessionID(sID))
 	{
@@ -590,23 +590,26 @@ void NetManager::event_onSessionPulse(SessionID sID, unsigned int pulseInterval)
 			LOGW("kick session because session heartbeat timeout.  sID=" << sID << ", lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);
 			return;
 		}
-		WriteStream ws(ID_AS2C_ServerPulse);
-		AS2C_ServerPulse sp;
+		WriteStream ws(ID_X2X_ServerPulse);
+		X2X_ServerPulse sp;
 		sp.timeStamp = (ui32)time(NULL);
-		sp.timeTick = 0;
+		sp.timeTick = getNowTick();
 		ws << sp;
 		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	}
 }
 
 
-void NetManager::msg_onClientPulse(SessionID sID, ProtoID pID, ReadStream & rs)
+void NetManager::msg_onServerPulse(SessionID sID, ProtoID pID, ReadStream & rs)
 {
 	auto founder = _mapUserSession.find(sID);
 	if (founder != _mapUserSession.end())
 	{
+		X2X_ServerPulse cp;
+		rs >> cp;
 		founder->second->sesionInfo.lastActiveTime = time(NULL);
-		LOGD("msg_onClientPulse lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);
+		founder->second->sesionInfo.lastDelayTick = (getNowTick() - cp.timeTick + founder->second->sesionInfo.lastDelayTick) / 2; //延迟检测 阻尼衰减
+		LOGD("msg_onServerPulse lastActiveTime=" << founder->second->sesionInfo.lastActiveTime <<", lastDelayTick=" << founder->second->sesionInfo.lastDelayTick << "ms");
 		return;
 	}
 }

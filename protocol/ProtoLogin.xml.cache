@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<md5>b1eaa4ce38ee1bb60de9d2328c50d7f0</md5>
+<md5>3ade5ad811c336e86309688e92c10a1b</md5>
 
 <CacheNo>
 	<cache key = "ID_AS2C_ServerPulse" No = "107" /> 
@@ -13,4 +13,6 @@
 	<cache key = "ID_LS2C_CreateUserAck" No = "109" /> 
 	<cache key = "ID_LS2C_CreateUserInfoAck" No = "101" /> 
 	<cache key = "ID_LS2C_LoginAck" No = "103" /> 
+	<cache key = "ID_X2X_ClientPulse" No = "110" /> 
+	<cache key = "ID_X2X_ServerPulse" No = "111" /> 
 </CacheNo>
