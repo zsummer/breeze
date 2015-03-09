@@ -49,16 +49,14 @@ namespace Proto4z
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(103); } 
 		static public string getProtoName() { return "LS2C_LoginAck"; } 
 		public Proto4z.i32 retCode;  
-		public Proto4z.i32 needCreateUser;  
 		public Proto4z.UserInfo info; //用户信息 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 7; 
+			Proto4z.ui64 tag = 3; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(retCode.__encode()); 
-			data.AddRange(needCreateUser.__encode()); 
 			data.AddRange(info.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
 			var ret = new System.Collections.Generic.List<byte>(); 
@@ -79,13 +77,8 @@ namespace Proto4z
 			{ 
 				retCode.__decode(binData, ref pos); 
 			} 
-			needCreateUser = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
-			{ 
-				needCreateUser.__decode(binData, ref pos); 
-			} 
 			info = new Proto4z.UserInfo(); 
-			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
 				info.__decode(binData, ref pos); 
 			} 
@@ -140,16 +133,14 @@ namespace Proto4z
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(109); } 
 		static public string getProtoName() { return "LS2C_CreateUserAck"; } 
 		public Proto4z.ui16 retCode;  
-		public Proto4z.i32 needCreateUser; //nickname冲突需要重新创建 
 		public Proto4z.UserInfo info;  
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 7; 
+			Proto4z.ui64 tag = 3; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(retCode.__encode()); 
-			data.AddRange(needCreateUser.__encode()); 
 			data.AddRange(info.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
 			var ret = new System.Collections.Generic.List<byte>(); 
@@ -170,13 +161,8 @@ namespace Proto4z
 			{ 
 				retCode.__decode(binData, ref pos); 
 			} 
-			needCreateUser = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
-			{ 
-				needCreateUser.__decode(binData, ref pos); 
-			} 
 			info = new Proto4z.UserInfo(); 
-			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
 				info.__decode(binData, ref pos); 
 			} 

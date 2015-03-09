@@ -17,11 +17,11 @@ function messageHandler:onMessage(sID, pID, binData)
 end
 
 function messageHandler:on_LS2C_LoginAck(sID, msg)
-	if msg.retCode ~= Protoz.BEC_SUCCESS then
+	if msg.retCode ~= Protoz.BEC_SUCCESS and msg.retCode ~= Protoz.BEC_AUTH_ACCOUNT_INCORRECT then
 			loge("LS2C_LoginAck retcode ~= BEC_SUCCESS. ret=" .. msg.retCode)
 			return nil
 	end
-	if msg.needCreateUser > 0 then
+	if msg.retCode == Protoz.BEC_AUTH_ACCOUNT_INCORRECT then
 		local nickname = string.format("summer%04d", sID%1000)
 		local data = Protoz.encode({nickName=nickname, iconID=100}, "C2LS_CreateUserReq")
 		summer.sendContent(sID, Protoz.C2LS_CreateUserReq.__getID, data)
@@ -33,8 +33,8 @@ end
 
 
 function messageHandler:on_LS2C_CreateUserAck(sID, msg)
-	if msg.retCode ~= Protoz.BEC_SUCCESS or msg.needCreateUser > 0 then
-		loge("create user error. ret=" .. msg.retCode .. ", need change name = " .. msg.needCreateUser)
+	if msg.retCode ~= Protoz.BEC_SUCCESS and msg.retCode ~= Protoz.BEC_AUTH_ACCOUNT_INCORRECT  then
+		loge("create user error. ret=" .. msg.retCode)
 		return nil
 	end
 	logi("create user success.")

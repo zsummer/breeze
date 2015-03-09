@@ -11,10 +11,9 @@ Protoz.register(103,"LS2C_LoginAck")
 Protoz.LS2C_LoginAck = {} --登录结果 
 Protoz.LS2C_LoginAck.__getID = 103 
 Protoz.LS2C_LoginAck.__getName = "LS2C_LoginAck" 
-Protoz.LS2C_LoginAck.__getTag = "111" 
+Protoz.LS2C_LoginAck.__getTag = "11" 
 Protoz.LS2C_LoginAck[1] = {name="retCode", type="i32" }  
-Protoz.LS2C_LoginAck[2] = {name="needCreateUser", type="i32" }  
-Protoz.LS2C_LoginAck[3] = {name="info", type="UserInfo" } --用户信息 
+Protoz.LS2C_LoginAck[2] = {name="info", type="UserInfo" } --用户信息 
  
 Protoz.register(108,"C2LS_CreateUserReq") 
 Protoz.C2LS_CreateUserReq = {} --填写用户信息 
@@ -28,10 +27,9 @@ Protoz.register(109,"LS2C_CreateUserAck")
 Protoz.LS2C_CreateUserAck = {} --返回 
 Protoz.LS2C_CreateUserAck.__getID = 109 
 Protoz.LS2C_CreateUserAck.__getName = "LS2C_CreateUserAck" 
-Protoz.LS2C_CreateUserAck.__getTag = "111" 
+Protoz.LS2C_CreateUserAck.__getTag = "11" 
 Protoz.LS2C_CreateUserAck[1] = {name="retCode", type="ui16" }  
-Protoz.LS2C_CreateUserAck[2] = {name="needCreateUser", type="i32" } --nickname冲突需要重新创建 
-Protoz.LS2C_CreateUserAck[3] = {name="info", type="UserInfo" }  
+Protoz.LS2C_CreateUserAck[2] = {name="info", type="UserInfo" }  
  
 Protoz.register(111,"X2X_ServerPulse") 
 Protoz.X2X_ServerPulse = {} --服务端存活脉冲 

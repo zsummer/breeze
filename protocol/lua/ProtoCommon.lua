@@ -8,9 +8,10 @@ Protoz.BEC_SYSTEM_ERROR = 6--系统错误
 Protoz.BEC_INVALIDE_USERID = 50--用户ID无效 
 Protoz.BEC_AUTH_USER_NOT_EXIST = 60--认证错误:用户不存在 
 Protoz.BEC_AUTH_PASSWD_INCORRECT = 61--认证错误:密码错误 
-Protoz.BEC_AUTH_ING = 62--认证错误:正在认证中... 
-Protoz.BEC_AUTH_AREADY_AUTH = 63--认证错误:已认证 
-Protoz.BEC_AUTH_LIMITE_COUNT = 64--认证错误:认证次数超过限制 
+Protoz.BEC_AUTH_ACCOUNT_INCORRECT = 62--认证错误:角色名冲突(创建角色) 
+Protoz.BEC_AUTH_ING = 63--认证错误:正在认证中... 
+Protoz.BEC_AUTH_AREADY_AUTH = 64--认证错误:已认证 
+Protoz.BEC_AUTH_LIMITE_COUNT = 65--认证错误:认证次数超过限制 
  
 Protoz.UserInfo = {} --用户信息 
 Protoz.UserInfo.__getName = "UserInfo" 

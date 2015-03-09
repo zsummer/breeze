@@ -17,7 +17,6 @@
 
   <proto from="LS" to="C" name="LoginAck" desc= "登录结果" >
   	<member name="retCode" type="i32"   desc=""/>
-  	<member name="needCreateUser" type="i32"   desc=""/>
     <member name="info" type="UserInfo"   desc="用户信息"/>
   </proto>
 
@@ -30,7 +29,6 @@
 
   <proto from="LS" to="C" name="CreateUserAck" desc= "返回" >
   	<member name="retCode" type="ui16"   desc=""/>
-  	<member name="needCreateUser" type="i32"   desc="nickname冲突需要重新创建"/>
     <member name="info" type="UserInfo"   desc=""/>
   </proto>
 

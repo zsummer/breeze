@@ -10,21 +10,27 @@
 <Proto>
 
   <!-- 这里是配置统一的错误代码 -->
-  <const name="BEC_SUCCESS" value="0" type="ui16"  desc="成功"/>
-  <const name="BEC_UNKOWN_ERROR" value="1"  type="ui16" desc="未知错误"/>
-  <const name="BEC_INNER_ERROR"  value="2" type="ui16" desc="内部错误"/>
-  <const name="BEC_DB_ERROR"  value="3" type="ui16" desc="数据库错误"/>
-  <const name="BEC_PARAM_DENIED"  value="4" type="ui16" desc="非法参数"/>
-  <const name="BEC_PERMISSION_DENIED"  value="5" type="ui16" desc="权限非法"/>
-  <const name="BEC_SYSTEM_ERROR"  value="6" type="ui16" desc="系统错误"/>
+  <enum type="ui16" >
+ 	<member name="BEC_SUCCESS" value="0"   desc="成功"/>
+	<member name="BEC_UNKOWN_ERROR"   desc="未知错误"/>
+	<member name="BEC_INNER_ERROR"  desc="内部错误"/>
+	<member name="BEC_DB_ERROR"  desc="数据库错误"/>
+	<member name="BEC_PARAM_DENIED"  desc="非法参数"/>
+	<member name="BEC_PERMISSION_DENIED"  desc="权限非法"/>
+	<member name="BEC_SYSTEM_ERROR"  desc="系统错误"/>
 
-  <const name="BEC_INVALIDE_USERID"  value="50" type="ui16" desc="用户ID无效"/>
+	<member name="BEC_INVALIDE_USERID"  value="50"  desc="用户ID无效"/>
 
-  <const name="BEC_AUTH_USER_NOT_EXIST" value="60"  type="ui16" desc="认证错误:用户不存在"/>
-  <const name="BEC_AUTH_PASSWD_INCORRECT"  value="61" type="ui16" desc="认证错误:密码错误"/>
-  <const name="BEC_AUTH_ING"  value="62" type="ui16" desc="认证错误:正在认证中..."/>
-  <const name="BEC_AUTH_AREADY_AUTH"  value="63" type="ui16" desc="认证错误:已认证"/>
-  <const name="BEC_AUTH_LIMITE_COUNT"  value="64" type="ui16" desc="认证错误:认证次数超过限制"/>
+	<member name="BEC_AUTH_USER_NOT_EXIST" value="60"   desc="认证错误:用户不存在"/>
+	<member name="BEC_AUTH_PASSWD_INCORRECT"    desc="认证错误:密码错误"/>
+	<member name="BEC_AUTH_ACCOUNT_INCORRECT"  desc="认证错误:角色名冲突(创建角色)"/>
+	<member name="BEC_AUTH_ING"         desc="认证错误:正在认证中..."/>
+	<member name="BEC_AUTH_AREADY_AUTH"   desc="认证错误:已认证"/>
+	<member name="BEC_AUTH_LIMITE_COUNT"  desc="认证错误:认证次数超过限制"/>
+	
+  </enum>
+
+
 
 
   <!-- 用户信息 -->

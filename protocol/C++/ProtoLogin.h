@@ -46,24 +46,21 @@ const unsigned short ID_LS2C_LoginAck = 103; //登录结果
 struct LS2C_LoginAck //登录结果 
 { 
 	unsigned int retCode;  
-	unsigned int needCreateUser;  
 	UserInfo info; //用户信息 
 	LS2C_LoginAck() 
 	{ 
 		retCode = 0; 
-		needCreateUser = 0; 
 	} 
 	inline unsigned short GetProtoID() { return 103;} 
 	inline std::string GetProtoName() { return "ID_LS2C_LoginAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LS2C_LoginAck & data) 
 { 
-	unsigned long long tag = 7ULL; 
+	unsigned long long tag = 3ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
 	ws << data.retCode; 
-	ws << data.needCreateUser; 
 	ws << data.info; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
@@ -80,10 +77,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 		rs >> data.retCode;  
 	} 
 	if ( (1ULL << 1) & tag) 
-	{ 
-		rs >> data.needCreateUser;  
-	} 
-	if ( (1ULL << 2) & tag) 
 	{ 
 		rs >> data.info;  
 	} 
@@ -139,24 +132,21 @@ const unsigned short ID_LS2C_CreateUserAck = 109; //返回
 struct LS2C_CreateUserAck //返回 
 { 
 	unsigned short retCode;  
-	unsigned int needCreateUser; //nickname冲突需要重新创建 
 	UserInfo info;  
 	LS2C_CreateUserAck() 
 	{ 
 		retCode = 0; 
-		needCreateUser = 0; 
 	} 
 	inline unsigned short GetProtoID() { return 109;} 
 	inline std::string GetProtoName() { return "ID_LS2C_CreateUserAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LS2C_CreateUserAck & data) 
 { 
-	unsigned long long tag = 7ULL; 
+	unsigned long long tag = 3ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
 	ws << data.retCode; 
-	ws << data.needCreateUser; 
 	ws << data.info; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
@@ -173,10 +163,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 		rs >> data.retCode;  
 	} 
 	if ( (1ULL << 1) & tag) 
-	{ 
-		rs >> data.needCreateUser;  
-	} 
-	if ( (1ULL << 2) & tag) 
 	{ 
 		rs >> data.info;  
 	} 

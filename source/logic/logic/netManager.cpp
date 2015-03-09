@@ -278,7 +278,6 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 				fder->second->sesionInfo = innerInfo->sesionInfo;
 				innerInfo = fder->second;
 				innerInfo->sesionInfo.lastLoginTime = time(NULL);
-				ack.needCreateUser = false;
 				ack.info = innerInfo->userInfo;
 				WriteStream ws(ID_LS2C_LoginAck);
 				ws << ack;
@@ -309,7 +308,6 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 	LOGD("enter db_onUserSelect. sID=" << sID);
 	LS2C_LoginAck ack;
 	ack.retCode = BEC_DB_ERROR;
-	ack.needCreateUser = false;
 
 	auto founder = _mapUserSession.find(sID);
 	if (founder == _mapUserSession.end())
@@ -345,7 +343,6 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 				*res >> innerInfo->userInfo.joinTime;
 				ack.info = innerInfo->userInfo;
 				ack.retCode = BEC_SUCCESS;
-				ack.needCreateUser = false;
 				break;
 			}
 		}
@@ -356,11 +353,10 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 	}
 	else
 	{
-		ack.retCode = BEC_SUCCESS;
-		ack.needCreateUser = true;
+		ack.retCode = BEC_AUTH_ACCOUNT_INCORRECT;
 	}
 
-	if (ack.retCode != BEC_SUCCESS)
+	if (ack.retCode != BEC_SUCCESS && ack.retCode != BEC_AUTH_ACCOUNT_INCORRECT)
 	{
 		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
 		WriteStream ws(ID_LS2C_LoginAck);
@@ -382,7 +378,7 @@ void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUs
 			ack.info = innerInfo->userInfo;
 			ws << ack;
 			SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-			if (!ack.needCreateUser)
+			if (ack.retCode != BEC_AUTH_ACCOUNT_INCORRECT)
 			{
 				innerInfo->status = InnerUserInfo::IUIT_LOGINED;
 				innerInfo->sesionInfo.lastLoginTime = time(NULL);
@@ -425,7 +421,7 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 	
 	LS2C_CreateUserAck ack;
 	ack.retCode = BEC_DB_ERROR;
-	ack.needCreateUser = false;
+
 
 	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 	{
@@ -447,7 +443,6 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 				*res >> innerInfo->userInfo.joinTime;
 				ack.info = innerInfo->userInfo;
 				ack.retCode = BEC_SUCCESS;
-				ack.needCreateUser = false;
 				break;
 			}
 		}
@@ -458,17 +453,16 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 	}
 	else
 	{
-		ack.retCode = BEC_SUCCESS;
-		ack.needCreateUser = true;
+		ack.retCode = BEC_AUTH_ACCOUNT_INCORRECT;
 	}
 
-	if (ack.retCode != BEC_SUCCESS)
+	if (ack.retCode != BEC_SUCCESS && ack.retCode != BEC_AUTH_ACCOUNT_INCORRECT)
 	{
 		SessionManager::getRef().kickSession(sID);
 	}
 	else
 	{
-		if (!ack.needCreateUser)
+		if (ack.retCode == BEC_SUCCESS)
 		{
 			ack.info = innerInfo->userInfo;
 			WriteStream ws(ID_LS2C_CreateUserAck);
