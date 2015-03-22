@@ -92,6 +92,15 @@
       <Filter>md5</Filter>
     </ClInclude>
     <ClInclude Include="messageHandler.h" />
+    <ClInclude Include="lua\fpconv.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lua_cjson.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\strbuf.h">
+      <Filter>lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbhelper\dbHelper.cpp">
@@ -202,6 +211,15 @@
       <Filter>md5</Filter>
     </ClCompile>
     <ClCompile Include="lua\protoz_bit.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\fpconv.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\lua_cjson.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="lua\strbuf.c">
       <Filter>lua</Filter>
     </ClCompile>
   </ItemGroup>

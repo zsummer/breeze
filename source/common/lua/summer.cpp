@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2014 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2015 YaweiZhang <yawei_zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -84,6 +84,24 @@ static int loga(lua_State * L)
 	const char * log = luaL_checkstring(L, 1);
 	LOGA("from lua: " << log);
 	return 0;
+}
+
+static int pcall_error(lua_State* L)
+{
+	lua_getglobal(L, "debug");
+	if (!lua_istable(L, -1)) {
+		lua_pop(L, 1);
+		return 1;
+	}
+	lua_getfield(L, -1, "traceback");
+	if (!lua_isfunction(L, -1)) {
+		lua_pop(L, 2);
+		return 1;
+	}
+	lua_pushvalue(L, 1);
+	lua_pushinteger(L, 2);
+	lua_call(L, 2, 1);
+	return 1;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -251,6 +269,7 @@ void _onConnecterCallback(lua_State * L, SessionID sID)
 	}
 
 	int index = lua_gettop(L);
+	lua_pushcfunction(L, pcall_error);
 	_checkCallbackTable(L, _staticConnect);
 	if (lua_isnil(L, -1))
 	{
@@ -258,7 +277,7 @@ void _onConnecterCallback(lua_State * L, SessionID sID)
 		return;
 	}
 	lua_pushnumber(L, sID);
-	int status = lua_pcall(L, 1, 0, 0);
+	int status = lua_pcall(L, 1, 0, index+1);
 	if (status && !lua_isnil(L, -1))
 	{
 		const char *msg = lua_tostring(L, -1);
@@ -294,7 +313,7 @@ static int registerConnect(lua_State * L)
 }
 
 
-void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStream & rs)
+static void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStream & rs)
 {
 	if (!isConnectID(sID))
 	{
@@ -308,6 +327,7 @@ void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStream & 
 	}
 
 	int index = lua_gettop(L);
+	lua_pushcfunction(L, pcall_error);
 	_checkCallbackTable(L, _staticMessage);
 	if (lua_isnil(L, -1))
 	{
@@ -318,7 +338,7 @@ void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStream & 
 	lua_pushinteger(L, sID);
 	lua_pushinteger(L, pID);
 	lua_pushlstring(L, rs.getStreamBody(), rs.getStreamBodyLen());
-	int status = lua_pcall(L, 3, 0, 0);
+	int status = lua_pcall(L, 3, 0, index+1);
 	if (status && !lua_isnil(L, -1))
 	{
 		const char *msg = lua_tostring(L, -1);
@@ -355,7 +375,7 @@ static int registerMessage(lua_State * L)
 
 
 
-void _onDisconnectCallback(lua_State * L, SessionID sID)
+static void _onDisconnectCallback(lua_State * L, SessionID sID)
 {
 	if (!isConnectID(sID))
 	{
@@ -369,16 +389,15 @@ void _onDisconnectCallback(lua_State * L, SessionID sID)
 	}
 
 	int index = lua_gettop(L);
+	lua_pushcfunction(L, pcall_error);
 	_checkCallbackTable(L, _staticDisconnect);
 	if (lua_isnil(L, -1))
 	{
 		lua_settop(L, index);
 		return;
 	}
-	index = lua_gettop(L);
 	lua_pushinteger(L, sID);
-	index = lua_gettop(L);
-	int status = lua_pcall(L, 1, 0, 0);
+	int status = lua_pcall(L, 1, 0, index+1);
 	if (status && !lua_isnil(L, -1))
 	{
 		const char *msg = lua_tostring(L, -1);

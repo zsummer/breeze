@@ -354,11 +354,15 @@ inline ReadStream & operator >> (ReadStream & rs, std::vector<T, _Alloc> & vct)
 {
 	Integer totalCount = 0;
 	rs >> totalCount;
-	for (Integer i = 0; i < totalCount; ++i)
+	if (totalCount > 0)
 	{
-		T t;
-		rs >> t;
-		vct.push_back(t);
+		vct.reserve(totalCount);
+		for (Integer i = 0; i < totalCount; ++i)
+		{
+			T t;
+			rs >> t;
+			vct.push_back(t);
+		}
 	}
 	return rs;
 }

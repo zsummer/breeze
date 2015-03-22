@@ -27,6 +27,7 @@ extern "C"
 #include "lua/lualib.h"
 #include "lua/lpack.h"
 int luaopen_protoz_bit(lua_State *L);
+int luaopen_cjson(lua_State *l);
 }
 
 
@@ -119,7 +120,7 @@ int main(int argc, char* argv[])
 		luaopen_summer(L);
 		luaopen_pack(L);
 		luaopen_protoz_bit(L);
-
+		luaopen_cjson(L);
 		lua_gc(L, LUA_GCRESTART, 0);
 		status = luaL_dofile(L, "./main.lua");
 

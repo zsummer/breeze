@@ -39,6 +39,10 @@ for i=1, 3 do
 	summer.logi("new connect id=" .. id)
 end
 
+
+
+--local jsonData = cjson.decode("{\"Himi\":\"himigame.com\"}")
+--Protoz.dump(jsonData)
 --start summer event loop
 while 1 do
 	summer.runOnce()
