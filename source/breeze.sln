@@ -5,15 +5,12 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "common\common.vcxproj", "{AE557081-EA4D-49A7-A629-49EA151806DF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stressTest", "stressTest\stressTest.vcxproj", "{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}"
-	ProjectSection(ProjectDependencies) = postProject
-		{AE557081-EA4D-49A7-A629-49EA151806DF} = {AE557081-EA4D-49A7-A629-49EA151806DF}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "logic", "logic\logic.vcxproj", "{73328CCC-F36D-40C2-BE36-E03797191DE9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AE557081-EA4D-49A7-A629-49EA151806DF} = {AE557081-EA4D-49A7-A629-49EA151806DF}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress", "stress\StressTest.vcxproj", "{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +22,14 @@ Global
 		{AE557081-EA4D-49A7-A629-49EA151806DF}.Debug|x64.Build.0 = Debug|x64
 		{AE557081-EA4D-49A7-A629-49EA151806DF}.Release|x64.ActiveCfg = Release|x64
 		{AE557081-EA4D-49A7-A629-49EA151806DF}.Release|x64.Build.0 = Release|x64
-		{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}.Debug|x64.ActiveCfg = Debug|x64
-		{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}.Debug|x64.Build.0 = Debug|x64
-		{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}.Release|x64.ActiveCfg = Release|x64
-		{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}.Release|x64.Build.0 = Release|x64
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Debug|x64.ActiveCfg = Debug|x64
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Debug|x64.Build.0 = Debug|x64
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Release|x64.ActiveCfg = Release|x64
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Release|x64.Build.0 = Release|x64
+		{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}.Debug|x64.ActiveCfg = Debug|x64
+		{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}.Debug|x64.Build.0 = Debug|x64
+		{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}.Release|x64.ActiveCfg = Release|x64
+		{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

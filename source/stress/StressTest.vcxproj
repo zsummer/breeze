@@ -14,7 +14,7 @@
     <ProjectGuid>{EA950C2B-48CB-4FEC-81E8-4CED27BAB732}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>server</RootNamespace>
-    <ProjectName>stressTest</ProjectName>
+    <ProjectName>stress</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -91,7 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="stressMain.cpp" />
+    <ClCompile Include="stress.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

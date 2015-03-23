@@ -33,5 +33,5 @@ set(CMAKE_CXX_FLAGS -std=c++11)
 
 add_subdirectory(common)
 add_subdirectory(logic)
-add_subdirectory(stressTest)
+add_subdirectory(stress)
 

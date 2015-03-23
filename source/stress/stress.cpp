@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     //parse config
     {
         
-        std::string filename = "../serverConfig.xml";
+        std::string filename = "../config.xml";
         bool ret = false;
         ret = ServerConfig::getRef().parse(filename, StressNode, 0);
         if (!ret)

@@ -14,12 +14,12 @@
     <ClInclude Include="lua\fpconv.h" />
     <ClInclude Include="lua\lua_cjson.h" />
     <ClInclude Include="lua\strbuf.h" />
-    <ClInclude Include="messageHandler.h" />
+    <ClInclude Include="handler.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="dbAsync.h" />
     <ClInclude Include="dbhelper\dbHelper.h" />
-    <ClInclude Include="genObjectID.h" />
-    <ClInclude Include="innerDefined.h" />
+    <ClInclude Include="genID.h" />
+    <ClInclude Include="defined.h" />
     <ClInclude Include="lua\lapi.h" />
     <ClInclude Include="lua\lauxlib.h" />
     <ClInclude Include="lua\lcode.h" />
@@ -46,7 +46,7 @@
     <ClInclude Include="lua\lzio.h" />
     <ClInclude Include="lua\summer.h" />
     <ClInclude Include="md5\md5.h" />
-    <ClInclude Include="serverConfig.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="single.h" />
     <ClInclude Include="tinyxml2\tinyxml2.h" />
   </ItemGroup>
@@ -90,7 +90,7 @@
     <ClCompile Include="lua\strbuf.c" />
     <ClCompile Include="lua\summer.cpp" />
     <ClCompile Include="md5\md5.cpp" />
-    <ClCompile Include="serverConfig.cpp" />
+    <ClCompile Include="config.cpp" />
     <ClCompile Include="tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

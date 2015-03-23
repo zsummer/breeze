@@ -26,10 +26,10 @@
 
 #ifndef _DB_ASNYNC_H_
 #define _DB_ASNYNC_H_
-#include <innerDefined.h>
-#include <messageHandler.h>
+#include <defined.h>
+#include <handler.h>
 #include <single.h>
-#include <serverConfig.h>
+#include <config.h>
 #include <dbhelper/dbHelper.h>
 
 namespace  zsummer

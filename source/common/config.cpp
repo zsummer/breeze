@@ -18,7 +18,7 @@
 */
 
 #include "tinyxml2.h"
-#include "serverConfig.h"
+#include "config.h"
 
 static ServerNode toServerNode(std::string strNode)
 {
