@@ -46,17 +46,21 @@ namespace  zsummer
 			bool stop();
 		public:
 
+			//无论mysql遇到任何错误, 在当前服务节点关闭时, Post出去的请求数量肯定和Final的完成数量相等.
 			inline unsigned long long getPostCount(){ return _uPostCount.load(); }
 			inline unsigned long long getFinalCount(){ return _uFinalCount.load(); }
 		public:
+			//调用该接口把sql语句的执行丢进另外一个线程中执行.
+			//执行完毕后会在主线程中执行回调函数.
+			//如果觉得一个线程不够用可以把_event改造成数据, 以线程池的模式运行. 默认一个够了.
 			void asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 				const std::function<void(DBResultPtr)> & handler);
+
+
 		protected:
 			void _asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 				const std::function<void(DBResultPtr)> & handler);
-
 			inline void run();
-
 		private:
 			std::shared_ptr<std::thread> _thread;
 			zsummer::network::EventLoopPtr _event;

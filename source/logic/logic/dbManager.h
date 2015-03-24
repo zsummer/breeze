@@ -38,6 +38,7 @@ class DBManager :public MessageHandler, public Singleton<DBManager>
 public:
 	DBManager();
 	~DBManager();
+	//在初始化中连接所有需要访问的数据库.
 	virtual bool init() final override;
 	virtual void userLogin(std::shared_ptr<InnerUserInfo> innerInfo) final override;
 	virtual void userLogout(std::shared_ptr<InnerUserInfo> innerInfo) final override;

@@ -19,7 +19,7 @@
 
 /*
  *  file desc
- *  BaseHandler provide a unified way to manager message handler.
+ *  单例
  */
 
 

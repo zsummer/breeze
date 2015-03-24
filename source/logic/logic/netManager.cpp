@@ -25,8 +25,11 @@ NetManager::NetManager()
 
 bool NetManager::start()
 {
-	//init
+	//push MessageHandler
 	_handlers.push_back(DBManager::instantiate());
+	//.....
+	//add other MessageHandler at here
+	//.....
 	for (auto ptr : _handlers)
 	{
 		if (!ptr->init())
@@ -56,16 +59,18 @@ bool NetManager::start()
 			LOGE("addConnector failed. ConnectConfig=" << tag);
 			return false;
 		}
+		
 		// save sID. do something after.
 		// ...
 	}
+
+	//如果这个服务节点依赖需要和其他服务节点建立连接(分布式), 然后再开放端口的话, 下面的打开监听端口的代码应该放在所有connect成功后的回调函数中.
+	// if have some connector need connect success. call addAcceptor in event_onSessionEstablished when all connector is success.
 
 	_configListen._listenIP = ServerConfig::getRef().getConfigListen(LogicNode)._ip;
 	_configListen._listenPort = ServerConfig::getRef().getConfigListen(LogicNode)._port;
 	_configListen._maxSessions = 5000;
 
-	// if have some connector need connect success. do open accept in event_onSessionEstablished when all connector is success.
-	//other open acceoter in here.
 	_accepterID = SessionManager::getRef().addAcceptor(_configListen);
 	if (_accepterID == InvalidAccepterID)
 	{
@@ -78,6 +83,7 @@ bool NetManager::start()
 	}
 	return true;
 }
+
 bool NetManager::stop()
 {
 	SessionManager::getRef().stop();
@@ -403,7 +409,7 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	auto & db = DBManager::getRef().getInfoDB();
 	DBRequest dbreq("call CreateUser(?, ?, ?)");
 	dbreq.add(fouder->second->sesionInfo.uid);
-	dbreq.add(escapeString(req.nickName));
+	dbreq.add(req.nickName);
 	dbreq.add(req.iconID);
 	DBAsync::getRef().asyncQuery(db, dbreq.genSQL(), std::bind(&NetManager::db_onUserCreate, this,
 		std::placeholders::_1, sID));

@@ -39,10 +39,6 @@ static DBConfigID toDBConfigID(std::string db)
 	{
 		return AuthDB;
 	}
-	else if (db == "dict")
-	{
-		return DictDB;
-	}
 	else if (db == "info")
 	{
 		return InfoDB;

@@ -19,7 +19,7 @@
 
 /*
  *  file desc
- *  BaseHandler provide a unified way to manager message handler.
+ *  MessageHandler provide a unified way to manager message handler.
  */
 
 
@@ -33,7 +33,9 @@ class MessageHandler
 public:
 	MessageHandler(){}
 	virtual ~MessageHandler(){};
+	//初始化handler. 在该函数中不允许调用异步mysql操作, 应当以同步方式进行, 这样可以简化服务启动时候的数据初始化流程.
 	virtual bool init() = 0;
+	//用户登录和登出回调通知.
 	virtual void userLogin(std::shared_ptr<InnerUserInfo> innerInfo) = 0;
 	virtual void userLogout(std::shared_ptr<InnerUserInfo> innerInfo) = 0;
 };
