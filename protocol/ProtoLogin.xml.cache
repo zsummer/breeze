@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<md5>527dd8c5af94ce02628f8f2bbe503737</md5>
+<md5>bcffdeb4979995c49fa1910fb67139e8</md5>
 
 <CacheNo>
-	<cache key = "ID_AS2C_ServerPulse" No = "107" /> 
-	<cache key = "ID_C2AS_ClientPulse" No = "106" /> 
-	<cache key = "ID_C2LS_ChangeUserInfoReq" No = "104" /> 
-	<cache key = "ID_C2LS_CreateUserInfoReq" No = "100" /> 
-	<cache key = "ID_C2LS_CreateUserReq" No = "108" /> 
-	<cache key = "ID_C2LS_LoginReq" No = "102" /> 
-	<cache key = "ID_LS2C_ChangeUserInfoAck" No = "105" /> 
-	<cache key = "ID_LS2C_CreateUserAck" No = "109" /> 
-	<cache key = "ID_LS2C_CreateUserInfoAck" No = "101" /> 
-	<cache key = "ID_LS2C_LoginAck" No = "103" /> 
-	<cache key = "ID_X2X_ClientPulse" No = "110" /> 
-	<cache key = "ID_X2X_ServerPulse" No = "111" /> 
+	<cache key = "ID_CreateUserAck" No = "103" /> 
+	<cache key = "ID_CreateUserReq" No = "102" /> 
+	<cache key = "ID_LoginAck" No = "101" /> 
+	<cache key = "ID_LoginReq" No = "100" /> 
+	<cache key = "ID_ServerPulse" No = "104" /> 
+	<cache key = "ID_ServerPulseEcho" No = "105" /> 
 </CacheNo>

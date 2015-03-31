@@ -42,7 +42,7 @@ namespace  zsummer
 {
 	namespace mysql
 	{
-		enum class QueryErrorCode : unsigned short
+		enum QueryErrorCode
 		{
 			QEC_SUCCESS = 0,
 			QEC_UNQUERY,
@@ -56,14 +56,14 @@ namespace  zsummer
 		inline std::string escapeString(const std::string &orgField){ return escapeString(orgField.c_str(), orgField.length()); }
 
 		// db request
-		class DBRequest
+		class DBQuery
 		{
 		public:
-			DBRequest()
+			DBQuery()
 			{
 				_fmtPos = 0;
 			}
-			DBRequest(const std::string & init)
+			DBQuery(const std::string & init)
 			{
 				_sql = init;
 				_fmtPos = 0;
@@ -98,7 +98,7 @@ namespace  zsummer
 				size_t pos = _sql.find('?', _fmtPos);
 				if (pos != std::string::npos)
 				{
-					LOGE("DBRequest param is not enough. current sql=" << _sql);
+					LOGE("DBQuery param is not enough. current sql=" << _sql);
 				}
 				return _sql;
 			}
@@ -125,7 +125,7 @@ namespace  zsummer
 				}
 				else
 				{
-					LOGE("DBRequest insert param error. too many param. current sql=" << _sql);
+					LOGE("DBQuery insert param error. too many param. current sql=" << _sql);
 					return false;
 				}
 				return true;

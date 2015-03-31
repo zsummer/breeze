@@ -21,8 +21,7 @@ struct UserInfo //用户信息
 { 
 	unsigned long long uid;  
 	std::string nickName; //用户昵称 
-	unsigned int iconID; //头像 
-	unsigned int level; //等级 
+	short iconID; //头像 
 	unsigned int diamond; //当前剩余的充值钻石 
 	unsigned int hisotryDiamond; //历史充值钻石总额 
 	unsigned int giftDiamond; //当前剩余的赠送钻石 
@@ -31,7 +30,6 @@ struct UserInfo //用户信息
 	{ 
 		uid = 0; 
 		iconID = 0; 
-		level = 0; 
 		diamond = 0; 
 		hisotryDiamond = 0; 
 		giftDiamond = 0; 
@@ -40,14 +38,13 @@ struct UserInfo //用户信息
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserInfo & data) 
 { 
-	unsigned long long tag = 255ULL; 
+	unsigned long long tag = 127ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
 	ws << data.uid; 
 	ws << data.nickName; 
 	ws << data.iconID; 
-	ws << data.level; 
 	ws << data.diamond; 
 	ws << data.hisotryDiamond; 
 	ws << data.giftDiamond; 
@@ -76,21 +73,17 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	} 
 	if ( (1ULL << 3) & tag) 
 	{ 
-		rs >> data.level;  
+		rs >> data.diamond;  
 	} 
 	if ( (1ULL << 4) & tag) 
 	{ 
-		rs >> data.diamond;  
+		rs >> data.hisotryDiamond;  
 	} 
 	if ( (1ULL << 5) & tag) 
 	{ 
-		rs >> data.hisotryDiamond;  
-	} 
-	if ( (1ULL << 6) & tag) 
-	{ 
 		rs >> data.giftDiamond;  
 	} 
-	if ( (1ULL << 7) & tag) 
+	if ( (1ULL << 6) & tag) 
 	{ 
 		rs >> data.joinTime;  
 	} 
@@ -100,5 +93,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
  
 typedef std::vector<UserInfo> UserInfoVct;  
+ 
+typedef std::vector<unsigned long long> UserIDVct;  
  
 #endif 

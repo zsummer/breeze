@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<md5>bc76d4abd75e1dddf468dc336ff1b0e7</md5>
+
+<CacheNo>
+	<cache key = "ID_AddBlacklistAck" No = "1009" /> 
+	<cache key = "ID_AddBlacklistReq" No = "1008" /> 
+	<cache key = "ID_AddFriendAck" No = "1003" /> 
+	<cache key = "ID_AddFriendReq" No = "1002" /> 
+	<cache key = "ID_BreakFriendAck" No = "1019" /> 
+	<cache key = "ID_BreakFriendReq" No = "1018" /> 
+	<cache key = "ID_ChatAck" No = "1013" /> 
+	<cache key = "ID_ChatNotice" No = "1021" /> 
+	<cache key = "ID_ChatReq" No = "1012" /> 
+	<cache key = "ID_DelBlacklistAck" No = "1011" /> 
+	<cache key = "ID_DelBlacklistReq" No = "1010" /> 
+	<cache key = "ID_DelFriendAck" No = "1005" /> 
+	<cache key = "ID_DelFriendReq" No = "1004" /> 
+	<cache key = "ID_GetBlacklistAck" No = "1007" /> 
+	<cache key = "ID_GetBlacklistReq" No = "1006" /> 
+	<cache key = "ID_GetFriendListAck" No = "1001" /> 
+	<cache key = "ID_GetFriendListReq" No = "1000" /> 
+	<cache key = "ID_GetHistoryChatReq" No = "1020" /> 
+	<cache key = "ID_MakeFriendAck" No = "1015" /> 
+	<cache key = "ID_MakeFriendConfirm" No = "1016" /> 
+	<cache key = "ID_MakeFriendNotice" No = "1017" /> 
+	<cache key = "ID_MakeFriendReq" No = "1014" /> 
+</CacheNo>

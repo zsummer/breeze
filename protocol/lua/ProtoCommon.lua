@@ -15,17 +15,21 @@ Protoz.BEC_AUTH_LIMITE_COUNT = 65--认证错误:认证次数超过限制
  
 Protoz.UserInfo = {} --用户信息 
 Protoz.UserInfo.__getName = "UserInfo" 
-Protoz.UserInfo.__getTag = "11111111" 
+Protoz.UserInfo.__getTag = "1111111" 
 Protoz.UserInfo[1] = {name="uid", type="ui64" }  
 Protoz.UserInfo[2] = {name="nickName", type="string" } --用户昵称 
-Protoz.UserInfo[3] = {name="iconID", type="i32" } --头像 
-Protoz.UserInfo[4] = {name="level", type="i32" } --等级 
-Protoz.UserInfo[5] = {name="diamond", type="i32" } --当前剩余的充值钻石 
-Protoz.UserInfo[6] = {name="hisotryDiamond", type="i32" } --历史充值钻石总额 
-Protoz.UserInfo[7] = {name="giftDiamond", type="i32" } --当前剩余的赠送钻石 
-Protoz.UserInfo[8] = {name="joinTime", type="ui32" } --加入时间 
+Protoz.UserInfo[3] = {name="iconID", type="i16" } --头像 
+Protoz.UserInfo[4] = {name="diamond", type="i32" } --当前剩余的充值钻石 
+Protoz.UserInfo[5] = {name="hisotryDiamond", type="i32" } --历史充值钻石总额 
+Protoz.UserInfo[6] = {name="giftDiamond", type="i32" } --当前剩余的赠送钻石 
+Protoz.UserInfo[7] = {name="joinTime", type="ui32" } --加入时间 
  
 Protoz.UserInfoVct = {}  
 Protoz.UserInfoVct.__getName = "UserInfoVct" 
 Protoz.UserInfoVct.__getDesc = "array" 
 Protoz.UserInfoVct.__getTypeV = "UserInfo" 
+ 
+Protoz.UserIDVct = {}  
+Protoz.UserIDVct.__getName = "UserIDVct" 
+Protoz.UserIDVct.__getDesc = "array" 
+Protoz.UserIDVct.__getTypeV = "ui64" 

@@ -91,10 +91,13 @@ struct SessionInfo
 	std::string passwd;
 	UserID uid = InvalidUserID;
 	SessionID sID = InvalidSeesionID;
-	//login time
-	ui64 loginTime = time(NULL);
-	time_t lastLoginTime = time(NULL);
-	time_t lastActiveTime = time(NULL);
+
+	//log timestamp
+	time_t authTime = 0;
+	time_t loginTime = 0;
+
+	//check active
+	time_t lastActiveTime = 0;
 	unsigned int lastDelayTick = 0;
 };
 

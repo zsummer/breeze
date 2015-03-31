@@ -37,14 +37,16 @@
   <struct name="UserInfo" desc="用户信息">
     <member name="uid" type="ui64"   desc=""/>
     <member name="nickName" type="string"   desc="用户昵称"/>
-    <member name="iconID"  type="i32" desc="头像"/>
-    <member name="level"  type="i32" desc="等级"/>
+    <member name="iconID"  type="i16" desc="头像"/>
     <member name="diamond"  type="i32" desc="当前剩余的充值钻石"/>
     <member name="hisotryDiamond"  type="i32" desc="历史充值钻石总额"/>
     <member name="giftDiamond"  type="i32" desc="当前剩余的赠送钻石"/>
     <member name="joinTime"  type="ui32" desc="加入时间"/>
   </struct>
   <array name="UserInfoVct" type="UserInfo" desc="" />
+  
+  <array name="UserIDVct" type="ui64" desc="" />
+
   
 
 

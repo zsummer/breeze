@@ -10,36 +10,39 @@
 <Proto>
 
 
-  <proto from="C" to="LS" name="LoginReq" desc= "登录请求">
+  <proto name="LoginReq" desc= "登录请求">
     <member name="user" type="string"   desc=""/>
     <member name="passwd"  type="string" desc=""/>
   </proto>
 
-  <proto from="LS" to="C" name="LoginAck" desc= "登录结果" >
-  	<member name="retCode" type="i32"   desc=""/>
+  <proto name="LoginAck" desc= "登录结果" >
+  	<member name="retCode" type="ui16"   desc=""/>
     <member name="info" type="UserInfo"   desc="用户信息"/>
   </proto>
 
 
 
-  <proto from="C" to="LS" name="CreateUserReq" desc= "填写用户信息">
+  <proto name="CreateUserReq" desc= "填写用户信息">
     <member name="nickName"  type="string" desc="昵称"/>
     <member name="iconID"  type="i32" desc="头像"/>
   </proto>
 
-  <proto from="LS" to="C" name="CreateUserAck" desc= "返回" >
+  <proto name="CreateUserAck" desc= "返回" >
   	<member name="retCode" type="ui16"   desc=""/>
     <member name="info" type="UserInfo"   desc=""/>
   </proto>
 
 
 
-  <!-- 服务器脉冲, 客户端需要原样返回 -->
-  <proto from="X" to="X" name="ServerPulse" desc= "服务端存活脉冲">
+
+  <proto name="ServerPulse" desc= "服务器生命脉冲">
     <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
     <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
   </proto>
-
+  <proto name="ServerPulseEcho" desc= "服务器生命脉冲客户端回放">
+    <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
+    <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
+  </proto>
 
 </Proto>
 

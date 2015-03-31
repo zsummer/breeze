@@ -84,16 +84,16 @@ int main(int argc, char* argv[])
 		{
 			for (int i = 0; i < 1000; i++)
 			{
-				DBRequest req("insert ignore into tb_auth(`user`, passwd)values(?, ?)");
+				DBQuery q("insert ignore into tb_auth(`user`, passwd)values(?, ?)");
 				char buf[100];
 				sprintf(buf, "zhangyawei%04d", i);
 				std::string str(buf);
-				req.add(buf);
-				req.add("123");
-				DBResultPtr result = helper.query(req.genSQL());
+				q.add(buf);
+				q.add("123");
+				DBResultPtr result = helper.query(q.genSQL());
 				if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 				{
-					LOGE("mysql querry error. the error=" << result->getLastError() << ", sql=" << req.genSQL());
+					LOGE("mysql querry error. the error=" << result->getLastError() << ", sql=" << q.genSQL());
 					break;
 				}
 				if (result->getAffectedRows() == 0)

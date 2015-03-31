@@ -62,8 +62,7 @@ namespace Proto4z
 	{	 
 		public Proto4z.ui64 uid;  
 		public Proto4z.String nickName; //用户昵称 
-		public Proto4z.i32 iconID; //头像 
-		public Proto4z.i32 level; //等级 
+		public Proto4z.i16 iconID; //头像 
 		public Proto4z.i32 diamond; //当前剩余的充值钻石 
 		public Proto4z.i32 hisotryDiamond; //历史充值钻石总额 
 		public Proto4z.i32 giftDiamond; //当前剩余的赠送钻石 
@@ -71,13 +70,12 @@ namespace Proto4z
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 255; 
+			Proto4z.ui64 tag = 127; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(uid.__encode()); 
 			data.AddRange(nickName.__encode()); 
 			data.AddRange(iconID.__encode()); 
-			data.AddRange(level.__encode()); 
 			data.AddRange(diamond.__encode()); 
 			data.AddRange(hisotryDiamond.__encode()); 
 			data.AddRange(giftDiamond.__encode()); 
@@ -106,33 +104,28 @@ namespace Proto4z
 			{ 
 				nickName.__decode(binData, ref pos); 
 			} 
-			iconID = new Proto4z.i32(); 
+			iconID = new Proto4z.i16(); 
 			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
 			{ 
 				iconID.__decode(binData, ref pos); 
 			} 
-			level = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 3)) != 0) 
-			{ 
-				level.__decode(binData, ref pos); 
-			} 
 			diamond = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 4)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 3)) != 0) 
 			{ 
 				diamond.__decode(binData, ref pos); 
 			} 
 			hisotryDiamond = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 5)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 4)) != 0) 
 			{ 
 				hisotryDiamond.__decode(binData, ref pos); 
 			} 
 			giftDiamond = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 6)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 5)) != 0) 
 			{ 
 				giftDiamond.__decode(binData, ref pos); 
 			} 
 			joinTime = new Proto4z.ui32(); 
-			if ((tag.val & ((System.UInt64)1 << 7)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 6)) != 0) 
 			{ 
 				joinTime.__decode(binData, ref pos); 
 			} 
@@ -163,6 +156,37 @@ namespace Proto4z
 				for (int i=0; i<len.val; i++) 
 				{ 
 					var data = new Proto4z.UserInfo(); 
+					 data.__decode(binData, ref pos); 
+					this.Add(data); 
+				} 
+			} 
+			return pos; 
+		} 
+	} 
+ 
+	class UserIDVct : System.Collections.Generic.List<Proto4z.ui64>, Proto4z.IProtoObject  
+	{ 
+		public System.Collections.Generic.List<byte> __encode() 
+		{ 
+			var ret = new System.Collections.Generic.List<byte>(); 
+			 var len = new Proto4z.ui32((System.UInt32)this.Count); 
+			ret.AddRange(len.__encode()); 
+			for (int i = 0; i < this.Count; i++ ) 
+			{ 
+				ret.AddRange(this[i].__encode()); 
+			} 
+			return ret; 
+		} 
+ 
+		public int __decode(byte[] binData, ref int pos) 
+		{ 
+			var len = new Proto4z.ui32(0); 
+			len.__decode(binData, ref pos); 
+			if(len.val > 0) 
+			{ 
+				for (int i=0; i<len.val; i++) 
+				{ 
+					var data = new Proto4z.ui64(); 
 					 data.__decode(binData, ref pos); 
 					this.Add(data); 
 				} 
