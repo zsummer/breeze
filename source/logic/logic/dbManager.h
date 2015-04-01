@@ -33,23 +33,25 @@
 
 
 
-class DBManager :public MessageHandler, public Singleton<DBManager>
+class DBManager : public Singleton<DBManager>
 {
 public:
 	DBManager();
 	~DBManager();
 	//在初始化中连接所有需要访问的数据库.
-	virtual bool init() final override;
-	virtual void userLogin(std::shared_ptr<InnerUserInfo> innerInfo) final override;
-	virtual void userLogout(std::shared_ptr<InnerUserInfo> innerInfo) final override;
+	bool start();
+	bool stop();
 public:
 	inline DBHelperPtr & getAuthDB(){ return _authDB; }
 	inline DBHelperPtr & getInfoDB(){ return _infoDB; }
 	inline DBHelperPtr & getLogDB(){ return _logDB; }
+	inline DBAsyncPtr & getAsync(){ return _dbAsync; }
 private:
 	DBHelperPtr _infoDB;
 	DBHelperPtr _logDB;
 	DBHelperPtr _authDB;
+
+	DBAsyncPtr _dbAsync;
 };
 
 

@@ -26,9 +26,76 @@ NetManager::NetManager()
 
 bool NetManager::start()
 {
-	//push MessageHandler
-	_handlers.push_back(DBManager::instantiate());
+	if (!DBManager::getRef().start())
+	{
+		return false;
+	}
+	//////////////////////////////////////////////////////////////////////////
 
+	{
+		auto ret = DBManager::getRef().getInfoDB()->query("desc tb_user");
+		if (ret->getErrorCode() != QEC_SUCCESS)
+		{
+			LOGI("create talbe tb_user ");
+			DBQuery q("CREATE TABLE `tb_user` ( "
+				"`uid` bigint(20) unsigned NOT NULL, "
+				"PRIMARY KEY(`uid`) "
+				") ENGINE = MyISAM DEFAULT CHARSET = utf8");
+			ret = DBManager::getRef().getInfoDB()->query(q.genSQL());
+			if (ret->getErrorCode() != QEC_SUCCESS)
+			{
+				LOGE("create talbe tb_user error=" << ret->getLastError());
+				return false;
+			}
+		}
+		//版本升级自动alter add 新字段. 
+		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `nickname` varchar(255) NOT NULL DEFAULT ''");
+		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `iconID` smallint(10) NOT NULL DEFAULT '0'");
+		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `diamond` int(10) NOT NULL DEFAULT '0'");
+		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `giftDiamond` int(10) NOT NULL DEFAULT '0'");
+		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `historyDiamond` int(10) NOT NULL DEFAULT '0'");
+		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `joinTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'");
+
+		//加载所有用户数据
+		UserID curID = 0;
+		do
+		{
+			DBQuery q("select uid, nickname, iconID, diamond, giftDiamond, historyDiamond, joinTime from tb_user where uid >? limit 1000;");
+			q.add(curID);
+			auto result = DBManager::getRef().getInfoDB()->query(q.genSQL());
+			if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
+			{
+				LOGE("loadUserInfo error. begin uid is " << curID << ",  sql error=" << result->getLastError());
+				return false;
+			}
+			if (!result->haveRow())
+			{
+				//all already loaded.
+				LOGI("all tb_user is already loaded.");
+				break;
+			}
+			while (result->haveRow())
+			{
+				UserInfo info;
+				std::string friends;
+				std::string bag;
+				*result >> info.uid;
+				*result >> info.nickName;
+				*result >> info.iconID;
+				*result >> info.diamond;
+				*result >> info.giftDiamond;
+				*result >> info.hisotryDiamond;
+				*result >> info.joinTime;
+				curID = info.uid;
+				NetManager::getRef().loadUserInfo(info);
+			}
+
+		} while (true);
+
+	}
+
+
+	//push MessageHandler
 	//.....
 	//add other MessageHandler at here
 	//.....
@@ -212,7 +279,7 @@ void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs)
 	DBQuery q("SELECT uid, passwd FROM `tb_auth` where user = ?");
 	q.add(req.user);
 	auto & db = DBManager::getRef().getAuthDB();
-	DBAsync::getRef().asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onAuthSelect, this,
+	DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onAuthSelect, this,
 		std::placeholders::_1, sID));
 
 }
@@ -333,7 +400,7 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 		DBQuery q;
 		q.init("select uid, nickname, iconID, diamond, giftDiamond,historyDiamond, UNIX_TIMESTAMP(joinTime) from tb_user where uid = ?");
 		q.add(innerInfo->sesionInfo.uid);
-		DBAsync::getRef().asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onUserSelect, this,
+		DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onUserSelect, this,
 			std::placeholders::_1, sID, false));
 	}
 }
@@ -442,7 +509,7 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	q.add(fouder->second->sesionInfo.uid);
 	q.add(req.nickName);
 	q.add(req.iconID);
-	DBAsync::getRef().asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onUserCreate, this,
+	DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onUserCreate, this,
 		std::placeholders::_1, sID ));
 }
 void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 project(breeze)
 
 if (APPLE)
@@ -23,13 +23,13 @@ link_directories(${breeze_SOURCE_DIR}/lib/)
 
 set(LIB_SUFFIX "")
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_definitions(-Wall -g -ggdb -O0  -D_GLIBCXX_USE_NANOSLEEP -fpermissive -static -Wno-deprecated-declarations -Wno-strict-aliasing)
+	add_definitions(-Wall -g -ggdb -O0  -D_GLIBCXX_USE_NANOSLEEP -static -Wno-deprecated-declarations -Wno-strict-aliasing)
 	set(LIB_SUFFIX "_d")
 else()
-	add_definitions(-Wall  -O2 -DNDEBUG  -D_GLIBCXX_USE_NANOSLEEP -fpermissive -static -Wno-deprecated-declarations -Wno-strict-aliasing)
+	add_definitions(-Wall  -O2 -DNDEBUG  -D_GLIBCXX_USE_NANOSLEEP -static -Wno-deprecated-declarations -Wno-strict-aliasing)
 	set(LIB_SUFFIX "")
 endif()
-set(CMAKE_CXX_FLAGS -std=c++11)
+set(CMAKE_CXX_FLAGS "-std=c++11 -fpermissive")
 
 add_subdirectory(common)
 add_subdirectory(logic)

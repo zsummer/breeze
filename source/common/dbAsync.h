@@ -37,7 +37,7 @@ namespace  zsummer
 	namespace mysql
 	{
 
-		class DBAsync : public Singleton<DBAsync>
+		class DBAsync
 		{
 		public:
 			DBAsync();
@@ -52,7 +52,6 @@ namespace  zsummer
 		public:
 			//调用该接口把sql语句的执行丢进另外一个线程中执行.
 			//执行完毕后会在主线程中执行回调函数.
-			//如果觉得一个线程不够用可以把_event改造成数据, 以线程池的模式运行. 默认一个够了.
 			void asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 				const std::function<void(DBResultPtr)> & handler);
 
@@ -68,7 +67,7 @@ namespace  zsummer
 			std::atomic_ullong _uPostCount;
 			std::atomic_ullong _uFinalCount;
 		};
-
+		typedef std::shared_ptr<DBAsync> DBAsyncPtr;
 
 	}
 }

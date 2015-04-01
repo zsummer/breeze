@@ -61,7 +61,9 @@ protected:
 	//检测发包频度,发包权限,登录权限等.
 	bool on_preMessageProcess(SessionID sid, const char * blockBegin, zsummer::proto4z::Integer blockSize);
 
+
 	//! ---- message --------------------------------------------
+	//////////////////////////////////////////////////////////////////////////
 	//登录流程(集成认证流程和用户数据拉取流程)
 	void msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs);
 	void db_onAuthSelect(DBResultPtr res, SessionID sID);
