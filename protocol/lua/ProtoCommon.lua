@@ -16,7 +16,7 @@ Protoz.BEC_AUTH_LIMITE_COUNT = 65--认证错误:认证次数超过限制
 Protoz.UserInfo = {} --用户信息 
 Protoz.UserInfo.__getName = "UserInfo" 
 Protoz.UserInfo.__getTag = "1111111" 
-Protoz.UserInfo[1] = {name="uid", type="ui64" }  
+Protoz.UserInfo[1] = {name="uID", type="ui64" }  
 Protoz.UserInfo[2] = {name="nickName", type="string" } --用户昵称 
 Protoz.UserInfo[3] = {name="iconID", type="i16" } --头像 
 Protoz.UserInfo[4] = {name="diamond", type="i32" } --当前剩余的充值钻石 

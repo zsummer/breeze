@@ -26,14 +26,23 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#include <log4z/log4z.h>
-#include <tinyxml2.h>
+extern "C"
+{
+#include "lua/lua.h"
+#include "lua/lualib.h"
+#include "lua/lauxlib.h"
+#include "lua/lpack.h"
+	int luaopen_protoz_bit(lua_State *L);
+	int luaopen_cjson(lua_State *l);
+}
+#include "lua/summer.h"
+
 #include "defined.h"
-#include "handler.h"
 #include "single.h"
 #include "genID.h"
-#include "config.h"
 #include "dbhelper/dbHelper.h"
+#include "dbAsync.h"
+#include "config.h"
 
 
 

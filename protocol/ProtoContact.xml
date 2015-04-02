@@ -9,7 +9,7 @@
 <Proto>
 
   <struct name="ContactInfo" desc="联系人信息">
-   	<member name="uid" type="ui64"   desc=""/>
+   	<member name="uID" type="ui64"   desc=""/>
    	<member name="nickName" type="string"   desc="用户昵称"/>
 	<member name="iconID"  type="i16" desc="头像"/>
 	<member name="banned"  type="i8" desc="禁言"/>

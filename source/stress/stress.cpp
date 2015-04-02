@@ -20,19 +20,9 @@
 
 #include <common.h>
 #include <ProtoLogin.h>
-#include <unordered_map>
-extern "C"
-{
-#include "lua/lua.h"
-#include "lua/lualib.h"
-#include "lua/lpack.h"
-int luaopen_protoz_bit(lua_State *L);
-int luaopen_cjson(lua_State *l);
-}
 
 
-#include <dbHelper.h>
-#include "lua/summer.h"
+
 
 using namespace zsummer::log4z;
 using namespace zsummer::mysql;
@@ -64,7 +54,7 @@ int main(int argc, char* argv[])
     //parse config
     {
         
-        std::string filename = "../config.xml";
+        std::string filename = "../config.lua";
         bool ret = false;
         ret = ServerConfig::getRef().parse(filename, StressNode, 0);
         if (!ret)

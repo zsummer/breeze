@@ -17,8 +17,6 @@
 */
 
 #include "application.h"
-#include <zsummerX/zsummerX.h>
-#include <unordered_map>
 using namespace zsummer::log4z;
 
 
@@ -50,7 +48,7 @@ int main(int argc, char* argv[])
 
 	
 	
-	std::string filename = "../config.xml";
+	std::string filename = "../config.lua";
 	unsigned int serverIndex = 0;
 	if (argc > 1)
 	{

@@ -57,7 +57,7 @@ namespace zsummer
 			~MessageDispatcher(){};
 
 			//message
-			inline void registerSessionOrgMessage(const OnOrgMessageFunction & msgfun){ _vctOrgSessionDispatch.push_back(msgfun); }
+			inline void registerSessionOrgMessage(const OnPreMessageFunction & msgfun){ _vctPreSessionDispatch.push_back(msgfun); }
 			inline void registerSessionMessage(ProtoID protoID, const OnMessageFunction & msgfun){ _mapSessionDispatch[protoID].push_back(msgfun); }
 			inline void registerSessionDefaultMessage(const OnMessageFunction & msgfun){ _vctDefaultSessionDispatch.push_back(msgfun); }
 
@@ -71,7 +71,7 @@ namespace zsummer
 			inline void registerOnSessionHTTPMessage(const OnHTTPMessageFunction & fun) { _vctSessionHTTPMessage.push_back(fun); }
 
 		public:
-			inline bool dispatchOrgSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize);
+			inline bool dispatchPreSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize);
 			inline void dispatchSessionMessage(SessionID sID, ProtoID pID, zsummer::proto4z::ReadStream & msg);
 			inline void dispatchOnSessionEstablished(SessionID sID);
 			inline void dispatchOnSessionDisconnect(SessionID sID);
@@ -81,7 +81,7 @@ namespace zsummer
 		private:
 			//!message
 			MapProtoDispatch _mapSessionDispatch;
-			std::vector<OnOrgMessageFunction> _vctOrgSessionDispatch;
+			std::vector<OnPreMessageFunction> _vctPreSessionDispatch;
 			std::vector<OnMessageFunction> _vctDefaultSessionDispatch;
 
 			//http
@@ -97,16 +97,16 @@ namespace zsummer
 
 
 
-		inline bool MessageDispatcher::dispatchOrgSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize)
+		inline bool MessageDispatcher::dispatchPreSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize)
 		{
-			if (_vctOrgSessionDispatch.empty())
+			if (_vctPreSessionDispatch.empty())
 			{
 				return true;
 			}
 
 			try
 			{
-				for (auto & fun : _vctOrgSessionDispatch)
+				for (auto & fun : _vctPreSessionDispatch)
 				{
 					LCT("Entry dispatchOrgSessionMessage  SessionID=" << sID << ", blockSize=" << blockSize);
 					if (!fun(sID, blockBegin, blockSize))

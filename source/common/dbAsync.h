@@ -27,7 +27,6 @@
 #ifndef _DB_ASNYNC_H_
 #define _DB_ASNYNC_H_
 #include <defined.h>
-#include <handler.h>
 #include <single.h>
 #include <config.h>
 #include <dbhelper/dbHelper.h>

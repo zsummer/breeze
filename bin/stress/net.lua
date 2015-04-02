@@ -17,14 +17,17 @@ function messageHandler:onMessage(sID, pID, binData)
 end
 
 function messageHandler:on_LoginAck(sID, msg)
-	if msg.retCode ~= Protoz.BEC_SUCCESS and msg.retCode ~= Protoz.BEC_AUTH_ACCOUNT_INCORRECT then
+	if msg.retCode ~= Protoz.BEC_SUCCESS then
 			loge("LoginAck retcode ~= BEC_SUCCESS. ret=" .. msg.retCode)
 			return nil
 	end
-	if msg.retCode == Protoz.BEC_AUTH_ACCOUNT_INCORRECT then
-		local nickname = string.format("summer%04d", sID%1000)
-		local data = Protoz.encode({nickName=nickname, iconID=100}, "CreateUserReq")
-		summer.sendContent(sID, Protoz.CreateUserReq.__getID, data)
+	if msg.needCreate ~= 0 then
+		summer.post(1000, function()
+							local nickname = string.format("summer%04d", sID%1000)
+							local data = Protoz.encode({nickName=nickname, iconID=100}, "CreateUserReq")
+							summer.sendContent(sID, Protoz.CreateUserReq.__getID, data)
+						end)
+
 	else
 		logi("login success.")
 		Protoz.dump(msg.info, "user info:", 5)
@@ -32,14 +35,7 @@ function messageHandler:on_LoginAck(sID, msg)
 end
 
 
-function messageHandler:on_CreateUserAck(sID, msg)
-	if msg.retCode ~= Protoz.BEC_SUCCESS and msg.retCode ~= Protoz.BEC_AUTH_ACCOUNT_INCORRECT  then
-		loge("create user error. ret=" .. msg.retCode)
-		return nil
-	end
-	logi("create user success.")
-	Protoz.dump(msg.info, "user info:", 5)
-end
+
 
 function messageHandler:on_ServerPulse(sID, msg)
 	Protoz.dump(msg, "on_ServerPulse:", 5)

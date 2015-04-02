@@ -27,9 +27,7 @@
 #define _SERVER_CONFIG_H_
 
 #include <defined.h>
-#include <handler.h>
 #include <single.h>
-#include <tinyxml2.h>
 
 
 
@@ -50,6 +48,7 @@ struct ConnectorConfig
 {
 	ServerNode _srcNode = InvalidServerNode;
 	ServerNode _dstNode = InvalidServerNode;
+	NodeIndex  _dstNodeIndex = InvalidNodeIndex;
 	std::string _remoteIP;
 	unsigned short _remotePort = 0;
 };

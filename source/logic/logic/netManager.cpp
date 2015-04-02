@@ -1,5 +1,6 @@
 ﻿#include "netManager.h"
 #include "dbManager.h"
+#include "userManager.h"
 
 using namespace zsummer::mysql;
 
@@ -26,89 +27,6 @@ NetManager::NetManager()
 
 bool NetManager::start()
 {
-	if (!DBManager::getRef().start())
-	{
-		return false;
-	}
-	//////////////////////////////////////////////////////////////////////////
-
-	{
-		auto ret = DBManager::getRef().getInfoDB()->query("desc tb_user");
-		if (ret->getErrorCode() != QEC_SUCCESS)
-		{
-			LOGI("create talbe tb_user ");
-			DBQuery q("CREATE TABLE `tb_user` ( "
-				"`uid` bigint(20) unsigned NOT NULL, "
-				"PRIMARY KEY(`uid`) "
-				") ENGINE = MyISAM DEFAULT CHARSET = utf8");
-			ret = DBManager::getRef().getInfoDB()->query(q.genSQL());
-			if (ret->getErrorCode() != QEC_SUCCESS)
-			{
-				LOGE("create talbe tb_user error=" << ret->getLastError());
-				return false;
-			}
-		}
-		//版本升级自动alter add 新字段. 
-		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `nickname` varchar(255) NOT NULL DEFAULT ''");
-		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `iconID` smallint(10) NOT NULL DEFAULT '0'");
-		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `diamond` int(10) NOT NULL DEFAULT '0'");
-		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `giftDiamond` int(10) NOT NULL DEFAULT '0'");
-		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `historyDiamond` int(10) NOT NULL DEFAULT '0'");
-		DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `joinTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'");
-
-		//加载所有用户数据
-		UserID curID = 0;
-		do
-		{
-			DBQuery q("select uid, nickname, iconID, diamond, giftDiamond, historyDiamond, joinTime from tb_user where uid >? limit 1000;");
-			q.add(curID);
-			auto result = DBManager::getRef().getInfoDB()->query(q.genSQL());
-			if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
-			{
-				LOGE("loadUserInfo error. begin uid is " << curID << ",  sql error=" << result->getLastError());
-				return false;
-			}
-			if (!result->haveRow())
-			{
-				//all already loaded.
-				LOGI("all tb_user is already loaded.");
-				break;
-			}
-			while (result->haveRow())
-			{
-				UserInfo info;
-				std::string friends;
-				std::string bag;
-				*result >> info.uid;
-				*result >> info.nickName;
-				*result >> info.iconID;
-				*result >> info.diamond;
-				*result >> info.giftDiamond;
-				*result >> info.hisotryDiamond;
-				*result >> info.joinTime;
-				curID = info.uid;
-				NetManager::getRef().loadUserInfo(info);
-			}
-
-		} while (true);
-
-	}
-
-
-	//push MessageHandler
-	//.....
-	//add other MessageHandler at here
-	//.....
-	for (auto ptr : _handlers)
-	{
-		if (!ptr->init())
-		{
-			LOGW("init handler false");
-			return false;
-		}
-	}
-	LOGI("init handler all Success. handler size=" << _handlers.size());
-	//end
 	auto connecters = ServerConfig::getRef().getConfigConnect(LogicNode);
 	for (auto con : connecters)
 	{
@@ -148,7 +66,7 @@ bool NetManager::start()
 	}
 	else
 	{
-		LOGI("OPEN Accepter true. ListenConfig=" << _configListen);
+		LOGD("OPEN Accepter true. ListenConfig=" << _configListen);
 	}
 	return true;
 }
@@ -160,40 +78,6 @@ bool NetManager::stop()
 }
 
 
-void NetManager::loadUserInfo(const UserInfo & info)
-{
-	if (info.uid == InvalidUserID)
-	{
-		LOGW("loadUserInfo found InvalidUserID");
-		return;
-	}
-	auto founder = _mapUserInfo.find(info.uid);
-	if (founder != _mapUserInfo.end())
-	{
-		LOGW("loadUserInfo  the user be aready loaded. uid=" << info.uid);
-		return;
-	}
-
-	auto inner = std::make_shared<InnerUserInfo>();
-	inner->userInfo = info;
-	_mapUserInfo.insert(std::make_pair(info.uid, inner));
-}
-
-void NetManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
-{
-	for (auto ptr : _handlers)
-	{
-		ptr->userLogin(innerInfo);
-	}
-}
-void NetManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)
-{
-	for (auto ptr : _handlers)
-	{
-		ptr->userLogout(innerInfo);
-	}
-}
-
 
 void NetManager::event_onSessionEstablished(SessionID sID)
 {
@@ -203,7 +87,7 @@ void NetManager::event_onSessionEstablished(SessionID sID)
 	}
 	else
 	{
-		LOGT("NetManager::event_onSessionEstablished. SessionID=" << sID);
+		LOGT("NetManager::event_onSessionEstablished. SessionID=" << sID << ", all unlogins clients=" << _clients.size());
 	}
 }
 
@@ -216,29 +100,67 @@ void NetManager::event_onSessionDisconnect(SessionID sID)
 	else
 	{
 		LOGI("NetManager::event_onSessionDisconnect. sID=" << sID);
-		auto founder = _mapUserSession.find(sID);
-		if (founder == _mapUserSession.end())
+		
+		auto founder = _clients.find(sID);
+		if (founder != _clients.end())
+		{
+			_clients.erase(sID);
+		}
+
+		auto info = UserManager::getRef().getInnerUserInfoBySID(sID);
+		if (!info)
 		{
 			return;
 		}
-		auto innerInfo = founder->second;
-		_mapUserSession.erase(sID);
-
-		if (innerInfo->status == InnerUserInfo::IUIT_LOGINED)
-		{
-			userLogin(innerInfo);
-		}
-		if (innerInfo->status == InnerUserInfo::IUIT_LOGINING)
-		{
-			_mapUserInfo.erase(innerInfo->sesionInfo.uid);
-		}
-		innerInfo->sesionInfo.sID = InvalidSeesionID;
+		UserManager::getRef().userLogout(info);
 	}
 }
 
-bool NetManager::on_preMessageProcess(SessionID sid, const char * blockBegin, zsummer::proto4z::Integer blockSize)
+bool NetManager::on_preMessageProcess(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize)
 {
-	return true;
+	ReadStream rs(blockBegin, blockSize);
+	auto founder = _clients.find(sID);
+	if (founder == _clients.end())
+	{
+		SessionInfo info;
+		info.sID = sID;
+		_clients[sID] = info;
+		founder = _clients.find(sID);
+	}
+
+	if (rs.getProtoID() >= 200 || rs.getProtoID() == ID_ServerPulseEcho)
+	{
+		if (founder->second.status == SS_LOGINED)
+		{
+			return true;
+		}
+		else
+		{
+			WriteStream ws(ID_LoginAck);
+			LoginAck ack;
+			ack.retCode = BEC_PERMISSION_DENIED;
+			ws << ack;
+			SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			return false;
+		}
+	}
+
+	if (rs.getProtoID() == ID_LoginReq  && founder->second.status == SS_UNAUTH)
+	{
+		return true;
+	}
+	if (rs.getProtoID() == ID_CreateUserReq && founder->second.status == SS_AUTHED)
+	{
+		return true;
+	}
+	
+	
+	WriteStream ws(ID_LoginAck);
+	LoginAck ack;
+	ack.retCode = BEC_AUTH_ING;
+	ws << ack;
+	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+	return false;
 }
 
 
@@ -247,36 +169,17 @@ void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs)
 	LoginReq req;
 	rs >> req;
 	LOGD("enter msg_loginReq user=" << req.user << ", passwd=" << req.passwd);
-	std::shared_ptr<InnerUserInfo> innerInfo;
-	auto founder = _mapUserSession.find(sID);
-	if (founder != _mapUserSession.end())
-	{
-		innerInfo = founder->second;
-	}
-	else
-	{
-		innerInfo = std::shared_ptr<InnerUserInfo>(new InnerUserInfo);
-		innerInfo->sesionInfo.sID = sID;
-		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
-		_mapUserSession.insert(std::make_pair(sID, innerInfo));
-	}
 
-	if (innerInfo->status != InnerUserInfo::IUIT_UNAUTH)
+	auto founder = _clients.find(sID);
+	if (founder == _clients.end())
 	{
-		WriteStream ws(ID_LoginAck);
-		LoginAck ack;
-		ack.retCode = BEC_AUTH_LIMITE_COUNT;
-		ws << ack;
-		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 		return;
 	}
-	
-	innerInfo->sesionInfo.user = req.user;
-	innerInfo->sesionInfo.passwd = req.passwd;
-	innerInfo->status = InnerUserInfo::IUIT_AUTHING;
+	founder->second.user = req.user;
+	founder->second.passwd = req.passwd;
+	founder->second.status = SS_AUTHING;
 
-	
-	DBQuery q("SELECT uid, passwd FROM `tb_auth` where user = ?");
+	DBQuery q("SELECT uID, passwd FROM `tb_auth` where user = ?");
 	q.add(req.user);
 	auto & db = DBManager::getRef().getAuthDB();
 	DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onAuthSelect, this,
@@ -289,23 +192,19 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 	LOGD("enter db_authSelect. sID=" << sID);
 	LoginAck ack;
 	ack.retCode = BEC_DB_ERROR;
-
-	auto founder = _mapUserSession.find(sID);
-	if (founder == _mapUserSession.end())
-	{
-		LOGE("db auth callback not found session. sID=" << sID);
-		return;
-	}
-	auto & innerInfo = founder->second;
-	if (!innerInfo)
-	{
-		LOGE("db auth callback found session but InnerInfo is NULL . sID=" << sID);
-		return;
-	}
+	ack.needCreate = 0;
 	
+
+	auto founder = _clients.find(sID);
+	if (founder == _clients.end())
+	{
+		LOGW("db auth callback not found session. sID=" << sID);
+		return;
+	}
+
 	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 	{
-		LOGE("db_authSelect error.  db error, msg=" << res->getLastError() << ", req.user=" << innerInfo->sesionInfo.user << ", req.passwd=" << innerInfo->sesionInfo.passwd);
+		LOGE("db_authSelect error.  db error, msg=" << res->getLastError() << ", req.user=" << founder->second.user << ", req.passwd=" << founder->second.passwd);
 	}
 	else if (!res->haveRow())
 	{
@@ -317,18 +216,20 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 		{
 			if (res->haveRow())
 			{
-				UserID uid = 0;
 				std::string passwd;
-				*res >> uid;
+				UserID uID = InvalidUserID;
+				*res >> uID;
 				*res >> passwd;
-				if (innerInfo->sesionInfo.passwd != passwd)
+				if (founder->second.passwd != passwd)
 				{
 					ack.retCode = BEC_AUTH_PASSWD_INCORRECT;
 				}
 				else
 				{
 					ack.retCode = BEC_SUCCESS;
-					innerInfo->sesionInfo.uid = uid;
+					founder->second.uID = uID;
+					founder->second.authTime = time(NULL);
+					founder->second.status = SS_AUTHED;
 				}
 
 			}
@@ -343,150 +244,45 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 
 	if (ack.retCode != BEC_SUCCESS)
 	{
-		LOGD("user auth fail. sID=" << sID << " req.user = " << innerInfo->sesionInfo.user << ", req.passwd = " << innerInfo->sesionInfo.passwd );
-		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
+		LOGD("user auth fail. sID=" << sID << " req.user = " << founder->second.user << ", req.passwd=" << founder->second.passwd);
+		founder->second.status = SS_UNAUTH;
 		WriteStream ws(ID_LoginAck);
 		ws << ack;
 		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-	}
-	else
-	{
-		LOGD("user auth success. sID=" << sID << " req.user = " << innerInfo->sesionInfo.user << ", req.passwd = " << innerInfo->sesionInfo.passwd);
-		innerInfo->sesionInfo.authTime = time(NULL);
-		//检测用户状态 判断是否需要踢人, 重新拉取DB数据
-
-		auto fder = _mapUserInfo.find(innerInfo->sesionInfo.uid);
-		if (fder != _mapUserInfo.end())
-		{
-
-			//登录保护中
-			if (fder->second->sesionInfo.sID != InvalidSeesionID 
-				&& fder->second->status == InnerUserInfo::IUIT_LOGINING 
-				&& time(NULL) - fder->second->sesionInfo.authTime < 300)
-			{
-				SessionManager::getRef().kickSession(sID);
-			}
-			else
-			{
-				if (fder->second->sesionInfo.sID != InvalidSeesionID)
-				{
-					SessionManager::getRef().kickSession(fder->second->sesionInfo.sID);
-					userLogout(fder->second);
-					_mapUserSession.erase(fder->second->sesionInfo.sID);
-					fder->second->sesionInfo.sID = InvalidSeesionID;
-				}
-				
-				fder->second->sesionInfo = innerInfo->sesionInfo;
-				innerInfo = fder->second;
-				innerInfo->sesionInfo.loginTime = time(NULL);
-				innerInfo->sesionInfo.lastActiveTime = time(NULL);
-				ack.info = innerInfo->userInfo;
-				WriteStream ws(ID_LoginAck);
-				ws << ack;
-				SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-
-				userLogin(innerInfo);
-
-
-			}
-			return;
-		}
-		
-		_mapUserInfo.insert(std::make_pair(innerInfo->sesionInfo.uid, innerInfo));
-		innerInfo->status = InnerUserInfo::IUIT_LOGINING;
-
-		//! 
-		auto & db = DBManager::getRef().getInfoDB();
-		DBQuery q;
-		q.init("select uid, nickname, iconID, diamond, giftDiamond,historyDiamond, UNIX_TIMESTAMP(joinTime) from tb_user where uid = ?");
-		q.add(innerInfo->sesionInfo.uid);
-		DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onUserSelect, this,
-			std::placeholders::_1, sID, false));
-	}
-}
-
-void NetManager::db_onUserSelect(DBResultPtr res, SessionID sID, bool isCreateUser)
-{
-	LOGD("enter db_onUserSelect. sID=" << sID);
-	LoginAck ack;
-	ack.retCode = BEC_DB_ERROR;
-
-	auto founder = _mapUserSession.find(sID);
-	if (founder == _mapUserSession.end())
-	{
-		LOGE("db_onUserSelect callback not found session. sID=" << sID);
 		return;
 	}
-	auto & innerInfo = founder->second;
-	if (!innerInfo)
-	{
-		LOGE("db_onUserSelect callback found session but InnerInfo is NULL . sID=" << sID);
-		return;
-	}
-	
 
-	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
+	LOGD("user auth success. sID=" << sID << " req.user = " << founder->second.user << ", req.passwd=" << founder->second.passwd);
+	auto inner = UserManager::getRef().getInnerUserInfoByUID(founder->second.uID);
+	if (!inner)
 	{
-		LOGE("db_onUserSelect error.  error msg=" << res->getLastError() << ", req.user=" << innerInfo->sesionInfo.user << ", req.passwd=" << innerInfo->sesionInfo.passwd);
-	}
-	else if (res->haveRow())
-	{
-		try
-		{
-			while (res->haveRow())
-			{
-				*res >> innerInfo->userInfo.uid;
-				*res >> innerInfo->userInfo.nickName;
-				*res >> innerInfo->userInfo.iconID;
-				*res >> innerInfo->userInfo.diamond;
-				*res >> innerInfo->userInfo.giftDiamond;
-				*res >> innerInfo->userInfo.hisotryDiamond;
-				*res >> innerInfo->userInfo.joinTime;
-				ack.info = innerInfo->userInfo;
-				ack.retCode = BEC_SUCCESS;
-				break;
-			}
-		}
-		catch (const std::string & err)
-		{
-			LOGE("db_onUserSelect catch error. err=" << err << ", sql=" << res->sqlString());
-		}
-	}
-	else
-	{
-		ack.retCode = BEC_AUTH_ACCOUNT_INCORRECT;
-	}
-
-	if (ack.retCode != BEC_SUCCESS && ack.retCode != BEC_AUTH_ACCOUNT_INCORRECT)
-	{
-		innerInfo->status = InnerUserInfo::IUIT_UNAUTH;
 		WriteStream ws(ID_LoginAck);
+		ack.retCode = BEC_SUCCESS;
+		ack.needCreate = 1;
 		ws << ack;
 		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+		return;
 	}
-	else
+
+	if (inner->sesionInfo.status == SS_LOGINED)
 	{
-		LOGD("user auth success. sID=" << sID << " req.user = " << innerInfo->sesionInfo.user << ", req.passwd = " << innerInfo->sesionInfo.passwd);
-		auto fder = _mapUserInfo.find(innerInfo->sesionInfo.uid);
-		if (fder == _mapUserInfo.end())
-		{
-			SessionManager::getRef().kickSession(sID);
-			return;
-		}
-		else
-		{
-			WriteStream ws(ID_LoginAck);
-			ack.info = innerInfo->userInfo;
-			ws << ack;
-			SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-			if (ack.retCode != BEC_AUTH_ACCOUNT_INCORRECT)
-			{
-				innerInfo->status = InnerUserInfo::IUIT_LOGINED;
-				innerInfo->sesionInfo.loginTime = time(NULL);
-				userLogin(innerInfo);
-			}
-		}
+		_clients.erase(inner->sesionInfo.sID);
+		UserManager::getRef().userLogout(inner);
 	}
+
+	inner->sesionInfo = founder->second;
+	inner->sesionInfo.lastActiveTime = time(NULL);
+	inner->sesionInfo.loginTime = time(NULL);
+	inner->sesionInfo.status = SS_LOGINED;
+
+
+
+	UserManager::getRef().userLogin(inner);
+	WriteStream ws(ID_LoginAck);
+	ack.retCode = BEC_SUCCESS;
+	ack.info = inner->userInfo;
+	ws << ack;
+	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 }
 
 
@@ -494,19 +290,53 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 {
 	CreateUserReq req;
 	rs >> req;
-	auto fouder = _mapUserSession.find(sID);
-	if (fouder == _mapUserSession.end() || fouder->second->status != InnerUserInfo::IUIT_LOGINING)
+
+	auto founder = _clients.find(sID);
+	if (founder == _clients.end())
 	{
-		SessionManager::getRef().kickSession(sID);
 		return;
 	}
-	fouder->second->userInfo.uid = fouder->second->sesionInfo.uid;
-	fouder->second->userInfo.nickName = req.nickName;
-	fouder->second->userInfo.iconID = req.iconID;
+	if (founder->second.status != SS_AUTHED || founder->second.uID == InvalidUserID)
+	{
+		return;
+	}
+
+	//如果是多个logic服务器, 那么创建角色的工作要先交给一个公共服务来进行互斥,而不是在这里进行互斥检测.
+	auto inner = UserManager::getRef().getInnerUserInfoByNickName(req.nickName);
+	if (inner)
+	{
+		LoginAck ack;
+		WriteStream ws(ID_LoginAck);
+		ack.retCode = BEC_SUCCESS;
+		ack.needCreate = 1;
+		ws << ack;
+		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+		LOGW("create user  warning. nick name incorect. nickname =" << req.nickName << ", cur uID=" << founder->second.uID << ", incorect uID= " << inner->userInfo.uID);
+		return;
+	}
+	
+
+	inner = UserManager::getRef().getInnerUserInfoByUID(founder->second.uID);
+	if (inner)
+	{
+		return;
+	}
+	
+	
+	inner = std::make_shared<InnerUserInfo>();
+	inner->userInfo.uID = founder->second.uID;
+	inner->userInfo.nickName = req.nickName;
+	inner->userInfo.iconID = req.iconID;
+
+	inner->sesionInfo = founder->second;
+	inner->sesionInfo.status = SS_LOGINED;
+	inner->sesionInfo.loginTime = time(NULL);
+	_clients.erase(sID);
+	UserManager::getRef().userLogin(inner, true);
 
 	auto & db = DBManager::getRef().getInfoDB();
-	DBQuery q("insert into tb_user(uid, nickname, iconID, joinTime) values(?, ?, ?, now());");
-	q.add(fouder->second->sesionInfo.uid);
+	DBQuery q("insert into tb_user(uID, nickname, iconID, joinTime) values(?, ?, ?, now());");
+	q.add(inner->userInfo.uID);
 	q.add(req.nickName);
 	q.add(req.iconID);
 	DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onUserCreate, this,
@@ -515,40 +345,38 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 {
 	LOGD("enter db_onUserCreate. sID=" << sID);
-	auto fouder = _mapUserSession.find(sID);
-	if (fouder == _mapUserSession.end() || fouder->second->status != InnerUserInfo::IUIT_LOGINING)
+	LoginAck ack;
+	if (res->getErrorCode() == QEC_SUCCESS)
 	{
-		SessionManager::getRef().kickSession(sID);
-		return;
-	}
-	auto & innerInfo = fouder->second;
-	
-	CreateUserAck ack;
-	ack.retCode = BEC_DB_ERROR;
-
-
-	if (res->getErrorCode() != QEC_SUCCESS)
-	{
-		LOGE("db_onUserCreate error.  error msg=" << res->getLastError() << ",  sql=" << res->sqlString());
+		ack.retCode = BEC_SUCCESS;
+		ack.needCreate = 0;
+		auto inner = UserManager::getRef().getInnerUserInfoBySID(sID);
+		if (inner)
+		{
+			ack.info = inner->userInfo;
+		}
+		else
+		{
+			ack.retCode = BEC_DB_ERROR;
+		}
 	}
 	else
 	{
-		ack.retCode = BEC_SUCCESS;
+		ack.retCode = BEC_DB_ERROR;
+		ack.needCreate = 0;
 	}
+	
+	WriteStream ws(ID_LoginAck);
+	ws << ack;
+	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+	
 
-
-	if (ack.retCode == BEC_SUCCESS)
+	//一段测试blob存储的测试代码.
+	if (ack.retCode == BEC_SUCCESS && false)
 	{
-		ack.info = innerInfo->userInfo;
-		WriteStream ws(ID_CreateUserAck);
-		ws << ack;
-		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-		innerInfo->sesionInfo.loginTime = time(NULL);
-		userLogin(innerInfo);
-
-/*			//blob test
+		//blob test
 		DBQuery q;
-		q.init("update tb_user set bag=? where uid=?");
+		q.init("update tb_user set bag=? where uID=?");
 		std::string apendBin;
 		for (int i = 0; i < 256; i++)
 		{
@@ -559,21 +387,14 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 		wsdb << apendBin;
 		std::string blob(wsdb.getStreamBody(), wsdb.getStreamBodyLen());
 		q.add(blob);
-		q.add(ack.info.uid);
+		q.add(ack.info.uID);
 		auto & db = DBManager::getRef().getInfoDB();
-		DBAsync::getRef().asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, false));
-		q.init("select bag from tb_user where uid=?");
-		q.add(ack.info.uid);
-		DBAsync::getRef().asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, true));
-		*/
+		DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, false));
+		q.init("select bag from tb_user where uID=?");
+		q.add(ack.info.uID);
+		DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, true));
+				
 	}
-	else
-	{
-		WriteStream ws(ID_CreateUserAck);
-		ws << ack;
-		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-	}
-		
 }
 
 void NetManager::db_onTestBlog(DBResultPtr res, bool isRead)
@@ -646,19 +467,21 @@ void NetManager::event_onPulse(SessionID sID, unsigned int pulseInterval)
 {
 	if (isSessionID(sID))
 	{
-		auto founder = _mapUserSession.find(sID);
-		if (founder == _mapUserSession.end())
+		auto inner = UserManager::getRef().getInnerUserInfoBySID(sID);
+		if (!inner)
 		{
+			//如果第一个心跳检测之前没有登录 直接踢掉
 			SessionManager::getRef().kickSession(sID);
 			LOGW("kick session because session not found in _mapSession.  sID=" << sID);
 			return;
 		}
-		if (founder->second->sesionInfo.lastActiveTime + pulseInterval * 2 / 1000 < time(NULL))
+		if (time(NULL) - inner->sesionInfo.lastActiveTime > pulseInterval *2)
 		{
 			SessionManager::getRef().kickSession(sID);
-			LOGW("kick session because session heartbeat timeout.  sID=" << sID << ", lastActiveTime=" << founder->second->sesionInfo.lastActiveTime);
+			LOGW("kick session because session heartbeat timeout.  sID=" << sID << ", lastActiveTime=" << inner->sesionInfo.lastActiveTime);
 			return;
 		}
+
 		WriteStream ws(ID_ServerPulse);
 		ServerPulse sp;
 		sp.timeStamp = (ui32)time(NULL);
@@ -671,16 +494,16 @@ void NetManager::event_onPulse(SessionID sID, unsigned int pulseInterval)
 
 void NetManager::msg_onServerPulseEcho(SessionID sID, ProtoID pID, ReadStream & rs)
 {
-	auto founder = _mapUserSession.find(sID);
-	if (founder != _mapUserSession.end())
+	auto inner = UserManager::getRef().getInnerUserInfoBySID(sID);
+	if (!inner)
 	{
-		ServerPulseEcho cp;
-		rs >> cp;
-		founder->second->sesionInfo.lastActiveTime = time(NULL);
-		founder->second->sesionInfo.lastDelayTick = (getNowTick() - cp.timeTick + founder->second->sesionInfo.lastDelayTick) / 2; //延迟检测 阻尼衰减
-		LOGD("msg_onServerPulseEcho lastActiveTime=" << founder->second->sesionInfo.lastActiveTime <<", lastDelayTick=" << founder->second->sesionInfo.lastDelayTick << "ms");
 		return;
 	}
+	ServerPulseEcho cp;
+	rs >> cp;
+	inner->sesionInfo.lastActiveTime = time(NULL);
+	inner->sesionInfo.lastDelayTick = (getNowTick() - cp.timeTick + inner->sesionInfo.lastDelayTick) / 2; //延迟检测 阻尼衰减
+	LOGD("msg_onServerPulseEcho lastActiveTime=" << inner->sesionInfo.lastActiveTime << ", lastDelayTick=" << inner->sesionInfo.lastDelayTick << "ms");
 }
 
 

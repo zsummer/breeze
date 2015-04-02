@@ -333,7 +333,7 @@ static int addListen(lua_State *L)
 
 
 
-void _onConnecterCallback(lua_State * L, SessionID sID)
+static void _onConnecterCallback(lua_State * L, SessionID sID)
 {
 	auto founder = std::find_if(_vmCheck.begin(), _vmCheck.end(), [L](lua_State* l){return l == L; });
 	if (founder == _vmCheck.end())
@@ -588,6 +588,70 @@ static int kick(lua_State * L)
 	return 0;
 }
 
+static void onPost(lua_State * L, int delay, int refID)
+{
+	auto founder = std::find_if(_vmCheck.begin(), _vmCheck.end(), [L](lua_State* l){return l == L; });
+	if (founder == _vmCheck.end())
+	{
+		LOGW("onPost _vmCheck warning: L is not found . L=" << L);
+		return;
+	}
+
+	int index = lua_gettop(L);
+	lua_pushcfunction(L, pcall_error);
+	lua_rawgeti(L, LUA_REGISTRYINDEX, refID);
+	if (lua_isnil(L, -1))
+	{
+		LOGW("onPost warning: cannot found ther callback. L=" << L << ", ref=" << refID);
+		lua_settop(L, 0);
+		return;
+	}
+	int status = lua_pcall(L, 0, 0, index + 1);
+	if (status && !lua_isnil(L, -1))
+	{
+		const char *msg = lua_tostring(L, -1);
+		if (msg == NULL) msg = "(error object is not a string)";
+		LOGE(msg);
+		lua_pop(L, 1);
+	}
+	luaL_unref(L, LUA_REGISTRYINDEX, refID);
+}
+
+static int _post(lua_State * L)
+{
+	int index = lua_gettop(L);
+	if (index != 2)
+	{
+		LOGE("post error. argc is not 2 [delay,function].  the argc=" << index);
+		lua_settop(L, 0);
+		return 0;
+	}
+
+	int delay = (int)luaL_checkinteger(L, 1);
+	if (!lua_isfunction(L, -1))
+	{
+		LOGE("post error. found out callback function.  the argc=" << index);
+		lua_settop(L, 0);
+	}
+	
+	int ret = luaL_ref(L, LUA_REGISTRYINDEX);
+	if (ret == LUA_REFNIL)
+	{
+		LOGE("post error. callback function is nil .  the argc=" << index);
+		lua_settop(L, 0);
+		return 0;
+	}
+	if (delay <= 0)
+	{
+		SessionManager::getRef().post(std::bind(onPost, L, delay, ret));
+	}
+	else
+	{
+		SessionManager::getRef().createTimer(delay, std::bind(onPost, L, delay, ret));
+	}
+	return 0;
+}
+
 luaL_Reg summer[] = {
 	{ "logd", logd },
 	{ "logi", logi },
@@ -608,6 +672,7 @@ luaL_Reg summer[] = {
 	{ "sendContent", sendContent }, //send content, don't care serialize and package.
 	{ "sendData", sendData }, // send original data, need to serialize and package via proto4z. 
 	{ "kick", kick }, // kick session. 
+	{ "post", _post }, // kick session. 
 
 	{ NULL, NULL }
 };

@@ -44,48 +44,6 @@ namespace Proto4z
 		} 
 	} 
  
-	class LoginAck: Proto4z.IProtoObject //登录结果 
-	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(101); } 
-		static public string getProtoName() { return "LoginAck"; } 
-		public Proto4z.ui16 retCode;  
-		public Proto4z.UserInfo info; //用户信息 
-		public System.Collections.Generic.List<byte> __encode() 
-		{ 
-			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 3; 
-			 
-			var data = new System.Collections.Generic.List<byte>(); 
-			data.AddRange(retCode.__encode()); 
-			data.AddRange(info.__encode()); 
-			sttLen = (System.UInt32)data.Count + 8; 
-			var ret = new System.Collections.Generic.List<byte>(); 
-			ret.AddRange(sttLen.__encode()); 
-			ret.AddRange(tag.__encode()); 
-			ret.AddRange(data); 
-			return ret; 
-		} 
-		public int __decode(byte[] binData, ref int pos) 
-		{ 
-			Proto4z.ui32 offset = 0; 
-			Proto4z.ui64 tag = 0; 
-			offset.__decode(binData, ref pos); 
-			offset.val += (System.UInt32)pos; 
-			tag.__decode(binData, ref pos); 
-			retCode = new Proto4z.ui16(); 
-			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
-			{ 
-				retCode.__decode(binData, ref pos); 
-			} 
-			info = new Proto4z.UserInfo(); 
-			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
-			{ 
-				info.__decode(binData, ref pos); 
-			} 
-			return (int)offset.val; 
-		} 
-	} 
- 
 	class CreateUserReq: Proto4z.IProtoObject //填写用户信息 
 	{	 
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(102); } 
@@ -128,19 +86,21 @@ namespace Proto4z
 		} 
 	} 
  
-	class CreateUserAck: Proto4z.IProtoObject //返回 
+	class LoginAck: Proto4z.IProtoObject //登录结果 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(103); } 
-		static public string getProtoName() { return "CreateUserAck"; } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(101); } 
+		static public string getProtoName() { return "LoginAck"; } 
 		public Proto4z.ui16 retCode;  
-		public Proto4z.UserInfo info;  
+		public Proto4z.ui16 needCreate;  
+		public Proto4z.UserInfo info; //用户信息 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 3; 
+			Proto4z.ui64 tag = 7; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(retCode.__encode()); 
+			data.AddRange(needCreate.__encode()); 
 			data.AddRange(info.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
 			var ret = new System.Collections.Generic.List<byte>(); 
@@ -161,8 +121,13 @@ namespace Proto4z
 			{ 
 				retCode.__decode(binData, ref pos); 
 			} 
-			info = new Proto4z.UserInfo(); 
+			needCreate = new Proto4z.ui16(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
+			{ 
+				needCreate.__decode(binData, ref pos); 
+			} 
+			info = new Proto4z.UserInfo(); 
+			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
 			{ 
 				info.__decode(binData, ref pos); 
 			} 

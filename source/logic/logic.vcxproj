@@ -99,12 +99,14 @@
     <ClCompile Include="application.cpp" />
     <ClCompile Include="logic\dbManager.cpp" />
     <ClCompile Include="logic\netManager.cpp" />
+    <ClCompile Include="logic\userManager.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="logic\dbManager.h" />
     <ClInclude Include="logic\netManager.h" />
+    <ClInclude Include="logic\userManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

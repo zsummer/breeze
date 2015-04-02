@@ -1,7 +1,7 @@
 ﻿#include "application.h"
-#include <log4z/log4z.h>
+#include "logic/dbManager.h"
+#include "logic/userManager.h"
 #include "logic/netManager.h"
-#include <dbAsync.h>
 using namespace zsummer::log4z;
 
 
@@ -29,9 +29,6 @@ bool Appliction::init(std::string filename, unsigned int index)
 	}
 	LOGI("parse ServerConfig success. configFile=" << filename << ", node=" << LogicNode << ", index=" << index);
 
-
-
-
 	ret = SessionManager::getRef().start();
 	if (!ret)
 	{
@@ -39,6 +36,21 @@ bool Appliction::init(std::string filename, unsigned int index)
 		return ret;
 	}
 	LOGI("SessionManager start success.");
+
+	ret = DBManager::getRef().start();
+	if (!ret)
+	{
+		LOGE("DBManager start false.");
+		return ret;
+	}
+	LOGI("DBManager start success.");
+	ret = UserManager::getRef().init();
+	if (!ret)
+	{
+		LOGE("UserManager init false.");
+		return ret;
+	}
+	LOGI("UserManager init success.");
 
 
 	if (!NetManager::getRef().start())

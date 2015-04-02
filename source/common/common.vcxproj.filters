@@ -7,9 +7,6 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="dbAsync.h" />
     <ClInclude Include="single.h" />
-    <ClInclude Include="tinyxml2\tinyxml2.h">
-      <Filter>tinyxml2</Filter>
-    </ClInclude>
     <ClInclude Include="lua\lapi.h">
       <Filter>lua</Filter>
     </ClInclude>
@@ -100,16 +97,12 @@
     <ClInclude Include="defined.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="genID.h" />
-    <ClInclude Include="handler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbhelper\dbHelper.cpp">
       <Filter>dbhelper</Filter>
     </ClCompile>
     <ClCompile Include="dbAsync.cpp" />
-    <ClCompile Include="tinyxml2\tinyxml2.cpp">
-      <Filter>tinyxml2</Filter>
-    </ClCompile>
     <ClCompile Include="lua\lapi.c">
       <Filter>lua</Filter>
     </ClCompile>
@@ -226,9 +219,6 @@
   <ItemGroup>
     <Filter Include="dbhelper">
       <UniqueIdentifier>{37712797-5d3e-47d5-a0ac-8e5567e84c3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="tinyxml2">
-      <UniqueIdentifier>{01a38f39-0efb-446d-ae82-0aa6ba70e93f}</UniqueIdentifier>
     </Filter>
     <Filter Include="lua">
       <UniqueIdentifier>{6b7a7289-959d-49af-a43f-7448863917d0}</UniqueIdentifier>

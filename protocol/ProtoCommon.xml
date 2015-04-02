@@ -35,7 +35,7 @@
 
   <!-- 用户信息 -->
   <struct name="UserInfo" desc="用户信息">
-    <member name="uid" type="ui64"   desc=""/>
+    <member name="uID" type="ui64"   desc=""/>
     <member name="nickName" type="string"   desc="用户昵称"/>
     <member name="iconID"  type="i16" desc="头像"/>
     <member name="diamond"  type="i32" desc="当前剩余的充值钻石"/>

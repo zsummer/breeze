@@ -21,6 +21,9 @@
     <ClCompile Include="logic\netManager.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\userManager.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -30,6 +33,9 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\netManager.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\userManager.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>

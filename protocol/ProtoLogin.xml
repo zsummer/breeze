@@ -15,22 +15,20 @@
     <member name="passwd"  type="string" desc=""/>
   </proto>
 
+  <proto name="CreateUserReq" desc= "填写用户信息">
+    <member name="nickName"  type="string" desc="昵称"/>
+    <member name="iconID"  type="i32" desc="头像"/>
+  </proto>
+  
   <proto name="LoginAck" desc= "登录结果" >
   	<member name="retCode" type="ui16"   desc=""/>
+  	<member name="needCreate" type="ui16"   desc=""/>
     <member name="info" type="UserInfo"   desc="用户信息"/>
   </proto>
 
 
 
-  <proto name="CreateUserReq" desc= "填写用户信息">
-    <member name="nickName"  type="string" desc="昵称"/>
-    <member name="iconID"  type="i32" desc="头像"/>
-  </proto>
 
-  <proto name="CreateUserAck" desc= "返回" >
-  	<member name="retCode" type="ui16"   desc=""/>
-    <member name="info" type="UserInfo"   desc=""/>
-  </proto>
 
 
 

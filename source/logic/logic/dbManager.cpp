@@ -36,10 +36,10 @@ bool DBManager::start()
 	{
 		return false;
 	}
+	LOGD("DBAsync start success.  begin connect to db ...");
 	
 	//创建DBHelper
 	//////////////////////////////////////////////////////////////////////////
-	LOGI("DBAsync start success.  begin connect to db ...");
 	{
 		const auto authConfig = ServerConfig::getRef().getDBConfig(AuthDB);
 		const auto infoConfig = ServerConfig::getRef().getDBConfig(InfoDB);
@@ -53,21 +53,21 @@ bool DBManager::start()
 			LOGE("connect Auth DB false. db config=" << authConfig);
 			return false;
 		}
-		LOGI("connect Auth DB success. db config=" << authConfig);
+		LOGD("connect Auth DB success. db config=" << authConfig);
 
 		if (!_infoDB->connect())
 		{
 			LOGE("connect Info DB false. db config=" << infoConfig);
 			return false;
 		}
-		LOGI("connect Info DB success. db config=" << infoConfig);
+		LOGD("connect Info DB success. db config=" << infoConfig);
 
 		if (!_logDB->connect())
 		{
 			LOGE("connect Log DB false. db config=" << logConfig);
 			return false;
 		}
-		LOGI("connect Log DB success. db config=" << logConfig);
+		LOGD("connect Log DB success. db config=" << logConfig);
 
 	}
 

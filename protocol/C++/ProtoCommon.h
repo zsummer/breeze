@@ -19,7 +19,7 @@ const unsigned short BEC_AUTH_LIMITE_COUNT = 65; //认证错误:认证次数超�
  
 struct UserInfo //用户信息 
 { 
-	unsigned long long uid;  
+	unsigned long long uID;  
 	std::string nickName; //用户昵称 
 	short iconID; //头像 
 	unsigned int diamond; //当前剩余的充值钻石 
@@ -28,7 +28,7 @@ struct UserInfo //用户信息
 	unsigned int joinTime; //加入时间 
 	UserInfo() 
 	{ 
-		uid = 0; 
+		uID = 0; 
 		iconID = 0; 
 		diamond = 0; 
 		hisotryDiamond = 0; 
@@ -42,7 +42,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
-	ws << data.uid; 
+	ws << data.uID; 
 	ws << data.nickName; 
 	ws << data.iconID; 
 	ws << data.diamond; 
@@ -61,7 +61,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	rs >> tag; 
 	if ( (1ULL << 0) & tag) 
 	{ 
-		rs >> data.uid;  
+		rs >> data.uID;  
 	} 
 	if ( (1ULL << 1) & tag) 
 	{ 

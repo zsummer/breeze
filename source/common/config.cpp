@@ -17,8 +17,17 @@
 * limitations under the License.
 */
 
-#include "tinyxml2.h"
 #include "config.h"
+extern "C"
+{
+#include "lua/lua.h"
+#include "lua/lualib.h"
+#include "lua/lauxlib.h"
+#include "lua/lpack.h"
+	int luaopen_protoz_bit(lua_State *L);
+	int luaopen_cjson(lua_State *l);
+}
+
 
 static ServerNode toServerNode(std::string strNode)
 {
@@ -98,149 +107,199 @@ const DBConfig & ServerConfig::getDBConfig(DBConfigID id)
 
 
 
+static int panichHandler(lua_State * L)
+{
+	std::string errMsg = lua_tostring(L, -1);
+	LOGE(errMsg);
+	return 0;
+}
 
 
 bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex ownIndex)
 {
 	_ownServerNode = ownNode;
 	_ownNodeIndex = ownIndex;
-	tinyxml2::XMLDocument doc;
-	if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS)
-	{
-		LOGE(filename << " parse ServerConfig Error. ");
-		doc.PrintError();
-		return false;
-	}
 
-	//////////////////////////////////////////////////////////////////////////
-	auto elmTraits = doc.FirstChildElement("traits");
-	if (!elmTraits || ! elmTraits->Attribute("platid") || ! elmTraits->Attribute("areaid"))
-	{
-		LOGE(filename << " parse ServerConfig Error. not have traits");
-		return false;
-	}
-	_platid = elmTraits->IntAttribute("platid");
-	_areaid = elmTraits->IntAttribute("areaid");
 
-	//////////////////////////////////////////////////////////////////////////
+	int status;
+	lua_State *L = luaL_newstate();
+	if (L == NULL)
 	{
-		auto elmListen = doc.FirstChildElement("listen");
-		if (!elmListen || !elmListen->FirstChildElement())
+		return EXIT_FAILURE;
+	}
+	luaL_openlibs(L);  /* open libraries */
+	lua_atpanic(L, panichHandler);
+
+	status = luaL_dofile(L, filename.c_str());
+	int index = lua_gettop(L);
+	lua_getfield(L, -1, "traits");
+	lua_getfield(L, -1, "platid");
+	_platid = (unsigned short)luaL_checkinteger(L, -1);
+	lua_pop(L, 1);
+	lua_getfield(L, -1, "areaid");
+	_areaid = (unsigned short)luaL_checkinteger(L, -1);
+	lua_pop(L, 2);
+
+	lua_getfield(L, -1, "db");
+	lua_pushnil(L);
+	while (lua_next(L, -2))
+	{
+		if (!lua_isstring(L, -2))
 		{
-			LOGE(filename << " parse ServerConfig Error. not have listen");
+			LOGE("config parse db false. key is not string type");
 			return false;
 		}
-		auto elmListenChild = elmListen->FirstChildElement();
-		do
-		{
-			std::string strNode = elmListenChild->Name();
-			if (!elmListenChild->Attribute("ip") || !elmListenChild->Attribute("port") || !elmListenChild->Attribute("index"))
-			{
-				LOGE(filename << " parse ServerConfig Error. listen have invalide config.");
-				return false;
-			}
+		
 
+		DBConfig lconfig;
+		lua_getfield(L, -1, "ip");
+		lconfig._ip = lua_tostring(L, -1);
+		lua_pop(L, 1);
+
+		lua_getfield(L, -1, "port");
+		lconfig._port = (unsigned short)lua_tointeger(L, -1);
+		lua_pop(L, 1);
+
+		lua_getfield(L, -1, "db");
+		lconfig._db = lua_tostring(L, -1);
+		lua_pop(L, 1);
+
+		lua_getfield(L, -1, "user");
+		lconfig._user = lua_tostring(L, -1);
+		lua_pop(L, 1);
+
+		lua_getfield(L, -1, "pwd");
+		lconfig._pwd = lua_tostring(L, -1);
+		lua_pop(L, 1);
+
+		lua_getfield(L, -1, "db");
+		lconfig._db = lua_tostring(L, -1);
+		lua_pop(L, 1);
+
+		lconfig._id = toDBConfigID(lua_tostring(L, -2));
+		if (lconfig._id != InvalidDB)
+		{
+			_configDB.push_back(lconfig);
+			LOGI("DBConfig=" << lconfig);
+		}
+		else
+		{
+			LOGE("unknown DBConfig=" << lconfig);
+		}
+
+		//saved key to next while.
+		lua_pop(L, 1);
+	}
+	//pop "db" table.
+	lua_pop(L, 1);
+
+
+	lua_getfield(L, -1, "listen");
+	lua_pushnil(L);
+	while (lua_next(L, -2))
+	{
+		if (!lua_isstring(L, -2))
+		{
+			LOGE("config parse listen false. key is not string type");
+			return false;
+		}
+		std::string node = lua_tostring(L, -2);
+
+		lua_pushnil(L);
+		while (lua_next(L, -2))
+		{
 			::ListenConfig lconfig;
-			lconfig._ip = elmListenChild->Attribute("ip");
-			lconfig._port = elmListenChild->IntAttribute("port");
-			lconfig._index = elmListenChild->IntAttribute("index");
-			lconfig._node = toServerNode(strNode);
+
+			lua_getfield(L, -1, "ip");
+			lconfig._ip = lua_tostring(L, -1);
+			lua_pop(L, 1);
+
+			lua_getfield(L, -1, "port");
+			lconfig._port = (unsigned short)lua_tointeger(L, -1);
+			lua_pop(L, 1);
+
+			lua_getfield(L, -1, "index");
+			lconfig._index = (NodeIndex)lua_tointeger(L, -1);
+			lua_pop(L, 1);
+
+
+			lconfig._node = toServerNode(node);
 			if (lconfig._node != InvalidServerNode)
 			{
 				_configListen.push_back(lconfig);
-				LOGI("ListenConfig=" << lconfig );
+				LOGI("ListenConfig=" << lconfig);
 			}
 			else
 			{
 				LOGE("UNKNOWN ListenConfig=" << lconfig);
 			}
 
-			elmListenChild = elmListenChild->NextSiblingElement();
-		} while (elmListenChild);
+			//saved key to next while.
+			lua_pop(L, 1);
+		}
+		
+		//saved key to next while.
+		lua_pop(L, 1);
 	}
+	//pop "listen" table.
+	lua_pop(L, 1);
 
 
-	//////////////////////////////////////////////////////////////////////////
+	lua_getfield(L, -1, "connect");
+	lua_pushnil(L);
+	while (lua_next(L, -2))
 	{
-		auto elmConnect = doc.FirstChildElement("connect");
-		if (!elmConnect || !elmConnect->FirstChildElement())
+		if (!lua_isstring(L, -2))
 		{
-			LOGE(filename << " parse ServerConfig Error. not have connect");
+			LOGE("config parse connect false. key is not string type");
 			return false;
 		}
-		auto elmConnectChild = elmConnect->FirstChildElement();
-		do
+		std::string node = lua_tostring(L, -2);
+
+		lua_pushnil(L);
+		while (lua_next(L, -2))
 		{
-			std::string srcStrNode = elmConnectChild->Name();
-			if (!elmConnectChild->Attribute("ip")
-				|| !elmConnectChild->Attribute("port")
-				|| !elmConnectChild->Attribute("dstNode"))
-			{
-				LOGE(filename << " parse ServerConfig Error. connect have invalide config.");
-				return false;
-			}
-
-
 			ConnectorConfig lconfig;
-			std::string dstStrNode = elmConnectChild->Attribute("dstNode");
-			lconfig._remoteIP = elmConnectChild->Attribute("ip");
-			lconfig._remotePort = elmConnectChild->IntAttribute("port");
-			lconfig._srcNode = toServerNode(srcStrNode);
-			lconfig._dstNode = toServerNode(dstStrNode);
+
+			lua_getfield(L, -1, "ip");
+			lconfig._remoteIP = lua_tostring(L, -1);
+			lua_pop(L, 1);
+
+			lua_getfield(L, -1, "port");
+			lconfig._remotePort = (unsigned short)lua_tointeger(L, -1);
+			lua_pop(L, 1);
+
+			lua_getfield(L, -1, "index");
+			lconfig._dstNodeIndex = (NodeIndex)lua_tointeger(L, -1);
+			lua_pop(L, 1);
+
+			lua_getfield(L, -1, "dstNode");
+			lconfig._dstNode = toServerNode(lua_tostring(L, -1));
+			lua_pop(L, 1);
+
+			lconfig._srcNode = toServerNode(node);
+
 			if (lconfig._srcNode != InvalidServerNode && lconfig._dstNode != InvalidServerNode)
 			{
 				_configConnect.push_back(lconfig);
-				LOGD("ConnectorConfig=" << lconfig);
+				LOGI("_configConnect=" << lconfig);
 			}
 			else
 			{
-				LOGE("UNKNOWN ConnectorConfig=" << lconfig);
+				LOGE("UNKNOWN ConnectConfig=" << lconfig);
 			}
-			elmConnectChild = elmConnectChild->NextSiblingElement();
-		} while (elmConnectChild);
-	}
 
-	//////////////////////////////////////////////////////////////////////////
-	{
-		auto elmDB = doc.FirstChildElement("db");
-		if (!elmDB || !elmDB->FirstChildElement())
-		{
-			LOGE(filename << " parse ServerConfig Error. not have mongo");
-			return false;
+			//saved key to next while.
+			lua_pop(L, 1);
 		}
-		auto elmDBChild = elmDB->FirstChildElement();
-		do
-		{
-			std::string strNode = elmDBChild->Name();
-			if (!elmDBChild->Attribute("ip")
-				|| !elmDBChild->Attribute("port")
-				|| !elmDBChild->Attribute("db")
-				|| !elmDBChild->Attribute("user")
-				|| !elmDBChild->Attribute("pwd"))
-			{
-				LOGE(filename << " parse ServerConfig Error. mongo have invalide config.");
-				return false;
-			}
 
-			DBConfig lconfig;
-			lconfig._ip = elmDBChild->Attribute("ip");
-			lconfig._port = elmDBChild->IntAttribute("port");
-			lconfig._db = elmDBChild->Attribute("db");
-			lconfig._user = elmDBChild->Attribute("user");
-			lconfig._pwd = elmDBChild->Attribute("pwd");
-			lconfig._id = toDBConfigID(strNode);
-			if (lconfig._id != InvalidDB)
-			{
-				_configDB.push_back(lconfig);
-				LOGI("DBConfig=" << lconfig);
-			}
-			else
-			{
-				LOGE("unknown DBConfig=" << lconfig);
-			}
-			elmDBChild = elmDBChild->NextSiblingElement();
-		} while (elmDBChild);
+		//saved key to next while.
+		lua_pop(L, 1);
 	}
+	//pop "connect" table.
+	lua_pop(L, 1);
+
+	lua_close(L);
 	return true;
 }
 

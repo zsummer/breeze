@@ -60,7 +60,7 @@ namespace Proto4z
  
 	class UserInfo: Proto4z.IProtoObject //用户信息 
 	{	 
-		public Proto4z.ui64 uid;  
+		public Proto4z.ui64 uID;  
 		public Proto4z.String nickName; //用户昵称 
 		public Proto4z.i16 iconID; //头像 
 		public Proto4z.i32 diamond; //当前剩余的充值钻石 
@@ -73,7 +73,7 @@ namespace Proto4z
 			Proto4z.ui64 tag = 127; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
-			data.AddRange(uid.__encode()); 
+			data.AddRange(uID.__encode()); 
 			data.AddRange(nickName.__encode()); 
 			data.AddRange(iconID.__encode()); 
 			data.AddRange(diamond.__encode()); 
@@ -94,10 +94,10 @@ namespace Proto4z
 			offset.__decode(binData, ref pos); 
 			offset.val += (System.UInt32)pos; 
 			tag.__decode(binData, ref pos); 
-			uid = new Proto4z.ui64(); 
+			uID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
 			{ 
-				uid.__decode(binData, ref pos); 
+				uID.__decode(binData, ref pos); 
 			} 
 			nickName = new Proto4z.String(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 

@@ -7,14 +7,6 @@ Protoz.LoginReq.__getTag = "11"
 Protoz.LoginReq[1] = {name="user", type="string" }  
 Protoz.LoginReq[2] = {name="passwd", type="string" }  
  
-Protoz.register(101,"LoginAck") 
-Protoz.LoginAck = {} --登录结果 
-Protoz.LoginAck.__getID = 101 
-Protoz.LoginAck.__getName = "LoginAck" 
-Protoz.LoginAck.__getTag = "11" 
-Protoz.LoginAck[1] = {name="retCode", type="ui16" }  
-Protoz.LoginAck[2] = {name="info", type="UserInfo" } --用户信息 
- 
 Protoz.register(102,"CreateUserReq") 
 Protoz.CreateUserReq = {} --填写用户信息 
 Protoz.CreateUserReq.__getID = 102 
@@ -23,13 +15,14 @@ Protoz.CreateUserReq.__getTag = "11"
 Protoz.CreateUserReq[1] = {name="nickName", type="string" } --昵称 
 Protoz.CreateUserReq[2] = {name="iconID", type="i32" } --头像 
  
-Protoz.register(103,"CreateUserAck") 
-Protoz.CreateUserAck = {} --返回 
-Protoz.CreateUserAck.__getID = 103 
-Protoz.CreateUserAck.__getName = "CreateUserAck" 
-Protoz.CreateUserAck.__getTag = "11" 
-Protoz.CreateUserAck[1] = {name="retCode", type="ui16" }  
-Protoz.CreateUserAck[2] = {name="info", type="UserInfo" }  
+Protoz.register(101,"LoginAck") 
+Protoz.LoginAck = {} --登录结果 
+Protoz.LoginAck.__getID = 101 
+Protoz.LoginAck.__getName = "LoginAck" 
+Protoz.LoginAck.__getTag = "111" 
+Protoz.LoginAck[1] = {name="retCode", type="ui16" }  
+Protoz.LoginAck[2] = {name="needCreate", type="ui16" }  
+Protoz.LoginAck[3] = {name="info", type="UserInfo" } --用户信息 
  
 Protoz.register(104,"ServerPulse") 
 Protoz.ServerPulse = {} --服务器生命脉冲 

@@ -42,49 +42,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	return rs; 
 } 
  
-const unsigned short ID_LoginAck = 101; //登录结果 
-struct LoginAck //登录结果 
-{ 
-	unsigned short retCode;  
-	UserInfo info; //用户信息 
-	LoginAck() 
-	{ 
-		retCode = 0; 
-	} 
-	inline unsigned short GetProtoID() { return 101;} 
-	inline std::string GetProtoName() { return "ID_LoginAck";} 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LoginAck & data) 
-{ 
-	unsigned long long tag = 3ULL; 
-	ws << (zsummer::proto4z::Integer)0; 
-	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-	ws << tag; 
-	ws << data.retCode; 
-	ws << data.info; 
-	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
-	return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LoginAck & data) 
-{ 
-	zsummer::proto4z::Integer sttLen = 0; 
-	rs >> sttLen; 
-	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-	unsigned long long tag = 0; 
-	rs >> tag; 
-	if ( (1ULL << 0) & tag) 
-	{ 
-		rs >> data.retCode;  
-	} 
-	if ( (1ULL << 1) & tag) 
-	{ 
-		rs >> data.info;  
-	} 
-	cursor = cursor - rs.getStreamUnreadLen(); 
-	rs.skipOriginalData(sttLen - cursor); 
-	return rs; 
-} 
- 
 const unsigned short ID_CreateUserReq = 102; //填写用户信息 
 struct CreateUserReq //填写用户信息 
 { 
@@ -128,30 +85,33 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	return rs; 
 } 
  
-const unsigned short ID_CreateUserAck = 103; //返回 
-struct CreateUserAck //返回 
+const unsigned short ID_LoginAck = 101; //登录结果 
+struct LoginAck //登录结果 
 { 
 	unsigned short retCode;  
-	UserInfo info;  
-	CreateUserAck() 
+	unsigned short needCreate;  
+	UserInfo info; //用户信息 
+	LoginAck() 
 	{ 
 		retCode = 0; 
+		needCreate = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 103;} 
-	inline std::string GetProtoName() { return "ID_CreateUserAck";} 
+	inline unsigned short GetProtoID() { return 101;} 
+	inline std::string GetProtoName() { return "ID_LoginAck";} 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserAck & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LoginAck & data) 
 { 
-	unsigned long long tag = 3ULL; 
+	unsigned long long tag = 7ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
 	ws << data.retCode; 
+	ws << data.needCreate; 
 	ws << data.info; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserAck & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LoginAck & data) 
 { 
 	zsummer::proto4z::Integer sttLen = 0; 
 	rs >> sttLen; 
@@ -163,6 +123,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 		rs >> data.retCode;  
 	} 
 	if ( (1ULL << 1) & tag) 
+	{ 
+		rs >> data.needCreate;  
+	} 
+	if ( (1ULL << 2) & tag) 
 	{ 
 		rs >> data.info;  
 	} 

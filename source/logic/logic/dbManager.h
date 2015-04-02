@@ -28,8 +28,8 @@
 #ifndef _DB_MANAGER_H_
 #define _DB_MANAGER_H_
 #include <common.h>
-#include <unordered_map>
-#include <dbAsync.h>
+
+
 
 
 
@@ -38,20 +38,20 @@ class DBManager : public Singleton<DBManager>
 public:
 	DBManager();
 	~DBManager();
-	//在初始化中连接所有需要访问的数据库.
+	//在启动连接所有需要访问的数据库.
 	bool start();
 	bool stop();
 public:
-	inline DBHelperPtr & getAuthDB(){ return _authDB; }
-	inline DBHelperPtr & getInfoDB(){ return _infoDB; }
-	inline DBHelperPtr & getLogDB(){ return _logDB; }
-	inline DBAsyncPtr & getAsync(){ return _dbAsync; }
+	inline zsummer::mysql::DBHelperPtr & getAuthDB(){ return _authDB; }
+	inline zsummer::mysql::DBHelperPtr & getInfoDB(){ return _infoDB; }
+	inline zsummer::mysql::DBHelperPtr & getLogDB(){ return _logDB; }
+	inline zsummer::mysql::DBAsyncPtr & getAsync(){ return _dbAsync; }
 private:
-	DBHelperPtr _infoDB;
-	DBHelperPtr _logDB;
-	DBHelperPtr _authDB;
+	zsummer::mysql::DBHelperPtr _infoDB;
+	zsummer::mysql::DBHelperPtr _logDB;
+	zsummer::mysql::DBHelperPtr _authDB;
 
-	DBAsyncPtr _dbAsync;
+	zsummer::mysql::DBAsyncPtr _dbAsync;
 };
 
 
