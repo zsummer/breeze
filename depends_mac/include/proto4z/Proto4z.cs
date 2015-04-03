@@ -915,11 +915,16 @@ namespace Proto4z
             _val = "";
             ui32 len = new ui32(0);
             len.__decode(binData, ref pos);
-            for (int i = pos; i < pos + len.val; i++)
+            if ( len > 0 )
             {
-                _val += (char)binData[i];
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                for (int i = pos; i < pos + len.val; i++)
+                {
+                    sb.Append((char)binData[i]);
+                }
+                pos += (int)len.val;
+                _val = sb.ToString();
             }
-            pos += _val.Length;
             return pos;
         }
         public override bool Equals(System.Object obj)

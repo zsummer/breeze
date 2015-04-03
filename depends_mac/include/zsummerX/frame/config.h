@@ -148,7 +148,7 @@ namespace zsummer
 		const unsigned int SEND_RECV_CHUNK_SIZE = 100 * 1024;
 
 		//!register message with original net pack, if return false other register will not receive this message.
-		typedef std::function < bool(SessionID, const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnOrgMessageFunction;
+		typedef std::function < bool(SessionID, const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnPreMessageFunction;
 
 		//!register message 
 		typedef std::function < void(SessionID, ProtoID, zsummer::proto4z::ReadStream &) > OnMessageFunction;

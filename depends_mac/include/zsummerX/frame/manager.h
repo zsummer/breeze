@@ -57,6 +57,9 @@ namespace zsummer
 			inline static SessionManager * getPtr(){ return &getRef(); };
 		public:
 			bool start();
+			void stopAccept();
+			void kickAllClients();
+			void kickAllConnect();
 			void stop();
 			void run();
 			void runOnce(bool isImmediately = false);
@@ -92,7 +95,6 @@ namespace zsummer
 
 
 		private:
-			void safeStop();
 			friend class TcpSession;
 			// socket(from accept) on close 
 			void onSessionClose(AccepterID aID, SessionID sID);
@@ -102,7 +104,7 @@ namespace zsummer
 		private:
 			EventLoopPtr _summer;
 			bool  _running = true;
-			unsigned int  _onlineConnectCounts = 0;//counts online connect when zsummerx will exit
+			bool _openAccept = true;
 
 			SessionID _lastAcceptID = 0; //accept ID sequence. range  [0 - -1)
 			SessionID _lastSessionID = 0;//session ID sequence. range  [0 - __MIDDLE_SEGMENT_VALUE)
