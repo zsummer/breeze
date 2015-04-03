@@ -16,13 +16,12 @@ DBManager::~DBManager()
 
 bool DBManager::stop()
 {
-	// 	_authDB->stop();
-	// 	_infoDB->stop();
-	// 	_logDB->stop();
 	while (_dbAsync->getFinalCount() != _dbAsync->getPostCount())
 	{
+		LOGA("Waiting the db data to store. waiting count=" << _dbAsync->getPostCount() - _dbAsync->getFinalCount());
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
+	LOGA("_dbAsync total FinalCount  :" << _dbAsync->getFinalCount());
 	_authDB->stop();
 	_infoDB->stop();
 	_logDB->stop();
@@ -68,10 +67,7 @@ bool DBManager::start()
 			return false;
 		}
 		LOGD("connect Log DB success. db config=" << logConfig);
-
 	}
-
-	
 
 	return true;
 }

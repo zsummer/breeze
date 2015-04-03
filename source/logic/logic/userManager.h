@@ -42,7 +42,10 @@ public:
 	std::shared_ptr<InnerUserInfo> getInnerUserInfoBySID(SessionID sid);
 	std::shared_ptr<InnerUserInfo> getInnerUserInfoByUID(UserID uID);
 	std::shared_ptr<InnerUserInfo> getInnerUserInfoByNickName(const std::string & nickName);
-	void userLogin(std::shared_ptr<InnerUserInfo> innerInfo, bool isFirst = false);
+	inline size_t getAllOnlineUserCount() { return _mapSession.size(); }
+	inline size_t getAllUserCount() { return _mapUser.size(); }
+
+	void userLogin(std::shared_ptr<InnerUserInfo> innerInfo, bool newUser = false);
 	void userLogout(std::shared_ptr<InnerUserInfo> innerInfo);
 protected:
 	

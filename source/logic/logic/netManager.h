@@ -40,7 +40,7 @@ public:
 	//启动
 	bool start();
 	//关闭
-	bool stop();
+	bool stop(std::function<void()> onNetClosed);
 
 protected:
 	//! ---- callback --------------------------------------------
@@ -82,6 +82,9 @@ private:
 	zsummer::network::ListenConfig _configListen; 
 	bool _bListening = false;
 	AccepterID _accepterID = InvalidAccepterID;
+
+	//
+	std::function<void()> _onNetClosed;
 };
 
 

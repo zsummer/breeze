@@ -11,7 +11,8 @@ public:
 	void run();
 	void stop();
 protected:
-	void _stop();
+	void _onSigalStop();
+	void _onNetClosed();
 };
 
 

@@ -71,9 +71,20 @@ bool NetManager::start()
 	return true;
 }
 
-bool NetManager::stop()
+bool NetManager::stop(std::function<void()> onNetClosed)
 {
-	SessionManager::getRef().stop();
+	SessionManager::getRef().stopAccept();
+	SessionManager::getRef().kickAllClients();
+	SessionManager::getRef().kickAllConnect();
+
+	if (UserManager::getRef().getAllOnlineUserCount() == 0)
+	{
+		SessionManager::getRef().post(onNetClosed);
+	}
+	else
+	{
+		_onNetClosed = onNetClosed;
+	}
 	return true;
 }
 
@@ -108,11 +119,16 @@ void NetManager::event_onSessionDisconnect(SessionID sID)
 		}
 
 		auto info = UserManager::getRef().getInnerUserInfoBySID(sID);
-		if (!info)
+		if (info)
 		{
-			return;
+			UserManager::getRef().userLogout(info);
 		}
-		UserManager::getRef().userLogout(info);
+	}
+
+	if (UserManager::getRef().getAllOnlineUserCount() == 0 && _onNetClosed)
+	{
+		SessionManager::getRef().post(_onNetClosed);
+		_onNetClosed = nullptr;
 	}
 }
 

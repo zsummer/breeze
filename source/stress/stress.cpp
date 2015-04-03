@@ -28,6 +28,7 @@ using namespace zsummer::log4z;
 using namespace zsummer::mysql;
 
 
+
 int main(int argc, char* argv[])
 {
 
@@ -43,8 +44,8 @@ int main(int argc, char* argv[])
 	signal( SIGQUIT, SIG_IGN );
 	signal( SIGCHLD, SIG_IGN);
 #endif
-// 	signal(SIGINT, &sigInt);
-// 	signal(SIGTERM, &sigInt);
+//	signal(SIGINT, &sigFun);
+//	signal(SIGTERM, &sigFun);
 
 		
 	ILog4zManager::getPtr()->config("log.config");

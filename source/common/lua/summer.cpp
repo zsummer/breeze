@@ -121,6 +121,9 @@ static int start(lua_State *L)
 
 static int stop(lua_State *L)
 {
+	SessionManager::getRef().stopAccept();
+	SessionManager::getRef().kickAllClients();
+	SessionManager::getRef().kickAllConnect();
 	SessionManager::getRef().stop();
 	return 0;
 }

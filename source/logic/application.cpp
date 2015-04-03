@@ -71,10 +71,21 @@ void Appliction::run()
 
 void Appliction::stop()
 {
-	SessionManager::getRef().createTimer(100, std::bind(&Appliction::_stop, this));
+	LOGA("Appliction::stop()");
+	SessionManager::getRef().post(std::bind(&Appliction::_onSigalStop, this));
 }
 
-void Appliction::_stop()
+void Appliction::_onSigalStop()
 {
-	NetManager::getRef().stop();
+	LOGA("Appliction::_onSigalStop(): waiting all session safe close ...");
+	NetManager::getRef().stop(std::bind(&Appliction::_onNetClosed, this));
 }
+
+void Appliction::_onNetClosed()
+{
+	LOGA("Appliction::_onNetClosed(): waiting DBManager stop ...");
+	DBManager::getRef().stop();// DBManager will wait all data store.
+	LOGA("Appliction::_onNetClosed(): stop main thread ...");
+	SessionManager::getRef().stop(); //exit main thread.
+}
+

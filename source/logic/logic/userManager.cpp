@@ -118,10 +118,10 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByNickName(const std
 }
 
 
-void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo, bool isFirst)
+void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo, bool newUser)
 {
 	_mapSession[innerInfo->sesionInfo.sID] = innerInfo;
-	if (isFirst)
+	if (newUser)
 	{
 		_mapUser[innerInfo->userInfo.uID] = innerInfo;
 		_mapNickName[innerInfo->userInfo.nickName] = innerInfo;
