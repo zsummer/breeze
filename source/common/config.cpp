@@ -121,7 +121,6 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
 	_ownNodeIndex = ownIndex;
 
 
-	int status;
 	lua_State *L = luaL_newstate();
 	if (L == NULL)
 	{
@@ -130,8 +129,7 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
 	luaL_openlibs(L);  /* open libraries */
 	lua_atpanic(L, panichHandler);
 
-	status = luaL_dofile(L, filename.c_str());
-	int index = lua_gettop(L);
+	luaL_dofile(L, filename.c_str());
 	lua_getfield(L, -1, "traits");
 	lua_getfield(L, -1, "platid");
 	_platid = (unsigned short)luaL_checkinteger(L, -1);

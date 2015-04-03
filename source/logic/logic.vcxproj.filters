@@ -7,6 +7,9 @@
     <Filter Include="logic">
       <UniqueIdentifier>{f9cdd186-985b-4536-b830-420c0d6f254c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="logic\mission">
+      <UniqueIdentifier>{6170ecf2-f3d2-4744-94cf-89a0e852dba9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,6 +27,9 @@
     <ClCompile Include="logic\userManager.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\mission\eventTrigger.cpp">
+      <Filter>logic\mission</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -37,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="logic\userManager.h">
       <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\mission\eventTrigger.h">
+      <Filter>logic\mission</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

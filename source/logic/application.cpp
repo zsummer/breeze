@@ -2,6 +2,7 @@
 #include "logic/dbManager.h"
 #include "logic/userManager.h"
 #include "logic/netManager.h"
+#include "logic/mission/eventTrigger.h"
 using namespace zsummer::log4z;
 
 
@@ -52,7 +53,19 @@ bool Appliction::init(std::string filename, unsigned int index)
 	}
 	LOGI("UserManager init success.");
 
+	ret = EventTrigger::getRef().init();
+	if (!ret)
+	{
+		LOGE("EventTrigger init false.");
+		return ret;
+	}
+	LOGI("EventTrigger init success.");
 
+
+
+
+
+	//open network
 	if (!NetManager::getRef().start())
 	{
 		LOGE("NetManager start false.");

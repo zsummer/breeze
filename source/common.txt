@@ -1,16 +1,12 @@
 
 
-
-aux_source_directory(./ source1)    
-aux_source_directory(./logic source2)    
-aux_source_directory(./core source3)    
-aux_source_directory(./lua source4)    
+file(GLOB_RECURSE source "*.cpp") 
 set(BINNAME ${PROJECT_NAME})
 
 
 set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/../bin/${BINNAME}/)
 
-add_executable(${BINNAME} ${source1} ${source2} ${source3} ${source4})
+add_executable(${BINNAME} ${source})
 
 if(APPLE)
   target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX_select${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread)
