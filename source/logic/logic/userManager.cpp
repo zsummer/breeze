@@ -130,7 +130,7 @@ void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo, bool newUs
 		_mapNickName[innerInfo->userInfo.nickName] = innerInfo;
 	}
     
-    EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID);
+    EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID, 1 , 1);
 }
 
 void UserManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)

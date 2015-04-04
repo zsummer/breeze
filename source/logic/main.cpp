@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 		filename = argv[2];
 	}
 	bool ret = false;
-	ILog4zManager::getPtr()->config("../log.config");
+	ILog4zManager::getPtr()->config("../log.logic.config");
 	ret = ILog4zManager::getPtr()->start();
 	if (!ret)
 	{

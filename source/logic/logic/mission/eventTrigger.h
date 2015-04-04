@@ -31,6 +31,7 @@
 
 
 
+
 //事件触发器只为其他系统模块提供事件出发服务. 这些系统模块指的是 活动,任务,成就 等.
 
 enum EventTriggerEnum : unsigned short
@@ -45,12 +46,42 @@ public:
 	~EventTrigger();
 	typedef std::function<void(UserID uID, unsigned long long param1, unsigned long long param2, unsigned long long param3)> TriggerHandler;
 	bool init();
-	void trigger(EventTriggerEnum triggerID, UserID uID, unsigned long long param1 = 0, unsigned long long param2 = 0, unsigned long long param3 = 0);
-	void watching(EventTriggerEnum triggerID, TriggerHandler callback);
+
+	template<typename T, typename ... Args>
+	inline void trigger(EventTriggerEnum triggerID, const T & val, Args ... args)
+	{
+		if (_firstTrigger)
+		{
+			lua_settop(_luaState, 0);
+			_firstTrigger = false;
+			lua_pushnumber(_luaState, triggerID);
+		}
+		lua_pushnumber(_luaState, val);
+		trigger(triggerID, args ...);
+	}
+	template<typename T>
+	inline void trigger(EventTriggerEnum triggerID, const T & val)
+	{
+		if (_firstTrigger)
+		{
+			lua_settop(_luaState, 0);
+			_firstTrigger = false;
+			lua_pushnumber(_luaState, triggerID);
+		}
+		lua_pushnumber(_luaState, val);
+		trigger(triggerID);
+		_firstTrigger = true;
+	}
+
+	void trigger(EventTriggerEnum triggerID);
+
+	//lua callback
+	void watching(EventTriggerEnum triggerID, int ref){ _watchings[triggerID].insert(ref); }
+	void unwatching(EventTriggerEnum triggerID, int ref){ _watchings[triggerID].erase(ref); }
 private:
-	void _trigger(EventTriggerEnum triggerID, UserID uID, unsigned long long param1, unsigned long long param2, unsigned long long param3);
-private:
-	std::map<EventTriggerEnum, std::vector<TriggerHandler>> _watchings;
+	bool _firstTrigger = true;
+	lua_State * _luaState = NULL;
+	std::map<EventTriggerEnum, std::set<int>> _watchings;
 };
 
 

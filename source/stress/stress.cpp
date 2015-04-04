@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 //	signal(SIGTERM, &sigFun);
 
 		
-	ILog4zManager::getPtr()->config("log.config");
+	ILog4zManager::getPtr()->config("../log.stress.config");
 	ILog4zManager::getPtr()->start();
 	ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);
 
@@ -113,8 +113,28 @@ int main(int argc, char* argv[])
 		luaopen_protoz_bit(L);
 		luaopen_cjson(L);
 		lua_gc(L, LUA_GCRESTART, 0);
-		status = luaL_dofile(L, "./main.lua");
 
+		lua_getglobal(L, "summer");
+		lua_getfield(L, -1, "logd");
+		lua_setglobal(L, "logd");
+		lua_getfield(L, -1, "logi");
+		lua_setglobal(L, "logi");
+		lua_getfield(L, -1, "logw");
+		lua_setglobal(L, "logw");
+		lua_getfield(L, -1, "loge");
+		lua_setglobal(L, "loge");
+		lua_getfield(L, -1, "logi");
+		lua_setglobal(L, "print");
+		lua_pop(L, 1);
+
+		status = luaL_dostring(L, R"(package.path = package.path .. ";" .. "../../protocol/lua/?.lua" .. ";" .. "../?.lua")");
+		if (status && !lua_isnil(L, -1))
+		{
+			const char *msg = lua_tostring(L, -1);
+			if (msg == NULL) msg = "(error object is not a string)";
+			LOGE(msg);
+		}
+		status = luaL_dofile(L, "../script/stress/main.lua");
 		if (status && !lua_isnil(L, -1))
 		{
 			const char *msg = lua_tostring(L, -1);
