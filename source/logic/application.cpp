@@ -97,8 +97,20 @@ void Appliction::_onSigalStop()
 void Appliction::_onNetClosed()
 {
 	LOGA("Appliction::_onNetClosed(): waiting DBManager stop ...");
-	DBManager::getRef().stop();// DBManager will wait all data store.
-	LOGA("Appliction::_onNetClosed(): stop main thread ...");
-	SessionManager::getRef().stop(); //exit main thread.
+    DBManager::getRef().stop(std::bind(&Appliction::_onDBClosed, this));
 }
+
+void Appliction::_onDBClosed()
+{
+    LOGA("Appliction::_onDBClosed(): stop main thread ...");
+    SessionManager::getRef().stop(); //exit main thread.
+}
+
+
+
+
+
+
+
+
 

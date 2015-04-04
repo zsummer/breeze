@@ -71,7 +71,7 @@ bool NetManager::start()
 	return true;
 }
 
-bool NetManager::stop(std::function<void()> onNetClosed)
+bool NetManager::stop(std::function<void()> onSafeClosed)
 {
 	SessionManager::getRef().stopAccept();
 	SessionManager::getRef().kickAllClients();
@@ -79,11 +79,11 @@ bool NetManager::stop(std::function<void()> onNetClosed)
 
 	if (UserManager::getRef().getAllOnlineUserCount() == 0)
 	{
-		SessionManager::getRef().post(onNetClosed);
+		SessionManager::getRef().post(onSafeClosed);
 	}
 	else
 	{
-		_onNetClosed = onNetClosed;
+		_onSafeClosed = onSafeClosed;
 	}
 	return true;
 }
@@ -125,10 +125,10 @@ void NetManager::event_onSessionDisconnect(SessionID sID)
 		}
 	}
 
-	if (UserManager::getRef().getAllOnlineUserCount() == 0 && _onNetClosed)
+	if (UserManager::getRef().getAllOnlineUserCount() == 0 && _onSafeClosed)
 	{
-		SessionManager::getRef().post(_onNetClosed);
-		_onNetClosed = nullptr;
+		SessionManager::getRef().post(_onSafeClosed);
+		_onSafeClosed = nullptr;
 	}
 }
 
@@ -197,9 +197,7 @@ void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs)
 
 	DBQuery q("SELECT uID, passwd FROM `tb_auth` where user = ?");
 	q.add(req.user);
-	auto & db = DBManager::getRef().getAuthDB();
-	DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onAuthSelect, this,
-		std::placeholders::_1, sID));
+	DBManager::getRef().authAsyncQuery(q.genSQL(), std::bind(&NetManager::db_onAuthSelect, this, std::placeholders::_1, sID));
 
 }
 
@@ -350,13 +348,12 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	_clients.erase(sID);
 	UserManager::getRef().userLogin(inner, true);
 
-	auto & db = DBManager::getRef().getInfoDB();
+
 	DBQuery q("insert into tb_user(uID, nickname, iconID, joinTime) values(?, ?, ?, now());");
 	q.add(inner->userInfo.uID);
 	q.add(req.nickName);
 	q.add(req.iconID);
-	DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onUserCreate, this,
-		std::placeholders::_1, sID ));
+	DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&NetManager::db_onUserCreate, this, std::placeholders::_1, sID) );
 }
 void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 {
@@ -404,11 +401,10 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 		std::string blob(wsdb.getStreamBody(), wsdb.getStreamBodyLen());
 		q.add(blob);
 		q.add(ack.info.uID);
-		auto & db = DBManager::getRef().getInfoDB();
-		DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, false));
+		DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, false));
 		q.init("select bag from tb_user where uID=?");
 		q.add(ack.info.uID);
-		DBManager::getRef().getAsync()->asyncQuery(db, q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, true));
+		DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, true));
 				
 	}
 }

@@ -13,6 +13,7 @@ public:
 protected:
 	void _onSigalStop();
 	void _onNetClosed();
+    void _onDBClosed();
 };
 
 

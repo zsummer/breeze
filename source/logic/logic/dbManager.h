@@ -40,19 +40,69 @@ public:
 	~DBManager();
 	//在启动连接所有需要访问的数据库.
 	bool start();
-	bool stop();
+	bool stop(std::function<void()> onSafeClosed);
 public:
-	inline zsummer::mysql::DBHelperPtr & getAuthDB(){ return _authDB; }
-	inline zsummer::mysql::DBHelperPtr & getInfoDB(){ return _infoDB; }
-	inline zsummer::mysql::DBHelperPtr & getLogDB(){ return _logDB; }
-	inline zsummer::mysql::DBAsyncPtr & getAsync(){ return _dbAsync; }
+    inline void authAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
+    inline zsummer::mysql::DBResultPtr authQuery(const std::string &sql);
+
+    inline void infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
+    inline zsummer::mysql::DBResultPtr infoQuery(const std::string &sql);
+
+    inline void logAsyncQuery(const std::string &sql);
+    inline zsummer::mysql::DBResultPtr logQuery(const std::string &sql);
+    
+private:
+    static void _defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
+    {
+        if (ptr->getErrorCode() != zsummer::mysql::QEC_SUCCESS)
+        {
+            LOGE("_defaultAsyncHandler error. msg=" << ptr->getLastError() << ", org sql=" << ptr->sqlString());
+        }
+    }
+
 private:
 	zsummer::mysql::DBHelperPtr _infoDB;
 	zsummer::mysql::DBHelperPtr _logDB;
 	zsummer::mysql::DBHelperPtr _authDB;
 
 	zsummer::mysql::DBAsyncPtr _dbAsync;
+    zsummer::mysql::DBAsyncPtr _dbLogAsync; //write log in other thread.
+    
+private:
+    void _checkSafeClosed();
+    std::function<void()> _onSafeClosed;
 };
+
+
+void DBManager::authAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
+{
+    _dbAsync->asyncQuery(_authDB, sql, handler);
+}
+zsummer::mysql::DBResultPtr DBManager::authQuery(const std::string &sql)
+{
+    return _authDB->query(sql);
+}
+
+void DBManager::infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
+{
+    _dbAsync->asyncQuery(_infoDB, sql, handler);
+}
+
+zsummer::mysql::DBResultPtr DBManager::infoQuery(const std::string &sql)
+{
+    return _infoDB->query(sql);
+}
+
+
+void DBManager::logAsyncQuery(const std::string &sql)
+{
+    _dbAsync->asyncQuery(_authDB, sql, &DBManager::_defaultAsyncHandler);
+}
+
+zsummer::mysql::DBResultPtr DBManager::logQuery(const std::string &sql)
+{
+    return _logDB->query(sql);
+}
 
 
 

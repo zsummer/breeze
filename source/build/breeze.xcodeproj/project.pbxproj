@@ -48,11 +48,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		9A1A924C1ACF7BB200F8FDC5 /* eventTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A1A924A1ACF7BB200F8FDC5 /* eventTrigger.cpp */; };
+		9A1A924F1ACF7D5D00F8FDC5 /* userManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A1A924D1ACF7D5D00F8FDC5 /* userManager.cpp */; };
 		9AAA88C51AC1C77200DD40DB /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA88C01AC1C77200DD40DB /* config.cpp */; };
 		9AAA88CE1AC1C79500DD40DB /* fpconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA88C61AC1C79500DD40DB /* fpconv.c */; };
 		9AAA88CF1AC1C79500DD40DB /* lua_cjson.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA88C81AC1C79500DD40DB /* lua_cjson.c */; };
 		9AAA88D01AC1C79500DD40DB /* strbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA88CA1AC1C79500DD40DB /* strbuf.c */; };
-		9AAA88D11AC1C79500DD40DB /* summer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AAA88CC1AC1C79500DD40DB /* summer.cpp */; };
 		9ABDD10F1AA0C863004C59FC /* dbAsync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD0C31AA0C863004C59FC /* dbAsync.cpp */; };
 		9ABDD1101AA0C863004C59FC /* dbHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD0C61AA0C863004C59FC /* dbHelper.cpp */; };
 		9ABDD1111AA0C863004C59FC /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD0CB1AA0C863004C59FC /* lapi.c */; };
@@ -89,7 +90,6 @@
 		9ABDD1301AA0C863004C59FC /* protoz_bit.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD1021AA0C863004C59FC /* protoz_bit.c */; };
 		9ABDD1311AA0C863004C59FC /* summer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD1031AA0C863004C59FC /* summer.cpp */; };
 		9ABDD1321AA0C863004C59FC /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD1061AA0C863004C59FC /* md5.cpp */; };
-		9ABDD1341AA0C863004C59FC /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD10D1AA0C863004C59FC /* tinyxml2.cpp */; };
 		9ABDD13D1AA0C929004C59FC /* application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD1351AA0C929004C59FC /* application.cpp */; };
 		9ABDD13E1AA0C929004C59FC /* application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD1351AA0C929004C59FC /* application.cpp */; };
 		9ABDD13F1AA0C929004C59FC /* dbManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ABDD1381AA0C929004C59FC /* dbManager.cpp */; };
@@ -159,11 +159,14 @@
 		381571D847CE47EF9729E1FE /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = stressTest/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		3A0B19A0D1E84614AF8AC20B /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = common/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		4D90BFA051C44CA1A37E4189 /* stressTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = stressTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A1A924A1ACF7BB200F8FDC5 /* eventTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eventTrigger.cpp; path = mission/eventTrigger.cpp; sourceTree = "<group>"; };
+		9A1A924B1ACF7BB200F8FDC5 /* eventTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = eventTrigger.h; path = mission/eventTrigger.h; sourceTree = "<group>"; };
+		9A1A924D1ACF7D5D00F8FDC5 /* userManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = userManager.cpp; sourceTree = "<group>"; };
+		9A1A924E1ACF7D5D00F8FDC5 /* userManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = userManager.h; sourceTree = "<group>"; };
 		9AAA88C01AC1C77200DD40DB /* config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = config.cpp; path = common/config.cpp; sourceTree = "<group>"; };
 		9AAA88C11AC1C77200DD40DB /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = common/config.h; sourceTree = "<group>"; };
 		9AAA88C21AC1C77200DD40DB /* defined.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = defined.h; path = common/defined.h; sourceTree = "<group>"; };
 		9AAA88C31AC1C77200DD40DB /* genID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = genID.h; path = common/genID.h; sourceTree = "<group>"; };
-		9AAA88C41AC1C77200DD40DB /* handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = handler.h; path = common/handler.h; sourceTree = "<group>"; };
 		9AAA88C61AC1C79500DD40DB /* fpconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fpconv.c; sourceTree = "<group>"; };
 		9AAA88C71AC1C79500DD40DB /* fpconv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fpconv.h; sourceTree = "<group>"; };
 		9AAA88C81AC1C79500DD40DB /* lua_cjson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lua_cjson.c; sourceTree = "<group>"; };
@@ -238,8 +241,6 @@
 		9ABDD1061AA0C863004C59FC /* md5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = md5.cpp; sourceTree = "<group>"; };
 		9ABDD1071AA0C863004C59FC /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
 		9ABDD10B1AA0C863004C59FC /* single.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = single.h; path = common/single.h; sourceTree = "<group>"; };
-		9ABDD10D1AA0C863004C59FC /* tinyxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml2.cpp; sourceTree = "<group>"; };
-		9ABDD10E1AA0C863004C59FC /* tinyxml2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml2.h; sourceTree = "<group>"; };
 		9ABDD1351AA0C929004C59FC /* application.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = application.cpp; path = logic/application.cpp; sourceTree = "<group>"; };
 		9ABDD1361AA0C929004C59FC /* application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = application.h; path = logic/application.h; sourceTree = "<group>"; };
 		9ABDD1381AA0C929004C59FC /* dbManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dbManager.cpp; sourceTree = "<group>"; };
@@ -280,6 +281,15 @@
 				9ABDD13C1AA0C929004C59FC /* main.cpp */,
 			);
 			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		9A1A92491ACF7B6600F8FDC5 /* mission */ = {
+			isa = PBXGroup;
+			children = (
+				9A1A924A1ACF7BB200F8FDC5 /* eventTrigger.cpp */,
+				9A1A924B1ACF7BB200F8FDC5 /* eventTrigger.h */,
+			);
+			name = mission;
 			sourceTree = "<group>";
 		};
 		9ABDD0C51AA0C863004C59FC /* dbhelper */ = {
@@ -376,23 +386,16 @@
 			path = common/md5;
 			sourceTree = "<group>";
 		};
-		9ABDD10C1AA0C863004C59FC /* tinyxml2 */ = {
-			isa = PBXGroup;
-			children = (
-				9ABDD10D1AA0C863004C59FC /* tinyxml2.cpp */,
-				9ABDD10E1AA0C863004C59FC /* tinyxml2.h */,
-			);
-			name = tinyxml2;
-			path = common/tinyxml2;
-			sourceTree = "<group>";
-		};
 		9ABDD1371AA0C929004C59FC /* logic */ = {
 			isa = PBXGroup;
 			children = (
+				9A1A924D1ACF7D5D00F8FDC5 /* userManager.cpp */,
+				9A1A924E1ACF7D5D00F8FDC5 /* userManager.h */,
 				9ABDD1381AA0C929004C59FC /* dbManager.cpp */,
 				9ABDD1391AA0C929004C59FC /* dbManager.h */,
 				9ABDD13A1AA0C929004C59FC /* netManager.cpp */,
 				9ABDD13B1AA0C929004C59FC /* netManager.h */,
+				9A1A92491ACF7B6600F8FDC5 /* mission */,
 			);
 			name = logic;
 			path = logic/logic;
@@ -443,7 +446,6 @@
 		F3C138185F054FAFAD323F80 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				9ABDD10C1AA0C863004C59FC /* tinyxml2 */,
 				9ABDD0CA1AA0C863004C59FC /* lua */,
 				9ABDD1051AA0C863004C59FC /* md5 */,
 				9ABDD0C51AA0C863004C59FC /* dbhelper */,
@@ -452,7 +454,6 @@
 				9AAA88C11AC1C77200DD40DB /* config.h */,
 				9AAA88C21AC1C77200DD40DB /* defined.h */,
 				9AAA88C31AC1C77200DD40DB /* genID.h */,
-				9AAA88C41AC1C77200DD40DB /* handler.h */,
 				9ABDD0C31AA0C863004C59FC /* dbAsync.cpp */,
 				9ABDD0C41AA0C863004C59FC /* dbAsync.h */,
 				9ABDD10B1AA0C863004C59FC /* single.h */,
@@ -527,6 +528,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = 25A6D9D56AE04B998F17EB27 /* Build configuration list for PBXProject "breeze" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -599,8 +601,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				9ABDD1421AA0C929004C59FC /* netManager.cpp in Sources */,
+				9A1A924C1ACF7BB200F8FDC5 /* eventTrigger.cpp in Sources */,
 				9ABDD13E1AA0C929004C59FC /* application.cpp in Sources */,
 				9ABDD1441AA0C929004C59FC /* main.cpp in Sources */,
+				9A1A924F1ACF7D5D00F8FDC5 /* userManager.cpp in Sources */,
 				9ABDD1401AA0C929004C59FC /* dbManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -628,7 +632,6 @@
 				9ABDD1161AA0C863004C59FC /* ldebug.c in Sources */,
 				9ABDD11E1AA0C863004C59FC /* lmathlib.c in Sources */,
 				9ABDD12C1AA0C863004C59FC /* lundump.c in Sources */,
-				9ABDD1341AA0C863004C59FC /* tinyxml2.cpp in Sources */,
 				9ABDD11B1AA0C863004C59FC /* linit.c in Sources */,
 				9ABDD11F1AA0C863004C59FC /* lmem.c in Sources */,
 				9AAA88CE1AC1C79500DD40DB /* fpconv.c in Sources */,
@@ -653,7 +656,6 @@
 				9ABDD1231AA0C863004C59FC /* loslib.c in Sources */,
 				9ABDD1301AA0C863004C59FC /* protoz_bit.c in Sources */,
 				9ABDD1121AA0C863004C59FC /* lauxlib.c in Sources */,
-				9AAA88D11AC1C79500DD40DB /* summer.cpp in Sources */,
 				9ABDD1151AA0C863004C59FC /* ldblib.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1101,7 +1103,7 @@
 		45D016E4638B4F96B0CBD601 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				LIBRARY_SEARCH_PATHS = ../../depends_mac/lib;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk;
 				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/build;
@@ -1831,7 +1833,7 @@
 		C89563C680EC43E181BCF6CF /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				LIBRARY_SEARCH_PATHS = ../../depends_mac/lib;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk;
 				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/build;
@@ -1975,8 +1977,10 @@
 		D3D7D830D503440D9E27E816 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				LIBRARY_SEARCH_PATHS = ../../depends_mac/lib;
 				ONLY_ACTIVE_ARCH = YES;
+				ORDER_FILE = "";
+				PRELINK_LIBS = "";
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk;
 				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/build;
 			};
@@ -1985,7 +1989,7 @@
 		EDF2A554BD33456EB47ADAC9 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				LIBRARY_SEARCH_PATHS = ../../depends_mac/lib;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk;
 				SYMROOT = /Users/zhangyawei/Documents/github/breeze/source/build/build;

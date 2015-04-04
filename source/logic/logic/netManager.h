@@ -40,7 +40,7 @@ public:
 	//启动
 	bool start();
 	//关闭
-	bool stop(std::function<void()> onNetClosed);
+	bool stop(std::function<void()> onSafeClosed);
 
 protected:
 	//! ---- callback --------------------------------------------
@@ -84,7 +84,7 @@ private:
 	AccepterID _accepterID = InvalidAccepterID;
 
 	//
-	std::function<void()> _onNetClosed;
+	std::function<void()> _onSafeClosed;
 };
 
 

@@ -8,26 +8,54 @@ DBManager::DBManager()
 	_infoDB = std::make_shared<DBHelper>();
 	_logDB = std::make_shared<DBHelper>();
 	_dbAsync = std::make_shared<DBAsync>();
+    _dbLogAsync = std::make_shared<DBAsync>();
 }
 DBManager::~DBManager()
 {
 	
 }
 
-bool DBManager::stop()
+bool DBManager::stop(std::function<void()> onSafeClosed)
 {
-	while (_dbAsync->getFinalCount() != _dbAsync->getPostCount())
-	{
-		LOGA("Waiting the db data to store. waiting count=" << _dbAsync->getPostCount() - _dbAsync->getFinalCount());
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	}
-	LOGA("_dbAsync total FinalCount  :" << _dbAsync->getFinalCount());
-	_authDB->stop();
-	_infoDB->stop();
-	_logDB->stop();
-	_dbAsync->stop();
+    _onSafeClosed = onSafeClosed;
+    if (_dbAsync->getFinalCount() != _dbAsync->getPostCount()
+        || _dbLogAsync->getFinalCount() != _dbLogAsync->getPostCount())
+    {
+        SessionManager::getRef().createTimer(500, std::bind(&DBManager::_checkSafeClosed, this));
+    }
+    else
+    {
+        SessionManager::getRef().post(std::bind(&DBManager::_checkSafeClosed, this));
+    }
 	return true;
 }
+
+void DBManager::_checkSafeClosed()
+{
+    if (_dbAsync->getFinalCount() != _dbAsync->getPostCount()
+        || _dbLogAsync->getFinalCount() != _dbLogAsync->getPostCount())
+    {
+        SessionManager::getRef().createTimer(1000, std::bind(&DBManager::_checkSafeClosed, this));
+        LOGA("Waiting the db data to store. waiting count=" << _dbAsync->getPostCount() - _dbAsync->getFinalCount()
+             << "  waiting write to log db:" <<  _dbLogAsync->getPostCount() - _dbLogAsync->getFinalCount());
+        return;
+    }
+    
+    LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() << "  _dbLogAsync finish count=:" << _dbLogAsync->getFinalCount());
+    
+    _authDB->stop();
+    _infoDB->stop();
+    _logDB->stop();
+    _dbAsync->stop();
+    _dbLogAsync->stop();
+    
+    if (_onSafeClosed)
+    {
+        _onSafeClosed();
+        _onSafeClosed = nullptr;
+    }
+}
+
 bool DBManager::start()
 {
 	//启动db异步操作线程

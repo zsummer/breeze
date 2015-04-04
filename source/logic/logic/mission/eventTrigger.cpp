@@ -6,6 +6,7 @@ EventTrigger::EventTrigger()
 {
 
 }
+
 EventTrigger::~EventTrigger()
 {
 
@@ -15,6 +16,7 @@ bool EventTrigger::init()
 {
 	return true;
 }
+
 void EventTrigger::trigger(EventTriggerEnum triggerID, UserID uID, unsigned long long param1, unsigned long long param2, unsigned long long param3)
 {
 	SessionManager::getRef().post(std::bind(&EventTrigger::_trigger, this, triggerID, uID, param1, param2, param3));

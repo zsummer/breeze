@@ -1,5 +1,6 @@
 ﻿#include "userManager.h"
 #include "dbManager.h"
+#include "mission/eventTrigger.h"
 
 using namespace zsummer::mysql;
 using namespace zsummer::network;
@@ -10,7 +11,7 @@ UserManager::UserManager()
 
 bool UserManager::init()
 {
-	auto checkTable = DBManager::getRef().getInfoDB()->query("desc tb_user");
+	auto checkTable = DBManager::getRef().infoQuery("desc tb_user");
 	if (checkTable->getErrorCode() != QEC_SUCCESS)
 	{
 		LOGI("create talbe tb_user ");
@@ -18,7 +19,7 @@ bool UserManager::init()
 			"`uID` bigint(20) unsigned NOT NULL, "
 			"PRIMARY KEY(`uID`) "
 			") ENGINE = MyISAM DEFAULT CHARSET = utf8");
-		checkTable = DBManager::getRef().getInfoDB()->query(q.genSQL());
+		checkTable = DBManager::getRef().infoQuery(q.genSQL());
 		if (checkTable->getErrorCode() != QEC_SUCCESS)
 		{
 			LOGE("create talbe tb_user error=" << checkTable->getLastError());
@@ -26,12 +27,12 @@ bool UserManager::init()
 		}
 	}
 	//版本升级自动alter add 新字段. 
-	DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `nickname` varchar(255) NOT NULL DEFAULT ''");
-	DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `iconID` smallint(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `diamond` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `giftDiamond` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `historyDiamond` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().getInfoDB()->query("alter table `tb_user` add `joinTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'");
+	DBManager::getRef().infoQuery("alter table `tb_user` add `nickname` varchar(255) NOT NULL DEFAULT ''");
+	DBManager::getRef().infoQuery("alter table `tb_user` add `iconID` smallint(10) NOT NULL DEFAULT '0'");
+	DBManager::getRef().infoQuery("alter table `tb_user` add `diamond` int(10) NOT NULL DEFAULT '0'");
+	DBManager::getRef().infoQuery("alter table `tb_user` add `giftDiamond` int(10) NOT NULL DEFAULT '0'");
+	DBManager::getRef().infoQuery("alter table `tb_user` add `historyDiamond` int(10) NOT NULL DEFAULT '0'");
+	DBManager::getRef().infoQuery("alter table `tb_user` add `joinTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'");
 
 	//加载所有用户数据
 	UserID curID = 0;
@@ -39,7 +40,7 @@ bool UserManager::init()
 	{
 		DBQuery q("select uID, nickname, iconID, diamond, giftDiamond, historyDiamond, joinTime from tb_user where uID >? limit 1000;");
 		q.add(curID);
-		auto result = DBManager::getRef().getInfoDB()->query(q.genSQL());
+		auto result = DBManager::getRef().infoQuery(q.genSQL());
 		if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 		{
 			LOGE("loadUserInfo error. begin uID is " << curID << ",  sql error=" << result->getLastError());
@@ -98,6 +99,7 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoBySID(SessionID sid)
 	}
 	return std::shared_ptr<InnerUserInfo>();
 }
+
 std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByUID(UserID uID)
 {
 	auto founder = _mapUser.find(uID);
@@ -107,6 +109,7 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByUID(UserID uID)
 	}
 	return std::shared_ptr<InnerUserInfo>();
 }
+
 std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByNickName(const std::string & nickName)
 {
 	auto founder = _mapNickName.find(nickName);
@@ -126,8 +129,10 @@ void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo, bool newUs
 		_mapUser[innerInfo->userInfo.uID] = innerInfo;
 		_mapNickName[innerInfo->userInfo.nickName] = innerInfo;
 	}
-
+    
+    EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID);
 }
+
 void UserManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)
 {
 	SessionManager::getRef().kickSession(innerInfo->sesionInfo.sID);

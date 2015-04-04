@@ -4,5 +4,9 @@
 <dict>
 	<key>BuildLocationStyle</key>
 	<string>UseTargetSettings</string>
+	<key>HasAskedToTakeAutomaticSnapshotBeforeSignificantChanges</key>
+	<true/>
+	<key>SnapshotAutomaticallyBeforeSignificantChanges</key>
+	<true/>
 </dict>
 </plist>
