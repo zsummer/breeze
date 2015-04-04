@@ -56,6 +56,7 @@ public:
 			_firstTrigger = false;
 			lua_pushnumber(_luaState, triggerID);
 		}
+		//这里需要判断类型 对INT64 STRING类型调用pushstring方法
 		lua_pushnumber(_luaState, val);
 		trigger(triggerID, args ...);
 	}
