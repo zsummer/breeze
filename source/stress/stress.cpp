@@ -52,51 +52,6 @@ int main(int argc, char* argv[])
 	ILog4zManager::getPtr()->start();
 	ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);
 
-    //parse config
-    {
-        
-        std::string filename = "../config.lua";
-        bool ret = false;
-        ret = ServerConfig::getRef().parse(filename, StressNode, 0);
-        if (!ret)
-        {
-            LOGE("parse ServerConfig failed.");
-            return ret;
-        }
-        LOGI("parse ServerConfig success. configFile=" << filename << ", node=" << StressNode << ", index=" << 0);
-        
-    }
-	// insert account
-	{
-        const auto authConfig = ServerConfig::getRef().getDBConfig(AuthDB);
-		DBHelper helper;
-		helper.init(authConfig._ip, authConfig._port, authConfig._db, authConfig._user, authConfig._pwd);
-		if (helper.connect())
-		{
-			for (int i = 0; i < 1000; i++)
-			{
-				DBQuery q("insert ignore into tb_auth(`user`, passwd)values(?, ?)");
-				char buf[100];
-				sprintf(buf, "zhangyawei%04d", i);
-				std::string str(buf);
-				q.add(buf);
-				q.add("123");
-				DBResultPtr result = helper.query(q.genSQL());
-				if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
-				{
-					LOGE("mysql querry error. the error=" << result->getLastError() << ", sql=" << q.genSQL());
-					break;
-				}
-				if (result->getAffectedRows() == 0)
-				{
-					LOGW("mysql insert account not affect any rows. the user=" << buf);
-					continue;
-				}
-			}
-
-		}
-	}
-
 	// lua script
 	{
 		int status;

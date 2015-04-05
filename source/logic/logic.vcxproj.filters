@@ -39,6 +39,9 @@
     <ClCompile Include="logic\testBlob\testBlob.cpp">
       <Filter>logic\testBlob</Filter>
     </ClCompile>
+    <ClCompile Include="logic\testBlob\createTestAuthInfo.cpp">
+      <Filter>logic\testBlob</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -60,6 +63,9 @@
       <Filter>logic\mission</Filter>
     </ClInclude>
     <ClInclude Include="logic\testBlob\testBlob.h">
+      <Filter>logic\testBlob</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\testBlob\createTestAuthInfo.h">
       <Filter>logic\testBlob</Filter>
     </ClInclude>
   </ItemGroup>

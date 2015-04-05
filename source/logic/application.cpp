@@ -5,6 +5,7 @@
 #include "logic/mission/eventTrigger.h"
 #include "logic/mission/dailyMission.h"
 #include "logic/testBlob/testBlob.h"
+#include "logic/testBlob/createTestAuthInfo.h"
 using namespace zsummer::log4z;
 
 
@@ -79,6 +80,24 @@ bool Appliction::init(std::string filename, unsigned int index)
 		return ret;
 	}
 	LOGI("TestBlob init success.");
+
+	ret = CreateTestAuthInfo::getRef().init();
+	if (!ret)
+	{
+		LOGE("CreateTestAuthInfo init false.");
+		return ret;
+	}
+	LOGI("CreateTestAuthInfo init success.");
+
+
+
+
+
+
+
+
+
+
 
 	//open network
 	if (!NetManager::getRef().start())
