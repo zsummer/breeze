@@ -4,6 +4,7 @@
 #include "logic/netManager.h"
 #include "logic/mission/eventTrigger.h"
 #include "logic/mission/dailyMission.h"
+#include "logic/testBlob/testBlob.h"
 using namespace zsummer::log4z;
 
 
@@ -71,7 +72,13 @@ bool Appliction::init(std::string filename, unsigned int index)
 	}
 	LOGI("DailyMission init success.");
 
-
+	ret = TestBlob::getRef().init();
+	if (!ret)
+	{
+		LOGE("TestBlob init false.");
+		return ret;
+	}
+	LOGI("TestBlob init success.");
 
 	//open network
 	if (!NetManager::getRef().start())

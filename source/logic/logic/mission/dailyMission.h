@@ -19,7 +19,7 @@
 
 /*
 *  file desc 
-*  event trigger
+*  DailyMission
 */
 
 

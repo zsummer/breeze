@@ -384,98 +384,9 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 	WriteStream ws(ID_LoginAck);
 	ws << ack;
 	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-	
 
-	//一段测试blob存储的测试代码.
-	if (ack.retCode == EC_SUCCESS && false)
-	{
-		//blob test
-		DBQuery q;
-		q.init("update tb_user set bag=? where uID=?");
-		std::string apendBin;
-		for (int i = 0; i < 256; i++)
-		{
-			apendBin.append(1, (char)i);
-		}
-		WriteStream wsdb(0);
-		wsdb << ack.info;
-		wsdb << apendBin;
-		std::string blob(wsdb.getStreamBody(), wsdb.getStreamBodyLen());
-		q.add(blob);
-		q.add(ack.info.uID);
-		DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, false));
-		q.init("select bag from tb_user where uID=?");
-		q.add(ack.info.uID);
-		DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&NetManager::db_onTestBlog, this, std::placeholders::_1, true));
-				
-	}
 }
 
-void NetManager::db_onTestBlog(DBResultPtr res, bool isRead)
-{
-	LOGD("enter db_onTestBlog. isRead=" << isRead);
-	
-	if (res->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
-	{
-		LOGE("db_onTestBlog error.  error msg=" << res->getLastError() << ",  sql=" << res->sqlString());
-	}
-	else if (isRead)
-	{
-		if (res->haveRow())
-		{
-			try
-			{
-				std::string blob;
-				*res >> blob;
-				if (blob.length() > 0)
-				{
-					ReadStream rs(blob.c_str(), (zsummer::proto4z::Integer)blob.length(), false);
-					UserInfo info;
-					rs >> info;
-					std::string appendBin;
-					rs >> appendBin;
-					if (appendBin.length() != 256)
-					{
-						LOGE("test blog read error. appendBin length not is 256");
-					}
-					else
-					{
-						for (unsigned int i = 0; i < 256; i++)
-						{
-							if ((unsigned int)(unsigned char)appendBin.at(i) != i )
-							{
-								LOGE("test blog read error. appendBin have error. the character is " << i);
-								break;
-							}
-						}		
-					}
-					
-					int a = 0;
-					a++;
-				}
-			}
-			catch (const std::runtime_error & e)
-			{
-				LOGE("test blog read error. catch:" << e.what());
-			}
-			catch (...)
-			{
-				LOGE("test blog read error. catch:other.");
-			}
-		}
-		else
-		{
-			LOGE("test blog read error");
-		}
-	}
-	else
-	{
-		if (res->getAffectedRows() == 0)
-		{
-			LOGE("test blog write error");
-		}
-	}
-}
 
 void NetManager::event_onPulse(SessionID sID, unsigned int pulseInterval)
 {

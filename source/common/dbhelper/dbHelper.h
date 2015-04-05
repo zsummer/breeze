@@ -157,12 +157,22 @@ namespace  zsummer
 			inline bool haveRow(){ return _curIter != _result.end(); }
 			
 			template<class T>
-			inline DBResult & operator >>(T & t){t = _fromeString<T>(extractOneField());return *this;}
+			inline DBResult & operator >>(T & t)
+			{
+				t = _fromeString<T>(extractOneField());return *this;
+			}
+			template<>
+			inline DBResult & operator >>(std::string & t)
+			{
+				t = extractOneField(); return *this; 
+			}
+
 
 		public:
 			void _setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db);
 		private:
 			const std::string& extractOneField();
+
 			template<class RET>
 			inline RET _fromeString(const std::string& field)
 			{

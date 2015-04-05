@@ -65,8 +65,6 @@ protected:
 	void msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs);
 	void db_onUserCreate(DBResultPtr res, SessionID sID);
 
-	//测试mysql存储blob
-	void db_onTestBlog(DBResultPtr res, bool isRead);
 
 
 	//session存活脉冲, 这个由zsummerX网络库维护, 每个session建立后都会定时调用该回调.

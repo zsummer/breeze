@@ -10,6 +10,9 @@
     <Filter Include="logic\mission">
       <UniqueIdentifier>{6170ecf2-f3d2-4744-94cf-89a0e852dba9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="logic\testBlob">
+      <UniqueIdentifier>{4e2165f0-cde5-400c-94a4-0c5b8c3f3a56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -33,6 +36,9 @@
     <ClCompile Include="logic\mission\dailyMission.cpp">
       <Filter>logic\mission</Filter>
     </ClCompile>
+    <ClCompile Include="logic\testBlob\testBlob.cpp">
+      <Filter>logic\testBlob</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -52,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="logic\mission\dailyMission.h">
       <Filter>logic\mission</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\testBlob\testBlob.h">
+      <Filter>logic\testBlob</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
