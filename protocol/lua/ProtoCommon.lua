@@ -1,13 +1,13 @@
-Protoz.BEC_SUCCESS = 0--成功 
-Protoz.BEC_UNKOWN_ERROR = 1--未知错误 
-Protoz.BEC_INNER_ERROR = 2--内部错误 
-Protoz.BEC_DB_ERROR = 3--数据库错误 
-Protoz.BEC_PARAM_DENIED = 4--非法参数 
-Protoz.BEC_PERMISSION_DENIED = 5--权限非法 
-Protoz.BEC_SYSTEM_ERROR = 6--系统错误 
-Protoz.BEC_INVALIDE_USERID = 50--用户ID无效 
-Protoz.BEC_AUTH_USER_NOT_EXIST = 60--认证错误:用户不存在 
-Protoz.BEC_AUTH_PASSWD_INCORRECT = 61--认证错误:密码错误 
+Protoz.EC_SUCCESS = 0--成功 
+Protoz.EC_UNKOWN_ERROR = 1--未知错误 
+Protoz.EC_INNER_ERROR = 2--内部错误 
+Protoz.EC_DB_ERROR = 3--数据库错误 
+Protoz.EC_PARAM_DENIED = 4--非法参数 
+Protoz.EC_PERMISSION_DENIED = 5--权限非法 
+Protoz.EC_SYSTEM_ERROR = 6--系统错误 
+Protoz.EC_INVALIDE_USERID = 50--用户ID无效 
+Protoz.EC_AUTH_USER_NOT_EXIST = 60--认证错误:用户不存在 
+Protoz.EC_AUTH_PASSWD_INCORRECT = 61--认证错误:密码错误 
  
 Protoz.UserInfo = {} --用户信息 
 Protoz.UserInfo.__getName = "UserInfo" 

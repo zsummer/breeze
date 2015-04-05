@@ -1,43 +1,43 @@
  
 namespace Proto4z  
 { 
-	class STATIC_BEC_SUCCESS //成功 
+	class STATIC_EC_SUCCESS //成功 
 	{ 
 		public static Proto4z.ui16 value = 0;  
 	} 
-	class STATIC_BEC_UNKOWN_ERROR //未知错误 
+	class STATIC_EC_UNKOWN_ERROR //未知错误 
 	{ 
 		public static Proto4z.ui16 value = 1;  
 	} 
-	class STATIC_BEC_INNER_ERROR //内部错误 
+	class STATIC_EC_INNER_ERROR //内部错误 
 	{ 
 		public static Proto4z.ui16 value = 2;  
 	} 
-	class STATIC_BEC_DB_ERROR //数据库错误 
+	class STATIC_EC_DB_ERROR //数据库错误 
 	{ 
 		public static Proto4z.ui16 value = 3;  
 	} 
-	class STATIC_BEC_PARAM_DENIED //非法参数 
+	class STATIC_EC_PARAM_DENIED //非法参数 
 	{ 
 		public static Proto4z.ui16 value = 4;  
 	} 
-	class STATIC_BEC_PERMISSION_DENIED //权限非法 
+	class STATIC_EC_PERMISSION_DENIED //权限非法 
 	{ 
 		public static Proto4z.ui16 value = 5;  
 	} 
-	class STATIC_BEC_SYSTEM_ERROR //系统错误 
+	class STATIC_EC_SYSTEM_ERROR //系统错误 
 	{ 
 		public static Proto4z.ui16 value = 6;  
 	} 
-	class STATIC_BEC_INVALIDE_USERID //用户ID无效 
+	class STATIC_EC_INVALIDE_USERID //用户ID无效 
 	{ 
 		public static Proto4z.ui16 value = 50;  
 	} 
-	class STATIC_BEC_AUTH_USER_NOT_EXIST //认证错误:用户不存在 
+	class STATIC_EC_AUTH_USER_NOT_EXIST //认证错误:用户不存在 
 	{ 
 		public static Proto4z.ui16 value = 60;  
 	} 
-	class STATIC_BEC_AUTH_PASSWD_INCORRECT //认证错误:密码错误 
+	class STATIC_EC_AUTH_PASSWD_INCORRECT //认证错误:密码错误 
 	{ 
 		public static Proto4z.ui16 value = 61;  
 	} 

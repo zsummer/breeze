@@ -154,9 +154,10 @@ bool NetManager::on_preMessageProcess(SessionID sID, const char * blockBegin, zs
 		{
 			WriteStream ws(ID_LoginAck);
 			LoginAck ack;
-			ack.retCode = BEC_PERMISSION_DENIED;
+			ack.retCode = EC_PERMISSION_DENIED;
 			ws << ack;
 			SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+			LOGW("on_preMessageProcess check authorization failed. protoID=" << rs.getProtoID() << ", session authorization status=" << founder->second.status);
 			return false;
 		}
 	}
@@ -173,9 +174,10 @@ bool NetManager::on_preMessageProcess(SessionID sID, const char * blockBegin, zs
 	
 	WriteStream ws(ID_LoginAck);
 	LoginAck ack;
-	ack.retCode = BEC_PERMISSION_DENIED;
+	ack.retCode = EC_PERMISSION_DENIED;
 	ws << ack;
 	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+	LOGW("on_preMessageProcess check authorization failed. protoID=" << rs.getProtoID() << ", session authorization status=" << founder->second.status)
 	return false;
 }
 
@@ -205,7 +207,7 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 {
 	LOGD("enter db_authSelect. sID=" << sID);
 	LoginAck ack;
-	ack.retCode = BEC_DB_ERROR;
+	ack.retCode = EC_DB_ERROR;
 	ack.needCreate = 0;
 	
 
@@ -222,7 +224,7 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 	}
 	else if (!res->haveRow())
 	{
-		ack.retCode = BEC_AUTH_USER_NOT_EXIST;
+		ack.retCode = EC_AUTH_USER_NOT_EXIST;
 	}
 	else
 	{
@@ -236,11 +238,11 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 				*res >> passwd;
 				if (founder->second.passwd != passwd)
 				{
-					ack.retCode = BEC_AUTH_PASSWD_INCORRECT;
+					ack.retCode = EC_AUTH_PASSWD_INCORRECT;
 				}
 				else
 				{
-					ack.retCode = BEC_SUCCESS;
+					ack.retCode = EC_SUCCESS;
 					founder->second.uID = uID;
 					founder->second.authTime = time(NULL);
 					founder->second.status = SS_AUTHED;
@@ -251,12 +253,12 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 		catch (const std::string & err)
 		{
 			LOGE("db_onAuthSelect catch error. err=" << err << ", sql=" << res->sqlString());
-			ack.retCode = BEC_DB_ERROR;
+			ack.retCode = EC_DB_ERROR;
 		}
 	}
 	
 
-	if (ack.retCode != BEC_SUCCESS)
+	if (ack.retCode != EC_SUCCESS)
 	{
 		LOGD("user auth fail. sID=" << sID << " req.user = " << founder->second.user << ", req.passwd=" << founder->second.passwd);
 		founder->second.status = SS_UNAUTH;
@@ -271,7 +273,7 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 	if (!inner)
 	{
 		WriteStream ws(ID_LoginAck);
-		ack.retCode = BEC_SUCCESS;
+		ack.retCode = EC_SUCCESS;
 		ack.needCreate = 1;
 		ws << ack;
 		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
@@ -293,7 +295,7 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 
 	UserManager::getRef().userLogin(inner);
 	WriteStream ws(ID_LoginAck);
-	ack.retCode = BEC_SUCCESS;
+	ack.retCode = EC_SUCCESS;
 	ack.info = inner->userInfo;
 	ws << ack;
 	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
@@ -321,7 +323,7 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	{
 		LoginAck ack;
 		WriteStream ws(ID_LoginAck);
-		ack.retCode = BEC_SUCCESS;
+		ack.retCode = EC_SUCCESS;
 		ack.needCreate = 1;
 		ws << ack;
 		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
@@ -361,7 +363,7 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 	LoginAck ack;
 	if (res->getErrorCode() == QEC_SUCCESS)
 	{
-		ack.retCode = BEC_SUCCESS;
+		ack.retCode = EC_SUCCESS;
 		ack.needCreate = 0;
 		auto inner = UserManager::getRef().getInnerUserInfoBySID(sID);
 		if (inner)
@@ -370,12 +372,12 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 		}
 		else
 		{
-			ack.retCode = BEC_DB_ERROR;
+			ack.retCode = EC_DB_ERROR;
 		}
 	}
 	else
 	{
-		ack.retCode = BEC_DB_ERROR;
+		ack.retCode = EC_DB_ERROR;
 		ack.needCreate = 0;
 	}
 	
@@ -385,7 +387,7 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 	
 
 	//一段测试blob存储的测试代码.
-	if (ack.retCode == BEC_SUCCESS && false)
+	if (ack.retCode == EC_SUCCESS && false)
 	{
 		//blob test
 		DBQuery q;

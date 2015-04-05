@@ -77,11 +77,11 @@ namespace zsummer
 
 			bool doRecv();
 
-			void onConnected(zsummer::network::ErrorCode ec, const std::pair<ConnectConfig, ConnectInfo> & config);
+			void onConnected(zsummer::network::NetErrorCode ec, const std::pair<ConnectConfig, ConnectInfo> & config);
 
-			void onRecv(zsummer::network::ErrorCode ec, int nRecvedLen);
+			void onRecv(zsummer::network::NetErrorCode ec, int nRecvedLen);
 
-			void onSend(zsummer::network::ErrorCode ec, int nSentLen);
+			void onSend(zsummer::network::NetErrorCode ec, int nSentLen);
 
 			void onPulseTimer();
 

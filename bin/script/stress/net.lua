@@ -17,8 +17,8 @@ function messageHandler:onMessage(sID, pID, binData)
 end
 
 function messageHandler:on_LoginAck(sID, msg)
-	if msg.retCode ~= Protoz.BEC_SUCCESS then
-			loge("LoginAck retcode ~= BEC_SUCCESS. ret=" .. msg.retCode)
+	if msg.retCode ~= Protoz.EC_SUCCESS then
+			loge("LoginAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
 			return nil
 	end
 	if msg.needCreate ~= 0 then

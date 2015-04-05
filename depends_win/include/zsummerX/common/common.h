@@ -79,13 +79,13 @@ namespace zsummer
 {
 	namespace network
 	{
-		//! ErrorCode
-		enum ErrorCode
+		//! NetErrorCode
+		enum NetErrorCode
 		{
-			EC_SUCCESS = 0,
-			EC_ERROR,
-			EC_REMOTE_CLOSED,
-			EC_REMOTE_HANGUP,
+			NEC_SUCCESS = 0,
+			NEC_ERROR,
+			NEC_REMOTE_CLOSED,
+			NEC_REMOTE_HANGUP,
 		};
 
 		
@@ -96,20 +96,20 @@ namespace zsummer
 
 		//accept callback
 		class TcpSocket;
-		typedef std::function<void(ErrorCode, std::shared_ptr<TcpSocket>)> _OnAcceptHandler;
+		typedef std::function<void(NetErrorCode, std::shared_ptr<TcpSocket>)> _OnAcceptHandler;
 		//connect callback
-		typedef std::function<void(ErrorCode)> _OnConnectHandler;
+		typedef std::function<void(NetErrorCode)> _OnConnectHandler;
 
 		//send or recv callback
 		//! type int : translate bytes already.
-		typedef std::function<void(ErrorCode, int)> _OnSendHandler;
+		typedef std::function<void(NetErrorCode, int)> _OnSendHandler;
 		typedef _OnSendHandler _OnRecvHandler;
 
 		//udp callback
 		//! const char *: remote ip
 		//! unsigned short: remote port
 		//! int : translate bytes
-		typedef std::function<void (ErrorCode, const char*, unsigned short, int)> _OnRecvFromHandler;
+		typedef std::function<void (NetErrorCode, const char*, unsigned short, int)> _OnRecvFromHandler;
 
 
 		enum LINK_STATUS

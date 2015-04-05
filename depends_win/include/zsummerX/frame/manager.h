@@ -100,7 +100,7 @@ namespace zsummer
 			void onSessionClose(AccepterID aID, SessionID sID);
 			// socket(from connect) on close 
 			void onConnect(SessionID cID, bool bConnected, const TcpSessionPtr &session);
-			void onAcceptNewClient(zsummer::network::ErrorCode ec, const TcpSocketPtr & s, const TcpAcceptPtr & accepter, AccepterID aID);
+			void onAcceptNewClient(zsummer::network::NetErrorCode ec, const TcpSocketPtr & s, const TcpAcceptPtr & accepter, AccepterID aID);
 		private:
 			EventLoopPtr _summer;
 			bool  _running = true;
