@@ -9,7 +9,7 @@
 
 <Proto>
 
-  <!-- 这里是配置统一的错误代码 -->
+  <!-- 错误码 -->
   <enum type="ui16" >
  	<member name="BEC_SUCCESS" value="0"   desc="成功"/>
 	<member name="BEC_UNKOWN_ERROR"   desc="未知错误"/>
@@ -23,10 +23,6 @@
 
 	<member name="BEC_AUTH_USER_NOT_EXIST" value="60"   desc="认证错误:用户不存在"/>
 	<member name="BEC_AUTH_PASSWD_INCORRECT"    desc="认证错误:密码错误"/>
-	<member name="BEC_AUTH_ACCOUNT_INCORRECT"  desc="认证错误:角色名冲突(创建角色)"/>
-	<member name="BEC_AUTH_ING"         desc="认证错误:正在认证中..."/>
-	<member name="BEC_AUTH_AREADY_AUTH"   desc="认证错误:已认证"/>
-	<member name="BEC_AUTH_LIMITE_COUNT"  desc="认证错误:认证次数超过限制"/>
 	
   </enum>
 
@@ -49,8 +45,10 @@
 
   
 
-
-
+  <!-- 事件触发码 -->
+  <enum type="ui16" >
+  <member name="ETRIGGER_USER_LOGIN" value="0"   desc="用户登录, 用户ID"/>
+  </enum>
 
 </Proto>
 

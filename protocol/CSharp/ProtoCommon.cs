@@ -41,22 +41,6 @@ namespace Proto4z
 	{ 
 		public static Proto4z.ui16 value = 61;  
 	} 
-	class STATIC_BEC_AUTH_ACCOUNT_INCORRECT //认证错误:角色名冲突(创建角色) 
-	{ 
-		public static Proto4z.ui16 value = 62;  
-	} 
-	class STATIC_BEC_AUTH_ING //认证错误:正在认证中... 
-	{ 
-		public static Proto4z.ui16 value = 63;  
-	} 
-	class STATIC_BEC_AUTH_AREADY_AUTH //认证错误:已认证 
-	{ 
-		public static Proto4z.ui16 value = 64;  
-	} 
-	class STATIC_BEC_AUTH_LIMITE_COUNT //认证错误:认证次数超过限制 
-	{ 
-		public static Proto4z.ui16 value = 65;  
-	} 
  
 	class UserInfo: Proto4z.IProtoObject //用户信息 
 	{	 
@@ -193,6 +177,10 @@ namespace Proto4z
 			} 
 			return pos; 
 		} 
+	} 
+	class STATIC_ETRIGGER_USER_LOGIN //用户登录, 用户ID 
+	{ 
+		public static Proto4z.ui16 value = 0;  
 	} 
  
 } 

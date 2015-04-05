@@ -173,7 +173,7 @@ bool NetManager::on_preMessageProcess(SessionID sID, const char * blockBegin, zs
 	
 	WriteStream ws(ID_LoginAck);
 	LoginAck ack;
-	ack.retCode = BEC_AUTH_ING;
+	ack.retCode = BEC_PERMISSION_DENIED;
 	ws << ack;
 	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 	return false;

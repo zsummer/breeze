@@ -1,7 +1,7 @@
 ﻿#include "userManager.h"
 #include "dbManager.h"
 #include "mission/eventTrigger.h"
-
+#include <ProtoCommon.h>
 using namespace zsummer::mysql;
 using namespace zsummer::network;
 
@@ -130,11 +130,8 @@ void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo, bool newUs
 		_mapNickName[innerInfo->userInfo.nickName] = innerInfo;
 	}
     
-	char a[4] = "12";
-	const char *pstr = "34";
-	std::string str = "55";
-	std::string & str2 = str;
-    EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID, 1 , a, pstr, str, str2);
+
+    EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID, 1);
 }
 
 void UserManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)

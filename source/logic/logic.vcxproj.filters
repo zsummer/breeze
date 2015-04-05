@@ -30,6 +30,9 @@
     <ClCompile Include="logic\mission\eventTrigger.cpp">
       <Filter>logic\mission</Filter>
     </ClCompile>
+    <ClCompile Include="logic\mission\dailyMission.cpp">
+      <Filter>logic\mission</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -45,6 +48,9 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\mission\eventTrigger.h">
+      <Filter>logic\mission</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\mission\dailyMission.h">
       <Filter>logic\mission</Filter>
     </ClInclude>
   </ItemGroup>

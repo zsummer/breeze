@@ -46,7 +46,7 @@ const unsigned short ID_CreateUserReq = 102; //填写用户信息
 struct CreateUserReq //填写用户信息 
 { 
 	std::string nickName; //昵称 
-	unsigned int iconID; //头像 
+	int iconID; //头像 
 	CreateUserReq() 
 	{ 
 		iconID = 0; 

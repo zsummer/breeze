@@ -3,6 +3,7 @@
 #include "logic/userManager.h"
 #include "logic/netManager.h"
 #include "logic/mission/eventTrigger.h"
+#include "logic/mission/dailyMission.h"
 using namespace zsummer::log4z;
 
 
@@ -62,7 +63,13 @@ bool Appliction::init(std::string filename, unsigned int index)
 	}
 	LOGI("EventTrigger init success.");
 
-
+	ret = DailyMission::getRef().init();
+	if (!ret)
+	{
+		LOGE("DailyMission init false.");
+		return ret;
+	}
+	LOGI("DailyMission init success.");
 
 
 
