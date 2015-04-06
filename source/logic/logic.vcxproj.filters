@@ -13,6 +13,12 @@
     <Filter Include="logic\testBlob">
       <UniqueIdentifier>{4e2165f0-cde5-400c-94a4-0c5b8c3f3a56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="logic\mail">
+      <UniqueIdentifier>{7ac9b94c-1ff0-40b5-95d9-41533880f214}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="logic\chat">
+      <UniqueIdentifier>{d00be9fd-3cd5-4ab8-878c-f5fe675b6e4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

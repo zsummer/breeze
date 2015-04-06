@@ -8,7 +8,7 @@
 
 <Proto>
 
-  <struct name="ContactInfo" desc="联系人信息">
+  <struct name="ContactInfo" desc="联系人卡片">
    	<member name="uID" type="ui64"   desc=""/>
    	<member name="nickName" type="string"   desc="用户昵称"/>
 	<member name="iconID"  type="i16" desc="头像"/>
@@ -42,14 +42,16 @@
 
  
   <struct name="ChatInfo" desc="聊天消息">
-  	<member name="id" type="ui64"   desc="msg id"/>
+  	<member name="id" type="ui32"   desc="msg id"/>
     <member name="chlType" type="ui8"   desc="channel type"/>
     <member name="srcid" type="ui64"   desc=""/>
-    <member name="nickName" type="string"   desc="src"/>
-    <member name="iconID"  type="i16" desc="src"/>
+    <member name="srcName" type="string"   desc="src"/>
+    <member name="srcIcon"  type="i16" desc="src"/>
     <member name="dstid" type="ui64"   desc="userid or groupid"/>
+    <member name="dstName" type="string"   desc="src"/>
+    <member name="dstIcon"  type="i16" desc="src"/>
     <member name="msg" type="string"   desc=""/>
-    <member name="addTime" type="ui32"   desc=""/>
+    <member name="sendTime" type="ui32"   desc=""/>
   </struct>
   <array name="ChatInfoVct" type="ChatInfo" desc="" />
 
@@ -72,22 +74,22 @@
     <member name="uid" type="ui64"   desc=""/>
   </proto>
 
+  <proto name="MakeFriendNotice" desc= "添加好友通知" >
+    <member name="applicant" type="ContactInfo"   desc=""/>
+    <member name="confirm" type="ui8"   desc="如果是添加好友成功,两个用户都会收到该消息, 如果是waiting状态, 需要客户端确认一个操作给服务器."/>
+  </proto>
+
   <proto name="MakeFriendConfirm" desc= "对添加好友的消息确认一个操作, 拒绝/同意/忽略" >
     <member name="uid" type="ui64"   desc=""/>
     <member name="confirm" type="ui8"   desc=""/>
   </proto>
 
-  <proto name="MakeFriendNotice" desc= "添加好友通知" >
-    <member name="uid" type="ui64"   desc=""/>
-    <member name="confirm" type="ui8"   desc="如果是添加好友成功,两个用户都会收到该消息, 如果是waiting状态, 需要客户端确认一个操作给服务器."/>
-  </proto>
 
-
-  <proto name="BreakFriendReq" desc= "解除好友请求">
+  <proto name="RemoveFriendReq" desc= "解除好友请求">
     <member name="uid" type="ui64"   desc="目标ID"/>
   </proto>
 
-  <proto name="BreakFriendAck" desc= "解除好友结果" >
+  <proto name="RemoveFriendAck" desc= "解除好友结果" >
     <member name="retCode" type="ui16"   desc=""/>
     <member name="uid" type="ui64"   desc=""/>
   </proto>
@@ -97,7 +99,7 @@
 
   <proto name="GetBlacklistAck" desc= "获取黑名单列表结果" >
     <member name="retCode" type="ui16"   desc=""/>
-    <member name="friends" type="FriendInfoVct"   desc=""/>
+    <member name="blacks" type="FriendInfoVct"   desc=""/>
   </proto>
 
   <proto name="AddBlacklistReq" desc= "添加到黑名单请求">
@@ -109,11 +111,11 @@
     <member name="uid" type="ui64"   desc=""/>
   </proto>
 
-  <proto name="DelBlacklistReq" desc= "删除黑名单请求">
+  <proto name="RemoveBlacklistReq" desc= "移除黑名单请求">
     <member name="uid" type="ui64"   desc="目标ID"/>
   </proto>
 
-  <proto name="DelBlacklistAck" desc= "删除黑名单结果" >
+  <proto name="RemoveBlacklistAck" desc= "移除黑名单结果" >
     <member name="retCode" type="ui16"   desc=""/>
     <member name="uid" type="ui64"   desc=""/>
   </proto>
@@ -128,6 +130,7 @@
   	<member name="retCode" type="ui16"   desc=""/>
   	<member name="chlType" type="ui8"   desc="channel type"/>
     <member name="dstid" type="ui64"   desc="userid or groupid"/>
+    <member name="msgid" type="ui32"   desc=""/>
   </proto>
 
   <proto name="GetHistoryChatReq" desc= "获取历史消息">

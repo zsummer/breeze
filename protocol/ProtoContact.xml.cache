@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<md5>63e884a221a3357521c66d260041ea98</md5>
+<md5>31eb239773a3e492c808952ea25b7f67</md5>
 
 <CacheNo>
 	<cache key = "ID_AddBlacklistAck" No = "1009" /> 
@@ -25,4 +25,8 @@
 	<cache key = "ID_MakeFriendConfirm" No = "1016" /> 
 	<cache key = "ID_MakeFriendNotice" No = "1017" /> 
 	<cache key = "ID_MakeFriendReq" No = "1014" /> 
+	<cache key = "ID_RemoveBlacklistAck" No = "1025" /> 
+	<cache key = "ID_RemoveBlacklistReq" No = "1024" /> 
+	<cache key = "ID_RemoveFriendAck" No = "1023" /> 
+	<cache key = "ID_RemoveFriendReq" No = "1022" /> 
 </CacheNo>
