@@ -48,6 +48,9 @@
     <ClCompile Include="logic\testBlob\createTestAuthInfo.cpp">
       <Filter>logic\testBlob</Filter>
     </ClCompile>
+    <ClCompile Include="logic\chat\chatManager.cpp">
+      <Filter>logic\chat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="logic\testBlob\createTestAuthInfo.h">
       <Filter>logic\testBlob</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\chat\chatManager.h">
+      <Filter>logic\chat</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

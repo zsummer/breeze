@@ -17,7 +17,7 @@ bool DailyMission::init()
 	return true;
 }
 
-void DailyMission::onUserLogin(EventTriggerID tID, UserID uID, unsigned long long param1, unsigned long long param2, unsigned long long param3)
+void DailyMission::onUserLogin(EventTriggerID tID, UserID uID, unsigned long long param1, unsigned long long param2, std::string param3)
 {
 
 }

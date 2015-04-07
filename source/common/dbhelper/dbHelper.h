@@ -86,6 +86,23 @@ namespace  zsummer
 			{
 				return insertParam(escapeString(param), true);
 			}
+
+			inline bool add(char   param)
+			{
+				return add(int(param));
+			}
+			inline bool add(unsigned char   param)
+			{
+				return add(int(param));
+			}
+
+			inline bool add(const char *buf, size_t len)
+			{
+				std::string field;
+				field.assign(buf, len);
+				return add(field);
+			}
+
 			template <class T>
 			inline bool add(const T & t)
 			{

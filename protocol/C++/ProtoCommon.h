@@ -92,5 +92,6 @@ typedef std::vector<UserInfo> UserInfoVct;
  
 typedef std::vector<unsigned long long> UserIDVct;  
 const unsigned short ETRIGGER_USER_LOGIN = 0; //用户登录, 用户ID 
+const unsigned short ETRIGGER_USER_LOGOUT = 1; //用户登出, 用户ID 
  
 #endif 

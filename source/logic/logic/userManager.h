@@ -29,7 +29,7 @@
 #define _USER_MANAGER_H_
 #include <common.h>
 #include <ProtoLogin.h>
-using namespace zsummer::mysql;
+
 
 
 

@@ -27,7 +27,7 @@ bool UserManager::init()
 		}
 	}
 	//版本升级自动alter add 新字段. 
-	DBManager::getRef().infoQuery("alter table `tb_user` add `nickname` varchar(255) NOT NULL DEFAULT ''");
+	DBManager::getRef().infoQuery("alter table `tb_user` add `nickName` varchar(255) NOT NULL DEFAULT ''");
 	DBManager::getRef().infoQuery("alter table `tb_user` add `iconID` smallint(10) NOT NULL DEFAULT '0'");
 	DBManager::getRef().infoQuery("alter table `tb_user` add `diamond` int(10) NOT NULL DEFAULT '0'");
 	DBManager::getRef().infoQuery("alter table `tb_user` add `giftDiamond` int(10) NOT NULL DEFAULT '0'");
@@ -38,7 +38,7 @@ bool UserManager::init()
 	UserID curID = 0;
 	do
 	{
-		DBQuery q("select uID, nickname, iconID, diamond, giftDiamond, historyDiamond, joinTime from tb_user where uID >? limit 1000;");
+		DBQuery q("select uID, nickName, iconID, diamond, giftDiamond, historyDiamond, joinTime from tb_user where uID >? limit 1000;");
 		q.add(curID);
 		auto result = DBManager::getRef().infoQuery(q.genSQL());
 		if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
@@ -139,6 +139,7 @@ void UserManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)
 	SessionManager::getRef().kickSession(innerInfo->sesionInfo.sID);
 	_mapSession.erase(innerInfo->sesionInfo.sID);
 	innerInfo->sesionInfo = SessionInfo();
+	EventTrigger::getRef().trigger(ETRIGGER_USER_LOGOUT, innerInfo->userInfo.uID, 1, innerInfo->userInfo.iconID, innerInfo->userInfo.nickName);
 }
 
 

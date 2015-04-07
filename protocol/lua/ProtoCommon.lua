@@ -30,3 +30,4 @@ Protoz.UserIDVct.__getName = "UserIDVct"
 Protoz.UserIDVct.__getDesc = "array" 
 Protoz.UserIDVct.__getTypeV = "ui64" 
 Protoz.ETRIGGER_USER_LOGIN = 0--用户登录, 用户ID 
+Protoz.ETRIGGER_USER_LOGOUT = 1--用户登出, 用户ID 

@@ -6,6 +6,7 @@
 #include "logic/mission/dailyMission.h"
 #include "logic/testBlob/testBlob.h"
 #include "logic/testBlob/createTestAuthInfo.h"
+#include "logic/chat/chatManager.h"
 using namespace zsummer::log4z;
 
 
@@ -89,6 +90,13 @@ bool Appliction::init(std::string filename, unsigned int index)
 	}
 	LOGI("CreateTestAuthInfo init success.");
 
+	ret = ChatManager::getRef().init();
+	if (!ret)
+	{
+		LOGE("ChatManager init false.");
+		return ret;
+	}
+	LOGI("ChatManager init success.");
 
 
 

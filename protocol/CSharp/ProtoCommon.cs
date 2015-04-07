@@ -182,6 +182,10 @@ namespace Proto4z
 	{ 
 		public static Proto4z.ui16 value = 0;  
 	} 
+	class STATIC_ETRIGGER_USER_LOGOUT //用户登出, 用户ID 
+	{ 
+		public static Proto4z.ui16 value = 1;  
+	} 
  
 } 
  

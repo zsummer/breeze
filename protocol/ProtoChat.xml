@@ -8,22 +8,25 @@
 
 <Proto>
 
+  <struct name="FriendInfo" desc="好友信息">
+   	<member name="uid" type="ui64"   desc=""/>
+   	<member name="makeTime"  type="ui32" desc="建立时间"/>
+  </struct>
+  <array name="FriendInfoVct" type="FriendInfo" desc="" />
+
+  
   <struct name="ContactInfo" desc="联系人卡片">
    	<member name="uID" type="ui64"   desc=""/>
    	<member name="nickName" type="string"   desc="用户昵称"/>
 	<member name="iconID"  type="i16" desc="头像"/>
-	<member name="banned"  type="i8" desc="禁言"/>
+	<member name="banned"  type="ui8" desc="禁言"/>
 	<member name="rankBlacks"  type="ui32" desc="被拉黑次数"/>
 	<member name="rankFriends"  type="ui32" desc="好友个数"/>
    	<member name="onlineFlag"  type="ui8" desc="在线状态0离线,1在线"/>
   </struct>
   <array name="ContactInfoVct" type="ContactInfo" desc="" />
 
-  <struct name="FriendInfo" desc="好友信息">
-   	<member name="uid" type="ui64"   desc=""/>
-   	<member name="makeTime"  type="ui32" desc="建立时间"/>
-  </struct>
-  <array name="FriendInfoVct" type="FriendInfo" desc="" />
+
 
 
   <enum type="ui8"  desc="聊天(频道)类型">

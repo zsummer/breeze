@@ -545,6 +545,11 @@ inline ZSummer_EndianType __localEndianType()
 template<class Integer>
 Integer streamToInteger(const char stream[sizeof(Integer)])
 {
+	if (stream == NULL)
+	{
+		throw std::runtime_error("streamToInteger stream is NULL");
+	}
+	
 	unsigned short integerLen = sizeof(Integer);
 	Integer integer = 0 ;
 	if (integerLen == 1)
@@ -851,13 +856,15 @@ inline ReadStream::ReadStream(const char *attachData, Integer attachDataLen, boo
 	{
 		_maxDataLen = MaxPackLen;
 	}
-	if (_maxDataLen < sizeof(Integer) + sizeof(ProtoInteger))
-	{
-		_attachData = NULL; //assert
-	}
+
 
 	if (_isHaveHeader)
 	{
+		if (_maxDataLen < sizeof(Integer)+sizeof(ProtoInteger))
+		{
+			_attachData = NULL; //assert
+		}
+
 		_cursor = sizeof(Integer) + sizeof(ProtoInteger);
 		_pID = streamToInteger<ProtoInteger>(&_attachData[sizeof(Integer)]);
 		Integer len = streamToInteger<Integer>(&_attachData[0]);

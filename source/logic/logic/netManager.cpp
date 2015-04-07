@@ -327,7 +327,7 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 		ack.needCreate = 1;
 		ws << ack;
 		SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
-		LOGW("create user  warning. nick name incorect. nickname =" << req.nickName << ", cur uID=" << founder->second.uID << ", incorect uID= " << inner->userInfo.uID);
+		LOGW("create user  warning. nick name incorect. nickName =" << req.nickName << ", cur uID=" << founder->second.uID << ", incorect uID= " << inner->userInfo.uID);
 		return;
 	}
 	
@@ -351,7 +351,7 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	UserManager::getRef().userLogin(inner, true);
 
 
-	DBQuery q("insert into tb_user(uID, nickname, iconID, joinTime) values(?, ?, ?, now());");
+	DBQuery q("insert into tb_user(uID, nickName, iconID, joinTime) values(?, ?, ?, now());");
 	q.add(inner->userInfo.uID);
 	q.add(req.nickName);
 	q.add(req.iconID);
