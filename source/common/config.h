@@ -83,10 +83,10 @@ public:
 	std::vector<ConnectorConfig > getConfigConnect(ServerNode node);
 	const DBConfig & getDBConfig(DBConfigID id);
 
-	ServerNode getOwnServerNode(){ return _ownServerNode; }
-	NodeIndex getOwnNodeIndex(){ return _ownNodeIndex; }
-	PlatID getPlatID() { return _platid; }
-	AreaID getAreaID() { return _areaid; }
+	inline ServerNode getOwnServerNode(){ return _ownServerNode; }
+	inline NodeIndex getOwnNodeIndex(){ return _ownNodeIndex; }
+	inline PlatID getPlatID() { return _platid; }
+	inline AreaID getAreaID() { return _areaid; }
 
 
 

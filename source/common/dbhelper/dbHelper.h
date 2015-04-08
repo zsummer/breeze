@@ -68,48 +68,89 @@ namespace  zsummer
 				_sql = init;
 				_fmtPos = 0;
 			}
-			void init(const std::string & init)
+			inline void init(const std::string & init)
 			{
 				_sql = init;
 				_fmtPos = 0;
 			}
 
-			inline bool add(const char *  param)
+
+
+			inline bool add(long long data)
 			{
-				return insertParam(escapeString(param, strlen(param)), true);
+				char buf[64];
+				buf[0] = '\0';
+#ifdef WIN32  
+				sprintf(buf, "%I64d", data);
+#else
+				sprintf(buf, "%lld", data);
+#endif
+				return insertParam(buf, false);
 			}
-			inline bool add(char *  param)
+			inline bool add(unsigned long long data)
 			{
-				return add((const char*)param);
+				char buf[64];
+				buf[0] = '\0';
+#ifdef WIN32  
+				sprintf(buf, "%I64u", data);
+#else
+				sprintf(buf, "%llu", data);
+#endif
+					return insertParam(buf, false);
+			}
+			inline bool add(char data)
+			{
+				return add((long long)data);
+			}
+			inline bool add(unsigned char data)
+			{
+				return add((unsigned long long)data);
+			}
+			inline bool add(short data)
+			{
+				return add((long long)data);
+			}
+			inline bool add(unsigned short data)
+			{
+				return add((unsigned long long)data);
+			}
+			inline bool add(int data)
+			{
+				return add((long long)data);
+			}
+			inline bool add(unsigned int data)
+			{
+				return add((unsigned long long)data);
+			}
+			inline bool add(long data)
+			{
+				return add((long long)data);
+			}
+			inline bool add(unsigned long data)
+			{
+				return add((unsigned long long)data);
+			}
+			inline bool add(double data)
+			{
+				char buf[64];
+				buf[0] = '\0';
+				sprintf(buf, "%lf", data);
+				return insertParam(buf, false);
+			}
+			inline bool add(float data)
+			{
+				return add((double)data);
+			}
+
+			inline bool add(const char *  param, size_t len)
+			{
+				return insertParam(escapeString(param, len), true);
 			}
 			inline bool add(const std::string & param)
 			{
 				return insertParam(escapeString(param), true);
 			}
 
-			inline bool add(char   param)
-			{
-				return add(int(param));
-			}
-			inline bool add(unsigned char   param)
-			{
-				return add(int(param));
-			}
-
-			inline bool add(const char *buf, size_t len)
-			{
-				std::string field;
-				field.assign(buf, len);
-				return add(field);
-			}
-
-			template <class T>
-			inline bool add(const T & t)
-			{
-				std::stringstream ss;
-				ss << t;
-				return insertParam(ss.str(), false);
-			}
 			inline const std::string & genSQL()
 			{
 				size_t pos = _sql.find('?', _fmtPos);
@@ -119,6 +160,7 @@ namespace  zsummer
 				}
 				return _sql;
 			}
+
 		protected:
 			inline bool insertParam(const std::string & param, bool isString)
 			{
@@ -161,7 +203,7 @@ namespace  zsummer
 			~DBResult(){}
 		public:
 			//get sql string
-			const std::string & sqlString(){ return _sql; }
+			inline const std::string & sqlString(){ return _sql; }
 
 			//get error info
 			inline QueryErrorCode getErrorCode(){ return _ec; }
@@ -198,8 +240,24 @@ namespace  zsummer
 				ss >> ret;
 				return std::move(ret);
 			}
-
-
+			template<>
+			inline char _fromeString(const std::string& field)
+			{
+				if (field.length() > 0)
+				{
+					return field[0];
+				}
+				return '\0';
+			}
+			template<>
+			inline unsigned char _fromeString(const std::string& field)
+			{
+				if (field.length() > 0)
+				{
+					return (unsigned char)field[0];
+				}
+				return 0;
+			}
 			template<class T>
 			inline std::string _toString(const T & t)
 			{
@@ -244,7 +302,7 @@ namespace  zsummer
 			bool waitEnable();
 			DBResultPtr query(const std::string & sql);
 		public:
-			void stop(){ _waiting = false; }
+			inline void stop(){ _waiting = false; }
 		private:
 			DBHelper(const DBHelper &) = delete;
 			MYSQL * _mysql = nullptr;
