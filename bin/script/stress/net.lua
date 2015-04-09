@@ -10,10 +10,14 @@ function messageHandler:ctor( ... )
 end
 
 function messageHandler:onMessage(sID, pID, binData)
-	logd("onMessage. sID=" .. sID .. ", pID=" .. pID )
 	local name = Protoz.getName(pID)
-	local msg = Protoz.decode(binData, name)
-	self["on_"..name](self, sID, msg)
+	if name then
+		logd("onMessage. sID=" .. sID .. ", pID=" .. pID .. ", typename=" .. name )
+		local msg = Protoz.decode(binData, name)
+		self["on_"..name](self, sID, msg)
+	else
+		logw("onMessage. sID=" .. sID .. ", pID=" .. pID )
+	end
 end
 
 function messageHandler:on_LoginAck(sID, msg)

@@ -8,26 +8,22 @@
 
 <Proto>
 
-  <struct name="FriendInfo" desc="好友信息">
-   	<member name="uid" type="ui64"   desc=""/>
-   	<member name="makeTime"  type="ui32" desc="建立时间"/>
-  </struct>
-  <array name="FriendInfoVct" type="FriendInfo" desc="" />
+  <enum type="ui8"  desc="好友状态">
+  	<member name="FRIEND_WAITING" value="0" desc="等待好友同意"/>
+  	<member name="FRIEND_REQUESTING" 		desc="等待确认"/>
+  	<member name="FRIEND_BLACKLIST" 		desc="黑名单"/>
+  	<member name="FRIEND_ESTABLISHED"   	desc="好友"/>
+  </enum>
 
-  
-  <struct name="ContactInfo" desc="联系人卡片">
-   	<member name="uID" type="ui64"   desc=""/>
-   	<member name="nickName" type="string"   desc="用户昵称"/>
-	<member name="iconID"  type="i16" desc="头像"/>
-	<member name="banned"  type="ui8" desc="禁言"/>
-	<member name="rankBlacks"  type="ui32" desc="被拉黑次数"/>
-	<member name="rankFriends"  type="ui32" desc="好友个数"/>
-   	<member name="onlineFlag"  type="ui8" desc="在线状态0离线,1在线"/>
-  </struct>
-  <array name="ContactInfoVct" type="ContactInfo" desc="" />
-
-
-
+  <enum type="ui8"  desc="操作指令">
+  	<member name="FRIEND_ADDFRIEND"    desc="添加好友"/>
+  	<member name="FRIEND_ADDBLACK"    desc="添加黑名单"/>
+  	<member name="FRIEND_REMOVEFRIEND"    desc="移除好友"/>
+  	<member name="FRIEND_REMOVEBLACK"    desc="移除黑名单"/>
+ 	<member name="FRIEND_ALLOW"    desc="同意"/>
+	<member name="FRIEND_REJECT"   desc="拒绝"/>
+	<member name="FRIEND_IGNORE"   desc="忽略"/>
+  </enum>
 
   <enum type="ui8"  desc="聊天(频道)类型">
  	<member name="CHANNEL_PRIVATE" value="0"   desc="私聊, 需要指明具体某个uid"/>
@@ -35,15 +31,25 @@
 	<member name="CHANNEL_GROUP"  desc="群组, 需要指明具体某个groupid"/>
   </enum>
 
-  <enum type="ui8"  desc="好友请求确认">
-  	<member name="FRIEND_WAITING" value="0"   desc="等待好友同意"/>
- 	<member name="FRIEND_CONSENT" desc="同意建立好友关系"/>
-	<member name="FRIEND_REJECT"   desc="拒绝"/>
-	<member name="FRIEND_IGNORE"  desc="忽略"/>
-  </enum>
 
+  <struct name="FriendInfo" desc="好友信息">
+   	<member name="uid" type="ui64"   desc=""/>
+   	<member name="flag" type="ui8"   desc="状态标志"/>
+   	<member name="makeTime"  type="ui32" desc="建立时间"/>
+  </struct>
+  <array name="FriendInfoArray" type="FriendInfo" desc="" />
 
- 
+  <struct name="ContactInfo" desc="联系人卡片">
+   	<member name="uID" type="ui64"   desc=""/>
+   	<member name="nickName" type="string"   desc="用户昵称"/>
+	<member name="iconID"  type="i16" desc="头像"/>
+	<member name="banned"  type="ui8" desc="禁言"/>
+	<member name="totalBlacks"  type="ui32" desc="被拉黑次数"/>
+	<member name="totalFriends"  type="ui32" desc="好友个数"/>
+   	<member name="onlineFlag"  type="ui8" desc="在线状态0离线,1在线"/>
+  </struct>
+  <array name="ContactInfoArray" type="ContactInfo" desc="" />
+
   <struct name="ChatInfo" desc="聊天消息">
   	<member name="id" type="ui32"   desc="msg id"/>
     <member name="chlType" type="ui8"   desc="channel type"/>
@@ -56,73 +62,40 @@
     <member name="msg" type="string"   desc=""/>
     <member name="sendTime" type="ui32"   desc=""/>
   </struct>
-  <array name="ChatInfoVct" type="ChatInfo" desc="" />
+  <array name="ChatInfoArray" type="ChatInfo" desc="" />
 
 
-  <proto name="GetFriendListReq" desc= "获取好友列表请求">
+  <proto name="GetContactInfoReq" desc= "获取联系人名片请求">
+  	<member name="uid" type="ui64"   desc=""/>
   </proto>
 
-  <proto name="GetFriendListAck" desc= "获取好友列表结果" >
+  <proto name="GetContactInfoAck" desc= "获取联系人名片结果" >
     <member name="retCode" type="ui16"   desc=""/>
-    <member name="friends" type="FriendInfoVct"   desc=""/>
+    <member name="contact" type="ContactInfo"   desc=""/>
+  </proto>
+
+  <proto name="GetFriendListReq" desc= "获取联系人名单|黑名单|请求名单请求">
+  </proto>
+
+  <proto name="GetFriendListAck" desc= "获取联系人列表结果" >
+    <member name="retCode" type="ui16"   desc=""/>
+    <member name="friends" type="FriendInfoArray"   desc=""/>
   </proto>
 
 
-  <proto name="MakeFriendReq" desc= "添加好友请求">
+  <proto name="FriendOperationReq" desc= "好友操作请求">
     <member name="uid" type="ui64"   desc="目标ID"/>
+    <member name="oFlag" type="ui8"   desc="操作指令"/>
   </proto>
 
-  <proto name="MakeFriendAck" desc= "添加好友结果" >
+  <proto name="FriendOperationAck" desc= "好友操作请求结果" >
   	<member name="retCode" type="ui16"   desc=""/>
-    <member name="uid" type="ui64"   desc=""/>
+  	<member name="srcUID" type="ui64"   desc=""/>
+    <member name="srcFlag" type="ui8"   desc=""/>
+    <member name="dstUID" type="ui64"   desc=""/>
   </proto>
 
-  <proto name="MakeFriendNotice" desc= "添加好友通知" >
-    <member name="applicant" type="ContactInfo"   desc=""/>
-    <member name="confirm" type="ui8"   desc="如果是添加好友成功,两个用户都会收到该消息, 如果是waiting状态, 需要客户端确认一个操作给服务器."/>
-  </proto>
-
-  <proto name="MakeFriendConfirm" desc= "对添加好友的消息确认一个操作, 拒绝/同意/忽略" >
-    <member name="uid" type="ui64"   desc=""/>
-    <member name="confirm" type="ui8"   desc=""/>
-  </proto>
-
-
-  <proto name="RemoveFriendReq" desc= "解除好友请求">
-    <member name="uid" type="ui64"   desc="目标ID"/>
-  </proto>
-
-  <proto name="RemoveFriendAck" desc= "解除好友结果" >
-    <member name="retCode" type="ui16"   desc=""/>
-    <member name="uid" type="ui64"   desc=""/>
-  </proto>
-
-  <proto name="GetBlacklistReq" desc= "获取黑名单列表请求">
-  </proto>
-
-  <proto name="GetBlacklistAck" desc= "获取黑名单列表结果" >
-    <member name="retCode" type="ui16"   desc=""/>
-    <member name="blacks" type="FriendInfoVct"   desc=""/>
-  </proto>
-
-  <proto name="AddBlacklistReq" desc= "添加到黑名单请求">
-    <member name="uid" type="ui64"   desc="目标ID"/>
-  </proto>
-
-  <proto name="AddBlacklistAck" desc= "添加到黑名单结果" >
-    <member name="retCode" type="ui16"   desc=""/>
-    <member name="uid" type="ui64"   desc=""/>
-  </proto>
-
-  <proto name="RemoveBlacklistReq" desc= "移除黑名单请求">
-    <member name="uid" type="ui64"   desc="目标ID"/>
-  </proto>
-
-  <proto name="RemoveBlacklistAck" desc= "移除黑名单结果" >
-    <member name="retCode" type="ui16"   desc=""/>
-    <member name="uid" type="ui64"   desc=""/>
-  </proto>
-
+ 
   <proto name="ChatReq" desc= "发送聊天请求">
   	<member name="chlType" type="ui8"   desc="channel type"/>
     <member name="dstid" type="ui64"   desc="userid or groupid"/>
@@ -136,14 +109,9 @@
     <member name="msgid" type="ui32"   desc=""/>
   </proto>
 
-  <proto name="GetHistoryChatReq" desc= "获取历史消息">
-  	<member name="chlType" type="ui8"   desc="channel type"/>
-    <member name="dstid" type="ui64"   desc="userid or groupid"/>
-  </proto>
-
   <proto name="ChatNotice" desc= "聊天通知" >
     <member name="retCode" type="ui16"   desc=""/>
-  	<member name="msgs" type="ChatInfoVct"   desc=""/>
+  	<member name="msgs" type="ChatInfoArray"   desc=""/>
   </proto>
 
 

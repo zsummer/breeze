@@ -69,11 +69,22 @@ int main(int argc, char* argv[])
 	}
 
 
-	if (!Appliction::getRef().init(filename, serverIndex))
+	try
 	{
-		LOGE("Appliction init false.");
+		if (!Appliction::getRef().init(filename, serverIndex))
+		{
+			LOGE("Appliction init false.");
+			return 1;
+		}
+	}
+	catch (std::runtime_error e)
+	{
+		LOGE("Appliction::init have runtime error. what=" << e.what());
 		return 1;
 	}
+
+	
+
 	Appliction::getRef().run();
 
 	LOGI("Appliction exit.");

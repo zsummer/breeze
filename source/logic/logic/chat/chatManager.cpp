@@ -10,13 +10,7 @@ using namespace zsummer::network;
 ChatManager::ChatManager()
 {
 }
-unsigned long long uID;
-std::string nickName; //用户昵称 
-short iconID; //头像 
-char banned; //禁言 
-unsigned int rankBlacks; //被拉黑次数 
-unsigned int rankFriends; //好友个数 
-unsigned char onlineFlag; //在线状态0离线,1在线 
+
 bool ChatManager::init()
 {
 	auto checkTable = DBManager::getRef().infoQuery("desc tb_friend");
@@ -38,16 +32,14 @@ bool ChatManager::init()
 	DBManager::getRef().infoQuery("alter table `tb_friend` add `nickName` varchar(255) NOT NULL DEFAULT ''");
 	DBManager::getRef().infoQuery("alter table `tb_friend` add `iconID` smallint(10) NOT NULL DEFAULT '0'");
 	DBManager::getRef().infoQuery("alter table `tb_friend` add `banned` tinyint(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `rankBlacks` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `rankFriends` int(10) NOT NULL DEFAULT '0'");
+	DBManager::getRef().infoQuery("alter table `tb_friend` add `totalBlacks` int(10) NOT NULL DEFAULT '0'");
+	DBManager::getRef().infoQuery("alter table `tb_friend` add `totalFriends` int(10) NOT NULL DEFAULT '0'");
 	DBManager::getRef().infoQuery("alter table `tb_friend` add `friends` blob");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `blacks` blob");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `request` blob");
 	//加载所有用户数据
 	UserID curID = 0;
 	do
 	{
-		DBQuery q("select uID, nickName, iconID, banned, rankBlacks, rankFriends, friends, blacks, request from tb_friend where uID >? limit 1000;");
+		DBQuery q("select uID, nickName, iconID, banned, totalBlacks, totalFriends, friends from tb_friend where uID >? limit 1000;");
 		q.add(curID);
 		auto result = DBManager::getRef().infoQuery(q.genSQL());
 		if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
@@ -68,40 +60,21 @@ bool ChatManager::init()
 			*result >> info.contact.nickName;
 			*result >> info.contact.iconID;
 			*result >> info.contact.banned;
-			*result >> info.contact.rankBlacks;
-			*result >> info.contact.rankFriends;
+			*result >> info.contact.totalBlacks;
+			*result >> info.contact.totalFriends;
 			info.contact.onlineFlag = false;
 			std::string friends;
-			std::string blacks;
-			std::string request;
 			friends.resize(1024);
-			blacks.resize(1024);
-			request.resize(1024);
 			*result >> friends;
-			*result >> blacks;
-			*result >> request;
+
 			try
 			{
-				ReadStream rs(friends.c_str(), (zsummer::proto4z::Integer)friends.length(), false);
+				if (!friends.empty())
+				{
+
+					ReadStream rs(friends.c_str(), (zsummer::proto4z::Integer)friends.length(), false);
 					rs >> info.friends;
-			}
-			catch (std::runtime_error re)
-			{
-				LOGE("when load user friend find one error. uID=" << info.contact.uID << " error=" << re.what());
-			}
-			try
-			{
-				ReadStream rs(blacks.c_str(), (zsummer::proto4z::Integer)blacks.length(), false);
-				rs >> info.blacks;
-			}
-			catch (std::runtime_error re)
-			{
-				LOGE("when load user friend find one error. uID=" << info.contact.uID << " error=" << re.what());
-			}
-			try
-			{
-				ReadStream rs(request.c_str(), (zsummer::proto4z::Integer)request.length(), false);
-				rs >> info.request;
+				}
 			}
 			catch (std::runtime_error re)
 			{
@@ -125,30 +98,35 @@ bool ChatManager::init()
 
 void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long long count, unsigned long long iconID, std::string nick)
 {
+	bool haveChange = false;
 	auto founder = _mapContact.find(uID);
 	if (founder == _mapContact.end())
 	{
 		InnerContactInfo info;
 		info.contact.uID = uID;
-		info.contact.banned = false;
-		info.contact.iconID = (short)iconID;
-		info.contact.nickName = nick;
-		info.contact.rankBlacks = 0;
-		info.contact.rankFriends = 0;
+		haveChange = true;
 		_mapContact[uID] = info;
-		
-		updateContact(info);
-		
+		updateContact(info, true, false);
 		founder = _mapContact.find(uID);
 	}
-	founder->second.contact.onlineFlag = true;
-	for (auto &kv : founder->second.friends)
+	if (founder->second.contact.nickName != nick)
 	{
-		//broadcast
+		founder->second.contact.nickName = nick;
+		haveChange = true;
 	}
-	
-
-	
+	if (founder->second.contact.iconID != iconID)
+	{
+		founder->second.contact.iconID = (short)iconID;
+		haveChange = true;
+	}
+	if (haveChange)
+	{
+		updateContact(founder->second, true, true);
+	}
+	else
+	{
+		updateContact(founder->second, false, true);
+	}
 }
 void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string)
 {
@@ -156,46 +134,59 @@ void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, unsigned long lo
 	if (founder != _mapContact.end())
 	{
 		founder->second.contact.onlineFlag = false;
+		updateContact(founder->second, false, true);
 	}
 }
 
-void ChatManager::updateContact(const InnerContactInfo & info)
+void ChatManager::updateContact(const InnerContactInfo & info, bool writedb, bool broadcast)
 {
-	try
+	if (writedb)
 	{
-		WriteStream wsFriends(0);
-		wsFriends << info.friends;
-		WriteStream wsBlacks(0);
-		wsBlacks << info.blacks;
-		WriteStream wsRequest(0);
-		wsRequest << info.request;
+		try
+		{
+			WriteStream wsFriends(0);
+			wsFriends << info.friends;
+			DBQuery q("insert into tb_friend(uID) values(?) on duplicate key update nickName=?, iconID=?, banned=?,  totalBlacks=?, totalFriends=?, friends=?;");
+			q.add(info.contact.uID);
+			q.add(info.contact.nickName);
+			q.add(info.contact.iconID);
+			q.add(info.contact.banned);
+			q.add(info.contact.totalBlacks);
+			q.add(info.contact.totalFriends);
+			q.add(wsFriends.getStreamBody(), wsFriends.getStreamBodyLen());
 
-		DBQuery q("insert into tb_friend(uID, nickName, iconID, banned, rankBlacks, rankFriends, friends, blacks, request) "
-			" values(?,?,?,?,?,?, ?, ?, ?) on duplicate key update banned=?, rankBlacks=?, rankFriends=?, friends=?, blacks=?, request=?;");
-		q.add(info.contact.uID);
-		q.add(info.contact.nickName);
-		q.add(info.contact.iconID);
-		q.add(info.contact.banned);
-		q.add(info.contact.rankBlacks);
-		q.add(info.contact.rankFriends);
-		q.add(wsFriends.getStreamBody(), wsFriends.getStreamBodyLen());
-		q.add(wsBlacks.getStreamBody(), wsBlacks.getStreamBodyLen());
-		q.add(wsRequest.getStreamBody(), wsRequest.getStreamBodyLen());
-
-
-		q.add(info.contact.banned);
-		q.add(info.contact.rankBlacks);
-		q.add(info.contact.rankFriends);
-		q.add(wsFriends.getStreamBody(), wsFriends.getStreamBodyLen());
-		q.add(wsBlacks.getStreamBody(), wsBlacks.getStreamBodyLen());
-		q.add(wsRequest.getStreamBody(), wsRequest.getStreamBodyLen());
-
-		DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
+			DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
+		}
+		catch (...)
+		{
+			LOGE("updateContact failed");
+			return;
+		}
 	}
-	catch (...)
+	
+
+
+	//broadcast
+	if (broadcast)
 	{
-		LOGE("updateContact failed");
-		return;
+		WriteStream ws(ID_GetContactInfoAck);
+		ws << EC_SUCCESS << info.contact;
+		for (auto &kv : info.friends)
+		{
+			if (kv.flag == FRIEND_ESTABLISHED)
+			{
+				auto ptr = UserManager::getRef().getInnerUserInfoByUID(kv.uid);
+				if (ptr && ptr->sesionInfo.sID != InvalidSeesionID)
+				{
+					SessionManager::getRef().sendOrgSessionData(ptr->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
+				}
+			}
+		}
+		auto ptr = UserManager::getRef().getInnerUserInfoByUID(info.contact.uID);
+		if (ptr && ptr->sesionInfo.sID != InvalidSeesionID)
+		{
+			SessionManager::getRef().sendOrgSessionData(ptr->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
+		}
 	}
 }
 

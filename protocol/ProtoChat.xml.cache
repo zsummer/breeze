@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<md5>ee80fc71558a32af4f9916c2e7e510aa</md5>
+<md5>a39b10f234d715bf492838d7476a979f</md5>
 
 <CacheNo>
 	<cache key = "ID_AddBlacklistAck" No = "1011" /> 
@@ -8,8 +8,12 @@
 	<cache key = "ID_ChatAck" No = "1015" /> 
 	<cache key = "ID_ChatNotice" No = "1017" /> 
 	<cache key = "ID_ChatReq" No = "1014" /> 
+	<cache key = "ID_FriendOperationAck" No = "1021" /> 
+	<cache key = "ID_FriendOperationReq" No = "1020" /> 
 	<cache key = "ID_GetBlacklistAck" No = "1009" /> 
 	<cache key = "ID_GetBlacklistReq" No = "1008" /> 
+	<cache key = "ID_GetContactInfoAck" No = "1019" /> 
+	<cache key = "ID_GetContactInfoReq" No = "1018" /> 
 	<cache key = "ID_GetFriendListAck" No = "1001" /> 
 	<cache key = "ID_GetFriendListReq" No = "1000" /> 
 	<cache key = "ID_GetHistoryChatReq" No = "1016" /> 
