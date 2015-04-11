@@ -74,6 +74,7 @@ bool TestBlob::init()
 
 			std::string blob;
 			*result >> blob;
+
 			ReadStream rs(blob.c_str(), (zsummer::proto4z::Integer)blob.length(), false);
 
 			UserID uID = 0;

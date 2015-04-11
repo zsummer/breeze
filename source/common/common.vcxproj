@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
-    <ClCompile Include="dbhelper\dbHelper.cpp" />
     <ClCompile Include="lua\fpconv.c" />
     <ClCompile Include="lua\lapi.c" />
     <ClCompile Include="lua\lauxlib.c" />

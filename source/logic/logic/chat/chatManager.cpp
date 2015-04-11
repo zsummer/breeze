@@ -198,6 +198,21 @@ void ChatManager::onUpdateContact(zsummer::mysql::DBResultPtr result)
 	{
 		LOGE("onUpdateContact error. msg=" << result->getLastError() << ", sql=" << result->sqlString());
 	}
-	
 }
 
+void ChatManager::msg_onGetContactInfoReq(SessionID sID, ProtoID pID, ReadStream & rs)
+{
+
+}
+void ChatManager::msg_onGetFriendListReq(SessionID sID, ProtoID pID, ReadStream & rs)
+{
+
+}
+void ChatManager::msg_onFriendOperationReq(SessionID sID, ProtoID pID, ReadStream & rs)
+{
+
+}
+void ChatManager::msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs)
+{
+
+}

@@ -99,9 +99,6 @@
     <ClInclude Include="genID.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dbhelper\dbHelper.cpp">
-      <Filter>dbhelper</Filter>
-    </ClCompile>
     <ClCompile Include="dbAsync.cpp" />
     <ClCompile Include="lua\lapi.c">
       <Filter>lua</Filter>

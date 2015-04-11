@@ -26,6 +26,8 @@ using namespace zsummer::mysql;
 DBAsync::DBAsync()
 {
 	_event = std::make_shared<zsummer::network::EventLoop>();
+	_uFinalCount = 0;
+	_uPostCount = 0;
 }
 
 DBAsync::~DBAsync()
