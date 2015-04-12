@@ -27,7 +27,7 @@ bool CreateTestAuthInfo::init()
 			"PRIMARY KEY(`user`), "
 			"UNIQUE KEY `accID` (`uid`) "
 			") ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8");
-		checkTable = DBManager::getRef().authQuery(q.genSQL());
+		checkTable = DBManager::getRef().authQuery(q.popSQL());
 		if (checkTable->getErrorCode() != QEC_SUCCESS)
 		{
 			LOGE("create talbe tb_auth error=" << checkTable->getLastError());
@@ -41,10 +41,10 @@ bool CreateTestAuthInfo::init()
 			std::string str(buf);
 			q.add(buf);
 			q.add("123");
-			DBResultPtr result = DBManager::getRef().authQuery(q.genSQL());
+			DBResultPtr result = DBManager::getRef().authQuery(q.popSQL());
 			if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 			{
-				LOGE("mysql querry error. the error=" << result->getLastError() << ", sql=" << q.genSQL());
+				LOGE("mysql querry error. the error=" << result->getLastError() << ", sql=" << result->sqlString());
 				return false;
 			}
 			if (result->getAffectedRows() == 0)

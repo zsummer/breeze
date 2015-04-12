@@ -24,7 +24,7 @@ bool TestBlob::init()
 			"`uID` bigint(20) unsigned NOT NULL, "
 			"PRIMARY KEY(`uID`) "
 			") ENGINE = MyISAM DEFAULT CHARSET = utf8");
-		checkTable = DBManager::getRef().infoQuery(q.genSQL());
+		checkTable = DBManager::getRef().infoQuery(q.popSQL());
 		if (checkTable->getErrorCode() != QEC_SUCCESS)
 		{
 			LOGE("create talbe tb_testBlob error=" << checkTable->getLastError());
@@ -51,7 +51,7 @@ bool TestBlob::init()
 	q.add(blob);
 	q.add(blob);
 
-	auto result = DBManager::getRef().infoQuery(q.genSQL());
+	auto result = DBManager::getRef().infoQuery(q.popSQL());
 	if (result->getErrorCode() != QEC_SUCCESS )
 	{
 		LOGE("update blob error. msg=" << result->getLastError());
@@ -60,7 +60,7 @@ bool TestBlob::init()
 	
 	q.init("select bag from tb_testBlob where uID=?");
 	q.add(1);
-	result = DBManager::getRef().infoQuery(q.genSQL());
+	result = DBManager::getRef().infoQuery(q.popSQL());
 	if (result->getErrorCode() != QEC_SUCCESS)
 	{
 		LOGE("select blob error. errorMsg=" << result->getLastError());
@@ -101,5 +101,50 @@ bool TestBlob::init()
 
 	return true;
 }
+
+
+// test
+// this is one test .
+// wait a moment,  the sql query code will needless write more that I will use proto tools make it.
+//
+#include <ProtoCommon.h>
+inline std::string LOAD_UserInfo(unsigned long long uID)
+{
+	DBQuery q("select * from tb_UserInfo where uID>?");
+	q << uID;
+	return q.popSQL();
+}
+
+inline std::string SELECT_UserInfo(unsigned long long uID)
+{
+	DBQuery q("select * from tb_UserInfo where uID=?");
+	q << uID;
+	return q.popSQL();
+}
+
+inline std::map<unsigned long long, UserInfo> UserInfo_FROMDB(DBResultPtr ptr)
+{
+	std::map <unsigned long long, UserInfo> ret;
+	if (ptr->getErrorCode() == QEC_SUCCESS)
+	{
+		while (ptr->haveRow())
+		{
+			UserInfo info;
+			*ptr >> info.uID;
+			*ptr >> info.nickName;
+			//...
+			ret[info.uID] = info;
+		}
+	}
+}
+
+inline std::string UPDATE_UserInfo(const UserInfo & info)
+{
+	DBQuery q("insert into tb_UserInfo(uID)values(?) on duplicate key set .........");
+	q << info.uID;
+	///
+	return q.popSQL();
+}
+
 
 

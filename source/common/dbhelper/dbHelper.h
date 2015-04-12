@@ -95,14 +95,15 @@ namespace  zsummer
 				return *this;
 			}
 
-			inline const std::string & genSQL()
+
+			inline std::string && popSQL()
 			{
 				size_t pos = _sql.find('?', _fmtPos);
 				if (pos != std::string::npos)
 				{
 					LOGE("DBQuery param is not enough. current sql=" << _sql);
 				}
-				return _sql;
+				return std::move(_sql);
 			}
 
 		protected:
@@ -329,7 +330,7 @@ namespace  zsummer
 					ret += ch;
 				}
 			}
-			return ret;
+			return std::move(ret);
 		}
 		inline bool DBQuery::add(long long data)
 		{

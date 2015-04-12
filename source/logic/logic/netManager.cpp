@@ -199,7 +199,7 @@ void NetManager::msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs)
 
 	DBQuery q("SELECT uID, passwd FROM `tb_auth` where user = ?");
 	q.add(req.user);
-	DBManager::getRef().authAsyncQuery(q.genSQL(), std::bind(&NetManager::db_onAuthSelect, this, std::placeholders::_1, sID));
+	DBManager::getRef().authAsyncQuery(q.popSQL(), std::bind(&NetManager::db_onAuthSelect, this, std::placeholders::_1, sID));
 
 }
 
@@ -355,7 +355,7 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	q.add(inner->userInfo.uID);
 	q.add(req.nickName);
 	q.add(req.iconID);
-	DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&NetManager::db_onUserCreate, this, std::placeholders::_1, sID) );
+	DBManager::getRef().infoAsyncQuery(q.popSQL(), std::bind(&NetManager::db_onUserCreate, this, std::placeholders::_1, sID) );
 }
 void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 {

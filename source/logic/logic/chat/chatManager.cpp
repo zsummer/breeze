@@ -21,7 +21,7 @@ bool ChatManager::init()
 			"`uID` bigint(20) unsigned NOT NULL, "
 			"PRIMARY KEY(`uID`) "
 			") ENGINE = MyISAM DEFAULT CHARSET = utf8");
-		checkTable = DBManager::getRef().infoQuery(q.genSQL());
+		checkTable = DBManager::getRef().infoQuery(q.popSQL());
 		if (checkTable->getErrorCode() != QEC_SUCCESS)
 		{
 			LOGE("create talbe tb_user error=" << checkTable->getLastError());
@@ -41,7 +41,7 @@ bool ChatManager::init()
 	{
 		DBQuery q("select uID, nickName, iconID, banned, totalBlacks, totalFriends, friends from tb_friend where uID >? limit 1000;");
 		q.add(curID);
-		auto result = DBManager::getRef().infoQuery(q.genSQL());
+		auto result = DBManager::getRef().infoQuery(q.popSQL());
 		if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 		{
 			LOGE("load friend error. begin uID is " << curID << ",  sql error=" << result->getLastError());
@@ -155,7 +155,7 @@ void ChatManager::updateContact(const InnerContactInfo & info, bool writedb, boo
 			q.add(info.contact.totalFriends);
 			q.add(wsFriends.getStreamBody(), wsFriends.getStreamBodyLen());
 
-			DBManager::getRef().infoAsyncQuery(q.genSQL(), std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
+			DBManager::getRef().infoAsyncQuery(q.popSQL(), std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
 		}
 		catch (...)
 		{

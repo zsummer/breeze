@@ -19,7 +19,7 @@ bool UserManager::init()
 			"`uID` bigint(20) unsigned NOT NULL, "
 			"PRIMARY KEY(`uID`) "
 			") ENGINE = MyISAM DEFAULT CHARSET = utf8");
-		checkTable = DBManager::getRef().infoQuery(q.genSQL());
+		checkTable = DBManager::getRef().infoQuery(q.popSQL());
 		if (checkTable->getErrorCode() != QEC_SUCCESS)
 		{
 			LOGE("create talbe tb_user error=" << checkTable->getLastError());
@@ -40,7 +40,7 @@ bool UserManager::init()
 	{
 		DBQuery q("select uID, nickName, iconID, diamond, giftDiamond, historyDiamond, joinTime from tb_user where uID >? limit 1000;");
 		q.add(curID);
-		auto result = DBManager::getRef().infoQuery(q.genSQL());
+		auto result = DBManager::getRef().infoQuery(q.popSQL());
 		if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 		{
 			LOGE("loadUserInfo error. begin uID is " << curID << ",  sql error=" << result->getLastError());
