@@ -77,7 +77,10 @@ void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 {
 	DBResultPtr ret = dbhelper->query(sql);
 	_uFinalCount++;
-	SessionManager::getRef().post(std::bind(handler, ret));
+	if (handler)
+	{
+		SessionManager::getRef().post(std::bind(handler, ret));
+	}
 }
 
 

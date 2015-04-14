@@ -15,83 +15,37 @@ UserManager::UserManager()
 bool UserManager::init()
 {
 	auto tb = UserInfo_BUILD();
-	for (auto &m : tb)
+	for (auto & m : tb)
 	{
-		DBManager::getRef().getRef().infoQuery(m);
+		DBManager::getRef().infoQuery(m);
 	}
 	
-	auto checkTable = DBManager::getRef().infoQuery("desc tb_user");
-	if (checkTable->getErrorCode() != QEC_SUCCESS)
-	{
-		LOGI("create talbe tb_user ");
-		DBQuery q("CREATE TABLE `tb_user` ( "
-			"`uID` bigint(20) unsigned NOT NULL, "
-			"PRIMARY KEY(`uID`) "
-			") ENGINE = MyISAM DEFAULT CHARSET = utf8");
-		checkTable = DBManager::getRef().infoQuery(q.popSQL());
-		if (checkTable->getErrorCode() != QEC_SUCCESS)
-		{
-			LOGE("create talbe tb_user error=" << checkTable->getLastError());
-			return false;
-		}
-	}
-	//版本升级自动alter add 新字段. 
-	DBManager::getRef().infoQuery("alter table `tb_user` add `nickName` varchar(255) NOT NULL DEFAULT ''");
-	DBManager::getRef().infoQuery("alter table `tb_user` add `iconID` smallint(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_user` add `diamond` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_user` add `giftDiamond` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_user` add `historyDiamond` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_user` add `joinTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'");
-
 	//加载所有用户数据
-	UserID curID = 0;
+	unsigned long long curIndex = 0;
 	do
 	{
-		DBQuery q("select uID, nickName, iconID, diamond, giftDiamond, historyDiamond, joinTime from tb_user where uID >? limit 1000;");
-		q.add(curID);
-		auto result = DBManager::getRef().infoQuery(q.popSQL());
+		auto result = DBManager::getRef().infoQuery(UserInfo_LOAD(curIndex));
+		curIndex += 1000;
 		if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
 		{
-			LOGE("loadUserInfo error. begin uID is " << curID << ",  sql error=" << result->getLastError());
+			LOGE("loadUserInfo error. begin curIndex is " << curIndex << ",  sql error=" << result->getLastError());
 			return false;
 		}
 		if (!result->haveRow())
 		{
 			//all already loaded.
-			LOGD("all tb_user is already loaded.");
+			LOGD("all tb_UserInfo is already loaded.");
 			break;
 		}
-		while (result->haveRow())
+
+		auto ret = UserInfo_FETCH(result);
+		for (auto & kv : ret)
 		{
-			UserInfo info;
-			*result >> info.uID;
-			*result >> info.nickName;
-			*result >> info.iconID;
-			*result >> info.diamond;
-			*result >> info.giftDiamond;
-			*result >> info.hisotryDiamond;
-			*result >> info.joinTime;
-			if (info.uID == InvalidUserID)
-			{
-				continue;
-			}
-			if (info.uID > curID)
-			{
-				curID = info.uID;
-			}
-
-			auto founder = _mapUser.find(info.uID);
-			if (founder != _mapUser.end())
-			{
-				LOGE("loadUserInfo  the user be aready loaded. uID=" << info.uID);
-				continue;
-			}
 			auto inner = std::make_shared<InnerUserInfo>();
-			inner->userInfo = info;
-			_mapUser.insert(std::make_pair(info.uID, inner));
-			_mapNickName.insert(std::make_pair(info.nickName, inner));
+			inner->userInfo = kv.second;
+			_mapUser.insert(std::make_pair(kv.first, inner));
+			_mapNickName.insert(std::make_pair(kv.second.nickName, inner));
 		}
-
 	} while (true);
 
 

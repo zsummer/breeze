@@ -1,7 +1,7 @@
 ﻿#include "netManager.h"
 #include "dbManager.h"
 #include "userManager.h"
-
+#include <ProtoCommonSQL.h>
 using namespace zsummer::mysql;
 
 NetManager::NetManager()
@@ -349,13 +349,8 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	inner->sesionInfo.loginTime = time(NULL);
 	_clients.erase(sID);
 	UserManager::getRef().userLogin(inner, true);
-
-
-	DBQuery q("insert into tb_user(uID, nickName, iconID, joinTime) values(?, ?, ?, now());");
-	q.add(inner->userInfo.uID);
-	q.add(req.nickName);
-	q.add(req.iconID);
-	DBManager::getRef().infoAsyncQuery(q.popSQL(), std::bind(&NetManager::db_onUserCreate, this, std::placeholders::_1, sID) );
+	DBManager::getRef().infoAsyncQuery(UserInfo_UPDATE(inner->userInfo), nullptr);
+	DBManager::getRef().infoAsyncQuery(UserInfo_UPDATE(inner->userInfo), std::bind(&NetManager::db_onUserCreate, this, std::placeholders::_1, sID) );
 }
 void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 {

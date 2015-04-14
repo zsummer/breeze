@@ -24,7 +24,7 @@ bool ChatManager::init()
 		checkTable = DBManager::getRef().infoQuery(q.popSQL());
 		if (checkTable->getErrorCode() != QEC_SUCCESS)
 		{
-			LOGE("create talbe tb_user error=" << checkTable->getLastError());
+			LOGE("create talbe tb_friend error=" << checkTable->getLastError());
 			return false;
 		}
 	}
