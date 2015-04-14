@@ -2,8 +2,11 @@
 #include "dbManager.h"
 #include "mission/eventTrigger.h"
 #include <ProtoCommon.h>
+#include <ProtoCommonSQL.h>
+
 using namespace zsummer::mysql;
 using namespace zsummer::network;
+
 
 UserManager::UserManager()
 {
@@ -11,6 +14,12 @@ UserManager::UserManager()
 
 bool UserManager::init()
 {
+	auto tb = UserInfo_BUILD();
+	for (auto &m : tb)
+	{
+		DBManager::getRef().getRef().infoQuery(m);
+	}
+	
 	auto checkTable = DBManager::getRef().infoQuery("desc tb_user");
 	if (checkTable->getErrorCode() != QEC_SUCCESS)
 	{

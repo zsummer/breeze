@@ -30,8 +30,8 @@
 
 
   <!-- 用户信息 -->
-  <struct name="UserInfo" dbstore="true" desc="用户信息">
-    <member name="uID" type="ui64"  dbtype="key" desc=""/>
+  <struct name="UserInfo" store="true" desc="用户信息">
+    <member name="uID" type="ui64"  key="true" desc=""/>
     <member name="nickName" type="string"   desc="用户昵称"/>
     <member name="iconID"  type="i16" desc="头像"/>
     <member name="diamond"  type="i32" desc="当前剩余的充值钻石"/>
