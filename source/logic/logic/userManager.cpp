@@ -14,38 +14,47 @@ UserManager::UserManager()
 
 bool UserManager::init()
 {
-	auto tb = UserInfo_BUILD();
-	for (auto & m : tb)
+	auto build = UserInfo_BUILD();
+	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
 	{
-		DBManager::getRef().infoQuery(m);
+		if (DBManager::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
+		{
+			LOGE("create table error. sql=" << build[1]);
+			return false;
+		}
 	}
+
+	for (size_t i = 2; i < build.size(); i++)
+	{
+		DBManager::getRef().infoQuery(build[i]);
+	}
+
+	
 	
 	//加载所有用户数据
-	unsigned long long curIndex = 0;
+	unsigned long long curID = 0;
 	do
 	{
-		auto result = DBManager::getRef().infoQuery(UserInfo_LOAD(curIndex));
-		curIndex += 1000;
-		if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
+		auto sql = UserInfo_LOAD(curID);
+		auto result = DBManager::getRef().infoQuery(sql);
+		if (result->getErrorCode() != QEC_SUCCESS)
 		{
-			LOGE("loadUserInfo error. begin curIndex is " << curIndex << ",  sql error=" << result->getLastError());
+			LOGE("load contact error. curID:" << curID << ", err=" << result->getLastError());
 			return false;
 		}
 		if (!result->haveRow())
 		{
-			//all already loaded.
-			LOGD("all tb_UserInfo is already loaded.");
 			break;
 		}
-
-		auto ret = UserInfo_FETCH(result);
-		for (auto & kv : ret)
+		auto mapInfo = UserInfo_FETCH(result);
+		for (auto & kv : mapInfo)
 		{
 			auto inner = std::make_shared<InnerUserInfo>();
 			inner->userInfo = kv.second;
 			_mapUser.insert(std::make_pair(kv.first, inner));
 			_mapNickName.insert(std::make_pair(kv.second.nickName, inner));
 		}
+		curID += mapInfo.size();
 	} while (true);
 
 
@@ -83,17 +92,14 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByNickName(const std
 	return std::shared_ptr<InnerUserInfo>();
 }
 
-
-void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo, bool newUser)
+void UserManager::addUser(std::shared_ptr<InnerUserInfo> innerInfo)
 {
 	_mapSession[innerInfo->sesionInfo.sID] = innerInfo;
-	if (newUser)
-	{
-		_mapUser[innerInfo->userInfo.uID] = innerInfo;
-		_mapNickName[innerInfo->userInfo.nickName] = innerInfo;
-	}
-    
-
+	_mapUser[innerInfo->userInfo.uID] = innerInfo;
+	_mapNickName[innerInfo->userInfo.nickName] = innerInfo;
+}
+void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
+{
     EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID, 1);
 }
 

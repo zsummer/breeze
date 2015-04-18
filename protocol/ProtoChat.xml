@@ -39,19 +39,20 @@
   </struct>
   <array name="FriendInfoArray" type="FriendInfo" desc="" />
 
-  <struct name="ContactInfo" desc="联系人卡片">
-   	<member name="uID" type="ui64"   desc=""/>
+  <struct name="ContactInfo" store="true" desc="联系人卡片">
+   	<member name="uID" type="ui64" key="true" desc=""/>
    	<member name="nickName" type="string"   desc="用户昵称"/>
-	<member name="iconID"  type="i16" desc="头像"/>
-	<member name="banned"  type="ui8" desc="禁言"/>
-	<member name="totalBlacks"  type="ui32" desc="被拉黑次数"/>
-	<member name="totalFriends"  type="ui32" desc="好友个数"/>
+  	<member name="iconID"  type="i16" desc="头像"/>
+  	<member name="banned"  type="ui8" desc="禁言"/>
+  	<member name="totalBlacks"  type="ui32" desc="被拉黑次数"/>
+  	<member name="totalFriends"  type="ui32" desc="好友个数"/>
    	<member name="onlineFlag"  type="ui8" desc="在线状态0离线,1在线"/>
+    <member name="friends" type="FriendInfoArray" desc="好友信息/黑名单信息/好友请求" />
   </struct>
   <array name="ContactInfoArray" type="ContactInfo" desc="" />
 
-  <struct name="ChatInfo" desc="聊天消息">
-  	<member name="id" type="ui32"   desc="msg id"/>
+  <struct name="ChatInfo" store="true" desc="聊天消息">
+  	<member name="id" type="ui32" key="true"  desc="msg id"/>
     <member name="chlType" type="ui8"   desc="channel type"/>
     <member name="srcid" type="ui64"   desc=""/>
     <member name="srcName" type="string"   desc="src"/>

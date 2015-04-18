@@ -75,7 +75,7 @@ protected:
 	void msg_onServerPulseEcho(SessionID sID, ProtoID pID, ReadStream & rs);
 
 private:
-	std::map<UserID, SessionInfo> _clients;
+	std::map<SessionID, SessionInfo> _clients;
 	//监听配置.
 	zsummer::network::ListenConfig _configListen; 
 	bool _bListening = false;

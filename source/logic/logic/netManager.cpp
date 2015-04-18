@@ -290,7 +290,7 @@ void NetManager::db_onAuthSelect(DBResultPtr res, SessionID sID)
 	inner->sesionInfo.lastActiveTime = time(NULL);
 	inner->sesionInfo.loginTime = time(NULL);
 	inner->sesionInfo.status = SS_LOGINED;
-
+	founder->second.status = SS_LOGINED;
 
 
 	UserManager::getRef().userLogin(inner);
@@ -316,7 +316,12 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 	{
 		return;
 	}
-
+	auto userPtr = UserManager::getRef().getInnerUserInfoByUID(founder->second.uID);
+	if (userPtr && userPtr->sesionInfo.status != SS_AUTHED)
+	{
+		return;
+	}
+	
 	//如果是多个logic服务器, 那么创建角色的工作要先交给一个公共服务来进行互斥,而不是在这里进行互斥检测.
 	auto inner = UserManager::getRef().getInnerUserInfoByNickName(req.nickName);
 	if (inner)
@@ -331,24 +336,23 @@ void NetManager::msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs)
 		return;
 	}
 	
-
-	inner = UserManager::getRef().getInnerUserInfoByUID(founder->second.uID);
-	if (inner)
+	if (!userPtr)
 	{
-		return;
-	}
-	
-	
-	inner = std::make_shared<InnerUserInfo>();
-	inner->userInfo.uID = founder->second.uID;
-	inner->userInfo.nickName = req.nickName;
-	inner->userInfo.iconID = req.iconID;
+		userPtr = std::make_shared<InnerUserInfo>();
+		userPtr->userInfo.uID = founder->second.uID;
 
-	inner->sesionInfo = founder->second;
-	inner->sesionInfo.status = SS_LOGINED;
-	inner->sesionInfo.loginTime = time(NULL);
-	_clients.erase(sID);
-	UserManager::getRef().userLogin(inner, true);
+	}
+	userPtr->userInfo.nickName = req.nickName;
+	userPtr->userInfo.iconID = req.iconID;
+	userPtr->userInfo.joinTime = time(NULL);
+
+	userPtr->sesionInfo = founder->second;
+	userPtr->sesionInfo.status = SS_LOGINING;
+	userPtr->sesionInfo.loginTime = time(NULL);
+
+	UserManager::getRef().addUser(userPtr);
+
+	
 	DBManager::getRef().infoAsyncQuery(UserInfo_UPDATE(inner->userInfo), nullptr);
 	DBManager::getRef().infoAsyncQuery(UserInfo_UPDATE(inner->userInfo), std::bind(&NetManager::db_onUserCreate, this, std::placeholders::_1, sID) );
 }
@@ -363,6 +367,12 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 		auto inner = UserManager::getRef().getInnerUserInfoBySID(sID);
 		if (inner)
 		{
+			inner->sesionInfo.status == SS_LOGINED;
+			auto founder = _clients.find(sID);
+			if (founder != _clients.end())
+			{
+				founder->second.status = SS_LOGINED;
+			}
 			ack.info = inner->userInfo;
 		}
 		else

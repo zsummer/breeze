@@ -3,7 +3,8 @@
 #include "../dbManager.h"
 using namespace zsummer::mysql;
 #include <ProtoCommon.h>
-
+#include <ProtoCommonSQL.h>
+#include <ProtoChatSQL.h>
 using namespace zsummer::mysql;
 using namespace zsummer::network;
 
@@ -13,83 +14,42 @@ ChatManager::ChatManager()
 
 bool ChatManager::init()
 {
-	auto checkTable = DBManager::getRef().infoQuery("desc tb_friend");
-	if (checkTable->getErrorCode() != QEC_SUCCESS)
+	auto build = ContactInfo_BUILD();
+	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
 	{
-		LOGI("create talbe tb_friend ");
-		DBQuery q("CREATE TABLE `tb_friend` ( "
-			"`uID` bigint(20) unsigned NOT NULL, "
-			"PRIMARY KEY(`uID`) "
-			") ENGINE = MyISAM DEFAULT CHARSET = utf8");
-		checkTable = DBManager::getRef().infoQuery(q.popSQL());
-		if (checkTable->getErrorCode() != QEC_SUCCESS)
+		if (DBManager::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
 		{
-			LOGE("create talbe tb_friend error=" << checkTable->getLastError());
+			LOGE("create table error. sql=" <<build[1]);
 			return false;
 		}
 	}
-	//版本升级自动alter add 新字段. 
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `nickName` varchar(255) NOT NULL DEFAULT ''");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `iconID` smallint(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `banned` tinyint(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `totalBlacks` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `totalFriends` int(10) NOT NULL DEFAULT '0'");
-	DBManager::getRef().infoQuery("alter table `tb_friend` add `friends` blob");
+
+	for (size_t i = 2; i < build.size(); i++)
+	{
+		DBManager::getRef().infoQuery(build[i]);
+	}
+	
+
 	//加载所有用户数据
-	UserID curID = 0;
+	unsigned long long curID = 0;
 	do
 	{
-		DBQuery q("select uID, nickName, iconID, banned, totalBlacks, totalFriends, friends from tb_friend where uID >? limit 1000;");
-		q.add(curID);
-		auto result = DBManager::getRef().infoQuery(q.popSQL());
-		if (result->getErrorCode() != QueryErrorCode::QEC_SUCCESS)
+		auto sql = ContactInfo_LOAD(curID);
+		auto result = DBManager::getRef().infoQuery(sql);
+		if (result->getErrorCode() != QEC_SUCCESS)
 		{
-			LOGE("load friend error. begin uID is " << curID << ",  sql error=" << result->getLastError());
+			LOGE("load contact error. curID:" << curID << ", err=" << result->getLastError());
 			return false;
 		}
 		if (!result->haveRow())
 		{
-			//all already loaded.
-			LOGD("all tb_friend is already loaded.");
 			break;
 		}
-		while (result->haveRow())
-		{
-			InnerContactInfo info;
-			*result >> info.contact.uID;
-			*result >> info.contact.nickName;
-			*result >> info.contact.iconID;
-			*result >> info.contact.banned;
-			*result >> info.contact.totalBlacks;
-			*result >> info.contact.totalFriends;
-			info.contact.onlineFlag = false;
-			std::string friends;
-			friends.resize(1024);
-			*result >> friends;
-
-			try
-			{
-				if (!friends.empty())
-				{
-
-					ReadStream rs(friends.c_str(), (zsummer::proto4z::Integer)friends.length(), false);
-					rs >> info.friends;
-				}
-			}
-			catch (std::runtime_error re)
-			{
-				LOGE("when load user friend find one error. uID=" << info.contact.uID << " error=" << re.what());
-			}
-
-			_mapContact[info.contact.uID] = info;
-			if (info.contact.uID > curID)
-			{
-				curID = info.contact.uID;
-			}
-			
-		}
-
+		auto mapInfo = ContactInfo_FETCH(result);
+		_mapContact.insert(mapInfo.begin(), mapInfo.end());
+		curID += mapInfo.size();
 	} while (true);
+
 	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN, std::bind(&ChatManager::onUserLogin, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 	EventTrigger::getRef().watching(ETRIGGER_USER_LOGOUT, std::bind(&ChatManager::onUserLogout, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 	return true;
@@ -102,75 +62,51 @@ void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long lon
 	auto founder = _mapContact.find(uID);
 	if (founder == _mapContact.end())
 	{
-		InnerContactInfo info;
-		info.contact.uID = uID;
+		ContactInfo info;
+		info.uID = uID;
 		haveChange = true;
 		_mapContact[uID] = info;
 		updateContact(info, true, false);
 		founder = _mapContact.find(uID);
 	}
-	if (founder->second.contact.nickName != nick)
+	if (founder->second.nickName != nick)
 	{
-		founder->second.contact.nickName = nick;
+		founder->second.nickName = nick;
 		haveChange = true;
 	}
-	if (founder->second.contact.iconID != iconID)
+	if (founder->second.iconID != iconID)
 	{
-		founder->second.contact.iconID = (short)iconID;
+		founder->second.iconID = (short)iconID;
 		haveChange = true;
 	}
-	if (haveChange)
-	{
-		updateContact(founder->second, true, true);
-	}
-	else
-	{
-		updateContact(founder->second, false, true);
-	}
+	updateContact(founder->second, haveChange, true);
 }
 void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string)
 {
 	auto founder = _mapContact.find(uID);
 	if (founder != _mapContact.end())
 	{
-		founder->second.contact.onlineFlag = false;
+		founder->second.onlineFlag = false;
 		updateContact(founder->second, false, true);
 	}
 }
 
-void ChatManager::updateContact(const InnerContactInfo & info, bool writedb, bool broadcast)
+void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool broadcast)
 {
 	if (writedb)
 	{
-		try
+		auto sql = ContactInfo_UPDATE(info);
+		if (!sql.empty())
 		{
-			WriteStream wsFriends(0);
-			wsFriends << info.friends;
-			DBQuery q("insert into tb_friend(uID) values(?) on duplicate key update nickName=?, iconID=?, banned=?,  totalBlacks=?, totalFriends=?, friends=?;");
-			q.add(info.contact.uID);
-			q.add(info.contact.nickName);
-			q.add(info.contact.iconID);
-			q.add(info.contact.banned);
-			q.add(info.contact.totalBlacks);
-			q.add(info.contact.totalFriends);
-			q.add(wsFriends.getStreamBody(), wsFriends.getStreamBodyLen());
-
-			DBManager::getRef().infoAsyncQuery(q.popSQL(), std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
-		}
-		catch (...)
-		{
-			LOGE("updateContact failed");
-			return;
+			DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
 		}
 	}
 	
-
-
 	//broadcast
 	if (broadcast)
 	{
 		WriteStream ws(ID_GetContactInfoAck);
-		ws << EC_SUCCESS << info.contact;
+		ws << EC_SUCCESS << info;
 		for (auto &kv : info.friends)
 		{
 			if (kv.flag == FRIEND_ESTABLISHED)
@@ -182,7 +118,7 @@ void ChatManager::updateContact(const InnerContactInfo & info, bool writedb, boo
 				}
 			}
 		}
-		auto ptr = UserManager::getRef().getInnerUserInfoByUID(info.contact.uID);
+		auto ptr = UserManager::getRef().getInnerUserInfoByUID(info.uID);
 		if (ptr && ptr->sesionInfo.sID != InvalidSeesionID)
 		{
 			SessionManager::getRef().sendOrgSessionData(ptr->sesionInfo.sID, ws.getStream(), ws.getStreamLen());

@@ -33,11 +33,7 @@
 
 
 
-struct InnerContactInfo
-{
-	ContactInfo contact; //联系人卡片
-	FriendInfoArray friends;
-};
+
 
 class ChatManager :public Singleton<ChatManager>
 {
@@ -45,7 +41,7 @@ public:
 	ChatManager();
 	bool init();
 	//更新名片, 可选择更新到数据库还是更新给所有客户端
-	void updateContact(const InnerContactInfo & info, bool writedb, bool broadcast);
+	void updateContact(const ContactInfo & info, bool writedb, bool broadcast);
 	void onUpdateContact(zsummer::mysql::DBResultPtr);
 
 public:
@@ -58,7 +54,7 @@ public:
 	void msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs);
 	
 private:
-	std::unordered_map<UserID, InnerContactInfo> _mapContact;
+	std::unordered_map<UserID, ContactInfo> _mapContact;
 };
 
 

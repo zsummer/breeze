@@ -60,26 +60,26 @@ static DBConfigID toDBConfigID(std::string db)
 }
 
 
-const ::ListenConfig & ServerConfig::getConfigListen(ServerNode node, NodeIndex index)
+const NodeListenConfig & ServerConfig::getConfigListen(ServerNode node, NodeIndex index)
 {
 	if (index == InvalidNodeIndex)
 	{
 		index = _ownNodeIndex;
 	}
 	auto founder = std::find_if(_configListen.begin(), _configListen.end(),
-		[node, index](const ::ListenConfig & lc){return lc._node == node && lc._index == index; });
+		[node, index](const NodeListenConfig & lc){return lc._node == node && lc._index == index; });
 	if (founder == _configListen.end())
 	{
-		static ::ListenConfig lc;
+		static NodeListenConfig lc;
 		return lc;
 	}
 	return *founder;
 }
 
 
-std::vector<ConnectorConfig > ServerConfig::getConfigConnect(ServerNode node)
+std::vector<NodeConnectConfig > ServerConfig::getConfigConnect(ServerNode node)
 {
-	std::vector<ConnectorConfig > ret;
+	std::vector<NodeConnectConfig > ret;
 	for (const auto & cc : _configConnect)
 	{
 		if (cc._srcNode != node)
@@ -206,7 +206,7 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
 		lua_pushnil(L);
 		while (lua_next(L, -2))
 		{
-			::ListenConfig lconfig;
+			NodeListenConfig lconfig;
 
 			lua_getfield(L, -1, "ip");
 			lconfig._ip = lua_tostring(L, -1);
@@ -257,7 +257,7 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
 		lua_pushnil(L);
 		while (lua_next(L, -2))
 		{
-			ConnectorConfig lconfig;
+			NodeConnectConfig lconfig;
 
 			lua_getfield(L, -1, "ip");
 			lconfig._remoteIP = lua_tostring(L, -1);
