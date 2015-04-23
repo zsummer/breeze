@@ -367,7 +367,7 @@ void NetManager::db_onUserCreate(DBResultPtr res, SessionID sID)
 		auto inner = UserManager::getRef().getInnerUserInfoBySID(sID);
 		if (inner)
 		{
-			inner->sesionInfo.status == SS_LOGINED;
+			inner->sesionInfo.status = SS_LOGINED;
 			auto founder = _clients.find(sID);
 			if (founder != _clients.end())
 			{

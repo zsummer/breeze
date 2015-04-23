@@ -167,6 +167,38 @@ void MD5Transform(unsigned int state[4], unsigned char block[64])
 }
 
 
+MD5Data::MD5Data()
+{
+	MD5Init(&_content);
+}
+MD5Data::~MD5Data(){}
+
+const std::string & MD5Data::genMD5Bin()
+{
+	if (_bin.empty())
+	{
+		unsigned char buf[16];
+		MD5Final(&_content, buf);
+		_bin.assign((const char *)buf, 16);
+	}
+	return _bin;
+}
+const std::string & MD5Data::genMD5()
+{
+	if (_string.empty())
+	{
+		genMD5Bin();
+		for (size_t i = 0; i < _bin.length(); i++)
+		{
+			char buf[10];
+			sprintf(buf, "%02x", (unsigned char)_bin[i]);
+			_string += buf;
+		}
+	}
+	return _string;
+}
+
+
 
 std::string genFileMD5(std::string filename)
 {
@@ -189,24 +221,14 @@ std::string genFileMD5(std::string filename)
 		return ret;
 	}
 
-	content.resize(filelen + 10, '\0');
+	content.resize(filelen, '\0');
 	if (fread(&content[0], 1, filelen, f) != (size_t)filelen)
 	{
 		return ret;
 	}
-	MD5_CTX ctx;
-	unsigned char md5buff[16];
-	MD5Init(&ctx);
-	MD5Update(&ctx, (unsigned char *)content.c_str(), filelen);
-	MD5Final(&ctx, (unsigned char *)md5buff);
 
-	
-	for (int i = 0; i < 16; i++)
-	{
-		char buf[10];
-		sprintf(buf, "%02x", md5buff[i]);
-		ret += buf;
-	}
-	return ret;
+	MD5Data md;
+	md << content;
+	return md.genMD5();
 }
 

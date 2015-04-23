@@ -1,5 +1,20 @@
-﻿//base version fork from xhnet
-//https://github.com/mybestcool/xhnet/blob/master/include/md5/md5.h
+﻿
+/*
+* MD5 License
+* Copyright (C) 2014-2015 YaweiZhang <yawei_zhang@foxmail.com>.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #ifndef MD5_H
 #define MD5_H
@@ -48,6 +63,35 @@ void MD5Final(MD5_CTX *context, unsigned char digest[16]);
 void MD5Transform(unsigned int state[4], unsigned char block[64]);
 void MD5Encode(unsigned char *output, unsigned int *input, unsigned int len);
 void MD5Decode(unsigned int *output, unsigned char *input, unsigned int len);
+
+
+class MD5Data
+{
+public:
+	MD5Data();
+	~MD5Data();
+	const std::string & genMD5Bin();
+	const std::string & genMD5();
+	inline MD5Data & operator <<(const std::string & org)
+	{
+		if (!org.empty())
+		{
+			MD5Update(&_content, (unsigned char *) org.c_str(), (unsigned int)org.length());
+		}
+		return *this;
+	}
+	inline void append(const std::string &org)
+	{
+		if (!org.empty())
+		{
+			MD5Update(&_content, (unsigned char *)org.c_str(), (unsigned int)org.length());
+		}
+	}
+private:
+	MD5_CTX _content;
+	std::string _bin;
+	std::string _string;
+};
 
 
 std::string genFileMD5(std::string filename);
