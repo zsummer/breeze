@@ -14,6 +14,7 @@ ChatManager::ChatManager()
 
 bool ChatManager::init()
 {
+	//! 先desc一下ContactInfo表, 不存在则创建
 	auto build = ContactInfo_BUILD();
 	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
 	{
@@ -23,7 +24,7 @@ bool ChatManager::init()
 			return false;
 		}
 	}
-
+	//! 无论ContactInfo表的字段是否有增删 都alter一遍. 
 	for (size_t i = 2; i < build.size(); i++)
 	{
 		DBManager::getRef().infoQuery(build[i]);
@@ -50,6 +51,7 @@ bool ChatManager::init()
 		curID += mapInfo.size();
 	} while (true);
 
+	//监控玩家登录和退出, 用来更新玩家在线状态, 如果之后独立为一个进程后, 该通知以消息通知的形式获得.
 	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN, std::bind(&ChatManager::onUserLogin, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 	EventTrigger::getRef().watching(ETRIGGER_USER_LOGOUT, std::bind(&ChatManager::onUserLogout, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 	return true;
@@ -58,17 +60,19 @@ bool ChatManager::init()
 
 void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long long count, unsigned long long iconID, std::string nick)
 {
-	bool haveChange = false;
+	
 	auto founder = _mapContact.find(uID);
 	if (founder == _mapContact.end())
 	{
 		ContactInfo info;
 		info.uID = uID;
-		haveChange = true;
+		info.iconID = iconID;
+		info.nickName = nick;
 		_mapContact[uID] = info;
-		updateContact(info, true, false);
-		founder = _mapContact.find(uID);
+		insertContact(info);
+		return;
 	}
+	bool haveChange = false;
 	if (founder->second.nickName != nick)
 	{
 		founder->second.nickName = nick;
@@ -91,6 +95,14 @@ void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, unsigned long lo
 	}
 }
 
+void ChatManager::insertContact(const ContactInfo & info)
+{
+	auto sql = ContactInfo_INSERT(info);
+	if (!sql.empty())
+	{
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
+	}
+}
 void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool broadcast)
 {
 	if (writedb)

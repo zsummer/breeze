@@ -46,7 +46,7 @@
   	<member name="banned"  type="ui8" desc="禁言"/>
   	<member name="totalBlacks"  type="ui32" desc="被拉黑次数"/>
   	<member name="totalFriends"  type="ui32" desc="好友个数"/>
-   	<member name="onlineFlag"  type="ui8" desc="在线状态0离线,1在线"/>
+   	<member name="onlineFlag"  type="ui8" ignore="true" desc="在线状态0离线,1在线"/>
     <member name="friends" type="FriendInfoArray" desc="好友信息/黑名单信息/好友请求" />
   </struct>
   <array name="ContactInfoArray" type="ContactInfo" desc="" />

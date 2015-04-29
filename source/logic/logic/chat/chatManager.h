@@ -41,6 +41,7 @@ public:
 	ChatManager();
 	bool init();
 	//更新名片, 可选择更新到数据库还是更新给所有客户端
+	void insertContact(const ContactInfo & info);
 	void updateContact(const ContactInfo & info, bool writedb, bool broadcast);
 	void onUpdateContact(zsummer::mysql::DBResultPtr);
 

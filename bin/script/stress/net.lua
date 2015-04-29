@@ -48,15 +48,15 @@ function messageHandler:on_ServerPulse(sID, msg)
 end
 
 
-function messageHandler:onConnect(sID)
-	logd("stressTest is on connected. sID=" .. sID)
+function messageHandler:onConnect(sID, remoteIP, remotePort)
+	logd("stressTest is on connected. sID=" .. sID .. ", remoteIP=" .. remoteIP .. ", remotePort=" .. remotePort)
 	local user = string.format("zhangyawei%04d", sID%1000)
   	local data = Protoz.encode({user=user, passwd="123"}, "LoginReq")
 	summer.sendContent(sID, Protoz.LoginReq.__getID, data)
 end
 
-function messageHandler:onDisconnect(sID)
-	logi("session is on disconnect. sID=" .. sID)
+function messageHandler:onDisconnect(sID, remoteIP, remotePort)
+	logi("session is on disconnect. sID=" .. sID .. ", remoteIP=" .. remoteIP .. ", remotePort=" .. remotePort)
 end
 
 messageHandler:ctor()

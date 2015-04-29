@@ -47,8 +47,8 @@ protected:
 
 
 	//底层session建立和断开通知
-	void event_onSessionEstablished(SessionID);
-	void event_onSessionDisconnect(SessionID);
+	void event_onSessionEstablished(SessionID, std::string, unsigned short);
+	void event_onSessionDisconnect(SessionID, std::string remoteIP, unsigned short remotePort);
 	
 	//检测发包频度,发包权限,登录权限等.
 	bool on_preMessageProcess(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize);

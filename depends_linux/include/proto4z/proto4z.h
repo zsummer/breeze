@@ -166,8 +166,12 @@ enum INTEGRITY_RET_TYPE
 //! first: IRT_SUCCESS data integrity. second: current integrity data lenght.
 //! first: IRT_SHORTAGE data not integrity. second: shortage lenght.
 //! first: IRT_CORRUPTION data corruption. second: data lenght
+//! buff 缓冲区内容起始位置
+//! curBuffLen 当前缓冲区内容大小
+//! boundLen 当前缓冲区的边界大小, 如果对boundLen有疑惑 请填写和maxBuffLen一样的值
+//! maxBuffLen 当前缓冲区实际最大大小
 inline std::pair<INTEGRITY_RET_TYPE, Integer>
-checkBuffIntegrity(const char * buff, Integer curBuffLen, Integer maxBuffLen /*= MaxPackLen*/);
+checkBuffIntegrity(const char * buff, Integer curBuffLen, Integer boundLen, Integer maxBuffLen);
 
 
 
@@ -609,18 +613,33 @@ void integerToStream(Integer integer, char *stream)
 
 
 
-inline std::pair<INTEGRITY_RET_TYPE, Integer> checkBuffIntegrity(const char * buff, Integer curBuffLen, Integer maxBuffLen)
+inline std::pair<INTEGRITY_RET_TYPE, Integer> checkBuffIntegrity(const char * buff, Integer curBuffLen, Integer boundLen, Integer maxBuffLen)
 {
-	//! 检查包头是否完整
+	if (boundLen < curBuffLen || maxBuffLen < boundLen)
+	{
+		return std::make_pair(IRT_CORRUPTION, curBuffLen);
+	}
+
 	unsigned short headLen = (unsigned short)sizeof(Integer) + (unsigned short)sizeof(ProtoInteger);
 	if (curBuffLen < headLen)
 	{
 		return std::make_pair(IRT_SHORTAGE, headLen - curBuffLen);
 	}
 
-	//! 获取包长度
 	Integer packLen = streamToInteger<Integer>(buff);
 
+	if (packLen > boundLen)
+	{
+		if (packLen > maxBuffLen)
+		{
+			return std::make_pair(IRT_CORRUPTION, curBuffLen);
+		}
+		else
+		{
+			return std::make_pair(IRT_SHORTAGE, packLen - curBuffLen);
+		}
+	}
+	
 	//! check
 	if (packLen > maxBuffLen)
 	{

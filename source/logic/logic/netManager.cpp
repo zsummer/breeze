@@ -16,8 +16,8 @@ NetManager::NetManager()
 	MessageDispatcher::getRef().registerSessionOrgMessage(std::bind(&NetManager::on_preMessageProcess, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	
 	//register event
-	MessageDispatcher::getRef().registerOnSessionEstablished(std::bind(&NetManager::event_onSessionEstablished, this, std::placeholders::_1));
-	MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&NetManager::event_onSessionDisconnect, this, std::placeholders::_1));
+	MessageDispatcher::getRef().registerOnSessionEstablished(std::bind(&NetManager::event_onSessionEstablished, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&NetManager::event_onSessionDisconnect, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	//
 	MessageDispatcher::getRef().registerOnSessionPulse(std::bind(&NetManager::event_onPulse, this, std::placeholders::_1, std::placeholders::_2));
@@ -90,27 +90,27 @@ bool NetManager::stop(std::function<void()> onSafeClosed)
 
 
 
-void NetManager::event_onSessionEstablished(SessionID sID)
+void NetManager::event_onSessionEstablished(SessionID sID, std::string remoteIP, unsigned short remotePort)
 {
 	if (isConnectID(sID))
 	{
-		LOGT("NetManager::event_onSessionEstablished. SessionID=" << sID);
+		LOGT("NetManager::event_onSessionEstablished. SessionID=" << sID << ", remoteIP=" << remoteIP << ", remotePort=" << remotePort);
 	}
 	else
 	{
-		LOGT("NetManager::event_onSessionEstablished. SessionID=" << sID << ", all unlogins clients=" << _clients.size());
+		LOGT("NetManager::event_onSessionEstablished. SessionID=" << sID << ", remoteIP=" << remoteIP << ", remotePort=" << remotePort << ", all unlogins clients=" << _clients.size());
 	}
 }
 
-void NetManager::event_onSessionDisconnect(SessionID sID)
+void NetManager::event_onSessionDisconnect(SessionID sID, std::string remoteIP, unsigned short remotePort)
 {
 	if (isConnectID(sID))
 	{
-		LOGI("NetManager::event_onSessionDisconnect. sID=" << sID);
+		LOGI("NetManager::event_onSessionDisconnect. sID=" << sID << ", remoteIP=" << remoteIP << ", remotePort=" << remotePort);
 	}
 	else
 	{
-		LOGI("NetManager::event_onSessionDisconnect. sID=" << sID);
+		LOGI("NetManager::event_onSessionDisconnect. sID=" << sID << ", remoteIP=" << remoteIP << ", remotePort=" << remotePort);
 		
 		auto founder = _clients.find(sID);
 		if (founder != _clients.end())

@@ -76,78 +76,10 @@ namespace zsummer
 				return dwDelayMs;
 			}
 
-			inline TimerID createTimer(unsigned int delayms, _OnTimerHandler &&handle)
-			{
-				_OnTimerHandler *pfunc= new _OnTimerHandler(std::move(handle));
-				unsigned int now = getNowMilliTick();
-				unsigned int expire = now+delayms;
-				unsigned long long timerID = expire;
-				timerID <<= 32;
-				timerID |= _queSeq++; //timerID is merge expire time and a sequence. sequence assure the ID is single.
-				_queTimer.insert(std::make_pair(timerID, pfunc));
-				if (_nextExpire > expire)
-				{
-					_nextExpire = expire;
-				}
-				return timerID;
-			}
-			inline bool cancelTimer(TimerID timerID)
-			{
-				std::map<unsigned long long, _OnTimerHandler* >::iterator iter = _queTimer.find(timerID);
-				if (iter != _queTimer.end())
-				{
-					delete iter->second;
-					_queTimer.erase(iter);
-					return true;
-				}
-				return false;
-			}
+			TimerID createTimer(unsigned int delayms, _OnTimerHandler &&handle);
+			bool cancelTimer(TimerID timerID);
 			// if have expired timer. the timer will trigger.
-			inline void checkTimer()
-			{
-				if (!_queTimer.empty())
-				{
-					unsigned int now = getNowMilliTick();
-					if (_nextExpire > now)
-					{
-						return;
-					}
-
-					while(1)
-					{
-						if (_queTimer.empty())
-						{
-							_nextExpire = (unsigned int)-1;
-							break;
-						}
-						auto iter = _queTimer.begin();
-						unsigned long long timerID = iter->first;
-						_OnTimerHandler * handler = iter->second;
-						unsigned int nextexpire = timerID>>32;
-						if (nextexpire > now)
-						{
-							_nextExpire = nextexpire;
-							break;
-						}
-						//erase the pointer from timer queue before call handler.
-						_queTimer.erase(iter);
-						try
-						{
-							(*handler)();
-						}
-						catch (std::runtime_error e)
-						{
-							LCW("OnTimerHandler have runtime_error exception. err=" << e.what());
-						}
-						catch (...)
-						{
-							LCW("OnTimerHandler have unknown exception.");
-						}
-						delete handler;
-					}
-					
-				}
-			}
+			void checkTimer();
 			inline std::map<TimerID, _OnTimerHandler* >::size_type GetTimersCount(){ return _queTimer.size(); }
 		private:
 			//! timer queue

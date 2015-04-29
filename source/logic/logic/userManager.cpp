@@ -100,7 +100,7 @@ void UserManager::addUser(std::shared_ptr<InnerUserInfo> innerInfo)
 }
 void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
 {
-    EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID, 1);
+    EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID, 1, innerInfo->userInfo.iconID, innerInfo->userInfo.nickName);
 }
 
 void UserManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)

@@ -6,8 +6,8 @@ local config = require("config")
 dump = Protoz.dump
 
 --event on connect
-summer.registerConnect(function(sID)
-							handler:onConnect(sID)
+summer.registerConnect(function(sID, ip, port)
+							handler:onConnect(sID, ip, port)
 						end)
 
 --event on recv message
@@ -16,8 +16,8 @@ summer.registerMessage(function(sID, pID, binData)
 						end)
 
 --event on disconnect
-summer.registerDisconnect(function(sID)
-								handler:onDisconnect(sID)
+summer.registerDisconnect(function(sID, ip, port)
+								handler:onDisconnect(sID, ip, port)
 							end)
 
 --start summer

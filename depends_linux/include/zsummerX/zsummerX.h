@@ -61,7 +61,6 @@
 // default in windows use IOCP implementation
 // default in linux use EPOLL LT implementation 
 // default in mac use select implementation
-// if can't compile on  some other system , you can try compile used ZSUMMERX_USE_SELECT.  It's be force compiled with select implementation.
 
 #include "frame/config.h"
 #include "frame/dispatch.h"

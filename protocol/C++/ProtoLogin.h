@@ -42,7 +42,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	return rs; 
 } 
  
-const unsigned short ID_CreateUserReq = 102; //填写用户信息 
+const unsigned short ID_CreateUserReq = 101; //填写用户信息 
 struct CreateUserReq //填写用户信息 
 { 
 	std::string nickName; //昵称 
@@ -51,7 +51,7 @@ struct CreateUserReq //填写用户信息
 	{ 
 		iconID = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 102;} 
+	inline unsigned short GetProtoID() { return 101;} 
 	inline std::string GetProtoName() { return "ID_CreateUserReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserReq & data) 
@@ -85,7 +85,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	return rs; 
 } 
  
-const unsigned short ID_LoginAck = 101; //登录结果 
+const unsigned short ID_LoginAck = 102; //登录结果 
 struct LoginAck //登录结果 
 { 
 	unsigned short retCode;  
@@ -96,7 +96,7 @@ struct LoginAck //登录结果
 		retCode = 0; 
 		needCreate = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 101;} 
+	inline unsigned short GetProtoID() { return 102;} 
 	inline std::string GetProtoName() { return "ID_LoginAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LoginAck & data) 
@@ -135,7 +135,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	return rs; 
 } 
  
-const unsigned short ID_ServerPulse = 104; //服务器生命脉冲 
+const unsigned short ID_ServerPulse = 103; //服务器生命脉冲 
 struct ServerPulse //服务器生命脉冲 
 { 
 	unsigned int timeStamp; //服务器当前UTC时间戳 
@@ -145,7 +145,7 @@ struct ServerPulse //服务器生命脉冲
 		timeStamp = 0; 
 		timeTick = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 104;} 
+	inline unsigned short GetProtoID() { return 103;} 
 	inline std::string GetProtoName() { return "ID_ServerPulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ServerPulse & data) 
@@ -179,7 +179,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	return rs; 
 } 
  
-const unsigned short ID_ServerPulseEcho = 105; //服务器生命脉冲客户端回放 
+const unsigned short ID_ServerPulseEcho = 104; //服务器生命脉冲客户端回放 
 struct ServerPulseEcho //服务器生命脉冲客户端回放 
 { 
 	unsigned int timeStamp; //服务器当前UTC时间戳 
@@ -189,7 +189,7 @@ struct ServerPulseEcho //服务器生命脉冲客户端回放
 		timeStamp = 0; 
 		timeTick = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 105;} 
+	inline unsigned short GetProtoID() { return 104;} 
 	inline std::string GetProtoName() { return "ID_ServerPulseEcho";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ServerPulseEcho & data) 

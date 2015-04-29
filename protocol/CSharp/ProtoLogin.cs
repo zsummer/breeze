@@ -46,7 +46,7 @@ namespace Proto4z
  
 	class CreateUserReq: Proto4z.IProtoObject //填写用户信息 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(102); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(101); } 
 		static public string getProtoName() { return "CreateUserReq"; } 
 		public Proto4z.String nickName; //昵称 
 		public Proto4z.i32 iconID; //头像 
@@ -88,7 +88,7 @@ namespace Proto4z
  
 	class LoginAck: Proto4z.IProtoObject //登录结果 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(101); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(102); } 
 		static public string getProtoName() { return "LoginAck"; } 
 		public Proto4z.ui16 retCode;  
 		public Proto4z.ui16 needCreate;  
@@ -137,7 +137,7 @@ namespace Proto4z
  
 	class ServerPulse: Proto4z.IProtoObject //服务器生命脉冲 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(104); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(103); } 
 		static public string getProtoName() { return "ServerPulse"; } 
 		public Proto4z.ui32 timeStamp; //服务器当前UTC时间戳 
 		public Proto4z.ui32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
@@ -179,7 +179,7 @@ namespace Proto4z
  
 	class ServerPulseEcho: Proto4z.IProtoObject //服务器生命脉冲客户端回放 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(105); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(104); } 
 		static public string getProtoName() { return "ServerPulseEcho"; } 
 		public Proto4z.ui32 timeStamp; //服务器当前UTC时间戳 
 		public Proto4z.ui32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
