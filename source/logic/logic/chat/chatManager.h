@@ -50,8 +50,6 @@ public:
 	void onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
 public:
 	void msg_onGetContactInfoReq(SessionID sID, ProtoID pID, ReadStream & rs);
-	void msg_onGetFriendListReq(SessionID sID, ProtoID pID, ReadStream & rs);
-	void msg_onFriendOperationReq(SessionID sID, ProtoID pID, ReadStream & rs);
 	void msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs);
 	
 private:

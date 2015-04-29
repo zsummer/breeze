@@ -12,6 +12,7 @@ const unsigned short EC_SYSTEM_ERROR = 6; //系统错误
 const unsigned short EC_INVALIDE_USERID = 50; //用户ID无效 
 const unsigned short EC_AUTH_USER_NOT_EXIST = 60; //认证错误:用户不存在 
 const unsigned short EC_AUTH_PASSWD_INCORRECT = 61; //认证错误:密码错误 
+const unsigned short EC_NO_USER = 62; //没有该用户 
  
 struct UserInfo //用户信息 
 { 

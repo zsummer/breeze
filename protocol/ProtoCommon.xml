@@ -24,6 +24,7 @@
 	<member name="EC_AUTH_USER_NOT_EXIST" value="60"   desc="认证错误:用户不存在"/>
 	<member name="EC_AUTH_PASSWD_INCORRECT"    desc="认证错误:密码错误"/>
 	
+  <member name="EC_NO_USER"    desc="没有该用户"/>
   </enum>
 
 

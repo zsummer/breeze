@@ -150,16 +150,26 @@ void ChatManager::onUpdateContact(zsummer::mysql::DBResultPtr result)
 
 void ChatManager::msg_onGetContactInfoReq(SessionID sID, ProtoID pID, ReadStream & rs)
 {
-
+	GetContactInfoReq req;
+	rs >> req;
+	GetContactInfoAck ack;
+	ack.retCode = EC_SUCCESS;
+	auto founder = _mapContact.find(req.uid);
+	if (founder == _mapContact.end())
+	{
+		ack.retCode = EC_NO_USER;
+	}
+	else
+	{
+		ack.retCode = EC_SUCCESS;
+		ack.contact = founder->second;
+	}
+	WriteStream ws(ID_GetContactInfoAck);
+	ws << ack;
+	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 }
-void ChatManager::msg_onGetFriendListReq(SessionID sID, ProtoID pID, ReadStream & rs)
-{
 
-}
-void ChatManager::msg_onFriendOperationReq(SessionID sID, ProtoID pID, ReadStream & rs)
-{
 
-}
 void ChatManager::msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs)
 {
 

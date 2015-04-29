@@ -8,6 +8,7 @@ Protoz.EC_SYSTEM_ERROR = 6--系统错误
 Protoz.EC_INVALIDE_USERID = 50--用户ID无效 
 Protoz.EC_AUTH_USER_NOT_EXIST = 60--认证错误:用户不存在 
 Protoz.EC_AUTH_PASSWD_INCORRECT = 61--认证错误:密码错误 
+Protoz.EC_NO_USER = 62--没有该用户 
  
 Protoz.UserInfo = {} --用户信息 
 Protoz.UserInfo.__getName = "UserInfo" 

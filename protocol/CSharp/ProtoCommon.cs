@@ -41,6 +41,10 @@ namespace Proto4z
 	{ 
 		public static Proto4z.ui16 value = 61;  
 	} 
+	class STATIC_EC_NO_USER //没有该用户 
+	{ 
+		public static Proto4z.ui16 value = 62;  
+	} 
  
 	class UserInfo: Proto4z.IProtoObject //用户信息 
 	{	 

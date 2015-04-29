@@ -75,14 +75,6 @@
     <member name="contact" type="ContactInfo"   desc=""/>
   </proto>
 
-  <proto name="GetFriendListReq" desc= "获取联系人名单|黑名单|请求名单请求">
-  </proto>
-
-  <proto name="GetFriendListAck" desc= "获取联系人列表结果" >
-    <member name="retCode" type="ui16"   desc=""/>
-    <member name="friends" type="FriendInfoArray"   desc=""/>
-  </proto>
-
 
   <proto name="FriendOperationReq" desc= "好友操作请求">
     <member name="uid" type="ui64"   desc="目标ID"/>
