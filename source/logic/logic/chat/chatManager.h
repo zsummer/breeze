@@ -53,7 +53,9 @@ public:
 	void msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs);
 	
 private:
-	std::unordered_map<UserID, ContactInfo> _mapContact;
+	std::unordered_map<UserID, ContactInfo> _mapContact; //存储所有好友/名片信息
+	std::list<ChatInfo> _cacheChat[256]; //缓存最近的历史聊天记录.
+	GenObjectID _genID; //生成消息ID
 };
 
 

@@ -51,6 +51,8 @@ bool ChatManager::init()
 		curID += mapInfo.size();
 	} while (true);
 
+
+
 	//监控玩家登录和退出, 用来更新玩家在线状态, 如果之后独立为一个进程后, 该通知以消息通知的形式获得.
 	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN, std::bind(&ChatManager::onUserLogin, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 	EventTrigger::getRef().watching(ETRIGGER_USER_LOGOUT, std::bind(&ChatManager::onUserLogout, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
@@ -172,5 +174,58 @@ void ChatManager::msg_onGetContactInfoReq(SessionID sID, ProtoID pID, ReadStream
 
 void ChatManager::msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs)
 {
+	ChatReq req;
+	rs >> req;
+	auto inner = UserManager::getRef().getInnerUserInfoBySID(sID);
+	if (!inner)
+	{
+		//.
+		return;
+	}
+	ChatInfo info;
+	info.chlType = req.chlType;
+	info.dstid = req.dstid;
+	info.id = _genID.genNewObjID();
+	info.msg = req.msg;
+	info.sendTime = time(NULL);
+	info.srcIcon = inner->userInfo.iconID;
+	info.srcid = inner->userInfo.uID;
+	info.srcName = inner->userInfo.nickName;
 
+	if (info.chlType == CHANNEL_PRIVATE)
+	{
+		auto dstinner = UserManager::getRef().getInnerUserInfoByUID(req.dstid);
+		if (!dstinner)
+		{
+			return;
+		}
+		info.dstIcon = dstinner->userInfo.iconID;
+		info.dstName = dstinner->userInfo.nickName;
+		if (dstinner->sesionInfo.sID != InvalidSeesionID)
+		{
+			WriteStream ws(ID_ChatNotice);
+			ChatNotice notice;
+			notice.msgs.push_back(info);
+			ws << notice;
+			SessionManager::getRef().sendOrgSessionData(dstinner->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
+		}
+	}
+	else if (info.chlType == CHANNEL_GROUP || info.chlType == CHANNEL_WORLD)
+	{
+// 		for ()
+// 		{
+// 			WriteStream ws(ID_ChatNotice);
+// 			ChatNotice notice;
+// 			notice.msgs.push_back(info);
+// 			SessionManager::getRef().sendOrgSessionData(dstinner->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
+// 		}
+	}
+	WriteStream ws(ID_ChatAck);
+	ChatAck ack;
+	ack.chlType = info.chlType;
+	ack.dstid = info.dstid;
+	ack.msgid = info.id;
+	ack.retCode = EC_SUCCESS;
+	ws << ack;
+	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
 }
