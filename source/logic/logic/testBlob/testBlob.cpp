@@ -103,48 +103,7 @@ bool TestBlob::init()
 }
 
 
-// test
-// this is one test .
-// wait a moment,  the sql query code will needless write more that I will use proto tools make it.
-//
-#include <ProtoCommon.h>
-inline std::string LOAD_UserInfo(unsigned long long uID)
-{
-	DBQuery q("select * from tb_UserInfo where uID>?");
-	q << uID;
-	return q.popSQL();
-}
 
-inline std::string SELECT_UserInfo(unsigned long long uID)
-{
-	DBQuery q("select * from tb_UserInfo where uID=?");
-	q << uID;
-	return q.popSQL();
-}
-
-inline std::map<unsigned long long, UserInfo> UserInfo_FROMDB(DBResultPtr ptr)
-{
-	std::map <unsigned long long, UserInfo> ret;
-	if (ptr->getErrorCode() == QEC_SUCCESS)
-	{
-		while (ptr->haveRow())
-		{
-			UserInfo info;
-			*ptr >> info.uID;
-			*ptr >> info.nickName;
-			//...
-			ret[info.uID] = info;
-		}
-	}
-}
-
-inline std::string UPDATE_UserInfo(const UserInfo & info)
-{
-	DBQuery q("insert into tb_UserInfo(uID)values(?) on duplicate key set .........");
-	q << info.uID;
-	///
-	return q.popSQL();
-}
 
 
 

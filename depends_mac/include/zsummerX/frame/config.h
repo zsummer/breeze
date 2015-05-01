@@ -54,7 +54,7 @@
 #include "../iocp/tcpsocket_impl.h"
 #include "../iocp/udpsocket_impl.h"
 #include "../iocp/tcpaccept_impl.h"
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) || defined(__SELECT__)
 #include "../select/select_impl.h"
 #include "../select/udpsocket_impl.h"
 #include "../select/tcpsocket_impl.h"
@@ -145,7 +145,8 @@ namespace zsummer
 		//----------------------------------------
 
 		//receive buffer length  and send buffer length 
-		const unsigned int SEND_RECV_CHUNK_SIZE = 100 * 1024;
+		const unsigned int MAX_BUFF_SIZE = 100 * 1024;
+		const unsigned int MAX_SEND_PACK_SIZE = 10 * 1024;
 
 		//!register message with original net pack, if return false other register will not receive this message.
 		typedef std::function < bool(SessionID, const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnPreMessageFunction;
@@ -154,8 +155,8 @@ namespace zsummer
 		typedef std::function < void(SessionID, ProtoID, zsummer::proto4z::ReadStream &) > OnMessageFunction;
 
 		//!register event 
-		typedef std::function < void(SessionID) > OnSessionEstablished;
-		typedef std::function < void(SessionID) > OnSessionDisconnect;
+		typedef std::function < void(SessionID, const std::string & /*remoteIP*/, unsigned short /*remotePort*/) > OnSessionEstablished;
+		typedef std::function < void(SessionID, const std::string & /*remoteIP*/, unsigned short /*remotePort*/) > OnSessionDisconnect;
 
 		//register http proto message 
 		typedef std::function < void(SessionID, const zsummer::proto4z::PairString &, const zsummer::proto4z::HTTPHeadMap& /*head*/, const std::string & /*body*/) > OnHTTPMessageFunction;

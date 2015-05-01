@@ -73,8 +73,8 @@ namespace zsummer
 		public:
 			inline bool dispatchPreSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize);
 			inline void dispatchSessionMessage(SessionID sID, ProtoID pID, zsummer::proto4z::ReadStream & msg);
-			inline void dispatchOnSessionEstablished(SessionID sID);
-			inline void dispatchOnSessionDisconnect(SessionID sID);
+			inline void dispatchOnSessionEstablished(SessionID sID, const std::string & remoteIP, unsigned short remotePort);
+			inline void dispatchOnSessionDisconnect(SessionID sID, const std::string & remoteIP, unsigned short remotePort);
 			inline void dispatchOnSessionPulse(SessionID sID, unsigned int pulseInterval);
 			inline bool dispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body);
 
@@ -168,7 +168,7 @@ namespace zsummer
 		}
 
 
-		inline void MessageDispatcher::dispatchOnSessionEstablished(SessionID sID)
+		inline void MessageDispatcher::dispatchOnSessionEstablished(SessionID sID, const std::string & remoteIP, unsigned short remotePort)
 		{
 			if (_vctOnSessionEstablished.empty())
 			{
@@ -179,7 +179,7 @@ namespace zsummer
 				try
 				{
 					LCT("Entry dispatchOnSessionEstablished SessionID=" << sID);
-					fun(sID);
+					fun(sID, remoteIP, remotePort);
 					LCT("Leave dispatchOnSessionEstablished SessionID=" << sID);
 				}
 
@@ -195,7 +195,7 @@ namespace zsummer
 
 
 		}
-		inline void MessageDispatcher::dispatchOnSessionDisconnect(SessionID sID)
+		inline void MessageDispatcher::dispatchOnSessionDisconnect(SessionID sID, const std::string & remoteIP, unsigned short remotePort)
 		{
 			if (_vctOnSessionDisconnect.empty())
 			{
@@ -206,7 +206,7 @@ namespace zsummer
 				try
 				{
 					LCT("Entry dispatchOnSessionDisconnect SessionID=" << sID);
-					fun(sID);
+					fun(sID, remoteIP, remotePort);
 					LCT("Leave dispatchOnSessionDisconnect SessionID=" << sID);
 				}
 				catch (std::runtime_error e)

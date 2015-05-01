@@ -58,17 +58,17 @@ namespace zsummer
 				remotePort = _remotePort;
 				return true;
 			}
-			//! handle: void(zsummer::network::ErrorCode);
-			//! handle: ErrorCode: 0 success. other code is failed  and can see error code in enum ErrorCode 
+			//! handle: void(zsummer::network::NetErrorCode);
+			//! handle: NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
 			bool doConnect(const std::string& remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
-			//!handle:  void(ErrorCode, int)
-			//!handle:  ErrorCode: 0 success. other code is failed  and can see error code in enum ErrorCode 
+			//!handle:  void(NetErrorCode, int)
+			//!handle:  NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
 			//!handle:  int: is transfer length. if not all data already transfer that you need call doSend transfer the remnant data.
 			//! warning: when  handler is not callback ,  the function can not call repeat. if you have some question maybe you need read the test or implementation .
 			//!          so,  when you want  repeat send data without care the callback , you need encapsulate the send operate via a send queue like the StressTest/FrameTest source code
 			bool doSend(char * buf, unsigned int len, _OnSendHandler &&handler);
-			//!handle:  void(ErrorCode, int)
-			//!handle:  ErrorCode: 0 success. other code is failed  and can see error code in enum ErrorCode 
+			//!handle:  void(NetErrorCode, int)
+			//!handle:  NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
 			//!handle:  int: is received data  length. it maybe short than you want received data (len).
 			//! buf: you recv buffer memory address . you would block the buffer still the handler callback .
 			//! len: you want recv data for max bytes .

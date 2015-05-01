@@ -77,8 +77,7 @@ protected:
 private:
 	std::map<SessionID, SessionInfo> _clients;
 	//监听配置.
-	zsummer::network::ListenConfig _configListen; 
-	bool _bListening = false;
+	zsummer::network::ListenConfig _configListen;
 	AccepterID _accepterID = InvalidAccepterID;
 
 	//

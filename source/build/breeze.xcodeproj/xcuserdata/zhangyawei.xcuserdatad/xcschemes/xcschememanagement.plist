@@ -4,50 +4,65 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>common.xcscheme</key>
+		<key>ALL_BUILD.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>logic.xcscheme</key>
+		<key>ZERO_CHECK.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
-		<key>stressTest.xcscheme</key>
+		<key>common_d.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>install.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
+		<key>logic.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>stress.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>83115B6016EA447D8877E878</key>
+		<key>1A66333B51914043BA9E2E6B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>83AFAB780BB945E9926ACA88</key>
+		<key>5333B138CB95457F91945AC0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>87A31CAE7A7A49F5B5451D78</key>
+		<key>76AC484E30454012BAC4C57C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9E2D166AD3564A7BB01BA193</key>
+		<key>7E7F12DDB4154F74833930BE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E514611B848A4071863E0A4B</key>
+		<key>C05284506D3145D08B95C8E4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>F4AC74B7483A4169A2ADEBB3</key>
+		<key>CD0B280290C54C3D9BF6D51B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

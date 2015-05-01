@@ -64,18 +64,16 @@ namespace zsummer
 			void run();
 			void runOnce(bool isImmediately = false);
 
-		public:
 			//handle: std::function<void()>
 			//switch initiative, in the multi-thread it's switch call thread simultaneously.
 			template<class H>
 			void post(H &&h){ _summer->post(std::move(h)); }
 
-		public:
 			template <class H>
 			zsummer::network::TimerID createTimer(unsigned int delayms, H &&h){ return _summer->createTimer(delayms, std::move(h)); }
 			bool cancelTimer(unsigned long long timerID){ return _summer->cancelTimer(timerID); }
 
-		public:
+
 			//! add acceptor under the configure.
 			AccepterID addAcceptor(const ListenConfig &traits);
 			AccepterID getAccepterID(SessionID sID);
@@ -83,7 +81,7 @@ namespace zsummer
 			//! add connector under the configure.
 			SessionID addConnector(const ConnectConfig & traits);
 
-		public:
+
 			//send original data. can repeat call because it's used send queue in internal implementation.
 			void sendOrgSessionData(SessionID sID, const char * orgData, unsigned int orgDataLen);
 			//send LCIc data with protocol id 
@@ -92,15 +90,29 @@ namespace zsummer
 			//close session socket.
 			void kickSession(SessionID sID);
 
+		public://statistical information
+			std::string getRemoteIP(SessionID sID);
+			unsigned short getRemotePort(SessionID sID);
+			unsigned long long _totalConnectCount = 0;
+			unsigned long long _totalAcceptCount = 0;
+			unsigned long long _totalConnectClosedCount = 0;
+			unsigned long long _totalAcceptClosedCount = 0;
+			unsigned long long _totalSendMessages = 0;
+			unsigned long long _totalSendBytes = 0;
 
+			unsigned long long _totalRecvCount = 0;
+			unsigned long long _totalRecvBytes = 0;
+			unsigned long long _totalRecvMessages = 0;
+			unsigned long long _totalRecvHTTPCount = 0;
+			time_t _openTime = 0;
 
 		private:
 			friend class TcpSession;
 			// socket(from accept) on close 
-			void onSessionClose(AccepterID aID, SessionID sID);
+			void onSessionClose(AccepterID aID, SessionID sID, const TcpSessionPtr &session);
 			// socket(from connect) on close 
 			void onConnect(SessionID cID, bool bConnected, const TcpSessionPtr &session);
-			void onAcceptNewClient(zsummer::network::ErrorCode ec, const TcpSocketPtr & s, const TcpAcceptPtr & accepter, AccepterID aID);
+			void onAcceptNewClient(zsummer::network::NetErrorCode ec, const TcpSocketPtr & s, const TcpAcceptPtr & accepter, AccepterID aID);
 		private:
 			EventLoopPtr _summer;
 			bool  _running = true;

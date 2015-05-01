@@ -48,15 +48,15 @@ namespace zsummer
 	{
 
 
-		struct MessagePack
+		struct MessageSendPack
 		{
-			char buff[zsummer::proto4z::MaxPackLen];
+			char buff[MAX_SEND_PACK_SIZE];
 			unsigned int bufflen = 0;
 		};
 
-		struct MessageChunk
+		struct MessageBuffChunk
 		{
-			char buff[SEND_RECV_CHUNK_SIZE];
+			char buff[MAX_BUFF_SIZE];
 			unsigned int bufflen = 0;
 		};
 
@@ -72,23 +72,31 @@ namespace zsummer
 			void doSend(const char *buf, unsigned int len);
 			void close();
 			SessionID GetAcceptID(){ return _acceptID; }
+			inline const std::string & getRemoteIP(){ return _remoteIP; }
+			inline unsigned short getRemotePort(){ return _remotePort; }
+
 		private:
 			void cleanSession(bool isCleanAllData, const std::string &rc4TcpEncryption);
 
 			bool doRecv();
 
-			void onConnected(zsummer::network::ErrorCode ec, const std::pair<ConnectConfig, ConnectInfo> & config);
+			void onConnected(zsummer::network::NetErrorCode ec, const std::pair<ConnectConfig, ConnectInfo> & config);
 
-			void onRecv(zsummer::network::ErrorCode ec, int nRecvedLen);
+			void onRecv(zsummer::network::NetErrorCode ec, int nRecvedLen);
 
-			void onSend(zsummer::network::ErrorCode ec, int nSentLen);
+			void onSend(zsummer::network::NetErrorCode ec, int nSentLen);
 
 			void onPulseTimer();
 
 			void onClose();
 
+
 		private:
 			TcpSocketPtr  _sockptr;
+			//cache remoteIP, remotePort
+			std::string _remoteIP;
+			unsigned short _remotePort = 0;
+			//
 			SessionID _sessionID = InvalidSeesionID;
 			AccepterID _acceptID = InvalidAccepterID;
 			ProtoType _protoType = PT_TCP;
@@ -103,13 +111,13 @@ namespace zsummer
 			};
 
 			//! 
-			MessageChunk _recving;
-			MessageChunk _sending;
+			MessageBuffChunk _recving;
+			MessageBuffChunk _sending;
 			unsigned int _sendingCurIndex = 0;
 
 			//! send data queue
-			std::queue<MessagePack *> _sendque;
-			std::queue<MessagePack *> _freeCache;
+			std::queue<MessageSendPack *> _sendque;
+			std::queue<MessageSendPack *> _freeCache;
 
 			//! rc encrypt
 			std::string _rc4Encrypt;
