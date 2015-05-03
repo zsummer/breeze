@@ -78,15 +78,9 @@ const DBConfigID LogDB = 2;
 const DBConfigID InvalidDB = (DBConfigID)-1;
 
 
-
-
-
 //分区分服的ID
 typedef ui16 PlatID;
 typedef ui16 AreaID;
-
-
-
 
 
 
@@ -95,12 +89,6 @@ enum SessionStatus
 	SS_UNLOGIN = 0,
 	SS_LOGINED,
 };
-
-
-
-
-
-
 
 
 struct InnerUserInfo

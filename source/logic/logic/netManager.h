@@ -36,40 +36,37 @@ class NetManager :public Singleton<NetManager>
 {
 public:
 	NetManager();
-	//启动
 	bool start();
-	//关闭
 	bool stop(std::function<void()> onSafeClosed);
 
 protected:
-	//! ---- callback --------------------------------------------
+	//! ---- 令牌验证 --------------------------------------------
+	void msg_onPlatAuthReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onCreateUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onSelectUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 
 
-	//底层session建立和断开通知
-	void event_onSessionEstablished(TcpSessionPtr session);
-	void event_onSessionDisconnect(TcpSessionPtr session);
-	
-	//检测发包频度,发包权限,登录权限等.
-	bool on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
 
-	//! ---- message --------------------------------------------
-	//////////////////////////////////////////////////////////////////////////
-	//登录流程(集成认证流程和用户数据拉取流程)
+	//! ---- 登录流程 --------------------------------------------
 	void msg_onLoginReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 
-	//脉冲检测.
-	void event_onSessionPulse(TcpSessionPtr session, unsigned int pulseInterval);
 
-	//在协议中定义的一个脉冲消息, 定时发送一个脉冲, 配合event_onPulse完成异常断线检测.
+	//! ---- 底层session建立和断开通知 ---------------------------
+	void event_onSessionEstablished(TcpSessionPtr session);
+	void event_onSessionDisconnect(TcpSessionPtr session);
+
+	//! ---- 检测发包权限等 ---------------------------
+	bool on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
+
+
+	//! ---- session状态检测 ---------------------------
+	void event_onSessionPulse(TcpSessionPtr session, unsigned int pulseInterval);
 	void msg_onHeartbeatEcho(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 
 private:
-	//监听配置.
 	zsummer::network::ListenConfig _configListen;
 	AccepterID _accepterID = InvalidAccepterID;
-	//内部token
 	std::map<UserID, std::string> _token;
-	//进程退出时候的回调
 	std::function<void()> _onSafeClosed;
 };
 

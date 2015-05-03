@@ -100,7 +100,6 @@ void UserManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)
 {
 	SessionManager::getRef().kickSession(innerInfo->sID);
 	_mapSession.erase(innerInfo->sID);
-	innerInfo->sID = InvalidSeesionID;
 	EventTrigger::getRef().trigger(ETRIGGER_USER_LOGOUT, innerInfo->userInfo.uID, 1, innerInfo->userInfo.iconID, innerInfo->userInfo.nickName);
 }
 

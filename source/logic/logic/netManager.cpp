@@ -90,60 +90,22 @@ bool NetManager::stop(std::function<void()> onSafeClosed)
 
 
 
-void NetManager::event_onSessionEstablished(TcpSessionPtr session)
-{
-    session->setUserParam(InvalidUserID);
-	session->setUserLParam(SS_UNLOGIN);
-    LOGT("NetManager::event_onSessionEstablished. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
 
+void NetManager::msg_onPlatAuthReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+{
+	PlatAuthReq req;
+	rs >> req;
+	DBQuery q("SELECT uID, account, nickName, iconID FROM `tb_userinfo` where account = ?");
+	q << req.account;
+	//////////////////////////////////////////////////////////////////////////
 }
 
-void NetManager::event_onSessionDisconnect(TcpSessionPtr session)
+void NetManager::msg_onCreateUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
 {
-    LOGT("NetManager::event_onSessionDisconnect. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
-
-	if (isConnectID(session->getSessionID()))
-	{
-	}
-	else
-	{
-        if (session->getUserParam() != InvalidUserID
-            && session->getUserLParam() == SS_LOGINED)
-        {
-			auto info = UserManager::getRef().getInnerUserInfo(session->getUserParam());
-            if (info)
-            {
-                UserManager::getRef().userLogout(info);
-            }
-        }
-
-	}
-
-	if (UserManager::getRef().getAllOnlineUserCount() == 0 && _onSafeClosed)
-	{
-		SessionManager::getRef().post(_onSafeClosed);
-		_onSafeClosed = nullptr;
-	}
 }
 
-
-//param is userID
-//lparam is loginstatus
-//rparam is lastactive time
-
-bool NetManager::on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize)
+void NetManager::msg_onSelectUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
 {
-	ReadStream rs(blockBegin, blockSize);
-	ProtoID pID = rs.getProtoID();
-	if (pID >= 200)
-	{
-		if (session->getUserParam() == InvalidUserID || session->getUserLParam() != SS_LOGINED)
-		{
-			LOGW("on_preMessageProcess check authorization failed. protoID=" << pID << ", session authorization status=" << session->getUserLParam());
-			return false;
-		}
-	}
-	return true;
 }
 
 
@@ -209,10 +171,74 @@ void NetManager::event_onSessionPulse(TcpSessionPtr session, unsigned int pulseI
 	}
 }
 
+
+
+
+
+
+void NetManager::event_onSessionDisconnect(TcpSessionPtr session)
+{
+	LOGT("NetManager::event_onSessionDisconnect. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
+
+	if (isConnectID(session->getSessionID()))
+	{
+	}
+	else
+	{
+		if (session->getUserParam() != InvalidUserID
+			&& session->getUserLParam() == SS_LOGINED)
+		{
+			auto info = UserManager::getRef().getInnerUserInfo(session->getUserParam());
+			if (info)
+			{
+				UserManager::getRef().userLogout(info);
+				info->sID = InvalidSeesionID;
+			}
+		}
+
+	}
+
+	if (UserManager::getRef().getAllOnlineUserCount() == 0 && _onSafeClosed)
+	{
+		SessionManager::getRef().post(_onSafeClosed);
+		_onSafeClosed = nullptr;
+	}
+}
+
+
+//param is userID
+//lparam is loginstatus
+//rparam is lastactive time
+
+bool NetManager::on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize)
+{
+	ReadStream rs(blockBegin, blockSize);
+	ProtoID pID = rs.getProtoID();
+	if (pID >= 200)
+	{
+		if (session->getUserParam() == InvalidUserID || session->getUserLParam() != SS_LOGINED)
+		{
+			LOGW("on_preMessageProcess check authorization failed. protoID=" << pID << ", session authorization status=" << session->getUserLParam());
+			return false;
+		}
+	}
+	return true;
+}
+
+void NetManager::event_onSessionEstablished(TcpSessionPtr session)
+{
+	session->setUserParam(InvalidUserID);
+	session->setUserLParam(SS_UNLOGIN);
+	LOGT("NetManager::event_onSessionEstablished. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
+}
 void NetManager::msg_onHeartbeatEcho(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
 {
 	session->setUserRParam(time(NULL));
 }
+
+
+
+
 
 
 
