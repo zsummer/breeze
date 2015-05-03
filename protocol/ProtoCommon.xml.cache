@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<xmlmd5>768990ac5855902a3da88bd01c0e3a29</xmlmd5>
-<cppmd5>4bcdc2c97710d22905636915acbafca6</cppmd5>
-<luamd5>3286645bd022282f1a4153b3809580d4</luamd5>
-<csharpmd5>8cf4cbd8f5449238d2965e8aec0b5c0c</csharpmd5>
-<sqlmd5>3a01b9b97d3afb92252210e43d1531fb</sqlmd5>
+<xmlmd5>ae52a70ec772f511c24b210bf758b0fa</xmlmd5>
+<cppmd5>d5f4cb8cde7752a5d769315872d28421</cppmd5>
+<luamd5>e519b6ce230bde2dd90025b2d17c25dc</luamd5>
+<csharpmd5>08fad888fec63087c8ae8ecc4d210bc5</csharpmd5>
+<sqlmd5>4057fad30d3f68f8d80d955dde650a35</sqlmd5>
 
 <cacheNo>
+	<cache key = "ID_Heartbeat" No = "200" /> 
+	<cache key = "ID_HeartbeatEcho" No = "201" /> 
 </cacheNo>

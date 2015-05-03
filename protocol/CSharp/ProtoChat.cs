@@ -455,7 +455,7 @@ namespace Proto4z
  
 	class FriendOperationReq: Proto4z.IProtoObject //好友操作请求 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1004); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1002); } 
 		static public string getProtoName() { return "FriendOperationReq"; } 
 		public Proto4z.ui64 uid; //目标ID 
 		public Proto4z.ui8 oFlag; //操作指令 
@@ -497,7 +497,7 @@ namespace Proto4z
  
 	class FriendOperationAck: Proto4z.IProtoObject //好友操作请求结果 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1005); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1003); } 
 		static public string getProtoName() { return "FriendOperationAck"; } 
 		public Proto4z.ui16 retCode;  
 		public Proto4z.ui64 srcUID;  
@@ -553,7 +553,7 @@ namespace Proto4z
  
 	class ChatReq: Proto4z.IProtoObject //发送聊天请求 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1006); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1004); } 
 		static public string getProtoName() { return "ChatReq"; } 
 		public Proto4z.ui8 chlType; //channel type 
 		public Proto4z.ui64 dstid; //userid or groupid 
@@ -602,7 +602,7 @@ namespace Proto4z
  
 	class ChatAck: Proto4z.IProtoObject //发送聊天请求 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1007); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1005); } 
 		static public string getProtoName() { return "ChatAck"; } 
 		public Proto4z.ui16 retCode;  
 		public Proto4z.ui8 chlType; //channel type 
@@ -658,7 +658,7 @@ namespace Proto4z
  
 	class ChatNotice: Proto4z.IProtoObject //聊天通知 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1008); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1006); } 
 		static public string getProtoName() { return "ChatNotice"; } 
 		public Proto4z.ui16 retCode;  
 		public Proto4z.ChatInfoArray msgs;  

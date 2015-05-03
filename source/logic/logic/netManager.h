@@ -1,4 +1,3 @@
-﻿
 /*
 * breeze License
 * Copyright (C) 2015 YaweiZhang <yawei_zhang@foxmail.com>.
@@ -47,40 +46,30 @@ protected:
 
 
 	//底层session建立和断开通知
-	void event_onSessionEstablished(SessionID, std::string, unsigned short);
-	void event_onSessionDisconnect(SessionID, std::string remoteIP, unsigned short remotePort);
+	void event_onSessionEstablished(TcpSessionPtr session);
+	void event_onSessionDisconnect(TcpSessionPtr session);
 	
 	//检测发包频度,发包权限,登录权限等.
-	bool on_preMessageProcess(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize);
-
+	bool on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
 
 	//! ---- message --------------------------------------------
 	//////////////////////////////////////////////////////////////////////////
 	//登录流程(集成认证流程和用户数据拉取流程)
-	void msg_onLoginReq(SessionID sID, ProtoID pID, ReadStream & rs);
-	void db_onAuthSelect(DBResultPtr res, SessionID sID);
+	void msg_onLoginReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 
-
-	//创建用户流程
-	void msg_onCreateUserReq(SessionID sID, ProtoID pID, ReadStream &rs);
-	void db_onUserCreate(DBResultPtr res, SessionID sID);
-
-
-
-	//session存活脉冲, 这个由zsummerX网络库维护, 每个session建立后都会定时调用该回调.
-	//由registerOnSessionPulse进行注册的定时脉冲. 用于检测session异常断线. 定时周期在ListenConfig中配置
-	void event_onPulse(SessionID sID, unsigned int pulseInterval);
+	//脉冲检测.
+	void event_onSessionPulse(TcpSessionPtr session, unsigned int pulseInterval);
 
 	//在协议中定义的一个脉冲消息, 定时发送一个脉冲, 配合event_onPulse完成异常断线检测.
-	void msg_onServerPulseEcho(SessionID sID, ProtoID pID, ReadStream & rs);
+	void msg_onHeartbeatEcho(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 
 private:
-	std::map<SessionID, SessionInfo> _clients;
 	//监听配置.
 	zsummer::network::ListenConfig _configListen;
 	AccepterID _accepterID = InvalidAccepterID;
-
-	//
+	//内部token
+	std::map<UserID, std::string> _token;
+	//进程退出时候的回调
 	std::function<void()> _onSafeClosed;
 };
 

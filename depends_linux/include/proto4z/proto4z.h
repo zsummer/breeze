@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2013-2015 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2013-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@
 
 
 /*
- * AUTHORS:  YaweiZhang <yawei_zhang@foxmail.com>
+ * AUTHORS:  YaweiZhang <yawei.zhang@foxmail.com>
  * VERSION:  1.0
  * PURPOSE:  A lightweight library for process protocol .
  * CREATION: 2013.07.04
@@ -46,7 +46,7 @@
 
 /*
  * Web Site: www.zsummer.net
- * mail: yawei_zhang@foxmail.com
+ * mail: yawei.zhang@foxmail.com
  */
 
 /* 

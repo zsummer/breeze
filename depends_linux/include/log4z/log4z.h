@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2014 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@
 
 
 /*
- * AUTHORS:  YaweiZhang <yawei_zhang@foxmail.com>
+ * AUTHORS:  YaweiZhang <yawei.zhang@foxmail.com>
  * VERSION:  3.0.0
  * PURPOSE:  A lightweight library for error reporting and logging to file and screen .
  * CREATION: 2010.10.4
@@ -48,7 +48,7 @@
 /*
  * contact me:
  * tencent qq group: 19811947
- * mail: yawei_zhang@foxmail.com
+ * mail: yawei.zhang@foxmail.com
  */
 
 
@@ -172,6 +172,12 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #endif
+#include <vector>
+#include <map>
+#include <list>
+#include <queue>
+#include <deque>
+
 
 //! logger ID type. DO NOT TOUCH
 typedef int LoggerId;
@@ -495,6 +501,17 @@ public:
 	inline Log4zStream & operator <<(const std::basic_string<_Elem, _Traits, _Alloc> & t){ return *this << t.c_str(); }
 
 	inline Log4zStream & operator << (const zsummer::log4z::Log4zBinary & binary){ return writeBinary(binary); }
+
+	template<class _Elem, class _Alloc>
+	inline Log4zStream & operator <<(const std::vector<_Elem, _Alloc> & t){ *this << "vector[size="; *this << t.size(); return *this << "]"; }
+	template<class _Elem, class _Alloc>
+	inline Log4zStream & operator <<(const std::list<_Elem, _Alloc> & t){ *this << "list[size="; *this << t.size(); return *this << "]"; }
+	template<class _Elem, class _Alloc>
+	inline Log4zStream & operator <<(const std::deque<_Elem, _Alloc> & t){ *this << "deque[size="; *this << t.size(); return *this << "]"; }
+	template<class _Elem, class _Alloc>
+	inline Log4zStream & operator <<(const std::queue<_Elem, _Alloc> & t){ *this << "queue[size="; *this << t.size(); return *this << "]"; }
+	template<class _K, class _V, class _Pr, class _Alloc>
+	inline Log4zStream & operator <<(const std::map<_K, _V, _Pr, _Alloc> & t){ *this << "map[size="; *this << t.size(); return *this << "]"; }
 
 private:
 	Log4zStream(){}

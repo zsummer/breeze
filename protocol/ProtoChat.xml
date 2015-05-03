@@ -3,6 +3,7 @@
 <ProtoTraits>
   <MinNo>1000</MinNo>
   <MaxNo>1100</MaxNo>
+  <UseLog4z>1</UseLog4z>
 </ProtoTraits>
 
 
@@ -20,9 +21,10 @@
   	<member name="FRIEND_ADDBLACK"    desc="添加黑名单"/>
   	<member name="FRIEND_REMOVEFRIEND"    desc="移除好友"/>
   	<member name="FRIEND_REMOVEBLACK"    desc="移除黑名单"/>
- 	<member name="FRIEND_ALLOW"    desc="同意"/>
-	<member name="FRIEND_REJECT"   desc="拒绝"/>
-	<member name="FRIEND_IGNORE"   desc="忽略"/>
+
+   	<member name="FRIEND_ALLOW"    desc="同意"/>
+  	<member name="FRIEND_REJECT"   desc="拒绝"/>
+  	<member name="FRIEND_IGNORE"   desc="忽略"/>
   </enum>
 
   <enum type="ui8"  desc="聊天(频道)类型">

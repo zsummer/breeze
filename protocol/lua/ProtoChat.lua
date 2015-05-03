@@ -76,17 +76,17 @@ Protoz.GetContactInfoAck.__getTag = "11"
 Protoz.GetContactInfoAck[1] = {name="retCode", type="ui16" }  
 Protoz.GetContactInfoAck[2] = {name="contact", type="ContactInfo" }  
  
-Protoz.register(1004,"FriendOperationReq") 
+Protoz.register(1002,"FriendOperationReq") 
 Protoz.FriendOperationReq = {} --好友操作请求 
-Protoz.FriendOperationReq.__getID = 1004 
+Protoz.FriendOperationReq.__getID = 1002 
 Protoz.FriendOperationReq.__getName = "FriendOperationReq" 
 Protoz.FriendOperationReq.__getTag = "11" 
 Protoz.FriendOperationReq[1] = {name="uid", type="ui64" } --目标ID 
 Protoz.FriendOperationReq[2] = {name="oFlag", type="ui8" } --操作指令 
  
-Protoz.register(1005,"FriendOperationAck") 
+Protoz.register(1003,"FriendOperationAck") 
 Protoz.FriendOperationAck = {} --好友操作请求结果 
-Protoz.FriendOperationAck.__getID = 1005 
+Protoz.FriendOperationAck.__getID = 1003 
 Protoz.FriendOperationAck.__getName = "FriendOperationAck" 
 Protoz.FriendOperationAck.__getTag = "1111" 
 Protoz.FriendOperationAck[1] = {name="retCode", type="ui16" }  
@@ -94,18 +94,18 @@ Protoz.FriendOperationAck[2] = {name="srcUID", type="ui64" }
 Protoz.FriendOperationAck[3] = {name="srcFlag", type="ui8" }  
 Protoz.FriendOperationAck[4] = {name="dstUID", type="ui64" }  
  
-Protoz.register(1006,"ChatReq") 
+Protoz.register(1004,"ChatReq") 
 Protoz.ChatReq = {} --发送聊天请求 
-Protoz.ChatReq.__getID = 1006 
+Protoz.ChatReq.__getID = 1004 
 Protoz.ChatReq.__getName = "ChatReq" 
 Protoz.ChatReq.__getTag = "111" 
 Protoz.ChatReq[1] = {name="chlType", type="ui8" } --channel type 
 Protoz.ChatReq[2] = {name="dstid", type="ui64" } --userid or groupid 
 Protoz.ChatReq[3] = {name="msg", type="string" } --msg 
  
-Protoz.register(1007,"ChatAck") 
+Protoz.register(1005,"ChatAck") 
 Protoz.ChatAck = {} --发送聊天请求 
-Protoz.ChatAck.__getID = 1007 
+Protoz.ChatAck.__getID = 1005 
 Protoz.ChatAck.__getName = "ChatAck" 
 Protoz.ChatAck.__getTag = "1111" 
 Protoz.ChatAck[1] = {name="retCode", type="ui16" }  
@@ -113,9 +113,9 @@ Protoz.ChatAck[2] = {name="chlType", type="ui8" } --channel type
 Protoz.ChatAck[3] = {name="dstid", type="ui64" } --userid or groupid 
 Protoz.ChatAck[4] = {name="msgid", type="ui32" }  
  
-Protoz.register(1008,"ChatNotice") 
+Protoz.register(1006,"ChatNotice") 
 Protoz.ChatNotice = {} --聊天通知 
-Protoz.ChatNotice.__getID = 1008 
+Protoz.ChatNotice.__getID = 1006 
 Protoz.ChatNotice.__getName = "ChatNotice" 
 Protoz.ChatNotice.__getTag = "11" 
 Protoz.ChatNotice[1] = {name="retCode", type="ui16" }  

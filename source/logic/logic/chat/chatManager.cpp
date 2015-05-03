@@ -54,8 +54,8 @@ bool ChatManager::init()
 
 
 	//监控玩家登录和退出, 用来更新玩家在线状态, 如果之后独立为一个进程后, 该通知以消息通知的形式获得.
-	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN, std::bind(&ChatManager::onUserLogin, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
-	EventTrigger::getRef().watching(ETRIGGER_USER_LOGOUT, std::bind(&ChatManager::onUserLogout, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN, std::bind(&ChatManager::onUserLogin, this, _1, _2, _3, _4, _5));
+	EventTrigger::getRef().watching(ETRIGGER_USER_LOGOUT, std::bind(&ChatManager::onUserLogout, this, _1, _2, _3, _4, _5));
 	return true;
 }
 
@@ -102,7 +102,7 @@ void ChatManager::insertContact(const ContactInfo & info)
 	auto sql = ContactInfo_INSERT(info);
 	if (!sql.empty())
 	{
-		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::onUpdateContact, this, _1));
 	}
 }
 void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool broadcast)
@@ -112,7 +112,7 @@ void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool bro
 		auto sql = ContactInfo_UPDATE(info);
 		if (!sql.empty())
 		{
-			DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::onUpdateContact, this, std::placeholders::_1));
+			DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::onUpdateContact, this, _1));
 		}
 	}
 	
@@ -125,17 +125,17 @@ void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool bro
 		{
 			if (kv.flag == FRIEND_ESTABLISHED)
 			{
-				auto ptr = UserManager::getRef().getInnerUserInfoByUID(kv.uid);
-				if (ptr && ptr->sesionInfo.sID != InvalidSeesionID)
+				auto ptr = UserManager::getRef().getInnerUserInfo(kv.uid);
+				if (ptr && ptr->sID != InvalidSeesionID)
 				{
-					SessionManager::getRef().sendOrgSessionData(ptr->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
+					SessionManager::getRef().sendSessionData(ptr->sID, ws.getStream(), ws.getStreamLen());
 				}
 			}
 		}
-		auto ptr = UserManager::getRef().getInnerUserInfoByUID(info.uID);
-		if (ptr && ptr->sesionInfo.sID != InvalidSeesionID)
+		auto ptr = UserManager::getRef().getInnerUserInfo(info.uID);
+		if (ptr && ptr->sID != InvalidSeesionID)
 		{
-			SessionManager::getRef().sendOrgSessionData(ptr->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
+			SessionManager::getRef().sendSessionData(ptr->sID, ws.getStream(), ws.getStreamLen());
 		}
 	}
 }
@@ -150,7 +150,7 @@ void ChatManager::onUpdateContact(zsummer::mysql::DBResultPtr result)
 	}
 }
 
-void ChatManager::msg_onGetContactInfoReq(SessionID sID, ProtoID pID, ReadStream & rs)
+void ChatManager::msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
 {
 	GetContactInfoReq req;
 	rs >> req;
@@ -168,15 +168,15 @@ void ChatManager::msg_onGetContactInfoReq(SessionID sID, ProtoID pID, ReadStream
 	}
 	WriteStream ws(ID_GetContactInfoAck);
 	ws << ack;
-	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+	session->doSend(ws.getStream(), ws.getStreamLen());
 }
 
 
-void ChatManager::msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs)
+void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
 {
 	ChatReq req;
 	rs >> req;
-	auto inner = UserManager::getRef().getInnerUserInfoBySID(sID);
+	auto inner = UserManager::getRef().getInnerUserInfo(session->getUserParam());
 	if (!inner)
 	{
 		//.
@@ -194,20 +194,20 @@ void ChatManager::msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs)
 
 	if (info.chlType == CHANNEL_PRIVATE)
 	{
-		auto dstinner = UserManager::getRef().getInnerUserInfoByUID(req.dstid);
+		auto dstinner = UserManager::getRef().getInnerUserInfo(req.dstid);
 		if (!dstinner)
 		{
 			return;
 		}
 		info.dstIcon = dstinner->userInfo.iconID;
 		info.dstName = dstinner->userInfo.nickName;
-		if (dstinner->sesionInfo.sID != InvalidSeesionID)
+		if (dstinner->sID != InvalidSeesionID)
 		{
 			WriteStream ws(ID_ChatNotice);
 			ChatNotice notice;
 			notice.msgs.push_back(info);
 			ws << notice;
-			SessionManager::getRef().sendOrgSessionData(dstinner->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
+			SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
 		}
 	}
 	else if (info.chlType == CHANNEL_GROUP || info.chlType == CHANNEL_WORLD)
@@ -227,5 +227,5 @@ void ChatManager::msg_onChatReq(SessionID sID, ProtoID pID, ReadStream & rs)
 	ack.msgid = info.id;
 	ack.retCode = EC_SUCCESS;
 	ws << ack;
-	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+	session->doSend(ws.getStream(), ws.getStreamLen());
 }

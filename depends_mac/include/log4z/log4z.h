@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2014 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@
 
 
 /*
- * AUTHORS:  YaweiZhang <yawei_zhang@foxmail.com>
+ * AUTHORS:  YaweiZhang <yawei.zhang@foxmail.com>
  * VERSION:  3.0.0
  * PURPOSE:  A lightweight library for error reporting and logging to file and screen .
  * CREATION: 2010.10.4
@@ -48,7 +48,7 @@
 /*
  * contact me:
  * tencent qq group: 19811947
- * mail: yawei_zhang@foxmail.com
+ * mail: yawei.zhang@foxmail.com
  */
 
 

@@ -1,46 +1,62 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
   <MinNo>100</MinNo>
   <MaxNo>200</MaxNo>
-  <UseLog4z>0</UseLog4z>
+  <UseLog4z>true</UseLog4z>
 </ProtoTraits>
 
 
 <Proto>
 
+    <!-- 登录服务器协议 -->
+    <proto name="PlatAuthReq" desc= "平台认证">
+        <member name="account"  type="string" desc="用户名"/>
+        <member name="token"  type="string" desc="令牌"/>
+    </proto>
 
-  <proto name="LoginReq" desc= "登录请求">
-    <member name="user" type="string"   desc=""/>
-    <member name="passwd"  type="string" desc=""/>
-  </proto>
+    <proto name="PlatAuthAck" desc= "认证结果, 包含该用户的所有用户/角色数据" >
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="users" type="UserInfoArray"   desc="该帐号下的所有用户信息"/>
+    </proto>
 
-  <proto name="CreateUserReq" desc= "填写用户信息">
-    <member name="nickName"  type="string" desc="昵称"/>
-    <member name="iconID"  type="i32" desc="头像"/>
-  </proto>
+
+    <proto name="CreateUserReq" desc= "创建一个新的用户数据">
+        <member name="nickName"  type="string" desc="昵称"/>
+        <member name="iconID"  type="i32" desc="头像"/>
+    </proto>
+
+    <proto name="CreateUserAck" desc= "创建结果和所有用户数据" >
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="users" type="UserInfoArray"   desc="该帐号下的所有用户信息"/>
+    </proto>
+    
+   
+   <proto name="SelectUserReq" desc= "获取需要登录用户的所在服务器和认证令牌">
+        <member name="uID"  type="ui64" desc=""/>
+   </proto>
+   
+   <proto name="SelectUserAck" desc= "获取需要登录用户的所在服务器和认证令牌" >
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="uID"  type="ui64" desc=""/>
+        <member name="token" type="string"   desc=""/>
+        <member name="ip" type="string"   desc=""/>
+        <member name="port" type="ui16"   desc=""/>
+   </proto>
+   
+   
+
+    <!-- 游戏服务器登录协议 -->
+    <proto name="LoginReq" desc= "登录请求">
+      <member name="uID" type="ui64"   desc=""/>
+      <member name="token"  type="string" desc=""/>
+    </proto>
+    <proto name="LoginAck" desc= "登录结果" >
+        <member name="retCode" type="ui16"   desc=""/>
+    </proto>
   
-  <proto name="LoginAck" desc= "登录结果" >
-  	<member name="retCode" type="ui16"   desc=""/>
-  	<member name="needCreate" type="ui16"   desc=""/>
-    <member name="info" type="UserInfo"   desc="用户信息"/>
-  </proto>
+  
 
-
-
-
-
-
-
-
-  <proto name="ServerPulse" desc= "服务器生命脉冲">
-    <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
-    <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
-  </proto>
-  <proto name="ServerPulseEcho" desc= "服务器生命脉冲客户端回放">
-    <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
-    <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
-  </proto>
 
 </Proto>
 

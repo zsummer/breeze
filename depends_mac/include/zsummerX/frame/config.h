@@ -9,7 +9,7 @@
  *
  * ===============================================================================
  *
- * Copyright (C) 2010-2014 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,6 @@
 #include "../epoll/udpsocket_impl.h"
 #include "../epoll/tcpaccept_impl.h"
 #endif
-
 
 namespace zsummer
 {
@@ -146,23 +145,25 @@ namespace zsummer
 
 		//receive buffer length  and send buffer length 
 		const unsigned int MAX_BUFF_SIZE = 100 * 1024;
-		const unsigned int MAX_SEND_PACK_SIZE = 10 * 1024;
+		const unsigned int MAX_SEND_PACK_SIZE = 20 * 1024;
 
 		//!register message with original net pack, if return false other register will not receive this message.
-		typedef std::function < bool(SessionID, const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnPreMessageFunction;
+        class TcpSession;
+        typedef  std::shared_ptr<TcpSession> TcpSessionPtr;
+        typedef std::function < bool(TcpSessionPtr , const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnPreMessageFunction;
 
 		//!register message 
-		typedef std::function < void(SessionID, ProtoID, zsummer::proto4z::ReadStream &) > OnMessageFunction;
+		typedef std::function < void(TcpSessionPtr, ProtoID, zsummer::proto4z::ReadStream &) > OnMessageFunction;
 
 		//!register event 
-		typedef std::function < void(SessionID, const std::string & /*remoteIP*/, unsigned short /*remotePort*/) > OnSessionEstablished;
-		typedef std::function < void(SessionID, const std::string & /*remoteIP*/, unsigned short /*remotePort*/) > OnSessionDisconnect;
+		typedef std::function < void(TcpSessionPtr) > OnSessionEstablished;
+		typedef std::function < void(TcpSessionPtr) > OnSessionDisconnect;
 
-		//register http proto message 
-		typedef std::function < void(SessionID, const zsummer::proto4z::PairString &, const zsummer::proto4z::HTTPHeadMap& /*head*/, const std::string & /*body*/) > OnHTTPMessageFunction;
+		//register http proto message
+		typedef std::function < void(TcpSessionPtr , const zsummer::proto4z::PairString &, const zsummer::proto4z::HTTPHeadMap& /*head*/, const std::string & /*body*/) > OnHTTPMessageFunction;
 
 		//register pulse timer .  you can register this to implement heartbeat . 
-		typedef std::function < void(SessionID, unsigned int/*pulse interval*/) > OnSessionPulseTimer;
+		typedef std::function < void(TcpSessionPtr , unsigned int/*pulse interval*/) > OnSessionPulseTimer;
 
 
 

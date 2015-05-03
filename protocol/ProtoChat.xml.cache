@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<xmlmd5>3c0be54e335ac920c5557b392d70fa62</xmlmd5>
-<cppmd5>4235b82836797718c9621875e82cf1ff</cppmd5>
-<luamd5>3ad7061214ada45a4d7a23a8c58a8d35</luamd5>
-<csharpmd5>03790752c575225fe1b8be4c3d559321</csharpmd5>
+<xmlmd5>4703f2a8a96d86b24f36bea1ff8b596c</xmlmd5>
+<cppmd5>8b5910471e636e306eef71b37b4ae840</cppmd5>
+<luamd5>e5adc60a9cd6739af44a9bf03dee862a</luamd5>
+<csharpmd5>1bbef1854f29713d6e5089c9c3aa327a</csharpmd5>
 <sqlmd5>fbeb0ab0032dc10b206f8de4a7b2bc6d</sqlmd5>
 
 <cacheNo>
-	<cache key = "ID_ChatAck" No = "1007" /> 
-	<cache key = "ID_ChatNotice" No = "1008" /> 
-	<cache key = "ID_ChatReq" No = "1006" /> 
-	<cache key = "ID_FriendOperationAck" No = "1005" /> 
-	<cache key = "ID_FriendOperationReq" No = "1004" /> 
+	<cache key = "ID_ChatAck" No = "1005" /> 
+	<cache key = "ID_ChatNotice" No = "1006" /> 
+	<cache key = "ID_ChatReq" No = "1004" /> 
+	<cache key = "ID_FriendOperationAck" No = "1003" /> 
+	<cache key = "ID_FriendOperationReq" No = "1002" /> 
 	<cache key = "ID_GetContactInfoAck" No = "1001" /> 
 	<cache key = "ID_GetContactInfoReq" No = "1000" /> 
-	<cache key = "ID_GetFriendListAck" No = "1003" /> 
-	<cache key = "ID_GetFriendListReq" No = "1002" /> 
 </cacheNo>

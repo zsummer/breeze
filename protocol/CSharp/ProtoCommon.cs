@@ -46,10 +46,58 @@ namespace Proto4z
 		public static Proto4z.ui16 value = 62;  
 	} 
  
-	class UserInfo: Proto4z.IProtoObject //用户信息 
+	class SessionToken: Proto4z.IProtoObject //认证令牌 
 	{	 
 		public Proto4z.ui64 uID;  
-		public Proto4z.String nickName; //用户昵称 
+		public Proto4z.String token;  
+		public Proto4z.ui32 tokenExpire;  
+		public System.Collections.Generic.List<byte> __encode() 
+		{ 
+			Proto4z.ui32 sttLen = 0; 
+			Proto4z.ui64 tag = 7; 
+			 
+			var data = new System.Collections.Generic.List<byte>(); 
+			data.AddRange(uID.__encode()); 
+			data.AddRange(token.__encode()); 
+			data.AddRange(tokenExpire.__encode()); 
+			sttLen = (System.UInt32)data.Count + 8; 
+			var ret = new System.Collections.Generic.List<byte>(); 
+			ret.AddRange(sttLen.__encode()); 
+			ret.AddRange(tag.__encode()); 
+			ret.AddRange(data); 
+			return ret; 
+		} 
+		public int __decode(byte[] binData, ref int pos) 
+		{ 
+			Proto4z.ui32 offset = 0; 
+			Proto4z.ui64 tag = 0; 
+			offset.__decode(binData, ref pos); 
+			offset.val += (System.UInt32)pos; 
+			tag.__decode(binData, ref pos); 
+			uID = new Proto4z.ui64(); 
+			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
+			{ 
+				uID.__decode(binData, ref pos); 
+			} 
+			token = new Proto4z.String(); 
+			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
+			{ 
+				token.__decode(binData, ref pos); 
+			} 
+			tokenExpire = new Proto4z.ui32(); 
+			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
+			{ 
+				tokenExpire.__decode(binData, ref pos); 
+			} 
+			return (int)offset.val; 
+		} 
+	} 
+ 
+	class UserInfo: Proto4z.IProtoObject //用户信息 
+	{	 
+		public Proto4z.ui64 uID; //用户唯一ID 
+		public Proto4z.String account; //帐号 
+		public Proto4z.String nickName; //昵称 
 		public Proto4z.i16 iconID; //头像 
 		public Proto4z.i32 diamond; //当前剩余的充值钻石 
 		public Proto4z.i32 hisotryDiamond; //历史充值钻石总额 
@@ -58,10 +106,11 @@ namespace Proto4z
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 127; 
+			Proto4z.ui64 tag = 255; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(uID.__encode()); 
+			data.AddRange(account.__encode()); 
 			data.AddRange(nickName.__encode()); 
 			data.AddRange(iconID.__encode()); 
 			data.AddRange(diamond.__encode()); 
@@ -87,33 +136,38 @@ namespace Proto4z
 			{ 
 				uID.__decode(binData, ref pos); 
 			} 
-			nickName = new Proto4z.String(); 
+			account = new Proto4z.String(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
+			{ 
+				account.__decode(binData, ref pos); 
+			} 
+			nickName = new Proto4z.String(); 
+			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
 			{ 
 				nickName.__decode(binData, ref pos); 
 			} 
 			iconID = new Proto4z.i16(); 
-			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 3)) != 0) 
 			{ 
 				iconID.__decode(binData, ref pos); 
 			} 
 			diamond = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 3)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 4)) != 0) 
 			{ 
 				diamond.__decode(binData, ref pos); 
 			} 
 			hisotryDiamond = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 4)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 5)) != 0) 
 			{ 
 				hisotryDiamond.__decode(binData, ref pos); 
 			} 
 			giftDiamond = new Proto4z.i32(); 
-			if ((tag.val & ((System.UInt64)1 << 5)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 6)) != 0) 
 			{ 
 				giftDiamond.__decode(binData, ref pos); 
 			} 
 			joinTime = new Proto4z.ui32(); 
-			if ((tag.val & ((System.UInt64)1 << 6)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 7)) != 0) 
 			{ 
 				joinTime.__decode(binData, ref pos); 
 			} 
@@ -121,7 +175,7 @@ namespace Proto4z
 		} 
 	} 
  
-	class UserInfoVct : System.Collections.Generic.List<Proto4z.UserInfo>, Proto4z.IProtoObject  
+	class UserInfoArray : System.Collections.Generic.List<Proto4z.UserInfo>, Proto4z.IProtoObject  
 	{ 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -152,7 +206,7 @@ namespace Proto4z
 		} 
 	} 
  
-	class UserIDVct : System.Collections.Generic.List<Proto4z.ui64>, Proto4z.IProtoObject  
+	class UserIDArray : System.Collections.Generic.List<Proto4z.ui64>, Proto4z.IProtoObject  
 	{ 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -189,6 +243,90 @@ namespace Proto4z
 	class STATIC_ETRIGGER_USER_LOGOUT //用户登出, 用户ID 
 	{ 
 		public static Proto4z.ui16 value = 1;  
+	} 
+ 
+	class Heartbeat: Proto4z.IProtoObject //心跳包 
+	{	 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(200); } 
+		static public string getProtoName() { return "Heartbeat"; } 
+		public Proto4z.ui32 timeStamp; //服务器当前UTC时间戳 
+		public Proto4z.ui32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+		public System.Collections.Generic.List<byte> __encode() 
+		{ 
+			Proto4z.ui32 sttLen = 0; 
+			Proto4z.ui64 tag = 3; 
+			 
+			var data = new System.Collections.Generic.List<byte>(); 
+			data.AddRange(timeStamp.__encode()); 
+			data.AddRange(timeTick.__encode()); 
+			sttLen = (System.UInt32)data.Count + 8; 
+			var ret = new System.Collections.Generic.List<byte>(); 
+			ret.AddRange(sttLen.__encode()); 
+			ret.AddRange(tag.__encode()); 
+			ret.AddRange(data); 
+			return ret; 
+		} 
+		public int __decode(byte[] binData, ref int pos) 
+		{ 
+			Proto4z.ui32 offset = 0; 
+			Proto4z.ui64 tag = 0; 
+			offset.__decode(binData, ref pos); 
+			offset.val += (System.UInt32)pos; 
+			tag.__decode(binData, ref pos); 
+			timeStamp = new Proto4z.ui32(); 
+			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
+			{ 
+				timeStamp.__decode(binData, ref pos); 
+			} 
+			timeTick = new Proto4z.ui32(); 
+			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
+			{ 
+				timeTick.__decode(binData, ref pos); 
+			} 
+			return (int)offset.val; 
+		} 
+	} 
+ 
+	class HeartbeatEcho: Proto4z.IProtoObject //心跳包需要立刻回复 
+	{	 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(201); } 
+		static public string getProtoName() { return "HeartbeatEcho"; } 
+		public Proto4z.ui32 timeStamp; //服务器当前UTC时间戳 
+		public Proto4z.ui32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+		public System.Collections.Generic.List<byte> __encode() 
+		{ 
+			Proto4z.ui32 sttLen = 0; 
+			Proto4z.ui64 tag = 3; 
+			 
+			var data = new System.Collections.Generic.List<byte>(); 
+			data.AddRange(timeStamp.__encode()); 
+			data.AddRange(timeTick.__encode()); 
+			sttLen = (System.UInt32)data.Count + 8; 
+			var ret = new System.Collections.Generic.List<byte>(); 
+			ret.AddRange(sttLen.__encode()); 
+			ret.AddRange(tag.__encode()); 
+			ret.AddRange(data); 
+			return ret; 
+		} 
+		public int __decode(byte[] binData, ref int pos) 
+		{ 
+			Proto4z.ui32 offset = 0; 
+			Proto4z.ui64 tag = 0; 
+			offset.__decode(binData, ref pos); 
+			offset.val += (System.UInt32)pos; 
+			tag.__decode(binData, ref pos); 
+			timeStamp = new Proto4z.ui32(); 
+			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
+			{ 
+				timeStamp.__decode(binData, ref pos); 
+			} 
+			timeTick = new Proto4z.ui32(); 
+			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
+			{ 
+				timeTick.__decode(binData, ref pos); 
+			} 
+			return (int)offset.val; 
+		} 
 	} 
  
 } 

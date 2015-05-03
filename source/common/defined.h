@@ -37,12 +37,12 @@
 #include <map>
 #include <unordered_map>
 #include <algorithm>
-
 #include <log4z/log4z.h>
 #include <zsummerX/zsummerX.h>
 #include <ProtoCommon.h>
 using namespace zsummer::network;
 using namespace zsummer::proto4z;
+using namespace std::placeholders;
 
 
 
@@ -92,46 +92,29 @@ typedef ui16 AreaID;
 
 enum SessionStatus
 {
-	SS_UNAUTH = 0,
-	SS_AUTHING,
-	SS_AUTHED,
-	SS_LOGINING,
+	SS_UNLOGIN = 0,
 	SS_LOGINED,
 };
-//session info
-struct SessionInfo 
-{
-	//client
-	std::string user;
-	std::string passwd;
 
-	SessionID sID = InvalidSeesionID;
-	UserID uID = InvalidUserID; //
-	//log timestamp
-	time_t authTime = 0;
-	time_t loginTime = 0;
 
-	//check active
-	time_t lastActiveTime = time(NULL);
-	unsigned int lastDelayTick = 0;
-	SessionStatus status = SS_UNAUTH;
-};
+
+
+
+
 
 
 struct InnerUserInfo
 {
-	SessionInfo sesionInfo;
 	UserInfo userInfo;
+	SessionToken token;
+	SessionID sID = InvalidSeesionID;
+	time_t loginTime = 0;
 };
 
 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SessionInfo & info)
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const InnerUserInfo & info)
 {
-	stm << "user=" << info.user << ", passwd=" << info.passwd
-		<< ", uID=" << info.uID << ", sID=" << info.sID
-		<< ", loginTime=" << info.loginTime
-		<< ",lastLoginTime=" << info.lastActiveTime << ", lastActiveTime=" << info.lastActiveTime
-		<< ", lastDelayTick=" << info.lastDelayTick;
+	stm << "[UserInfo]" << info.userInfo << " [SessionToken]" << info.token << " sID=" << info.sID << ", loginTime=" << info.loginTime;
 	return stm;
 }
 

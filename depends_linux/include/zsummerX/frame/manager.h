@@ -9,7 +9,7 @@
  *
  * ===============================================================================
  *
- * Copyright (C) 2010-2014 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,9 +43,6 @@ namespace zsummer
 {
 	namespace network
 	{
-
-		class TcpSession;
-		typedef  std::shared_ptr<TcpSession> TcpSessionPtr;
 
 		class SessionManager
 		{
@@ -81,10 +78,11 @@ namespace zsummer
 			//! add connector under the configure.
 			SessionID addConnector(const ConnectConfig & traits);
 
+			TcpSessionPtr getTcpSession(SessionID sID);
 
-			//send original data. can repeat call because it's used send queue in internal implementation.
-			void sendOrgSessionData(SessionID sID, const char * orgData, unsigned int orgDataLen);
-			//send LCIc data with protocol id 
+			//send data.
+			void sendSessionData(SessionID sID, const char * orgData, unsigned int orgDataLen);
+			//send data.
 			void sendSessionData(SessionID sID, ProtoID pID, const char * userData, unsigned int userDataLen);
 
 			//close session socket.
@@ -97,9 +95,10 @@ namespace zsummer
 			unsigned long long _totalAcceptCount = 0;
 			unsigned long long _totalConnectClosedCount = 0;
 			unsigned long long _totalAcceptClosedCount = 0;
-			unsigned long long _totalSendMessages = 0;
+            
+			unsigned long long _totalSendCount = 0;
 			unsigned long long _totalSendBytes = 0;
-
+            unsigned long long _totalSendMessages = 0;
 			unsigned long long _totalRecvCount = 0;
 			unsigned long long _totalRecvBytes = 0;
 			unsigned long long _totalRecvMessages = 0;

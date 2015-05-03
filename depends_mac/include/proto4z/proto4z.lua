@@ -11,7 +11,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2013-2015 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2013-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@
 
 -- proto4z core file
 -- Auther: zhangyawei
--- mail:yawei_zhang@foxmail.com
+-- mail:yawei.zhang@foxmail.com
 -- date: 2015-01-12
 
 

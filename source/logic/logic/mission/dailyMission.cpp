@@ -13,7 +13,7 @@ DailyMission::~DailyMission()
 bool DailyMission::init()
 {
 	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN,
-		std::bind(&DailyMission::onUserLogin, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+		std::bind(&DailyMission::onUserLogin, this, _1, _2, _3, _4, _5));
 	return true;
 }
 

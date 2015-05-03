@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<xmlmd5>761888ebb77d7f4c9b6effd37d027e2c</xmlmd5>
-<cppmd5>5f781b78dacd5d9579aa064e161da0a4</cppmd5>
-<luamd5>6afe99a7312817603b6eb7cf7de03b2b</luamd5>
-<csharpmd5>71684ed1da3e30170f5912cd0f4ffac4</csharpmd5>
+<xmlmd5>ca24ccf0db6729f520a5053328621512</xmlmd5>
+<cppmd5>c3f3dd821b00dc7bcdfa1afc58b330ca</cppmd5>
+<luamd5>e1ca1b6a4d88bfccb21e14ccfdec1a5a</luamd5>
+<csharpmd5>7f2bf0efe4c74ef4ded28f4f4991a969</csharpmd5>
 <sqlmd5>b99eb97f9766d353e2998ce19730a352</sqlmd5>
 
 <cacheNo>
-	<cache key = "ID_CreateUserReq" No = "101" /> 
-	<cache key = "ID_LoginAck" No = "102" /> 
-	<cache key = "ID_LoginReq" No = "100" /> 
-	<cache key = "ID_ServerPulse" No = "103" /> 
-	<cache key = "ID_ServerPulseEcho" No = "104" /> 
+	<cache key = "ID_CreateUserAck" No = "103" /> 
+	<cache key = "ID_CreateUserReq" No = "102" /> 
+	<cache key = "ID_LoginAck" No = "107" /> 
+	<cache key = "ID_LoginReq" No = "106" /> 
+	<cache key = "ID_PlatAuthAck" No = "101" /> 
+	<cache key = "ID_PlatAuthReq" No = "100" /> 
+	<cache key = "ID_SelectUserAck" No = "105" /> 
+	<cache key = "ID_SelectUserReq" No = "104" /> 
 </cacheNo>

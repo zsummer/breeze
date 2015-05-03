@@ -9,7 +9,7 @@
  *
  * ===============================================================================
  *
- * Copyright (C) 2010-2014 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,12 +40,11 @@
 #ifndef ZSUMMER_MSG_MANAGER_H_
 #define ZSUMMER_MSG_MANAGER_H_
 #include "config.h"
-
+#include "session.h"
 namespace zsummer
 {
 	namespace network
 	{
-
 		class MessageDispatcher
 		{
 		private:
@@ -57,7 +56,7 @@ namespace zsummer
 			~MessageDispatcher(){};
 
 			//message
-			inline void registerSessionOrgMessage(const OnPreMessageFunction & msgfun){ _vctPreSessionDispatch.push_back(msgfun); }
+			inline void registerSessionPreMessage(const OnPreMessageFunction & msgfun){ _vctPreSessionDispatch.push_back(msgfun); }
 			inline void registerSessionMessage(ProtoID protoID, const OnMessageFunction & msgfun){ _mapSessionDispatch[protoID].push_back(msgfun); }
 			inline void registerSessionDefaultMessage(const OnMessageFunction & msgfun){ _vctDefaultSessionDispatch.push_back(msgfun); }
 
@@ -71,13 +70,12 @@ namespace zsummer
 			inline void registerOnSessionHTTPMessage(const OnHTTPMessageFunction & fun) { _vctSessionHTTPMessage.push_back(fun); }
 
 		public:
-			inline bool dispatchPreSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize);
-			inline void dispatchSessionMessage(SessionID sID, ProtoID pID, zsummer::proto4z::ReadStream & msg);
-			inline void dispatchOnSessionEstablished(SessionID sID, const std::string & remoteIP, unsigned short remotePort);
-			inline void dispatchOnSessionDisconnect(SessionID sID, const std::string & remoteIP, unsigned short remotePort);
-			inline void dispatchOnSessionPulse(SessionID sID, unsigned int pulseInterval);
-			inline bool dispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body);
-
+            bool dispatchPreSessionMessage(TcpSessionPtr  session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
+			void dispatchSessionMessage(TcpSessionPtr  session, ProtoID pID, zsummer::proto4z::ReadStream & msg);
+			void dispatchOnSessionEstablished(TcpSessionPtr  session);
+			void dispatchOnSessionDisconnect(TcpSessionPtr  session);
+			void dispatchOnSessionPulse(TcpSessionPtr  session, unsigned int pulseInterval);
+            bool dispatchSessionHTTPMessage(TcpSessionPtr session, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body);
 		private:
 			//!message
 			MapProtoDispatch _mapSessionDispatch;
@@ -97,179 +95,6 @@ namespace zsummer
 
 
 
-		inline bool MessageDispatcher::dispatchPreSessionMessage(SessionID sID, const char * blockBegin, zsummer::proto4z::Integer blockSize)
-		{
-			if (_vctPreSessionDispatch.empty())
-			{
-				return true;
-			}
-
-			try
-			{
-				for (auto & fun : _vctPreSessionDispatch)
-				{
-					LCT("Entry dispatchOrgSessionMessage  SessionID=" << sID << ", blockSize=" << blockSize);
-					if (!fun(sID, blockBegin, blockSize))
-					{
-						return false;
-					}
-				}
-			}
-			catch (std::runtime_error e)
-			{
-				LCE("Leave dispatchOrgSessionMessage With Runtime Error:  SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
-				return false;
-			}
-			catch (...)
-			{
-				LCE("Leave dispatchOrgSessionMessage With Unknown Runtime Error: SessionID=" << sID);
-				return false;
-			}
-			return true;
-		}
-
-		inline void MessageDispatcher::dispatchSessionMessage(SessionID sID, ProtoID pID, zsummer::proto4z::ReadStream & msg)
-		{
-			MapProtoDispatch::iterator iter = _mapSessionDispatch.find(pID);
-			if ((iter == _mapSessionDispatch.end() || iter->second.empty()) && _vctDefaultSessionDispatch.empty())
-			{
-				LCW("Entry dispatchSessionMessage[" << pID << "] Failed: UNKNOWN ProtoID.  SessionID=" << sID << ", ProtoID=" << pID);
-				return;
-			}
-			try
-			{
-				if (iter != _mapSessionDispatch.end() && !iter->second.empty())
-				{
-					for (auto & fun : iter->second)
-					{
-						LCT("Entry dispatchSessionMessage[" << pID << "]  SessionID=" << sID);
-						msg.resetMoveCursor();
-						fun(sID, pID, msg);
-					}
-				}
-				else
-				{
-					for (auto & fun : _vctDefaultSessionDispatch)
-					{
-						msg.resetMoveCursor();
-						fun(sID, pID, msg);
-					}
-				}
-				LCT("Leave dispatchSessionMessage[" << pID << "]  SessionID=" << sID);
-			}
-			catch (std::runtime_error e)
-			{
-				LCE("Leave dispatchSessionMessage[" << pID << "] With Runtime Error: SessionID=" << sID << ", rsLen=" << msg.getStreamLen() << ", Error Message=\"" << e.what() << "\"");
-			}
-			catch (...)
-			{
-				LCE("Leave dispatchSessionMessage[" << pID << "] With Unknown Runtime Error: SessionID=" << sID);
-			}
-		}
-
-
-		inline void MessageDispatcher::dispatchOnSessionEstablished(SessionID sID, const std::string & remoteIP, unsigned short remotePort)
-		{
-			if (_vctOnSessionEstablished.empty())
-			{
-				return;
-			}
-			for (auto &fun : _vctOnSessionEstablished)
-			{
-				try
-				{
-					LCT("Entry dispatchOnSessionEstablished SessionID=" << sID);
-					fun(sID, remoteIP, remotePort);
-					LCT("Leave dispatchOnSessionEstablished SessionID=" << sID);
-				}
-
-				catch (std::runtime_error e)
-				{
-					LCE("Leave dispatchOnSessionEstablished Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
-				}
-				catch (...)
-				{
-					LCE("Leave dispatchOnSessionEstablished Unknown Runtime Error: SessionID=" << sID);
-				}
-			}
-
-
-		}
-		inline void MessageDispatcher::dispatchOnSessionDisconnect(SessionID sID, const std::string & remoteIP, unsigned short remotePort)
-		{
-			if (_vctOnSessionDisconnect.empty())
-			{
-				return;
-			}
-			for (auto & fun : _vctOnSessionDisconnect)
-			{
-				try
-				{
-					LCT("Entry dispatchOnSessionDisconnect SessionID=" << sID);
-					fun(sID, remoteIP, remotePort);
-					LCT("Leave dispatchOnSessionDisconnect SessionID=" << sID);
-				}
-				catch (std::runtime_error e)
-				{
-					LCE("Leave dispatchOnSessionDisconnect Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
-				}
-				catch (...)
-				{
-					LCE("Leave dispatchOnSessionDisconnect Unknown Runtime Error: SessionID=" << sID);
-				}
-			}
-		}
-
-
-		inline void MessageDispatcher::dispatchOnSessionPulse(SessionID sID, unsigned int pulseInterval)
-		{
-			if (_vctOnSessionPulse.empty())
-			{
-				return;
-			}
-			for (auto & fun : _vctOnSessionPulse)
-			{
-				try
-				{
-					LCT("Entry dispatchOnSessionPulse SessionID=" << sID);
-					fun(sID, pulseInterval);
-					LCT("Leave dispatchOnSessionPulse SessionID=" << sID);
-				}
-				catch (std::runtime_error e)
-				{
-					LCE("Leave dispatchOnSessionPulse Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
-				}
-				catch (...)
-				{
-					LCE("Leave dispatchOnSessionPulse Unknown Runtime Error: SessionID=" << sID);
-				}
-			}
-		}
-
-
-		inline bool  MessageDispatcher::dispatchSessionHTTPMessage(SessionID sID, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body)
-		{
-			try
-			{
-				for (auto & fun : _vctSessionHTTPMessage)
-				{
-					LCT("Entry dispatchSessionHTTPMessage  SessionID=" << sID << ", commond=" << commonLine.first << ", commondValue=" << commonLine.second
-						<< ", head count=" << head.size() << ", bodySize=" << body.length());
-					fun(sID, commonLine, head, body);
-					LCT("Leave dispatchSessionHTTPMessage  SessionID=" << sID);
-				}
-				return true;
-			}
-			catch (std::runtime_error e)
-			{
-				LCE("Leave dispatchSessionHTTPMessage With Runtime Error: SessionID=" << sID << ", Error Message=\"" << e.what() << "\"");
-			}
-			catch (...)
-			{
-				LCE("Leave dispatchSessionHTTPMessage With Unknown Runtime Error: SessionID=" << sID);
-			}
-			return false;
-		}
 
 	}
 }

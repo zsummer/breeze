@@ -9,7 +9,7 @@
  *
  * ===============================================================================
  *
- * Copyright (C) 2010-2014 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,16 +65,27 @@ namespace zsummer
 		class TcpSession : public std::enable_shared_from_this<TcpSession>
 		{
 		public:
-			TcpSession();
-			~TcpSession();
-			bool bindTcpSocketPrt(const TcpSocketPtr &sockptr, AccepterID aID, SessionID sID, const ListenConfig &traits);
-			void bindTcpConnectorPtr(const TcpSocketPtr &sockptr, const std::pair<ConnectConfig, ConnectInfo> & config);
 			void doSend(const char *buf, unsigned int len);
 			void close();
-			SessionID GetAcceptID(){ return _acceptID; }
+			inline SessionID getAcceptID(){ return _acceptID; }
+            inline SessionID getSessionID(){ return _sessionID; }
 			inline const std::string & getRemoteIP(){ return _remoteIP; }
 			inline unsigned short getRemotePort(){ return _remotePort; }
-
+            
+            inline void setUserParam(unsigned long long param) { _param = param;}
+            inline void setUserLParam(unsigned long long param) { _lparam = param;}
+            inline void setUserRParam(unsigned long long param) { _rparam = param;}
+            inline unsigned long long getUserParam(){ return _param;}
+            inline unsigned long long getUserLParam(){ return _lparam;}
+            inline unsigned long long getUserRParam(){ return _rparam;}
+            inline void setUserParamString(const std::string param){ _paramstring = param;}
+            inline const std::string getUserParamString(){ return _paramstring;}
+        public:
+            TcpSession();
+            ~TcpSession();
+            bool bindTcpSocketPrt(const TcpSocketPtr &sockptr, AccepterID aID, SessionID sID, const ListenConfig &traits);
+            void bindTcpConnectorPtr(const TcpSocketPtr &sockptr, const std::pair<ConnectConfig, ConnectInfo> & config);
+            
 		private:
 			void cleanSession(bool isCleanAllData, const std::string &rc4TcpEncryption);
 
@@ -93,7 +104,6 @@ namespace zsummer
 
 		private:
 			TcpSocketPtr  _sockptr;
-			//cache remoteIP, remotePort
 			std::string _remoteIP;
 			unsigned short _remotePort = 0;
 			//
@@ -133,6 +143,12 @@ namespace zsummer
 			bool _httpIsChunked = false;
 			zsummer::proto4z::PairString  _httpCommonLine;
 			zsummer::proto4z::HTTPHeadMap _httpHeader;
+            
+            //! user param
+            unsigned long long _param = 0;
+            unsigned long long _lparam = 0;
+            unsigned long long _rparam = 0;
+            std::string _paramstring;
 		};
 
 

@@ -62,17 +62,9 @@ bool UserManager::init()
 }
 
 
-std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoBySID(SessionID sid)
-{
-	auto founder = _mapSession.find(sid);
-	if (founder != _mapSession.end())
-	{
-		return founder->second;
-	}
-	return std::shared_ptr<InnerUserInfo>();
-}
 
-std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByUID(UserID uID)
+
+std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfo(UserID uID)
 {
 	auto founder = _mapUser.find(uID);
 	if (founder != _mapUser.end())
@@ -94,20 +86,21 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByNickName(const std
 
 void UserManager::addUser(std::shared_ptr<InnerUserInfo> innerInfo)
 {
-	_mapSession[innerInfo->sesionInfo.sID] = innerInfo;
 	_mapUser[innerInfo->userInfo.uID] = innerInfo;
 	_mapNickName[innerInfo->userInfo.nickName] = innerInfo;
 }
+
 void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
 {
+	_mapSession[innerInfo->sID] = innerInfo;
     EventTrigger::getRef().trigger(ETRIGGER_USER_LOGIN, innerInfo->userInfo.uID, 1, innerInfo->userInfo.iconID, innerInfo->userInfo.nickName);
 }
 
 void UserManager::userLogout(std::shared_ptr<InnerUserInfo> innerInfo)
 {
-	SessionManager::getRef().kickSession(innerInfo->sesionInfo.sID);
-	_mapSession.erase(innerInfo->sesionInfo.sID);
-	innerInfo->sesionInfo = SessionInfo();
+	SessionManager::getRef().kickSession(innerInfo->sID);
+	_mapSession.erase(innerInfo->sID);
+	innerInfo->sID = InvalidSeesionID;
 	EventTrigger::getRef().trigger(ETRIGGER_USER_LOGOUT, innerInfo->userInfo.uID, 1, innerInfo->userInfo.iconID, innerInfo->userInfo.nickName);
 }
 

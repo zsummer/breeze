@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2015 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -336,7 +336,7 @@ static int addListen(lua_State *L)
 
 
 
-static void _onConnecterCallback(lua_State * L, SessionID sID, std::string remoteIP, unsigned short remotePort)
+static void _onConnecterCallback(lua_State * L, TcpSessionPtr session)
 {
 	auto founder = std::find_if(_vmCheck.begin(), _vmCheck.end(), [L](lua_State* l){return l == L; });
 	if (founder == _vmCheck.end())
@@ -359,9 +359,9 @@ static void _onConnecterCallback(lua_State * L, SessionID sID, std::string remot
 		return;
 	}
 
-	lua_pushnumber(L, sID);
-	lua_pushstring(L, remoteIP.c_str());
-	lua_pushnumber(L, remotePort);
+	lua_pushnumber(L, session->getSessionID());
+	lua_pushstring(L, session->getRemoteIP().c_str());
+	lua_pushnumber(L, session->getRemotePort());
 	int status = lua_pcall(L, 3, 0, index+1);
 	if (status && !lua_isnil(L, -1))
 	{
@@ -397,12 +397,12 @@ static int registerConnect(lua_State * L)
 	}
 	_connectCB = ret;
 	
-	MessageDispatcher::getRef().registerOnSessionEstablished(std::bind(_onConnecterCallback, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerOnSessionEstablished(std::bind(_onConnecterCallback, L, std::placeholders::_1));
 	return 0;
 }
 
 
-static void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadStream & rs)
+static void _onMessageCallback(lua_State * L,TcpSessionPtr session, ProtoID pID, ReadStream & rs)
 {
 	auto founder = std::find_if(_vmCheck.begin(), _vmCheck.end(), [L](lua_State* l){return l == L; });
 	if (founder == _vmCheck.end())
@@ -425,7 +425,7 @@ static void _onMessageCallback(lua_State * L, SessionID sID, ProtoID pID, ReadSt
 		return;
 	}
 
-	lua_pushinteger(L, sID);
+	lua_pushinteger(L, session->getSessionID());
 	lua_pushinteger(L, pID);
 	lua_pushlstring(L, rs.getStreamBody(), rs.getStreamBodyLen());
 	int status = lua_pcall(L, 3, 0, index + 1);
@@ -463,13 +463,13 @@ static int registerMessage(lua_State * L)
 	}
 	_messageCB = ret;
 
-	MessageDispatcher::getRef().registerSessionDefaultMessage(std::bind(_onMessageCallback, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    MessageDispatcher::getRef().registerSessionDefaultMessage(std::bind(_onMessageCallback, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	return 0;
 }
 
 
 
-static void _onDisconnectCallback(lua_State * L, SessionID sID, std::string remoteIP, unsigned short remotePort)
+static void _onDisconnectCallback(lua_State * L, TcpSessionPtr session)
 {
 	auto founder = std::find_if(_vmCheck.begin(), _vmCheck.end(), [L](lua_State* l){return l == L; });
 	if (founder == _vmCheck.end())
@@ -492,9 +492,9 @@ static void _onDisconnectCallback(lua_State * L, SessionID sID, std::string remo
 		return;
 	}
 
-	lua_pushnumber(L, sID);
-	lua_pushstring(L, remoteIP.c_str());
-	lua_pushnumber(L, remotePort);
+	lua_pushnumber(L, session->getSessionID());
+	lua_pushstring(L, session->getRemoteIP().c_str());
+	lua_pushnumber(L, session->getRemotePort());
 	int status = lua_pcall(L, 3, 0, index + 1);
 	if (status && !lua_isnil(L, -1))
 	{
@@ -530,7 +530,7 @@ static int registerDisconnect(lua_State * L)
 	}
 	_disconnectCB = ret;
 
-	MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(_onDisconnectCallback, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(_onDisconnectCallback, L, std::placeholders::_1));
 	return 0;
 }
 
@@ -552,7 +552,7 @@ static int sendContent(lua_State * L)
 	const char * content = luaL_checklstring(L, 3, &len);
 	WriteStream ws(pID);
 	ws.appendOriginalData(content, (zsummer::proto4z::Integer)len);
-	SessionManager::getRef().sendOrgSessionData(sID, ws.getStream(), ws.getStreamLen());
+	SessionManager::getRef().sendSessionData(sID, ws.getStream(), ws.getStreamLen());
 
 	return 0;
 }
@@ -576,7 +576,7 @@ static int sendData(lua_State * L)
 		return 0;
 	}
 
-	SessionManager::getRef().sendOrgSessionData(sID, data, (unsigned short)len);
+	SessionManager::getRef().sendSessionData(sID, data, (unsigned short)len);
 	return 0;
 }
 
