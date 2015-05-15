@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<xmlmd5>ca24ccf0db6729f520a5053328621512</xmlmd5>
-<cppmd5>c3f3dd821b00dc7bcdfa1afc58b330ca</cppmd5>
-<luamd5>e1ca1b6a4d88bfccb21e14ccfdec1a5a</luamd5>
-<csharpmd5>7f2bf0efe4c74ef4ded28f4f4991a969</csharpmd5>
+<xmlmd5>cd40de5d6b27adf87b65c2aa9921c336</xmlmd5>
+<cppmd5>daa3f081ddcd15a4ff4c438649d6890b</cppmd5>
+<luamd5>44cc5611f5089b6c5bf8504654b67c38</luamd5>
+<csharpmd5>653d25846d2034941858fd0c42d0b071</csharpmd5>
 <sqlmd5>b99eb97f9766d353e2998ce19730a352</sqlmd5>
 
 <cacheNo>
 	<cache key = "ID_CreateUserAck" No = "103" /> 
 	<cache key = "ID_CreateUserReq" No = "102" /> 
-	<cache key = "ID_LoginAck" No = "107" /> 
-	<cache key = "ID_LoginReq" No = "106" /> 
+	<cache key = "ID_LinkServerAck" No = "107" /> 
+	<cache key = "ID_LinkServerReq" No = "106" /> 
 	<cache key = "ID_PlatAuthAck" No = "101" /> 
 	<cache key = "ID_PlatAuthReq" No = "100" /> 
 	<cache key = "ID_SelectUserAck" No = "105" /> 

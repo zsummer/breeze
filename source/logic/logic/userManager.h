@@ -42,6 +42,7 @@ public:
 public:
 	//interface
 	std::shared_ptr<InnerUserInfo> getInnerUserInfo(UserID uID);
+	std::shared_ptr<InnerUserInfo> getInnerUserInfoBySID(SessionID sID);
 	std::shared_ptr<InnerUserInfo> getInnerUserInfoByNickName(const std::string & nickName);
     
 	inline size_t getAllOnlineUserCount() { return _mapSession.size(); }

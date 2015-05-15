@@ -113,18 +113,30 @@ static int _disconnectCB = LUA_NOREF;
 //在回调前检测模块是否已经被卸载
 static std::vector<lua_State*> _vmCheck;
 
+void onStopServersFinish()
+{
+	SessionManager::getRef().stop();
+}
+
+void onStopClientsFinish()
+{
+	SessionManager::getRef().stopServers();
+}
+
+
 static int start(lua_State *L)
 {
 	SessionManager::getRef().start();
+	SessionManager::getRef().setStopClientsHandler(onStopClientsFinish);
+	SessionManager::getRef().setStopServersHandler(onStopServersFinish);
 	return 0;
 }
+
 
 static int stop(lua_State *L)
 {
 	SessionManager::getRef().stopAccept();
-	SessionManager::getRef().kickAllClients();
-	SessionManager::getRef().kickAllConnect();
-	SessionManager::getRef().stop();
+	SessionManager::getRef().stopClients();
 	return 0;
 }
 
@@ -135,8 +147,9 @@ static int runOnce(lua_State * L)
 	{
 		isImmediately = true;
 	}
-	SessionManager::getRef().runOnce(isImmediately);
-	return 0;
+	bool ret = SessionManager::getRef().runOnce(isImmediately);
+	lua_pushboolean(L, ret);
+	return 1;
 }
 
 

@@ -96,7 +96,7 @@ namespace  zsummer
 			}
 
 
-			inline std::string && popSQL()
+			inline std::string popSQL()
 			{
 				size_t pos = _sql.find('?', _fmtPos);
 				if (pos != std::string::npos)
@@ -138,7 +138,7 @@ namespace  zsummer
 
 			inline DBResult & operator >>(long long & t)
 			{
-				std::string && field = popOrgField();
+				std::string  field = popOrgField();
 				if (field.empty())
 				{
 					t = 0;
@@ -172,7 +172,7 @@ namespace  zsummer
 			}
 			inline DBResult & operator >>(unsigned long long & t)
 			{
-				std::string && field = popOrgField();
+				std::string  field = popOrgField();
 				if (field.empty())
 				{
 					t = 0;
@@ -208,7 +208,7 @@ namespace  zsummer
 
 			inline DBResult & operator >>(double & t)
 			{
-				std::string && field = popOrgField();
+				std::string field = popOrgField();
 				if (field.empty())
 				{
 					t = 0.0;
@@ -235,7 +235,7 @@ namespace  zsummer
 		public:
 			inline void _setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db);
 		private:
-			inline std::string&& popOrgField()
+			inline std::string popOrgField()
 			{
 				if (_curIter == _result.end())
 				{

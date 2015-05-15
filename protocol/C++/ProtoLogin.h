@@ -301,19 +301,19 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_LoginReq = 106; //登录请求 
-struct LoginReq //登录请求 
+const unsigned short ID_LinkServerReq = 106; //连接到服务器 
+struct LinkServerReq //连接到服务器 
 { 
 	unsigned long long uID;  
 	std::string token;  
-	LoginReq() 
+	LinkServerReq() 
 	{ 
 		uID = 0; 
 	} 
 	inline unsigned short GetProtoID() { return 106;} 
-	inline std::string GetProtoName() { return "ID_LoginReq";} 
+	inline std::string GetProtoName() { return "ID_LinkServerReq";} 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LoginReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LinkServerReq & data) 
 { 
 	unsigned long long tag = 3ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
@@ -324,7 +324,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LoginReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LinkServerReq & data) 
 { 
 	zsummer::proto4z::Integer sttLen = 0; 
 	rs >> sttLen; 
@@ -343,24 +343,24 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	rs.skipOriginalData(sttLen - cursor); 
 	return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LoginReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LinkServerReq & info) 
 { 
 	stm << "uID=" << info.uID << ", token=" << info.token; 
 	return stm; 
 } 
  
-const unsigned short ID_LoginAck = 107; //登录结果 
-struct LoginAck //登录结果 
+const unsigned short ID_LinkServerAck = 107; //连接到服务器 
+struct LinkServerAck //连接到服务器 
 { 
 	unsigned short retCode;  
-	LoginAck() 
+	LinkServerAck() 
 	{ 
 		retCode = 0; 
 	} 
 	inline unsigned short GetProtoID() { return 107;} 
-	inline std::string GetProtoName() { return "ID_LoginAck";} 
+	inline std::string GetProtoName() { return "ID_LinkServerAck";} 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LoginAck & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LinkServerAck & data) 
 { 
 	unsigned long long tag = 1ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
@@ -370,7 +370,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LoginAck & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LinkServerAck & data) 
 { 
 	zsummer::proto4z::Integer sttLen = 0; 
 	rs >> sttLen; 
@@ -385,7 +385,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	rs.skipOriginalData(sttLen - cursor); 
 	return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LoginAck & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LinkServerAck & info) 
 { 
 	stm << "retCode=" << info.retCode; 
 	return stm; 

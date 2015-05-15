@@ -38,8 +38,11 @@
 #include <unordered_map>
 #include <algorithm>
 #include <log4z/log4z.h>
+#include <proto4z/proto4z.h>
 #include <zsummerX/zsummerX.h>
 #include <ProtoCommon.h>
+
+using namespace zsummer::log4z;
 using namespace zsummer::network;
 using namespace zsummer::proto4z;
 using namespace std::placeholders;

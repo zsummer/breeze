@@ -69,6 +69,7 @@ namespace zsummer
 			void close();
 			inline SessionID getAcceptID(){ return _acceptID; }
             inline SessionID getSessionID(){ return _sessionID; }
+			inline bool isInvalidSession(){ return !_sockptr; }
 			inline const std::string & getRemoteIP(){ return _remoteIP; }
 			inline unsigned short getRemotePort(){ return _remotePort; }
             
@@ -91,7 +92,7 @@ namespace zsummer
 
 			bool doRecv();
 
-			void onConnected(zsummer::network::NetErrorCode ec, const std::pair<ConnectConfig, ConnectInfo> & config);
+			void onConnected(zsummer::network::NetErrorCode ec);
 
 			void onRecv(zsummer::network::NetErrorCode ec, int nRecvedLen);
 

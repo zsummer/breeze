@@ -1,6 +1,5 @@
 ﻿#include "netManager.h"
 #include "dbManager.h"
-using namespace zsummer::mysql;
 
 
 

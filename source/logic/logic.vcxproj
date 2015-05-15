@@ -99,6 +99,7 @@
     <ClCompile Include="application.cpp" />
     <ClCompile Include="logic\chat\chatManager.cpp" />
     <ClCompile Include="logic\dbManager.cpp" />
+    <ClCompile Include="logic\login\login.cpp" />
     <ClCompile Include="logic\mission\dailyMission.cpp" />
     <ClCompile Include="logic\mission\eventTrigger.cpp" />
     <ClCompile Include="logic\netManager.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="application.h" />
     <ClInclude Include="logic\chat\chatManager.h" />
     <ClInclude Include="logic\dbManager.h" />
+    <ClInclude Include="logic\login\login.h" />
     <ClInclude Include="logic\mission\dailyMission.h" />
     <ClInclude Include="logic\mission\eventTrigger.h" />
     <ClInclude Include="logic\netManager.h" />

@@ -7,7 +7,7 @@
 #include "logic/testBlob/testBlob.h"
 #include "logic/testBlob/createTestAuthInfo.h"
 #include "logic/chat/chatManager.h"
-using namespace zsummer::log4z;
+
 
 
 Appliction::Appliction()
@@ -126,8 +126,7 @@ void Appliction::run()
 
 void Appliction::stop()
 {
-	LOGA("Appliction::stop()");
-	SessionManager::getRef().post(std::bind(&Appliction::_onSigalStop, this));
+	//SessionManager::getRef().post(std::bind(&Appliction::_onSigalStop, this));
 }
 
 void Appliction::_onSigalStop()

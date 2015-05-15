@@ -268,10 +268,10 @@ namespace Proto4z
 		} 
 	} 
  
-	class LoginReq: Proto4z.IProtoObject //登录请求 
+	class LinkServerReq: Proto4z.IProtoObject //连接到服务器 
 	{	 
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(106); } 
-		static public string getProtoName() { return "LoginReq"; } 
+		static public string getProtoName() { return "LinkServerReq"; } 
 		public Proto4z.ui64 uID;  
 		public Proto4z.String token;  
 		public System.Collections.Generic.List<byte> __encode() 
@@ -310,10 +310,10 @@ namespace Proto4z
 		} 
 	} 
  
-	class LoginAck: Proto4z.IProtoObject //登录结果 
+	class LinkServerAck: Proto4z.IProtoObject //连接到服务器 
 	{	 
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(107); } 
-		static public string getProtoName() { return "LoginAck"; } 
+		static public string getProtoName() { return "LinkServerAck"; } 
 		public Proto4z.ui16 retCode;  
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 

@@ -49,17 +49,17 @@ Protoz.SelectUserAck[3] = {name="token", type="string" }
 Protoz.SelectUserAck[4] = {name="ip", type="string" }  
 Protoz.SelectUserAck[5] = {name="port", type="ui16" }  
  
-Protoz.register(106,"LoginReq") 
-Protoz.LoginReq = {} --登录请求 
-Protoz.LoginReq.__getID = 106 
-Protoz.LoginReq.__getName = "LoginReq" 
-Protoz.LoginReq.__getTag = "11" 
-Protoz.LoginReq[1] = {name="uID", type="ui64" }  
-Protoz.LoginReq[2] = {name="token", type="string" }  
+Protoz.register(106,"LinkServerReq") 
+Protoz.LinkServerReq = {} --连接到服务器 
+Protoz.LinkServerReq.__getID = 106 
+Protoz.LinkServerReq.__getName = "LinkServerReq" 
+Protoz.LinkServerReq.__getTag = "11" 
+Protoz.LinkServerReq[1] = {name="uID", type="ui64" }  
+Protoz.LinkServerReq[2] = {name="token", type="string" }  
  
-Protoz.register(107,"LoginAck") 
-Protoz.LoginAck = {} --登录结果 
-Protoz.LoginAck.__getID = 107 
-Protoz.LoginAck.__getName = "LoginAck" 
-Protoz.LoginAck.__getTag = "1" 
-Protoz.LoginAck[1] = {name="retCode", type="ui16" }  
+Protoz.register(107,"LinkServerAck") 
+Protoz.LinkServerAck = {} --连接到服务器 
+Protoz.LinkServerAck.__getID = 107 
+Protoz.LinkServerAck.__getName = "LinkServerAck" 
+Protoz.LinkServerAck.__getTag = "1" 
+Protoz.LinkServerAck[1] = {name="retCode", type="ui16" }  

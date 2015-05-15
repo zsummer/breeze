@@ -46,6 +46,9 @@ extern "C"
 #include "config.h"
 
 
+using namespace zsummer::mysql;
+
+
 
 
 

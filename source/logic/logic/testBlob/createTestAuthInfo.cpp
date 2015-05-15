@@ -1,7 +1,7 @@
 ﻿
 #include "createTestAuthInfo.h"
 #include "../dbManager.h"
-using namespace zsummer::mysql;
+
 
 
 CreateTestAuthInfo::CreateTestAuthInfo()

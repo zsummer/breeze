@@ -4,8 +4,6 @@
 #include <ProtoCommon.h>
 #include <ProtoCommonSQL.h>
 
-using namespace zsummer::mysql;
-using namespace zsummer::network;
 
 
 UserManager::UserManager()
@@ -62,7 +60,15 @@ bool UserManager::init()
 }
 
 
-
+std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoBySID(SessionID sID)
+{
+	auto founder = _mapSession.find(sID);
+	if (founder != _mapSession.end())
+	{
+		return founder->second;
+	}
+	return nullptr;
+}
 
 std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfo(UserID uID)
 {
@@ -71,7 +77,7 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfo(UserID uID)
 	{
 		return founder->second;
 	}
-	return std::shared_ptr<InnerUserInfo>();
+	return nullptr;
 }
 
 std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByNickName(const std::string & nickName)
@@ -81,7 +87,7 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByNickName(const std
 	{
 		return founder->second;
 	}
-	return std::shared_ptr<InnerUserInfo>();
+	return nullptr;
 }
 
 void UserManager::addUser(std::shared_ptr<InnerUserInfo> innerInfo)

@@ -1,12 +1,10 @@
 ﻿#include "chatManager.h"
 #include "../userManager.h"
 #include "../dbManager.h"
-using namespace zsummer::mysql;
 #include <ProtoCommon.h>
 #include <ProtoCommonSQL.h>
 #include <ProtoChatSQL.h>
-using namespace zsummer::mysql;
-using namespace zsummer::network;
+
 
 ChatManager::ChatManager()
 {
@@ -68,7 +66,7 @@ void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long lon
 	{
 		ContactInfo info;
 		info.uID = uID;
-		info.iconID = iconID;
+		info.iconID = (short)iconID;
 		info.nickName = nick;
 		_mapContact[uID] = info;
 		insertContact(info);
@@ -176,7 +174,7 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 {
 	ChatReq req;
 	rs >> req;
-	auto inner = UserManager::getRef().getInnerUserInfo(session->getUserParam());
+	auto inner = UserManager::getRef().getInnerUserInfo(session->getSessionID());
 	if (!inner)
 	{
 		//.

@@ -19,6 +19,9 @@
     <Filter Include="logic\chat">
       <UniqueIdentifier>{d00be9fd-3cd5-4ab8-878c-f5fe675b6e4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="logic\login">
+      <UniqueIdentifier>{47e6fa41-00a5-4a32-92d1-00f76fc176f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -51,6 +54,9 @@
     <ClCompile Include="logic\chat\chatManager.cpp">
       <Filter>logic\chat</Filter>
     </ClCompile>
+    <ClCompile Include="logic\login\login.cpp">
+      <Filter>logic\login</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -79,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="logic\chat\chatManager.h">
       <Filter>logic\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\login\login.h">
+      <Filter>logic\login</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

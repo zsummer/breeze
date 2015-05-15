@@ -1,4 +1,4 @@
-/*
+﻿/*
 * breeze License
 * Copyright (C) 2015 YaweiZhang <yawei_zhang@foxmail.com>.
 *
@@ -28,7 +28,7 @@
 #define _NET_MANAGER_H_
 #include <common.h>
 #include <ProtoLogin.h>
-using namespace zsummer::mysql;
+
 
 
 
@@ -40,15 +40,9 @@ public:
 	bool stop(std::function<void()> onSafeClosed);
 
 protected:
-	//! ---- 令牌验证 --------------------------------------------
-	void msg_onPlatAuthReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
-	void msg_onCreateUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
-	void msg_onSelectUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
-
-
 
 	//! ---- 登录流程 --------------------------------------------
-	void msg_onLoginReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onLinkServerReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 
 
 	//! ---- 底层session建立和断开通知 ---------------------------

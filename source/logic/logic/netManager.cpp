@@ -2,13 +2,12 @@
 #include "dbManager.h"
 #include "userManager.h"
 #include <ProtoCommonSQL.h>
-using namespace zsummer::mysql;
-using namespace std::placeholders;
+
 NetManager::NetManager()
 {
 	//auth request process
-	MessageDispatcher::getRef().registerSessionMessage(ID_LoginReq,
-		std::bind(&NetManager::msg_onLoginReq, this, _1, _2, _3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_LinkServerReq,
+		std::bind(&NetManager::msg_onLinkServerReq, this, _1, _2, _3));
 
 
 
@@ -19,7 +18,7 @@ NetManager::NetManager()
 	MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&NetManager::event_onSessionDisconnect, this, _1));
 
 	//
-//	MessageDispatcher::getRef().registerOnSessionPulse(std::bind(&NetManager::event_onPulse, this, _1, _2));
+	MessageDispatcher::getRef().registerOnSessionPulse(std::bind(&NetManager::event_onSessionPulse, this, _1, _2));
 
 	MessageDispatcher::getRef().registerSessionMessage(ID_HeartbeatEcho,
 		std::bind(&NetManager::msg_onHeartbeatEcho, this, _1, _2, _3));
@@ -73,48 +72,32 @@ bool NetManager::start()
 
 bool NetManager::stop(std::function<void()> onSafeClosed)
 {
-	SessionManager::getRef().stopAccept();
-	SessionManager::getRef().kickAllClients();
-	SessionManager::getRef().kickAllConnect();
-
-	if (UserManager::getRef().getAllOnlineUserCount() == 0)
-	{
-		SessionManager::getRef().post(onSafeClosed);
-	}
-	else
-	{
-		_onSafeClosed = onSafeClosed;
-	}
+// 	SessionManager::getRef().stopAccept();
+// 	SessionManager::getRef().kickAllClients();
+// 	SessionManager::getRef().kickAllConnect();
+// 
+// 	if (UserManager::getRef().getAllOnlineUserCount() == 0)
+// 	{
+// 		SessionManager::getRef().post(onSafeClosed);
+// 	}
+// 	else
+// 	{
+// 		_onSafeClosed = onSafeClosed;
+// 	}
 	return true;
 }
 
 
 
 
-void NetManager::msg_onPlatAuthReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
-{
-	PlatAuthReq req;
-	rs >> req;
-	DBQuery q("SELECT uID, account, nickName, iconID FROM `tb_userinfo` where account = ?");
-	q << req.account;
-	//////////////////////////////////////////////////////////////////////////
-}
-
-void NetManager::msg_onCreateUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
-{
-}
-
-void NetManager::msg_onSelectUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
-{
-}
 
 
-void NetManager::msg_onLoginReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void NetManager::msg_onLinkServerReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
 {
-	LoginReq req;
+	LinkServerReq req;
 	rs >> req;
 	LOGD("enter msg_loginReq token=" << req.token << ", uID=" << req.uID);
-	LoginAck ack;
+	LinkServerAck ack;
 	ack.retCode = EC_AUTH_USER_NOT_EXIST;
 
     auto inner = UserManager::getRef().getInnerUserInfo(req.uID);
@@ -135,7 +118,7 @@ void NetManager::msg_onLoginReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 				session->setUserParam(inner->userInfo.uID);
 				session->setUserLParam(SS_LOGINED);
 				session->setUserRParam(time(NULL));
-				WriteStream ws(ID_LoginAck);
+				WriteStream ws(ID_LinkServerAck);
 				ws << ack;
 				session->doSend(ws.getStream(), ws.getStreamLen());
 				UserManager::getRef().userLogin(inner);
@@ -145,7 +128,7 @@ void NetManager::msg_onLoginReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 		
     }
     
-	WriteStream ws(ID_LoginAck);
+	WriteStream ws(ID_LinkServerAck);
 	ws << ack;
 	session->doSend(ws.getStream(), ws.getStreamLen());
 }
@@ -156,7 +139,7 @@ void NetManager::event_onSessionPulse(TcpSessionPtr session, unsigned int pulseI
 {
 	if (isSessionID(session->getSessionID()))
 	{
-		if (session->getUserParam() == InvalidUserID || session->getUserLParam() != SS_LOGINED || time(NULL) - session->getUserRParam() > pulseInterval * 2)
+		if (session->getUserParam() == SS_LOGINED || time(NULL) - session->getUserLParam() > pulseInterval * 2)
 		{
 			session->close();
 			return;
@@ -171,10 +154,19 @@ void NetManager::event_onSessionPulse(TcpSessionPtr session, unsigned int pulseI
 	}
 }
 
+void NetManager::msg_onHeartbeatEcho(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+{
+	session->setUserLParam(time(NULL));
+}
 
 
 
 
+void NetManager::event_onSessionEstablished(TcpSessionPtr session)
+{
+	session->setUserParam(SS_UNLOGIN);
+	LOGT("NetManager::event_onSessionEstablished. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
+}
 
 void NetManager::event_onSessionDisconnect(TcpSessionPtr session)
 {
@@ -185,10 +177,9 @@ void NetManager::event_onSessionDisconnect(TcpSessionPtr session)
 	}
 	else
 	{
-		if (session->getUserParam() != InvalidUserID
-			&& session->getUserLParam() == SS_LOGINED)
+		if (session->getUserParam() == SS_LOGINED)
 		{
-			auto info = UserManager::getRef().getInnerUserInfo(session->getUserParam());
+			auto info = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
 			if (info)
 			{
 				UserManager::getRef().userLogout(info);
@@ -216,25 +207,16 @@ bool NetManager::on_preMessageProcess(TcpSessionPtr session, const char * blockB
 	ProtoID pID = rs.getProtoID();
 	if (pID >= 200)
 	{
-		if (session->getUserParam() == InvalidUserID || session->getUserLParam() != SS_LOGINED)
+		if (session->getUserParam() != SS_LOGINED)
 		{
-			LOGW("on_preMessageProcess check authorization failed. protoID=" << pID << ", session authorization status=" << session->getUserLParam());
+			LOGW("on_preMessageProcess check authorization failed. protoID=" << pID << ", session authorization status=" << session->getUserParam());
 			return false;
 		}
 	}
 	return true;
 }
 
-void NetManager::event_onSessionEstablished(TcpSessionPtr session)
-{
-	session->setUserParam(InvalidUserID);
-	session->setUserLParam(SS_UNLOGIN);
-	LOGT("NetManager::event_onSessionEstablished. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
-}
-void NetManager::msg_onHeartbeatEcho(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
-{
-	session->setUserRParam(time(NULL));
-}
+
 
 
 

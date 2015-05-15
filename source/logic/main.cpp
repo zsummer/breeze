@@ -24,7 +24,6 @@ using namespace zsummer::log4z;
 
 void sigInt(int sig)
 {
-	LOGI("catch SIGINT.");
 	Appliction::getRef().stop();
 }
 
