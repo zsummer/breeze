@@ -121,7 +121,7 @@ bool Appliction::init(std::string filename, unsigned int index)
 
 void Appliction::run()
 {
-	return SessionManager::getRef().run();
+	 SessionManager::getRef().run();
 }
 
 void Appliction::stop()
