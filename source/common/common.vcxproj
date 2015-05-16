@@ -11,17 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lua\fpconv.h" />
-    <ClInclude Include="lua\lua_cjson.h" />
-    <ClInclude Include="lua\strbuf.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="dbAsync.h" />
     <ClInclude Include="dbhelper\dbHelper.h" />
     <ClInclude Include="genID.h" />
     <ClInclude Include="defined.h" />
+    <ClInclude Include="lua\fpconv.h" />
     <ClInclude Include="lua\lapi.h" />
     <ClInclude Include="lua\lauxlib.h" />
     <ClInclude Include="lua\lcode.h" />
+    <ClInclude Include="lua\lctype.h" />
     <ClInclude Include="lua\ldebug.h" />
     <ClInclude Include="lua\ldo.h" />
     <ClInclude Include="lua\lfunc.h" />
@@ -33,16 +32,20 @@
     <ClInclude Include="lua\lopcodes.h" />
     <ClInclude Include="lua\lpack.h" />
     <ClInclude Include="lua\lparser.h" />
+    <ClInclude Include="lua\lprefix.h" />
     <ClInclude Include="lua\lstate.h" />
     <ClInclude Include="lua\lstring.h" />
     <ClInclude Include="lua\ltable.h" />
     <ClInclude Include="lua\ltm.h" />
     <ClInclude Include="lua\lua.h" />
+    <ClInclude Include="lua\lua.hpp" />
     <ClInclude Include="lua\luaconf.h" />
     <ClInclude Include="lua\lualib.h" />
+    <ClInclude Include="lua\lua_cjson.h" />
     <ClInclude Include="lua\lundump.h" />
     <ClInclude Include="lua\lvm.h" />
     <ClInclude Include="lua\lzio.h" />
+    <ClInclude Include="lua\strbuf.h" />
     <ClInclude Include="lua\summer.h" />
     <ClInclude Include="md5\md5.h" />
     <ClInclude Include="config.h" />
@@ -54,7 +57,10 @@
     <ClCompile Include="lua\lapi.c" />
     <ClCompile Include="lua\lauxlib.c" />
     <ClCompile Include="lua\lbaselib.c" />
+    <ClCompile Include="lua\lbitlib.c" />
     <ClCompile Include="lua\lcode.c" />
+    <ClCompile Include="lua\lcorolib.c" />
+    <ClCompile Include="lua\lctype.c" />
     <ClCompile Include="lua\ldblib.c" />
     <ClCompile Include="lua\ldebug.c" />
     <ClCompile Include="lua\ldo.c" />
@@ -80,9 +86,9 @@
     <ClCompile Include="lua\ltm.c" />
     <ClCompile Include="lua\lua_cjson.c" />
     <ClCompile Include="lua\lundump.c" />
+    <ClCompile Include="lua\lutf8lib.c" />
     <ClCompile Include="lua\lvm.c" />
     <ClCompile Include="lua\lzio.c" />
-    <ClCompile Include="lua\print.c" />
     <ClCompile Include="lua\protoz_bit.c" />
     <ClCompile Include="lua\strbuf.c" />
     <ClCompile Include="lua\summer.cpp" />
