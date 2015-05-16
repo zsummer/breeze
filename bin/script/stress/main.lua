@@ -22,7 +22,7 @@ summer.registerDisconnect(function(sID, ip, port)
 
 --start summer
 summer.start()
-
+--debug.debug()
 --dump(config)
 --add connector
 for i=1, 3 do
