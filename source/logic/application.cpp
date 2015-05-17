@@ -26,7 +26,7 @@ Appliction::~Appliction()
 bool Appliction::init(std::string filename, unsigned int index)
 {
 	bool ret = false;
-
+	SessionManager::getRef().setStopClientsHandler(std::bind(&Appliction::_onSigalStop, this));
 	ret = ServerConfig::getRef().parse(filename, LogicNode, index);
 	if (!ret)
 	{
@@ -126,7 +126,7 @@ void Appliction::run()
 
 void Appliction::stop()
 {
-	//SessionManager::getRef().post(std::bind(&Appliction::_onSigalStop, this));
+	SessionManager::getRef().stopClients();
 }
 
 void Appliction::_onSigalStop()
@@ -145,6 +145,7 @@ void Appliction::_onDBClosed()
 {
     LOGA("Appliction::_onDBClosed(): stop main thread ...");
     SessionManager::getRef().stop(); //exit main thread.
+	SessionManager::getRef().stopAccept();
 }
 
 

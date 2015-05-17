@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014 YaweiZhang <yawei_zhang@foxmail.com>.
+* Copyright (C) 2014-2015 YaweiZhang <yawei_zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
