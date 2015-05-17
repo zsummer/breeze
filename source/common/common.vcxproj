@@ -78,6 +78,7 @@
     <ClCompile Include="lua\loslib.c" />
     <ClCompile Include="lua\lpack.c" />
     <ClCompile Include="lua\lparser.c" />
+    <ClCompile Include="lua\lproto4z.c" />
     <ClCompile Include="lua\lstate.c" />
     <ClCompile Include="lua\lstring.c" />
     <ClCompile Include="lua\lstrlib.c" />
@@ -89,7 +90,6 @@
     <ClCompile Include="lua\lutf8lib.c" />
     <ClCompile Include="lua\lvm.c" />
     <ClCompile Include="lua\lzio.c" />
-    <ClCompile Include="lua\protoz_bit.c" />
     <ClCompile Include="lua\strbuf.c" />
     <ClCompile Include="lua\summer.cpp" />
     <ClCompile Include="md5\md5.cpp" />

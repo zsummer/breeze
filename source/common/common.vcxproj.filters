@@ -188,6 +188,9 @@
     <ClCompile Include="lua\lparser.c">
       <Filter>lua</Filter>
     </ClCompile>
+    <ClCompile Include="lua\lproto4z.c">
+      <Filter>lua</Filter>
+    </ClCompile>
     <ClCompile Include="lua\lstate.c">
       <Filter>lua</Filter>
     </ClCompile>
@@ -219,9 +222,6 @@
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="lua\lzio.c">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\protoz_bit.c">
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="lua\strbuf.c">

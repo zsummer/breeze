@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2013-2015 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2013-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -130,9 +130,9 @@ static int checkStringToBit(lua_State *L)
 }
 
 
-luaL_Reg protoz_bit[] = {
-	{ "checkBitTrue", checkBitTrue },
-	{ "checkStringToBit", checkStringToBit },
+static luaL_Reg checkBit[] = {
+	{ "__checkBitTrue", checkBitTrue },
+	{ "__checkStringToBit", checkStringToBit },
 
 	{ NULL, NULL }
 };
@@ -140,13 +140,20 @@ luaL_Reg protoz_bit[] = {
 
 int luaopen_protoz_bit(lua_State *L)
 {
-	lua_newtable(L);
+	lua_getglobal(L, "Proto4z");
+	if (lua_isnil(L, -1))
+	{
+		lua_pop(L, 1);
+		lua_newtable(L);
+		lua_pushvalue(L, -1);
+		lua_setglobal(L, "Proto4z");
+	}
+	
 	luaL_Reg *l;
-	for (l = protoz_bit; l->name != NULL; l++) {
+	for (l = checkBit; l->name != NULL; l++) {
 		lua_pushcclosure(L, l->func, 0);  /* closure with those upvalues */
 		lua_setfield(L, -2, l->name);
 	}
-	lua_setglobal(L, "Protoz_bit");
 	return 0;
 }
 
