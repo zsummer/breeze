@@ -7,6 +7,7 @@
 #include "logic/testBlob/testBlob.h"
 #include "logic/testBlob/createTestAuthInfo.h"
 #include "logic/chat/chatManager.h"
+#include "logic/login/login.h"
 
 
 
@@ -99,7 +100,13 @@ bool Appliction::init(std::string filename, unsigned int index)
 	LOGI("ChatManager init success.");
 
 
-
+	ret = Login::getRef().init();
+	if (!ret)
+	{
+		LOGE("Login init false.");
+		return ret;
+	}
+	LOGI("Login init success.");
 
 
 
