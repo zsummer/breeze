@@ -75,11 +75,11 @@ namespace zsummer
 			void stop();
 
 			//阻塞当前线程并开始消息循环. 默认选用这个比较好. 当希望有更细力度的控制run的时候推荐使用runOnce
-			void run();
+			bool run();
 
 			//执行一次消息处理, 如果isImmediately为true, 则无论当前处理有无数据 都需要立即返回, 可以嵌入到任意一个线程中灵活使用
 			//默认为false,  如果没有网络消息和事件消息 则会阻塞一小段时间, 有消息通知会立刻被唤醒.
-			void runOnce(bool isImmediately = false);
+			bool runOnce(bool isImmediately = false);
 
 			//handle: std::function<void()>
 			//switch initiative, in the multi-thread it's switch call thread simultaneously.
