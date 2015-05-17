@@ -115,12 +115,14 @@ void NetManager::msg_onLinkServerReq(TcpSessionPtr session, ProtoID pID, ReadStr
 
 				inner->loginTime = time(NULL);
 				inner->sID = session->getSessionID();
+
 				session->setUserParam(inner->userInfo.uID);
 				session->setUserLParam(SS_LOGINED);
 				session->setUserRParam(time(NULL));
 				WriteStream ws(ID_LinkServerAck);
 				ws << ack;
 				session->doSend(ws.getStream(), ws.getStreamLen());
+
 				UserManager::getRef().userLogin(inner);
 				return;
 			}

@@ -94,7 +94,16 @@ void UserManager::addUser(const UserInfo & info)
 	_mapUser.insert(std::make_pair(info.uID, inner));
 	_mapNickName.insert(std::make_pair(info.nickName, inner));
 }
-
+void UserManager::setUserToken(UserID uID, std::string token, time_t expireTime)
+{
+	auto inner = getInnerUserInfo(uID);
+	if (inner)
+	{
+		inner->token.token = token;
+		inner->token.tokenExpire = (unsigned int)expireTime;
+		inner->token.uID = uID;
+	}
+}
 void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
 {
 	_mapSession[innerInfo->sID] = innerInfo;

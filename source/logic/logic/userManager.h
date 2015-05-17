@@ -48,10 +48,10 @@ public:
 	inline size_t getAllOnlineUserCount() { return _mapSession.size(); }
 	inline size_t getAllUserCount() { return _mapUser.size(); }
 
-    
-    
 public:
 	void addUser(const UserInfo & info);
+	void setUserToken(UserID uID, std::string token, time_t expireTime);
+public:
 	void userLogin(std::shared_ptr<InnerUserInfo> innerInfo);
 	void userLogout(std::shared_ptr<InnerUserInfo> innerInfo);
 protected:
