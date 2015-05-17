@@ -11,7 +11,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2013-2015 YaweiZhang <yawei_zhang@foxmail.com>.
+ * Copyright (C) 2013-2015 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,8 +39,8 @@
 
 
 -- proto4z core file
--- Auther: zhangyawei
--- mail:yawei_zhang@foxmail.com
+-- Author: zhangyawei
+-- mail:yawei.zhang@foxmail.com
 -- date: 2015-01-12
 
 
@@ -160,53 +160,6 @@ function Protoz.__checkType(tp)
 	error("Protoz.__checkType error. unknown val type=" .. tp .. ", trace=" .. debug.traceback())
 end
 
---[[--
-pack base type to binary stream
-@param __pack val.  base type value
-@param __pack tp.  type
-@return no result
-]]
-
---[[ -- lua 5.3 version
-function Protoz.__pack(val, tp)
-	if val == nil or tp == nil then
-		error(debug.traceback())
-	end
-	--print(tp .. "[" .. val .. "]")
-	-- integer type
-	if     tp == "i8" or tp == "char" then
-		return string.pack("<i1", val)
-	elseif tp == "ui8" or tp == "unsigned char" then
-		return string.pack("<I1", val)
-	elseif tp == "i16" or tp == "short" then
-		return string.pack("<i2", val)
-	elseif tp == "ui16" or tp == "unsigned short" then
-		return string.pack("<I2", val)	
-	elseif tp == "i32" or tp == "int" then
-		return string.pack("<i4", val)
-	elseif tp == "ui32" or tp == "unsigned int" then
-		return string.pack("<I4", val)	
-	elseif tp == "i64" or tp == "long long" then
-		return string.pack("<i8", val)
-	elseif tp == "ui64" or tp == "unsigned long long" then
-		return string.pack("<I8", val)	
-
-	-- string type
-	elseif tp == "string" then
-		return string.pack("<s2", val)
-
-	-- float type
-	elseif tp == "float" then
-		return string.pack("<f", val)
-	elseif tp == "double" then
-		return string.pack("<d", val)
-
-	-- error
-	else
-		error("unknown base data type when __pack it. val type=" .. type(val) .. "trace: " .. debug.traceback())
-	end
-end
-]]--
 
 -- lua 5.1 + lpack
 function Protoz.__pack(val, tp)
@@ -216,32 +169,32 @@ function Protoz.__pack(val, tp)
 	--print(tp .. "[" .. val .. "]")
 	-- integer type
 	if     tp == "i8" or tp == "char" then
-		return string.pack("<c", val)
+		return bpack("<c", val)
 	elseif tp == "ui8" or tp == "unsigned char" then
-		return string.pack("<b", val)
+		return bpack("<b", val)
 	elseif tp == "i16" or tp == "short" then
-		return string.pack("<h", val)
+		return bpack("<h", val)
 	elseif tp == "ui16" or tp == "unsigned short" then
-		return string.pack("<H", val)	
+		return bpack("<H", val)	
 	elseif tp == "i32" or tp == "int" then
-		return string.pack("<i", val)
+		return bpack("<i", val)
 	elseif tp == "ui32" or tp == "unsigned int" then
-		return string.pack("<I", val)	
+		return bpack("<I", val)	
 	elseif tp == "i64" or tp == "long long" or tp == "ui64" or tp == "unsigned long long" then
 		return string.sub(val, 1, 8)
 
 
 	-- string type
 	elseif tp == "string" then
-		local i = string.pack("<I", #val)
-		i = i .. string.pack("A", val)
+		local i = bpack("<I", #val)
+		i = i .. bpack("A", val)
 		return i
 
 	-- float type
 	elseif tp == "float" then
-		return string.pack("<f", val)
+		return bpack("<f", val)
 	elseif tp == "double" then
-		return string.pack("<d", val)
+		return bpack("<d", val)
 
 	-- error
 	else
@@ -250,53 +203,6 @@ function Protoz.__pack(val, tp)
 end
 
 
---[[--
-unpack base type from binary stream
-@param __unpack binData.  binary data stream
-@param __unpack pos. binary current begin unpack position
-@param __unpack tp.  type
-@return value, next pos
-]]
---[[ lua5.3
-function Protoz.__unpack(binData, pos, tp)
-	if binData == nil or tp == nil or pos == nil then
-		error("can't unpack binData. " .. debug.traceback())
-	end
-	-- integer type
-	if     tp == "i8" or tp == "char" then
-		return string.unpack("<i1", binData, pos)
-	elseif tp == "ui8" or tp == "unsigned char" then
-		return string.unpack("<I1", binData, pos)
-	elseif tp == "i16" or tp == "short" then
-		return string.unpack("<i2", binData, pos)
-	elseif tp == "ui16" or tp == "unsigned short" then
-		return string.unpack("<I2", binData, pos)
-	elseif tp == "i32" or tp == "int" then
-		return string.unpack("<i4", binData, pos)
-	elseif tp == "ui32" or tp == "unsigned int" then
-		return string.unpack("<I4", binData, pos)
-	elseif tp == "i64" or tp == "long long" then
-		return string.unpack("<i8", binData, pos)
-	elseif tp == "ui64" or tp == "unsigned long long" then
-		return string.unpack("<I8", binData, pos)
-
-	-- string type
-	elseif tp == "string" then
-		return string.unpack("<s2", binData, pos)
-
-	-- float type
-	elseif tp == "float" then
-		return string.unpack("<f", binData, pos)
-	elseif tp == "double" then
-		return string.unpack("<d", binData, pos)
-
-	else
-		--error("unknown binData to unpack . pos=" .. pos .. " tp=" .. tp .." trace: " .. debug.traceback())
-		return nil, pos
-	end
-
-end
-]]--
 -- lua 5.1 + lpack
 function Protoz.__unpack(binData, pos, tp)
 	if binData == nil or tp == nil or pos == nil then
@@ -306,30 +212,30 @@ function Protoz.__unpack(binData, pos, tp)
 	local v
 	-- integer type
 	if     tp == "i8" or tp == "char" then
-		n, v = string.unpack(binData, "<c", pos)
+		n, v = bunpack(binData, "<c", pos)
 	elseif tp == "ui8" or tp == "unsigned char" then
-		n, v = string.unpack(binData, "<b", pos)
+		n, v = bunpack(binData, "<b", pos)
 	elseif tp == "i16" or tp == "short" then
-		n, v = string.unpack(binData, "<h", pos)
+		n, v = bunpack(binData, "<h", pos)
 	elseif tp == "ui16" or tp == "unsigned short" then
-		n, v = string.unpack(binData, "<H", pos)
+		n, v = bunpack(binData, "<H", pos)
 	elseif tp == "i32" or tp == "int" then
-		n, v = string.unpack(binData, "<i", pos)
+		n, v = bunpack(binData, "<i", pos)
 	elseif tp == "ui32" or tp == "unsigned int" then
-		n, v = string.unpack(binData, "<I", pos)
+		n, v = bunpack(binData, "<I", pos)
 	elseif tp == "i64" or tp == "long long" or tp == "ui64" or tp == "unsigned long long" then
 		v = string.sub(binData, pos, pos+7)
 		n = pos +8
 	-- string type
 	elseif tp == "string" then
-		n, v = string.unpack(binData, "<I", pos)
-		n, v = string.unpack(binData, "<A" .. v, pos+4)
+		n, v = bunpack(binData, "<I", pos)
+		n, v = bunpack(binData, "<A" .. v, pos+4)
 
 	-- float type
 	elseif tp == "float" then
-		n, v = string.unpack(binData, "<f", pos)
+		n, v = bunpack(binData, "<f", pos)
 	elseif tp == "double" then
-		n, v = string.unpack(binData, "<d", pos)
+		n, v = bunpack(binData, "<d", pos)
 
 	else
 		--error("unknown binData to unpack . pos=" .. pos .. " tp=" .. tp .." trace: " .. debug.traceback())
@@ -422,7 +328,7 @@ function Protoz.__encode(obj, name, data)
 	--------------------------------------
 	if proto.__getDesc == "array" then
 		Protoz.__checkType(proto.__getTypeV)
-		data.data = data.data .. string.pack("<I", #obj) --this line lua5.3 or lua5.1+lpack all compatibility 
+		data.data = data.data .. bpack("<I", #obj) --this line lua5.3 or lua5.1+lpack all compatibility 
 		for i =1, #obj do
 			if type(obj[i]) ~= "table" then
 				data.data = data.data .. Protoz.__pack(obj[i], proto.__getTypeV)
@@ -435,7 +341,7 @@ function Protoz.__encode(obj, name, data)
 	elseif proto.__getDesc == "map" then
 		Protoz.__checkType(proto.__getTypeK)
 		Protoz.__checkType(proto.__getTypeV)
-		data.data = data.data .. string.pack("<I", #obj)--this line lua5.3 or lua5.1+lpack all compatibility 
+		data.data = data.data .. bpack("<I", #obj)--this line lua5.3 or lua5.1+lpack all compatibility 
 		for i =1, #obj do
 			if not Protoz.__isInnerType(proto.__getTypeK) or type(obj[i].k) == "table" then
 				error("unknown member type(obj[i].k)=" .. type(obj[i].k) .. ", type=" .. name .. "." .. proto.__getTypeK)
