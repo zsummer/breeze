@@ -51,7 +51,7 @@ public:
     
     
 public:
-	void addUser(std::shared_ptr<InnerUserInfo> innerInfo);
+	void addUser(const UserInfo & info);
 	void userLogin(std::shared_ptr<InnerUserInfo> innerInfo);
 	void userLogout(std::shared_ptr<InnerUserInfo> innerInfo);
 protected:

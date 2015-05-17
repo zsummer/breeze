@@ -47,10 +47,7 @@ bool UserManager::init()
 		auto mapInfo = UserInfo_FETCH(result);
 		for (auto & kv : mapInfo)
 		{
-			auto inner = std::make_shared<InnerUserInfo>();
-			inner->userInfo = kv.second;
-			_mapUser.insert(std::make_pair(kv.first, inner));
-			_mapNickName.insert(std::make_pair(kv.second.nickName, inner));
+			addUser(kv.second);
 		}
 		curID += mapInfo.size();
 	} while (true);
@@ -90,10 +87,12 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByNickName(const std
 	return nullptr;
 }
 
-void UserManager::addUser(std::shared_ptr<InnerUserInfo> innerInfo)
+void UserManager::addUser(const UserInfo & info)
 {
-	_mapUser[innerInfo->userInfo.uID] = innerInfo;
-	_mapNickName[innerInfo->userInfo.nickName] = innerInfo;
+	auto inner = std::make_shared<InnerUserInfo>();
+	inner->userInfo = info;
+	_mapUser.insert(std::make_pair(info.uID, inner));
+	_mapNickName.insert(std::make_pair(info.nickName, inner));
 }
 
 void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
