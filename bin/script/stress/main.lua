@@ -3,7 +3,7 @@
 
 local handler = require("script.stress.net")
 local config = require("config")
-dump = Protoz.dump
+dump = Proto4z.dump
 
 --event on connect
 summer.registerConnect(function(sID, ip, port)
@@ -36,7 +36,7 @@ end
 
 
 --local jsonData = cjson.decode("{\"Himi\":\"himigame.com\"}")
---Protoz.dump(jsonData)
+--Proto4z.dump(jsonData)
 --start summer event loop
 while 1 do
 	summer.runOnce()
