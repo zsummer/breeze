@@ -128,22 +128,21 @@ void Login::msg_onCreateUserReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 	info.nickName = req.nickName;
 	info.iconID = req.iconID;
 	std::string sql = UserInfo_INSERT(info);
-	DBManager::getRef().infoAsyncQuery(sql, std::bind(&Login::db_onCreateUser, this, _1, session));
+	DBManager::getRef().infoAsyncQuery(sql, std::bind(&Login::db_onCreateUser, this, _1, session, info));
 }
 
-void Login::db_onCreateUser(DBResultPtr result, TcpSessionPtr session)
+void Login::db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const UserInfo & info)
 {
 	CreateUserAck ack;
 	ack.retCode = EC_SUCCESS;
-	auto data =  UserInfo_FETCH(result);
-	if (data.empty())
+	if (result->getErrorCode() != QEC_SUCCESS)
 	{
 		ack.retCode = EC_DB_ERROR;
 	}
 	else
 	{
 		//!跨服务节点不能这么写
-		UserManager::getRef().addUser((*data.begin()).second);
+		UserManager::getRef().addUser(info);
 		//end
 
 		auto founder = _cache.find(session->getSessionID());
@@ -153,7 +152,7 @@ void Login::db_onCreateUser(DBResultPtr result, TcpSessionPtr session)
 		}
 		else
 		{
-			founder->second.push_back((*data.begin()).second);
+			founder->second.push_back(info);
 			ack.users = founder->second;
 		}
 	}

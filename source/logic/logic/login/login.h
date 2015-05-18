@@ -41,7 +41,7 @@ public:
 	void msg_onSelectUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 
 	void db_onFetchUsers(DBResultPtr result, TcpSessionPtr session);
-	void db_onCreateUser(DBResultPtr result, TcpSessionPtr session);
+	void db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const UserInfo &info);
 private:
 	//走数据库, 这里只是保存下认证/创建用户/选择用户这些流程时候的一些状态.
 	//玩家进入游戏后应该选择一个合适的时机清除掉.
