@@ -26,8 +26,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="stress\main.lua" />
-    <Compile Include="stress\net.lua" />
     <Compile Include="stress\proto4z.lua" />
+    <Compile Include="stress\user.lua" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

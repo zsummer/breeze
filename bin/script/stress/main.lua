@@ -1,24 +1,69 @@
 --require
 --process msg
-
-local handler = require("script.stress.net")
 local config = require("config")
+require("proto4z")
+require("ProtoCommon")
+require("ProtoLogin")
+require("user")
+
 dump = Proto4z.dump
+loge = summer.loge
+logw = summer.logw
+logi = summer.logi
+logd = summer.logd
+
+_sessions = {}
+
+function onConnect(sID, ip, port)
+    local session = _sessions[sID]
+    if not session then
+        return
+    end
+    session.ip = ip
+    session.port = port
+    session.user:onConnect(sID, ip, port)
+end
+
+function onDisconnect(sID, ip, port)
+    local session = _sessions[sID]
+    if not session then
+        return
+    end
+    session.user:onDisconnect(sID, ip, port)
+    _sessions[sID] = nil
+end
+
+function onMessage(sID, pID, binData)
+    local name = Proto4z.getName(pID)
+    if not name then
+        logw("onMessage. sID=" .. sID .. ", pID=" .. pID )
+        return
+    end
+    local msg = Proto4z.decode(binData, name)
+    local session = _sessions[sID]
+    if not session then
+        loge("onMessage not found session data")
+        return
+    end
+    if not session.user or not session.user["on_" .. name] then
+        loge("not have the message process function. name=on_" .. name)
+        return
+    end
+    --dump(msg)
+    --logd("onMessage. sID=" .. sID .. ", pID=" .. pID .. ", typename=" .. name )
+    session.user["on_" .. name](session.user, sID, msg)
+end
+
+
 
 --event on connect
-summer.registerConnect(function(sID, ip, port)
-							handler:onConnect(sID, ip, port)
-						end)
+summer.registerConnect(onConnect)
 
 --event on recv message
-summer.registerMessage(function(sID, pID, binData)
-							handler:onMessage(sID, pID, binData)
-						end)
+summer.registerMessage(onMessage)
 
 --event on disconnect
-summer.registerDisconnect(function(sID, ip, port)
-								handler:onDisconnect(sID, ip, port)
-							end)
+summer.registerDisconnect(onDisconnect)
 
 --start summer
 summer.start()
@@ -31,6 +76,9 @@ for i=1, 3 do
 		summer.logw("id == nil when addConnect")
 	end
 	summer.logi("new connect id=" .. id)
+    local session = {}
+    _sessions[id] = session
+    session.user  = User.new(sID)
 end
 
 
@@ -38,9 +86,8 @@ end
 --local jsonData = cjson.decode("{\"Himi\":\"himigame.com\"}")
 --Proto4z.dump(jsonData)
 --start summer event loop
-while 1 do
-	summer.runOnce()
---	summer.runOnce(true) -- call retuen is immediately.
+while summer.runOnce() do
+--	while summer.runOnce(true)  do -- call retuen is immediately.
 end
 
 
