@@ -98,6 +98,7 @@ int main(int argc, char* argv[])
 			lua_pop(L, 1);
 		}
 		lua_close(L);
+		getchar();
 		return (status) ? EXIT_FAILURE : EXIT_SUCCESS;
 	}
 

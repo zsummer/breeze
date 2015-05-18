@@ -93,11 +93,6 @@
   <ItemGroup>
     <ClCompile Include="stress.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\bin\script\stress\main.lua" />
-    <None Include="..\..\bin\script\stress\net.lua" />
-    <None Include="..\..\bin\script\stress\proto4z.lua" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
