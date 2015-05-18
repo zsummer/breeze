@@ -7,10 +7,7 @@ require("ProtoLogin")
 require("user")
 
 dump = Proto4z.dump
-loge = summer.loge
-logw = summer.logw
-logi = summer.logi
-logd = summer.logd
+
 
 _sessions = {}
 
