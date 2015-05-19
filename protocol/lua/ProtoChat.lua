@@ -45,7 +45,7 @@ Proto4z.ContactInfoArray.__getTypeV = "ContactInfo"
 Proto4z.ChatInfo = {} --聊天消息 
 Proto4z.ChatInfo.__getName = "ChatInfo" 
 Proto4z.ChatInfo.__getTag = "1111111111" 
-Proto4z.ChatInfo[1] = {name="id", type="ui32" } --msg id 
+Proto4z.ChatInfo[1] = {name="id", type="ui64" } --msg id 
 Proto4z.ChatInfo[2] = {name="chlType", type="ui8" } --channel type 
 Proto4z.ChatInfo[3] = {name="srcid", type="ui64" }  
 Proto4z.ChatInfo[4] = {name="srcName", type="string" } --src 

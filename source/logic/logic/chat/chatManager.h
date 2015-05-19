@@ -43,18 +43,18 @@ public:
 	//更新名片, 可选择更新到数据库还是更新给所有客户端
 	void insertContact(const ContactInfo & info);
 	void updateContact(const ContactInfo & info, bool writedb, bool broadcast);
-	void onUpdateContact(zsummer::mysql::DBResultPtr);
+	void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
 
 public:
 	void onUserLogin(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
 	void onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
 public:
 	void msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 	void msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 	
 private:
 	std::unordered_map<UserID, ContactInfo> _mapContact; //存储所有好友/名片信息
-	std::list<ChatInfo> _cacheChat[256]; //缓存最近的历史聊天记录.
 	GenObjectID _genID; //生成消息ID
 };
 

@@ -8,6 +8,9 @@
 
 ChatManager::ChatManager()
 {
+	MessageDispatcher::getRef().registerSessionMessage(ID_GetContactInfoReq, std::bind(&ChatManager::msg_onGetContactInfoReq, this, _1, _2, _3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_FriendOperationReq, std::bind(&ChatManager::msg_onFriendOperationReq, this, _1, _2, _3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_ChatReq, std::bind(&ChatManager::msg_onChatReq, this, _1, _2, _3));
 }
 
 bool ChatManager::init()
@@ -49,7 +52,31 @@ bool ChatManager::init()
 		curID += mapInfo.size();
 	} while (true);
 
-
+	//获取当前最大消息ID
+	_genID.initConfig(ServerConfig::getRef().getPlatID(), ServerConfig::getRef().getAreaID());
+	DBQuery q("select id from tb_ChatInfo where id >= ? and id < ?  order by id desc limit 1;");
+	q << _genID.getMinObjID();
+	q << _genID.getMaxObjID();
+	auto result = DBManager::getRef().infoQuery(q.popSQL());
+	if (result->getErrorCode() != QEC_SUCCESS)
+	{
+		LOGE("ChatManager::init() init error.  can't get current tb_ChatInfo id.  error=" << result->getLastError() << ", sql=" << result->sqlString());
+		return false;
+	}
+	if (result->haveRow())
+	{
+		try
+		{
+			UserID lastChatID = 0;
+			*result >> lastChatID;
+			_genID.setCurObjID(lastChatID);
+		}
+		catch (...)
+		{
+			LOGE("ChatManager::init() catch error.  can't get current tb_ChatInfo .  error=" << result->getLastError() << ", sql=" << result->sqlString());
+			return false;
+		}
+	}
 
 	//监控玩家登录和退出, 用来更新玩家在线状态, 如果之后独立为一个进程后, 该通知以消息通知的形式获得.
 	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN, std::bind(&ChatManager::onUserLogin, this, _1, _2, _3, _4, _5));
@@ -100,7 +127,7 @@ void ChatManager::insertContact(const ContactInfo & info)
 	auto sql = ContactInfo_INSERT(info);
 	if (!sql.empty())
 	{
-		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::onUpdateContact, this, _1));
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "insertContact"));
 	}
 }
 void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool broadcast)
@@ -110,7 +137,7 @@ void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool bro
 		auto sql = ContactInfo_UPDATE(info);
 		if (!sql.empty())
 		{
-			DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::onUpdateContact, this, _1));
+			DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "updateContact"));
 		}
 	}
 	
@@ -140,11 +167,11 @@ void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool bro
 
 
 
-void ChatManager::onUpdateContact(zsummer::mysql::DBResultPtr result)
+void ChatManager::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc)
 {
 	if (result->getErrorCode() != QEC_SUCCESS)
 	{
-		LOGE("onUpdateContact error. msg=" << result->getLastError() << ", sql=" << result->sqlString());
+		LOGE(desc << " error. msg=" << result->getLastError() << ", sql=" << result->sqlString());
 	}
 }
 
@@ -167,6 +194,35 @@ void ChatManager::msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, Re
 	WriteStream ws(ID_GetContactInfoAck);
 	ws << ack;
 	session->doSend(ws.getStream(), ws.getStreamLen());
+}
+
+void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+{
+	FriendOperationReq req;
+	rs >> req;
+
+	auto inner = UserManager::getRef().getInnerUserInfo(session->getSessionID());
+	if (!inner)
+	{
+		//.
+		return;
+	}
+
+	auto src = _mapContact.find(inner->userInfo.uID);
+	if (src == _mapContact.end())
+	{
+		return;
+	}
+
+	auto dst = _mapContact.find(req.uid);
+	if (dst == _mapContact.end())
+	{
+		return;
+	}
+
+	
+
+
 }
 
 
@@ -218,6 +274,10 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 // 			SessionManager::getRef().sendOrgSessionData(dstinner->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
 // 		}
 	}
+
+	auto chatsql = ChatInfo_INSERT(info);
+	DBManager::getRef().infoAsyncQuery(chatsql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
+
 	WriteStream ws(ID_ChatAck);
 	ChatAck ack;
 	ack.chlType = info.chlType;

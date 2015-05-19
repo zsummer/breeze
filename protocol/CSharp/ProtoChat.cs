@@ -251,7 +251,7 @@ namespace Proto4z
  
 	class ChatInfo: Proto4z.IProtoObject //聊天消息 
 	{	 
-		public Proto4z.ui32 id; //msg id 
+		public Proto4z.ui64 id; //msg id 
 		public Proto4z.ui8 chlType; //channel type 
 		public Proto4z.ui64 srcid;  
 		public Proto4z.String srcName; //src 
@@ -291,7 +291,7 @@ namespace Proto4z
 			offset.__decode(binData, ref pos); 
 			offset.val += (System.UInt32)pos; 
 			tag.__decode(binData, ref pos); 
-			id = new Proto4z.ui32(); 
+			id = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
 			{ 
 				id.__decode(binData, ref pos); 

@@ -162,7 +162,7 @@ typedef std::vector<ContactInfo> ContactInfoArray;
  
 struct ChatInfo //聊天消息 
 { 
-	unsigned int id; //msg id 
+	unsigned long long id; //msg id 
 	unsigned char chlType; //channel type 
 	unsigned long long srcid;  
 	std::string srcName; //src 

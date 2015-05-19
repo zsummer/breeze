@@ -86,7 +86,21 @@ function User:on_LinkServerAck(sID, msg)
 	    return
 	end
     logi("login success. account=" .. self.account .. ", nickName=" .. self.userinfo.nickName)
+
+	local data = Proto4z.encode({uid=self.uID}, "GetContactInfoReq")
+    summer.sendContent(sID, Proto4z.GetContactInfoReq.__getID, data) 
 end
 
+function User:on_GetContactInfoAck(sID, msg)
+	if msg.retCode ~= Proto4z.EC_SUCCESS then
+		loge("on_GetContactInfoAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
+	    return
+	end
+    logi("GetContactInfo success. totalFriends=" .. msg.totalFriends )
+	dump(msg, "GetContactInfo")
+
+	local data = Proto4z.encode({uid=self.uID}, "GetContactInfoReq")
+    summer.sendContent(sID, Proto4z.GetContactInfoReq.__getID, data) 
+end
 
 

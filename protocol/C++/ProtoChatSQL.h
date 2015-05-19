@@ -148,16 +148,16 @@ inline std::string ChatInfo_LOAD( unsigned long long curLoaded)
 	return q.popSQL(); 
 } 
  
-inline std::string ChatInfo_SELECT(unsigned int id) 
+inline std::string ChatInfo_SELECT(unsigned long long id) 
 { 
 	zsummer::mysql::DBQuery q(" select `id`,`chlType`,`srcid`,`srcName`,`srcIcon`,`dstid`,`dstName`,`dstIcon`,`msg`,`sendTime` from `tb_ChatInfo` where `id` = ? "); 
 	q << id; 
 	return q.popSQL(); 
 } 
  
-inline std::map<unsigned int, ChatInfo> ChatInfo_FETCH(zsummer::mysql::DBResultPtr ptr) 
+inline std::map<unsigned long long, ChatInfo> ChatInfo_FETCH(zsummer::mysql::DBResultPtr ptr) 
 { 
-	std::map<unsigned int, ChatInfo> ret; 
+	std::map<unsigned long long, ChatInfo> ret; 
 	if (ptr->getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
 	{ 
 		LOGE("fetch info from db found error. ErrorCode="  <<  ptr->getErrorCode() << ", Error=" << ptr->getLastError()); 

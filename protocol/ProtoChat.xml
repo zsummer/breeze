@@ -54,7 +54,7 @@
   <array name="ContactInfoArray" type="ContactInfo" desc="" />
 
   <struct name="ChatInfo" store="true" desc="聊天消息">
-  	<member name="id" type="ui32" key="true"  desc="msg id"/>
+  	<member name="id" type="ui64" key="true"  desc="msg id"/>
     <member name="chlType" type="ui8"   desc="channel type"/>
     <member name="srcid" type="ui64"   desc=""/>
     <member name="srcName" type="string"   desc="src"/>
@@ -101,7 +101,7 @@
   	<member name="retCode" type="ui16"   desc=""/>
   	<member name="chlType" type="ui8"   desc="channel type"/>
     <member name="dstid" type="ui64"   desc="userid or groupid"/>
-    <member name="msgid" type="ui32"   desc=""/>
+    <member name="msgid" type="ui64"   desc=""/>
   </proto>
 
   <proto name="ChatNotice" desc= "聊天通知" >
