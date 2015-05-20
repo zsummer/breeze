@@ -55,6 +55,7 @@ public:
 	
 private:
 	std::unordered_map<UserID, ContactInfo> _mapContact; //存储所有好友/名片信息
+	std::map<unsigned long long, UserIDArray> _channels;
 	GenObjectID _genID; //生成消息ID
 };
 

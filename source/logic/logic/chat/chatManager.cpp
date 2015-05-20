@@ -200,29 +200,156 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 {
 	FriendOperationReq req;
 	rs >> req;
-
+	FriendOperationAck ack;
+	ack.retCode = EC_SUCCESS;
+	ack.srcFlag = req.oFlag;
+	ack.dstUID = req.uid;
 	auto inner = UserManager::getRef().getInnerUserInfo(session->getSessionID());
 	if (!inner)
 	{
-		//.
+		ack.retCode = EC_PERMISSION_DENIED;
 		return;
 	}
+	ack.srcUID = inner->userInfo.uID;
+
 
 	auto src = _mapContact.find(inner->userInfo.uID);
 	if (src == _mapContact.end())
 	{
+		ack.retCode = EC_PARAM_DENIED;
 		return;
 	}
+	auto srcStatus = std::find_if(src->second.friends.begin(), src->second.friends.end(), [&req](const FriendInfo& info){return info.uid == req.uid; });
+
 
 	auto dst = _mapContact.find(req.uid);
 	if (dst == _mapContact.end())
 	{
+		ack.retCode = EC_PARAM_DENIED;
 		return;
 	}
+	auto dstStatus = std::find_if(dst->second.friends.begin(), dst->second.friends.end(), [&inner](const FriendInfo& info){return info.uid == inner->userInfo.uID; });
 
+
+	if (req.oFlag == FRIEND_ADDFRIEND)
+	{
+		if (dstStatus == dst->second.friends.end() || dstStatus->flag == FRIEND_REQUESTING)
+		{
+			if (dstStatus != dst->second.friends.end())
+			{
+				dst->second.friends.erase(dstStatus);
+			}
+			FriendInfo info;
+			info.flag = FRIEND_REQUESTING;
+			info.makeTime = time(NULL);
+			info.uid = src->second.uID;
+			dst->second.friends.push_back(info);
+			if (srcStatus == src->second.friends.end() || srcStatus->flag == FRIEND_WAITING)
+			{
+				if (srcStatus != src->second.friends.end())
+				{
+					src->second.friends.erase(srcStatus);
+				}
+				info.flag = FRIEND_WAITING;
+				info.uid = req.uid;
+				src->second.friends.push_back(info);
+			}
+		}
+		else
+		{
+			ack.retCode = EC_PARAM_DENIED;
+		}
+		
+	}
+	else if (req.oFlag == FRIEND_ADDBLACK)
+	{
+		src->second.friends.erase(srcStatus);
+		FriendInfo info;
+		info.flag = FRIEND_BLACKLIST;
+		info.makeTime = time(NULL);
+		info.uid = req.uid;
+		src->second.friends.push_back(info);
+		if (dstStatus != dst->second.friends.end() && dstStatus->flag != FRIEND_BLACKLIST)
+		{
+			dst->second.friends.erase(dstStatus);
+		}
+	}
+	else if (req.oFlag == FRIEND_REMOVEBLACK)
+	{
+		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_BLACKLIST)
+		{
+			src->second.friends.erase(srcStatus);
+		}
+		else
+		{
+			ack.retCode = EC_PARAM_DENIED;
+		}
+	}
+	else if (req.oFlag == FRIEND_REMOVEFRIEND)
+	{
+		if (srcStatus != src->second.friends.end() && srcStatus->flag != FRIEND_BLACKLIST)
+		{
+			src->second.friends.erase(srcStatus);
+		}
+		else
+		{
+			ack.retCode = EC_PARAM_DENIED;
+		}
+	}
+	else if (req.oFlag == FRIEND_ALLOW)
+	{
+		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
+		{
+			srcStatus->flag = FRIEND_ESTABLISHED;
+			srcStatus->makeTime = time(NULL);
+			dst->second.friends.erase(dstStatus);
+
+			FriendInfo info;
+			info.uid = inner->userInfo.uID;
+			info.makeTime = time(NULL);
+			info.flag = FRIEND_ESTABLISHED;
+			src->second.friends.push_back(info);
+		}
+		else
+		{
+			ack.retCode = EC_PARAM_DENIED;
+		}
+	}
+	else if (req.oFlag == FRIEND_REJECT)
+	{
+		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
+		{
+			src->second.friends.erase(srcStatus);
+			if (dstStatus != dst->second.friends.end() && dstStatus->flag == FRIEND_WAITING)
+			{
+				dst->second.friends.erase(dstStatus);
+			}
+		}
+		else
+		{
+			ack.retCode = EC_PARAM_DENIED;
+		}
+	}
+	else if (req.oFlag == FRIEND_IGNORE)
+	{
+		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
+		{
+			src->second.friends.erase(srcStatus);
+		}
+		else
+		{
+			ack.retCode = EC_PARAM_DENIED;
+		}
+	}
+	else 
+	{
+		ack.retCode = EC_PARAM_DENIED;
+	}
 	
-
-
+	
+	WriteStream ws(ID_FriendOperationAck);
+	ws << ack;
+	session->doSend(ws.getStream(), ws.getStreamLen());
 }
 
 
@@ -266,13 +393,42 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 	}
 	else if (info.chlType == CHANNEL_GROUP || info.chlType == CHANNEL_WORLD)
 	{
-// 		for ()
-// 		{
-// 			WriteStream ws(ID_ChatNotice);
-// 			ChatNotice notice;
-// 			notice.msgs.push_back(info);
-// 			SessionManager::getRef().sendOrgSessionData(dstinner->sesionInfo.sID, ws.getStream(), ws.getStreamLen());
-// 		}
+		WriteStream ws(ID_ChatNotice);
+		ChatNotice notice;
+		notice.msgs.push_back(info);
+		ws << notice;
+
+		if (info.chlType == CHANNEL_GROUP)
+		{
+			auto founder = _channels.find(info.dstid);
+			if (founder != _channels.end())
+			{
+				for (auto id : founder->second)
+				{
+					auto dstinner = UserManager::getRef().getInnerUserInfo(id);
+					if (!dstinner || dstinner->sID == InvalidSeesionID)
+					{
+						continue;;
+					}
+					SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
+				}
+				
+			}
+		}
+		else
+		{
+			for (auto &c : _mapContact)
+			{
+				auto dstinner = UserManager::getRef().getInnerUserInfo(c.first);
+				if (!dstinner || dstinner->sID == InvalidSeesionID)
+				{
+					continue;;
+				}
+				SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
+			}
+			
+		}
+		
 	}
 
 	auto chatsql = ChatInfo_INSERT(info);
