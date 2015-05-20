@@ -46,6 +46,7 @@
    	<member name="nickName" type="string"   desc="用户昵称"/>
   	<member name="iconID"  type="i16" desc="头像"/>
   	<member name="banned"  type="ui8" desc="禁言"/>
+  	<member name="groupid" type="ui64" desc="加入的群组ID, 0为没有加入任何群组" />
   	<member name="totalBlacks"  type="ui32" desc="被拉黑次数"/>
   	<member name="totalFriends"  type="ui32" desc="好友个数"/>
    	<member name="onlineFlag"  type="ui8" ignore="true" desc="在线状态0离线,1在线"/>
@@ -90,6 +91,11 @@
     <member name="dstUID" type="ui64"   desc=""/>
   </proto>
 
+  <proto name="JoinGropuReq" desc= "加入群组">
+  </proto>
+
+  <proto name="JoinGropuAck" desc= "加入群组">
+  </proto>
  
   <proto name="ChatReq" desc= "发送聊天请求">
   	<member name="chlType" type="ui8"   desc="channel type"/>
