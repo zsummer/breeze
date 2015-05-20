@@ -56,6 +56,8 @@ public:
 private:
 	std::unordered_map<UserID, ContactInfo> _mapContact; //存储所有好友/名片信息
 	std::map<unsigned long long, UserIDArray> _channels;
+
+	//负责分配一个支持SQL合服的64位ID.  [plat+ared+uniqueID]
 	GenObjectID _genID; //生成消息ID
 };
 
