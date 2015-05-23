@@ -145,7 +145,7 @@ void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long lon
 		founder->second.iconID = (short)iconID;
 		haveChange = true;
 	}
-	updateContact(founder->second, haveChange, true);
+	updateContact(founder->second, haveChange, false);
 }
 void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string)
 {

@@ -153,7 +153,7 @@ void NetManager::event_onSessionPulse(TcpSessionPtr session, unsigned int pulseI
 {
 	if (isSessionID(session->getSessionID()))
 	{
-		if (session->getUserParam() == SS_LOGINED || time(NULL) - session->getUserLParam() > pulseInterval * 2)
+		if (session->getUserLParam() == SS_LOGINED || time(NULL) - session->getUserRParam() > pulseInterval * 2)
 		{
 			session->close();
 			return;
@@ -178,7 +178,7 @@ void NetManager::msg_onHeartbeatEcho(TcpSessionPtr session, ProtoID pID, ReadStr
 
 void NetManager::event_onSessionEstablished(TcpSessionPtr session)
 {
-	session->setUserParam(SS_UNLOGIN);
+	session->setUserLParam(SS_UNLOGIN);
 	LOGT("NetManager::event_onSessionEstablished. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
 }
 
@@ -221,7 +221,7 @@ bool NetManager::on_preMessageProcess(TcpSessionPtr session, const char * blockB
 	ProtoID pID = rs.getProtoID();
 	if (pID >= 200)
 	{
-		if (session->getUserParam() != SS_LOGINED)
+		if (session->getUserLParam() != SS_LOGINED)
 		{
 			LOGW("on_preMessageProcess check authorization failed. protoID=" << pID << ", session authorization status=" << session->getUserParam());
 			return false;
