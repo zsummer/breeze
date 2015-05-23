@@ -77,6 +77,20 @@ Proto4z.GetContactInfoAck.__getTag = "11"
 Proto4z.GetContactInfoAck[1] = {name="retCode", type="ui16" }  
 Proto4z.GetContactInfoAck[2] = {name="contact", type="ContactInfo" }  
  
+Proto4z.register(1009,"GetSomeStrangersReq") 
+Proto4z.GetSomeStrangersReq = {} --获取一些陌生人 
+Proto4z.GetSomeStrangersReq.__getID = 1009 
+Proto4z.GetSomeStrangersReq.__getName = "GetSomeStrangersReq" 
+Proto4z.GetSomeStrangersReq.__getTag = "" 
+ 
+Proto4z.register(1010,"GetSomeStrangersAck") 
+Proto4z.GetSomeStrangersAck = {} --获取一些陌生人 
+Proto4z.GetSomeStrangersAck.__getID = 1010 
+Proto4z.GetSomeStrangersAck.__getName = "GetSomeStrangersAck" 
+Proto4z.GetSomeStrangersAck.__getTag = "11" 
+Proto4z.GetSomeStrangersAck[1] = {name="retCode", type="ui16" }  
+Proto4z.GetSomeStrangersAck[2] = {name="uIDs", type="UserIDArray" }  
+ 
 Proto4z.register(1002,"FriendOperationReq") 
 Proto4z.FriendOperationReq = {} --好友操作请求 
 Proto4z.FriendOperationReq.__getID = 1002 

@@ -460,6 +460,76 @@ namespace Proto4z
 		} 
 	} 
  
+	class GetSomeStrangersReq: Proto4z.IProtoObject //获取一些陌生人 
+	{	 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1009); } 
+		static public string getProtoName() { return "GetSomeStrangersReq"; } 
+		public System.Collections.Generic.List<byte> __encode() 
+		{ 
+			Proto4z.ui32 sttLen = 0; 
+			Proto4z.ui64 tag = 0; 
+			 
+			var data = new System.Collections.Generic.List<byte>(); 
+			sttLen = (System.UInt32)data.Count + 8; 
+			var ret = new System.Collections.Generic.List<byte>(); 
+			ret.AddRange(sttLen.__encode()); 
+			ret.AddRange(tag.__encode()); 
+			ret.AddRange(data); 
+			return ret; 
+		} 
+		public int __decode(byte[] binData, ref int pos) 
+		{ 
+			Proto4z.ui32 offset = 0; 
+			Proto4z.ui64 tag = 0; 
+			offset.__decode(binData, ref pos); 
+			offset.val += (System.UInt32)pos; 
+			tag.__decode(binData, ref pos); 
+			return (int)offset.val; 
+		} 
+	} 
+ 
+	class GetSomeStrangersAck: Proto4z.IProtoObject //获取一些陌生人 
+	{	 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1010); } 
+		static public string getProtoName() { return "GetSomeStrangersAck"; } 
+		public Proto4z.ui16 retCode;  
+		public Proto4z.UserIDArray uIDs;  
+		public System.Collections.Generic.List<byte> __encode() 
+		{ 
+			Proto4z.ui32 sttLen = 0; 
+			Proto4z.ui64 tag = 3; 
+			 
+			var data = new System.Collections.Generic.List<byte>(); 
+			data.AddRange(retCode.__encode()); 
+			data.AddRange(uIDs.__encode()); 
+			sttLen = (System.UInt32)data.Count + 8; 
+			var ret = new System.Collections.Generic.List<byte>(); 
+			ret.AddRange(sttLen.__encode()); 
+			ret.AddRange(tag.__encode()); 
+			ret.AddRange(data); 
+			return ret; 
+		} 
+		public int __decode(byte[] binData, ref int pos) 
+		{ 
+			Proto4z.ui32 offset = 0; 
+			Proto4z.ui64 tag = 0; 
+			offset.__decode(binData, ref pos); 
+			offset.val += (System.UInt32)pos; 
+			tag.__decode(binData, ref pos); 
+			retCode = new Proto4z.ui16(); 
+			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
+			{ 
+				retCode.__decode(binData, ref pos); 
+			} 
+			uIDs = new Proto4z.UserIDArray(); 
+			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
+			{ 
+				uIDs.__decode(binData, ref pos); 
+			} 
+			return (int)offset.val; 
+		} 
+	} 
+ 
 	class FriendOperationReq: Proto4z.IProtoObject //好友操作请求 
 	{	 
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1002); } 

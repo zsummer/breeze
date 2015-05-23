@@ -78,6 +78,13 @@
     <member name="contact" type="ContactInfo"   desc=""/>
   </proto>
 
+  <proto name="GetSomeStrangersReq" desc= "获取一些陌生人">
+  </proto>
+
+  <proto name="GetSomeStrangersAck" desc= "获取一些陌生人" >
+    <member name="retCode" type="ui16"   desc=""/>
+    <member name="uIDs" type="UserIDArray"   desc=""/>
+  </proto>
 
   <proto name="FriendOperationReq" desc= "好友操作请求">
     <member name="uID" type="ui64"   desc="目标ID"/>

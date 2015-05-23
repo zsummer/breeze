@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<xmlmd5>793a9a2b0e3a6b1af219e79715e62d7b</xmlmd5>
-<cppmd5>f0dcf927854bcf774247c58a5b3cb8ac</cppmd5>
-<luamd5>fd500a5d2853633779fa87f397cc6ada</luamd5>
-<csharpmd5>5016b0d1aefac2bb5f305aed641ecda2</csharpmd5>
+<xmlmd5>d52b19128c2798b9d694ad34997e3bd0</xmlmd5>
+<cppmd5>ce38575d65e57c9fc9e6397e633fa04f</cppmd5>
+<luamd5>b9736d62b9513e241a6528bebead021c</luamd5>
+<csharpmd5>d02f002f6cac513dca1edd69c3b662f4</csharpmd5>
 <sqlmd5>64e3dcecbea63282da01f555900da176</sqlmd5>
 
 <cacheNo>
@@ -14,6 +14,8 @@
 	<cache key = "ID_FriendOperationReq" No = "1002" /> 
 	<cache key = "ID_GetContactInfoAck" No = "1001" /> 
 	<cache key = "ID_GetContactInfoReq" No = "1000" /> 
+	<cache key = "ID_GetSomeStrangersAck" No = "1010" /> 
+	<cache key = "ID_GetSomeStrangersReq" No = "1009" /> 
 	<cache key = "ID_JoinGropuAck" No = "1008" /> 
 	<cache key = "ID_JoinGropuReq" No = "1007" /> 
 </cacheNo>

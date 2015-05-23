@@ -358,6 +358,86 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
+const unsigned short ID_GetSomeStrangersReq = 1009; //获取一些陌生人 
+struct GetSomeStrangersReq //获取一些陌生人 
+{ 
+	inline unsigned short GetProtoID() { return 1009;} 
+	inline std::string GetProtoName() { return "ID_GetSomeStrangersReq";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSomeStrangersReq & data) 
+{ 
+	unsigned long long tag = 0ULL; 
+	ws << (zsummer::proto4z::Integer)0; 
+	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
+	ws << tag; 
+	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
+	return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetSomeStrangersReq & data) 
+{ 
+	zsummer::proto4z::Integer sttLen = 0; 
+	rs >> sttLen; 
+	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
+	unsigned long long tag = 0; 
+	rs >> tag; 
+	cursor = cursor - rs.getStreamUnreadLen(); 
+	rs.skipOriginalData(sttLen - cursor); 
+	return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetSomeStrangersReq & info) 
+{ 
+; 
+	return stm; 
+} 
+ 
+const unsigned short ID_GetSomeStrangersAck = 1010; //获取一些陌生人 
+struct GetSomeStrangersAck //获取一些陌生人 
+{ 
+	unsigned short retCode;  
+	UserIDArray uIDs;  
+	GetSomeStrangersAck() 
+	{ 
+		retCode = 0; 
+	} 
+	inline unsigned short GetProtoID() { return 1010;} 
+	inline std::string GetProtoName() { return "ID_GetSomeStrangersAck";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSomeStrangersAck & data) 
+{ 
+	unsigned long long tag = 3ULL; 
+	ws << (zsummer::proto4z::Integer)0; 
+	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
+	ws << tag; 
+	ws << data.retCode; 
+	ws << data.uIDs; 
+	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
+	return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetSomeStrangersAck & data) 
+{ 
+	zsummer::proto4z::Integer sttLen = 0; 
+	rs >> sttLen; 
+	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
+	unsigned long long tag = 0; 
+	rs >> tag; 
+	if ( (1ULL << 0) & tag) 
+	{ 
+		rs >> data.retCode;  
+	} 
+	if ( (1ULL << 1) & tag) 
+	{ 
+		rs >> data.uIDs;  
+	} 
+	cursor = cursor - rs.getStreamUnreadLen(); 
+	rs.skipOriginalData(sttLen - cursor); 
+	return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetSomeStrangersAck & info) 
+{ 
+	stm << "retCode=" << info.retCode << ", uIDs=" << info.uIDs; 
+	return stm; 
+} 
+ 
 const unsigned short ID_FriendOperationReq = 1002; //好友操作请求 
 struct FriendOperationReq //好友操作请求 
 { 
