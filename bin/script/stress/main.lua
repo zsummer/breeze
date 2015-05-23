@@ -6,44 +6,43 @@ require("user")
 
 dump = Proto4z.dump
 
-
-_sessions = {}
+-- sID <=> user
+_users = {}
 function onConnect(sID, ip, port)
-    local session = _sessions[sID]
-    if not session then
+    local user = _users[sID]
+    if not user then
         return
     end
-    session.ip = ip
-    session.port = port
-    session.user:onConnect(sID, ip, port)
+    user.ip = ip
+    user.port = port
+    user:onConnect(sID, ip, port)
 end
 
 function onDisconnect(sID, ip, port)
-    local session = _sessions[sID]
-    if not session then
+    local user = _users[sID]
+    if not user then
         return
     end
-    session.user:onDisconnect(sID, ip, port)
- 
+    user:onDisconnect(sID, ip, port)
 end
 
 function onMessage(sID, pID, binData)
-    local name = Proto4z.getName(pID)
-    if not name then
-        logw("onMessage. sID=" .. sID .. ", pID=" .. pID )
+    local proto = Proto4z.getName(pID)
+    if not proto then
+        logw("onMessage. can not found this proto. sID=" .. sID .. ", pID=" .. pID )
         return
     end
-    local msg = Proto4z.decode(binData, name)
-    local session = _sessions[sID]
-    if not session then
-        loge("onMessage not found session data")
+    local msg = Proto4z.decode(binData, proto)
+    local user = _users[sID]
+    if not user then
+        logw("onMessage. can not found this session data (user). sID=" .. sID .. ", pID=" .. pID )
         return
     end
-    if not session.user or not session.user["on_" .. name] then
-        loge("not have the message process function. name=on_" .. name)
+    if not user or not user["on_" .. proto] then
+        loge("not have the message process function. name=on_" .. proto)
         return
     end
-    session.user["on_" .. name](session.user, sID, msg)
+    user["on_" .. proto](user, sID, msg)
 end
 
 
@@ -63,14 +62,14 @@ summer.start()
 --dump(config)
 --add connector
 for i=1, 1 do
-	local id = summer.addConnect({ip=config.connect.stress[1].ip, port=config.connect.stress[1].port, reconnect=4})
-	if id == nil then
-		summer.logw("id == nil when addConnect")
+	local sID = summer.addConnect({ip=config.connect.stress[1].ip, port=config.connect.stress[1].port, reconnect=4})
+	if sID == nil then
+		summer.logw("sID == nil when addConnect")
 	end
-	summer.logi("new connect id=" .. id)
-    local session = {}
-    _sessions[id] = session
-    session.user  = User.new(sID)
+	summer.logi("new connect sID=" .. sID)
+    local user =  User.new()
+    user.sID = sID
+    _users[sID] = user
 end
 
 
