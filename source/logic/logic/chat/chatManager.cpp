@@ -243,7 +243,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 	ack.retCode = EC_SUCCESS;
 	ack.srcFlag = req.oFlag;
 	ack.dstUID = req.uID;
-	auto inner = UserManager::getRef().getInnerUserInfo(session->getSessionID());
+	auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
 	if (!inner)
 	{
 		ack.retCode = EC_PERMISSION_DENIED;
@@ -395,7 +395,7 @@ void ChatManager::msg_onGetSomeStrangersReq(TcpSessionPtr session, ProtoID pID, 
 {
 	GetSomeStrangersReq req;
 	rs >> req;
-	auto inner = UserManager::getRef().getInnerUserInfo(session->getSessionID());
+	auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
 	if (!inner)
 	{
 		//.
@@ -406,14 +406,18 @@ void ChatManager::msg_onGetSomeStrangersReq(TcpSessionPtr session, ProtoID pID, 
 	ack.retCode = EC_SUCCESS;
 	for (auto & c : _contacts)
 	{
-		if (c.second.onlineFlag != 0)
-		{
-			ack.uIDs.push_back(c.first);
-		}
 		if (ack.uIDs.size() > 10)
 		{
 			break;
 		}
+		if (c.first == session->getUserParam())
+		{
+			continue;
+		}
+// 		if (c.second.onlineFlag != 0)
+// 		{
+ 			ack.uIDs.push_back(c.first);
+// 		}
 	}
 
 	WriteStream ws(ID_GetSomeStrangersAck);
@@ -425,7 +429,7 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 {
 	ChatReq req;
 	rs >> req;
-	auto inner = UserManager::getRef().getInnerUserInfo(session->getSessionID());
+	auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
 	if (!inner)
 	{
 		//.
