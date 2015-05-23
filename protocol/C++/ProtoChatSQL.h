@@ -11,6 +11,7 @@ inline std::vector<std::string> ContactInfo_BUILD()
 	ret.push_back("alter table `tb_ContactInfo` add `nickName`  varchar(255) NOT NULL DEFAULT '' "); 
 	ret.push_back("alter table `tb_ContactInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
 	ret.push_back("alter table `tb_ContactInfo` add `banned`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+	ret.push_back("alter table `tb_ContactInfo` add `groupID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
 	ret.push_back("alter table `tb_ContactInfo` add `totalBlacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
 	ret.push_back("alter table `tb_ContactInfo` add `totalFriends`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
 	ret.push_back("alter table `tb_ContactInfo` add `friends`  blob "); 
@@ -19,14 +20,14 @@ inline std::vector<std::string> ContactInfo_BUILD()
  
 inline std::string ContactInfo_LOAD( unsigned long long curLoaded) 
 { 
-	zsummer::mysql::DBQuery q(" select `uID`,`nickName`,`iconID`,`banned`,`totalBlacks`,`totalFriends`,`friends` from `tb_ContactInfo` order by `uID` desc limit ?, 1000 "); 
+	zsummer::mysql::DBQuery q(" select `uID`,`nickName`,`iconID`,`banned`,`groupID`,`totalBlacks`,`totalFriends`,`friends` from `tb_ContactInfo` order by `uID` desc limit ?, 1000 "); 
 	q << curLoaded; 
 	return q.popSQL(); 
 } 
  
 inline std::string ContactInfo_SELECT(unsigned long long uID) 
 { 
-	zsummer::mysql::DBQuery q(" select `uID`,`nickName`,`iconID`,`banned`,`totalBlacks`,`totalFriends`,`friends` from `tb_ContactInfo` where `uID` = ? "); 
+	zsummer::mysql::DBQuery q(" select `uID`,`nickName`,`iconID`,`banned`,`groupID`,`totalBlacks`,`totalFriends`,`friends` from `tb_ContactInfo` where `uID` = ? "); 
 	q << uID; 
 	return q.popSQL(); 
 } 
@@ -48,6 +49,7 @@ inline std::map<unsigned long long, ContactInfo> ContactInfo_FETCH(zsummer::mysq
 			*ptr >> info.nickName; 
 			*ptr >> info.iconID; 
 			*ptr >> info.banned; 
+			*ptr >> info.groupID; 
 			*ptr >> info.totalBlacks; 
 			*ptr >> info.totalFriends; 
 			try 
@@ -78,11 +80,12 @@ inline std::map<unsigned long long, ContactInfo> ContactInfo_FETCH(zsummer::mysq
  
 inline std::string ContactInfo_INSERT( const ContactInfo & info)  
 { 
-	zsummer::mysql::DBQuery q(" insert into tb_ContactInfo( `uID`,`nickName`,`iconID`,`banned`,`totalBlacks`,`totalFriends`,`friends` ) values(?,?,?,?,?,?,?  )"); 
+	zsummer::mysql::DBQuery q(" insert into tb_ContactInfo( `uID`,`nickName`,`iconID`,`banned`,`groupID`,`totalBlacks`,`totalFriends`,`friends` ) values(?,?,?,?,?,?,?,?  )"); 
 	q << info.uID; 
 	q << info.nickName; 
 	q << info.iconID; 
 	q << info.banned; 
+	q << info.groupID; 
 	q << info.totalBlacks; 
 	q << info.totalFriends; 
 	try 
@@ -102,11 +105,12 @@ inline std::string ContactInfo_INSERT( const ContactInfo & info)
  
 inline std::string ContactInfo_UPDATE( const ContactInfo & info)  
 { 
-	zsummer::mysql::DBQuery q(" insert into tb_ContactInfo(uID) values(?) on duplicate key update `nickName` = ?,`iconID` = ?,`banned` = ?,`totalBlacks` = ?,`totalFriends` = ?,`friends` = ?  "); 
+	zsummer::mysql::DBQuery q(" insert into tb_ContactInfo(uID) values(?) on duplicate key update `nickName` = ?,`iconID` = ?,`banned` = ?,`groupID` = ?,`totalBlacks` = ?,`totalFriends` = ?,`friends` = ?  "); 
 	q << info.uID; 
 	q << info.nickName; 
 	q << info.iconID; 
 	q << info.banned; 
+	q << info.groupID; 
 	q << info.totalBlacks; 
 	q << info.totalFriends; 
 	try 
@@ -128,12 +132,12 @@ inline std::vector<std::string> ChatInfo_BUILD()
 { 
 	std::vector<std::string> ret; 
 	ret.push_back("desc `tb_ChatInfo`"); 
-	ret.push_back("CREATE TABLE `tb_ChatInfo` (`id` bigint(20) unsigned NOT NULL DEFAULT '0' ,  PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+	ret.push_back("CREATE TABLE `tb_ChatInfo` (`mID` bigint(20) unsigned NOT NULL DEFAULT '0' ,  PRIMARY KEY(`mID`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
 	ret.push_back("alter table `tb_ChatInfo` add `chlType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-	ret.push_back("alter table `tb_ChatInfo` add `srcid`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+	ret.push_back("alter table `tb_ChatInfo` add `srcID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
 	ret.push_back("alter table `tb_ChatInfo` add `srcName`  varchar(255) NOT NULL DEFAULT '' "); 
 	ret.push_back("alter table `tb_ChatInfo` add `srcIcon`  bigint(20) NOT NULL DEFAULT '0' "); 
-	ret.push_back("alter table `tb_ChatInfo` add `dstid`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+	ret.push_back("alter table `tb_ChatInfo` add `dstID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
 	ret.push_back("alter table `tb_ChatInfo` add `dstName`  varchar(255) NOT NULL DEFAULT '' "); 
 	ret.push_back("alter table `tb_ChatInfo` add `dstIcon`  bigint(20) NOT NULL DEFAULT '0' "); 
 	ret.push_back("alter table `tb_ChatInfo` add `msg`  varchar(255) NOT NULL DEFAULT '' "); 
@@ -143,15 +147,15 @@ inline std::vector<std::string> ChatInfo_BUILD()
  
 inline std::string ChatInfo_LOAD( unsigned long long curLoaded) 
 { 
-	zsummer::mysql::DBQuery q(" select `id`,`chlType`,`srcid`,`srcName`,`srcIcon`,`dstid`,`dstName`,`dstIcon`,`msg`,`sendTime` from `tb_ChatInfo` order by `id` desc limit ?, 1000 "); 
+	zsummer::mysql::DBQuery q(" select `mID`,`chlType`,`srcID`,`srcName`,`srcIcon`,`dstID`,`dstName`,`dstIcon`,`msg`,`sendTime` from `tb_ChatInfo` order by `mID` desc limit ?, 1000 "); 
 	q << curLoaded; 
 	return q.popSQL(); 
 } 
  
-inline std::string ChatInfo_SELECT(unsigned long long id) 
+inline std::string ChatInfo_SELECT(unsigned long long mID) 
 { 
-	zsummer::mysql::DBQuery q(" select `id`,`chlType`,`srcid`,`srcName`,`srcIcon`,`dstid`,`dstName`,`dstIcon`,`msg`,`sendTime` from `tb_ChatInfo` where `id` = ? "); 
-	q << id; 
+	zsummer::mysql::DBQuery q(" select `mID`,`chlType`,`srcID`,`srcName`,`srcIcon`,`dstID`,`dstName`,`dstIcon`,`msg`,`sendTime` from `tb_ChatInfo` where `mID` = ? "); 
+	q << mID; 
 	return q.popSQL(); 
 } 
  
@@ -168,17 +172,17 @@ inline std::map<unsigned long long, ChatInfo> ChatInfo_FETCH(zsummer::mysql::DBR
 		while (ptr->haveRow()) 
 		{ 
 			ChatInfo info; 
-			*ptr >> info.id; 
+			*ptr >> info.mID; 
 			*ptr >> info.chlType; 
-			*ptr >> info.srcid; 
+			*ptr >> info.srcID; 
 			*ptr >> info.srcName; 
 			*ptr >> info.srcIcon; 
-			*ptr >> info.dstid; 
+			*ptr >> info.dstID; 
 			*ptr >> info.dstName; 
 			*ptr >> info.dstIcon; 
 			*ptr >> info.msg; 
 			*ptr >> info.sendTime; 
-			ret[info.id] = info; 
+			ret[info.mID] = info; 
 		} 
 	} 
 	catch(std::runtime_error e) 
@@ -192,13 +196,13 @@ inline std::map<unsigned long long, ChatInfo> ChatInfo_FETCH(zsummer::mysql::DBR
  
 inline std::string ChatInfo_INSERT( const ChatInfo & info)  
 { 
-	zsummer::mysql::DBQuery q(" insert into tb_ChatInfo( `id`,`chlType`,`srcid`,`srcName`,`srcIcon`,`dstid`,`dstName`,`dstIcon`,`msg`,`sendTime` ) values(?,?,?,?,?,?,?,?,?,?  )"); 
-	q << info.id; 
+	zsummer::mysql::DBQuery q(" insert into tb_ChatInfo( `mID`,`chlType`,`srcID`,`srcName`,`srcIcon`,`dstID`,`dstName`,`dstIcon`,`msg`,`sendTime` ) values(?,?,?,?,?,?,?,?,?,?  )"); 
+	q << info.mID; 
 	q << info.chlType; 
-	q << info.srcid; 
+	q << info.srcID; 
 	q << info.srcName; 
 	q << info.srcIcon; 
-	q << info.dstid; 
+	q << info.dstID; 
 	q << info.dstName; 
 	q << info.dstIcon; 
 	q << info.msg; 
@@ -209,13 +213,13 @@ inline std::string ChatInfo_INSERT( const ChatInfo & info)
  
 inline std::string ChatInfo_UPDATE( const ChatInfo & info)  
 { 
-	zsummer::mysql::DBQuery q(" insert into tb_ChatInfo(id) values(?) on duplicate key update `chlType` = ?,`srcid` = ?,`srcName` = ?,`srcIcon` = ?,`dstid` = ?,`dstName` = ?,`dstIcon` = ?,`msg` = ?,`sendTime` = ?  "); 
-	q << info.id; 
+	zsummer::mysql::DBQuery q(" insert into tb_ChatInfo(mID) values(?) on duplicate key update `chlType` = ?,`srcID` = ?,`srcName` = ?,`srcIcon` = ?,`dstID` = ?,`dstName` = ?,`dstIcon` = ?,`msg` = ?,`sendTime` = ?  "); 
+	q << info.mID; 
 	q << info.chlType; 
-	q << info.srcid; 
+	q << info.srcID; 
 	q << info.srcName; 
 	q << info.srcIcon; 
-	q << info.dstid; 
+	q << info.dstID; 
 	q << info.dstName; 
 	q << info.dstIcon; 
 	q << info.msg; 

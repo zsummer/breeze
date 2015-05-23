@@ -60,7 +60,7 @@ namespace Proto4z
  
 	class FriendInfo: Proto4z.IProtoObject //好友信息 
 	{	 
-		public Proto4z.ui64 uid;  
+		public Proto4z.ui64 uID;  
 		public Proto4z.ui8 flag; //状态标志 
 		public Proto4z.ui32 makeTime; //建立时间 
 		public System.Collections.Generic.List<byte> __encode() 
@@ -69,7 +69,7 @@ namespace Proto4z
 			Proto4z.ui64 tag = 7; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
-			data.AddRange(uid.__encode()); 
+			data.AddRange(uID.__encode()); 
 			data.AddRange(flag.__encode()); 
 			data.AddRange(makeTime.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
@@ -86,10 +86,10 @@ namespace Proto4z
 			offset.__decode(binData, ref pos); 
 			offset.val += (System.UInt32)pos; 
 			tag.__decode(binData, ref pos); 
-			uid = new Proto4z.ui64(); 
+			uID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
 			{ 
-				uid.__decode(binData, ref pos); 
+				uID.__decode(binData, ref pos); 
 			} 
 			flag = new Proto4z.ui8(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
@@ -142,6 +142,7 @@ namespace Proto4z
 		public Proto4z.String nickName; //用户昵称 
 		public Proto4z.i16 iconID; //头像 
 		public Proto4z.ui8 banned; //禁言 
+		public Proto4z.ui64 groupID; //加入的群组ID, 0为没有加入任何群组 
 		public Proto4z.ui32 totalBlacks; //被拉黑次数 
 		public Proto4z.ui32 totalFriends; //好友个数 
 		public Proto4z.ui8 onlineFlag; //在线状态0离线,1在线 
@@ -149,13 +150,14 @@ namespace Proto4z
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 255; 
+			Proto4z.ui64 tag = 511; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(uID.__encode()); 
 			data.AddRange(nickName.__encode()); 
 			data.AddRange(iconID.__encode()); 
 			data.AddRange(banned.__encode()); 
+			data.AddRange(groupID.__encode()); 
 			data.AddRange(totalBlacks.__encode()); 
 			data.AddRange(totalFriends.__encode()); 
 			data.AddRange(onlineFlag.__encode()); 
@@ -194,23 +196,28 @@ namespace Proto4z
 			{ 
 				banned.__decode(binData, ref pos); 
 			} 
-			totalBlacks = new Proto4z.ui32(); 
+			groupID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 4)) != 0) 
+			{ 
+				groupID.__decode(binData, ref pos); 
+			} 
+			totalBlacks = new Proto4z.ui32(); 
+			if ((tag.val & ((System.UInt64)1 << 5)) != 0) 
 			{ 
 				totalBlacks.__decode(binData, ref pos); 
 			} 
 			totalFriends = new Proto4z.ui32(); 
-			if ((tag.val & ((System.UInt64)1 << 5)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 6)) != 0) 
 			{ 
 				totalFriends.__decode(binData, ref pos); 
 			} 
 			onlineFlag = new Proto4z.ui8(); 
-			if ((tag.val & ((System.UInt64)1 << 6)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 7)) != 0) 
 			{ 
 				onlineFlag.__decode(binData, ref pos); 
 			} 
 			friends = new Proto4z.FriendInfoArray(); 
-			if ((tag.val & ((System.UInt64)1 << 7)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 8)) != 0) 
 			{ 
 				friends.__decode(binData, ref pos); 
 			} 
@@ -251,12 +258,12 @@ namespace Proto4z
  
 	class ChatInfo: Proto4z.IProtoObject //聊天消息 
 	{	 
-		public Proto4z.ui64 id; //msg id 
+		public Proto4z.ui64 mID; //msg id 
 		public Proto4z.ui8 chlType; //channel type 
-		public Proto4z.ui64 srcid;  
+		public Proto4z.ui64 srcID;  
 		public Proto4z.String srcName; //src 
 		public Proto4z.i16 srcIcon; //src 
-		public Proto4z.ui64 dstid; //userid or groupid 
+		public Proto4z.ui64 dstID; //userid or groupid 
 		public Proto4z.String dstName; //src 
 		public Proto4z.i16 dstIcon; //src 
 		public Proto4z.String msg;  
@@ -267,12 +274,12 @@ namespace Proto4z
 			Proto4z.ui64 tag = 1023; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
-			data.AddRange(id.__encode()); 
+			data.AddRange(mID.__encode()); 
 			data.AddRange(chlType.__encode()); 
-			data.AddRange(srcid.__encode()); 
+			data.AddRange(srcID.__encode()); 
 			data.AddRange(srcName.__encode()); 
 			data.AddRange(srcIcon.__encode()); 
-			data.AddRange(dstid.__encode()); 
+			data.AddRange(dstID.__encode()); 
 			data.AddRange(dstName.__encode()); 
 			data.AddRange(dstIcon.__encode()); 
 			data.AddRange(msg.__encode()); 
@@ -291,20 +298,20 @@ namespace Proto4z
 			offset.__decode(binData, ref pos); 
 			offset.val += (System.UInt32)pos; 
 			tag.__decode(binData, ref pos); 
-			id = new Proto4z.ui64(); 
+			mID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
 			{ 
-				id.__decode(binData, ref pos); 
+				mID.__decode(binData, ref pos); 
 			} 
 			chlType = new Proto4z.ui8(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
 				chlType.__decode(binData, ref pos); 
 			} 
-			srcid = new Proto4z.ui64(); 
+			srcID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
 			{ 
-				srcid.__decode(binData, ref pos); 
+				srcID.__decode(binData, ref pos); 
 			} 
 			srcName = new Proto4z.String(); 
 			if ((tag.val & ((System.UInt64)1 << 3)) != 0) 
@@ -316,10 +323,10 @@ namespace Proto4z
 			{ 
 				srcIcon.__decode(binData, ref pos); 
 			} 
-			dstid = new Proto4z.ui64(); 
+			dstID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 5)) != 0) 
 			{ 
-				dstid.__decode(binData, ref pos); 
+				dstID.__decode(binData, ref pos); 
 			} 
 			dstName = new Proto4z.String(); 
 			if ((tag.val & ((System.UInt64)1 << 6)) != 0) 
@@ -380,14 +387,14 @@ namespace Proto4z
 	{	 
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1000); } 
 		static public string getProtoName() { return "GetContactInfoReq"; } 
-		public Proto4z.ui64 uid;  
+		public Proto4z.ui64 uID;  
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
 			Proto4z.ui64 tag = 1; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
-			data.AddRange(uid.__encode()); 
+			data.AddRange(uID.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
 			var ret = new System.Collections.Generic.List<byte>(); 
 			ret.AddRange(sttLen.__encode()); 
@@ -402,10 +409,10 @@ namespace Proto4z
 			offset.__decode(binData, ref pos); 
 			offset.val += (System.UInt32)pos; 
 			tag.__decode(binData, ref pos); 
-			uid = new Proto4z.ui64(); 
+			uID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
 			{ 
-				uid.__decode(binData, ref pos); 
+				uID.__decode(binData, ref pos); 
 			} 
 			return (int)offset.val; 
 		} 
@@ -457,7 +464,7 @@ namespace Proto4z
 	{	 
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1002); } 
 		static public string getProtoName() { return "FriendOperationReq"; } 
-		public Proto4z.ui64 uid; //目标ID 
+		public Proto4z.ui64 uID; //目标ID 
 		public Proto4z.ui8 oFlag; //操作指令 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -465,7 +472,7 @@ namespace Proto4z
 			Proto4z.ui64 tag = 3; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
-			data.AddRange(uid.__encode()); 
+			data.AddRange(uID.__encode()); 
 			data.AddRange(oFlag.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
 			var ret = new System.Collections.Generic.List<byte>(); 
@@ -481,10 +488,10 @@ namespace Proto4z
 			offset.__decode(binData, ref pos); 
 			offset.val += (System.UInt32)pos; 
 			tag.__decode(binData, ref pos); 
-			uid = new Proto4z.ui64(); 
+			uID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
 			{ 
-				uid.__decode(binData, ref pos); 
+				uID.__decode(binData, ref pos); 
 			} 
 			oFlag = new Proto4z.ui8(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
@@ -551,12 +558,68 @@ namespace Proto4z
 		} 
 	} 
  
+	class JoinGropuReq: Proto4z.IProtoObject //加入群组 
+	{	 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1007); } 
+		static public string getProtoName() { return "JoinGropuReq"; } 
+		public System.Collections.Generic.List<byte> __encode() 
+		{ 
+			Proto4z.ui32 sttLen = 0; 
+			Proto4z.ui64 tag = 0; 
+			 
+			var data = new System.Collections.Generic.List<byte>(); 
+			sttLen = (System.UInt32)data.Count + 8; 
+			var ret = new System.Collections.Generic.List<byte>(); 
+			ret.AddRange(sttLen.__encode()); 
+			ret.AddRange(tag.__encode()); 
+			ret.AddRange(data); 
+			return ret; 
+		} 
+		public int __decode(byte[] binData, ref int pos) 
+		{ 
+			Proto4z.ui32 offset = 0; 
+			Proto4z.ui64 tag = 0; 
+			offset.__decode(binData, ref pos); 
+			offset.val += (System.UInt32)pos; 
+			tag.__decode(binData, ref pos); 
+			return (int)offset.val; 
+		} 
+	} 
+ 
+	class JoinGropuAck: Proto4z.IProtoObject //加入群组 
+	{	 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1008); } 
+		static public string getProtoName() { return "JoinGropuAck"; } 
+		public System.Collections.Generic.List<byte> __encode() 
+		{ 
+			Proto4z.ui32 sttLen = 0; 
+			Proto4z.ui64 tag = 0; 
+			 
+			var data = new System.Collections.Generic.List<byte>(); 
+			sttLen = (System.UInt32)data.Count + 8; 
+			var ret = new System.Collections.Generic.List<byte>(); 
+			ret.AddRange(sttLen.__encode()); 
+			ret.AddRange(tag.__encode()); 
+			ret.AddRange(data); 
+			return ret; 
+		} 
+		public int __decode(byte[] binData, ref int pos) 
+		{ 
+			Proto4z.ui32 offset = 0; 
+			Proto4z.ui64 tag = 0; 
+			offset.__decode(binData, ref pos); 
+			offset.val += (System.UInt32)pos; 
+			tag.__decode(binData, ref pos); 
+			return (int)offset.val; 
+		} 
+	} 
+ 
 	class ChatReq: Proto4z.IProtoObject //发送聊天请求 
 	{	 
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1004); } 
 		static public string getProtoName() { return "ChatReq"; } 
 		public Proto4z.ui8 chlType; //channel type 
-		public Proto4z.ui64 dstid; //userid or groupid 
+		public Proto4z.ui64 dstID; //userID or groupID 
 		public Proto4z.String msg; //msg 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -565,7 +628,7 @@ namespace Proto4z
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(chlType.__encode()); 
-			data.AddRange(dstid.__encode()); 
+			data.AddRange(dstID.__encode()); 
 			data.AddRange(msg.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
 			var ret = new System.Collections.Generic.List<byte>(); 
@@ -586,10 +649,10 @@ namespace Proto4z
 			{ 
 				chlType.__decode(binData, ref pos); 
 			} 
-			dstid = new Proto4z.ui64(); 
+			dstID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
-				dstid.__decode(binData, ref pos); 
+				dstID.__decode(binData, ref pos); 
 			} 
 			msg = new Proto4z.String(); 
 			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
@@ -606,8 +669,8 @@ namespace Proto4z
 		static public string getProtoName() { return "ChatAck"; } 
 		public Proto4z.ui16 retCode;  
 		public Proto4z.ui8 chlType; //channel type 
-		public Proto4z.ui64 dstid; //userid or groupid 
-		public Proto4z.ui32 msgid;  
+		public Proto4z.ui64 dstID; //userID or groupID 
+		public Proto4z.ui64 msgID;  
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
@@ -616,8 +679,8 @@ namespace Proto4z
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(retCode.__encode()); 
 			data.AddRange(chlType.__encode()); 
-			data.AddRange(dstid.__encode()); 
-			data.AddRange(msgid.__encode()); 
+			data.AddRange(dstID.__encode()); 
+			data.AddRange(msgID.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
 			var ret = new System.Collections.Generic.List<byte>(); 
 			ret.AddRange(sttLen.__encode()); 
@@ -642,15 +705,15 @@ namespace Proto4z
 			{ 
 				chlType.__decode(binData, ref pos); 
 			} 
-			dstid = new Proto4z.ui64(); 
+			dstID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
 			{ 
-				dstid.__decode(binData, ref pos); 
+				dstID.__decode(binData, ref pos); 
 			} 
-			msgid = new Proto4z.ui32(); 
+			msgID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 3)) != 0) 
 			{ 
-				msgid.__decode(binData, ref pos); 
+				msgID.__decode(binData, ref pos); 
 			} 
 			return (int)offset.val; 
 		} 

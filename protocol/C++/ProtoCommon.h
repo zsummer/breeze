@@ -3,16 +3,13 @@
 #define _PROTOCOMMON_H_ 
  
 const unsigned short EC_SUCCESS = 0; //成功 
-const unsigned short EC_UNKOWN_ERROR = 1; //未知错误 
+const unsigned short EC_ERROR = 1; //错误 
 const unsigned short EC_INNER_ERROR = 2; //内部错误 
 const unsigned short EC_DB_ERROR = 3; //数据库错误 
 const unsigned short EC_PARAM_DENIED = 4; //非法参数 
-const unsigned short EC_PERMISSION_DENIED = 5; //权限非法 
-const unsigned short EC_SYSTEM_ERROR = 6; //系统错误 
-const unsigned short EC_INVALIDE_USERID = 50; //用户ID无效 
-const unsigned short EC_AUTH_USER_NOT_EXIST = 60; //认证错误:用户不存在 
-const unsigned short EC_AUTH_PASSWD_INCORRECT = 61; //认证错误:密码错误 
-const unsigned short EC_NO_USER = 62; //没有该用户 
+const unsigned short EC_PERMISSION_DENIED = 5; //权限错误 
+const unsigned short EC_INVALIDE_USER = 50; //错误的用户信息 
+const unsigned short EC_TOKEN_EXPIRE = 51; //令牌过期 
  
 struct SessionToken //认证令牌 
 { 

@@ -12,14 +12,15 @@
   <!-- 错误码 -->
   <enum type="ui16" >
  	<member name="EC_SUCCESS" value="0"   desc="成功"/>
-	<member name="EC_UNKOWN_ERROR"   desc="未知错误"/>
+	<member name="EC_ERROR"   desc="错误"/>
 	<member name="EC_INNER_ERROR"  desc="内部错误"/>
 	<member name="EC_DB_ERROR"  desc="数据库错误"/>
 	<member name="EC_PARAM_DENIED"  desc="非法参数"/>
-	<member name="EC_PERMISSION_DENIED"  desc="权限非法"/>
-	<member name="EC_SYSTEM_ERROR"  desc="系统错误"/>
+	<member name="EC_PERMISSION_DENIED"  desc="权限错误"/>
 
-	<member name="EC_INVALIDE_USERID"  value="50"  desc="用户ID无效"/>
+
+  <member name="EC_INVALIDE_USER"  value="50"  desc="错误的用户信息"/>
+  <member name="EC_TOKEN_EXPIRE"   desc="令牌过期"/>
 
 
 	

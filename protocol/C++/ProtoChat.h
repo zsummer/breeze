@@ -19,12 +19,12 @@ const unsigned char CHANNEL_GROUP = 2; //群组, 需要指明具体某个groupid
  
 struct FriendInfo //好友信息 
 { 
-	unsigned long long uid;  
+	unsigned long long uID;  
 	unsigned char flag; //状态标志 
 	unsigned int makeTime; //建立时间 
 	FriendInfo() 
 	{ 
-		uid = 0; 
+		uID = 0; 
 		flag = 0; 
 		makeTime = 0; 
 	} 
@@ -35,7 +35,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
-	ws << data.uid; 
+	ws << data.uID; 
 	ws << data.flag; 
 	ws << data.makeTime; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
@@ -50,7 +50,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	rs >> tag; 
 	if ( (1ULL << 0) & tag) 
 	{ 
-		rs >> data.uid;  
+		rs >> data.uID;  
 	} 
 	if ( (1ULL << 1) & tag) 
 	{ 
@@ -66,7 +66,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FriendInfo & info) 
 { 
-	stm << "uid=" << info.uid << ", flag=" << info.flag << ", makeTime=" << info.makeTime; 
+	stm << "uID=" << info.uID << ", flag=" << info.flag << ", makeTime=" << info.makeTime; 
 	return stm; 
 } 
  
@@ -78,6 +78,7 @@ struct ContactInfo //联系人卡片
 	std::string nickName; //用户昵称 
 	short iconID; //头像 
 	unsigned char banned; //禁言 
+	unsigned long long groupID; //加入的群组ID, 0为没有加入任何群组 
 	unsigned int totalBlacks; //被拉黑次数 
 	unsigned int totalFriends; //好友个数 
 	unsigned char onlineFlag; //在线状态0离线,1在线 
@@ -87,6 +88,7 @@ struct ContactInfo //联系人卡片
 		uID = 0; 
 		iconID = 0; 
 		banned = 0; 
+		groupID = 0; 
 		totalBlacks = 0; 
 		totalFriends = 0; 
 		onlineFlag = 0; 
@@ -94,7 +96,7 @@ struct ContactInfo //联系人卡片
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ContactInfo & data) 
 { 
-	unsigned long long tag = 255ULL; 
+	unsigned long long tag = 511ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -102,6 +104,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws << data.nickName; 
 	ws << data.iconID; 
 	ws << data.banned; 
+	ws << data.groupID; 
 	ws << data.totalBlacks; 
 	ws << data.totalFriends; 
 	ws << data.onlineFlag; 
@@ -134,17 +137,21 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	} 
 	if ( (1ULL << 4) & tag) 
 	{ 
-		rs >> data.totalBlacks;  
+		rs >> data.groupID;  
 	} 
 	if ( (1ULL << 5) & tag) 
 	{ 
-		rs >> data.totalFriends;  
+		rs >> data.totalBlacks;  
 	} 
 	if ( (1ULL << 6) & tag) 
 	{ 
-		rs >> data.onlineFlag;  
+		rs >> data.totalFriends;  
 	} 
 	if ( (1ULL << 7) & tag) 
+	{ 
+		rs >> data.onlineFlag;  
+	} 
+	if ( (1ULL << 8) & tag) 
 	{ 
 		rs >> data.friends;  
 	} 
@@ -154,7 +161,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ContactInfo & info) 
 { 
-	stm << "uID=" << info.uID << ", nickName=" << info.nickName << ", iconID=" << info.iconID << ", banned=" << info.banned << ", totalBlacks=" << info.totalBlacks << ", totalFriends=" << info.totalFriends << ", onlineFlag=" << info.onlineFlag << ", friends=" << info.friends; 
+	stm << "uID=" << info.uID << ", nickName=" << info.nickName << ", iconID=" << info.iconID << ", banned=" << info.banned << ", groupID=" << info.groupID << ", totalBlacks=" << info.totalBlacks << ", totalFriends=" << info.totalFriends << ", onlineFlag=" << info.onlineFlag << ", friends=" << info.friends; 
 	return stm; 
 } 
  
@@ -162,23 +169,23 @@ typedef std::vector<ContactInfo> ContactInfoArray;
  
 struct ChatInfo //聊天消息 
 { 
-	unsigned long long id; //msg id 
+	unsigned long long mID; //msg id 
 	unsigned char chlType; //channel type 
-	unsigned long long srcid;  
+	unsigned long long srcID;  
 	std::string srcName; //src 
 	short srcIcon; //src 
-	unsigned long long dstid; //userid or groupid 
+	unsigned long long dstID; //userid or groupid 
 	std::string dstName; //src 
 	short dstIcon; //src 
 	std::string msg;  
 	unsigned int sendTime;  
 	ChatInfo() 
 	{ 
-		id = 0; 
+		mID = 0; 
 		chlType = 0; 
-		srcid = 0; 
+		srcID = 0; 
 		srcIcon = 0; 
-		dstid = 0; 
+		dstID = 0; 
 		dstIcon = 0; 
 		sendTime = 0; 
 	} 
@@ -189,12 +196,12 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
-	ws << data.id; 
+	ws << data.mID; 
 	ws << data.chlType; 
-	ws << data.srcid; 
+	ws << data.srcID; 
 	ws << data.srcName; 
 	ws << data.srcIcon; 
-	ws << data.dstid; 
+	ws << data.dstID; 
 	ws << data.dstName; 
 	ws << data.dstIcon; 
 	ws << data.msg; 
@@ -211,7 +218,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	rs >> tag; 
 	if ( (1ULL << 0) & tag) 
 	{ 
-		rs >> data.id;  
+		rs >> data.mID;  
 	} 
 	if ( (1ULL << 1) & tag) 
 	{ 
@@ -219,7 +226,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	} 
 	if ( (1ULL << 2) & tag) 
 	{ 
-		rs >> data.srcid;  
+		rs >> data.srcID;  
 	} 
 	if ( (1ULL << 3) & tag) 
 	{ 
@@ -231,7 +238,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	} 
 	if ( (1ULL << 5) & tag) 
 	{ 
-		rs >> data.dstid;  
+		rs >> data.dstID;  
 	} 
 	if ( (1ULL << 6) & tag) 
 	{ 
@@ -255,7 +262,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChatInfo & info) 
 { 
-	stm << "id=" << info.id << ", chlType=" << info.chlType << ", srcid=" << info.srcid << ", srcName=" << info.srcName << ", srcIcon=" << info.srcIcon << ", dstid=" << info.dstid << ", dstName=" << info.dstName << ", dstIcon=" << info.dstIcon << ", msg=" << info.msg << ", sendTime=" << info.sendTime; 
+	stm << "mID=" << info.mID << ", chlType=" << info.chlType << ", srcID=" << info.srcID << ", srcName=" << info.srcName << ", srcIcon=" << info.srcIcon << ", dstID=" << info.dstID << ", dstName=" << info.dstName << ", dstIcon=" << info.dstIcon << ", msg=" << info.msg << ", sendTime=" << info.sendTime; 
 	return stm; 
 } 
  
@@ -264,10 +271,10 @@ typedef std::vector<ChatInfo> ChatInfoArray;
 const unsigned short ID_GetContactInfoReq = 1000; //获取联系人名片请求 
 struct GetContactInfoReq //获取联系人名片请求 
 { 
-	unsigned long long uid;  
+	unsigned long long uID;  
 	GetContactInfoReq() 
 	{ 
-		uid = 0; 
+		uID = 0; 
 	} 
 	inline unsigned short GetProtoID() { return 1000;} 
 	inline std::string GetProtoName() { return "ID_GetContactInfoReq";} 
@@ -278,7 +285,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
-	ws << data.uid; 
+	ws << data.uID; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
 } 
@@ -291,7 +298,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	rs >> tag; 
 	if ( (1ULL << 0) & tag) 
 	{ 
-		rs >> data.uid;  
+		rs >> data.uID;  
 	} 
 	cursor = cursor - rs.getStreamUnreadLen(); 
 	rs.skipOriginalData(sttLen - cursor); 
@@ -299,7 +306,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetContactInfoReq & info) 
 { 
-	stm << "uid=" << info.uid; 
+	stm << "uID=" << info.uID; 
 	return stm; 
 } 
  
@@ -354,11 +361,11 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 const unsigned short ID_FriendOperationReq = 1002; //好友操作请求 
 struct FriendOperationReq //好友操作请求 
 { 
-	unsigned long long uid; //目标ID 
+	unsigned long long uID; //目标ID 
 	unsigned char oFlag; //操作指令 
 	FriendOperationReq() 
 	{ 
-		uid = 0; 
+		uID = 0; 
 		oFlag = 0; 
 	} 
 	inline unsigned short GetProtoID() { return 1002;} 
@@ -370,7 +377,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
-	ws << data.uid; 
+	ws << data.uID; 
 	ws << data.oFlag; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
@@ -384,7 +391,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	rs >> tag; 
 	if ( (1ULL << 0) & tag) 
 	{ 
-		rs >> data.uid;  
+		rs >> data.uID;  
 	} 
 	if ( (1ULL << 1) & tag) 
 	{ 
@@ -396,7 +403,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FriendOperationReq & info) 
 { 
-	stm << "uid=" << info.uid << ", oFlag=" << info.oFlag; 
+	stm << "uID=" << info.uID << ", oFlag=" << info.oFlag; 
 	return stm; 
 } 
  
@@ -463,16 +470,80 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
+const unsigned short ID_JoinGropuReq = 1007; //加入群组 
+struct JoinGropuReq //加入群组 
+{ 
+	inline unsigned short GetProtoID() { return 1007;} 
+	inline std::string GetProtoName() { return "ID_JoinGropuReq";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinGropuReq & data) 
+{ 
+	unsigned long long tag = 0ULL; 
+	ws << (zsummer::proto4z::Integer)0; 
+	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
+	ws << tag; 
+	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
+	return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, JoinGropuReq & data) 
+{ 
+	zsummer::proto4z::Integer sttLen = 0; 
+	rs >> sttLen; 
+	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
+	unsigned long long tag = 0; 
+	rs >> tag; 
+	cursor = cursor - rs.getStreamUnreadLen(); 
+	rs.skipOriginalData(sttLen - cursor); 
+	return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const JoinGropuReq & info) 
+{ 
+; 
+	return stm; 
+} 
+ 
+const unsigned short ID_JoinGropuAck = 1008; //加入群组 
+struct JoinGropuAck //加入群组 
+{ 
+	inline unsigned short GetProtoID() { return 1008;} 
+	inline std::string GetProtoName() { return "ID_JoinGropuAck";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinGropuAck & data) 
+{ 
+	unsigned long long tag = 0ULL; 
+	ws << (zsummer::proto4z::Integer)0; 
+	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
+	ws << tag; 
+	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
+	return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, JoinGropuAck & data) 
+{ 
+	zsummer::proto4z::Integer sttLen = 0; 
+	rs >> sttLen; 
+	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
+	unsigned long long tag = 0; 
+	rs >> tag; 
+	cursor = cursor - rs.getStreamUnreadLen(); 
+	rs.skipOriginalData(sttLen - cursor); 
+	return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const JoinGropuAck & info) 
+{ 
+; 
+	return stm; 
+} 
+ 
 const unsigned short ID_ChatReq = 1004; //发送聊天请求 
 struct ChatReq //发送聊天请求 
 { 
 	unsigned char chlType; //channel type 
-	unsigned long long dstid; //userid or groupid 
+	unsigned long long dstID; //userID or groupID 
 	std::string msg; //msg 
 	ChatReq() 
 	{ 
 		chlType = 0; 
-		dstid = 0; 
+		dstID = 0; 
 	} 
 	inline unsigned short GetProtoID() { return 1004;} 
 	inline std::string GetProtoName() { return "ID_ChatReq";} 
@@ -484,7 +555,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
 	ws << data.chlType; 
-	ws << data.dstid; 
+	ws << data.dstID; 
 	ws << data.msg; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
@@ -502,7 +573,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	} 
 	if ( (1ULL << 1) & tag) 
 	{ 
-		rs >> data.dstid;  
+		rs >> data.dstID;  
 	} 
 	if ( (1ULL << 2) & tag) 
 	{ 
@@ -514,7 +585,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChatReq & info) 
 { 
-	stm << "chlType=" << info.chlType << ", dstid=" << info.dstid << ", msg=" << info.msg; 
+	stm << "chlType=" << info.chlType << ", dstID=" << info.dstID << ", msg=" << info.msg; 
 	return stm; 
 } 
  
@@ -523,14 +594,14 @@ struct ChatAck //发送聊天请求
 { 
 	unsigned short retCode;  
 	unsigned char chlType; //channel type 
-	unsigned long long dstid; //userid or groupid 
-	unsigned int msgid;  
+	unsigned long long dstID; //userID or groupID 
+	unsigned long long msgID;  
 	ChatAck() 
 	{ 
 		retCode = 0; 
 		chlType = 0; 
-		dstid = 0; 
-		msgid = 0; 
+		dstID = 0; 
+		msgID = 0; 
 	} 
 	inline unsigned short GetProtoID() { return 1005;} 
 	inline std::string GetProtoName() { return "ID_ChatAck";} 
@@ -543,8 +614,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws << tag; 
 	ws << data.retCode; 
 	ws << data.chlType; 
-	ws << data.dstid; 
-	ws << data.msgid; 
+	ws << data.dstID; 
+	ws << data.msgID; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
 } 
@@ -565,11 +636,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	} 
 	if ( (1ULL << 2) & tag) 
 	{ 
-		rs >> data.dstid;  
+		rs >> data.dstID;  
 	} 
 	if ( (1ULL << 3) & tag) 
 	{ 
-		rs >> data.msgid;  
+		rs >> data.msgID;  
 	} 
 	cursor = cursor - rs.getStreamUnreadLen(); 
 	rs.skipOriginalData(sttLen - cursor); 
@@ -577,7 +648,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChatAck & info) 
 { 
-	stm << "retCode=" << info.retCode << ", chlType=" << info.chlType << ", dstid=" << info.dstid << ", msgid=" << info.msgid; 
+	stm << "retCode=" << info.retCode << ", chlType=" << info.chlType << ", dstID=" << info.dstID << ", msgID=" << info.msgID; 
 	return stm; 
 } 
  

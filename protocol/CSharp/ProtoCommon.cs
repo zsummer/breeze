@@ -5,7 +5,7 @@ namespace Proto4z
 	{ 
 		public static Proto4z.ui16 value = 0;  
 	} 
-	class STATIC_EC_UNKOWN_ERROR //未知错误 
+	class STATIC_EC_ERROR //错误 
 	{ 
 		public static Proto4z.ui16 value = 1;  
 	} 
@@ -21,29 +21,17 @@ namespace Proto4z
 	{ 
 		public static Proto4z.ui16 value = 4;  
 	} 
-	class STATIC_EC_PERMISSION_DENIED //权限非法 
+	class STATIC_EC_PERMISSION_DENIED //权限错误 
 	{ 
 		public static Proto4z.ui16 value = 5;  
 	} 
-	class STATIC_EC_SYSTEM_ERROR //系统错误 
-	{ 
-		public static Proto4z.ui16 value = 6;  
-	} 
-	class STATIC_EC_INVALIDE_USERID //用户ID无效 
+	class STATIC_EC_INVALIDE_USER //错误的用户信息 
 	{ 
 		public static Proto4z.ui16 value = 50;  
 	} 
-	class STATIC_EC_AUTH_USER_NOT_EXIST //认证错误:用户不存在 
+	class STATIC_EC_TOKEN_EXPIRE //令牌过期 
 	{ 
-		public static Proto4z.ui16 value = 60;  
-	} 
-	class STATIC_EC_AUTH_PASSWD_INCORRECT //认证错误:密码错误 
-	{ 
-		public static Proto4z.ui16 value = 61;  
-	} 
-	class STATIC_EC_NO_USER //没有该用户 
-	{ 
-		public static Proto4z.ui16 value = 62;  
+		public static Proto4z.ui16 value = 51;  
 	} 
  
 	class SessionToken: Proto4z.IProtoObject //认证令牌 

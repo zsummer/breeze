@@ -35,7 +35,7 @@
 
 
   <struct name="FriendInfo" desc="好友信息">
-   	<member name="uid" type="ui64"   desc=""/>
+   	<member name="uID" type="ui64"   desc=""/>
    	<member name="flag" type="ui8"   desc="状态标志"/>
    	<member name="makeTime"  type="ui32" desc="建立时间"/>
   </struct>
@@ -46,7 +46,7 @@
    	<member name="nickName" type="string"   desc="用户昵称"/>
   	<member name="iconID"  type="i16" desc="头像"/>
   	<member name="banned"  type="ui8" desc="禁言"/>
-  	<member name="groupid" type="ui64" desc="加入的群组ID, 0为没有加入任何群组" />
+  	<member name="groupID" type="ui64" desc="加入的群组ID, 0为没有加入任何群组" />
   	<member name="totalBlacks"  type="ui32" desc="被拉黑次数"/>
   	<member name="totalFriends"  type="ui32" desc="好友个数"/>
    	<member name="onlineFlag"  type="ui8" ignore="true" desc="在线状态0离线,1在线"/>
@@ -55,12 +55,12 @@
   <array name="ContactInfoArray" type="ContactInfo" desc="" />
 
   <struct name="ChatInfo" store="true" desc="聊天消息">
-  	<member name="id" type="ui64" key="true"  desc="msg id"/>
+  	<member name="mID" type="ui64" key="true"  desc="msg id"/>
     <member name="chlType" type="ui8"   desc="channel type"/>
-    <member name="srcid" type="ui64"   desc=""/>
+    <member name="srcID" type="ui64"   desc=""/>
     <member name="srcName" type="string"   desc="src"/>
     <member name="srcIcon"  type="i16" desc="src"/>
-    <member name="dstid" type="ui64"   desc="userid or groupid"/>
+    <member name="dstID" type="ui64"   desc="userid or groupid"/>
     <member name="dstName" type="string"   desc="src"/>
     <member name="dstIcon"  type="i16" desc="src"/>
     <member name="msg" type="string"   desc=""/>
@@ -70,7 +70,7 @@
 
 
   <proto name="GetContactInfoReq" desc= "获取联系人名片请求">
-  	<member name="uid" type="ui64"   desc=""/>
+  	<member name="uID" type="ui64"   desc=""/>
   </proto>
 
   <proto name="GetContactInfoAck" desc= "获取联系人名片结果" >
@@ -80,7 +80,7 @@
 
 
   <proto name="FriendOperationReq" desc= "好友操作请求">
-    <member name="uid" type="ui64"   desc="目标ID"/>
+    <member name="uID" type="ui64"   desc="目标ID"/>
     <member name="oFlag" type="ui8"   desc="操作指令"/>
   </proto>
 
@@ -99,15 +99,15 @@
  
   <proto name="ChatReq" desc= "发送聊天请求">
   	<member name="chlType" type="ui8"   desc="channel type"/>
-    <member name="dstid" type="ui64"   desc="userid or groupid"/>
+    <member name="dstID" type="ui64"   desc="userID or groupID"/>
     <member name="msg" type="string"   desc="msg"/>
   </proto>
 
   <proto name="ChatAck" desc= "发送聊天请求">
   	<member name="retCode" type="ui16"   desc=""/>
   	<member name="chlType" type="ui8"   desc="channel type"/>
-    <member name="dstid" type="ui64"   desc="userid or groupid"/>
-    <member name="msgid" type="ui64"   desc=""/>
+    <member name="dstID" type="ui64"   desc="userID or groupID"/>
+    <member name="msgID" type="ui64"   desc=""/>
   </proto>
 
   <proto name="ChatNotice" desc= "聊天通知" >
