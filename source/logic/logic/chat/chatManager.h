@@ -52,10 +52,11 @@ public:
 public:
 	void msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 	void msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onGetSomeStrangersReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 	void msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
 	
 private:
-	std::unordered_map<UserID, ContactInfo> _mapContact; //存储所有好友/名片信息
+	std::unordered_map<UserID, ContactInfo> _contacts; //存储所有好友/名片信息
 	std::map<unsigned long long, UserIDArray> _channels;
 
 	//过滤词库

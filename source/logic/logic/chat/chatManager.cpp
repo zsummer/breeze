@@ -11,6 +11,7 @@ ChatManager::ChatManager()
 	MessageDispatcher::getRef().registerSessionMessage(ID_GetContactInfoReq, std::bind(&ChatManager::msg_onGetContactInfoReq, this, _1, _2, _3));
 	MessageDispatcher::getRef().registerSessionMessage(ID_FriendOperationReq, std::bind(&ChatManager::msg_onFriendOperationReq, this, _1, _2, _3));
 	MessageDispatcher::getRef().registerSessionMessage(ID_ChatReq, std::bind(&ChatManager::msg_onChatReq, this, _1, _2, _3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_GetSomeStrangersReq, std::bind(&ChatManager::msg_onGetSomeStrangersReq, this, _1, _2, _3));
 }
 
 ChatManager::~ChatManager()
@@ -83,7 +84,7 @@ bool ChatManager::init()
 			break;
 		}
 		auto mapInfo = ContactInfo_FETCH(result);
-		_mapContact.insert(mapInfo.begin(), mapInfo.end());
+		_contacts.insert(mapInfo.begin(), mapInfo.end());
 		curID += mapInfo.size();
 	} while (true);
 
@@ -123,14 +124,14 @@ bool ChatManager::init()
 void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long long count, unsigned long long iconID, std::string nick)
 {
 	
-	auto founder = _mapContact.find(uID);
-	if (founder == _mapContact.end())
+	auto founder = _contacts.find(uID);
+	if (founder == _contacts.end())
 	{
 		ContactInfo info;
 		info.uID = uID;
 		info.iconID = (short)iconID;
 		info.nickName = nick;
-		_mapContact[uID] = info;
+		_contacts[uID] = info;
 		insertContact(info);
 		return;
 	}
@@ -149,8 +150,8 @@ void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long lon
 }
 void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string)
 {
-	auto founder = _mapContact.find(uID);
-	if (founder != _mapContact.end())
+	auto founder = _contacts.find(uID);
+	if (founder != _contacts.end())
 	{
 		founder->second.onlineFlag = false;
 		updateContact(founder->second, false, true);
@@ -219,8 +220,8 @@ void ChatManager::msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, Re
 	rs >> req;
 	GetContactInfoAck ack;
 	ack.retCode = EC_SUCCESS;
-	auto founder = _mapContact.find(req.uID);
-	if (founder == _mapContact.end())
+	auto founder = _contacts.find(req.uID);
+	if (founder == _contacts.end())
 	{
 		ack.retCode = EC_INVALIDE_USER;
 	}
@@ -251,8 +252,8 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 	ack.srcUID = inner->userInfo.uID;
 
 
-	auto src = _mapContact.find(inner->userInfo.uID);
-	if (src == _mapContact.end())
+	auto src = _contacts.find(inner->userInfo.uID);
+	if (src == _contacts.end())
 	{
 		ack.retCode = EC_PARAM_DENIED;
 		return;
@@ -260,8 +261,8 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 	auto srcStatus = std::find_if(src->second.friends.begin(), src->second.friends.end(), [&req](const FriendInfo& info){return info.uID == req.uID; });
 
 
-	auto dst = _mapContact.find(req.uID);
-	if (dst == _mapContact.end())
+	auto dst = _contacts.find(req.uID);
+	if (dst == _contacts.end())
 	{
 		ack.retCode = EC_PARAM_DENIED;
 		return;
@@ -390,6 +391,35 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 	session->doSend(ws.getStream(), ws.getStreamLen());
 }
 
+void ChatManager::msg_onGetSomeStrangersReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+{
+	GetSomeStrangersReq req;
+	rs >> req;
+	auto inner = UserManager::getRef().getInnerUserInfo(session->getSessionID());
+	if (!inner)
+	{
+		//.
+		return;
+	}
+
+	GetSomeStrangersAck ack;
+	ack.retCode = EC_SUCCESS;
+	for (auto & c : _contacts)
+	{
+		if (c.second.onlineFlag != 0)
+		{
+			ack.uIDs.push_back(c.first);
+		}
+		if (ack.uIDs.size() > 10)
+		{
+			break;
+		}
+	}
+
+	WriteStream ws(ID_GetSomeStrangersAck);
+	ws << ack;
+	session->doSend(ws.getStream(), ws.getStreamLen());
+}
 
 void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
 {
@@ -462,7 +492,7 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 		}
 		else
 		{
-			for (auto &c : _mapContact)
+			for (auto &c : _contacts)
 			{
 				auto dstinner = UserManager::getRef().getInnerUserInfo(c.first);
 				if (!dstinner || dstinner->sID == InvalidSeesionID)
