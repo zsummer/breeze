@@ -96,10 +96,19 @@ function User:on_GetContactInfoAck(sID, msg)
 		loge("on_GetContactInfoAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
 	    return
 	end
-    logi("GetContactInfo success. totalFriends=" .. msg.contact.totalFriends )
-	dump(msg, "GetContactInfo")
-	--local data = Proto4z.encode({uID=self.uID}, "GetContactInfoReq")
-    --summer.sendContent(sID, Proto4z.GetContactInfoReq.__getID, data) 
+    logi("on_GetContactInfoAck success. totalFriends=" .. msg.contact.totalFriends )
+	dump(msg, "on_GetContactInfoAck")
+	local data = Proto4z.encode({}, "GetSomeStrangersReq")
+    summer.sendContent(sID, Proto4z.GetSomeStrangersReq.__getID, data) 
 end
 
+function User:on_GetSomeStrangersAck(sID, msg)
+
+	if msg.retCode ~= Proto4z.EC_SUCCESS then
+		loge("on_GetSomeStrangersAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
+	    return
+	end
+    logi("on_GetSomeStrangersAck success. #uIDs=" .. #msg.uIDs )
+	dump(msg, "on_GetSomeStrangersAck")
+end
 
