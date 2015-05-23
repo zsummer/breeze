@@ -39,6 +39,7 @@ class ChatManager :public Singleton<ChatManager>
 {
 public:
 	ChatManager();
+	~ChatManager();
 	bool init();
 	//更新名片, 可选择更新到数据库还是更新给所有客户端
 	void insertContact(const ContactInfo & info);

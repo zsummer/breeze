@@ -13,10 +13,27 @@ ChatManager::ChatManager()
 	MessageDispatcher::getRef().registerSessionMessage(ID_ChatReq, std::bind(&ChatManager::msg_onChatReq, this, _1, _2, _3));
 }
 
+ChatManager::~ChatManager()
+{
+	if (_filter)
+	{
+		match_tree_free(_filter);
+		_filter = nullptr;
+	}
+}
+
 bool ChatManager::init()
 {
 	//加载过滤词库
-
+	_filter = match_tree_init_from_file("../filter.txt", ".....", 5);
+	if (_filter == nullptr)
+	{
+		LOGE("match_tree_init_from_file error");
+		return false;
+	}
+	LOGI("init filter configure success. filter patterns=" << _filter->_tree_pattern_count << ", min pattern=" 
+		<< _filter->_tree_pattern_minimum_len << ", max pattern=" << _filter->_tree_pattern_maximum_len << ", used memory=" << _filter->_tree_memory_used / 1024 << "KB");
+	
 	//! 先desc一下ContactInfo表, 不存在则创建
 	auto build = ContactInfo_BUILD();
 	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
@@ -390,7 +407,14 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 	info.srcIcon = inner->userInfo.iconID;
 	info.srcID = inner->userInfo.uID;
 	info.srcName = inner->userInfo.nickName;
+	//塞进数据库原诗的聊天内容
+	auto chatsql = ChatInfo_INSERT(info);
+	DBManager::getRef().infoAsyncQuery(chatsql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
 
+	//过滤掉脏字
+	match_tree_translate(_filter, &info.msg[0], (unsigned int)info.msg.length(), 1, '*');
+
+	//通知下去
 	if (info.chlType == CHANNEL_PRIVATE)
 	{
 		auto dstinner = UserManager::getRef().getInnerUserInfo(req.dstID);
@@ -449,8 +473,7 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 		
 	}
 
-	auto chatsql = ChatInfo_INSERT(info);
-	DBManager::getRef().infoAsyncQuery(chatsql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
+
 
 	WriteStream ws(ID_ChatAck);
 	ChatAck ack;
