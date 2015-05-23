@@ -98,7 +98,7 @@ void NetManager::msg_onLinkServerReq(TcpSessionPtr session, ProtoID pID, ReadStr
 	rs >> req;
 	LOGD("enter msg_loginReq token=" << req.token << ", uID=" << req.uID);
 	LinkServerAck ack;
-	ack.retCode = EC_AUTH_USER_NOT_EXIST;
+	ack.retCode = EC_SUCCESS;
 
     auto inner = UserManager::getRef().getInnerUserInfo(req.uID);
     if (inner)
@@ -125,6 +125,10 @@ void NetManager::msg_onLinkServerReq(TcpSessionPtr session, ProtoID pID, ReadStr
 
 				UserManager::getRef().userLogin(inner);
 				return;
+			}
+			else
+			{
+
 			}
 		}
 		

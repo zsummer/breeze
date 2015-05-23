@@ -23,9 +23,9 @@ bool CreateTestAuthInfo::init()
 		DBQuery q("CREATE TABLE `tb_auth` ( "
 			"`user` varchar(20) NOT NULL DEFAULT '',"
 			"`passwd` varchar(20) NOT NULL DEFAULT '',"
-			"`uid` bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
+			"`uID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
 			"PRIMARY KEY(`user`), "
-			"UNIQUE KEY `accID` (`uid`) "
+			"UNIQUE KEY `accID` (`uID`) "
 			") ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8");
 		checkTable = DBManager::getRef().authQuery(q.popSQL());
 		if (checkTable->getErrorCode() != QEC_SUCCESS)

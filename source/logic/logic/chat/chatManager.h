@@ -30,7 +30,7 @@
 #include <common.h>
 #include <ProtoChat.h>
 #include "../mission/eventTrigger.h"
-
+#include <multimod_matching_tree/match_tree.h>
 
 
 
@@ -58,7 +58,7 @@ private:
 	std::map<unsigned long long, UserIDArray> _channels;
 
 	//过滤词库
-	
+	match_tree_head * _filter = nullptr;
 	//负责分配一个支持SQL合服的64位ID.  [plat+ared+uniqueID]
 	GenObjectID _genID; //生成消息ID
 };

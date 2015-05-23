@@ -33,6 +33,22 @@ bool ChatManager::init()
 		DBManager::getRef().infoQuery(build[i]);
 	}
 	
+	//! 先desc一下ChatInfo表, 不存在则创建
+	build = ChatInfo_BUILD();
+	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
+	{
+		if (DBManager::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
+		{
+			LOGE("create table error. sql=" << build[1]);
+			return false;
+		}
+	}
+	//! 无论ChatInfo表的字段是否有增删 都alter一遍. 
+	for (size_t i = 2; i < build.size(); i++)
+	{
+		DBManager::getRef().infoQuery(build[i]);
+	}
+
 
 	//加载所有用户数据
 	unsigned long long curID = 0;
@@ -56,7 +72,7 @@ bool ChatManager::init()
 
 	//获取当前最大消息ID
 	_genID.initConfig(ServerConfig::getRef().getPlatID(), ServerConfig::getRef().getAreaID());
-	DBQuery q("select id from tb_ChatInfo where id >= ? and id < ?  order by id desc limit 1;");
+	DBQuery q("select mID from tb_ChatInfo where mID >= ? and mID < ?  order by mID desc limit 1;");
 	q << _genID.getMinObjID();
 	q << _genID.getMaxObjID();
 	auto result = DBManager::getRef().infoQuery(q.popSQL());
@@ -152,7 +168,7 @@ void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool bro
 		{
 			if (kv.flag == FRIEND_ESTABLISHED)
 			{
-				auto ptr = UserManager::getRef().getInnerUserInfo(kv.uid);
+				auto ptr = UserManager::getRef().getInnerUserInfo(kv.uID);
 				if (ptr && ptr->sID != InvalidSeesionID)
 				{
 					SessionManager::getRef().sendSessionData(ptr->sID, ws.getStream(), ws.getStreamLen());
@@ -183,10 +199,10 @@ void ChatManager::msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, Re
 	rs >> req;
 	GetContactInfoAck ack;
 	ack.retCode = EC_SUCCESS;
-	auto founder = _mapContact.find(req.uid);
+	auto founder = _mapContact.find(req.uID);
 	if (founder == _mapContact.end())
 	{
-		ack.retCode = EC_NO_USER;
+		ack.retCode = EC_INVALIDE_USER;
 	}
 	else
 	{
@@ -205,7 +221,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 	FriendOperationAck ack;
 	ack.retCode = EC_SUCCESS;
 	ack.srcFlag = req.oFlag;
-	ack.dstUID = req.uid;
+	ack.dstUID = req.uID;
 	auto inner = UserManager::getRef().getInnerUserInfo(session->getSessionID());
 	if (!inner)
 	{
@@ -221,16 +237,16 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 		ack.retCode = EC_PARAM_DENIED;
 		return;
 	}
-	auto srcStatus = std::find_if(src->second.friends.begin(), src->second.friends.end(), [&req](const FriendInfo& info){return info.uid == req.uid; });
+	auto srcStatus = std::find_if(src->second.friends.begin(), src->second.friends.end(), [&req](const FriendInfo& info){return info.uID == req.uID; });
 
 
-	auto dst = _mapContact.find(req.uid);
+	auto dst = _mapContact.find(req.uID);
 	if (dst == _mapContact.end())
 	{
 		ack.retCode = EC_PARAM_DENIED;
 		return;
 	}
-	auto dstStatus = std::find_if(dst->second.friends.begin(), dst->second.friends.end(), [&inner](const FriendInfo& info){return info.uid == inner->userInfo.uID; });
+	auto dstStatus = std::find_if(dst->second.friends.begin(), dst->second.friends.end(), [&inner](const FriendInfo& info){return info.uID == inner->userInfo.uID; });
 
 
 	if (req.oFlag == FRIEND_ADDFRIEND)
@@ -243,8 +259,8 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 			}
 			FriendInfo info;
 			info.flag = FRIEND_REQUESTING;
-			info.makeTime = time(NULL);
-			info.uid = src->second.uID;
+			info.makeTime = (unsigned int)time(NULL);
+			info.uID = src->second.uID;
 			dst->second.friends.push_back(info);
 			if (srcStatus == src->second.friends.end() || srcStatus->flag == FRIEND_WAITING)
 			{
@@ -253,7 +269,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 					src->second.friends.erase(srcStatus);
 				}
 				info.flag = FRIEND_WAITING;
-				info.uid = req.uid;
+				info.uID = req.uID;
 				src->second.friends.push_back(info);
 			}
 		}
@@ -268,8 +284,8 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 		src->second.friends.erase(srcStatus);
 		FriendInfo info;
 		info.flag = FRIEND_BLACKLIST;
-		info.makeTime = time(NULL);
-		info.uid = req.uid;
+		info.makeTime = (unsigned int)time(NULL);
+		info.uID = req.uID;
 		src->second.friends.push_back(info);
 		if (dstStatus != dst->second.friends.end() && dstStatus->flag != FRIEND_BLACKLIST)
 		{
@@ -303,12 +319,12 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
 		{
 			srcStatus->flag = FRIEND_ESTABLISHED;
-			srcStatus->makeTime = time(NULL);
+			srcStatus->makeTime = (unsigned int)time(NULL);
 			dst->second.friends.erase(dstStatus);
 
 			FriendInfo info;
-			info.uid = inner->userInfo.uID;
-			info.makeTime = time(NULL);
+			info.uID = inner->userInfo.uID;
+			info.makeTime = (unsigned int)time(NULL);
 			info.flag = FRIEND_ESTABLISHED;
 			src->second.friends.push_back(info);
 		}
@@ -367,17 +383,17 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 	}
 	ChatInfo info;
 	info.chlType = req.chlType;
-	info.dstid = req.dstid;
-	info.id = _genID.genNewObjID();
+	info.dstID = req.dstID;
+	info.mID = _genID.genNewObjID();
 	info.msg = req.msg;
-	info.sendTime = time(NULL);
+	info.sendTime = (unsigned int)time(NULL);
 	info.srcIcon = inner->userInfo.iconID;
-	info.srcid = inner->userInfo.uID;
+	info.srcID = inner->userInfo.uID;
 	info.srcName = inner->userInfo.nickName;
 
 	if (info.chlType == CHANNEL_PRIVATE)
 	{
-		auto dstinner = UserManager::getRef().getInnerUserInfo(req.dstid);
+		auto dstinner = UserManager::getRef().getInnerUserInfo(req.dstID);
 		if (!dstinner)
 		{
 			return;
@@ -402,7 +418,7 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 
 		if (info.chlType == CHANNEL_GROUP)
 		{
-			auto founder = _channels.find(info.dstid);
+			auto founder = _channels.find(info.dstID);
 			if (founder != _channels.end())
 			{
 				for (auto id : founder->second)
@@ -439,8 +455,8 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 	WriteStream ws(ID_ChatAck);
 	ChatAck ack;
 	ack.chlType = info.chlType;
-	ack.dstid = info.dstid;
-	ack.msgid = info.id;
+	ack.dstID = info.dstID;
+	ack.msgID = info.mID;
 	ack.retCode = EC_SUCCESS;
 	ws << ack;
 	session->doSend(ws.getStream(), ws.getStreamLen());
