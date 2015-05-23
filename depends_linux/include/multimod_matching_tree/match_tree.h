@@ -115,7 +115,7 @@ static unsigned int match_tree_matching(const struct match_tree_head *head, cons
 //translate character when the character is matched.
 static void match_tree_translate(const struct match_tree_head *head, char * text, unsigned int text_len, unsigned char is_greedy, char escape);
 //free one multi-pattern match tree
-static void match_tree_free(struct match_tree_head **head);
+static void match_tree_free(struct match_tree_head *head);
 
 
 //--------------------------------------
@@ -328,22 +328,17 @@ static void __match_tree_free(struct match_tree_node *tree)
 		free(tree->_child_tree);
 	}
 }
-static void match_tree_free(struct match_tree_head **head)
+static void match_tree_free(struct match_tree_head *head)
 {
 	if (head == NULL)
 	{
 		return;
 	}
-	if (*head == NULL)
+	if (head->_tree)
 	{
-		return;
+		__match_tree_free(head->_tree);
 	}
-	if ((*head)->_tree)
-	{
-		__match_tree_free((*head)->_tree);
-	}
-	free((*head)->_tree);
-	*head = NULL;
+	free(head->_tree);
 }
 
 
