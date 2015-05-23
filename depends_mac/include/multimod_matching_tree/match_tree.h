@@ -11,7 +11,7 @@ and commercial purposes at absolutely no cost.
 
 ===============================================================================
 
-Copyright (C) 2014-2015 YaweiZhang <yawei_zhang@foxmail.com>.
+Copyright (C) 2014-2015 YaweiZhang <yawei.zhang@foxmail.com>.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -98,10 +98,12 @@ struct match_tree_node
 struct match_tree_head
 {
 	struct match_tree_node * _tree;
-	unsigned int _tree_node_count;
-	unsigned int _tree_node_valid_count;
-	unsigned int _tree_node_maximum_len;
-	unsigned int _tree_node_minimum_len;
+	unsigned int _tree_memory_used;
+	unsigned int _tree_node_total_count;
+	unsigned int _tree_node_used_count;
+	unsigned int _tree_pattern_count;
+	unsigned int _tree_pattern_maximum_len;
+	unsigned int _tree_pattern_minimum_len;
 };
 
 //build one multi-pattern match tree
@@ -151,7 +153,8 @@ static int match_tree_add_pattern(struct match_tree_head * head, const char * pa
 		{
 			*tree = (struct match_tree_node *)malloc(sizeof(struct match_tree_node) * 256);
 			memset(*tree, 0, sizeof(struct match_tree_node) * 256);
-			head->_tree_node_count += 256;
+			head->_tree_node_total_count += 256;
+			head->_tree_memory_used += sizeof(struct match_tree_node) * 256;
 		}
 		
 		node = (unsigned char)pattern[i];
@@ -160,20 +163,22 @@ static int match_tree_add_pattern(struct match_tree_head * head, const char * pa
 		if (!(*tree)[node]._is_used)
 		{
 			(*tree)[node]._is_used = 1;
+			head->_tree_node_used_count++;
 		}
 
 		//check is the boundary, if true then set bound.
 		if (i == pattern_len - 1 && !(*tree)[node]._is_boundary)
 		{
 			(*tree)[node]._is_boundary = 1;
-			head->_tree_node_valid_count++;
-			if (pattern_len > head->_tree_node_maximum_len)
+			head->_tree_pattern_count++;
+
+			if (pattern_len > head->_tree_pattern_maximum_len)
 			{
-				head->_tree_node_maximum_len = pattern_len;
+				head->_tree_pattern_maximum_len = pattern_len;
 			}
-			if (pattern_len < head->_tree_node_minimum_len)
+			if (pattern_len < head->_tree_pattern_minimum_len || head->_tree_pattern_minimum_len == 0)
 			{
-				head->_tree_node_minimum_len = pattern_len;
+				head->_tree_pattern_minimum_len = pattern_len;
 			}
 		}
 		tree = &(*tree)[node]._child_tree;
