@@ -141,7 +141,7 @@ void Login::db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const Use
 	}
 	else
 	{
-		//!跨服务节点不能这么写
+		//!跨服务节点时候这里改成协议通知
 		UserManager::getRef().addUser(info);
 		//end
 
@@ -191,7 +191,7 @@ void Login::msg_onSelectUserReq(TcpSessionPtr session, ProtoID pID, ReadStream &
 	ack.uID = req.uID;
 	ack.token = data.genMD5();
 
-	//!跨服务节点不能这么写
+	//!跨服务节点时候这里改成协议通知
 	UserManager::getRef().setUserToken(ack.uID, ack.token, time(NULL) + 100000);
 
 	WriteStream ws(ID_SelectUserAck);
