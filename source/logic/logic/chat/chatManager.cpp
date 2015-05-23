@@ -15,6 +15,8 @@ ChatManager::ChatManager()
 
 bool ChatManager::init()
 {
+	//加载过滤词库
+
 	//! 先desc一下ContactInfo表, 不存在则创建
 	auto build = ContactInfo_BUILD();
 	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
