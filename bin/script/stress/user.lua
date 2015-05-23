@@ -99,8 +99,8 @@ function User:on_GetContactInfoAck(sID, msg)
 	end
     logi("GetContactInfo success. totalFriends=" .. msg.contact.totalFriends )
 	dump(msg, "GetContactInfo")
-	local data = Proto4z.encode({uID=self.uID}, "GetContactInfoReq")
-    summer.sendContent(sID, Proto4z.GetContactInfoReq.__getID, data) 
+	--local data = Proto4z.encode({uID=self.uID}, "GetContactInfoReq")
+    --summer.sendContent(sID, Proto4z.GetContactInfoReq.__getID, data) 
 end
 
 
