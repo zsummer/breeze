@@ -124,7 +124,7 @@ static void match_tree_free(struct match_tree_head **head);
 
 static struct match_tree_head * match_tree_init()
 {
-	struct match_tree_head * head = malloc(sizeof(struct match_tree_head));
+	struct match_tree_head * head = (struct match_tree_head *)malloc(sizeof(struct match_tree_head));
 	memset(head, 0, sizeof(struct match_tree_head));
 	return head;
 }
@@ -149,7 +149,7 @@ static int match_tree_add_pattern(struct match_tree_head * head, const char * pa
 		//check  is current node had all childs. if not then malloc it.
 		if (*tree == NULL)
 		{
-			*tree = malloc(sizeof(struct match_tree_node) * 256);
+			*tree = (struct match_tree_node *)malloc(sizeof(struct match_tree_node) * 256);
 			memset(*tree, 0, sizeof(struct match_tree_node) * 256);
 			head->_tree_node_count += 256;
 		}
@@ -217,7 +217,7 @@ static struct match_tree_head * match_tree_init_from_file(const char * file_name
 	file_content_len = ftell(fp);
 	file_content = (char*)malloc(file_content_len + delimiter_len+ 1);
 	fseek(fp, 0, SEEK_SET);
-	file_content_len = fread(file_content, 1, file_content_len, fp);
+	file_content_len = (unsigned int)fread(file_content, 1, file_content_len, fp);
 	fclose(fp);
 	fp = NULL;
 	memcpy(file_content + file_content_len, delimiter, delimiter_len);
@@ -241,7 +241,7 @@ static struct match_tree_head * match_tree_init_from_file(const char * file_name
 
 		if (is_delimiter)
 		{
-			pattern_len = file_content + i - pattern;
+			pattern_len = (unsigned int)(file_content + i - pattern);
 			match_tree_add_pattern(head, pattern, pattern_len);
 			i = i + delimiter_len;
 			pattern = file_content + i;
