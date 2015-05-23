@@ -42,8 +42,6 @@ public:
 	bool start();
 	bool stop(std::function<void()> onSafeClosed);
 public:
-    inline void authAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
-    inline zsummer::mysql::DBResultPtr authQuery(const std::string &sql);
 
     inline void infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
     inline zsummer::mysql::DBResultPtr infoQuery(const std::string &sql);
@@ -63,7 +61,7 @@ private:
 private:
 	zsummer::mysql::DBHelperPtr _infoDB;
 	zsummer::mysql::DBHelperPtr _logDB;
-	zsummer::mysql::DBHelperPtr _authDB;
+
 
 	zsummer::mysql::DBAsyncPtr _dbAsync;
     zsummer::mysql::DBAsyncPtr _dbLogAsync; //write log in other thread.
@@ -74,14 +72,7 @@ private:
 };
 
 
-void DBManager::authAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
-{
-    _dbAsync->asyncQuery(_authDB, sql, handler);
-}
-zsummer::mysql::DBResultPtr DBManager::authQuery(const std::string &sql)
-{
-    return _authDB->query(sql);
-}
+
 
 void DBManager::infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
 {
@@ -96,7 +87,7 @@ zsummer::mysql::DBResultPtr DBManager::infoQuery(const std::string &sql)
 
 void DBManager::logAsyncQuery(const std::string &sql)
 {
-    _dbAsync->asyncQuery(_authDB, sql, &DBManager::_defaultAsyncHandler);
+    _dbAsync->asyncQuery(_logDB, sql, &DBManager::_defaultAsyncHandler);
 }
 
 zsummer::mysql::DBResultPtr DBManager::logQuery(const std::string &sql)

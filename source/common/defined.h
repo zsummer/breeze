@@ -75,7 +75,6 @@ const NodeIndex InvalidNodeIndex = (NodeIndex)-1;
 
 //DB类型
 typedef ui8 DBConfigID;
-const DBConfigID AuthDB = 0;
 const DBConfigID InfoDB = 1;
 const DBConfigID LogDB = 2;
 const DBConfigID InvalidDB = (DBConfigID)-1;

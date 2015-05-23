@@ -5,7 +5,6 @@
 #include "logic/mission/eventTrigger.h"
 #include "logic/mission/dailyMission.h"
 #include "logic/testBlob/testBlob.h"
-#include "logic/testBlob/createTestAuthInfo.h"
 #include "logic/chat/chatManager.h"
 #include "logic/login/login.h"
 
@@ -83,12 +82,6 @@ bool Appliction::init(std::string filename, unsigned int index)
 	}
 	LOGI("TestBlob init success.");
 
-	ret = CreateTestAuthInfo::getRef().init();
-	if (!ret)
-	{
-		LOGE("CreateTestAuthInfo init false.");
-		return ret;
-	}
 	LOGI("CreateTestAuthInfo init success.");
 
 	ret = ChatManager::getRef().init();

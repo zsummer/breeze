@@ -44,11 +44,7 @@ static ServerNode toServerNode(std::string strNode)
 
 static DBConfigID toDBConfigID(std::string db)
 {
-	if (db == "auth")
-	{
-		return AuthDB;
-	}
-	else if (db == "info")
+	if (db == "info")
 	{
 		return InfoDB;
 	}

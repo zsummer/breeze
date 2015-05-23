@@ -103,7 +103,6 @@
     <ClCompile Include="logic\mission\dailyMission.cpp" />
     <ClCompile Include="logic\mission\eventTrigger.cpp" />
     <ClCompile Include="logic\netManager.cpp" />
-    <ClCompile Include="logic\testBlob\createTestAuthInfo.cpp" />
     <ClCompile Include="logic\testBlob\testBlob.cpp" />
     <ClCompile Include="logic\userManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -116,7 +115,6 @@
     <ClInclude Include="logic\mission\dailyMission.h" />
     <ClInclude Include="logic\mission\eventTrigger.h" />
     <ClInclude Include="logic\netManager.h" />
-    <ClInclude Include="logic\testBlob\createTestAuthInfo.h" />
     <ClInclude Include="logic\testBlob\testBlob.h" />
     <ClInclude Include="logic\userManager.h" />
   </ItemGroup>
