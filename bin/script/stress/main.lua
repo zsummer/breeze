@@ -2,15 +2,12 @@
 --process msg
 local config = require("config")
 require("proto4z")
-require("ProtoCommon")
-require("ProtoLogin")
 require("user")
 
 dump = Proto4z.dump
 
 
 _sessions = {}
-
 function onConnect(sID, ip, port)
     local session = _sessions[sID]
     if not session then
@@ -27,7 +24,7 @@ function onDisconnect(sID, ip, port)
         return
     end
     session.user:onDisconnect(sID, ip, port)
-    _sessions[sID] = nil
+ 
 end
 
 function onMessage(sID, pID, binData)
@@ -46,8 +43,10 @@ function onMessage(sID, pID, binData)
         loge("not have the message process function. name=on_" .. name)
         return
     end
-    --dump(msg)
-    --logd("onMessage. sID=" .. sID .. ", pID=" .. pID .. ", typename=" .. name )
+    if name == "GetContactInfoAck" then
+        dump(msg)
+        logd("onMessage. sID=" .. sID .. ", pID=" .. pID .. ", typename=" .. name )
+    end
     session.user["on_" .. name](session.user, sID, msg)
 end
 
@@ -67,8 +66,8 @@ summer.start()
 --debug.debug()
 --dump(config)
 --add connector
-for i=1, 3 do
-	local id = summer.addConnect({ip=config.connect.stress[1].ip, port=config.connect.stress[1].port, reconnect=2})
+for i=1, 1 do
+	local id = summer.addConnect({ip=config.connect.stress[1].ip, port=config.connect.stress[1].port, reconnect=4})
 	if id == nil then
 		summer.logw("id == nil when addConnect")
 	end

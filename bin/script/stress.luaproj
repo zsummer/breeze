@@ -22,9 +22,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="proto\" />
     <Folder Include="stress\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="proto\ProtoChat.lua" />
+    <Compile Include="proto\ProtoCommon.lua" />
+    <Compile Include="proto\ProtoLogin.lua" />
     <Compile Include="stress\main.lua" />
     <Compile Include="stress\proto4z.lua" />
     <Compile Include="stress\user.lua" />

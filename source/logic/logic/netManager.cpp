@@ -128,11 +128,19 @@ void NetManager::msg_onLinkServerReq(TcpSessionPtr session, ProtoID pID, ReadStr
 			}
 			else
 			{
-
+				ack.retCode = EC_TOKEN_EXPIRE;
 			}
+		}
+		else
+		{
+			ack.retCode = EC_INVALIDE_USER;
 		}
 		
     }
+	else
+	{
+		ack.retCode = EC_INVALIDE_USER;
+	}
     
 	WriteStream ws(ID_LinkServerAck);
 	ws << ack;

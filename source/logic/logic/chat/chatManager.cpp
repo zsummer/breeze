@@ -180,7 +180,10 @@ void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool bro
 	if (broadcast)
 	{
 		WriteStream ws(ID_GetContactInfoAck);
-		ws << EC_SUCCESS << info;
+		GetContactInfoAck ack;
+		ack.retCode = EC_SUCCESS;
+		ack.contact = info;
+		ws << ack;
 		for (auto &kv : info.friends)
 		{
 			if (kv.flag == FRIEND_ESTABLISHED)

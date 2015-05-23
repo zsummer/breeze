@@ -1,6 +1,7 @@
 require("proto4z")
 require("ProtoCommon")
 require("ProtoLogin")
+require("ProtoChat")
 
 User = {}
 
@@ -75,31 +76,30 @@ function User:on_SelectUserAck(sID, msg)
 	end
     self.uID = msg.uID
     self.token = msg.token
-    dump(msg)
     local data = Proto4z.encode({uID=self.uID, token=self.token}, "LinkServerReq")
     summer.sendContent(sID, Proto4z.LinkServerReq.__getID, data)  
 end
 
+-- µÇÂ¼ÓÎÏ·
 function User:on_LinkServerAck(sID, msg)
 	if msg.retCode ~= Proto4z.EC_SUCCESS then
 		loge("on_LinkServerAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
 	    return
 	end
     logi("login success. account=" .. self.account .. ", nickName=" .. self.userinfo.nickName)
-
-	local data = Proto4z.encode({uid=self.uID}, "GetContactInfoReq")
+	local data = Proto4z.encode({uID=self.uID}, "GetContactInfoReq")
     summer.sendContent(sID, Proto4z.GetContactInfoReq.__getID, data) 
 end
 
 function User:on_GetContactInfoAck(sID, msg)
+
 	if msg.retCode ~= Proto4z.EC_SUCCESS then
 		loge("on_GetContactInfoAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
 	    return
 	end
-    logi("GetContactInfo success. totalFriends=" .. msg.totalFriends )
+    logi("GetContactInfo success. totalFriends=" .. msg.contact.totalFriends )
 	dump(msg, "GetContactInfo")
-
-	local data = Proto4z.encode({uid=self.uID}, "GetContactInfoReq")
+	local data = Proto4z.encode({uID=self.uID}, "GetContactInfoReq")
     summer.sendContent(sID, Proto4z.GetContactInfoReq.__getID, data) 
 end
 
