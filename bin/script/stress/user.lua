@@ -14,8 +14,7 @@ function User.new(...)
     return user
 end
 
-function User:ctor(sID)
-    _sID = sID
+function User:ctor()
 end
 
 function User:onConnect(sID, remoteIP, remotePort)
@@ -44,9 +43,9 @@ function User:on_PlatAuthAck(sID, msg)
 	    summer.sendContent(sID, Proto4z.CreateUserReq.__getID, data)
     else
         self.userinfo = user
+        self.users = nil
         local data = Proto4z.encode({uID=self.userinfo.uID}, "SelectUserReq")
 	    summer.sendContent(sID, Proto4z.SelectUserReq.__getID, data)
-        dump(self.user)
     end
 end
 
@@ -63,9 +62,9 @@ function User:on_CreateUserAck(sID, msg)
         loge("create user failed. account=" .. self.account )
     else
        self.userinfo = user
+       self.users = {}
        local data = Proto4z.encode({uID=self.userinfo.uID}, "SelectUserReq")
        summer.sendContent(sID, Proto4z.SelectUserReq.__getID, data)
-       dump(self.user)
     end
 end
 

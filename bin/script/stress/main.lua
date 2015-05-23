@@ -6,6 +6,8 @@ require("user")
 
 dump = Proto4z.dump
 
+
+
 -- sID <=> user
 _users = {}
 function onConnect(sID, ip, port)
