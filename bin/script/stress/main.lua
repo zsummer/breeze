@@ -43,10 +43,6 @@ function onMessage(sID, pID, binData)
         loge("not have the message process function. name=on_" .. name)
         return
     end
-    if name == "GetContactInfoAck" then
-        dump(msg)
-        logd("onMessage. sID=" .. sID .. ", pID=" .. pID .. ", typename=" .. name )
-    end
     session.user["on_" .. name](session.user, sID, msg)
 end
 
