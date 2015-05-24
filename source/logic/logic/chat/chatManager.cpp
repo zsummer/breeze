@@ -283,6 +283,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 			info.makeTime = (unsigned int)time(NULL);
 			info.uID = src->second.uID;
 			dst->second.friends.push_back(info);
+			updateContact(dst->second, true, true);
 			if (srcStatus == src->second.friends.end() || srcStatus->flag == FRIEND_WAITING)
 			{
 				if (srcStatus != src->second.friends.end())
@@ -292,6 +293,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 				info.flag = FRIEND_WAITING;
 				info.uID = req.uID;
 				src->second.friends.push_back(info);
+				updateContact(src->second, true, true);
 			}
 		}
 		else
@@ -308,9 +310,11 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 		info.makeTime = (unsigned int)time(NULL);
 		info.uID = req.uID;
 		src->second.friends.push_back(info);
+		updateContact(src->second, true, true);
 		if (dstStatus != dst->second.friends.end() && dstStatus->flag != FRIEND_BLACKLIST)
 		{
 			dst->second.friends.erase(dstStatus);
+			updateContact(dst->second, true, true);
 		}
 	}
 	else if (req.oFlag == FRIEND_REMOVEBLACK)
@@ -318,6 +322,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_BLACKLIST)
 		{
 			src->second.friends.erase(srcStatus);
+			updateContact(src->second, true, true);
 		}
 		else
 		{
@@ -329,6 +334,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 		if (srcStatus != src->second.friends.end() && srcStatus->flag != FRIEND_BLACKLIST)
 		{
 			src->second.friends.erase(srcStatus);
+			updateContact(src->second, true, true);
 		}
 		else
 		{
@@ -342,12 +348,14 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 			srcStatus->flag = FRIEND_ESTABLISHED;
 			srcStatus->makeTime = (unsigned int)time(NULL);
 			dst->second.friends.erase(dstStatus);
+			updateContact(dst->second, true, true);
 
 			FriendInfo info;
 			info.uID = inner->userInfo.uID;
 			info.makeTime = (unsigned int)time(NULL);
 			info.flag = FRIEND_ESTABLISHED;
 			src->second.friends.push_back(info);
+			updateContact(src->second, true, true);
 		}
 		else
 		{
@@ -359,9 +367,11 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
 		{
 			src->second.friends.erase(srcStatus);
+			updateContact(src->second, true, true);
 			if (dstStatus != dst->second.friends.end() && dstStatus->flag == FRIEND_WAITING)
 			{
 				dst->second.friends.erase(dstStatus);
+				updateContact(dst->second, true, true);
 			}
 		}
 		else
@@ -374,6 +384,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
 		{
 			src->second.friends.erase(srcStatus);
+			updateContact(src->second, true, true);
 		}
 		else
 		{
