@@ -103,11 +103,22 @@ function User:on_GetContactInfoAck(sID, msg)
 
     logi("on_GetContactInfoAck success. totalFriends=" .. msg.contact.totalFriends )
     dump(msg, "on_GetContactInfoAck")
-
+    --检查下有没有收到好友请求 有就允许
+    if msg.contact.totalFriends > 0 then
+        for _, v  in pairs(self.contact.friends) do
+            if v.flag == Proto4z.FRIEND_REQUESTING then
+                local data = Proto4z.encode({uID=v.uID, oFlag=Proto4z.FRIEND_ALLOW}, "FriendOperationReq")
+                summer.sendContent(sID, Proto4z.FriendOperationReq.__getID, data) 
+            end
+        end
     --获取一些在线的陌生人ID
-    if msg.contact.totalFriends == 0 then
-    	local data = Proto4z.encode({}, "GetSomeStrangersReq")
-        summer.sendContent(sID, Proto4z.GetSomeStrangersReq.__getID, data) 
+    else
+        if self.onceget then --先onceget一下 后面改
+    	    local data = Proto4z.encode({}, "GetSomeStrangersReq")
+            summer.sendContent(sID, Proto4z.GetSomeStrangersReq.__getID, data) 
+        else
+            self.onceget = true
+        end
     end
 end
 
