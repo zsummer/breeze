@@ -1,4 +1,4 @@
-require("proto4z")
+ï»¿require("proto4z")
 require("ProtoCommon")
 require("ProtoLogin")
 require("ProtoChat")
@@ -79,7 +79,7 @@ function User:on_SelectUserAck(sID, msg)
     summer.sendContent(sID, Proto4z.LinkServerReq.__getID, data)  
 end
 
--- µÇÂ¼ÓÎÏ·
+-- ç™»å½•æ¸¸æˆ
 function User:on_LinkServerAck(sID, msg)
 	if msg.retCode ~= Proto4z.EC_SUCCESS then
 		loge("on_LinkServerAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
@@ -87,12 +87,12 @@ function User:on_LinkServerAck(sID, msg)
 	end
     logi("login success. account=" .. self.account .. ", nickName=" .. self.userinfo.nickName)
 
-    --»ñÈ¡×Ô¼ºµÄ½»ÓÑĞÅÏ¢
+    --è·å–è‡ªå·±çš„äº¤å‹ä¿¡æ¯
 	local data = Proto4z.encode({uID=self.uID}, "GetContactInfoReq")
     summer.sendContent(sID, Proto4z.GetContactInfoReq.__getID, data) 
 end
 
--- ±£´æ·şÎñÆ÷¶Ë´«À´µÄ½»ÓÑĞÅÏ¢
+-- ä¿å­˜æœåŠ¡å™¨ç«¯ä¼ æ¥çš„äº¤å‹ä¿¡æ¯
 function User:on_GetContactInfoAck(sID, msg)
 	if msg.retCode ~= Proto4z.EC_SUCCESS then
 		loge("on_GetContactInfoAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
@@ -103,17 +103,18 @@ function User:on_GetContactInfoAck(sID, msg)
 
     logi("on_GetContactInfoAck success. totalFriends=" .. msg.contact.totalFriends )
     dump(msg, "on_GetContactInfoAck")
-    --¼ì²éÏÂÓĞÃ»ÓĞÊÕµ½ºÃÓÑÇëÇó ÓĞ¾ÍÔÊĞí
-    if msg.contact.totalFriends > 0 then
+    --æ£€æŸ¥ä¸‹æœ‰æ²¡æœ‰æ”¶åˆ°å¥½å‹è¯·æ±‚ æœ‰å°±å…è®¸
+    if #self.contact.friends > 0 then
+        dump(self.contact.friends, "self.contact.friends æ£€æŸ¥ä¸‹æœ‰æ²¡æœ‰æ”¶åˆ°å¥½å‹è¯·æ±‚ æœ‰å°±å…è®¸")
         for _, v  in pairs(self.contact.friends) do
             if v.flag == Proto4z.FRIEND_REQUESTING then
                 local data = Proto4z.encode({uID=v.uID, oFlag=Proto4z.FRIEND_ALLOW}, "FriendOperationReq")
                 summer.sendContent(sID, Proto4z.FriendOperationReq.__getID, data) 
             end
         end
-    --»ñÈ¡Ò»Ğ©ÔÚÏßµÄÄ°ÉúÈËID
+    --è·å–ä¸€äº›åœ¨çº¿çš„é™Œç”ŸäººID
     else
-        if self.onceget then --ÏÈoncegetÒ»ÏÂ ºóÃæ¸Ä
+        if self.onceget then --å…ˆoncegetä¸€ä¸‹ åé¢æ”¹
     	    local data = Proto4z.encode({}, "GetSomeStrangersReq")
             summer.sendContent(sID, Proto4z.GetSomeStrangersReq.__getID, data) 
         else
