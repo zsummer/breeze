@@ -80,7 +80,7 @@ namespace zsummer
 			bool doClose();
 		public:
 			bool attachSocket(SOCKET s, std::string remoteIP, unsigned short remotePort);
-			void onIOCPMessage(BOOL bSuccess, DWORD dwTranceCount, unsigned char cType);
+			void onIOCPMessage(BOOL bSuccess, DWORD dwTranceBytes, unsigned char cType);
 			std::string getTcpSocketStatus();
 		public:
 			//private

@@ -36,9 +36,9 @@ public:
 public:
 	void event_onSessionDisconnect(TcpSessionPtr session);
 	//! ---- 令牌验证 --------------------------------------------
-	void msg_onPlatAuthReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
-	void msg_onCreateUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
-	void msg_onSelectUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs);
+	void msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs);
+	void msg_onSelectUserReq(TcpSessionPtr session, ReadStream & rs);
 
 	void db_onFetchUsers(DBResultPtr result, TcpSessionPtr session);
 	void db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const UserInfo &info);

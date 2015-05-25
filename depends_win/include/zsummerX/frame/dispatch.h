@@ -67,7 +67,7 @@ namespace zsummer
 			//注册消息处理handler, 这个是针对消息ID进行注册, 回调参数是包含已经处理得到的协议ID以及attach好的ReadStream. 可以直接使用ReadStream流出对应的协议数据.
 			inline void registerSessionMessage(ProtoID protoID, const OnMessageFunction & msgfun){ _mapSessionDispatch[protoID].push_back(msgfun); }
 			//注册默认的消息处理handler, 如果一个协议找不到对应的协议处理handler, 则会交给默认的处理handler去处理.
-			inline void registerSessionDefaultMessage(const OnMessageFunction & msgfun){ _vctDefaultSessionDispatch.push_back(msgfun); }
+			inline void registerSessionDefaultMessage(const OnDefaultMessageFunction & msgfun){ _vctDefaultSessionDispatch.push_back(msgfun); }
 
 			//event. can use method isSessionID or isConnectID to resolution who is the sessionID
 			//注册连接建立和断开的通知, 具体是连入的连接断开还是连出的连接断开 请使用isSessionID()和isConnectID()来判断.
@@ -96,7 +96,7 @@ namespace zsummer
 			//!message
 			MapProtoDispatch _mapSessionDispatch;
 			std::vector<OnPreMessageFunction> _vctPreSessionDispatch;
-			std::vector<OnMessageFunction> _vctDefaultSessionDispatch;
+			std::vector<OnDefaultMessageFunction> _vctDefaultSessionDispatch;
 
 			//http
 			std::vector<OnHTTPMessageFunction> _vctSessionHTTPMessage;

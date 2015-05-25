@@ -9,9 +9,9 @@
 Login::Login()
 {
 	MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&Login::event_onSessionDisconnect, this, _1));
-	MessageDispatcher::getRef().registerSessionMessage(ID_PlatAuthReq, std::bind(&Login::msg_onPlatAuthReq, this, _1, _2, _3));
-	MessageDispatcher::getRef().registerSessionMessage(ID_CreateUserReq, std::bind(&Login::msg_onCreateUserReq, this, _1, _2, _3));
-	MessageDispatcher::getRef().registerSessionMessage(ID_SelectUserReq, std::bind(&Login::msg_onSelectUserReq, this, _1, _2, _3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_PlatAuthReq, std::bind(&Login::msg_onPlatAuthReq, this, _1, _2));
+	MessageDispatcher::getRef().registerSessionMessage(ID_CreateUserReq, std::bind(&Login::msg_onCreateUserReq, this, _1, _2));
+	MessageDispatcher::getRef().registerSessionMessage(ID_SelectUserReq, std::bind(&Login::msg_onSelectUserReq, this, _1, _2));
 }
 
 bool Login::init()
@@ -48,7 +48,7 @@ void Login::event_onSessionDisconnect(TcpSessionPtr session)
 	_cache.erase(session->getSessionID());
 }
 
-void Login::msg_onPlatAuthReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void Login::msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs)
 {
 	PlatAuthReq req; 
 	rs >> req;
@@ -105,7 +105,7 @@ void Login::db_onFetchUsers(DBResultPtr result, TcpSessionPtr session)
 	session->doSend(ws.getStream(), ws.getStreamLen());
 }
 
-void Login::msg_onCreateUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void Login::msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs)
 {
 	auto founder = _cache.find(session->getSessionID());
 	if (founder == _cache.end())
@@ -163,7 +163,7 @@ void Login::db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const Use
 
 
 
-void Login::msg_onSelectUserReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void Login::msg_onSelectUserReq(TcpSessionPtr session, ReadStream & rs)
 {
 	SelectUserReq req;
 	rs >> req;

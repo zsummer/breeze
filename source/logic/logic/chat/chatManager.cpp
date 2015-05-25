@@ -8,10 +8,10 @@
 
 ChatManager::ChatManager()
 {
-	MessageDispatcher::getRef().registerSessionMessage(ID_GetContactInfoReq, std::bind(&ChatManager::msg_onGetContactInfoReq, this, _1, _2, _3));
-	MessageDispatcher::getRef().registerSessionMessage(ID_FriendOperationReq, std::bind(&ChatManager::msg_onFriendOperationReq, this, _1, _2, _3));
-	MessageDispatcher::getRef().registerSessionMessage(ID_ChatReq, std::bind(&ChatManager::msg_onChatReq, this, _1, _2, _3));
-	MessageDispatcher::getRef().registerSessionMessage(ID_GetSomeStrangersReq, std::bind(&ChatManager::msg_onGetSomeStrangersReq, this, _1, _2, _3));
+	MessageDispatcher::getRef().registerSessionMessage(ID_GetContactInfoReq, std::bind(&ChatManager::msg_onGetContactInfoReq, this, _1, _2));
+	MessageDispatcher::getRef().registerSessionMessage(ID_FriendOperationReq, std::bind(&ChatManager::msg_onFriendOperationReq, this, _1, _2));
+	MessageDispatcher::getRef().registerSessionMessage(ID_ChatReq, std::bind(&ChatManager::msg_onChatReq, this, _1, _2));
+	MessageDispatcher::getRef().registerSessionMessage(ID_GetSomeStrangersReq, std::bind(&ChatManager::msg_onGetSomeStrangersReq, this, _1, _2));
 }
 
 ChatManager::~ChatManager()
@@ -214,7 +214,7 @@ void ChatManager::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::st
 	}
 }
 
-void ChatManager::msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void ChatManager::msg_onGetContactInfoReq(TcpSessionPtr session, ReadStream & rs)
 {
 	GetContactInfoReq req;
 	rs >> req;
@@ -235,7 +235,7 @@ void ChatManager::msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, Re
 	session->doSend(ws.getStream(), ws.getStreamLen());
 }
 
-void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
 {
 	FriendOperationReq req;
 	rs >> req;
@@ -402,7 +402,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, R
 	session->doSend(ws.getStream(), ws.getStreamLen());
 }
 
-void ChatManager::msg_onGetSomeStrangersReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void ChatManager::msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs)
 {
 	GetSomeStrangersReq req;
 	rs >> req;
@@ -436,7 +436,7 @@ void ChatManager::msg_onGetSomeStrangersReq(TcpSessionPtr session, ProtoID pID, 
 	session->doSend(ws.getStream(), ws.getStreamLen());
 }
 
-void ChatManager::msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void ChatManager::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
 {
 	ChatReq req;
 	rs >> req;

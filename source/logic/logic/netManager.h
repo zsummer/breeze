@@ -42,7 +42,7 @@ public:
 protected:
 
 	//! ---- 登录流程 --------------------------------------------
-	void msg_onLinkServerReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onLinkServerReq(TcpSessionPtr session, ReadStream & rs);
 
 
 	//! ---- 底层session建立和断开通知 ---------------------------
@@ -55,7 +55,7 @@ protected:
 
 	//! ---- session状态检测 ---------------------------
 	void event_onSessionPulse(TcpSessionPtr session, unsigned int pulseInterval);
-	void msg_onHeartbeatEcho(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs);
 
 private:
 	zsummer::network::ListenConfig _configListen;

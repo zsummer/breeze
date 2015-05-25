@@ -50,10 +50,10 @@ public:
 	void onUserLogin(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
 	void onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
 public:
-	void msg_onGetContactInfoReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
-	void msg_onFriendOperationReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
-	void msg_onGetSomeStrangersReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
-	void msg_onChatReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs);
+	void msg_onGetContactInfoReq(TcpSessionPtr session, ReadStream & rs);
+	void msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs);
+	void msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs);
+	void msg_onChatReq(TcpSessionPtr session, ReadStream & rs);
 	
 private:
 	std::unordered_map<UserID, ContactInfo> _contacts; //存储所有好友/名片信息

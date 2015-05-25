@@ -50,7 +50,7 @@ namespace zsummer
 			~UdpSocket();
 			bool initialize(const EventLoopPtr &summer, const char *localIP, unsigned short localPort);
 			bool doSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
-			bool onIOCPMessage(BOOL bSuccess, DWORD dwTranceCount, unsigned char cType);
+			bool onIOCPMessage(BOOL bSuccess, DWORD dwTranceBytes, unsigned char cType);
 			bool doRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler &&handler);
 		public:
 			//private

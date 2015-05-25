@@ -68,12 +68,12 @@ namespace zsummer
 			inline unsigned int getNextExpireTime()
 			{
 				unsigned int now = getNowMilliTick();
-				unsigned int dwDelayMs = _nextExpire - now;
-				if (dwDelayMs > 100)
+				unsigned int delay = _nextExpire - now;
+				if (delay > 100)
 				{
-					dwDelayMs = 100;
+					delay = 100;
 				}
-				return dwDelayMs;
+				return delay;
 			}
 
 			TimerID createTimer(unsigned int delayms, _OnTimerHandler &&handle);

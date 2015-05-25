@@ -97,13 +97,14 @@ namespace zsummer
 
 		struct ListenConfig
 		{
-			std::string _listenIP = "0.0.0.0";
-			unsigned short _listenPort = 81;
-			ProtoType _protoType = PT_TCP;
-			std::string _rc4TcpEncryption = ""; //empty is not encryption
-			bool _openFlashPolicy = false;
-			unsigned int _pulseInterval = 30000;
-			unsigned int _maxSessions = 5000;
+			std::string		_listenIP = "0.0.0.0";
+			unsigned short	_listenPort = 81;
+			ProtoType		_protoType = PT_TCP;
+			std::string		_rc4TcpEncryption = ""; //empty is not encryption
+			bool			_openFlashPolicy = false;
+			bool			_setNoDelay = true;
+			unsigned int	_pulseInterval = 30000;
+			unsigned int	_maxSessions = 5000;
 			std::vector<std::string> _whitelistIP;
 		};
 
@@ -127,6 +128,7 @@ namespace zsummer
 			unsigned int _reconnectMaxCount = 0; // try reconnect max count
 			unsigned int _reconnectInterval = 5000; //million seconds;
 			bool         _reconnectCleanAllData = true;//clean all data when reconnect;
+			bool		 _setNoDelay = true;
 		};
 
 
@@ -153,8 +155,9 @@ namespace zsummer
         typedef std::function < bool(TcpSessionPtr , const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnPreMessageFunction;
 
 		//!register message 
-		typedef std::function < void(TcpSessionPtr, ProtoID, zsummer::proto4z::ReadStream &) > OnMessageFunction;
-
+		typedef std::function < void(TcpSessionPtr, zsummer::proto4z::ReadStream &) > OnMessageFunction;
+		//!register message 
+		typedef std::function < void(TcpSessionPtr, ProtoID, zsummer::proto4z::ReadStream &) > OnDefaultMessageFunction;
 		//!register event 
 		typedef std::function < void(TcpSessionPtr) > OnSessionEstablished;
 		typedef std::function < void(TcpSessionPtr) > OnSessionDisconnect;

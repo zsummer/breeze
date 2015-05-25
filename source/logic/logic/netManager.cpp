@@ -7,7 +7,7 @@ NetManager::NetManager()
 {
 	//auth request process
 	MessageDispatcher::getRef().registerSessionMessage(ID_LinkServerReq,
-		std::bind(&NetManager::msg_onLinkServerReq, this, _1, _2, _3));
+		std::bind(&NetManager::msg_onLinkServerReq, this, _1, _2));
 
 
 
@@ -21,7 +21,7 @@ NetManager::NetManager()
 	MessageDispatcher::getRef().registerOnSessionPulse(std::bind(&NetManager::event_onSessionPulse, this, _1, _2));
 
 	MessageDispatcher::getRef().registerSessionMessage(ID_HeartbeatEcho,
-		std::bind(&NetManager::msg_onHeartbeatEcho, this, _1, _2, _3));
+		std::bind(&NetManager::msg_onHeartbeatEcho, this, _1, _2));
 }
 
 bool NetManager::start()
@@ -92,7 +92,7 @@ bool NetManager::stop(std::function<void()> onSafeClosed)
 
 
 
-void NetManager::msg_onLinkServerReq(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void NetManager::msg_onLinkServerReq(TcpSessionPtr session, ReadStream & rs)
 {
 	LinkServerReq req;
 	rs >> req;
@@ -168,7 +168,7 @@ void NetManager::event_onSessionPulse(TcpSessionPtr session, unsigned int pulseI
 	}
 }
 
-void NetManager::msg_onHeartbeatEcho(TcpSessionPtr session, ProtoID pID, ReadStream & rs)
+void NetManager::msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs)
 {
 	session->setUserLParam(time(NULL));
 }
