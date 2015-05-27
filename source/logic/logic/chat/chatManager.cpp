@@ -299,6 +299,31 @@ void ChatManager::broadcast(WriteStream & ws, const UserIDArray uIDs)
 	UserManager::getRef().broadcast(ws, uIDs);
 }
 
+void ChatManager::broadcastFriends(WriteStream & ws, UserID uID)
+{
+	auto founder = _contacts.find(uID);
+	if (founder == _contacts.end())
+	{
+		return;
+	}
+	UserIDArray ids;
+	for (auto kv : founder->second.friends)
+	{
+		if (kv.second.fID == FRIEND_ESTABLISHED)
+		{
+			auto fr = _contacts.find(kv.second.fID);
+			if (fr == _contacts.end())
+			{
+				continue;
+			}
+			if (fr->second.info.onlineFlag)
+			{
+				ids.push_back(kv.first);
+			}
+		}
+	}
+	broadcast(ws, ids);
+}
 
 void ChatManager::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc)
 {

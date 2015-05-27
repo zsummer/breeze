@@ -67,6 +67,7 @@ public:
 	//广播消息给客户端
 	//uIDs为空则广播给所有在线用户
 	void broadcast(WriteStream & ws, const UserIDArray uIDs);
+	void broadcastFriends(WriteStream & ws, UserID uID);
 
 	void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
 public:
