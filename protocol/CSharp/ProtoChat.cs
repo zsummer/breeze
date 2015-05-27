@@ -60,16 +60,18 @@ namespace Proto4z
  
 	class FriendInfo: Proto4z.IProtoObject //好友信息 
 	{	 
-		public Proto4z.ui64 uID;  
+		public Proto4z.ui64 ownID;  
+		public Proto4z.ui64 fID;  
 		public Proto4z.ui8 flag; //状态标志 
 		public Proto4z.ui32 makeTime; //建立时间 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 7; 
+			Proto4z.ui64 tag = 15; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
-			data.AddRange(uID.__encode()); 
+			data.AddRange(ownID.__encode()); 
+			data.AddRange(fID.__encode()); 
 			data.AddRange(flag.__encode()); 
 			data.AddRange(makeTime.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
@@ -86,18 +88,23 @@ namespace Proto4z
 			offset.__decode(binData, ref pos); 
 			offset.val += (System.UInt32)pos; 
 			tag.__decode(binData, ref pos); 
-			uID = new Proto4z.ui64(); 
+			ownID = new Proto4z.ui64(); 
 			if ((tag.val & ((System.UInt64)1 << 0)) != 0) 
 			{ 
-				uID.__decode(binData, ref pos); 
+				ownID.__decode(binData, ref pos); 
+			} 
+			fID = new Proto4z.ui64(); 
+			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
+			{ 
+				fID.__decode(binData, ref pos); 
 			} 
 			flag = new Proto4z.ui8(); 
-			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
 			{ 
 				flag.__decode(binData, ref pos); 
 			} 
 			makeTime = new Proto4z.ui32(); 
-			if ((tag.val & ((System.UInt64)1 << 2)) != 0) 
+			if ((tag.val & ((System.UInt64)1 << 3)) != 0) 
 			{ 
 				makeTime.__decode(binData, ref pos); 
 			} 
@@ -143,14 +150,11 @@ namespace Proto4z
 		public Proto4z.i16 iconID; //头像 
 		public Proto4z.ui8 banned; //禁言 
 		public Proto4z.ui64 groupID; //加入的群组ID, 0为没有加入任何群组 
-		public Proto4z.ui32 totalBlacks; //被拉黑次数 
-		public Proto4z.ui32 totalFriends; //好友个数 
 		public Proto4z.ui8 onlineFlag; //在线状态0离线,1在线 
-		public Proto4z.FriendInfoArray friends; //好友信息/黑名单信息/好友请求 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
-			Proto4z.ui64 tag = 511; 
+			Proto4z.ui64 tag = 63; 
 			 
 			var data = new System.Collections.Generic.List<byte>(); 
 			data.AddRange(uID.__encode()); 
@@ -158,10 +162,7 @@ namespace Proto4z
 			data.AddRange(iconID.__encode()); 
 			data.AddRange(banned.__encode()); 
 			data.AddRange(groupID.__encode()); 
-			data.AddRange(totalBlacks.__encode()); 
-			data.AddRange(totalFriends.__encode()); 
 			data.AddRange(onlineFlag.__encode()); 
-			data.AddRange(friends.__encode()); 
 			sttLen = (System.UInt32)data.Count + 8; 
 			var ret = new System.Collections.Generic.List<byte>(); 
 			ret.AddRange(sttLen.__encode()); 
@@ -201,25 +202,10 @@ namespace Proto4z
 			{ 
 				groupID.__decode(binData, ref pos); 
 			} 
-			totalBlacks = new Proto4z.ui32(); 
+			onlineFlag = new Proto4z.ui8(); 
 			if ((tag.val & ((System.UInt64)1 << 5)) != 0) 
 			{ 
-				totalBlacks.__decode(binData, ref pos); 
-			} 
-			totalFriends = new Proto4z.ui32(); 
-			if ((tag.val & ((System.UInt64)1 << 6)) != 0) 
-			{ 
-				totalFriends.__decode(binData, ref pos); 
-			} 
-			onlineFlag = new Proto4z.ui8(); 
-			if ((tag.val & ((System.UInt64)1 << 7)) != 0) 
-			{ 
 				onlineFlag.__decode(binData, ref pos); 
-			} 
-			friends = new Proto4z.FriendInfoArray(); 
-			if ((tag.val & ((System.UInt64)1 << 8)) != 0) 
-			{ 
-				friends.__decode(binData, ref pos); 
 			} 
 			return (int)offset.val; 
 		} 

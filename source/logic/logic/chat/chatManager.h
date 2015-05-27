@@ -33,6 +33,11 @@
 #include <multimod_matching_tree/match_tree.h>
 
 
+struct Contact
+{
+	ContactInfo info;
+	std::map<UserID, FriendInfo> friends;
+};
 
 
 class ChatManager :public Singleton<ChatManager>
@@ -41,11 +46,27 @@ public:
 	ChatManager();
 	~ChatManager();
 	bool init();
-	//更新名片, 可选择更新到数据库还是更新给所有客户端
+	bool initFilter();
+	bool initContact();
+	bool initFriends();
+	bool initMessage();
+	//存储名片信息
 	void insertContact(const ContactInfo & info);
-	void updateContact(const ContactInfo & info, bool writedb, bool broadcast);
-	void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
+	void updateContact(const ContactInfo & info);
 
+	//存储好友关系
+	void insertFriend(const FriendInfo & info);
+	void updateFriend(const FriendInfo & info);
+
+	//存储聊天消息
+	void insertMessage(const ChatInfo & info);
+	void updateMessage(const ChatInfo & info);
+
+	//广播消息给客户端
+	//uIDs为空则广播给所有在线用户
+	void broadcast(WriteStream & ws, const UserIDArray uIDs);
+
+	void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
 public:
 	void onUserLogin(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
 	void onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
@@ -56,11 +77,12 @@ public:
 	void msg_onChatReq(TcpSessionPtr session, ReadStream & rs);
 	
 private:
-	std::unordered_map<UserID, ContactInfo> _contacts; //存储所有好友/名片信息
+	std::unordered_map<UserID, Contact> _contacts; //存储所有好友/名片信息
 	std::map<unsigned long long, UserIDArray> _channels;
 
 	//过滤词库
 	match_tree_head * _filter = nullptr;
+
 	//负责分配一个支持SQL合服的64位ID.  [plat+ared+uniqueID]
 	GenObjectID _genID; //生成消息ID
 };

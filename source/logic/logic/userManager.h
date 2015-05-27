@@ -47,7 +47,7 @@ public:
     
 	inline size_t getAllOnlineUserCount() { return _mapSession.size(); }
 	inline size_t getAllUserCount() { return _mapUser.size(); }
-
+	void broadcast(WriteStream & ws, const UserIDArray uIDs);
 public:
 	void addUser(const UserInfo & info);
 	void setUserToken(UserID uID, std::string token, time_t expireTime);

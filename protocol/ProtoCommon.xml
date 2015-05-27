@@ -30,7 +30,7 @@
 
   <!-- 认证令牌 -->
   <struct name="SessionToken" store="true" desc="认证令牌">
-    <member name="uID" type="ui64"  key="true" desc=""/>
+    <member name="uID" type="ui64"  tag="key" desc=""/>
     <member name="token" type="string"   desc=""/>
     <member name="tokenExpire"  type="ui32" desc=""/>
   </struct>
@@ -38,7 +38,7 @@
 
   <!-- 用户信息 -->
   <struct name="UserInfo" store="true" desc="用户信息">
-    <member name="uID" type="ui64"  key="true" desc="用户唯一ID"/>
+    <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
     <member name="account"  type="string" desc="帐号"/>
     <member name="nickName" type="string"   desc="昵称"/>
     <member name="iconID"  type="i16" desc="头像"/>

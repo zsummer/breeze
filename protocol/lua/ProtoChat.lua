@@ -15,10 +15,11 @@ Proto4z.CHANNEL_GROUP = 2--群组, 需要指明具体某个groupid
  
 Proto4z.FriendInfo = {} --好友信息 
 Proto4z.FriendInfo.__getName = "FriendInfo" 
-Proto4z.FriendInfo.__getTag = "111" 
-Proto4z.FriendInfo[1] = {name="uID", type="ui64" }  
-Proto4z.FriendInfo[2] = {name="flag", type="ui8" } --状态标志 
-Proto4z.FriendInfo[3] = {name="makeTime", type="ui32" } --建立时间 
+Proto4z.FriendInfo.__getTag = "1111" 
+Proto4z.FriendInfo[1] = {name="ownID", type="ui64" }  
+Proto4z.FriendInfo[2] = {name="fID", type="ui64" }  
+Proto4z.FriendInfo[3] = {name="flag", type="ui8" } --状态标志 
+Proto4z.FriendInfo[4] = {name="makeTime", type="ui32" } --建立时间 
  
 Proto4z.FriendInfoArray = {}  
 Proto4z.FriendInfoArray.__getName = "FriendInfoArray" 
@@ -27,16 +28,13 @@ Proto4z.FriendInfoArray.__getTypeV = "FriendInfo"
  
 Proto4z.ContactInfo = {} --联系人卡片 
 Proto4z.ContactInfo.__getName = "ContactInfo" 
-Proto4z.ContactInfo.__getTag = "111111111" 
+Proto4z.ContactInfo.__getTag = "111111" 
 Proto4z.ContactInfo[1] = {name="uID", type="ui64" }  
 Proto4z.ContactInfo[2] = {name="nickName", type="string" } --用户昵称 
 Proto4z.ContactInfo[3] = {name="iconID", type="i16" } --头像 
 Proto4z.ContactInfo[4] = {name="banned", type="ui8" } --禁言 
 Proto4z.ContactInfo[5] = {name="groupID", type="ui64" } --加入的群组ID, 0为没有加入任何群组 
-Proto4z.ContactInfo[6] = {name="totalBlacks", type="ui32" } --被拉黑次数 
-Proto4z.ContactInfo[7] = {name="totalFriends", type="ui32" } --好友个数 
-Proto4z.ContactInfo[8] = {name="onlineFlag", type="ui8" } --在线状态0离线,1在线 
-Proto4z.ContactInfo[9] = {name="friends", type="FriendInfoArray" } --好友信息/黑名单信息/好友请求 
+Proto4z.ContactInfo[6] = {name="onlineFlag", type="ui8" } --在线状态0离线,1在线 
  
 Proto4z.ContactInfoArray = {}  
 Proto4z.ContactInfoArray.__getName = "ContactInfoArray" 

@@ -25,23 +25,46 @@ ChatManager::~ChatManager()
 
 bool ChatManager::init()
 {
-	//加载过滤词库
+	if (!initFilter())
+	{
+		return false;
+	}
+	if (!initContact())
+	{
+		return false;
+	}
+	if (!initFriends())
+	{
+		return false;
+	}
+
+	//监控玩家登录和退出, 用来更新玩家在线状态, 如果之后独立为一个进程后, 该通知以消息通知的形式获得.
+	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN, std::bind(&ChatManager::onUserLogin, this, _1, _2, _3, _4, _5));
+	EventTrigger::getRef().watching(ETRIGGER_USER_LOGOUT, std::bind(&ChatManager::onUserLogout, this, _1, _2, _3, _4, _5));
+	return true;
+}
+
+bool ChatManager::initFilter()
+{
 	_filter = match_tree_init_from_file("../filter.txt", ".....", 5);
 	if (_filter == nullptr)
 	{
 		LOGE("match_tree_init_from_file error");
 		return false;
 	}
-	LOGI("init filter configure success. filter patterns=" << _filter->_tree_pattern_count << ", min pattern=" 
+	LOGI("init filter configure success. filter patterns=" << _filter->_tree_pattern_count << ", min pattern="
 		<< _filter->_tree_pattern_minimum_len << ", max pattern=" << _filter->_tree_pattern_maximum_len << ", used memory=" << _filter->_tree_memory_used / 1024 << "KB");
-	
+	return true;
+}
+bool ChatManager::initContact()
+{
 	//! 先desc一下ContactInfo表, 不存在则创建
 	auto build = ContactInfo_BUILD();
 	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
 	{
 		if (DBManager::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
 		{
-			LOGE("create table error. sql=" <<build[1]);
+			LOGE("create table error. sql=" << build[1]);
 			return false;
 		}
 	}
@@ -50,9 +73,87 @@ bool ChatManager::init()
 	{
 		DBManager::getRef().infoQuery(build[i]);
 	}
-	
+
+	//加载所有用户数据
+	unsigned long long curID = 0;
+	do
+	{
+		auto sql = ContactInfo_LOAD(curID);
+		auto result = DBManager::getRef().infoQuery(sql);
+		if (result->getErrorCode() != QEC_SUCCESS)
+		{
+			LOGE("load contact error. curID:" << curID << ", err=" << result->getLastError());
+			return false;
+		}
+		auto mapInfo = ContactInfo_FETCH(result);
+		if (mapInfo.empty())
+		{
+			break;
+		}
+		for (auto kv : mapInfo)
+		{
+			Contact info;
+			info.info = kv.second;
+			_contacts.insert(std::make_pair(info.info.uID, info));
+		}
+		curID += mapInfo.size();
+	} while (true);
+
+	return true;
+}
+bool ChatManager::initFriends()
+{
+	//! 先desc一下FriendInfo表, 不存在则创建
+	auto build = FriendInfo_BUILD();
+	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
+	{
+		if (DBManager::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
+		{
+			LOGE("create table error. sql=" << build[1]);
+			return false;
+		}
+	}
+	//! 无论FriendInfo表的字段是否有增删 都alter一遍. 
+	for (size_t i = 2; i < build.size(); i++)
+	{
+		DBManager::getRef().infoQuery(build[i]);
+	}
+
+	//加载所有好友关系
+	unsigned long long curID = 0;
+	do
+	{
+		auto sql = FriendInfo_LOAD(curID);
+		auto result = DBManager::getRef().infoQuery(sql);
+		if (result->getErrorCode() != QEC_SUCCESS)
+		{
+			LOGE("load FriendInfo error. curID:" << curID << ", err=" << result->getLastError());
+			return false;
+		}
+		auto mapInfo = FriendInfo_FETCH(result);
+		if (mapInfo.empty())
+		{
+			break;
+		}
+		for (auto kv : mapInfo)
+		{
+			auto founder = _contacts.find(kv.first);
+			if (founder == _contacts.end())
+			{
+				LOGW("can not found the user ID when load friends info. uID=" << kv.first);
+				continue;
+			}
+			founder->second.friends.insert(kv.second.begin(), kv.second.end());
+		}
+		curID += mapInfo.size();
+	} while (true);
+	return true;
+}
+
+bool ChatManager::initMessage()
+{
 	//! 先desc一下ChatInfo表, 不存在则创建
-	build = ChatInfo_BUILD();
+	auto build = ChatInfo_BUILD();
 	if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
 	{
 		if (DBManager::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
@@ -66,28 +167,6 @@ bool ChatManager::init()
 	{
 		DBManager::getRef().infoQuery(build[i]);
 	}
-
-
-	//加载所有用户数据
-	unsigned long long curID = 0;
-	do
-	{
-		auto sql = ContactInfo_LOAD(curID);
-		auto result = DBManager::getRef().infoQuery(sql);
-		if (result->getErrorCode() != QEC_SUCCESS)
-		{
-			LOGE("load contact error. curID:" << curID << ", err=" << result->getLastError());
-			return false;
-		}
-		if (!result->haveRow())
-		{
-			break;
-		}
-		auto mapInfo = ContactInfo_FETCH(result);
-		_contacts.insert(mapInfo.begin(), mapInfo.end());
-		curID += mapInfo.size();
-	} while (true);
-
 	//获取当前最大消息ID
 	_genID.initConfig(ServerConfig::getRef().getPlatID(), ServerConfig::getRef().getAreaID());
 	DBQuery q("select mID from tb_ChatInfo where mID >= ? and mID < ?  order by mID desc limit 1;");
@@ -113,48 +192,50 @@ bool ChatManager::init()
 			return false;
 		}
 	}
-
-	//监控玩家登录和退出, 用来更新玩家在线状态, 如果之后独立为一个进程后, 该通知以消息通知的形式获得.
-	EventTrigger::getRef().watching(ETRIGGER_USER_LOGIN, std::bind(&ChatManager::onUserLogin, this, _1, _2, _3, _4, _5));
-	EventTrigger::getRef().watching(ETRIGGER_USER_LOGOUT, std::bind(&ChatManager::onUserLogout, this, _1, _2, _3, _4, _5));
 	return true;
 }
 
-
 void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long long count, unsigned long long iconID, std::string nick)
 {
-	
 	auto founder = _contacts.find(uID);
 	if (founder == _contacts.end())
 	{
-		ContactInfo info;
-		info.uID = uID;
-		info.iconID = (short)iconID;
-		info.nickName = nick;
-		_contacts[uID] = info;
-		insertContact(info);
+		Contact contact;
+		contact.info.uID = uID;
+		contact.info.iconID = (short)iconID;
+		contact.info.nickName = nick;
+		_contacts[uID] = contact;
+		insertContact(contact.info);
+	}
+	founder = _contacts.find(uID);
+	if (founder == _contacts.end())
+	{
 		return;
 	}
 	bool haveChange = false;
-	if (founder->second.nickName != nick)
+	if (founder->second.info.nickName != nick)
 	{
-		founder->second.nickName = nick;
+		founder->second.info.nickName = nick;
 		haveChange = true;
 	}
-	if (founder->second.iconID != iconID)
+	if (founder->second.info.iconID != iconID)
 	{
-		founder->second.iconID = (short)iconID;
+		founder->second.info.iconID = (short)iconID;
 		haveChange = true;
 	}
-	updateContact(founder->second, haveChange, false);
+	if (haveChange)
+	{
+		updateContact(founder->second.info);
+	}
+	founder->second.info.onlineFlag = true;
 }
+
 void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string)
 {
 	auto founder = _contacts.find(uID);
 	if (founder != _contacts.end())
 	{
-		founder->second.onlineFlag = false;
-		updateContact(founder->second, false, true);
+		founder->second.info.onlineFlag = false;
 	}
 }
 
@@ -166,44 +247,57 @@ void ChatManager::insertContact(const ContactInfo & info)
 		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "insertContact"));
 	}
 }
-void ChatManager::updateContact(const ContactInfo & info, bool writedb, bool broadcast)
+
+void ChatManager::updateContact(const ContactInfo & info)
 {
-	if (writedb)
+	auto sql = ContactInfo_UPDATE(info);
+	if (!sql.empty())
 	{
-		auto sql = ContactInfo_UPDATE(info);
-		if (!sql.empty())
-		{
-			DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "updateContact"));
-		}
-	}
-	
-	//broadcast
-	if (broadcast)
-	{
-		WriteStream ws(ID_GetContactInfoAck);
-		GetContactInfoAck ack;
-		ack.retCode = EC_SUCCESS;
-		ack.contact = info;
-		ws << ack;
-		for (auto &kv : info.friends)
-		{
-			if (kv.flag == FRIEND_ESTABLISHED)
-			{
-				auto ptr = UserManager::getRef().getInnerUserInfo(kv.uID);
-				if (ptr && ptr->sID != InvalidSeesionID)
-				{
-					SessionManager::getRef().sendSessionData(ptr->sID, ws.getStream(), ws.getStreamLen());
-				}
-			}
-		}
-		auto ptr = UserManager::getRef().getInnerUserInfo(info.uID);
-		if (ptr && ptr->sID != InvalidSeesionID)
-		{
-			SessionManager::getRef().sendSessionData(ptr->sID, ws.getStream(), ws.getStreamLen());
-		}
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "updateContact"));
 	}
 }
 
+//存储好友关系
+void ChatManager::insertFriend(const FriendInfo & info)
+{
+	auto sql = FriendInfo_INSERT(info);
+	if (!sql.empty())
+	{
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "insertFriend"));
+	}
+}
+void ChatManager::updateFriend(const FriendInfo & info)
+{
+	auto sql = FriendInfo_UPDATE(info);
+	if (!sql.empty())
+	{
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "updateFriend"));
+	}
+}
+
+//存储聊天消息
+void ChatManager::insertMessage(const ChatInfo & info)
+{
+	auto sql = ChatInfo_INSERT(info);
+	if (!sql.empty())
+	{
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "insertMessage"));
+	}
+}
+void ChatManager::updateMessage(const ChatInfo & info)
+{
+	auto sql = ChatInfo_UPDATE(info);
+	if (!sql.empty())
+	{
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "updateMessage"));
+	}
+}
+
+
+void ChatManager::broadcast(WriteStream & ws, const UserIDArray uIDs)
+{
+	UserManager::getRef().broadcast(ws, uIDs);
+}
 
 
 void ChatManager::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc)
@@ -228,7 +322,7 @@ void ChatManager::msg_onGetContactInfoReq(TcpSessionPtr session, ReadStream & rs
 	else
 	{
 		ack.retCode = EC_SUCCESS;
-		ack.contact = founder->second;
+		ack.contact = founder->second.info;
 	}
 	WriteStream ws(ID_GetContactInfoAck);
 	ws << ack;
@@ -258,7 +352,7 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & r
 		ack.retCode = EC_PARAM_DENIED;
 		return;
 	}
-	auto srcStatus = std::find_if(src->second.friends.begin(), src->second.friends.end(), [&req](const FriendInfo& info){return info.uID == req.uID; });
+	auto srcStatus = src->second.friends.find(req.uID);
 
 
 	auto dst = _contacts.find(req.uID);
@@ -267,34 +361,44 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & r
 		ack.retCode = EC_PARAM_DENIED;
 		return;
 	}
-	auto dstStatus = std::find_if(dst->second.friends.begin(), dst->second.friends.end(), [&inner](const FriendInfo& info){return info.uID == inner->userInfo.uID; });
+	auto dstStatus = dst->second.friends.find(inner->userInfo.uID);
 
 
 	if (req.oFlag == FRIEND_ADDFRIEND)
 	{
-		if (dstStatus == dst->second.friends.end() || dstStatus->flag == FRIEND_REQUESTING)
+		if (dstStatus == dst->second.friends.end() || dstStatus->second.flag == FRIEND_REQUESTING)
 		{
-			if (dstStatus != dst->second.friends.end())
-			{
-				dst->second.friends.erase(dstStatus);
-			}
 			FriendInfo info;
 			info.flag = FRIEND_REQUESTING;
 			info.makeTime = (unsigned int)time(NULL);
-			info.uID = src->second.uID;
-			dst->second.friends.push_back(info);
-			updateContact(dst->second, true, true);
-			if (srcStatus == src->second.friends.end() || srcStatus->flag == FRIEND_WAITING)
+			info.fID = src->second.info.uID;
+			info.ownID = dst->second.info.uID;
+
+			if (dstStatus == dst->second.friends.end())
 			{
-				if (srcStatus != src->second.friends.end())
-				{
-					src->second.friends.erase(srcStatus);
-				}
-				info.flag = FRIEND_WAITING;
-				info.uID = req.uID;
-				src->second.friends.push_back(info);
-				updateContact(src->second, true, true);
+				dst->second.friends[info.fID] = info;
+				insertFriend(info);
 			}
+			else
+			{
+				dstStatus->second = info;
+				updateFriend(info);
+			}
+
+			info.flag = FRIEND_WAITING;
+			info.fID = dst->second.info.uID;
+			info.ownID = src->second.info.uID;
+			if (srcStatus == src->second.friends.end())
+			{
+				src->second.friends[info.fID] = info;
+				insertFriend(info);
+			}
+			else if (srcStatus->second.flag == FRIEND_WAITING)
+			{
+				srcStatus->second = info;
+				updateFriend(info);
+			}
+			
 		}
 		else
 		{
@@ -304,58 +408,30 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & r
 	}
 	else if (req.oFlag == FRIEND_ADDBLACK)
 	{
-		src->second.friends.erase(srcStatus);
-		FriendInfo info;
-		info.flag = FRIEND_BLACKLIST;
-		info.makeTime = (unsigned int)time(NULL);
-		info.uID = req.uID;
-		src->second.friends.push_back(info);
-		updateContact(src->second, true, true);
-		if (dstStatus != dst->second.friends.end() && dstStatus->flag != FRIEND_BLACKLIST)
-		{
-			dst->second.friends.erase(dstStatus);
-			updateContact(dst->second, true, true);
-		}
+
 	}
 	else if (req.oFlag == FRIEND_REMOVEBLACK)
 	{
-		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_BLACKLIST)
-		{
-			src->second.friends.erase(srcStatus);
-			updateContact(src->second, true, true);
-		}
-		else
-		{
-			ack.retCode = EC_PARAM_DENIED;
-		}
+
 	}
 	else if (req.oFlag == FRIEND_REMOVEFRIEND)
 	{
-		if (srcStatus != src->second.friends.end() && srcStatus->flag != FRIEND_BLACKLIST)
-		{
-			src->second.friends.erase(srcStatus);
-			updateContact(src->second, true, true);
-		}
-		else
-		{
-			ack.retCode = EC_PARAM_DENIED;
-		}
+
 	}
 	else if (req.oFlag == FRIEND_ALLOW)
 	{
-		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
+		if (srcStatus != src->second.friends.end() && srcStatus->second.flag == FRIEND_REQUESTING)
 		{
-			srcStatus->flag = FRIEND_ESTABLISHED;
-			srcStatus->makeTime = (unsigned int)time(NULL);
-			dst->second.friends.erase(dstStatus);
-			updateContact(dst->second, true, true);
+			srcStatus->second.flag = FRIEND_ESTABLISHED;
+			srcStatus->second.makeTime = (unsigned int)time(NULL);
+			updateFriend(srcStatus->second);
 
-			FriendInfo info;
-			info.uID = inner->userInfo.uID;
-			info.makeTime = (unsigned int)time(NULL);
-			info.flag = FRIEND_ESTABLISHED;
-			src->second.friends.push_back(info);
-			updateContact(src->second, true, true);
+			if (dstStatus != dst->second.friends.end())
+			{
+				dstStatus->second.flag = FRIEND_ESTABLISHED;
+				dstStatus->second.makeTime = (unsigned int)time(NULL);
+				updateFriend(dstStatus->second);
+			}
 		}
 		else
 		{
@@ -364,32 +440,11 @@ void ChatManager::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & r
 	}
 	else if (req.oFlag == FRIEND_REJECT)
 	{
-		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
-		{
-			src->second.friends.erase(srcStatus);
-			updateContact(src->second, true, true);
-			if (dstStatus != dst->second.friends.end() && dstStatus->flag == FRIEND_WAITING)
-			{
-				dst->second.friends.erase(dstStatus);
-				updateContact(dst->second, true, true);
-			}
-		}
-		else
-		{
-			ack.retCode = EC_PARAM_DENIED;
-		}
+	
 	}
 	else if (req.oFlag == FRIEND_IGNORE)
 	{
-		if (srcStatus != src->second.friends.end() && srcStatus->flag == FRIEND_REQUESTING)
-		{
-			src->second.friends.erase(srcStatus);
-			updateContact(src->second, true, true);
-		}
-		else
-		{
-			ack.retCode = EC_PARAM_DENIED;
-		}
+
 	}
 	else 
 	{

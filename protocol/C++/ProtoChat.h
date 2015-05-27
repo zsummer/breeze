@@ -19,23 +19,26 @@ const unsigned char CHANNEL_GROUP = 2; //群组, 需要指明具体某个groupid
  
 struct FriendInfo //好友信息 
 { 
-	unsigned long long uID;  
+	unsigned long long ownID;  
+	unsigned long long fID;  
 	unsigned char flag; //状态标志 
 	unsigned int makeTime; //建立时间 
 	FriendInfo() 
 	{ 
-		uID = 0; 
+		ownID = 0; 
+		fID = 0; 
 		flag = 0; 
 		makeTime = 0; 
 	} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FriendInfo & data) 
 { 
-	unsigned long long tag = 7ULL; 
+	unsigned long long tag = 15ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
-	ws << data.uID; 
+	ws << data.ownID; 
+	ws << data.fID; 
 	ws << data.flag; 
 	ws << data.makeTime; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
@@ -50,13 +53,17 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	rs >> tag; 
 	if ( (1ULL << 0) & tag) 
 	{ 
-		rs >> data.uID;  
+		rs >> data.ownID;  
 	} 
 	if ( (1ULL << 1) & tag) 
 	{ 
-		rs >> data.flag;  
+		rs >> data.fID;  
 	} 
 	if ( (1ULL << 2) & tag) 
+	{ 
+		rs >> data.flag;  
+	} 
+	if ( (1ULL << 3) & tag) 
 	{ 
 		rs >> data.makeTime;  
 	} 
@@ -66,7 +73,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FriendInfo & info) 
 { 
-	stm << "uID=" << info.uID << ", flag=" << info.flag << ", makeTime=" << info.makeTime; 
+	stm << "ownID=" << info.ownID << ", fID=" << info.fID << ", flag=" << info.flag << ", makeTime=" << info.makeTime; 
 	return stm; 
 } 
  
@@ -79,24 +86,19 @@ struct ContactInfo //联系人卡片
 	short iconID; //头像 
 	unsigned char banned; //禁言 
 	unsigned long long groupID; //加入的群组ID, 0为没有加入任何群组 
-	unsigned int totalBlacks; //被拉黑次数 
-	unsigned int totalFriends; //好友个数 
 	unsigned char onlineFlag; //在线状态0离线,1在线 
-	FriendInfoArray friends; //好友信息/黑名单信息/好友请求 
 	ContactInfo() 
 	{ 
 		uID = 0; 
 		iconID = 0; 
 		banned = 0; 
 		groupID = 0; 
-		totalBlacks = 0; 
-		totalFriends = 0; 
 		onlineFlag = 0; 
 	} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ContactInfo & data) 
 { 
-	unsigned long long tag = 511ULL; 
+	unsigned long long tag = 63ULL; 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -105,10 +107,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 	ws << data.iconID; 
 	ws << data.banned; 
 	ws << data.groupID; 
-	ws << data.totalBlacks; 
-	ws << data.totalFriends; 
 	ws << data.onlineFlag; 
-	ws << data.friends; 
 	ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
 	return ws; 
 } 
@@ -141,19 +140,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	} 
 	if ( (1ULL << 5) & tag) 
 	{ 
-		rs >> data.totalBlacks;  
-	} 
-	if ( (1ULL << 6) & tag) 
-	{ 
-		rs >> data.totalFriends;  
-	} 
-	if ( (1ULL << 7) & tag) 
-	{ 
 		rs >> data.onlineFlag;  
-	} 
-	if ( (1ULL << 8) & tag) 
-	{ 
-		rs >> data.friends;  
 	} 
 	cursor = cursor - rs.getStreamUnreadLen(); 
 	rs.skipOriginalData(sttLen - cursor); 
@@ -161,7 +148,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ContactInfo & info) 
 { 
-	stm << "uID=" << info.uID << ", nickName=" << info.nickName << ", iconID=" << info.iconID << ", banned=" << info.banned << ", groupID=" << info.groupID << ", totalBlacks=" << info.totalBlacks << ", totalFriends=" << info.totalFriends << ", onlineFlag=" << info.onlineFlag << ", friends=" << info.friends; 
+	stm << "uID=" << info.uID << ", nickName=" << info.nickName << ", iconID=" << info.iconID << ", banned=" << info.banned << ", groupID=" << info.groupID << ", onlineFlag=" << info.onlineFlag; 
 	return stm; 
 } 
  

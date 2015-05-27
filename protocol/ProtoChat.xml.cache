@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<xmlmd5>d52b19128c2798b9d694ad34997e3bd0</xmlmd5>
-<cppmd5>ce38575d65e57c9fc9e6397e633fa04f</cppmd5>
-<luamd5>b9736d62b9513e241a6528bebead021c</luamd5>
-<csharpmd5>d02f002f6cac513dca1edd69c3b662f4</csharpmd5>
-<sqlmd5>64e3dcecbea63282da01f555900da176</sqlmd5>
+<xmlmd5>b566a4baa5b45bffc6d0d87c6e261904</xmlmd5>
+<cppmd5>8adceb0ee9818f545c6073585f0b82bf</cppmd5>
+<luamd5>cf34d2898208546885c0bd269f91c441</luamd5>
+<csharpmd5>8d88a12907fd94a245fa37af3acca931</csharpmd5>
+<sqlmd5>b27b43cb585d2945411139f5f302d3c1</sqlmd5>
 
 <cacheNo>
 	<cache key = "ID_ChatAck" No = "1005" /> 

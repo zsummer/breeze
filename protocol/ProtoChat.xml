@@ -34,28 +34,26 @@
   </enum>
 
 
-  <struct name="FriendInfo" desc="好友信息">
-   	<member name="uID" type="ui64"   desc=""/>
+  <struct name="FriendInfo" store="true" desc="好友信息">
+   	<member name="ownID" type="ui64"  tag="key" desc=""/>
+   	<member name="fID" type="ui64"  tag="key" desc=""/>
    	<member name="flag" type="ui8"   desc="状态标志"/>
    	<member name="makeTime"  type="ui32" desc="建立时间"/>
   </struct>
   <array name="FriendInfoArray" type="FriendInfo" desc="" />
 
   <struct name="ContactInfo" store="true" desc="联系人卡片">
-   	<member name="uID" type="ui64" key="true" desc=""/>
+   	<member name="uID" type="ui64" tag="key" desc=""/>
    	<member name="nickName" type="string"   desc="用户昵称"/>
   	<member name="iconID"  type="i16" desc="头像"/>
   	<member name="banned"  type="ui8" desc="禁言"/>
   	<member name="groupID" type="ui64" desc="加入的群组ID, 0为没有加入任何群组" />
-  	<member name="totalBlacks"  type="ui32" desc="被拉黑次数"/>
-  	<member name="totalFriends"  type="ui32" desc="好友个数"/>
    	<member name="onlineFlag"  type="ui8" ignore="true" desc="在线状态0离线,1在线"/>
-    <member name="friends" type="FriendInfoArray" desc="好友信息/黑名单信息/好友请求" />
   </struct>
   <array name="ContactInfoArray" type="ContactInfo" desc="" />
 
   <struct name="ChatInfo" store="true" desc="聊天消息">
-  	<member name="mID" type="ui64" key="true"  desc="msg id"/>
+  	<member name="mID" type="ui64" tag="key"  desc="msg id"/>
     <member name="chlType" type="ui8"   desc="channel type"/>
     <member name="srcID" type="ui64"   desc=""/>
     <member name="srcName" type="string"   desc="src"/>

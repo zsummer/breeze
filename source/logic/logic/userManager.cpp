@@ -86,7 +86,28 @@ std::shared_ptr<InnerUserInfo> UserManager::getInnerUserInfoByNickName(const std
 	}
 	return nullptr;
 }
-
+void UserManager::broadcast(WriteStream & ws, const UserIDArray uIDs)
+{
+	if (uIDs.empty())
+	{
+		for (auto uID :uIDs)
+		{
+			auto ptr = getInnerUserInfo(uID);
+			if (ptr->sID != InvalidSeesionID)
+			{
+				SessionManager::getRef().sendSessionData(ptr->sID, ws.getStream(), ws.getStreamLen());
+			}
+		}
+		return;
+	}
+	for (auto &kv : _mapSession)
+	{
+		if (kv.second->sID != InvalidSeesionID)
+		{
+			SessionManager::getRef().sendSessionData(kv.second->sID, ws.getStream(), ws.getStreamLen());
+		}
+	}
+}
 void UserManager::addUser(const UserInfo & info)
 {
 	auto inner = std::make_shared<InnerUserInfo>();
