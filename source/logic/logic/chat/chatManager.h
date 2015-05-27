@@ -46,10 +46,12 @@ public:
 	ChatManager();
 	~ChatManager();
 	bool init();
+
 	bool initFilter();
 	bool initContact();
 	bool initFriends();
 	bool initMessage();
+
 	//存储名片信息
 	void insertContact(const ContactInfo & info);
 	void updateContact(const ContactInfo & info);
