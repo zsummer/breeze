@@ -163,7 +163,7 @@ namespace Proto4z
 		} 
 	} 
  
-	class UserInfoArray : System.Collections.Generic.List<Proto4z.UserInfo>, Proto4z.IProtoObject  
+	class UserInfoArray : System.Collections.Generic.List<UserInfo>, Proto4z.IProtoObject  
 	{ 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -185,7 +185,7 @@ namespace Proto4z
 			{ 
 				for (int i=0; i<len.val; i++) 
 				{ 
-					var data = new Proto4z.UserInfo(); 
+					var data = new UserInfo(); 
 					 data.__decode(binData, ref pos); 
 					this.Add(data); 
 				} 

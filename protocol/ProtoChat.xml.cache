@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<xmlmd5>b566a4baa5b45bffc6d0d87c6e261904</xmlmd5>
-<cppmd5>8adceb0ee9818f545c6073585f0b82bf</cppmd5>
-<luamd5>cf34d2898208546885c0bd269f91c441</luamd5>
-<csharpmd5>8d88a12907fd94a245fa37af3acca931</csharpmd5>
-<sqlmd5>b27b43cb585d2945411139f5f302d3c1</sqlmd5>
-
-<cacheNo>
-	<cache key = "ID_ChatAck" No = "1005" /> 
-	<cache key = "ID_ChatNotice" No = "1006" /> 
-	<cache key = "ID_ChatReq" No = "1004" /> 
-	<cache key = "ID_FriendOperationAck" No = "1003" /> 
-	<cache key = "ID_FriendOperationReq" No = "1002" /> 
-	<cache key = "ID_GetContactInfoAck" No = "1001" /> 
-	<cache key = "ID_GetContactInfoReq" No = "1000" /> 
-	<cache key = "ID_GetSomeStrangersAck" No = "1010" /> 
-	<cache key = "ID_GetSomeStrangersReq" No = "1009" /> 
-	<cache key = "ID_JoinGropuAck" No = "1008" /> 
-	<cache key = "ID_JoinGropuReq" No = "1007" /> 
-</cacheNo>
+<cppmd5></cppmd5> 
+<luamd5></luamd5> 
+<csharpmd5></csharpmd5> 
+<sqlmd5></sqlmd5> 
+<xmlmd5>b566a4baa5b45bffc6d0d87c6e261904</xmlmd5> 
+<cacheNumber>
+	<cache key = "ID_ChatAck" Number = "1009" /> 
+	<cache key = "ID_ChatNotice" Number = "1010" /> 
+	<cache key = "ID_ChatReq" Number = "1008" /> 
+	<cache key = "ID_FriendOperationAck" Number = "1005" /> 
+	<cache key = "ID_FriendOperationReq" Number = "1004" /> 
+	<cache key = "ID_GetContactInfoAck" Number = "1001" /> 
+	<cache key = "ID_GetContactInfoReq" Number = "1000" /> 
+	<cache key = "ID_GetSomeStrangersAck" Number = "1003" /> 
+	<cache key = "ID_GetSomeStrangersReq" Number = "1002" /> 
+	<cache key = "ID_JoinGropuAck" Number = "1007" /> 
+	<cache key = "ID_JoinGropuReq" Number = "1006" /> 
+</cacheNumber>

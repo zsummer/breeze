@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<xmlmd5>cd40de5d6b27adf87b65c2aa9921c336</xmlmd5>
-<cppmd5>daa3f081ddcd15a4ff4c438649d6890b</cppmd5>
-<luamd5>99af2e03b47604839164141296eb094c</luamd5>
-<csharpmd5>653d25846d2034941858fd0c42d0b071</csharpmd5>
-<sqlmd5>b99eb97f9766d353e2998ce19730a352</sqlmd5>
-
-<cacheNo>
-	<cache key = "ID_CreateUserAck" No = "103" /> 
-	<cache key = "ID_CreateUserReq" No = "102" /> 
-	<cache key = "ID_LinkServerAck" No = "107" /> 
-	<cache key = "ID_LinkServerReq" No = "106" /> 
-	<cache key = "ID_PlatAuthAck" No = "101" /> 
-	<cache key = "ID_PlatAuthReq" No = "100" /> 
-	<cache key = "ID_SelectUserAck" No = "105" /> 
-	<cache key = "ID_SelectUserReq" No = "104" /> 
-</cacheNo>
+<cppmd5></cppmd5> 
+<luamd5></luamd5> 
+<csharpmd5></csharpmd5> 
+<sqlmd5></sqlmd5> 
+<xmlmd5>cd40de5d6b27adf87b65c2aa9921c336</xmlmd5> 
+<cacheNumber>
+	<cache key = "ID_CreateUserAck" Number = "103" /> 
+	<cache key = "ID_CreateUserReq" Number = "102" /> 
+	<cache key = "ID_LinkServerAck" Number = "107" /> 
+	<cache key = "ID_LinkServerReq" Number = "106" /> 
+	<cache key = "ID_PlatAuthAck" Number = "101" /> 
+	<cache key = "ID_PlatAuthReq" Number = "100" /> 
+	<cache key = "ID_SelectUserAck" Number = "105" /> 
+	<cache key = "ID_SelectUserReq" Number = "104" /> 
+</cacheNumber>

@@ -49,7 +49,7 @@ namespace Proto4z
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(101); } 
 		static public string getProtoName() { return "PlatAuthAck"; } 
 		public Proto4z.ui16 retCode;  
-		public Proto4z.UserInfoArray users; //该帐号下的所有用户信息 
+		public UserInfoArray users; //该帐号下的所有用户信息 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
@@ -77,7 +77,7 @@ namespace Proto4z
 			{ 
 				retCode.__decode(binData, ref pos); 
 			} 
-			users = new Proto4z.UserInfoArray(); 
+			users = new UserInfoArray(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
 				users.__decode(binData, ref pos); 
@@ -133,7 +133,7 @@ namespace Proto4z
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(103); } 
 		static public string getProtoName() { return "CreateUserAck"; } 
 		public Proto4z.ui16 retCode;  
-		public Proto4z.UserInfoArray users; //该帐号下的所有用户信息 
+		public UserInfoArray users; //该帐号下的所有用户信息 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
@@ -161,7 +161,7 @@ namespace Proto4z
 			{ 
 				retCode.__decode(binData, ref pos); 
 			} 
-			users = new Proto4z.UserInfoArray(); 
+			users = new UserInfoArray(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
 				users.__decode(binData, ref pos); 

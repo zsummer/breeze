@@ -112,7 +112,7 @@ namespace Proto4z
 		} 
 	} 
  
-	class FriendInfoArray : System.Collections.Generic.List<Proto4z.FriendInfo>, Proto4z.IProtoObject  
+	class FriendInfoArray : System.Collections.Generic.List<FriendInfo>, Proto4z.IProtoObject  
 	{ 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -134,7 +134,7 @@ namespace Proto4z
 			{ 
 				for (int i=0; i<len.val; i++) 
 				{ 
-					var data = new Proto4z.FriendInfo(); 
+					var data = new FriendInfo(); 
 					 data.__decode(binData, ref pos); 
 					this.Add(data); 
 				} 
@@ -211,7 +211,7 @@ namespace Proto4z
 		} 
 	} 
  
-	class ContactInfoArray : System.Collections.Generic.List<Proto4z.ContactInfo>, Proto4z.IProtoObject  
+	class ContactInfoArray : System.Collections.Generic.List<ContactInfo>, Proto4z.IProtoObject  
 	{ 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -233,7 +233,7 @@ namespace Proto4z
 			{ 
 				for (int i=0; i<len.val; i++) 
 				{ 
-					var data = new Proto4z.ContactInfo(); 
+					var data = new ContactInfo(); 
 					 data.__decode(binData, ref pos); 
 					this.Add(data); 
 				} 
@@ -338,7 +338,7 @@ namespace Proto4z
 		} 
 	} 
  
-	class ChatInfoArray : System.Collections.Generic.List<Proto4z.ChatInfo>, Proto4z.IProtoObject  
+	class ChatInfoArray : System.Collections.Generic.List<ChatInfo>, Proto4z.IProtoObject  
 	{ 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -360,7 +360,7 @@ namespace Proto4z
 			{ 
 				for (int i=0; i<len.val; i++) 
 				{ 
-					var data = new Proto4z.ChatInfo(); 
+					var data = new ChatInfo(); 
 					 data.__decode(binData, ref pos); 
 					this.Add(data); 
 				} 
@@ -409,7 +409,7 @@ namespace Proto4z
 		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1001); } 
 		static public string getProtoName() { return "GetContactInfoAck"; } 
 		public Proto4z.ui16 retCode;  
-		public Proto4z.ContactInfo contact;  
+		public ContactInfo contact;  
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
@@ -437,7 +437,7 @@ namespace Proto4z
 			{ 
 				retCode.__decode(binData, ref pos); 
 			} 
-			contact = new Proto4z.ContactInfo(); 
+			contact = new ContactInfo(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
 				contact.__decode(binData, ref pos); 
@@ -448,7 +448,7 @@ namespace Proto4z
  
 	class GetSomeStrangersReq: Proto4z.IProtoObject //获取一些陌生人 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1009); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1002); } 
 		static public string getProtoName() { return "GetSomeStrangersReq"; } 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -476,10 +476,10 @@ namespace Proto4z
  
 	class GetSomeStrangersAck: Proto4z.IProtoObject //获取一些陌生人 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1010); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1003); } 
 		static public string getProtoName() { return "GetSomeStrangersAck"; } 
 		public Proto4z.ui16 retCode;  
-		public Proto4z.UserIDArray uIDs;  
+		public UserIDArray uIDs;  
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
@@ -507,7 +507,7 @@ namespace Proto4z
 			{ 
 				retCode.__decode(binData, ref pos); 
 			} 
-			uIDs = new Proto4z.UserIDArray(); 
+			uIDs = new UserIDArray(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
 				uIDs.__decode(binData, ref pos); 
@@ -518,7 +518,7 @@ namespace Proto4z
  
 	class FriendOperationReq: Proto4z.IProtoObject //好友操作请求 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1002); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1004); } 
 		static public string getProtoName() { return "FriendOperationReq"; } 
 		public Proto4z.ui64 uID; //目标ID 
 		public Proto4z.ui8 oFlag; //操作指令 
@@ -560,7 +560,7 @@ namespace Proto4z
  
 	class FriendOperationAck: Proto4z.IProtoObject //好友操作请求结果 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1003); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1005); } 
 		static public string getProtoName() { return "FriendOperationAck"; } 
 		public Proto4z.ui16 retCode;  
 		public Proto4z.ui64 srcUID;  
@@ -616,7 +616,7 @@ namespace Proto4z
  
 	class JoinGropuReq: Proto4z.IProtoObject //加入群组 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1007); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1006); } 
 		static public string getProtoName() { return "JoinGropuReq"; } 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -644,7 +644,7 @@ namespace Proto4z
  
 	class JoinGropuAck: Proto4z.IProtoObject //加入群组 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1008); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1007); } 
 		static public string getProtoName() { return "JoinGropuAck"; } 
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
@@ -672,7 +672,7 @@ namespace Proto4z
  
 	class ChatReq: Proto4z.IProtoObject //发送聊天请求 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1004); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1008); } 
 		static public string getProtoName() { return "ChatReq"; } 
 		public Proto4z.ui8 chlType; //channel type 
 		public Proto4z.ui64 dstID; //userID or groupID 
@@ -721,7 +721,7 @@ namespace Proto4z
  
 	class ChatAck: Proto4z.IProtoObject //发送聊天请求 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1005); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1009); } 
 		static public string getProtoName() { return "ChatAck"; } 
 		public Proto4z.ui16 retCode;  
 		public Proto4z.ui8 chlType; //channel type 
@@ -777,10 +777,10 @@ namespace Proto4z
  
 	class ChatNotice: Proto4z.IProtoObject //聊天通知 
 	{	 
-		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1006); } 
+		static public Proto4z.ui16 getProtoID() { return new Proto4z.ui16(1010); } 
 		static public string getProtoName() { return "ChatNotice"; } 
 		public Proto4z.ui16 retCode;  
-		public Proto4z.ChatInfoArray msgs;  
+		public ChatInfoArray msgs;  
 		public System.Collections.Generic.List<byte> __encode() 
 		{ 
 			Proto4z.ui32 sttLen = 0; 
@@ -808,7 +808,7 @@ namespace Proto4z
 			{ 
 				retCode.__decode(binData, ref pos); 
 			} 
-			msgs = new Proto4z.ChatInfoArray(); 
+			msgs = new ChatInfoArray(); 
 			if ((tag.val & ((System.UInt64)1 << 1)) != 0) 
 			{ 
 				msgs.__decode(binData, ref pos); 

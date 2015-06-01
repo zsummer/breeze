@@ -34,6 +34,7 @@ struct FriendInfo //好友信息
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FriendInfo & data) 
 { 
 	unsigned long long tag = 15ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -51,6 +52,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.ownID;  
@@ -99,6 +101,7 @@ struct ContactInfo //联系人卡片
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ContactInfo & data) 
 { 
 	unsigned long long tag = 63ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -118,6 +121,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.uID;  
@@ -180,6 +184,7 @@ struct ChatInfo //聊天消息
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatInfo & data) 
 { 
 	unsigned long long tag = 1023ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -203,6 +208,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.mID;  
@@ -269,6 +275,7 @@ struct GetContactInfoReq //获取联系人名片请求
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetContactInfoReq & data) 
 { 
 	unsigned long long tag = 1ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -283,6 +290,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.uID;  
@@ -312,6 +320,7 @@ struct GetContactInfoAck //获取联系人名片结果
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetContactInfoAck & data) 
 { 
 	unsigned long long tag = 3ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -327,6 +336,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.retCode;  
@@ -345,15 +355,16 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_GetSomeStrangersReq = 1009; //获取一些陌生人 
+const unsigned short ID_GetSomeStrangersReq = 1002; //获取一些陌生人 
 struct GetSomeStrangersReq //获取一些陌生人 
 { 
-	inline unsigned short GetProtoID() { return 1009;} 
+	inline unsigned short GetProtoID() { return 1002;} 
 	inline std::string GetProtoName() { return "ID_GetSomeStrangersReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSomeStrangersReq & data) 
 { 
 	unsigned long long tag = 0ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -367,6 +378,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	cursor = cursor - rs.getStreamUnreadLen(); 
 	rs.skipOriginalData(sttLen - cursor); 
 	return rs; 
@@ -377,7 +389,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_GetSomeStrangersAck = 1010; //获取一些陌生人 
+const unsigned short ID_GetSomeStrangersAck = 1003; //获取一些陌生人 
 struct GetSomeStrangersAck //获取一些陌生人 
 { 
 	unsigned short retCode;  
@@ -386,12 +398,13 @@ struct GetSomeStrangersAck //获取一些陌生人
 	{ 
 		retCode = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 1010;} 
+	inline unsigned short GetProtoID() { return 1003;} 
 	inline std::string GetProtoName() { return "ID_GetSomeStrangersAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSomeStrangersAck & data) 
 { 
 	unsigned long long tag = 3ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -407,6 +420,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.retCode;  
@@ -425,7 +439,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_FriendOperationReq = 1002; //好友操作请求 
+const unsigned short ID_FriendOperationReq = 1004; //好友操作请求 
 struct FriendOperationReq //好友操作请求 
 { 
 	unsigned long long uID; //目标ID 
@@ -435,12 +449,13 @@ struct FriendOperationReq //好友操作请求
 		uID = 0; 
 		oFlag = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 1002;} 
+	inline unsigned short GetProtoID() { return 1004;} 
 	inline std::string GetProtoName() { return "ID_FriendOperationReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FriendOperationReq & data) 
 { 
 	unsigned long long tag = 3ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -456,6 +471,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.uID;  
@@ -474,7 +490,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_FriendOperationAck = 1003; //好友操作请求结果 
+const unsigned short ID_FriendOperationAck = 1005; //好友操作请求结果 
 struct FriendOperationAck //好友操作请求结果 
 { 
 	unsigned short retCode;  
@@ -488,12 +504,13 @@ struct FriendOperationAck //好友操作请求结果
 		srcFlag = 0; 
 		dstUID = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 1003;} 
+	inline unsigned short GetProtoID() { return 1005;} 
 	inline std::string GetProtoName() { return "ID_FriendOperationAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FriendOperationAck & data) 
 { 
 	unsigned long long tag = 15ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -511,6 +528,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.retCode;  
@@ -537,15 +555,16 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_JoinGropuReq = 1007; //加入群组 
+const unsigned short ID_JoinGropuReq = 1006; //加入群组 
 struct JoinGropuReq //加入群组 
 { 
-	inline unsigned short GetProtoID() { return 1007;} 
+	inline unsigned short GetProtoID() { return 1006;} 
 	inline std::string GetProtoName() { return "ID_JoinGropuReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinGropuReq & data) 
 { 
 	unsigned long long tag = 0ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -559,6 +578,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	cursor = cursor - rs.getStreamUnreadLen(); 
 	rs.skipOriginalData(sttLen - cursor); 
 	return rs; 
@@ -569,15 +589,16 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_JoinGropuAck = 1008; //加入群组 
+const unsigned short ID_JoinGropuAck = 1007; //加入群组 
 struct JoinGropuAck //加入群组 
 { 
-	inline unsigned short GetProtoID() { return 1008;} 
+	inline unsigned short GetProtoID() { return 1007;} 
 	inline std::string GetProtoName() { return "ID_JoinGropuAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinGropuAck & data) 
 { 
 	unsigned long long tag = 0ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -591,6 +612,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	cursor = cursor - rs.getStreamUnreadLen(); 
 	rs.skipOriginalData(sttLen - cursor); 
 	return rs; 
@@ -601,7 +623,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_ChatReq = 1004; //发送聊天请求 
+const unsigned short ID_ChatReq = 1008; //发送聊天请求 
 struct ChatReq //发送聊天请求 
 { 
 	unsigned char chlType; //channel type 
@@ -612,12 +634,13 @@ struct ChatReq //发送聊天请求
 		chlType = 0; 
 		dstID = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 1004;} 
+	inline unsigned short GetProtoID() { return 1008;} 
 	inline std::string GetProtoName() { return "ID_ChatReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatReq & data) 
 { 
 	unsigned long long tag = 7ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -634,6 +657,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.chlType;  
@@ -656,7 +680,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_ChatAck = 1005; //发送聊天请求 
+const unsigned short ID_ChatAck = 1009; //发送聊天请求 
 struct ChatAck //发送聊天请求 
 { 
 	unsigned short retCode;  
@@ -670,12 +694,13 @@ struct ChatAck //发送聊天请求
 		dstID = 0; 
 		msgID = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 1005;} 
+	inline unsigned short GetProtoID() { return 1009;} 
 	inline std::string GetProtoName() { return "ID_ChatAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatAck & data) 
 { 
 	unsigned long long tag = 15ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -693,6 +718,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.retCode;  
@@ -719,7 +745,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 	return stm; 
 } 
  
-const unsigned short ID_ChatNotice = 1006; //聊天通知 
+const unsigned short ID_ChatNotice = 1010; //聊天通知 
 struct ChatNotice //聊天通知 
 { 
 	unsigned short retCode;  
@@ -728,12 +754,13 @@ struct ChatNotice //聊天通知
 	{ 
 		retCode = 0; 
 	} 
-	inline unsigned short GetProtoID() { return 1006;} 
+	inline unsigned short GetProtoID() { return 1010;} 
 	inline std::string GetProtoName() { return "ID_ChatNotice";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatNotice & data) 
 { 
 	unsigned long long tag = 3ULL; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	ws << (zsummer::proto4z::Integer)0; 
 	zsummer::proto4z::Integer offset = ws.getStreamLen(); 
 	ws << tag; 
@@ -749,6 +776,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 	zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
 	unsigned long long tag = 0; 
 	rs >> tag; 
+	if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
 	if ( (1ULL << 0) & tag) 
 	{ 
 		rs >> data.retCode;  

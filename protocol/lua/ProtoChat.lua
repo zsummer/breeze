@@ -75,31 +75,31 @@ Proto4z.GetContactInfoAck.__getTag = "11"
 Proto4z.GetContactInfoAck[1] = {name="retCode", type="ui16" }  
 Proto4z.GetContactInfoAck[2] = {name="contact", type="ContactInfo" }  
  
-Proto4z.register(1009,"GetSomeStrangersReq") 
+Proto4z.register(1002,"GetSomeStrangersReq") 
 Proto4z.GetSomeStrangersReq = {} --获取一些陌生人 
-Proto4z.GetSomeStrangersReq.__getID = 1009 
+Proto4z.GetSomeStrangersReq.__getID = 1002 
 Proto4z.GetSomeStrangersReq.__getName = "GetSomeStrangersReq" 
 Proto4z.GetSomeStrangersReq.__getTag = "" 
  
-Proto4z.register(1010,"GetSomeStrangersAck") 
+Proto4z.register(1003,"GetSomeStrangersAck") 
 Proto4z.GetSomeStrangersAck = {} --获取一些陌生人 
-Proto4z.GetSomeStrangersAck.__getID = 1010 
+Proto4z.GetSomeStrangersAck.__getID = 1003 
 Proto4z.GetSomeStrangersAck.__getName = "GetSomeStrangersAck" 
 Proto4z.GetSomeStrangersAck.__getTag = "11" 
 Proto4z.GetSomeStrangersAck[1] = {name="retCode", type="ui16" }  
 Proto4z.GetSomeStrangersAck[2] = {name="uIDs", type="UserIDArray" }  
  
-Proto4z.register(1002,"FriendOperationReq") 
+Proto4z.register(1004,"FriendOperationReq") 
 Proto4z.FriendOperationReq = {} --好友操作请求 
-Proto4z.FriendOperationReq.__getID = 1002 
+Proto4z.FriendOperationReq.__getID = 1004 
 Proto4z.FriendOperationReq.__getName = "FriendOperationReq" 
 Proto4z.FriendOperationReq.__getTag = "11" 
 Proto4z.FriendOperationReq[1] = {name="uID", type="ui64" } --目标ID 
 Proto4z.FriendOperationReq[2] = {name="oFlag", type="ui8" } --操作指令 
  
-Proto4z.register(1003,"FriendOperationAck") 
+Proto4z.register(1005,"FriendOperationAck") 
 Proto4z.FriendOperationAck = {} --好友操作请求结果 
-Proto4z.FriendOperationAck.__getID = 1003 
+Proto4z.FriendOperationAck.__getID = 1005 
 Proto4z.FriendOperationAck.__getName = "FriendOperationAck" 
 Proto4z.FriendOperationAck.__getTag = "1111" 
 Proto4z.FriendOperationAck[1] = {name="retCode", type="ui16" }  
@@ -107,30 +107,30 @@ Proto4z.FriendOperationAck[2] = {name="srcUID", type="ui64" }
 Proto4z.FriendOperationAck[3] = {name="srcFlag", type="ui8" }  
 Proto4z.FriendOperationAck[4] = {name="dstUID", type="ui64" }  
  
-Proto4z.register(1007,"JoinGropuReq") 
+Proto4z.register(1006,"JoinGropuReq") 
 Proto4z.JoinGropuReq = {} --加入群组 
-Proto4z.JoinGropuReq.__getID = 1007 
+Proto4z.JoinGropuReq.__getID = 1006 
 Proto4z.JoinGropuReq.__getName = "JoinGropuReq" 
 Proto4z.JoinGropuReq.__getTag = "" 
  
-Proto4z.register(1008,"JoinGropuAck") 
+Proto4z.register(1007,"JoinGropuAck") 
 Proto4z.JoinGropuAck = {} --加入群组 
-Proto4z.JoinGropuAck.__getID = 1008 
+Proto4z.JoinGropuAck.__getID = 1007 
 Proto4z.JoinGropuAck.__getName = "JoinGropuAck" 
 Proto4z.JoinGropuAck.__getTag = "" 
  
-Proto4z.register(1004,"ChatReq") 
+Proto4z.register(1008,"ChatReq") 
 Proto4z.ChatReq = {} --发送聊天请求 
-Proto4z.ChatReq.__getID = 1004 
+Proto4z.ChatReq.__getID = 1008 
 Proto4z.ChatReq.__getName = "ChatReq" 
 Proto4z.ChatReq.__getTag = "111" 
 Proto4z.ChatReq[1] = {name="chlType", type="ui8" } --channel type 
 Proto4z.ChatReq[2] = {name="dstID", type="ui64" } --userID or groupID 
 Proto4z.ChatReq[3] = {name="msg", type="string" } --msg 
  
-Proto4z.register(1005,"ChatAck") 
+Proto4z.register(1009,"ChatAck") 
 Proto4z.ChatAck = {} --发送聊天请求 
-Proto4z.ChatAck.__getID = 1005 
+Proto4z.ChatAck.__getID = 1009 
 Proto4z.ChatAck.__getName = "ChatAck" 
 Proto4z.ChatAck.__getTag = "1111" 
 Proto4z.ChatAck[1] = {name="retCode", type="ui16" }  
@@ -138,9 +138,9 @@ Proto4z.ChatAck[2] = {name="chlType", type="ui8" } --channel type
 Proto4z.ChatAck[3] = {name="dstID", type="ui64" } --userID or groupID 
 Proto4z.ChatAck[4] = {name="msgID", type="ui64" }  
  
-Proto4z.register(1006,"ChatNotice") 
+Proto4z.register(1010,"ChatNotice") 
 Proto4z.ChatNotice = {} --聊天通知 
-Proto4z.ChatNotice.__getID = 1006 
+Proto4z.ChatNotice.__getID = 1010 
 Proto4z.ChatNotice.__getName = "ChatNotice" 
 Proto4z.ChatNotice.__getTag = "11" 
 Proto4z.ChatNotice[1] = {name="retCode", type="ui16" }  
