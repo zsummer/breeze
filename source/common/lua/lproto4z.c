@@ -57,41 +57,42 @@ static bool islocalLittleEndian()
 	return false;
 }
 
-
-
-static unsigned long long streamToInteger(const char stream[])
+static unsigned long long reversalInteger(unsigned long long org)
 {
-	unsigned long long integer = 0;
+	unsigned long long ret = 0;
 	size_t len = sizeof(unsigned long long);
-	if (!islocalLittleEndian())
+
+	unsigned char *dst = (unsigned char*)&ret;
+	unsigned char *src = (unsigned char*)org + sizeof(unsigned long long);
+	while (len > 0)
 	{
-		unsigned char *dst = (unsigned char*)&integer;
-		unsigned char *src = (unsigned char*)stream + sizeof(unsigned long long);
-		while (len > 0)
-		{
-			*dst++ = *--src;
-			len--;
-		}
+		*dst++ = *--src;
+		len--;
 	}
-	else
-	{
-		memcpy(&integer, stream, len);
-	}
-	return integer;
+	return ret;
 }
 
 
-static int checkBitTrue(lua_State *L)
+static int checkIntegerBitTrue(lua_State *L)
 {
 	size_t len = 0;
-	const char * log = luaL_checklstring(L, 1, &len);
-	size_t pos = luaL_checkinteger(L, 2);
+	const char * stream;
+	size_t pos;
+	unsigned long long val;
+	stream = luaL_checklstring(L, 1, &len);
 	if (len != 8)
 	{
 		return 0;
 	}
+	val = *(unsigned long long *)stream;
+	if (!islocalLittleEndian())
+	{
+		val = reversalInteger(val);
+	}
+	pos = luaL_checkinteger(L, 2);
+
 	lua_settop(L, 0);
-	unsigned long long val = streamToInteger(log);
+	
 	if (val & (1ULL << pos))
 	{
 		lua_pushboolean(L, 1);
@@ -103,11 +104,11 @@ static int checkBitTrue(lua_State *L)
 	return 1;
 }
 
-static int checkStringToBit(lua_State *L)
+static int  sequenceToInteger(lua_State *L)
 {
 	size_t i, len = 0;
-	const char * log = luaL_checklstring(L, 1, &len);
-	unsigned long long pos = 0;
+	const char * sequence = luaL_checklstring(L, 1, &len);
+	unsigned long long num = 0;
 	if (len > 64)
 	{
 		return 0;
@@ -115,24 +116,60 @@ static int checkStringToBit(lua_State *L)
 	
 	for (i = 0; i < len; i++)
 	{
-		if (log[i] == '1')
+		if (sequence[i] == '1')
 		{
-			pos |= (1ULL << i);
+			num |= (1ULL << i);
 		}
 		else
 		{
-			pos &= ~(unsigned long long)(1ULL << i);
+			num &= ~(unsigned long long)(1ULL << i);
 		}
 	}
+	if (!islocalLittleEndian())
+	{
+		num = reversalInteger(num);
+	}
+	
+	lua_pushlstring(L, (const char*)&num, 8);
+	return 1;
+}
 
-	lua_pushlstring(L, (const char*)&pos, 8);
+
+static int streamToString(lua_State *L)
+{
+	const char * stream = luaL_checkstring(L, -1);
+	unsigned long long integer = *(unsigned long long*) stream;
+	char buf[50];
+	lua_settop(L, 0);
+#ifdef WIN32  
+	sprintf(buf, "%I64u", integer);
+#else
+	sprintf(buf, "%llu", integer);
+#endif
+	lua_pushstring(L, buf);
+	return 1;
+}
+
+static int stringToStream(lua_State *L)
+{
+	const char * stream = luaL_checkstring(L, -1);
+	unsigned long long integer = 0;
+#ifdef WIN32  
+	sscanf(stream, "%I64u", &integer);
+#else
+	sscanf(stream, "%llu", &integer);
+#endif
+	lua_settop(L, 0);
+	lua_pushlstring(L, (const char *)&integer, 8);
 	return 1;
 }
 
 
 static luaL_Reg checkBit[] = {
-	{ "__checkBitTrue", checkBitTrue },
-	{ "__checkStringToBit", checkStringToBit },
+	{ "checkIntegerBitTrue", checkIntegerBitTrue },
+	{ "sequenceToInteger", sequenceToInteger },
+	{ "streamToString", streamToString },
+	{ "stringToStream", stringToStream },
 
 	{ NULL, NULL }
 };
@@ -154,6 +191,7 @@ int luaopen_protoz_bit(lua_State *L)
 		lua_pushcclosure(L, l->func, 0);  /* closure with those upvalues */
 		lua_setfield(L, -2, l->name);
 	}
+	lua_pop(L, 1);
 	return 0;
 }
 
