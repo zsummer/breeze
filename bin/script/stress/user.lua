@@ -34,7 +34,7 @@ function User:on_PlatAuthAck(sID, msg)
 		loge("on_PlatAuthAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
 		return
 	end
-    dump(msg)
+    dump(msg, "", 5, true)
     self.users = msg.users
 	
     local _, user = next(self.users)
@@ -54,7 +54,7 @@ function User:on_CreateUserAck(sID, msg)
 		loge("on_CreateUserAck retcode ~= EC_SUCCESS. ret=" .. msg.retCode)
 	    return
 	end
-    dump(msg)
+    dump(msg, "", 5, true)
     self.users = msg.users
 	
     local _, user = next(self.users)
@@ -102,7 +102,7 @@ function User:on_GetContactInfoAck(sID, msg)
     self.contact = msg.contact
 
     logi("on_GetContactInfoAck success. ")
-    dump(msg, "on_GetContactInfoAck")
+    dump(msg, "on_GetContactInfoAck", 5, true)
      
 
 end
@@ -113,7 +113,7 @@ function User:on_GetSomeStrangersAck(sID, msg)
 	    return
 	end
     logi("on_GetSomeStrangersAck success. #uIDs=" .. #msg.uIDs )
-	dump(msg, "on_GetSomeStrangersAck")
+	dump(msg, "on_GetSomeStrangersAck", 5, true)
     for _, uID in ipairs(msg.uIDs) do
         local data = Proto4z.encode({uID=uID, oFlag=Proto4z.FRIEND_ADDFRIEND}, "FriendOperationReq")
         summer.sendContent(sID, Proto4z.FriendOperationReq.__getID, data) 

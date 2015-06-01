@@ -438,7 +438,7 @@ end
 --[[--
 dump table with nesting
 ]]
-function Proto4z.dump(value, desciption, nesting)
+function Proto4z.dump(value, desciption, nesting, showULL)
     if type(nesting) ~= "number" then nesting = 5 end
 
     local lookupTable = {}
@@ -446,6 +446,9 @@ function Proto4z.dump(value, desciption, nesting)
 
     local function _v(v)
         if type(v) == "string" then
+        	if showULL and #v == 8 then
+        		return Proto4z.streamToString(v)
+        	end
             v = "\"" .. v .. "\""
         end
         return tostring(v)
