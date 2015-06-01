@@ -28,9 +28,45 @@
 
 
 
+// 仅支持基础类型哦
+class Any
+{
+public:
+	Any(unsigned long long ull)
+	{
+		_integer = ull;
+	}
+	Any(const std::string & str)
+	{
+		_str = str;
+	}
+	Any(const Any & a)
+	{
+		_integer = a._integer;
+		_str = a._str;
+	}
+	Any(Any && a)
+	{
+		_integer = a._integer;
+		_str = std::move(a._str);
+	}
+	std::string _str;
+	unsigned long long _integer = 0;
+
+};
 
 
+template<class T>
+T integerCast(const Any & a)
+{
+	return static_cast<T>(a._integer);
+}
 
+
+inline std::string stringCast(const Any & a)
+{
+	return a._str;
+}
 
 
 

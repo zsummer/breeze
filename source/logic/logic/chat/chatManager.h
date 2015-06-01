@@ -71,8 +71,8 @@ public:
 
 	void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
 public:
-	void onUserLogin(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
-	void onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string);
+	void onUserLogin(EventTriggerID tID, UserID uID, Any , Any , Any );
+	void onUserLogout(EventTriggerID tID, UserID uID, Any , Any , Any );
 public:
 	void msg_onGetContactInfoReq(TcpSessionPtr session, ReadStream & rs);
 	void msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs);

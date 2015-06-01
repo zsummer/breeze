@@ -195,15 +195,15 @@ bool ChatManager::initMessage()
 	return true;
 }
 
-void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long long count, unsigned long long iconID, std::string nick)
+void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, Any count, Any iconID, Any nick)
 {
 	auto founder = _contacts.find(uID);
 	if (founder == _contacts.end())
 	{
 		Contact contact;
 		contact.info.uID = uID;
-		contact.info.iconID = (short)iconID;
-		contact.info.nickName = nick;
+		contact.info.iconID = integerCast<short>(iconID);
+		contact.info.nickName = stringCast(nick);
 		_contacts[uID] = contact;
 		insertContact(contact.info);
 	}
@@ -213,14 +213,14 @@ void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long lon
 		return;
 	}
 	bool haveChange = false;
-	if (founder->second.info.nickName != nick)
+	if (founder->second.info.nickName != stringCast(nick))
 	{
-		founder->second.info.nickName = nick;
+		founder->second.info.nickName = stringCast(nick);
 		haveChange = true;
 	}
-	if (founder->second.info.iconID != iconID)
+	if (founder->second.info.iconID != integerCast<short>(iconID))
 	{
-		founder->second.info.iconID = (short)iconID;
+		founder->second.info.iconID = integerCast<short>(iconID);
 		haveChange = true;
 	}
 	if (haveChange)
@@ -230,7 +230,7 @@ void  ChatManager::onUserLogin(EventTriggerID tID, UserID uID, unsigned long lon
 	founder->second.info.onlineFlag = true;
 }
 
-void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, unsigned long long, unsigned long long, std::string)
+void  ChatManager::onUserLogout(EventTriggerID tID, UserID uID, Any count, Any iconID, Any nick)
 {
 	auto founder = _contacts.find(uID);
 	if (founder != _contacts.end())
