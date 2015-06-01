@@ -545,6 +545,24 @@ inline ZSummer_EndianType __localEndianType()
 	}
 	return BigEndian;
 }
+template<class Integer>
+Integer reversalInteger(Integer n)
+{
+	if (sizeof(n) == 1)
+	{
+		return n;
+	}
+	Integer ret = 0;
+	int integerLen = sizeof(n);
+	unsigned char *dst = (unsigned char*)&ret;
+	unsigned char *src = (unsigned char*)&n + integerLen;
+	while (integerLen > 0)
+	{
+		*dst++ = *--src;
+		integerLen --;
+	}
+	return ret;
+}
 
 template<class Integer>
 Integer streamToInteger(const char stream[sizeof(Integer)])
@@ -564,17 +582,11 @@ Integer streamToInteger(const char stream[sizeof(Integer)])
 	{
 		if (LittleEndian != __localEndianType())
 		{
-			unsigned char *dst = (unsigned char*)&integer;
-			unsigned char *src = (unsigned char*)stream + integerLen;
-			while (integerLen > 0)
-			{
-				*dst++ = *--src;
-				integerLen --;
-			}
+			integer = reversalInteger<Integer>(integer);
 		}
 		else
 		{
-			memcpy(&integer, stream, integerLen);
+			integer = *(Integer*)stream;
 		}
 	}
 	return integer;
@@ -592,18 +604,9 @@ void integerToStream(Integer integer, char *stream)
 	{
 		if (LittleEndian != __localEndianType())
 		{
-			unsigned char *src = (unsigned char*)&integer + integerLen;
-			unsigned char *dst = (unsigned char*)stream;
-			while (integerLen > 0)
-			{
-				*dst++ = *--src;
-				integerLen --;
-			}
+			integer = reversalInteger<Integer>(integer);
 		}
-		else
-		{
-			memcpy(stream, &integer, integerLen);
-		}
+		memcpy(stream, &integer, integerLen);
 	}
 }
 

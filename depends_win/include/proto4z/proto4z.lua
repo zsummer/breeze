@@ -86,7 +86,7 @@ function Proto4z.register(id, name)
 		Proto4z.__protos = {}
 	end
 	if Proto4z.__protos[id] ~= nil then
-		error("id already register. id=" .. id .. " registrered name=" .. Proto4z.__protos[id]  .. ", new name=" .. protoName .. ": " .. debug.traceback())
+		error("id already register. id=" .. id .. " registrered name=" .. Proto4z.__protos[id]  .. ", new name=" .. name .. ": " .. debug.traceback())
 	end
 	if type(name) ~= "string" then
 		error("name ~= string " .. debug.traceback())
@@ -295,7 +295,7 @@ function Proto4z.__decode(binData, pos, name, result)
 		offset = p + offset
 		tag, p = Proto4z.__unpack(binData, p, "ui64")
 		for i = 1, #proto do
-			if Proto4z.__checkBitTrue(tag, i-1) ~= nil then
+			if Proto4z.checkIntegerBitTrue(tag, i-1) ~= nil then
 				local desc = proto[i]
 				v, p = Proto4z.__unpack(binData, p, desc.type)
 				if v ~= nil then
@@ -380,7 +380,7 @@ function Proto4z.__encode(obj, name, data)
 				end
 			end
 		end
-		local tag = Proto4z.__checkStringToBit(proto.__getTag)
+		local tag = Proto4z.sequenceToInteger(proto.__getTag)
 		offset = #curdata.data + #tag
 		offset = Proto4z.__pack(offset, "ui32")
 		data.data = data.data .. offset .. tag .. curdata.data
