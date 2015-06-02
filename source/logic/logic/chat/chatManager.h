@@ -33,11 +33,6 @@
 #include <multimod_matching_tree/match_tree.h>
 
 
-struct Contact
-{
-	ContactInfo info;
-	std::map<UserID, FriendInfo> friends;
-};
 
 
 class ChatManager :public Singleton<ChatManager>
@@ -48,17 +43,8 @@ public:
 	bool init();
 
 	bool initFilter();
-	bool initContact();
-	bool initFriends();
 	bool initMessage();
 
-	//存储名片信息
-	void insertContact(const ContactInfo & info);
-	void updateContact(const ContactInfo & info);
-
-	//存储好友关系
-	void insertFriend(const FriendInfo & info);
-	void updateFriend(const FriendInfo & info);
 
 	//存储聊天消息
 	void insertMessage(const ChatInfo & info);
@@ -70,17 +56,12 @@ public:
 	void broadcastFriends(WriteStream & ws, UserID uID);
 
 	void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
+
 public:
-	void onUserLogin(EventTriggerID tID, UserID uID, Any , Any , Any );
-	void onUserLogout(EventTriggerID tID, UserID uID, Any , Any , Any );
-public:
-	void msg_onGetContactInfoReq(TcpSessionPtr session, ReadStream & rs);
-	void msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs);
-	void msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs);
 	void msg_onChatReq(TcpSessionPtr session, ReadStream & rs);
 	
 private:
-	std::unordered_map<UserID, Contact> _contacts; //存储所有好友/名片信息
+
 	std::map<unsigned long long, UserIDArray> _channels;
 
 	//过滤词库

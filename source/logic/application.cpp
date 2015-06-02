@@ -6,8 +6,32 @@
 #include "logic/mission/dailyMission.h"
 #include "logic/testBlob/testBlob.h"
 #include "logic/chat/chatManager.h"
+#include "logic/friend/friend.h"
 #include "logic/login/login.h"
 
+
+#define LogicInit(logic) do  \
+{ \
+	bool ret = logic::getRef().init(); \
+	if (!ret) \
+	{ \
+		LOGE("LogicInit " << #logic << " error!"); \
+		return false; \
+	} \
+	LOGI("LogicInit " << #logic << " success!"); \
+} while (0) 
+
+
+#define LogicStart(logic) do  \
+{\
+	bool ret = logic::getRef().start(); \
+	if (!ret) \
+	{ \
+		LOGE("LogicStart " << #logic << " error!"); \
+		return false; \
+	} \
+	LOGI("LogicStart " << #logic << " success!"); \
+} while (0)
 
 
 Appliction::Appliction()
@@ -35,85 +59,19 @@ bool Appliction::init(std::string filename, unsigned int index)
 	}
 	LOGI("parse ServerConfig success. configFile=" << filename << ", node=" << LogicNode << ", index=" << index);
 
-	ret = SessionManager::getRef().start();
-	if (!ret)
-	{
-		LOGE("SessionManager start false.");
-		return ret;
-	}
-	LOGI("SessionManager start success.");
+	LogicStart(SessionManager);
+	LogicStart(DBManager);
+	
+	LogicInit(UserManager);
+	LogicInit(EventTrigger);
+	LogicInit(DailyMission);
+	LogicInit(TestBlob);
+	LogicInit(ChatManager);
+	LogicInit(Login);
+	LogicInit(Friend);
 
-	ret = DBManager::getRef().start();
-	if (!ret)
-	{
-		LOGE("DBManager start false.");
-		return ret;
-	}
-	LOGI("DBManager start success.");
-	ret = UserManager::getRef().init();
-	if (!ret)
-	{
-		LOGE("UserManager init false.");
-		return ret;
-	}
-	LOGI("UserManager init success.");
+	LogicStart(NetManager);
 
-	ret = EventTrigger::getRef().init();
-	if (!ret)
-	{
-		LOGE("EventTrigger init false.");
-		return ret;
-	}
-	LOGI("EventTrigger init success.");
-
-	ret = DailyMission::getRef().init();
-	if (!ret)
-	{
-		LOGE("DailyMission init false.");
-		return ret;
-	}
-	LOGI("DailyMission init success.");
-
-	ret = TestBlob::getRef().init();
-	if (!ret)
-	{
-		LOGE("TestBlob init false.");
-		return ret;
-	}
-	LOGI("TestBlob init success.");
-
-	LOGI("CreateTestAuthInfo init success.");
-
-	ret = ChatManager::getRef().init();
-	if (!ret)
-	{
-		LOGE("ChatManager init false.");
-		return ret;
-	}
-	LOGI("ChatManager init success.");
-
-
-	ret = Login::getRef().init();
-	if (!ret)
-	{
-		LOGE("Login init false.");
-		return ret;
-	}
-	LOGI("Login init success.");
-
-
-
-
-
-
-
-	//open network
-	if (!NetManager::getRef().start())
-	{
-		LOGE("NetManager start false.");
-		return ret;
-	}
-	LOGI("NetManager start Success.");
 
 	LOGI("Appliction init success.");
 	return ret;
