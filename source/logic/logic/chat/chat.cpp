@@ -1,16 +1,16 @@
-﻿#include "chatManager.h"
+﻿#include "chat.h"
 #include "../userManager.h"
 #include "../dbManager.h"
 #include <ProtoCommon.h>
 #include "ProtoChat.h"
 #include "ProtoChat_SQL.h"
 
-ChatManager::ChatManager()
+Chat::Chat()
 {
-	MessageDispatcher::getRef().registerSessionMessage(ID_ChatReq, std::bind(&ChatManager::msg_onChatReq, this, _1, _2));
+	MessageDispatcher::getRef().registerSessionMessage(ID_ChatReq, std::bind(&Chat::msg_onChatReq, this, _1, _2));
 }
 
-ChatManager::~ChatManager()
+Chat::~Chat()
 {
 	if (_filter)
 	{
@@ -19,7 +19,7 @@ ChatManager::~ChatManager()
 	}
 }
 
-bool ChatManager::init()
+bool Chat::init()
 {
 	if (!initFilter())
 	{
@@ -34,7 +34,7 @@ bool ChatManager::init()
 	return true;
 }
 
-bool ChatManager::initFilter()
+bool Chat::initFilter()
 {
 	_filter = match_tree_init_from_file("../filter.txt", ".....", 5);
 	if (_filter == nullptr)
@@ -47,7 +47,7 @@ bool ChatManager::initFilter()
 	return true;
 }
 
-bool ChatManager::initMessage()
+bool Chat::initMessage()
 {
 	//! 先desc一下ChatInfo表, 不存在则创建
 	auto build = ChatInfo_BUILD();
@@ -72,7 +72,7 @@ bool ChatManager::initMessage()
 	auto result = DBManager::getRef().infoQuery(q.popSQL());
 	if (result->getErrorCode() != QEC_SUCCESS)
 	{
-		LOGE("ChatManager::init() init error.  can't get current tb_ChatInfo id.  error=" << result->getLastError() << ", sql=" << result->sqlString());
+		LOGE("Chat::init() init error.  can't get current tb_ChatInfo id.  error=" << result->getLastError() << ", sql=" << result->sqlString());
 		return false;
 	}
 	if (result->haveRow())
@@ -85,7 +85,7 @@ bool ChatManager::initMessage()
 		}
 		catch (...)
 		{
-			LOGE("ChatManager::init() catch error.  can't get current tb_ChatInfo .  error=" << result->getLastError() << ", sql=" << result->sqlString());
+			LOGE("Chat::init() catch error.  can't get current tb_ChatInfo .  error=" << result->getLastError() << ", sql=" << result->sqlString());
 			return false;
 		}
 	}
@@ -94,30 +94,30 @@ bool ChatManager::initMessage()
 
 
 //存储聊天消息
-void ChatManager::insertMessage(const ChatInfo & info)
+void Chat::insertMessage(const ChatInfo & info)
 {
 	auto sql = ChatInfo_INSERT(info);
 	if (!sql.empty())
 	{
-		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "insertMessage"));
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "insertMessage"));
 	}
 }
-void ChatManager::updateMessage(const ChatInfo & info)
+void Chat::updateMessage(const ChatInfo & info)
 {
 	auto sql = ChatInfo_UPDATE(info);
 	if (!sql.empty())
 	{
-		DBManager::getRef().infoAsyncQuery(sql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "updateMessage"));
+		DBManager::getRef().infoAsyncQuery(sql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "updateMessage"));
 	}
 }
 
 
-void ChatManager::broadcast(WriteStream & ws, const UserIDArray uIDs)
+void Chat::broadcast(WriteStream & ws, const UserIDArray uIDs)
 {
 	UserManager::getRef().broadcast(ws, uIDs);
 }
 
-void ChatManager::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc)
+void Chat::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc)
 {
 	if (result->getErrorCode() != QEC_SUCCESS)
 	{
@@ -125,7 +125,7 @@ void ChatManager::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::st
 	}
 }
 
-void ChatManager::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
+void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
 {
 	ChatReq req;
 	rs >> req;
@@ -146,7 +146,7 @@ void ChatManager::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
 	info.srcName = inner->userInfo.nickName;
 	//塞进数据库原诗的聊天内容
 	auto chatsql = ChatInfo_INSERT(info);
-	DBManager::getRef().infoAsyncQuery(chatsql, std::bind(&ChatManager::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
+	DBManager::getRef().infoAsyncQuery(chatsql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
 
 	//过滤掉脏字
 	match_tree_translate(_filter, &info.msg[0], (unsigned int)info.msg.length(), 1, '*');

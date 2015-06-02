@@ -2,9 +2,9 @@
 #include "../userManager.h"
 #include "../dbManager.h"
 #include <ProtoCommon.h>
-#include <ProtoCommonSQL.h>
+#include <ProtoCommon_SQL.h>
 #include <ProtoLogin.h>
-#include <ProtoLoginSQL.h>
+#include <ProtoLogin_SQL.h>
 
 Login::Login()
 {

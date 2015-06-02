@@ -33,6 +33,14 @@ namespace Proto4z
 	{ 
 		public static Proto4z.ui16 value = 51;  
 	} 
+	class STATIC_EC_ALREADY_FRIEND //你们已经是好友了 
+	{ 
+		public static Proto4z.ui16 value = 100;  
+	} 
+	class STATIC_EC_ALREADY_BLACKLIST //该好友在黑名单中 
+	{ 
+		public static Proto4z.ui16 value = 101;  
+	} 
  
 	class SessionToken: Proto4z.IProtoObject //认证令牌 
 	{	 

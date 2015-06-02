@@ -51,14 +51,14 @@
     <ClCompile Include="logic\testBlob\testBlob.cpp">
       <Filter>logic\testBlob</Filter>
     </ClCompile>
-    <ClCompile Include="logic\chat\chatManager.cpp">
-      <Filter>logic\chat</Filter>
-    </ClCompile>
     <ClCompile Include="logic\login\login.cpp">
       <Filter>logic\login</Filter>
     </ClCompile>
     <ClCompile Include="logic\friend\friend.cpp">
       <Filter>logic\friend</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\chat\chat.cpp">
+      <Filter>logic\chat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,14 +83,14 @@
     <ClInclude Include="logic\testBlob\testBlob.h">
       <Filter>logic\testBlob</Filter>
     </ClInclude>
-    <ClInclude Include="logic\chat\chatManager.h">
-      <Filter>logic\chat</Filter>
-    </ClInclude>
     <ClInclude Include="logic\login\login.h">
       <Filter>logic\login</Filter>
     </ClInclude>
     <ClInclude Include="logic\friend\friend.h">
       <Filter>logic\friend</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\chat\chat.h">
+      <Filter>logic\chat</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

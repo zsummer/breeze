@@ -22,8 +22,9 @@
   <member name="EC_INVALIDE_USER"  value="50"  desc="错误的用户信息"/>
   <member name="EC_TOKEN_EXPIRE"   desc="令牌过期"/>
 
+  <member name="EC_ALREADY_FRIEND"   value="100" desc="你们已经是好友了"/>
+  <member name="EC_ALREADY_BLACKLIST"   desc="该好友在黑名单中"/>
 
-	
   
   </enum>
 

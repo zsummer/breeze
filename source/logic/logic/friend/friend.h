@@ -19,56 +19,46 @@
 
 /*
 *  file desc 
-*  chat manager
+*  friend 
 */
 
 
 
 
-#ifndef _CHAT_MANAGER_H_
-#define _CHAT_MANAGER_H_
+#ifndef _FRIEND_H_
+#define _FRIEND_H_
 #include <common.h>
-#include <ProtoChat.h>
+#include <ProtoFriend.h>
 #include "../mission/eventTrigger.h"
 #include <multimod_matching_tree/match_tree.h>
 
 
 
 
-class ChatManager :public Singleton<ChatManager>
+
+class Friend :public Singleton<Friend>
 {
 public:
-	ChatManager();
-	~ChatManager();
+	Friend();
+	~Friend();
 	bool init();
+	bool initFriends();
 
-	bool initFilter();
-	bool initMessage();
+	//存储好友关系
+	void insertFriend(const FriendInfo & info);
+	void updateFriend(const FriendInfo & info);
 
-
-	//存储聊天消息
-	void insertMessage(const ChatInfo & info);
-	void updateMessage(const ChatInfo & info);
-
-	//广播消息给客户端
-	//uIDs为空则广播给所有在线用户
-	void broadcast(WriteStream & ws, const UserIDArray uIDs);
-	void broadcastFriends(WriteStream & ws, UserID uID);
 
 	void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
-
 public:
-	void msg_onChatReq(TcpSessionPtr session, ReadStream & rs);
+	void onUserLogin(EventTriggerID tID, UserID uID, Any , Any , Any );
+	void onUserLogout(EventTriggerID tID, UserID uID, Any , Any , Any );
+public:
+	void msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs);
+	void msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs);
 	
 private:
-
-	std::map<unsigned long long, UserIDArray> _channels;
-
-	//过滤词库
-	match_tree_head * _filter = nullptr;
-
-	//负责分配一个支持SQL合服的64位ID.  [plat+ared+uniqueID]
-	GenObjectID _genID; //生成消息ID
+	std::map<UserID, std::map<UserID, FriendInfo> > _friends;
 };
 
 

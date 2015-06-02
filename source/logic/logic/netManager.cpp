@@ -1,7 +1,7 @@
 ﻿#include "netManager.h"
 #include "dbManager.h"
 #include "userManager.h"
-#include <ProtoCommonSQL.h>
+#include <ProtoCommon_SQL.h>
 
 NetManager::NetManager()
 {

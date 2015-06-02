@@ -10,6 +10,8 @@ const unsigned short EC_PARAM_DENIED = 4; //非法参数
 const unsigned short EC_PERMISSION_DENIED = 5; //权限错误 
 const unsigned short EC_INVALIDE_USER = 50; //错误的用户信息 
 const unsigned short EC_TOKEN_EXPIRE = 51; //令牌过期 
+const unsigned short EC_ALREADY_FRIEND = 100; //你们已经是好友了 
+const unsigned short EC_ALREADY_BLACKLIST = 101; //该好友在黑名单中 
  
 struct SessionToken //认证令牌 
 { 
