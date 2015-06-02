@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>00276e782a68648480b4bea3dba896a8</cppmd5> 
+<luamd5>72095e682f136b10882c7e497b077b3d</luamd5> 
+<csharpmd5>d2416b8572f05e569d4934190f054aed</csharpmd5> 
+<sqlmd5>7a282f1e6f92bf3e6dbda37dc7e4959c</sqlmd5> 
+<xmlmd5>1fdb73ac10df6aeb386b531493496c4c</xmlmd5> 
+<cacheNumber>
+	<cache key = "ID_FriendOperationAck" Number = "1003" /> 
+	<cache key = "ID_FriendOperationReq" Number = "1002" /> 
+	<cache key = "ID_GetSomeStrangersAck" Number = "1001" /> 
+	<cache key = "ID_GetSomeStrangersReq" Number = "1000" /> 
+</cacheNumber>

@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5></cppmd5> 
-<luamd5></luamd5> 
-<csharpmd5></csharpmd5> 
-<sqlmd5></sqlmd5> 
-<xmlmd5>b566a4baa5b45bffc6d0d87c6e261904</xmlmd5> 
+<cppmd5>9f3bce3356f9423689e72bfbf3bda7f3</cppmd5> 
+<luamd5>51832793a26c695df5d5140f44197756</luamd5> 
+<csharpmd5>82ae0938d78978d8c66e98623f10f84b</csharpmd5> 
+<sqlmd5>e6c44577fa8404aa378d736bbe7ac2ee</sqlmd5> 
+<xmlmd5>e4af50023a5a0717b16734cb3de33ff1</xmlmd5> 
 <cacheNumber>
-	<cache key = "ID_ChatAck" Number = "1009" /> 
-	<cache key = "ID_ChatNotice" Number = "1010" /> 
-	<cache key = "ID_ChatReq" Number = "1008" /> 
-	<cache key = "ID_FriendOperationAck" Number = "1005" /> 
-	<cache key = "ID_FriendOperationReq" Number = "1004" /> 
-	<cache key = "ID_GetContactInfoAck" Number = "1001" /> 
-	<cache key = "ID_GetContactInfoReq" Number = "1000" /> 
-	<cache key = "ID_GetSomeStrangersAck" Number = "1003" /> 
-	<cache key = "ID_GetSomeStrangersReq" Number = "1002" /> 
-	<cache key = "ID_JoinGropuAck" Number = "1007" /> 
-	<cache key = "ID_JoinGropuReq" Number = "1006" /> 
+	<cache key = "ID_ChatAck" Number = "1105" /> 
+	<cache key = "ID_ChatNotice" Number = "1106" /> 
+	<cache key = "ID_ChatReq" Number = "1104" /> 
+	<cache key = "ID_JoinGropuAck" Number = "1101" /> 
+	<cache key = "ID_JoinGropuReq" Number = "1100" /> 
+	<cache key = "ID_LeaveGropuAck" Number = "1103" /> 
+	<cache key = "ID_LeaveGropuReq" Number = "1102" /> 
 </cacheNumber>

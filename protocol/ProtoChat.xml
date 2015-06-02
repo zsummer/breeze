@@ -1,56 +1,38 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
-  <MinNo>1000</MinNo>
-  <MaxNo>1100</MaxNo>
+  <MinNo>1100</MinNo>
+  <MaxNo>1200</MaxNo>
   <UseLog4z>1</UseLog4z>
 </ProtoTraits>
 
 
 <Proto>
 
-  <enum type="ui8"  desc="好友状态">
-  	<member name="FRIEND_WAITING" value="0" desc="等待好友同意"/>
-  	<member name="FRIEND_REQUESTING" 		desc="等待确认"/>
-  	<member name="FRIEND_BLACKLIST" 		desc="黑名单"/>
-  	<member name="FRIEND_ESTABLISHED"   	desc="好友"/>
-  </enum>
-
-  <enum type="ui8"  desc="操作指令">
-  	<member name="FRIEND_ADDFRIEND"    desc="添加好友"/>
-  	<member name="FRIEND_ADDBLACK"    desc="添加黑名单"/>
-  	<member name="FRIEND_REMOVEFRIEND"    desc="移除好友"/>
-  	<member name="FRIEND_REMOVEBLACK"    desc="移除黑名单"/>
-
-   	<member name="FRIEND_ALLOW"    desc="同意"/>
-  	<member name="FRIEND_REJECT"   desc="拒绝"/>
-  	<member name="FRIEND_IGNORE"   desc="忽略"/>
-  </enum>
-
+ 
   <enum type="ui8"  desc="聊天(频道)类型">
  	<member name="CHANNEL_PRIVATE" value="0"   desc="私聊, 需要指明具体某个uid"/>
 	<member name="CHANNEL_WORLD"   desc="世界"/>
 	<member name="CHANNEL_GROUP"  desc="群组, 需要指明具体某个groupid"/>
   </enum>
 
+  <proto name="JoinGropuReq" desc= "加入频道">
+  	<member name="chlType" type="ui8"   desc="channel type"/>
+  </proto>
 
-  <struct name="FriendInfo" store="true" desc="好友信息">
-   	<member name="ownID" type="ui64"  tag="key" desc=""/>
-   	<member name="fID" type="ui64"  tag="key" desc=""/>
-   	<member name="flag" type="ui8"   desc="状态标志"/>
-   	<member name="makeTime"  type="ui32" desc="建立时间"/>
-  </struct>
-  <array name="FriendInfoArray" type="FriendInfo" desc="" />
+  <proto name="JoinGropuAck" desc= "">
+  	<member name="retCode" type="ui16"   desc=""/>
+  	<member name="chlType" type="ui8"   desc="channel type"/>
+  </proto>
 
-  <struct name="ContactInfo" store="true" desc="联系人卡片">
-   	<member name="uID" type="ui64" tag="key" desc=""/>
-   	<member name="nickName" type="string"   desc="用户昵称"/>
-  	<member name="iconID"  type="i16" desc="头像"/>
-  	<member name="banned"  type="ui8" desc="禁言"/>
-  	<member name="groupID" type="ui64" desc="加入的群组ID, 0为没有加入任何群组" />
-   	<member name="onlineFlag"  type="ui8" ignore="true" desc="在线状态0离线,1在线"/>
-  </struct>
-  <array name="ContactInfoArray" type="ContactInfo" desc="" />
+  <proto name="LeaveGropuReq" desc= "加入频道">
+  	<member name="chlType" type="ui8"   desc="channel type"/>
+  </proto>
+
+  <proto name="LeaveGropuAck" desc= "">
+  	<member name="retCode" type="ui16"   desc=""/>
+  	<member name="chlType" type="ui8"   desc="channel type"/>
+  </proto>
 
   <struct name="ChatInfo" store="true" desc="聊天消息">
   	<member name="mID" type="ui64" tag="key"  desc="msg id"/>
@@ -67,40 +49,8 @@
   <array name="ChatInfoArray" type="ChatInfo" desc="" />
 
 
-  <proto name="GetContactInfoReq" desc= "获取联系人名片请求">
-  	<member name="uID" type="ui64"   desc=""/>
-  </proto>
 
-  <proto name="GetContactInfoAck" desc= "获取联系人名片结果" >
-    <member name="retCode" type="ui16"   desc=""/>
-    <member name="contact" type="ContactInfo"   desc=""/>
-  </proto>
 
-  <proto name="GetSomeStrangersReq" desc= "获取一些陌生人">
-  </proto>
-
-  <proto name="GetSomeStrangersAck" desc= "获取一些陌生人" >
-    <member name="retCode" type="ui16"   desc=""/>
-    <member name="uIDs" type="UserIDArray"   desc=""/>
-  </proto>
-
-  <proto name="FriendOperationReq" desc= "好友操作请求">
-    <member name="uID" type="ui64"   desc="目标ID"/>
-    <member name="oFlag" type="ui8"   desc="操作指令"/>
-  </proto>
-
-  <proto name="FriendOperationAck" desc= "好友操作请求结果" >
-  	<member name="retCode" type="ui16"   desc=""/>
-  	<member name="srcUID" type="ui64"   desc=""/>
-    <member name="srcFlag" type="ui8"   desc=""/>
-    <member name="dstUID" type="ui64"   desc=""/>
-  </proto>
-
-  <proto name="JoinGropuReq" desc= "加入群组">
-  </proto>
-
-  <proto name="JoinGropuAck" desc= "加入群组">
-  </proto>
  
   <proto name="ChatReq" desc= "发送聊天请求">
   	<member name="chlType" type="ui8"   desc="channel type"/>
