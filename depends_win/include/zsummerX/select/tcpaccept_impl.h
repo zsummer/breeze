@@ -41,39 +41,39 @@
 #include "select_impl.h"
 #include "tcpsocket_impl.h"
 /*
-*	TcpAccept: EPOLL LT EPOLLONESHOT模式 每次MOD accept一次 以尽量保持和IOCP的PROACTOR设计的一致性
+*    TcpAccept: EPOLL LT EPOLLONESHOT模式 每次MOD accept一次 以尽量保持和IOCP的PROACTOR设计的一致性
 */
 
 namespace zsummer
 {
-	namespace network
-	{
-		class TcpAccept :public std::enable_shared_from_this<TcpAccept>
-		{
-		public:
-			TcpAccept();
-			~TcpAccept();
-			bool initialize(const EventLoopPtr &summer);
-			bool openAccept(const std::string& listenIP, unsigned short listenPort);
-			bool doAccept(const TcpSocketPtr &s, _OnAcceptHandler && handle);
-			void onSelectMessage();
-			bool close();
+    namespace network
+    {
+        class TcpAccept :public std::enable_shared_from_this<TcpAccept>
+        {
+        public:
+            TcpAccept();
+            ~TcpAccept();
+            bool initialize(const EventLoopPtr &summer);
+            bool openAccept(const std::string& listenIP, unsigned short listenPort);
+            bool doAccept(const TcpSocketPtr &s, _OnAcceptHandler && handle);
+            void onSelectMessage();
+            bool close();
 
-		private:
-			std::string AcceptSection();
-		private:
-			EventLoopPtr 		_summer;
-			std::string		_listenIP;
-			short			_listenPort = 0;
+        private:
+            std::string AcceptSection();
+        private:
+            EventLoopPtr         _summer;
+            std::string        _listenIP;
+            short            _listenPort = 0;
 
-			sockaddr_in		_addr;
+            sockaddr_in        _addr;
 
-			tagRegister _register; //! epoll 注册事件
-			_OnAcceptHandler _onAcceptHandler;
-			TcpSocketPtr  _client;
-		};
-		typedef std::shared_ptr<TcpAccept> TcpAcceptPtr;
-	}
+            tagRegister _register; //! epoll 注册事件
+            _OnAcceptHandler _onAcceptHandler;
+            TcpSocketPtr  _client;
+        };
+        typedef std::shared_ptr<TcpAccept> TcpAcceptPtr;
+    }
 }
 
 

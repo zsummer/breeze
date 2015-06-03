@@ -41,38 +41,38 @@
 
 namespace zsummer
 {
-	namespace network
-	{
-		class EventLoop : public std::enable_shared_from_this<EventLoop>
-		{
-		public:
-			typedef std::vector<void*> MessageStack;
-			EventLoop(){}
-			~EventLoop(){}
-			bool initialize();
-			void runOnce(bool isImmediately = false);
+    namespace network
+    {
+        class EventLoop : public std::enable_shared_from_this<EventLoop>
+        {
+        public:
+            typedef std::vector<void*> MessageStack;
+            EventLoop(){}
+            ~EventLoop(){}
+            bool initialize();
+            void runOnce(bool isImmediately = false);
 
-			template <typename handle>
-			inline void post(handle &&h){PostMessage(std::move(h));}
-			inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle){return _timer.createTimer(delayms, std::move(handle));}
-			inline bool cancelTimer(unsigned long long timerID){return _timer.cancelTimer(timerID);}
+            template <typename handle>
+            inline void post(handle &&h){PostMessage(std::move(h));}
+            inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle){return _timer.createTimer(delayms, std::move(handle));}
+            inline bool cancelTimer(unsigned long long timerID){return _timer.cancelTimer(timerID);}
 
-		public:
-			bool registerEvent(int op, tagRegister &reg);
-			void PostMessage(_OnPostHandler &&handle);
-		private:
-			std::string logSection();
-		private:
-			int	_epoll = InvalideFD;
-			epoll_event _events[5000] = {};
-			int		_sockpair[2] = {};
-			tagRegister _register;
-			MessageStack _stackMessages;
-			std::mutex	 _stackMessagesLock;
-			Timer _timer;
-		};
-		typedef std::shared_ptr<EventLoop> EventLoopPtr;
-	}
+        public:
+            bool registerEvent(int op, tagRegister &reg);
+            void PostMessage(_OnPostHandler &&handle);
+        private:
+            std::string logSection();
+        private:
+            int    _epoll = InvalideFD;
+            epoll_event _events[5000] = {};
+            int        _sockpair[2] = {};
+            tagRegister _register;
+            MessageStack _stackMessages;
+            std::mutex     _stackMessagesLock;
+            Timer _timer;
+        };
+        typedef std::shared_ptr<EventLoop> EventLoopPtr;
+    }
 
 }
 

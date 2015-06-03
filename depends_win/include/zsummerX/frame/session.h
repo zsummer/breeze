@@ -44,34 +44,34 @@
 
 namespace zsummer
 {
-	namespace network
-	{
+    namespace network
+    {
 
 
-		struct MessageSendPack
-		{
-			char buff[MAX_SEND_PACK_SIZE];
-			unsigned int bufflen = 0;
-		};
+        struct MessageSendPack
+        {
+            char buff[MAX_SEND_PACK_SIZE];
+            unsigned int bufflen = 0;
+        };
 
-		struct MessageBuffChunk
-		{
-			char buff[MAX_BUFF_SIZE];
-			unsigned int bufflen = 0;
-		};
+        struct MessageBuffChunk
+        {
+            char buff[MAX_BUFF_SIZE];
+            unsigned int bufflen = 0;
+        };
 
-		struct rc4_state;
+        struct rc4_state;
 
-		class TcpSession : public std::enable_shared_from_this<TcpSession>
-		{
-		public:
-			void doSend(const char *buf, unsigned int len);
-			void close();
-			inline SessionID getAcceptID(){ return _acceptID; }
+        class TcpSession : public std::enable_shared_from_this<TcpSession>
+        {
+        public:
+            void doSend(const char *buf, unsigned int len);
+            void close();
+            inline SessionID getAcceptID(){ return _acceptID; }
             inline SessionID getSessionID(){ return _sessionID; }
-			inline bool isInvalidSession(){ return !_sockptr; }
-			inline const std::string & getRemoteIP(){ return _remoteIP; }
-			inline unsigned short getRemotePort(){ return _remotePort; }
+            inline bool isInvalidSession(){ return !_sockptr; }
+            inline const std::string & getRemoteIP(){ return _remoteIP; }
+            inline unsigned short getRemotePort(){ return _remotePort; }
             
             inline void setUserParam(unsigned long long param) { _param = param;}
             inline void setUserLParam(unsigned long long param) { _lparam = param;}
@@ -87,73 +87,73 @@ namespace zsummer
             bool bindTcpSocketPrt(const TcpSocketPtr &sockptr, AccepterID aID, SessionID sID, const ListenConfig &traits);
             void bindTcpConnectorPtr(const TcpSocketPtr &sockptr, const std::pair<ConnectConfig, ConnectInfo> & config);
             
-		private:
-			void cleanSession(bool isCleanAllData, const std::string &rc4TcpEncryption);
+        private:
+            void cleanSession(bool isCleanAllData, const std::string &rc4TcpEncryption);
 
-			bool doRecv();
+            bool doRecv();
 
-			void onConnected(zsummer::network::NetErrorCode ec);
+            void onConnected(zsummer::network::NetErrorCode ec);
 
-			void onRecv(zsummer::network::NetErrorCode ec, int nRecvedLen);
+            void onRecv(zsummer::network::NetErrorCode ec, int nRecvedLen);
 
-			void onSend(zsummer::network::NetErrorCode ec, int nSentLen);
+            void onSend(zsummer::network::NetErrorCode ec, int nSentLen);
 
-			void onPulseTimer();
+            void onPulseTimer();
 
-			void onClose();
+            void onClose();
 
 
-		private:
-			TcpSocketPtr  _sockptr;
-			std::string _remoteIP;
-			unsigned short _remotePort = 0;
-			//
-			SessionID _sessionID = InvalidSeesionID;
-			AccepterID _acceptID = InvalidAccepterID;
-			ProtoType _protoType = PT_TCP;
-			unsigned int _pulseInterval = 0;
-			zsummer::network::TimerID _pulseTimerID = zsummer::network::InvalidTimerID;
+        private:
+            TcpSocketPtr  _sockptr;
+            std::string _remoteIP;
+            unsigned short _remotePort = 0;
+            //
+            SessionID _sessionID = InvalidSeesionID;
+            AccepterID _acceptID = InvalidAccepterID;
+            ProtoType _protoType = PT_TCP;
+            unsigned int _pulseInterval = 0;
+            zsummer::network::TimerID _pulseTimerID = zsummer::network::InvalidTimerID;
 
-			enum SessionStatus
-			{
-				SS_UNINITILIZE,
-				SS_ESTABLISHED,
-				SS_CLOSED,
-			};
+            enum SessionStatus
+            {
+                SS_UNINITILIZE,
+                SS_ESTABLISHED,
+                SS_CLOSED,
+            };
 
-			//! 
-			MessageBuffChunk _recving;
-			MessageBuffChunk _sending;
-			unsigned int _sendingCurIndex = 0;
+            //! 
+            MessageBuffChunk _recving;
+            MessageBuffChunk _sending;
+            unsigned int _sendingCurIndex = 0;
 
-			//! send data queue
-			std::queue<MessageSendPack *> _sendque;
-			std::queue<MessageSendPack *> _freeCache;
+            //! send data queue
+            std::queue<MessageSendPack *> _sendque;
+            std::queue<MessageSendPack *> _freeCache;
 
-			//! rc encrypt
-			std::string _rc4Encrypt;
-			RC4Encryption _rc4StateRead;
-			RC4Encryption _rc4StateWrite;
+            //! rc encrypt
+            std::string _rc4Encrypt;
+            RC4Encryption _rc4StateRead;
+            RC4Encryption _rc4StateWrite;
 
-			//! flash policy 
-			bool _bFirstRecvData = true;
-			bool _bOpenFlashPolicy = false;
+            //! flash policy 
+            bool _bFirstRecvData = true;
+            bool _bOpenFlashPolicy = false;
 
-			//! http status data
-			bool _httpHadHeader = false;
-			bool _httpIsChunked = false;
-			zsummer::proto4z::PairString  _httpCommonLine;
-			zsummer::proto4z::HTTPHeadMap _httpHeader;
+            //! http status data
+            bool _httpHadHeader = false;
+            bool _httpIsChunked = false;
+            zsummer::proto4z::PairString  _httpCommonLine;
+            zsummer::proto4z::HTTPHeadMap _httpHeader;
             
             //! user param
             unsigned long long _param = 0;
             unsigned long long _lparam = 0;
             unsigned long long _rparam = 0;
             std::string _paramstring;
-		};
+        };
 
 
-	}
+    }
 }
 
 

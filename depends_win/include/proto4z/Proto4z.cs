@@ -42,61 +42,61 @@ namespace Proto4z
     sealed  class RC4Encryption //rc4 encrypt
     {
         private int _x;
-	    private int _y;
+        private int _y;
         private int[] m_box;
-	    public void makeSBox(string obscure)
-	    {
+        public void makeSBox(string obscure)
+        {
             m_box = new int[256];
-		    _x = 0;
-		    _y = 0;
-		    for (int i = 0; i < 256; i++)
-		    {
-			    m_box[i] = i;
-		    }
-		    if (obscure.Length > 0)
-		    {
-			    int j = 0;
-			    int k = 0;
+            _x = 0;
+            _y = 0;
+            for (int i = 0; i < 256; i++)
+            {
+                m_box[i] = i;
+            }
+            if (obscure.Length > 0)
+            {
+                int j = 0;
+                int k = 0;
                 char[] obs = obscure.ToCharArray();
-			    int lenth = obs.Length;
-			    for (int i = 0; i < 256; i++)
-			    {
-				    int tmp = m_box[i];
-				    j = (byte)(j + tmp + (byte)obs[k]);
-				    m_box[i] = m_box[j];
-				    m_box[j] = tmp;
-				    if (++k >= lenth)
-				    {
-					    k = 0;
-				    }
-			    }
-		    }
-	    }
+                int lenth = obs.Length;
+                for (int i = 0; i < 256; i++)
+                {
+                    int tmp = m_box[i];
+                    j = (byte)(j + tmp + (byte)obs[k]);
+                    m_box[i] = m_box[j];
+                    m_box[j] = tmp;
+                    if (++k >= lenth)
+                    {
+                        k = 0;
+                    }
+                }
+            }
+        }
 
-	    public void encryption(byte[] data, int length)
-	    {
-		    int  x, y;
+        public void encryption(byte[] data, int length)
+        {
+            int  x, y;
 
-		    x = _x;
-		    y = _y;
+            x = _x;
+            y = _y;
 
-		    for (int i = 0; i < length; i++)
-		    {
-			    x = (byte)(x + 1);
-			    int a = m_box[x];
-			    y = (byte)(y + a);
-			    int b = m_box[x] = m_box[y];
-			    m_box[y] = a;
+            for (int i = 0; i < length; i++)
+            {
+                x = (byte)(x + 1);
+                int a = m_box[x];
+                y = (byte)(y + a);
+                int b = m_box[x] = m_box[y];
+                m_box[y] = a;
                 data[i] ^= (byte)m_box[(byte)(a + b)];
-		    }
+            }
 
-		    _x = x;
-		    _y = y;
-	    }
+            _x = x;
+            _y = y;
+        }
 
 
 
-	   
+       
     }
 
     interface IProtoObject

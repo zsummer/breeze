@@ -40,76 +40,76 @@
 #include "iocp_impl.h"
 namespace zsummer
 {
-	namespace network
-	{
-		class TcpSocket : public std::enable_shared_from_this<TcpSocket>
-		{
-		public:
+    namespace network
+    {
+        class TcpSocket : public std::enable_shared_from_this<TcpSocket>
+        {
+        public:
 
-			TcpSocket();
-			~TcpSocket();
-			//! initialize an attach socket to zsummer pump.
-			//if the socket is used to connect,  It's need initialize before call doConnect 
-			// if the socket is used to accept new socket, It's need initialize after OnAccept. 
-			bool initialize(const EventLoopPtr& summer);
-			inline bool getPeerInfo(std::string& remoteIP, unsigned short &remotePort)
-			{
-				remoteIP = _remoteIP;
-				remotePort = _remotePort;
-				return true;
-			}
-			//! handle: void(zsummer::network::NetErrorCode);
-			//! handle: NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
-			bool doConnect(const std::string& remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
-			//!handle:  void(NetErrorCode, int)
-			//!handle:  NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
-			//!handle:  int: is transfer length. if not all data already transfer that you need call doSend transfer the remnant data.
-			//! warning: when  handler is not callback ,  the function can not call repeat. if you have some question maybe you need read the test or implementation .
-			//!          so,  when you want  repeat send data without care the callback , you need encapsulate the send operate via a send queue like the StressTest/FrameTest source code
-			bool doSend(char * buf, unsigned int len, _OnSendHandler &&handler);
-			//!handle:  void(NetErrorCode, int)
-			//!handle:  NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
-			//!handle:  int: is received data  length. it maybe short than you want received data (len).
-			//! buf: you recv buffer memory address . you would block the buffer still the handler callback .
-			//! len: you want recv data for max bytes .
-			//! warning: when  handler is not callback ,  the function can not call repeat. if you have some question maybe you need read the test or implementation .
-			bool doRecv(char * buf, unsigned int len, _OnRecvHandler && handler);
-			//close this socket.
-			//warning : at a safe close method , if you have doConnect/doRecv/doSend request and not all callback. you need wait callback .  the callback will return with a error code.
-			//         if you have not the operate and when you doClose the socket and immediate destroy this class object . in next do zsummerx's runOnce(), callback may be return and call operate in the bad memory . 
-			bool doClose();
-		public:
-			bool attachSocket(SOCKET s, std::string remoteIP, unsigned short remotePort);
-			void onIOCPMessage(BOOL bSuccess, DWORD dwTranceBytes, unsigned char cType);
-			std::string getTcpSocketStatus();
-		public:
-			//private
-			EventLoopPtr  _summer;
-			SOCKET		_socket = INVALID_SOCKET;
-			std::string _remoteIP;
-			unsigned short _remotePort = 0;
+            TcpSocket();
+            ~TcpSocket();
+            //! initialize an attach socket to zsummer pump.
+            //if the socket is used to connect,  It's need initialize before call doConnect 
+            // if the socket is used to accept new socket, It's need initialize after OnAccept. 
+            bool initialize(const EventLoopPtr& summer);
+            inline bool getPeerInfo(std::string& remoteIP, unsigned short &remotePort)
+            {
+                remoteIP = _remoteIP;
+                remotePort = _remotePort;
+                return true;
+            }
+            //! handle: void(zsummer::network::NetErrorCode);
+            //! handle: NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
+            bool doConnect(const std::string& remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
+            //!handle:  void(NetErrorCode, int)
+            //!handle:  NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
+            //!handle:  int: is transfer length. if not all data already transfer that you need call doSend transfer the remnant data.
+            //! warning: when  handler is not callback ,  the function can not call repeat. if you have some question maybe you need read the test or implementation .
+            //!          so,  when you want  repeat send data without care the callback , you need encapsulate the send operate via a send queue like the StressTest/FrameTest source code
+            bool doSend(char * buf, unsigned int len, _OnSendHandler &&handler);
+            //!handle:  void(NetErrorCode, int)
+            //!handle:  NetErrorCode: 0 success. other code is failed  and can see error code in enum NetErrorCode 
+            //!handle:  int: is received data  length. it maybe short than you want received data (len).
+            //! buf: you recv buffer memory address . you would block the buffer still the handler callback .
+            //! len: you want recv data for max bytes .
+            //! warning: when  handler is not callback ,  the function can not call repeat. if you have some question maybe you need read the test or implementation .
+            bool doRecv(char * buf, unsigned int len, _OnRecvHandler && handler);
+            //close this socket.
+            //warning : at a safe close method , if you have doConnect/doRecv/doSend request and not all callback. you need wait callback .  the callback will return with a error code.
+            //         if you have not the operate and when you doClose the socket and immediate destroy this class object . in next do zsummerx's runOnce(), callback may be return and call operate in the bad memory . 
+            bool doClose();
+        public:
+            bool attachSocket(SOCKET s, std::string remoteIP, unsigned short remotePort);
+            void onIOCPMessage(BOOL bSuccess, DWORD dwTranceBytes, unsigned char cType);
+            std::string getTcpSocketStatus();
+        public:
+            //private
+            EventLoopPtr  _summer;
+            SOCKET        _socket = INVALID_SOCKET;
+            std::string _remoteIP;
+            unsigned short _remotePort = 0;
 
-			//recv
-			tagReqHandle _recvHandle;
-			WSABUF		 _recvWSABuf;
-			_OnRecvHandler _onRecvHandler;
-
-
-			//send
-			tagReqHandle _sendHandle;
-			WSABUF		 _sendWsaBuf;
-			_OnSendHandler _onSendHandler;
+            //recv
+            tagReqHandle _recvHandle;
+            WSABUF         _recvWSABuf;
+            _OnRecvHandler _onRecvHandler;
 
 
-			//connect
-			tagReqHandle _connectHandle;
-			_OnConnectHandler _onConnectHandler;
-			//status
-			int _nLinkStatus = LS_UNINITIALIZE;
-		};
-		typedef std::shared_ptr<TcpSocket> TcpSocketPtr;
+            //send
+            tagReqHandle _sendHandle;
+            WSABUF         _sendWsaBuf;
+            _OnSendHandler _onSendHandler;
 
-	}
+
+            //connect
+            tagReqHandle _connectHandle;
+            _OnConnectHandler _onConnectHandler;
+            //status
+            int _nLinkStatus = LS_UNINITIALIZE;
+        };
+        typedef std::shared_ptr<TcpSocket> TcpSocketPtr;
+
+    }
 }
 
 

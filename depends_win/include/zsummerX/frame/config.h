@@ -68,151 +68,151 @@
 
 namespace zsummer
 {
-	namespace network
-	{
+    namespace network
+    {
 
-		typedef unsigned int SessionID;
-		const SessionID InvalidSeesionID = -1;
-		typedef unsigned int AccepterID;
-		const AccepterID InvalidAccepterID = -1;
-		typedef unsigned short ProtoID;
-		const ProtoID InvalidProtoID = -1;
-
-
-		// const unsigned int __MIDDLE_SEGMENT_VALUE = ((unsigned int)-1) / (unsigned int)2;
-		const unsigned int __MIDDLE_SEGMENT_VALUE = 300 * 1000 * 1000;
-		inline bool isSessionID(unsigned int unknowID){ return unknowID < __MIDDLE_SEGMENT_VALUE ? true : false; }
-		inline bool isConnectID(unsigned int unknowID){ return unknowID != InvalidSeesionID && !isSessionID(unknowID); }
-		inline unsigned int nextSessionID(unsigned int curSessionID){ return (curSessionID + 1) % __MIDDLE_SEGMENT_VALUE; }
-		inline unsigned int nextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSeesionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
+        typedef unsigned int SessionID;
+        const SessionID InvalidSeesionID = -1;
+        typedef unsigned int AccepterID;
+        const AccepterID InvalidAccepterID = -1;
+        typedef unsigned short ProtoID;
+        const ProtoID InvalidProtoID = -1;
 
 
-
-		enum ProtoType
-		{
-			PT_TCP,
-			PT_HTTP,
-		};
-
-
-		struct ListenConfig
-		{
-			std::string		_listenIP = "0.0.0.0";
-			unsigned short	_listenPort = 81;
-			ProtoType		_protoType = PT_TCP;
-			std::string		_rc4TcpEncryption = ""; //empty is not encryption
-			bool			_openFlashPolicy = false;
-			bool			_setNoDelay = true;
-			unsigned int	_pulseInterval = 30000;
-			unsigned int	_maxSessions = 5000;
-			std::vector<std::string> _whitelistIP;
-		};
-
-
-		struct ListenInfo
-		{
-			//limit max session.
-			AccepterID _aID = InvalidAccepterID;
-			unsigned long long _totalAcceptCount = 0;
-			unsigned long long _currentLinked = 0;
-		};
-
-
-		struct ConnectConfig
-		{
-			std::string _remoteIP = "127.0.0.1";
-			unsigned short _remotePort = 81;
-			ProtoType _protoType = PT_TCP;
-			std::string _rc4TcpEncryption = ""; //empty is not encryption
-			unsigned int _pulseInterval = 30000;
-			unsigned int _reconnectMaxCount = 0; // try reconnect max count
-			unsigned int _reconnectInterval = 5000; //million seconds;
-			bool         _reconnectCleanAllData = true;//clean all data when reconnect;
-			bool		 _setNoDelay = true;
-		};
+        // const unsigned int __MIDDLE_SEGMENT_VALUE = ((unsigned int)-1) / (unsigned int)2;
+        const unsigned int __MIDDLE_SEGMENT_VALUE = 300 * 1000 * 1000;
+        inline bool isSessionID(unsigned int unknowID){ return unknowID < __MIDDLE_SEGMENT_VALUE ? true : false; }
+        inline bool isConnectID(unsigned int unknowID){ return unknowID != InvalidSeesionID && !isSessionID(unknowID); }
+        inline unsigned int nextSessionID(unsigned int curSessionID){ return (curSessionID + 1) % __MIDDLE_SEGMENT_VALUE; }
+        inline unsigned int nextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSeesionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
 
 
 
-		struct ConnectInfo
-		{
-			//implementation reconnect 
-			SessionID _cID = InvalidSeesionID;
-			unsigned long long _totalConnectCount = 0;
-			unsigned long long _curReconnectCount = 0;
-		};
+        enum ProtoType
+        {
+            PT_TCP,
+            PT_HTTP,
+        };
+
+
+        struct ListenConfig
+        {
+            std::string        _listenIP = "0.0.0.0";
+            unsigned short    _listenPort = 81;
+            ProtoType        _protoType = PT_TCP;
+            std::string        _rc4TcpEncryption = ""; //empty is not encryption
+            bool            _openFlashPolicy = false;
+            bool            _setNoDelay = true;
+            unsigned int    _pulseInterval = 30000;
+            unsigned int    _maxSessions = 5000;
+            std::vector<std::string> _whitelistIP;
+        };
+
+
+        struct ListenInfo
+        {
+            //limit max session.
+            AccepterID _aID = InvalidAccepterID;
+            unsigned long long _totalAcceptCount = 0;
+            unsigned long long _currentLinked = 0;
+        };
+
+
+        struct ConnectConfig
+        {
+            std::string _remoteIP = "127.0.0.1";
+            unsigned short _remotePort = 81;
+            ProtoType _protoType = PT_TCP;
+            std::string _rc4TcpEncryption = ""; //empty is not encryption
+            unsigned int _pulseInterval = 30000;
+            unsigned int _reconnectMaxCount = 0; // try reconnect max count
+            unsigned int _reconnectInterval = 5000; //million seconds;
+            bool         _reconnectCleanAllData = true;//clean all data when reconnect;
+            bool         _setNoDelay = true;
+        };
 
 
 
-		//----------------------------------------
+        struct ConnectInfo
+        {
+            //implementation reconnect 
+            SessionID _cID = InvalidSeesionID;
+            unsigned long long _totalConnectCount = 0;
+            unsigned long long _curReconnectCount = 0;
+        };
 
-		//receive buffer length  and send buffer length 
-		const unsigned int MAX_BUFF_SIZE = 100 * 1024;
-		const unsigned int MAX_SEND_PACK_SIZE = 20 * 1024;
 
-		//!register message with original net pack, if return false other register will not receive this message.
+
+        //----------------------------------------
+
+        //receive buffer length  and send buffer length 
+        const unsigned int MAX_BUFF_SIZE = 100 * 1024;
+        const unsigned int MAX_SEND_PACK_SIZE = 20 * 1024;
+
+        //!register message with original net pack, if return false other register will not receive this message.
         class TcpSession;
         typedef  std::shared_ptr<TcpSession> TcpSessionPtr;
         typedef std::function < bool(TcpSessionPtr , const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnPreMessageFunction;
 
-		//!register message 
-		typedef std::function < void(TcpSessionPtr, zsummer::proto4z::ReadStream &) > OnMessageFunction;
-		//!register message 
-		typedef std::function < void(TcpSessionPtr, ProtoID, zsummer::proto4z::ReadStream &) > OnDefaultMessageFunction;
-		//!register event 
-		typedef std::function < void(TcpSessionPtr) > OnSessionEstablished;
-		typedef std::function < void(TcpSessionPtr) > OnSessionDisconnect;
+        //!register message 
+        typedef std::function < void(TcpSessionPtr, zsummer::proto4z::ReadStream &) > OnMessageFunction;
+        //!register message 
+        typedef std::function < void(TcpSessionPtr, ProtoID, zsummer::proto4z::ReadStream &) > OnDefaultMessageFunction;
+        //!register event 
+        typedef std::function < void(TcpSessionPtr) > OnSessionEstablished;
+        typedef std::function < void(TcpSessionPtr) > OnSessionDisconnect;
 
-		//register http proto message
-		typedef std::function < void(TcpSessionPtr , const zsummer::proto4z::PairString &, const zsummer::proto4z::HTTPHeadMap& /*head*/, const std::string & /*body*/) > OnHTTPMessageFunction;
+        //register http proto message
+        typedef std::function < void(TcpSessionPtr , const zsummer::proto4z::PairString &, const zsummer::proto4z::HTTPHeadMap& /*head*/, const std::string & /*body*/) > OnHTTPMessageFunction;
 
-		//register pulse timer .  you can register this to implement heartbeat . 
-		typedef std::function < void(TcpSessionPtr , unsigned int/*pulse interval*/) > OnSessionPulseTimer;
-
-
+        //register pulse timer .  you can register this to implement heartbeat . 
+        typedef std::function < void(TcpSessionPtr , unsigned int/*pulse interval*/) > OnSessionPulseTimer;
 
 
 
 
-		inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
-		{
-			std::string whitelist;
-			for (auto str : config._whitelistIP)
-			{
-				whitelist += str + ",";
-			}
-
-			os << "[_listenIP=" << config._listenIP << ", _listenPort=" << config._listenPort << ", _protoType=" << (config._protoType == PT_TCP ? "PT_TCP" : "PT_HTTP")
-				<< ", _rc4TcpEncryption=" << config._rc4TcpEncryption << ", _openFlashPolicy=" << config._openFlashPolicy << ", _pulseInterval=" << config._pulseInterval
-				<< ", _maxSessions=" << config._maxSessions << ", _whitelistIP=" << whitelist << "]";
-			return os;
-		}
 
 
-		inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenInfo & info)
-		{
-			os << "[_aID=" << info._aID << ", _totalAcceptCount=" << info._totalAcceptCount << ", _currentLinked=" << info._currentLinked << "]";
-			return os;
-		}
+        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
+        {
+            std::string whitelist;
+            for (auto str : config._whitelistIP)
+            {
+                whitelist += str + ",";
+            }
+
+            os << "[_listenIP=" << config._listenIP << ", _listenPort=" << config._listenPort << ", _protoType=" << (config._protoType == PT_TCP ? "PT_TCP" : "PT_HTTP")
+                << ", _rc4TcpEncryption=" << config._rc4TcpEncryption << ", _openFlashPolicy=" << config._openFlashPolicy << ", _pulseInterval=" << config._pulseInterval
+                << ", _maxSessions=" << config._maxSessions << ", _whitelistIP=" << whitelist << "]";
+            return os;
+        }
+
+
+        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenInfo & info)
+        {
+            os << "[_aID=" << info._aID << ", _totalAcceptCount=" << info._totalAcceptCount << ", _currentLinked=" << info._currentLinked << "]";
+            return os;
+        }
 
 
 
-		inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
-		{
-			os << "[_remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << ", _protoType=" << (config._protoType == PT_TCP ? "PT_TCP" : "PT_HTTP")
-				<< ", _rc4TcpEncryption=" << config._rc4TcpEncryption << ", _pulseInterval=" << config._pulseInterval << ", _reconnectMaxCount=" << config._reconnectMaxCount
-				<< ", _reconnectInterval=" << config._reconnectInterval << ", _reconnectCleanAllData=" << config._reconnectCleanAllData << "]";
-			return os;
-		}
+        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
+        {
+            os << "[_remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << ", _protoType=" << (config._protoType == PT_TCP ? "PT_TCP" : "PT_HTTP")
+                << ", _rc4TcpEncryption=" << config._rc4TcpEncryption << ", _pulseInterval=" << config._pulseInterval << ", _reconnectMaxCount=" << config._reconnectMaxCount
+                << ", _reconnectInterval=" << config._reconnectInterval << ", _reconnectCleanAllData=" << config._reconnectCleanAllData << "]";
+            return os;
+        }
 
 
-		inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectInfo & info)
-		{
-			os << "[_cID=" << info._cID << ", _totalConnectCount=" << info._totalConnectCount << ", _curReconnectCount=" << info._curReconnectCount << "]";
-			return os;
-		}
+        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectInfo & info)
+        {
+            os << "[_cID=" << info._cID << ", _totalConnectCount=" << info._totalConnectCount << ", _curReconnectCount=" << info._curReconnectCount << "]";
+            return os;
+        }
 
 
-	}
+    }
 }
 
 

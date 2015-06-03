@@ -44,29 +44,29 @@
 
 namespace zsummer
 {
-	namespace network
-	{
+    namespace network
+    {
 
-		class UdpSocket : public std::enable_shared_from_this<UdpSocket>
-		{
-		public:
-			// const char * remoteIP, unsigned short remotePort, nTranslate
-			UdpSocket();
-			~UdpSocket();
-			bool initialize(const EventLoopPtr &summer, const char *localIP, unsigned short localPort);
-			bool doRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler&& handler);
-			bool doSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
-			bool onEPOLLMessage(int type, int flag);
-		public:
-			EventLoopPtr _summer;
-			tagRegister _register;
+        class UdpSocket : public std::enable_shared_from_this<UdpSocket>
+        {
+        public:
+            // const char * remoteIP, unsigned short remotePort, nTranslate
+            UdpSocket();
+            ~UdpSocket();
+            bool initialize(const EventLoopPtr &summer, const char *localIP, unsigned short localPort);
+            bool doRecvFrom(char * buf, unsigned int len, _OnRecvFromHandler&& handler);
+            bool doSendTo(char * buf, unsigned int len, const char *dstip, unsigned short dstport);
+            bool onEPOLLMessage(int type, int flag);
+        public:
+            EventLoopPtr _summer;
+            tagRegister _register;
 
-			_OnRecvFromHandler _onRecvFromHandler;
-			unsigned int _iRecvLen;
-			char	*	 _pRecvBuf;
-		};
-		typedef std::shared_ptr<UdpSocket> UdpSocketPtr;
-	}
+            _OnRecvFromHandler _onRecvFromHandler;
+            unsigned int _iRecvLen;
+            char    *     _pRecvBuf;
+        };
+        typedef std::shared_ptr<UdpSocket> UdpSocketPtr;
+    }
 
 }
 

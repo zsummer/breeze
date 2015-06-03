@@ -44,51 +44,51 @@
 
 namespace zsummer
 {
-	namespace network
-	{
+    namespace network
+    {
 
-		class TcpSocket : public std::enable_shared_from_this<TcpSocket>
-		{
-		public:
-			TcpSocket();
-			~TcpSocket();
-			bool initialize(const EventLoopPtr& summer);
-			inline bool getPeerInfo(std::string& remoteIP, unsigned short &remotePort)
-			{
-				remoteIP = _remoteIP;
-				remotePort = _remotePort;
-				return true;
-			}
-			bool doConnect(const std::string &remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
-			bool doSend(char * buf, unsigned int len, _OnSendHandler && handler);
-			bool doRecv(char * buf, unsigned int len, _OnRecvHandler && handler);
-			bool doClose();
+        class TcpSocket : public std::enable_shared_from_this<TcpSocket>
+        {
+        public:
+            TcpSocket();
+            ~TcpSocket();
+            bool initialize(const EventLoopPtr& summer);
+            inline bool getPeerInfo(std::string& remoteIP, unsigned short &remotePort)
+            {
+                remoteIP = _remoteIP;
+                remotePort = _remotePort;
+                return true;
+            }
+            bool doConnect(const std::string &remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
+            bool doSend(char * buf, unsigned int len, _OnSendHandler && handler);
+            bool doRecv(char * buf, unsigned int len, _OnRecvHandler && handler);
+            bool doClose();
 
-			
-		public:
-			void OnPostClose();
-			void onEPOLLMessage(int flag, bool err);
-			bool attachSocket(int s, const std::string& remoteIP, unsigned short remotePort);
-		private:
-			std::string logSection();
-		private:
-			EventLoopPtr _summer;
-			std::string _remoteIP;
-			unsigned short _remotePort = 0;
-			tagRegister _register;
-			
-			_OnConnectHandler _onConnectHandler;
+            
+        public:
+            void OnPostClose();
+            void onEPOLLMessage(int flag, bool err);
+            bool attachSocket(int s, const std::string& remoteIP, unsigned short remotePort);
+        private:
+            std::string logSection();
+        private:
+            EventLoopPtr _summer;
+            std::string _remoteIP;
+            unsigned short _remotePort = 0;
+            tagRegister _register;
+            
+            _OnConnectHandler _onConnectHandler;
 
-			_OnRecvHandler _onRecvHandler;
-			unsigned int _iRecvLen = 0;
-			char	*	 _pRecvBuf = NULL;
+            _OnRecvHandler _onRecvHandler;
+            unsigned int _iRecvLen = 0;
+            char    *     _pRecvBuf = NULL;
 
-			_OnSendHandler _onSendHandler;
-			unsigned int _iSendLen = 0;
-			char *		 _pSendBuf = NULL;
-		};
-		typedef std::shared_ptr<TcpSocket> TcpSocketPtr;
-	}
+            _OnSendHandler _onSendHandler;
+            unsigned int _iSendLen = 0;
+            char *         _pSendBuf = NULL;
+        };
+        typedef std::shared_ptr<TcpSocket> TcpSocketPtr;
+    }
 
 }
 

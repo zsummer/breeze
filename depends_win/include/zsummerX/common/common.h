@@ -77,106 +77,106 @@
 
 namespace zsummer
 {
-	namespace network
-	{
-		//! NetErrorCode
-		enum NetErrorCode
-		{
-			NEC_SUCCESS = 0,
-			NEC_ERROR,
-			NEC_REMOTE_CLOSED,
-			NEC_REMOTE_HANGUP,
-		};
+    namespace network
+    {
+        //! NetErrorCode
+        enum NetErrorCode
+        {
+            NEC_SUCCESS = 0,
+            NEC_ERROR,
+            NEC_REMOTE_CLOSED,
+            NEC_REMOTE_HANGUP,
+        };
 
-		
-		//! post callback
-		typedef std::function<void()> _OnPostHandler;
-		//timer callback
-		typedef std::function<void()> _OnTimerHandler;
+        
+        //! post callback
+        typedef std::function<void()> _OnPostHandler;
+        //timer callback
+        typedef std::function<void()> _OnTimerHandler;
 
-		//accept callback
-		class TcpSocket;
-		typedef std::function<void(NetErrorCode, std::shared_ptr<TcpSocket>)> _OnAcceptHandler;
-		//connect callback
-		typedef std::function<void(NetErrorCode)> _OnConnectHandler;
+        //accept callback
+        class TcpSocket;
+        typedef std::function<void(NetErrorCode, std::shared_ptr<TcpSocket>)> _OnAcceptHandler;
+        //connect callback
+        typedef std::function<void(NetErrorCode)> _OnConnectHandler;
 
-		//send or recv callback
-		//! type int : translate bytes already.
-		typedef std::function<void(NetErrorCode, int)> _OnSendHandler;
-		typedef _OnSendHandler _OnRecvHandler;
+        //send or recv callback
+        //! type int : translate bytes already.
+        typedef std::function<void(NetErrorCode, int)> _OnSendHandler;
+        typedef _OnSendHandler _OnRecvHandler;
 
-		//udp callback
-		//! const char *: remote ip
-		//! unsigned short: remote port
-		//! int : translate bytes
-		typedef std::function<void (NetErrorCode, const char*, unsigned short, int)> _OnRecvFromHandler;
+        //udp callback
+        //! const char *: remote ip
+        //! unsigned short: remote port
+        //! int : translate bytes
+        typedef std::function<void (NetErrorCode, const char*, unsigned short, int)> _OnRecvFromHandler;
 
 
-		enum LINK_STATUS
-		{
-			LS_UNINITIALIZE, //socket default status
-			LS_WAITLINK, // socket status after init and will to connect.
-			LS_ESTABLISHED, //socket status is established
-			LS_CLOSED, // socket is closed. don't use it again.
-		};
+        enum LINK_STATUS
+        {
+            LS_UNINITIALIZE, //socket default status
+            LS_WAITLINK, // socket status after init and will to connect.
+            LS_ESTABLISHED, //socket status is established
+            LS_CLOSED, // socket is closed. don't use it again.
+        };
 
-		class ZSummerEnvironment
-		{
-		public:
-			ZSummerEnvironment();
-			~ZSummerEnvironment();
-			inline void addCreatedSocketCount(){ _totalCreatedCTcpSocketObjs++; }
-			inline void addClosedSocketCount(){ _totalClosedCTcpSocketObjs++; }
-			inline unsigned int getCreatedSocketCount(){ return _totalCreatedCTcpSocketObjs; }
-			inline unsigned int getClosedSocketCount(){ return _totalClosedCTcpSocketObjs; }
+        class ZSummerEnvironment
+        {
+        public:
+            ZSummerEnvironment();
+            ~ZSummerEnvironment();
+            inline void addCreatedSocketCount(){ _totalCreatedCTcpSocketObjs++; }
+            inline void addClosedSocketCount(){ _totalClosedCTcpSocketObjs++; }
+            inline unsigned int getCreatedSocketCount(){ return _totalCreatedCTcpSocketObjs; }
+            inline unsigned int getClosedSocketCount(){ return _totalClosedCTcpSocketObjs; }
 
-			inline void addCreatedSessionCount(){ _totalCreatedCTcpSessionObjs++; }
-			inline void addClosedSessionCount(){ _totalClosedCTcpSessionObjs++; }
-			inline unsigned int getCreatedSessionCount(){ return _totalCreatedCTcpSessionObjs; }
-			inline unsigned int getClosedSessionCount(){ return _totalClosedCTcpSessionObjs; }
+            inline void addCreatedSessionCount(){ _totalCreatedCTcpSessionObjs++; }
+            inline void addClosedSessionCount(){ _totalClosedCTcpSessionObjs++; }
+            inline unsigned int getCreatedSessionCount(){ return _totalCreatedCTcpSessionObjs; }
+            inline unsigned int getClosedSessionCount(){ return _totalClosedCTcpSessionObjs; }
 
-			inline LoggerId getNetCoreLogger(){ return _netLoggerID; }
-		private:
-			std::atomic_uint _totalCreatedCTcpSocketObjs;
-			std::atomic_uint _totalClosedCTcpSocketObjs;
-			std::atomic_uint _totalCreatedCTcpSessionObjs;
-			std::atomic_uint _totalClosedCTcpSessionObjs;
-			LoggerId _netLoggerID = 0;
-		};
+            inline LoggerId getNetCoreLogger(){ return _netLoggerID; }
+        private:
+            std::atomic_uint _totalCreatedCTcpSocketObjs;
+            std::atomic_uint _totalClosedCTcpSocketObjs;
+            std::atomic_uint _totalCreatedCTcpSessionObjs;
+            std::atomic_uint _totalClosedCTcpSessionObjs;
+            LoggerId _netLoggerID = 0;
+        };
 
-		extern ZSummerEnvironment g_appEnvironment;
+        extern ZSummerEnvironment g_appEnvironment;
 #ifndef WIN32
-		inline bool setNonBlock(int fd) 
-		{
-			return fcntl((fd), F_SETFL, fcntl(fd, F_GETFL)|O_NONBLOCK) == 0;
-		}
-		inline bool setNoDelay(int fd)
-		{
-			int bTrue = true?1:0;
-			return setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) == 0;
-		}
+        inline bool setNonBlock(int fd) 
+        {
+            return fcntl((fd), F_SETFL, fcntl(fd, F_GETFL)|O_NONBLOCK) == 0;
+        }
+        inline bool setNoDelay(int fd)
+        {
+            int bTrue = true?1:0;
+            return setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) == 0;
+        }
 #else
-		inline bool setNonBlock(SOCKET s) 
-		{		
-			unsigned long val = 1;
-			int nb = ioctlsocket(s, FIONBIO, &val);
-			if (nb != NO_ERROR)
-			{
-				return false;
-			}
-			return true;
-		}
-		inline bool setNoDelay(SOCKET s)
-		{
-			BOOL bTrue = TRUE;
-			if (setsockopt(s,IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) != 0)
-			{
-				return false;
-			}
-			return true;
-		}
+        inline bool setNonBlock(SOCKET s) 
+        {        
+            unsigned long val = 1;
+            int nb = ioctlsocket(s, FIONBIO, &val);
+            if (nb != NO_ERROR)
+            {
+                return false;
+            }
+            return true;
+        }
+        inline bool setNoDelay(SOCKET s)
+        {
+            BOOL bTrue = TRUE;
+            if (setsockopt(s,IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) != 0)
+            {
+                return false;
+            }
+            return true;
+        }
 #endif
-	}
+    }
 }
 
 
