@@ -88,24 +88,24 @@ typedef ui16 AreaID;
 
 enum SessionStatus
 {
-	SS_UNLOGIN = 0,
-	SS_LOGINED,
+    SS_UNLOGIN = 0,
+    SS_LOGINED,
 };
 
 
 struct InnerUserInfo
 {
-	UserInfo userInfo;
-	SessionToken token;
-	SessionID sID = InvalidSeesionID;
-	time_t loginTime = 0;
+    UserInfo userInfo;
+    SessionToken token;
+    SessionID sID = InvalidSeesionID;
+    time_t loginTime = 0;
 };
 
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const InnerUserInfo & info)
 {
-	stm << "[UserInfo]" << info.userInfo << " [SessionToken]" << info.token << " sID=" << info.sID << ", loginTime=" << info.loginTime;
-	return stm;
+//    stm << "[UserInfo]" << info.userInfo << " [SessionToken]" << info.token << " sID=" << info.sID << ", loginTime=" << info.loginTime;
+    return stm;
 }
 
 

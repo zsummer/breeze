@@ -24,277 +24,277 @@ extern "C"
 #include "lua/lualib.h"
 #include "lua/lauxlib.h"
 #include "lua/lpack.h"
-	int luaopen_protoz_bit(lua_State *L);
-	int luaopen_cjson(lua_State *l);
+    int luaopen_protoz_bit(lua_State *L);
+    int luaopen_cjson(lua_State *l);
 }
 
 
 static ServerNode toServerNode(std::string strNode)
 {
-	if (strNode == "logic")
-	{
-		return LogicNode;
-	}
-	else if (strNode == "stress")
-	{
-		return StressNode;
-	}
-	return InvalidServerNode;
+    if (strNode == "logic")
+    {
+        return LogicNode;
+    }
+    else if (strNode == "stress")
+    {
+        return StressNode;
+    }
+    return InvalidServerNode;
 }
 
 static DBConfigID toDBConfigID(std::string db)
 {
-	if (db == "info")
-	{
-		return InfoDB;
-	}
-	else if (db == "log")
-	{
-		return LogDB;
-	}
-	return InvalidDB;
+    if (db == "info")
+    {
+        return InfoDB;
+    }
+    else if (db == "log")
+    {
+        return LogDB;
+    }
+    return InvalidDB;
 }
 
 
 const NodeListenConfig & ServerConfig::getConfigListen(ServerNode node, NodeIndex index)
 {
-	if (index == InvalidNodeIndex)
-	{
-		index = _ownNodeIndex;
-	}
-	auto founder = std::find_if(_configListen.begin(), _configListen.end(),
-		[node, index](const NodeListenConfig & lc){return lc._node == node && lc._index == index; });
-	if (founder == _configListen.end())
-	{
-		static NodeListenConfig lc;
-		return lc;
-	}
-	return *founder;
+    if (index == InvalidNodeIndex)
+    {
+        index = _ownNodeIndex;
+    }
+    auto founder = std::find_if(_configListen.begin(), _configListen.end(),
+        [node, index](const NodeListenConfig & lc){return lc._node == node && lc._index == index; });
+    if (founder == _configListen.end())
+    {
+        static NodeListenConfig lc;
+        return lc;
+    }
+    return *founder;
 }
 
 
 std::vector<NodeConnectConfig > ServerConfig::getConfigConnect(ServerNode node)
 {
-	std::vector<NodeConnectConfig > ret;
-	for (const auto & cc : _configConnect)
-	{
-		if (cc._srcNode != node)
-		{
-			continue;
-		}
-		ret.push_back(cc);
-	}
-	
-	return ret;
+    std::vector<NodeConnectConfig > ret;
+    for (const auto & cc : _configConnect)
+    {
+        if (cc._srcNode != node)
+        {
+            continue;
+        }
+        ret.push_back(cc);
+    }
+    
+    return ret;
 }
 
 
 const DBConfig & ServerConfig::getDBConfig(DBConfigID id)
 {
-	auto founder = std::find_if(_configDB.begin(), _configDB.end(),
-		[id](const DBConfig & db){return db._id == id; });
-	if (founder == _configDB.end())
-	{
-		static DBConfig db;
-		return db;
-	}
-	return *founder;
+    auto founder = std::find_if(_configDB.begin(), _configDB.end(),
+        [id](const DBConfig & db){return db._id == id; });
+    if (founder == _configDB.end())
+    {
+        static DBConfig db;
+        return db;
+    }
+    return *founder;
 }
 
 
 
 static int panichHandler(lua_State * L)
 {
-	std::string errMsg = lua_tostring(L, -1);
-	LOGE(errMsg);
-	return 0;
+    std::string errMsg = lua_tostring(L, -1);
+    LOGE(errMsg);
+    return 0;
 }
 
 
 bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex ownIndex)
 {
-	_ownServerNode = ownNode;
-	_ownNodeIndex = ownIndex;
+    _ownServerNode = ownNode;
+    _ownNodeIndex = ownIndex;
 
 
-	lua_State *L = luaL_newstate();
-	if (L == NULL)
-	{
-		return EXIT_FAILURE;
-	}
-	luaL_openlibs(L);  /* open libraries */
-	lua_atpanic(L, panichHandler);
+    lua_State *L = luaL_newstate();
+    if (L == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+    luaL_openlibs(L);  /* open libraries */
+    lua_atpanic(L, panichHandler);
 
-	luaL_dofile(L, filename.c_str());
-	lua_getfield(L, -1, "traits");
-	lua_getfield(L, -1, "platid");
-	_platid = (unsigned short)luaL_checkinteger(L, -1);
-	lua_pop(L, 1);
-	lua_getfield(L, -1, "areaid");
-	_areaid = (unsigned short)luaL_checkinteger(L, -1);
-	lua_pop(L, 2);
+    luaL_dofile(L, filename.c_str());
+    lua_getfield(L, -1, "traits");
+    lua_getfield(L, -1, "platid");
+    _platid = (unsigned short)luaL_checkinteger(L, -1);
+    lua_pop(L, 1);
+    lua_getfield(L, -1, "areaid");
+    _areaid = (unsigned short)luaL_checkinteger(L, -1);
+    lua_pop(L, 2);
 
-	lua_getfield(L, -1, "db");
-	lua_pushnil(L);
-	while (lua_next(L, -2))
-	{
-		if (!lua_isstring(L, -2))
-		{
-			LOGE("config parse db false. key is not string type");
-			return false;
-		}
-		
+    lua_getfield(L, -1, "db");
+    lua_pushnil(L);
+    while (lua_next(L, -2))
+    {
+        if (!lua_isstring(L, -2))
+        {
+            LOGE("config parse db false. key is not string type");
+            return false;
+        }
+        
 
-		DBConfig lconfig;
-		lua_getfield(L, -1, "ip");
-		lconfig._ip = lua_tostring(L, -1);
-		lua_pop(L, 1);
+        DBConfig lconfig;
+        lua_getfield(L, -1, "ip");
+        lconfig._ip = lua_tostring(L, -1);
+        lua_pop(L, 1);
 
-		lua_getfield(L, -1, "port");
-		lconfig._port = (unsigned short)lua_tointeger(L, -1);
-		lua_pop(L, 1);
+        lua_getfield(L, -1, "port");
+        lconfig._port = (unsigned short)lua_tointeger(L, -1);
+        lua_pop(L, 1);
 
-		lua_getfield(L, -1, "db");
-		lconfig._db = lua_tostring(L, -1);
-		lua_pop(L, 1);
+        lua_getfield(L, -1, "db");
+        lconfig._db = lua_tostring(L, -1);
+        lua_pop(L, 1);
 
-		lua_getfield(L, -1, "user");
-		lconfig._user = lua_tostring(L, -1);
-		lua_pop(L, 1);
+        lua_getfield(L, -1, "user");
+        lconfig._user = lua_tostring(L, -1);
+        lua_pop(L, 1);
 
-		lua_getfield(L, -1, "pwd");
-		lconfig._pwd = lua_tostring(L, -1);
-		lua_pop(L, 1);
+        lua_getfield(L, -1, "pwd");
+        lconfig._pwd = lua_tostring(L, -1);
+        lua_pop(L, 1);
 
-		lua_getfield(L, -1, "db");
-		lconfig._db = lua_tostring(L, -1);
-		lua_pop(L, 1);
+        lua_getfield(L, -1, "db");
+        lconfig._db = lua_tostring(L, -1);
+        lua_pop(L, 1);
 
-		lconfig._id = toDBConfigID(lua_tostring(L, -2));
-		if (lconfig._id != InvalidDB)
-		{
-			_configDB.push_back(lconfig);
-			LOGI("DBConfig=" << lconfig);
-		}
-		else
-		{
-			LOGE("unknown DBConfig=" << lconfig);
-		}
+        lconfig._id = toDBConfigID(lua_tostring(L, -2));
+        if (lconfig._id != InvalidDB)
+        {
+            _configDB.push_back(lconfig);
+            LOGI("DBConfig=" << lconfig);
+        }
+        else
+        {
+            LOGE("unknown DBConfig=" << lconfig);
+        }
 
-		//saved key to next while.
-		lua_pop(L, 1);
-	}
-	//pop "db" table.
-	lua_pop(L, 1);
-
-
-	lua_getfield(L, -1, "listen");
-	lua_pushnil(L);
-	while (lua_next(L, -2))
-	{
-		if (!lua_isstring(L, -2))
-		{
-			LOGE("config parse listen false. key is not string type");
-			return false;
-		}
-		std::string node = lua_tostring(L, -2);
-
-		lua_pushnil(L);
-		while (lua_next(L, -2))
-		{
-			NodeListenConfig lconfig;
-
-			lua_getfield(L, -1, "ip");
-			lconfig._ip = lua_tostring(L, -1);
-			lua_pop(L, 1);
-
-			lua_getfield(L, -1, "port");
-			lconfig._port = (unsigned short)lua_tointeger(L, -1);
-			lua_pop(L, 1);
-
-			lua_getfield(L, -1, "index");
-			lconfig._index = (NodeIndex)lua_tointeger(L, -1);
-			lua_pop(L, 1);
+        //saved key to next while.
+        lua_pop(L, 1);
+    }
+    //pop "db" table.
+    lua_pop(L, 1);
 
 
-			lconfig._node = toServerNode(node);
-			if (lconfig._node != InvalidServerNode)
-			{
-				_configListen.push_back(lconfig);
-				LOGI("ListenConfig=" << lconfig);
-			}
-			else
-			{
-				LOGE("UNKNOWN ListenConfig=" << lconfig);
-			}
+    lua_getfield(L, -1, "listen");
+    lua_pushnil(L);
+    while (lua_next(L, -2))
+    {
+        if (!lua_isstring(L, -2))
+        {
+            LOGE("config parse listen false. key is not string type");
+            return false;
+        }
+        std::string node = lua_tostring(L, -2);
 
-			//saved key to next while.
-			lua_pop(L, 1);
-		}
-		
-		//saved key to next while.
-		lua_pop(L, 1);
-	}
-	//pop "listen" table.
-	lua_pop(L, 1);
+        lua_pushnil(L);
+        while (lua_next(L, -2))
+        {
+            NodeListenConfig lconfig;
+
+            lua_getfield(L, -1, "ip");
+            lconfig._ip = lua_tostring(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, -1, "port");
+            lconfig._port = (unsigned short)lua_tointeger(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, -1, "index");
+            lconfig._index = (NodeIndex)lua_tointeger(L, -1);
+            lua_pop(L, 1);
 
 
-	lua_getfield(L, -1, "connect");
-	lua_pushnil(L);
-	while (lua_next(L, -2))
-	{
-		if (!lua_isstring(L, -2))
-		{
-			LOGE("config parse connect false. key is not string type");
-			return false;
-		}
-		std::string node = lua_tostring(L, -2);
+            lconfig._node = toServerNode(node);
+            if (lconfig._node != InvalidServerNode)
+            {
+                _configListen.push_back(lconfig);
+                LOGI("ListenConfig=" << lconfig);
+            }
+            else
+            {
+                LOGE("UNKNOWN ListenConfig=" << lconfig);
+            }
 
-		lua_pushnil(L);
-		while (lua_next(L, -2))
-		{
-			NodeConnectConfig lconfig;
+            //saved key to next while.
+            lua_pop(L, 1);
+        }
+        
+        //saved key to next while.
+        lua_pop(L, 1);
+    }
+    //pop "listen" table.
+    lua_pop(L, 1);
 
-			lua_getfield(L, -1, "ip");
-			lconfig._remoteIP = lua_tostring(L, -1);
-			lua_pop(L, 1);
 
-			lua_getfield(L, -1, "port");
-			lconfig._remotePort = (unsigned short)lua_tointeger(L, -1);
-			lua_pop(L, 1);
+    lua_getfield(L, -1, "connect");
+    lua_pushnil(L);
+    while (lua_next(L, -2))
+    {
+        if (!lua_isstring(L, -2))
+        {
+            LOGE("config parse connect false. key is not string type");
+            return false;
+        }
+        std::string node = lua_tostring(L, -2);
 
-			lua_getfield(L, -1, "index");
-			lconfig._dstNodeIndex = (NodeIndex)lua_tointeger(L, -1);
-			lua_pop(L, 1);
+        lua_pushnil(L);
+        while (lua_next(L, -2))
+        {
+            NodeConnectConfig lconfig;
 
-			lua_getfield(L, -1, "dstNode");
-			lconfig._dstNode = toServerNode(lua_tostring(L, -1));
-			lua_pop(L, 1);
+            lua_getfield(L, -1, "ip");
+            lconfig._remoteIP = lua_tostring(L, -1);
+            lua_pop(L, 1);
 
-			lconfig._srcNode = toServerNode(node);
+            lua_getfield(L, -1, "port");
+            lconfig._remotePort = (unsigned short)lua_tointeger(L, -1);
+            lua_pop(L, 1);
 
-			if (lconfig._srcNode != InvalidServerNode && lconfig._dstNode != InvalidServerNode)
-			{
-				_configConnect.push_back(lconfig);
-				LOGI("_configConnect=" << lconfig);
-			}
-			else
-			{
-				LOGE("UNKNOWN ConnectConfig=" << lconfig);
-			}
+            lua_getfield(L, -1, "index");
+            lconfig._dstNodeIndex = (NodeIndex)lua_tointeger(L, -1);
+            lua_pop(L, 1);
 
-			//saved key to next while.
-			lua_pop(L, 1);
-		}
+            lua_getfield(L, -1, "dstNode");
+            lconfig._dstNode = toServerNode(lua_tostring(L, -1));
+            lua_pop(L, 1);
 
-		//saved key to next while.
-		lua_pop(L, 1);
-	}
-	//pop "connect" table.
-	lua_pop(L, 1);
+            lconfig._srcNode = toServerNode(node);
 
-	lua_close(L);
-	return true;
+            if (lconfig._srcNode != InvalidServerNode && lconfig._dstNode != InvalidServerNode)
+            {
+                _configConnect.push_back(lconfig);
+                LOGI("_configConnect=" << lconfig);
+            }
+            else
+            {
+                LOGE("UNKNOWN ConnectConfig=" << lconfig);
+            }
+
+            //saved key to next while.
+            lua_pop(L, 1);
+        }
+
+        //saved key to next while.
+        lua_pop(L, 1);
+    }
+    //pop "connect" table.
+    lua_pop(L, 1);
+
+    lua_close(L);
+    return true;
 }
 
 

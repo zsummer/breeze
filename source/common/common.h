@@ -32,8 +32,8 @@ extern "C"
 #include "lua/lualib.h"
 #include "lua/lauxlib.h"
 #include "lua/lpack.h"
-	int luaopen_protoz_bit(lua_State *L);
-	int luaopen_cjson(lua_State *l);
+    int luaopen_protoz_bit(lua_State *L);
+    int luaopen_cjson(lua_State *l);
 }
 #include "lua/summer.h"
 
@@ -57,14 +57,14 @@ using namespace zsummer::mysql;
 template<class T>
 std::string toString(const T &t)
 {
-	std::stringstream os;
-	os << t;
-	return os.str();
+    std::stringstream os;
+    os << t;
+    return os.str();
 }
 
 inline unsigned  int getNowTick()
 {
-	return (unsigned int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    return (unsigned int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 

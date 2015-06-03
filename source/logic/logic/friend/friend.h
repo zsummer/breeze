@@ -39,26 +39,26 @@
 class Friend :public Singleton<Friend>
 {
 public:
-	Friend();
-	~Friend();
-	bool init();
-	bool initFriends();
+    Friend();
+    ~Friend();
+    bool init();
+    bool initFriends();
 
-	//存储好友关系
-	void insertFriend(const FriendInfo & info);
-	void updateFriend(const FriendInfo & info);
+    //存储好友关系
+    void insertFriend(const FriendInfo & info);
+    void updateFriend(const FriendInfo & info);
 
 
-	void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
+    void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
 public:
-	void onUserLogin(EventTriggerID tID, UserID uID, Any , Any , Any );
-	void onUserLogout(EventTriggerID tID, UserID uID, Any , Any , Any );
+    void onUserLogin(EventTriggerID tID, UserID uID, Any , Any , Any );
+    void onUserLogout(EventTriggerID tID, UserID uID, Any , Any , Any );
 public:
-	void msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs);
-	void msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs);
-	
+    void msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs);
+    void msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs);
+    
 private:
-	std::map<UserID, std::map<UserID, FriendInfo> > _friends;
+    std::map<UserID, std::map<UserID, FriendInfo> > _friends;
 };
 
 

@@ -36,11 +36,11 @@
 class DBManager : public Singleton<DBManager>
 {
 public:
-	DBManager();
-	~DBManager();
-	//在启动连接所有需要访问的数据库.
-	bool start();
-	bool stop(std::function<void()> onSafeClosed);
+    DBManager();
+    ~DBManager();
+    //在启动连接所有需要访问的数据库.
+    bool start();
+    bool stop(std::function<void()> onSafeClosed);
 public:
 
     inline void infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
@@ -59,11 +59,11 @@ private:
     }
 
 private:
-	zsummer::mysql::DBHelperPtr _infoDB;
-	zsummer::mysql::DBHelperPtr _logDB;
+    zsummer::mysql::DBHelperPtr _infoDB;
+    zsummer::mysql::DBHelperPtr _logDB;
 
 
-	zsummer::mysql::DBAsyncPtr _dbAsync;
+    zsummer::mysql::DBAsyncPtr _dbAsync;
     zsummer::mysql::DBAsyncPtr _dbLogAsync; //write log in other thread.
     
 private:

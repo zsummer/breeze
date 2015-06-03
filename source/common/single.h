@@ -32,16 +32,16 @@ template<class T>
 class Singleton
 {
 public:
-	virtual ~Singleton(){}
-	static T * instantiate(){if (_pInstance)return _pInstance;else return _pInstance = new T();}
-	//warning.  a single instance must new by user. 
-	static T & getRef(){ return *instantiate(); }
-	static T * getPtr(){ return instantiate(); }
+    virtual ~Singleton(){}
+    static T * instantiate(){if (_pInstance)return _pInstance;else return _pInstance = new T();}
+    //warning.  a single instance must new by user. 
+    static T & getRef(){ return *instantiate(); }
+    static T * getPtr(){ return instantiate(); }
 public:
-	Singleton() = default;
+    Singleton() = default;
 private:
-	static T * _pInstance;
-	Singleton(const Singleton<T> &) = delete;
+    static T * _pInstance;
+    Singleton(const Singleton<T> &) = delete;
 };
 
 template<class T>

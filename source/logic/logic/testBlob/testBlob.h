@@ -37,9 +37,9 @@
 class  TestBlob :public Singleton<TestBlob>
 {
 public:
-	TestBlob();
-	~TestBlob();
-	bool init();
+    TestBlob();
+    ~TestBlob();
+    bool init();
 };
 
 

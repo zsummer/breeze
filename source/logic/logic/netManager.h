@@ -35,33 +35,33 @@
 class NetManager :public Singleton<NetManager>
 {
 public:
-	NetManager();
-	bool start();
-	bool stop(std::function<void()> onSafeClosed);
+    NetManager();
+    bool start();
+    bool stop(std::function<void()> onSafeClosed);
 
 protected:
 
-	//! ---- 登录流程 --------------------------------------------
-	void msg_onLinkServerReq(TcpSessionPtr session, ReadStream & rs);
+    //! ---- 登录流程 --------------------------------------------
+    void msg_onLinkServerReq(TcpSessionPtr session, ReadStream & rs);
 
 
-	//! ---- 底层session建立和断开通知 ---------------------------
-	void event_onSessionEstablished(TcpSessionPtr session);
-	void event_onSessionDisconnect(TcpSessionPtr session);
+    //! ---- 底层session建立和断开通知 ---------------------------
+    void event_onSessionEstablished(TcpSessionPtr session);
+    void event_onSessionDisconnect(TcpSessionPtr session);
 
-	//! ---- 检测发包权限等 ---------------------------
-	bool on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
+    //! ---- 检测发包权限等 ---------------------------
+    bool on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
 
 
-	//! ---- session状态检测 ---------------------------
-	void event_onSessionPulse(TcpSessionPtr session, unsigned int pulseInterval);
-	void msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs);
+    //! ---- session状态检测 ---------------------------
+    void event_onSessionPulse(TcpSessionPtr session, unsigned int pulseInterval);
+    void msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs);
 
 private:
-	zsummer::network::ListenConfig _configListen;
-	AccepterID _accepterID = InvalidAccepterID;
-	std::map<UserID, std::string> _token;
-	std::function<void()> _onSafeClosed;
+    zsummer::network::ListenConfig _configListen;
+    AccepterID _accepterID = InvalidAccepterID;
+    std::map<UserID, std::string> _token;
+    std::function<void()> _onSafeClosed;
 };
 
 

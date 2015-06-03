@@ -25,82 +25,82 @@ using namespace zsummer::mysql;
 
 DBAsync::DBAsync()
 {
-	_event = std::make_shared<zsummer::network::EventLoop>();
-	_uFinalCount = 0;
-	_uPostCount = 0;
+    _event = std::make_shared<zsummer::network::EventLoop>();
+    _uFinalCount = 0;
+    _uPostCount = 0;
 }
 
 DBAsync::~DBAsync()
 {
-	stop();
+    stop();
 }
 
 bool DBAsync::start()
 {
-	bool ret = _event->initialize();
-	if (!ret)
-	{
-		return false;
-	}
-	if (_thread)
-	{
-		return false;
-	}
-	_bRuning = true;
-	_uPostCount.store(0);
-	_uFinalCount.store(0);
-	_thread = std::shared_ptr<std::thread>(new std::thread(std::bind(&DBAsync::run, this)));
-	return true;
+    bool ret = _event->initialize();
+    if (!ret)
+    {
+        return false;
+    }
+    if (_thread)
+    {
+        return false;
+    }
+    _bRuning = true;
+    _uPostCount.store(0);
+    _uFinalCount.store(0);
+    _thread = std::shared_ptr<std::thread>(new std::thread(std::bind(&DBAsync::run, this)));
+    return true;
 }
 bool DBAsync::stop()
 {
-	if (_thread)
-	{
-		_bRuning = false;
-		_thread->join();
-		_thread.reset();
-		return true;
-	}
-	return false;
+    if (_thread)
+    {
+        _bRuning = false;
+        _thread->join();
+        _thread.reset();
+        return true;
+    }
+    return false;
 }
 
 
 void DBAsync::asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
-	const std::function<void(DBResultPtr)> & handler)
+    const std::function<void(DBResultPtr)> & handler)
 {
-	_uPostCount++;
-	_event->post(std::bind(&DBAsync::_asyncQuery, this, dbhelper, sql, handler));
+    _uPostCount++;
+    _event->post(std::bind(&DBAsync::_asyncQuery, this, dbhelper, sql, handler));
 }
 
 void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
-	const std::function<void(DBResultPtr)> & handler)
+    const std::function<void(DBResultPtr)> & handler)
 {
-	DBResultPtr ret = dbhelper->query(sql);
-	_uFinalCount++;
-	if (handler)
-	{
-		SessionManager::getRef().post(std::bind(handler, ret));
-	}
+    DBResultPtr ret = dbhelper->query(sql);
+    _uFinalCount++;
+    if (handler)
+    {
+        SessionManager::getRef().post(std::bind(handler, ret));
+    }
 }
 
 
 void DBAsync::run()
 {
-	do
-	{
-		if (!_bRuning)
-		{
-			break;
-		}
-		try
-		{
-			_event->runOnce();
-		}
-		catch (...)
-		{
-		}
+    do
+    {
+        if (!_bRuning)
+        {
+            break;
+        }
+        try
+        {
+            _event->runOnce();
+        }
+        catch (...)
+        {
+        }
 
-	} while (true);
+    } while (true);
 }
 
 

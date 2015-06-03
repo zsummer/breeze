@@ -33,75 +33,75 @@ int main(int argc, char* argv[])
 {
 
 #ifndef _WIN32
-	//! linux下需要屏蔽的一些信号
-	signal( SIGHUP, SIG_IGN );
-	signal( SIGALRM, SIG_IGN ); 
-	signal( SIGPIPE, SIG_IGN );
-	signal( SIGXCPU, SIG_IGN );
-	signal( SIGXFSZ, SIG_IGN );
-	signal( SIGPROF, SIG_IGN ); 
-	signal( SIGVTALRM, SIG_IGN );
-	signal( SIGQUIT, SIG_IGN );
-	signal( SIGCHLD, SIG_IGN);
+    //! linux下需要屏蔽的一些信号
+    signal( SIGHUP, SIG_IGN );
+    signal( SIGALRM, SIG_IGN ); 
+    signal( SIGPIPE, SIG_IGN );
+    signal( SIGXCPU, SIG_IGN );
+    signal( SIGXFSZ, SIG_IGN );
+    signal( SIGPROF, SIG_IGN ); 
+    signal( SIGVTALRM, SIG_IGN );
+    signal( SIGQUIT, SIG_IGN );
+    signal( SIGCHLD, SIG_IGN);
 #endif
-//	signal(SIGINT, &sigFun);
-//	signal(SIGTERM, &sigFun);
+//    signal(SIGINT, &sigFun);
+//    signal(SIGTERM, &sigFun);
 
-		
-	ILog4zManager::getPtr()->config("../log.stress.config");
-	ILog4zManager::getPtr()->start();
-	ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);
+        
+    ILog4zManager::getPtr()->config("../log.stress.config");
+    ILog4zManager::getPtr()->start();
+    ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);
 
-	// lua script
-	{
-		int status;
-		lua_State *L = luaL_newstate();  /* create state */
-		if (L == NULL)
-		{
-			return EXIT_FAILURE;
-		}
+    // lua script
+    {
+        int status;
+        lua_State *L = luaL_newstate();  /* create state */
+        if (L == NULL)
+        {
+            return EXIT_FAILURE;
+        }
 
-		lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
-		luaL_openlibs(L);  /* open libraries */
-		luaopen_summer(L);
-		luaopen_pack(L);
-		luaopen_protoz_bit(L);
-		luaopen_cjson(L);
-		lua_gc(L, LUA_GCRESTART, 0);
+        lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
+        luaL_openlibs(L);  /* open libraries */
+        luaopen_summer(L);
+        luaopen_pack(L);
+        luaopen_protoz_bit(L);
+        luaopen_cjson(L);
+        lua_gc(L, LUA_GCRESTART, 0);
 
-		lua_getglobal(L, "summer");
-		lua_getfield(L, -1, "logd");
-		lua_setglobal(L, "logd");
-		lua_getfield(L, -1, "logi");
-		lua_setglobal(L, "logi");
-		lua_getfield(L, -1, "logw");
-		lua_setglobal(L, "logw");
-		lua_getfield(L, -1, "loge");
-		lua_setglobal(L, "loge");
-		lua_getfield(L, -1, "logi");
-		lua_setglobal(L, "print");
-		lua_pop(L, 1);
+        lua_getglobal(L, "summer");
+        lua_getfield(L, -1, "logd");
+        lua_setglobal(L, "logd");
+        lua_getfield(L, -1, "logi");
+        lua_setglobal(L, "logi");
+        lua_getfield(L, -1, "logw");
+        lua_setglobal(L, "logw");
+        lua_getfield(L, -1, "loge");
+        lua_setglobal(L, "loge");
+        lua_getfield(L, -1, "logi");
+        lua_setglobal(L, "print");
+        lua_pop(L, 1);
 
-		status = luaL_dostring(L, R"(package.path = package.path .. ";" .. "../?.lua" .. ";" .. "../script/stress/?.lua" .. ";" .. "../../protocol/lua/?.lua" )");
-		if (status && !lua_isnil(L, -1))
-		{
-			const char *msg = lua_tostring(L, -1);
-			if (msg == NULL) msg = "(error object is not a string)";
-			LOGE(msg);
-		}
-		status = luaL_dofile(L, "../script/stress/main.lua");
-		if (status && !lua_isnil(L, -1))
-		{
-			const char *msg = lua_tostring(L, -1);
-			if (msg == NULL) msg = "(error object is not a string)";
-			LOGE(msg);
-			lua_pop(L, 1);
-		}
-		lua_close(L);
-		getchar();
-		return (status) ? EXIT_FAILURE : EXIT_SUCCESS;
-	}
+        status = luaL_dostring(L, R"(package.path = package.path .. ";" .. "../?.lua" .. ";" .. "../script/stress/?.lua" .. ";" .. "../../protocol/lua/?.lua" )");
+        if (status && !lua_isnil(L, -1))
+        {
+            const char *msg = lua_tostring(L, -1);
+            if (msg == NULL) msg = "(error object is not a string)";
+            LOGE(msg);
+        }
+        status = luaL_dofile(L, "../script/stress/main.lua");
+        if (status && !lua_isnil(L, -1))
+        {
+            const char *msg = lua_tostring(L, -1);
+            if (msg == NULL) msg = "(error object is not a string)";
+            LOGE(msg);
+            lua_pop(L, 1);
+        }
+        lua_close(L);
+        getchar();
+        return (status) ? EXIT_FAILURE : EXIT_SUCCESS;
+    }
 
-	return 0;
+    return 0;
 }
 

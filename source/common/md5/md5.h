@@ -22,9 +22,9 @@
 #include <fstream>
 typedef struct
 {
-	unsigned int count[2];
-	unsigned int state[4];
-	unsigned char buffer[64];
+    unsigned int count[2];
+    unsigned int state[4];
+    unsigned char buffer[64];
 }MD5_CTX;
 
 
@@ -68,29 +68,29 @@ void MD5Decode(unsigned int *output, unsigned char *input, unsigned int len);
 class MD5Data
 {
 public:
-	MD5Data();
-	~MD5Data();
-	const std::string & genMD5Bin();
-	const std::string & genMD5();
-	inline MD5Data & operator <<(const std::string & org)
-	{
-		if (!org.empty())
-		{
-			MD5Update(&_content, (unsigned char *) org.c_str(), (unsigned int)org.length());
-		}
-		return *this;
-	}
-	inline void append(const std::string &org)
-	{
-		if (!org.empty())
-		{
-			MD5Update(&_content, (unsigned char *)org.c_str(), (unsigned int)org.length());
-		}
-	}
+    MD5Data();
+    ~MD5Data();
+    const std::string & genMD5Bin();
+    const std::string & genMD5();
+    inline MD5Data & operator <<(const std::string & org)
+    {
+        if (!org.empty())
+        {
+            MD5Update(&_content, (unsigned char *) org.c_str(), (unsigned int)org.length());
+        }
+        return *this;
+    }
+    inline void append(const std::string &org)
+    {
+        if (!org.empty())
+        {
+            MD5Update(&_content, (unsigned char *)org.c_str(), (unsigned int)org.length());
+        }
+    }
 private:
-	MD5_CTX _content;
-	std::string _bin;
-	std::string _string;
+    MD5_CTX _content;
+    std::string _bin;
+    std::string _string;
 };
 
 

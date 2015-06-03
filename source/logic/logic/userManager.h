@@ -36,34 +36,34 @@
 class UserManager :public Singleton<UserManager>
 {
 public:
-	UserManager();
-	bool init();
+    UserManager();
+    bool init();
 
 public:
-	//interface
-	std::shared_ptr<InnerUserInfo> getInnerUserInfo(UserID uID);
-	std::shared_ptr<InnerUserInfo> getInnerUserInfoBySID(SessionID sID);
-	std::shared_ptr<InnerUserInfo> getInnerUserInfoByNickName(const std::string & nickName);
+    //interface
+    std::shared_ptr<InnerUserInfo> getInnerUserInfo(UserID uID);
+    std::shared_ptr<InnerUserInfo> getInnerUserInfoBySID(SessionID sID);
+    std::shared_ptr<InnerUserInfo> getInnerUserInfoByNickName(const std::string & nickName);
     
-	inline size_t getAllOnlineUserCount() { return _mapSession.size(); }
-	inline size_t getAllUserCount() { return _mapUser.size(); }
-	void broadcast(WriteStream & ws, const UserIDArray uIDs);
+    inline size_t getAllOnlineUserCount() { return _mapSession.size(); }
+    inline size_t getAllUserCount() { return _mapUser.size(); }
+    void broadcast(WriteStream & ws, const UserIDArray uIDs);
 public:
-	void addUser(const UserInfo & info);
-	void setUserToken(UserID uID, std::string token, time_t expireTime);
+    void addUser(const UserInfo & info);
+    void setUserToken(UserID uID, std::string token, time_t expireTime);
 public:
-	void userLogin(std::shared_ptr<InnerUserInfo> innerInfo);
-	void userLogout(std::shared_ptr<InnerUserInfo> innerInfo);
+    void userLogin(std::shared_ptr<InnerUserInfo> innerInfo);
+    void userLogout(std::shared_ptr<InnerUserInfo> innerInfo);
 protected:
-	
+    
 private:
-	//sessionID和userID索引
-	//服务器启动时加载所有用户数据
-	//用户退出后不释放该用户的内存, 仅仅对InnerUserInfo中的sessionID赋值为Invalid标记, 并删除_mapUserSession中的索引. 因此可以很方便的做快速重连的功能.
-	//用户所有私有数据应当以扩展InnerUserInfo结构的形式去做. 比如添加装备,背包,任务进度 等.
-	std::unordered_map<SessionID, std::shared_ptr<InnerUserInfo>> _mapSession;
-	std::unordered_map<UserID, std::shared_ptr<InnerUserInfo>> _mapUser;
-	std::unordered_map<std::string, std::shared_ptr<InnerUserInfo>> _mapNickName;
+    //sessionID和userID索引
+    //服务器启动时加载所有用户数据
+    //用户退出后不释放该用户的内存, 仅仅对InnerUserInfo中的sessionID赋值为Invalid标记, 并删除_mapUserSession中的索引. 因此可以很方便的做快速重连的功能.
+    //用户所有私有数据应当以扩展InnerUserInfo结构的形式去做. 比如添加装备,背包,任务进度 等.
+    std::unordered_map<SessionID, std::shared_ptr<InnerUserInfo>> _mapSession;
+    std::unordered_map<UserID, std::shared_ptr<InnerUserInfo>> _mapUser;
+    std::unordered_map<std::string, std::shared_ptr<InnerUserInfo>> _mapNickName;
 };
 
 

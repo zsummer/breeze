@@ -31,25 +31,25 @@
 class Login :public Singleton<Login>
 {
 public:
-	Login();
-	bool init();
+    Login();
+    bool init();
 public:
-	void event_onSessionDisconnect(TcpSessionPtr session);
-	//! ---- 令牌验证 --------------------------------------------
-	void msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs);
-	void msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs);
-	void msg_onSelectUserReq(TcpSessionPtr session, ReadStream & rs);
+    void event_onSessionDisconnect(TcpSessionPtr session);
+    //! ---- 令牌验证 --------------------------------------------
+    void msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs);
+    void msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs);
+    void msg_onSelectUserReq(TcpSessionPtr session, ReadStream & rs);
 
-	void db_onFetchUsers(DBResultPtr result, TcpSessionPtr session);
-	void db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const UserInfo &info);
+    void db_onFetchUsers(DBResultPtr result, TcpSessionPtr session);
+    void db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const UserInfo &info);
 private:
-	//走数据库, 这里只是保存下认证/创建用户/选择用户这些流程时候的一些状态.
-	//玩家进入游戏后应该选择一个合适的时机清除掉.
-	//也可以后续放进redis中存储.
-	std::map<SessionID, UserInfoArray> _cache;
+    //走数据库, 这里只是保存下认证/创建用户/选择用户这些流程时候的一些状态.
+    //玩家进入游戏后应该选择一个合适的时机清除掉.
+    //也可以后续放进redis中存储.
+    std::map<SessionID, UserInfoArray> _cache;
 
-	//负责分配一个支持SQL合服的64位ID.  [plat+ared+uniqueID]
-	GenObjectID _genID;
+    //负责分配一个支持SQL合服的64位ID.  [plat+ared+uniqueID]
+    GenObjectID _genID;
 
 
 };
