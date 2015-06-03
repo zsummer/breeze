@@ -45,6 +45,10 @@ namespace Proto4z
 	{ 
 		public static Proto4z.ui16 value = 102;  
 	} 
+	class STATIC_EC_TARGET_REQUESTING //已在对方的请求列表中 
+	{ 
+		public static Proto4z.ui16 value = 103;  
+	} 
  
 	class SessionToken: Proto4z.IProtoObject //认证令牌 
 	{	 

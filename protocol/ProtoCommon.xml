@@ -25,6 +25,7 @@
         <member name="EC_OWNER_FRIEND"   value="100" desc="自己的好友"/>
         <member name="EC_OWNER_BLACKLIST"   desc="自己的黑名单用户"/>
         <member name="EC_TARGET_BLACKLIST"   desc="对方的黑名单用户"/>
+        <member name="EC_TARGET_REQUESTING"   desc="已在对方的请求列表中"/>
 
     </enum>
 

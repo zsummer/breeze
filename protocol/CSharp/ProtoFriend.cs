@@ -1,35 +1,39 @@
  
 namespace Proto4z  
 { 
-	class STATIC_FRIEND_WAITING //等待好友同意 
+	class STATIC_FRIEND_DELETED //已删除好友关系 
 	{ 
 		public static Proto4z.ui8 value = 0;  
 	} 
-	class STATIC_FRIEND_REQUESTING //等待确认 
+	class STATIC_FRIEND_WAITING //等待好友确认 
 	{ 
 		public static Proto4z.ui8 value = 1;  
+	} 
+	class STATIC_FRIEND_REQUESTING //需要确认 
+	{ 
+		public static Proto4z.ui8 value = 2;  
 	} 
 	class STATIC_FRIEND_BLACKLIST //黑名单 
 	{ 
-		public static Proto4z.ui8 value = 2;  
+		public static Proto4z.ui8 value = 3;  
 	} 
 	class STATIC_FRIEND_ESTABLISHED //好友 
 	{ 
-		public static Proto4z.ui8 value = 3;  
+		public static Proto4z.ui8 value = 4;  
 	} 
-	class STATIC_FRIEND_ADDFRIEND //添加好友 
+	class STATIC_FRIEND_ADD_FRIEND //添加好友 
 	{ 
 		public static Proto4z.ui8 value = 0;  
 	} 
-	class STATIC_FRIEND_ADDBLACK //添加黑名单 
+	class STATIC_FRIEND_REMOVE_FRIEND //移除好友 
 	{ 
 		public static Proto4z.ui8 value = 1;  
 	} 
-	class STATIC_FRIEND_REMOVEFRIEND //移除好友 
+	class STATIC_FRIEND_ADD_BLACKLIST //添加黑名单 
 	{ 
 		public static Proto4z.ui8 value = 2;  
 	} 
-	class STATIC_FRIEND_REMOVEBLACK //移除黑名单 
+	class STATIC_FRIEND_REMOVE_BLACKLIST //移除黑名单 
 	{ 
 		public static Proto4z.ui8 value = 3;  
 	} 

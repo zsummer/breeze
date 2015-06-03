@@ -9,6 +9,7 @@ Proto4z.EC_TOKEN_EXPIRE = 51--令牌过期
 Proto4z.EC_OWNER_FRIEND = 100--自己的好友 
 Proto4z.EC_OWNER_BLACKLIST = 101--自己的黑名单用户 
 Proto4z.EC_TARGET_BLACKLIST = 102--对方的黑名单用户 
+Proto4z.EC_TARGET_REQUESTING = 103--已在对方的请求列表中 
  
 Proto4z.SessionToken = {} --认证令牌 
 Proto4z.SessionToken.__getName = "SessionToken" 
