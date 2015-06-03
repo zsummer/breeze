@@ -41,48 +41,48 @@
 
 namespace zsummer
 {
-	namespace network
-	{
-		class EventLoop : public std::enable_shared_from_this<EventLoop>
-		{
-		public:
-			typedef std::vector<void*> MessageStack;
-			EventLoop(){}
-			~EventLoop(){}
-			bool initialize();
-			void runOnce(bool isImmediately = false);
+    namespace network
+    {
+        class EventLoop : public std::enable_shared_from_this<EventLoop>
+        {
+        public:
+            typedef std::vector<void*> MessageStack;
+            EventLoop(){}
+            ~EventLoop(){}
+            bool initialize();
+            void runOnce(bool isImmediately = false);
 
-			template <typename handle>
-			inline void post(handle &&h)
-			{
-				PostMessage(std::move(h));
-			}
-			inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle)
-			{
-				return _timer.createTimer(delayms, std::move(handle));
-			}
-			inline bool cancelTimer(unsigned long long timerID)
-			{
-				return _timer.cancelTimer(timerID);
-			}
+            template <typename handle>
+            inline void post(handle &&h)
+            {
+                PostMessage(std::move(h));
+            }
+            inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle)
+            {
+                return _timer.createTimer(delayms, std::move(handle));
+            }
+            inline bool cancelTimer(unsigned long long timerID)
+            {
+                return _timer.cancelTimer(timerID);
+            }
 
-		public:
-			bool registerEvent(int op/* 0 add,  1 mod, 2 del*/, tagRegister &reg);
-			void PostMessage(_OnPostHandler &&handle);
-		private:
-			std::string logSection();
-		private:
-			//线程消息
-			SOCKET		_sockpair[2];
-			PoolReggister _poolRegister;
-			MessageStack _stackMessages;
-			std::mutex	 _stackMessagesLock;
+        public:
+            bool registerEvent(int op/* 0 add,  1 mod, 2 del*/, tagRegister &reg);
+            void PostMessage(_OnPostHandler &&handle);
+        private:
+            std::string logSection();
+        private:
+            //线程消息
+            SOCKET        _sockpair[2];
+            PoolReggister _poolRegister;
+            MessageStack _stackMessages;
+            std::mutex     _stackMessagesLock;
 
-			//! timmer
-			Timer _timer;
-		};
-		typedef std::shared_ptr<EventLoop> EventLoopPtr;
-	}
+            //! timmer
+            Timer _timer;
+        };
+        typedef std::shared_ptr<EventLoop> EventLoopPtr;
+    }
 
 }
 

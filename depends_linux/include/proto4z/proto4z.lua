@@ -56,9 +56,9 @@ encode protocol table to binary stream
 @return binary stream
 ]]
 function Proto4z.encode(obj, name)
-	local data = {data=""}
-	Proto4z.__encode(obj, name, data)
-	return data.data
+    local data = {data=""}
+    Proto4z.__encode(obj, name, data)
+    return data.data
 end
 
 --[[--
@@ -68,10 +68,10 @@ decode binary stream to protocol table
 @return protocol table
 ]]
 function Proto4z.decode(binData, name)
-	--print("decode id = " .. id)
-	local result = {}
-	Proto4z.__decode(binData, 1, name, result)
-	return result
+    --print("decode id = " .. id)
+    local result = {}
+    Proto4z.__decode(binData, 1, name, result)
+    return result
 end
 
 
@@ -82,16 +82,16 @@ make map [protocol id = protocol name]
 @return  no result
 ]]
 function Proto4z.register(id, name)
-	if Proto4z.__protos == nil then
-		Proto4z.__protos = {}
-	end
-	if Proto4z.__protos[id] ~= nil then
-		error("id already register. id=" .. id .. " registrered name=" .. Proto4z.__protos[id]  .. ", new name=" .. name .. ": " .. debug.traceback())
-	end
-	if type(name) ~= "string" then
-		error("name ~= string " .. debug.traceback())
-	end
-	Proto4z.__protos[id] = name
+    if Proto4z.__protos == nil then
+        Proto4z.__protos = {}
+    end
+    if Proto4z.__protos[id] ~= nil then
+        error("id already register. id=" .. id .. " registrered name=" .. Proto4z.__protos[id]  .. ", new name=" .. name .. ": " .. debug.traceback())
+    end
+    if type(name) ~= "string" then
+        error("name ~= string " .. debug.traceback())
+    end
+    Proto4z.__protos[id] = name
 end
 
 --[[--
@@ -100,13 +100,13 @@ get the protocol name from protoco id.
 @return  protocol name
 ]]
 function Proto4z.getName(id)
-	if Proto4z.__protos == nil then
-		return nil
-	end
-	if Proto4z.__protos[id] == nil then
-		return nil
-	end
-	return Proto4z.__protos[id]
+    if Proto4z.__protos == nil then
+        return nil
+    end
+    if Proto4z.__protos[id] == nil then
+        return nil
+    end
+    return Proto4z.__protos[id]
 end
 
 
@@ -124,124 +124,124 @@ end
 --[[
 ]]
 function Proto4z.__checkVal(val)
-	local tp = type(val)
-	if(tp == "string" or tp == "number" or tp == "table") then
-		return true
-	end
-	error("Proto4z.__checkVal error. val type=" .. tp .. ", trace=" .. debug.traceback())
+    local tp = type(val)
+    if(tp == "string" or tp == "number" or tp == "table") then
+        return true
+    end
+    error("Proto4z.__checkVal error. val type=" .. tp .. ", trace=" .. debug.traceback())
 end
 function Proto4z.__isInnerType(tp)
-	if tp == "i8" or tp == "ui8" or tp == "i16" or tp == "ui16"
-		or tp == "i32" or tp == "ui32" or tp == "i64" or tp == "ui64"
-		or tp == "float" or tp == "double" or tp == "string" then
-		return true
-	end
-	return false
+    if tp == "i8" or tp == "ui8" or tp == "i16" or tp == "ui16"
+        or tp == "i32" or tp == "ui32" or tp == "i64" or tp == "ui64"
+        or tp == "float" or tp == "double" or tp == "string" then
+        return true
+    end
+    return false
 end
 function Proto4z.__isUserType(tp)
-	if type(Proto4z[tp]) == "table" then
-		return true
-	end
-	return false
+    if type(Proto4z[tp]) == "table" then
+        return true
+    end
+    return false
 end
 
 function Proto4z.__checkType(tp)
-	if tp == nil then
-		error("Proto4z.__checkType error. type == nil, trace=" .. debug.traceback())
-	end
-	if Proto4z.__isInnerType(tp) then
-		return "base"
-	end
+    if tp == nil then
+        error("Proto4z.__checkType error. type == nil, trace=" .. debug.traceback())
+    end
+    if Proto4z.__isInnerType(tp) then
+        return "base"
+    end
 
-	if Proto4z.__isUserType(tp) then
-		return "table"
-	end
+    if Proto4z.__isUserType(tp) then
+        return "table"
+    end
 
-	error("Proto4z.__checkType error. unknown val type=" .. tp .. ", trace=" .. debug.traceback())
+    error("Proto4z.__checkType error. unknown val type=" .. tp .. ", trace=" .. debug.traceback())
 end
 
 
 -- lua 5.1 + lpack
 function Proto4z.__pack(val, tp)
-	if val == nil or tp == nil then
-		error(debug.traceback())
-	end
-	--print(tp .. "[" .. val .. "]")
-	-- integer type
-	if     tp == "i8" or tp == "char" then
-		return bpack("<c", val)
-	elseif tp == "ui8" or tp == "unsigned char" then
-		return bpack("<b", val)
-	elseif tp == "i16" or tp == "short" then
-		return bpack("<h", val)
-	elseif tp == "ui16" or tp == "unsigned short" then
-		return bpack("<H", val)	
-	elseif tp == "i32" or tp == "int" then
-		return bpack("<i", val)
-	elseif tp == "ui32" or tp == "unsigned int" then
-		return bpack("<I", val)	
-	elseif tp == "i64" or tp == "long long" or tp == "ui64" or tp == "unsigned long long" then
-		return string.sub(val, 1, 8)
+    if val == nil or tp == nil then
+        error(debug.traceback())
+    end
+    --print(tp .. "[" .. val .. "]")
+    -- integer type
+    if     tp == "i8" or tp == "char" then
+        return bpack("<c", val)
+    elseif tp == "ui8" or tp == "unsigned char" then
+        return bpack("<b", val)
+    elseif tp == "i16" or tp == "short" then
+        return bpack("<h", val)
+    elseif tp == "ui16" or tp == "unsigned short" then
+        return bpack("<H", val)    
+    elseif tp == "i32" or tp == "int" then
+        return bpack("<i", val)
+    elseif tp == "ui32" or tp == "unsigned int" then
+        return bpack("<I", val)    
+    elseif tp == "i64" or tp == "long long" or tp == "ui64" or tp == "unsigned long long" then
+        return string.sub(val, 1, 8)
 
 
-	-- string type
-	elseif tp == "string" then
-		local i = bpack("<I", #val)
-		i = i .. bpack("A", val)
-		return i
+    -- string type
+    elseif tp == "string" then
+        local i = bpack("<I", #val)
+        i = i .. bpack("A", val)
+        return i
 
-	-- float type
-	elseif tp == "float" then
-		return bpack("<f", val)
-	elseif tp == "double" then
-		return bpack("<d", val)
+    -- float type
+    elseif tp == "float" then
+        return bpack("<f", val)
+    elseif tp == "double" then
+        return bpack("<d", val)
 
-	-- error
-	else
-		error("unknown base data type when __pack it. val type=" .. type(val) .. "trace: " .. debug.traceback())
-	end
+    -- error
+    else
+        error("unknown base data type when __pack it. val type=" .. type(val) .. "trace: " .. debug.traceback())
+    end
 end
 
 
 -- lua 5.1 + lpack
 function Proto4z.__unpack(binData, pos, tp)
-	if binData == nil or tp == nil or pos == nil then
-		error("can't unpack binData. " .. debug.traceback())
-	end
-	local n
-	local v
-	-- integer type
-	if     tp == "i8" or tp == "char" then
-		n, v = bunpack(binData, "<c", pos)
-	elseif tp == "ui8" or tp == "unsigned char" then
-		n, v = bunpack(binData, "<b", pos)
-	elseif tp == "i16" or tp == "short" then
-		n, v = bunpack(binData, "<h", pos)
-	elseif tp == "ui16" or tp == "unsigned short" then
-		n, v = bunpack(binData, "<H", pos)
-	elseif tp == "i32" or tp == "int" then
-		n, v = bunpack(binData, "<i", pos)
-	elseif tp == "ui32" or tp == "unsigned int" then
-		n, v = bunpack(binData, "<I", pos)
-	elseif tp == "i64" or tp == "long long" or tp == "ui64" or tp == "unsigned long long" then
-		v = string.sub(binData, pos, pos+7)
-		n = pos +8
-	-- string type
-	elseif tp == "string" then
-		n, v = bunpack(binData, "<I", pos)
-		n, v = bunpack(binData, "<A" .. v, pos+4)
+    if binData == nil or tp == nil or pos == nil then
+        error("can't unpack binData. " .. debug.traceback())
+    end
+    local n
+    local v
+    -- integer type
+    if     tp == "i8" or tp == "char" then
+        n, v = bunpack(binData, "<c", pos)
+    elseif tp == "ui8" or tp == "unsigned char" then
+        n, v = bunpack(binData, "<b", pos)
+    elseif tp == "i16" or tp == "short" then
+        n, v = bunpack(binData, "<h", pos)
+    elseif tp == "ui16" or tp == "unsigned short" then
+        n, v = bunpack(binData, "<H", pos)
+    elseif tp == "i32" or tp == "int" then
+        n, v = bunpack(binData, "<i", pos)
+    elseif tp == "ui32" or tp == "unsigned int" then
+        n, v = bunpack(binData, "<I", pos)
+    elseif tp == "i64" or tp == "long long" or tp == "ui64" or tp == "unsigned long long" then
+        v = string.sub(binData, pos, pos+7)
+        n = pos +8
+    -- string type
+    elseif tp == "string" then
+        n, v = bunpack(binData, "<I", pos)
+        n, v = bunpack(binData, "<A" .. v, pos+4)
 
-	-- float type
-	elseif tp == "float" then
-		n, v = bunpack(binData, "<f", pos)
-	elseif tp == "double" then
-		n, v = bunpack(binData, "<d", pos)
+    -- float type
+    elseif tp == "float" then
+        n, v = bunpack(binData, "<f", pos)
+    elseif tp == "double" then
+        n, v = bunpack(binData, "<d", pos)
 
-	else
-		--error("unknown binData to unpack . pos=" .. pos .. " tp=" .. tp .." trace: " .. debug.traceback())
-		n, v = pos, nil
-	end
-	return v, n
+    else
+        --error("unknown binData to unpack . pos=" .. pos .. " tp=" .. tp .." trace: " .. debug.traceback())
+        n, v = pos, nil
+    end
+    return v, n
 end
 
 
@@ -256,59 +256,59 @@ decode binary stream to protocol table
 @return next begin index
 ]]
 function Proto4z.__decode(binData, pos, name, result)
-	Proto4z.__checkType(name)
-	local proto = Proto4z[name]
+    Proto4z.__checkType(name)
+    local proto = Proto4z[name]
 
-	local v, p
-	p = pos
+    local v, p
+    p = pos
 
-	if proto.__getDesc == "array" then
-		local len
+    if proto.__getDesc == "array" then
+        local len
 
-		len, p = Proto4z.__unpack(binData, p, "ui32")
-		for i=1, len do
-			v, p = Proto4z.__unpack(binData, p, proto.__getTypeV)
-			if v ~= nil then
-				result[i] = v
-			else
-				result[i] = {}
-				p = Proto4z.__decode(binData, p, proto.__getTypeV, result[i])
-			end
-		end
-	elseif proto.__getDesc == "map" then
-		local len
-		local k
-		len, p = Proto4z.__unpack(binData, p, "ui32")
-		for j=1, len do
-			k, p = Proto4z.__unpack(binData, p, proto.__getTypeK)
-			v, p = Proto4z.__unpack(binData, p, proto.__getTypeV)
-			if v ~= nil then
-				result[k] = v
-			else
-				result[k] = {}
-				p = Proto4z.__decode(binData, p, proto.__getTypeV, result[k])
-			end
-		end
-	else
-		local offset, tag
-		offset, p = Proto4z.__unpack(binData, p, "ui32")
-		offset = p + offset
-		tag, p = Proto4z.__unpack(binData, p, "ui64")
-		for i = 1, #proto do
-			if Proto4z.checkIntegerBitTrue(tag, i-1) ~= nil then
-				local desc = proto[i]
-				v, p = Proto4z.__unpack(binData, p, desc.type)
-				if v ~= nil then
-					result[desc.name] = v
-				else
-					result[desc.name] = {}
-					p = Proto4z.__decode(binData, p, desc.type, result[desc.name])
-				end
-			end
-		end
-		p = offset
-	end
-	return p
+        len, p = Proto4z.__unpack(binData, p, "ui32")
+        for i=1, len do
+            v, p = Proto4z.__unpack(binData, p, proto.__getTypeV)
+            if v ~= nil then
+                result[i] = v
+            else
+                result[i] = {}
+                p = Proto4z.__decode(binData, p, proto.__getTypeV, result[i])
+            end
+        end
+    elseif proto.__getDesc == "map" then
+        local len
+        local k
+        len, p = Proto4z.__unpack(binData, p, "ui32")
+        for j=1, len do
+            k, p = Proto4z.__unpack(binData, p, proto.__getTypeK)
+            v, p = Proto4z.__unpack(binData, p, proto.__getTypeV)
+            if v ~= nil then
+                result[k] = v
+            else
+                result[k] = {}
+                p = Proto4z.__decode(binData, p, proto.__getTypeV, result[k])
+            end
+        end
+    else
+        local offset, tag
+        offset, p = Proto4z.__unpack(binData, p, "ui32")
+        offset = p + offset
+        tag, p = Proto4z.__unpack(binData, p, "ui64")
+        for i = 1, #proto do
+            if Proto4z.checkIntegerBitTrue(tag, i-1) ~= nil then
+                local desc = proto[i]
+                v, p = Proto4z.__unpack(binData, p, desc.type)
+                if v ~= nil then
+                    result[desc.name] = v
+                else
+                    result[desc.name] = {}
+                    p = Proto4z.__decode(binData, p, desc.type, result[desc.name])
+                end
+            end
+        end
+        p = offset
+    end
+    return p
 end
 
 
@@ -320,71 +320,71 @@ encode protocol table to binary stream
 @return no result
 ]]
 function Proto4z.__encode(obj, name, data)
-	Proto4z.__checkVal(obj)
-	Proto4z.__checkType(name)
+    Proto4z.__checkVal(obj)
+    Proto4z.__checkType(name)
 
-	local proto = Proto4z[name]
-	--array
-	--------------------------------------
-	if proto.__getDesc == "array" then
-		Proto4z.__checkType(proto.__getTypeV)
-		data.data = data.data .. bpack("<I", #obj) --this line lua5.3 or lua5.1+lpack all compatibility 
-		for i =1, #obj do
-			if type(obj[i]) ~= "table" then
-				data.data = data.data .. Proto4z.__pack(obj[i], proto.__getTypeV)
-			else
-				Proto4z.__encode(obj[i], proto.__getTypeV, data)
-			end
-		end
-	--map
-	--------------------------------------
-	elseif proto.__getDesc == "map" then
-		Proto4z.__checkType(proto.__getTypeK)
-		Proto4z.__checkType(proto.__getTypeV)
-		data.data = data.data .. bpack("<I", #obj)--this line lua5.3 or lua5.1+lpack all compatibility 
-		for i =1, #obj do
-			if not Proto4z.__isInnerType(proto.__getTypeK) or type(obj[i].k) == "table" then
-				error("unknown member type(obj[i].k)=" .. type(obj[i].k) .. ", type=" .. name .. "." .. proto.__getTypeK)
-			end
-			data.data = data.data .. Proto4z.__pack(obj[i].k, proto.__getTypeK)
-			if type(obj[i].v) ~= "table" and Proto4z.__isInnerType(proto.__getTypeV) then
-				data.data = data.data .. Proto4z.__pack(obj[i].v, proto.__getTypeV)
-			elseif type(obj[i].v) == "table" and Proto4z.__isUserType(proto.__getTypeV) then
-				Proto4z.__encode(obj[i].v, proto.__getTypeV, data)
-			else
-				error("unknown member type(obj[i].v)=" .. type(obj[i].v) .. ", type=" .. name .. "." .. proto.__getTypeV)
-			end
-		end
-	--base typ or struct or proto
-	--------------------------------------
-	else
-		local curdata, offset
-		curdata = {data=""}
-		for i=1, #proto do
-			local desc = proto[i]
-			if type(desc) ~= "table" or type(desc.name) ~= "string" or type(desc.type) ~= "string" then
-				error("parse Proto error. name[" .. name .. "] " .. debug.traceback())
-			end
-			if desc.del == nil or desc.del ~= true then
-				local val = obj[desc.name]
-				if val == nil then
-					error("not found the dest object. name[" ..name .. "." .. desc.name .. "] " .. debug.traceback())
-				end
+    local proto = Proto4z[name]
+    --array
+    --------------------------------------
+    if proto.__getDesc == "array" then
+        Proto4z.__checkType(proto.__getTypeV)
+        data.data = data.data .. bpack("<I", #obj) --this line lua5.3 or lua5.1+lpack all compatibility 
+        for i =1, #obj do
+            if type(obj[i]) ~= "table" then
+                data.data = data.data .. Proto4z.__pack(obj[i], proto.__getTypeV)
+            else
+                Proto4z.__encode(obj[i], proto.__getTypeV, data)
+            end
+        end
+    --map
+    --------------------------------------
+    elseif proto.__getDesc == "map" then
+        Proto4z.__checkType(proto.__getTypeK)
+        Proto4z.__checkType(proto.__getTypeV)
+        data.data = data.data .. bpack("<I", #obj)--this line lua5.3 or lua5.1+lpack all compatibility 
+        for i =1, #obj do
+            if not Proto4z.__isInnerType(proto.__getTypeK) or type(obj[i].k) == "table" then
+                error("unknown member type(obj[i].k)=" .. type(obj[i].k) .. ", type=" .. name .. "." .. proto.__getTypeK)
+            end
+            data.data = data.data .. Proto4z.__pack(obj[i].k, proto.__getTypeK)
+            if type(obj[i].v) ~= "table" and Proto4z.__isInnerType(proto.__getTypeV) then
+                data.data = data.data .. Proto4z.__pack(obj[i].v, proto.__getTypeV)
+            elseif type(obj[i].v) == "table" and Proto4z.__isUserType(proto.__getTypeV) then
+                Proto4z.__encode(obj[i].v, proto.__getTypeV, data)
+            else
+                error("unknown member type(obj[i].v)=" .. type(obj[i].v) .. ", type=" .. name .. "." .. proto.__getTypeV)
+            end
+        end
+    --base typ or struct or proto
+    --------------------------------------
+    else
+        local curdata, offset
+        curdata = {data=""}
+        for i=1, #proto do
+            local desc = proto[i]
+            if type(desc) ~= "table" or type(desc.name) ~= "string" or type(desc.type) ~= "string" then
+                error("parse Proto error. name[" .. name .. "] " .. debug.traceback())
+            end
+            if desc.del == nil or desc.del ~= true then
+                local val = obj[desc.name]
+                if val == nil then
+                    error("not found the dest object. name[" ..name .. "." .. desc.name .. "] " .. debug.traceback())
+                end
 
-				if type(val) ~= "table" and Proto4z.__isInnerType(desc.type) then
-					curdata.data = curdata.data .. Proto4z.__pack(val, desc.type)
-				elseif type(val) == "table" and Proto4z.__isUserType(desc.type) then
-					Proto4z.__encode(val, desc.type, curdata)
-				else
-					error("unknown member type(val)=" .. type(val) .. ", type=" .. name .. "." .. desc.type)
-				end
-			end
-		end
-		local tag = Proto4z.sequenceToInteger(proto.__getTag)
-		offset = #curdata.data + #tag
-		offset = Proto4z.__pack(offset, "ui32")
-		data.data = data.data .. offset .. tag .. curdata.data
-	end
+                if type(val) ~= "table" and Proto4z.__isInnerType(desc.type) then
+                    curdata.data = curdata.data .. Proto4z.__pack(val, desc.type)
+                elseif type(val) == "table" and Proto4z.__isUserType(desc.type) then
+                    Proto4z.__encode(val, desc.type, curdata)
+                else
+                    error("unknown member type(val)=" .. type(val) .. ", type=" .. name .. "." .. desc.type)
+                end
+            end
+        end
+        local tag = Proto4z.sequenceToInteger(proto.__getTag)
+        offset = #curdata.data + #tag
+        offset = Proto4z.__pack(offset, "ui32")
+        data.data = data.data .. offset .. tag .. curdata.data
+    end
 end
 
 
@@ -399,11 +399,11 @@ print binary stream with hexadecimal string
 @return no result
 ]]
 function Proto4z.putbin(binData)
-	local str = ""
-	for i = 1, #binData do
-		str = str .. string.format("%02x ",string.byte(binData, i))
-	end
-	print("[len:" .. #binData .. "]" .. str)
+    local str = ""
+    for i = 1, #binData do
+        str = str .. string.format("%02x ",string.byte(binData, i))
+    end
+    print("[len:" .. #binData .. "]" .. str)
 end
 
 
@@ -438,7 +438,7 @@ end
 --[[--
 dump table with nesting
 ]]
-function Proto4z.dump(value, desciption, nesting)
+function Proto4z.dump(value, desciption, nesting, showULL)
     if type(nesting) ~= "number" then nesting = 5 end
 
     local lookupTable = {}
@@ -446,6 +446,9 @@ function Proto4z.dump(value, desciption, nesting)
 
     local function _v(v)
         if type(v) == "string" then
+            if showULL and #v == 8 then
+                return Proto4z.streamToString(v)
+            end
             v = "\"" .. v .. "\""
         end
         return tostring(v)

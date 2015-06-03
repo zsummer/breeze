@@ -45,57 +45,55 @@
 
 namespace zsummer
 {
-	namespace network
-	{
-		//! ioserver, message loop.
-		class EventLoop :public std::enable_shared_from_this<EventLoop>
-		{
-		public:
-			EventLoop(){_io = NULL;}
-			~EventLoop(){}
+    namespace network
+    {
+        //! ioserver, message loop.
+        class EventLoop :public std::enable_shared_from_this<EventLoop>
+        {
+        public:
+            EventLoop(){_io = NULL;}
+            ~EventLoop(){}
 
-			inline bool initialize();
-			void runOnce(bool isImmediately = false);
-			//handle: std::function<void()>
-			//switch initiative, in the multi-thread it's switch call thread simultaneously.
-			inline void post(_OnPostHandler &&h){ postMsg(PCK_USER_DATA, std::move(h)); }
-			inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle){return _timer.createTimer(delayms, std::move(handle));}
-			inline bool cancelTimer(unsigned long long timerID){return _timer.cancelTimer(timerID);}
-		private:
-			inline void postMsg(POST_COM_KEY pck, _OnPostHandler &&handle)
-			{
-				_OnPostHandler *ptr = new _OnPostHandler(std::move(handle));
-				PostQueuedCompletionStatus(_io, 0, pck, (LPOVERLAPPED)(ptr));
-			}
-			inline std::string logSection()
-			{
-				std::stringstream os;
-				os << " logSection: _iocp=" << (void*)_io << ", current total timer=" << _timer.GetTimersCount();
-				return os.str();
-			}
-		public:
-			HANDLE _io;
-			Timer _timer;
-		};
+            inline bool initialize();
+            void runOnce(bool isImmediately = false);
+            //handle: std::function<void()>
+            //switch initiative, in the multi-thread it's switch call thread simultaneously.
+            inline void post(_OnPostHandler &&h){ postMsg(PCK_USER_DATA, std::move(h)); }
+            inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle){return _timer.createTimer(delayms, std::move(handle));}
+            inline bool cancelTimer(unsigned long long timerID){return _timer.cancelTimer(timerID);}
+        private:
+            inline void postMsg(POST_COM_KEY pck, _OnPostHandler &&handle)
+            {
+                _OnPostHandler *ptr = new _OnPostHandler(std::move(handle));
+                PostQueuedCompletionStatus(_io, 0, pck, (LPOVERLAPPED)(ptr));
+            }
+            inline std::string logSection()
+            {
+                std::stringstream os;
+                os << " logSection: _iocp=" << (void*)_io << ", current total timer=" << _timer.GetTimersCount();
+                return os.str();
+            }
+        public:
+            HANDLE _io;
+            Timer _timer;
+        };
 
-		typedef std::shared_ptr<EventLoop> EventLoopPtr;
-		inline bool EventLoop::initialize()
-		{
-			if (_io != NULL)
-			{
-				LCF("EventLoop::runOnce[this0x" << this << "] iocp is craeted !" << logSection());
-				return false;
-			}
-			_io = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 1);
-			if (!_io)
-			{
-				LCF("EventLoop::runOnce[this0x" << this << "] CreateIoCompletionPort False!" << logSection());
-				return false;
-			}
-			return true;
-		}
-
-
+        typedef std::shared_ptr<EventLoop> EventLoopPtr;
+        inline bool EventLoop::initialize()
+        {
+            if (_io != NULL)
+            {
+                LCF("EventLoop::runOnce[this0x" << this << "] iocp is craeted !" << logSection());
+                return false;
+            }
+            _io = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 1);
+            if (!_io)
+            {
+                LCF("EventLoop::runOnce[this0x" << this << "] CreateIoCompletionPort False!" << logSection());
+                return false;
+            }
+            return true;
+        }
 
 
 
@@ -103,7 +101,9 @@ namespace zsummer
 
 
 
-	}
+
+
+    }
 
 }
 

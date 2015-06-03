@@ -45,42 +45,42 @@
 
 namespace zsummer
 {
-	namespace network
-	{
-		class TcpSocket;
-		class TcpAccept;
-		class UdpSocket;
-		const int InvalideFD = -1;
-		struct tagReqHandle 
-		{
-			OVERLAPPED	 _overlapped;
-			unsigned char _type;
-			std::shared_ptr<TcpSocket> _tcpSocket;
-			std::shared_ptr<TcpAccept> _tcpAccept;
-			std::shared_ptr<UdpSocket> _udpSocket;
-			enum HANDLE_TYPE
-			{
-				HANDLE_ACCEPT, 
-				HANDLE_RECV, 
-				HANDLE_SEND,
-				HANDLE_CONNECT, 
-				HANDLE_RECVFROM,
-				HANDLE_SENDTO,
-			};
-		};
-		template <class T>
-		T & operator <<(T &t, const tagReqHandle & h)
-		{
-			t << (unsigned int)h._type;
-			return t;
-		}
-		//! 完成键
-		enum POST_COM_KEY
-		{
-			PCK_USER_DATA,
-		};
+    namespace network
+    {
+        class TcpSocket;
+        class TcpAccept;
+        class UdpSocket;
+        const int InvalideFD = -1;
+        struct tagReqHandle 
+        {
+            OVERLAPPED     _overlapped;
+            unsigned char _type;
+            std::shared_ptr<TcpSocket> _tcpSocket;
+            std::shared_ptr<TcpAccept> _tcpAccept;
+            std::shared_ptr<UdpSocket> _udpSocket;
+            enum HANDLE_TYPE
+            {
+                HANDLE_ACCEPT, 
+                HANDLE_RECV, 
+                HANDLE_SEND,
+                HANDLE_CONNECT, 
+                HANDLE_RECVFROM,
+                HANDLE_SENDTO,
+            };
+        };
+        template <class T>
+        T & operator <<(T &t, const tagReqHandle & h)
+        {
+            t << (unsigned int)h._type;
+            return t;
+        }
+        //! 完成键
+        enum POST_COM_KEY
+        {
+            PCK_USER_DATA,
+        };
 #define HandlerFromOverlaped(ptr)  ((tagReqHandle*)((char*)ptr - (char*)&((tagReqHandle*)NULL)->_overlapped))
-	}
+    }
 }
 
 
