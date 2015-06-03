@@ -6,8 +6,9 @@ Proto4z.EC_PARAM_DENIED = 4--非法参数
 Proto4z.EC_PERMISSION_DENIED = 5--权限错误 
 Proto4z.EC_INVALIDE_USER = 50--错误的用户信息 
 Proto4z.EC_TOKEN_EXPIRE = 51--令牌过期 
-Proto4z.EC_ALREADY_FRIEND = 100--你们已经是好友了 
-Proto4z.EC_ALREADY_BLACKLIST = 101--该好友在黑名单中 
+Proto4z.EC_OWNER_FRIEND = 100--自己的好友 
+Proto4z.EC_OWNER_BLACKLIST = 101--自己的黑名单用户 
+Proto4z.EC_TARGET_BLACKLIST = 102--对方的黑名单用户 
  
 Proto4z.SessionToken = {} --认证令牌 
 Proto4z.SessionToken.__getName = "SessionToken" 

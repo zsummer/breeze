@@ -151,35 +151,28 @@ void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
 		{
 			if (founderDest != srcFriends.end())
 			{
-				//已经是好友了
-				if (founderDest != srcFriends.end() && founderDest->second.flag == FRIEND_ESTABLISHED
-					&& founderSrc != dstFriends.end() && founderSrc->second.flag == FRIEND_ESTABLISHED)
-				{
-					ack.retCode = EC_ALREADY_FRIEND;
-					break;
-				}
-				//己方单向好友
+				//已经是自己好友了
 				if (founderDest != srcFriends.end() && founderDest->second.flag == FRIEND_ESTABLISHED)
 				{
-					ack.retCode = EC_ALREADY_FRIEND;
+					ack.retCode = EC_OWNER_FRIEND;
 					break;
 				}
 
 				//黑名单用户
 				if (founderDest != srcFriends.end() && founderDest->second.flag == FRIEND_BLACKLIST)
 				{
-					ack.retCode = EC_ALREADY_BLACKLIST;
+					ack.retCode = EC_OWNER_BLACKLIST;
 					break;
 				}
-				//其他状态
-				ack.retCode = EC_ALREADY_FRIEND;
-				break;
 			}
 			if (founderSrc != dstFriends.end())
 			{
-				//其他状态
-				ack.retCode = EC_ALREADY_FRIEND;
-				break;
+				if (founderSrc->second.flag == FRIEND_BLACKLIST)
+				{
+					//黑名单用户
+					ack.retCode = EC_TARGET_BLACKLIST;
+					break;
+				}
 			}
 			
 			/*

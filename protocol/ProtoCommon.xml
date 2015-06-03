@@ -9,68 +9,68 @@
 
 <Proto>
 
-  <!-- 错误码 -->
-  <enum type="ui16" >
- 	<member name="EC_SUCCESS" value="0"   desc="成功"/>
-	<member name="EC_ERROR"   desc="错误"/>
-	<member name="EC_INNER_ERROR"  desc="内部错误"/>
-	<member name="EC_DB_ERROR"  desc="数据库错误"/>
-	<member name="EC_PARAM_DENIED"  desc="非法参数"/>
-	<member name="EC_PERMISSION_DENIED"  desc="权限错误"/>
+    <!-- 错误码 -->
+    <enum type="ui16" >
+        <member name="EC_SUCCESS" value="0"   desc="成功"/>
+        <member name="EC_ERROR"   desc="错误"/>
+        <member name="EC_INNER_ERROR"  desc="内部错误"/>
+        <member name="EC_DB_ERROR"  desc="数据库错误"/>
+        <member name="EC_PARAM_DENIED"  desc="非法参数"/>
+        <member name="EC_PERMISSION_DENIED"  desc="权限错误"/>
 
 
-  <member name="EC_INVALIDE_USER"  value="50"  desc="错误的用户信息"/>
-  <member name="EC_TOKEN_EXPIRE"   desc="令牌过期"/>
+        <member name="EC_INVALIDE_USER"  value="50"  desc="错误的用户信息"/>
+        <member name="EC_TOKEN_EXPIRE"   desc="令牌过期"/>
 
-  <member name="EC_ALREADY_FRIEND"   value="100" desc="你们已经是好友了"/>
-  <member name="EC_ALREADY_BLACKLIST"   desc="该好友在黑名单中"/>
+        <member name="EC_OWNER_FRIEND"   value="100" desc="自己的好友"/>
+        <member name="EC_OWNER_BLACKLIST"   desc="自己的黑名单用户"/>
+        <member name="EC_TARGET_BLACKLIST"   desc="对方的黑名单用户"/>
 
-  
-  </enum>
-
-
-  <!-- 认证令牌 -->
-  <struct name="SessionToken" store="true" desc="认证令牌">
-    <member name="uID" type="ui64"  tag="key" desc=""/>
-    <member name="token" type="string"   desc=""/>
-    <member name="tokenExpire"  type="ui32" desc=""/>
-  </struct>
+    </enum>
 
 
-  <!-- 用户信息 -->
-  <struct name="UserInfo" store="true" desc="用户信息">
-    <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
-    <member name="account"  type="string" desc="帐号"/>
-    <member name="nickName" type="string"   desc="昵称"/>
-    <member name="iconID"  type="i16" desc="头像"/>
-    <member name="diamond"  type="i32" desc="当前剩余的充值钻石"/>
-    <member name="hisotryDiamond"  type="i32" desc="历史充值钻石总额"/>
-    <member name="giftDiamond"  type="i32" desc="当前剩余的赠送钻石"/>
-    <member name="joinTime"  type="ui32" desc="加入时间"/>
-  </struct>
-  <array name="UserInfoArray" type="UserInfo" desc="" />
-  <array name="UserIDArray" type="ui64" desc="" />
+    <!-- 认证令牌 -->
+    <struct name="SessionToken" store="true" desc="认证令牌">
+        <member name="uID" type="ui64"  tag="key" desc=""/>
+        <member name="token" type="string"   desc=""/>
+        <member name="tokenExpire"  type="ui32" desc=""/>
+        </struct>
 
-  
 
-  <!-- 事件触发码 -->
-  <enum type="ui16" >
-    <member name="ETRIGGER_USER_LOGIN" value="0"   desc="用户登录, 用户ID"/>
-    <member name="ETRIGGER_USER_LOGOUT"   desc="用户登出, 用户ID"/>
-  </enum>
+        <!-- 用户信息 -->
+        <struct name="UserInfo" store="true" desc="用户信息">
+        <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
+        <member name="account"  type="string" desc="帐号"/>
+        <member name="nickName" type="string"   desc="昵称"/>
+        <member name="iconID"  type="i16" desc="头像"/>
+        <member name="diamond"  type="i32" desc="当前剩余的充值钻石"/>
+        <member name="hisotryDiamond"  type="i32" desc="历史充值钻石总额"/>
+        <member name="giftDiamond"  type="i32" desc="当前剩余的赠送钻石"/>
+        <member name="joinTime"  type="ui32" desc="加入时间"/>
+    </struct>
+    <array name="UserInfoArray" type="UserInfo" desc="" />
+    <array name="UserIDArray" type="ui64" desc="" />
 
 
 
+    <!-- 事件触发码 -->
+    <enum type="ui16" >
+        <member name="ETRIGGER_USER_LOGIN" value="0"   desc="用户登录, 用户ID"/>
+        <member name="ETRIGGER_USER_LOGOUT"   desc="用户登出, 用户ID"/>
+    </enum>
 
 
-  <proto name="Heartbeat" desc= "心跳包">
-    <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
-    <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
-  </proto>
-  <proto name="HeartbeatEcho" desc= "心跳包需要立刻回复">
-    <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
-    <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
-  </proto>
+
+
+
+    <proto name="Heartbeat" desc= "心跳包">
+        <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
+        <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
+    </proto>
+    <proto name="HeartbeatEcho" desc= "心跳包需要立刻回复">
+        <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
+        <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
+    </proto>
 
 </Proto>
 
