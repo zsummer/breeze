@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>a22ba48365932c23aa9680f21f89a357</cppmd5> 
+<cppmd5>e9ba96ff18611510e8b7039137bb250f</cppmd5> 
 <luamd5>306348073955f5cfcb01da4ae18a4746</luamd5> 
-<csharpmd5>97fb5ef5906762b176984d46b80898d5</csharpmd5> 
-<sqlmd5>7a282f1e6f92bf3e6dbda37dc7e4959c</sqlmd5> 
+<csharpmd5>19b2c96474838c55886c2d7b6146f5d3</csharpmd5> 
+<sqlmd5>22e49a0fd0903b344424fe758a3c9b05</sqlmd5> 
 <xmlmd5>4670ae26a04aadcab34898300bd932f1</xmlmd5> 
 <cacheNumber>
-	<cache key = "ID_FriendOperationAck" Number = "1003" /> 
-	<cache key = "ID_FriendOperationReq" Number = "1002" /> 
-	<cache key = "ID_GetSomeStrangersAck" Number = "1001" /> 
-	<cache key = "ID_GetSomeStrangersReq" Number = "1000" /> 
+    <cache key = "ID_FriendOperationAck" Number = "1003" /> 
+    <cache key = "ID_FriendOperationReq" Number = "1002" /> 
+    <cache key = "ID_GetSomeStrangersAck" Number = "1001" /> 
+    <cache key = "ID_GetSomeStrangersReq" Number = "1000" /> 
 </cacheNumber>
