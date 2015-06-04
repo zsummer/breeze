@@ -17,6 +17,8 @@
         <member name="EC_DB_ERROR"  desc="数据库错误"/>
         <member name="EC_PARAM_DENIED"  desc="非法参数"/>
         <member name="EC_PERMISSION_DENIED"  desc="权限错误"/>
+        <member name="EC_REQUEST_EXPIRE"  desc="请求操作已过期"/>
+        <member name="EC_TARGET_NOT_EXIST"  desc="操作目标不存在"/>
 
 
         <member name="EC_INVALIDE_USER"  value="50"  desc="错误的用户信息"/>

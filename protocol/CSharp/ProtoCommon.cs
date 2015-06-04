@@ -25,6 +25,14 @@ namespace Proto4z
     { 
         public static Proto4z.ui16 value = 5;  
     } 
+    class STATIC_EC_REQUEST_EXPIRE //请求操作已过期 
+    { 
+        public static Proto4z.ui16 value = 6;  
+    } 
+    class STATIC_EC_TARGET_NOT_EXIST //操作目标不存在 
+    { 
+        public static Proto4z.ui16 value = 7;  
+    } 
     class STATIC_EC_INVALIDE_USER //错误的用户信息 
     { 
         public static Proto4z.ui16 value = 50;  
