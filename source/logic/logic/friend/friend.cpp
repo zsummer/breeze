@@ -104,6 +104,8 @@ void Friend::insertFriend(const FriendInfo & info)
         DBManager::getRef().infoAsyncQuery(sql, std::bind(&Friend::db_onDefaultUpdate, this, _1, "insertFriend"));
     }
 }
+
+//更新好友关系
 void Friend::updateFriend(const FriendInfo & info)
 {
     auto sql = FriendInfo_UPDATE(info);
@@ -142,12 +144,12 @@ void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
     auto srcFriends = _friends[inner->userInfo.uID];
     auto founderDest = srcFriends.find(req.uID);
 
+
     auto dstFriends = _friends[req.uID];
     auto founderSrc = dstFriends.find(inner->userInfo.uID);
-
-    do 
+    switch (req.oFlag)
     {
-        if (req.oFlag == FRIEND_ADD_FRIEND)
+        case FRIEND_ADD_FRIEND:
         {
             if (founderDest != srcFriends.end())
             {
@@ -167,109 +169,119 @@ void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
             }
             if (founderSrc != dstFriends.end())
             {
+                //黑名单用户
                 if (founderSrc->second.flag == FRIEND_BLACKLIST)
                 {
-                    //黑名单用户
                     ack.retCode = EC_TARGET_BLACKLIST;
                     break;
                 }
+                //已在对方的请求列表中
                 if (founderSrc->second.flag == FRIEND_REQUESTING)
                 {
                     ack.retCode = EC_TARGET_REQUESTING;
                     break;
                 }
-                
+                //直接添加到好友中
+                if (founderSrc->second.flag == FRIEND_ESTABLISHED || founderSrc->second.flag == FRIEND_WAITING)
+                {
+                    if (founderDest == srcFriends.end())
+                    {
+                        FriendInfo info;
+                        info.fID = req.uID;
+                        info.flag = FRIEND_ESTABLISHED;
+                        info.makeTime = (unsigned int)time(NULL);
+                        info.ownID = inner->userInfo.uID;
+                        srcFriends.insert(std::make_pair(info.fID, info));
+                        insertFriend(info);
+                    }
+                    else
+                    {
+                        FriendInfo &info = founderDest->second;
+                        info.flag = FRIEND_ESTABLISHED;
+                        info.makeTime = (unsigned int)time(NULL);
+                        updateFriend(info);
+                    }
+                    //对方在等自己确认的话 好友互加成功
+                    if (founderSrc->second.flag == FRIEND_WAITING)
+                    {
+                        founderSrc->second.flag = FRIEND_ESTABLISHED;
+                        founderSrc->second.makeTime = (unsigned int)time(NULL);
+                        updateFriend(founderSrc->second);
+                    }
+                    break;
+                }
             }
-            
-            /*
-
-            if (dstStatus == dst->second.friends.end() || dstStatus->second.flag == FRIEND_REQUESTING)
+            if (founderDest == srcFriends.end())
             {
                 FriendInfo info;
+                info.fID = req.uID;
+                info.flag = FRIEND_WAITING;
+                info.makeTime = (unsigned int)time(NULL);
+                info.ownID = inner->userInfo.uID;
+                srcFriends.insert(std::make_pair(info.fID, info));
+                insertFriend(info);
+            }
+            else
+            {
+                FriendInfo &info = founderDest->second;
+                info.flag = FRIEND_WAITING;
+                info.makeTime = (unsigned int)time(NULL);
+                updateFriend(info);
+            }
+            if (founderSrc == dstFriends.end())
+            {
+                FriendInfo info;
+                info.fID = req.uID;
                 info.flag = FRIEND_REQUESTING;
                 info.makeTime = (unsigned int)time(NULL);
-                info.fID = src->second.info.uID;
-                info.ownID = dst->second.info.uID;
-
-                if (dstStatus == dst->second.friends.end())
-                {
-                    dst->second.friends[info.fID] = info;
-                    insertFriend(info);
-                }
-                else
-                {
-                    dstStatus->second = info;
-                    updateFriend(info);
-                }
-
-                info.flag = FRIEND_WAITING;
-                info.fID = dst->second.info.uID;
-                info.ownID = src->second.info.uID;
-                if (srcStatus == src->second.friends.end())
-                {
-                    src->second.friends[info.fID] = info;
-                    insertFriend(info);
-                }
-                else if (srcStatus->second.flag == FRIEND_WAITING)
-                {
-                    srcStatus->second = info;
-                    updateFriend(info);
-                }
-
+                info.ownID = inner->userInfo.uID;
+                dstFriends.insert(std::make_pair(info.fID, info));
+                insertFriend(info);
             }
             else
             {
-                ack.retCode = EC_PARAM_DENIED;
-            }*/
-
+                FriendInfo &info = founderSrc->second;
+                info.flag = FRIEND_REQUESTING;
+                info.makeTime = (unsigned int)time(NULL);
+                updateFriend(info);
+            }
         }
-        else if (req.oFlag == FRIEND_ADD_BLACKLIST)
+    	break;
+        case FRIEND_ALLOW:
         {
-
-        }
-        else if (req.oFlag == FRIEND_REMOVE_BLACKLIST)
-        {
-
-        }
-        else if (req.oFlag == FRIEND_REMOVE_FRIEND)
-        {
-
-        }
-        else if (req.oFlag == FRIEND_ALLOW)
-        {
-            /*
-            if (srcStatus != src->second.friends.end() && srcStatus->second.flag == FRIEND_REQUESTING)
+            if (founderDest != srcFriends.end() && founderDest->second.flag == FRIEND_REQUESTING)
             {
-                srcStatus->second.flag = FRIEND_ESTABLISHED;
-                srcStatus->second.makeTime = (unsigned int)time(NULL);
-                updateFriend(srcStatus->second);
+                founderDest->second.flag = FRIEND_DELETED;
+                founderDest->second.makeTime = (unsigned int)time(NULL);
+                updateFriend(founderDest->second);
 
-                if (dstStatus != dst->second.friends.end())
+                if (founderSrc == dstFriends.end())
                 {
-                    dstStatus->second.flag = FRIEND_ESTABLISHED;
-                    dstStatus->second.makeTime = (unsigned int)time(NULL);
-                    updateFriend(dstStatus->second);
+                    ack.retCode = EC_REQUEST_EXPIRE;
+                    break;
                 }
+                founderSrc->second.flag = FRIEND_ESTABLISHED;
+                founderSrc->second.makeTime = (unsigned int)time(NULL);
+                updateFriend(founderSrc->second);
             }
             else
             {
-                ack.retCode = EC_PARAM_DENIED;
+                ack.retCode = EC_TARGET_NOT_EXIST;
+                break;
             }
-            */
         }
-        else if (req.oFlag == FRIEND_REJECT)
-        {
-
-        }
-        else if (req.oFlag == FRIEND_IGNORE)
-        {
-
-        }
-        else
+        break;
+        default:
         {
             ack.retCode = EC_PARAM_DENIED;
+            break;
         }
-    } while (0);
+    }
+    
+
+
+
+
     
 
     

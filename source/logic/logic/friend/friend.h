@@ -46,6 +46,7 @@ public:
 
     //存储好友关系
     void insertFriend(const FriendInfo & info);
+    //更新好友关系
     void updateFriend(const FriendInfo & info);
 
 
