@@ -33,10 +33,31 @@
     <struct name="FriendInfo" store="true" desc="好友信息">
          <member name="ownID" type="ui64"    tag="key" desc=""/>
          <member name="fID" type="ui64"    tag="key" desc=""/>
-         <member name="flag" type="ui8"     desc="状态标志"/>
+         <member name="flag" type="ui8"  tag="key"   desc="状态标志"/>
+         <member name="online" type="ui8"  tag="ignore"  desc="好友是否在线,不需要存数据库"/>
          <member name="makeTime"    type="ui32" desc="建立时间"/>
     </struct>
     <array name="FriendInfoArray" type="FriendInfo" desc="" />
+
+    <proto name="GetFriendsReq" desc= "获取好友列表">
+    </proto>
+
+    <proto name="UpdateFriendsNotice" desc= "好友列表推送通知" >
+        <member name="friends" type="FriendInfoArray"     desc=""/>
+    </proto>
+
+
+    <proto name="FriendOperationReq" desc= "好友操作请求">
+        <member name="dst" type="ui64"     desc="目标ID"/>
+        <member name="instruct" type="ui8"     desc="操作指令"/>
+    </proto>
+
+    <proto name="FriendOperationNotice" desc= "好友操作推送通知" >
+        <member name="retCode" type="ui16"     desc=""/>
+        <member name="src" type="ui64"     desc="发起操作的用户"/>
+        <member name="instruct" type="ui8"     desc="发起的操作指令"/>
+        <member name="dst" type="ui64"     desc="操作目标用户"/>
+    </proto>
 
 
     <proto name="GetSomeStrangersReq" desc= "获取一些陌生人">
@@ -47,17 +68,7 @@
         <member name="uIDs" type="UserIDArray"     desc=""/>
     </proto>
 
-    <proto name="FriendOperationReq" desc= "好友操作请求">
-        <member name="uID" type="ui64"     desc="目标ID"/>
-        <member name="oFlag" type="ui8"     desc="操作指令"/>
-    </proto>
 
-    <proto name="FriendOperationAck" desc= "好友操作请求结果" >
-        <member name="retCode" type="ui16"     desc=""/>
-        <member name="srcUID" type="ui64"     desc=""/>
-        <member name="srcFlag" type="ui8"     desc=""/>
-        <member name="dstUID" type="ui64"     desc=""/>
-    </proto>
 
     
 </Proto>

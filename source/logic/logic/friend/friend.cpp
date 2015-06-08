@@ -9,6 +9,7 @@
 
 Friend::Friend()
 {
+    MessageDispatcher::getRef().registerSessionMessage(ID_GetFriendsReq, std::bind(&Friend::msg_onGetFriendsReq, this, _1, _2));
     MessageDispatcher::getRef().registerSessionMessage(ID_FriendOperationReq, std::bind(&Friend::msg_onFriendOperationReq, this, _1, _2));
     MessageDispatcher::getRef().registerSessionMessage(ID_GetSomeStrangersReq, std::bind(&Friend::msg_onGetSomeStrangersReq, this, _1, _2));
 }
@@ -124,30 +125,47 @@ void Friend::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string 
     }
 }
 
+void Friend::msg_onGetFriendsReq(TcpSessionPtr session, ReadStream & rs)
+{
+    UpdateFriendsNotice notice;
+    auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
+    if (!inner)
+    {
+        return;
+    }
+    auto friends = _friends.find(inner->userInfo.uID);
+    if (friends != _friends.end())
+    {
+        std::for_each(friends->second.begin, friends->second.end, [&notice](const std::pair<UserID, FriendInfo> & info){ notice.friends.push_back(info.second); });
+    }
+    WriteStream ws(ID_UpdateFriendsNotice);
+    ws << notice;
+    session->doSend(ws.getStream(), ws.getStreamLen());
+}
 
 void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
 {
     FriendOperationReq req;
     rs >> req;
-    FriendOperationAck ack;
+    FriendOperationNotice ack;
     ack.retCode = EC_SUCCESS;
-    ack.srcFlag = req.oFlag;
-    ack.dstUID = req.uID;
+    ack.instruct = req.instruct;
+    ack.dst = req.dst;
     auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
     if (!inner)
     {
         ack.retCode = EC_PERMISSION_DENIED;
         return;
     }
-    ack.srcUID = inner->userInfo.uID;
+    ack.src = inner->userInfo.uID;
 
     auto srcFriends = _friends[inner->userInfo.uID];
-    auto founderDest = srcFriends.find(req.uID);
+    auto founderDest = srcFriends.find(req.dst);
 
 
-    auto dstFriends = _friends[req.uID];
+    auto dstFriends = _friends[req.dst];
     auto founderSrc = dstFriends.find(inner->userInfo.uID);
-    switch (req.oFlag)
+    switch (req.instruct)
     {
         case FRIEND_ADD_FRIEND:
         {
@@ -187,7 +205,7 @@ void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
                     if (founderDest == srcFriends.end())
                     {
                         FriendInfo info;
-                        info.fID = req.uID;
+                        info.fID = req.dst;
                         info.flag = FRIEND_ESTABLISHED;
                         info.makeTime = (unsigned int)time(NULL);
                         info.ownID = inner->userInfo.uID;
@@ -214,7 +232,7 @@ void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
             if (founderDest == srcFriends.end())
             {
                 FriendInfo info;
-                info.fID = req.uID;
+                info.fID = req.dst;
                 info.flag = FRIEND_WAITING;
                 info.makeTime = (unsigned int)time(NULL);
                 info.ownID = inner->userInfo.uID;
@@ -231,7 +249,7 @@ void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
             if (founderSrc == dstFriends.end())
             {
                 FriendInfo info;
-                info.fID = req.uID;
+                info.fID = req.dst;
                 info.flag = FRIEND_REQUESTING;
                 info.makeTime = (unsigned int)time(NULL);
                 info.ownID = inner->userInfo.uID;
@@ -286,7 +304,7 @@ void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
 
     
     
-    WriteStream ws(ID_FriendOperationAck);
+    WriteStream ws(ID_FriendOperationNotice);
     ws << ack;
     session->doSend(ws.getStream(), ws.getStreamLen()); 
 }

@@ -55,6 +55,7 @@ public:
     void onUserLogin(EventTriggerID tID, UserID uID, Any , Any , Any );
     void onUserLogout(EventTriggerID tID, UserID uID, Any , Any , Any );
 public:
+    void msg_onGetFriendsReq(TcpSessionPtr session, ReadStream & rs);
     void msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs);
     void msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs);
     
