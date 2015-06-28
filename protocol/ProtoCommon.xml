@@ -24,10 +24,10 @@
         <member name="EC_INVALIDE_USER"  value="50"  desc="错误的用户信息"/>
         <member name="EC_TOKEN_EXPIRE"   desc="令牌过期"/>
 
-        <member name="EC_OWNER_FRIEND"   value="100" desc="自己的好友"/>
-        <member name="EC_OWNER_BLACKLIST"   desc="自己的黑名单用户"/>
-        <member name="EC_TARGET_BLACKLIST"   desc="对方的黑名单用户"/>
-        <member name="EC_TARGET_REQUESTING"   desc="已在对方的请求列表中"/>
+        <member name="EC_FRIEND_DUPLICATE"   value="100" desc="请先删除与该好友建立的关系"/>
+        <member name="EC_FRIEND_CEILING"   desc="达到好友上限"/>
+        <member name="EC_FRIEND_REFUSE"   desc="不能添加对方为好友"/>
+        <member name="EC_FRIEND_NOT_EXIST"   desc="好友不存在"/>
 
     </enum>
 

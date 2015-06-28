@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>3bd356a2b77b05b32d9e9b447afe1526</cppmd5> 
-<luamd5>140c62a0e1b2c3309d9bb723d305c4b1</luamd5> 
-<csharpmd5>d30aa832224aabfe791580ccdfd40750</csharpmd5> 
-<sqlmd5>ec8d85c0a0022a1349f70f13c98feab1</sqlmd5> 
-<xmlmd5>6bfc57907fe2a1db9cf2fdd751524aa0</xmlmd5> 
+<cppmd5>fb1055623789cf04d8564ece104d2590</cppmd5> 
+<luamd5>b1ead053a5dd5d2cabc2679a3ee349b5</luamd5> 
+<csharpmd5>aec9593ed8e736ade8a6e5203b171482</csharpmd5> 
+<sqlmd5>a4780599eccd20073ad5f6e1aec410ce</sqlmd5> 
+<xmlmd5>3fbaf926421788722a63c6ca1c7cecec</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_FriendOperationAck" Number = "1003" /> 
-    <cache key = "ID_FriendOperationNotice" Number = "1004" /> 
-    <cache key = "ID_FriendOperationReq" Number = "1002" /> 
-    <cache key = "ID_GetFriendsReq" Number = "1005" /> 
-    <cache key = "ID_GetSomeStrangersAck" Number = "1001" /> 
-    <cache key = "ID_GetSomeStrangersReq" Number = "1000" /> 
-    <cache key = "ID_UpdateFriendsNotice" Number = "1006" /> 
+    <cache key = "ID_AddFriendAck" Number = "1004" /> 
+    <cache key = "ID_AddFriendReply" Number = "1003" /> 
+    <cache key = "ID_AddFriendReq" Number = "1002" /> 
+    <cache key = "ID_DelFriendAck" Number = "1006" /> 
+    <cache key = "ID_DelFriendReq" Number = "1005" /> 
+    <cache key = "ID_GetFriendsReq" Number = "1000" /> 
+    <cache key = "ID_UpdateFriendsNotice" Number = "1001" /> 
 </cacheNumber>

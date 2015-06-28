@@ -12,10 +12,10 @@ const unsigned short EC_REQUEST_EXPIRE = 6; //请求操作已过期
 const unsigned short EC_TARGET_NOT_EXIST = 7; //操作目标不存在 
 const unsigned short EC_INVALIDE_USER = 50; //错误的用户信息 
 const unsigned short EC_TOKEN_EXPIRE = 51; //令牌过期 
-const unsigned short EC_OWNER_FRIEND = 100; //自己的好友 
-const unsigned short EC_OWNER_BLACKLIST = 101; //自己的黑名单用户 
-const unsigned short EC_TARGET_BLACKLIST = 102; //对方的黑名单用户 
-const unsigned short EC_TARGET_REQUESTING = 103; //已在对方的请求列表中 
+const unsigned short EC_FRIEND_DUPLICATE = 100; //请先删除与该好友建立的关系 
+const unsigned short EC_FRIEND_CEILING = 101; //达到好友上限 
+const unsigned short EC_FRIEND_REFUSE = 102; //不能添加对方为好友 
+const unsigned short EC_FRIEND_NOT_EXIST = 103; //好友不存在 
  
 struct SessionToken //认证令牌 
 { 
@@ -165,8 +165,8 @@ struct Heartbeat //心跳包
         timeStamp = 0; 
         timeTick = 0; 
     } 
-    inline unsigned short GetProtoID() { return 200;} 
-    inline std::string GetProtoName() { return "ID_Heartbeat";} 
+    static const unsigned short GetProtoID() { return 200;} 
+    static const std::string GetProtoName() { return "ID_Heartbeat";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Heartbeat & data) 
 { 
@@ -211,8 +211,8 @@ struct HeartbeatEcho //心跳包需要立刻回复
         timeStamp = 0; 
         timeTick = 0; 
     } 
-    inline unsigned short GetProtoID() { return 201;} 
-    inline std::string GetProtoName() { return "ID_HeartbeatEcho";} 
+    static const unsigned short GetProtoID() { return 201;} 
+    static const std::string GetProtoName() { return "ID_HeartbeatEcho";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const HeartbeatEcho & data) 
 { 

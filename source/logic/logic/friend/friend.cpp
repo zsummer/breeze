@@ -10,8 +10,9 @@
 Friend::Friend()
 {
     MessageDispatcher::getRef().registerSessionMessage(ID_GetFriendsReq, std::bind(&Friend::msg_onGetFriendsReq, this, _1, _2));
-    MessageDispatcher::getRef().registerSessionMessage(ID_FriendOperationReq, std::bind(&Friend::msg_onFriendOperationReq, this, _1, _2));
-    MessageDispatcher::getRef().registerSessionMessage(ID_GetSomeStrangersReq, std::bind(&Friend::msg_onGetSomeStrangersReq, this, _1, _2));
+    MessageDispatcher::getRef().registerSessionMessage(ID_AddFriendReq, std::bind(&Friend::msg_onAddFriendReq, this, _1, _2));
+    MessageDispatcher::getRef().registerSessionMessage(ID_AddFriendReply, std::bind(&Friend::msg_onAddFriendReply, this, _1, _2));
+    MessageDispatcher::getRef().registerSessionMessage(ID_DelFriendReq, std::bind(&Friend::msg_onDelFriendReq, this, _1, _2));
 }
 
 Friend::~Friend()
@@ -79,18 +80,68 @@ bool Friend::initFriends()
 void  Friend::onUserLogin(EventTriggerID tID, UserID uID, Any count, Any iconID, Any nick)
 {
     auto & friends = _friends[uID];
+    UpdateFriendsNotice notice;
+    auto & info = notice.friends[0];
     for (auto & f : friends)
     {
-        //broadcast to all friends
+        if (f.second.flag != FRIEND_DELETED)
+        {
+            auto frd = _friends.find(f.second.fID);
+            if (frd == _friends.end())
+            {
+                break;
+            }
+            auto inf = frd->second.find(uID);
+            if (inf == frd->second.end())
+            {
+                break;
+            }
+            if (inf->second.flag != FRIEND_DELETED)
+            {
+                inf->second.online = true;
+                
+                auto dstInner = UserManager::getRef().getInnerUserInfo(f.second.fID);
+                if (dstInner && dstInner->sID != InvalidSeesionID)
+                {
+                    info = inf->second;
+                    sendMessage(dstInner->sID, notice);
+                }
+            }
+        }
     }
 }
 
 void  Friend::onUserLogout(EventTriggerID tID, UserID uID, Any count, Any iconID, Any nick)
 {
     auto & friends = _friends[uID];
+    UpdateFriendsNotice notice;
+    auto & info = notice.friends[0];
     for (auto & f : friends)
     {
-        //broadcast to all friends
+        if (f.second.flag != FRIEND_DELETED)
+        {
+            auto frd = _friends.find(f.second.fID);
+            if (frd == _friends.end())
+            {
+                break;
+            }
+            auto inf = frd->second.find(uID);
+            if (inf == frd->second.end())
+            {
+                break;
+            }
+            if (inf->second.flag != FRIEND_DELETED)
+            {
+                inf->second.online = false;
+
+                auto dstInner = UserManager::getRef().getInnerUserInfo(f.second.fID);
+                if (dstInner && dstInner->sID != InvalidSeesionID)
+                {
+                    info = inf->second;
+                    sendMessage(dstInner->sID, notice);
+                }
+            }
+        }
     }
 }
 
@@ -136,209 +187,298 @@ void Friend::msg_onGetFriendsReq(TcpSessionPtr session, ReadStream & rs)
     auto friends = _friends.find(inner->userInfo.uID);
     if (friends != _friends.end())
     {
-        std::for_each(friends->second.begin, friends->second.end, [&notice](const std::pair<UserID, FriendInfo> & info){ notice.friends.push_back(info.second); });
+        std::for_each(friends->second.begin(), friends->second.end(), [&notice](const std::pair<UserID, FriendInfo> & info){ notice.friends.push_back(info.second); });
     }
     WriteStream ws(ID_UpdateFriendsNotice);
     ws << notice;
     session->doSend(ws.getStream(), ws.getStreamLen());
 }
 
-void Friend::msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs)
+void Friend::msg_onAddFriendReq(TcpSessionPtr session, ReadStream & rs)
 {
-    FriendOperationReq req;
+    AddFriendReq req;
     rs >> req;
-    FriendOperationNotice ack;
-    ack.retCode = EC_SUCCESS;
-    ack.instruct = req.instruct;
+    AddFriendAck ack;
     ack.dst = req.dst;
-    auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
-    if (!inner)
+    ack.retCode = EC_ERROR;
+    UpdateFriendsNotice notice;
+    do 
     {
-        ack.retCode = EC_PERMISSION_DENIED;
-        return;
-    }
-    ack.src = inner->userInfo.uID;
-
-    auto srcFriends = _friends[inner->userInfo.uID];
-    auto founderDest = srcFriends.find(req.dst);
-
-
-    auto dstFriends = _friends[req.dst];
-    auto founderSrc = dstFriends.find(inner->userInfo.uID);
-    switch (req.instruct)
-    {
-        case FRIEND_ADD_FRIEND:
+        UserID srcID = InvalidUserID;
         {
-            if (founderDest != srcFriends.end())
+            auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
+            if (!inner)
             {
-                //已经是自己好友了
-                if (founderDest != srcFriends.end() && founderDest->second.flag == FRIEND_ESTABLISHED)
-                {
-                    ack.retCode = EC_OWNER_FRIEND;
-                    break;
-                }
-
-                //黑名单用户
-                if (founderDest != srcFriends.end() && founderDest->second.flag == FRIEND_BLACKLIST)
-                {
-                    ack.retCode = EC_OWNER_BLACKLIST;
-                    break;
-                }
+                break;
             }
-            if (founderSrc != dstFriends.end())
+            srcID = inner->userInfo.uID;
+        }
+
+        auto src = _friends.find(srcID);
+        if (src == _friends.end())
+        {
+            _friends[srcID];
+            src = _friends.find(srcID);
+        }
+
+        int friendCount = 0;
+        std::for_each(src->second.begin(), src->second.end(), [&friendCount](const std::pair<UserID,FriendInfo> & kv){ if (kv.second.flag != FRIEND_DELETED) friendCount++; });
+        if (friendCount > 50)
+        {
+            ack.retCode = EC_FRIEND_CEILING;
+            break;
+        }
+
+        auto srcExist = src->second.find(req.dst);
+        if (srcExist != src->second.end() && srcExist->second.flag != FRIEND_DELETED)
+        {
+            ack.retCode = EC_FRIEND_DUPLICATE;
+            break;
+        }
+
+        auto dst = _friends.find(req.dst);
+        if (dst != _friends.end())
+        {
+            auto checkRight = dst->second.find(srcID);
+            if (checkRight != dst->second.end())
             {
-                //黑名单用户
-                if (founderSrc->second.flag == FRIEND_BLACKLIST)
+                //直接加好友
+                if (checkRight->second.flag == FRIEND_REQUESTING || checkRight->second.flag == FRIEND_ESTABLISHED)
                 {
-                    ack.retCode = EC_TARGET_BLACKLIST;
-                    break;
-                }
-                //已在对方的请求列表中
-                if (founderSrc->second.flag == FRIEND_REQUESTING)
-                {
-                    ack.retCode = EC_TARGET_REQUESTING;
-                    break;
-                }
-                //直接添加到好友中
-                if (founderSrc->second.flag == FRIEND_ESTABLISHED || founderSrc->second.flag == FRIEND_WAITING)
-                {
-                    if (founderDest == srcFriends.end())
+                    FriendInfo info;
+                    info.fID = req.dst;
+                    info.ownID = srcID;
+                    info.flag = FRIEND_ESTABLISHED;
+                    info.makeTime = (unsigned int)time(NULL);
+                    info.lastChanged = info.makeTime;
+                    if (srcExist != src->second.end())
                     {
-                        FriendInfo info;
-                        info.fID = req.dst;
-                        info.flag = FRIEND_ESTABLISHED;
-                        info.makeTime = (unsigned int)time(NULL);
-                        info.ownID = inner->userInfo.uID;
-                        srcFriends.insert(std::make_pair(info.fID, info));
-                        insertFriend(info);
+                        info.makeTime = srcExist->second.makeTime;
+                        updateFriend(info);
                     }
                     else
                     {
-                        FriendInfo &info = founderDest->second;
-                        info.flag = FRIEND_ESTABLISHED;
-                        info.makeTime = (unsigned int)time(NULL);
-                        updateFriend(info);
+                        src->second[info.fID] = info;
+                        insertFriend(info);
                     }
-                    //对方在等自己确认的话 好友互加成功
-                    if (founderSrc->second.flag == FRIEND_WAITING)
-                    {
-                        founderSrc->second.flag = FRIEND_ESTABLISHED;
-                        founderSrc->second.makeTime = (unsigned int)time(NULL);
-                        updateFriend(founderSrc->second);
-                    }
-                    break;
-                }
-            }
-            if (founderDest == srcFriends.end())
-            {
-                FriendInfo info;
-                info.fID = req.dst;
-                info.flag = FRIEND_WAITING;
-                info.makeTime = (unsigned int)time(NULL);
-                info.ownID = inner->userInfo.uID;
-                srcFriends.insert(std::make_pair(info.fID, info));
-                insertFriend(info);
-            }
-            else
-            {
-                FriendInfo &info = founderDest->second;
-                info.flag = FRIEND_WAITING;
-                info.makeTime = (unsigned int)time(NULL);
-                updateFriend(info);
-            }
-            if (founderSrc == dstFriends.end())
-            {
-                FriendInfo info;
-                info.fID = req.dst;
-                info.flag = FRIEND_REQUESTING;
-                info.makeTime = (unsigned int)time(NULL);
-                info.ownID = inner->userInfo.uID;
-                dstFriends.insert(std::make_pair(info.fID, info));
-                insertFriend(info);
-            }
-            else
-            {
-                FriendInfo &info = founderSrc->second;
-                info.flag = FRIEND_REQUESTING;
-                info.makeTime = (unsigned int)time(NULL);
-                updateFriend(info);
-            }
-        }
-    	break;
-        case FRIEND_ALLOW:
-        {
-            if (founderDest != srcFriends.end() && founderDest->second.flag == FRIEND_REQUESTING)
-            {
-                founderDest->second.flag = FRIEND_DELETED;
-                founderDest->second.makeTime = (unsigned int)time(NULL);
-                updateFriend(founderDest->second);
+                    notice.friends.clear();
+                    notice.friends.push_back(info);
+                    sendMessage(session, notice);
 
-                if (founderSrc == dstFriends.end())
-                {
-                    ack.retCode = EC_REQUEST_EXPIRE;
+                    info.fID = srcID;
+                    info.ownID = req.dst;
+                    info.makeTime = checkRight->second.makeTime;
+                    updateFriend(info);
+                    auto dstInner = UserManager::getRef().getInnerUserInfo(req.dst);
+                    if (dstInner && dstInner->sID != InvalidSeesionID)
+                    {
+                        notice.friends.clear();
+                        notice.friends.push_back(info);
+                        sendMessage(dstInner->sID, notice);
+                    }
                     break;
                 }
-                founderSrc->second.flag = FRIEND_ESTABLISHED;
-                founderSrc->second.makeTime = (unsigned int)time(NULL);
-                updateFriend(founderSrc->second);
+                else if (checkRight->second.flag == FRIEND_BLACKLIST)
+                {
+                    ack.retCode = EC_FRIEND_REFUSE;
+                    break;
+                }
             }
-            else
+            
+        }
+        
+
+        FriendInfo info;
+        info.fID = req.dst;
+        info.ownID = srcID;
+        info.flag = FRIEND_WAITING;
+        info.makeTime = (unsigned int)time(NULL);
+        info.lastChanged = info.makeTime;
+        if (srcExist != src->second.end())
+        {
+            info.makeTime = srcExist->second.makeTime;
+            srcExist->second = info;
+            updateFriend(info);
+        }
+        else
+        {
+            src->second[info.fID] = info;
+            insertFriend(info);
+        }
+        notice.friends.clear();
+        notice.friends.push_back(info);
+        sendMessage(session, notice);
+
+        if (dst == _friends.end())
+        {
+            _friends[req.dst];
+            dst = _friends.find(req.dst);
+        }
+        auto dstExist = dst->second.find(srcID);
+
+        info.fID = srcID;
+        info.ownID = req.dst;
+        info.flag = FRIEND_REQUESTING;
+        if (dstExist != dst->second.end())
+        {
+            info.makeTime = dstExist->second.makeTime;
+            dstExist->second = info;
+            updateFriend(info);
+        }
+        else
+        {
+            dst->second[info.fID] = info;
+            insertFriend(info);
+        }
+        auto dstInner = UserManager::getRef().getInnerUserInfo(req.dst);
+        if (dstInner && dstInner->sID != InvalidSeesionID)
+        {
+            notice.friends.clear();
+            notice.friends.push_back(info);
+            sendMessage(dstInner->sID, notice);
+        }
+        ack.retCode = EC_SUCCESS;
+    } while (false);
+    sendMessage(session, ack);
+}
+
+
+void Friend::msg_onAddFriendReply(TcpSessionPtr session, ReadStream & rs)
+{
+    AddFriendReply reply;
+    rs >> reply;
+    AddFriendAck ack;
+    ack.dst = reply.dst;
+    ack.retCode = EC_ERROR;
+    UpdateFriendsNotice notice;
+    do
+    {
+        UserID srcID = InvalidUserID;
+        {
+            auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
+            if (!inner)
             {
-                ack.retCode = EC_TARGET_NOT_EXIST;
                 break;
             }
+            srcID = inner->userInfo.uID;
         }
-        break;
-        default:
+        auto src = _friends.find(srcID);
+        if (src == _friends.end())
         {
-            ack.retCode = EC_PARAM_DENIED;
+            ack.retCode = EC_PERMISSION_DENIED;
             break;
         }
+        auto checkOwner = src->second.find(reply.dst);
+        if (checkOwner == src->second.end() || checkOwner->second.flag != FRIEND_REQUESTING)
+        {
+            ack.retCode = EC_PERMISSION_DENIED;
+            break;
+        }
+        auto dst = _friends.find(reply.dst);
+        if (dst == _friends.end())
+        {
+            ack.retCode = EC_PERMISSION_DENIED;
+            break;
+        }
+        auto checkRight = dst->second.find(srcID);
+        if (checkRight == src->second.end() || checkRight->second.flag != FRIEND_WAITING)
+        {
+            ack.retCode = EC_PERMISSION_DENIED;
+            break;
+        }
+       
+        checkOwner->second.flag = FRIEND_ESTABLISHED;
+        checkOwner->second.lastChanged = (unsigned int)time(NULL);
+
+        updateFriend(checkOwner->second);
+        notice.friends.clear();
+        notice.friends.push_back(checkOwner->second);
+        sendMessage(session, notice);
+
+
+        checkRight->second.flag = FRIEND_ESTABLISHED;
+        checkRight->second.lastChanged = checkOwner->second.lastChanged;
+        updateFriend(checkRight->second);
+        auto dstInner = UserManager::getRef().getInnerUserInfo(reply.dst);
+        if (dstInner && dstInner->sID != InvalidSeesionID)
+        {
+            notice.friends.clear();
+            notice.friends.push_back(checkRight->second);
+            sendMessage(dstInner->sID, notice);
+        }
+        ack.retCode = EC_SUCCESS;
     }
-    
-
-
-
-
-    
-
-    
-    
-    WriteStream ws(ID_FriendOperationNotice);
-    ws << ack;
-    session->doSend(ws.getStream(), ws.getStreamLen()); 
+    while (false);
+    sendMessage(session, ack);
 }
 
-void Friend::msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs)
+
+
+void Friend::msg_onDelFriendReq(TcpSessionPtr session, ReadStream & rs)
 {
-    /*GetSomeStrangersReq req;
+    DelFriendReq req;
     rs >> req;
-    auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
-    if (!inner)
+    DelFriendAck ack;
+    ack.dst = req.dst;
+    ack.retCode = EC_ERROR;
+    UpdateFriendsNotice notice;
+    do
     {
-        //.
-        return;
-    }
+        UserID srcID = InvalidUserID;
+        {
+            auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
+            if (!inner)
+            {
+                break;
+            }
+            srcID = inner->userInfo.uID;
+        }
+        auto src = _friends.find(srcID);
+        if (src == _friends.end())
+        {
+            ack.retCode = EC_FRIEND_NOT_EXIST;
+            break;
+        }
+        auto checkOwner = src->second.find(req.dst);
+        if (checkOwner == src->second.end() || checkOwner->second.flag == FRIEND_DELETED)
+        {
+            ack.retCode = EC_FRIEND_NOT_EXIST;
+            break;
+        }
+       
+        checkOwner->second.flag = FRIEND_DELETED;
+        checkOwner->second.lastChanged = (unsigned int)time(NULL);
 
-    GetSomeStrangersAck ack;
-    ack.retCode = EC_SUCCESS;
-    for (auto & c : _contacts)
-    {
-        if (ack.uIDs.size() > 10)
+        updateFriend(checkOwner->second);
+        notice.friends.clear();
+        notice.friends.push_back(checkOwner->second);
+        sendMessage(session, notice);
+        ack.retCode = EC_SUCCESS;
+
+
+        //如果该好友在线 设置为隐身
+        auto dst = _friends.find(req.dst);
+        if (dst == _friends.end())
         {
             break;
         }
-        if (c.first == session->getUserParam())
+        auto checkDst = dst->second.find(srcID);
+        if (checkDst == dst->second.end())
         {
-            continue;
+            break;
         }
-//         if (c.second.onlineFlag != 0)
-//         {
-             ack.uIDs.push_back(c.first);
-//         }
+        checkDst->second.online = false;
+        auto dstInner = UserManager::getRef().getInnerUserInfo(req.dst);
+        if (dstInner && dstInner->sID != InvalidSeesionID)
+        {
+            notice.friends.clear();
+            notice.friends.push_back(checkDst->second);
+            sendMessage(dstInner->sID, notice);
+        }
     }
-
-    WriteStream ws(ID_GetSomeStrangersAck);
-    ws << ack;
-    session->doSend(ws.getStream(), ws.getStreamLen()); */
+    while (false);
+    sendMessage(session, ack);
 }
+
+
+

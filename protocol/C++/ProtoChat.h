@@ -14,8 +14,8 @@ struct JoinGropuReq //加入频道
     { 
         chlType = 0; 
     } 
-    inline unsigned short GetProtoID() { return 1100;} 
-    inline std::string GetProtoName() { return "ID_JoinGropuReq";} 
+    static const unsigned short GetProtoID() { return 1100;} 
+    static const std::string GetProtoName() { return "ID_JoinGropuReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinGropuReq & data) 
 { 
@@ -55,8 +55,8 @@ struct JoinGropuAck
         retCode = 0; 
         chlType = 0; 
     } 
-    inline unsigned short GetProtoID() { return 1101;} 
-    inline std::string GetProtoName() { return "ID_JoinGropuAck";} 
+    static const unsigned short GetProtoID() { return 1101;} 
+    static const std::string GetProtoName() { return "ID_JoinGropuAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinGropuAck & data) 
 { 
@@ -99,8 +99,8 @@ struct LeaveGropuReq //加入频道
     { 
         chlType = 0; 
     } 
-    inline unsigned short GetProtoID() { return 1102;} 
-    inline std::string GetProtoName() { return "ID_LeaveGropuReq";} 
+    static const unsigned short GetProtoID() { return 1102;} 
+    static const std::string GetProtoName() { return "ID_LeaveGropuReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LeaveGropuReq & data) 
 { 
@@ -140,8 +140,8 @@ struct LeaveGropuAck
         retCode = 0; 
         chlType = 0; 
     } 
-    inline unsigned short GetProtoID() { return 1103;} 
-    inline std::string GetProtoName() { return "ID_LeaveGropuAck";} 
+    static const unsigned short GetProtoID() { return 1103;} 
+    static const std::string GetProtoName() { return "ID_LeaveGropuAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LeaveGropuAck & data) 
 { 
@@ -285,8 +285,8 @@ struct ChatReq //发送聊天请求
         chlType = 0; 
         dstID = 0; 
     } 
-    inline unsigned short GetProtoID() { return 1104;} 
-    inline std::string GetProtoName() { return "ID_ChatReq";} 
+    static const unsigned short GetProtoID() { return 1104;} 
+    static const std::string GetProtoName() { return "ID_ChatReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatReq & data) 
 { 
@@ -340,8 +340,8 @@ struct ChatAck //发送聊天请求
         dstID = 0; 
         msgID = 0; 
     } 
-    inline unsigned short GetProtoID() { return 1105;} 
-    inline std::string GetProtoName() { return "ID_ChatAck";} 
+    static const unsigned short GetProtoID() { return 1105;} 
+    static const std::string GetProtoName() { return "ID_ChatAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatAck & data) 
 { 
@@ -395,8 +395,8 @@ struct ChatNotice //聊天通知
     { 
         retCode = 0; 
     } 
-    inline unsigned short GetProtoID() { return 1106;} 
-    inline std::string GetProtoName() { return "ID_ChatNotice";} 
+    static const unsigned short GetProtoID() { return 1106;} 
+    static const std::string GetProtoName() { return "ID_ChatNotice";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatNotice & data) 
 { 

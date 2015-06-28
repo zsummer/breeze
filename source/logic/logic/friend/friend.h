@@ -56,10 +56,12 @@ public:
     void onUserLogout(EventTriggerID tID, UserID uID, Any , Any , Any );
 public:
     void msg_onGetFriendsReq(TcpSessionPtr session, ReadStream & rs);
-    void msg_onFriendOperationReq(TcpSessionPtr session, ReadStream & rs);
-    void msg_onGetSomeStrangersReq(TcpSessionPtr session, ReadStream & rs);
-    
+    void msg_onAddFriendReq(TcpSessionPtr session, ReadStream & rs);
+    void msg_onAddFriendReply(TcpSessionPtr session, ReadStream & rs);
+    void msg_onDelFriendReq(TcpSessionPtr session, ReadStream & rs);
+
 private:
+    //<用户ID, <朋友ID, 状态> >
     std::map<UserID, std::map<UserID, FriendInfo> > _friends;
 };
 

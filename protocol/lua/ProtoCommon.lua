@@ -8,10 +8,10 @@ Proto4z.EC_REQUEST_EXPIRE = 6--请求操作已过期
 Proto4z.EC_TARGET_NOT_EXIST = 7--操作目标不存在 
 Proto4z.EC_INVALIDE_USER = 50--错误的用户信息 
 Proto4z.EC_TOKEN_EXPIRE = 51--令牌过期 
-Proto4z.EC_OWNER_FRIEND = 100--自己的好友 
-Proto4z.EC_OWNER_BLACKLIST = 101--自己的黑名单用户 
-Proto4z.EC_TARGET_BLACKLIST = 102--对方的黑名单用户 
-Proto4z.EC_TARGET_REQUESTING = 103--已在对方的请求列表中 
+Proto4z.EC_FRIEND_DUPLICATE = 100--请先删除与该好友建立的关系 
+Proto4z.EC_FRIEND_CEILING = 101--达到好友上限 
+Proto4z.EC_FRIEND_REFUSE = 102--不能添加对方为好友 
+Proto4z.EC_FRIEND_NOT_EXIST = 103--好友不存在 
  
 Proto4z.SessionToken = {} --认证令牌 
 Proto4z.SessionToken.__getName = "SessionToken" 

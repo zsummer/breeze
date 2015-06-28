@@ -67,9 +67,20 @@ inline unsigned  int getNowTick()
     return (unsigned int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
+template <class MSG>
+void sendMessage(TcpSessionPtr & session, MSG & msg)
+{
+    WriteStream ws(MSG::GetProtoID());
+    ws << msg;
+    session->doSend(ws.getStream(), ws.getStreamLen());
+}
 
-
-
-
+template <class MSG>
+void sendMessage(SessionID & sID, MSG & msg)
+{
+    WriteStream ws(MSG::GetProtoID());
+    ws << msg;
+    SessionManager::getRef().sendSessionData(sID, ws.getStream(), ws.getStreamLen());
+}
 
 #endif

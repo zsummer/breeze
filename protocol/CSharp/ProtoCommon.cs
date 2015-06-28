@@ -41,19 +41,19 @@ namespace Proto4z
     { 
         public static Proto4z.ui16 value = 51;  
     } 
-    class STATIC_EC_OWNER_FRIEND //自己的好友 
+    class STATIC_EC_FRIEND_DUPLICATE //请先删除与该好友建立的关系 
     { 
         public static Proto4z.ui16 value = 100;  
     } 
-    class STATIC_EC_OWNER_BLACKLIST //自己的黑名单用户 
+    class STATIC_EC_FRIEND_CEILING //达到好友上限 
     { 
         public static Proto4z.ui16 value = 101;  
     } 
-    class STATIC_EC_TARGET_BLACKLIST //对方的黑名单用户 
+    class STATIC_EC_FRIEND_REFUSE //不能添加对方为好友 
     { 
         public static Proto4z.ui16 value = 102;  
     } 
-    class STATIC_EC_TARGET_REQUESTING //已在对方的请求列表中 
+    class STATIC_EC_FRIEND_NOT_EXIST //好友不存在 
     { 
         public static Proto4z.ui16 value = 103;  
     } 

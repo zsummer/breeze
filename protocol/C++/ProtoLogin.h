@@ -8,8 +8,8 @@ struct PlatAuthReq //平台认证
 { 
     std::string account; //用户名 
     std::string token; //令牌 
-    inline unsigned short GetProtoID() { return 100;} 
-    inline std::string GetProtoName() { return "ID_PlatAuthReq";} 
+    static const unsigned short GetProtoID() { return 100;} 
+    static const std::string GetProtoName() { return "ID_PlatAuthReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthReq & data) 
 { 
@@ -53,8 +53,8 @@ struct PlatAuthAck //认证结果, 包含该用户的所有用户/角色数据
     { 
         retCode = 0; 
     } 
-    inline unsigned short GetProtoID() { return 101;} 
-    inline std::string GetProtoName() { return "ID_PlatAuthAck";} 
+    static const unsigned short GetProtoID() { return 101;} 
+    static const std::string GetProtoName() { return "ID_PlatAuthAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthAck & data) 
 { 
@@ -98,8 +98,8 @@ struct CreateUserReq //创建一个新的用户数据
     { 
         iconID = 0; 
     } 
-    inline unsigned short GetProtoID() { return 102;} 
-    inline std::string GetProtoName() { return "ID_CreateUserReq";} 
+    static const unsigned short GetProtoID() { return 102;} 
+    static const std::string GetProtoName() { return "ID_CreateUserReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserReq & data) 
 { 
@@ -143,8 +143,8 @@ struct CreateUserAck //创建结果和所有用户数据
     { 
         retCode = 0; 
     } 
-    inline unsigned short GetProtoID() { return 103;} 
-    inline std::string GetProtoName() { return "ID_CreateUserAck";} 
+    static const unsigned short GetProtoID() { return 103;} 
+    static const std::string GetProtoName() { return "ID_CreateUserAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserAck & data) 
 { 
@@ -187,8 +187,8 @@ struct SelectUserReq //获取需要登录用户的所在服务器和认证令牌
     { 
         uID = 0; 
     } 
-    inline unsigned short GetProtoID() { return 104;} 
-    inline std::string GetProtoName() { return "ID_SelectUserReq";} 
+    static const unsigned short GetProtoID() { return 104;} 
+    static const std::string GetProtoName() { return "ID_SelectUserReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserReq & data) 
 { 
@@ -232,8 +232,8 @@ struct SelectUserAck //获取需要登录用户的所在服务器和认证令牌
         uID = 0; 
         port = 0; 
     } 
-    inline unsigned short GetProtoID() { return 105;} 
-    inline std::string GetProtoName() { return "ID_SelectUserAck";} 
+    static const unsigned short GetProtoID() { return 105;} 
+    static const std::string GetProtoName() { return "ID_SelectUserAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserAck & data) 
 { 
@@ -292,8 +292,8 @@ struct LinkServerReq //连接到服务器
     { 
         uID = 0; 
     } 
-    inline unsigned short GetProtoID() { return 106;} 
-    inline std::string GetProtoName() { return "ID_LinkServerReq";} 
+    static const unsigned short GetProtoID() { return 106;} 
+    static const std::string GetProtoName() { return "ID_LinkServerReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LinkServerReq & data) 
 { 
@@ -336,8 +336,8 @@ struct LinkServerAck //连接到服务器
     { 
         retCode = 0; 
     } 
-    inline unsigned short GetProtoID() { return 107;} 
-    inline std::string GetProtoName() { return "ID_LinkServerAck";} 
+    static const unsigned short GetProtoID() { return 107;} 
+    static const std::string GetProtoName() { return "ID_LinkServerAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LinkServerAck & data) 
 { 
