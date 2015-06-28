@@ -33,11 +33,15 @@ namespace Proto4z
     { 
         public static Proto4z.ui16 value = 7;  
     } 
-    class STATIC_EC_INVALIDE_USER //错误的用户信息 
+    class STATIC_EC_TOKEN_EXPIRE //令牌过期 
+    { 
+        public static Proto4z.ui16 value = 8;  
+    } 
+    class STATIC_EC_USER_NOT_FOUND //错误的用户信息 
     { 
         public static Proto4z.ui16 value = 50;  
     } 
-    class STATIC_EC_TOKEN_EXPIRE //令牌过期 
+    class STATIC_EC_USER_OFFLINE //错误的用户信息 
     { 
         public static Proto4z.ui16 value = 51;  
     } 

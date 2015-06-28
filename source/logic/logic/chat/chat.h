@@ -62,6 +62,7 @@ public:
     
 private:
 
+    //频道
     std::map<unsigned long long, UserIDArray> _channels;
 
     //过滤词库

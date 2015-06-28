@@ -133,13 +133,13 @@ void NetManager::msg_onLinkServerReq(TcpSessionPtr session, ReadStream & rs)
         }
         else
         {
-            ack.retCode = EC_INVALIDE_USER;
+            ack.retCode = EC_USER_NOT_FOUND;
         }
         
     }
     else
     {
-        ack.retCode = EC_INVALIDE_USER;
+        ack.retCode = EC_USER_NOT_FOUND;
     }
     
     WriteStream ws(ID_LinkServerAck);

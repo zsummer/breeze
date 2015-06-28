@@ -129,86 +129,106 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
 {
     ChatReq req;
     rs >> req;
-    auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
-    if (!inner)
+    ChatAck ack;
+    ack.retCode = EC_ERROR;
+    ack.msgID = 0;
+    ack.chlType = req.chlType;
+    ack.dstID = req.dstID;
+    do 
     {
-        //.
-        return;
-    }
-    ChatInfo info;
-    info.chlType = req.chlType;
-    info.dstID = req.dstID;
-    info.mID = _genID.genNewObjID();
-    info.msg = req.msg;
-    info.sendTime = (unsigned int)time(NULL);
-    info.srcIcon = inner->userInfo.iconID;
-    info.srcID = inner->userInfo.uID;
-    info.srcName = inner->userInfo.nickName;
-    //塞进数据库原诗的聊天内容
-    auto chatsql = ChatInfo_INSERT(info);
-    DBManager::getRef().infoAsyncQuery(chatsql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
 
-    //过滤掉脏字
-    match_tree_translate(_filter, &info.msg[0], (unsigned int)info.msg.length(), 1, '*');
-
-    //通知下去
-    if (info.chlType == CHANNEL_PRIVATE)
-    {
-        auto dstinner = UserManager::getRef().getInnerUserInfo(req.dstID);
-        if (!dstinner)
+        auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
+        if (!inner)
         {
-            return;
+            break;
         }
-        info.dstIcon = dstinner->userInfo.iconID;
-        info.dstName = dstinner->userInfo.nickName;
-        if (dstinner->sID != InvalidSeesionID)
+        ChatInfo info;
+        info.chlType = req.chlType;
+        info.dstID = req.dstID;
+        info.mID = _genID.genNewObjID();
+        info.msg = req.msg;
+        info.sendTime = (unsigned int)time(NULL);
+        info.srcIcon = inner->userInfo.iconID;
+        info.srcID = inner->userInfo.uID;
+        info.srcName = inner->userInfo.nickName;
+        ack.msgID = info.mID;
+        //塞进数据库
+        auto chatsql = ChatInfo_INSERT(info);
+        DBManager::getRef().infoAsyncQuery(chatsql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
+
+        //过滤掉脏字
+        match_tree_translate(_filter, &info.msg[0], (unsigned int)info.msg.length(), 1, '*');
+
+        //通知下去
+        if (info.chlType == CHANNEL_PRIVATE)
+        {
+            auto dstinner = UserManager::getRef().getInnerUserInfo(req.dstID);
+            if (!dstinner)
+            {
+                ack.retCode = EC_USER_NOT_FOUND;
+                return;
+            }
+            info.dstIcon = dstinner->userInfo.iconID;
+            info.dstName = dstinner->userInfo.nickName;
+            if (dstinner->sID != InvalidSeesionID)
+            {
+                WriteStream ws(ID_ChatNotice);
+                ChatNotice notice;
+                notice.msgs.push_back(info);
+                ws << notice;
+                SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
+                ack.retCode = EC_SUCCESS;
+                break;
+            }
+            else
+            {
+                ack.retCode = EC_USER_OFFLINE;
+                break;
+            }
+        }
+        else if (info.chlType == CHANNEL_GROUP || info.chlType == CHANNEL_WORLD)
         {
             WriteStream ws(ID_ChatNotice);
             ChatNotice notice;
             notice.msgs.push_back(info);
             ws << notice;
-            SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
-        }
-    }
-    else if (info.chlType == CHANNEL_GROUP || info.chlType == CHANNEL_WORLD)
-    {
-        WriteStream ws(ID_ChatNotice);
-        ChatNotice notice;
-        notice.msgs.push_back(info);
-        ws << notice;
 
-        if (info.chlType == CHANNEL_GROUP)
-        {
-            auto founder = _channels.find(info.dstID);
-            if (founder != _channels.end())
+            if (info.chlType == CHANNEL_GROUP)
             {
-                for (auto id : founder->second)
+                auto founder = _channels.find(info.dstID);
+                if (founder != _channels.end())
                 {
-                    auto dstinner = UserManager::getRef().getInnerUserInfo(id);
-                    if (!dstinner || dstinner->sID == InvalidSeesionID)
+                    for (auto id : founder->second)
                     {
-                        continue;;
+                        auto dstinner = UserManager::getRef().getInnerUserInfo(id);
+                        if (!dstinner || dstinner->sID == InvalidSeesionID)
+                        {
+                            continue;;
+                        }
+                        SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
                     }
-                    SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
+                    ack.retCode = EC_SUCCESS;
+                    break;
                 }
-                
+                else
+                {
+                    ack.retCode = EC_TARGET_NOT_EXIST;
+                    break;
+                }
+            }
+            else
+            {
+                UserManager::getRef().broadcast(ws, UserIDArray());
+                ack.retCode = EC_SUCCESS;
+                break;
             }
         }
         else
         {
-            UserManager::getRef().broadcast(ws, UserIDArray());
+            ack.retCode = EC_PARAM_DENIED;
+            break;
         }
-        
-    }
-
-
-
-    WriteStream ws(ID_ChatAck);
-    ChatAck ack;
-    ack.chlType = info.chlType;
-    ack.dstID = info.dstID;
-    ack.msgID = info.mID;
-    ack.retCode = EC_SUCCESS;
-    ws << ack;
-    session->doSend(ws.getStream(), ws.getStreamLen());
+    } while (false);
+    
+    sendMessage(session, ack);
 }

@@ -108,6 +108,8 @@ void UserManager::broadcast(WriteStream & ws, const UserIDArray uIDs)
         }
     }
 }
+
+
 void UserManager::addUser(const UserInfo & info)
 {
     auto inner = std::make_shared<InnerUserInfo>();
@@ -115,6 +117,8 @@ void UserManager::addUser(const UserInfo & info)
     _mapUser.insert(std::make_pair(info.uID, inner));
     _mapNickName.insert(std::make_pair(info.nickName, inner));
 }
+
+
 void UserManager::setUserToken(UserID uID, std::string token, time_t expireTime)
 {
     auto inner = getInnerUserInfo(uID);
@@ -125,6 +129,8 @@ void UserManager::setUserToken(UserID uID, std::string token, time_t expireTime)
         inner->token.uID = uID;
     }
 }
+
+
 void UserManager::userLogin(std::shared_ptr<InnerUserInfo> innerInfo)
 {
     _mapSession[innerInfo->sID] = innerInfo;
