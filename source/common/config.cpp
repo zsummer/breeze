@@ -23,9 +23,8 @@ extern "C"
 #include "lua/lua.h"
 #include "lua/lualib.h"
 #include "lua/lauxlib.h"
-#include "lua/lpack.h"
-    int luaopen_protoz_bit(lua_State *L);
-    int luaopen_cjson(lua_State *l);
+int luaopen_protoz_util(lua_State *L);
+int luaopen_cjson(lua_State *l);
 }
 
 

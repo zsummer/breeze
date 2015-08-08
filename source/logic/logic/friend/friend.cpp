@@ -81,6 +81,7 @@ void  Friend::onUserLogin(EventTriggerID tID, UserID uID, Any count, Any iconID,
 {
     auto & friends = _friends[uID];
     UpdateFriendsNotice notice;
+    notice.friends.resize(1);
     auto & info = notice.friends[0];
     for (auto & f : friends)
     {
@@ -115,6 +116,7 @@ void  Friend::onUserLogout(EventTriggerID tID, UserID uID, Any count, Any iconID
 {
     auto & friends = _friends[uID];
     UpdateFriendsNotice notice;
+    notice.friends.resize(1);
     auto & info = notice.friends[0];
     for (auto & f : friends)
     {

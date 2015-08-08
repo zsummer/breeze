@@ -140,11 +140,11 @@ const static Integer MaxPackLen = 1024*1024;
 
 //stream translate to Integer with endian type.
 template<class Integer>
-Integer streamToInteger(const char stream[sizeof(Integer)]);
+Integer streamToBaseType(const char stream[sizeof(Integer)]);
 
 //integer translate to stream with endian type.
 template<class Integer>
-void integerToStream(Integer integer, char *stream);
+void baseTypeToStream(Integer integer, char *stream);
 
 //!get runtime local endian type. 
 static const unsigned short __gc_localEndianType = 1;
@@ -545,14 +545,10 @@ inline ZSummer_EndianType __localEndianType()
     }
     return BigEndian;
 }
-template<class Integer>
-Integer reversalInteger(Integer n)
+template<class BaseType>
+BaseType byteRevese(BaseType n)
 {
-    if (sizeof(n) == 1)
-    {
-        return n;
-    }
-    Integer ret = 0;
+    BaseType ret = 0;
     int integerLen = sizeof(n);
     unsigned char *dst = (unsigned char*)&ret;
     unsigned char *src = (unsigned char*)&n + integerLen;
@@ -564,49 +560,46 @@ Integer reversalInteger(Integer n)
     return ret;
 }
 
-template<class Integer>
-Integer streamToInteger(const char stream[sizeof(Integer)])
+template<class BaseType>
+BaseType streamToBaseType(const char stream[sizeof(BaseType)])
 {
     if (stream == NULL)
     {
-        throw std::runtime_error("streamToInteger stream is NULL");
+        throw std::runtime_error("streamToBaseType stream is NULL");
     }
     
-    unsigned short integerLen = sizeof(Integer);
-    Integer integer = 0 ;
-    if (integerLen == 1)
+    unsigned short bytes = sizeof(BaseType);
+    BaseType v = 0;
+    if (bytes == 1)
     {
-        integer = (Integer)stream[0];
+        v = (BaseType)stream[0];
     }
     else
     {
+        memcpy(&v, stream, bytes);
         if (LittleEndian != __localEndianType())
         {
-            integer = reversalInteger<Integer>(integer);
-        }
-        else
-        {
-            integer = *(Integer*)stream;
+            v = byteRevese(v);
         }
     }
-    return integer;
+    return v;
 }
 
-template<class Integer>
-void integerToStream(Integer integer, char *stream)
+template<class BaseType>
+void baseTypeToStream(BaseType v, char *stream)
 {
-    unsigned short integerLen = sizeof(Integer);
-    if (integerLen == 1)
+    unsigned short bytes = sizeof(BaseType);
+    if (bytes == 1)
     {
-        stream[0] = (char)integer;
+        stream[0] = (char)v;
     }
     else
     {
         if (LittleEndian != __localEndianType())
         {
-            integer = reversalInteger<Integer>(integer);
+            v = byteRevese(v);
         }
-        memcpy(stream, &integer, integerLen);
+        memcpy(stream, &v, bytes);
     }
 }
 
@@ -629,7 +622,7 @@ inline std::pair<INTEGRITY_RET_TYPE, Integer> checkBuffIntegrity(const char * bu
         return std::make_pair(IRT_SHORTAGE, headLen - curBuffLen);
     }
 
-    Integer packLen = streamToInteger<Integer>(buff);
+    Integer packLen = streamToBaseType<Integer>(buff);
 
     if (packLen > boundLen)
     {
@@ -689,13 +682,13 @@ inline WriteStream::WriteStream(ProtoInteger pID, char * attachData, Integer max
     Integer packLen = _headLen;
     if (_attachData)
     {
-        integerToStream<Integer>(packLen, &_attachData[0]);
-        integerToStream<ProtoInteger>(pID, &_attachData[sizeof(Integer)]);
+        baseTypeToStream<Integer>(packLen, &_attachData[0]);
+        baseTypeToStream<ProtoInteger>(pID, &_attachData[sizeof(Integer)]);
     }
     else
     {
-        integerToStream<Integer>(packLen, &_data[0]);
-        integerToStream<ProtoInteger>(pID, &_data[sizeof(Integer)]);
+        baseTypeToStream<Integer>(packLen, &_data[0]);
+        baseTypeToStream<ProtoInteger>(pID, &_data[sizeof(Integer)]);
     }
 }
 
@@ -731,11 +724,11 @@ inline void WriteStream::fixPackLen()
     Integer packLen = _cursor;
     if (_attachData)
     {
-        integerToStream<Integer>(packLen, &_attachData[0]);
+        baseTypeToStream<Integer>(packLen, &_attachData[0]);
     }
     else
     {
-        integerToStream<Integer>(packLen, &_data[0]);
+        baseTypeToStream<Integer>(packLen, &_data[0]);
     }
 }
 
@@ -804,11 +797,11 @@ inline WriteStream & WriteStream::fixOriginalData(Integer offset, Integer unit)
     }
     if (_attachData)
     {
-        integerToStream<Integer>(unit, &_attachData[offset]);
+        baseTypeToStream<Integer>(unit, &_attachData[offset]);
     }
     else
     {
-        integerToStream<Integer>(unit, &_data[offset]);
+        baseTypeToStream<Integer>(unit, &_data[offset]);
     }
     return *this;
 }
@@ -821,14 +814,14 @@ inline WriteStream & WriteStream::writeIntegerData(T t)
     {
         if (_attachData)
         {
-            integerToStream<T>(t, &_attachData[_cursor]);
+            baseTypeToStream<T>(t, &_attachData[_cursor]);
         }
         else
         {
             _data.append((const char*)&t, unit);
             if (LittleEndian != __localEndianType())
             {
-                integerToStream<T>(t, &_data[_cursor]);
+                baseTypeToStream<T>(t, &_data[_cursor]);
             }
         }
     }
@@ -888,8 +881,8 @@ inline ReadStream::ReadStream(const char *attachData, Integer attachDataLen, boo
         }
 
         _cursor = sizeof(Integer) + sizeof(ProtoInteger);
-        _pID = streamToInteger<ProtoInteger>(&_attachData[sizeof(Integer)]);
-        Integer len = streamToInteger<Integer>(&_attachData[0]);
+        _pID = streamToBaseType<ProtoInteger>(&_attachData[sizeof(Integer)]);
+        Integer len = streamToBaseType<Integer>(&_attachData[0]);
         if (len < _maxDataLen) // if stream invalid, ReadStream try read data as much as possible.
         {
             _maxDataLen = len;
@@ -984,7 +977,7 @@ inline ReadStream & ReadStream::readIntegerData(T & t)
 {
     Integer unit = sizeof(T);
     checkMoveCursor(unit);
-    t = streamToInteger<T>(&_attachData[_cursor]);
+    t = streamToBaseType<T>(&_attachData[_cursor]);
     _cursor += unit;
     return * this;
 }

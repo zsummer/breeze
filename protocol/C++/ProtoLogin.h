@@ -14,7 +14,7 @@ struct PlatAuthReq //平台认证
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthReq & data) 
 { 
     unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -30,7 +30,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.account;  
@@ -59,7 +59,7 @@ struct PlatAuthAck //认证结果, 包含该用户的所有用户/角色数据
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthAck & data) 
 { 
     unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -75,7 +75,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.retCode;  
@@ -104,7 +104,7 @@ struct CreateUserReq //创建一个新的用户数据
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserReq & data) 
 { 
     unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -120,7 +120,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.nickName;  
@@ -149,7 +149,7 @@ struct CreateUserAck //创建结果和所有用户数据
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserAck & data) 
 { 
     unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -165,7 +165,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.retCode;  
@@ -193,7 +193,7 @@ struct SelectUserReq //获取需要登录用户的所在服务器和认证令牌
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserReq & data) 
 { 
     unsigned long long tag = 1ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -208,7 +208,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.uID;  
@@ -238,7 +238,7 @@ struct SelectUserAck //获取需要登录用户的所在服务器和认证令牌
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserAck & data) 
 { 
     unsigned long long tag = 31ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -257,7 +257,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.retCode;  
@@ -298,7 +298,7 @@ struct LinkServerReq //连接到服务器
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LinkServerReq & data) 
 { 
     unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -314,7 +314,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.uID;  
@@ -342,7 +342,7 @@ struct LinkServerAck //连接到服务器
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LinkServerAck & data) 
 { 
     unsigned long long tag = 1ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -357,7 +357,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.retCode;  

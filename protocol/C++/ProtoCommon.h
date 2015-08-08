@@ -32,7 +32,7 @@ struct SessionToken //认证令牌
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SessionToken & data) 
 { 
     unsigned long long tag = 7ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -49,7 +49,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.uID;  
@@ -90,7 +90,7 @@ struct UserInfo //用户信息
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserInfo & data) 
 { 
     unsigned long long tag = 255ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -112,7 +112,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.uID;  
@@ -172,7 +172,7 @@ struct Heartbeat //心跳包
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Heartbeat & data) 
 { 
     unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -188,7 +188,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.timeStamp;  
@@ -218,7 +218,7 @@ struct HeartbeatEcho //心跳包需要立刻回复
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const HeartbeatEcho & data) 
 { 
     unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     ws << (zsummer::proto4z::Integer)0; 
     zsummer::proto4z::Integer offset = ws.getStreamLen(); 
     ws << tag; 
@@ -234,7 +234,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
     unsigned long long tag = 0; 
     rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::reversalInteger(tag); 
+    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
     if ( (1ULL << 0) & tag) 
     { 
         rs >> data.timeStamp;  

@@ -72,18 +72,7 @@ bool NetManager::start()
 
 bool NetManager::stop(std::function<void()> onSafeClosed)
 {
-//     SessionManager::getRef().stopAccept();
-//     SessionManager::getRef().kickAllClients();
-//     SessionManager::getRef().kickAllConnect();
-// 
-//     if (UserManager::getRef().getAllOnlineUserCount() == 0)
-//     {
-//         SessionManager::getRef().post(onSafeClosed);
-//     }
-//     else
-//     {
-//         _onSafeClosed = onSafeClosed;
-//     }
+    onSafeClosed();
     return true;
 }
 

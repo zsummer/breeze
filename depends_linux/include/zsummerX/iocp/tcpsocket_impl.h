@@ -81,7 +81,7 @@ namespace zsummer
         public:
             bool attachSocket(SOCKET s, std::string remoteIP, unsigned short remotePort);
             void onIOCPMessage(BOOL bSuccess, DWORD dwTranceBytes, unsigned char cType);
-            std::string getTcpSocketStatus();
+            std::string logSection();
         public:
             //private
             EventLoopPtr  _summer;

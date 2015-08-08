@@ -64,8 +64,7 @@ int main(int argc, char* argv[])
         lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
         luaL_openlibs(L);  /* open libraries */
         luaopen_summer(L);
-        luaopen_pack(L);
-        luaopen_protoz_bit(L);
+        luaopen_proto4z_util(L);
         luaopen_cjson(L);
         lua_gc(L, LUA_GCRESTART, 0);
 

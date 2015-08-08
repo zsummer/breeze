@@ -41,157 +41,405 @@
 #include "lauxlib.h"
 #include <string.h>
 #include <stdbool.h>
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#else
+#include <time.h>
+#include <sys/time.h>
+#endif // WIN32
 
+#ifdef __APPLE__
+#include<mach/mach_time.h>
+#endif // __APPLE__
 
-int luaopen_protoz_bit(lua_State *L);
-
-
+int luaopen_proto4z_util(lua_State *L);
 
 static const unsigned short __gc_localEndianType = 1;
-static bool islocalLittleEndian()
+static int isEndianType()
 {
     if (*(const unsigned char *)&__gc_localEndianType == 1)
     {
-        return true;
+        return 1;
     }
-    return false;
+    return 0;
 }
 
-static unsigned long long reversalInteger(unsigned long long org)
+void byteRevese(char * buf, unsigned int bytes)
 {
-    unsigned long long ret = 0;
-    size_t len = sizeof(unsigned long long);
-
-    unsigned char *dst = (unsigned char*)&ret;
-    unsigned char *src = (unsigned char*)org + sizeof(unsigned long long);
-    while (len > 0)
+    char tmp = 0;
+    char *dst = buf;
+    char *src = buf + bytes;
+    bytes /= 2;
+    while (bytes > 0)
     {
+        tmp = *dst;
         *dst++ = *--src;
-        len--;
+        *src = tmp;
+        bytes--;
     }
-    return ret;
+    return;
 }
 
 
-static int checkIntegerBitTrue(lua_State *L)
+static int newTag(lua_State * L)
 {
-    size_t len = 0;
-    const char * stream;
-    size_t pos;
-    unsigned long long val;
-    stream = luaL_checklstring(L, 1, &len);
-    if (len != 8)
+    unsigned long long tag = 0;
+    lua_pushlstring(L, (const char*)&tag, sizeof(tag));
+    return 1;
+}
+
+static int setTag(lua_State * L)
+{
+    unsigned long long tag = 0;
+    const char * luaTag = luaL_checkstring(L, 1);
+    int n = (int)luaL_checkinteger(L, 2);
+    memcpy(&tag, luaTag, sizeof(tag));
+    tag |= (unsigned long long)1 << (n - 1);
+    lua_pushlstring(L, (const char*)&tag, sizeof(tag));
+    return 1;
+}
+
+static int unsetTag(lua_State * L)
+{
+    unsigned long long tag = 0;
+    const char * luaTag = luaL_checkstring(L, 1);
+    int n = (int)luaL_checkinteger(L, 2);
+    memcpy(&tag, luaTag, sizeof(tag));
+    tag &= ~((unsigned long long)1 << (n - 1));
+    lua_pushlstring(L, (const char*)&tag, sizeof(tag));
+    return 1;
+}
+
+static int testTag(lua_State * L)
+{
+    unsigned long long tag = 0;
+    const char * luaTag = luaL_checkstring(L, 1);
+    int n = (int)luaL_checkinteger(L, 2);
+    memcpy(&tag, luaTag, sizeof(tag));
+    int ret = tag & ((unsigned long long)1 << (n - 1));
+    lua_pushboolean(L, ret);
+    return 1;
+}
+
+static int pack(lua_State * L)
+{
+    const char * tp = luaL_checkstring(L, 2);
+
+    if (strcmp(tp, "i8") == 0)
+    {
+        char v = (char)luaL_checkinteger(L, 1);
+        lua_pushlstring(L, &v, 1);
+    }
+    else if (strcmp(tp, "ui8") == 0)
+    {
+        unsigned char v = (unsigned char)luaL_checkinteger(L, 1);
+        lua_pushlstring(L, (const char *)&v, 1);
+    }
+    else if (strcmp(tp, "i16") == 0)
+    {
+        short v = (short)luaL_checkinteger(L, 1);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 2);
+        }
+        lua_pushlstring(L, (const char *)&v, 2);
+    }
+    else if (strcmp(tp, "ui16") == 0)
+    {
+        unsigned short v = (unsigned short)luaL_checkinteger(L, 1);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 2);
+        }
+        lua_pushlstring(L, (const char *)&v, 2);
+    }
+    else if (strcmp(tp, "i32") == 0)
+    {
+        int v = (int)luaL_checkinteger(L, 1);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 4);
+        }
+        lua_pushlstring(L, (const char *)&v, 4);
+    }
+    else if (strcmp(tp, "ui32") == 0)
+    {
+        unsigned int v = (unsigned int)luaL_checkinteger(L, 1);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 4);
+        }
+        lua_pushlstring(L, (const char *)&v, 4);
+    }
+    else if (strcmp(tp, "i64") == 0 || strcmp(tp, "ui64") == 0)
+    {
+        lua_pushvalue(L, 1);
+    }
+    else if (strcmp(tp, "float") == 0)
+    {
+        float v = (float)luaL_checknumber(L, 1);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 4);
+        }
+        lua_pushlstring(L, (const char *)&v, 4);
+    }
+    else if (strcmp(tp, "double") == 0)
+    {
+        double v = (double)luaL_checknumber(L, 1);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 8);
+        }
+        lua_pushlstring(L, (const char *)&v, 8);
+    }
+    else
     {
         return 0;
     }
-    val = *(unsigned long long *)stream;
-    if (!islocalLittleEndian())
-    {
-        val = reversalInteger(val);
-    }
-    pos = luaL_checkinteger(L, 2);
+    return 1;
+}
 
-    lua_settop(L, 0);
-    
-    if (val & (1ULL << pos))
+
+static int unpack(lua_State * L)
+{
+    size_t dataLen = 0;
+    const char * data = luaL_checklstring(L, 1, &dataLen);
+    int pos = (int)luaL_checkinteger(L, 2);
+    const char * tp = luaL_checkstring(L, 3);
+    if (pos < 1 || (size_t)pos > dataLen)
     {
-        lua_pushboolean(L, 1);
+        return 0;
+    }
+    
+    if (strcmp(tp, "i8") == 0)
+    {
+        if (pos - 1 + 1 > dataLen)
+        {
+            return 0;
+        }
+        char ch = (char)data[pos - 1];
+        lua_pushinteger(L, ch);
+        lua_pushinteger(L, pos + 1);
+    }
+    else if (strcmp(tp, "ui8") == 0)
+    {
+        if (pos - 1 + 1 > dataLen)
+        {
+            return 0;
+        }
+        unsigned char ch = (unsigned char)data[pos - 1];
+        lua_pushinteger(L, ch);
+        lua_pushinteger(L, pos + 1);
+    }
+    else if (strcmp(tp, "i16") == 0)
+    {
+        if (pos - 1 + 2 > dataLen)
+        {
+            return 0;
+        }
+        short v = 0;
+        memcpy(&v, &data[pos - 1], 2);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 2);
+        }
+        lua_pushinteger(L, v);
+        lua_pushinteger(L, pos + 2);
+    }
+    else if (strcmp(tp, "ui16") == 0)
+    {
+        if (pos - 1 + 2 > dataLen)
+        {
+            return 0;
+        }
+        unsigned short v = 0;
+        memcpy(&v, &data[pos - 1], 2);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 2);
+        }
+        lua_pushinteger(L, v);
+        lua_pushinteger(L, pos + 2);
+    }
+    else if (strcmp(tp, "i32") == 0)
+    {
+        if (pos - 1 + 4 > dataLen)
+        {
+            return 0;
+        }
+        int v = 0;
+        memcpy(&v, &data[pos - 1], 4);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 4);
+        }
+        lua_pushinteger(L, v);
+        lua_pushinteger(L, pos + 4);
+    }
+    else if (strcmp(tp, "ui32") == 0)
+    {
+        if (pos - 1 + 4 > dataLen)
+        {
+            return 0;
+        }
+        unsigned int v = 0;
+        memcpy(&v, &data[pos - 1], 4);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 4);
+        }
+        lua_pushinteger(L, v);
+        lua_pushinteger(L, pos + 4);
+    }
+    else if (strcmp(tp, "i64") == 0 || strcmp(tp, "ui64") == 0)
+    {
+        if (pos - 1 + 8 > dataLen)
+        {
+            return 0;
+        }
+        lua_pushlstring(L, &data[pos - 1], 8);
+        lua_pushinteger(L, pos + 8);
+    }
+    else if (strcmp(tp, "float") == 0)
+    {
+        if (pos - 1 + 4 > dataLen)
+        {
+            return 0;
+        }
+        float v = 0;
+        memcpy(&v, &data[pos - 1], 4);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 4);
+        }
+        lua_pushnumber(L, v);
+        lua_pushinteger(L, pos + 4);
+    }
+    else if (strcmp(tp, "double") == 0)
+    {
+        if (pos - 1 + 8 > dataLen)
+        {
+            return 0;
+        }
+        double v = 0;
+        memcpy(&v, &data[pos - 1], 8);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&v, 8);
+        }
+        lua_pushnumber(L, v);
+        lua_pushinteger(L, pos + 8);
+    }
+    else if (strcmp(tp, "string") == 0)
+    {
+        if (pos - 1 + 4 > dataLen)
+        {
+            return 0;
+        }
+        unsigned int strLen = 0;
+        memcpy(&strLen, &data[pos - 1], 4);
+        if (!isEndianType())
+        {
+            byteRevese((char*)&strLen, 4);
+        }
+        pos += 4;
+        if (pos - 1 + strLen > dataLen)
+        {
+            return 0;
+        }
+        lua_pushlstring(L, &data[pos - 1], strLen);
+        lua_pushinteger(L, pos + strLen);
     }
     else
     {
         lua_pushnil(L);
+        lua_pushinteger(L, pos);
+        return 2;
     }
-    return 1;
+    return 2;
 }
 
-static int  sequenceToInteger(lua_State *L)
+static int steadyTime(lua_State * L)
 {
-    size_t i, len = 0;
-    const char * sequence = luaL_checklstring(L, 1, &len);
-    unsigned long long num = 0;
-    if (len > 64)
-    {
-        return 0;
-    }
-    
-    for (i = 0; i < len; i++)
-    {
-        if (sequence[i] == '1')
-        {
-            num |= (1ULL << i);
-        }
-        else
-        {
-            num &= ~(unsigned long long)(1ULL << i);
-        }
-    }
-    if (!islocalLittleEndian())
-    {
-        num = reversalInteger(num);
-    }
-    
-    lua_pushlstring(L, (const char*)&num, 8);
-    return 1;
-}
-
-
-static int streamToString(lua_State *L)
-{
-    const char * stream = luaL_checkstring(L, -1);
-    unsigned long long integer = *(unsigned long long*) stream;
-    char buf[50];
-    lua_settop(L, 0);
-#ifdef WIN32  
-    sprintf(buf, "%I64u", integer);
+    unsigned int ret = 0;
+#ifdef WIN32
+    ret = GetTickCount();
+#elif defined(__APPLE__)
+    const int64_t kOneMillion = 1000 * 1000;
+    mach_timebase_info_data_t timebase_info;
+    mach_timebase_info(&timebase_info);
+    ret = (unsigned int)((mach_absolute_time() * timebase_info.numer) / (kOneMillion * timebase_info.denom));
 #else
-    sprintf(buf, "%llu", integer);
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) != 0)
+        ret = 0;
+    ret = ts.tv_sec * 1000 + (ts.tv_nsec / 1000 / 1000);
 #endif
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
+static int checkULL(lua_State * L)
+{
+    unsigned long long num = 0;
+    size_t strLen = 0;
+    const char * str = luaL_checklstring(L, 1, &strLen);
+    int isULL = false;
+    int i = 0;
+    if (strLen == 8)
+    {
+        for (i = 0; i < 8; i++)
+        {
+            if (str[i] >126 || str[i] < 32)
+            {
+                isULL = true;
+                break;
+            }
+        }
+    }
+    char buf[50];
+    if (isULL)
+    {
+        memcpy(&num, str, 8);
+#ifdef WIN32  
+        sprintf(buf, "%I64d", num);
+#else
+        sprintf(buf,"%lld", num);
+#endif
+    }
+    else
+    {
+        sprintf(buf, "\"%s\"", str);
+    }
     lua_pushstring(L, buf);
     return 1;
 }
 
-static int stringToStream(lua_State *L)
-{
-    const char * stream = luaL_checkstring(L, -1);
-    unsigned long long integer = 0;
-#ifdef WIN32  
-    sscanf(stream, "%I64u", &integer);
-#else
-    sscanf(stream, "%llu", &integer);
-#endif
-    lua_settop(L, 0);
-    lua_pushlstring(L, (const char *)&integer, 8);
-    return 1;
-}
-
-
-static luaL_Reg checkBit[] = {
-    { "checkIntegerBitTrue", checkIntegerBitTrue },
-    { "sequenceToInteger", sequenceToInteger },
-    { "streamToString", streamToString },
-    { "stringToStream", stringToStream },
-
+static luaL_Reg tagReg[] = {
+    { "newTag", newTag },
+    { "setTag", setTag },
+    { "unsetTag", unsetTag },
+    { "testTag", testTag },
+    { "pack", pack },
+    { "unpack", unpack },
+    { "now", steadyTime },
+    { "checkULL",checkULL },
     { NULL, NULL }
 };
 
 
-int luaopen_protoz_bit(lua_State *L)
+int luaopen_proto4z_util(lua_State *L)
 {
-    lua_getglobal(L, "Proto4z");
-    if (lua_isnil(L, -1))
-    {
-        lua_pop(L, 1);
-        lua_newtable(L);
-        lua_pushvalue(L, -1);
-        lua_setglobal(L, "Proto4z");
-    }
-    
+    lua_newtable(L);
     luaL_Reg *l;
-    for (l = checkBit; l->name != NULL; l++) {
-        lua_pushcclosure(L, l->func, 0);  /* closure with those upvalues */
+    for (l = tagReg; l->name != NULL; l++) 
+    {
+        lua_pushcclosure(L, l->func, 0);
         lua_setfield(L, -2, l->name);
     }
-    lua_pop(L, 1);
+    lua_setglobal(L, "Proto4zUtil");
     return 0;
 }
 

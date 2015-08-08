@@ -64,7 +64,7 @@ summer.start()
 --dump(config)
 --add connector
 for i=1, 3 do
-	local sID = summer.addConnect({ip=config.connect.stress[1].ip, port=config.connect.stress[1].port, reconnect=4})
+	local sID = summer.addConnect(config.connect.stress[1].ip, config.connect.stress[1].port, nil, 4)
 	if sID == nil then
 		summer.logw("sID == nil when addConnect")
 	end

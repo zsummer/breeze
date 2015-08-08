@@ -31,7 +31,6 @@
     <ClInclude Include="lua\lmem.h" />
     <ClInclude Include="lua\lobject.h" />
     <ClInclude Include="lua\lopcodes.h" />
-    <ClInclude Include="lua\lpack.h" />
     <ClInclude Include="lua\lparser.h" />
     <ClInclude Include="lua\lprefix.h" />
     <ClInclude Include="lua\lstate.h" />
@@ -77,7 +76,6 @@
     <ClCompile Include="lua\lobject.c" />
     <ClCompile Include="lua\lopcodes.c" />
     <ClCompile Include="lua\loslib.c" />
-    <ClCompile Include="lua\lpack.c" />
     <ClCompile Include="lua\lparser.c" />
     <ClCompile Include="lua\lproto4z.c" />
     <ClCompile Include="lua\lstate.c" />
