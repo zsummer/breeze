@@ -88,34 +88,33 @@ namespace zsummer
             NEC_REMOTE_HANGUP,
         };
 
-        
-        //! post callback
-        typedef std::function<void()> _OnPostHandler;
-        //timer callback
-        typedef std::function<void()> _OnTimerHandler;
-
-        //accept callback
         class TcpSocket;
-        typedef std::function<void(NetErrorCode, std::shared_ptr<TcpSocket>)> _OnAcceptHandler;
-        //connect callback
-        typedef std::function<void(NetErrorCode)> _OnConnectHandler;
+        using TcpSocketPtr = std::shared_ptr<TcpSocket>;
 
-        //send or recv callback
-        //! type int : translate bytes already.
-        typedef std::function<void(NetErrorCode, int)> _OnSendHandler;
-        typedef _OnSendHandler _OnRecvHandler;
+        //! post callback
+        using _OnPostHandler = std::function<void()>;
+        //timer callback
+        using _OnTimerHandler = std::function<void()>;
+        //accept callback
+        using _OnAcceptHandler = std::function<void(NetErrorCode, TcpSocketPtr)>;
+        //connect callback
+        using _OnConnectHandler = std::function<void(NetErrorCode)>;
+        //send or recv callback  @int : translate bytes.
+        using _OnSendHandler = std::function<void(NetErrorCode, int)>;
+        using _OnRecvHandler = std::function<void(NetErrorCode, int)>;
 
         //udp callback
-        //! const char *: remote ip
-        //! unsigned short: remote port
-        //! int : translate bytes
-        typedef std::function<void (NetErrorCode, const char*, unsigned short, int)> _OnRecvFromHandler;
+        //! @const char *: remote ip
+        //! @unsigned short: remote port
+        //! @int : translate bytes
+        using _OnRecvFromHandler = std::function<void(NetErrorCode, const char*, unsigned short, int)>;
 
 
         enum LINK_STATUS
         {
             LS_UNINITIALIZE, //socket default status
             LS_WAITLINK, // socket status after init and will to connect.
+            LS_ATTACHED, // socket attached will to initialize.
             LS_ESTABLISHED, //socket status is established
             LS_CLOSED, // socket is closed. don't use it again.
         };
@@ -129,18 +128,10 @@ namespace zsummer
             inline void addClosedSocketCount(){ _totalClosedCTcpSocketObjs++; }
             inline unsigned int getCreatedSocketCount(){ return _totalCreatedCTcpSocketObjs; }
             inline unsigned int getClosedSocketCount(){ return _totalClosedCTcpSocketObjs; }
-
-            inline void addCreatedSessionCount(){ _totalCreatedCTcpSessionObjs++; }
-            inline void addClosedSessionCount(){ _totalClosedCTcpSessionObjs++; }
-            inline unsigned int getCreatedSessionCount(){ return _totalCreatedCTcpSessionObjs; }
-            inline unsigned int getClosedSessionCount(){ return _totalClosedCTcpSessionObjs; }
-
             inline LoggerId getNetCoreLogger(){ return _netLoggerID; }
         private:
             std::atomic_uint _totalCreatedCTcpSocketObjs;
             std::atomic_uint _totalClosedCTcpSocketObjs;
-            std::atomic_uint _totalCreatedCTcpSessionObjs;
-            std::atomic_uint _totalClosedCTcpSessionObjs;
             LoggerId _netLoggerID = 0;
         };
 
@@ -180,13 +171,13 @@ namespace zsummer
 }
 
 
-#define LCT( log ) LOG_TRACE( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
-#define LCD( log ) LOG_DEBUG( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ <<": "<< log )
-#define LCI( log ) LOG_INFO( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ <<": "<<  log )
-#define LCW( log ) LOG_WARN( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
-#define LCE( log ) LOG_ERROR( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
-#define LCA( log ) LOG_ALARM( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
-#define LCF( log ) LOG_FATAL( zsummer::network::g_appEnvironment.getNetCoreLogger(), __FUNCTION__ << ": "<< log )
+
+#define LCD( log ) LOG_DEBUG( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
+#define LCI( log ) LOG_INFO( zsummer::network::g_appEnvironment.getNetCoreLogger(),  log )
+#define LCW( log ) LOG_WARN( zsummer::network::g_appEnvironment.getNetCoreLogger(),  log )
+#define LCE( log ) LOG_ERROR( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
+#define LCA( log ) LOG_ALARM( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
+#define LCF( log ) LOG_FATAL( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
 
 
 

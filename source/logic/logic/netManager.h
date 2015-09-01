@@ -54,11 +54,10 @@ protected:
 
 
     //! ---- session状态检测 ---------------------------
-    void event_onSessionPulse(TcpSessionPtr session, unsigned int pulseInterval);
+    void event_onSessionPulse(TcpSessionPtr session);
     void msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs);
 
 private:
-    zsummer::network::ListenConfig _configListen;
     AccepterID _accepterID = InvalidAccepterID;
     std::map<UserID, std::string> _token;
     std::function<void()> _onSafeClosed;

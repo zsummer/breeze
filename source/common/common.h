@@ -71,7 +71,7 @@ void sendMessage(TcpSessionPtr & session, MSG & msg)
 {
     WriteStream ws(MSG::GetProtoID());
     ws << msg;
-    session->doSend(ws.getStream(), ws.getStreamLen());
+    session->send(ws.getStream(), ws.getStreamLen());
 }
 
 template <class MSG>

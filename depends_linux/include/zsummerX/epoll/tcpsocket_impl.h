@@ -52,6 +52,7 @@ namespace zsummer
         public:
             TcpSocket();
             ~TcpSocket();
+            bool setNoDelay();
             bool initialize(const EventLoopPtr& summer);
             inline bool getPeerInfo(std::string& remoteIP, unsigned short &remotePort)
             {
@@ -67,15 +68,15 @@ namespace zsummer
             
         public:
             void OnPostClose();
-            void onEPOLLMessage(int flag, bool err);
-            bool attachSocket(int s, const std::string& remoteIP, unsigned short remotePort);
+            void onEPOLLMessage(uint32_t event);
+            bool attachSocket(int fd, const std::string& remoteIP, unsigned short remotePort);
         private:
             std::string logSection();
         private:
             EventLoopPtr _summer;
             std::string _remoteIP;
             unsigned short _remotePort = 0;
-            tagRegister _register;
+            EventData _eventData;
             
             _OnConnectHandler _onConnectHandler;
 
@@ -87,41 +88,12 @@ namespace zsummer
             unsigned int _iSendLen = 0;
             char *         _pSendBuf = NULL;
         };
-        typedef std::shared_ptr<TcpSocket> TcpSocketPtr;
+        using TcpSocketPtr = std::shared_ptr<TcpSocket>;
     }
 
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif
-
-
-
-
-
-
-
-
-
 
 

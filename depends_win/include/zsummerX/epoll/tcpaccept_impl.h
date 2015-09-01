@@ -53,7 +53,7 @@ namespace zsummer
             bool initialize(const EventLoopPtr &summer);
             bool openAccept(const std::string & listenIP, unsigned short listenPort);
             bool doAccept(const TcpSocketPtr &s, _OnAcceptHandler &&handle);
-            void onEPOLLMessage(bool bSuccess);
+            void onEPOLLMessage(uint32_t event);
             bool close();
 
         private:
@@ -65,45 +65,15 @@ namespace zsummer
 
             sockaddr_in        _addr;
 
-            tagRegister _register; 
+            EventData _eventData;
             _OnAcceptHandler _onAcceptHandler;
             TcpSocketPtr  _client;
 
         };
-        typedef std::shared_ptr<TcpAccept> TcpAcceptPtr;
+        using TcpAcceptPtr = std::shared_ptr<TcpAccept>;
     }
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif
-
-
-
-
-
-
-
-
-
-
 

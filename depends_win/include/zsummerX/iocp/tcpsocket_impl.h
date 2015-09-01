@@ -52,6 +52,7 @@ namespace zsummer
             //if the socket is used to connect,  It's need initialize before call doConnect 
             // if the socket is used to accept new socket, It's need initialize after OnAccept. 
             bool initialize(const EventLoopPtr& summer);
+            bool setNoDelay();
             inline bool getPeerInfo(std::string& remoteIP, unsigned short &remotePort)
             {
                 remoteIP = _remoteIP;
@@ -90,24 +91,24 @@ namespace zsummer
             unsigned short _remotePort = 0;
 
             //recv
-            tagReqHandle _recvHandle;
+            ExtendHandle _recvHandle;
             WSABUF         _recvWSABuf;
             _OnRecvHandler _onRecvHandler;
 
 
             //send
-            tagReqHandle _sendHandle;
+            ExtendHandle _sendHandle;
             WSABUF         _sendWsaBuf;
             _OnSendHandler _onSendHandler;
 
 
             //connect
-            tagReqHandle _connectHandle;
+            ExtendHandle _connectHandle;
             _OnConnectHandler _onConnectHandler;
             //status
-            int _nLinkStatus = LS_UNINITIALIZE;
+            int _linkStatus = LS_UNINITIALIZE;
         };
-        typedef std::shared_ptr<TcpSocket> TcpSocketPtr;
+        using TcpSocketPtr = std::shared_ptr<TcpSocket>;
 
     }
 }

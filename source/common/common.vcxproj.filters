@@ -55,9 +55,6 @@
     <ClInclude Include="lua\lopcodes.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="lua\lpack.h">
-      <Filter>lua</Filter>
-    </ClInclude>
     <ClInclude Include="lua\lparser.h">
       <Filter>lua</Filter>
     </ClInclude>
@@ -106,7 +103,6 @@
     <ClInclude Include="lua\summer.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="any.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
@@ -181,9 +177,6 @@
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="lua\loslib.c">
-      <Filter>lua</Filter>
-    </ClCompile>
-    <ClCompile Include="lua\lpack.c">
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="lua\lparser.c">

@@ -193,7 +193,7 @@ void Friend::msg_onGetFriendsReq(TcpSessionPtr session, ReadStream & rs)
     }
     WriteStream ws(ID_UpdateFriendsNotice);
     ws << notice;
-    session->doSend(ws.getStream(), ws.getStreamLen());
+    session->send(ws.getStream(), ws.getStreamLen());
 }
 
 void Friend::msg_onAddFriendReq(TcpSessionPtr session, ReadStream & rs)

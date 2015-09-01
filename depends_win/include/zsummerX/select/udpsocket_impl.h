@@ -46,7 +46,8 @@ namespace zsummer
 {
     namespace network
     {
-
+        class EventLoop;
+        using EventLoopPtr = std::shared_ptr<EventLoop>;
         class UdpSocket : public std::enable_shared_from_this<UdpSocket>
         {
         public:
@@ -59,12 +60,13 @@ namespace zsummer
             bool onSelectMessage(int type, bool rd, bool wt);
         public:
             EventLoopPtr _summer;
-            tagRegister _register;
             _OnRecvFromHandler _onRecvFromHandler;
+            unsigned char _linkstat = LS_UNINITIALIZE;
+            int _fd = InvalidFD;
             unsigned int _iRecvLen;
             char    *     _pRecvBuf;
         };
-        typedef std::shared_ptr<UdpSocket> UdpSocketPtr;
+        using UdpSocketPtr = std::shared_ptr<UdpSocket> ;
     }
 
 }

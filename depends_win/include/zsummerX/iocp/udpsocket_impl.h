@@ -60,14 +60,14 @@ namespace zsummer
             SOCKADDR_IN    _addr;
 
             //recv
-            tagReqHandle _recvHandle;
+            ExtendHandle _recvHandle;
             WSABUF         _recvWSABuf;
             sockaddr_in  _recvFrom;
             int             _recvFromLen;
             _OnRecvFromHandler _onRecvHander;
-            LINK_STATUS _nLinkStatus;
+            LINK_STATUS _linkStatus;
         };
-        typedef std::shared_ptr<UdpSocket> UdpSocketPtr;
+        using UdpSocketPtr = std::shared_ptr<UdpSocket>;
     }
 }
 

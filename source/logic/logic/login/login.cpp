@@ -8,7 +8,6 @@
 
 Login::Login()
 {
-    MessageDispatcher::getRef().registerOnSessionDisconnect(std::bind(&Login::event_onSessionDisconnect, this, _1));
     MessageDispatcher::getRef().registerSessionMessage(ID_PlatAuthReq, std::bind(&Login::msg_onPlatAuthReq, this, _1, _2));
     MessageDispatcher::getRef().registerSessionMessage(ID_CreateUserReq, std::bind(&Login::msg_onCreateUserReq, this, _1, _2));
     MessageDispatcher::getRef().registerSessionMessage(ID_SelectUserReq, std::bind(&Login::msg_onSelectUserReq, this, _1, _2));
@@ -55,8 +54,7 @@ void Login::msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs)
     //goto plat auth
     //....
     //plat auth success.
-
-    session->setUserParamString(req.account);
+    session->setUserParam(USER_ACCOUNT, req.account);
     zsummer::mysql::DBQuery q(" select `uID`,`account`,`nickName`,`iconID`,`diamond`,`hisotryDiamond`,`giftDiamond`,`joinTime` from `tb_UserInfo` where `account` = ? ");
     q << req.account;
     DBManager::getRef().infoAsyncQuery(q.popSQL(), std::bind(&Login::db_onFetchUsers, this, _1, session));
@@ -102,7 +100,7 @@ void Login::db_onFetchUsers(DBResultPtr result, TcpSessionPtr session)
     }
     WriteStream ws(ID_PlatAuthAck);
     ws << ack;
-    session->doSend(ws.getStream(), ws.getStreamLen());
+    session->send(ws.getStream(), ws.getStreamLen());
 }
 
 void Login::msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs)
@@ -124,7 +122,7 @@ void Login::msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs)
         return;
     }
     
-    info.account = session->getUserParamString();
+    info.account = session->getUserParam(USER_ACCOUNT).getString();
     info.nickName = req.nickName;
     info.iconID = req.iconID;
     std::string sql = UserInfo_INSERT(info);
@@ -158,7 +156,7 @@ void Login::db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const Use
     }
     WriteStream ws(ID_CreateUserAck);
     ws << ack;
-    session->doSend(ws.getStream(), ws.getStreamLen());
+    session->send(ws.getStream(), ws.getStreamLen());
 }
 
 
@@ -196,5 +194,5 @@ void Login::msg_onSelectUserReq(TcpSessionPtr session, ReadStream & rs)
 
     WriteStream ws(ID_SelectUserAck);
     ws << ack;
-    session->doSend(ws.getStream(), ws.getStreamLen());
+    session->send(ws.getStream(), ws.getStreamLen());
 }

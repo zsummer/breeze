@@ -45,7 +45,7 @@ namespace zsummer
 {
     namespace network
     {
-        typedef unsigned long long TimerID;
+        using TimerID = unsigned long long;
         const unsigned long long   InvalidTimerID = 0;
         const unsigned long long   ReserveBit = 20;
         const unsigned long long   MaxSequence = ((unsigned long long)-1) >> (sizeof(TimerID)*8-ReserveBit);

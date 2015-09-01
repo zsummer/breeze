@@ -50,13 +50,13 @@ end
 
 
 --event on connect
-summer.registerConnect(onConnect)
+summer.whenLinked(onConnect)
 
 --event on recv message
-summer.registerMessage(onMessage)
+summer.whenMessage(onMessage)
 
 --event on disconnect
-summer.registerDisconnect(onDisconnect)
+summer.whenClosed(onDisconnect)
 
 --start summer
 summer.start()
