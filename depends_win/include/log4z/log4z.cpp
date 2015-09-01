@@ -1635,7 +1635,7 @@ bool LogerManager::openLogger(LogData * pLog)
     int id = pLog->_id;
     if (id < 0 || id >_lastId)
     {
-        showColorText("log4z: openLogger can not open, invalide logger id! \r\n", LOG_LEVEL_FATAL);
+        showColorText("log4z: openLogger can not open, invalid logger id! \r\n", LOG_LEVEL_FATAL);
         return false;
     }
 
@@ -1706,7 +1706,7 @@ bool LogerManager::closeLogger(LoggerId id)
 {
     if (id < 0 || id >_lastId)
     {
-        showColorText("log4z: closeLogger can not close, invalide logger id! \r\n", LOG_LEVEL_FATAL);
+        showColorText("log4z: closeLogger can not close, invalid logger id! \r\n", LOG_LEVEL_FATAL);
         return false;
     }
     LoggerInfo * pLogger = &_loggers[id];

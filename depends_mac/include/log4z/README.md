@@ -94,7 +94,7 @@ Add files log4z.cpp log4z.h and compile together in the existing projects
 `make`   
 
 #About The Author  
-Auther: YaweiZhang  
+Author: YaweiZhang  
 Web Site: www.zsummer.net  
 Mail: yawei_zhang@foxmail.com  
 GitHub: https://github.com/zsummer  

@@ -41,42 +41,42 @@
 #include "tcpsocket_impl.h"
 namespace zsummer
 {
-	namespace network
-	{
-		class TcpAccept : public std::enable_shared_from_this<TcpAccept>
-		{
-		public:
-			TcpAccept();
-			~TcpAccept();
-			bool initialize(EventLoopPtr& summer);
-			bool openAccept(const char * ip, unsigned short port);
-			bool doAccept(const TcpSocketPtr& s, _OnAcceptHandler &&handler);
-			bool onIOCPMessage(BOOL bSuccess);
+    namespace network
+    {
+        class TcpAccept : public std::enable_shared_from_this<TcpAccept>
+        {
+        public:
+            TcpAccept();
+            ~TcpAccept();
+            bool initialize(EventLoopPtr& summer);
+            bool openAccept(const std::string ip, unsigned short port);
+            bool doAccept(const TcpSocketPtr& s, _OnAcceptHandler &&handler);
+            bool onIOCPMessage(BOOL bSuccess);
+        private:
+            std::string logSection();
+        private:
+            //config
+            EventLoopPtr _summer;
 
-			//config
-			EventLoopPtr _summer;
+
+            std::string        _ip;
+            unsigned short    _port = 0;
+            //listen
+            SOCKET            _server = INVALID_SOCKET;
 
 
-			std::string		_ip;
-			unsigned short	_port = 0;
-			//listen
-			SOCKET			_server = INVALID_SOCKET;
-			SOCKADDR_IN		_addr;
+            //client
+            SOCKET _socket = INVALID_SOCKET;
+            char _recvBuf[200];
+            DWORD _recvLen = 0;
+            ExtendHandle _handle;
+            _OnAcceptHandler _onAcceptHandler;
+            TcpSocketPtr _client;
 
-			//client
-			SOCKET _socket = INVALID_SOCKET;
-			char _recvBuf[200];
-			DWORD _recvLen = 0;
-			tagReqHandle _handle;
-			_OnAcceptHandler _onAcceptHandler;
-			TcpSocketPtr _client;
+        };
+        using TcpAcceptPtr = std::shared_ptr<TcpAccept>;
 
-			//status
-			int _nLinkStatus;
-		};
-		typedef std::shared_ptr<TcpAccept> TcpAcceptPtr;
-
-	}
+    }
 
 }
 

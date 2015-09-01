@@ -40,54 +40,38 @@
 #include "../common/common.h"
 
 
-// build a timmer system  based on red-black tree (std::map).
+// one timmer system  based on red-black tree (std::map).
 namespace zsummer
 {
-	namespace network
-	{
-		typedef unsigned long long TimerID;
-		const unsigned long long   InvalidTimerID = 0;
-		class Timer
-		{
-		public:
-			Timer()
-			{
-				_queSeq = 0;
-				_nextExpire = (unsigned int)-1;
-			}
-			~Timer()
-			{
-			}
-			//get current time tick. unit is millisecond.
-			inline unsigned  int getNowMilliTick()
-			{
-				return (unsigned int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-			}
+    namespace network
+    {
+        using TimerID = unsigned long long;
+        const unsigned long long   InvalidTimerID = 0;
+        const unsigned long long   ReserveBit = 20;
+        const unsigned long long   MaxSequence = ((unsigned long long)-1) >> (sizeof(TimerID)*8-ReserveBit);
+        class Timer
+        {
+        public:
+            Timer();
+            ~Timer();
+            //get current time tick. unit is millisecond.
+            unsigned  long long getSteadyTime();
 
-			//get next expire time  be used to set timeout when calling select / epoll_wait / GetQueuedCompletionStatus.
-			inline unsigned int getNextExpireTime()
-			{
-				unsigned int now = getNowMilliTick();
-				unsigned int dwDelayMs = _nextExpire - now;
-				if (dwDelayMs > 100)
-				{
-					dwDelayMs = 100;
-				}
-				return dwDelayMs;
-			}
+            //get next expire time  be used to set timeout when calling select / epoll_wait / GetQueuedCompletionStatus.
+            unsigned int getNextExpireTime();
 
-			TimerID createTimer(unsigned int delayms, _OnTimerHandler &&handle);
-			bool cancelTimer(TimerID timerID);
-			// if have expired timer. the timer will trigger.
-			void checkTimer();
-			inline std::map<TimerID, _OnTimerHandler* >::size_type GetTimersCount(){ return _queTimer.size(); }
-		private:
-			//! timer queue
-			std::map<TimerID, _OnTimerHandler* > _queTimer;
-			unsigned int _queSeq; //! single sequence . assure timer ID is global single.
-			unsigned int _nextExpire; //! cache the next expire time for check timer with   performance 
-		};
-	}
+            TimerID createTimer(unsigned int delayms, _OnTimerHandler &&handle);
+            bool cancelTimer(TimerID timerID);
+            // if have expired timer. the timer will trigger.
+            void checkTimer();
+            inline std::map<TimerID, _OnTimerHandler* >::size_type getTimersCount(){ return _queTimer.size(); }
+        private:
+            //! timer queue
+            std::map<TimerID, _OnTimerHandler* > _queTimer;
+            unsigned long long _queSeq; //! single sequence . assure timer ID is global single.
+            unsigned long long _nextExpire; //! cache the next expire time for check timer with   performance 
+        };
+    }
 }
 
 

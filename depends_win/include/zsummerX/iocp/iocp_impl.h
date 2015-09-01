@@ -67,7 +67,7 @@ namespace zsummer
             HANDLE _io;
             Timer _timer;
         };
-        typedef std::shared_ptr<EventLoop> EventLoopPtr;
+        using EventLoopPtr = std::shared_ptr<EventLoop>;
     }
 
 }

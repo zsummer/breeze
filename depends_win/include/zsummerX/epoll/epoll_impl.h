@@ -46,7 +46,7 @@ namespace zsummer
         class EventLoop : public std::enable_shared_from_this<EventLoop>
         {
         public:
-            typedef std::vector<void*> MessageStack;
+            using MessageStack = std::vector<void*>;
             EventLoop(){}
             ~EventLoop(){}
             bool initialize();
@@ -58,53 +58,26 @@ namespace zsummer
             inline bool cancelTimer(unsigned long long timerID){return _timer.cancelTimer(timerID);}
 
         public:
-            bool registerEvent(int op, tagRegister &reg);
+            bool registerEvent(int op, EventData &ed);
             void PostMessage(_OnPostHandler &&handle);
         private:
             std::string logSection();
         private:
-            int    _epoll = InvalideFD;
-            epoll_event _events[5000] = {};
+            int    _epoll = InvalidFD;
+            epoll_event _events[MAX_EPOLL_WAIT] = {};
             int        _sockpair[2] = {};
-            tagRegister _register;
+            EventData _eventData;
             MessageStack _stackMessages;
             std::mutex     _stackMessagesLock;
             Timer _timer;
         };
-        typedef std::shared_ptr<EventLoop> EventLoopPtr;
+        using EventLoopPtr = std::shared_ptr<EventLoop>;
     }
 
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif
-
-
-
-
-
-
-
-
 
 
 

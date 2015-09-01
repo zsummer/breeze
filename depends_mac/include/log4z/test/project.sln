@@ -1,17 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fast_test", "fast_test.vcproj", "{ECA530E9-0097-43B9-8FA4-3C2E74E187EE}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fast_test", "fast_test.vcxproj", "{ECA530E9-0097-43B9-8FA4-3C2E74E187EE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "advanced_test", "advanced_test.vcproj", "{6BA80E07-A245-470E-B36C-4A869C401C03}"
-	ProjectSection(ProjectDependencies) = postProject
-		{ECA530E9-0097-43B9-8FA4-3C2E74E187EE} = {ECA530E9-0097-43B9-8FA4-3C2E74E187EE}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "advanced_test", "advanced_test.vcxproj", "{6BA80E07-A245-470E-B36C-4A869C401C03}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress_test", "stress_test.vcproj", "{E4EAF9EE-28C2-428F-96C0-F043773EF1CA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6BA80E07-A245-470E-B36C-4A869C401C03} = {6BA80E07-A245-470E-B36C-4A869C401C03}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stress_test", "stress_test.vcxproj", "{E4EAF9EE-28C2-428F-96C0-F043773EF1CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

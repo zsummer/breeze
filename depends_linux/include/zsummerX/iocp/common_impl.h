@@ -50,8 +50,8 @@ namespace zsummer
         class TcpSocket;
         class TcpAccept;
         class UdpSocket;
-        const int InvalideFD = -1;
-        struct tagReqHandle 
+        const int InvalidFD = -1;
+        struct ExtendHandle 
         {
             OVERLAPPED     _overlapped;
             unsigned char _type;
@@ -69,7 +69,7 @@ namespace zsummer
             };
         };
         template <class T>
-        T & operator <<(T &t, const tagReqHandle & h)
+        T & operator <<(T &t, const ExtendHandle & h)
         {
             t << (unsigned int)h._type;
             return t;
@@ -79,7 +79,7 @@ namespace zsummer
         {
             PCK_USER_DATA,
         };
-#define HandlerFromOverlaped(ptr)  ((tagReqHandle*)((char*)ptr - (char*)&((tagReqHandle*)NULL)->_overlapped))
+#define HandlerFromOverlaped(ptr)  ((ExtendHandle*)((char*)ptr - (char*)&((ExtendHandle*)NULL)->_overlapped))
     }
 }
 

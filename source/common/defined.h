@@ -92,6 +92,13 @@ enum SessionStatus
     SS_LOGINED,
 };
 
+enum SessionUserData
+{
+    USER_SESSION_STATUS,
+    USER_ACCOUNT,
+    USER_USER_ID,
+    USER_LAST_ACTIVE_TIME,
+};
 
 struct InnerUserInfo
 {

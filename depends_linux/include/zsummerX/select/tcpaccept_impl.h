@@ -48,6 +48,10 @@ namespace zsummer
 {
     namespace network
     {
+        class EventLoop;
+        using EventLoopPtr = std::shared_ptr<EventLoop>;
+        class TcpSocket;
+        using TcpSocketPtr = std::shared_ptr<TcpSocket>;
         class TcpAccept :public std::enable_shared_from_this<TcpAccept>
         {
         public:
@@ -65,14 +69,14 @@ namespace zsummer
             EventLoopPtr         _summer;
             std::string        _listenIP;
             short            _listenPort = 0;
-
+            unsigned char _linkstat = LS_UNINITIALIZE;
+            int _fd = InvalidFD;
             sockaddr_in        _addr;
 
-            tagRegister _register; //! epoll 注册事件
             _OnAcceptHandler _onAcceptHandler;
             TcpSocketPtr  _client;
         };
-        typedef std::shared_ptr<TcpAccept> TcpAcceptPtr;
+        using TcpAcceptPtr = std::shared_ptr<TcpAccept> ;
     }
 }
 

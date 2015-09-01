@@ -38,15 +38,29 @@
 #define _ZSUMMER_SELECT_IMPL_H_
 #include "common_impl.h"
 #include "../timer/timer.h"
+#include "tcpaccept_impl.h"
+#include "udpsocket_impl.h"
 
 namespace zsummer
 {
     namespace network
     {
+        class TcpSocket;
+        class UdpSocket;
+        class TcpAccept;
+        using TcpSocketPtr = std::shared_ptr<TcpSocket>;
+        using TcpAcceptPtr = std::shared_ptr<TcpAccept>;
+        using UdpSocketPtr = std::shared_ptr<UdpSocket>;
+
+
+        using ArrayTcpSocket = std::vector<TcpSocketPtr>;
+        using ArrayTcpAccept = std::vector<TcpAcceptPtr>;
+        using ArrayUdpSocket = std::vector<UdpSocketPtr>;
+
         class EventLoop : public std::enable_shared_from_this<EventLoop>
         {
         public:
-            typedef std::vector<void*> MessageStack;
+            using MessageStack = std::vector<void*> ;
             EventLoop(){}
             ~EventLoop(){}
             bool initialize();
@@ -67,21 +81,32 @@ namespace zsummer
             }
 
         public:
-            bool registerEvent(int op/* 0 add,  1 mod, 2 del*/, tagRegister &reg);
+            void setEvent(int fd, int op /*0 read, 1 write, 2 error*/);
+            void unsetEvent(int fd, int op /*0 read, 1 write, 2 error*/);
+            void addTcpAccept(int fd, TcpAcceptPtr s);
+            void addTcpSocket(int fd, TcpSocketPtr s);
+            void addUdpSocket(int fd, UdpSocketPtr s);
+            void clearSocket(int fd);
+
             void PostMessage(_OnPostHandler &&handle);
         private:
             std::string logSection();
         private:
             //线程消息
-            SOCKET        _sockpair[2];
-            PoolReggister _poolRegister;
+            int        _sockpair[2];
+            fd_set _fdreads;
+            fd_set _fdwrites;
+            fd_set _fderrors;
+            int _maxfd = 0;
+            ArrayTcpSocket _arrayTcpSocket;
+            ArrayTcpAccept _arrayTcpAccept;
+            ArrayUdpSocket _arrayUdpSocket;
             MessageStack _stackMessages;
             std::mutex     _stackMessagesLock;
-
             //! timmer
             Timer _timer;
         };
-        typedef std::shared_ptr<EventLoop> EventLoopPtr;
+        using EventLoopPtr = std::shared_ptr<EventLoop> ;
     }
 
 }

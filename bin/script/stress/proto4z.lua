@@ -49,6 +49,27 @@ Proto4z = Proto4z or {}
 
 
 
+function Proto4z.pack(obj, name)
+    local data = {}
+    data[1] = Proto4zUtil.pack(0, "ui16")
+    data[2] = Proto4zUtil.pack(Proto4z[name].__getID, "ui16")
+    Proto4z.__encode(obj, name, data)
+    local dst = table.concat(data)
+    local head = Proto4zUtil.pack(#dst+4, "ui32")
+    return head .. dst
+end
+
+
+function Proto4z.unpack(binData, name)
+    local head = Proto4zUtil.unpack(binData, 1, "ui32")
+    local reserve = Proto4zUtil.unpack(binData, 5, "ui16")
+    local proto = Proto4zUtil.unpack(binData, 7, "ui16")
+    local result = {}
+    Proto4z.__decode(binData, 9, name, result)
+    return proto, result
+end
+
+
 --[[--
 encode protocol table to binary stream
 @param encode obj.  protocol table 

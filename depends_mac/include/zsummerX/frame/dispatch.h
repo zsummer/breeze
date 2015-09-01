@@ -37,66 +37,45 @@
 
 
 
-#ifndef ZSUMMER_MSG_MANAGER_H_
-#define ZSUMMER_MSG_MANAGER_H_
-#include "config.h"
+#ifndef ZSUMMER_MESSAGE_DISPATCHER_H_
+#define ZSUMMER_MESSAGE_DISPATCHER_H_
 #include "session.h"
 namespace zsummer
 {
-	namespace network
-	{
-		class MessageDispatcher
-		{
-		private:
-			MessageDispatcher(){}
-			typedef std::unordered_map<ProtoID, std::vector<OnMessageFunction> > MapProtoDispatch;
-		public:
-			static MessageDispatcher & getRef();
-			inline static MessageDispatcher * getPtr(){ return &getRef(); }
-			~MessageDispatcher(){};
-
-			//message
-			inline void registerSessionPreMessage(const OnPreMessageFunction & msgfun){ _vctPreSessionDispatch.push_back(msgfun); }
-			inline void registerSessionMessage(ProtoID protoID, const OnMessageFunction & msgfun){ _mapSessionDispatch[protoID].push_back(msgfun); }
-			inline void registerSessionDefaultMessage(const OnMessageFunction & msgfun){ _vctDefaultSessionDispatch.push_back(msgfun); }
-
-			//event. can use method isSessionID or isConnectID to resolution who is the sessionID
-			inline void registerOnSessionEstablished(const OnSessionEstablished & fun){ _vctOnSessionEstablished.push_back(fun); }
-			inline void registerOnSessionDisconnect(const OnSessionDisconnect & fun){ _vctOnSessionDisconnect.push_back(fun); }
-
-			//heartbeat
-			inline void registerOnSessionPulse(const OnSessionPulseTimer & fun) { _vctOnSessionPulse.push_back(fun); }
-			//http
-			inline void registerOnSessionHTTPMessage(const OnHTTPMessageFunction & fun) { _vctSessionHTTPMessage.push_back(fun); }
-
-		public:
-            bool dispatchPreSessionMessage(TcpSessionPtr  session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
-			void dispatchSessionMessage(TcpSessionPtr  session, ProtoID pID, zsummer::proto4z::ReadStream & msg);
-			void dispatchOnSessionEstablished(TcpSessionPtr  session);
-			void dispatchOnSessionDisconnect(TcpSessionPtr  session);
-			void dispatchOnSessionPulse(TcpSessionPtr  session, unsigned int pulseInterval);
-            bool dispatchSessionHTTPMessage(TcpSessionPtr session, const zsummer::proto4z::PairString & commonLine, const zsummer::proto4z::HTTPHeadMap &head, const std::string & body);
-		private:
-			//!message
-			MapProtoDispatch _mapSessionDispatch;
-			std::vector<OnPreMessageFunction> _vctPreSessionDispatch;
-			std::vector<OnMessageFunction> _vctDefaultSessionDispatch;
-
-			//http
-			std::vector<OnHTTPMessageFunction> _vctSessionHTTPMessage;
-
-			//event
-			std::vector<OnSessionEstablished> _vctOnSessionEstablished;
-			std::vector<OnSessionDisconnect> _vctOnSessionDisconnect;
-
-			std::vector<OnSessionPulseTimer> _vctOnSessionPulse;
-		};
+    namespace network
+    {
+        /*
+            MessageDispatcher 是一个协议消息派发器, 是一个单例singleton.
+            消息派发分两种类型, 均需要使用者先调用对应的registerXXX系列接口进行注册.
+            第一类是事件类型的通知, 即连接建立, 连接断开, 连接的定时检测回调.
+            第二类为消息类型的处理通知,  消息处理通知分TCP和HTTP,  TCP有三种, 分别是预处理通知,具体协议处理和默认协议处理. HTTP只有一个消息处理回调. 
+             具体使用参见代码,注释和示例.
+        */
+       
+        //!register message 
+        using OnMessageFunction = std::function < void(TcpSessionPtr&, zsummer::proto4z::ReadStream &) >;
 
 
+        using ProtoID = zsummer::proto4z::ProtoInteger;
+        const ProtoID InvalidProtoID = -1;
 
-
-
-	}
+        class MessageDispatcher
+        {
+        private:
+            MessageDispatcher(){}
+            using MapProtoDispatch = std::unordered_map<unsigned short, std::vector<OnMessageFunction> >;
+        public:
+            static MessageDispatcher & getRef();
+            inline static MessageDispatcher * getPtr(){ return &getRef(); }
+            ~MessageDispatcher(){};
+            //注册消息处理handler, 这个是针对消息ID进行注册, 回调参数是包含已经处理得到的协议ID以及attach好的ReadStream. 可以直接使用ReadStream流出对应的协议数据.
+            inline void registerSessionMessage(ProtoID protoID, const OnMessageFunction & msgfun){ _mapSessionDispatch[protoID].push_back(msgfun); }
+            void dispatchSessionMessage(TcpSessionPtr  &session, ProtoID pID, zsummer::proto4z::ReadStream & msg);
+        private:
+            //!message
+            MapProtoDispatch _mapSessionDispatch;
+        };
+    }
 }
 
 #endif

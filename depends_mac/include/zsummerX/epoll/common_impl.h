@@ -43,100 +43,47 @@
 #endif
 namespace zsummer
 {
-	namespace network
-	{
+    namespace network
+    {
+        const int MAX_EPOLL_WAIT = 5000;
+        class TcpSocket;
+        class TcpAccept;
+        class UdpSocket;
+        const int InvalidFD = -1;
+        struct EventData
+        {
+            enum REG_TYPE
+            {
+                REG_INVALID,
+                REG_ZSUMMER,
+                REG_TCP_SOCKET,
+                REG_TCP_ACCEPT,
+                REG_UDP_SOCKET
+            };
 
-#ifdef WIN32
+            epoll_event   _event; //event, auto set
+            unsigned char _type = REG_INVALID; //register type
+            unsigned char _linkstat = LS_UNINITIALIZE;
+            int              _fd = InvalidFD;   //file descriptor
+            std::shared_ptr<TcpSocket> _tcpSocketPtr;
+            std::shared_ptr<TcpAccept> _tcpacceptPtr;
+            std::shared_ptr<UdpSocket> _udpsocketPtr;
+        };
 
-		enum EPOLL_CTL_ENUM
-		{
-			EPOLL_CTL_ADD,
-			EPOLL_CTL_MOD,
-			EPOLL_CTL_DEL,
-		};
-
-		typedef union epoll_data {
-			void    *ptr;
-			int      fd;
-			uint32_t u32;
-			uint64_t u64;
-		} epoll_data_t;
-
-		struct epoll_event {
-			uint32_t     events;//    Epoll events 
-			epoll_data_t data;//      User data variable 
-		};
-#endif
-		class TcpSocket;
-		class TcpAccept;
-		class UdpSocket;
-		const int InvalideFD = -1;
-		struct tagRegister
-		{
-			enum REG_TYPE
-			{
-				REG_INVALID,
-				REG_ZSUMMER,
-				REG_TCP_SOCKET,
-				REG_TCP_ACCEPT,
-				REG_UDP_SOCKET
-			};
-
-			epoll_event   _event; //event, auto set
-			unsigned char _type = REG_INVALID; //register type
-			unsigned char _linkstat = LS_UNINITIALIZE;
-			int			  _fd = InvalideFD;   //file descriptor
-			std::shared_ptr<TcpSocket> _tcpSocketSendPtr;
-			std::shared_ptr<TcpSocket> _tcpSocketRecvPtr;
-			std::shared_ptr<TcpSocket> _tcpSocketConnectPtr;
-			std::shared_ptr<TcpAccept> _tcpacceptPtr;
-			std::shared_ptr<UdpSocket> _udpsocketPtr;
-		};
-
-		template <class T>
-		T& operator <<(T &t, const tagRegister & reg)
-		{
-			t << "registerEvent Info: epoll_event.events[" << reg._event.events
-				<< "] _type[" << (int)reg._type << "] _linkstat[" << (int)reg._linkstat
-				<< "] _fd[" << reg._fd << "]  Notes: REG_INVALID[" << tagRegister::REG_INVALID << "] REG_ZSUMMER[" << tagRegister::REG_ZSUMMER
-				<< "] REG_TCP_SOCKET[" << tagRegister::REG_TCP_SOCKET << "] REG_TCP_ACCEPT[" << tagRegister::REG_TCP_ACCEPT
-				<< "] REG_UDP_SOCKET[" << tagRegister::REG_UDP_SOCKET
-				<< "] EPOLL_CTL_ADD[" << EPOLL_CTL_ADD << "] EPOLL_CTL_MOD[" << EPOLL_CTL_MOD << "] EPOLL_CTL_DEL[" << EPOLL_CTL_DEL
-				<< "];   EPOLLIN[" << EPOLLIN << "] EPOLLOUT[" << EPOLLOUT << "] EPOLLERR[" << EPOLLERR << "] EPOLLHUP[" << EPOLLHUP;
-			return t;
-		}
-	}
+        template <class T>
+        T& operator <<(T &t, const EventData & reg)
+        {
+            t << "registerEvent Info: epoll_event.events[" << reg._event.events
+                << "] _type[" << (int)reg._type << "] _linkstat[" << (int)reg._linkstat
+                << "] _fd[" << reg._fd << "]";
+            return t;
+        }
+    }
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif
-
-
-
-
-
-
-
-
-
 
 

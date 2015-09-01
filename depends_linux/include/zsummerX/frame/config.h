@@ -50,6 +50,8 @@
 #include <proto4z/proto4z.h>
 
 #ifdef WIN32
+#pragma warning(disable:4503)
+#pragma warning(disable:4200)
 #include "../iocp/iocp_impl.h"
 #include "../iocp/tcpsocket_impl.h"
 #include "../iocp/udpsocket_impl.h"
@@ -66,20 +68,19 @@
 #include "../epoll/tcpaccept_impl.h"
 #endif
 
+
 namespace zsummer
 {
     namespace network
     {
-
-        typedef unsigned int SessionID;
+        //! define network type
+        using SessionID = unsigned int;
         const SessionID InvalidSeesionID = -1;
-        typedef unsigned int AccepterID;
+        using AccepterID = unsigned int;
         const AccepterID InvalidAccepterID = -1;
-        typedef unsigned short ProtoID;
-        const ProtoID InvalidProtoID = -1;
 
 
-        // const unsigned int __MIDDLE_SEGMENT_VALUE = ((unsigned int)-1) / (unsigned int)2;
+        //! define session id range.
         const unsigned int __MIDDLE_SEGMENT_VALUE = 300 * 1000 * 1000;
         inline bool isSessionID(unsigned int unknowID){ return unknowID < __MIDDLE_SEGMENT_VALUE ? true : false; }
         inline bool isConnectID(unsigned int unknowID){ return unknowID != InvalidSeesionID && !isSessionID(unknowID); }
@@ -87,6 +88,7 @@ namespace zsummer
         inline unsigned int nextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSeesionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
 
 
+        const unsigned int SESSION_BLOCK_SIZE = 10 * 1024;
 
         enum ProtoType
         {
@@ -94,124 +96,193 @@ namespace zsummer
             PT_HTTP,
         };
 
-
-        struct ListenConfig
+        enum BLOCK_CHECK_TYPE
         {
-            std::string        _listenIP = "0.0.0.0";
-            unsigned short    _listenPort = 81;
-            ProtoType        _protoType = PT_TCP;
-            std::string        _rc4TcpEncryption = ""; //empty is not encryption
-            bool            _openFlashPolicy = false;
-            bool            _setNoDelay = true;
-            unsigned int    _pulseInterval = 30000;
+            BCT_SUCCESS = 0, //成功, 返回当前block大小
+            BCT_SHORTAGE = 1, //不足, 返回当前block还需要的大小
+            BCT_CORRUPTION = 2, //错误, 需要关闭socket
+        };
+
+        enum StatType
+        {
+            STAT_STARTTIME,
+            STAT_SESSION_CREATED,
+            STAT_SESSION_DESTROYED,
+            STAT_SESSION_LINKED,
+            STAT_SESSION_CLOSED,
+            STAT_FREE_BLOCKS,
+            STAT_EXIST_BLOCKS,
+            STAT_SEND_COUNT,
+            STAT_SEND_PACKS,
+            STAT_SEND_BYTES,
+            STAT_SEND_QUES,
+            STAT_RECV_COUNT,
+            STAT_RECV_PACKS,
+            STAT_RECV_BYTES,
+            
+            STAT_SIZE,
+        };
+
+        class TcpSession;
+        using TcpSessionPtr = std::shared_ptr<TcpSession>;
+
+        struct SessionBlock 
+        {
+            unsigned int len = 0;
+            unsigned int bound = 0;
+            char begin[0];
+        };
+        
+
+        using CreateBlock = std::function<SessionBlock * ()>;
+
+        using FreeBlock = std::function<void(SessionBlock *)>;
+        
+        using OnBlockCheckResult = std::pair<BLOCK_CHECK_TYPE, unsigned int>;
+
+        //检查当前缓冲块内是否能读出一个完整的block
+        using OnBlockCheck = std::function<OnBlockCheckResult(const char * /*begin*/, unsigned int /*len*/, unsigned int /*bound*/, unsigned int /*blockLimit*/)>;
+
+        //!每读出一个block就调用这个方法dispatch出去
+        using OnBlockDispatch = std::function<void(TcpSessionPtr   /*session*/, const char * /*begin*/, unsigned int /*len*/)>;
+
+        //!连接建立, 关闭, 定时器
+        using OnSessionEvent = std::function<void(TcpSessionPtr   /*session*/)>;
+
+        using PairString = std::pair<std::string, std::string>;
+        using MapString = std::map<std::string, std::string>;
+        //!HTTP解包,hadHeader 区别chunked的后续小包, commonLine 指的是GET, POST RESPONSE. 
+        using OnHTTPBlockCheck = std::function<OnBlockCheckResult(const char * /*begin*/, unsigned int /*len*/, unsigned int /*bound*/,
+            bool /*hadHeader*/, bool & /*isChunked*/, PairString& /*commonLine*/, MapString & /*head*/, std::string & /*body*/)>;
+        //!HTTP派发
+        using OnHTTPBlockDispatch = std::function<
+            void(TcpSessionPtr /*session*/, const PairString & /*commonLine*/, const MapString &/*head*/, const std::string & /*body*/)>;
+        
+
+
+        struct SessionOptions 
+        {
+
+            ProtoType       _protoType = PT_TCP;
+            std::string     _rc4TcpEncryption = ""; //empty is not encryption
+            bool            _openFlashPolicy = false; //检测falsh客户端
+            bool            _setNoDelay = true; 
+            bool            _joinSmallBlock = true; //发送时合并小包一起发送
+            unsigned int    _sessionPulseInterval = 30000; //session pulse间隔
+            unsigned int    _connectPulseInterval = 5000; //connect pulse间隔
+            unsigned int    _reconnects = 0; // 重连次数
+            bool            _reconnectClean = true;//重连时清除未发送的队列.
+
+            OnBlockCheck _onBlockCheck;
+            OnBlockDispatch _onBlockDispatch;
+            OnHTTPBlockCheck _onHTTPBlockCheck;
+            OnHTTPBlockDispatch _onHTTPBlockDispatch;
+            OnSessionEvent _onSessionClosed;
+            OnSessionEvent _onSessionLinked;
+            OnSessionEvent _onSessionPulse;
+
+            CreateBlock _createBlock ;
+            FreeBlock _freeBlock;
+
+        };
+
+        struct AccepterOptions
+        {
+            AccepterID _aID = InvalidAccepterID;
+            TcpAcceptPtr _accepter;
+            std::string        _listenIP;
+            unsigned short    _listenPort = 0;
             unsigned int    _maxSessions = 5000;
             std::vector<std::string> _whitelistIP;
-        };
-
-
-        struct ListenInfo
-        {
-            //limit max session.
-            AccepterID _aID = InvalidAccepterID;
             unsigned long long _totalAcceptCount = 0;
             unsigned long long _currentLinked = 0;
+            SessionOptions _sessionOptions;
         };
 
 
-        struct ConnectConfig
+        class Any
         {
-            std::string _remoteIP = "127.0.0.1";
-            unsigned short _remotePort = 81;
-            ProtoType _protoType = PT_TCP;
-            std::string _rc4TcpEncryption = ""; //empty is not encryption
-            unsigned int _pulseInterval = 30000;
-            unsigned int _reconnectMaxCount = 0; // try reconnect max count
-            unsigned int _reconnectInterval = 5000; //million seconds;
-            bool         _reconnectCleanAllData = true;//clean all data when reconnect;
-            bool         _setNoDelay = true;
-        };
-
-
-
-        struct ConnectInfo
-        {
-            //implementation reconnect 
-            SessionID _cID = InvalidSeesionID;
-            unsigned long long _totalConnectCount = 0;
-            unsigned long long _curReconnectCount = 0;
-        };
-
-
-
-        //----------------------------------------
-
-        //receive buffer length  and send buffer length 
-        const unsigned int MAX_BUFF_SIZE = 100 * 1024;
-        const unsigned int MAX_SEND_PACK_SIZE = 20 * 1024;
-
-        //!register message with original net pack, if return false other register will not receive this message.
-        class TcpSession;
-        typedef  std::shared_ptr<TcpSession> TcpSessionPtr;
-        typedef std::function < bool(TcpSessionPtr , const char * /*blockBegin*/, typename zsummer::proto4z::Integer /*blockSize*/) > OnPreMessageFunction;
-
-        //!register message 
-        typedef std::function < void(TcpSessionPtr, zsummer::proto4z::ReadStream &) > OnMessageFunction;
-        //!register message 
-        typedef std::function < void(TcpSessionPtr, ProtoID, zsummer::proto4z::ReadStream &) > OnDefaultMessageFunction;
-        //!register event 
-        typedef std::function < void(TcpSessionPtr) > OnSessionEstablished;
-        typedef std::function < void(TcpSessionPtr) > OnSessionDisconnect;
-
-        //register http proto message
-        typedef std::function < void(TcpSessionPtr , const zsummer::proto4z::PairString &, const zsummer::proto4z::HTTPHeadMap& /*head*/, const std::string & /*body*/) > OnHTTPMessageFunction;
-
-        //register pulse timer .  you can register this to implement heartbeat . 
-        typedef std::function < void(TcpSessionPtr , unsigned int/*pulse interval*/) > OnSessionPulseTimer;
-
-
-
-
-
-
-        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
-        {
-            std::string whitelist;
-            for (auto str : config._whitelistIP)
+        public:
+            Any()
             {
-                whitelist += str + ",";
+
             }
+            Any(unsigned long long n)
+            {
+                _number = n;
+            }
+            Any(const std::string & str)
+            {
+                _string = str;
+            }
+            Any(void * p)
+            {
+                _pointer = p;
+            }
+        public:
+            inline unsigned long long getNumber() const { return _number; }
+            inline std::string getString() const { return _string; }
+            inline void * getPtr() const { return _pointer; }
+        private:
+            unsigned long long _number = 0;
+            std::string _string;
+            void * _pointer = nullptr;
+        };
 
-            os << "[_listenIP=" << config._listenIP << ", _listenPort=" << config._listenPort << ", _protoType=" << (config._protoType == PT_TCP ? "PT_TCP" : "PT_HTTP")
-                << ", _rc4TcpEncryption=" << config._rc4TcpEncryption << ", _openFlashPolicy=" << config._openFlashPolicy << ", _pulseInterval=" << config._pulseInterval
-                << ", _maxSessions=" << config._maxSessions << ", _whitelistIP=" << whitelist << "]";
-            return os;
-        }
 
-
-        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenInfo & info)
+        template<class Number>
+        Number numberCast(const Any & any)
         {
-            os << "[_aID=" << info._aID << ", _totalAcceptCount=" << info._totalAcceptCount << ", _currentLinked=" << info._currentLinked << "]";
-            return os;
+            return (Number)any.getNumber();
         }
 
-
-
-        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
+        inline std::string  stringCast(const Any & any)
         {
-            os << "[_remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << ", _protoType=" << (config._protoType == PT_TCP ? "PT_TCP" : "PT_HTTP")
-                << ", _rc4TcpEncryption=" << config._rc4TcpEncryption << ", _pulseInterval=" << config._pulseInterval << ", _reconnectMaxCount=" << config._reconnectMaxCount
-                << ", _reconnectInterval=" << config._reconnectInterval << ", _reconnectCleanAllData=" << config._reconnectCleanAllData << "]";
-            return os;
+            return any.getString();
         }
-
-
-        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectInfo & info)
+        template<class Pointer>
+        Pointer * pointerCast(const Any & any)
         {
-            os << "[_cID=" << info._cID << ", _totalConnectCount=" << info._totalConnectCount << ", _curReconnectCount=" << info._curReconnectCount << "]";
+            return (Pointer *)any.getPtr();
+        }
+
+
+
+        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const SessionOptions & traits)
+        {
+            os << "{ " << "_protoType=" << traits._protoType
+                << ", _rc4TcpEncryption=" << traits._rc4TcpEncryption
+                << ", _openFlashPolicy=" << traits._openFlashPolicy
+                << ", _setNoDelay=" << traits._setNoDelay
+                << ", _sessionPulseInterval=" << traits._sessionPulseInterval
+                << ", _connectPulseInterval=" << traits._connectPulseInterval
+                << ", _reconnects=" << traits._reconnects
+                << ", _reconnectClean=" << traits._reconnectClean
+                << "}";
             return os;
         }
 
 
+        inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const AccepterOptions & extend)
+        {
+            os << "{"
+                << "_aID=" << extend._aID
+                << ", _listenIP=" << extend._listenIP
+                << ", _listenPort=" << extend._listenPort
+                << ", _maxSessions=" << extend._maxSessions
+                << ",_totalAcceptCount=" << extend._totalAcceptCount
+                << ", _currentLinked=" << extend._currentLinked
+                << ",_whitelistIP={";
+
+            for (auto str : extend._whitelistIP)
+            {
+                os << str << ",";
+            }
+            os << "}";
+            os << ", SessionOptions=" << extend._sessionOptions;
+            os << "}";
+            return os;
+        }
     }
 }
 

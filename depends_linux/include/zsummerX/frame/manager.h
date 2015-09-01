@@ -39,16 +39,45 @@
 #define ZSUMMER_TCPSESSION_MANAGER_H_
 
 #include "config.h"
+#include "dispatch.h"
 namespace zsummer
 {
     namespace network
     {
+
+
+        inline SessionBlock * DefaultCreateBlock();
+        inline void DefaultFreeBlock(SessionBlock *sb);
+
+        inline OnBlockCheckResult DefaulBlockCheck(const char * begin, unsigned int len, unsigned int bound, unsigned int blockLimit)
+        {
+            auto ret = zsummer::proto4z::checkBuffIntegrity(begin, len, bound, blockLimit);
+            return std::make_pair((BLOCK_CHECK_TYPE)ret.first, (unsigned int)ret.second);
+        }
+        inline void DefaultBlockDispatch(TcpSessionPtr session, const char * begin, unsigned int len)
+        {
+            zsummer::proto4z::ReadStream rs(begin, len);
+            MessageDispatcher::getRef().dispatchSessionMessage(session, rs.getProtoID(), rs);
+        }
+
+        inline OnBlockCheckResult DefaultHTTPBlockCheck(const char * begin, unsigned int len, unsigned int bound,
+            bool hadHeader, bool & isChunked, PairString& commonLine, MapString & head, std::string & body)
+        {
+            auto ret = zsummer::proto4z::checkHTTPBuffIntegrity(begin, len, bound, hadHeader, isChunked, commonLine, head, body);
+            return std::make_pair((BLOCK_CHECK_TYPE)ret.first, ret.second);
+        }
+
+        inline void DefaultHTTPBlockDispatch(TcpSessionPtr session, const PairString & commonLine, const MapString &head, const std::string & body)
+        {
+
+        }
+
+
         /*
             SessionManager是一个单例singleton, 是一个对zsummerX底层接口的高级封装, 如果需要自己封装 则可以参考frame的做法或者example中的例子进行封装或使用.
             这个单例提供了所有网络的高级的可操作接口, 比如启动网络模块单例, 开启网络循环, 依次关闭部分网络功能 最后退出网络循环,  添加多个监听接口, 添加多个连出, 发送数据,
                 跨线程的通知机制post, 创建取消定时器, 获取连接信息, 设置定时检测, 设置断线重莲次数和间隔, 设置是否支持flash Policy, 设置最大可连入的连接数, 设置协议是二进制的TCP协议(proto4z协议流), 
-                设置协议是HTTP(可做WEB服务器和客户端使用, 很方便的做一些SDK认证和平台接入),  可获取运行时的网络状态数据.
-            消息处理的handler注册 参看文件dispatch.h
+                设置协议是HTTP(可做WEB服务器和客户端使用, 很方便的做一些SDK认证和平台接入).
         */
         class SessionManager
         {
@@ -61,15 +90,6 @@ namespace zsummer
         public:
             //要使用SessionManager必须先调用start来启动服务.
             bool start();
-
-            //该组接口说明:
-            // stopXXXX系列接口可以在信号处理函数中调用, 也只有该系列函数可以在信号处理函数中使用.
-            // 一些stopXXX接口提供完成通知, 但需要调用setStopXXXX去注册回调函数.
-            void stopAccept();
-            void stopClients();
-            void setStopClientsHandler(std::function<void()> handler);
-            void stopServers();
-            void setStopServersHandler(std::function<void()> handler);
 
             //退出消息循环.
             void stop();
@@ -87,57 +107,55 @@ namespace zsummer
             template<class H>
             void post(H &&h){ _summer->post(std::move(h)); }
 
-            //创建定时器 单位是毫秒 非线程安全, 如有多线程下的需求请配合POST来实现.
+            //创建定时器 单位是毫秒 非线程安全.
             template <class H>
             zsummer::network::TimerID createTimer(unsigned int delayms, H &&h){ return _summer->createTimer(delayms, std::move(h)); }
             //取消定时器.  注意, 如果在定时器的回调handler中取消当前定时器 会失败的.
             bool cancelTimer(unsigned long long timerID){ return _summer->cancelTimer(timerID); }
 
 
-            //! add acceptor under the configure.
-            AccepterID addAcceptor(const ListenConfig &traits);
-            bool getAcceptorConfig(AccepterID aID, std::pair<ListenConfig, ListenInfo> & config);
+
+            AccepterID addAccepter(const std::string& listenIP, unsigned short listenPort);
+            AccepterOptions & getAccepterOptions(AccepterID aID);
+            bool openAccepter(AccepterID aID);
             AccepterID getAccepterID(SessionID sID);
 
-            //! add connector under the configure.
-            SessionID addConnector(const ConnectConfig & traits);
-            bool getConnectorConfig(SessionID sID, std::pair<ConnectConfig, ConnectInfo> & config);
+
+            SessionID addConnecter(const std::string& remoteIP, unsigned short remotePort);
+            SessionOptions & getConnecterOptions(SessionID cID);
+            bool openConnecter(SessionID cID);
             TcpSessionPtr getTcpSession(SessionID sID);
+
+            std::string getRemoteIP(SessionID sID);
+            unsigned short getRemotePort(SessionID sID);
 
             //send data.
             void sendSessionData(SessionID sID, const char * orgData, unsigned int orgDataLen);
-            //send data.
-            void sendSessionData(SessionID sID, ProtoID pID, const char * userData, unsigned int userDataLen);
+
 
             //close session socket.
             void kickSession(SessionID sID);
 
         public:
             //statistical information
-            //统计信息.
-            std::string getRemoteIP(SessionID sID);
-            unsigned short getRemotePort(SessionID sID);
-            unsigned long long _totalConnectCount = 0;
-            unsigned long long _totalAcceptCount = 0;
-            unsigned long long _totalConnectClosedCount = 0;
-            unsigned long long _totalAcceptClosedCount = 0;
-            
-            unsigned long long _totalSendCount = 0;
-            unsigned long long _totalSendBytes = 0;
-            unsigned long long _totalSendMessages = 0;
-            unsigned long long _totalRecvCount = 0;
-            unsigned long long _totalRecvBytes = 0;
-            unsigned long long _totalRecvMessages = 0;
-            unsigned long long _totalRecvHTTPCount = 0;
-            time_t _openTime = 0;
-
+            inline unsigned long long getStatInfo(int stat){ return _statInfo[stat]; }
+            unsigned long long _statInfo[STAT_SIZE];
+        public:
+            // stopXXXX系列接口可以在信号处理函数中调用.
+            void stopAccept();
+            void stopClients();
+            void setStopClientsHandler(std::function<void()> handler);
+            void stopServers();
+            void setStopServersHandler(std::function<void()> handler);
+        public:
+            SessionBlock * CreateBlock();
+            void FreeBlock(SessionBlock * sb);
+        private:
+            std::queue<SessionBlock*> _freeBlock;
         private:
             friend class TcpSession;
-            // 一个established状态的session已经关闭. 该session是连入的.
-            void onSessionClose(AccepterID aID, SessionID sID, const TcpSessionPtr &session);
-
-            // 一个established状态的session已经关闭或者连接失败, 因为是connect 需要判断是否需要重连.
-            void onConnect(SessionID cID, bool bConnected, const TcpSessionPtr &session);
+            // 一个established状态的session已经关闭. 
+            void removeSession(TcpSessionPtr session);
 
             //accept到新连接.
             void onAcceptNewClient(zsummer::network::NetErrorCode ec, const TcpSocketPtr & s, const TcpAcceptPtr & accepter, AccepterID aID);
@@ -161,15 +179,22 @@ namespace zsummer
             SessionID _lastConnectID = 0;//connect ID sequence. range  [__MIDDLE_SEGMENT_VALUE - -1)
 
             //!存储当前的连入连出的session信息和accept监听器信息.
-            std::unordered_map<AccepterID, TcpAcceptPtr> _mapAccepterPtr;
             std::unordered_map<SessionID, TcpSessionPtr> _mapTcpSessionPtr;
-
-            //!存储对应的配置信息.
-            std::unordered_map<SessionID, std::pair<ConnectConfig, ConnectInfo> > _mapConnectorConfig;
-            std::unordered_map<AccepterID, std::pair<ListenConfig, ListenInfo> > _mapAccepterConfig;
-        public:
+            std::unordered_map<AccepterID, AccepterOptions > _mapAccepterOptions;
         };
 
+
+
+
+        inline SessionBlock * DefaultCreateBlock()
+        {
+            return SessionManager::getRef().CreateBlock();
+        }
+
+        inline void DefaultFreeBlock(SessionBlock *sb)
+        {
+            SessionManager::getRef().FreeBlock(sb);
+        }
 
 
     }
