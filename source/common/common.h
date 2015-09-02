@@ -39,7 +39,7 @@ int luaopen_cjson(lua_State *l);
 #include "defined.h"
 #include "single.h"
 #include "genID.h"
-#include "dbhelper/dbHelper.h"
+#include <proto4z/dbHelper.h>
 #include "md5/md5.h"
 #include "dbAsync.h"
 #include "config.h"

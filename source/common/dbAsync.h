@@ -29,7 +29,7 @@
 #include <defined.h>
 #include <single.h>
 #include <config.h>
-#include <dbhelper/dbHelper.h>
+#include <proto4z/dbHelper.h>
 
 namespace  zsummer
 {
