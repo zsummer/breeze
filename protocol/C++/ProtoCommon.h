@@ -31,39 +31,16 @@ struct SessionToken //认证令牌
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SessionToken & data) 
 { 
-    unsigned long long tag = 7ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.uID; 
     ws << data.token; 
     ws << data.tokenExpire; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SessionToken & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.uID;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.token;  
-    } 
-    if ( (1ULL << 2) & tag) 
-    { 
         rs >> data.tokenExpire;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -89,11 +66,6 @@ struct UserInfo //用户信息
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserInfo & data) 
 { 
-    unsigned long long tag = 255ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.uID; 
     ws << data.account; 
     ws << data.nickName; 
@@ -102,51 +74,18 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.hisotryDiamond; 
     ws << data.giftDiamond; 
     ws << data.joinTime; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserInfo & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.uID;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.account;  
-    } 
-    if ( (1ULL << 2) & tag) 
-    { 
         rs >> data.nickName;  
-    } 
-    if ( (1ULL << 3) & tag) 
-    { 
         rs >> data.iconID;  
-    } 
-    if ( (1ULL << 4) & tag) 
-    { 
         rs >> data.diamond;  
-    } 
-    if ( (1ULL << 5) & tag) 
-    { 
         rs >> data.hisotryDiamond;  
-    } 
-    if ( (1ULL << 6) & tag) 
-    { 
         rs >> data.giftDiamond;  
-    } 
-    if ( (1ULL << 7) & tag) 
-    { 
         rs >> data.joinTime;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -171,34 +110,14 @@ struct Heartbeat //心跳包
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Heartbeat & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.timeStamp; 
     ws << data.timeTick; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Heartbeat & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.timeStamp;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.timeTick;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -217,34 +136,14 @@ struct HeartbeatEcho //心跳包需要立刻回复
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const HeartbeatEcho & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.timeStamp; 
     ws << data.timeTick; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, HeartbeatEcho & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.timeStamp;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.timeTick;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  

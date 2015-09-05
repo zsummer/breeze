@@ -13,34 +13,14 @@ struct PlatAuthReq //平台认证
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthReq & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.account; 
     ws << data.token; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, PlatAuthReq & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.account;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.token;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -58,34 +38,14 @@ struct PlatAuthAck //认证结果, 包含该用户的所有用户/角色数据
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthAck & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.retCode; 
     ws << data.users; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, PlatAuthAck & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.retCode;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.users;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -103,34 +63,14 @@ struct CreateUserReq //创建一个新的用户数据
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserReq & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.nickName; 
     ws << data.iconID; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserReq & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.nickName;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.iconID;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -148,34 +88,14 @@ struct CreateUserAck //创建结果和所有用户数据
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserAck & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.retCode; 
     ws << data.users; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserAck & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.retCode;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.users;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -192,29 +112,12 @@ struct SelectUserReq //获取需要登录用户的所在服务器和认证令牌
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserReq & data) 
 { 
-    unsigned long long tag = 1ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.uID; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserReq & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.uID;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -237,49 +140,20 @@ struct SelectUserAck //获取需要登录用户的所在服务器和认证令牌
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserAck & data) 
 { 
-    unsigned long long tag = 31ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.retCode; 
     ws << data.uID; 
     ws << data.token; 
     ws << data.ip; 
     ws << data.port; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserAck & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.retCode;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.uID;  
-    } 
-    if ( (1ULL << 2) & tag) 
-    { 
         rs >> data.token;  
-    } 
-    if ( (1ULL << 3) & tag) 
-    { 
         rs >> data.ip;  
-    } 
-    if ( (1ULL << 4) & tag) 
-    { 
         rs >> data.port;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -297,34 +171,14 @@ struct LinkServerReq //连接到服务器
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LinkServerReq & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.uID; 
     ws << data.token; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LinkServerReq & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.uID;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.token;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -341,29 +195,12 @@ struct LinkServerAck //连接到服务器
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LinkServerAck & data) 
 { 
-    unsigned long long tag = 1ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.retCode; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LinkServerAck & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.retCode;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  

@@ -31,54 +31,22 @@ struct FriendInfo //好友信息
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FriendInfo & data) 
 { 
-    unsigned long long tag = 63ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.ownID; 
     ws << data.fID; 
     ws << data.flag; 
     ws << data.online; 
     ws << data.makeTime; 
     ws << data.lastChanged; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FriendInfo & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.ownID;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.fID;  
-    } 
-    if ( (1ULL << 2) & tag) 
-    { 
         rs >> data.flag;  
-    } 
-    if ( (1ULL << 3) & tag) 
-    { 
         rs >> data.online;  
-    } 
-    if ( (1ULL << 4) & tag) 
-    { 
         rs >> data.makeTime;  
-    } 
-    if ( (1ULL << 5) & tag) 
-    { 
         rs >> data.lastChanged;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -92,24 +60,10 @@ struct GetFriendsReq //获取好友列表
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetFriendsReq & data) 
 { 
-    unsigned long long tag = 0ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetFriendsReq & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -122,29 +76,12 @@ struct UpdateFriendsNotice //好友列表推送通知
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UpdateFriendsNotice & data) 
 { 
-    unsigned long long tag = 1ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.friends; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UpdateFriendsNotice & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.friends;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -161,29 +98,12 @@ struct AddFriendReq //添加好友请求
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AddFriendReq & data) 
 { 
-    unsigned long long tag = 1ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.dst; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AddFriendReq & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.dst;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -202,34 +122,14 @@ struct AddFriendReply //答复好友请求
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AddFriendReply & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.dst; 
     ws << data.flag; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AddFriendReply & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.dst;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.flag;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -248,34 +148,14 @@ struct AddFriendAck //添加好友请求结果
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AddFriendAck & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.retCode; 
     ws << data.dst; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AddFriendAck & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.retCode;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.dst;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -292,29 +172,12 @@ struct DelFriendReq //删除好友请求
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DelFriendReq & data) 
 { 
-    unsigned long long tag = 1ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.dst; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DelFriendReq & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.dst;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  
@@ -333,34 +196,14 @@ struct DelFriendAck //删除好友请求结果
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DelFriendAck & data) 
 { 
-    unsigned long long tag = 3ULL; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    ws << (zsummer::proto4z::Integer)0; 
-    zsummer::proto4z::Integer offset = ws.getStreamLen(); 
-    ws << tag; 
     ws << data.retCode; 
     ws << data.dst; 
-    ws.fixOriginalData(offset - 4, ws.getStreamLen() - offset); 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DelFriendAck & data) 
 { 
-    zsummer::proto4z::Integer sttLen = 0; 
-    rs >> sttLen; 
-    zsummer::proto4z::Integer cursor = rs.getStreamUnreadLen(); 
-    unsigned long long tag = 0; 
-    rs >> tag; 
-    if (zsummer::proto4z::__localEndianType() != zsummer::proto4z::LittleEndian) tag = zsummer::proto4z::byteRevese(tag); 
-    if ( (1ULL << 0) & tag) 
-    { 
         rs >> data.retCode;  
-    } 
-    if ( (1ULL << 1) & tag) 
-    { 
         rs >> data.dst;  
-    } 
-    cursor = cursor - rs.getStreamUnreadLen(); 
-    rs.skipOriginalData(sttLen - cursor); 
     return rs; 
 } 
  

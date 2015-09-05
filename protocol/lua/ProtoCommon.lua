@@ -16,14 +16,12 @@ Proto4z.EC_FRIEND_NOT_EXIST = 103--好友不存在
  
 Proto4z.SessionToken = {} --认证令牌 
 Proto4z.SessionToken.__getName = "SessionToken" 
-Proto4z.SessionToken.__getTag = "111" 
 Proto4z.SessionToken[1] = {name="uID", type="ui64" }  
 Proto4z.SessionToken[2] = {name="token", type="string" }  
 Proto4z.SessionToken[3] = {name="tokenExpire", type="ui32" }  
  
 Proto4z.UserInfo = {} --用户信息 
 Proto4z.UserInfo.__getName = "UserInfo" 
-Proto4z.UserInfo.__getTag = "11111111" 
 Proto4z.UserInfo[1] = {name="uID", type="ui64" } --用户唯一ID 
 Proto4z.UserInfo[2] = {name="account", type="string" } --帐号 
 Proto4z.UserInfo[3] = {name="nickName", type="string" } --昵称 
@@ -49,7 +47,6 @@ Proto4z.register(200,"Heartbeat")
 Proto4z.Heartbeat = {} --心跳包 
 Proto4z.Heartbeat.__getID = 200 
 Proto4z.Heartbeat.__getName = "Heartbeat" 
-Proto4z.Heartbeat.__getTag = "11" 
 Proto4z.Heartbeat[1] = {name="timeStamp", type="ui32" } --服务器当前UTC时间戳 
 Proto4z.Heartbeat[2] = {name="timeTick", type="ui32" } --服务器当前tick时间戳 毫秒, 服务启动时刻为0 
  
@@ -57,6 +54,5 @@ Proto4z.register(201,"HeartbeatEcho")
 Proto4z.HeartbeatEcho = {} --心跳包需要立刻回复 
 Proto4z.HeartbeatEcho.__getID = 201 
 Proto4z.HeartbeatEcho.__getName = "HeartbeatEcho" 
-Proto4z.HeartbeatEcho.__getTag = "11" 
 Proto4z.HeartbeatEcho[1] = {name="timeStamp", type="ui32" } --服务器当前UTC时间戳 
 Proto4z.HeartbeatEcho[2] = {name="timeTick", type="ui32" } --服务器当前tick时间戳 毫秒, 服务启动时刻为0 
