@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(breeze)
-
+include_directories(${breeze_SOURCE_DIR}/../depends/include)
 if (APPLE)
 include_directories(${breeze_SOURCE_DIR}/../depends_mac/include)
 include_directories(${breeze_SOURCE_DIR}/../depends_mac/include/mysqlclient)
