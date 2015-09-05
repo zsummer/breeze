@@ -47,6 +47,7 @@
 
 Proto4z = Proto4z or {}
 
+--Proto4z.__with_tag = true
 
 
 function Proto4z.pack(obj, name)
@@ -184,12 +185,15 @@ function Proto4z.__decode(binData, pos, name, result)
         end
     else
         local offset, tag
-        offset, p = Proto4zUtil.unpack(binData, p, "ui32")
-        offset = p + offset
-        tag, p = Proto4zUtil.unpack(binData, p, "ui64")
+        if Proto4z.__with_tag then 
+            offset, p = Proto4zUtil.unpack(binData, p, "ui32")
+            offset = p + offset
+            tag, p = Proto4zUtil.unpack(binData, p, "ui64")
+        end
         for i = 1, #proto do
-            if Proto4zUtil.testTag(tag, i) then
-                local desc = proto[i]
+            local desc = proto[i]
+            if (not Proto4z.__with_tag and  not desc.del ) 
+                or  (Proto4z.__with_tag and Proto4zUtil.testTag(tag, i)) then
                 v, p = Proto4zUtil.unpack(binData, p, desc.type)
                 if v ~= nil then
                     result[desc.name] = v
@@ -199,7 +203,9 @@ function Proto4z.__decode(binData, pos, name, result)
                 end
             end
         end
-        p = offset
+        if Proto4z.__with_tag then
+            p = offset
+        end
     end
     return p
 end
@@ -260,7 +266,9 @@ function Proto4z.__encode(obj, name, data)
         for i=1, #proto do
             local desc = proto[i]
             if not desc.del then
-                tag = Proto4zUtil.setTag(tag, i)
+                if Proto4z.__with_tag then
+                    tag = Proto4zUtil.setTag(tag, i)
+                end
                 local val = obj[desc.name]
                 if type(val) ~= "table" and desc.type ~= "string" then
                     table.insert(curdata, Proto4zUtil.pack(val, desc.type))
@@ -273,9 +281,11 @@ function Proto4z.__encode(obj, name, data)
             end
         end
         curdata = table.concat(curdata)
-        offset = #curdata + #tag
-        table.insert(data, Proto4zUtil.pack(offset, "ui32"))
-        table.insert(data, tag)
+        if Proto4z.__with_tag then
+            offset = #curdata + #tag
+            table.insert(data, Proto4zUtil.pack(offset, "ui32"))
+            table.insert(data, tag)
+        end
         table.insert(data, curdata)
     end
 end

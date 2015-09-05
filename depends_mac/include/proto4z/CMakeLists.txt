@@ -27,9 +27,19 @@ else(WIN32)
     set(LIB_SUFFIX "")
   endif()
 endif(WIN32)
-
+#add_definitions(-D__WITH_TAG)
+SET(PROTO4Z_GEN_CODE_PATH ${proto4z_SOURCE_DIR}/test/genCode)
 SET(PROTO4Z_BIN_OUT_PATH ${proto4z_SOURCE_DIR}/test/bin)
 
-add_subdirectory(g++)
+add_subdirectory(genProto.tools)
 add_subdirectory(test)
+
+install(FILES 
+${proto4z_SOURCE_DIR}/proto4z.h 
+${proto4z_SOURCE_DIR}/dbHelper.h 
+${proto4z_SOURCE_DIR}/Proto4z.cs 
+${proto4z_SOURCE_DIR}/proto4z.lua 
+${proto4z_SOURCE_DIR}/README.md 
+${proto4z_SOURCE_DIR}/COPYRIGHT 
+DESTINATION include/proto4z)
 

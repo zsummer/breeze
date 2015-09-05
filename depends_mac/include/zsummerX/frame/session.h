@@ -99,7 +99,6 @@ namespace zsummer
 
             //! send data queue
             std::queue<SessionBlock *> _sendque;
-            unsigned long long _totalConnectCount = 0;
             unsigned long long _reconnects = 0;
 
             //! rc encrypt
