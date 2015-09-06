@@ -31,20 +31,23 @@
 
 
 
-struct NodeListenConfig 
+struct ListenConfig 
 {
     std::string _ip;
     unsigned short _port = 0;
+    std::vector<std::string> _whiteList;
+    std::string _wip;
+    unsigned short _wport = 0;
     ServerNode _node = InvalidServerNode;
     NodeIndex _index = InvalidNodeIndex;
 };
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const NodeListenConfig & config)
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
 {
     os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
     return os;
 }
 
-struct NodeConnectConfig 
+struct ConnectConfig 
 {
     ServerNode _srcNode = InvalidServerNode;
     ServerNode _dstNode = InvalidServerNode;
@@ -52,7 +55,7 @@ struct NodeConnectConfig
     std::string _remoteIP;
     unsigned short _remotePort = 0;
 };
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const NodeConnectConfig & config)
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
 {
     os << "[srcNode=" << config._srcNode << ", _dstNode=" << config._dstNode << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
     return os;
@@ -79,8 +82,8 @@ class ServerConfig : public Singleton<ServerConfig>
 public:
     bool parse(std::string filename, ServerNode ownNode,NodeIndex ownIndex);
 public:
-    const NodeListenConfig& getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
-    std::vector<NodeConnectConfig > getConfigConnect(ServerNode node);
+    const ListenConfig& getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
+    std::vector<ConnectConfig > getConfigConnect(ServerNode node);
     const DBConfig & getDBConfig(DBConfigID id);
 
     inline ServerNode getOwnServerNode(){ return _ownServerNode; }
@@ -96,8 +99,8 @@ private:
     PlatID _platid = 0;
     AreaID _areaid = 0;
 
-    std::vector<NodeListenConfig> _configListen;
-    std::vector<NodeConnectConfig> _configConnect;
+    std::vector<ListenConfig> _configListen;
+    std::vector<ConnectConfig> _configConnect;
     std::vector<DBConfig> _configDB;
 };
 

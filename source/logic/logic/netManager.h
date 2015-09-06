@@ -58,7 +58,8 @@ protected:
     void msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs);
 
 private:
-    AccepterID _accepterID = InvalidAccepterID;
+    AccepterID _innerAID = InvalidAccepterID;
+    AccepterID _wAID = InvalidAccepterID;
     std::map<UserID, std::string> _token;
     std::function<void()> _onSafeClosed;
 };

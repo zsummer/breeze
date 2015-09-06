@@ -34,17 +34,17 @@ bool NetManager::start()
         }
     }
 
-    AccepterID _accepterID = SessionManager::getRef().addAccepter(ServerConfig::getRef().getConfigListen(LogicNode)._ip, ServerConfig::getRef().getConfigListen(LogicNode)._port);
-    if (_accepterID == InvalidAccepterID)
+    _innerAID = SessionManager::getRef().addAccepter(ServerConfig::getRef().getConfigListen(LogicNode)._ip, ServerConfig::getRef().getConfigListen(LogicNode)._port);
+    if (_innerAID == InvalidAccepterID)
     {
         LOGE("addAccepter error");
         return false;
     }
-    
-    SessionManager::getRef().getAccepterOptions(_accepterID)._sessionOptions._onSessionLinked = std::bind(&NetManager::event_onSessionEstablished, this, _1);
-    SessionManager::getRef().getAccepterOptions(_accepterID)._sessionOptions._onSessionClosed = std::bind(&NetManager::event_onSessionDisconnect, this, _1);
-    SessionManager::getRef().getAccepterOptions(_accepterID)._sessionOptions._onSessionPulse = std::bind(&NetManager::event_onSessionPulse, this, _1);
-    if (!SessionManager::getRef().openAccepter(_accepterID))
+    SessionManager::getRef().getAccepterOptions(_innerAID)._whitelistIP = ServerConfig::getRef().getConfigListen(LogicNode)._whiteList;
+    SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionLinked = std::bind(&NetManager::event_onSessionEstablished, this, _1);
+    SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionClosed = std::bind(&NetManager::event_onSessionDisconnect, this, _1);
+    SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionPulse = std::bind(&NetManager::event_onSessionPulse, this, _1);
+    if (!SessionManager::getRef().openAccepter(_innerAID))
     {
         LOGE("openAccepter error");
         return false;
@@ -53,6 +53,19 @@ bool NetManager::start()
     {
         LOGD("openAccepter seccuss.");
     }
+    if (ServerConfig::getRef().getConfigListen(LogicNode)._port != 0)
+    {
+        _wAID = SessionManager::getRef().addAccepter(ServerConfig::getRef().getConfigListen(LogicNode)._wip, ServerConfig::getRef().getConfigListen(LogicNode)._wport);
+        if (_wAID != InvalidAccepterID)
+        {
+            SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionLinked = std::bind(&NetManager::event_onSessionEstablished, this, _1);
+            SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionClosed = std::bind(&NetManager::event_onSessionDisconnect, this, _1);
+            SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionPulse = std::bind(&NetManager::event_onSessionPulse, this, _1);
+            SessionManager::getRef().openAccepter(_wAID);
+        }
+        
+    }
+    
     return true;
 }
 
