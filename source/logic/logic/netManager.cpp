@@ -22,6 +22,11 @@ bool NetManager::start()
         SessionID cID = SessionManager::getRef().addConnecter(con._remoteIP, con._remotePort);
         SessionManager::getRef().getConnecterOptions(cID)._onSessionLinked = std::bind(&NetManager::event_onSessionEstablished, this, _1);
         SessionManager::getRef().getConnecterOptions(cID)._onSessionClosed = std::bind(&NetManager::event_onSessionDisconnect, this, _1);
+        SessionManager::getRef().getConnecterOptions(cID)._onBlockDispatch = [](TcpSessionPtr   session, const char * begin, unsigned int len)
+        {
+            ReadStream rs(begin, len);
+            MessageDispatcher::getRef().dispatchSessionMessage(session, rs.getProtoID(), rs);
+        };
         if (cID == InvalidSeesionID)
         {
             LOGE("addConnecter error.");
@@ -44,6 +49,11 @@ bool NetManager::start()
     SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionLinked = std::bind(&NetManager::event_onSessionEstablished, this, _1);
     SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionClosed = std::bind(&NetManager::event_onSessionDisconnect, this, _1);
     SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionPulse = std::bind(&NetManager::event_onSessionPulse, this, _1);
+    SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onBlockDispatch = [](TcpSessionPtr   session, const char * begin, unsigned int len)
+    {
+        ReadStream rs(begin, len);
+        MessageDispatcher::getRef().dispatchSessionMessage(session, rs.getProtoID(), rs);
+    };
     if (!SessionManager::getRef().openAccepter(_innerAID))
     {
         LOGE("openAccepter error");
@@ -58,9 +68,14 @@ bool NetManager::start()
         _wAID = SessionManager::getRef().addAccepter(ServerConfig::getRef().getConfigListen(LogicNode)._wip, ServerConfig::getRef().getConfigListen(LogicNode)._wport);
         if (_wAID != InvalidAccepterID)
         {
-            SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionLinked = std::bind(&NetManager::event_onSessionEstablished, this, _1);
-            SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionClosed = std::bind(&NetManager::event_onSessionDisconnect, this, _1);
-            SessionManager::getRef().getAccepterOptions(_innerAID)._sessionOptions._onSessionPulse = std::bind(&NetManager::event_onSessionPulse, this, _1);
+            SessionManager::getRef().getAccepterOptions(_wAID)._sessionOptions._onSessionLinked = std::bind(&NetManager::event_onSessionEstablished, this, _1);
+            SessionManager::getRef().getAccepterOptions(_wAID)._sessionOptions._onSessionClosed = std::bind(&NetManager::event_onSessionDisconnect, this, _1);
+            SessionManager::getRef().getAccepterOptions(_wAID)._sessionOptions._onSessionPulse = std::bind(&NetManager::event_onSessionPulse, this, _1);
+            SessionManager::getRef().getAccepterOptions(_wAID)._sessionOptions._onBlockDispatch = [](TcpSessionPtr   session, const char * begin, unsigned int len)
+            {
+                ReadStream rs(begin, len);
+                MessageDispatcher::getRef().dispatchSessionMessage(session, rs.getProtoID(), rs);
+            };
             SessionManager::getRef().openAccepter(_wAID);
         }
         

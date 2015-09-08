@@ -41,6 +41,7 @@
 #include <proto4z/proto4z.h>
 #include <zsummerX/zsummerX.h>
 #include <ProtoCommon.h>
+#include <dispatch.h>
 
 using namespace zsummer::log4z;
 using namespace zsummer::network;

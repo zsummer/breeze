@@ -100,6 +100,7 @@
     <ClInclude Include="lua\summer.h">
       <Filter>lua</Filter>
     </ClInclude>
+    <ClInclude Include="dispatch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
@@ -221,6 +222,7 @@
     <ClCompile Include="lua\summer.cpp">
       <Filter>lua</Filter>
     </ClCompile>
+    <ClCompile Include="dispatch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="dbhelper">

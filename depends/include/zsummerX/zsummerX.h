@@ -63,7 +63,6 @@
 // default in mac use select implementation
 
 #include "frame/config.h"
-#include "frame/dispatch.h"
 #include "frame/manager.h"
 
 

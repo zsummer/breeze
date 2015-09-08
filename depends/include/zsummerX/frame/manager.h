@@ -39,7 +39,7 @@
 #define ZSUMMER_TCPSESSION_MANAGER_H_
 
 #include "config.h"
-#include "dispatch.h"
+#include "session.h"
 namespace zsummer
 {
     namespace network
@@ -56,8 +56,7 @@ namespace zsummer
         }
         inline void DefaultBlockDispatch(TcpSessionPtr session, const char * begin, unsigned int len)
         {
-            zsummer::proto4z::ReadStream rs(begin, len);
-            MessageDispatcher::getRef().dispatchSessionMessage(session, rs.getProtoID(), rs);
+            LCW("DefaultBlockDispatch empty. ");
         }
 
         inline OnBlockCheckResult DefaultHTTPBlockCheck(const char * begin, unsigned int len, unsigned int bound,
@@ -69,7 +68,7 @@ namespace zsummer
 
         inline void DefaultHTTPBlockDispatch(TcpSessionPtr session, const PairString & commonLine, const MapString &head, const std::string & body)
         {
-
+            LCW("DefaultHTTPBlockDispatch empty.");
         }
 
 
