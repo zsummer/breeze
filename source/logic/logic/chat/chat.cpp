@@ -1,13 +1,13 @@
 ﻿#include "chat.h"
 #include "../userManager.h"
-#include "../dbManager.h"
+#include "../dbMgr.h"
 #include <ProtoCommon.h>
 #include "ProtoChat.h"
 #include "ProtoChat_SQL.h"
 
 Chat::Chat()
 {
-    MessageDispatcher::getRef().registerSessionMessage(ID_ChatReq, std::bind(&Chat::msg_onChatReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ID_ChatReq, std::bind(&Chat::msg_onChatReq, this, _1, _2));
 }
 
 Chat::~Chat()
@@ -51,9 +51,9 @@ bool Chat::initMessage()
 {
     //! 先desc一下ChatInfo表, 不存在则创建
     auto build = ChatInfo_BUILD();
-    if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
+    if (DBMgr::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
     {
-        if (DBManager::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
+        if (DBMgr::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
         {
             LOGE("create table error. sql=" << build[1]);
             return false;
@@ -62,14 +62,14 @@ bool Chat::initMessage()
     //! 无论ChatInfo表的字段是否有增删 都alter一遍. 
     for (size_t i = 2; i < build.size(); i++)
     {
-        DBManager::getRef().infoQuery(build[i]);
+        DBMgr::getRef().infoQuery(build[i]);
     }
     //获取当前最大消息ID
     _genID.initConfig(ServerConfig::getRef().getPlatID(), ServerConfig::getRef().getAreaID());
     DBQuery q("select mID from tb_ChatInfo where mID >= ? and mID < ?  order by mID desc limit 1;");
     q << _genID.getMinObjID();
     q << _genID.getMaxObjID();
-    auto result = DBManager::getRef().infoQuery(q.popSQL());
+    auto result = DBMgr::getRef().infoQuery(q.popSQL());
     if (result->getErrorCode() != QEC_SUCCESS)
     {
         LOGE("Chat::init() init error.  can't get current tb_ChatInfo id.  error=" << result->getLastError() << ", sql=" << result->sqlString());
@@ -99,7 +99,7 @@ void Chat::insertMessage(const ChatInfo & info)
     auto sql = ChatInfo_INSERT(info);
     if (!sql.empty())
     {
-        DBManager::getRef().infoAsyncQuery(sql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "insertMessage"));
+        DBMgr::getRef().infoAsyncQuery(sql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "insertMessage"));
     }
 }
 void Chat::updateMessage(const ChatInfo & info)
@@ -107,7 +107,7 @@ void Chat::updateMessage(const ChatInfo & info)
     auto sql = ChatInfo_UPDATE(info);
     if (!sql.empty())
     {
-        DBManager::getRef().infoAsyncQuery(sql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "updateMessage"));
+        DBMgr::getRef().infoAsyncQuery(sql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "updateMessage"));
     }
 }
 
@@ -154,7 +154,7 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
         ack.msgID = info.mID;
         //塞进数据库
         auto chatsql = ChatInfo_INSERT(info);
-        DBManager::getRef().infoAsyncQuery(chatsql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
+        DBMgr::getRef().infoAsyncQuery(chatsql, std::bind(&Chat::db_onDefaultUpdate, this, _1, "ChatInfo_INSERT"));
 
         //过滤掉脏字
         match_tree_translate(_filter, &info.msg[0], (unsigned int)info.msg.length(), 1, '*');

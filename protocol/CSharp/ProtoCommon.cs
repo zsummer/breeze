@@ -66,13 +66,13 @@ namespace Proto4z
     {     
         public System.UInt64 uID;  
         public System.String token;  
-        public System.UInt32 tokenExpire;  
+        public System.UInt32 expire;  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(tokenExpire)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(expire)); 
             var ret = new System.Collections.Generic.List<byte>(); 
             ret.AddRange(data); 
             return ret; 
@@ -82,13 +82,13 @@ namespace Proto4z
             uID = 0; 
                 uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
                 token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            tokenExpire = 0; 
-                tokenExpire = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            expire = 0; 
+                expire = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class UserInfo: Proto4z.IProtoObject //用户信息 
+    class BaseInfo: Proto4z.IProtoObject //用户基础信息 
     {     
         public System.UInt64 uID; //用户唯一ID 
         public System.String account; //帐号 
@@ -133,7 +133,7 @@ namespace Proto4z
         } 
     } 
  
-    class UserInfoArray : System.Collections.Generic.List<UserInfo>, Proto4z.IProtoObject  
+    class BaseInfoArray : System.Collections.Generic.List<BaseInfo>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -154,7 +154,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new UserInfo(); 
+                    var data = new BaseInfo(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
@@ -163,7 +163,7 @@ namespace Proto4z
         } 
     } 
  
-    class UserIDArray : System.Collections.Generic.List<System.UInt64>, Proto4z.IProtoObject  
+    class UIDS : System.Collections.Generic.List<System.UInt64>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 

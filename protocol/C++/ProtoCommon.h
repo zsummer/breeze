@@ -22,29 +22,29 @@ struct SessionToken //认证令牌
 { 
     unsigned long long uID;  
     std::string token;  
-    unsigned int tokenExpire;  
+    unsigned int expire;  
     SessionToken() 
     { 
         uID = 0; 
-        tokenExpire = 0; 
+        expire = 0; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SessionToken & data) 
 { 
     ws << data.uID; 
     ws << data.token; 
-    ws << data.tokenExpire; 
+    ws << data.expire; 
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SessionToken & data) 
 { 
         rs >> data.uID;  
         rs >> data.token;  
-        rs >> data.tokenExpire;  
+        rs >> data.expire;  
     return rs; 
 } 
  
-struct UserInfo //用户信息 
+struct BaseInfo //用户基础信息 
 { 
     unsigned long long uID; //用户唯一ID 
     std::string account; //帐号 
@@ -54,7 +54,7 @@ struct UserInfo //用户信息
     int hisotryDiamond; //历史充值钻石总额 
     int giftDiamond; //当前剩余的赠送钻石 
     unsigned int joinTime; //加入时间 
-    UserInfo() 
+    BaseInfo() 
     { 
         uID = 0; 
         iconID = 0; 
@@ -64,7 +64,7 @@ struct UserInfo //用户信息
         joinTime = 0; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserInfo & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const BaseInfo & data) 
 { 
     ws << data.uID; 
     ws << data.account; 
@@ -76,7 +76,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.joinTime; 
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserInfo & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, BaseInfo & data) 
 { 
         rs >> data.uID;  
         rs >> data.account;  
@@ -89,9 +89,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-typedef std::vector<UserInfo> UserInfoArray;  
+typedef std::vector<BaseInfo> BaseInfoArray;  
  
-typedef std::vector<unsigned long long> UserIDArray;  
+typedef std::vector<unsigned long long> UIDS;  
 const unsigned short ETRIGGER_USER_LOGIN = 0; //用户登录, 用户ID 
 const unsigned short ETRIGGER_USER_LOGOUT = 1; //用户登出, 用户ID 
  

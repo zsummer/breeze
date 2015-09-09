@@ -1,6 +1,6 @@
 ﻿
 #include "testBlob.h"
-#include "../dbManager.h"
+#include "../dbMgr.h"
 using namespace zsummer::mysql;
 
 
@@ -16,7 +16,7 @@ TestBlob::~TestBlob()
 bool TestBlob::init()
 {
     //一段测试blob存储的测试代码.
-    auto checkTable = DBManager::getRef().infoQuery("desc tb_testBlob");
+    auto checkTable = DBMgr::getRef().infoQuery("desc tb_testBlob");
     if (checkTable->getErrorCode() != QEC_SUCCESS)
     {
         LOGI("create talbe tb_testBlob ");
@@ -24,7 +24,7 @@ bool TestBlob::init()
             "`uID` bigint(20) unsigned NOT NULL, "
             "PRIMARY KEY(`uID`) "
             ") ENGINE = MyISAM DEFAULT CHARSET = utf8");
-        checkTable = DBManager::getRef().infoQuery(q.popSQL());
+        checkTable = DBMgr::getRef().infoQuery(q.popSQL());
         if (checkTable->getErrorCode() != QEC_SUCCESS)
         {
             LOGE("create talbe tb_testBlob error=" << checkTable->getLastError());
@@ -32,7 +32,7 @@ bool TestBlob::init()
         }
     }
     //版本升级自动alter add 新字段. 
-    DBManager::getRef().infoQuery("alter table `tb_testBlob` add `bag` blob");
+    DBMgr::getRef().infoQuery("alter table `tb_testBlob` add `bag` blob");
 
 
     //blob test
@@ -51,7 +51,7 @@ bool TestBlob::init()
     q.add(blob);
     q.add(blob);
 
-    auto result = DBManager::getRef().infoQuery(q.popSQL());
+    auto result = DBMgr::getRef().infoQuery(q.popSQL());
     if (result->getErrorCode() != QEC_SUCCESS )
     {
         LOGE("update blob error. msg=" << result->getLastError());
@@ -60,7 +60,7 @@ bool TestBlob::init()
     
     q.init("select bag from tb_testBlob where uID=?");
     q.add(1);
-    result = DBManager::getRef().infoQuery(q.popSQL());
+    result = DBMgr::getRef().infoQuery(q.popSQL());
     if (result->getErrorCode() != QEC_SUCCESS)
     {
         LOGE("select blob error. errorMsg=" << result->getLastError());

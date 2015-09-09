@@ -1,6 +1,6 @@
 ﻿#include "friend.h"
 #include "../userManager.h"
-#include "../dbManager.h"
+#include "../dbMgr.h"
 #include <ProtoCommon.h>
 #include <ProtoCommon_SQL.h>
 #include <ProtoFriend.h>
@@ -9,10 +9,10 @@
 
 Friend::Friend()
 {
-    MessageDispatcher::getRef().registerSessionMessage(ID_GetFriendsReq, std::bind(&Friend::msg_onGetFriendsReq, this, _1, _2));
-    MessageDispatcher::getRef().registerSessionMessage(ID_AddFriendReq, std::bind(&Friend::msg_onAddFriendReq, this, _1, _2));
-    MessageDispatcher::getRef().registerSessionMessage(ID_AddFriendReply, std::bind(&Friend::msg_onAddFriendReply, this, _1, _2));
-    MessageDispatcher::getRef().registerSessionMessage(ID_DelFriendReq, std::bind(&Friend::msg_onDelFriendReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ID_GetFriendsReq, std::bind(&Friend::msg_onGetFriendsReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ID_AddFriendReq, std::bind(&Friend::msg_onAddFriendReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ID_AddFriendReply, std::bind(&Friend::msg_onAddFriendReply, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ID_DelFriendReq, std::bind(&Friend::msg_onDelFriendReq, this, _1, _2));
 }
 
 Friend::~Friend()
@@ -36,9 +36,9 @@ bool Friend::initFriends()
 {
     //! 先desc一下FriendInfo表, 不存在则创建
     auto build = FriendInfo_BUILD();
-    if (DBManager::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
+    if (DBMgr::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
     {
-        if (DBManager::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
+        if (DBMgr::getRef().infoQuery(build[1])->getErrorCode() != QEC_SUCCESS)
         {
             LOGE("create table error. sql=" << build[1]);
             return false;
@@ -47,7 +47,7 @@ bool Friend::initFriends()
     //! 无论FriendInfo表的字段是否有增删 都alter一遍. 
     for (size_t i = 2; i < build.size(); i++)
     {
-        DBManager::getRef().infoQuery(build[i]);
+        DBMgr::getRef().infoQuery(build[i]);
     }
 
     //加载所有好友关系
@@ -55,7 +55,7 @@ bool Friend::initFriends()
     do
     {
         auto sql = FriendInfo_LOAD(curID);
-        auto result = DBManager::getRef().infoQuery(sql);
+        auto result = DBMgr::getRef().infoQuery(sql);
         if (result->getErrorCode() != QEC_SUCCESS)
         {
             LOGE("load FriendInfo error. curID:" << curID << ", err=" << result->getLastError());
@@ -155,7 +155,7 @@ void Friend::insertFriend(const FriendInfo & info)
     auto sql = FriendInfo_INSERT(info);
     if (!sql.empty())
     {
-        DBManager::getRef().infoAsyncQuery(sql, std::bind(&Friend::db_onDefaultUpdate, this, _1, "insertFriend"));
+        DBMgr::getRef().infoAsyncQuery(sql, std::bind(&Friend::db_onDefaultUpdate, this, _1, "insertFriend"));
     }
 }
 
@@ -165,7 +165,7 @@ void Friend::updateFriend(const FriendInfo & info)
     auto sql = FriendInfo_UPDATE(info);
     if (!sql.empty())
     {
-        DBManager::getRef().infoAsyncQuery(sql, std::bind(&Friend::db_onDefaultUpdate, this, _1, "updateFriend"));
+        DBMgr::getRef().infoAsyncQuery(sql, std::bind(&Friend::db_onDefaultUpdate, this, _1, "updateFriend"));
     }
 }
 

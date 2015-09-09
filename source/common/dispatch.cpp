@@ -46,12 +46,12 @@ MessageDispatcher & MessageDispatcher::getRef()
 }
 
 
-void MessageDispatcher::dispatchSessionMessage(TcpSessionPtr  &session, ProtoID pID, zsummer::proto4z::ReadStream & msg)
+void MessageDispatcher::dispatch(TcpSessionPtr  &session, ProtoID pID, zsummer::proto4z::ReadStream & msg)
 {
     MapProtoDispatch::iterator iter = _mapSessionDispatch.find(pID);
     if (iter == _mapSessionDispatch.end() )
     {
-        LCW("Entry dispatchSessionMessage[" << pID << "] Failed: UNKNOWN ProtoID.  SessionID=" << session->getSessionID() << ", ProtoID=" << pID);
+        LCW("Entry dispatch[" << pID << "] Failed: UNKNOWN ProtoID.  SessionID=" << session->getSessionID() << ", ProtoID=" << pID);
         return;
     }
     try
@@ -60,20 +60,20 @@ void MessageDispatcher::dispatchSessionMessage(TcpSessionPtr  &session, ProtoID 
         {
             for (auto & fun : iter->second)
             {
-                //LCT("Entry dispatchSessionMessage[" << pID << "]  SessionID=" << session->getSessionID());
+                //LCT("Entry dispatch[" << pID << "]  SessionID=" << session->getSessionID());
                 msg.resetMoveCursor();
                 fun(session,  msg);
             }
         }
-        //LCT("Leave dispatchSessionMessage[" << pID << "]  SessionID=" << session->getSessionID());
+        //LCT("Leave dispatch[" << pID << "]  SessionID=" << session->getSessionID());
     }
     catch (std::runtime_error e)
     {
-        LCE("Leave dispatchSessionMessage[" << pID << "] With Runtime Error: SessionID=" << session->getSessionID() << ", rsLen=" << msg.getStreamLen() << ", Error Message=\"" << e.what() << "\"");
+        LCE("Leave dispatch[" << pID << "] With Runtime Error: SessionID=" << session->getSessionID() << ", rsLen=" << msg.getStreamLen() << ", Error Message=\"" << e.what() << "\"");
     }
     catch (...)
     {
-        LCE("Leave dispatchSessionMessage[" << pID << "] With Unknown Runtime Error: SessionID=" << session->getSessionID());
+        LCE("Leave dispatch[" << pID << "] With Unknown Runtime Error: SessionID=" << session->getSessionID());
     }
 }
 

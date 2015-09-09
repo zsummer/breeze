@@ -33,15 +33,6 @@
     <ClCompile Include="application.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="logic\dbManager.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\netManager.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\userManager.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="logic\mission\eventTrigger.cpp">
       <Filter>logic\mission</Filter>
     </ClCompile>
@@ -60,19 +51,16 @@
     <ClCompile Include="logic\chat\chat.cpp">
       <Filter>logic\chat</Filter>
     </ClCompile>
+    <ClCompile Include="logic\netMgr.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\dbMgr.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
       <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\dbManager.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\netManager.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\userManager.h">
-      <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\mission\eventTrigger.h">
       <Filter>logic\mission</Filter>
@@ -91,6 +79,12 @@
     </ClInclude>
     <ClInclude Include="logic\chat\chat.h">
       <Filter>logic\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\netMgr.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\dbMgr.h">
+      <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

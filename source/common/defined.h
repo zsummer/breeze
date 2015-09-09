@@ -60,9 +60,7 @@ typedef unsigned int ui32;
 typedef long long i64;
 typedef unsigned long long ui64;
 
-//! 逻辑类型
-typedef ui64 UserID;
-const ui64 InvalidUserID = (UserID)-1;
+
 
 //服务节点类型
 typedef ui16 ServerNode;
@@ -86,6 +84,9 @@ typedef ui16 PlatID;
 typedef ui16 AreaID;
 
 
+//! 逻辑类型
+typedef ui64 UserID;
+const ui64 InvalidUserID = (UserID)0;
 
 enum SessionStatus
 {
@@ -98,21 +99,22 @@ enum SessionUserData
     USER_SESSION_STATUS,
     USER_ACCOUNT,
     USER_USER_ID,
+    USER_LOGIN_TIME,
     USER_LAST_ACTIVE_TIME,
 };
 
-struct InnerUserInfo
+struct UserInfo
 {
-    UserInfo userInfo;
+    BaseInfo userInfo;
     SessionToken token;
     SessionID sID = InvalidSeesionID;
-    time_t loginTime = 0;
 };
 
+using UserInfoPtr = std::shared_ptr<UserInfo>;
 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const InnerUserInfo & info)
+
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserInfo & info)
 {
-//    stm << "[UserInfo]" << info.userInfo << " [SessionToken]" << info.token << " sID=" << info.sID << ", loginTime=" << info.loginTime;
     return stm;
 }
 

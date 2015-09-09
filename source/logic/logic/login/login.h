@@ -34,7 +34,7 @@ public:
     Login();
     bool init();
 public:
-    void event_onSessionDisconnect(TcpSessionPtr session);
+    void event_onClosed(TcpSessionPtr session);
     //! ---- 令牌验证 --------------------------------------------
     void msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs);
     void msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs);

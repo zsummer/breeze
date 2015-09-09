@@ -1,6 +1,6 @@
 ﻿#include "login.h"
 #include "../userManager.h"
-#include "../dbManager.h"
+#include "../dbMgr.h"
 #include <ProtoCommon.h>
 #include <ProtoCommon_SQL.h>
 #include <ProtoLogin.h>
@@ -8,9 +8,9 @@
 
 Login::Login()
 {
-    MessageDispatcher::getRef().registerSessionMessage(ID_PlatAuthReq, std::bind(&Login::msg_onPlatAuthReq, this, _1, _2));
-    MessageDispatcher::getRef().registerSessionMessage(ID_CreateUserReq, std::bind(&Login::msg_onCreateUserReq, this, _1, _2));
-    MessageDispatcher::getRef().registerSessionMessage(ID_SelectUserReq, std::bind(&Login::msg_onSelectUserReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ID_PlatAuthReq, std::bind(&Login::msg_onPlatAuthReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ID_CreateUserReq, std::bind(&Login::msg_onCreateUserReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ID_SelectUserReq, std::bind(&Login::msg_onSelectUserReq, this, _1, _2));
 }
 
 bool Login::init()
@@ -19,7 +19,7 @@ bool Login::init()
     DBQuery q("select uID from tb_UserInfo where uID >= ? and uID < ?  order by uID desc limit 1;");
     q << _genID.getMinObjID();
     q << _genID.getMaxObjID();
-    auto result = DBManager::getRef().infoQuery(q.popSQL());
+    auto result = DBMgr::getRef().infoQuery(q.popSQL());
     if (result->getErrorCode() != QEC_SUCCESS)
     {
         LOGE("Login::init() init error.  can't get current users info.  error=" << result->getLastError() << ", sql=" << result->sqlString());
@@ -42,7 +42,7 @@ bool Login::init()
     return true;
 }
 
-void Login::event_onSessionDisconnect(TcpSessionPtr session)
+void Login::event_onClosed(TcpSessionPtr session)
 {
     _cache.erase(session->getSessionID());
 }
@@ -57,7 +57,7 @@ void Login::msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs)
     session->setUserParam(USER_ACCOUNT, req.account);
     zsummer::mysql::DBQuery q(" select `uID`,`account`,`nickName`,`iconID`,`diamond`,`hisotryDiamond`,`giftDiamond`,`joinTime` from `tb_UserInfo` where `account` = ? ");
     q << req.account;
-    DBManager::getRef().infoAsyncQuery(q.popSQL(), std::bind(&Login::db_onFetchUsers, this, _1, session));
+    DBMgr::getRef().infoAsyncQuery(q.popSQL(), std::bind(&Login::db_onFetchUsers, this, _1, session));
 }
 
 void Login::db_onFetchUsers(DBResultPtr result, TcpSessionPtr session)
@@ -126,7 +126,7 @@ void Login::msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs)
     info.nickName = req.nickName;
     info.iconID = req.iconID;
     std::string sql = UserInfo_INSERT(info);
-    DBManager::getRef().infoAsyncQuery(sql, std::bind(&Login::db_onCreateUser, this, _1, session, info));
+    DBMgr::getRef().infoAsyncQuery(sql, std::bind(&Login::db_onCreateUser, this, _1, session, info));
 }
 
 void Login::db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const UserInfo & info)
