@@ -19,9 +19,6 @@
     <Filter Include="logic\chat">
       <UniqueIdentifier>{d00be9fd-3cd5-4ab8-878c-f5fe675b6e4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="logic\login">
-      <UniqueIdentifier>{47e6fa41-00a5-4a32-92d1-00f76fc176f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="logic\friend">
       <UniqueIdentifier>{a6da4f1a-5fc7-47a2-9877-aa219f626887}</UniqueIdentifier>
     </Filter>
@@ -41,9 +38,6 @@
     </ClCompile>
     <ClCompile Include="logic\testBlob\testBlob.cpp">
       <Filter>logic\testBlob</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\login\login.cpp">
-      <Filter>logic\login</Filter>
     </ClCompile>
     <ClCompile Include="logic\friend\friend.cpp">
       <Filter>logic\friend</Filter>
@@ -70,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="logic\testBlob\testBlob.h">
       <Filter>logic\testBlob</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\login\login.h">
-      <Filter>logic\login</Filter>
     </ClInclude>
     <ClInclude Include="logic\friend\friend.h">
       <Filter>logic\friend</Filter>

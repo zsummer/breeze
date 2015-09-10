@@ -100,7 +100,6 @@
     <ClCompile Include="logic\chat\chat.cpp" />
     <ClCompile Include="logic\dbMgr.cpp" />
     <ClCompile Include="logic\friend\friend.cpp" />
-    <ClCompile Include="logic\login\login.cpp" />
     <ClCompile Include="logic\mission\dailyMission.cpp" />
     <ClCompile Include="logic\mission\eventTrigger.cpp" />
     <ClCompile Include="logic\netMgr.cpp" />
@@ -112,7 +111,6 @@
     <ClInclude Include="logic\chat\chat.h" />
     <ClInclude Include="logic\dbMgr.h" />
     <ClInclude Include="logic\friend\friend.h" />
-    <ClInclude Include="logic\login\login.h" />
     <ClInclude Include="logic\mission\dailyMission.h" />
     <ClInclude Include="logic\mission\eventTrigger.h" />
     <ClInclude Include="logic\netMgr.h" />

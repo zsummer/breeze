@@ -2,9 +2,59 @@
 namespace Proto4z  
 { 
  
+    class Heartbeat: Proto4z.IProtoObject //心跳包 
+    {     
+        static public System.UInt16 getProtoID() { return 0; } 
+        static public string getProtoName() { return "Heartbeat"; } 
+        public System.UInt32 timeStamp; //服务器当前UTC时间戳 
+        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeStamp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeTick)); 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            ret.AddRange(data); 
+            return ret; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            timeStamp = 0; 
+                timeStamp = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            timeTick = 0; 
+                timeTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    class HeartbeatEcho: Proto4z.IProtoObject //心跳包需要立刻回复 
+    {     
+        static public System.UInt16 getProtoID() { return 1; } 
+        static public string getProtoName() { return "HeartbeatEcho"; } 
+        public System.UInt32 timeStamp; //服务器当前UTC时间戳 
+        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeStamp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeTick)); 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            ret.AddRange(data); 
+            return ret; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            timeStamp = 0; 
+                timeStamp = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            timeTick = 0; 
+                timeTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     class PlatAuthReq: Proto4z.IProtoObject //平台认证 
     {     
-        static public System.UInt16 getProtoID() { return 100; } 
+        static public System.UInt16 getProtoID() { return 2; } 
         static public string getProtoName() { return "PlatAuthReq"; } 
         public System.String account; //用户名 
         public System.String token; //令牌 
@@ -27,10 +77,10 @@ namespace Proto4z
  
     class PlatAuthAck: Proto4z.IProtoObject //认证结果, 包含该用户的所有用户/角色数据 
     {     
-        static public System.UInt16 getProtoID() { return 101; } 
+        static public System.UInt16 getProtoID() { return 3; } 
         static public string getProtoName() { return "PlatAuthAck"; } 
         public System.UInt16 retCode;  
-        public UserInfoArray users; //该帐号下的所有用户信息 
+        public BaseInfoArray users; //该帐号下的所有用户信息 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -44,7 +94,7 @@ namespace Proto4z
         { 
             retCode = 0; 
                 retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            users = new UserInfoArray(); 
+            users = new BaseInfoArray(); 
                 users.__decode(binData, ref pos); 
             return pos; 
         } 
@@ -52,7 +102,7 @@ namespace Proto4z
  
     class CreateUserReq: Proto4z.IProtoObject //创建一个新的用户数据 
     {     
-        static public System.UInt16 getProtoID() { return 102; } 
+        static public System.UInt16 getProtoID() { return 4; } 
         static public string getProtoName() { return "CreateUserReq"; } 
         public System.String nickName; //昵称 
         public System.Int32 iconID; //头像 
@@ -76,10 +126,10 @@ namespace Proto4z
  
     class CreateUserAck: Proto4z.IProtoObject //创建结果和所有用户数据 
     {     
-        static public System.UInt16 getProtoID() { return 103; } 
+        static public System.UInt16 getProtoID() { return 5; } 
         static public string getProtoName() { return "CreateUserAck"; } 
         public System.UInt16 retCode;  
-        public UserInfoArray users; //该帐号下的所有用户信息 
+        public BaseInfoArray users; //该帐号下的所有用户信息 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -93,7 +143,7 @@ namespace Proto4z
         { 
             retCode = 0; 
                 retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            users = new UserInfoArray(); 
+            users = new BaseInfoArray(); 
                 users.__decode(binData, ref pos); 
             return pos; 
         } 
@@ -101,7 +151,7 @@ namespace Proto4z
  
     class SelectUserReq: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌 
     {     
-        static public System.UInt16 getProtoID() { return 104; } 
+        static public System.UInt16 getProtoID() { return 6; } 
         static public string getProtoName() { return "SelectUserReq"; } 
         public System.UInt64 uID;  
         public System.Collections.Generic.List<byte> __encode() 
@@ -122,7 +172,7 @@ namespace Proto4z
  
     class SelectUserAck: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌 
     {     
-        static public System.UInt16 getProtoID() { return 105; } 
+        static public System.UInt16 getProtoID() { return 7; } 
         static public string getProtoName() { return "SelectUserAck"; } 
         public System.UInt16 retCode;  
         public System.UInt64 uID;  
@@ -155,10 +205,10 @@ namespace Proto4z
         } 
     } 
  
-    class LinkServerReq: Proto4z.IProtoObject //连接到服务器 
+    class AttachLogicReq: Proto4z.IProtoObject //挂到logic服务器上 
     {     
-        static public System.UInt16 getProtoID() { return 106; } 
-        static public string getProtoName() { return "LinkServerReq"; } 
+        static public System.UInt16 getProtoID() { return 10; } 
+        static public string getProtoName() { return "AttachLogicReq"; } 
         public System.UInt64 uID;  
         public System.String token;  
         public System.Collections.Generic.List<byte> __encode() 
@@ -179,10 +229,10 @@ namespace Proto4z
         } 
     } 
  
-    class LinkServerAck: Proto4z.IProtoObject //连接到服务器 
+    class AttachLogicAck: Proto4z.IProtoObject //挂到logic服务器上 
     {     
-        static public System.UInt16 getProtoID() { return 107; } 
-        static public string getProtoName() { return "LinkServerAck"; } 
+        static public System.UInt16 getProtoID() { return 11; } 
+        static public string getProtoName() { return "AttachLogicAck"; } 
         public System.UInt16 retCode;  
         public System.Collections.Generic.List<byte> __encode() 
         { 

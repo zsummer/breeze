@@ -148,9 +148,9 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
         info.mID = _genID.genNewObjID();
         info.msg = req.msg;
         info.sendTime = (unsigned int)time(NULL);
-        info.srcIcon = inner->userInfo.iconID;
-        info.srcID = inner->userInfo.uID;
-        info.srcName = inner->userInfo.nickName;
+        info.srcIcon = inner->base.iconID;
+        info.srcID = inner->base.uID;
+        info.srcName = inner->base.nickName;
         ack.msgID = info.mID;
         //塞进数据库
         auto chatsql = ChatInfo_INSERT(info);
@@ -168,8 +168,8 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
                 ack.retCode = EC_USER_NOT_FOUND;
                 return;
             }
-            info.dstIcon = dstinner->userInfo.iconID;
-            info.dstName = dstinner->userInfo.nickName;
+            info.dstIcon = dstinner->base.iconID;
+            info.dstName = dstinner->base.nickName;
             if (dstinner->sID != InvalidSeesionID)
             {
                 WriteStream ws(ID_ChatNotice);

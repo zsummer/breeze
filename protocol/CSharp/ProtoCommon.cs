@@ -199,56 +199,6 @@ namespace Proto4z
         public static System.UInt16 value = 1;  
     } 
  
-    class Heartbeat: Proto4z.IProtoObject //心跳包 
-    {     
-        static public System.UInt16 getProtoID() { return 200; } 
-        static public string getProtoName() { return "Heartbeat"; } 
-        public System.UInt32 timeStamp; //服务器当前UTC时间戳 
-        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeStamp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeTick)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            timeStamp = 0; 
-                timeStamp = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            timeTick = 0; 
-                timeTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    class HeartbeatEcho: Proto4z.IProtoObject //心跳包需要立刻回复 
-    {     
-        static public System.UInt16 getProtoID() { return 201; } 
-        static public string getProtoName() { return "HeartbeatEcho"; } 
-        public System.UInt32 timeStamp; //服务器当前UTC时间戳 
-        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeStamp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeTick)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            timeStamp = 0; 
-                timeStamp = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            timeTick = 0; 
-                timeTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
 } 
  
  

@@ -48,6 +48,69 @@ int luaopen_cjson(lua_State *l);
 using namespace zsummer::mysql;
 
 
+//DB类型
+typedef ui8 DBConfigID;
+const DBConfigID InfoDB = 1;
+const DBConfigID LogDB = 2;
+const DBConfigID InvalidDB = (DBConfigID)-1;
+
+
+//分区分服的ID
+typedef ui16 PlatID;
+typedef ui16 AreaID;
+
+
+//! 逻辑类型
+typedef ui64 UserID;
+const ui64 InvalidUserID = (UserID)0;
+
+enum SessionStatus
+{
+    SSTATUS_UNKNOW = 0,
+    SSTATUS_PLAT_LOGINING,
+    SSTATUS_PLAT_LOGINED,
+    SSTATUS_PLAT_LOADING,
+    SSTATUS_PLAT_CREATING,
+    SSTATUS_PLAT_SELECTING,
+    SS_LOGINED,
+};
+
+enum SessionUserData
+{
+    UPARAM_SESSION_STATUS,
+    UPARAM_ACCOUNT,
+    UPARAM_USER_ID,
+    UPARAM_LOGIN_TIME,
+    UPARAM_LAST_ACTIVE_TIME,
+};
+
+struct UserInfo
+{
+    BaseInfo base;
+    SessionToken token;
+    SessionID sID = InvalidSeesionID;
+};
+
+using UserInfoPtr = std::shared_ptr<UserInfo>;
+
+
+
+const int MAX_ACCOUNT_USERS = 5;
+
+
+
+
+
+
+
+
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserInfo & info)
+{
+    return stm;
+}
+
+
+
 
 
 

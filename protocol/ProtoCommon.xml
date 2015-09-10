@@ -67,14 +67,6 @@
 
 
 
-    <proto name="Heartbeat" desc= "心跳包">
-        <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
-        <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
-    </proto>
-    <proto name="HeartbeatEcho" desc= "心跳包需要立刻回复">
-        <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
-        <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
-    </proto>
 
 </Proto>
 

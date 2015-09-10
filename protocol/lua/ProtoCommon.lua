@@ -42,17 +42,3 @@ Proto4z.UIDS.__getDesc = "array"
 Proto4z.UIDS.__getTypeV = "ui64" 
 Proto4z.ETRIGGER_USER_LOGIN = 0--用户登录, 用户ID 
 Proto4z.ETRIGGER_USER_LOGOUT = 1--用户登出, 用户ID 
- 
-Proto4z.register(200,"Heartbeat") 
-Proto4z.Heartbeat = {} --心跳包 
-Proto4z.Heartbeat.__getID = 200 
-Proto4z.Heartbeat.__getName = "Heartbeat" 
-Proto4z.Heartbeat[1] = {name="timeStamp", type="ui32" } --服务器当前UTC时间戳 
-Proto4z.Heartbeat[2] = {name="timeTick", type="ui32" } --服务器当前tick时间戳 毫秒, 服务启动时刻为0 
- 
-Proto4z.register(201,"HeartbeatEcho") 
-Proto4z.HeartbeatEcho = {} --心跳包需要立刻回复 
-Proto4z.HeartbeatEcho.__getID = 201 
-Proto4z.HeartbeatEcho.__getName = "HeartbeatEcho" 
-Proto4z.HeartbeatEcho[1] = {name="timeStamp", type="ui32" } --服务器当前UTC时间戳 
-Proto4z.HeartbeatEcho[2] = {name="timeTick", type="ui32" } --服务器当前tick时间戳 毫秒, 服务启动时刻为0 

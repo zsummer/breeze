@@ -186,7 +186,7 @@ void Friend::msg_onGetFriendsReq(TcpSessionPtr session, ReadStream & rs)
     {
         return;
     }
-    auto friends = _friends.find(inner->userInfo.uID);
+    auto friends = _friends.find(inner->base.uID);
     if (friends != _friends.end())
     {
         std::for_each(friends->second.begin(), friends->second.end(), [&notice](const std::pair<UserID, FriendInfo> & info){ notice.friends.push_back(info.second); });
@@ -213,7 +213,7 @@ void Friend::msg_onAddFriendReq(TcpSessionPtr session, ReadStream & rs)
             {
                 break;
             }
-            srcID = inner->userInfo.uID;
+            srcID = inner->base.uID;
         }
 
         auto src = _friends.find(srcID);
@@ -362,7 +362,7 @@ void Friend::msg_onAddFriendReply(TcpSessionPtr session, ReadStream & rs)
             {
                 break;
             }
-            srcID = inner->userInfo.uID;
+            srcID = inner->base.uID;
         }
         auto src = _friends.find(srcID);
         if (src == _friends.end())
@@ -433,7 +433,7 @@ void Friend::msg_onDelFriendReq(TcpSessionPtr session, ReadStream & rs)
             {
                 break;
             }
-            srcID = inner->userInfo.uID;
+            srcID = inner->base.uID;
         }
         auto src = _friends.find(srcID);
         if (src == _friends.end())
