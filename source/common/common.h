@@ -48,16 +48,6 @@ int luaopen_cjson(lua_State *l);
 using namespace zsummer::mysql;
 
 
-//DB类型
-typedef ui8 DBConfigID;
-const DBConfigID InfoDB = 1;
-const DBConfigID LogDB = 2;
-const DBConfigID InvalidDB = (DBConfigID)-1;
-
-
-//分区分服的ID
-typedef ui16 PlatID;
-typedef ui16 AreaID;
 
 
 //! 逻辑类型
@@ -72,7 +62,7 @@ enum SessionStatus
     SSTATUS_PLAT_LOADING,
     SSTATUS_PLAT_CREATING,
     SSTATUS_PLAT_SELECTING,
-    SS_LOGINED,
+    SSTATUS_LOGINED,
 };
 
 enum SessionUserData

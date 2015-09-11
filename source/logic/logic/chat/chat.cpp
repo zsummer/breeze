@@ -1,5 +1,4 @@
 ﻿#include "chat.h"
-#include "../userManager.h"
 #include "../dbMgr.h"
 #include <ProtoCommon.h>
 #include "ProtoChat.h"

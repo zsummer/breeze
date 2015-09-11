@@ -31,51 +31,6 @@
 
 
 
-struct ListenConfig 
-{
-    std::string _ip;
-    unsigned short _port = 0;
-    std::vector<std::string> _whiteList;
-    std::string _wip;
-    unsigned short _wport = 0;
-    ServerNode _node = InvalidServerNode;
-    NodeIndex _index = InvalidNodeIndex;
-};
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
-{
-    os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
-    return os;
-}
-
-struct ConnectConfig 
-{
-    ServerNode _srcNode = InvalidServerNode;
-    ServerNode _dstNode = InvalidServerNode;
-    NodeIndex  _dstNodeIndex = InvalidNodeIndex;
-    std::string _remoteIP;
-    unsigned short _remotePort = 0;
-};
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
-{
-    os << "[srcNode=" << config._srcNode << ", _dstNode=" << config._dstNode << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
-    return os;
-}
-
-struct DBConfig
-{
-    DBConfigID _id = InvalidDB;
-    std::string _ip;
-    unsigned short _port = 3306;
-    std::string _db;
-    std::string _user;
-    std::string _pwd;
-};
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
-{
-    os << "[id=" << (int)config._id << ", ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
-    return os;
-}
-
 
 class ServerConfig : public Singleton<ServerConfig>
 {

@@ -1,5 +1,4 @@
 ﻿#include "friend.h"
-#include "../userManager.h"
 #include "../dbMgr.h"
 #include <ProtoCommon.h>
 #include <ProtoCommon_SQL.h>

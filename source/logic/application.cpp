@@ -6,7 +6,7 @@
 #include "logic/testBlob/testBlob.h"
 #include "logic/chat/chat.h"
 #include "logic/friend/friend.h"
-#include "logic/login/login.h"
+
 
 
 #define LogicInit(logic) do  \
@@ -66,7 +66,6 @@ bool Appliction::init(std::string filename, unsigned int index)
     LogicInit(DailyMission);
     LogicInit(TestBlob);
     LogicInit(Chat);
-    LogicInit(Login);
     LogicInit(Friend);
 
     LogicStart(NetMgr);
