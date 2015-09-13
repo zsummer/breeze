@@ -42,8 +42,10 @@ public:
     ~Chat();
     bool init();
 
-    bool initFilter();
-    bool initMessage();
+    bool loadFilter();
+    bool buildMessage();
+    bool initGenerator();
+    bool loadMessage();
 
 
     //存储聊天消息
@@ -52,7 +54,7 @@ public:
 
     //广播消息给客户端
     //uIDs为空则广播给所有在线用户
-    void broadcast(WriteStream & ws, const UserIDArray uIDs);
+    void broadcast(WriteStream & ws, const UIDS &ids);
     void broadcastFriends(WriteStream & ws, UserID uID);
 
     void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
@@ -63,7 +65,7 @@ public:
 private:
 
     //频道
-    std::map<unsigned long long, UserIDArray> _channels;
+    std::map<unsigned long long, UIDS> _channels;
 
     //过滤词库
     match_tree_head * _filter = nullptr;

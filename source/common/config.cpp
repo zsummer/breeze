@@ -28,17 +28,17 @@ int luaopen_cjson(lua_State *l);
 }
 
 
-static ServerNode toServerNode(std::string strNode)
+static ServerType toServerType(std::string strType)
 {
-    if (strNode == "logic")
+    if (strType == "logic")
     {
-        return LogicNode;
+        return LogicServer;
     }
-    else if (strNode == "stress")
+    else if (strType == "stress")
     {
-        return StressNode;
+        return StressClient;
     }
-    return InvalidServerNode;
+    return InvalidServerType;
 }
 
 static DBConfigID toDBConfigID(std::string db)
@@ -55,11 +55,11 @@ static DBConfigID toDBConfigID(std::string db)
 }
 
 
-const ListenConfig & ServerConfig::getConfigListen(ServerNode node, NodeIndex index)
+const ListenConfig & ServerConfig::getConfigListen(ServerType node, ServerNode index)
 {
-    if (index == InvalidNodeIndex)
+    if (index == InvalidServerNode)
     {
-        index = _ownNodeIndex;
+        index = _ownServerNode;
     }
     auto founder = std::find_if(_configListen.begin(), _configListen.end(),
         [node, index](const ListenConfig & lc){return lc._node == node && lc._index == index; });
@@ -71,12 +71,12 @@ const ListenConfig & ServerConfig::getConfigListen(ServerNode node, NodeIndex in
 }
 
 
-std::vector<ConnectConfig > ServerConfig::getConfigConnect(ServerNode node)
+std::vector<ConnectConfig > ServerConfig::getConfigConnect(ServerType node)
 {
     std::vector<ConnectConfig > ret;
     for (const auto & cc : _configConnect)
     {
-        if (cc._srcNode != node)
+        if (cc._srcType != node)
         {
             continue;
         }
@@ -109,10 +109,10 @@ static int panichHandler(lua_State * L)
 }
 
 
-bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex ownIndex)
+bool ServerConfig::parse(std::string filename, ServerType ownType, ServerNode ownNode)
 {
+    _ownServerType = ownType;
     _ownServerNode = ownNode;
-    _ownNodeIndex = ownIndex;
 
 
     lua_State *L = luaL_newstate();
@@ -219,7 +219,7 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
             lua_pop(L, 1);
 
             lua_getfield(L, -1, "index");
-            lconfig._index = (NodeIndex)luaL_checkinteger(L, -1);
+            lconfig._index = (ServerNode)luaL_checkinteger(L, -1);
             lua_pop(L, 1);
 
             lua_getfield(L, -1, "white");
@@ -240,8 +240,8 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
             }
             
 
-            lconfig._node = toServerNode(node);
-            if (lconfig._node != InvalidServerNode)
+            lconfig._node = toServerType(node);
+            if (lconfig._node != InvalidServerType)
             {
                 _configListen.push_back(lconfig);
                 LOGI("ListenConfig=" << lconfig);
@@ -286,16 +286,16 @@ bool ServerConfig::parse(std::string filename, ServerNode ownNode, NodeIndex own
             lua_pop(L, 1);
 
             lua_getfield(L, -1, "index");
-            lconfig._dstNodeIndex = (NodeIndex)luaL_checkinteger(L, -1);
+            lconfig._dstServerNode = (ServerNode)luaL_checkinteger(L, -1);
             lua_pop(L, 1);
 
-            lua_getfield(L, -1, "dstNode");
-            lconfig._dstNode = toServerNode(luaL_checkstring(L, -1));
+            lua_getfield(L, -1, "dstType");
+            lconfig._dstType = toServerType(luaL_checkstring(L, -1));
             lua_pop(L, 1);
 
-            lconfig._srcNode = toServerNode(node);
+            lconfig._srcType = toServerType(node);
 
-            if (lconfig._srcNode != InvalidServerNode && lconfig._dstNode != InvalidServerNode)
+            if (lconfig._srcType != InvalidServerType && lconfig._dstType != InvalidServerType)
             {
                 _configConnect.push_back(lconfig);
                 LOGI("_configConnect=" << lconfig);

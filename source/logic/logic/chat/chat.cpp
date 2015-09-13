@@ -1,5 +1,6 @@
 ﻿#include "chat.h"
 #include "../dbMgr.h"
+#include "../netMgr.h"
 #include <ProtoCommon.h>
 #include "ProtoChat.h"
 #include "ProtoChat_SQL.h"
@@ -20,20 +21,30 @@ Chat::~Chat()
 
 bool Chat::init()
 {
-    if (!initFilter())
+    _genID.initConfig(ServerConfig::getRef().getPlatID(), ServerConfig::getRef().getAreaID());
+    if (!buildMessage() || !loadMessage())
     {
         return false;
     }
-    if (!initMessage())
+
+    if (!initGenerator())
     {
         return false;
     }
     
-
+    if (!loadFilter())
+    {
+        return false;
+    }
+    if (!buildMessage()|| ! loadMessage())
+    {
+        return false;
+    }
+    
     return true;
 }
 
-bool Chat::initFilter()
+bool Chat::loadFilter()
 {
     _filter = match_tree_init_from_file("../filter.txt", ".....", 5);
     if (_filter == nullptr)
@@ -46,9 +57,8 @@ bool Chat::initFilter()
     return true;
 }
 
-bool Chat::initMessage()
+bool Chat::buildMessage()
 {
-    //! 先desc一下ChatInfo表, 不存在则创建
     auto build = ChatInfo_BUILD();
     if (DBMgr::getRef().infoQuery(build[0])->getErrorCode() != QEC_SUCCESS)
     {
@@ -58,13 +68,14 @@ bool Chat::initMessage()
             return false;
         }
     }
-    //! 无论ChatInfo表的字段是否有增删 都alter一遍. 
     for (size_t i = 2; i < build.size(); i++)
     {
         DBMgr::getRef().infoQuery(build[i]);
     }
-    //获取当前最大消息ID
-    _genID.initConfig(ServerConfig::getRef().getPlatID(), ServerConfig::getRef().getAreaID());
+}
+
+bool Chat::initGenerator()
+{
     DBQuery q("select mID from tb_ChatInfo where mID >= ? and mID < ?  order by mID desc limit 1;");
     q << _genID.getMinObjID();
     q << _genID.getMaxObjID();
@@ -92,6 +103,12 @@ bool Chat::initMessage()
 }
 
 
+bool Chat::loadMessage()
+{
+    return true;
+}
+
+
 //存储聊天消息
 void Chat::insertMessage(const ChatInfo & info)
 {
@@ -111,9 +128,12 @@ void Chat::updateMessage(const ChatInfo & info)
 }
 
 
-void Chat::broadcast(WriteStream & ws, const UserIDArray uIDs)
+void Chat::broadcast(WriteStream & ws, const UIDS &ids)
 {
-    UserManager::getRef().broadcast(ws, uIDs);
+    for (auto id : ids)
+    {
+        NetMgr::getRef().sendData(id, ws.getStream(), ws.getStreamLen());
+    }
 }
 
 void Chat::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc)
@@ -169,7 +189,7 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
             }
             info.dstIcon = dstinner->base.iconID;
             info.dstName = dstinner->base.nickName;
-            if (dstinner->sID != InvalidSeesionID)
+            if (dstinner->sID != InvalidSessionID)
             {
                 WriteStream ws(ID_ChatNotice);
                 ChatNotice notice;
@@ -200,7 +220,7 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
                     for (auto id : founder->second)
                     {
                         auto dstinner = UserManager::getRef().getInnerUserInfo(id);
-                        if (!dstinner || dstinner->sID == InvalidSeesionID)
+                        if (!dstinner || dstinner->sID == InvalidSessionID)
                         {
                             continue;;
                         }

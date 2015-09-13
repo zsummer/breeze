@@ -35,22 +35,22 @@
 class ServerConfig : public Singleton<ServerConfig>
 {
 public:
-    bool parse(std::string filename, ServerNode ownNode,NodeIndex ownIndex);
+    bool parse(std::string filename, ServerType ownType,ServerNode ownNode);
 public:
-    const ListenConfig& getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
-    std::vector<ConnectConfig > getConfigConnect(ServerNode node);
+    const ListenConfig& getConfigListen(ServerType node, ServerNode index = InvalidServerNode);
+    std::vector<ConnectConfig > getConfigConnect(ServerType node);
     const DBConfig & getDBConfig(DBConfigID id);
 
+    inline ServerType getOwnServerType(){ return _ownServerType; }
     inline ServerNode getOwnServerNode(){ return _ownServerNode; }
-    inline NodeIndex getOwnNodeIndex(){ return _ownNodeIndex; }
     inline PlatID getPlatID() { return _platid; }
     inline AreaID getAreaID() { return _areaid; }
 
 
 
 private:
+    ServerType _ownServerType = InvalidServerType;
     ServerNode _ownServerNode = InvalidServerNode;
-    NodeIndex _ownNodeIndex = InvalidNodeIndex;
     PlatID _platid = 0;
     AreaID _areaid = 0;
 

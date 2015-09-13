@@ -63,14 +63,49 @@ typedef unsigned long long ui64;
 
 
 //服务节点类型
-typedef ui16 ServerNode;
-const ServerNode InvalidServerNode = (ServerNode)-1;
-const ServerNode LogicNode = 0;
-const ServerNode StressNode = 1;
+typedef ui16 ServerType;
+const ServerType InvalidServerType = (ServerType)-1;
 
 //节点索引ID
-typedef ui16 NodeIndex;
-const NodeIndex InvalidNodeIndex = (NodeIndex)-1;
+typedef ui16 ServerNode;
+const ServerNode InvalidServerNode = (ServerNode)-1;
+
+//服务节点
+const ServerType LogicServer = 0;
+const ServerType StressClient = 1;
+
+
+
+struct Route
+{
+    ServerType _fromType = InvalidServerType;
+    ServerNode _fromNode = InvalidServerNode;
+    ServerType _toType = InvalidServerType;
+    ServerNode _toNode = InvalidServerNode;
+    SessionID _fromSessionID = InvalidSessionID;
+    SessionID _toSessionID = InvalidSessionID;
+};
+
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Route & data)
+{
+    ws << data._fromType;
+    ws << data._fromNode;
+    ws << data._fromSessionID;
+    ws << data._toType;
+    ws << data._toNode;
+    ws << data._toSessionID;
+    return ws;
+}
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Route & data)
+{
+    rs >> data._fromType;
+    rs >> data._fromNode;
+    rs >> data._fromSessionID;
+    rs >> data._toType;
+    rs >> data._toNode;
+    rs >> data._toSessionID;
+    return rs;
+}
 
 
 //DB类型
@@ -93,9 +128,10 @@ struct ListenConfig
     std::vector<std::string> _whiteList;
     std::string _wip;
     unsigned short _wport = 0;
-    ServerNode _node = InvalidServerNode;
-    NodeIndex _index = InvalidNodeIndex;
+    ServerType _node = InvalidServerType;
+    ServerNode _index = InvalidServerNode;
 };
+
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
 {
     os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
@@ -104,15 +140,15 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
 
 struct ConnectConfig
 {
-    ServerNode _srcNode = InvalidServerNode;
-    ServerNode _dstNode = InvalidServerNode;
-    NodeIndex  _dstNodeIndex = InvalidNodeIndex;
+    ServerType _srcType = InvalidServerType;
+    ServerType _dstType = InvalidServerType;
+    ServerNode  _dstServerNode = InvalidServerNode;
     std::string _remoteIP;
     unsigned short _remotePort = 0;
 };
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
 {
-    os << "[srcNode=" << config._srcNode << ", _dstNode=" << config._dstNode << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
+    os << "[_srcType=" << config._srcType << ", _dstType=" << config._dstType << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
     return os;
 }
 

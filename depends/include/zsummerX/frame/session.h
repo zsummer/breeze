@@ -88,7 +88,7 @@ namespace zsummer
             int _status = 0; //0 uninit, 1 connecting, 2 session established, 3  died
    
             //
-            SessionID _sessionID = InvalidSeesionID;
+            SessionID _sessionID = InvalidSessionID;
             AccepterID _acceptID = InvalidAccepterID;
             zsummer::network::TimerID _pulseTimerID = zsummer::network::InvalidTimerID;
 

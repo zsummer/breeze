@@ -101,7 +101,7 @@ void  Friend::onUserLogin(EventTriggerID tID, UserID uID, Any count, Any iconID,
                 inf->second.online = true;
                 
                 auto dstInner = UserManager::getRef().getInnerUserInfo(f.second.fID);
-                if (dstInner && dstInner->sID != InvalidSeesionID)
+                if (dstInner && dstInner->sID != InvalidSessionID)
                 {
                     info = inf->second;
                     sendMessage(dstInner->sID, notice);
@@ -136,7 +136,7 @@ void  Friend::onUserLogout(EventTriggerID tID, UserID uID, Any count, Any iconID
                 inf->second.online = false;
 
                 auto dstInner = UserManager::getRef().getInnerUserInfo(f.second.fID);
-                if (dstInner && dstInner->sID != InvalidSeesionID)
+                if (dstInner && dstInner->sID != InvalidSessionID)
                 {
                     info = inf->second;
                     sendMessage(dstInner->sID, notice);
@@ -271,7 +271,7 @@ void Friend::msg_onAddFriendReq(TcpSessionPtr session, ReadStream & rs)
                     info.makeTime = checkRight->second.makeTime;
                     updateFriend(info);
                     auto dstInner = UserManager::getRef().getInnerUserInfo(req.dst);
-                    if (dstInner && dstInner->sID != InvalidSeesionID)
+                    if (dstInner && dstInner->sID != InvalidSessionID)
                     {
                         notice.friends.clear();
                         notice.friends.push_back(info);
@@ -332,7 +332,7 @@ void Friend::msg_onAddFriendReq(TcpSessionPtr session, ReadStream & rs)
             insertFriend(info);
         }
         auto dstInner = UserManager::getRef().getInnerUserInfo(req.dst);
-        if (dstInner && dstInner->sID != InvalidSeesionID)
+        if (dstInner && dstInner->sID != InvalidSessionID)
         {
             notice.friends.clear();
             notice.friends.push_back(info);
@@ -401,7 +401,7 @@ void Friend::msg_onAddFriendReply(TcpSessionPtr session, ReadStream & rs)
         checkRight->second.lastChanged = checkOwner->second.lastChanged;
         updateFriend(checkRight->second);
         auto dstInner = UserManager::getRef().getInnerUserInfo(reply.dst);
-        if (dstInner && dstInner->sID != InvalidSeesionID)
+        if (dstInner && dstInner->sID != InvalidSessionID)
         {
             notice.friends.clear();
             notice.friends.push_back(checkRight->second);
@@ -470,7 +470,7 @@ void Friend::msg_onDelFriendReq(TcpSessionPtr session, ReadStream & rs)
         }
         checkDst->second.online = false;
         auto dstInner = UserManager::getRef().getInnerUserInfo(req.dst);
-        if (dstInner && dstInner->sID != InvalidSeesionID)
+        if (dstInner && dstInner->sID != InvalidSessionID)
         {
             notice.friends.clear();
             notice.friends.push_back(checkDst->second);

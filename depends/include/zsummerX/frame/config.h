@@ -75,7 +75,7 @@ namespace zsummer
     {
         //! define network type
         using SessionID = unsigned int;
-        const SessionID InvalidSeesionID = -1;
+        const SessionID InvalidSessionID = -1;
         using AccepterID = unsigned int;
         const AccepterID InvalidAccepterID = -1;
 
@@ -83,9 +83,9 @@ namespace zsummer
         //! define session id range.
         const unsigned int __MIDDLE_SEGMENT_VALUE = 300 * 1000 * 1000;
         inline bool isSessionID(unsigned int unknowID){ return unknowID < __MIDDLE_SEGMENT_VALUE ? true : false; }
-        inline bool isConnectID(unsigned int unknowID){ return unknowID != InvalidSeesionID && !isSessionID(unknowID); }
+        inline bool isConnectID(unsigned int unknowID){ return unknowID != InvalidSessionID && !isSessionID(unknowID); }
         inline unsigned int nextSessionID(unsigned int curSessionID){ return (curSessionID + 1) % __MIDDLE_SEGMENT_VALUE; }
-        inline unsigned int nextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSeesionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
+        inline unsigned int nextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSessionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
 
 
         const unsigned int SESSION_BLOCK_SIZE = 10 * 1024;
