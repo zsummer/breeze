@@ -44,6 +44,7 @@ bool Follow::buildFollow()
     {
         DBMgr::getRef().infoQuery(build[i]);
     }
+    return true;
 }
 
 bool Follow::loadFollow()
