@@ -6,10 +6,10 @@ config.traits = {platid = 1000, areaid = 1000}
 
 config.db = 
 {
-	info = {ip = "192.168.15.216", port = 3306, db = "db_info", user = "root", pwd = "123456"},
-	log = {ip = "192.168.15.216", port = 3306, db = "db_log", user = "root", pwd = "123456"},
---	info = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
---	log = {ip = "127.0.0.1", port = 3306, db = "db_log", user = "root", pwd = "123456"},
+	--info = {ip = "192.168.15.216", port = 3306, db = "db_info", user = "root", pwd = "123456"},
+	--log = {ip = "192.168.15.216", port = 3306, db = "db_log", user = "root", pwd = "123456"},
+	info = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
+	log = {ip = "127.0.0.1", port = 3306, db = "db_log", user = "root", pwd = "123456"},
 }
 
 
@@ -34,7 +34,7 @@ config.connect =
 {
 	stress =
 		{
-			{dstNode = "logic", ip="127.0.0.1", port=20000, index = 0},
+			{dstType = "logic", ip="127.0.0.1", port=20000, index = 0},
 		},
 }
 
