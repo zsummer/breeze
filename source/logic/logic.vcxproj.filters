@@ -19,7 +19,7 @@
     <Filter Include="logic\chat">
       <UniqueIdentifier>{d00be9fd-3cd5-4ab8-878c-f5fe675b6e4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="logic\friend">
+    <Filter Include="logic\follow">
       <UniqueIdentifier>{a6da4f1a-5fc7-47a2-9877-aa219f626887}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -39,9 +39,6 @@
     <ClCompile Include="logic\testBlob\testBlob.cpp">
       <Filter>logic\testBlob</Filter>
     </ClCompile>
-    <ClCompile Include="logic\friend\friend.cpp">
-      <Filter>logic\friend</Filter>
-    </ClCompile>
     <ClCompile Include="logic\chat\chat.cpp">
       <Filter>logic\chat</Filter>
     </ClCompile>
@@ -50,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="logic\dbMgr.cpp">
       <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\follow\follow.cpp">
+      <Filter>logic\follow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,9 +65,6 @@
     <ClInclude Include="logic\testBlob\testBlob.h">
       <Filter>logic\testBlob</Filter>
     </ClInclude>
-    <ClInclude Include="logic\friend\friend.h">
-      <Filter>logic\friend</Filter>
-    </ClInclude>
     <ClInclude Include="logic\chat\chat.h">
       <Filter>logic\chat</Filter>
     </ClInclude>
@@ -76,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="logic\dbMgr.h">
       <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\follow\follow.h">
+      <Filter>logic\follow</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

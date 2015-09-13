@@ -1,24 +1,24 @@
  
 namespace Proto4z  
 { 
-    class STATIC_CHANNEL_PRIVATE //私聊, 需要指明具体某个uid 
+    class STATIC_CHANNEL_PRIVATE //私聊, 需要指明具体某个uid  
     { 
         public static System.Byte value = 0;  
     } 
-    class STATIC_CHANNEL_WORLD //世界 
+    class STATIC_CHANNEL_WORLD //世界  
     { 
         public static System.Byte value = 1;  
     } 
-    class STATIC_CHANNEL_GROUP //群组, 需要指明具体某个groupid 
+    class STATIC_CHANNEL_GROUP //群组, 需要指明具体某个groupid  
     { 
         public static System.Byte value = 2;  
     } 
  
-    class JoinGropuReq: Proto4z.IProtoObject //加入频道 
+    class JoinGropuReq: Proto4z.IProtoObject //加入频道  
     {     
         static public System.UInt16 getProtoID() { return 1100; } 
         static public string getProtoName() { return "JoinGropuReq"; } 
-        public System.Byte chlType; //channel type 
+        public System.Byte chlType; //channel type  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -40,7 +40,7 @@ namespace Proto4z
         static public System.UInt16 getProtoID() { return 1101; } 
         static public string getProtoName() { return "JoinGropuAck"; } 
         public System.UInt16 retCode;  
-        public System.Byte chlType; //channel type 
+        public System.Byte chlType; //channel type  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -60,11 +60,11 @@ namespace Proto4z
         } 
     } 
  
-    class LeaveGropuReq: Proto4z.IProtoObject //加入频道 
+    class LeaveGropuReq: Proto4z.IProtoObject //加入频道  
     {     
         static public System.UInt16 getProtoID() { return 1102; } 
         static public string getProtoName() { return "LeaveGropuReq"; } 
-        public System.Byte chlType; //channel type 
+        public System.Byte chlType; //channel type  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -86,7 +86,7 @@ namespace Proto4z
         static public System.UInt16 getProtoID() { return 1103; } 
         static public string getProtoName() { return "LeaveGropuAck"; } 
         public System.UInt16 retCode;  
-        public System.Byte chlType; //channel type 
+        public System.Byte chlType; //channel type  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -106,16 +106,16 @@ namespace Proto4z
         } 
     } 
  
-    class ChatInfo: Proto4z.IProtoObject //聊天消息 
+    class ChatInfo: Proto4z.IProtoObject //聊天消息  
     {     
-        public System.UInt64 mID; //msg id 
-        public System.Byte chlType; //channel type 
+        public System.UInt64 mID; //msg id  
+        public System.Byte chlType; //channel type  
         public System.UInt64 srcID;  
-        public System.String srcName; //src 
-        public System.Int16 srcIcon; //src 
-        public System.UInt64 dstID; //userid or groupid 
-        public System.String dstName; //src 
-        public System.Int16 dstIcon; //src 
+        public System.String srcName; //src  
+        public System.Int16 srcIcon; //src  
+        public System.UInt64 dstID; //userid or groupid  
+        public System.String dstName; //src  
+        public System.Int16 dstIcon; //src  
         public System.String msg;  
         public System.UInt32 sendTime;  
         public System.Collections.Generic.List<byte> __encode() 
@@ -188,13 +188,13 @@ namespace Proto4z
         } 
     } 
  
-    class ChatReq: Proto4z.IProtoObject //发送聊天请求 
+    class ChatReq: Proto4z.IProtoObject //发送聊天请求  
     {     
         static public System.UInt16 getProtoID() { return 1104; } 
         static public string getProtoName() { return "ChatReq"; } 
-        public System.Byte chlType; //channel type 
-        public System.UInt64 dstID; //userID or groupID 
-        public System.String msg; //msg 
+        public System.Byte chlType; //channel type  
+        public System.UInt64 dstID; //userID or groupID  
+        public System.String msg; //msg  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -216,13 +216,13 @@ namespace Proto4z
         } 
     } 
  
-    class ChatAck: Proto4z.IProtoObject //发送聊天请求 
+    class ChatAck: Proto4z.IProtoObject //发送聊天请求  
     {     
         static public System.UInt16 getProtoID() { return 1105; } 
         static public string getProtoName() { return "ChatAck"; } 
         public System.UInt16 retCode;  
-        public System.Byte chlType; //channel type 
-        public System.UInt64 dstID; //userID or groupID 
+        public System.Byte chlType; //channel type  
+        public System.UInt64 dstID; //userID or groupID  
         public System.UInt64 msgID;  
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -249,7 +249,7 @@ namespace Proto4z
         } 
     } 
  
-    class ChatNotice: Proto4z.IProtoObject //聊天通知 
+    class ChatNotice: Proto4z.IProtoObject //聊天通知  
     {     
         static public System.UInt16 getProtoID() { return 1106; } 
         static public string getProtoName() { return "ChatNotice"; } 

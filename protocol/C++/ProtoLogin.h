@@ -3,11 +3,11 @@
 #define _PROTOLOGIN_H_ 
  
  
-const unsigned short ID_Heartbeat = 0; //心跳包 
-struct Heartbeat //心跳包 
+const unsigned short ID_Heartbeat = 0; //心跳包  
+struct Heartbeat //心跳包  
 { 
-    unsigned int timeStamp; //服务器当前UTC时间戳 
-    unsigned int timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+    unsigned int timeStamp; //服务器当前UTC时间戳  
+    unsigned int timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
     Heartbeat() 
     { 
         timeStamp = 0; 
@@ -18,8 +18,8 @@ struct Heartbeat //心跳包
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Heartbeat & data) 
 { 
-    ws << data.timeStamp; 
-    ws << data.timeTick; 
+    ws << data.timeStamp;  
+    ws << data.timeTick;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Heartbeat & data) 
@@ -29,11 +29,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_HeartbeatEcho = 1; //心跳包需要立刻回复 
-struct HeartbeatEcho //心跳包需要立刻回复 
+const unsigned short ID_HeartbeatEcho = 1; //心跳包需要立刻回复  
+struct HeartbeatEcho //心跳包需要立刻回复  
 { 
-    unsigned int timeStamp; //服务器当前UTC时间戳 
-    unsigned int timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+    unsigned int timeStamp; //服务器当前UTC时间戳  
+    unsigned int timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
     HeartbeatEcho() 
     { 
         timeStamp = 0; 
@@ -44,8 +44,8 @@ struct HeartbeatEcho //心跳包需要立刻回复
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const HeartbeatEcho & data) 
 { 
-    ws << data.timeStamp; 
-    ws << data.timeTick; 
+    ws << data.timeStamp;  
+    ws << data.timeTick;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, HeartbeatEcho & data) 
@@ -55,18 +55,18 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_PlatAuthReq = 2; //平台认证 
-struct PlatAuthReq //平台认证 
+const unsigned short ID_PlatAuthReq = 2; //平台认证  
+struct PlatAuthReq //平台认证  
 { 
-    std::string account; //用户名 
-    std::string token; //令牌 
+    std::string account; //用户名  
+    std::string token; //令牌  
     static const unsigned short GetProtoID() { return 2;} 
     static const std::string GetProtoName() { return "ID_PlatAuthReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthReq & data) 
 { 
-    ws << data.account; 
-    ws << data.token; 
+    ws << data.account;  
+    ws << data.token;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, PlatAuthReq & data) 
@@ -76,11 +76,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_PlatAuthAck = 3; //认证结果, 包含该用户的所有用户/角色数据 
-struct PlatAuthAck //认证结果, 包含该用户的所有用户/角色数据 
+const unsigned short ID_PlatAuthAck = 3; //认证结果, 包含该用户的所有用户/角色数据  
+struct PlatAuthAck //认证结果, 包含该用户的所有用户/角色数据  
 { 
     unsigned short retCode;  
-    BaseInfoArray users; //该帐号下的所有用户信息 
+    BaseInfoArray users; //该帐号下的所有用户信息  
     PlatAuthAck() 
     { 
         retCode = 0; 
@@ -90,8 +90,8 @@ struct PlatAuthAck //认证结果, 包含该用户的所有用户/角色数据
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthAck & data) 
 { 
-    ws << data.retCode; 
-    ws << data.users; 
+    ws << data.retCode;  
+    ws << data.users;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, PlatAuthAck & data) 
@@ -101,11 +101,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_CreateUserReq = 4; //创建一个新的用户数据 
-struct CreateUserReq //创建一个新的用户数据 
+const unsigned short ID_CreateUserReq = 4; //创建一个新的用户数据  
+struct CreateUserReq //创建一个新的用户数据  
 { 
-    std::string nickName; //昵称 
-    int iconID; //头像 
+    std::string nickName; //昵称  
+    int iconID; //头像  
     CreateUserReq() 
     { 
         iconID = 0; 
@@ -115,8 +115,8 @@ struct CreateUserReq //创建一个新的用户数据
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserReq & data) 
 { 
-    ws << data.nickName; 
-    ws << data.iconID; 
+    ws << data.nickName;  
+    ws << data.iconID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserReq & data) 
@@ -126,11 +126,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_CreateUserAck = 5; //创建结果和所有用户数据 
-struct CreateUserAck //创建结果和所有用户数据 
+const unsigned short ID_CreateUserAck = 5; //创建结果和所有用户数据  
+struct CreateUserAck //创建结果和所有用户数据  
 { 
     unsigned short retCode;  
-    BaseInfoArray users; //该帐号下的所有用户信息 
+    BaseInfoArray users; //该帐号下的所有用户信息  
     CreateUserAck() 
     { 
         retCode = 0; 
@@ -140,8 +140,8 @@ struct CreateUserAck //创建结果和所有用户数据
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserAck & data) 
 { 
-    ws << data.retCode; 
-    ws << data.users; 
+    ws << data.retCode;  
+    ws << data.users;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserAck & data) 
@@ -151,8 +151,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_SelectUserReq = 6; //获取需要登录用户的所在服务器和认证令牌 
-struct SelectUserReq //获取需要登录用户的所在服务器和认证令牌 
+const unsigned short ID_SelectUserReq = 6; //获取需要登录用户的所在服务器和认证令牌  
+struct SelectUserReq //获取需要登录用户的所在服务器和认证令牌  
 { 
     unsigned long long uID;  
     SelectUserReq() 
@@ -164,7 +164,7 @@ struct SelectUserReq //获取需要登录用户的所在服务器和认证令牌
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserReq & data) 
 { 
-    ws << data.uID; 
+    ws << data.uID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserReq & data) 
@@ -173,8 +173,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_SelectUserAck = 7; //获取需要登录用户的所在服务器和认证令牌 
-struct SelectUserAck //获取需要登录用户的所在服务器和认证令牌 
+const unsigned short ID_SelectUserAck = 7; //获取需要登录用户的所在服务器和认证令牌  
+struct SelectUserAck //获取需要登录用户的所在服务器和认证令牌  
 { 
     unsigned short retCode;  
     unsigned long long uID;  
@@ -192,11 +192,11 @@ struct SelectUserAck //获取需要登录用户的所在服务器和认证令牌
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserAck & data) 
 { 
-    ws << data.retCode; 
-    ws << data.uID; 
-    ws << data.token; 
-    ws << data.ip; 
-    ws << data.port; 
+    ws << data.retCode;  
+    ws << data.uID;  
+    ws << data.token;  
+    ws << data.ip;  
+    ws << data.port;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserAck & data) 
@@ -209,8 +209,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_AttachLogicReq = 10; //挂到logic服务器上 
-struct AttachLogicReq //挂到logic服务器上 
+const unsigned short ID_AttachLogicReq = 10; //挂到logic服务器上  
+struct AttachLogicReq //挂到logic服务器上  
 { 
     unsigned long long uID;  
     std::string token;  
@@ -223,8 +223,8 @@ struct AttachLogicReq //挂到logic服务器上
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachLogicReq & data) 
 { 
-    ws << data.uID; 
-    ws << data.token; 
+    ws << data.uID;  
+    ws << data.token;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachLogicReq & data) 
@@ -234,8 +234,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_AttachLogicAck = 11; //挂到logic服务器上 
-struct AttachLogicAck //挂到logic服务器上 
+const unsigned short ID_AttachLogicAck = 11; //挂到logic服务器上  
+struct AttachLogicAck //挂到logic服务器上  
 { 
     unsigned short retCode;  
     AttachLogicAck() 
@@ -247,7 +247,7 @@ struct AttachLogicAck //挂到logic服务器上
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachLogicAck & data) 
 { 
-    ws << data.retCode; 
+    ws << data.retCode;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachLogicAck & data) 

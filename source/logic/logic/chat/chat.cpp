@@ -72,6 +72,7 @@ bool Chat::buildMessage()
     {
         DBMgr::getRef().infoQuery(build[i]);
     }
+    return true;
 }
 
 bool Chat::initGenerator()
@@ -128,13 +129,7 @@ void Chat::updateMessage(const ChatInfo & info)
 }
 
 
-void Chat::broadcast(WriteStream & ws, const UIDS &ids)
-{
-    for (auto id : ids)
-    {
-        NetMgr::getRef().sendData(id, ws.getStream(), ws.getStreamLen());
-    }
-}
+
 
 void Chat::db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc)
 {
@@ -155,9 +150,8 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
     ack.dstID = req.dstID;
     do 
     {
-
-        auto inner = UserManager::getRef().getInnerUserInfoBySID(session->getSessionID());
-        if (!inner)
+        auto infoPtr = NetMgr::getRef().getUserInfo(session->getUserParam(UPARAM_USER_ID).getNumber());
+        if (!infoPtr)
         {
             break;
         }
@@ -167,9 +161,9 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
         info.mID = _genID.genNewObjID();
         info.msg = req.msg;
         info.sendTime = (unsigned int)time(NULL);
-        info.srcIcon = inner->base.iconID;
-        info.srcID = inner->base.uID;
-        info.srcName = inner->base.nickName;
+        info.srcIcon = infoPtr->base.iconID;
+        info.srcID = infoPtr->base.uID;
+        info.srcName = infoPtr->base.nickName;
         ack.msgID = info.mID;
         //塞进数据库
         auto chatsql = ChatInfo_INSERT(info);
@@ -181,21 +175,20 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
         //通知下去
         if (info.chlType == CHANNEL_PRIVATE)
         {
-            auto dstinner = UserManager::getRef().getInnerUserInfo(req.dstID);
-            if (!dstinner)
+            auto dstPtr = NetMgr::getRef().getUserInfo(req.dstID);
+            if (!dstPtr)
             {
                 ack.retCode = EC_USER_NOT_FOUND;
                 return;
             }
-            info.dstIcon = dstinner->base.iconID;
-            info.dstName = dstinner->base.nickName;
-            if (dstinner->sID != InvalidSessionID)
+            info.dstIcon = dstPtr->base.iconID;
+            info.dstName = dstPtr->base.nickName;
+            if (dstPtr->sID != InvalidSessionID)
             {
-                WriteStream ws(ID_ChatNotice);
+                
                 ChatNotice notice;
                 notice.msgs.push_back(info);
-                ws << notice;
-                SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
+                sendMessage(dstPtr->sID, notice);
                 ack.retCode = EC_SUCCESS;
                 break;
             }
@@ -207,25 +200,15 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
         }
         else if (info.chlType == CHANNEL_GROUP || info.chlType == CHANNEL_WORLD)
         {
-            WriteStream ws(ID_ChatNotice);
             ChatNotice notice;
             notice.msgs.push_back(info);
-            ws << notice;
 
             if (info.chlType == CHANNEL_GROUP)
             {
                 auto founder = _channels.find(info.dstID);
                 if (founder != _channels.end())
                 {
-                    for (auto id : founder->second)
-                    {
-                        auto dstinner = UserManager::getRef().getInnerUserInfo(id);
-                        if (!dstinner || dstinner->sID == InvalidSessionID)
-                        {
-                            continue;;
-                        }
-                        SessionManager::getRef().sendSessionData(dstinner->sID, ws.getStream(), ws.getStreamLen());
-                    }
+                    NetMgr::getRef().broadcast(notice, founder->second);
                     ack.retCode = EC_SUCCESS;
                     break;
                 }
@@ -237,7 +220,7 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
             }
             else
             {
-                UserManager::getRef().broadcast(ws, UserIDArray());
+                NetMgr::getRef().broadcast(notice);
                 ack.retCode = EC_SUCCESS;
                 break;
             }

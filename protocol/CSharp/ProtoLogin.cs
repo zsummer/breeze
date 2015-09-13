@@ -2,12 +2,12 @@
 namespace Proto4z  
 { 
  
-    class Heartbeat: Proto4z.IProtoObject //心跳包 
+    class Heartbeat: Proto4z.IProtoObject //心跳包  
     {     
         static public System.UInt16 getProtoID() { return 0; } 
         static public string getProtoName() { return "Heartbeat"; } 
-        public System.UInt32 timeStamp; //服务器当前UTC时间戳 
-        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+        public System.UInt32 timeStamp; //服务器当前UTC时间戳  
+        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -27,12 +27,12 @@ namespace Proto4z
         } 
     } 
  
-    class HeartbeatEcho: Proto4z.IProtoObject //心跳包需要立刻回复 
+    class HeartbeatEcho: Proto4z.IProtoObject //心跳包需要立刻回复  
     {     
         static public System.UInt16 getProtoID() { return 1; } 
         static public string getProtoName() { return "HeartbeatEcho"; } 
-        public System.UInt32 timeStamp; //服务器当前UTC时间戳 
-        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0 
+        public System.UInt32 timeStamp; //服务器当前UTC时间戳  
+        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -52,12 +52,12 @@ namespace Proto4z
         } 
     } 
  
-    class PlatAuthReq: Proto4z.IProtoObject //平台认证 
+    class PlatAuthReq: Proto4z.IProtoObject //平台认证  
     {     
         static public System.UInt16 getProtoID() { return 2; } 
         static public string getProtoName() { return "PlatAuthReq"; } 
-        public System.String account; //用户名 
-        public System.String token; //令牌 
+        public System.String account; //用户名  
+        public System.String token; //令牌  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -75,12 +75,12 @@ namespace Proto4z
         } 
     } 
  
-    class PlatAuthAck: Proto4z.IProtoObject //认证结果, 包含该用户的所有用户/角色数据 
+    class PlatAuthAck: Proto4z.IProtoObject //认证结果, 包含该用户的所有用户/角色数据  
     {     
         static public System.UInt16 getProtoID() { return 3; } 
         static public string getProtoName() { return "PlatAuthAck"; } 
         public System.UInt16 retCode;  
-        public BaseInfoArray users; //该帐号下的所有用户信息 
+        public BaseInfoArray users; //该帐号下的所有用户信息  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -100,12 +100,12 @@ namespace Proto4z
         } 
     } 
  
-    class CreateUserReq: Proto4z.IProtoObject //创建一个新的用户数据 
+    class CreateUserReq: Proto4z.IProtoObject //创建一个新的用户数据  
     {     
         static public System.UInt16 getProtoID() { return 4; } 
         static public string getProtoName() { return "CreateUserReq"; } 
-        public System.String nickName; //昵称 
-        public System.Int32 iconID; //头像 
+        public System.String nickName; //昵称  
+        public System.Int32 iconID; //头像  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -124,12 +124,12 @@ namespace Proto4z
         } 
     } 
  
-    class CreateUserAck: Proto4z.IProtoObject //创建结果和所有用户数据 
+    class CreateUserAck: Proto4z.IProtoObject //创建结果和所有用户数据  
     {     
         static public System.UInt16 getProtoID() { return 5; } 
         static public string getProtoName() { return "CreateUserAck"; } 
         public System.UInt16 retCode;  
-        public BaseInfoArray users; //该帐号下的所有用户信息 
+        public BaseInfoArray users; //该帐号下的所有用户信息  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -149,7 +149,7 @@ namespace Proto4z
         } 
     } 
  
-    class SelectUserReq: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌 
+    class SelectUserReq: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌  
     {     
         static public System.UInt16 getProtoID() { return 6; } 
         static public string getProtoName() { return "SelectUserReq"; } 
@@ -170,7 +170,7 @@ namespace Proto4z
         } 
     } 
  
-    class SelectUserAck: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌 
+    class SelectUserAck: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌  
     {     
         static public System.UInt16 getProtoID() { return 7; } 
         static public string getProtoName() { return "SelectUserAck"; } 
@@ -205,7 +205,7 @@ namespace Proto4z
         } 
     } 
  
-    class AttachLogicReq: Proto4z.IProtoObject //挂到logic服务器上 
+    class AttachLogicReq: Proto4z.IProtoObject //挂到logic服务器上  
     {     
         static public System.UInt16 getProtoID() { return 10; } 
         static public string getProtoName() { return "AttachLogicReq"; } 
@@ -229,7 +229,7 @@ namespace Proto4z
         } 
     } 
  
-    class AttachLogicAck: Proto4z.IProtoObject //挂到logic服务器上 
+    class AttachLogicAck: Proto4z.IProtoObject //挂到logic服务器上  
     {     
         static public System.UInt16 getProtoID() { return 11; } 
         static public string getProtoName() { return "AttachLogicAck"; } 

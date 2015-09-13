@@ -1,68 +1,68 @@
  
 namespace Proto4z  
 { 
-    class STATIC_EC_SUCCESS //成功 
+    class STATIC_EC_SUCCESS //成功  
     { 
         public static System.UInt16 value = 0;  
     } 
-    class STATIC_EC_ERROR //错误 
+    class STATIC_EC_ERROR //错误  
     { 
         public static System.UInt16 value = 1;  
     } 
-    class STATIC_EC_INNER_ERROR //内部错误 
+    class STATIC_EC_INNER_ERROR //内部错误  
     { 
         public static System.UInt16 value = 2;  
     } 
-    class STATIC_EC_DB_ERROR //数据库错误 
+    class STATIC_EC_DB_ERROR //数据库错误  
     { 
         public static System.UInt16 value = 3;  
     } 
-    class STATIC_EC_PARAM_DENIED //非法参数 
+    class STATIC_EC_PARAM_DENIED //非法参数  
     { 
         public static System.UInt16 value = 4;  
     } 
-    class STATIC_EC_PERMISSION_DENIED //权限错误 
+    class STATIC_EC_PERMISSION_DENIED //权限错误  
     { 
         public static System.UInt16 value = 5;  
     } 
-    class STATIC_EC_REQUEST_EXPIRE //请求操作已过期 
+    class STATIC_EC_REQUEST_EXPIRE //请求操作已过期  
     { 
         public static System.UInt16 value = 6;  
     } 
-    class STATIC_EC_TARGET_NOT_EXIST //操作目标不存在 
+    class STATIC_EC_TARGET_NOT_EXIST //操作目标不存在  
     { 
         public static System.UInt16 value = 7;  
     } 
-    class STATIC_EC_TOKEN_EXPIRE //令牌过期 
+    class STATIC_EC_TOKEN_EXPIRE //令牌过期  
     { 
         public static System.UInt16 value = 8;  
     } 
-    class STATIC_EC_USER_NOT_FOUND //错误的用户信息 
+    class STATIC_EC_USER_NOT_FOUND //错误的用户信息  
     { 
         public static System.UInt16 value = 50;  
     } 
-    class STATIC_EC_USER_OFFLINE //错误的用户信息 
+    class STATIC_EC_USER_OFFLINE //错误的用户信息  
     { 
         public static System.UInt16 value = 51;  
     } 
-    class STATIC_EC_FRIEND_DUPLICATE //请先删除与该好友建立的关系 
+    class STATIC_EC_FRIEND_DUPLICATE //请先删除与该好友建立的关系  
     { 
         public static System.UInt16 value = 100;  
     } 
-    class STATIC_EC_FRIEND_CEILING //达到好友上限 
+    class STATIC_EC_FRIEND_CEILING //达到好友上限  
     { 
         public static System.UInt16 value = 101;  
     } 
-    class STATIC_EC_FRIEND_REFUSE //不能添加对方为好友 
+    class STATIC_EC_FRIEND_REFUSE //不能添加对方为好友  
     { 
         public static System.UInt16 value = 102;  
     } 
-    class STATIC_EC_FRIEND_NOT_EXIST //好友不存在 
+    class STATIC_EC_FRIEND_NOT_EXIST //好友不存在  
     { 
         public static System.UInt16 value = 103;  
     } 
  
-    class SessionToken: Proto4z.IProtoObject //认证令牌 
+    class SessionToken: Proto4z.IProtoObject //认证令牌  
     {     
         public System.UInt64 uID;  
         public System.String token;  
@@ -88,16 +88,16 @@ namespace Proto4z
         } 
     } 
  
-    class BaseInfo: Proto4z.IProtoObject //用户基础信息 
+    class BaseInfo: Proto4z.IProtoObject //用户基础信息  
     {     
-        public System.UInt64 uID; //用户唯一ID 
-        public System.String account; //帐号 
-        public System.String nickName; //昵称 
-        public System.Int16 iconID; //头像 
-        public System.Int32 diamond; //当前剩余的充值钻石 
-        public System.Int32 hisotryDiamond; //历史充值钻石总额 
-        public System.Int32 giftDiamond; //当前剩余的赠送钻石 
-        public System.UInt32 joinTime; //加入时间 
+        public System.UInt64 uID; //用户唯一ID  
+        public System.String account; //帐号  
+        public System.String nickName; //昵称  
+        public System.Int16 iconID; //头像  
+        public System.Int32 diamond; //当前剩余的充值钻石  
+        public System.Int32 hisotryDiamond; //历史充值钻石总额  
+        public System.Int32 giftDiamond; //当前剩余的赠送钻石  
+        public System.UInt32 joinTime; //加入时间  
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -190,11 +190,11 @@ namespace Proto4z
             return pos; 
         } 
     } 
-    class STATIC_ETRIGGER_USER_LOGIN //用户登录, 用户ID 
+    class STATIC_ETRIGGER_USER_LOGIN //用户登录, 用户ID  
     { 
         public static System.UInt16 value = 0;  
     } 
-    class STATIC_ETRIGGER_USER_LOGOUT //用户登出, 用户ID 
+    class STATIC_ETRIGGER_USER_LOGOUT //用户登出, 用户ID  
     { 
         public static System.UInt16 value = 1;  
     } 

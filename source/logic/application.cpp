@@ -5,7 +5,7 @@
 #include "logic/mission/dailyMission.h"
 #include "logic/testBlob/testBlob.h"
 #include "logic/chat/chat.h"
-#include "logic/friend/friend.h"
+#include "logic/follow/follow.h"
 
 
 
@@ -66,7 +66,7 @@ bool Appliction::init(std::string filename, unsigned int index)
     LogicInit(DailyMission);
     LogicInit(TestBlob);
     LogicInit(Chat);
-    LogicInit(Friend);
+    LogicInit(Follow);
 
     LogicStart(NetMgr);
 
