@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>f6ab018515466e117ce755a9771115ac</cppmd5> 
-<luamd5>ed049f109bb2282b33739c3b3fec48a9</luamd5> 
-<csharpmd5>c419c2db84f9e5c6889accda7447fe78</csharpmd5> 
+<cppmd5>ff8863f34b856128d021b19c83e9107b</cppmd5> 
+<luamd5>a2fec4536a64c15e5b1f9fc008fe2624</luamd5> 
+<csharpmd5>fb915c1e3e6d291b714e71ef1ef39ea5</csharpmd5> 
 <sqlmd5>b99eb97f9766d353e2998ce19730a352</sqlmd5> 
 <xmlmd5>c07580b5ef7f92348d36f9706b291a70</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_AttachLogicAck" Number = "11" /> 
-    <cache key = "ID_AttachLogicReq" Number = "10" /> 
-    <cache key = "ID_AttachLogicServerAck" Number = "9" /> 
-    <cache key = "ID_AttachLogicServerReq" Number = "8" /> 
+    <cache key = "ID_AttachLogicAck" Number = "9" /> 
+    <cache key = "ID_AttachLogicReq" Number = "8" /> 
     <cache key = "ID_CreateUserAck" Number = "5" /> 
     <cache key = "ID_CreateUserReq" Number = "4" /> 
     <cache key = "ID_Heartbeat" Number = "0" /> 

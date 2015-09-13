@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>83a5c3ca6eb42e352987b2ff2e94e06e</cppmd5> 
-<luamd5>99a25d8d30f9e5692d712d5aa662aa42</luamd5> 
-<csharpmd5>d82227ce49aca2909547b9fc3161e76a</csharpmd5> 
+<cppmd5>3e57694c22e51249f12bb521a2bda724</cppmd5> 
+<luamd5>d6dbda358d3988d94137f95372f37e62</luamd5> 
+<csharpmd5>58d05cde7e2f7abe9e05b25e5b822e87</csharpmd5> 
 <sqlmd5>c4e5a9ea02b51fbd7c486259af9d2e5a</sqlmd5> 
 <xmlmd5>a7bfcccb2f732e9b4ded873eb2ec1ddc</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_GetFollowerAck" Number = "1001" /> 
-    <cache key = "ID_GetFollowerCountAck" Number = "1003" /> 
-    <cache key = "ID_GetFollowerCountReq" Number = "1002" /> 
     <cache key = "ID_GetFollowerReq" Number = "1000" /> 
-    <cache key = "ID_GetFollowingAck" Number = "1011" /> 
-    <cache key = "ID_GetFollowingReq" Number = "1010" /> 
-    <cache key = "ID_GetWatchingAck" Number = "1005" /> 
-    <cache key = "ID_GetWatchingCountAck" Number = "1007" /> 
-    <cache key = "ID_GetWatchingCountReq" Number = "1006" /> 
-    <cache key = "ID_GetWatchingReq" Number = "1004" /> 
-    <cache key = "ID_PokeAck" Number = "1009" /> 
-    <cache key = "ID_PokeReq" Number = "1008" /> 
+    <cache key = "ID_GetFollowingAck" Number = "1003" /> 
+    <cache key = "ID_GetFollowingReq" Number = "1002" /> 
+    <cache key = "ID_PokeAck" Number = "1005" /> 
+    <cache key = "ID_PokeReq" Number = "1004" /> 
 </cacheNumber>

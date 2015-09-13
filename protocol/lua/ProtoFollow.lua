@@ -30,29 +30,29 @@ Proto4z.GetFollowerAck.__getName = "GetFollowerAck"
 Proto4z.GetFollowerAck[1] = {name="status", type="ui8" } --所有/路人/黑/粉 
 Proto4z.GetFollowerAck[2] = {name="follower", type="FollowingInfoArray" }  
  
-Proto4z.register(1010,"GetFollowingReq") 
+Proto4z.register(1002,"GetFollowingReq") 
 Proto4z.GetFollowingReq = {} --获取关注列表 
-Proto4z.GetFollowingReq.__getID = 1010 
+Proto4z.GetFollowingReq.__getID = 1002 
 Proto4z.GetFollowingReq.__getName = "GetFollowingReq" 
 Proto4z.GetFollowingReq[1] = {name="uID", type="ui64" }  
 Proto4z.GetFollowingReq[2] = {name="status", type="ui8" } --所有/路人/黑/粉 
  
-Proto4z.register(1011,"GetFollowingAck") 
+Proto4z.register(1003,"GetFollowingAck") 
 Proto4z.GetFollowingAck = {} --获取关注列表 
-Proto4z.GetFollowingAck.__getID = 1011 
+Proto4z.GetFollowingAck.__getID = 1003 
 Proto4z.GetFollowingAck.__getName = "GetFollowingAck" 
 Proto4z.GetFollowingAck[1] = {name="status", type="ui8" } --所有/路人/黑/粉 
 Proto4z.GetFollowingAck[2] = {name="following", type="FollowingInfoArray" }  
  
-Proto4z.register(1008,"PokeReq") 
+Proto4z.register(1004,"PokeReq") 
 Proto4z.PokeReq = {} --操作 
-Proto4z.PokeReq.__getID = 1008 
+Proto4z.PokeReq.__getID = 1004 
 Proto4z.PokeReq.__getName = "PokeReq" 
 Proto4z.PokeReq[1] = {name="dstStatus", type="ui8" } --路人/黑/粉 
 Proto4z.PokeReq[2] = {name="following", type="ui64" } --关注目标ID 
  
-Proto4z.register(1009,"PokeAck") 
+Proto4z.register(1005,"PokeAck") 
 Proto4z.PokeAck = {} --操作 
-Proto4z.PokeAck.__getID = 1009 
+Proto4z.PokeAck.__getID = 1005 
 Proto4z.PokeAck.__getName = "PokeAck" 
 Proto4z.PokeAck[1] = {name="follow", type="FollowingInfo" }  

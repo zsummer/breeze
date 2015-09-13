@@ -209,7 +209,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_AttachLogicReq = 10; //挂到logic服务器上  
+const unsigned short ID_AttachLogicReq = 8; //挂到logic服务器上  
 struct AttachLogicReq //挂到logic服务器上  
 { 
     unsigned long long uID;  
@@ -218,7 +218,7 @@ struct AttachLogicReq //挂到logic服务器上
     { 
         uID = 0; 
     } 
-    static const unsigned short GetProtoID() { return 10;} 
+    static const unsigned short GetProtoID() { return 8;} 
     static const std::string GetProtoName() { return "ID_AttachLogicReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachLogicReq & data) 
@@ -234,7 +234,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_AttachLogicAck = 11; //挂到logic服务器上  
+const unsigned short ID_AttachLogicAck = 9; //挂到logic服务器上  
 struct AttachLogicAck //挂到logic服务器上  
 { 
     unsigned short retCode;  
@@ -242,7 +242,7 @@ struct AttachLogicAck //挂到logic服务器上
     { 
         retCode = 0; 
     } 
-    static const unsigned short GetProtoID() { return 11;} 
+    static const unsigned short GetProtoID() { return 9;} 
     static const std::string GetProtoName() { return "ID_AttachLogicAck";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachLogicAck & data) 

@@ -135,7 +135,7 @@ namespace Proto4z
  
     class GetFollowingReq: Proto4z.IProtoObject //获取关注列表  
     {     
-        static public System.UInt16 getProtoID() { return 1010; } 
+        static public System.UInt16 getProtoID() { return 1002; } 
         static public string getProtoName() { return "GetFollowingReq"; } 
         public System.UInt64 uID;  
         public System.Byte status; //所有/路人/黑/粉  
@@ -160,7 +160,7 @@ namespace Proto4z
  
     class GetFollowingAck: Proto4z.IProtoObject //获取关注列表  
     {     
-        static public System.UInt16 getProtoID() { return 1011; } 
+        static public System.UInt16 getProtoID() { return 1003; } 
         static public string getProtoName() { return "GetFollowingAck"; } 
         public System.Byte status; //所有/路人/黑/粉  
         public FollowingInfoArray following;  
@@ -185,7 +185,7 @@ namespace Proto4z
  
     class PokeReq: Proto4z.IProtoObject //操作  
     {     
-        static public System.UInt16 getProtoID() { return 1008; } 
+        static public System.UInt16 getProtoID() { return 1004; } 
         static public string getProtoName() { return "PokeReq"; } 
         public System.Byte dstStatus; //路人/黑/粉  
         public System.UInt64 following; //关注目标ID  
@@ -210,7 +210,7 @@ namespace Proto4z
  
     class PokeAck: Proto4z.IProtoObject //操作  
     {     
-        static public System.UInt16 getProtoID() { return 1009; } 
+        static public System.UInt16 getProtoID() { return 1005; } 
         static public string getProtoName() { return "PokeAck"; } 
         public FollowingInfo follow;  
         public System.Collections.Generic.List<byte> __encode() 

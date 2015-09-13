@@ -207,7 +207,7 @@ namespace Proto4z
  
     class AttachLogicReq: Proto4z.IProtoObject //挂到logic服务器上  
     {     
-        static public System.UInt16 getProtoID() { return 10; } 
+        static public System.UInt16 getProtoID() { return 8; } 
         static public string getProtoName() { return "AttachLogicReq"; } 
         public System.UInt64 uID;  
         public System.String token;  
@@ -231,7 +231,7 @@ namespace Proto4z
  
     class AttachLogicAck: Proto4z.IProtoObject //挂到logic服务器上  
     {     
-        static public System.UInt16 getProtoID() { return 11; } 
+        static public System.UInt16 getProtoID() { return 9; } 
         static public string getProtoName() { return "AttachLogicAck"; } 
         public System.UInt16 retCode;  
         public System.Collections.Generic.List<byte> __encode() 

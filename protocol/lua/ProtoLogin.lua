@@ -57,15 +57,15 @@ Proto4z.SelectUserAck[3] = {name="token", type="string" }
 Proto4z.SelectUserAck[4] = {name="ip", type="string" }  
 Proto4z.SelectUserAck[5] = {name="port", type="ui16" }  
  
-Proto4z.register(10,"AttachLogicReq") 
+Proto4z.register(8,"AttachLogicReq") 
 Proto4z.AttachLogicReq = {} --挂到logic服务器上 
-Proto4z.AttachLogicReq.__getID = 10 
+Proto4z.AttachLogicReq.__getID = 8 
 Proto4z.AttachLogicReq.__getName = "AttachLogicReq" 
 Proto4z.AttachLogicReq[1] = {name="uID", type="ui64" }  
 Proto4z.AttachLogicReq[2] = {name="token", type="string" }  
  
-Proto4z.register(11,"AttachLogicAck") 
+Proto4z.register(9,"AttachLogicAck") 
 Proto4z.AttachLogicAck = {} --挂到logic服务器上 
-Proto4z.AttachLogicAck.__getID = 11 
+Proto4z.AttachLogicAck.__getID = 9 
 Proto4z.AttachLogicAck.__getName = "AttachLogicAck" 
 Proto4z.AttachLogicAck[1] = {name="retCode", type="ui16" }  
