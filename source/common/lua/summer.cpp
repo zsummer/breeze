@@ -109,6 +109,7 @@ static int pcall_error(lua_State *L)
 static int _linkedRef = LUA_NOREF;
 static int _messageRef = LUA_NOREF;
 static int _closedRef = LUA_NOREF;
+static int _pulseRef = LUA_NOREF;
 
 
 static void _onSessionLinked(lua_State * L, TcpSessionPtr session)
@@ -171,6 +172,26 @@ static void _onSessionClosed(lua_State * L, TcpSessionPtr session)
     }
 }
 
+static void _onSessionPulse(lua_State * L, TcpSessionPtr session)
+{
+    if (_pulseRef == LUA_NOREF)
+    {
+        LOGD("_onSessionPulse no callback.");
+        return;
+    }
+    lua_pushcfunction(L, pcall_error);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, _pulseRef);
+    lua_pushnumber(L, session->getSessionID());
+    int status = lua_pcall(L, 1, 0, 1);
+    lua_remove(L, 1);
+    if (status)
+    {
+        const char *msg = lua_tostring(L, -1);
+        if (msg == NULL) msg = "(error object is not a string)";
+        LOGE(msg);
+        lua_pop(L, 1);
+    }
+}
 
 static void onStopServersFinish()
 {
@@ -219,9 +240,11 @@ static int addConnect(lua_State *L)
     auto & traits = SessionManager::getRef().getConnecterOptions(cID);
     traits._rc4TcpEncryption = luaL_optstring(L, 3, traits._rc4TcpEncryption.c_str());
     traits._reconnects = (unsigned int)luaL_optinteger(L, 4, traits._reconnects);
+    traits._connectPulseInterval = (unsigned int)luaL_optinteger(L, 5, traits._connectPulseInterval);
     traits._onSessionLinked = std::bind(_onSessionLinked, L, std::placeholders::_1);
     traits._onBlockDispatch = std::bind(_onMessage, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     traits._onSessionClosed = std::bind(_onSessionClosed, L, std::placeholders::_1);
+    traits._onSessionPulse = std::bind(_onSessionPulse, L, std::placeholders::_1);
 
     if (!SessionManager::getRef().openConnecter(cID))
     {
@@ -242,6 +265,9 @@ static int addListen(lua_State *L)
     extend._sessionOptions._sessionPulseInterval = (unsigned int)luaL_optinteger(L, 5, extend._sessionOptions._sessionPulseInterval);
     extend._sessionOptions._onSessionLinked = std::bind(_onSessionLinked, L, std::placeholders::_1);
     extend._sessionOptions._onBlockDispatch = std::bind(_onMessage, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    extend._sessionOptions._onSessionClosed = std::bind(_onSessionClosed, L, std::placeholders::_1);
+    extend._sessionOptions._onSessionPulse = std::bind(_onSessionPulse, L, std::placeholders::_1);
+
     LOGD("lua: addListen:" << extend);
 
     if (!SessionManager::getRef().openAccepter(aID))
@@ -299,6 +325,20 @@ static int setClosedRef(lua_State * L)
     }
 
     _closedRef = luaL_ref(L, LUA_REGISTRYINDEX);
+    return 0;
+}
+
+static int setPulseRef(lua_State * L)
+{
+    luaL_checktype(L, 1, LUA_TFUNCTION);
+    lua_settop(L, 1);
+    if (_pulseRef != LUA_NOREF)
+    {
+        LOGE("setClosedRef error. connect callback already .");
+        return 0;
+    }
+
+    _pulseRef = luaL_ref(L, LUA_REGISTRYINDEX);
     return 0;
 }
 
@@ -381,6 +421,7 @@ static luaL_Reg summer[] = {
     { "whenLinked", setLinkedRef }, //register event when connect success.
     { "whenMessage", setMessageRef }, //register event when recv message.
     { "whenClosed", setClosedRef }, //register event when disconnect.
+    { "whenPulse", setPulseRef }, //register event when pulse.
     { "sendContent", sendContent }, //send content, don't care serialize and package.
     { "sendData", sendData }, // send original data, need to serialize and package via proto4z. 
     { "kick", kick }, // kick session. 

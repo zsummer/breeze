@@ -60,19 +60,53 @@ typedef unsigned int ui32;
 typedef long long i64;
 typedef unsigned long long ui64;
 
-//! 逻辑类型
-typedef ui64 UserID;
-const ui64 InvalidUserID = (UserID)-1;
+
 
 //服务节点类型
-typedef ui16 ServerNode;
-const ServerNode InvalidServerNode = (ServerNode)-1;
-const ServerNode LogicNode = 0;
-const ServerNode StressNode = 1;
+typedef ui16 ServerType;
+const ServerType InvalidServerType = (ServerType)-1;
 
 //节点索引ID
-typedef ui16 NodeIndex;
-const NodeIndex InvalidNodeIndex = (NodeIndex)-1;
+typedef ui16 ServerNode;
+const ServerNode InvalidServerNode = (ServerNode)-1;
+
+//服务节点
+const ServerType LogicServer = 0;
+const ServerType StressClient = 1;
+
+
+
+struct Route
+{
+    ServerType _fromType = InvalidServerType;
+    ServerNode _fromNode = InvalidServerNode;
+    ServerType _toType = InvalidServerType;
+    ServerNode _toNode = InvalidServerNode;
+    SessionID _fromSessionID = InvalidSessionID;
+    SessionID _toSessionID = InvalidSessionID;
+};
+
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Route & data)
+{
+    ws << data._fromType;
+    ws << data._fromNode;
+    ws << data._fromSessionID;
+    ws << data._toType;
+    ws << data._toNode;
+    ws << data._toSessionID;
+    return ws;
+}
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Route & data)
+{
+    rs >> data._fromType;
+    rs >> data._fromNode;
+    rs >> data._fromSessionID;
+    rs >> data._toType;
+    rs >> data._toNode;
+    rs >> data._toSessionID;
+    return rs;
+}
+
 
 //DB类型
 typedef ui8 DBConfigID;
@@ -87,38 +121,51 @@ typedef ui16 AreaID;
 
 
 
-enum SessionStatus
+struct ListenConfig
 {
-    SS_UNLOGIN = 0,
-    SS_LOGINED,
+    std::string _ip;
+    unsigned short _port = 0;
+    std::vector<std::string> _whiteList;
+    std::string _wip;
+    unsigned short _wport = 0;
+    ServerType _node = InvalidServerType;
+    ServerNode _index = InvalidServerNode;
 };
 
-enum SessionUserData
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
 {
-    USER_SESSION_STATUS,
-    USER_ACCOUNT,
-    USER_USER_ID,
-    USER_LAST_ACTIVE_TIME,
-};
-
-struct InnerUserInfo
-{
-    UserInfo userInfo;
-    SessionToken token;
-    SessionID sID = InvalidSeesionID;
-    time_t loginTime = 0;
-};
-
-
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const InnerUserInfo & info)
-{
-//    stm << "[UserInfo]" << info.userInfo << " [SessionToken]" << info.token << " sID=" << info.sID << ", loginTime=" << info.loginTime;
-    return stm;
+    os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
+    return os;
 }
 
+struct ConnectConfig
+{
+    ServerType _srcType = InvalidServerType;
+    ServerType _dstType = InvalidServerType;
+    ServerNode  _dstServerNode = InvalidServerNode;
+    std::string _remoteIP;
+    unsigned short _remotePort = 0;
+};
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
+{
+    os << "[_srcType=" << config._srcType << ", _dstType=" << config._dstType << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
+    return os;
+}
 
-
-
+struct DBConfig
+{
+    DBConfigID _id = InvalidDB;
+    std::string _ip;
+    unsigned short _port = 3306;
+    std::string _db;
+    std::string _user;
+    std::string _pwd;
+};
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
+{
+    os << "[id=" << (int)config._id << ", ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
+    return os;
+}
 
 
 

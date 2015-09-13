@@ -13,16 +13,10 @@
     <Filter Include="logic\testBlob">
       <UniqueIdentifier>{4e2165f0-cde5-400c-94a4-0c5b8c3f3a56}</UniqueIdentifier>
     </Filter>
-    <Filter Include="logic\mail">
-      <UniqueIdentifier>{7ac9b94c-1ff0-40b5-95d9-41533880f214}</UniqueIdentifier>
-    </Filter>
     <Filter Include="logic\chat">
       <UniqueIdentifier>{d00be9fd-3cd5-4ab8-878c-f5fe675b6e4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="logic\login">
-      <UniqueIdentifier>{47e6fa41-00a5-4a32-92d1-00f76fc176f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="logic\friend">
+    <Filter Include="logic\follow">
       <UniqueIdentifier>{a6da4f1a-5fc7-47a2-9877-aa219f626887}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -33,15 +27,6 @@
     <ClCompile Include="application.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="logic\dbManager.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\netManager.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\userManager.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="logic\mission\eventTrigger.cpp">
       <Filter>logic\mission</Filter>
     </ClCompile>
@@ -51,28 +36,22 @@
     <ClCompile Include="logic\testBlob\testBlob.cpp">
       <Filter>logic\testBlob</Filter>
     </ClCompile>
-    <ClCompile Include="logic\login\login.cpp">
-      <Filter>logic\login</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\friend\friend.cpp">
-      <Filter>logic\friend</Filter>
-    </ClCompile>
     <ClCompile Include="logic\chat\chat.cpp">
       <Filter>logic\chat</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\netMgr.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\dbMgr.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\follow\follow.cpp">
+      <Filter>logic\follow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
       <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\dbManager.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\netManager.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\userManager.h">
-      <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\mission\eventTrigger.h">
       <Filter>logic\mission</Filter>
@@ -83,14 +62,17 @@
     <ClInclude Include="logic\testBlob\testBlob.h">
       <Filter>logic\testBlob</Filter>
     </ClInclude>
-    <ClInclude Include="logic\login\login.h">
-      <Filter>logic\login</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\friend\friend.h">
-      <Filter>logic\friend</Filter>
-    </ClInclude>
     <ClInclude Include="logic\chat\chat.h">
       <Filter>logic\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\netMgr.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\dbMgr.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\follow\follow.h">
+      <Filter>logic\follow</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

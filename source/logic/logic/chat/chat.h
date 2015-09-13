@@ -42,18 +42,15 @@ public:
     ~Chat();
     bool init();
 
-    bool initFilter();
-    bool initMessage();
+    bool loadFilter();
+    bool buildMessage();
+    bool initGenerator();
+    bool loadMessage();
 
 
     //存储聊天消息
     void insertMessage(const ChatInfo & info);
     void updateMessage(const ChatInfo & info);
-
-    //广播消息给客户端
-    //uIDs为空则广播给所有在线用户
-    void broadcast(WriteStream & ws, const UserIDArray uIDs);
-    void broadcastFriends(WriteStream & ws, UserID uID);
 
     void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
 
@@ -63,7 +60,7 @@ public:
 private:
 
     //频道
-    std::map<unsigned long long, UserIDArray> _channels;
+    std::map<unsigned long long, UIDS> _channels;
 
     //过滤词库
     match_tree_head * _filter = nullptr;
@@ -71,7 +68,6 @@ private:
     //负责分配一个支持SQL合服的64位ID.  [plat+ared+uniqueID]
     GenObjectID _genID; //生成消息ID
 };
-
 
 
 

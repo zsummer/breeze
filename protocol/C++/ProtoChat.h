@@ -2,14 +2,15 @@
 #ifndef _PROTOCHAT_H_ 
 #define _PROTOCHAT_H_ 
  
-const unsigned char CHANNEL_PRIVATE = 0; //私聊, 需要指明具体某个uid 
-const unsigned char CHANNEL_WORLD = 1; //世界 
-const unsigned char CHANNEL_GROUP = 2; //群组, 需要指明具体某个groupid 
+/*--enum--[name=Anonymous, type=ui8, desc=聊天(频道)类型]--*/ 
+const unsigned char CHANNEL_PRIVATE = 0; //私聊, 需要指明具体某个uid  
+const unsigned char CHANNEL_WORLD = 1; //世界  
+const unsigned char CHANNEL_GROUP = 2; //群组, 需要指明具体某个groupid  
  
-const unsigned short ID_JoinGropuReq = 1100; //加入频道 
-struct JoinGropuReq //加入频道 
+const unsigned short ID_JoinGropuReq = 1100; //加入频道  
+struct JoinGropuReq //加入频道  
 { 
-    unsigned char chlType; //channel type 
+    unsigned char chlType; //channel type  
     JoinGropuReq() 
     { 
         chlType = 0; 
@@ -19,7 +20,7 @@ struct JoinGropuReq //加入频道
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinGropuReq & data) 
 { 
-    ws << data.chlType; 
+    ws << data.chlType;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, JoinGropuReq & data) 
@@ -32,7 +33,7 @@ const unsigned short ID_JoinGropuAck = 1101;
 struct JoinGropuAck 
 { 
     unsigned short retCode;  
-    unsigned char chlType; //channel type 
+    unsigned char chlType; //channel type  
     JoinGropuAck() 
     { 
         retCode = 0; 
@@ -43,8 +44,8 @@ struct JoinGropuAck
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinGropuAck & data) 
 { 
-    ws << data.retCode; 
-    ws << data.chlType; 
+    ws << data.retCode;  
+    ws << data.chlType;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, JoinGropuAck & data) 
@@ -54,10 +55,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_LeaveGropuReq = 1102; //加入频道 
-struct LeaveGropuReq //加入频道 
+const unsigned short ID_LeaveGropuReq = 1102; //加入频道  
+struct LeaveGropuReq //加入频道  
 { 
-    unsigned char chlType; //channel type 
+    unsigned char chlType; //channel type  
     LeaveGropuReq() 
     { 
         chlType = 0; 
@@ -67,7 +68,7 @@ struct LeaveGropuReq //加入频道
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LeaveGropuReq & data) 
 { 
-    ws << data.chlType; 
+    ws << data.chlType;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LeaveGropuReq & data) 
@@ -80,7 +81,7 @@ const unsigned short ID_LeaveGropuAck = 1103;
 struct LeaveGropuAck 
 { 
     unsigned short retCode;  
-    unsigned char chlType; //channel type 
+    unsigned char chlType; //channel type  
     LeaveGropuAck() 
     { 
         retCode = 0; 
@@ -91,8 +92,8 @@ struct LeaveGropuAck
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LeaveGropuAck & data) 
 { 
-    ws << data.retCode; 
-    ws << data.chlType; 
+    ws << data.retCode;  
+    ws << data.chlType;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LeaveGropuAck & data) 
@@ -102,16 +103,16 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-struct ChatInfo //聊天消息 
+struct ChatInfo //聊天消息  
 { 
-    unsigned long long mID; //msg id 
-    unsigned char chlType; //channel type 
+    unsigned long long mID; //msg id  
+    unsigned char chlType; //channel type  
     unsigned long long srcID;  
-    std::string srcName; //src 
-    short srcIcon; //src 
-    unsigned long long dstID; //userid or groupid 
-    std::string dstName; //src 
-    short dstIcon; //src 
+    std::string srcName; //src  
+    short srcIcon; //src  
+    unsigned long long dstID; //userid or groupid  
+    std::string dstName; //src  
+    short dstIcon; //src  
     std::string msg;  
     unsigned int sendTime;  
     ChatInfo() 
@@ -127,16 +128,16 @@ struct ChatInfo //聊天消息
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatInfo & data) 
 { 
-    ws << data.mID; 
-    ws << data.chlType; 
-    ws << data.srcID; 
-    ws << data.srcName; 
-    ws << data.srcIcon; 
-    ws << data.dstID; 
-    ws << data.dstName; 
-    ws << data.dstIcon; 
-    ws << data.msg; 
-    ws << data.sendTime; 
+    ws << data.mID;  
+    ws << data.chlType;  
+    ws << data.srcID;  
+    ws << data.srcName;  
+    ws << data.srcIcon;  
+    ws << data.dstID;  
+    ws << data.dstName;  
+    ws << data.dstIcon;  
+    ws << data.msg;  
+    ws << data.sendTime;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChatInfo & data) 
@@ -156,12 +157,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
  
 typedef std::vector<ChatInfo> ChatInfoArray;  
  
-const unsigned short ID_ChatReq = 1104; //发送聊天请求 
-struct ChatReq //发送聊天请求 
+const unsigned short ID_ChatReq = 1104; //发送聊天请求  
+struct ChatReq //发送聊天请求  
 { 
-    unsigned char chlType; //channel type 
-    unsigned long long dstID; //userID or groupID 
-    std::string msg; //msg 
+    unsigned char chlType; //channel type  
+    unsigned long long dstID; //userID or groupID  
+    std::string msg; //msg  
     ChatReq() 
     { 
         chlType = 0; 
@@ -172,9 +173,9 @@ struct ChatReq //发送聊天请求
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatReq & data) 
 { 
-    ws << data.chlType; 
-    ws << data.dstID; 
-    ws << data.msg; 
+    ws << data.chlType;  
+    ws << data.dstID;  
+    ws << data.msg;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChatReq & data) 
@@ -185,12 +186,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_ChatAck = 1105; //发送聊天请求 
-struct ChatAck //发送聊天请求 
+const unsigned short ID_ChatAck = 1105; //发送聊天请求  
+struct ChatAck //发送聊天请求  
 { 
     unsigned short retCode;  
-    unsigned char chlType; //channel type 
-    unsigned long long dstID; //userID or groupID 
+    unsigned char chlType; //channel type  
+    unsigned long long dstID; //userID or groupID  
     unsigned long long msgID;  
     ChatAck() 
     { 
@@ -204,10 +205,10 @@ struct ChatAck //发送聊天请求
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatAck & data) 
 { 
-    ws << data.retCode; 
-    ws << data.chlType; 
-    ws << data.dstID; 
-    ws << data.msgID; 
+    ws << data.retCode;  
+    ws << data.chlType;  
+    ws << data.dstID;  
+    ws << data.msgID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChatAck & data) 
@@ -219,8 +220,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_ChatNotice = 1106; //聊天通知 
-struct ChatNotice //聊天通知 
+const unsigned short ID_ChatNotice = 1106; //聊天通知  
+struct ChatNotice //聊天通知  
 { 
     unsigned short retCode;  
     ChatInfoArray msgs;  
@@ -233,8 +234,8 @@ struct ChatNotice //聊天通知
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatNotice & data) 
 { 
-    ws << data.retCode; 
-    ws << data.msgs; 
+    ws << data.retCode;  
+    ws << data.msgs;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChatNotice & data) 

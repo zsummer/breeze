@@ -37,12 +37,12 @@
     <struct name="SessionToken" store="true" desc="认证令牌">
         <member name="uID" type="ui64"  tag="key" desc=""/>
         <member name="token" type="string"   desc=""/>
-        <member name="tokenExpire"  type="ui32" desc=""/>
-        </struct>
+        <member name="expire"  type="ui32" desc=""/>
+    </struct>
 
 
-        <!-- 用户信息 -->
-        <struct name="UserInfo" store="true" desc="用户信息">
+        <!-- 用户基础信息 -->
+    <struct name="BaseInfo" store="true" desc="用户基础信息">
         <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
         <member name="account"  type="string" desc="帐号"/>
         <member name="nickName" type="string"   desc="昵称"/>
@@ -52,8 +52,8 @@
         <member name="giftDiamond"  type="i32" desc="当前剩余的赠送钻石"/>
         <member name="joinTime"  type="ui32" desc="加入时间"/>
     </struct>
-    <array name="UserInfoArray" type="UserInfo" desc="" />
-    <array name="UserIDArray" type="ui64" desc="" />
+    <array name="BaseInfoArray" type="BaseInfo" desc="" />
+    <array name="UIDS" type="ui64" desc="" />
 
 
 
@@ -67,14 +67,6 @@
 
 
 
-    <proto name="Heartbeat" desc= "心跳包">
-        <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
-        <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
-    </proto>
-    <proto name="HeartbeatEcho" desc= "心跳包需要立刻回复">
-        <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
-        <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
-    </proto>
 
 </Proto>
 

@@ -3,85 +3,97 @@
 package.path =  "../../depends/include/proto4z/?.lua;" .. package.path
 local config = require("config")
 require("proto4z")
-require("user")
+require("session")
 
 dump = Proto4z.dump
 
 
+--{sID : {account, token, uID, nickName, iconID, ip, port, authed}}
+-- if authed then login logic server, else login login server.
+_sessions = {}
 
--- sID <=> user
-_users = {}
-function onConnect(sID, ip, port)
-    local user = _users[sID]
-    if not user then
-        return
-    end
-    user.ip = ip
-    user.port = port
-    user:onConnect(sID, ip, port)
+function send(sID, protoName, proto)
+    local data = Proto4z.encode(proto, protoName)
+    summer.sendContent(sID, Proto4z[protoName].__getID, data)
 end
 
-function onDisconnect(sID, ip, port)
-    local user = _users[sID]
-    if not user then
+local function whenLinked(sID, ip, port)
+    local session = _sessions[sID]
+    session:whenLinked(sID, ip, port)
+end
+summer.whenLinked(whenLinked)
+
+local function whenClosed(sID, ip, port)
+    logi("whenClosed sID=" .. sID)
+end
+summer.whenClosed(whenClosed)
+
+local function whenPulse(sID)
+    session = _sessions[sID]
+    if not session then
+        logw("whenPulse unknown session. sID=" .. sID)
         return
     end
-    user:onDisconnect(sID, ip, port)
+    session:whenPulse(sID)
 end
+summer.whenPulse(whenPulse)
 
-function onMessage(sID, pID, binData)
+local function whenMessage(sID, pID, binData)
+    logd("whenMessage sID=" .. sID .. ", protoID=" .. pID )
+    session = _sessions[sID]
+    if not session then
+        logw("whenMessage unknown session. sID=" .. sID)
+        return
+    end
+
     local proto = Proto4z.getName(pID)
     if not proto then
-        logw("onMessage. can not found this proto. sID=" .. sID .. ", pID=" .. pID )
+        logw("whenMessage. can not found this proto. sID=" .. sID .. ", pID=" .. pID )
         return
     end
     local msg = Proto4z.decode(binData, proto)
-    local user = _users[sID]
-    if not user then
-        logw("onMessage. can not found this session data (user). sID=" .. sID .. ", pID=" .. pID )
+    if not msg then
+        logw("whenMessage decode error")
         return
     end
-    if not user or not user["on_" .. proto] then
+
+    local session = _sessions[sID]
+    if not session then
+        logw("whenMessage. can not found session. sID=" .. sID .. ", pID=" .. pID )
+        return
+    end
+    if not session["on" .. proto] then
         loge("not have the message process function. name=on_" .. proto)
         return
     end
-    user["on_" .. proto](user, sID, msg)
+    session["on" .. proto](session, sID, msg)
 end
+summer.whenMessage(whenMessage)
 
 
 
---event on connect
-summer.whenLinked(onConnect)
 
---event on recv message
-summer.whenMessage(onMessage)
 
---event on disconnect
-summer.whenClosed(onDisconnect)
 
 --start summer
 summer.start()
---debug.debug()
---dump(config)
---add connector
+
+
 for i=1, 3 do
-	local sID = summer.addConnect(config.connect.stress[1].ip, config.connect.stress[1].port, nil, 4)
+	local sID = summer.addConnect(config.connect.stress[1].ip, config.connect.stress[1].port, nil, 0)
 	if sID == nil then
 		summer.logw("sID == nil when addConnect")
+    else
+        summer.logi("new connect sID=" .. sID)
+        _sessions[sID] = Session.new(sID, string.format("test%04d", i), "111222", string.format("nick%04d", i), 0)
 	end
-	summer.logi("new connect sID=" .. sID)
-    local user =  User.new()
-    user.sID = sID
-    _users[sID] = user
+
 end
 
 
 
---local jsonData = cjson.decode("{\"Himi\":\"himigame.com\"}")
---Proto4z.dump(jsonData)
---start summer event loop
+
 while summer.runOnce() do
---	while summer.runOnce(true)  do -- call retuen is immediately.
 end
 
 

@@ -225,9 +225,6 @@
     <ClCompile Include="dispatch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="dbhelper">
-      <UniqueIdentifier>{37712797-5d3e-47d5-a0ac-8e5567e84c3c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lua">
       <UniqueIdentifier>{6b7a7289-959d-49af-a43f-7448863917d0}</UniqueIdentifier>
     </Filter>

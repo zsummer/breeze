@@ -33,11 +33,11 @@
 
 
 
-class DBManager : public Singleton<DBManager>
+class DBMgr : public Singleton<DBMgr>
 {
 public:
-    DBManager();
-    ~DBManager();
+    DBMgr();
+    ~DBMgr();
     //在启动连接所有需要访问的数据库.
     bool start();
     bool stop(std::function<void()> onSafeClosed);
@@ -74,23 +74,23 @@ private:
 
 
 
-void DBManager::infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
+void DBMgr::infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
 {
     _dbAsync->asyncQuery(_infoDB, sql, handler);
 }
 
-zsummer::mysql::DBResultPtr DBManager::infoQuery(const std::string &sql)
+zsummer::mysql::DBResultPtr DBMgr::infoQuery(const std::string &sql)
 {
     return _infoDB->query(sql);
 }
 
 
-void DBManager::logAsyncQuery(const std::string &sql)
+void DBMgr::logAsyncQuery(const std::string &sql)
 {
-    _dbAsync->asyncQuery(_logDB, sql, &DBManager::_defaultAsyncHandler);
+    _dbAsync->asyncQuery(_logDB, sql, &DBMgr::_defaultAsyncHandler);
 }
 
-zsummer::mysql::DBResultPtr DBManager::logQuery(const std::string &sql)
+zsummer::mysql::DBResultPtr DBMgr::logQuery(const std::string &sql)
 {
     return _logDB->query(sql);
 }

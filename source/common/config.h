@@ -31,71 +31,26 @@
 
 
 
-struct ListenConfig 
-{
-    std::string _ip;
-    unsigned short _port = 0;
-    std::vector<std::string> _whiteList;
-    std::string _wip;
-    unsigned short _wport = 0;
-    ServerNode _node = InvalidServerNode;
-    NodeIndex _index = InvalidNodeIndex;
-};
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
-{
-    os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
-    return os;
-}
-
-struct ConnectConfig 
-{
-    ServerNode _srcNode = InvalidServerNode;
-    ServerNode _dstNode = InvalidServerNode;
-    NodeIndex  _dstNodeIndex = InvalidNodeIndex;
-    std::string _remoteIP;
-    unsigned short _remotePort = 0;
-};
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
-{
-    os << "[srcNode=" << config._srcNode << ", _dstNode=" << config._dstNode << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
-    return os;
-}
-
-struct DBConfig
-{
-    DBConfigID _id = InvalidDB;
-    std::string _ip;
-    unsigned short _port = 3306;
-    std::string _db;
-    std::string _user;
-    std::string _pwd;
-};
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
-{
-    os << "[id=" << (int)config._id << ", ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
-    return os;
-}
-
 
 class ServerConfig : public Singleton<ServerConfig>
 {
 public:
-    bool parse(std::string filename, ServerNode ownNode,NodeIndex ownIndex);
+    bool parse(std::string filename, ServerType ownType,ServerNode ownNode);
 public:
-    const ListenConfig& getConfigListen(ServerNode node, NodeIndex index = InvalidNodeIndex);
-    std::vector<ConnectConfig > getConfigConnect(ServerNode node);
+    const ListenConfig& getConfigListen(ServerType node, ServerNode index = InvalidServerNode);
+    std::vector<ConnectConfig > getConfigConnect(ServerType node);
     const DBConfig & getDBConfig(DBConfigID id);
 
+    inline ServerType getOwnServerType(){ return _ownServerType; }
     inline ServerNode getOwnServerNode(){ return _ownServerNode; }
-    inline NodeIndex getOwnNodeIndex(){ return _ownNodeIndex; }
     inline PlatID getPlatID() { return _platid; }
     inline AreaID getAreaID() { return _areaid; }
 
 
 
 private:
+    ServerType _ownServerType = InvalidServerType;
     ServerNode _ownServerNode = InvalidServerNode;
-    NodeIndex _ownNodeIndex = InvalidNodeIndex;
     PlatID _platid = 0;
     AreaID _areaid = 0;
 

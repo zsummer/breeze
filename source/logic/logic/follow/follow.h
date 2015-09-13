@@ -25,44 +25,40 @@
 
 
 
-#ifndef _FRIEND_H_
-#define _FRIEND_H_
+#ifndef _FOLLOW_H_
+#define _FOLLOW_H_
 #include <common.h>
-#include <ProtoFriend.h>
+#include <ProtoFollow.h>
 #include "../mission/eventTrigger.h"
-#include <multimod_matching_tree/match_tree.h>
 
 
 
 
-
-class Friend :public Singleton<Friend>
+//关注 
+class Follow :public Singleton<Follow>
 {
 public:
-    Friend();
-    ~Friend();
+    Follow();
+    ~Follow();
     bool init();
-    bool initFriends();
-
-    //存储好友关系
-    void insertFriend(const FriendInfo & info);
-    //更新好友关系
-    void updateFriend(const FriendInfo & info);
+    bool buildFollow();
+    bool loadFollow();
 
 
+    void updateFollowingInfo(FollowingInfo & info);
     void db_onDefaultUpdate(zsummer::mysql::DBResultPtr result, std::string desc);
+
 public:
-    void onUserLogin(EventTriggerID tID, UserID uID, Any , Any , Any );
-    void onUserLogout(EventTriggerID tID, UserID uID, Any , Any , Any );
-public:
-    void msg_onGetFriendsReq(TcpSessionPtr session, ReadStream & rs);
-    void msg_onAddFriendReq(TcpSessionPtr session, ReadStream & rs);
-    void msg_onAddFriendReply(TcpSessionPtr session, ReadStream & rs);
-    void msg_onDelFriendReq(TcpSessionPtr session, ReadStream & rs);
+    void msg_onGetFollowingReq(TcpSessionPtr session, ReadStream & rs);
+    void msg_onGetFollowerReq(TcpSessionPtr session, ReadStream & rs);
+    void msg_onPokeReq(TcpSessionPtr session, ReadStream & rs);
 
 private:
-    //<用户ID, <朋友ID, 状态> >
-    std::map<UserID, std::map<UserID, FriendInfo> > _friends;
+    //<follower, <following, info>>
+    std::map<UserID, std::map<UserID, FollowingInfo>> _following;
+    
+    //<following, <follower, info>>
+    std::map<UserID, std::map<UserID, FollowingInfo>> _follower;
 };
 
 

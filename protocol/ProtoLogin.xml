@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
-  <MinNo>100</MinNo>
-  <MaxNo>200</MaxNo>
+  <MinNo>0</MinNo>
+  <MaxNo>100</MaxNo>
   <UseLog4z>true</UseLog4z>
 </ProtoTraits>
 
 
 <Proto>
+
+    <proto name="Heartbeat" desc= "心跳包">
+        <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
+        <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
+    </proto>
+    <proto name="HeartbeatEcho" desc= "心跳包需要立刻回复">
+        <member name="timeStamp" type="ui32"   desc="服务器当前UTC时间戳"/>
+        <member name="timeTick" type="ui32"   desc="服务器当前tick时间戳 毫秒, 服务启动时刻为0"/>
+    </proto>
+
+
 
     <!-- 登录服务器协议 -->
     <proto name="PlatAuthReq" desc= "平台认证">
@@ -17,7 +28,7 @@
 
     <proto name="PlatAuthAck" desc= "认证结果, 包含该用户的所有用户/角色数据" >
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="users" type="UserInfoArray"   desc="该帐号下的所有用户信息"/>
+        <member name="users" type="BaseInfoArray"   desc="该帐号下的所有用户信息"/>
     </proto>
 
 
@@ -28,7 +39,7 @@
 
     <proto name="CreateUserAck" desc= "创建结果和所有用户数据" >
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="users" type="UserInfoArray"   desc="该帐号下的所有用户信息"/>
+        <member name="users" type="BaseInfoArray"   desc="该帐号下的所有用户信息"/>
     </proto>
     
    
@@ -47,11 +58,12 @@
    
 
     <!-- 游戏服务器进入协议 -->
-    <proto name="LinkServerReq" desc= "连接到服务器">
+    <proto name="AttachLogicReq" desc="挂到logic服务器上">
       <member name="uID" type="ui64"   desc=""/>
       <member name="token"  type="string" desc=""/>
     </proto>
-    <proto name="LinkServerAck" desc= "连接到服务器" >
+
+    <proto name="AttachLogicAck" desc="挂到logic服务器上" >
         <member name="retCode" type="ui16"   desc=""/>
     </proto>
   

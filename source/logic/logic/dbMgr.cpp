@@ -1,42 +1,42 @@
-﻿#include "netManager.h"
-#include "dbManager.h"
+﻿#include "netMgr.h"
+#include "dbMgr.h"
 
 
 
 
-DBManager::DBManager()
+DBMgr::DBMgr()
 {
     _infoDB = std::make_shared<DBHelper>();
     _logDB = std::make_shared<DBHelper>();
     _dbAsync = std::make_shared<DBAsync>();
     _dbLogAsync = std::make_shared<DBAsync>();
 }
-DBManager::~DBManager()
+DBMgr::~DBMgr()
 {
     
 }
 
-bool DBManager::stop(std::function<void()> onSafeClosed)
+bool DBMgr::stop(std::function<void()> onSafeClosed)
 {
     _onSafeClosed = onSafeClosed;
     if (_dbAsync->getFinalCount() != _dbAsync->getPostCount()
         || _dbLogAsync->getFinalCount() != _dbLogAsync->getPostCount())
     {
-        SessionManager::getRef().createTimer(500, std::bind(&DBManager::_checkSafeClosed, this));
+        SessionManager::getRef().createTimer(500, std::bind(&DBMgr::_checkSafeClosed, this));
     }
     else
     {
-        SessionManager::getRef().post(std::bind(&DBManager::_checkSafeClosed, this));
+        SessionManager::getRef().post(std::bind(&DBMgr::_checkSafeClosed, this));
     }
     return true;
 }
 
-void DBManager::_checkSafeClosed()
+void DBMgr::_checkSafeClosed()
 {
     if (_dbAsync->getFinalCount() != _dbAsync->getPostCount()
         || _dbLogAsync->getFinalCount() != _dbLogAsync->getPostCount())
     {
-        SessionManager::getRef().createTimer(1000, std::bind(&DBManager::_checkSafeClosed, this));
+        SessionManager::getRef().createTimer(1000, std::bind(&DBMgr::_checkSafeClosed, this));
         LOGA("Waiting the db data to store. waiting count=" << _dbAsync->getPostCount() - _dbAsync->getFinalCount()
              << "  waiting write to log db:" <<  _dbLogAsync->getPostCount() - _dbLogAsync->getFinalCount());
         return;
@@ -56,14 +56,14 @@ void DBManager::_checkSafeClosed()
     }
 }
 
-bool DBManager::start()
+bool DBMgr::start()
 {
     //启动db异步操作线程
     if (!_dbAsync->start())
     {
         return false;
     }
-    LOGD("DBAsync start success.  begin connect to db ...");
+    LOGI("DBAsync started.  begin connect to db ...");
     
     //创建DBHelper
     //////////////////////////////////////////////////////////////////////////
@@ -78,14 +78,14 @@ bool DBManager::start()
             LOGE("connect Info DB false. db config=" << infoConfig);
             return false;
         }
-        LOGD("connect Info DB success. db config=" << infoConfig);
+        LOGI("connect Info DB success. db config=" << infoConfig);
 
         if (!_logDB->connect())
         {
             LOGE("connect Log DB false. db config=" << logConfig);
             return false;
         }
-        LOGD("connect Log DB success. db config=" << logConfig);
+        LOGI("connect Log DB success. db config=" << logConfig);
     }
 
     return true;

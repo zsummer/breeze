@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>3e57694c22e51249f12bb521a2bda724</cppmd5> 
+<luamd5>d6dbda358d3988d94137f95372f37e62</luamd5> 
+<csharpmd5>58d05cde7e2f7abe9e05b25e5b822e87</csharpmd5> 
+<sqlmd5>c4e5a9ea02b51fbd7c486259af9d2e5a</sqlmd5> 
+<xmlmd5>a7bfcccb2f732e9b4ded873eb2ec1ddc</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_GetFollowerAck" Number = "1001" /> 
+    <cache key = "ID_GetFollowerReq" Number = "1000" /> 
+    <cache key = "ID_GetFollowingAck" Number = "1003" /> 
+    <cache key = "ID_GetFollowingReq" Number = "1002" /> 
+    <cache key = "ID_PokeAck" Number = "1005" /> 
+    <cache key = "ID_PokeReq" Number = "1004" /> 
+</cacheNumber>

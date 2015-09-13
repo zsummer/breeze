@@ -43,6 +43,7 @@ int luaopen_cjson(lua_State *l);
 #include "md5/md5.h"
 #include "dbAsync.h"
 #include "config.h"
+#include "dispatch.h"
 
 
 using namespace zsummer::mysql;
@@ -50,6 +51,47 @@ using namespace zsummer::mysql;
 
 
 
+//! 逻辑类型
+typedef ui64 UserID;
+const ui64 InvalidUserID = (UserID)0;
+
+enum SessionStatus
+{
+    SSTATUS_UNKNOW = 0,
+    SSTATUS_PLAT_LOGINING,
+    SSTATUS_PLAT_LOGINED,
+    SSTATUS_PLAT_LOADING,
+    SSTATUS_PLAT_CREATING,
+    SSTATUS_PLAT_SELECTING,
+    SSTATUS_LOGINED,
+    SSTATUS_TRUST, //受信任的服务器内部session 
+};
+
+enum SessionUserData
+{
+    UPARAM_SESSION_STATUS,
+    UPARAM_ACCOUNT,
+    UPARAM_USER_ID,
+    UPARAM_LOGIN_TIME,
+    UPARAM_LAST_ACTIVE_TIME,
+};
+
+const int MAX_ACCOUNT_USERS = 5;
+struct UserInfo
+{
+    BaseInfo base;
+    SessionToken token;
+    SessionID sID = InvalidSessionID;
+};
+using UserInfoPtr = std::shared_ptr<UserInfo>;
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserInfo & info)
+{
+    return stm;
+}
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserInfoPtr & info)
+{
+    return stm;
+}
 
 
 
@@ -80,6 +122,17 @@ void sendMessage(SessionID & sID, MSG & msg)
     WriteStream ws(MSG::GetProtoID());
     ws << msg;
     SessionManager::getRef().sendSessionData(sID, ws.getStream(), ws.getStreamLen());
+}
+
+inline void DispatchFunction(TcpSessionPtr   session, const char * begin, unsigned int len)
+{
+    ReadStream rs(begin, len);
+    if (rs.getProtoID() < 200 
+        || (rs.getProtoID() < 50000 && session->getUserParam(UPARAM_SESSION_STATUS).getNumber() == SSTATUS_LOGINED)
+        || session->getUserParam(UPARAM_SESSION_STATUS).getNumber() == SSTATUS_TRUST)
+    {
+        MessageDispatcher::getRef().dispatch(session, rs.getProtoID(), rs);
+    }
 }
 
 #endif

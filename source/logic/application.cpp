@@ -1,13 +1,12 @@
 ﻿#include "application.h"
-#include "logic/dbManager.h"
-#include "logic/userManager.h"
-#include "logic/netManager.h"
+#include "logic/dbMgr.h"
+#include "logic/netMgr.h"
 #include "logic/mission/eventTrigger.h"
 #include "logic/mission/dailyMission.h"
 #include "logic/testBlob/testBlob.h"
 #include "logic/chat/chat.h"
-#include "logic/friend/friend.h"
-#include "logic/login/login.h"
+#include "logic/follow/follow.h"
+
 
 
 #define LogicInit(logic) do  \
@@ -51,26 +50,25 @@ bool Appliction::init(std::string filename, unsigned int index)
 {
     bool ret = false;
     SessionManager::getRef().setStopClientsHandler(std::bind(&Appliction::_onSigalStop, this));
-    ret = ServerConfig::getRef().parse(filename, LogicNode, index);
+    ret = ServerConfig::getRef().parse(filename, LogicServer, index);
     if (!ret)
     {
         LOGE("parse ServerConfig failed.");
         return ret;
     }
-    LOGI("parse ServerConfig success. configFile=" << filename << ", node=" << LogicNode << ", index=" << index);
+    LOGI("parse ServerConfig success. configFile=" << filename << ", node=" << LogicServer << ", index=" << index);
 
     LogicStart(SessionManager);
-    LogicStart(DBManager);
+    LogicStart(DBMgr);
     
-    LogicInit(UserManager);
+    LogicInit(NetMgr);
     LogicInit(EventTrigger);
     LogicInit(DailyMission);
     LogicInit(TestBlob);
     LogicInit(Chat);
-    LogicInit(Login);
-    LogicInit(Friend);
+    LogicInit(Follow);
 
-    LogicStart(NetManager);
+    LogicStart(NetMgr);
 
 
     LOGI("Appliction init success.");
@@ -90,13 +88,13 @@ void Appliction::stop()
 void Appliction::_onSigalStop()
 {
     LOGA("Appliction::_onSigalStop(): waiting all session safe close ...");
-    NetManager::getRef().stop(std::bind(&Appliction::_onNetClosed, this));
+    NetMgr::getRef().stop(std::bind(&Appliction::_onNetClosed, this));
 }
 
 void Appliction::_onNetClosed()
 {
-    LOGA("Appliction::_onNetClosed(): waiting DBManager stop ...");
-    DBManager::getRef().stop(std::bind(&Appliction::_onDBClosed, this));
+    LOGA("Appliction::_onNetClosed(): waiting DBMgr stop ...");
+    DBMgr::getRef().stop(std::bind(&Appliction::_onDBClosed, this));
 }
 
 void Appliction::_onDBClosed()
