@@ -21,7 +21,13 @@ function Session:ctor(sID, account, token, nickName, iconID)
     self.nickName=nickName
     self.iconID = iconID
 end
+function Session:whenPulse(sID)
+    logi("Session:whenPulse.  sID=" .. sID)
+end
 
+function Session:onHeartbeat(sID, msg)
+    send(sID, "HeartbeatEcho", {timeStamp=msg.timeStamp,timeTick=msg.timeTick})
+end
 
 function Session:whenLinked(sID, remoteIP, remotePort)
     if self.authed then

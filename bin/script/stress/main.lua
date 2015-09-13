@@ -21,13 +21,25 @@ local function whenLinked(sID, ip, port)
     local session = _sessions[sID]
     session:whenLinked(sID, ip, port)
 end
+summer.whenLinked(whenLinked)
 
 local function whenClosed(sID, ip, port)
-    -- 
+    logi("whenClosed sID=" .. sID)
 end
+summer.whenClosed(whenClosed)
+
+local function whenPulse(sID)
+    session = _sessions[sID]
+    if not session then
+        logw("whenPulse unknown session. sID=" .. sID)
+        return
+    end
+    session:whenPulse(sID)
+end
+summer.whenPulse(whenPulse)
 
 local function whenMessage(sID, pID, binData)
-    logd("whenMessage")
+    logd("whenMessage sID=" .. sID .. ", protoID=" .. pID )
     session = _sessions[sID]
     if not session then
         logw("whenMessage unknown session. sID=" .. sID)
@@ -55,19 +67,13 @@ local function whenMessage(sID, pID, binData)
         return
     end
     session["on" .. proto](session, sID, msg)
-
 end
-
-
-
---event on connect
-summer.whenLinked(whenLinked)
-
---event on recv message
 summer.whenMessage(whenMessage)
 
---event on disconnect
-summer.whenClosed(whenClosed)
+
+
+
+
 
 --start summer
 summer.start()

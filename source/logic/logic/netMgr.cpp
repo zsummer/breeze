@@ -201,6 +201,7 @@ void NetMgr::msg_onAttachLogicReq(TcpSessionPtr session, ReadStream & rs)
     {
         return;
     }
+    
     AttachLogicAck ack;
     ack.retCode = EC_SUCCESS;
     AttachLogicReq req;
@@ -219,7 +220,7 @@ void NetMgr::msg_onAttachLogicReq(TcpSessionPtr session, ReadStream & rs)
             ack.retCode = EC_PERMISSION_DENIED;
             break;
         }
-        if (info->token.expire > time(NULL))
+        if (info->token.expire < time(NULL))
         {
             ack.retCode = EC_REQUEST_EXPIRE;
             break;
@@ -240,7 +241,10 @@ void NetMgr::msg_onAttachLogicReq(TcpSessionPtr session, ReadStream & rs)
         _mapSession.insert(std::make_pair(session->getSessionID(), info));
 
         sendMessage(session, ack);
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, time(NULL));
+
         event_onLogin(info);
+        
         return;
     } while (0);
     
@@ -253,7 +257,7 @@ void NetMgr::event_onSessionPulse(TcpSessionPtr session)
 {
     if (isSessionID(session->getSessionID()))
     {
-        if (time(NULL) - session->getUserParam(UPARAM_LAST_ACTIVE_TIME).getNumber() > session->getOptions()._sessionPulseInterval*2)
+        if (time(NULL) - session->getUserParam(UPARAM_LAST_ACTIVE_TIME).getNumber() > session->getOptions()._sessionPulseInterval/1000*2)
         {
             session->close();
             return;
