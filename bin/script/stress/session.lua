@@ -74,7 +74,9 @@ end
 -- 登录游戏
 function Session:onAttachLogicAck(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
-        
+        logi("Session:onAttachLogicAck success")
+    else
+        loge("Session:onAttachLogicAck failed")
     end
 
 end
