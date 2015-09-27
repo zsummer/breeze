@@ -3,9 +3,10 @@
 #define _PROTOLOGIN_H_ 
  
  
-const unsigned short ID_Heartbeat = 0; //心跳包  
 struct Heartbeat //心跳包  
 { 
+    static const unsigned short GetProtoID() { return 0;} 
+    static const std::string GetProtoName() { return "ID_Heartbeat";} 
     unsigned int timeStamp; //服务器当前UTC时间戳  
     unsigned int timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
     Heartbeat() 
@@ -13,8 +14,11 @@ struct Heartbeat //心跳包
         timeStamp = 0; 
         timeTick = 0; 
     } 
-    static const unsigned short GetProtoID() { return 0;} 
-    static const std::string GetProtoName() { return "ID_Heartbeat";} 
+    Heartbeat(const unsigned int & timeStamp, const unsigned int & timeTick) 
+    { 
+        this->timeStamp = timeStamp; 
+        this->timeTick = timeTick; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Heartbeat & data) 
 { 
@@ -29,9 +33,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_HeartbeatEcho = 1; //心跳包需要立刻回复  
 struct HeartbeatEcho //心跳包需要立刻回复  
 { 
+    static const unsigned short GetProtoID() { return 1;} 
+    static const std::string GetProtoName() { return "ID_HeartbeatEcho";} 
     unsigned int timeStamp; //服务器当前UTC时间戳  
     unsigned int timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
     HeartbeatEcho() 
@@ -39,8 +44,11 @@ struct HeartbeatEcho //心跳包需要立刻回复
         timeStamp = 0; 
         timeTick = 0; 
     } 
-    static const unsigned short GetProtoID() { return 1;} 
-    static const std::string GetProtoName() { return "ID_HeartbeatEcho";} 
+    HeartbeatEcho(const unsigned int & timeStamp, const unsigned int & timeTick) 
+    { 
+        this->timeStamp = timeStamp; 
+        this->timeTick = timeTick; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const HeartbeatEcho & data) 
 { 
@@ -55,13 +63,20 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_PlatAuthReq = 2; //平台认证  
 struct PlatAuthReq //平台认证  
 { 
-    std::string account; //用户名  
-    std::string token; //令牌  
     static const unsigned short GetProtoID() { return 2;} 
     static const std::string GetProtoName() { return "ID_PlatAuthReq";} 
+    std::string account; //用户名  
+    std::string token; //令牌  
+    PlatAuthReq() 
+    { 
+    } 
+    PlatAuthReq(const std::string & account, const std::string & token) 
+    { 
+        this->account = account; 
+        this->token = token; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthReq & data) 
 { 
@@ -76,17 +91,21 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_PlatAuthAck = 3; //认证结果, 包含该用户的所有用户/角色数据  
 struct PlatAuthAck //认证结果, 包含该用户的所有用户/角色数据  
 { 
+    static const unsigned short GetProtoID() { return 3;} 
+    static const std::string GetProtoName() { return "ID_PlatAuthAck";} 
     unsigned short retCode;  
     BaseInfoArray users; //该帐号下的所有用户信息  
     PlatAuthAck() 
     { 
         retCode = 0; 
     } 
-    static const unsigned short GetProtoID() { return 3;} 
-    static const std::string GetProtoName() { return "ID_PlatAuthAck";} 
+    PlatAuthAck(const unsigned short & retCode, const BaseInfoArray & users) 
+    { 
+        this->retCode = retCode; 
+        this->users = users; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PlatAuthAck & data) 
 { 
@@ -101,17 +120,21 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_CreateUserReq = 4; //创建一个新的用户数据  
 struct CreateUserReq //创建一个新的用户数据  
 { 
+    static const unsigned short GetProtoID() { return 4;} 
+    static const std::string GetProtoName() { return "ID_CreateUserReq";} 
     std::string nickName; //昵称  
     int iconID; //头像  
     CreateUserReq() 
     { 
         iconID = 0; 
     } 
-    static const unsigned short GetProtoID() { return 4;} 
-    static const std::string GetProtoName() { return "ID_CreateUserReq";} 
+    CreateUserReq(const std::string & nickName, const int & iconID) 
+    { 
+        this->nickName = nickName; 
+        this->iconID = iconID; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserReq & data) 
 { 
@@ -126,17 +149,21 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_CreateUserAck = 5; //创建结果和所有用户数据  
 struct CreateUserAck //创建结果和所有用户数据  
 { 
+    static const unsigned short GetProtoID() { return 5;} 
+    static const std::string GetProtoName() { return "ID_CreateUserAck";} 
     unsigned short retCode;  
     BaseInfoArray users; //该帐号下的所有用户信息  
     CreateUserAck() 
     { 
         retCode = 0; 
     } 
-    static const unsigned short GetProtoID() { return 5;} 
-    static const std::string GetProtoName() { return "ID_CreateUserAck";} 
+    CreateUserAck(const unsigned short & retCode, const BaseInfoArray & users) 
+    { 
+        this->retCode = retCode; 
+        this->users = users; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserAck & data) 
 { 
@@ -151,16 +178,19 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_SelectUserReq = 6; //获取需要登录用户的所在服务器和认证令牌  
 struct SelectUserReq //获取需要登录用户的所在服务器和认证令牌  
 { 
+    static const unsigned short GetProtoID() { return 6;} 
+    static const std::string GetProtoName() { return "ID_SelectUserReq";} 
     unsigned long long uID;  
     SelectUserReq() 
     { 
         uID = 0; 
     } 
-    static const unsigned short GetProtoID() { return 6;} 
-    static const std::string GetProtoName() { return "ID_SelectUserReq";} 
+    SelectUserReq(const unsigned long long & uID) 
+    { 
+        this->uID = uID; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserReq & data) 
 { 
@@ -173,9 +203,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_SelectUserAck = 7; //获取需要登录用户的所在服务器和认证令牌  
 struct SelectUserAck //获取需要登录用户的所在服务器和认证令牌  
 { 
+    static const unsigned short GetProtoID() { return 7;} 
+    static const std::string GetProtoName() { return "ID_SelectUserAck";} 
     unsigned short retCode;  
     unsigned long long uID;  
     std::string token;  
@@ -187,8 +218,14 @@ struct SelectUserAck //获取需要登录用户的所在服务器和认证令牌
         uID = 0; 
         port = 0; 
     } 
-    static const unsigned short GetProtoID() { return 7;} 
-    static const std::string GetProtoName() { return "ID_SelectUserAck";} 
+    SelectUserAck(const unsigned short & retCode, const unsigned long long & uID, const std::string & token, const std::string & ip, const unsigned short & port) 
+    { 
+        this->retCode = retCode; 
+        this->uID = uID; 
+        this->token = token; 
+        this->ip = ip; 
+        this->port = port; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserAck & data) 
 { 
@@ -209,17 +246,21 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_AttachLogicReq = 8; //挂到logic服务器上  
 struct AttachLogicReq //挂到logic服务器上  
 { 
+    static const unsigned short GetProtoID() { return 8;} 
+    static const std::string GetProtoName() { return "ID_AttachLogicReq";} 
     unsigned long long uID;  
     std::string token;  
     AttachLogicReq() 
     { 
         uID = 0; 
     } 
-    static const unsigned short GetProtoID() { return 8;} 
-    static const std::string GetProtoName() { return "ID_AttachLogicReq";} 
+    AttachLogicReq(const unsigned long long & uID, const std::string & token) 
+    { 
+        this->uID = uID; 
+        this->token = token; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachLogicReq & data) 
 { 
@@ -234,16 +275,19 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_AttachLogicAck = 9; //挂到logic服务器上  
 struct AttachLogicAck //挂到logic服务器上  
 { 
+    static const unsigned short GetProtoID() { return 9;} 
+    static const std::string GetProtoName() { return "ID_AttachLogicAck";} 
     unsigned short retCode;  
     AttachLogicAck() 
     { 
         retCode = 0; 
     } 
-    static const unsigned short GetProtoID() { return 9;} 
-    static const std::string GetProtoName() { return "ID_AttachLogicAck";} 
+    AttachLogicAck(const unsigned short & retCode) 
+    { 
+        this->retCode = retCode; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachLogicAck & data) 
 { 

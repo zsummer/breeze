@@ -2,183 +2,271 @@
 namespace Proto4z  
 { 
  
-    class Heartbeat: Proto4z.IProtoObject //心跳包  
+    public class Heartbeat: Proto4z.IProtoObject //心跳包  
     {     
-        static public System.UInt16 getProtoID() { return 50000; } 
+        //proto id   
+        public const ushort protoID = 50000;  
+        static public ushort getProtoID() { return 50000; } 
         static public string getProtoName() { return "Heartbeat"; } 
-        public System.UInt32 timeStamp; //服务器当前UTC时间戳  
-        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
+        //members   
+        public uint timeStamp; //服务器当前UTC时间戳  
+        public uint timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
+        public Heartbeat()  
+        { 
+            timeStamp = 0;  
+            timeTick = 0;  
+        } 
+        public Heartbeat(uint timeStamp, uint timeTick) 
+        { 
+            this.timeStamp = timeStamp; 
+            this.timeTick = timeTick; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeStamp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeTick)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            timeStamp = 0; 
-                timeStamp = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            timeTick = 0; 
-                timeTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.timeStamp = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.timeTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class HeartbeatEcho: Proto4z.IProtoObject //心跳包需要立刻回复  
+    public class HeartbeatEcho: Proto4z.IProtoObject //心跳包需要立刻回复  
     {     
-        static public System.UInt16 getProtoID() { return 50001; } 
+        //proto id   
+        public const ushort protoID = 50001;  
+        static public ushort getProtoID() { return 50001; } 
         static public string getProtoName() { return "HeartbeatEcho"; } 
-        public System.UInt32 timeStamp; //服务器当前UTC时间戳  
-        public System.UInt32 timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
+        //members   
+        public uint timeStamp; //服务器当前UTC时间戳  
+        public uint timeTick; //服务器当前tick时间戳 毫秒, 服务启动时刻为0  
+        public HeartbeatEcho()  
+        { 
+            timeStamp = 0;  
+            timeTick = 0;  
+        } 
+        public HeartbeatEcho(uint timeStamp, uint timeTick) 
+        { 
+            this.timeStamp = timeStamp; 
+            this.timeTick = timeTick; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeStamp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeTick)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            timeStamp = 0; 
-                timeStamp = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            timeTick = 0; 
-                timeTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.timeStamp = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.timeTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class PlatAuthReq: Proto4z.IProtoObject //平台认证  
+    public class PlatAuthReq: Proto4z.IProtoObject //平台认证  
     {     
-        static public System.UInt16 getProtoID() { return 50002; } 
+        //proto id   
+        public const ushort protoID = 50002;  
+        static public ushort getProtoID() { return 50002; } 
         static public string getProtoName() { return "PlatAuthReq"; } 
-        public System.String account; //用户名  
-        public System.String token; //令牌  
+        //members   
+        public string account; //用户名  
+        public string token; //令牌  
+        public PlatAuthReq()  
+        { 
+            account = "";  
+            token = "";  
+        } 
+        public PlatAuthReq(string account, string token) 
+        { 
+            this.account = account; 
+            this.token = token; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-                account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-                token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class PlatAuthAck: Proto4z.IProtoObject //认证结果, 包含该用户的所有用户/角色数据  
+    public class PlatAuthAck: Proto4z.IProtoObject //认证结果, 包含该用户的所有用户/角色数据  
     {     
-        static public System.UInt16 getProtoID() { return 50003; } 
+        //proto id   
+        public const ushort protoID = 50003;  
+        static public ushort getProtoID() { return 50003; } 
         static public string getProtoName() { return "PlatAuthAck"; } 
-        public System.UInt16 retCode;  
+        //members   
+        public ushort retCode;  
         public BaseInfoArray users; //该帐号下的所有用户信息  
+        public PlatAuthAck()  
+        { 
+            retCode = 0;  
+            users = new BaseInfoArray();  
+        } 
+        public PlatAuthAck(ushort retCode, BaseInfoArray users) 
+        { 
+            this.retCode = retCode; 
+            this.users = users; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
+            if (users == null) users = new BaseInfoArray(); 
             data.AddRange(users.__encode()); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            retCode = 0; 
-                retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            users = new BaseInfoArray(); 
-                users.__decode(binData, ref pos); 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.users = new BaseInfoArray(); 
+            this.users.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class CreateUserReq: Proto4z.IProtoObject //创建一个新的用户数据  
+    public class CreateUserReq: Proto4z.IProtoObject //创建一个新的用户数据  
     {     
-        static public System.UInt16 getProtoID() { return 50004; } 
+        //proto id   
+        public const ushort protoID = 50004;  
+        static public ushort getProtoID() { return 50004; } 
         static public string getProtoName() { return "CreateUserReq"; } 
-        public System.String nickName; //昵称  
-        public System.Int32 iconID; //头像  
+        //members   
+        public string nickName; //昵称  
+        public int iconID; //头像  
+        public CreateUserReq()  
+        { 
+            nickName = "";  
+            iconID = 0;  
+        } 
+        public CreateUserReq(string nickName, int iconID) 
+        { 
+            this.nickName = nickName; 
+            this.iconID = iconID; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(nickName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(iconID)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-                nickName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            iconID = 0; 
-                iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            this.nickName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class CreateUserAck: Proto4z.IProtoObject //创建结果和所有用户数据  
+    public class CreateUserAck: Proto4z.IProtoObject //创建结果和所有用户数据  
     {     
-        static public System.UInt16 getProtoID() { return 50005; } 
+        //proto id   
+        public const ushort protoID = 50005;  
+        static public ushort getProtoID() { return 50005; } 
         static public string getProtoName() { return "CreateUserAck"; } 
-        public System.UInt16 retCode;  
+        //members   
+        public ushort retCode;  
         public BaseInfoArray users; //该帐号下的所有用户信息  
+        public CreateUserAck()  
+        { 
+            retCode = 0;  
+            users = new BaseInfoArray();  
+        } 
+        public CreateUserAck(ushort retCode, BaseInfoArray users) 
+        { 
+            this.retCode = retCode; 
+            this.users = users; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
+            if (users == null) users = new BaseInfoArray(); 
             data.AddRange(users.__encode()); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            retCode = 0; 
-                retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            users = new BaseInfoArray(); 
-                users.__decode(binData, ref pos); 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.users = new BaseInfoArray(); 
+            this.users.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class SelectUserReq: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌  
+    public class SelectUserReq: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌  
     {     
-        static public System.UInt16 getProtoID() { return 50006; } 
+        //proto id   
+        public const ushort protoID = 50006;  
+        static public ushort getProtoID() { return 50006; } 
         static public string getProtoName() { return "SelectUserReq"; } 
-        public System.UInt64 uID;  
+        //members   
+        public ulong uID;  
+        public SelectUserReq()  
+        { 
+            uID = 0;  
+        } 
+        public SelectUserReq(ulong uID) 
+        { 
+            this.uID = uID; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            uID = 0; 
-                uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class SelectUserAck: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌  
+    public class SelectUserAck: Proto4z.IProtoObject //获取需要登录用户的所在服务器和认证令牌  
     {     
-        static public System.UInt16 getProtoID() { return 50007; } 
+        //proto id   
+        public const ushort protoID = 50007;  
+        static public ushort getProtoID() { return 50007; } 
         static public string getProtoName() { return "SelectUserAck"; } 
-        public System.UInt16 retCode;  
-        public System.UInt64 uID;  
-        public System.String token;  
-        public System.String ip;  
-        public System.UInt16 port;  
+        //members   
+        public ushort retCode;  
+        public ulong uID;  
+        public string token;  
+        public string ip;  
+        public ushort port;  
+        public SelectUserAck()  
+        { 
+            retCode = 0;  
+            uID = 0;  
+            token = "";  
+            ip = "";  
+            port = 0;  
+        } 
+        public SelectUserAck(ushort retCode, ulong uID, string token, string ip, ushort port) 
+        { 
+            this.retCode = retCode; 
+            this.uID = uID; 
+            this.token = token; 
+            this.ip = ip; 
+            this.port = port; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -187,65 +275,78 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(ip)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(port)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            retCode = 0; 
-                retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            uID = 0; 
-                uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-                token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-                ip = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            port = 0; 
-                port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.ip = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class AttachLogicReq: Proto4z.IProtoObject //挂到logic服务器上  
+    public class AttachLogicReq: Proto4z.IProtoObject //挂到logic服务器上  
     {     
-        static public System.UInt16 getProtoID() { return 50008; } 
+        //proto id   
+        public const ushort protoID = 50008;  
+        static public ushort getProtoID() { return 50008; } 
         static public string getProtoName() { return "AttachLogicReq"; } 
-        public System.UInt64 uID;  
-        public System.String token;  
+        //members   
+        public ulong uID;  
+        public string token;  
+        public AttachLogicReq()  
+        { 
+            uID = 0;  
+            token = "";  
+        } 
+        public AttachLogicReq(ulong uID, string token) 
+        { 
+            this.uID = uID; 
+            this.token = token; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            uID = 0; 
-                uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-                token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class AttachLogicAck: Proto4z.IProtoObject //挂到logic服务器上  
+    public class AttachLogicAck: Proto4z.IProtoObject //挂到logic服务器上  
     {     
-        static public System.UInt16 getProtoID() { return 50009; } 
+        //proto id   
+        public const ushort protoID = 50009;  
+        static public ushort getProtoID() { return 50009; } 
         static public string getProtoName() { return "AttachLogicAck"; } 
-        public System.UInt16 retCode;  
+        //members   
+        public ushort retCode;  
+        public AttachLogicAck()  
+        { 
+            retCode = 0;  
+        } 
+        public AttachLogicAck(ushort retCode) 
+        { 
+            this.retCode = retCode; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            retCode = 0; 
-                retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 
         } 
     } 

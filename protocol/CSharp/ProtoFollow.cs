@@ -1,30 +1,39 @@
  
 namespace Proto4z  
 { 
-    class STATIC_FOLLOW_INVALID  
-    { 
-        public static System.Byte value = 0;  
-    } 
-    class STATIC_FOLLOW_DELETED //路人  
-    { 
-        public static System.Byte value = 1;  
-    } 
-    class STATIC_FOLLOW_HATE //黑  
-    { 
-        public static System.Byte value = 2;  
-    } 
-    class STATIC_FOLLOW_FOLLOWING //粉  
-    { 
-        public static System.Byte value = 3;  
-    } 
  
-    class FollowingInfo: Proto4z.IProtoObject //关注  
+    public enum FOLLOW_STATUS : byte 
+    { 
+        FOLLOW_INVALID = 0,  
+        FOLLOW_DELETED = 1, //路人  
+        FOLLOW_HATE = 2, //黑  
+        FOLLOW_FOLLOWING = 3, //粉  
+    }; 
+ 
+    public class FollowingInfo: Proto4z.IProtoObject //关注  
     {     
-        public System.UInt64 following;  
-        public System.UInt64 follower;  
-        public System.Byte status; //状态标志  
-        public System.UInt32 makeTime; //建立时间  
-        public System.UInt32 lastChanged; //最后更改时间  
+        //members   
+        public ulong following;  
+        public ulong follower;  
+        public byte status; //状态标志  
+        public uint makeTime; //建立时间  
+        public uint lastChanged; //最后更改时间  
+        public FollowingInfo()  
+        { 
+            following = 0;  
+            follower = 0;  
+            status = 0;  
+            makeTime = 0;  
+            lastChanged = 0;  
+        } 
+        public FollowingInfo(ulong following, ulong follower, byte status, uint makeTime, uint lastChanged) 
+        { 
+            this.following = following; 
+            this.follower = follower; 
+            this.status = status; 
+            this.makeTime = makeTime; 
+            this.lastChanged = lastChanged; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
@@ -33,32 +42,26 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(makeTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(lastChanged)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            following = 0; 
-                following = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            follower = 0; 
-                follower = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            status = 0; 
-                status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
-            makeTime = 0; 
-                makeTime = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            lastChanged = 0; 
-                lastChanged = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.following = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.follower = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
+            this.makeTime = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.lastChanged = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class FollowingInfoArray : System.Collections.Generic.List<FollowingInfo>, Proto4z.IProtoObject  
+ 
+    public class FollowingInfoArray : System.Collections.Generic.List<FollowingInfo>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var ret = new System.Collections.Generic.List<byte>(); 
-            System.Int32 len = (System.Int32)this.Count; 
+            int len = (int)this.Count; 
             ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
             for (int i = 0; i < this.Count; i++ ) 
             { 
@@ -69,7 +72,7 @@ namespace Proto4z
  
         public int __decode(byte[] binData, ref int pos) 
         { 
-            System.Int32 len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             if(len > 0) 
             { 
                 for (int i=0; i<len; i++) 
@@ -83,148 +86,207 @@ namespace Proto4z
         } 
     } 
  
-    class GetFollowerReq: Proto4z.IProtoObject //获取粉丝列表  
+    public class GetFollowerReq: Proto4z.IProtoObject //获取粉丝列表  
     {     
-        static public System.UInt16 getProtoID() { return 1000; } 
+        //proto id   
+        public const ushort protoID = 1000;  
+        static public ushort getProtoID() { return 1000; } 
         static public string getProtoName() { return "GetFollowerReq"; } 
-        public System.UInt64 uID;  
-        public System.Byte status; //所有/路人/黑/粉  
+        //members   
+        public ulong uID;  
+        public byte status; //所有/路人/黑/粉  
+        public GetFollowerReq()  
+        { 
+            uID = 0;  
+            status = 0;  
+        } 
+        public GetFollowerReq(ulong uID, byte status) 
+        { 
+            this.uID = uID; 
+            this.status = status; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            uID = 0; 
-                uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            status = 0; 
-                status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
+            this.uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class GetFollowerAck: Proto4z.IProtoObject //获取粉丝列表  
+    public class GetFollowerAck: Proto4z.IProtoObject //获取粉丝列表  
     {     
-        static public System.UInt16 getProtoID() { return 1001; } 
+        //proto id   
+        public const ushort protoID = 1001;  
+        static public ushort getProtoID() { return 1001; } 
         static public string getProtoName() { return "GetFollowerAck"; } 
-        public System.Byte status; //所有/路人/黑/粉  
+        //members   
+        public byte status; //所有/路人/黑/粉  
         public FollowingInfoArray follower;  
+        public GetFollowerAck()  
+        { 
+            status = 0;  
+            follower = new FollowingInfoArray();  
+        } 
+        public GetFollowerAck(byte status, FollowingInfoArray follower) 
+        { 
+            this.status = status; 
+            this.follower = follower; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
+            if (follower == null) follower = new FollowingInfoArray(); 
             data.AddRange(follower.__encode()); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            status = 0; 
-                status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
-            follower = new FollowingInfoArray(); 
-                follower.__decode(binData, ref pos); 
+            this.status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
+            this.follower = new FollowingInfoArray(); 
+            this.follower.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class GetFollowingReq: Proto4z.IProtoObject //获取关注列表  
+    public class GetFollowingReq: Proto4z.IProtoObject //获取关注列表  
     {     
-        static public System.UInt16 getProtoID() { return 1002; } 
+        //proto id   
+        public const ushort protoID = 1002;  
+        static public ushort getProtoID() { return 1002; } 
         static public string getProtoName() { return "GetFollowingReq"; } 
-        public System.UInt64 uID;  
-        public System.Byte status; //所有/路人/黑/粉  
+        //members   
+        public ulong uID;  
+        public byte status; //所有/路人/黑/粉  
+        public GetFollowingReq()  
+        { 
+            uID = 0;  
+            status = 0;  
+        } 
+        public GetFollowingReq(ulong uID, byte status) 
+        { 
+            this.uID = uID; 
+            this.status = status; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            uID = 0; 
-                uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            status = 0; 
-                status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
+            this.uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class GetFollowingAck: Proto4z.IProtoObject //获取关注列表  
+    public class GetFollowingAck: Proto4z.IProtoObject //获取关注列表  
     {     
-        static public System.UInt16 getProtoID() { return 1003; } 
+        //proto id   
+        public const ushort protoID = 1003;  
+        static public ushort getProtoID() { return 1003; } 
         static public string getProtoName() { return "GetFollowingAck"; } 
-        public System.Byte status; //所有/路人/黑/粉  
+        //members   
+        public byte status; //所有/路人/黑/粉  
         public FollowingInfoArray following;  
+        public GetFollowingAck()  
+        { 
+            status = 0;  
+            following = new FollowingInfoArray();  
+        } 
+        public GetFollowingAck(byte status, FollowingInfoArray following) 
+        { 
+            this.status = status; 
+            this.following = following; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
+            if (following == null) following = new FollowingInfoArray(); 
             data.AddRange(following.__encode()); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            status = 0; 
-                status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
-            following = new FollowingInfoArray(); 
-                following.__decode(binData, ref pos); 
+            this.status = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
+            this.following = new FollowingInfoArray(); 
+            this.following.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class PokeReq: Proto4z.IProtoObject //操作  
+    public class PokeReq: Proto4z.IProtoObject //操作  
     {     
-        static public System.UInt16 getProtoID() { return 1004; } 
+        //proto id   
+        public const ushort protoID = 1004;  
+        static public ushort getProtoID() { return 1004; } 
         static public string getProtoName() { return "PokeReq"; } 
-        public System.Byte dstStatus; //路人/黑/粉  
-        public System.UInt64 following; //关注目标ID  
+        //members   
+        public byte dstStatus; //路人/黑/粉  
+        public ulong following; //关注目标ID  
+        public PokeReq()  
+        { 
+            dstStatus = 0;  
+            following = 0;  
+        } 
+        public PokeReq(byte dstStatus, ulong following) 
+        { 
+            this.dstStatus = dstStatus; 
+            this.following = following; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI8(dstStatus)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(following)); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            dstStatus = 0; 
-                dstStatus = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
-            following = 0; 
-                following = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.dstStatus = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
+            this.following = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    class PokeAck: Proto4z.IProtoObject //操作  
+    public class PokeAck: Proto4z.IProtoObject //操作  
     {     
-        static public System.UInt16 getProtoID() { return 1005; } 
+        //proto id   
+        public const ushort protoID = 1005;  
+        static public ushort getProtoID() { return 1005; } 
         static public string getProtoName() { return "PokeAck"; } 
+        //members   
         public FollowingInfo follow;  
+        public PokeAck()  
+        { 
+            follow = new FollowingInfo();  
+        } 
+        public PokeAck(FollowingInfo follow) 
+        { 
+            this.follow = follow; 
+        } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            if (follow == null) follow = new FollowingInfo(); 
             data.AddRange(follow.__encode()); 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            ret.AddRange(data); 
-            return ret; 
+            return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            follow = new FollowingInfo(); 
-                follow.__decode(binData, ref pos); 
+            this.follow = new FollowingInfo(); 
+            this.follow.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

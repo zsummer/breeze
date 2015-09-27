@@ -2,11 +2,14 @@
 #ifndef _PROTOFOLLOW_H_ 
 #define _PROTOFOLLOW_H_ 
  
-/*--enum--[name=FOLLOW_STATUS, type=ui8, desc=关系]--*/ 
-const unsigned char FOLLOW_INVALID = 0;  
-const unsigned char FOLLOW_DELETED = 1; //路人  
-const unsigned char FOLLOW_HATE = 2; //黑  
-const unsigned char FOLLOW_FOLLOWING = 3; //粉  
+ 
+enum FOLLOW_STATUS : unsigned char 
+{ 
+    FOLLOW_INVALID = 0,  
+    FOLLOW_DELETED = 1, //路人  
+    FOLLOW_HATE = 2, //黑  
+    FOLLOW_FOLLOWING = 3, //粉  
+}; 
  
 struct FollowingInfo //关注  
 { 
@@ -22,6 +25,14 @@ struct FollowingInfo //关注
         status = 0; 
         makeTime = 0; 
         lastChanged = 0; 
+    } 
+    FollowingInfo(const unsigned long long & following, const unsigned long long & follower, const unsigned char & status, const unsigned int & makeTime, const unsigned int & lastChanged) 
+    { 
+        this->following = following; 
+        this->follower = follower; 
+        this->status = status; 
+        this->makeTime = makeTime; 
+        this->lastChanged = lastChanged; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FollowingInfo & data) 
@@ -43,11 +54,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
+ 
 typedef std::vector<FollowingInfo> FollowingInfoArray;  
  
-const unsigned short ID_GetFollowerReq = 1000; //获取粉丝列表  
 struct GetFollowerReq //获取粉丝列表  
 { 
+    static const unsigned short GetProtoID() { return 1000;} 
+    static const std::string GetProtoName() { return "ID_GetFollowerReq";} 
     unsigned long long uID;  
     unsigned char status; //所有/路人/黑/粉  
     GetFollowerReq() 
@@ -55,8 +68,11 @@ struct GetFollowerReq //获取粉丝列表
         uID = 0; 
         status = 0; 
     } 
-    static const unsigned short GetProtoID() { return 1000;} 
-    static const std::string GetProtoName() { return "ID_GetFollowerReq";} 
+    GetFollowerReq(const unsigned long long & uID, const unsigned char & status) 
+    { 
+        this->uID = uID; 
+        this->status = status; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetFollowerReq & data) 
 { 
@@ -71,17 +87,21 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_GetFollowerAck = 1001; //获取粉丝列表  
 struct GetFollowerAck //获取粉丝列表  
 { 
+    static const unsigned short GetProtoID() { return 1001;} 
+    static const std::string GetProtoName() { return "ID_GetFollowerAck";} 
     unsigned char status; //所有/路人/黑/粉  
     FollowingInfoArray follower;  
     GetFollowerAck() 
     { 
         status = 0; 
     } 
-    static const unsigned short GetProtoID() { return 1001;} 
-    static const std::string GetProtoName() { return "ID_GetFollowerAck";} 
+    GetFollowerAck(const unsigned char & status, const FollowingInfoArray & follower) 
+    { 
+        this->status = status; 
+        this->follower = follower; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetFollowerAck & data) 
 { 
@@ -96,9 +116,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_GetFollowingReq = 1002; //获取关注列表  
 struct GetFollowingReq //获取关注列表  
 { 
+    static const unsigned short GetProtoID() { return 1002;} 
+    static const std::string GetProtoName() { return "ID_GetFollowingReq";} 
     unsigned long long uID;  
     unsigned char status; //所有/路人/黑/粉  
     GetFollowingReq() 
@@ -106,8 +127,11 @@ struct GetFollowingReq //获取关注列表
         uID = 0; 
         status = 0; 
     } 
-    static const unsigned short GetProtoID() { return 1002;} 
-    static const std::string GetProtoName() { return "ID_GetFollowingReq";} 
+    GetFollowingReq(const unsigned long long & uID, const unsigned char & status) 
+    { 
+        this->uID = uID; 
+        this->status = status; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetFollowingReq & data) 
 { 
@@ -122,17 +146,21 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_GetFollowingAck = 1003; //获取关注列表  
 struct GetFollowingAck //获取关注列表  
 { 
+    static const unsigned short GetProtoID() { return 1003;} 
+    static const std::string GetProtoName() { return "ID_GetFollowingAck";} 
     unsigned char status; //所有/路人/黑/粉  
     FollowingInfoArray following;  
     GetFollowingAck() 
     { 
         status = 0; 
     } 
-    static const unsigned short GetProtoID() { return 1003;} 
-    static const std::string GetProtoName() { return "ID_GetFollowingAck";} 
+    GetFollowingAck(const unsigned char & status, const FollowingInfoArray & following) 
+    { 
+        this->status = status; 
+        this->following = following; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetFollowingAck & data) 
 { 
@@ -147,9 +175,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_PokeReq = 1004; //操作  
 struct PokeReq //操作  
 { 
+    static const unsigned short GetProtoID() { return 1004;} 
+    static const std::string GetProtoName() { return "ID_PokeReq";} 
     unsigned char dstStatus; //路人/黑/粉  
     unsigned long long following; //关注目标ID  
     PokeReq() 
@@ -157,8 +186,11 @@ struct PokeReq //操作
         dstStatus = 0; 
         following = 0; 
     } 
-    static const unsigned short GetProtoID() { return 1004;} 
-    static const std::string GetProtoName() { return "ID_PokeReq";} 
+    PokeReq(const unsigned char & dstStatus, const unsigned long long & following) 
+    { 
+        this->dstStatus = dstStatus; 
+        this->following = following; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PokeReq & data) 
 { 
@@ -173,12 +205,18 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-const unsigned short ID_PokeAck = 1005; //操作  
 struct PokeAck //操作  
 { 
-    FollowingInfo follow;  
     static const unsigned short GetProtoID() { return 1005;} 
     static const std::string GetProtoName() { return "ID_PokeAck";} 
+    FollowingInfo follow;  
+    PokeAck() 
+    { 
+    } 
+    PokeAck(const FollowingInfo & follow) 
+    { 
+        this->follow = follow; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const PokeAck & data) 
 { 

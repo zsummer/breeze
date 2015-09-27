@@ -13,6 +13,12 @@ struct Route //路由信息
         uID = 0; 
         expire = 0; 
     } 
+    Route(const unsigned long long & uID, const std::string & token, const unsigned int & expire) 
+    { 
+        this->uID = uID; 
+        this->token = token; 
+        this->expire = expire; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Route & data) 
 { 
@@ -28,8 +34,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
         rs >> data.expire;  
     return rs; 
 } 
-/*--enum--[name=Anonymous, type=ui16]--*/ 
-const unsigned short ETRIGGER_USER_LOGIN = 0; //用户登录, 用户ID  
-const unsigned short ETRIGGER_USER_LOGOUT = 1; //用户登出, 用户ID  
+ 
+enum  : unsigned short 
+{ 
+    ETRIGGER_USER_LOGIN = 0, //用户登录, 用户ID  
+    ETRIGGER_USER_LOGOUT = 1, //用户登出, 用户ID  
+}; 
  
 #endif 

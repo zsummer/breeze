@@ -7,7 +7,7 @@
 
 Chat::Chat()
 {
-    MessageDispatcher::getRef().addListener(ID_ChatReq, std::bind(&Chat::msg_onChatReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(ChatReq::GetProtoID(), std::bind(&Chat::msg_onChatReq, this, _1, _2));
 }
 
 Chat::~Chat()

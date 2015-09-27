@@ -9,9 +9,9 @@
 
 Follow::Follow()
 {
-    MessageDispatcher::getRef().addListener(ID_GetFollowingReq, std::bind(&Follow::msg_onGetFollowingReq, this, _1, _2));
-    MessageDispatcher::getRef().addListener(ID_GetFollowerReq, std::bind(&Follow::msg_onGetFollowerReq, this, _1, _2));
-    MessageDispatcher::getRef().addListener(ID_PokeReq, std::bind(&Follow::msg_onPokeReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(GetFollowingReq::GetProtoID(), std::bind(&Follow::msg_onGetFollowingReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(GetFollowerReq::GetProtoID(), std::bind(&Follow::msg_onGetFollowerReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(PokeReq::GetProtoID(), std::bind(&Follow::msg_onPokeReq, this, _1, _2));
 }
 
 Follow::~Follow()

@@ -4,16 +4,16 @@
 NetMgr::NetMgr()
 {
     //平台登录  
-    MessageDispatcher::getRef().addListener(ID_PlatAuthReq, std::bind(&NetMgr::msg_onPlatAuthReq, this, _1, _2));
-    MessageDispatcher::getRef().addListener(ID_CreateUserReq, std::bind(&NetMgr::msg_onCreateUserReq, this, _1, _2));
-    MessageDispatcher::getRef().addListener(ID_SelectUserReq, std::bind(&NetMgr::msg_onSelectUserReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(PlatAuthReq::GetProtoID(), std::bind(&NetMgr::msg_onPlatAuthReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(CreateUserReq::GetProtoID(), std::bind(&NetMgr::msg_onCreateUserReq, this, _1, _2));
+    MessageDispatcher::getRef().addListener(SelectUserReq::GetProtoID(), std::bind(&NetMgr::msg_onSelectUserReq, this, _1, _2));
 
     //auth request process
-    MessageDispatcher::getRef().addListener(ID_AttachLogicReq,
+    MessageDispatcher::getRef().addListener(AttachLogicReq::GetProtoID(),
         std::bind(&NetMgr::msg_onAttachLogicReq, this, _1, _2));
 
 
-    MessageDispatcher::getRef().addListener(ID_HeartbeatEcho,
+    MessageDispatcher::getRef().addListener(HeartbeatEcho::GetProtoID(),
         std::bind(&NetMgr::msg_onHeartbeatEcho, this, _1, _2));
 }
 

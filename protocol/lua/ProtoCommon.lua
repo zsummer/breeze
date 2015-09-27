@@ -1,3 +1,4 @@
+ 
 Proto4z.EC_SUCCESS = 0--成功 
 Proto4z.EC_ERROR = 1--错误 
 Proto4z.EC_INNER_ERROR = 2--内部错误 
@@ -40,5 +41,6 @@ Proto4z.UIDS = {}
 Proto4z.UIDS.__getName = "UIDS" 
 Proto4z.UIDS.__getDesc = "array" 
 Proto4z.UIDS.__getTypeV = "ui64" 
+ 
 Proto4z.ETRIGGER_USER_LOGIN = 0--用户登录, 用户ID 
 Proto4z.ETRIGGER_USER_LOGOUT = 1--用户登出, 用户ID 

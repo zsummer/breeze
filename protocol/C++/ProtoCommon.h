@@ -2,22 +2,25 @@
 #ifndef _PROTOCOMMON_H_ 
 #define _PROTOCOMMON_H_ 
  
-/*--enum--[name=Anonymous, type=ui16]--*/ 
-const unsigned short EC_SUCCESS = 0; //成功  
-const unsigned short EC_ERROR = 1; //错误  
-const unsigned short EC_INNER_ERROR = 2; //内部错误  
-const unsigned short EC_DB_ERROR = 3; //数据库错误  
-const unsigned short EC_PARAM_DENIED = 4; //非法参数  
-const unsigned short EC_PERMISSION_DENIED = 5; //权限错误  
-const unsigned short EC_REQUEST_EXPIRE = 6; //请求操作已过期  
-const unsigned short EC_TARGET_NOT_EXIST = 7; //操作目标不存在  
-const unsigned short EC_TOKEN_EXPIRE = 8; //令牌过期  
-const unsigned short EC_USER_NOT_FOUND = 50; //错误的用户信息  
-const unsigned short EC_USER_OFFLINE = 51; //错误的用户信息  
-const unsigned short EC_FRIEND_DUPLICATE = 100; //请先删除与该好友建立的关系  
-const unsigned short EC_FRIEND_CEILING = 101; //达到好友上限  
-const unsigned short EC_FRIEND_REFUSE = 102; //不能添加对方为好友  
-const unsigned short EC_FRIEND_NOT_EXIST = 103; //好友不存在  
+ 
+enum  : unsigned short 
+{ 
+    EC_SUCCESS = 0, //成功  
+    EC_ERROR = 1, //错误  
+    EC_INNER_ERROR = 2, //内部错误  
+    EC_DB_ERROR = 3, //数据库错误  
+    EC_PARAM_DENIED = 4, //非法参数  
+    EC_PERMISSION_DENIED = 5, //权限错误  
+    EC_REQUEST_EXPIRE = 6, //请求操作已过期  
+    EC_TARGET_NOT_EXIST = 7, //操作目标不存在  
+    EC_TOKEN_EXPIRE = 8, //令牌过期  
+    EC_USER_NOT_FOUND = 50, //错误的用户信息  
+    EC_USER_OFFLINE = 51, //错误的用户信息  
+    EC_FRIEND_DUPLICATE = 100, //请先删除与该好友建立的关系  
+    EC_FRIEND_CEILING = 101, //达到好友上限  
+    EC_FRIEND_REFUSE = 102, //不能添加对方为好友  
+    EC_FRIEND_NOT_EXIST = 103, //好友不存在  
+}; 
  
 struct SessionToken //认证令牌  
 { 
@@ -28,6 +31,12 @@ struct SessionToken //认证令牌
     { 
         uID = 0; 
         expire = 0; 
+    } 
+    SessionToken(const unsigned long long & uID, const std::string & token, const unsigned int & expire) 
+    { 
+        this->uID = uID; 
+        this->token = token; 
+        this->expire = expire; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SessionToken & data) 
@@ -64,6 +73,17 @@ struct BaseInfo //用户基础信息
         giftDiamond = 0; 
         joinTime = 0; 
     } 
+    BaseInfo(const unsigned long long & uID, const std::string & account, const std::string & nickName, const short & iconID, const int & diamond, const int & hisotryDiamond, const int & giftDiamond, const unsigned int & joinTime) 
+    { 
+        this->uID = uID; 
+        this->account = account; 
+        this->nickName = nickName; 
+        this->iconID = iconID; 
+        this->diamond = diamond; 
+        this->hisotryDiamond = hisotryDiamond; 
+        this->giftDiamond = giftDiamond; 
+        this->joinTime = joinTime; 
+    } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const BaseInfo & data) 
 { 
@@ -90,11 +110,16 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
+ 
 typedef std::vector<BaseInfo> BaseInfoArray;  
  
+ 
 typedef std::vector<unsigned long long> UIDS;  
-/*--enum--[name=Anonymous, type=ui16]--*/ 
-const unsigned short ETRIGGER_USER_LOGIN = 0; //用户登录, 用户ID  
-const unsigned short ETRIGGER_USER_LOGOUT = 1; //用户登出, 用户ID  
+ 
+enum  : unsigned short 
+{ 
+    ETRIGGER_USER_LOGIN = 0, //用户登录, 用户ID  
+    ETRIGGER_USER_LOGOUT = 1, //用户登出, 用户ID  
+}; 
  
 #endif 

@@ -1,3 +1,4 @@
+ 
 Proto4z.CHANNEL_PRIVATE = 0--私聊, 需要指明具体某个uid 
 Proto4z.CHANNEL_WORLD = 1--世界 
 Proto4z.CHANNEL_GROUP = 2--群组, 需要指明具体某个groupid 

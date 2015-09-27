@@ -1,3 +1,4 @@
+ 
 Proto4z.FOLLOW_INVALID = 0 
 Proto4z.FOLLOW_DELETED = 1--路人 
 Proto4z.FOLLOW_HATE = 2--黑 
