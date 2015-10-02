@@ -92,8 +92,9 @@ end
 
 
 
+summer.run()
 
-while summer.runOnce() do
-end
+--while summer.runOnce(true) do
+--end
 
 
