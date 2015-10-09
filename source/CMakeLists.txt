@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 project(breeze)
+
+#set(GLIBC_FLAG  "-v -static-libgcc -static-libstdc++ -Wl,--no-export-dynamic")
+#set(GLIBC_INCLUDE "/home/summer/dependlibs/glibc_static/include")
+#set(GLIBC_LIB "/home/summer/dependlibs/glibc_static/lib")
+#add_definitions(-DGLIBC_INCLUDEDIR=${GLIBC_INCLUDE} -DGLIBC_LIBRARYDIR=${GLIBC_LIB})
+#include_directories(${GLIBC_INCLUDE} )
+#link_directories(${GLIBC_LIB})
+
 include_directories(${breeze_SOURCE_DIR}/../depends/include)
 if (APPLE)
 include_directories(${breeze_SOURCE_DIR}/../depends_mac/include)
@@ -29,6 +37,8 @@ else()
 	set(LIB_SUFFIX "")
 endif()
 set(CMAKE_CXX_FLAGS "-std=c++11 -fpermissive")
+
+
 
 add_subdirectory(common)
 add_subdirectory(logic)

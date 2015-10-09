@@ -1,8 +1,6 @@
 
-
 file(GLOB_RECURSE source "*.cpp") 
 set(BINNAME ${PROJECT_NAME})
-
 
 set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/../bin/${BINNAME}/)
 
@@ -10,11 +8,9 @@ add_executable(${BINNAME} ${source})
 
 if(APPLE)
   target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX_select${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread)
-  message(STATUS "apple")
 else()
-  target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread rt dl)
-  message(STATUS "linux")
+  target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread rt dl m)
 endif()
 
-
+#set_target_properties (${BINNAME} PROPERTIES LINK_FLAGS "${GLIBC_FLAG}")
 
