@@ -98,9 +98,9 @@ namespace zsummer
 
         enum BLOCK_CHECK_TYPE
         {
-            BCT_SUCCESS = 0, //成功, 返回当前block大小
-            BCT_SHORTAGE = 1, //不足, 返回当前block还需要的大小
-            BCT_CORRUPTION = 2, //错误, 需要关闭socket
+            BCT_SUCCESS = 0, //success, return block size 
+            BCT_SHORTAGE = 1, //too short, return need size 
+            BCT_CORRUPTION = 2, //error, need close socket. 
         };
 
         enum StatType
@@ -128,8 +128,13 @@ namespace zsummer
 
         struct SessionBlock 
         {
-            unsigned int len = 0;
+            unsigned int type = 0;
+            unsigned int createTime = 0;
+            unsigned int reused = 0;
+            unsigned int timestamp = 0;
+            unsigned int timetick = 0;
             unsigned int bound = 0;
+            unsigned int len = 0;
             char begin[0];
         };
         
@@ -140,21 +145,21 @@ namespace zsummer
         
         using OnBlockCheckResult = std::pair<BLOCK_CHECK_TYPE, unsigned int>;
 
-        //检查当前缓冲块内是否能读出一个完整的block
+        //check one block integrity 
         using OnBlockCheck = std::function<OnBlockCheckResult(const char * /*begin*/, unsigned int /*len*/, unsigned int /*bound*/, unsigned int /*blockLimit*/)>;
 
-        //!每读出一个block就调用这个方法dispatch出去
+        //!dispatch one integrity block 
         using OnBlockDispatch = std::function<void(TcpSessionPtr   /*session*/, const char * /*begin*/, unsigned int /*len*/)>;
 
-        //!连接建立, 关闭, 定时器
+        //!event linked, closed, ontimer
         using OnSessionEvent = std::function<void(TcpSessionPtr   /*session*/)>;
 
         using PairString = std::pair<std::string, std::string>;
         using MapString = std::map<std::string, std::string>;
-        //!HTTP解包,hadHeader 区别chunked的后续小包, commonLine 指的是GET, POST RESPONSE. 
+        //!HTTP unpack, hadHeader used by 'chunked', commonLine can be GET, POST RESPONSE.  
         using OnHTTPBlockCheck = std::function<OnBlockCheckResult(const char * /*begin*/, unsigned int /*len*/, unsigned int /*bound*/,
             bool /*hadHeader*/, bool & /*isChunked*/, PairString& /*commonLine*/, MapString & /*head*/, std::string & /*body*/)>;
-        //!HTTP派发
+        //!HTTP dispatch  
         using OnHTTPBlockDispatch = std::function<
             void(TcpSessionPtr /*session*/, const PairString & /*commonLine*/, const MapString &/*head*/, const std::string & /*body*/)>;
         
@@ -164,14 +169,14 @@ namespace zsummer
         {
 
             ProtoType       _protoType = PT_TCP;
-            std::string     _rc4TcpEncryption = ""; //empty is not encryption
-            bool            _openFlashPolicy = false; //检测falsh客户端
+            std::string     _rc4TcpEncryption = ""; //empty is not encryption 
+            bool            _openFlashPolicy = false; //check falsh client  
             bool            _setNoDelay = true; 
-            bool            _joinSmallBlock = true; //发送时合并小包一起发送
-            unsigned int    _sessionPulseInterval = 30000; //session pulse间隔
-            unsigned int    _connectPulseInterval = 5000; //connect pulse间隔
-            unsigned int    _reconnects = 0; // 重连次数
-            bool            _reconnectClean = true;//重连时清除未发送的队列.
+            bool            _joinSmallBlock = true; //merge small block  
+            unsigned int    _sessionPulseInterval = 30000;  
+            unsigned int    _connectPulseInterval = 5000;  
+            unsigned int    _reconnects = 0; // can reconnect count 
+            bool            _reconnectClean = true;//clean unsend block . 
 
             OnBlockCheck _onBlockCheck;
             OnBlockDispatch _onBlockDispatch;
@@ -203,28 +208,20 @@ namespace zsummer
         class Any
         {
         public:
-            Any()
-            {
-
-            }
-            Any(unsigned long long n)
-            {
-                _number = n;
-            }
-            Any(const std::string & str)
-            {
-                _string = str;
-            }
-            Any(void * p)
-            {
-                _pointer = p;
-            }
+            Any(){}
+            Any(unsigned long long n) :_number(n){}
+            Any(const std::string & str) :_string(str){}
+            Any(void * p) :_pointer(p){}
+            explicit Any(double df) :_float(df){}
+            Any(unsigned long long n, double df, std::string str, void*p) :_number(n), _float(df), _string(str), _pointer(p){}
         public:
             inline unsigned long long getNumber() const { return _number; }
+            inline double getFloat() const { return _float; }
             inline std::string getString() const { return _string; }
             inline void * getPtr() const { return _pointer; }
         private:
             unsigned long long _number = 0;
+            double _float = 0.0;
             std::string _string;
             void * _pointer = nullptr;
         };

@@ -25,8 +25,8 @@
 
 #ifndef _DB_HELPER_H_
 #define _DB_HELPER_H_
-#include <mysqlclient/errmsg.h>
-#include <mysqlclient/mysql.h>
+#include <errmsg.h>
+#include <mysql.h>
 #include <log4z/log4z.h>
 #include <string>
 #include <iostream>

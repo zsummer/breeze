@@ -223,8 +223,8 @@ static int stop(lua_State *L)
 static int runOnce(lua_State * L)
 {
     int isImmediately = lua_toboolean(L, 1);
-    bool ret = SessionManager::getRef().runOnce(isImmediately);
-    lua_pushboolean(L, ret);
+    bool ret = SessionManager::getRef().runOnce((bool)isImmediately);
+    lua_pushboolean(L, (int)ret);
     return 1;
 }
 

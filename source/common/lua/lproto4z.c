@@ -381,51 +381,102 @@ static int steadyTime(lua_State * L)
     return 1;
 }
 
-static int checkULL(lua_State * L)
+
+
+static int makeULL(lua_State * L)
+{
+    unsigned long long num = 0;
+    if (lua_isstring(L, 1))
+    {
+        size_t strLen = 0;
+        const char * str = luaL_checklstring(L, 1, &strLen);
+#ifdef WIN32  
+        sscanf(str, "%I64d", &num);
+#else
+        sscanf(str, "%lld", &num);
+#endif
+    }
+    else if (lua_isnumber(L, 1))
+    {
+        num = luaL_checkinteger(L, 1);
+    }
+    else
+    {
+        return 0;
+    }
+    lua_pushlstring(L, (const char *)&num, sizeof(num));
+    return 1;
+}
+
+static int fromULL(lua_State * L)
 {
     unsigned long long num = 0;
     size_t strLen = 0;
     const char * str = luaL_checklstring(L, 1, &strLen);
-    int isULL = false;
-    int i = 0;
-    if (strLen == 8)
+    if (strLen < 8)
     {
-        for (i = 0; i < 8; i++)
-        {
-            if (str[i] >126 || str[i] < 32)
-            {
-                isULL = true;
-                break;
-            }
-        }
+        return 0;
     }
-    char buf[50];
-    if (isULL)
+    
+    memcpy(&num, str, sizeof(num));
+    if ( (num & 0xffffffff) != 0)
     {
-        memcpy(&num, str, 8);
+        char buf[100];
 #ifdef WIN32  
         sprintf(buf, "%I64d", num);
 #else
-        sprintf(buf,"%lld", num);
+        sprintf(buf, "%lld", num);
 #endif
+        lua_pushstring(L, buf);
     }
     else
     {
-        sprintf(buf, "\"%s\"", str);
+        lua_pushinteger(L, (unsigned int)num);
     }
-    lua_pushstring(L, buf);
     return 1;
 }
 
+
 static luaL_Reg tagReg[] = {
-    { "newTag", newTag },
+
+    //一个空的8字节tag 
+    { "newTag", newTag }, 
+
+    //设置第N位为1,  N的起始坐标是1.  
+    //example: local newTag = setTag(oldTag, 1)
     { "setTag", setTag },
-    { "unsetTag", unsetTag },
+
+    //设置第N位为0, N的起始坐标是1  
+    //example: local newTag = unsetTag(oldTag, 1)
+    { "unsetTag", unsetTag }, 
+
+    //检查第N位是否为1.  
+    //example: local isSet = testTag(tag, 1)
     { "testTag", testTag },
-    { "pack", pack },
-    { "unpack", unpack },
-    { "now", steadyTime },
-    { "checkULL",checkULL },
+
+    //把一个lua数据按照类型说明序列化成一段二进制流.
+    //支持i8,ui8, i16, ui16, i32, ui32, i64, ui64, float, double, string. 
+    //example: local block = pack(obj, "ui32")
+    { "pack", pack }, 
+
+    //从二进制流中流出一个元素 并返回下一个元素开始的下标位置. 
+    //example: local len , pos unpck(block, pos, "ui32")  
+    { "unpack", unpack }, 
+
+    //获取一个稳定的tick计数 毫秒级. 
+    //example: local nowTick = steadyTime()
+    { "now", steadyTime }, 
+
+    //根据字符串或者整形返回一个协议用的ui64数据
+    //local uID = makeULL("2132131299012301231")
+    //local uID = makeULL(2016)
+    { "makeULL", makeULL }, 
+
+    //根据ULL的大小选择返回一个整形或者字符串以供打印显示 
+    //local show = fromULL(uID)
+    //print(show)
+    { "fromULL", fromULL },
+
     { NULL, NULL }
 };
 

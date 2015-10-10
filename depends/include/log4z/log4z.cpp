@@ -872,7 +872,7 @@ std::string getProcessName()
 #else
     sprintf(buf, "/proc/%d/cmdline", (int)getpid());
     Log4zFileHandler i;
-    i.open(buf, "r");
+    i.open(buf, "rb");
     if (!i.isOpen())
     {
         return name;
@@ -1242,7 +1242,7 @@ bool LogerManager::config(const char* configPath)
     _configFile = configPath;
 
     Log4zFileHandler f;
-    f.open(_configFile.c_str(), "r");
+    f.open(_configFile.c_str(), "rb");
     if (!f.isOpen())
     {
         std::cout << " !!! !!! !!! !!!" << std::endl;
@@ -1599,7 +1599,7 @@ bool LogerManager::updateConfig()
         return false;
     }
     Log4zFileHandler f;
-    f.open(_configFile.c_str(), "r");
+    f.open(_configFile.c_str(), "rb");
     if (!f.isOpen())
     {
         std::cout << " !!! !!! !!! !!!" << std::endl;
@@ -1635,7 +1635,7 @@ bool LogerManager::openLogger(LogData * pLog)
     int id = pLog->_id;
     if (id < 0 || id >_lastId)
     {
-        showColorText("log4z: openLogger can not open, invalid logger id! \r\n", LOG_LEVEL_FATAL);
+        showColorText("log4z: openLogger can not open, invalide logger id! \r\n", LOG_LEVEL_FATAL);
         return false;
     }
 
@@ -1706,7 +1706,7 @@ bool LogerManager::closeLogger(LoggerId id)
 {
     if (id < 0 || id >_lastId)
     {
-        showColorText("log4z: closeLogger can not close, invalid logger id! \r\n", LOG_LEVEL_FATAL);
+        showColorText("log4z: closeLogger can not close, invalide logger id! \r\n", LOG_LEVEL_FATAL);
         return false;
     }
     LoggerInfo * pLogger = &_loggers[id];

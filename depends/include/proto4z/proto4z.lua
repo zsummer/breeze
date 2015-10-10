@@ -349,9 +349,6 @@ function Proto4z.dump(value, desciption, nesting, showULL)
 
     local function _v(v)
         if type(v) == "string" then
-            if showULL and #v == 8 then
-                return Proto4zUtil.checkULL(v)
-            end
             v = "\"" .. v .. "\""
         end
         return tostring(v)

@@ -236,7 +236,7 @@ void NetMgr::msg_onAttachLogicReq(TcpSessionPtr session, ReadStream & rs)
         info->sID = session->getSessionID();
         session->setUserParam(UPARAM_USER_ID, info->base.uID);
         session->setUserParam(UPARAM_SESSION_STATUS, info->base.uID);
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, time(NULL));
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, (unsigned long long)time(NULL));
         session->setUserParam(UPARAM_LOGIN_TIME, time(NULL));
         _mapSession.insert(std::make_pair(session->getSessionID(), info));
 
