@@ -77,8 +77,16 @@ namespace zsummer
             inline unsigned short getRemotePort(){ return _remotePort; }
             inline void setRemotePort(unsigned short remotePort){ _remotePort = remotePort; }
             inline std::size_t getSendQueSize(){ return _sendque.size(); }
-            Any setUserParam(size_t index, const Any &any);
-            Any getUserParam(size_t index);
+
+            TupleParam getUserParam(size_t index);
+            double getUserParamDouble(size_t index);
+            unsigned long long getUserParamNumber(size_t index);
+            std::string getUserParamString(size_t index);
+            void setUserParam(size_t index, const TupleParam &tp);
+            void setUserParamDouble(size_t index, double d);
+            void setUserParam(size_t index, unsigned long long ull);
+            void setUserParam(size_t index, const std::string & str);
+
         private:
             SessionOptions _options;
             EventLoopPtr _eventLoop;
@@ -116,7 +124,7 @@ namespace zsummer
             MapString _httpHeader;
             
             //! user param
-            std::vector<Any> _param;
+            std::vector<TupleParam> _param;
             
         };
         using TcpSessionPtr = std::shared_ptr<TcpSession>;

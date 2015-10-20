@@ -73,7 +73,7 @@ public:
     void on_msgTakeDailyMissionReward();
 
 protected:
-    void onUserLogin(EventTriggerID tID, UserID uID, Any, Any, Any);
+    void onUserLogin(EventTriggerID tID, UserID uID, TupleParam, TupleParam, TupleParam);
 
 private:
     std::map<MissionID, DailyMissionInfo> _infos;

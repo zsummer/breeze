@@ -197,7 +197,7 @@ bool NetMgr::sendToSession(SessionID sID, const char * block, unsigned int len)
 
 void NetMgr::msg_onAttachLogicReq(TcpSessionPtr session, ReadStream & rs)
 {
-    if (session->getUserParam(UPARAM_SESSION_STATUS).getNumber() != SSTATUS_UNKNOW)
+    if (std::get<TupleParamNumber>(session->getUserParam(UPARAM_SESSION_STATUS)) != SSTATUS_UNKNOW)
     {
         return;
     }
@@ -235,8 +235,8 @@ void NetMgr::msg_onAttachLogicReq(TcpSessionPtr session, ReadStream & rs)
 
         info->sID = session->getSessionID();
         session->setUserParam(UPARAM_USER_ID, info->base.uID);
-        session->setUserParam(UPARAM_SESSION_STATUS, info->base.uID);
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, (unsigned long long)time(NULL));
+        session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_LOGINED);
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, time(NULL));
         session->setUserParam(UPARAM_LOGIN_TIME, time(NULL));
         _mapSession.insert(std::make_pair(session->getSessionID(), info));
 
@@ -257,7 +257,7 @@ void NetMgr::event_onSessionPulse(TcpSessionPtr session)
 {
     if (isSessionID(session->getSessionID()))
     {
-        if (time(NULL) - session->getUserParam(UPARAM_LAST_ACTIVE_TIME).getNumber() > session->getOptions()._sessionPulseInterval/1000*2)
+        if (time(NULL) - session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME) > session->getOptions()._sessionPulseInterval / 1000 * 2)
         {
             session->close();
             return;
@@ -271,7 +271,7 @@ void NetMgr::event_onSessionPulse(TcpSessionPtr session)
 
 void NetMgr::msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs)
 {
-    auto status = session->getUserParam(UPARAM_SESSION_STATUS).getNumber();
+    auto status = session->getUserParamNumber(UPARAM_SESSION_STATUS);
     if (status != SSTATUS_UNKNOW && status != SSTATUS_PLAT_LOGINING)
     {
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, time(NULL));
@@ -296,9 +296,9 @@ void NetMgr::event_onClosed(TcpSessionPtr session)
     }
     else
     {
-        if (session->getUserParam(UPARAM_SESSION_STATUS).getNumber() == SSTATUS_LOGINED)
+        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_LOGINED)
         {
-            auto founder = _mapUserInfo.find(session->getUserParam(UPARAM_USER_ID).getNumber());
+            auto founder = _mapUserInfo.find(session->getUserParamNumber(UPARAM_USER_ID));
             if (founder == _mapUserInfo.end() || founder->second->sID != session->getSessionID())
             {
                 _mapSession.erase(session->getSessionID());
@@ -339,9 +339,9 @@ bool NetMgr::on_preMessageProcess(TcpSessionPtr session, const char * blockBegin
     ProtoID pID = rs.getProtoID();
     if (pID >= 200)
     {
-        if (session->getUserParam(UPARAM_SESSION_STATUS).getNumber() != SSTATUS_LOGINED)
+        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) != SSTATUS_LOGINED)
         {
-            LOGW("on_preMessageProcess check authorization failed. protoID=" << pID << ", session authorization status=" << session->getUserParam(UPARAM_SESSION_STATUS).getNumber());
+            LOGW("on_preMessageProcess check authorization failed. protoID=" << pID << ", session authorization status=" << session->getUserParamNumber(UPARAM_SESSION_STATUS));
             return false;
         }
     }
@@ -353,9 +353,9 @@ bool NetMgr::on_preMessageProcess(TcpSessionPtr session, const char * blockBegin
 
 void NetMgr::msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs)
 {
-    if (session->getUserParam(UPARAM_SESSION_STATUS).getNumber() != SSTATUS_UNKNOW)
+    if (session->getUserParamNumber(UPARAM_SESSION_STATUS) != SSTATUS_UNKNOW)
     {
-        LOGE("NetMgr::msg_onPlatAuthReq. status error .session id=" << session->getSessionID() << ", status = " << session->getUserParam(UPARAM_SESSION_STATUS).getNumber());
+        LOGE("NetMgr::msg_onPlatAuthReq. status error .session id=" << session->getSessionID() << ", status = " << session->getUserParamNumber(UPARAM_SESSION_STATUS));
         session->close();
         return;
     }
@@ -403,7 +403,7 @@ void NetMgr::db_onFetchUsers(DBResultPtr result, TcpSessionPtr session)
                 *result >> info.giftDiamond;
                 *result >> info.joinTime;
                 ack.users.push_back(info);
-                _mapAccounts[session->getUserParam(UPARAM_ACCOUNT).getString()][info.uID] = info;
+                _mapAccounts[session->getUserParamString(UPARAM_ACCOUNT)][info.uID] = info;
             }
 
         }
@@ -418,14 +418,14 @@ void NetMgr::db_onFetchUsers(DBResultPtr result, TcpSessionPtr session)
 
 void NetMgr::msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs)
 {
-    if (session->getUserParam(UPARAM_SESSION_STATUS).getNumber() != SSTATUS_PLAT_LOGINED)
+    if (session->getUserParamNumber(UPARAM_SESSION_STATUS) != SSTATUS_PLAT_LOGINED)
     {
-        LOGE("NetMgr::msg_onCreateUserReq. status error. session id=" << session->getSessionID() << ", status = " << session->getUserParam(UPARAM_SESSION_STATUS).getNumber());
+        LOGE("NetMgr::msg_onCreateUserReq. status error. session id=" << session->getSessionID() << ", status = " << session->getUserParamNumber(UPARAM_SESSION_STATUS));
         session->close();
         return;
     }
 
-    auto founder = _mapAccounts.find(session->getUserParam(UPARAM_ACCOUNT).getString());
+    auto founder = _mapAccounts.find(session->getUserParamString(UPARAM_ACCOUNT));
     if (founder != _mapAccounts.end() && founder->second.size() > MAX_ACCOUNT_USERS)
     {
         LOGW("Login::msg_onCreateUserReq  too many users. sID=" << session->getSessionID());
@@ -444,11 +444,11 @@ void NetMgr::msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs)
         LOGE("gen UserID over the max user ID. cur ID=" << info.uID);
         return;
     }
-    info.account = session->getUserParam(UPARAM_ACCOUNT).getString();
+    info.account = session->getUserParamString(UPARAM_ACCOUNT);
     info.nickName = req.nickName;
     info.iconID = req.iconID;
     info.joinTime = (ui32)time(NULL);
-    _mapAccounts[session->getUserParam(UPARAM_ACCOUNT).getString()][info.uID] = info;
+    _mapAccounts[session->getUserParamString(UPARAM_ACCOUNT)][info.uID] = info;
 
     std::string sql = BaseInfo_INSERT(info);
     DBMgr::getRef().infoAsyncQuery(sql, std::bind(&NetMgr::db_onCreateUser, this, _1, session, info));
@@ -478,14 +478,14 @@ void NetMgr::db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const Ba
 
 void NetMgr::msg_onSelectUserReq(TcpSessionPtr session, ReadStream & rs)
 {
-    if (session->getUserParam(UPARAM_SESSION_STATUS).getNumber() != SSTATUS_PLAT_LOGINED)
+    if (session->getUserParamNumber(UPARAM_SESSION_STATUS) != SSTATUS_PLAT_LOGINED)
     {
-        LOGE("NetMgr::msg_onSelectUserReq. status error. session id=" << session->getSessionID() << ", status = " << session->getUserParam(UPARAM_SESSION_STATUS).getNumber());
+        LOGE("NetMgr::msg_onSelectUserReq. status error. session id=" << session->getSessionID() << ", status = " << session->getUserParamNumber(UPARAM_SESSION_STATUS));
         session->close();
         return;
     }
 
-    auto founder = _mapAccounts.find(session->getUserParam(UPARAM_ACCOUNT).getString());
+    auto founder = _mapAccounts.find(session->getUserParamString(UPARAM_ACCOUNT));
     if (founder == _mapAccounts.end())
     {
         LOGW("Login::msg_onSelectUserReq session have no account info. sID=" << session->getSessionID());

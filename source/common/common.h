@@ -128,8 +128,8 @@ inline void DispatchFunction(TcpSessionPtr   session, const char * begin, unsign
 {
     ReadStream rs(begin, len);
     if (rs.getProtoID() < 200 
-        || (rs.getProtoID() < 50000 && session->getUserParam(UPARAM_SESSION_STATUS).getNumber() == SSTATUS_LOGINED)
-        || session->getUserParam(UPARAM_SESSION_STATUS).getNumber() == SSTATUS_TRUST)
+        || (rs.getProtoID() < 50000 && std::get<TupleParamNumber>(session->getUserParam(UPARAM_SESSION_STATUS)) == SSTATUS_LOGINED)
+        || std::get<TupleParamNumber>(session->getUserParam(UPARAM_SESSION_STATUS)) == SSTATUS_TRUST)
     {
         MessageDispatcher::getRef().dispatch(session, rs.getProtoID(), rs);
     }

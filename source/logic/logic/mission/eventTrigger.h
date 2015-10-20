@@ -43,13 +43,13 @@ public:
     bool init();
 
     
-    void trigger(EventTriggerID tID, UserID uID, Any param1, Any param2, Any param3);
+    void trigger(EventTriggerID tID, UserID uID, TupleParam param1, TupleParam param2, TupleParam param3);
 
-    typedef std::function<void(EventTriggerID, UserID, Any , Any , Any )> EventTriggerHandler;
+    typedef std::function<void(EventTriggerID, UserID, TupleParam, TupleParam, TupleParam)> EventTriggerHandler;
     inline void watching(EventTriggerID tID, EventTriggerHandler handler){ _watchings[tID].push_back(handler); }
 
 private:
-    void _trigger(EventTriggerID tID, UserID uID, Any param1, Any param2, Any param3);
+    void _trigger(EventTriggerID tID, UserID uID, TupleParam param1, TupleParam param2, TupleParam param3);
     std::map<EventTriggerID, std::vector<EventTriggerHandler>> _watchings;
 };
 

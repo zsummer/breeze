@@ -150,7 +150,7 @@ void Chat::msg_onChatReq(TcpSessionPtr session, ReadStream & rs)
     ack.dstID = req.dstID;
     do 
     {
-        auto infoPtr = NetMgr::getRef().getUserInfo(session->getUserParam(UPARAM_USER_ID).getNumber());
+        auto infoPtr = NetMgr::getRef().getUserInfo(session->getUserParamNumber(UPARAM_USER_ID));
         if (!infoPtr)
         {
             break;

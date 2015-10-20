@@ -186,7 +186,7 @@ void Follow::msg_onPokeReq(TcpSessionPtr session, ReadStream & rs)
 
 
     PokeAck ack;
-    ack.follow.follower = session->getUserParam(UPARAM_USER_ID).getNumber();
+    ack.follow.follower = std::get<TupleParamNumber>(session->getUserParam(UPARAM_USER_ID));
     ack.follow.following = req.following;
     ack.follow.makeTime = (unsigned int)time(NULL);
     ack.follow.lastChanged = ack.follow.makeTime;

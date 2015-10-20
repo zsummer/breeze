@@ -17,7 +17,7 @@ bool DailyMission::init()
     return true;
 }
 
-void DailyMission::onUserLogin(EventTriggerID tID, UserID uID, Any, Any, Any)
+void DailyMission::onUserLogin(EventTriggerID tID, UserID uID, TupleParam, TupleParam, TupleParam)
 {
 
 }
