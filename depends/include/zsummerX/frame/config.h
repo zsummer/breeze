@@ -177,7 +177,7 @@ namespace zsummer
             unsigned int    _connectPulseInterval = 5000;  
             unsigned int    _reconnects = 0; // can reconnect count 
             bool            _reconnectClean = true;//clean unsend block . 
-
+            unsigned int    _maxSendListCount = 600;
             OnBlockCheck _onBlockCheck;
             OnBlockDispatch _onBlockDispatch;
             OnHTTPBlockCheck _onHTTPBlockCheck;
