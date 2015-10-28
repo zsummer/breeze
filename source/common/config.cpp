@@ -65,7 +65,9 @@ const ListenConfig & ServerConfig::getConfigListen(ServerType node, ServerNode i
         [node, index](const ListenConfig & lc){return lc._node == node && lc._index == index; });
     if (founder == _configListen.end())
     {
-        throw std::runtime_error("getConfigListen not found config.");
+        std::stringstream os;
+        os << "getConfigListen not found config. the dest node=" << node << ", the dest index=" << index;
+        throw std::runtime_error(os.str());
     }
     return *founder;
 }
@@ -122,8 +124,11 @@ bool ServerConfig::parse(std::string filename, ServerType ownType, ServerNode ow
     }
     luaL_openlibs(L);  /* open libraries */
     lua_atpanic(L, panichHandler);
-
-    luaL_dofile(L, filename.c_str());
+    if (luaL_dofile(L, filename.c_str()))
+    {
+        LOGE("can't found the config file. filename=" << filename);
+        return false;
+    }
     lua_getfield(L, -1, "traits");
     lua_getfield(L, -1, "platid");
     _platid = (unsigned short)luaL_checkinteger(L, -1);
