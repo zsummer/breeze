@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     signal( SIGCHLD, SIG_IGN);
     //setenv("TZ", "GMT-8", 1);
 #else
-    //system("chcp 65001");
+    //system("chcp 65001"); //需要配合设置显示用的字体为TrueType字体 
 #endif
     signal(SIGINT, &sigInt);
     signal(SIGTERM, &sigInt);
