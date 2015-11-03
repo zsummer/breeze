@@ -247,11 +247,11 @@ static int pack(lua_State * L)
     return 1;
 }
 
-static void printError(lua_State * L, size_t pos, const char *tp)
+static void printError(lua_State * L, size_t pos, size_t dataLen, const char *tp)
 {
     char buf[100] = { 0 };
     lua_getglobal(L, "print");
-    sprintf(buf, "unpack error. the current pos is invalid. cur pos=%u, type=%s, name=", pos, tp);
+    sprintf(buf, "unpack error. the current pos is invalid. cur pos=%u, type=%s, blockSize=%u", pos, tp, dataLen);
     lua_pushstring(L, buf);
     lua_pcall(L, 1, 0, 0);
     
@@ -264,7 +264,7 @@ static int unpack(lua_State * L)
     const char * tp = luaL_checkstring(L, 3);
     if (pos < 1 || (size_t)pos > dataLen)
     {
-        printError(L, pos, "any");
+        printError(L, pos, dataLen, "any");
         return 0;
     }
     
@@ -272,7 +272,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 1 > dataLen)
         {
-            printError(L, pos, "i8");
+            printError(L, pos, dataLen, "i8");
             return 0;
         }
         char ch = (char)data[pos - 1];
@@ -283,7 +283,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 1 > dataLen)
         {
-            printError(L, pos, "ui8");
+            printError(L, pos, dataLen, "ui8");
             return 0;
         }
         unsigned char ch = (unsigned char)data[pos - 1];
@@ -294,7 +294,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 2 > dataLen)
         {
-            printError(L, pos, "i16");
+            printError(L, pos, dataLen, "i16");
             return 0;
         }
         short v = 0;
@@ -310,7 +310,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 2 > dataLen)
         {
-            printError(L, pos, "ui16");
+            printError(L, pos, dataLen, "ui16");
             return 0;
         }
         unsigned short v = 0;
@@ -326,7 +326,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 4 > dataLen)
         {
-            printError(L, pos, "i32");
+            printError(L, pos, dataLen, "i32");
             return 0;
         }
         int v = 0;
@@ -342,7 +342,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 4 > dataLen)
         {
-            printError(L, pos, "ui32");
+            printError(L, pos, dataLen, "ui32");
             return 0;
         }
         unsigned int v = 0;
@@ -358,7 +358,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 8 > dataLen)
         {
-            printError(L, pos, "i64/ui64");
+            printError(L, pos, dataLen, "i64/ui64");
             return 0;
         }
 /*        {
@@ -399,7 +399,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 4 > dataLen)
         {
-            printError(L, pos, "float");
+            printError(L, pos, dataLen, "float");
             return 0;
         }
         float v = 0;
@@ -415,7 +415,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 8 > dataLen)
         {
-            printError(L, pos, "double");
+            printError(L, pos, dataLen, "double");
             return 0;
         }
         double v = 0;
@@ -431,7 +431,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 4 > dataLen)
         {
-            printError(L, pos, "string/head");
+            printError(L, pos, dataLen, "string/head");
             return 0;
         }
         unsigned int strLen = 0;
@@ -443,7 +443,7 @@ static int unpack(lua_State * L)
         pos += 4;
         if (pos - 1 + strLen > dataLen)
         {
-            printError(L, pos, "string/body");
+            printError(L, pos, dataLen, "string/body");
             return 0;
         }
         lua_pushlstring(L, &data[pos - 1], strLen);
