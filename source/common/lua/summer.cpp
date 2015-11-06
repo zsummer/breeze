@@ -403,6 +403,21 @@ static int _post(lua_State * L)
     return 0;
 }
 
+static int _status(lua_State * L)
+{
+    SessionID sID = (int)luaL_checkinteger(L, 1);
+    lua_newtable(L);
+    for (int i = STAT_STARTTIME; i < STAT_SIZE; i++)
+    {
+        std::stringstream os;
+        os << SessionManager::getRef()._statInfo[i];
+        lua_pushstring(L, os.str().c_str());
+        lua_setfield(L, -2, StatTypeDesc[i]);
+    }
+    return 1;
+}
+
+
 static luaL_Reg summer[] = {
     { "logd", logd },
     { "logi", logi },
@@ -426,6 +441,7 @@ static luaL_Reg summer[] = {
     { "sendData", sendData }, // send original data, need to serialize and package via proto4z. 
     { "kick", kick }, // kick session. 
     { "post", _post }, // kick session. 
+    { "status", _status }, // get session status. 
 
     { NULL, NULL }
 };

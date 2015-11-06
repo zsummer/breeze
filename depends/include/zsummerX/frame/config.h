@@ -122,6 +122,22 @@ namespace zsummer
             
             STAT_SIZE,
         };
+        const char * const StatTypeDesc[] = { 
+            "STAT_STARTTIME",
+            "STAT_SESSION_CREATED",
+            "STAT_SESSION_DESTROYED",
+            "STAT_SESSION_LINKED",
+            "STAT_SESSION_CLOSED",
+            "STAT_FREE_BLOCKS",
+            "STAT_EXIST_BLOCKS",
+            "STAT_SEND_COUNT",
+            "STAT_SEND_PACKS",
+            "STAT_SEND_BYTES",
+            "STAT_SEND_QUES",
+            "STAT_RECV_COUNT",
+            "STAT_RECV_PACKS",
+            "STAT_RECV_BYTES",
+            "STAT_SIZE", };
 
         class TcpSession;
         using TcpSessionPtr = std::shared_ptr<TcpSession>;
