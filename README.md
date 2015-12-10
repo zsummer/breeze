@@ -1,5 +1,6 @@
 Welcome to the breeze wiki!
 #breeze简述  
+[![Build Status](https://travis-ci.org/zsummer/breeze.svg?branch=master)](https://travis-ci.org/zsummer/breeze)  
 breeze是一个C++的轻量级服务器框架, 适合端游/页游/手游/棋牌/IM的分布式服务器端.  
   
 #主要依赖模块  
