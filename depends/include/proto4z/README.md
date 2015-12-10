@@ -1,6 +1,6 @@
 Welcome to the proto4z wiki!  
 # Introduction:    
-
+[![Build Status](https://travis-ci.org/zsummer/proto4z.svg?branch=master)](https://travis-ci.org/zsummer/proto4z)  
 proto4z  is an efficient serialization library for C++ and lua, and will support C# in the near future , It's like Google protocol buffers, but much faster.  
 
 The design is simple. It can be easily integrate to the C++ servers, or  quick-cocos2dx.  

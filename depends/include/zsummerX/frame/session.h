@@ -77,7 +77,7 @@ namespace zsummer
             inline unsigned short getRemotePort(){ return _remotePort; }
             inline void setRemotePort(unsigned short remotePort){ _remotePort = remotePort; }
             inline std::size_t getSendQueSize(){ return _sendque.size(); }
-
+            inline zsummer::network::NetErrorCode getLastError(){ return _lastRecvError; }
             TupleParam getUserParam(size_t index);
             double getUserParamDouble(size_t index);
             unsigned long long getUserParamNumber(size_t index);
@@ -116,6 +116,8 @@ namespace zsummer
             //!
             bool _bFirstRecvData = true;
 
+            //!last recv error code
+            zsummer::network::NetErrorCode _lastRecvError = NEC_SUCCESS;
 
             //! http status data
             bool _httpHadHeader = false;

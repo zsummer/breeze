@@ -45,6 +45,44 @@ extern "C"
 #include "lauxlib.h"
 }
 
+#include <algorithm>
+#include <string>
+#include <vector>
+#include <list>
+#include <map>
+#include <thread>
+#include <chrono>
+#include <fstream>
+#include <sstream>
+
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <io.h>
+#include <shlwapi.h>
+#include <process.h>
+#pragma comment(lib, "shlwapi")
+#pragma warning(disable:4996)
+
+#else
+#include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include<pthread.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <semaphore.h>
+#endif
+
+
+#ifdef __APPLE__
+#include <dispatch/dispatch.h>
+#include <libproc.h>
+#endif
+
 
 
 int luaopen_summer(lua_State *L);

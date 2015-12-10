@@ -1035,6 +1035,7 @@ inline std::pair<INTEGRITY_RET_TYPE, unsigned int> checkHTTPBuffIntegrity(const 
                             bool hadHeader, bool & isChunked, PairString& commonLine, HTTPHeadMap & head, std::string & body);
 
 std::string urlEncode(const std::string& orgString);
+//"Content-Type" value is "application/x-www-form-urlencoded" means that your POST body will need to be URL encoded just like a GET parameter string.  
 std::string urlDecode(const std::string& orgString);
 class WriteHTTP
 {

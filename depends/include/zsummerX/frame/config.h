@@ -88,7 +88,7 @@ namespace zsummer
         inline unsigned int nextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSessionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
 
 
-        const unsigned int SESSION_BLOCK_SIZE = 10 * 1024;
+        const unsigned int SESSION_BLOCK_SIZE = 200 * 1024;
 
         enum ProtoType
         {

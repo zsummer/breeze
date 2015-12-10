@@ -35,11 +35,10 @@
  */
 
 #include "summer.h"
-
 #include <zsummerX/zsummerX.h>
+#include <chrono>
 using namespace zsummer::proto4z;
 using namespace zsummer::network;
-
 
 
 
@@ -405,7 +404,6 @@ static int _post(lua_State * L)
 
 static int _status(lua_State * L)
 {
-    SessionID sID = (int)luaL_checkinteger(L, 1);
     lua_newtable(L);
     for (int i = STAT_STARTTIME; i < STAT_SIZE; i++)
     {
@@ -414,6 +412,13 @@ static int _status(lua_State * L)
         lua_pushstring(L, os.str().c_str());
         lua_setfield(L, -2, StatTypeDesc[i]);
     }
+    return 1;
+}
+
+static int _steadyTime(lua_State * L)
+{
+    unsigned int now = (unsigned int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    lua_pushinteger(L, now);
     return 1;
 }
 
@@ -442,6 +447,7 @@ static luaL_Reg summer[] = {
     { "kick", kick }, // kick session. 
     { "post", _post }, // kick session. 
     { "status", _status }, // get session status. 
+    { "now", _steadyTime }, // get now tick. 
 
     { NULL, NULL }
 };
@@ -457,6 +463,7 @@ int luaopen_summer(lua_State *L)
     lua_setglobal(L, "summer");
     return 0;
 }
+
 
 
 

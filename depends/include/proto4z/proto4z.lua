@@ -52,11 +52,11 @@ Proto4z = Proto4z or {}
 
 function Proto4z.pack(obj, name)
     local data = {}
-    data[1] = Proto4zUtil.pack(0, "ui16")
-    data[2] = Proto4zUtil.pack(Proto4z[name].__getID, "ui16")
+    data[1] = Proto4zUtil.pack(0, "ui16") -- reseve field
+    data[2] = Proto4zUtil.pack(Proto4z[name].__getID, "ui16") -- proto id field
     Proto4z.__encode(obj, name, data)
     local dst = table.concat(data)
-    local head = Proto4zUtil.pack(#dst+4, "ui32")
+    local head = Proto4zUtil.pack(#dst+4, "ui32") -- proto len field
     return head .. dst
 end
 
@@ -104,16 +104,14 @@ make map [protocol id = protocol name]
 @return  no result
 ]]
 function Proto4z.register(id, name)
-    if Proto4z.__protos == nil then
-        Proto4z.__protos = {}
-    end
-    if Proto4z.__protos[id] ~= nil then
-        error("id already register. id=" .. id .. " registrered name=" .. Proto4z.__protos[id]  .. ", new name=" .. name .. ": " .. debug.traceback())
+    Proto4z.__protoNames = Proto4z.__protoNames or {}
+    if Proto4z.__protoNames[id] ~= nil then
+        error("id already register. id=" .. id .. " registrered name=" .. Proto4z.__protoNames[id]  .. ", new name=" .. name .. ": " .. debug.traceback())
     end
     if type(name) ~= "string" then
         error("name ~= string " .. debug.traceback())
     end
-    Proto4z.__protos[id] = name
+    Proto4z.__protoNames[id] = name
 end
 
 --[[--
@@ -122,13 +120,7 @@ get the protocol name from protoco id.
 @return  protocol name
 ]]
 function Proto4z.getName(id)
-    if Proto4z.__protos == nil then
-        return nil
-    end
-    if Proto4z.__protos[id] == nil then
-        return nil
-    end
-    return Proto4z.__protos[id]
+    return Proto4z and Proto4z.__protoNames and Proto4z.__protoNames[id]
 end
 
 
@@ -143,6 +135,10 @@ end
 -- private impl
 ------------------------------------------------
 
+local function isInnerType(t, withstring)
+    return t == "ui16" or t == "ui32" or t == "ui64" or t == "float" or (withstring and t == "string") 
+        or t == "i8" or t == "ui8" or t == "i16" or t == "i32" or t == "i64" or t == "double"
+end
 
 --[[--
 decode binary stream to protocol table
@@ -223,14 +219,16 @@ function Proto4z.__encode(obj, name, data)
     --array
     --------------------------------------
     if proto.__getDesc == "array" then
-        table.insert(data, Proto4zUtil.pack(#obj, "ui32"))
+        local obj = obj or {}
+        table.insert(data, Proto4zUtil.pack(#obj, "ui32", name))
         for i =1, #obj do
             local v = obj[i]
-            if type(v) ~= "table" and proto.__getTypeV ~= "string" then
-                table.insert(data, Proto4zUtil.pack(v, proto.__getTypeV))
-            elseif proto.__getTypeV == "string" then
-                table.insert(data, Proto4zUtil.pack(#v, "ui32"))
+            if proto.__getTypeV == "string" then
+                local v = ""
+                table.insert(data, Proto4zUtil.pack(#v, "ui32", name))
                 table.insert(data, v)
+            elseif isInnerType(proto.__getTypeV) then
+                table.insert(data, Proto4zUtil.pack(v, proto.__getTypeV, name))
             else
                 Proto4z.__encode(v, proto.__getTypeV, data)
             end
@@ -238,54 +236,50 @@ function Proto4z.__encode(obj, name, data)
     --map
     --------------------------------------
     elseif proto.__getDesc == "map" then
-        table.insert(data, Proto4zUtil.pack(#obj, "ui32"))
+        local obj = obj or {}
+        table.insert(data, Proto4zUtil.pack(#obj, "ui32", name))
         for i =1, #obj do
-            local k = obj[i].k
-            local v = obj[i].v
+            local k = obj[i] and obj[i].k
+            local v = obj[i] and obj[i].v
             if proto.__getTypeK == "string" then
-                table.insert(data, Proto4zUtil.pack(#k, "ui32"))
+                local k = k or ""
+                table.insert(data, Proto4zUtil.pack(#k, "ui32", name))
                 table.insert(data, k)
             else
-                table.insert(data, Proto4zUtil.pack(k, proto.__getTypeK))
+                table.insert(data, Proto4zUtil.pack(k, proto.__getTypeK, name))
             end
-            if type(v) ~= "table" and proto.__getTypeV ~= "string" then
-                table.insert(data, Proto4zUtil.pack(v, proto.__getTypeV))
-            elseif proto.__getTypeV == "string" then
-                table.insert(data, Proto4zUtil.pack(#v, "ui32"))
+            if proto.__getTypeV == "string" then
+                local v = v or ""
+                table.insert(data, Proto4zUtil.pack(#v, "ui32", name))
                 table.insert(data, v)
+            elseif  isInnerType(proto.__getTypeV) then
+                table.insert(data, Proto4zUtil.pack(v, proto.__getTypeV, name))
             else
-                Proto4z.__encode(obj[i].v, proto.__getTypeV, data)
+                Proto4z.__encode(v, proto.__getTypeV, data)
             end
         end
     --base typ or struct or proto
     --------------------------------------
     else
         local curdata, offset
-        local tag = Proto4zUtil.newTag()
         curdata = {}
         for i=1, #proto do
             local desc = proto[i]
             if not desc.del then
-                if Proto4z.__with_tag then
-                    tag = Proto4zUtil.setTag(tag, i)
-                end
+                if type(obj) ~= "table" then obj = {} end
                 local val = obj[desc.name]
-                if type(val) ~= "table" and desc.type ~= "string" then
-                    table.insert(curdata, Proto4zUtil.pack(val, desc.type))
-                elseif desc.type == "string" then
-                    table.insert(curdata, Proto4zUtil.pack(#val, "ui32"))
+                if desc.type == "string" then
+                    local val = val or ""
+                    table.insert(curdata, Proto4zUtil.pack(#val, "ui32", name))
                     table.insert(curdata, val)
+                elseif isInnerType(desc.type)  then
+                    table.insert(curdata, Proto4zUtil.pack(val, desc.type, name))
                 else
                     Proto4z.__encode(val, desc.type, curdata)
                 end
             end
         end
         curdata = table.concat(curdata)
-        if Proto4z.__with_tag then
-            offset = #curdata + #tag
-            table.insert(data, Proto4zUtil.pack(offset, "ui32"))
-            table.insert(data, tag)
-        end
         table.insert(data, curdata)
     end
 end
@@ -359,7 +353,7 @@ function Proto4z.dump(value, desciption, nesting, showULL)
 
     local function _dump(value, desciption, indent, nest, keylen)
         desciption = desciption or "<var>"
-        spc = ""
+        local spc = ""
         if type(keylen) == "number" then
             spc = string.rep(" ", keylen - string.len(_v(desciption)))
         end

@@ -303,10 +303,10 @@ public:
     virtual bool pushLog(LoggerId id, int level, const char * log, const char * file = NULL, int line = 0) = 0;
 
     //! set logger's attribute, thread safe.
-    virtual bool enableLogger(LoggerId id, bool enable) = 0;
+    virtual bool enableLogger(LoggerId id, bool enable) = 0; // immediately when enable, and queue up when disable. 
     virtual bool setLoggerName(LoggerId id, const char * name) = 0;
     virtual bool setLoggerPath(LoggerId id, const char * path) = 0;
-    virtual bool setLoggerLevel(LoggerId id, int nLevel) = 0;
+    virtual bool setLoggerLevel(LoggerId id, int nLevel) = 0; // immediately when enable, and queue up when disable. 
     virtual bool setLoggerFileLine(LoggerId id, bool enable) = 0;
     virtual bool setLoggerDisplay(LoggerId id, bool enable) = 0;
     virtual bool setLoggerOutFile(LoggerId id, bool enable) = 0;

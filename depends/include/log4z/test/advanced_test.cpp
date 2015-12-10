@@ -45,13 +45,23 @@ int main(int argc, char *argv[])
     ILog4zManager::getRef().setLoggerLevel(logid_dynamic, LOG_LEVEL_DEBUG);
     ILog4zManager::getRef().setLoggerMonthdir(logid_dynamic, true);
     ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);
+    ILog4zManager::getRef().setLoggerName(LOG4Z_MAIN_LOGGER_ID, "main");
+    ILog4zManager::getRef().setLoggerPath(LOG4Z_MAIN_LOGGER_ID, "./");
+    ILog4zManager::getRef().setLoggerLimitsize(logid_dynamic, 1);
+    ILog4zManager::getRef().setLoggerOutFile(LOG4Z_MAIN_LOGGER_ID, true);
 
 
+    ILog4zManager::getRef().setLoggerLevel(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_TRACE);
+    LOGT("set LOG_LEVEL_TRACE ----------------------------");
+    ILog4zManager::getRef().setLoggerLevel(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_DEBUG);
+    LOGT("set LOG_LEVEL_TRACE ============================");
+    
     //hot update configure
     ILog4zManager::getRef().setAutoUpdate(10);
 
     while(g_quit)
     {
+        LOG_TRACE(logid_fromfile, "fromfile LOG_TRACE");
         LOG_DEBUG(logid_fromfile, "fromfile LOG_DEBUG");
         LOG_INFO(logid_fromfile, "fromfile LOG_INFO");
         LOG_WARN(logid_fromfile, "fromfile LOG_WARN");
@@ -59,6 +69,7 @@ int main(int argc, char *argv[])
         LOG_ALARM(logid_fromfile, "fromfile LOG_ALARM");
         LOG_FATAL(logid_fromfile, "fromfile LOG_FATAL");
 
+        LOG_TRACE(logid_dynamic, "dynamic LOG_TRACE");
         LOG_DEBUG(logid_dynamic, "dynamic LOG_DEBUG");
         LOG_INFO(logid_dynamic, "dynamic LOG_INFO");
         LOG_WARN(logid_dynamic, "dynamic LOG_WARN");
@@ -66,6 +77,7 @@ int main(int argc, char *argv[])
         LOG_ALARM(logid_dynamic, "dynamic LOG_ALARM");
         LOG_FATAL(logid_dynamic, "dynamic LOG_FATAL");
 
+        LOGT("main LOGT");
         LOGD("main LOGD");
         LOGI("main LOGI");
         LOGW("main LOGW");

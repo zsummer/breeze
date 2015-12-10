@@ -251,7 +251,7 @@ static void printError(lua_State * L, size_t pos, size_t dataLen, const char *tp
 {
     char buf[100] = { 0 };
     lua_getglobal(L, "print");
-    sprintf(buf, "unpack error. the current pos is invalid. cur pos=%u, type=%s, blockSize=%u", pos, tp, dataLen);
+    sprintf(buf, "unpack error. the current pos is invalid. cur pos=%u, type=%s, blockSize=%u", (unsigned int)pos, tp, (unsigned int)dataLen);
     lua_pushstring(L, buf);
     lua_pcall(L, 1, 0, 0);
     

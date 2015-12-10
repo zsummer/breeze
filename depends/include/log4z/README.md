@@ -1,6 +1,6 @@
 Welcome to the log4z wiki!  
 # Introduction:    
-
+[![Build Status](https://travis-ci.org/zsummer/log4z.svg?branch=master)](https://travis-ci.org/zsummer/log4z)
 [![Build Status](https://travis-ci.org/franramirez688/log4z.svg?branch=master)](https://travis-ci.org/franramirez688/log4z)
 
 [![Build Status](https://webapi.biicode.com/v1/badges/fenix/fenix/log4z/master)](https://www.biicode.com/fenix/log4z) 

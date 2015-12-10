@@ -85,7 +85,6 @@ namespace zsummer
             NEC_SUCCESS = 0,
             NEC_ERROR,
             NEC_REMOTE_CLOSED,
-            NEC_REMOTE_HANGUP,
         };
 
         class TcpSocket;

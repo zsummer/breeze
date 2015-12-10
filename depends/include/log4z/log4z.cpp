@@ -283,9 +283,25 @@ void * threadProc(void * pParam)
 //////////////////////////////////////////////////////////////////////////
 //! LogData
 //////////////////////////////////////////////////////////////////////////
+enum LogDataType
+{
+    LDT_GENERAL,
+    LDT_ENABLE_LOGGER,
+    LDT_SET_LOGGER_NAME,
+    LDT_SET_LOGGER_PATH,
+    LDT_SET_LOGGER_LEVEL,
+    LDT_SET_LOGGER_FILELINE,
+    LDT_SET_LOGGER_DISPLAY,
+    LDT_SET_LOGGER_OUTFILE,
+    LDT_SET_LOGGER_LIMITSIZE,
+    LDT_SET_LOGGER_MONTHDIR,
+//    LDT_SET_LOGGER_,
+};
 struct LogData
 {
     LoggerId _id;        //dest logger id
+    int    _type;     //type.
+    int    _typeval;
     int    _level;    //log level
     time_t _time;        //create time
     unsigned int _precise; //create time 
@@ -316,8 +332,6 @@ struct LoggerInfo
     unsigned int _curWriteLen;  //current file length
     Log4zFileHandler    _handle;        //file handle.
 
-    //! hot update name or path for the logger 
-    bool _hotChange;
     
     LoggerInfo()
     {
@@ -334,8 +348,6 @@ struct LoggerInfo
         _curFileCreateTime = 0;
         _curFileIndex = 0;
         _curWriteLen = 0;
-
-        _hotChange = false;
     }
 };
 
@@ -362,7 +374,7 @@ public:
     virtual bool pushLog(LoggerId id, int level, const char * log, const char * file, int line);
     //! 查找ID
     virtual LoggerId findLogger(const char*  key);
-
+    bool hotChange(LoggerId id, LogDataType ldt, int num, const std::string & text);
     virtual bool enableLogger(LoggerId id, bool enable);
     virtual bool setLoggerName(LoggerId id, const char * name);
     virtual bool setLoggerPath(LoggerId id, const char * path);
@@ -382,6 +394,7 @@ public:
     virtual unsigned int getStatusActiveLoggers();
 protected:
     void showColorText(const char *text, int level = LOG_LEVEL_DEBUG);
+    bool onHotChange(LoggerInfo & logger, LogDataType ldt, int num, const std::string & text);
     bool openLogger(LogData * log);
     bool closeLogger(LoggerId id);
     bool popLog(LogData *& log);
@@ -1345,6 +1358,8 @@ bool LogerManager::pushLog(LoggerId id, int level, const char * log, const char 
     //create log data
     LogData * pLog = new LogData;
     pLog->_id =id;
+    pLog->_type = LDT_GENERAL;
+    pLog->_typeval = 0;
     pLog->_level = level;
     
     //append precise time to log
@@ -1490,86 +1505,77 @@ LoggerId LogerManager::findLogger(const char * key)
     }
     return LOG4Z_INVALID_LOGGER_ID;
 }
-bool LogerManager::enableLogger(LoggerId id, bool enable)
+
+bool LogerManager::hotChange(LoggerId id, LogDataType ldt, int num, const std::string & text)
 {
     if (id <0 || id > _lastId) return false;
-    _loggers[id]._enable = enable;
-    if (enable)
-    {
-        _loggers[id]._hotChange = true;
-    }
+    if (text.length() >= LOG4Z_LOG_BUF_SIZE) return false;
+    LogData * pLog = new LogData;
+    pLog->_id = id;
+    pLog->_type = ldt;
+    pLog->_typeval = num;
+    memcpy(pLog->_content, text.c_str(), text.length());
+    pLog->_contentLen = text.length();
+    AutoLock l(_logLock);
+    _logs.push_back(pLog);
     return true;
 }
-bool LogerManager::setLoggerLevel(LoggerId id, int level)
+
+bool LogerManager::onHotChange(LoggerInfo & logger, LogDataType ldt, int num, const std::string & text)
 {
-    if (id <0 || id > _lastId || level < LOG_LEVEL_TRACE || level >LOG_LEVEL_FATAL) return false;
-    _loggers[id]._level = level;
+    if (ldt == LDT_ENABLE_LOGGER) logger._enable = num != 0;
+    else if (ldt == LDT_SET_LOGGER_NAME) logger._name = text;
+    else if (ldt == LDT_SET_LOGGER_PATH) logger._path = text;
+    else if (ldt == LDT_SET_LOGGER_LEVEL) logger._level = num;
+    else if (ldt == LDT_SET_LOGGER_FILELINE) logger._fileLine = num != 0;
+    else if (ldt == LDT_SET_LOGGER_DISPLAY) logger._display = num != 0;
+    else if (ldt == LDT_SET_LOGGER_OUTFILE) logger._outfile = num != 0;
+    else if (ldt == LDT_SET_LOGGER_LIMITSIZE) logger._limitsize = num;
+    else if (ldt == LDT_SET_LOGGER_MONTHDIR) logger._monthdir = num != 0;
     return true;
 }
-bool LogerManager::setLoggerDisplay(LoggerId id, bool enable)
+
+bool LogerManager::enableLogger(LoggerId id, bool enable) 
 {
-    if (id <0 || id > _lastId) return false;
-    _loggers[id]._display = enable;
-    return true;
+    if (id < 0 || id > _lastId) return false;
+    if (enable) _loggers[id]._enable = true;
+    return hotChange(id, LDT_ENABLE_LOGGER, enable, ""); 
 }
-bool LogerManager::setLoggerOutFile(LoggerId id, bool enable)
-{
-    if (id <0 || id > _lastId) return false;
-    _loggers[id]._outfile = enable;
-    return true;
+bool LogerManager::setLoggerLevel(LoggerId id, int level) 
+{ 
+    if (id < 0 || id > _lastId) return false;
+    if (level < _loggers[id]._level) _loggers[id]._level = level;
+    return hotChange(id, LDT_SET_LOGGER_LEVEL, level, ""); 
 }
-bool LogerManager::setLoggerMonthdir(LoggerId id, bool enable)
-{
-    if (id <0 || id > _lastId) return false;
-    _loggers[id]._monthdir = enable;
-    return true;
-}
+bool LogerManager::setLoggerDisplay(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_DISPLAY, enable, ""); }
+bool LogerManager::setLoggerOutFile(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_OUTFILE, enable, ""); }
+bool LogerManager::setLoggerMonthdir(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_MONTHDIR, enable, ""); }
+bool LogerManager::setLoggerFileLine(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_FILELINE, enable, ""); }
+
 bool LogerManager::setLoggerLimitsize(LoggerId id, unsigned int limitsize)
 {
-    if (id <0 || id > _lastId) return false;
     if (limitsize == 0 ) {limitsize = (unsigned int)-1;}
-    _loggers[id]._limitsize = limitsize;
-    return true;
-}
-bool LogerManager::setLoggerFileLine(LoggerId id, bool enable)
-{
-    if (id <0 || id > _lastId) return false;
-    _loggers[id]._fileLine = enable;
-    return true;
+    return hotChange(id, LDT_SET_LOGGER_LIMITSIZE, limitsize, "");
 }
 
 bool LogerManager::setLoggerName(LoggerId id, const char * name)
 {
     if (id <0 || id > _lastId) return false;
     //the name by main logger is the process name and it's can't change. 
-    if (id == LOG4Z_MAIN_LOGGER_ID) return false; 
+//    if (id == LOG4Z_MAIN_LOGGER_ID) return false; 
     
     if (name == NULL || strlen(name) == 0) 
     {
         return false;
     }
-    AutoLock l(_hotLock);
-    if (_loggers[id]._name != name)
-    {
-        _loggers[id]._name = name;
-        _loggers[id]._hotChange = true;
-    }
-    return true;
+    return hotChange(id, LDT_SET_LOGGER_NAME, 0, name);
 }
 
 bool LogerManager::setLoggerPath(LoggerId id, const char * path)
 {
     if (id <0 || id > _lastId) return false;
-    std::string copyPath;
-    if (path == NULL || strlen(path) == 0) 
-    {
-        copyPath = LOG4Z_DEFAULT_PATH;
-    }
-    else
-    {
-         copyPath = path;
-    }
-    
+    if (path == NULL || strlen(path) == 0)  return false;
+    std::string copyPath = path;
     {
         char ch = copyPath.at(copyPath.length() - 1);
         if (ch != '\\' && ch != '/')
@@ -1577,14 +1583,7 @@ bool LogerManager::setLoggerPath(LoggerId id, const char * path)
             copyPath.append("/");
         }
     }
-
-    AutoLock l(_hotLock);
-    if (copyPath != _loggers[id]._path)
-    {
-        _loggers[id]._path = copyPath;
-        _loggers[id]._hotChange = true;
-    }
-    return true;
+    return hotChange(id, LDT_SET_LOGGER_PATH, 0, path);
 }
 bool LogerManager::setAutoUpdate(int interval)
 {
@@ -1647,9 +1646,9 @@ bool LogerManager::openLogger(LogData * pLog)
 
     bool sameday = isSameDay(pLog->_time, pLogger->_curFileCreateTime);
     bool needChageFile = pLogger->_curWriteLen > pLogger->_limitsize * 1024 * 1024;
-    if (!sameday || needChageFile || pLogger->_hotChange)
+    if (!sameday || needChageFile)
     {
-        if (!sameday || pLogger->_hotChange)
+        if (!sameday)
         {
             pLogger->_curFileIndex = 0;
         }
@@ -1673,7 +1672,6 @@ bool LogerManager::openLogger(LogData * pLog)
         _hotLock.lock();
         name = pLogger->_name;
         path = pLogger->_path;
-        pLogger->_hotChange = false;
         _hotLock.unLock();
         
         char buf[100] = { 0 };
@@ -1758,10 +1756,25 @@ void LogerManager::run()
     {
         while(popLog(pLog))
         {
+            if (pLog->_id <0 || pLog->_id > _lastId)
+            {
+                delete pLog;
+                continue;
+            }
+            LoggerInfo & curLogger = _loggers[pLog->_id];
+
+            if (pLog->_type != LDT_GENERAL)
+            {
+                onHotChange(curLogger, (LogDataType)pLog->_type, pLog->_typeval, std::string(pLog->_content, pLog->_contentLen));
+                curLogger._handle.close();
+                delete pLog;
+                continue;
+            }
+            
             //
             _ullStatusTotalPopLog ++;
             //discard
-            LoggerInfo & curLogger = _loggers[pLog->_id];
+            
             if (!curLogger._enable || pLog->_level <curLogger._level  )
             {
                 delete pLog;
