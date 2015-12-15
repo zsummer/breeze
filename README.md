@@ -22,6 +22,6 @@ kv-cache使用redis,
 
 #About The Author  
 Auther: YaweiZhang  
-Mail: yawei_zhang@foxmail.com  
+Mail: yawei.zhang@foxmail.com  
 GitHub: https://github.com/zsummer  
   
