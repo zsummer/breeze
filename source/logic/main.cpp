@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
         std::cout << "ILog4zManager start false." << std::endl;
         return ret;
     }
-
+    LOGA("version released by " << __DATE__ << " " << __TIME__);
 
     try
     {
