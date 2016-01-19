@@ -244,14 +244,11 @@ const bool LOG4Z_DEFAULT_MONTHDIR = false;
 const int LOG4Z_DEFAULT_LIMITSIZE = 100;
 //! default logger show suffix (file name and line number) 
 const bool LOG4Z_DEFAULT_SHOWSUFFIX = true;
-
+//! support ANSI->OEM console conversion on Windows
+#undef LOG4Z_OEM_CONSOLE
 ///////////////////////////////////////////////////////////////////////////
 //! -----------------------------------------------------------------------
 //////////////////////////////////////////////////////////////////////////
-
-
-
-
 
 #ifndef _ZSUMMER_BEGIN
 #define _ZSUMMER_BEGIN namespace zsummer {
@@ -261,9 +258,6 @@ const bool LOG4Z_DEFAULT_SHOWSUFFIX = true;
 #endif
 _ZSUMMER_BEGIN
 _ZSUMMER_LOG4Z_BEGIN
-
-
-
 
 //! log4z class
 class ILog4zManager
@@ -341,7 +335,7 @@ _ZSUMMER_END
 
 
 
-//! base micro.
+//! base macro.
 #define LOG_STREAM(id, level, log)\
 do{\
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
@@ -354,7 +348,7 @@ do{\
 } while (0)
 
 
-//! fast micro
+//! fast macro
 #define LOG_TRACE(id, log) LOG_STREAM(id, LOG_LEVEL_TRACE, log)
 #define LOG_DEBUG(id, log) LOG_STREAM(id, LOG_LEVEL_DEBUG, log)
 #define LOG_INFO(id, log)  LOG_STREAM(id, LOG_LEVEL_INFO, log)
@@ -363,7 +357,7 @@ do{\
 #define LOG_ALARM(id, log) LOG_STREAM(id, LOG_LEVEL_ALARM, log)
 #define LOG_FATAL(id, log) LOG_STREAM(id, LOG_LEVEL_FATAL, log)
 
-//! super micro.
+//! super macro.
 #define LOGT( log ) LOG_TRACE(LOG4Z_MAIN_LOGGER_ID, log )
 #define LOGD( log ) LOG_DEBUG(LOG4Z_MAIN_LOGGER_ID, log )
 #define LOGI( log ) LOG_INFO(LOG4Z_MAIN_LOGGER_ID, log )
@@ -641,8 +635,3 @@ _ZSUMMER_LOG4Z_END
 _ZSUMMER_END
 
 #endif
-
-
-
-
-

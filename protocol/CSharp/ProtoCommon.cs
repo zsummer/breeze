@@ -42,9 +42,9 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(expire)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.expire)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -92,14 +92,14 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(account)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(nickName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(iconID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(diamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(hisotryDiamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(giftDiamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(joinTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.nickName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.diamond)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.hisotryDiamond)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.giftDiamond)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.joinTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 

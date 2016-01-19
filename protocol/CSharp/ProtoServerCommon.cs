@@ -23,9 +23,9 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(expire)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.expire)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 

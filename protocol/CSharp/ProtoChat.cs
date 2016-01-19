@@ -28,7 +28,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(chlType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.chlType)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -60,8 +60,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(chlType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.chlType)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -91,7 +91,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(chlType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.chlType)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -123,8 +123,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(chlType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.chlType)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -177,16 +177,16 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(mID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(chlType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(srcID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(srcName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(srcIcon)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(dstID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(dstName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(dstIcon)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(msg)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(sendTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.mID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.chlType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.srcID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.srcName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.srcIcon)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.dstID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.dstName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.dstIcon)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.sendTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -261,9 +261,9 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(chlType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(dstID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(msg)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.chlType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.dstID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -303,10 +303,10 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(chlType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(dstID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(msgID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.chlType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.dstID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.msgID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -341,9 +341,9 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
-            if (msgs == null) msgs = new ChatInfoArray(); 
-            data.AddRange(msgs.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.msgs == null) this.msgs = new ChatInfoArray(); 
+            data.AddRange(this.msgs.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 

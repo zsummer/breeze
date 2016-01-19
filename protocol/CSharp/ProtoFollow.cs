@@ -37,11 +37,11 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(following)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(follower)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(makeTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(lastChanged)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.following)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.follower)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.status)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.makeTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.lastChanged)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -108,8 +108,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.status)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -142,9 +142,9 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
-            if (follower == null) follower = new FollowingInfoArray(); 
-            data.AddRange(follower.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.status)); 
+            if (this.follower == null) this.follower = new FollowingInfoArray(); 
+            data.AddRange(this.follower.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -178,8 +178,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.status)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -212,9 +212,9 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(status)); 
-            if (following == null) following = new FollowingInfoArray(); 
-            data.AddRange(following.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.status)); 
+            if (this.following == null) this.following = new FollowingInfoArray(); 
+            data.AddRange(this.following.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -248,8 +248,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(dstStatus)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(following)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.dstStatus)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.following)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -279,8 +279,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (follow == null) follow = new FollowingInfo(); 
-            data.AddRange(follow.__encode()); 
+            if (this.follow == null) this.follow = new FollowingInfo(); 
+            data.AddRange(this.follow.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 

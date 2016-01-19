@@ -56,6 +56,7 @@
 #include <shlwapi.h>
 #include <process.h>
 #pragma comment(lib, "shlwapi")
+#pragma comment(lib, "User32.lib")
 #pragma warning(disable:4996)
 
 #else
@@ -847,7 +848,7 @@ std::string getProcessID()
     char buf[260] = {0};
 #ifdef WIN32
     DWORD winPID = GetCurrentProcessId();
-    sprintf(buf, "%06d", winPID);
+    sprintf(buf, "%06u", winPID);
     pid = buf;
 #else
     sprintf(buf, "%06d", getpid());
@@ -859,7 +860,7 @@ std::string getProcessID()
 
 std::string getProcessName()
 {
-    std::string name = "MainLog";
+    std::string name = LOG4Z_MAIN_LOGGER_KEY;
     char buf[260] = {0};
 #ifdef WIN32
     if (GetModuleFileNameA(NULL, buf, 259) > 0)
@@ -1148,7 +1149,7 @@ LogerManager::LogerManager()
     _loggers[LOG4Z_MAIN_LOGGER_ID]._enable = true;
     _ids[LOG4Z_MAIN_LOGGER_KEY] = LOG4Z_MAIN_LOGGER_ID;
     _loggers[LOG4Z_MAIN_LOGGER_ID]._key = LOG4Z_MAIN_LOGGER_KEY;
-    _loggers[LOG4Z_MAIN_LOGGER_ID]._name = _proName;
+    _loggers[LOG4Z_MAIN_LOGGER_ID]._name = LOG4Z_MAIN_LOGGER_KEY;
 
 }
 LogerManager::~LogerManager()
@@ -1161,15 +1162,24 @@ LogerManager::~LogerManager()
 
 void LogerManager::showColorText(const char *text, int level)
 {
+
+#if defined(WIN32) && defined(LOG4Z_OEM_CONSOLE)
+    char oem[LOG4Z_LOG_BUF_SIZE] = { 0 };
+    CharToOemBuffA(text, oem, LOG4Z_LOG_BUF_SIZE);
+#endif
+
     if (level <= LOG_LEVEL_DEBUG || level > LOG_LEVEL_FATAL)
     {
+#if defined(WIN32) && defined(LOG4Z_OEM_CONSOLE)
+        printf("%s", oem);
+#else
         printf("%s", text);
+#endif
         return;
     }
 #ifndef WIN32
     printf("%s%s\e[0m", LOG_COLOR[level], text);
 #else
-
     AutoLock l(_scLock);
     HANDLE hStd = ::GetStdHandle(STD_OUTPUT_HANDLE);
     if (hStd == INVALID_HANDLE_VALUE) return;
@@ -1178,11 +1188,15 @@ void LogerManager::showColorText(const char *text, int level)
     {
         return;
     }
-    else 
+    else
     {
         SetConsoleTextAttribute(hStd, LOG_COLOR[level]);
-        printf("%s", text);
-        SetConsoleTextAttribute(hStd, oldInfo.wAttributes);
+#ifdef LOG4Z_OEM_CONSOLE
+		printf("%s", oem);
+#else
+		printf("%s", text);
+#endif
+		SetConsoleTextAttribute(hStd, oldInfo.wAttributes);
     }
 #endif
     return;
@@ -1313,6 +1327,7 @@ bool LogerManager::start()
 {
     if (_runing)
     {
+        showColorText("log4z already start \r\n", LOG_LEVEL_FATAL);
         return false;
     }
     _semaphore.create(0);
@@ -1321,8 +1336,9 @@ bool LogerManager::start()
 }
 bool LogerManager::stop()
 {
-    if (_runing == true)
+    if (_runing)
     {
+        showColorText("log4z stopping \r\n", LOG_LEVEL_FATAL);
         _runing = false;
         wait();
         return true;
@@ -1389,7 +1405,7 @@ bool LogerManager::pushLog(LoggerId id, int level, const char * log, const char 
         if (file == NULL || !_loggers[pLog->_id]._fileLine)
         {
 #ifdef WIN32
-            int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s \r\n",
+            int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03u %s %s \r\n",
                 tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
                 LOG_STRING[pLog->_level], log);
             if (ret == -1)
@@ -1398,7 +1414,7 @@ bool LogerManager::pushLog(LoggerId id, int level, const char * log, const char 
             }
             pLog->_contentLen = ret;
 #else
-            int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s \r\n",
+            int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03u %s %s \r\n",
                 tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
                 LOG_STRING[pLog->_level], log);
             if (ret == -1)
@@ -1425,7 +1441,7 @@ bool LogerManager::pushLog(LoggerId id, int level, const char * log, const char 
             
             
 #ifdef WIN32
-            int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s (%s):%d \r\n",
+            int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03u %s %s (%s):%d \r\n",
                 tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
                 LOG_STRING[pLog->_level], log, pNameBegin, line);
             if (ret == -1)
@@ -1434,7 +1450,7 @@ bool LogerManager::pushLog(LoggerId id, int level, const char * log, const char 
             }
             pLog->_contentLen = ret;
 #else
-            int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03d %s %s (%s):%d \r\n",
+            int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03u %s %s (%s):%d \r\n",
                 tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
                 LOG_STRING[pLog->_level], log, pNameBegin, line);
             if (ret == -1)
@@ -1515,7 +1531,7 @@ bool LogerManager::hotChange(LoggerId id, LogDataType ldt, int num, const std::s
     pLog->_type = ldt;
     pLog->_typeval = num;
     memcpy(pLog->_content, text.c_str(), text.length());
-    pLog->_contentLen = text.length();
+    pLog->_contentLen = (int)text.length();
     AutoLock l(_logLock);
     _logs.push_back(pLog);
     return true;
@@ -1686,13 +1702,18 @@ bool LogerManager::openLogger(LogData * pLog)
             createRecursionDir(path);
         }
 
-        sprintf(buf, "%s_%04d%02d%02d%02d%02d_%s_%03d.log",
-            name.c_str(), t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
+        sprintf(buf, "%s_%s_%04d%02d%02d%02d%02d_%s_%03u.log",
+            _proName.c_str(), name.c_str(), t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
             t.tm_hour, t.tm_min, _pid.c_str(), pLogger->_curFileIndex);
         path += buf;
         pLogger->_handle.open(path.c_str(), "ab");
         if (!pLogger->_handle.isOpen())
         {
+            std::stringstream ss;
+            ss << "log4z: can not open log file " << path << " . \r\n";
+            showColorText("!!!!!!!!!!!!!!!!!!!!!!!!!! \r\n", LOG_LEVEL_FATAL);
+            showColorText(ss.str().c_str(), LOG_LEVEL_FATAL);
+            showColorText("!!!!!!!!!!!!!!!!!!!!!!!!!! \r\n", LOG_LEVEL_FATAL);
             pLogger->_outfile = false;
             return false;
         }
@@ -1876,4 +1897,3 @@ ILog4zManager * ILog4zManager::getInstance()
 
 _ZSUMMER_LOG4Z_END
 _ZSUMMER_END
-

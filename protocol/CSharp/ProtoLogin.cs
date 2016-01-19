@@ -24,8 +24,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeStamp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeTick)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.timeStamp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.timeTick)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -58,8 +58,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeStamp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(timeTick)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.timeStamp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.timeTick)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -92,8 +92,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(account)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -126,9 +126,9 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
-            if (users == null) users = new BaseInfoArray(); 
-            data.AddRange(users.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.users == null) this.users = new BaseInfoArray(); 
+            data.AddRange(this.users.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -162,8 +162,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(nickName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.nickName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -196,9 +196,9 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
-            if (users == null) users = new BaseInfoArray(); 
-            data.AddRange(users.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.users == null) this.users = new BaseInfoArray(); 
+            data.AddRange(this.users.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -229,7 +229,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -270,11 +270,11 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(ip)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(port)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.ip)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -310,8 +310,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(uID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(token)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -341,7 +341,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
