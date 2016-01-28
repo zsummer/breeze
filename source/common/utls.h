@@ -42,6 +42,7 @@ template<class T>
 std::string toString(const T &t);
 //tonumber
 //split
+//trim
 
 
 //date, time, tick

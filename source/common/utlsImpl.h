@@ -24,7 +24,6 @@
 
 
 
-
 //string
 template<class T>
 std::string toString(const T &t)
@@ -86,14 +85,14 @@ inline std::string getDateString(time_t ts)
 {
     tm tstm = getTimestampStruct(ts);
     char buff[50];
-    sprintf(buff, "%04-d%02d-%02d", tstm.tm_year + 1900, tstm.tm_mon + 1, tstm.tm_mday);
+    sprintf(buff, "%04d-%02d-%02d", tstm.tm_year + 1900, tstm.tm_mon + 1, tstm.tm_mday);
     return buff;
 }
 inline std::string getDateTimeString(time_t ts)
 {
     tm tstm = getTimestampStruct(ts);
     char buff[50];
-    sprintf(buff, "%04-d%02d-%02d %02d:%02d:%02d",
+    sprintf(buff, "%04d-%02d-%02d %02d:%02d:%02d",
         tstm.tm_year + 1900, tstm.tm_mon + 1, tstm.tm_mday,
         tstm.tm_hour, tstm.tm_min, tstm.tm_sec);
     return buff;
@@ -127,7 +126,7 @@ inline bool isSameDay(time_t first, time_t second, time_t offset)
 
 
 
-
+using std::max;
 inline bool isEqual(double f1, double f2, double acc)
 {
     return fabs(f1 - f2) <= max(fabs(f1), fabs(f2)) * acc;
