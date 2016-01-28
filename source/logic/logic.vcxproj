@@ -107,6 +107,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\utlsImpl.h" />
     <ClInclude Include="application.h" />
     <ClInclude Include="logic\chat\chat.h" />
     <ClInclude Include="logic\dbMgr.h" />

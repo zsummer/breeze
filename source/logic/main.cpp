@@ -48,8 +48,7 @@ int main(int argc, char* argv[])
     signal(SIGINT, &sigInt);
     signal(SIGTERM, &sigInt);
 
-    
-    
+
     std::string filename = "../config.lua";
     unsigned int serverIndex = 0;
     if (argc > 1)

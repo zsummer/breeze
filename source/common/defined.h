@@ -28,7 +28,29 @@
 #ifdef WIN32
 #pragma warning(disable:4996)
 #pragma warning(disable:4819)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #endif
+
+#ifndef WIN32
+#include <sys/time.h>
+#endif 
+
+#ifdef __APPLE__
+#include<mach/mach_time.h>
+#endif 
+
+#include <iomanip>
+#include <string.h>
+#include <signal.h>
+#include <time.h>
+
+#include <iostream>
+#include <utility>
+#include <algorithm>
+
+#include <functional>
+#include <memory>
 
 #include <string>
 #include <set>
@@ -36,7 +58,7 @@
 #include <list>
 #include <map>
 #include <unordered_map>
-#include <algorithm>
+
 #include <log4z/log4z.h>
 #include <proto4z/proto4z.h>
 #include <zsummerX/zsummerX.h>
@@ -64,15 +86,15 @@ typedef unsigned long long ui64;
 
 //服务节点类型
 typedef ui16 ServerType;
-const ServerType InvalidServerType = (ServerType)-1;
+const ServerType InvalidServerType = (ServerType)0;
 
 //节点索引ID
 typedef ui16 ServerNode;
-const ServerNode InvalidServerNode = (ServerNode)-1;
+const ServerNode InvalidServerNode = (ServerNode)0;
 
 //服务节点
-const ServerType LogicServer = 0;
-const ServerType StressClient = 1;
+const ServerType LogicServer = 1;
+const ServerType StressClient = 2;
 
 
 
@@ -112,7 +134,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 typedef ui8 DBConfigID;
 const DBConfigID InfoDB = 1;
 const DBConfigID LogDB = 2;
-const DBConfigID InvalidDB = (DBConfigID)-1;
+const DBConfigID InvalidDB = (DBConfigID)0;
 
 
 //分区分服的ID

@@ -49,6 +49,8 @@
     <ClInclude Include="md5\md5.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="single.h" />
+    <ClInclude Include="utls.h" />
+    <ClInclude Include="utlsImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
@@ -93,6 +95,7 @@
     <ClCompile Include="lua\summer.cpp" />
     <ClCompile Include="md5\md5.cpp" />
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="utls.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{AE557081-EA4D-49A7-A629-49EA151806DF}</ProjectGuid>

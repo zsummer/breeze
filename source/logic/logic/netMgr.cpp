@@ -264,7 +264,7 @@ void NetMgr::event_onSessionPulse(TcpSessionPtr session)
         }
         Heartbeat hb;
         hb.timeStamp = (ui32)time(NULL);
-        hb.timeTick = getNowTick();
+        hb.timeTick = (unsigned int)getNowTick();
         sendMessage(session, hb);
     }
 }
