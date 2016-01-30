@@ -40,11 +40,20 @@
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include<pthread.h>
+#include <fcntl.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
 #endif 
 
 #ifdef __APPLE__
 #include<mach/mach_time.h>
-#endif 
+#include <dispatch/dispatch.h>
+#include <libproc.h>
+#endif
 
 #include <iomanip>
 #include <string.h>
