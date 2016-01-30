@@ -94,7 +94,7 @@ private:
 };
 
 
-std::string genFileMD5(std::string filename);
+
 
 #endif
 

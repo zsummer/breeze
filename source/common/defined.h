@@ -30,10 +30,16 @@
 #pragma warning(disable:4819)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <io.h>
+#include <shlwapi.h>
+#include <process.h>
 #endif
 
 #ifndef WIN32
+#include <sys/types.h>
 #include <sys/time.h>
+#include <sys/stat.h>
+#include <dirent.h>
 #endif 
 
 #ifdef __APPLE__

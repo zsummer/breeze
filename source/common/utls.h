@@ -17,10 +17,7 @@
 * limitations under the License.
 */
 
-/*
-*  file desc
-*  all server configure for start and configure defined from this.
-*/
+
 
 
 #ifndef _UTLS_H_
@@ -29,8 +26,14 @@
 #include <defined.h>
 #include <single.h>
 
-//file
-//read file. write file.
+//-------------------------------------------------------------------------------
+//isBinary if false it's will auto fix UTF-8 BOM. only this.
+std::string readFileContent(const std::string & filename, bool isBinary = false, size_t limitSize = 1024 * 1024, size_t beginIndex = 0);
+size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend = true);
+bool isDirectory(const std::string & path);
+bool createRecursionDir(std::string path);
+
+
 
 //md5
 class MD5Data;
@@ -41,12 +44,17 @@ std::string genFileMD5(std::string filename);
 template<class T>
 std::string toString(const T &t);
 //tonumber
-//split
-//trim
-
+//both 1 left, 2right, 3 both
+void trim(std::string &str, std::string ign, int both = 3);
+std::vector<std::string> splitString(const std::string & text, std::string deli, std::string ign);
+std::string toUpperString(std::string  org);
+std::string toLowerString(std::string  org);
+bool compareStringIgnCase(const std::string & left, const std::string & right, bool canTruncate = false);
 
 //date, time, tick
 //==========================================================================
+void sleepMillisecond(unsigned int ms);
+
 inline double getNow();
 inline double getSteadyNow();
 inline long long getNowTick();
@@ -66,29 +74,24 @@ inline bool isSameWeak(time_t first, time_t second, time_t offset);
 inline bool isSameDay(time_t first, time_t second, time_t offset);
 
 
-//double
+//float process
 const double POINT_DOUBLE = 1e-14;
-const float POINT_FLOAT = 1e-5f;
 const double PI = 3.14159265359;
 
 inline bool isEqual(double f1, double f2, double acc = POINT_DOUBLE);
-inline bool isEqual(float f1, float f2, double acc = POINT_FLOAT);
 inline bool isZero(double f, double acc = POINT_DOUBLE);
-inline bool isZero(float f, float acc = POINT_FLOAT);
 inline double getDistance(double org, double dst);
-inline double getDistance(float org, float dst);
 inline double getDistance(double orgx, double orgy, double dstx, double dsty);
-inline float getDistance(float orgx, float orgy, float dstx, float dsty);
 inline double getRadian(double orgx, double orgy, double dstx, double dsty);
-inline float getRadian(float orgx, float orgy, float dstx, float dsty);
 inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance);
-inline std::tuple<float, float> getFarPoint(float orgx, float orgy, float radian, float distance);
 inline std::tuple<double, double> getFarOffset(double orgx, double orgy, double dstx, double dsty, double distance);
-inline std::tuple<float, float> getFarOffset(float orgx, float orgy, float dstx, float dsty, float distance);
 inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double orgrad, double distance, double radian);
-inline std::tuple<float, float> rotatePoint(float orgx, float orgy, float orgrad, float distance, float radian);
 
 
+
+//process
+std::string getProcessID();
+std::string getProcessName();
 
 #include "utlsImpl.h"
 #endif

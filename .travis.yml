@@ -21,4 +21,6 @@ script:
   - cd ./source
   - cmake .
   - make
+  - cd ../bin/test
+  - ./test
 

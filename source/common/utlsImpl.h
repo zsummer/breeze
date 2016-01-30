@@ -131,16 +131,8 @@ inline bool isEqual(double f1, double f2, double acc)
 {
     return fabs(f1 - f2) <= max(fabs(f1), fabs(f2)) * acc;
 }
-inline bool isEqual(float f1, float f2, double acc)
-{
-    return fabs(f1 - f2) <= max(fabs(f1), fabs(f2)) * acc;
-}
 
 inline bool isZero(double f, double acc)
-{
-    return fabs(f) <= acc;
-}
-inline bool isZero(float f, float acc)
 {
     return fabs(f) <= acc;
 }
@@ -149,19 +141,12 @@ inline double getDistance(double org, double dst)
 {
     return fabs(org - dst);
 }
-inline double getDistance(float org, float dst)
-{
-    return fabs(org - dst);
-}
 
 inline double getDistance(double orgx, double orgy, double dstx, double dsty)
 {
     return sqrt(pow(orgx - dstx, 2) + pow(orgy - dsty, 2));
 }
-inline float getDistance(float orgx, float orgy, float dstx, float dsty)
-{
-    return sqrt(pow(orgx - dstx, 2) + pow(orgy - dsty, 2));
-}
+
 
 inline double getRadian(double orgx, double orgy, double dstx, double dsty)
 {
@@ -175,28 +160,18 @@ inline double getRadian(double orgx, double orgy, double dstx, double dsty)
     }
     return rad;
 }
-inline float getRadian(float orgx, float orgy, float dstx, float dsty)
-{
-    return (float)getRadian((double)orgx, (double)orgy, (double)dstx, (double)dsty);
-}
+
 inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance)
 {
     return std::make_tuple(orgx + cos(radian) * distance, orgy + sin(radian) * distance);
 }
-inline std::tuple<float, float> getFarPoint(float orgx, float orgy, float radian, float distance)
-{
-    return std::make_tuple(orgx + cos(radian) * distance, orgy + sin(radian) * distance);
-}
+
 inline std::tuple<double, double> getFarOffset(double orgx, double orgy, double dstx, double dsty, double distance)
 {
     double rate = distance / getDistance(orgx, orgy, dstx, dsty);
     return std::make_tuple(orgx + (dstx - orgx) * rate, orgy + (dsty - orgy) * rate);
 }
-inline std::tuple<float, float> getFarOffset(float orgx, float orgy, float dstx, float dsty, float distance)
-{
-    float rate = distance / getDistance(orgx, orgy, dstx, dsty);
-    return std::make_tuple(orgx + (dstx - orgx) * rate, orgy + (dsty - orgy) * rate);
-}
+
 
 
 inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double orgrad, double distance, double radian)
@@ -204,10 +179,7 @@ inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double o
     return std::make_tuple(orgx + cos(orgrad + radian)*distance, orgy + sin(orgrad + radian)*distance);
 }
 
-inline std::tuple<float, float> rotatePoint(float orgx, float orgy, float orgrad, float distance, float radian)
-{
-    return std::make_tuple(orgx + cos(orgrad + radian)*distance, orgy + sin(orgrad + radian)*distance);
-}
+
 
 
 

@@ -200,35 +200,3 @@ const std::string & MD5Data::genMD5()
 
 
 
-std::string genFileMD5(std::string filename)
-{
-    std::string ret;
-    std::string content;
-    FILE * f = fopen(filename.c_str(), "rb");
-    if (f == NULL)
-    {
-        return ret;
-    }
-
-    fseek(f, 0, SEEK_SET);
-    int beginpos = ftell(f);
-    fseek(f, 0, SEEK_END);
-    int endpos = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    int filelen = endpos - beginpos;
-    if (filelen > 10 * 1024 * 1024 || filelen <= 0)
-    {
-        return ret;
-    }
-
-    content.resize(filelen, '\0');
-    if (fread(&content[0], 1, filelen, f) != (size_t)filelen)
-    {
-        return ret;
-    }
-
-    MD5Data md;
-    md << content;
-    return md.genMD5();
-}
-
