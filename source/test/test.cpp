@@ -48,24 +48,32 @@ int main(int argc, char* argv[])
 #endif
 
     ILog4zManager::getPtr()->start();
-    
-    //test trim, split
-    if (checkString() != 0)
+    int ret = checkString();
+    if (ret != 0)
     {
-        return -1;
+        return ret;
     }
-    if (checkFile() != 0)
+    ret = checkFile();
+    if (ret != 0)
     {
-        return -1;
+        return ret;
     }
-    if (checkTime() != 0)
+    ret = checkTime();
+    if (ret != 0)
     {
-        return -1;
+        return ret;
     }
-    if (checkFloat() != 0)
+    ret = checkFloat();
+    if (ret != 0)
     {
-        return -1;
+        return ret;
     }
+    ret = checkString();
+    if (ret != 0)
+    {
+        return ret;
+    }
+
     LOGA("check all success.");
     sleepMillisecond(3000);
     return 0;
@@ -80,43 +88,43 @@ int checkString()
     auto ret = splitString(t1, "=", "&%^");
     if (ret.size() != 2)
     {
-        return -1;
+        return 1;
     }
     if (ret.front() != "123")
     {
-        return -1;
+        return 2;
     }
     if (!ret.back().empty())
     {
-        return -1;
+        return 3;
     }
     if (splitString("==", "==", "adf123").size() != 2)
     {
-        return -1;
+        return 4;
     }
     if (!compareStringIgnCase("Fad123123", "fAd123123"))
     {
-        return -1;
+        return 5;
     }
     if (compareStringIgnCase("1234", "123", true))
     {
-        return -1;
+        return 6;
     }
     if (!compareStringIgnCase("a123", "A1234", true))
     {
-        return -1;
+        return 7;
     }
     if (compareStringIgnCase("a123", "A1234", false))
     {
-        return -1;
+        return 8;
     }
     if (strcmp(toUpperString("aaaa").c_str(), "AAAA") != 0)
     {
-        return -1;
+        return 9;
     }
     if (strcmp(toLowerString("AAAA").c_str(), "aaaa") != 0)
     {
-        return -1;
+        return 10;
     }
     LOGA("end check trim, splitString, toUpperString,toLowerString,compareStringIgnCase");
     return 0;
@@ -131,15 +139,15 @@ int checkFile()
     std::string md5 = "e807f1fcf82d132f9bb018ca6738a19F";
     if (isDirectory(path))
     {
-        return -1;
+        return 1;
     }
     if (!createRecursionDir(path))
     {
-        return -1;
+        return 2;
     }
     if (!isDirectory(path))
     {
-        return -1;
+        return 3;
     }
     writeFileContent(path + filename, content.c_str(), content.length(), false);
     content.clear();
@@ -162,20 +170,20 @@ int checkFile()
     std::string mmd5 = d.genMD5();
     if (!compareStringIgnCase(toUpperString(mmd5), toLowerString(md5)))
     {
-        return -1;
+        return 4;
     }
 
     if (!compareStringIgnCase(toUpperString(genFileMD5(path + filename)), toLowerString(md5)))
     {
-        return -1;
+        return 5;
     }
     if (!removeFile(path + filename))
     {
-        return -1;
+        return 6;
     }
     if (!removeDir(path))
     {
-        return -1;
+        return 7;
     }
     LOGA("end check readFileContent, writeFileContent, isDirectory, createRecursionDir, MD5Data genMD5,genFileMD5");
     return 0;
@@ -197,7 +205,8 @@ int checkTime()
     nowts = getTimestampNow() - nowts -3;
     if (now > 1 || snow > 1 || nowt >1000 || nowst >1000 || nowts > 1)
     {
-        return -1;
+        LOGE("now =" << now << ", snow=" << snow << ", nowt=" << nowt << ", nowst=" << nowst << ", nowts=" << nowts);
+        return 1;
     }
     LOGI(getDateString(getTimestampNow()) << " " << getTimeString(getTimestampNow()));
     LOGI(getDateTimeString(getTimestampNow()));
@@ -208,20 +217,20 @@ int checkTime()
     if (isSameDay(dt2015, dt2016) || isSameMonth(dt2015, dt2016)
         || isSameYear(dt2015, dt2016))
     {
-        return -1;
+        return 2;
     }
     if (!isSameDay(dt2015, dt2016, -1) || !isSameMonth(dt2015, dt2016, -1)
         || !isSameYear(dt2015, dt2016, -1))
     {
-        return -1;
+        return 3;
     }
     if (!isSameWeak(dt2015, dt2016) || isSameWeak(dt2015+3*24*3600, dt2016 + 3*24+3600))
     {
-        return -1;
+        return 4;
     }
     if (!isSameWeak(dt2015+3*24*3600+1, dt2015+3*24*3600+3))
     {
-        return -1;
+        return 5;
     }
     
     
@@ -234,59 +243,59 @@ int checkFloat()
     LOGA("begin check float");
     if(isZero(POINT_DOUBLE*2))
     {
-        return -1;
+        return 1;
     }
     if (!isZero(POINT_DOUBLE / -10.0))
     {
-        return -1;
+        return 2;
     }
     if (!isZero(POINT_DOUBLE / 10.0))
     {
-        return -1;
+        return 3;
     }
     if (!isEqual(1.0 + POINT_DOUBLE, 1.0 + POINT_DOUBLE/2.0))
     {
-        return -1;
+        return 4;
     }
     if (isEqual(1.0 + POINT_DOUBLE*2, 1.0))
     {
-        return -1;
+        return 5;
     }
     if (!isEqual(getDistance(1.0, -1.0), 2.0))
     {
-        return -1;
+        return 6;
     }
     if (!isEqual(getDistance(1.0, 0.0, 2.0, 0.0), 1.0))
     {
-        return -1;
+        return 7;
     }
     if (!isEqual(getRadian(0.0, 0.0, 1.0, 0.0), 0.0))
     {
-        return -1;
+        return 8;
     }
     if (!isEqual(getRadian(0.0, 0.0, -1.0, 0.0), PI))
     {
-        return -1;
+        return 9;
     }
     if (!isEqual(std::get<1>(getFarPoint(0.0, 0.0, PI/2.0*3.0, 1.0)), -1.0))
     {
-        return -1;
+        return 10;
     }
     if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, -2.0, 1.0)), -1.0))
     {
-        return -1;
+        return 11;
     }
     if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, 2.0, 1.0)), 1.0))
     {
-        return -1;
+        return 12;
     }
     if (!isEqual(std::get<0>(rotatePoint(0.0, 0.0, PI/2.0, 1.0, PI/2.0)), -1.0))
     {
-        return -1;
+        return 15;
     }
     if (!isEqual(std::get<1>(rotatePoint(0.0, 0.0, PI / 2.0, 1.0, PI)), -1.0))
     {
-        return -1;
+        return 16;
     }
 
     LOGA("end check float");
