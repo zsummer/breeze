@@ -130,6 +130,22 @@ int checkString()
     {
         return 10;
     }
+    if (!isEqual(fromString<float>("0.1", 0.0), 0.1, 1e-5))
+    {
+        return 11;
+    }
+    if (!isEqual(fromString<double>("1e-1", 0.0), 0.1))
+    {
+        return 12;
+    }
+    if (fromString<int>("-1", 0) != -1)
+    {
+        return 15;
+    }
+    if (fromString<unsigned long long>("18446744073709551615", 0) != 18446744073709551615U)
+    {
+        return 16;
+    }
     LOGA("end check trim, splitString, toUpperString,toLowerString,compareStringIgnCase");
     return 0;
 }

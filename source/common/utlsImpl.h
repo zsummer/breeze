@@ -33,6 +33,28 @@ std::string toString(const T &t)
     return os.str();
 }
 
+
+template<class RET>
+RET fromString(const std::string & t, RET def)
+{
+    if (t.empty()) return def;
+    if (typeid(RET) == typeid(float) || typeid(RET) == typeid(double))
+    {
+        return (RET)atof(t.c_str());
+    }
+    else if (typeid(RET) == typeid(unsigned long long))
+    {
+        unsigned long long ull = 0;
+#ifndef WIN32
+        sscanf(t.c_str(), "%llu", &ull);
+#else
+        int count = sscanf(t.c_str(), "%I64u", &ull);
+#endif
+        return (RET)ull;
+    }
+    return (RET)atoll(t.c_str());
+}
+
 inline double getNow()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::system_clock::now().time_since_epoch()).count();

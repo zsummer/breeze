@@ -45,6 +45,8 @@ std::string genFileMD5(std::string filename);
 //==========================================================================
 template<class T>
 std::string toString(const T &t);
+template<class RET>
+RET fromString(const std::string & t, RET def);
 //tonumber
 //both 1 left, 2right, 3 both
 void trim(std::string &str, std::string ign, int both = 3);
