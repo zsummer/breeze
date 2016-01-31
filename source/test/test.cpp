@@ -26,6 +26,7 @@ using namespace zsummer::mysql;
 int checkString();
 int checkFile();
 int checkTime();
+int checkFloat();
 
 int main(int argc, char* argv[])
 {
@@ -57,13 +58,16 @@ int main(int argc, char* argv[])
     {
         return -1;
     }
-    if (checkTime())
+    if (checkTime() != 0)
     {
         return -1;
     }
- 
-    sleepMillisecond(3000);
+    if (checkFloat() != 0)
+    {
+        return -1;
+    }
     LOGA("check all success.");
+    sleepMillisecond(3000);
     return 0;
 }
 
@@ -209,6 +213,77 @@ int checkTime()
     }
     
     
-
+    LOGA("end check Time");
     return 0;
 }
+
+int checkFloat()
+{
+    LOGA("begin check float");
+    if(isZero(POINT_DOUBLE*2))
+    {
+        return -1;
+    }
+    if (!isZero(POINT_DOUBLE / -10.0))
+    {
+        return -1;
+    }
+    if (!isZero(POINT_DOUBLE / 10.0))
+    {
+        return -1;
+    }
+    if (!isEqual(1.0 + POINT_DOUBLE, 1.0 + POINT_DOUBLE/2.0))
+    {
+        return -1;
+    }
+    if (isEqual(1.0 + POINT_DOUBLE*2, 1.0))
+    {
+        return -1;
+    }
+    if (!isEqual(getDistance(1.0, -1.0), 2.0))
+    {
+        return -1;
+    }
+    if (!isEqual(getDistance(1.0, 0.0, 2.0, 0.0), 1.0))
+    {
+        return -1;
+    }
+    if (!isEqual(getRadian(0.0, 0.0, 1.0, 0.0), 0.0))
+    {
+        return -1;
+    }
+    if (!isEqual(getRadian(0.0, 0.0, -1.0, 0.0), PI))
+    {
+        return -1;
+    }
+    if (!isEqual(std::get<1>(getFarPoint(0.0, 0.0, PI/2.0*3.0, 1.0)), -1.0))
+    {
+        return -1;
+    }
+    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, -2.0, 1.0)), -1.0))
+    {
+        return -1;
+    }
+    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, 2.0, 1.0)), 1.0))
+    {
+        return -1;
+    }
+    if (!isEqual(std::get<0>(rotatePoint(0.0, 0.0, PI/2.0, 1.0, PI/2.0)), -1.0))
+    {
+        return -1;
+    }
+    if (!isEqual(std::get<1>(rotatePoint(0.0, 0.0, PI / 2.0, 1.0, PI)), -1.0))
+    {
+        return -1;
+    }
+
+    LOGA("end check float");
+    return 0;
+}
+
+
+
+
+
+
+

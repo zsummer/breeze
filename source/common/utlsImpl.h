@@ -132,17 +132,18 @@ inline bool isSameDay(time_t first, time_t second, time_t offset)
 
 
 
+inline bool isZero(double f, double acc)
+{
+    return fabs(f) <= acc;
+}
 
 using std::max;
+using std::min;
 inline bool isEqual(double f1, double f2, double acc)
 {
     return fabs(f1 - f2) <= max(fabs(f1), fabs(f2)) * acc;
 }
 
-inline bool isZero(double f, double acc)
-{
-    return fabs(f) <= acc;
-}
 
 inline double getDistance(double org, double dst)
 {
@@ -160,6 +161,10 @@ inline double getRadian(double orgx, double orgy, double dstx, double dsty)
     double disx = dstx - orgx;
     double disy = dsty - orgy;
     double h = getDistance(orgx, orgy, dstx, dsty);
+    if (h == 0)
+    {
+        h = 1;
+    }
     double rad = acos(disx / h);
     if (disy < 0)
     {
