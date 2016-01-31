@@ -52,10 +52,27 @@ inline long long getSteadyNowTick()
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-inline time_t getTimestampNow()
+inline time_t getCurTime()
 {
     return time(NULL);
 }
+inline time_t getTZZoneFixTime()
+{
+    time_t fixday = 7 * 24 * 3600;
+    tm tm = gettm(fixday);
+    return fixday - ((tm.tm_mday - 1) * 24 + tm.tm_hour) * 3600;
+}
+inline time_t getDay(time_t t)
+{
+    time_t fix = getTZZoneFixTime();
+    return (t - fix) / 24 / 3600;
+}
+inline time_t getCurDay()
+{
+    time_t fix = getTZZoneFixTime();
+    return (getCurTime() - fix) / 24 / 3600;
+}
+
 //safe method for get tm from unix timestamp
 // 
 // struct tm {
@@ -70,7 +87,7 @@ inline time_t getTimestampNow()
 //             int tm_isdst;  /* Daylight saving time */
 //            };
 // 
-inline tm getTimestampStruct(time_t ts)
+inline tm gettm(time_t ts)
 {
     tm * tstm = localtime(&ts);
     if (!tstm)
@@ -83,21 +100,21 @@ inline tm getTimestampStruct(time_t ts)
 
 inline std::string getDateString(time_t ts)
 {
-    tm tstm = getTimestampStruct(ts);
+    tm tstm = gettm(ts);
     char buff[50];
     sprintf(buff, "%04d-%02d-%02d", tstm.tm_year + 1900, tstm.tm_mon + 1, tstm.tm_mday);
     return buff;
 }
 inline std::string getTimeString(time_t ts)
 {
-    tm tstm = getTimestampStruct(ts);
+    tm tstm = gettm(ts);
     char buff[50];
     sprintf(buff, "%02d:%02d:%02d", tstm.tm_hour, tstm.tm_min, tstm.tm_sec);
     return buff;
 }
 inline std::string getDateTimeString(time_t ts)
 {
-    tm tstm = getTimestampStruct(ts);
+    tm tstm = gettm(ts);
     char buff[50];
     sprintf(buff, "%04d-%02d-%02d %02d:%02d:%02d",
         tstm.tm_year + 1900, tstm.tm_mon + 1, tstm.tm_mday,
@@ -106,25 +123,25 @@ inline std::string getDateTimeString(time_t ts)
 }
 inline bool isSameYear(time_t first, time_t second, time_t offset)
 {
-    return getTimestampStruct(first + offset).tm_year == getTimestampStruct(second + offset).tm_year;
+    return gettm(first + offset).tm_year == gettm(second + offset).tm_year;
 }
 inline bool isSameMonth(time_t first, time_t second, time_t offset)
 {
-    tm ftm = getTimestampStruct(first + offset);
-    tm stm = getTimestampStruct(second + offset);
+    tm ftm = gettm(first + offset);
+    tm stm = gettm(second + offset);
     return ftm.tm_year == stm.tm_year && ftm.tm_mon == stm.tm_mon;
 }
 inline bool isSameWeak(time_t first, time_t second, time_t offset)
 {
-    tm ftm = getTimestampStruct(first + offset);
+    tm ftm = gettm(first + offset);
     time_t begin = first + offset - (ftm.tm_wday * 24 * 3600) - ftm.tm_hour * 3600 - ftm.tm_min * 60 - ftm.tm_sec;
     return second + offset >= begin && second + offset < begin + 7 * 24 * 3600;
 }
 // example: if 03:00::00 is the day bound you can set offset = -3*3600
 inline bool isSameDay(time_t first, time_t second, time_t offset)
 {
-    tm ftm = getTimestampStruct(first + offset);
-    tm stm = getTimestampStruct(second + offset);
+    tm ftm = gettm(first + offset);
+    tm stm = gettm(second + offset);
     return ftm.tm_year == stm.tm_year && ftm.tm_yday == stm.tm_yday;
 }
 

@@ -48,8 +48,10 @@ int main(int argc, char* argv[])
 #endif
     
     ILog4zManager::getPtr()->start();
-    LOGI("0second" << getDateTimeString(0));
-    LOGI("now" << getDateTimeString(getTimestampNow()));
+    LOGI("0second" << getDateTimeString(24*3600));
+    LOGI("now" << getDateTimeString(getCurTime()));
+    LOGA("version released by " << __DATE__ << " " << __TIME__);
+
     int ret = checkString();
     if (ret != 0)
     {
@@ -194,24 +196,26 @@ int checkFile()
 int checkTime()
 {
     LOGA("begin check Time");
+
+    getCurDay();
     double now = getNow();
     double snow = getSteadyNow();
     long long nowt = getNowTick();
     long long nowst = getSteadyNowTick();
-    time_t nowts = getTimestampNow();
+    time_t nowts = getCurTime();
     sleepMillisecond(3000);
     now = getNow() - now - 3.0;
     snow = getSteadyNow() - snow - 3.0;
     nowt = getNowTick() - nowt - 3000;
     nowst = getSteadyNowTick() - nowst - 3000;
-    nowts = getTimestampNow() - nowts -3;
+    nowts = getCurTime() - nowts -3;
     if (now > 1 || snow > 1 || nowt >1000 || nowst >1000 || nowts > 1)
     {
         LOGE("now =" << now << ", snow=" << snow << ", nowt=" << nowt << ", nowst=" << nowst << ", nowts=" << nowts);
         return 1;
     }
-    LOGI(getDateString(getTimestampNow()) << " " << getTimeString(getTimestampNow()));
-    LOGI(getDateTimeString(getTimestampNow()));
+    LOGI(getDateString(getCurTime()) << " " << getTimeString(getCurTime()));
+    LOGI(getDateTimeString(getCurTime()));
 
     //2015周四/2016周五
     time_t dt2015 = 1451577599;
@@ -234,7 +238,10 @@ int checkTime()
     {
         return 5;
     }
-    
+    if (getDay(1451577599) == getDay(1451577600))
+    {
+        return 6;
+    }
     
     LOGA("end check Time");
     return 0;

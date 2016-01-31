@@ -55,13 +55,16 @@ bool compareStringIgnCase(const std::string & left, const std::string & right, b
 //==========================================================================
 void sleepMillisecond(unsigned int ms);
 
+//now 
 inline double getNow();
 inline double getSteadyNow();
 inline long long getNowTick();
 inline long long getSteadyNowTick();
 
-inline time_t getTimestampNow();
-inline tm getTimestampStruct(time_t ts);
+inline time_t getCurTime();
+inline time_t getTZZoneFixTime();
+inline time_t getCurDay();
+inline tm gettm(time_t ts);
 
 inline std::string getDateString(time_t ts);
 inline std::string getTimeString(time_t ts);
