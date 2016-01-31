@@ -32,6 +32,8 @@ std::string readFileContent(const std::string & filename, bool isBinary = false,
 size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend = true);
 bool isDirectory(const std::string & path);
 bool createRecursionDir(std::string path);
+bool removeFile(const std::string &pathfile);
+bool removeDir(const std::string &path);
 
 //md5
 class MD5Data;

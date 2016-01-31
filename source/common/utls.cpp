@@ -116,6 +116,15 @@ bool isDirectory(const std::string & path)
 #endif
 }
 
+bool removeFile(const std::string &pathfile)
+{
+    return ::remove(pathfile.c_str()) == 0;
+}
+bool removeDir(const std::string &path)
+{
+    return ::rmdir(path.c_str()) == 0;
+}
+
 bool createRecursionDir(std::string  path)
 {
     if (path.empty()) return false;

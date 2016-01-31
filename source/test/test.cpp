@@ -129,7 +129,10 @@ int checkFile()
     std::string path = "./log2/log3/";
     std::string filename = "aaaa";
     std::string md5 = "e807f1fcf82d132f9bb018ca6738a19F";
-
+    if (isDirectory(path))
+    {
+        return -1;
+    }
     if (!createRecursionDir(path))
     {
         return -1;
@@ -153,6 +156,7 @@ int checkFile()
 
     } while (true);
 
+
     MD5Data d;
     d << content;
     std::string mmd5 = d.genMD5();
@@ -162,6 +166,14 @@ int checkFile()
     }
 
     if (!compareStringIgnCase(toUpperString(genFileMD5(path + filename)), toLowerString(md5)))
+    {
+        return -1;
+    }
+    if (!removeFile(path + filename))
+    {
+        return -1;
+    }
+    if (!removeDir(path))
     {
         return -1;
     }
