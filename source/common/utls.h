@@ -61,9 +61,13 @@ inline double getSteadyNow();
 inline long long getNowTick();
 inline long long getSteadyNowTick();
 
+//the second through 1900-01-01 00:00:00
 inline time_t getCurTime();
 inline time_t getTZZoneFixTime();
+//the day through 1900-01-01 00:00:00
 inline time_t getCurDay();
+//the day through t
+inline time_t getDay(time_t t);
 inline tm gettm(time_t ts);
 
 inline std::string getDateString(time_t ts);
