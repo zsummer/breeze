@@ -26,7 +26,8 @@
 #include <defined.h>
 #include <single.h>
 
-//-------------------------------------------------------------------------------
+//file
+//==========================================================================
 //isBinary if false it's will auto fix UTF-8 BOM. only this.
 std::string readFileContent(const std::string & filename, bool isBinary = false, size_t limitSize = 1024 * 1024, size_t beginIndex = 0);
 size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend = true);
@@ -41,6 +42,7 @@ std::string genFileMD5(std::string filename);
 
 
 //string
+//==========================================================================
 template<class T>
 std::string toString(const T &t);
 //tonumber
@@ -53,14 +55,18 @@ bool compareStringIgnCase(const std::string & left, const std::string & right, b
 
 //date, time, tick
 //==========================================================================
+
+//----- sleep thread ------
 void sleepMillisecond(unsigned int ms);
 
-//now 
+//----- time check ------
+//check used time. don't used it as datetime.
 inline double getNow();
 inline double getSteadyNow();
 inline long long getNowTick();
 inline long long getSteadyNowTick();
 
+//-----date time---------
 //the second through 1900-01-01 00:00:00
 inline time_t getCurTime();
 inline time_t getTZZoneFixTime();
@@ -68,8 +74,10 @@ inline time_t getTZZoneFixTime();
 inline time_t getCurDay();
 //the day through t
 inline time_t getDay(time_t t);
+//get struct tm via safe method
 inline tm gettm(time_t ts);
 
+//to print date time
 inline std::string getDateString(time_t ts);
 inline std::string getTimeString(time_t ts);
 inline std::string getDateTimeString(time_t ts);
@@ -82,7 +90,8 @@ inline bool isSameWeak(time_t first, time_t second, time_t offset = 0);
 inline bool isSameDay(time_t first, time_t second, time_t offset = 0);
 
 
-//float process
+//float
+//==========================================================================
 const double POINT_DOUBLE = 1e-14;
 const double PI = 3.14159265358979323;
 
@@ -98,6 +107,7 @@ inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double o
 
 
 //process
+//==========================================================================
 std::string getProcessID();
 std::string getProcessName();
 
