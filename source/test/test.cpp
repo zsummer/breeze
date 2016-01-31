@@ -46,8 +46,10 @@ int main(int argc, char* argv[])
 #else
     //system("chcp 65001");
 #endif
-
+    
     ILog4zManager::getPtr()->start();
+    LOGI("0second" << getDateTimeString(0));
+    LOGI("now" << getDateTimeString(getTimestampNow()));
     int ret = checkString();
     if (ret != 0)
     {
