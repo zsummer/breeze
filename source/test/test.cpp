@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     signal( SIGVTALRM, SIG_IGN );
     signal( SIGQUIT, SIG_IGN );
     signal( SIGCHLD, SIG_IGN);
-    //setenv("TZ", "GMT-8", 1);
+    setenv("TZ", "GMT-8", 1);
 #else
     //system("chcp 65001");
 #endif
