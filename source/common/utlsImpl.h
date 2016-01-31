@@ -88,6 +88,13 @@ inline std::string getDateString(time_t ts)
     sprintf(buff, "%04d-%02d-%02d", tstm.tm_year + 1900, tstm.tm_mon + 1, tstm.tm_mday);
     return buff;
 }
+inline std::string getTimeString(time_t ts)
+{
+    tm tstm = getTimestampStruct(ts);
+    char buff[50];
+    sprintf(buff, "%02d:%02d:%02d", tstm.tm_hour, tstm.tm_min, tstm.tm_sec);
+    return buff;
+}
 inline std::string getDateTimeString(time_t ts)
 {
     tm tstm = getTimestampStruct(ts);

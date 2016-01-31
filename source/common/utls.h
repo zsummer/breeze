@@ -33,8 +33,6 @@ size_t writeFileContent(const std::string & filename, const char * buff, size_t 
 bool isDirectory(const std::string & path);
 bool createRecursionDir(std::string path);
 
-
-
 //md5
 class MD5Data;
 std::string genFileMD5(std::string filename);
@@ -64,14 +62,15 @@ inline time_t getTimestampNow();
 inline tm getTimestampStruct(time_t ts);
 
 inline std::string getDateString(time_t ts);
+inline std::string getTimeString(time_t ts);
 inline std::string getDateTimeString(time_t ts);
 
 //default offset set 0
 //example method isSameDay: if 03:00::00 is the day bound you can set offset = -3*3600
-inline bool isSameYear(time_t first, time_t second, time_t offset);
-inline bool isSameMonth(time_t first, time_t second, time_t offset);
-inline bool isSameWeak(time_t first, time_t second, time_t offset);
-inline bool isSameDay(time_t first, time_t second, time_t offset);
+inline bool isSameYear(time_t first, time_t second, time_t offset = 0);
+inline bool isSameMonth(time_t first, time_t second, time_t offset = 0);
+inline bool isSameWeak(time_t first, time_t second, time_t offset = 0);
+inline bool isSameDay(time_t first, time_t second, time_t offset = 0);
 
 
 //float process

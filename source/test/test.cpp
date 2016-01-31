@@ -23,7 +23,9 @@
 using namespace zsummer::log4z;
 using namespace zsummer::mysql;
 
-
+int checkString();
+int checkFile();
+int checkTime();
 
 int main(int argc, char* argv[])
 {
@@ -47,70 +49,166 @@ int main(int argc, char* argv[])
     ILog4zManager::getPtr()->start();
     
     //test trim, split
-    if (true)
+    if (checkString() != 0)
     {
-        LOGA("begin check trim, split");
-        std::string t1 = "%^&123^=&";
-        auto ret = splitString(t1, "=", "&%^");
-        if (ret.size() != 2)
-        {
-            return -1;
-        }
-        if (ret.front() != "123")
-        {
-            return -1;
-        }
-        if (!ret.back().empty())
-        {
-            return -1;
-        }
-        if (splitString("==", "==", "adf123").size() != 2)
-        {
-            return -1;
-        }
-        LOGA("end check trim, split");
+        return -1;
     }
-    if (true)
+    if (checkFile() != 0)
     {
-        LOGA("begin check file, md5, upper, lower, compareigncase");
-        std::string content = "1234567890";
-        std::string md5 = "e807f1fcf82d132f9bb018ca6738a19F";
-        writeFileContent("./aaaa", content.c_str(), content.length(), false);
-        content.clear();
-        size_t lastSize = 0;
-        do 
-        {
-            std::string str = readFileContent("./aaaa", true, 4, lastSize);
-            lastSize += str.length();
-            content += str;
-            if (str.length() < 4)
-            {
-                break;
-            }
-            
-        } while (true);
-
-        
-        if (true)
-        {
-            MD5Data d;
-            d << content;
-            std::string mmd5 = d.genMD5();
-            if (!compareStringIgnCase(toUpperString(mmd5), toLowerString(md5)))
-            {
-                return -1;
-            }
-        }
-        if (!compareStringIgnCase(toUpperString(genFileMD5("./aaaa")), toLowerString(md5)))
-        {
-            return -1;
-        }
-        LOGA("end check file, md5, upper, lower, compareigncase");
-        
+        return -1;
     }
-    
+    if (checkTime())
+    {
+        return -1;
+    }
+ 
     sleepMillisecond(3000);
     LOGA("check all success.");
     return 0;
 }
 
+
+
+int checkString()
+{
+    LOGA("begin check trim, splitString, toUpperString,toLowerString,compareStringIgnCase");
+    std::string t1 = "%^&123^=&";
+    auto ret = splitString(t1, "=", "&%^");
+    if (ret.size() != 2)
+    {
+        return -1;
+    }
+    if (ret.front() != "123")
+    {
+        return -1;
+    }
+    if (!ret.back().empty())
+    {
+        return -1;
+    }
+    if (splitString("==", "==", "adf123").size() != 2)
+    {
+        return -1;
+    }
+    if (!compareStringIgnCase("Fad123123", "fAd123123"))
+    {
+        return -1;
+    }
+    if (compareStringIgnCase("1234", "123", true))
+    {
+        return -1;
+    }
+    if (!compareStringIgnCase("a123", "A1234", true))
+    {
+        return -1;
+    }
+    if (compareStringIgnCase("a123", "A1234", false))
+    {
+        return -1;
+    }
+    if (strcmp(toUpperString("aaaa").c_str(), "AAAA") != 0)
+    {
+        return -1;
+    }
+    if (strcmp(toLowerString("AAAA").c_str(), "aaaa") != 0)
+    {
+        return -1;
+    }
+    LOGA("end check trim, splitString, toUpperString,toLowerString,compareStringIgnCase");
+    return 0;
+}
+
+int checkFile()
+{
+    LOGA("begin check readFileContent, writeFileContent, isDirectory, createRecursionDir, MD5Data genMD5,genFileMD5");
+    std::string content = "1234567890";
+    std::string path = "./log2/log3/";
+    std::string filename = "aaaa";
+    std::string md5 = "e807f1fcf82d132f9bb018ca6738a19F";
+
+    if (!createRecursionDir(path))
+    {
+        return -1;
+    }
+    if (!isDirectory(path))
+    {
+        return -1;
+    }
+    writeFileContent(path + filename, content.c_str(), content.length(), false);
+    content.clear();
+    size_t lastSize = 0;
+    do
+    {
+        std::string str = readFileContent(path + filename, true, 4, lastSize);
+        lastSize += str.length();
+        content += str;
+        if (str.length() < 4)
+        {
+            break;
+        }
+
+    } while (true);
+
+    MD5Data d;
+    d << content;
+    std::string mmd5 = d.genMD5();
+    if (!compareStringIgnCase(toUpperString(mmd5), toLowerString(md5)))
+    {
+        return -1;
+    }
+
+    if (!compareStringIgnCase(toUpperString(genFileMD5(path + filename)), toLowerString(md5)))
+    {
+        return -1;
+    }
+    LOGA("end check readFileContent, writeFileContent, isDirectory, createRecursionDir, MD5Data genMD5,genFileMD5");
+    return 0;
+}
+
+int checkTime()
+{
+    LOGA("begin check Time");
+    double now = getNow();
+    double snow = getSteadyNow();
+    long long nowt = getNowTick();
+    long long nowst = getSteadyNowTick();
+    time_t nowts = getTimestampNow();
+    sleepMillisecond(3000);
+    now = getNow() - now - 3.0;
+    snow = getSteadyNow() - snow - 3.0;
+    nowt = getNowTick() - nowt - 3000;
+    nowst = getSteadyNowTick() - nowst - 3000;
+    nowts = getTimestampNow() - nowts -3;
+    if (now > 1 || snow > 1 || nowt >1000 || nowst >1000 || nowts > 1)
+    {
+        return -1;
+    }
+    LOGI(getDateString(getTimestampNow()) << " " << getTimeString(getTimestampNow()));
+    LOGI(getDateTimeString(getTimestampNow()));
+
+    //2015周四/2016周五
+    time_t dt2015 = 1451577599;
+    time_t dt2016 = 1451577600;
+    if (isSameDay(dt2015, dt2016) || isSameMonth(dt2015, dt2016)
+        || isSameYear(dt2015, dt2016))
+    {
+        return -1;
+    }
+    if (!isSameDay(dt2015, dt2016, -1) || !isSameMonth(dt2015, dt2016, -1)
+        || !isSameYear(dt2015, dt2016, -1))
+    {
+        return -1;
+    }
+    if (!isSameWeak(dt2015, dt2016) || isSameWeak(dt2015+3*24*3600, dt2016 + 3*24+3600))
+    {
+        return -1;
+    }
+    if (!isSameWeak(dt2015+3*24*3600+1, dt2015+3*24*3600+3))
+    {
+        return -1;
+    }
+    
+    
+
+    return 0;
+}
