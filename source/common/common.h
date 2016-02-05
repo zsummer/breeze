@@ -45,6 +45,7 @@ int luaopen_cjson(lua_State *l);
 #include "dbAsync.h"
 #include "config.h"
 #include "dispatch.h"
+#include "balance.h"
 
 
 using namespace zsummer::mysql;
