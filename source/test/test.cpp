@@ -20,6 +20,7 @@
 
 #include <common.h>
 #include <utls.h>
+#include <balance.h>
 using namespace zsummer::log4z;
 using namespace zsummer::mysql;
 
@@ -27,7 +28,7 @@ int checkString();
 int checkFile();
 int checkTime();
 int checkFloat();
-
+int checkBalance();
 int main(int argc, char* argv[])
 {
 
@@ -74,6 +75,11 @@ int main(int argc, char* argv[])
     }
     ret = checkString();
     if (ret != 0)
+    {
+        return ret;
+    }
+    ret = checkBalance();
+    if( ret != 0 )
     {
         return ret;
     }
@@ -328,6 +334,61 @@ int checkFloat()
 }
 
 
+int checkBalance()
+{
+    LOGA("begin check balance");
+    Balance balance;
+    balance.enableNode(1);
+    balance.enableNode(2);
+    balance.enableNode(3);
+    for (int i = 0; i <6 ; ++i)
+    {
+        if(balance.selectAuto() != i%3+1)
+        {
+            return 1;
+        }
+    }
+    for (int i=0; i<6; ++i)
+    {
+        if(balance.selectManual() != i%3+1)
+        {
+            return 2; //select light when lost weight
+        }
+        balance.changeWeight(i%3+1, 5);
+    }
+    balance.disableNode(3);
+    for (int i = 0; i < 6; ++i)
+    {
+        if(balance.selectAuto() != i%2+1)
+        {
+            return 3;
+        }
+    }
+    for (int i = 0; i < 6; ++i)
+    {
+        if(balance.selectManual() != i%2+1)
+        {
+            return 4;
+        }
+        balance.changeWeight(i%2+1, 5);
+    }
+    balance.enableNode(4);
+    for (int i = 0; i < 3; ++i)
+    {
+        if(balance.selectAuto() != 4)
+        {
+            return 5;
+        }
+        if(balance.selectManual() != 4)
+        {
+            return 6;
+        }
+        balance.changeWeight(4, 1);
+    }
+    LOGD("rate=" << balance.getBalanceRate() << ", status=" << balance.getBalanceStatus());
+    LOGA("end check balance");
+    return 0;
+}
 
 
 

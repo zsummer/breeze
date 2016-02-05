@@ -102,12 +102,12 @@ typedef unsigned long long ui64;
 
 
 //服务节点类型
-typedef ui16 ServerType;
-const ServerType InvalidServerType = (ServerType)0;
+typedef i16 ServerType;
+const ServerType InvalidServerType = (ServerType)-1;
 
 //节点索引ID
-typedef ui16 ServerNode;
-const ServerNode InvalidServerNode = (ServerNode)0;
+typedef i16 ServerNode;
+const ServerNode InvalidServerNode = (ServerNode)-1;
 
 //服务节点
 const ServerType LogicServer = 1;
@@ -148,15 +148,15 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 
 
 //DB类型
-typedef ui8 DBConfigID;
+typedef i8 DBConfigID;
 const DBConfigID InfoDB = 1;
 const DBConfigID LogDB = 2;
 const DBConfigID InvalidDB = (DBConfigID)0;
 
 
 //分区分服的ID
-typedef ui16 PlatID;
-typedef ui16 AreaID;
+typedef i16 PlatID;
+typedef i16 AreaID;
 
 
 
