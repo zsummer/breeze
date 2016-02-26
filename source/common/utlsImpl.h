@@ -55,46 +55,53 @@ RET fromString(const std::string & t, RET def)
     return (RET)atoll(t.c_str());
 }
 
-inline double getNow()
+inline double getTick()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
-inline double getSteadyNow()
+inline double getSteadyTick()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-inline long long getNowTick()
+inline long long getMSecTick()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-inline long long getSteadyNowTick()
+inline long long getSteadyMSecTick()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-inline time_t getCurTime()
+inline time_t getUTCTime()
 {
     return time(NULL);
 }
-inline time_t getTZZoneFixTime()
+inline time_t getTZZoneOffset()
 {
     time_t fixday = 7 * 24 * 3600;
     tm tm = gettm(fixday);
     return fixday - ((tm.tm_mday - 1) * 24 + tm.tm_hour) * 3600;
 }
-inline time_t getDay(time_t t)
+inline time_t getLocalDay(time_t t, time_t offset)
 {
-    time_t fix = getTZZoneFixTime();
-    return (t - fix) / 24 / 3600;
+    time_t fix = getTZZoneOffset();
+    return (t - fix + offset) / 24 / 3600;
 }
-inline time_t getCurDay()
+inline time_t getLocalDay(time_t offset)
 {
-    time_t fix = getTZZoneFixTime();
-    return (getCurTime() - fix) / 24 / 3600;
+    return getLocalDay(getUTCTime(), offset);
 }
-
+inline time_t getLocalDayByReadable(time_t t, time_t offset)
+{
+    tm st = gettm(t);
+    return (st.tm_year + 1900) * 10000 + (st.tm_mon + 1) * 100 + st.tm_mday;
+}
+inline time_t getLocalDayByReadable(time_t offset)
+{
+    return getLocalDayByReadable(getUTCTime(), offset);
+}
 //safe method for get tm from unix timestamp
 // 
 // struct tm {
@@ -143,6 +150,7 @@ inline std::string getDateTimeString(time_t ts)
         tstm.tm_hour, tstm.tm_min, tstm.tm_sec);
     return buff;
 }
+
 inline bool isSameYear(time_t first, time_t second, time_t offset)
 {
     return gettm(first + offset).tm_year == gettm(second + offset).tm_year;

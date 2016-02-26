@@ -39,12 +39,12 @@ class Balance
 {
 public:
     //server node, isAble, manual weight, auto weight, total select count
-    using BalanceInfo=std::tuple<ServerNode, bool, i32, i32, i32>;
+    using BalanceInfo = std::tuple<ServerNode, bool, float, float, float>;
     Balance(){}
     inline bool enableNode(ServerNode node);
     inline bool cleanNode(ServerNode node);
     inline bool disableNode(ServerNode node);
-    inline bool changeWeight(ServerNode node, i32 weight);
+    inline bool changeWeight(ServerNode node, float weight);
 
     inline ServerNode selectAuto();
     inline ServerNode selectManual();
@@ -66,7 +66,7 @@ inline bool Balance::enableNode(ServerNode node)
     }
     else
     {
-        _balance.push_back(std::make_tuple(node, true, 0, 0, 0));
+        _balance.push_back(std::make_tuple(node, true, 0.0f, 0.0f, 0.0f));
     }
     return true;
 }
@@ -92,7 +92,7 @@ inline bool Balance::disableNode(ServerNode node)
     std::get<1>(*founder) = false;
     return true;
 }
-inline bool Balance::changeWeight(ServerNode node, i32 weight)
+inline bool Balance::changeWeight(ServerNode node, float weight)
 {
     auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
     if (founder == _balance.end())
@@ -111,8 +111,8 @@ inline bool Balance::changeWeight(ServerNode node, i32 weight)
 
 inline ServerNode Balance::selectAuto()
 {
-    size_t idx = -1;
-    i32 weight = (2^32)/2-1;
+    size_t idx = (size_t)-1;
+    float weight = (float)1E15;
     for (size_t i = 0; i < _balance.size(); ++i)
     {
         if(std::get<1>(_balance[i]) && std::get<3>(_balance[i]) < weight)
@@ -121,7 +121,7 @@ inline ServerNode Balance::selectAuto()
             weight = std::get<3>(_balance[i]);
         }
     }
-    if (idx == -1)
+    if (idx == (size_t)-1)
     {
         return InvalidServerNode;
     }
@@ -131,8 +131,8 @@ inline ServerNode Balance::selectAuto()
 }
 inline ServerNode Balance::selectManual()
 {
-    size_t idx = -1;
-    i32 weight = (0xffffffff)/2-1;
+    size_t idx = (size_t)-1;
+    float weight = (float)1E15;
     for (size_t i = 0; i < _balance.size(); ++i)
     {
         if(std::get<1>(_balance[i]) && std::get<2>(_balance[i]) < weight)
@@ -141,7 +141,7 @@ inline ServerNode Balance::selectManual()
             weight = std::get<2>(_balance[i]);
         }
     }
-    if (idx == -1)
+    if (idx == (size_t)-1)
     {
         return InvalidServerNode;
     }
@@ -154,7 +154,7 @@ inline float Balance::getBalanceRate()
     float light = 0.0;
     float weight = 0.0;
     float count = 0.0;
-    for (int i = 0; i < _balance.size(); ++i)
+    for (size_t i = 0; i < _balance.size(); ++i)
     {
         if(!std::get<1>(_balance[i])) continue;
         if(std::get<2>(_balance[i]) < light)

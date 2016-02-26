@@ -237,8 +237,9 @@ void trim(std::string &str, std::string ign, int both)
         str.clear();
     }
 }
-std::vector<std::string> splitString(const std::string & text, std::string deli, std::string ign)
+std::vector<std::string> splitString(std::string text, std::string deli, std::string ign)
 {
+    trim(text, ign);
     std::vector<std::string> ret;
     if (deli.empty())
     {
@@ -298,6 +299,116 @@ bool compareStringIgnCase(const std::string & left, const std::string & right, b
     }
     return true;
     
+}
+
+
+
+time_t getUTCTimeFromLocalString(const std::string & str)
+{
+    std::string sdate;
+    std::string stime;
+    if (str.find(' ') != std::string::npos)
+    {
+        auto sp = splitString(str, " ", " ");
+        if (sp.size() < 2)
+        {
+            return 0;
+        }
+        sdate = sp.front();
+        stime = sp.back();
+    }
+    else
+    {
+        if (str.find(':') != std::string::npos)
+        {
+            stime = str;
+            trim(stime, " ");
+        }
+        else
+        {
+            sdate = str;
+            trim(sdate, " ");
+        }
+    }
+    struct tm st;
+    memset(&st, 0, sizeof(st));
+    if (!sdate.empty())
+    {
+        std::string deli;
+        if (sdate.find('-') != std::string::npos)
+        {
+            deli = "-";
+        }
+        else if (sdate.find('/') != std::string::npos)
+        {
+            deli = "/";
+        }
+        else if (sdate.find('\\') != std::string::npos)
+        {
+            deli = "\\";
+        }
+        std::vector<std::string> spdate;
+        if (!deli.empty())
+        {
+            spdate = splitString(sdate, deli, " ");
+        }
+        else if (sdate.size() == 8)
+        {
+            spdate.push_back(sdate.substr(0, 4));
+            spdate.push_back(sdate.substr(4, 2));
+            spdate.push_back(sdate.substr(6, 2));
+        }
+        if (!spdate.empty())
+        {
+            if (spdate.back().size() == 4)
+            {
+                st.tm_year = fromString<int>(spdate.back(), 1900) - 1900;
+                if (spdate.size() >= 2)
+                {
+                    st.tm_mon = fromString<int>(spdate[spdate.size() - 2], 1) - 1;
+                }
+                if (spdate.size() >= 3)
+                {
+                    st.tm_mday = fromString<int>(spdate[spdate.size() - 3], 1);
+                }
+            }
+            else
+            {
+                st.tm_year = fromString<int>(spdate.front(), 1900) - 1900;
+                if (spdate.size() >= 2)
+                {
+                    st.tm_mon = fromString<int>(spdate[1], 1) - 1;
+                }
+                if (spdate.size() >= 3)
+                {
+                    st.tm_mday = fromString<int>(spdate[2], 1);
+                }
+            }
+        }
+    } //sdate
+    if (!stime.empty())
+    {
+        auto sptime = splitString(stime, ":", " ");
+        if (sptime.size() >= 1)
+        {
+            st.tm_hour = fromString<int>(sptime[0], 0);
+        }
+        if (sptime.size() >= 2)
+        {
+            st.tm_min = fromString<int>(sptime[1], 0);
+        }
+        if (sptime.size() >= 3)
+        {
+            st.tm_sec = fromString<int>(sptime[2], 0);
+        }
+    }
+    if (st.tm_year < 70) st.tm_year = 70;
+    if (st.tm_mon < 0 || st.tm_mon > 11) st.tm_mon = 0;
+    if (st.tm_mday < 1 || st.tm_mday > 31) st.tm_mday = 1;
+    if (st.tm_hour < 0 || st.tm_hour > 23) st.tm_hour = 0;
+    if (st.tm_min < 0 || st.tm_min > 59) st.tm_min = 0;
+    if (st.tm_sec < 0 || st.tm_sec > 59) st.tm_sec = 0;
+    return mktime(&st);
 }
 
 std::string getProcessID()

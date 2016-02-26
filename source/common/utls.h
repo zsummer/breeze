@@ -50,7 +50,7 @@ RET fromString(const std::string & t, RET def);
 //tonumber
 //both 1 left, 2right, 3 both
 void trim(std::string &str, std::string ign, int both = 3);
-std::vector<std::string> splitString(const std::string & text, std::string deli, std::string ign);
+std::vector<std::string> splitString(std::string text, std::string deli, std::string ign);
 std::string toUpperString(std::string  org);
 std::string toLowerString(std::string  org);
 bool compareStringIgnCase(const std::string & left, const std::string & right, bool canTruncate = false);
@@ -63,19 +63,26 @@ void sleepMillisecond(unsigned int ms);
 
 //----- time check ------
 //check used time. don't used it as datetime.
-inline double getNow();
-inline double getSteadyNow();
-inline long long getNowTick();
-inline long long getSteadyNowTick();
+inline double getTick();
+inline double getSteadyTick();
+inline long long getMSecTick();
+inline long long getSteadyMSecTick();
 
 //-----date time---------
 //the second through 1900-01-01 00:00:00
-inline time_t getCurTime();
-inline time_t getTZZoneFixTime();
+inline time_t getUTCTime();
+inline time_t getNowTime(){ return getUTCTime(); }
+inline time_t getTZZoneOffset();
 //the day through 1900-01-01 00:00:00
-inline time_t getCurDay();
-//the day through t
-inline time_t getDay(time_t t);
+inline time_t getLocalDay(time_t offset);
+//the day through 1900-01-01 00:00:00 @ $t
+inline time_t getLocalDay(time_t t, time_t offset);
+//the day through 1900-01-01 00:00:00
+inline time_t getLocalDayByReadable(time_t offset);
+//the day through 1900-01-01 00:00:00 @ $t
+inline time_t getLocalDayByReadable(time_t t, time_t offset);
+
+
 //get struct tm via safe method
 inline tm gettm(time_t ts);
 
@@ -83,7 +90,7 @@ inline tm gettm(time_t ts);
 inline std::string getDateString(time_t ts);
 inline std::string getTimeString(time_t ts);
 inline std::string getDateTimeString(time_t ts);
-
+time_t getUTCTimeFromLocalString(const std::string & str);
 //default offset set 0
 //example method isSameDay: if 03:00::00 is the day bound you can set offset = -3*3600
 inline bool isSameYear(time_t first, time_t second, time_t offset = 0);

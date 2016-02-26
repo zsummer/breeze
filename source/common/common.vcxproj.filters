@@ -101,6 +101,9 @@
       <Filter>lua</Filter>
     </ClInclude>
     <ClInclude Include="dispatch.h" />
+    <ClInclude Include="utls.h" />
+    <ClInclude Include="utlsImpl.h" />
+    <ClInclude Include="balance.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
@@ -223,6 +226,7 @@
       <Filter>lua</Filter>
     </ClCompile>
     <ClCompile Include="dispatch.cpp" />
+    <ClCompile Include="utls.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lua">

@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     
     ILog4zManager::getPtr()->start();
     LOGI("0second" << getDateTimeString(24*3600));
-    LOGI("now" << getDateTimeString(getCurTime()));
+    LOGI("now" << getDateTimeString(getNowTime()));
     LOGA("version released by " << __DATE__ << " " << __TIME__);
 
     int ret = checkString();
@@ -218,26 +218,31 @@ int checkFile()
 int checkTime()
 {
     LOGA("begin check Time");
-
-    getCurDay();
-    double now = getNow();
-    double snow = getSteadyNow();
-    long long nowt = getNowTick();
-    long long nowst = getSteadyNowTick();
-    time_t nowts = getCurTime();
+    tm ts;
+    memset(&ts, 0, sizeof(ts));
+    ts.tm_year = 70;
+    ts.tm_mday = 1;
+    ts.tm_hour = 8;
+    time_t r = mktime(&ts);
+    getLocalDay(0);
+    double now = getTick();
+    double snow = getSteadyTick();
+    long long nowt = getMSecTick();
+    long long nowst = getSteadyMSecTick();
+    time_t nowts = getNowTime();
     sleepMillisecond(3000);
-    now = getNow() - now - 3.0;
-    snow = getSteadyNow() - snow - 3.0;
-    nowt = getNowTick() - nowt - 3000;
-    nowst = getSteadyNowTick() - nowst - 3000;
-    nowts = getCurTime() - nowts -3;
+    now = getTick() - now - 3.0;
+    snow = getSteadyTick() - snow - 3.0;
+    nowt = getMSecTick() - nowt - 3000;
+    nowst = getSteadyMSecTick() - nowst - 3000;
+    nowts = getNowTime() - nowts -3;
     if (now > 1 || snow > 1 || nowt >1000 || nowst >1000 || nowts > 1)
     {
         LOGE("now =" << now << ", snow=" << snow << ", nowt=" << nowt << ", nowst=" << nowst << ", nowts=" << nowts);
         return 1;
     }
-    LOGI(getDateString(getCurTime()) << " " << getTimeString(getCurTime()));
-    LOGI(getDateTimeString(getCurTime()));
+    LOGI(getDateString(getNowTime()) << " " << getTimeString(getNowTime()));
+    LOGI(getDateTimeString(getNowTime()));
 
     //2015周四/2016周五
     time_t dt2015 = 1451577599;
@@ -260,10 +265,35 @@ int checkTime()
     {
         return 5;
     }
-    if (getDay(1451577599) == getDay(1451577600))
+    if (getLocalDay(1451577599, 0) == getLocalDay(1451577600, 0))
     {
         return 6;
     }
+    if (getLocalDayByReadable(1451577599, 0) == getLocalDayByReadable(1451577600, 0))
+    {
+        return 7;
+    }
+    if (getUTCTimeFromLocalString("2015/12/31 23:59:59") != 1451577599)
+    {
+        return 8;
+    }
+    if (getUTCTimeFromLocalString("     31-12-2015    23:59        ") != 1451577599 - 59)
+    {
+        return 9;
+    }
+    if (getUTCTimeFromLocalString("12-2015    23:59") != 1451577599 - (31-1)*24*3600 - 59)
+    {
+        return 10;
+    }
+    if (getUTCTimeFromLocalString("20151231") != 1451577599 -  24 * 3600 + 1)
+    {
+        return 10;
+    }
+    if (!isSameDay(getUTCTimeFromLocalString(toString<time_t>(getLocalDayByReadable(1451577599, 0))), 1451577599))
+    {
+        return 11;
+    }
+
     
     LOGA("end check Time");
     return 0;
