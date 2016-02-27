@@ -124,6 +124,14 @@ bool removeDir(const std::string &path)
 {
     return ::rmdir(path.c_str()) == 0;
 }
+bool hadFile(const std::string &pathfile)
+{
+#ifdef WIN32
+    return ::_access(pathfile.c_str(), 0) == 0;
+#else
+    return ::access(pathfile.c_str(), F_OK) == 0;
+#endif
+}
 
 bool createRecursionDir(std::string  path)
 {

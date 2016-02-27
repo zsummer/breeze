@@ -176,6 +176,11 @@ int checkFile()
         return 3;
     }
     writeFileContent(path + filename, content.c_str(), content.length(), false);
+    if (!hadFile(path + filename))
+    {
+        return 4;
+    }
+    
     content.clear();
     size_t lastSize = 0;
     do
@@ -196,21 +201,26 @@ int checkFile()
     std::string mmd5 = d.genMD5();
     if (!compareStringIgnCase(toUpperString(mmd5), toLowerString(md5)))
     {
-        return 4;
+        return 5;
     }
 
     if (!compareStringIgnCase(toUpperString(genFileMD5(path + filename)), toLowerString(md5)))
     {
-        return 5;
+        return 6;
     }
     if (!removeFile(path + filename))
     {
-        return 6;
+        return 7;
     }
     if (!removeDir(path))
     {
-        return 7;
+        return 8;
     }
+    if (hadFile(path + filename))
+    {
+        return 9;
+    }
+    
     LOGA("end check readFileContent, writeFileContent, isDirectory, createRecursionDir, MD5Data genMD5,genFileMD5");
     return 0;
 }
@@ -218,12 +228,6 @@ int checkFile()
 int checkTime()
 {
     LOGA("begin check Time");
-    tm ts;
-    memset(&ts, 0, sizeof(ts));
-    ts.tm_year = 70;
-    ts.tm_mday = 1;
-    ts.tm_hour = 8;
-    time_t r = mktime(&ts);
     getLocalDay(0);
     double now = getTick();
     double snow = getSteadyTick();

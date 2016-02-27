@@ -84,7 +84,7 @@ bool isDirectory(const std::string & path);
 bool createRecursionDir(std::string path);
 bool removeFile(const std::string &pathfile);
 bool removeDir(const std::string &path);
-
+bool hadFile(const std::string &pathfile);
 //md5
 class MD5Data;
 std::string genFileMD5(std::string filename);
