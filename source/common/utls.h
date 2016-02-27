@@ -72,6 +72,14 @@ inline long long getSteadyMSecTick();
 //the second through 1900-01-01 00:00:00
 inline time_t getUTCTime();
 inline time_t getNowTime(){ return getUTCTime(); }
+
+// GMT+8 the mean is the area hour fast than gmt area that is + 8*3600 second.
+// the method return the offset of second.  in GMT+8 return 8*3600.
+//used: 
+//  get local date time needn't via system tzzone.
+//  like get one day's begin UTC time not via localtime.
+//  like get server's local datetime in any area client. server date time = localtime(UTC + (server offset - client offset)); 
+//
 inline time_t getTZZoneOffset();
 //the day through 1900-01-01 00:00:00
 inline time_t getLocalDay(time_t offset);
@@ -87,10 +95,12 @@ inline time_t getLocalDayByReadable(time_t t, time_t offset);
 inline tm gettm(time_t ts);
 
 //to print date time
-inline std::string getDateString(time_t ts);
-inline std::string getTimeString(time_t ts);
-inline std::string getDateTimeString(time_t ts);
+inline std::string formatDateString(time_t ts);
+inline std::string formatTimeString(time_t ts);
+inline std::string formatDateTimeString(time_t ts);
 time_t getUTCTimeFromLocalString(const std::string & str);
+time_t getSecondFromTimeString(const std::string & str);// format like "hour:min:second"
+
 //default offset set 0
 //example method isSameDay: if 03:00::00 is the day bound you can set offset = -3*3600
 inline bool isSameYear(time_t first, time_t second, time_t offset = 0);
@@ -113,6 +123,45 @@ inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double r
 inline std::tuple<double, double> getFarOffset(double orgx, double orgy, double dstx, double dsty, double distance);
 inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double orgrad, double distance, double radian);
 
+//bit
+//==========================================================================
+template<class Integer, class Number>
+inline bool checkBitFlag(Integer n, Number f) // f [1-32] or [1-64], begin 1 not 0.
+{
+    return (n & ((Integer)1 << (f - 1))) != 0;
+}
+
+template<class Integer, class Number>
+inline Integer appendBitFlag(Integer n, Number f)
+{
+    return n | ((Integer)1 << (f - 1));
+}
+
+template<class Integer, class Number>
+inline Integer removeBitFlag(Integer n, Number f)
+{
+    return n ^ ((Integer)1 << (f - 1));
+}
+
+//rand
+//==========================================================================
+inline double randfloat()
+{
+    return (rand() % 10000) / 10000.0;
+}
+inline double randfloat(double min, double max)
+{
+    return  min + randfloat() * (max - min);
+}
+
+//integer
+//==========================================================================
+//return value is [min, max]
+template<class T>
+inline T pruning(T v, T min, T max)
+{
+    return v < min ? min : (v > max ? max : v);
+}
 
 
 //process

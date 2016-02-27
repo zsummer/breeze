@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
 #endif
     
     ILog4zManager::getPtr()->start();
-    LOGI("0second" << getDateTimeString(24*3600));
-    LOGI("now" << getDateTimeString(getNowTime()));
+    LOGI("0second" << formatDateTimeString(0));
+    LOGI("now" << formatDateTimeString(getNowTime()));
     LOGA("version released by " << __DATE__ << " " << __TIME__);
 
     int ret = checkString();
@@ -241,8 +241,8 @@ int checkTime()
         LOGE("now =" << now << ", snow=" << snow << ", nowt=" << nowt << ", nowst=" << nowst << ", nowts=" << nowts);
         return 1;
     }
-    LOGI(getDateString(getNowTime()) << " " << getTimeString(getNowTime()));
-    LOGI(getDateTimeString(getNowTime()));
+    LOGI(formatDateString(getNowTime()) << " " << formatTimeString(getNowTime()));
+    LOGI(formatDateTimeString(getNowTime()));
 
     //2015周四/2016周五
     time_t dt2015 = 1451577599;
@@ -293,8 +293,50 @@ int checkTime()
     {
         return 11;
     }
-
-    
+    //hypothesis server is GMT+9, unknown client time area, utc second is 1451577599, in client get server's localtime.
+    if (gettm(1451577599 + (9 * 3600 - getTZZoneOffset())).tm_hour != 0)
+    {
+        return 12;
+    }
+    if (getSecondFromTimeString("1:2:3") != 1*3600 + 2*60 + 3)
+    {
+        return 15;
+    }
+    if (true)
+    {
+        int bit = 0;
+        bit = appendBitFlag(bit, 1);
+        bit = appendBitFlag(bit, 2);
+        if (!checkBitFlag(bit, 1))
+        {
+            return 16;
+        }
+        bit = removeBitFlag(bit, 1);
+        if (checkBitFlag(bit, 1))
+        {
+            return 17;
+        }
+        if (!checkBitFlag(bit, 2))
+        {
+            return 18;
+        }
+    }
+    if (pruning(1, 2,3) != 2)
+    {
+        return 19;
+    }
+    if (pruning(4, 2, 3) != 3)
+    {
+        return 20;
+    }
+    for (int i = 0; i < 10000; i++)
+    {
+        double rd = randfloat(0.2, 0.3);
+        if (rd < 0.2 || rd > 0.3)
+        {
+            return 21;
+        }
+    }
     LOGA("end check Time");
     return 0;
 }

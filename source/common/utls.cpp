@@ -402,13 +402,37 @@ time_t getUTCTimeFromLocalString(const std::string & str)
             st.tm_sec = fromString<int>(sptime[2], 0);
         }
     }
-    if (st.tm_year < 70) st.tm_year = 70;
-    if (st.tm_mon < 0 || st.tm_mon > 11) st.tm_mon = 0;
-    if (st.tm_mday < 1 || st.tm_mday > 31) st.tm_mday = 1;
-    if (st.tm_hour < 0 || st.tm_hour > 23) st.tm_hour = 0;
-    if (st.tm_min < 0 || st.tm_min > 59) st.tm_min = 0;
-    if (st.tm_sec < 0 || st.tm_sec > 59) st.tm_sec = 0;
+    st.tm_year = pruning(st.tm_year, 70, 200);
+    st.tm_mon = pruning(st.tm_mon, 0, 11);
+    st.tm_mday = pruning(st.tm_mday, 1, 31);
+    st.tm_hour = pruning(st.tm_hour, 0, 23);
+    st.tm_min = pruning(st.tm_min, 0, 59);
+    st.tm_sec = pruning(st.tm_sec, 0, 59);
     return mktime(&st);
+}
+
+time_t getSecondFromTimeString(const std::string & str)
+{
+    auto sptime = splitString(str, ":", " ");
+    int hour = 0;
+    int minute = 0;
+    int second = 0;
+    if (sptime.size() >= 1)
+    {
+        hour = fromString<int>(sptime[0], 0);
+    }
+    if (sptime.size() >= 2)
+    {
+        minute = fromString<int>(sptime[1], 0);
+    }
+    if (sptime.size() >= 3)
+    {
+        second = fromString<int>(sptime[2], 0);
+    }
+    hour = pruning(hour, 0, 23);
+    minute = pruning(minute, 0, 59);
+    second = pruning(second, 0, 59);
+    return hour * 3600 + minute * 60 + second;
 }
 
 std::string getProcessID()

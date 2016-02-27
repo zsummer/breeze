@@ -82,12 +82,12 @@ inline time_t getTZZoneOffset()
 {
     time_t fixday = 7 * 24 * 3600;
     tm tm = gettm(fixday);
-    return fixday - ((tm.tm_mday - 1) * 24 + tm.tm_hour) * 3600;
+    return ((tm.tm_mday - 1) * 24 + tm.tm_hour) * 3600 - fixday;
 }
 inline time_t getLocalDay(time_t t, time_t offset)
 {
     time_t fix = getTZZoneOffset();
-    return (t - fix + offset) / 24 / 3600;
+    return (t + fix + offset) / 24 / 3600;
 }
 inline time_t getLocalDay(time_t offset)
 {
@@ -127,21 +127,21 @@ inline tm gettm(time_t ts)
     return *tstm;
 }
 
-inline std::string getDateString(time_t ts)
+inline std::string formatDateString(time_t ts)
 {
     tm tstm = gettm(ts);
     char buff[50];
     sprintf(buff, "%04d-%02d-%02d", tstm.tm_year + 1900, tstm.tm_mon + 1, tstm.tm_mday);
     return buff;
 }
-inline std::string getTimeString(time_t ts)
+inline std::string formatTimeString(time_t ts)
 {
     tm tstm = gettm(ts);
     char buff[50];
     sprintf(buff, "%02d:%02d:%02d", tstm.tm_hour, tstm.tm_min, tstm.tm_sec);
     return buff;
 }
-inline std::string getDateTimeString(time_t ts)
+inline std::string formatDateTimeString(time_t ts)
 {
     tm tstm = gettm(ts);
     char buff[50];
