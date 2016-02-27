@@ -453,7 +453,7 @@ std::string getProcessID()
 
 std::string getProcessName()
 {
-    std::string name = LOG4Z_MAIN_LOGGER_KEY;
+    std::string name = "unknown";
     char buf[260] = { 0 };
 #ifdef WIN32
     if (GetModuleFileNameA(NULL, buf, 259) > 0)

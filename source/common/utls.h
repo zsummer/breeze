@@ -23,8 +23,57 @@
 #ifndef _UTLS_H_
 #define _UTLS_H_
 
-#include <defined.h>
-#include <single.h>
+#ifdef WIN32
+#pragma warning(disable:4996)
+#pragma warning(disable:4819)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <io.h>
+#include <shlwapi.h>
+#include <process.h>
+#include <direct.h>
+#else
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include<pthread.h>
+#include <fcntl.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#endif 
+
+#ifdef __APPLE__
+#include<mach/mach_time.h>
+#include <dispatch/dispatch.h>
+#include <libproc.h>
+#endif
+
+#include <iomanip>
+#include <string.h>
+#include <signal.h>
+#include <time.h>
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <utility>
+#include <algorithm>
+
+#include <functional>
+#include <memory>
+#include <unordered_map>
+#include <chrono>
+
+#include <string>
+#include <set>
+#include <vector>
+#include <list>
+#include <map>
+
 
 //file
 //==========================================================================
@@ -126,43 +175,22 @@ inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double o
 //bit
 //==========================================================================
 template<class Integer, class Number>
-inline bool checkBitFlag(Integer n, Number f) // f [1-32] or [1-64], begin 1 not 0.
-{
-    return (n & ((Integer)1 << (f - 1))) != 0;
-}
+inline bool checkBitFlag(Integer n, Number f); // f [1-32] or [1-64], begin 1 not 0.
+template<class Integer, class Number>
+inline Integer appendBitFlag(Integer n, Number f);
 
 template<class Integer, class Number>
-inline Integer appendBitFlag(Integer n, Number f)
-{
-    return n | ((Integer)1 << (f - 1));
-}
-
-template<class Integer, class Number>
-inline Integer removeBitFlag(Integer n, Number f)
-{
-    return n ^ ((Integer)1 << (f - 1));
-}
+inline Integer removeBitFlag(Integer n, Number f);
 
 //rand
 //==========================================================================
-inline double randfloat()
-{
-    return (rand() % 10000) / 10000.0;
-}
-inline double randfloat(double min, double max)
-{
-    return  min + randfloat() * (max - min);
-}
-
+inline double randfloat();
+inline double randfloat(double min, double max);
 //integer
 //==========================================================================
 //return value is [min, max]
 template<class T>
-inline T pruning(T v, T min, T max)
-{
-    return v < min ? min : (v > max ? max : v);
-}
-
+inline T pruning(T v, T min, T max);
 
 //process
 //==========================================================================

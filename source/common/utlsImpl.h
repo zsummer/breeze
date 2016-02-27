@@ -241,6 +241,43 @@ inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double o
 
 
 
+template<class Integer, class Number>
+inline bool checkBitFlag(Integer n, Number f)
+{
+    return (n & ((Integer)1 << (f - 1))) != 0;
+}
+
+template<class Integer, class Number>
+inline Integer appendBitFlag(Integer n, Number f)
+{
+    return n | ((Integer)1 << (f - 1));
+}
+
+template<class Integer, class Number>
+inline Integer removeBitFlag(Integer n, Number f)
+{
+    return n & ~((Integer)1 << (f - 1));
+}
+
+//rand
+//==========================================================================
+inline double randfloat()
+{
+    return (rand() % 10000) / 10000.0;
+}
+inline double randfloat(double min, double max)
+{
+    return  min + randfloat() * (max - min);
+}
+
+//integer
+//==========================================================================
+//return value is [min, max]
+template<class T>
+inline T pruning(T v, T min, T max)
+{
+    return v < min ? min : (v > max ? max : v);
+}
 
 
 

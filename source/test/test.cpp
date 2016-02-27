@@ -320,6 +320,12 @@ int checkTime()
         {
             return 18;
         }
+        bit = removeBitFlag(bit, 2);
+        if (bit != 0)
+        {
+            return 19;
+        }
+        
     }
     if (pruning(1, 2,3) != 2)
     {
