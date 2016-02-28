@@ -271,9 +271,68 @@ inline T pruning(T v, T min, T max)
 }
 
 
+template<class RandIt>
+inline void randomShuffle(RandIt first, RandIt end)
+{
+    std::random_shuffle(first, end);
+}
 
+template<class RandIt>
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount)
+{
+    std::vector<RandIt> temp;
+    if (true)
+    {
+        auto cur = first;
+        while (cur != end)
+        {
+            temp.push_back(cur);
+            cur++;
+        }
+    }
+    randomShuffle(temp.begin(), temp.end());
+    while (temp.size() > takeCount)
+    {
+        temp.pop_back();
+    }
+    return std::move(temp);
+}
 
-
+template<class RandIt, class GetWeightFunc> 
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount, GetWeightFunc getWeight)
+{
+    std::vector<std::pair<RandIt, size_t> > temp;
+    size_t sumWeight = 0;
+    if (true)
+    {
+        auto cur = first;
+        while (cur != end)
+        {
+            size_t curWeight = getWeight(cur);
+            sumWeight += curWeight;
+            temp.push_back(std::make_pair(cur, curWeight));
+            cur++;
+        }
+    }
+    std::vector<RandIt> ret;
+    while (ret.size() < takeCount && temp.size() > 0)
+    {
+        size_t rd = realRand() % (sumWeight+1);
+        size_t curWeight = 0;
+        for (auto iter = temp.begin(); iter != temp.end(); iter ++)
+        {
+            curWeight += iter->second;
+            if (rd <= curWeight)
+            {
+                ret.push_back(iter->first);
+                sumWeight -= iter->second;
+                temp.erase(iter);
+                break;
+            }
+        }
+    }
+    return std::move(ret);
+}
 
 
 

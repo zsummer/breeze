@@ -29,6 +29,25 @@ int checkFile();
 int checkTime();
 int checkFloat();
 int checkBalance();
+int checkRandom();
+
+
+#define TestUtls(func) do \
+{ \
+    LOGA("begin " << #func); \
+    double now = getTick(); \
+    int ret = func(); \
+    if (ret == 0) \
+    { \
+        LOGA("end " << #func << ", used second=" <<getTick() - now); \
+    } \
+    else \
+    { \
+        LOGE("end " << #func << ", used second=" <<getTick() - now << ", ret=" << ret); \
+        return ret; \
+    } \
+} while (false)
+
 int main(int argc, char* argv[])
 {
 
@@ -52,38 +71,12 @@ int main(int argc, char* argv[])
     LOGI("0second" << formatDateTimeString(0));
     LOGI("now" << formatDateTimeString(getNowTime()));
     LOGA("version released by " << __DATE__ << " " << __TIME__);
-
-    int ret = checkString();
-    if (ret != 0)
-    {
-        return ret;
-    }
-    ret = checkFile();
-    if (ret != 0)
-    {
-        return ret;
-    }
-    ret = checkTime();
-    if (ret != 0)
-    {
-        return ret;
-    }
-    ret = checkFloat();
-    if (ret != 0)
-    {
-        return ret;
-    }
-    ret = checkString();
-    if (ret != 0)
-    {
-        return ret;
-    }
-    ret = checkBalance();
-    if( ret != 0 )
-    {
-        return ret;
-    }
-
+    TestUtls(checkString);
+    TestUtls(checkFile);
+    TestUtls(checkFloat);
+    TestUtls(checkBalance);
+    TestUtls(checkRandom);
+    TestUtls(checkTime);
     LOGA("check all success.");
     sleepMillisecond(3000);
     return 0;
@@ -93,7 +86,6 @@ int main(int argc, char* argv[])
 
 int checkString()
 {
-    LOGA("begin check trim, splitString, toUpperString,toLowerString,compareStringIgnCase");
     std::string t1 = "%^&123^=&";
     auto ret = splitString(t1, "=", "&%^");
     if (ret.size() != 2)
@@ -152,13 +144,11 @@ int checkString()
     {
         return 16;
     }
-    LOGA("end check trim, splitString, toUpperString,toLowerString,compareStringIgnCase");
     return 0;
 }
 
 int checkFile()
 {
-    LOGA("begin check readFileContent, writeFileContent, isDirectory, createRecursionDir, MD5Data genMD5,genFileMD5");
     std::string content = "1234567890";
     std::string path = "./log2/log3/";
     std::string filename = "aaaa";
@@ -221,13 +211,11 @@ int checkFile()
         return 9;
     }
     
-    LOGA("end check readFileContent, writeFileContent, isDirectory, createRecursionDir, MD5Data genMD5,genFileMD5");
     return 0;
 }
 
 int checkTime()
 {
-    LOGA("begin check Time");
     getLocalDay(0);
     double now = getTick();
     double snow = getSteadyTick();
@@ -339,28 +327,12 @@ int checkTime()
     {
         return 20;
     }
-    for (int i = 0; i < 100000; i++)
-    {
-        unsigned int rr = realRand(1000, 2000);
-        if (rr < 1000 || rr > 2000)
-        {
-            return 21;
-        }
-        double rrf = realRandF(100.234, 200.999);
-        if (rrf < 100.234 || rrf > 200.999)
-        {
-            return 22;
-        }
-        continue;
-        
-    }
-    LOGA("end check Time");
+
     return 0;
 }
 
 int checkFloat()
 {
-    LOGA("begin check float");
     if(isZero(POINT_DOUBLE*2))
     {
         return 1;
@@ -418,14 +390,12 @@ int checkFloat()
         return 16;
     }
 
-    LOGA("end check float");
     return 0;
 }
 
 
 int checkBalance()
 {
-    LOGA("begin check balance");
     Balance balance;
     balance.enableNode(1);
     balance.enableNode(2);
@@ -475,11 +445,70 @@ int checkBalance()
         balance.changeWeight(4, 1);
     }
     LOGD("rate=" << balance.getBalanceRate() << ", status=" << balance.getBalanceStatus());
-    LOGA("end check balance");
     return 0;
 }
 
+int checkRandom()
+{
+    double now = getTick();
+    for (int i = 0; i < 10000; i++)
+    {
+        unsigned int rr = realRand(1000, 2000);
+        if (rr < 1000 || rr > 2000)
+        {
+            return 1;
+        }
+        double rrf = realRandF(100.234, 200.999);
+        if (rrf < 100.234 || rrf > 200.999)
+        {
+            return 2;
+        }
+        continue;
+    }
+    std::vector<int> cards;
+    for (int i = 100; i > 0; i--)
+    {
+        cards.push_back(i);
+    }
+    if (true)
+    {
+        int loopCount = 1*10000;
+        int sumRaffle = 0;
+        int sumRaffleWeight = 0;
+        for (int i = 0; i < loopCount; i++)
+        {
+            auto ret = raffle(cards.begin(), cards.end(), 10);
+            for (auto v : ret)
+            {
+                if (*v == 100)
+                {
+                    sumRaffle++;
+                    break;
+                }
+            }
+            ret = raffle(cards.begin(), cards.end(), 10, [](std::vector<int>::iterator iter){return *iter; });
+            for (auto v : ret)
+            {
+                if (*v == 100)
+                {
+                    sumRaffleWeight++;
+                    break;
+                }
+            }
+        }
+        if (abs(sumRaffle - loopCount* (1.0 / 100.0) * 10) > loopCount* (1.0 / 100.0) * 10)
+        {
+            return 3;
+        }
+        if (abs(sumRaffleWeight - loopCount *(100.0 / 5050.0) * 10) > loopCount *(100.0 / 5050.0) * 10)
+        {
+            return 4;
+        }
 
+    }
+
+    return 0;
+}
 
 
 
