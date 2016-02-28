@@ -498,7 +498,7 @@ std::string getProcessName()
     return name;
 }
 
-#ifdef APPLE
+#ifdef __APPLE__
 std::mt19937 __genRandom; // not thread safe - -!
 #elif defined(WIN32)
 __declspec(thread) char __genRandomBacking[sizeof(std::mt19937)];
