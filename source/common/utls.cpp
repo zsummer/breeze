@@ -498,12 +498,14 @@ std::string getProcessName()
     return name;
 }
 
-#ifndef WIN32
-thread_local std::mt19937 __genRandom; // vs2015 support
-#else 
+#ifdef __GNUC__
+thread_local std::mt19937 __genRandom; //vs2015 support
+#elif defined(WIN32)
 __declspec(thread) char __genRandomBacking[sizeof(std::mt19937)];
 __declspec(thread) std::mt19937* __genRandom; //vs2013 support
 __declspec(thread) bool __genRandomInited = false;
+#else
+std::mt19937 __genRandom; // not thread safe - -!
 #endif
 //rand
 //==========================================================================
