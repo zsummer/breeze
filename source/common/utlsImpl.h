@@ -259,16 +259,7 @@ inline Integer removeBitFlag(Integer n, Number f)
     return n & ~((Integer)1 << (f - 1));
 }
 
-//rand
-//==========================================================================
-inline double randfloat()
-{
-    return (rand() % 10000) / 10000.0;
-}
-inline double randfloat(double min, double max)
-{
-    return  min + randfloat() * (max - min);
-}
+
 
 //integer
 //==========================================================================

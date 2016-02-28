@@ -339,13 +339,20 @@ int checkTime()
     {
         return 20;
     }
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 100000; i++)
     {
-        double rd = randfloat(0.2, 0.3);
-        if (rd < 0.2 || rd > 0.3)
+        unsigned int rr = realRand(1000, 2000);
+        if (rr < 1000 || rr > 2000)
         {
             return 21;
         }
+        double rrf = realRandF(100.234, 200.999);
+        if (rrf < 100.234 || rrf > 200.999)
+        {
+            return 22;
+        }
+        continue;
+        
     }
     LOGA("end check Time");
     return 0;

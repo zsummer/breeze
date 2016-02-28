@@ -498,6 +498,40 @@ std::string getProcessName()
     return name;
 }
 
+#ifndef WIN32
+thread_local std::mt19937 __genRandom; // vs2015 support
+#else 
+__declspec(thread) char __genRandomBacking[sizeof(std::mt19937)];
+__declspec(thread) std::mt19937* __genRandom; //vs2013 support
+__declspec(thread) bool __genRandomInited = false;
+#endif
+//rand
+//==========================================================================
+unsigned int realRand()
+{
+#ifdef WIN32
+    if (!__genRandomInited)
+    {
+        __genRandom = new(__genRandomBacking)std::mt19937();
+        __genRandomInited = true;
+    }
+    return (*__genRandom)();
+#else
+    return __genRandom();
+#endif
+}
+unsigned int realRand(unsigned int mi, unsigned int mx)
+{
+    return mi + (realRand() % (mx - mi + 1));
+}
+double realRandF()
+{
+    return (double)realRand() * 1.0 / (double)0xffffffff;
+}
+double realRandF(double mi, double mx)
+{
+    return mi + realRandF()*(mx - mi);
+}
 
 
 

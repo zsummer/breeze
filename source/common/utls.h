@@ -67,6 +67,7 @@
 #include <memory>
 #include <unordered_map>
 #include <chrono>
+#include <random>
 
 #include <string>
 #include <set>
@@ -178,14 +179,20 @@ template<class Integer, class Number>
 inline bool checkBitFlag(Integer n, Number f); // f [1-32] or [1-64], begin 1 not 0.
 template<class Integer, class Number>
 inline Integer appendBitFlag(Integer n, Number f);
-
 template<class Integer, class Number>
 inline Integer removeBitFlag(Integer n, Number f);
 
 //rand
 //==========================================================================
-inline double randfloat();
-inline double randfloat(double min, double max);
+//[0-0xffffffff]
+unsigned int realRand();
+//[mi-mx]
+unsigned int realRand(unsigned int mi, unsigned int mx);
+//[0.0-1.0]
+double realRandF();
+//[mi, mx]
+double realRandF(double mi, double mx);
+
 //integer
 //==========================================================================
 //return value is [min, max]
