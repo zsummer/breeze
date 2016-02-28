@@ -278,7 +278,7 @@ inline void randomShuffle(RandIt first, RandIt end)
 }
 
 template<class RandIt>
-inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount)
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount)
 {
     std::vector<RandIt> temp;
     temp.reserve(128);
@@ -292,7 +292,7 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount)
         }
     }
     randomShuffle(temp.begin(), temp.end());
-    while (temp.size() > takeCount)
+    while (temp.size() > (size_t)takeCount)
     {
         temp.pop_back();
     }
@@ -300,17 +300,17 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount)
 }
 
 template<class RandIt, class GetWeightFunc> 
-inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount, GetWeightFunc getWeight)
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight)
 {
-    std::vector<std::pair<RandIt, size_t> > temp;
+    std::vector<std::pair<RandIt, int> > temp;
     temp.reserve(128);
-    size_t sumWeight = 0;
+    int sumWeight = 0;
     if (true)
     {
         auto cur = first;
         while (cur != end)
         {
-            size_t curWeight = getWeight(cur);
+            int curWeight = getWeight(cur);
             curWeight = curWeight >= 0 ? curWeight : 0;
             sumWeight += curWeight;
             temp.push_back(std::make_pair(cur, curWeight));
@@ -318,10 +318,10 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount, Ge
         }
     }
     std::vector<RandIt> ret;
-    while (ret.size() < takeCount && ret.size() < temp.size())
+    while (ret.size() < (size_t)takeCount && ret.size() < temp.size())
     {
-        size_t rd = realRand() % (sumWeight+1);
-        size_t curWeight = 0;
+        int rd = realRand() % (sumWeight+1);
+        int curWeight = 0;
         for (auto &v: temp)
         {
             if (v.second < 0)

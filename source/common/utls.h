@@ -195,9 +195,9 @@ double realRandF(double mi, double mx);
 template<class RandIt>
 inline void randomShuffle(RandIt first, RandIt end);
 template<class RandIt>
-inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount);
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount);
 template<class RandIt, class GetWeightFunc> // func example  [](RandIt iter){return iter->weight;}
-inline std::vector<RandIt> raffle(RandIt first, RandIt end, size_t takeCount, GetWeightFunc getWeight);
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight);
 //integer
 //==========================================================================
 //return value is [min, max]
