@@ -450,7 +450,6 @@ int checkBalance()
 
 int checkRandom()
 {
-    double now = getTick();
     for (int i = 0; i < 10000; i++)
     {
         unsigned int rr = realRand(1000, 2000);
@@ -473,8 +472,8 @@ int checkRandom()
     if (true)
     {
         int loopCount = 1*10000;
-        int sumRaffle = 0;
-        int sumRaffleWeight = 0;
+        double sumRaffle = 0.0;
+        double sumRaffleWeight = 0.0;
         for (int i = 0; i < loopCount; i++)
         {
             auto ret = raffle(cards.begin(), cards.end(), 10);
@@ -482,7 +481,7 @@ int checkRandom()
             {
                 if (*v == 100)
                 {
-                    sumRaffle++;
+                    sumRaffle += 1.0;
                     break;
                 }
             }
@@ -491,18 +490,38 @@ int checkRandom()
             {
                 if (*v == 100)
                 {
-                    sumRaffleWeight++;
+                    sumRaffleWeight += 1.0;
                     break;
                 }
             }
         }
-        if (abs(sumRaffle - loopCount* (1.0 / 100.0) * 10) > loopCount* (1.0 / 100.0) * 10)
+        if (fabs(sumRaffle - loopCount* (1.0 / 100.0) * 10.0) > loopCount* (1.0 / 100.0) * 10.0)
         {
             return 3;
         }
-        if (abs(sumRaffleWeight - loopCount *(100.0 / 5050.0) * 10) > loopCount *(100.0 / 5050.0) * 10)
+        if (fabs(sumRaffleWeight - loopCount *(100.0 / 5050.0) * 10.0) > loopCount *(100.0 / 5050.0) * 10.0)
         {
             return 4;
+        }
+        if (raffle(cards.begin(), cards.end(), 101).size() != 100)
+        {
+            return 5;
+        }
+        if (raffle(cards.begin(), cards.end(), 101, [](std::vector<int>::iterator iter){return *iter; }).size() != 100)
+        {
+            return 6;
+        }
+        if (raffle(cards.begin(), cards.end(), 101, [](std::vector<int>::iterator iter){return 0; }).size() != 100)
+        {
+            return 7;
+        }
+        if (raffle(cards.end(), cards.end(), 101, [](std::vector<int>::iterator iter){return 0; }).size() != 0)
+        {
+            return 8;
+        }
+        if (raffle(cards.end(), cards.end(), 101).size() != 0)
+        {
+            return 9;
         }
 
     }
