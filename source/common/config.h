@@ -43,7 +43,6 @@ public:
 
     inline ServerType getOwnServerType(){ return _ownServerType; }
     inline ServerNode getOwnServerNode(){ return _ownServerNode; }
-    inline PlatID getPlatID() { return _platid; }
     inline AreaID getAreaID() { return _areaid; }
 
 
@@ -51,7 +50,6 @@ public:
 private:
     ServerType _ownServerType = InvalidServerType;
     ServerNode _ownServerNode = InvalidServerNode;
-    PlatID _platid = 0;
     AreaID _areaid = 0;
 
     std::vector<ListenConfig> _configListen;

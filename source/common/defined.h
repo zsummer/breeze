@@ -115,8 +115,6 @@ const ServerNode InvalidServerNode = (ServerNode)-1;
 const ServerType LogicServer = 1;
 const ServerType StressClient = 2;
 
-
-
 struct Route
 {
     ServerType _fromType = InvalidServerType;
@@ -126,6 +124,71 @@ struct Route
     SessionID _fromSessionID = InvalidSessionID;
     SessionID _toSessionID = InvalidSessionID;
 };
+
+//DB类型
+typedef i8 DBConfigID;
+const DBConfigID InfoDB = 1;
+const DBConfigID LogDB = 2;
+const DBConfigID InvalidDB = (DBConfigID)0;
+
+
+//分区
+typedef i16 AreaID;
+
+struct ListenConfig
+{
+    std::string _ip;
+    unsigned short _port = 0;
+    std::vector<std::string> _whiteList;
+    std::string _wip;
+    unsigned short _wport = 0;
+    ServerType _node = InvalidServerType;
+    ServerNode _index = InvalidServerNode;
+};
+
+
+struct ConnectConfig
+{
+    ServerType _srcType = InvalidServerType;
+    ServerType _dstType = InvalidServerType;
+    ServerNode  _dstServerNode = InvalidServerNode;
+    std::string _remoteIP;
+    unsigned short _remotePort = 0;
+};
+
+
+struct DBConfig
+{
+    DBConfigID _id = InvalidDB;
+    std::string _ip;
+    unsigned short _port = 3306;
+    std::string _db;
+    std::string _user;
+    std::string _pwd;
+};
+
+
+
+
+
+
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
+{
+    os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
+    return os;
+}
+
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
+{
+    os << "[_srcType=" << config._srcType << ", _dstType=" << config._dstType << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
+    return os;
+}
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
+{
+    os << "[id=" << (int)config._id << ", ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
+    return os;
+}
+
 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Route & data)
 {
@@ -147,79 +210,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data._toSessionID;
     return rs;
 }
-
-
-//DB类型
-typedef i8 DBConfigID;
-const DBConfigID InfoDB = 1;
-const DBConfigID LogDB = 2;
-const DBConfigID InvalidDB = (DBConfigID)0;
-
-
-//分区分服的ID
-typedef i16 PlatID;
-typedef i16 AreaID;
-
-
-
-struct ListenConfig
-{
-    std::string _ip;
-    unsigned short _port = 0;
-    std::vector<std::string> _whiteList;
-    std::string _wip;
-    unsigned short _wport = 0;
-    ServerType _node = InvalidServerType;
-    ServerNode _index = InvalidServerNode;
-};
-
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
-{
-    os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
-    return os;
-}
-
-struct ConnectConfig
-{
-    ServerType _srcType = InvalidServerType;
-    ServerType _dstType = InvalidServerType;
-    ServerNode  _dstServerNode = InvalidServerNode;
-    std::string _remoteIP;
-    unsigned short _remotePort = 0;
-};
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
-{
-    os << "[_srcType=" << config._srcType << ", _dstType=" << config._dstType << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
-    return os;
-}
-
-struct DBConfig
-{
-    DBConfigID _id = InvalidDB;
-    std::string _ip;
-    unsigned short _port = 3306;
-    std::string _db;
-    std::string _user;
-    std::string _pwd;
-};
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
-{
-    os << "[id=" << (int)config._id << ", ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
-    return os;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #endif

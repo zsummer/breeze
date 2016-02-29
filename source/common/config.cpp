@@ -129,13 +129,9 @@ bool ServerConfig::parse(std::string filename, ServerType ownType, ServerNode ow
         LOGE("can't found the config file. filename=" << filename);
         return false;
     }
-    lua_getfield(L, -1, "traits");
-    lua_getfield(L, -1, "platid");
-    _platid = (unsigned short)luaL_checkinteger(L, -1);
-    lua_pop(L, 1);
     lua_getfield(L, -1, "areaid");
-    _areaid = (unsigned short)luaL_checkinteger(L, -1);
-    lua_pop(L, 2);
+    _areaid = (unsigned short)luaL_optinteger(L, -1, 0);
+    lua_pop(L, 1);
 
     lua_getfield(L, -1, "db");
     lua_pushnil(L);

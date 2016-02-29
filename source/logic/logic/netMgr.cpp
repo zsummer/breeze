@@ -20,7 +20,7 @@ NetMgr::NetMgr()
 
 bool NetMgr::init()
 {
-    _genID.initConfig(ServerConfig::getRef().getPlatID(), ServerConfig::getRef().getAreaID());
+    _genID.initConfig(ServerConfig::getRef().getAreaID());
     return buildData() && loadData();
 }
 
@@ -63,9 +63,9 @@ bool NetMgr::loadData()
         auto mapInfo = BaseInfo_FETCH(result);
         for (auto & kv : mapInfo)
         {
-            if (kv.first > _genID.getCurObjID())
+            if (kv.first > _genID.getCurID())
             {
-                _genID.setCurObjID(kv.first);
+                _genID.setCurID(kv.first);
             }
             createUser(kv.second);
         }
@@ -439,11 +439,6 @@ void NetMgr::msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs)
     session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_PLAT_CREATING);
     BaseInfo info;
     info.uID = _genID.genNewObjID();
-    if (info.uID >= _genID.getMaxObjID() || info.uID < _genID.getMinObjID())
-    {
-        LOGE("gen UserID over the max user ID. cur ID=" << info.uID);
-        return;
-    }
     info.account = session->getUserParamString(UPARAM_ACCOUNT);
     info.nickName = req.nickName;
     info.iconID = req.iconID;

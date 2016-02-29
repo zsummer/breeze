@@ -21,7 +21,7 @@ Chat::~Chat()
 
 bool Chat::init()
 {
-    _genID.initConfig(ServerConfig::getRef().getPlatID(), ServerConfig::getRef().getAreaID());
+    _genID.initConfig(ServerConfig::getRef().getAreaID());
     if (!buildMessage() || !loadMessage())
     {
         return false;
@@ -77,9 +77,8 @@ bool Chat::buildMessage()
 
 bool Chat::initGenerator()
 {
-    DBQuery q("select mID from tb_ChatInfo where mID >= ? and mID < ?  order by mID desc limit 1;");
-    q << _genID.getMinObjID();
-    q << _genID.getMaxObjID();
+    DBQuery q("select mID from tb_ChatInfo where mID >= ? order by mID desc limit 1;");
+    q << _genID.getCurID();
     auto result = DBMgr::getRef().infoQuery(q.popSQL());
     if (result->getErrorCode() != QEC_SUCCESS)
     {
@@ -92,7 +91,8 @@ bool Chat::initGenerator()
         {
             UserID lastChatID = 0;
             *result >> lastChatID;
-            _genID.setCurObjID(lastChatID);
+            _genID.setCurID(lastChatID);
+            LOGI("Chat::initGenerator setCurID=" << lastChatID);
         }
         catch (...)
         {
