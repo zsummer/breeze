@@ -122,23 +122,36 @@ static int testTag(lua_State * L)
     return 1;
 }
 
+
+static void printPackError(lua_State * L, const char *tp, const char * desc)
+{
+    char buf[200] = { 0 };
+    lua_getglobal(L, "print");
+    sprintf(buf, "pack warning. the value is nil when pack [%s].[%s]. it's will replace by default value.", desc, tp);
+    lua_pushstring(L, buf);
+    lua_pcall(L, 1, 0, 0);
+}
+
 static int pack(lua_State * L)
 {
     const char * tp = luaL_checkstring(L, 2);
-
+    const char * desc = luaL_optstring(L, 3, "");
     if (strcmp(tp, "i8") == 0)
     {
-        char v = (char)luaL_checkinteger(L, 1);
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
+        char v = (char)luaL_optinteger(L, 1, 0);
         lua_pushlstring(L, &v, 1);
     }
     else if (strcmp(tp, "ui8") == 0)
     {
-        unsigned char v = (unsigned char)luaL_checkinteger(L, 1);
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
+        unsigned char v = (unsigned char)luaL_optinteger(L, 1, 0);
         lua_pushlstring(L, (const char *)&v, 1);
     }
     else if (strcmp(tp, "i16") == 0)
     {
-        short v = (short)luaL_checkinteger(L, 1);
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
+        short v = (short)luaL_optinteger(L, 1, 0);
         if (!isLittleEndian())
         {
             byteRevese((char*)&v, 2);
@@ -147,7 +160,8 @@ static int pack(lua_State * L)
     }
     else if (strcmp(tp, "ui16") == 0)
     {
-        unsigned short v = (unsigned short)luaL_checkinteger(L, 1);
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
+        unsigned short v = (unsigned short)luaL_optinteger(L, 1, 0);
         if (!isLittleEndian())
         {
             byteRevese((char*)&v, 2);
@@ -156,7 +170,8 @@ static int pack(lua_State * L)
     }
     else if (strcmp(tp, "i32") == 0)
     {
-        int v = (int)luaL_checkinteger(L, 1);
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
+        int v = (int)luaL_optinteger(L, 1, 0);
         if (!isLittleEndian())
         {
             byteRevese((char*)&v, 4);
@@ -165,7 +180,8 @@ static int pack(lua_State * L)
     }
     else if (strcmp(tp, "ui32") == 0)
     {
-        unsigned int v = (unsigned int)luaL_checkinteger(L, 1);
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
+        unsigned int v = (unsigned int)luaL_optinteger(L, 1, 0);
         if (!isLittleEndian())
         {
             byteRevese((char*)&v, 4);
@@ -174,6 +190,7 @@ static int pack(lua_State * L)
     }
     else if (strcmp(tp, "i64") == 0 || strcmp(tp, "ui64") == 0)
     {
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
         if (lua_isstring(L, 1))
         {
             size_t len = 0;
@@ -214,7 +231,7 @@ static int pack(lua_State * L)
         }
         else
         {
-            unsigned long long v = (unsigned long long)luaL_checkinteger(L, 1);
+            unsigned long long v = (unsigned long long)luaL_optnumber(L, 1, 0);
             if (!isLittleEndian())
             {
                 byteRevese((char*)&v, 8);
@@ -224,7 +241,8 @@ static int pack(lua_State * L)
     }
     else if (strcmp(tp, "float") == 0)
     {
-        float v = (float)luaL_checknumber(L, 1);
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
+        float v = (float)luaL_optnumber(L, 1, 0.0f);
         if (!isLittleEndian())
         {
             byteRevese((char*)&v, 4);
@@ -233,7 +251,8 @@ static int pack(lua_State * L)
     }
     else if (strcmp(tp, "double") == 0)
     {
-        double v = (double)luaL_checknumber(L, 1);
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
+        double v = (double)luaL_optnumber(L, 1, 0.0f);
         if (!isLittleEndian())
         {
             byteRevese((char*)&v, 8);
@@ -242,19 +261,19 @@ static int pack(lua_State * L)
     }
     else
     {
+        if (lua_isnil(L, 1)) printPackError(L, tp, desc);
         return 0;
     }
     return 1;
 }
 
-static void printError(lua_State * L, size_t pos, size_t dataLen, const char *tp)
+static void printUnpackError(lua_State * L, size_t pos, size_t dataLen, const char *tp)
 {
-    char buf[100] = { 0 };
+    char buf[200] = { 0 };
     lua_getglobal(L, "print");
     sprintf(buf, "unpack error. the current pos is invalid. cur pos=%u, type=%s, blockSize=%u", (unsigned int)pos, tp, (unsigned int)dataLen);
     lua_pushstring(L, buf);
     lua_pcall(L, 1, 0, 0);
-    
 }
 static int unpack(lua_State * L)
 {
@@ -264,7 +283,7 @@ static int unpack(lua_State * L)
     const char * tp = luaL_checkstring(L, 3);
     if (pos < 1 || (size_t)pos > dataLen)
     {
-        printError(L, pos, dataLen, "any");
+        printUnpackError(L, pos, dataLen, "any");
         return 0;
     }
     
@@ -272,7 +291,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 1 > dataLen)
         {
-            printError(L, pos, dataLen, "i8");
+            printUnpackError(L, pos, dataLen, "i8");
             return 0;
         }
         char ch = (char)data[pos - 1];
@@ -283,7 +302,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 1 > dataLen)
         {
-            printError(L, pos, dataLen, "ui8");
+            printUnpackError(L, pos, dataLen, "ui8");
             return 0;
         }
         unsigned char ch = (unsigned char)data[pos - 1];
@@ -294,7 +313,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 2 > dataLen)
         {
-            printError(L, pos, dataLen, "i16");
+            printUnpackError(L, pos, dataLen, "i16");
             return 0;
         }
         short v = 0;
@@ -310,7 +329,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 2 > dataLen)
         {
-            printError(L, pos, dataLen, "ui16");
+            printUnpackError(L, pos, dataLen, "ui16");
             return 0;
         }
         unsigned short v = 0;
@@ -326,7 +345,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 4 > dataLen)
         {
-            printError(L, pos, dataLen, "i32");
+            printUnpackError(L, pos, dataLen, "i32");
             return 0;
         }
         int v = 0;
@@ -342,7 +361,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 4 > dataLen)
         {
-            printError(L, pos, dataLen, "ui32");
+            printUnpackError(L, pos, dataLen, "ui32");
             return 0;
         }
         unsigned int v = 0;
@@ -358,7 +377,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 8 > dataLen)
         {
-            printError(L, pos, dataLen, "i64/ui64");
+            printUnpackError(L, pos, dataLen, "i64/ui64");
             return 0;
         }
 /*        {
@@ -399,7 +418,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 4 > dataLen)
         {
-            printError(L, pos, dataLen, "float");
+            printUnpackError(L, pos, dataLen, "float");
             return 0;
         }
         float v = 0;
@@ -415,7 +434,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 8 > dataLen)
         {
-            printError(L, pos, dataLen, "double");
+            printUnpackError(L, pos, dataLen, "double");
             return 0;
         }
         double v = 0;
@@ -431,7 +450,7 @@ static int unpack(lua_State * L)
     {
         if (pos - 1 + 4 > dataLen)
         {
-            printError(L, pos, dataLen, "string/head");
+            printUnpackError(L, pos, dataLen, "string/head");
             return 0;
         }
         unsigned int strLen = 0;
@@ -443,7 +462,7 @@ static int unpack(lua_State * L)
         pos += 4;
         if (pos - 1 + strLen > dataLen)
         {
-            printError(L, pos, dataLen, "string/body");
+            printUnpackError(L, pos, dataLen, "string/body");
             return 0;
         }
         lua_pushlstring(L, &data[pos - 1], strLen);
@@ -498,7 +517,7 @@ static luaL_Reg tagReg[] = {
 
     //把一个lua数据按照类型说明序列化成一段二进制流.
     //支持i8,ui8, i16, ui16, i32, ui32, i64, ui64, float, double, string. 
-    //example: local block = pack(obj, "ui32")
+    //example: local block = pack(obj, "ui32", "desc")
     { "pack", pack }, 
 
     //从二进制流中流出一个元素 并返回下一个元素开始的下标位置. 
