@@ -104,7 +104,25 @@ HISTORY for Log4z
  *  support for reading config from a string.
  *  remove all TLS code, used dispatch_semaphore in apple OS.
  *  support system: windows, linux, mac, iOS
- *  
+ *
+ * VERSION 3.1 <DATE: 2014.12.19>
+ *  add method enable/disable logger by specific logger id
+ *  add method enable/disable log suffix line number.
+ *  add method enable/disable log output to file.
+ *
+ * VERSION 3.2 <DATE: 2014.12.19>
+ *  add interface setLoggerName,setLoggerPath,setAutoUpdate
+ *  support auto update from configure file
+ *
+ * VERSION 3.3 <DATE: 2014.12.19>
+ *  support map vector list
+ *  support continuum via travis.
+ *  new hot change design, all change realize need via push log flow.
+ *  support oem string convert.
+ *  new method to read whole content of file.
+ *  check configure's checksum when auto update it.
+ *  some other optimize.
+ *
  */
    
 (end of HISTORY)

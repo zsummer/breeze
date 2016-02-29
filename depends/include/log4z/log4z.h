@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,10 +37,10 @@
 
 /*
  * AUTHORS:  YaweiZhang <yawei.zhang@foxmail.com>
- * VERSION:  3.0.0
+ * VERSION:  3.3.0
  * PURPOSE:  A lightweight library for error reporting and logging to file and screen .
  * CREATION: 2010.10.4
- * LCHANGE:  2014.12.19
+ * LCHANGE:  2016.02.29
  * LICENSE:  Expat/MIT License, See Copyright Notice at the begin of this file.
  */
 
@@ -156,7 +156,25 @@
  *  support for reading config from a string.
  *  remove all TLS code, used dispatch_semaphore in apple OS.
  *  support system: windows, linux, mac, iOS
- *  
+ *
+ * VERSION 3.1 <DATE: 2014.12.19>
+ *  add method enable/disable logger by specific logger id
+ *  add method enable/disable log suffix line number.
+ *  add method enable/disable log output to file.
+ *
+ * VERSION 3.2 <DATE: 2014.12.19>
+ *  add interface setLoggerName,setLoggerPath,setAutoUpdate
+ *  support auto update from configure file
+ *
+ * VERSION 3.3 <DATE: 2014.12.19>
+ *  support map vector list
+ *  support continuum via travis.
+ *  new hot change design, all change realize need via push log flow.
+ *  support oem string convert.
+ *  new method to read whole content of file.
+ *  check configure's checksum when auto update it.
+ *  some other optimize.
+ *
  */
 
 
@@ -224,6 +242,8 @@ enum ENUM_LOG_LEVEL
 const int LOG4Z_LOGGER_MAX = 10;
 //! the max log content length.
 const int LOG4Z_LOG_BUF_SIZE = 2048;
+//! the max stl container depth.
+const int LOG4Z_LOG_CONTAINER_DEPTH = 5;
 
 //! all logger synchronous output or not
 const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = false;
@@ -496,16 +516,114 @@ public:
 
     inline Log4zStream & operator << (const zsummer::log4z::Log4zBinary & binary){ return writeBinary(binary); }
 
+    template<class _Ty1, class _Ty2>
+    inline Log4zStream & operator <<(const std::pair<_Ty1, _Ty2> & t){ return *this << "pair(" << t.first << ":" << t.second << ")"; }
+
     template<class _Elem, class _Alloc>
-    inline Log4zStream & operator <<(const std::vector<_Elem, _Alloc> & t){ *this << "vector[size="; *this << t.size(); return *this << "]"; }
+    inline Log4zStream & operator <<(const std::vector<_Elem, _Alloc> & t)
+    { 
+        *this << "vector(" << t.size() << ")[";
+        int inputCount = 0;
+        for (typename std::vector<_Elem, _Alloc>::const_iterator iter = t.begin(); iter != t.end(); iter++)
+        {
+            inputCount++;
+            if (inputCount > LOG4Z_LOG_CONTAINER_DEPTH)
+            {
+                *this << "..., ";
+                break;
+            }
+            *this << *iter << ", ";
+        }
+        if (!t.empty())
+        {
+            _cur -= 2;
+        }
+        return *this << "]";
+    }
     template<class _Elem, class _Alloc>
-    inline Log4zStream & operator <<(const std::list<_Elem, _Alloc> & t){ *this << "list[size="; *this << t.size(); return *this << "]"; }
+    inline Log4zStream & operator <<(const std::list<_Elem, _Alloc> & t)
+    { 
+        *this << "list(" << t.size() << ")[";
+        int inputCount = 0;
+        for (typename std::list<_Elem, _Alloc>::const_iterator iter = t.begin(); iter != t.end(); iter++)
+        {
+            inputCount++;
+            if (inputCount > LOG4Z_LOG_CONTAINER_DEPTH)
+            {
+                *this << "..., ";
+                break;
+            }
+            *this << *iter << ", ";
+        }
+        if (!t.empty())
+        {
+            _cur -= 2;
+        }
+        return *this << "]";
+    }
     template<class _Elem, class _Alloc>
-    inline Log4zStream & operator <<(const std::deque<_Elem, _Alloc> & t){ *this << "deque[size="; *this << t.size(); return *this << "]"; }
+    inline Log4zStream & operator <<(const std::deque<_Elem, _Alloc> & t)
+    {
+        *this << "deque(" << t.size() << ")[";
+        int inputCount = 0;
+        for (typename std::deque<_Elem, _Alloc>::const_iterator iter = t.begin(); iter != t.end(); iter++)
+        {
+            inputCount++;
+            if (inputCount > LOG4Z_LOG_CONTAINER_DEPTH)
+            {
+                *this << "..., ";
+                break;
+            }
+            *this << *iter << ", ";
+        }
+        if (!t.empty())
+        {
+            _cur -= 2;
+        }
+        return *this << "]";
+    }
     template<class _Elem, class _Alloc>
-    inline Log4zStream & operator <<(const std::queue<_Elem, _Alloc> & t){ *this << "queue[size="; *this << t.size(); return *this << "]"; }
+    inline Log4zStream & operator <<(const std::queue<_Elem, _Alloc> & t)
+    {
+        *this << "queue(" << t.size() << ")[";
+        int inputCount = 0;
+        for (typename std::queue<_Elem, _Alloc>::const_iterator iter = t.begin(); iter != t.end(); iter++)
+        {
+            inputCount++;
+            if (inputCount > LOG4Z_LOG_CONTAINER_DEPTH)
+            {
+                *this << "..., ";
+                break;
+            }
+            *this << *iter << ", ";
+        }
+        if (!t.empty())
+        {
+            _cur -= 2;
+        }
+        return *this << "]";
+    }
     template<class _K, class _V, class _Pr, class _Alloc>
-    inline Log4zStream & operator <<(const std::map<_K, _V, _Pr, _Alloc> & t){ *this << "map[size="; *this << t.size(); return *this << "]"; }
+    inline Log4zStream & operator <<(const std::map<_K, _V, _Pr, _Alloc> & t)
+    {
+        *this << "map(" << t.size() << ")[";
+        int inputCount = 0;
+        for (typename std::map < _K, _V, _Pr, _Alloc>::const_iterator iter = t.begin(); iter != t.end(); iter++)
+        {
+            inputCount++;
+            if (inputCount > LOG4Z_LOG_CONTAINER_DEPTH)
+            {
+                *this << "..., ";
+                break;
+            }
+            *this << *iter << ", ";
+        }
+        if (!t.empty())
+        {
+            _cur -= 2;
+        }
+        return *this << "]";
+    }
 
 private:
     Log4zStream(){}
@@ -625,6 +743,7 @@ inline zsummer::log4z::Log4zStream & zsummer::log4z::Log4zStream::writeWString(c
 #endif
     return *this;
 }
+
 
 
 #ifdef WIN32
