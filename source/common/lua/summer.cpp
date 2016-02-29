@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -107,6 +107,7 @@ static int pcall_error(lua_State *L)
 
 static int _linkedRef = LUA_NOREF;
 static int _messageRef = LUA_NOREF;
+static int _webMessageRef = LUA_NOREF;
 static int _closedRef = LUA_NOREF;
 static int _pulseRef = LUA_NOREF;
 
@@ -128,7 +129,7 @@ static void _onSessionLinked(lua_State * L, TcpSessionPtr session)
         lua_pop(L, 1);
     }
 }
-
+//param:sID, pID, content
 static void _onMessage(lua_State * L, TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
@@ -143,11 +144,58 @@ static void _onMessage(lua_State * L, TcpSessionPtr session, const char * begin,
     {
         const char *msg = lua_tostring(L, -1);
         if (msg == NULL) msg = "(error object is not a string)";
+        LOGE("code crash when process message. sID=" << session->getSessionID() << ", block len=" << len
+            << ", block=" << zsummer::log4z::Log4zBinary(begin, len));
         LOGE(msg);
         lua_pop(L, 1);
     }
 }
-
+//param: sID, {key=,value=}, {head kv}, body
+static void _onWebMessage(lua_State * L, TcpSessionPtr session, const zsummer::network::PairString & commonLine,
+                          const MapString &head, const std::string & body)
+{
+    lua_pushcfunction(L, pcall_error);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, _webMessageRef);
+    lua_pushinteger(L, session->getSessionID());
+    lua_newtable(L);
+    lua_pushstring(L, commonLine.first.c_str());
+    lua_setfield(L, -2, "key");
+    lua_pushstring(L, commonLine.second.c_str());
+    lua_setfield(L, -2, "value");
+    lua_newtable(L);
+    bool needUrlDecode = false;
+    for (auto & hd : head)
+    {
+        lua_pushstring(L, hd.second.c_str());
+        lua_setfield(L, -2, hd.first.c_str());
+        if(hd.first.find("Content-Type") != std::string::npos
+           && hd.second.find("application/x-www-form-urlencoded") != std::string::npos)
+        {
+            needUrlDecode = true;
+        }
+    }
+    if (needUrlDecode)
+    {
+        std::string de = zsummer::proto4z::urlDecode(body);
+        lua_pushlstring(L, de.c_str(), de.length());
+    }
+    else
+    {
+        lua_pushlstring(L, body.c_str(), body.length());
+    }
+    int status = lua_pcall(L, 4, 0, 1);
+    lua_remove(L, 1);
+    if (status)
+    {
+        const char *msg = lua_tostring(L, -1);
+        if (msg == NULL) msg = "(error object is not a string)";
+        LOGE("code crash when process web message. sID=" << session->getSessionID()
+            << ", commond line=" << commonLine.first << " " << commonLine.second << ", body(max500byte)=" << body.substr(0, 500)
+            << ", head=" << head);
+        LOGE(msg);
+        lua_pop(L, 1);
+    }
+}
 static void _onSessionClosed(lua_State * L, TcpSessionPtr session)
 {
     if (_closedRef == LUA_NOREF)
@@ -233,6 +281,7 @@ static int run(lua_State * L)
     return 0;
 }
 
+//ip,port, encrypt string, reconnect count, pulse intv(ms), proto type(0 tcp, 1 http)
 static int addConnect(lua_State *L)
 {
     SessionID cID = SessionManager::getRef().addConnecter(luaL_checkstring(L, 1), (unsigned short)luaL_checkinteger(L, 2));
@@ -240,8 +289,11 @@ static int addConnect(lua_State *L)
     traits._rc4TcpEncryption = luaL_optstring(L, 3, traits._rc4TcpEncryption.c_str());
     traits._reconnects = (unsigned int)luaL_optinteger(L, 4, traits._reconnects);
     traits._connectPulseInterval = (unsigned int)luaL_optinteger(L, 5, traits._connectPulseInterval);
+    traits._protoType = (unsigned int)luaL_optinteger(L, 6, 0) == 0 ? PT_TCP : PT_HTTP;
     traits._onSessionLinked = std::bind(_onSessionLinked, L, std::placeholders::_1);
     traits._onBlockDispatch = std::bind(_onMessage, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    traits._onHTTPBlockDispatch = std::bind(_onWebMessage, L, std::placeholders::_1, std::placeholders::_2,
+                                            std::placeholders::_3, std::placeholders::_4);
     traits._onSessionClosed = std::bind(_onSessionClosed, L, std::placeholders::_1);
     traits._onSessionPulse = std::bind(_onSessionPulse, L, std::placeholders::_1);
 
@@ -254,7 +306,7 @@ static int addConnect(lua_State *L)
 }
 
 
-
+//ip,port, encrypt string, limit sessions, pulse intv(ms), proto type(0 tcp, 1 http)
 static int addListen(lua_State *L)
 {
     AccepterID aID = SessionManager::getRef().addAccepter(luaL_checkstring(L, 1), (unsigned short)luaL_checkinteger(L, 2));
@@ -262,8 +314,11 @@ static int addListen(lua_State *L)
     extend._sessionOptions._rc4TcpEncryption = luaL_optstring(L, 3, extend._sessionOptions._rc4TcpEncryption.c_str());
     extend._maxSessions = (unsigned int)luaL_optinteger(L, 4, extend._maxSessions);
     extend._sessionOptions._sessionPulseInterval = (unsigned int)luaL_optinteger(L, 5, extend._sessionOptions._sessionPulseInterval);
+    extend._sessionOptions._protoType = (unsigned int)luaL_optinteger(L, 6, 0) == 0 ? PT_TCP : PT_HTTP;
     extend._sessionOptions._onSessionLinked = std::bind(_onSessionLinked, L, std::placeholders::_1);
     extend._sessionOptions._onBlockDispatch = std::bind(_onMessage, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    extend._sessionOptions._onHTTPBlockDispatch = std::bind(_onWebMessage, L, std::placeholders::_1, std::placeholders::_2,
+                                            std::placeholders::_3, std::placeholders::_4);
     extend._sessionOptions._onSessionClosed = std::bind(_onSessionClosed, L, std::placeholders::_1);
     extend._sessionOptions._onSessionPulse = std::bind(_onSessionPulse, L, std::placeholders::_1);
 
@@ -309,6 +364,18 @@ static int setMessageRef(lua_State * L)
     return 0;
 }
 
+static int setWebMessageRef(lua_State * L)
+{
+    luaL_checktype(L, 1, LUA_TFUNCTION);
+    lua_settop(L, 1);
+    if (_webMessageRef != LUA_NOREF)
+    {
+        LOGE("setMessageRef error. connect callback already .");
+        return 0;
+    }
+    _webMessageRef = luaL_ref(L, LUA_REGISTRYINDEX);
+    return 0;
+}
 
 
 
@@ -341,6 +408,76 @@ static int setPulseRef(lua_State * L)
     return 0;
 }
 
+static int webGet(lua_State * L)
+{
+    SessionID sID = (SessionID)luaL_checkinteger(L, 1);
+    zsummer::proto4z::WriteHTTP wh;
+    std::string url = luaL_checkstring(L, 2);
+    if(lua_istable(L, 3))
+    {
+        lua_pushnil(L);
+        while(lua_next(L, 3) != 0)
+        {
+            lua_pushvalue(L, -2);
+            wh.addHead(luaL_optstring(L, -1, ""), luaL_optstring(L, -2, ""));
+            lua_pop(L, 2);
+        }
+    }
+    wh.get(url);
+    SessionManager::getRef().sendSessionData(sID, wh.getStream(), wh.getStreamLen());
+    return 0;
+}
+static int webPost(lua_State * L)
+{
+    SessionID sID = (SessionID)luaL_checkinteger(L, 1);
+    zsummer::proto4z::WriteHTTP wh;
+    std::string uri = luaL_checkstring(L, 2);
+    LOGD("top=" << lua_gettop(L));
+    if(lua_istable(L, 3))
+    {
+        lua_pushnil(L);
+        while(lua_next(L, 3) != 0)
+        {
+            lua_pushvalue(L, -2);
+            wh.addHead(luaL_optstring(L, -1, ""), luaL_optstring(L, -2, ""));
+            lua_pop(L, 2);
+        }
+    }
+    LOGD("top=" << lua_gettop(L));
+    size_t len = 0;
+    const char * str = luaL_optlstring(L, 4, "", &len);
+    std::string body;
+    body.assign(str, len);
+    wh.post(uri, body);
+    SessionManager::getRef().sendSessionData(sID, wh.getStream(), wh.getStreamLen());
+    return 0;
+}
+
+static int webResponse(lua_State * L)
+{
+    SessionID sID = (SessionID)luaL_checkinteger(L, 1);
+    zsummer::proto4z::WriteHTTP wh;
+    std::string code = luaL_checkstring(L, 2);
+    LOGD("TOP=" << lua_gettop(L));
+    if(lua_istable(L, 3))
+    {
+        lua_pushnil(L);
+        while(lua_next(L, 3) != 0)
+        {
+            lua_pushvalue(L, -2);
+            wh.addHead(luaL_optstring(L, -1, ""), luaL_optstring(L, -2, ""));
+            lua_pop(L, 2);
+        }
+    }
+    LOGD("TOP=" << lua_gettop(L));
+    size_t len = 0;
+    const char * str = luaL_optlstring(L, 4, "", &len);
+    std::string body;
+    body.assign(str, len);
+    wh.response(code, body);
+    SessionManager::getRef().sendSessionData(sID, wh.getStream(), wh.getStreamLen());
+    return 0;
+}
 
 static int sendContent(lua_State * L)
 {
@@ -436,14 +573,18 @@ static luaL_Reg summer[] = {
     { "stop", stop }, //stop network
     { "run", run }, //run
     { "runOnce", runOnce }, //message pump, run it once.
-    { "addConnect", addConnect }, //add one connect.
-    { "addListen", addListen }, //add listen.
+    { "addConnect", addConnect }, //add one connect. param: ip,port, encrypt string, reconnect count, pulse intv(ms), proto type(0 tcp, 1 http)
+    { "addListen", addListen }, //add listen. param: ip, port, encrypt string, limit sessions, pulse intv(ms), proto type(0 tcp, 1 http)
     { "whenLinked", setLinkedRef }, //register event when connect success.
-    { "whenMessage", setMessageRef }, //register event when recv message.
+    { "whenMessage", setMessageRef }, //function, //param:sID, pID, content
+    { "whenWebMessage", setWebMessageRef }, //function, //param: sID, {key=,value=}, {head kv}, body
     { "whenClosed", setClosedRef }, //register event when disconnect.
     { "whenPulse", setPulseRef }, //register event when pulse.
+    { "webGet", webGet }, // param: sID, url, {head kv}
+    { "webPost", webPost }, // param: sID, uri, {head kv}, body string.
+    { "webResponse", webResponse }, //param: sID, code string, {head kv}, body string
     { "sendContent", sendContent }, //send content, don't care serialize and package.
-    { "sendData", sendData }, // send original data, need to serialize and package via proto4z. 
+    { "sendData", sendData }, // send original data, need to serialize and package via proto4z.
     { "kick", kick }, // kick session. 
     { "post", _post }, // kick session. 
     { "status", _status }, // get session status. 
