@@ -135,6 +135,8 @@ inline time_t getTZZoneOffset();
 inline time_t getLocalDay(time_t offset);
 //the day through 1900-01-01 00:00:00 @ $t
 inline time_t getLocalDay(time_t t, time_t offset);
+//get current second from day begin.
+inline time_t getDaySecond(time_t t);
 //the day through 1900-01-01 00:00:00
 inline time_t getLocalDayByReadable(time_t offset);
 //the day through 1900-01-01 00:00:00 @ $t

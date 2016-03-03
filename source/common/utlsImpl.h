@@ -93,6 +93,10 @@ inline time_t getLocalDay(time_t offset)
 {
     return getLocalDay(getUTCTime(), offset);
 }
+inline time_t getDaySecond(time_t t)
+{
+    return (t + getTZZoneOffset()) % (24 * 3600);
+}
 inline time_t getLocalDayByReadable(time_t t, time_t offset)
 {
     tm st = gettm(t);

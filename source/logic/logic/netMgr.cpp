@@ -458,15 +458,17 @@ void NetMgr::db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const Ba
     {
         ack.retCode = EC_DB_ERROR;
         _mapAccounts[info.account].erase(info.uID);
+        sendMessage(session, ack);
     }
     else
     {
         //!模拟 通知logic服务器添加新的用户
         createUser(info);
         ack.users.push_back(info);
+        sendMessage(session, ack);
         //end
     }
-    sendMessage(session, ack);
+    
 }
 
 

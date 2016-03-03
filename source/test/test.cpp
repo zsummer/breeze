@@ -327,6 +327,16 @@ int checkTime()
     {
         return 20;
     }
+    if (true)
+    {
+        time_t now = getUTCTime();
+        time_t scd = getDaySecond(now);
+        tm ts = gettm(now);
+        if (scd != ts.tm_hour * 3600 + ts.tm_min*60 + ts.tm_sec)
+        {
+            return 21;
+        }
+    }
 
     return 0;
 }
