@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -78,19 +78,6 @@
 #include <map>
 
 
-#include <log4z/log4z.h>
-#include <proto4z/proto4z.h>
-#include <zsummerX/zsummerX.h>
-#include <ProtoCommon.h>
-#include <dispatch.h>
-
-using namespace zsummer::log4z;
-using namespace zsummer::network;
-using namespace zsummer::proto4z;
-using namespace std::placeholders;
-
-
-
 //! 基本类型
 typedef char i8;
 typedef unsigned char ui8;
@@ -101,25 +88,53 @@ typedef unsigned int ui32;
 typedef long long i64;
 typedef unsigned long long ui64;
 
+
+#include <log4z/log4z.h>
+#include <proto4z/proto4z.h>
+#include <proto4z/dbHelper.h>
+#include <multimod_matching_tree/match_tree.h>
+#include <rc4/rc4_encryption.h>
+#include <zsummerX/zsummerX.h>
+
+
+
+extern "C"
+{
+#include "lua/lua.h"
+#include "lua/lualib.h"
+#include "lua/lauxlib.h"
+    int luaopen_proto4z_util(lua_State *L);
+    int luaopen_cjson(lua_State *l);
+}
+#include "lua/summer.h"
+
+using namespace zsummer::log4z;
+using namespace zsummer::network;
+using namespace zsummer::proto4z;
+using namespace std::placeholders;
+using namespace zsummer::mysql;
+
 //分区
-typedef i16 AreaID;
+typedef ui32 AreaID;
 
 //节点索引ID
-typedef i16 ClusterNode;
+typedef ui32 ClusterNode;
 const ClusterNode InvalidClusterNode = 0;
 
-typedef ui64 ServiceID;
-const ServiceID InvalidServiceID = 0;
+const std::string EntityClient = "client"; //特殊
+const std::string EntityUser = "user"; //特殊, 需要uid
+const std::vector<std::string> EntityServices = { "userMgr", "chatMgr", "dbMgr" };
 
-const std::string ClientService = "client"; //需要uid
-const std::string UserService = "user"; //需要uid
-const std::vector<std::string> SingletonServices = { "userMgr", "chatMgr", "dbMgr"};
+struct EntityMailbox 
+{
+    ClusterNode _cluster = InvalidClusterNode;
+};
 
 
 typedef ui64 UserID;
 const ui64 InvalidUserID = (UserID)0;
 
-struct Route
+struct Tracing
 {
     std::string _toService;
     UserID _toUID = InvalidUserID;
@@ -128,7 +143,7 @@ struct Route
 };
 
 const std::string InfoDB = "info";
-const std::string LogDB = "log"; 
+const std::string LogDB = "log";
 const std::vector<std::string> DBCluster = { InfoDB, LogDB };
 
 
@@ -160,10 +175,50 @@ struct DBConfig
 
 
 
+//! 逻辑类型
+enum SessionStatus
+{
+    SSTATUS_UNKNOW = 0,
+    SSTATUS_PLAT_LOGINING,
+    SSTATUS_PLAT_LOGINED,
+    SSTATUS_PLAT_LOADING,
+    SSTATUS_PLAT_CREATING,
+    SSTATUS_PLAT_SELECTING,
+    SSTATUS_LOGINED,
+    SSTATUS_TRUST, //受信任的服务器内部session 
+};
+
+enum SessionUserData
+{
+    UPARAM_SESSION_STATUS,
+    UPARAM_ACCOUNT,
+    UPARAM_USER_ID,
+    UPARAM_LOGIN_TIME,
+    UPARAM_LAST_ACTIVE_TIME,
+};
+
+
+template <class MSG>
+void sendMessage(zsummer::network::TcpSessionPtr & session, MSG & msg)
+{
+    zsummer::proto4z::WriteStream ws(MSG::GetProtoID());
+    ws << msg;
+    session->send(ws.getStream(), ws.getStreamLen());
+}
+
+template <class MSG>
+void sendMessage(zsummer::network::SessionID & sID, MSG & msg)
+{
+    zsummer::proto4z::WriteStream ws(MSG::GetProtoID());
+    ws << msg;
+    zsummer::network::SessionManager::getRef().sendSessionData(sID, ws.getStream(), ws.getStreamLen());
+}
+
+
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ClusterConfig & config)
 {
-    os << "[_serviceBindIP=" << config._serviceBindIP << ", _serviceIP=" << config._serviceIP 
+    os << "[_serviceBindIP=" << config._serviceBindIP << ", _serviceIP=" << config._serviceIP
         << ", _servicePort=" << config._servicePort << ", _wideIP=" << config._wideIP
         << ", _widePort=" << config._widePort << ", _whiteList=" << config._whiteList
         << ", _services=" << config._services << ", _cluster=" << config._cluster
@@ -174,13 +229,13 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
 {
-    os << "[_name=" << config._name << ", ip=" << config._ip << ", port=" << config._port 
+    os << "[_name=" << config._name << ", ip=" << config._ip << ", port=" << config._port
         << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
     return os;
 }
 
 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Route & data)
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data)
 {
     ws << data._toService;
     ws << data._toUID;
@@ -188,7 +243,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data._fromUID;
     return ws;
 }
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Route & data)
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data)
 {
     rs >> data._toService;
     rs >> data._toUID;
@@ -196,6 +251,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data._fromUID;
     return rs;
 }
+
+
 
 
 #endif

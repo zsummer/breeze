@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2015 - 2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -68,13 +68,13 @@ protected:
 
     void msg_onAttachLogicReq(TcpSessionPtr session, ReadStream & rs);
 
-
-
     bool on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
 
     void event_onSessionPulse(TcpSessionPtr session);
     void msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs);
 private:
+    std::unordered_map<std::string, EntityMailbox> _services;
+
     std::unordered_map<SessionID, UserInfoPtr> _mapSession;
     std::unordered_map<UserID, UserInfoPtr> _mapUserInfo;
     
@@ -88,35 +88,6 @@ private:
     AccepterID _wAID = InvalidAccepterID;
     std::function<void()> _onSafeClosed;
 };
-
-
-template<typename Proto>
-void NetMgr::broadcast(Proto & data, const UIDS &ids)
-{
-    if (!ids.empty())
-    {
-        WriteStream ws(Proto::GetProtoID());
-        ws << data;
-        for (auto id : ids)
-        {
-            NetMgr::getRef().sendToUser(id, ws.getStream(), ws.getStreamLen());
-        }
-    }
-}
-
-template<typename Proto>
-void NetMgr::broadcast(Proto & data)
-{
-    WriteStream ws(Proto::GetProtoID());
-    ws << data;
-    for (auto pr : _mapSession)
-    {
-        if (pr.second && pr.second->sID != InvalidSessionID)
-        {
-            NetMgr::getRef().sendToSession(pr.second->sID, ws.getStream(), ws.getStreamLen());
-        }
-    }
-}
 
 
 

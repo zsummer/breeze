@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -39,8 +39,6 @@ static int panichHandler(lua_State * L)
 bool ServerConfig::parse(std::string filename, ClusterNode ownNode)
 {
     _ownClusterNode = ownNode;
-
-
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {

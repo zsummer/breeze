@@ -104,6 +104,7 @@
     <ClCompile Include="logic\mission\eventTrigger.cpp" />
     <ClCompile Include="logic\netMgr.cpp" />
     <ClCompile Include="logic\testBlob\testBlob.cpp" />
+    <ClCompile Include="logic\user.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +116,7 @@
     <ClInclude Include="logic\mission\eventTrigger.h" />
     <ClInclude Include="logic\netMgr.h" />
     <ClInclude Include="logic\testBlob\testBlob.h" />
+    <ClInclude Include="logic\user.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

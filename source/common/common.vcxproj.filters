@@ -8,7 +8,6 @@
       <Filter>md5</Filter>
     </ClInclude>
     <ClInclude Include="defined.h" />
-    <ClInclude Include="config.h" />
     <ClInclude Include="genID.h" />
     <ClInclude Include="lua\fpconv.h">
       <Filter>lua</Filter>
@@ -100,17 +99,17 @@
     <ClInclude Include="lua\summer.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="dispatch.h" />
     <ClInclude Include="utls.h" />
     <ClInclude Include="utlsImpl.h" />
     <ClInclude Include="balance.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="slot.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
     <ClCompile Include="md5\md5.cpp">
       <Filter>md5</Filter>
     </ClCompile>
-    <ClCompile Include="config.cpp" />
     <ClCompile Include="lua\fpconv.c">
       <Filter>lua</Filter>
     </ClCompile>
@@ -225,8 +224,8 @@
     <ClCompile Include="lua\summer.cpp">
       <Filter>lua</Filter>
     </ClCompile>
-    <ClCompile Include="dispatch.cpp" />
     <ClCompile Include="utls.cpp" />
+    <ClCompile Include="config.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lua">

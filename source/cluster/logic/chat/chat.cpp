@@ -4,6 +4,7 @@
 #include <ProtoCommon.h>
 #include "ProtoChat.h"
 #include "ProtoChat_SQL.h"
+#include <config.h>
 
 Chat::Chat()
 {

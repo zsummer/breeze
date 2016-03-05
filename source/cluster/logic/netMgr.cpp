@@ -1,5 +1,7 @@
-﻿#include "netMgr.h"
+﻿#include "../config.h"
+#include "netMgr.h"
 #include "dbMgr.h"
+
 #include <ProtoCommon_SQL.h>
 NetMgr::NetMgr()
 {

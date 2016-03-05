@@ -1,8 +1,7 @@
 ﻿
-
 /*
 * breeze License
-* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -17,28 +16,66 @@
 * limitations under the License.
 */
 
+
 /*
-*
+*  file desc 
+*  chat manager
 */
 
-#ifndef _GEN_OBJECT_ID_H_
-#define _GEN_OBJECT_ID_H_
-#include <defined.h>
-class GenObjectID
+
+
+
+#ifndef _USER_H_
+#define _USER_H_
+#include <common.h>
+#include <ProtoChat.h>
+
+
+
+
+
+class User : public MessageSlot, std::enable_shared_from_this<User>
 {
 public:
-    GenObjectID(){}
-    inline void initConfig(ui64 areaID)
-    {
-        _areaID = areaID;
-        _uniqueObjID = areaID * 1000 * 1000 * 100;
-    }
-    inline void setCurID(ui64 uniqueID){ _uniqueObjID = uniqueID; }
-    inline ui64 getCurID(){ return _uniqueObjID; }
-    inline ui64 getCurAreaID(){ return _areaID; }
-    inline ui64 genNewObjID(){ return ++_uniqueObjID; }
-private:
-    ui64 _areaID = 0;
-    ui64 _uniqueObjID = 0;
+    User(const std::string &entity, UserID uID);
+    ~User();
+public:
+    void onChatReq(TcpSocketPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &);
+    
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif

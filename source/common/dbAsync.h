@@ -1,7 +1,7 @@
 ﻿
 /*
 * breeze License
-* Copyright (C) 2014-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
 #include <single.h>
 #include <config.h>
 #include <proto4z/dbHelper.h>
-
+#include <zsummerX/zsummerX.h>
 namespace  zsummer
 {
     namespace mysql
@@ -67,7 +67,6 @@ namespace  zsummer
             std::atomic_ullong _uFinalCount;
         };
         typedef std::shared_ptr<DBAsync> DBAsyncPtr;
-
     }
 }
 

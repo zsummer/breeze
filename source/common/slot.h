@@ -1,26 +1,26 @@
-﻿/*
+/*
  * zsummerX License
  * -----------
- * 
+ *
  * zsummerX is licensed under the terms of the MIT license reproduced below.
  * This means that zsummerX is free software and can be used for both academic
  * and commercial purposes at absolutely no cost.
- * 
- * 
+ *
+ *
  * ===============================================================================
- * 
- * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
- * 
+ *
+ * Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
@@ -28,53 +28,52 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * ===============================================================================
- * 
+ *
  * (end of COPYRIGHT)
  */
 
-#include "dispatch.h"
+#ifndef BREEZE_SLOT_H_
+#define BREEZE_SLOT_H_
+#include "defined.h"
 
-using namespace zsummer::proto4z;
-using namespace zsummer::network;
 
-MessageDispatcher & MessageDispatcher::getRef()
+using Slot = std::function < void(zsummer::network::TcpSocketPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &) >;
+
+
+using ProtoID = zsummer::proto4z::ProtoInteger;
+const ProtoID InvalidProtoID = -1;
+
+class MessageSlot
 {
-    static MessageDispatcher _manager;
-    return _manager;
-}
-
-
-void MessageDispatcher::dispatch(TcpSessionPtr  &session, ProtoID pID, zsummer::proto4z::ReadStream & msg)
-{
-    MapProtoDispatch::iterator iter = _mapSessionDispatch.find(pID);
-    if (iter == _mapSessionDispatch.end() )
+public:
+    MessageSlot(const std::string &entity, UserID uID) :_entity(entity), _uID(uID){}
+    virtual ~MessageSlot(){};
+    using Slots = std::unordered_map<unsigned short, Slot>;
+    inline void slotting(ProtoID protoID,  const Slot & msgfun){ _slots[protoID]=msgfun; }
+    inline void call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len)
     {
-        LCW("Entry dispatch[" << pID << "] Failed: UNKNOWN ProtoID.  SessionID=" << session->getSessionID() << ", ProtoID=" << pID);
-        return;
-    }
-    try
-    {
-        if (iter != _mapSessionDispatch.end() && !iter->second.empty())
+        try
         {
-            for (auto & fun : iter->second)
+            ReadStream rs(block, len);
+            auto founder = _slots.find(rs.getProtoID());
+            if (founder != _slots.end())
             {
-                //LCT("Entry dispatch[" << pID << "]  SessionID=" << session->getSessionID());
-                msg.resetMoveCursor();
-                fun(session,  msg);
+                founder->second(session, trace, rs);
             }
         }
-        //LCT("Leave dispatch[" << pID << "]  SessionID=" << session->getSessionID());
+        catch (std::runtime_error e)
+        {
+
+        }
     }
-    catch (std::runtime_error e)
-    {
-        LCE("Leave dispatch[" << pID << "] With Runtime Error: SessionID=" << session->getSessionID() << ", rsLen=" << msg.getStreamLen() << ", Error Message=\"" << e.what() << "\"");
-    }
-    catch (...)
-    {
-        LCE("Leave dispatch[" << pID << "] With Unknown Runtime Error: SessionID=" << session->getSessionID());
-    }
-}
+protected:
+    Slots _slots;
+    std::string _entity;
+    UserID _uID = InvalidUserID;
+};
+
+#endif
 
 

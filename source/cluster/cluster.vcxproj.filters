@@ -48,6 +48,9 @@
     <ClCompile Include="logic\follow\follow.cpp">
       <Filter>logic\follow</Filter>
     </ClCompile>
+    <ClCompile Include="logic\user.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="logic\follow\follow.h">
       <Filter>logic\follow</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\user.h">
+      <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
