@@ -46,17 +46,17 @@ Appliction::~Appliction()
 
 
 
-bool Appliction::init(std::string filename, unsigned int index)
+bool Appliction::init(std::string filename, unsigned int cluster)
 {
     bool ret = false;
     SessionManager::getRef().setStopClientsHandler(std::bind(&Appliction::_onSigalStop, this));
-    ret = ServerConfig::getRef().parse(filename, LogicServer, index);
+    ret = ServerConfig::getRef().parse(filename, cluster);
     if (!ret)
     {
         LOGE("parse ServerConfig failed.");
         return ret;
     }
-    LOGI("parse ServerConfig success. configFile=" << filename << ", node=" << LogicServer << ", index=" << index);
+    LOGI("parse ServerConfig success. configFile=" << filename << ", cluster=" << cluster);
 
     LogicStart(SessionManager);
     LogicStart(DBMgr);

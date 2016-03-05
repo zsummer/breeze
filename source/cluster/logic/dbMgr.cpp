@@ -67,7 +67,7 @@ bool DBMgr::start()
     
     //创建DBHelper
     //////////////////////////////////////////////////////////////////////////
-    {
+/*    {
         const auto infoConfig = ServerConfig::getRef().getDBConfig(InfoDB);
         const auto logConfig = ServerConfig::getRef().getDBConfig(LogDB);
         _infoDB->init(infoConfig._ip, infoConfig._port, infoConfig._db, infoConfig._user, infoConfig._pwd);
@@ -87,7 +87,7 @@ bool DBMgr::start()
         }
         LOGI("connect Log DB success. db config=" << logConfig);
     }
-
+    */
     return true;
 }
 

@@ -14,7 +14,7 @@
     <ProjectGuid>{73328CCC-F36D-40C2-BE36-E03797191DE9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>agent</RootNamespace>
-    <ProjectName>logic</ProjectName>
+    <ProjectName>cluster</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

@@ -101,65 +101,54 @@ typedef unsigned int ui32;
 typedef long long i64;
 typedef unsigned long long ui64;
 
-
-
-//服务节点类型
-typedef i16 ServerType;
-const ServerType InvalidServerType = (ServerType)-1;
-
-//节点索引ID
-typedef i16 ServerNode;
-const ServerNode InvalidServerNode = (ServerNode)-1;
-
-//服务节点
-const ServerType LogicServer = 1;
-const ServerType StressClient = 2;
-
-struct Route
-{
-    ServerType _fromType = InvalidServerType;
-    ServerNode _fromNode = InvalidServerNode;
-    ServerType _toType = InvalidServerType;
-    ServerNode _toNode = InvalidServerNode;
-    SessionID _fromSessionID = InvalidSessionID;
-    SessionID _toSessionID = InvalidSessionID;
-};
-
-//DB类型
-typedef i8 DBConfigID;
-const DBConfigID InfoDB = 1;
-const DBConfigID LogDB = 2;
-const DBConfigID InvalidDB = (DBConfigID)0;
-
-
 //分区
 typedef i16 AreaID;
 
-struct ListenConfig
+//节点索引ID
+typedef i16 ClusterNode;
+const ClusterNode InvalidClusterNode = 0;
+
+typedef ui64 ServiceID;
+const ServiceID InvalidServiceID = 0;
+
+const std::string ClientService = "client"; //需要uid
+const std::string UserService = "user"; //需要uid
+const std::vector<std::string> SingletonServices = { "userMgr", "chatMgr", "dbMgr"};
+
+
+typedef ui64 UserID;
+const ui64 InvalidUserID = (UserID)0;
+
+struct Route
 {
-    std::string _ip;
-    unsigned short _port = 0;
+    std::string _toService;
+    UserID _toUID = InvalidUserID;
+    std::string _fromService;
+    UserID _fromUID = InvalidUserID;
+};
+
+const std::string InfoDB = "info";
+const std::string LogDB = "log"; 
+const std::vector<std::string> DBCluster = { InfoDB, LogDB };
+
+
+struct ClusterConfig
+{
+    std::string _serviceBindIP;
+    std::string _serviceIP;
+    unsigned short _servicePort = 0;
+    std::string _wideIP;
+    unsigned short _widePort = 0;
     std::vector<std::string> _whiteList;
-    std::string _wip;
-    unsigned short _wport = 0;
-    ServerType _node = InvalidServerType;
-    ServerNode _index = InvalidServerNode;
+    std::vector<std::string> _services;
+    ClusterNode _cluster = InvalidClusterNode;
 };
 
-
-struct ConnectConfig
-{
-    ServerType _srcType = InvalidServerType;
-    ServerType _dstType = InvalidServerType;
-    ServerNode  _dstServerNode = InvalidServerNode;
-    std::string _remoteIP;
-    unsigned short _remotePort = 0;
-};
 
 
 struct DBConfig
 {
-    DBConfigID _id = InvalidDB;
+    std::string _name;
     std::string _ip;
     unsigned short _port = 3306;
     std::string _db;
@@ -172,42 +161,39 @@ struct DBConfig
 
 
 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ListenConfig & config)
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ClusterConfig & config)
 {
-    os << "[_ip=" << config._ip << ", _port=" << config._port << ", _node=" << config._node << ", _index=" << config._index << "]";
+    os << "[_serviceBindIP=" << config._serviceBindIP << ", _serviceIP=" << config._serviceIP 
+        << ", _servicePort=" << config._servicePort << ", _wideIP=" << config._wideIP
+        << ", _widePort=" << config._widePort << ", _whiteList=" << config._whiteList
+        << ", _services=" << config._services << ", _cluster=" << config._cluster
+        << "]";
     return os;
 }
 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ConnectConfig & config)
-{
-    os << "[_srcType=" << config._srcType << ", _dstType=" << config._dstType << ", _remoteIP=" << config._remoteIP << ", _remotePort=" << config._remotePort << "]";
-    return os;
-}
+
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DBConfig & config)
 {
-    os << "[id=" << (int)config._id << ", ip=" << config._ip << ", port=" << config._port << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
+    os << "[_name=" << config._name << ", ip=" << config._ip << ", port=" << config._port 
+        << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
     return os;
 }
 
 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Route & data)
 {
-    ws << data._fromType;
-    ws << data._fromNode;
-    ws << data._fromSessionID;
-    ws << data._toType;
-    ws << data._toNode;
-    ws << data._toSessionID;
+    ws << data._toService;
+    ws << data._toUID;
+    ws << data._fromService;
+    ws << data._fromUID;
     return ws;
 }
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Route & data)
 {
-    rs >> data._fromType;
-    rs >> data._fromNode;
-    rs >> data._fromSessionID;
-    rs >> data._toType;
-    rs >> data._toNode;
-    rs >> data._toSessionID;
+    rs >> data._toService;
+    rs >> data._toUID;
+    rs >> data._fromService;
+    rs >> data._fromUID;
     return rs;
 }
 

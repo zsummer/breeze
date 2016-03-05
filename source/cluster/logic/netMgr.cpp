@@ -76,7 +76,7 @@ bool NetMgr::loadData()
 
 bool NetMgr::start()
 {
-    auto connecters = ServerConfig::getRef().getConfigConnect(LogicServer);
+/*    auto connecters = ServerConfig::getRef().getConfigConnect(LogicServer);
     for (auto con : connecters)
     {
         SessionID cID = SessionManager::getRef().addConnecter(con._remoteIP, con._remotePort);
@@ -132,7 +132,7 @@ bool NetMgr::start()
         }
         
     }
-    
+    */
     return true;
 }
 
@@ -523,8 +523,8 @@ void NetMgr::msg_onSelectUserReq(TcpSessionPtr session, ReadStream & rs)
     ack.retCode = EC_SUCCESS;
     ack.uID = req.uID;
     ack.token = data.genMD5();
-    ack.ip = ServerConfig::getRef().getConfigListen(LogicServer)._wip;
-    ack.port = ServerConfig::getRef().getConfigListen(LogicServer)._wport;
+//    ack.ip = ServerConfig::getRef().getConfigListen(LogicServer)._wip;
+//    ack.port = ServerConfig::getRef().getConfigListen(LogicServer)._wport;
 
     sendMessage(session, ack);
 }

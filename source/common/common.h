@@ -54,8 +54,7 @@ using namespace zsummer::mysql;
 
 
 //! 逻辑类型
-typedef ui64 UserID;
-const ui64 InvalidUserID = (UserID)0;
+
 
 enum SessionStatus
 {

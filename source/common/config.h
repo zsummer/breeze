@@ -35,25 +35,16 @@
 class ServerConfig : public Singleton<ServerConfig>
 {
 public:
-    bool parse(std::string filename, ServerType ownType,ServerNode ownNode);
+    bool parse(std::string filename, ClusterNode ownNode);
 public:
-    const ListenConfig& getConfigListen(ServerType node, ServerNode index = InvalidServerNode);
-    std::vector<ConnectConfig > getConfigConnect(ServerType node);
-    const DBConfig & getDBConfig(DBConfigID id);
-
-    inline ServerType getOwnServerType(){ return _ownServerType; }
-    inline ServerNode getOwnServerNode(){ return _ownServerNode; }
+    inline const std::vector<ClusterConfig> & getClusterConfig(){ return _configCluster; }
+    inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
+    inline ClusterNode getOwnClusterNode(){ return _ownClusterNode; }
     inline AreaID getAreaID() { return _areaid; }
-
-
-
 private:
-    ServerType _ownServerType = InvalidServerType;
-    ServerNode _ownServerNode = InvalidServerNode;
+    ClusterNode _ownClusterNode = InvalidClusterNode;
     AreaID _areaid = 0;
-
-    std::vector<ListenConfig> _configListen;
-    std::vector<ConnectConfig> _configConnect;
+    std::vector<ClusterConfig> _configCluster;
     std::vector<DBConfig> _configDB;
 };
 

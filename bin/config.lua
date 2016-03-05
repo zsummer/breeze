@@ -12,31 +12,42 @@ config.db =
 	--log = {ip = "127.0.0.1", port = 3306, db = "db_log", user = "root", pwd = "123456"},
 }
 
-
-
-config.listen = 
+config.cluster = 
 {
-	logic= 
-		{
-			{
-				ip = "0.0.0.0", 
-				port=8081,
-				white={"192.168.", "127.0."},
-				wip="127.0.0.1", 
-				wport=20000,
-				index = 0
-			},
-		},
+    {
+        serviceBindIP="0.0.0.0",
+        serviceIP="127.0.0.1",
+        servicePort=16000,
+        serviceWhite={"192.168.", "127.0."},
+        --wideIP="127.0.0.1",
+        --widePort=26000,
+        services={"chatMgr"},
+        cluster = 1,
+    },
+    
+    {
+        serviceBindIP="0.0.0.0",
+        serviceIP="127.0.0.1",
+        servicePort=16001,
+        serviceWhite={"192.168.", "127.0."},
+        --wideIP="127.0.0.1",
+        --widePort=26001,
+        services={"userMgr"},
+        cluster = 2,
+    },
+
+    {
+        serviceBindIP="0.0.0.0",
+        serviceIP="127.0.0.1",
+        servicePort=16001,
+        serviceWhite={"192.168.", "127.0."},
+        wideIP="127.0.0.1",
+        widePort=26001,
+        --services={},
+        cluster = 3,
+    },
 }
 
-
-config.connect = 
-{
-	stress =
-		{
-			{dstType = "logic", ip="127.0.0.1", port=20000, index = 0},
-		},
-}
 
 
 return config
