@@ -1,11 +1,14 @@
 ﻿#include "user.h"
 #include <ProtoChat.h>
-User::User(const std::string &entity, UserID uID) : MessageSlot(entity, uID)
+User::User(const std::string &entity, UserID uID) : EntitySlot(entity, uID)
 {
-    slotting(ChatReq::GetProtoID(), std::bind(&User::call, this, _1, _2, _3, _4, _5));
+    slotting(ChatReq::GetProtoID(), std::bind(&User::onChatReq, this, _1, _2, _3));
+}
+User::~User() 
+{
 }
 
-void User::onChatReq(TcpSocketPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &)
+void User::onChatReq(TcpSessionPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &)
 {
     //globalCall;
     ChatAck ack;

@@ -34,14 +34,14 @@
 class ServerConfig : public Singleton<ServerConfig>
 {
 public:
-    bool parse(std::string filename, ClusterNode ownNode);
+    bool parse(std::string filename, ClusterIndex ownNode);
 public:
     inline const std::vector<ClusterConfig> & getClusterConfig(){ return _configCluster; }
     inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
-    inline ClusterNode getOwnClusterNode(){ return _ownClusterNode; }
+    inline ClusterIndex getOwnClusterID(){ return _ownClusterID; }
     inline AreaID getAreaID() { return _areaid; }
 private:
-    ClusterNode _ownClusterNode = InvalidClusterNode;
+    ClusterIndex _ownClusterID = InvalidClusterIndex;
     AreaID _areaid = 0;
     std::vector<ClusterConfig> _configCluster;
     std::vector<DBConfig> _configDB;

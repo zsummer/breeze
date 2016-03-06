@@ -118,16 +118,19 @@ using namespace zsummer::mysql;
 typedef ui32 AreaID;
 
 //节点索引ID
-typedef ui32 ClusterNode;
-const ClusterNode InvalidClusterNode = 0;
+typedef ui32 ClusterIndex;
+const ClusterIndex InvalidClusterIndex = 0;
 
 const std::string EntityClient = "client"; //特殊
 const std::string EntityUser = "user"; //特殊, 需要uid
-const std::vector<std::string> EntityServices = { "userMgr", "chatMgr", "dbMgr" };
+const std::string EntityUserCenter = "userCenter";
+const std::vector<std::string> EntityServices = { EntityUserCenter };
 
-struct EntityMailbox 
+struct EntitySession 
 {
-    ClusterNode _cluster = InvalidClusterNode;
+    ClusterIndex _cluster = InvalidClusterIndex;
+    SessionID _sID = InvalidSessionID;
+    bool _worked = false;
 };
 
 
@@ -156,7 +159,7 @@ struct ClusterConfig
     unsigned short _widePort = 0;
     std::vector<std::string> _whiteList;
     std::vector<std::string> _services;
-    ClusterNode _cluster = InvalidClusterNode;
+    ClusterIndex _cluster = InvalidClusterIndex;
 };
 
 
@@ -191,10 +194,11 @@ enum SessionStatus
 enum SessionUserData
 {
     UPARAM_SESSION_STATUS,
+    UPARAM_LAST_ACTIVE_TIME,
     UPARAM_ACCOUNT,
     UPARAM_USER_ID,
     UPARAM_LOGIN_TIME,
-    UPARAM_LAST_ACTIVE_TIME,
+   
 };
 
 

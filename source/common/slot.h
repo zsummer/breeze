@@ -39,7 +39,7 @@
 #include "defined.h"
 
 
-using Slot = std::function < void(zsummer::network::TcpSocketPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &) >;
+using Slot = std::function < void(zsummer::network::TcpSessionPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &) >;
 
 
 using ProtoID = zsummer::proto4z::ProtoInteger;

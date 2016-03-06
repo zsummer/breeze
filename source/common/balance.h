@@ -39,23 +39,23 @@ class Balance
 {
 public:
     //server node, isAble, manual weight, auto weight, total select count
-    using BalanceInfo = std::tuple<ClusterNode, bool, float, float, float>;
+    using BalanceInfo = std::tuple<ClusterIndex, bool, float, float, float>;
     Balance(){}
-    inline bool enableNode(ClusterNode node);
-    inline bool cleanNode(ClusterNode node);
-    inline bool disableNode(ClusterNode node);
-    inline bool changeWeight(ClusterNode node, float weight);
+    inline bool enableNode(ClusterIndex node);
+    inline bool cleanNode(ClusterIndex node);
+    inline bool disableNode(ClusterIndex node);
+    inline bool changeWeight(ClusterIndex node, float weight);
 
-    inline ClusterNode selectAuto();
-    inline ClusterNode selectManual();
+    inline ClusterIndex selectAuto();
+    inline ClusterIndex selectManual();
     inline float getBalanceRate();
     inline std::string getBalanceStatus();
 private:
     std::vector<BalanceInfo> _balance;
 };
-inline bool Balance::enableNode(ClusterNode node)
+inline bool Balance::enableNode(ClusterIndex node)
 {
-    if(node < 0 || node == InvalidClusterNode)
+    if(node < 0 || node == InvalidClusterIndex)
     {
         return false;
     }
@@ -70,7 +70,7 @@ inline bool Balance::enableNode(ClusterNode node)
     }
     return true;
 }
-inline bool Balance::cleanNode(ClusterNode node)
+inline bool Balance::cleanNode(ClusterIndex node)
 {
     auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
     if (founder == _balance.end())
@@ -82,7 +82,7 @@ inline bool Balance::cleanNode(ClusterNode node)
     std::get<4>(*founder) = 0;
     return true;
 }
-inline bool Balance::disableNode(ClusterNode node)
+inline bool Balance::disableNode(ClusterIndex node)
 {
     auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
     if(founder == _balance.end())
@@ -92,7 +92,7 @@ inline bool Balance::disableNode(ClusterNode node)
     std::get<1>(*founder) = false;
     return true;
 }
-inline bool Balance::changeWeight(ClusterNode node, float weight)
+inline bool Balance::changeWeight(ClusterIndex node, float weight)
 {
     auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
     if (founder == _balance.end())
@@ -109,7 +109,7 @@ inline bool Balance::changeWeight(ClusterNode node, float weight)
     return true;
 }
 
-inline ClusterNode Balance::selectAuto()
+inline ClusterIndex Balance::selectAuto()
 {
     size_t idx = (size_t)-1;
     float weight = (float)1E15;
@@ -123,13 +123,13 @@ inline ClusterNode Balance::selectAuto()
     }
     if (idx == (size_t)-1)
     {
-        return InvalidClusterNode;
+        return InvalidClusterIndex;
     }
     std::get<3>(_balance[idx]) ++;
     std::get<4>(_balance[idx]) ++;
     return std::get<0>(_balance[idx]);
 }
-inline ClusterNode Balance::selectManual()
+inline ClusterIndex Balance::selectManual()
 {
     size_t idx = (size_t)-1;
     float weight = (float)1E15;
@@ -143,7 +143,7 @@ inline ClusterNode Balance::selectManual()
     }
     if (idx == (size_t)-1)
     {
-        return InvalidClusterNode;
+        return InvalidClusterIndex;
     }
     std::get<4>(_balance[idx]) ++;
     return std::get<0>(_balance[idx]);

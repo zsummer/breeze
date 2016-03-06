@@ -60,13 +60,12 @@ bool Appliction::init(std::string filename, unsigned int cluster)
 
     LogicStart(SessionManager);
     LogicStart(DBMgr);
-    
     LogicInit(NetMgr);
-    LogicInit(EventTrigger);
-    LogicInit(DailyMission);
-    LogicInit(TestBlob);
-    LogicInit(Chat);
-    LogicInit(Follow);
+//     LogicInit(EventTrigger);
+//     LogicInit(DailyMission);
+//     LogicInit(TestBlob);
+//     LogicInit(Chat);
+//     LogicInit(Follow);
 
     LogicStart(NetMgr);
 

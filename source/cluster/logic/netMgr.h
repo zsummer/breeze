@@ -27,10 +27,10 @@
 #ifndef _NET_MANAGER_H_
 #define _NET_MANAGER_H_
 #include <common.h>
-#include <ProtoLogin.h>
+#include <ProtoCluster.h>
 
 
-class NetMgr :public Singleton<NetMgr>
+class NetMgr : public Singleton<NetMgr>
 {
 public:
     NetMgr();
@@ -43,26 +43,22 @@ public:
     UserInfoPtr getUserInfo(UserID uID);
     bool sendToUser(UserID uID, const char * block, unsigned int len);
     bool sendToSession(SessionID sID, const char * block, unsigned int len);
-    template<typename Proto>
-    void broadcast(Proto & data, const UIDS &ids);
-    template<typename Proto>
-    void broadcast(Proto & data);
 protected:
 protected:
-    UserInfoPtr createUser(const BaseInfo & info);
 
 
-protected: //平台登录  
-    void msg_onPlatAuthReq(TcpSessionPtr session, ReadStream & rs);
-    void msg_onCreateUserReq(TcpSessionPtr session, ReadStream & rs);
-    void msg_onSelectUserReq(TcpSessionPtr session, ReadStream & rs);
-    void db_onFetchUsers(DBResultPtr result, TcpSessionPtr session);
-    void db_onCreateUser(DBResultPtr result, TcpSessionPtr session, const BaseInfo &info);
+
 protected:
+    void event_onServiceLinked(TcpSessionPtr session);
+    void event_onServiceClosed(TcpSessionPtr session);
+    void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+    void checkServiceState();
+
     void event_onLinked(TcpSessionPtr session);
     void event_onClosed(TcpSessionPtr session);
-    void event_onLogin(UserInfoPtr);
-    void event_onLogout(UserInfoPtr);
+    void event_onMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+
+
 
 
 
@@ -73,16 +69,13 @@ protected:
     void event_onSessionPulse(TcpSessionPtr session);
     void msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs);
 private:
-    std::unordered_map<std::string, EntityMailbox> _services;
+    std::unordered_map<std::string, EntitySession> _services;
+    std::map<SessionID, int> _clusterState;
+    bool _clusterNetWorking = false;
 
     std::unordered_map<SessionID, UserInfoPtr> _mapSession;
     std::unordered_map<UserID, UserInfoPtr> _mapUserInfo;
     
-
-    //login server
-    GenObjectID _genID;
-    std::unordered_map<std::string, std::map<UserID, BaseInfo>> _mapAccounts;
-    //login server end.
 private:
     AccepterID _innerAID = InvalidAccepterID;
     AccepterID _wAID = InvalidAccepterID;

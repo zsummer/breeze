@@ -34,13 +34,13 @@
 
 
 
-class User : public MessageSlot, std::enable_shared_from_this<User>
+class User : public EntitySlot, public std::enable_shared_from_this<User>
 {
 public:
     User(const std::string &entity, UserID uID);
     ~User();
 public:
-    void onChatReq(TcpSocketPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onChatReq(TcpSessionPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &);
     
 };
 
