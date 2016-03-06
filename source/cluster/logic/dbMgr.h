@@ -33,67 +33,36 @@
 
 
 
-class DBMgr : public Singleton<DBMgr>
+class DBBase : public EntitySlot
 {
 public:
-    DBMgr();
-    ~DBMgr();
-    //在启动连接所有需要访问的数据库.
+    DBBase();
+    ~DBBase();
+    bool init(const std::string & db);
     bool start();
     bool stop(std::function<void()> onSafeClosed);
 public:
+    void asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
+    void asyncQuery(const std::string &sql);
+    zsummer::mysql::DBResultPtr query(const std::string &sql);
 
-    inline void infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
-    inline zsummer::mysql::DBResultPtr infoQuery(const std::string &sql);
-
-    inline void logAsyncQuery(const std::string &sql);
-    inline zsummer::mysql::DBResultPtr logQuery(const std::string &sql);
-    
-private:
-    static void _defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
-    {
-        if (ptr->getErrorCode() != zsummer::mysql::QEC_SUCCESS)
-        {
-            LOGE("_defaultAsyncHandler error. msg=" << ptr->getLastError() << ", org sql=" << ptr->sqlString());
-        }
-    }
+public:
 
 private:
-    zsummer::mysql::DBHelperPtr _infoDB;
-    zsummer::mysql::DBHelperPtr _logDB;
-
-
+    std::string _db;
+    DBHelperPtr _dbHelper;
     zsummer::mysql::DBAsyncPtr _dbAsync;
-    zsummer::mysql::DBAsyncPtr _dbLogAsync; //write log in other thread.
     
 private:
     void _checkSafeClosed();
     std::function<void()> _onSafeClosed;
 };
 
-
-
-
-void DBMgr::infoAsyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
+class InfoDBMgr : public DBBase, public Singleton<InfoDBMgr>
 {
-    _dbAsync->asyncQuery(_infoDB, sql, handler);
-}
+public:
+};
 
-zsummer::mysql::DBResultPtr DBMgr::infoQuery(const std::string &sql)
-{
-    return _infoDB->query(sql);
-}
-
-
-void DBMgr::logAsyncQuery(const std::string &sql)
-{
-    _dbAsync->asyncQuery(_logDB, sql, &DBMgr::_defaultAsyncHandler);
-}
-
-zsummer::mysql::DBResultPtr DBMgr::logQuery(const std::string &sql)
-{
-    return _logDB->query(sql);
-}
 
 
 

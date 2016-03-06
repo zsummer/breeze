@@ -96,16 +96,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="application.cpp" />
     <ClCompile Include="logic\dbMgr.cpp" />
-    <ClCompile Include="logic\netMgr.cpp" />
+    <ClCompile Include="logic\application.cpp" />
     <ClCompile Include="logic\user.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application.h" />
     <ClInclude Include="logic\dbMgr.h" />
-    <ClInclude Include="logic\netMgr.h" />
+    <ClInclude Include="logic\application.h" />
     <ClInclude Include="logic\user.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

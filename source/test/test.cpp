@@ -410,14 +410,14 @@ int checkBalance()
     balance.enableNode(1);
     balance.enableNode(2);
     balance.enableNode(3);
-    for (int i = 0; i <6 ; ++i)
+    for (unsigned i = 0; i <6 ; ++i)
     {
         if(balance.selectAuto() != i%3+1)
         {
             return 1;
         }
     }
-    for (int i=0; i<6; ++i)
+    for (unsigned i = 0; i<6; ++i)
     {
         if(balance.selectManual() != i%3+1)
         {
@@ -426,14 +426,14 @@ int checkBalance()
         balance.changeWeight(i%3+1, 5);
     }
     balance.disableNode(3);
-    for (int i = 0; i < 6; ++i)
+    for (unsigned i = 0; i < 6; ++i)
     {
         if(balance.selectAuto() != i%2+1)
         {
             return 3;
         }
     }
-    for (int i = 0; i < 6; ++i)
+    for (unsigned i = 0; i < 6; ++i)
     {
         if(balance.selectManual() != i%2+1)
         {
@@ -442,7 +442,7 @@ int checkBalance()
         balance.changeWeight(i%2+1, 5);
     }
     balance.enableNode(4);
-    for (int i = 0; i < 3; ++i)
+    for (unsigned i = 0; i < 3; ++i)
     {
         if(balance.selectAuto() != 4)
         {

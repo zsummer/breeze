@@ -16,7 +16,7 @@
 * limitations under the License.
 */
 
-#include "application.h"
+#include "logic/application.h"
 using namespace zsummer::log4z;
 
 
@@ -24,7 +24,10 @@ using namespace zsummer::log4z;
 
 void sigInt(int sig)
 {
-    Appliction::getRef().stop();
+    SessionManager::getRef().post(std::bind(&SessionManager::stopAccept, SessionManager::getPtr()));
+    SessionManager::getRef().post(std::bind(&SessionManager::stopClients, SessionManager::getPtr()));
+    SessionManager::getRef().post(std::bind(&SessionManager::stopServers, SessionManager::getPtr()));
+    SessionManager::getRef().post(std::bind(&SessionManager::stop, SessionManager::getPtr()));
 }
 
 int main(int argc, char* argv[])
@@ -50,10 +53,10 @@ int main(int argc, char* argv[])
 
 
     std::string filename = "../config.lua";
-    unsigned int serverIndex = 0;
+    ClusterIndex index = 0;
     if (argc > 1)
     {
-        serverIndex = atoi(argv[1]);
+        index = atoi(argv[1]);
         
     }
     if (argc > 2)
@@ -72,11 +75,27 @@ int main(int argc, char* argv[])
 
     try
     {
-        if (!Appliction::getRef().init(filename, serverIndex))
+        if (!SessionManager::getRef().start())
         {
             LOGE("Appliction init false.");
             return 1;
         }
+        
+        if (!Application::getRef().init(filename, index))
+        {
+            LOGE("Appliction init false.");
+            return 2;
+        }
+        if (!Application::getRef().start())
+        {
+            return 3;
+        }
+        if (Application::getRef().run())
+        {
+            return 4;
+        }
+        
+        
     }
     catch (std::runtime_error e)
     {
@@ -85,8 +104,6 @@ int main(int argc, char* argv[])
     }
 
     
-
-    Appliction::getRef().run();
 
     LOGI("Appliction exit.");
 

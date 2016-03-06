@@ -48,31 +48,39 @@ const ProtoID InvalidProtoID = -1;
 class EntitySlot
 {
 public:
-    EntitySlot(const std::string &entity, UserID uID) :_entity(entity), _uID(uID){}
+    EntitySlot(){}
     virtual ~EntitySlot(){};
+    inline void setEntityName(const std::string &entity){ _entity = entity; }
+    inline std::string getEntityName(){ return _entity; }
+    inline void setEntityID(UserID uID){ _uID = uID; }
+    inline UserID getEntityID(){ return _uID; }
+
     using Slots = std::unordered_map<unsigned short, Slot>;
     inline void slotting(ProtoID protoID,  const Slot & msgfun){ _slots[protoID]=msgfun; }
-    inline void call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len)
-    {
-        try
-        {
-            ReadStream rs(block, len);
-            auto founder = _slots.find(rs.getProtoID());
-            if (founder != _slots.end())
-            {
-                (founder->second)(session, trace, rs);
-            }
-        }
-        catch (std::runtime_error e)
-        {
-
-        }
-    }
+    inline void call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len);
 protected:
     Slots _slots;
     std::string _entity;
     UserID _uID = InvalidUserID;
 };
+
+
+inline void EntitySlot::call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len)
+{
+    try
+    {
+        ReadStream rs(block, len);
+        auto founder = _slots.find(rs.getProtoID());
+        if (founder != _slots.end())
+        {
+            (founder->second)(session, trace, rs);
+        }
+    }
+    catch (std::runtime_error e)
+    {
+
+    }
+}
 
 #endif
 

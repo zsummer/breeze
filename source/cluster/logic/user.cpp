@@ -1,7 +1,8 @@
 ﻿#include "user.h"
 #include <ProtoChat.h>
-User::User(const std::string &entity, UserID uID) : EntitySlot(entity, uID)
+User::User()
 {
+    setEntityName("User");
     slotting(ChatReq::GetProtoID(), std::bind(&User::onChatReq, this, _1, _2, _3));
 }
 User::~User() 

@@ -37,7 +37,7 @@
 class User : public EntitySlot, public std::enable_shared_from_this<User>
 {
 public:
-    User(const std::string &entity, UserID uID);
+    User();
     ~User();
 public:
     void onChatReq(TcpSessionPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &);

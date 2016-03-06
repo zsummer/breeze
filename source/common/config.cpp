@@ -36,9 +36,9 @@ static int panichHandler(lua_State * L)
 }
 
 
-bool ServerConfig::parse(std::string filename, ClusterIndex ownNode)
+bool ServerConfig::parse(std::string filename, ClusterIndex idx)
 {
-    _ownClusterID = ownNode;
+    _clusterIdx = idx;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {

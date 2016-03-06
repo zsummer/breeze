@@ -24,60 +24,24 @@
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="application.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\mission\eventTrigger.cpp">
-      <Filter>logic\mission</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\mission\dailyMission.cpp">
-      <Filter>logic\mission</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\testBlob\testBlob.cpp">
-      <Filter>logic\testBlob</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\chat\chat.cpp">
-      <Filter>logic\chat</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\netMgr.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="logic\dbMgr.cpp">
       <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\follow\follow.cpp">
-      <Filter>logic\follow</Filter>
     </ClCompile>
     <ClCompile Include="logic\user.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\application.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application.h">
-      <Filter>main</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\mission\eventTrigger.h">
-      <Filter>logic\mission</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\mission\dailyMission.h">
-      <Filter>logic\mission</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\testBlob\testBlob.h">
-      <Filter>logic\testBlob</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\chat\chat.h">
-      <Filter>logic\chat</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\netMgr.h">
-      <Filter>logic</Filter>
-    </ClInclude>
     <ClInclude Include="logic\dbMgr.h">
       <Filter>logic</Filter>
     </ClInclude>
-    <ClInclude Include="logic\follow\follow.h">
-      <Filter>logic\follow</Filter>
-    </ClInclude>
     <ClInclude Include="logic\user.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\application.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>
