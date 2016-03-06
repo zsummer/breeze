@@ -45,11 +45,11 @@ using Slot = std::function < void(zsummer::network::TcpSocketPtr&, const Tracing
 using ProtoID = zsummer::proto4z::ProtoInteger;
 const ProtoID InvalidProtoID = -1;
 
-class MessageSlot
+class EntitySlot
 {
 public:
-    MessageSlot(const std::string &entity, UserID uID) :_entity(entity), _uID(uID){}
-    virtual ~MessageSlot(){};
+    EntitySlot(const std::string &entity, UserID uID) :_entity(entity), _uID(uID){}
+    virtual ~EntitySlot(){};
     using Slots = std::unordered_map<unsigned short, Slot>;
     inline void slotting(ProtoID protoID,  const Slot & msgfun){ _slots[protoID]=msgfun; }
     inline void call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len)
@@ -60,7 +60,7 @@ public:
             auto founder = _slots.find(rs.getProtoID());
             if (founder != _slots.end())
             {
-                founder->second(session, trace, rs);
+                (founder->second)(session, trace, rs);
             }
         }
         catch (std::runtime_error e)
