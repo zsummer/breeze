@@ -12,7 +12,8 @@
     <proto name="ClusterPulse" desc= "集群脉冲">
     </proto>
     <proto name="ClusterServiceInited" desc= "服务初始化成功">
-        <member name="entity" type="string"   desc=""/>
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
     </proto>
 
 

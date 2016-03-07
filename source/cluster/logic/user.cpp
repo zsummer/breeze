@@ -2,7 +2,7 @@
 #include <ProtoChat.h>
 User::User()
 {
-    setEntityName("User");
+    setServiceType(ServiceUser);
     slotting(ChatReq::GetProtoID(), std::bind(&User::onChatReq, this, _1, _2, _3));
 }
 User::~User() 

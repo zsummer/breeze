@@ -8,4 +8,5 @@ Proto4z.register(50001,"ClusterServiceInited")
 Proto4z.ClusterServiceInited = {} --服务初始化成功 
 Proto4z.ClusterServiceInited.__getID = 50001 
 Proto4z.ClusterServiceInited.__getName = "ClusterServiceInited" 
-Proto4z.ClusterServiceInited[1] = {name="entity", type="string" }  
+Proto4z.ClusterServiceInited[1] = {name="serviceType", type="ui16" }  
+Proto4z.ClusterServiceInited[2] = {name="serviceID", type="ui64" }  

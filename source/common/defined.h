@@ -121,33 +121,43 @@ typedef ui32 AreaID;
 typedef ui32 ClusterIndex;
 const ClusterIndex InvalidClusterIndex = 0;
 
-const std::string EntityClient = "client"; //特殊
-const std::string EntityUser = "user"; //特殊, 需要uid
-const std::string EntityUserCenter = "userCenter";
-const std::vector<std::string> EntityServices = { EntityUserCenter };
+typedef ui64 ServiceID;
+const ui64 InvalidServiceID = (ServiceID)0;
 
-struct EntitySession 
+enum ServiceType : ui16
 {
-    ClusterIndex _cluster = InvalidClusterIndex;
-    SessionID _sID = InvalidSessionID;
-    bool _worked = false;
+    ServiceInvalid = 0,
+    ServiceClient, 
+    ServiceUser,
+    ServiceUserMgr,
+    ServiceDictDBMgr,
+    ServiceInfoDBMgr,
+    ServiceLogDBMgr,
 };
-
-
-typedef ui64 UserID;
-const ui64 InvalidUserID = (UserID)0;
+const std::vector<std::string> ServiceNames =
+{
+    "Unknown",
+    "Client",
+    "User",
+    "UserMgr",
+    "DictDBMgr",
+    "InfoDBMgr",
+    "LogDBMgr",
+};
 
 struct Tracing
 {
-    std::string _toService;
-    UserID _toUID = InvalidUserID;
-    std::string _fromService;
-    UserID _fromUID = InvalidUserID;
+    ui16 _toService;
+    ServiceID _toUID = InvalidServiceID;
+    ui16 _fromService;
+    ServiceID _fromUID = InvalidServiceID;
 };
 
-const std::string InfoDB = "info";
-const std::string LogDB = "log";
-const std::vector<std::string> DBCluster = { InfoDB, LogDB };
+
+
+
+
+
 
 
 struct ClusterConfig
@@ -158,7 +168,7 @@ struct ClusterConfig
     std::string _wideIP;
     unsigned short _widePort = 0;
     std::vector<std::string> _whiteList;
-    std::vector<std::string> _services;
+    std::vector<ServiceType> _services;
     ClusterIndex _cluster = InvalidClusterIndex;
 };
 
@@ -176,9 +186,8 @@ struct DBConfig
 
 
 
+const int MAX_ACCOUNT_USERS = 5;
 
-
-//! 逻辑类型
 enum SessionStatus
 {
     SSTATUS_UNKNOW = 0,

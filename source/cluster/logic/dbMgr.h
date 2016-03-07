@@ -33,12 +33,12 @@
 
 
 
-class DBBase : public EntitySlot
+class DBBase : public Service
 {
 public:
     DBBase();
     ~DBBase();
-    bool init(const std::string & db);
+    bool init();
     bool start();
     bool stop(std::function<void()> onSafeClosed);
 public:
@@ -56,11 +56,6 @@ private:
 private:
     void _checkSafeClosed();
     std::function<void()> _onSafeClosed;
-};
-
-class InfoDBMgr : public DBBase, public Singleton<InfoDBMgr>
-{
-public:
 };
 
 

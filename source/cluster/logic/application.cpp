@@ -58,13 +58,31 @@ bool Application::start()
             return false;
         }
         _clusterState[cID] = 0;
-        for (auto service : cluster._services)
+        for (auto serviceType : cluster._services)
         {
-            EntitySession es;
-            es._cluster = cluster._cluster;
-            es._sID = cID;
-            es._worked = false;
-            _services[service] = es;
+            auto & second = _services[serviceType];
+            auto & servicePtr =  second[InvalidServiceID];
+            if (servicePtr)
+            {
+            }
+            else
+            {
+                if (serviceType == ServiceDictDBMgr)
+                {
+                    servicePtr = std::make_shared<DBBase>();
+                }
+                else
+                {
+                    servicePtr = std::make_shared<Service>();
+                }
+            }
+            servicePtr->setServiceType(serviceType);
+            servicePtr->setServiceID(InvalidServiceID);
+            if (cluster._cluster != ServerConfig::getRef().getClusterID())
+            {
+                servicePtr->setShell(true);
+                servicePtr->setSessionID(cID);
+            }
         }
 
         if (cluster._cluster == ServerConfig::getRef().getClusterID())
@@ -117,9 +135,9 @@ bool Application::start()
                         session->close();
                     }
                 };
-                options._sessionOptions._onSessionLinked = std::bind(&Application::event_onLinked, this, _1);
-                options._sessionOptions._onSessionClosed = std::bind(&Application::event_onClosed, this, _1);
-                options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onMessage, this, _1, _2, _3);
+                options._sessionOptions._onSessionLinked = std::bind(&Application::event_onClientLinked, this, _1);
+                options._sessionOptions._onSessionClosed = std::bind(&Application::event_onClientClosed, this, _1);
+                options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onClientMessage, this, _1, _2, _3);
                 if (!SessionManager::getRef().openAccepter(aID))
                 {
                     LOGE("openAccepter error");
@@ -160,36 +178,9 @@ void Application::event_onServiceClosed(TcpSessionPtr session)
     _clusterNetWorking = false;
 }
 
-void Application::initService()
+void Application::initService(const std::vector<ServiceType> & services)
 {
-    std::vector<std::string> services;
-    if (true)
-    {
-        const auto & clusters = ServerConfig::getRef().getClusterConfig();
-        for (const auto c : clusters)
-        {
-            if (c._cluster == ServerConfig::getRef().getClusterID())
-            {
-                services = c._services;
-                break;
-            }
-        }
-    }
-    InfoDBMgr::getRef().setEntityName("InfoDBMgr");
-    if (!InfoDBMgr::getRef().init(InfoDB))
-    {
-        LOGE("InfoDBMgr init error");
-        SessionManager::getRef().stop();
-        return ;
-    }
-    
-    for (auto service : services)
-    {
-        if (service == "InfoDBMgr")
-        {
-            InfoDBMgr::getRef().start();
-        }
-    }
+
 }
 void Application::checkServiceState()
 {
@@ -211,15 +202,29 @@ void Application::checkServiceState()
     {
         _clusterServiceInited = true;
         LOGI("Application::checkServiceState _clusterServiceInited change to true");
-        initService();
+        std::vector<ServiceType> services;
+        const auto & clusters = ServerConfig::getRef().getClusterConfig();
+        for (const auto c : clusters)
+        {
+            if (c._cluster == ServerConfig::getRef().getClusterID())
+            {
+                initService(services);
+                break;
+            }
+        }
+        
     }
     
-    for (auto & service : _services)
+    for (auto & second : _services)
     {
-        if (!service.second._worked)
+        for (auto & service : second.second)
         {
-            return;
+            if (!service.second || !service.second->getInited() || !service.second->getWorked())
+            {
+                return;
+            }
         }
+
     }
     if (!_clusterServiceWorking)
     {
@@ -242,12 +247,18 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
     {
         ClusterServiceInited service;
         rs >> service;
-        auto founder = _services.find(service.entity);
+        auto founder = _services.find(service.serviceType);
         if (founder == _services.end())
         {
             return;
         }
-        founder->second._worked = true;
+        auto fder = founder->second.find(service.serviceID);
+        if (fder == founder->second.end() || !fder->second)
+        {
+            return;
+        }
+        fder->second->setInited(true);
+        fder->second->setWorked(true);
         checkServiceState();
         return;
     }
@@ -256,7 +267,7 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
 
 
 
-void Application::event_onSessionPulse(TcpSessionPtr session)
+void Application::event_onClientPulse(TcpSessionPtr session)
 {
     if (isSessionID(session->getSessionID()))
     {
@@ -273,16 +284,17 @@ void Application::event_onSessionPulse(TcpSessionPtr session)
 
 
 
-void Application::event_onLinked(TcpSessionPtr session)
+void Application::event_onClientLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
-    LOGD("Application::event_onLinked. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
+    LOGD("Application::event_onClientLinked. SessionID=" << session->getSessionID() 
+        << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
 }
 
-void Application::event_onClosed(TcpSessionPtr session)
+void Application::event_onClientClosed(TcpSessionPtr session)
 {
-    LOGD("Application::event_onClosed. SessionID=" << session->getSessionID() << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
-
+    LOGD("Application::event_onClientClosed. SessionID=" << session->getSessionID() 
+        << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
     if (isConnectID(session->getSessionID()))
     {
     }
@@ -290,29 +302,15 @@ void Application::event_onClosed(TcpSessionPtr session)
     {
         if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_LOGINED)
         {
-            auto founder = _mapUserInfo.find(session->getUserParamNumber(UPARAM_USER_ID));
-            if (founder == _mapUserInfo.end() || founder->second->sID != session->getSessionID())
-            {
-                _mapSession.erase(session->getSessionID());
-                return;
-            }
-            
 
-            founder->second->sID = InvalidSessionID;
         }
-        _mapSession.erase(session->getSessionID());
-    }
 
-//     if (_mapSession.size() == 0 && _onSafeClosed)
-//     {
-//         SessionManager::getRef().post(_onSafeClosed);
-//         _onSafeClosed = nullptr;
-//     }
+    }
 }
 
 
 
-void Application::event_onMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
+void Application::event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
 
 }

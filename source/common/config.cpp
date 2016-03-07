@@ -164,7 +164,17 @@ bool ServerConfig::parse(std::string filename, ClusterIndex idx)
             lua_pushnil(L);
             while (lua_next(L, -2))
             {
-                lconfig._services.push_back(luaL_checkstring(L, -1));
+                std::string service = luaL_checkstring(L, -1);
+                auto founder = std::find(ServiceNames.begin(), ServiceNames.end(), service);
+                if (founder != ServiceNames.end())
+                {
+                    lconfig._services.push_back((ServiceType)(founder - ServiceNames.begin()));
+                }
+                else
+                {
+                    LOGE("not found service");
+                    return false;
+                }
                 lua_pop(L, 1);
             }
             lua_pop(L, 1);

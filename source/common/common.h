@@ -39,28 +39,12 @@
 #include "balance.h"
 #include "config.h"
 #include <ProtoCommon.h>
-#include <slot.h>
+#include "service.h"
 
 
 
 
 
-const int MAX_ACCOUNT_USERS = 5;
-struct UserInfo
-{
-    BaseInfo base;
-    SessionToken token;
-    SessionID sID = InvalidSessionID;
-};
-using UserInfoPtr = std::shared_ptr<UserInfo>;
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserInfo & info)
-{
-    return stm;
-}
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserInfoPtr & info)
-{
-    return stm;
-}
 
 
 

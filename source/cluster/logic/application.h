@@ -41,7 +41,7 @@ public:
     template<class Proto>
     void broadcast(const Proto & proto);
     template<class Proto>
-    void globalCall(const std::string & src, const UserID & srcID, const std::string & dst, const UserID & dstID, const Proto & proto);
+    void globalCall(const std::string & src, const ServiceID & srcID, const std::string & dst, const ServiceID & dstID, const Proto & proto);
 protected:
 protected:
 
@@ -51,31 +51,23 @@ protected:
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    void initService();
+    void initService(const std::vector<ServiceType> & services);
     void checkServiceState();
 
-    void event_onLinked(TcpSessionPtr session);
-    void event_onClosed(TcpSessionPtr session);
-    void event_onMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+    void event_onClientLinked(TcpSessionPtr session);
+    void event_onClientClosed(TcpSessionPtr session);
+    void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+    void event_onClientPulse(TcpSessionPtr   session);
 
-
-
-
-
-    void msg_onAttachLogicReq(TcpSessionPtr session, ReadStream & rs);
-
-    bool on_preMessageProcess(TcpSessionPtr session, const char * blockBegin, zsummer::proto4z::Integer blockSize);
-
-    void event_onSessionPulse(TcpSessionPtr session);
-    void msg_onHeartbeatEcho(TcpSessionPtr session, ReadStream & rs);
 private:
-    std::unordered_map<std::string, EntitySession> _services;
+    std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
+
     std::map<SessionID, int> _clusterState;
     bool _clusterNetWorking = false;
     bool _clusterServiceWorking = false;
     bool _clusterServiceInited = false;
-    std::unordered_map<SessionID, UserInfoPtr> _mapSession;
-    std::unordered_map<UserID, UserInfoPtr> _mapUserInfo;
+
+
 
 };
 
@@ -97,7 +89,7 @@ void Application::broadcast(const Proto & proto)
 
 
 template<class Proto>
-void Application::globalCall(const std::string & src, const UserID & srcID, const std::string & dst, const UserID & dstID, const Proto & proto)
+void Application::globalCall(const std::string & src, const ServiceID & srcID, const std::string & dst, const ServiceID & dstID, const Proto & proto)
 {
     Tracing trace;
     trace._fromService = src;
@@ -106,11 +98,11 @@ void Application::globalCall(const std::string & src, const UserID & srcID, cons
     trace._toUID = dstID;
     WriteStream ws(Proto::GetProtoID());
     ws << trace << proto;
-    auto founder = _services.find(dst);
-    if (founder != _services.end())
-    {
-        SessionManager::getRef().sendSessionData(founder->second._sID, ws.getStream(), ws.getStreamLen());
-    }
+//     auto founder = _services.find(dst);
+//     if (founder != _services.end())
+//     {
+//         SessionManager::getRef().sendSessionData(founder->second._sID, ws.getStream(), ws.getStreamLen());
+//     }
 }
 
 

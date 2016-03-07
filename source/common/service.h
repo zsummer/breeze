@@ -34,8 +34,8 @@
  * (end of COPYRIGHT)
  */
 
-#ifndef BREEZE_SLOT_H_
-#define BREEZE_SLOT_H_
+#ifndef BREEZE_SERVICE_H_
+#define BREEZE_SERVICE_H_
 #include "defined.h"
 
 
@@ -45,42 +45,39 @@ using Slot = std::function < void(zsummer::network::TcpSessionPtr&, const Tracin
 using ProtoID = zsummer::proto4z::ProtoInteger;
 const ProtoID InvalidProtoID = -1;
 
-class EntitySlot
+class Service
 {
 public:
-    EntitySlot(){}
-    virtual ~EntitySlot(){};
-    inline void setEntityName(const std::string &entity){ _entity = entity; }
-    inline std::string getEntityName(){ return _entity; }
-    inline void setEntityID(UserID uID){ _uID = uID; }
-    inline UserID getEntityID(){ return _uID; }
+    Service(){}
+    virtual ~Service(){};
+    inline void setServiceType(ServiceType st){ _st = st; }
+    inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
+    inline void setSessionID(SessionID sID){ _sID = sID; }
+    inline void setInited(bool inited){ _inited = inited; }
+    inline void setWorked(bool worked){ _worked = worked; }
+    inline void setShell(bool shell){ _shell = shell; }
+    inline ServiceType getServiceType(){ return _st; }
+    inline ServiceID getServiceID(){ return _serviceID; }
+    inline SessionID getSessionID(){ return _sID; }
+    inline bool getInited(){ return _inited; }
+    inline bool getWorked(){ return _worked; }
+    inline bool getShell(){ return _shell; }
 
     using Slots = std::unordered_map<unsigned short, Slot>;
     inline void slotting(ProtoID protoID,  const Slot & msgfun){ _slots[protoID]=msgfun; }
-    inline void call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len);
+
+    virtual void call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len);
 protected:
     Slots _slots;
-    std::string _entity;
-    UserID _uID = InvalidUserID;
+    ServiceType _st = ServiceInvalid;
+    bool _inited = false;
+    bool _worked = false;
+    bool _shell = false;
+    SessionID _sID = InvalidSessionID;
+    ServiceID _serviceID = InvalidServiceID;
 };
+using ServicePtr = std::shared_ptr<Service>;
 
-
-inline void EntitySlot::call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len)
-{
-    try
-    {
-        ReadStream rs(block, len);
-        auto founder = _slots.find(rs.getProtoID());
-        if (founder != _slots.end())
-        {
-            (founder->second)(session, trace, rs);
-        }
-    }
-    catch (std::runtime_error e)
-    {
-
-    }
-}
 
 #endif
 

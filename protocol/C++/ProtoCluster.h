@@ -21,23 +21,29 @@ struct ClusterServiceInited //服务初始化成功
 { 
     static const unsigned short GetProtoID() { return 50001;} 
     static const std::string GetProtoName() { return "ID_ClusterServiceInited";} 
-    std::string entity;  
+    unsigned short serviceType;  
+    unsigned long long serviceID;  
     ClusterServiceInited() 
     { 
+        serviceType = 0; 
+        serviceID = 0; 
     } 
-    ClusterServiceInited(const std::string & entity) 
+    ClusterServiceInited(const unsigned short & serviceType, const unsigned long long & serviceID) 
     { 
-        this->entity = entity; 
+        this->serviceType = serviceType; 
+        this->serviceID = serviceID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterServiceInited & data) 
 { 
-    ws << data.entity;  
+    ws << data.serviceType;  
+    ws << data.serviceID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterServiceInited & data) 
 { 
-        rs >> data.entity;  
+        rs >> data.serviceType;  
+        rs >> data.serviceID;  
     return rs; 
 } 
  

@@ -30,24 +30,29 @@ namespace Proto4z
         static public ushort getProtoID() { return 50001; } 
         static public string getProtoName() { return "ClusterServiceInited"; } 
         //members   
-        public string entity;  
+        public ushort serviceType;  
+        public ulong serviceID;  
         public ClusterServiceInited()  
         { 
-            entity = "";  
+            serviceType = 0;  
+            serviceID = 0;  
         } 
-        public ClusterServiceInited(string entity) 
+        public ClusterServiceInited(ushort serviceType, ulong serviceID) 
         { 
-            this.entity = entity; 
+            this.serviceType = serviceType; 
+            this.serviceID = serviceID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.entity)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.serviceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.entity = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 

@@ -13,13 +13,13 @@ DBBase::~DBBase()
 {
     
 }
-bool DBBase::init(const std::string & db)
+
+bool DBBase::init()
 {
-    _db = db;
     const auto & dbConfigs = ServerConfig::getRef().getDBConfig();
     for (const auto & dbConfig : dbConfigs)
     {
-        if (dbConfig._name != db)
+        if (dbConfig._name != ServiceNames.at(getServiceType()))
         {
             continue;
         }
@@ -47,7 +47,7 @@ bool DBBase::start()
     {
         return false;
     }
-    ClusterServiceInited inited(getEntityName());
+    ClusterServiceInited inited(getServiceType(), getServiceID());
     Application::getRef().broadcast(inited);
     return true;
 }
