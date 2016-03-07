@@ -51,7 +51,7 @@ protected:
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    void initService(const std::vector<ServiceType> & services);
+    ServicePtr createLocalService(ServiceType st);
     void checkServiceState();
 
     void event_onClientLinked(TcpSessionPtr session);

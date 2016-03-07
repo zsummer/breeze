@@ -1,6 +1,6 @@
 ﻿#include "../config.h"
 #include "application.h"
-#include "dbMgr.h"
+#include "dbService.h"
 
 Application::Application()
 {
@@ -64,21 +64,26 @@ bool Application::start()
             auto & servicePtr =  second[InvalidServiceID];
             if (servicePtr)
             {
+                LOGE("duplicat service");
+                return false;
             }
             else
             {
-                if (serviceType == ServiceDictDBMgr)
-                {
-                    servicePtr = std::make_shared<DBBase>();
-                }
-                else
-                {
-                    servicePtr = std::make_shared<Service>();
-                }
+                servicePtr = createLocalService(serviceType);
             }
+            if (!servicePtr)
+            {
+                LOGE("unsupport service");
+                return false;
+            }
+            
             servicePtr->setServiceType(serviceType);
             servicePtr->setServiceID(InvalidServiceID);
-            if (cluster._cluster != ServerConfig::getRef().getClusterID())
+            if (cluster._cluster == ServerConfig::getRef().getClusterID())
+            {
+                servicePtr->setShell(false);
+            }
+            else
             {
                 servicePtr->setShell(true);
                 servicePtr->setSessionID(cID);
@@ -178,10 +183,27 @@ void Application::event_onServiceClosed(TcpSessionPtr session)
     _clusterNetWorking = false;
 }
 
-void Application::initService(const std::vector<ServiceType> & services)
-{
 
+ServicePtr Application::createLocalService(ServiceType st)
+{
+    if (st == ServiceDictDBMgr)
+    {
+        return std::make_shared<DBService>();
+    }
+    else if (st == ServiceInfoDBMgr)
+    {
+        return std::make_shared<DBService>();
+    }
+    else if (st == ServiceLogDBMgr)
+    {
+        return std::make_shared<DBService>();
+    }
+    else if (st == ServiceUserMgr)
+    {
+    }
+    return nullptr;
 }
+
 void Application::checkServiceState()
 {
     for (auto & c : _clusterState)
@@ -194,25 +216,24 @@ void Application::checkServiceState()
     if (!_clusterNetWorking)
     {
         _clusterNetWorking = true;
-        LOGI("Application::checkServiceState _clusterNetWorking change to true");
+        LOGI("Application _clusterNetWorking change to true");
     }
     
     
     if (!_clusterServiceInited)
     {
         _clusterServiceInited = true;
-        LOGI("Application::checkServiceState _clusterServiceInited change to true");
-        std::vector<ServiceType> services;
-        const auto & clusters = ServerConfig::getRef().getClusterConfig();
-        for (const auto c : clusters)
+        LOGI("Application _clusterServiceInited change to true");
+        for (auto & second :_services)
         {
-            if (c._cluster == ServerConfig::getRef().getClusterID())
+            for (auto service : second.second)
             {
-                initService(services);
-                break;
+                if (service.second && !service.second->getShell() && !service.second->getInited())
+                {
+                    service.second->init();
+                }
             }
         }
-        
     }
     
     for (auto & second : _services)
@@ -229,7 +250,7 @@ void Application::checkServiceState()
     if (!_clusterServiceWorking)
     {
         _clusterServiceWorking = true;
-        LOGI("Application::checkServiceState _clusterServiceWorking change to true");
+        LOGI("Application _clusterServiceWorking change to true");
     }
     
     
@@ -247,19 +268,26 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
     {
         ClusterServiceInited service;
         rs >> service;
+        LOGD("event_onServiceMessage. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
+
         auto founder = _services.find(service.serviceType);
         if (founder == _services.end())
         {
+            LOGE("event_onServiceMessage can't founder remote service. service=" << ServiceNames.at(service.serviceType));
             return;
         }
         auto fder = founder->second.find(service.serviceID);
         if (fder == founder->second.end() || !fder->second)
         {
+            LOGE("event_onServiceMessage can't founder remote service with id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
             return;
         }
-        fder->second->setInited(true);
-        fder->second->setWorked(true);
-        checkServiceState();
+        if (fder->second->getShell())
+        {
+            fder->second->setInited(true);
+            fder->second->setWorked(true);
+            checkServiceState();
+        }
         return;
     }
 }

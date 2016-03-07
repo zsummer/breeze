@@ -1,21 +1,22 @@
 ﻿#include "application.h"
-#include "dbMgr.h"
+#include "dbService.h"
 
 
 
 
-DBBase::DBBase() 
+DBService::DBService() 
 {
     _dbAsync = std::make_shared<DBAsync>();
 }
 
-DBBase::~DBBase()
+DBService::~DBService()
 {
     
 }
 
-bool DBBase::init()
+bool DBService::init()
 {
+    Service::init();
     const auto & dbConfigs = ServerConfig::getRef().getDBConfig();
     for (const auto & dbConfig : dbConfigs)
     {
@@ -35,36 +36,30 @@ bool DBBase::init()
     {
         return false;
     }
-    return true;
-}
-bool DBBase::start()
-{
-    if (!_dbHelper)
-    {
-        return false;
-    }
     if (!_dbAsync->start())
     {
         return false;
     }
+    Service::start();
     ClusterServiceInited inited(getServiceType(), getServiceID());
     Application::getRef().broadcast(inited);
     return true;
 }
 
 
-bool DBBase::stop(std::function<void()> onSafeClosed)
+
+bool DBService::stop(std::function<void()> onSafeClosed)
 {
     _onSafeClosed = onSafeClosed;
-    SessionManager::getRef().createTimer(500, std::bind(&DBBase::_checkSafeClosed, this));
+    SessionManager::getRef().createTimer(500, std::bind(&DBService::_checkSafeClosed, this));
     return true;
 }
 
-void DBBase::_checkSafeClosed()
+void DBService::_checkSafeClosed()
 {
     if (_dbAsync->getFinalCount() != _dbAsync->getPostCount())
     {
-        SessionManager::getRef().createTimer(600, std::bind(&DBBase::_checkSafeClosed, this));
+        SessionManager::getRef().createTimer(600, std::bind(&DBService::_checkSafeClosed, this));
         LOGA("Waiting the db data to store. waiting count=" << _dbAsync->getPostCount() - _dbAsync->getFinalCount());
         return;
     }
@@ -87,15 +82,15 @@ static void defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
         LOGE("_defaultAsyncHandler error. msg=" << ptr->getLastError() << ", org sql=" << ptr->sqlString());
     }
 }
-void DBBase::asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
+void DBService::asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
 {
     _dbAsync->asyncQuery(_dbHelper, sql, handler);
 }
-void DBBase::asyncQuery(const std::string &sql)
+void DBService::asyncQuery(const std::string &sql)
 {
     asyncQuery(sql, defaultAsyncHandler);
 }
-zsummer::mysql::DBResultPtr DBBase::query(const std::string &sql)
+zsummer::mysql::DBResultPtr DBService::query(const std::string &sql)
 {
     return _dbHelper->query(sql);
 }

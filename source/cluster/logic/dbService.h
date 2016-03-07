@@ -33,11 +33,11 @@
 
 
 
-class DBBase : public Service
+class DBService : public Service
 {
 public:
-    DBBase();
-    ~DBBase();
+    DBService();
+    ~DBService();
     bool init();
     bool start();
     bool stop(std::function<void()> onSafeClosed);

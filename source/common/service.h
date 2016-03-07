@@ -59,10 +59,13 @@ public:
     inline ServiceType getServiceType(){ return _st; }
     inline ServiceID getServiceID(){ return _serviceID; }
     inline SessionID getSessionID(){ return _sID; }
+    inline bool getShell(){ return _shell; }
     inline bool getInited(){ return _inited; }
     inline bool getWorked(){ return _worked; }
-    inline bool getShell(){ return _shell; }
 
+
+    virtual bool init();
+    bool start();
     using Slots = std::unordered_map<unsigned short, Slot>;
     inline void slotting(ProtoID protoID,  const Slot & msgfun){ _slots[protoID]=msgfun; }
 

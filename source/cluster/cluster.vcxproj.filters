@@ -24,24 +24,24 @@
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="logic\dbMgr.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="logic\user.cpp">
       <Filter>logic</Filter>
     </ClCompile>
     <ClCompile Include="logic\application.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\dbService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="logic\dbMgr.h">
-      <Filter>logic</Filter>
-    </ClInclude>
     <ClInclude Include="logic\user.h">
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\application.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\dbService.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>

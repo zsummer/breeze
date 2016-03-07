@@ -96,13 +96,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="logic\dbMgr.cpp" />
+    <ClCompile Include="logic\dbService.cpp" />
     <ClCompile Include="logic\application.cpp" />
     <ClCompile Include="logic\user.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="logic\dbMgr.h" />
+    <ClInclude Include="logic\dbService.h" />
     <ClInclude Include="logic\application.h" />
     <ClInclude Include="logic\user.h" />
   </ItemGroup>
