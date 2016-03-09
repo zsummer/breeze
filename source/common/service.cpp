@@ -9,11 +9,7 @@ bool Service::init()
     return true;
 }
 
-bool Service::start()
-{
-    _worked = true;
-    return true;
-}
+
 
 void Service::call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len)
 {

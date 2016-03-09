@@ -50,26 +50,35 @@ class Service
 public:
     Service(){}
     virtual ~Service(){};
-    inline void setServiceType(ServiceType st){ _st = st; }
-    inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
-    inline void setSessionID(SessionID sID){ _sID = sID; }
-    inline void setInited(bool inited){ _inited = inited; }
-    inline void setWorked(bool worked){ _worked = worked; }
-    inline void setShell(bool shell){ _shell = shell; }
+    using Slots = std::unordered_map<unsigned short, Slot>;
+
     inline ServiceType getServiceType(){ return _st; }
     inline ServiceID getServiceID(){ return _serviceID; }
     inline SessionID getSessionID(){ return _sID; }
     inline bool getShell(){ return _shell; }
     inline bool getInited(){ return _inited; }
     inline bool getWorked(){ return _worked; }
+    inline void setWorked(bool worked){ _worked = worked; }
 
-
-    virtual bool init();
-    bool start();
-    using Slots = std::unordered_map<unsigned short, Slot>;
-    inline void slotting(ProtoID protoID,  const Slot & msgfun){ _slots[protoID]=msgfun; }
-
+    inline void slotting(ProtoID protoID, const Slot & msgfun){ _slots[protoID] = msgfun; }
     virtual void call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len);
+    virtual bool init();
+
+    inline void setServiceType(ServiceType st){ _st = st; }
+    inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
+    inline void setSessionID(SessionID sID){ _sID = sID; }
+   
+    inline void setWorked(bool worked){ _worked = worked; }
+
+    inline void setInited(bool inited){ _inited = inited; }
+    inline void setShell(bool shell){ _shell = shell; }
+
+
+
+    
+    
+
+    
 protected:
     Slots _slots;
     ServiceType _st = ServiceInvalid;
