@@ -14,9 +14,8 @@ DBService::~DBService()
     
 }
 
-bool DBService::init()
+bool DBService::onInit()
 {
-    Service::init();
     const auto & dbConfigs = ServerConfig::getRef().getDBConfig();
     for (const auto & dbConfig : dbConfigs)
     {
@@ -40,9 +39,8 @@ bool DBService::init()
     {
         return false;
     }
-    Service::start();
-    ClusterServiceInited inited(getServiceType(), getServiceID());
-    Application::getRef().broadcast(inited);
+
+    setWorked();
     return true;
 }
 

@@ -103,7 +103,6 @@
     <ClInclude Include="utlsImpl.h" />
     <ClInclude Include="balance.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="slot.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />

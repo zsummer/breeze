@@ -98,12 +98,14 @@
   <ItemGroup>
     <ClCompile Include="logic\dbService.cpp" />
     <ClCompile Include="logic\application.cpp" />
+    <ClCompile Include="logic\service.cpp" />
     <ClCompile Include="logic\user.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logic\dbService.h" />
     <ClInclude Include="logic\application.h" />
+    <ClInclude Include="logic\service.h" />
     <ClInclude Include="logic\user.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

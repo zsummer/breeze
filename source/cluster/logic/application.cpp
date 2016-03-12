@@ -78,15 +78,12 @@ bool Application::start()
             }
             
             servicePtr->setServiceType(serviceType);
-            servicePtr->setServiceID(InvalidServiceID);
             if (cluster._cluster == ServerConfig::getRef().getClusterID())
             {
-                servicePtr->setShell(false);
             }
             else
             {
-                servicePtr->setShell(true);
-                servicePtr->setSessionID(cID);
+                servicePtr->setShell(cID);
             }
         }
 
@@ -230,7 +227,8 @@ void Application::checkServiceState()
             {
                 if (service.second && !service.second->getShell() && !service.second->getInited())
                 {
-                    service.second->init();
+                    service.second->setInited();
+                    service.second->onInit();
                 }
             }
         }
@@ -284,8 +282,8 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
         }
         if (fder->second->getShell())
         {
-            fder->second->setInited(true);
-            fder->second->setWorked(true);
+            fder->second->setInited();
+            fder->second->setWorked();
             checkServiceState();
         }
         return;

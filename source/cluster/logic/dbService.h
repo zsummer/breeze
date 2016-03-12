@@ -28,7 +28,7 @@
 #ifndef _DB_MANAGER_H_
 #define _DB_MANAGER_H_
 #include <common.h>
-
+#include "service.h"
 
 
 
@@ -38,7 +38,7 @@ class DBService : public Service
 public:
     DBService();
     ~DBService();
-    bool init();
+    bool onInit();
     bool start();
     bool stop(std::function<void()> onSafeClosed);
 public:

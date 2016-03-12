@@ -27,6 +27,7 @@
 #ifndef _NET_MANAGER_H_
 #define _NET_MANAGER_H_
 #include <common.h>
+#include "service.h"
 #include <ProtoCluster.h>
 
 

@@ -48,7 +48,6 @@
     <ClInclude Include="lua\strbuf.h" />
     <ClInclude Include="lua\summer.h" />
     <ClInclude Include="md5\md5.h" />
-    <ClInclude Include="service.h" />
     <ClInclude Include="single.h" />
     <ClInclude Include="utls.h" />
     <ClInclude Include="utlsImpl.h" />
@@ -95,7 +94,6 @@
     <ClCompile Include="lua\strbuf.c" />
     <ClCompile Include="lua\summer.cpp" />
     <ClCompile Include="md5\md5.cpp" />
-    <ClCompile Include="service.cpp" />
     <ClCompile Include="utls.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
