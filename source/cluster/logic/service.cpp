@@ -92,7 +92,26 @@ void Service::onBacking(const Tracing & trace, const char * block, unsigned int 
     }
     else
     {
-        LOGE("Service::onBacking not found callback");
+        LOGW("Service::onBacking not found callback");
+        try
+        {
+            ReadStream rs(block, len);
+            auto fder = _slots.find(rs.getProtoID());
+            if (fder != _slots.end())
+            {
+                fder->second(trace, rs);
+            }
+            else
+            {
+                LOGE("Service::onBacking not found maping function. pID=" << rs.getProtoID());
+            }
+        }
+        catch (std::runtime_error e)
+        {
+            LOGE("e=" << e.what());
+        }
+
+
     }
 }
 
