@@ -40,12 +40,12 @@
 
 
 using Slot = std::function < void(const Tracing & trace, zsummer::proto4z::ReadStream &) >;
-
+using ServiceCallback = std::function<void(zsummer::proto4z::ReadStream &)>;
 
 using ProtoID = zsummer::proto4z::ProtoInteger;
 const ProtoID InvalidProtoID = -1;
 class Application;
-class Service
+class Service : public std::enable_shared_from_this<Service>
 {
 public:
     Service(){}
@@ -68,12 +68,19 @@ protected:
     inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
     virtual bool onInit() = 0;
     void setWorked();
+    //call 其他服务.
+    void globalCall(ServiceType st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
+    void backCall(const Tracing & trace, const char * block, unsigned int len);
 private:
-
     friend Application;
     inline void setInited(){ _inited = true; }
     inline void setShell(SessionID sID){ _sID = sID; }
-    virtual void call(const Tracing & trace, const char * block, unsigned int len);
+    //处理服务
+    void process(const Tracing & trace, const char * block, unsigned int len);
+    //壳子处理
+    void onBacking(const Tracing & trace, const char * block, unsigned int len);
+
+
 private:
     Slots _slots;
     std::map<ProtoID, std::string> _slotsName;
@@ -83,6 +90,8 @@ private:
     bool _shell = false;
     SessionID _sID = InvalidSessionID;
     ServiceID _serviceID = InvalidServiceID;
+    ui32 _seqID = 0;
+    std::map<ui32, ServiceCallback> _cbs;
 };
 using ServicePtr = std::shared_ptr<Service>;
 

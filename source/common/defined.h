@@ -148,9 +148,13 @@ const std::vector<std::string> ServiceNames =
 struct Tracing
 {
     ui16 _toService;
-    ServiceID _toUID = InvalidServiceID;
+    ServiceID _toServiceID = InvalidServiceID;
     ui16 _fromService;
-    ServiceID _fromUID = InvalidServiceID;
+    ServiceID _fromServiceD = InvalidServiceID;
+    ui16 _fromLocal = 0;
+    ui32 _traceID = 0;
+    ui32 _traceBackID = 0;
+    
 };
 
 
@@ -251,17 +255,23 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data)
 {
     ws << data._toService;
-    ws << data._toUID;
+    ws << data._toServiceID;
     ws << data._fromService;
-    ws << data._fromUID;
+    ws << data._fromServiceD;
+    ws << data._fromLocal;
+    ws << data._traceID;
+    ws << data._traceBackID;
     return ws;
 }
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data)
 {
     rs >> data._toService;
-    rs >> data._toUID;
+    rs >> data._toServiceID;
     rs >> data._fromService;
-    rs >> data._fromUID;
+    rs >> data._fromServiceD;
+    rs >> data._fromLocal;
+    rs >> data._traceID;
+    rs >> data._traceBackID;
     return rs;
 }
 

@@ -5,7 +5,7 @@
  
 struct ClusterPulse //集群脉冲  
 { 
-    static const unsigned short GetProtoID() { return 50000;} 
+    static const unsigned short GetProtoID() { return 40000;} 
     static const std::string GetProtoName() { return "ID_ClusterPulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterPulse & data) 
@@ -19,7 +19,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
  
 struct ClusterServiceInited //服务初始化成功  
 { 
-    static const unsigned short GetProtoID() { return 50001;} 
+    static const unsigned short GetProtoID() { return 40001;} 
     static const std::string GetProtoName() { return "ID_ClusterServiceInited";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
@@ -44,6 +44,34 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
         rs >> data.serviceType;  
         rs >> data.serviceID;  
+    return rs; 
+} 
+ 
+struct ClusterShellForward //壳子转发  
+{ 
+    static const unsigned short GetProtoID() { return 40003;} 
+    static const std::string GetProtoName() { return "ID_ClusterShellForward";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterShellForward & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterShellForward & data) 
+{ 
+    return rs; 
+} 
+ 
+struct ClusterShellBack //壳子请求  
+{ 
+    static const unsigned short GetProtoID() { return 40004;} 
+    static const std::string GetProtoName() { return "ID_ClusterShellBack";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterShellBack & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterShellBack & data) 
+{ 
     return rs; 
 } 
  

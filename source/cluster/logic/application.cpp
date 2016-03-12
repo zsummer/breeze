@@ -168,6 +168,18 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
     }
     LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", clusterID=" << founder->second.first);
     founder->second.second = 1;
+    for (auto & second : _services)
+    {
+        for (auto & svc : second.second )
+        {
+            if (!svc.second->getShell() && svc.second->getInited())
+            {
+                ClusterServiceInited inited(svc.second->getServiceType(), svc.second->getServiceID());
+                Application::getRef().broadcast(inited);
+            }
+        }
+    }
+    
     checkServiceState();
 }
 
@@ -281,7 +293,7 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
             LOGE("event_onServiceMessage can't founder remote service with id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
             return;
         }
-        if (fder->second->getShell())
+        if (fder->second->getShell() && !fder->second->getInited())
         {
             LOGI("Application initing remote service [" << ServiceNames.at(fder->second->getServiceType()) << "][" << fder->second->getServiceID() << "] ...");
             fder->second->setInited();
@@ -291,6 +303,49 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
         }
         return;
     }
+    if (rs.getProtoID() == ClusterShellForward::GetProtoID())
+    {
+        Tracing trace;
+        rs >> trace;
+        auto founder = _services.find(trace._toService);
+        if (founder == _services.end())
+        {
+            return;
+        }
+        auto fder = founder->second.find(trace._toServiceID);
+        if (fder == founder->second.end())
+        {
+            return;
+        }
+        Service & svc = *fder->second;
+        if (svc.getShell())
+        {
+            return;
+        }
+        svc.process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
+    }
+    if (rs.getProtoID() == ClusterShellBack::GetProtoID())
+    {
+        Tracing trace;
+        rs >> trace;
+        auto founder = _services.find(trace._toService);
+        if (founder == _services.end())
+        {
+            return;
+        }
+        auto fder = founder->second.find(trace._toServiceID);
+        if (fder == founder->second.end())
+        {
+            return;
+        }
+        Service & svc = *fder->second;
+        if (svc.getShell())
+        {
+            return;
+        }
+        svc.onBacking(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
+    }
+    
 }
 
 
@@ -343,4 +398,47 @@ void Application::event_onClientMessage(TcpSessionPtr   session, const char * be
 {
 
 }
+
+void Application::globalCall(Tracing trace, const char * block, unsigned int len)
+{
+    auto founder = _services.find(trace._toService);
+    if (founder != _services.end())
+    {
+        auto fder = founder->second.find(trace._toServiceID);
+        if (fder != founder->second.end())
+        {
+            auto & service = *fder->second;
+            if (service.getShell()) //forward 
+            {
+                WriteStream ws(ClusterShellForward::GetProtoID());
+                ws << trace;
+                ws.appendOriginalData(block, len);
+                SessionManager::getRef().sendSessionData(service.getSessionID(), ws.getStream(), ws.getStreamLen());
+            }
+            else //direct process
+            {
+                trace._fromLocal = 1;
+                service.process(trace, block, len);
+            }
+            
+        }
+    }
+}
+
+void Application::globalBack(const Tracing & trace, const char * block, unsigned int len)
+{
+    auto founder = _services.find(trace._toService);
+    if (founder != _services.end())
+    {
+        auto fder = founder->second.find(trace._toServiceID);
+        if (fder != founder->second.end())
+        {
+            WriteStream ws(ClusterShellBack::GetProtoID());
+            ws << trace;
+            ws.appendOriginalData(block, len);
+            SessionManager::getRef().sendSessionData(fder->second->getSessionID(), ws.getStream(), ws.getStreamLen());
+        }
+    }
+}
+
 

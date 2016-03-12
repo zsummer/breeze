@@ -16,7 +16,43 @@ void Service::setWorked()
     _worked = true;
 }
 
-void Service::call(const Tracing & trace, const char * block, unsigned int len)
+void Service::globalCall(ServiceType st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
+{
+    Tracing trace;
+    trace._fromService = getServiceType();
+    trace._fromServiceD = getServiceID();
+    trace._traceBackID = 0;
+    trace._traceID = ++_seqID;
+    trace._toService = st;
+    trace._toServiceID = svcID;
+    if (cb)
+    {
+        _cbs.insert(std::make_pair(trace._traceID, cb));
+    }
+    Application::getRef().globalCall(trace, block, len);
+}
+
+void Service::backCall(const Tracing & trace, const char * block, unsigned int len)
+{
+    Tracing trc;
+    trc._fromService = getServiceType();
+    trc._fromServiceD = getServiceID();
+    trc._traceBackID = trace._traceID;
+    trc._traceID = ++_seqID;
+    trc._toService = trace._fromService;
+    trc._toServiceID = trace._fromServiceD;
+    trc._fromLocal = trace._fromLocal;
+    if (trc._fromLocal)
+    {
+        onBacking(trc, block, len);
+    }
+    else
+    {
+        Application::getRef().globalBack(trc, block, len);
+    }
+}
+
+void Service::process(const Tracing & trace, const char * block, unsigned int len)
 {
     try
     {
@@ -24,14 +60,42 @@ void Service::call(const Tracing & trace, const char * block, unsigned int len)
         auto founder = _slots.find(rs.getProtoID());
         if (founder != _slots.end())
         {
-            (founder->second)(trace, rs);
+            founder->second(trace, rs);
+        }
+        else
+        {
+            LOGE("Service::process not found maping function. pID=" << rs.getProtoID());
         }
     }
     catch (std::runtime_error e)
     {
-
+        LOGE("e=" << e.what());
     }
 }
+
+void Service::onBacking(const Tracing & trace, const char * block, unsigned int len)
+{
+    auto founder = _cbs.find(trace._traceBackID);
+    if (founder != _cbs.end())
+    {
+        try
+        {
+            auto cb = std::move(founder->second);
+            _cbs.erase(founder);
+            ReadStream rs(block, len);
+            cb(rs);
+        }
+        catch (std::runtime_error e)
+        {
+            LOGE("e=" << e.what());
+        }
+    }
+    else
+    {
+        LOGE("Service::onBacking not found callback");
+    }
+}
+
 
 
 

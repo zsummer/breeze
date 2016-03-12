@@ -1,12 +1,13 @@
 ﻿#include "application.h"
 #include "dbService.h"
-
+#include <ProtoDBService.h>
 
 
 
 DBService::DBService() 
 {
     _dbAsync = std::make_shared<DBAsync>();
+    slotting<SQLQueryReq>(std::bind(&DBService::onSQLQueryReq, this, _1, _2)); //sloting都是同步调用 不需要shared_from_this
 }
 
 DBService::~DBService()
@@ -41,8 +42,30 @@ bool DBService::onInit()
     }
 
     setWorked();
+
+    if (getServiceType() == ServiceInfoDBMgr)
+    {
+        WriteStream ws(SQLQueryReq::GetProtoID());
+        SQLQueryReq req;
+        req.sql = "select 1";
+        ws << req;
+        globalCall(ServiceDictDBMgr, InvalidServiceID, ws.getStream(), ws.getStreamLen(), std::bind(&DBService::onTest, std::static_pointer_cast<DBService>(shared_from_this()), _1));
+    }
+    
+
     return true;
 }
+
+
+void DBService::onSQLQueryReq(Tracing trace, ReadStream &rs)
+{
+    SQLQueryResp resp;
+    WriteStream ws(SQLQueryResp::GetProtoID());
+    ws << resp;
+    
+    backCall(trace, ws.getStream(), ws.getStreamLen());
+}
+
 
 
 

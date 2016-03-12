@@ -5,8 +5,8 @@ namespace Proto4z
     public class ClusterPulse: Proto4z.IProtoObject //集群脉冲  
     {     
         //proto id   
-        public const ushort protoID = 50000;  
-        static public ushort getProtoID() { return 50000; } 
+        public const ushort protoID = 40000;  
+        static public ushort getProtoID() { return 40000; } 
         static public string getProtoName() { return "ClusterPulse"; } 
         //members   
         public ClusterPulse()  
@@ -26,8 +26,8 @@ namespace Proto4z
     public class ClusterServiceInited: Proto4z.IProtoObject //服务初始化成功  
     {     
         //proto id   
-        public const ushort protoID = 50001;  
-        static public ushort getProtoID() { return 50001; } 
+        public const ushort protoID = 40001;  
+        static public ushort getProtoID() { return 40001; } 
         static public string getProtoName() { return "ClusterServiceInited"; } 
         //members   
         public ushort serviceType;  
@@ -53,6 +53,48 @@ namespace Proto4z
         { 
             this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class ClusterShellForward: Proto4z.IProtoObject //壳子转发  
+    {     
+        //proto id   
+        public const ushort protoID = 40003;  
+        static public ushort getProtoID() { return 40003; } 
+        static public string getProtoName() { return "ClusterShellForward"; } 
+        //members   
+        public ClusterShellForward()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class ClusterShellBack: Proto4z.IProtoObject //壳子请求  
+    {     
+        //proto id   
+        public const ushort protoID = 40004;  
+        static public ushort getProtoID() { return 40004; } 
+        static public string getProtoName() { return "ClusterShellBack"; } 
+        //members   
+        public ClusterShellBack()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
             return pos; 
         } 
     } 

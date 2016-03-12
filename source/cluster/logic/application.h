@@ -41,8 +41,8 @@ public:
 public:
     template<class Proto>
     void broadcast(const Proto & proto);
-    template<class Proto>
-    void globalCall(const Tracing & trace, const Proto & proto);
+    void globalCall(Tracing trace, const char * block, unsigned int len);
+    void globalBack(const Tracing & trace, const char * block, unsigned int len);
 protected:
 protected:
 
@@ -89,22 +89,8 @@ void Application::broadcast(const Proto & proto)
 }
 
 
-template<class Proto>
-void Application::globalCall(const Tracing & trace, const Proto & proto)
-{
-    auto founder = _services.find(trace._toService);
-    if (founder != _services.end() )
-    {
-        auto fder = founder->second.find(trace._toUID);
-        if (fder != founder->second.end())
-        {
-            auto & service = *fder->second;
-            WriteStream ws(Proto::GetProtoID());
-            ws << trace << proto;
-            service.call(trace, ws.getStream(), ws.getStreamLen());
-        }
-    }
-}
+
+
 
 
 
