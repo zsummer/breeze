@@ -12,6 +12,7 @@ void Service::setWorked()
         ClusterServiceInited inited(getServiceType(), getServiceID());
         Application::getRef().broadcast(inited);
     }
+    LOGI("Service worked service [" << ServiceNames.at(getServiceType()) << "][" << getServiceID() << "] ...");
     _worked = true;
 }
 

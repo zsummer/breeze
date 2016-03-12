@@ -63,7 +63,7 @@ protected:
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
 
-    std::map<SessionID, int> _clusterState;
+    std::map<SessionID, std::pair<ClusterIndex, int>> _clusterState;
     bool _clusterNetWorking = false;
     bool _clusterServiceWorking = false;
     bool _clusterServiceInited = false;
