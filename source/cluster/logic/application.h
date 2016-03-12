@@ -42,7 +42,7 @@ public:
     template<class Proto>
     void broadcast(const Proto & proto);
     template<class Proto>
-    void globalCall(const std::string & src, const ServiceID & srcID, const std::string & dst, const ServiceID & dstID, const Proto & proto);
+    void globalCall(const Tracing & trace, const Proto & proto);
 protected:
 protected:
 
@@ -90,20 +90,20 @@ void Application::broadcast(const Proto & proto)
 
 
 template<class Proto>
-void Application::globalCall(const std::string & src, const ServiceID & srcID, const std::string & dst, const ServiceID & dstID, const Proto & proto)
+void Application::globalCall(const Tracing & trace, const Proto & proto)
 {
-    Tracing trace;
-    trace._fromService = src;
-    trace._fromUID = srcID;
-    trace._toService = dst;
-    trace._toUID = dstID;
-    WriteStream ws(Proto::GetProtoID());
-    ws << trace << proto;
-//     auto founder = _services.find(dst);
-//     if (founder != _services.end())
-//     {
-//         SessionManager::getRef().sendSessionData(founder->second._sID, ws.getStream(), ws.getStreamLen());
-//     }
+    auto founder = _services.find(trace._toService);
+    if (founder != _services.end() )
+    {
+        auto fder = founder->second.find(trace._toUID);
+        if (fder != founder->second.end())
+        {
+            auto & service = *fder->second;
+            WriteStream ws(Proto::GetProtoID());
+            ws << trace << proto;
+            service.call(trace, ws.getStream(), ws.getStreamLen());
+        }
+    }
 }
 
 

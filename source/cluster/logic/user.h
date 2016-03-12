@@ -41,7 +41,7 @@ public:
     User();
     ~User();
 public:
-    void onChatReq(TcpSessionPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     
 };
 

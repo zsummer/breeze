@@ -39,13 +39,11 @@ public:
     DBService();
     ~DBService();
     bool onInit();
-    bool start();
     bool stop(std::function<void()> onSafeClosed);
 public:
     void asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
     void asyncQuery(const std::string &sql);
     zsummer::mysql::DBResultPtr query(const std::string &sql);
-
 public:
 
 private:

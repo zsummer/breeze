@@ -39,7 +39,7 @@
 #include "defined.h"
 
 
-using Slot = std::function < void(zsummer::network::TcpSessionPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &) >;
+using Slot = std::function < void(const Tracing & trace, zsummer::proto4z::ReadStream &) >;
 
 
 using ProtoID = zsummer::proto4z::ProtoInteger;
@@ -59,23 +59,24 @@ public:
     inline bool getInited(){ return _inited; }
     inline bool getWorked(){ return _worked; }
 
+protected:
+    template<class Proto>
+    inline void slotting(const Slot & msgfun){ _slots[Proto::GetProtoID()] = msgfun; _slotsName[Proto::GetProtoID()] = Proto::GetProtoName(); }
 
-    inline void slotting(ProtoID protoID, const Slot & msgfun){ _slots[protoID] = msgfun; }
-    virtual void call(TcpSessionPtr  &session, const Tracing & trace, const char * block, unsigned int len);
-    virtual bool onInit() =0;
-
+protected:
     inline void setServiceType(ServiceType st){ _st = st; }
     inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
-   
+    virtual bool onInit() = 0;
     void setWorked();
-
 private:
+
     friend Application;
     inline void setInited(){ _inited = true; }
     inline void setShell(SessionID sID){ _sID = sID; }
-
+    virtual void call(const Tracing & trace, const char * block, unsigned int len);
 private:
     Slots _slots;
+    std::map<ProtoID, std::string> _slotsName;
     ServiceType _st = ServiceInvalid;
     bool _inited = false;
     bool _worked = false;
@@ -84,6 +85,7 @@ private:
     ServiceID _serviceID = InvalidServiceID;
 };
 using ServicePtr = std::shared_ptr<Service>;
+
 
 
 #endif

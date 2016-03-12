@@ -3,13 +3,13 @@
 User::User()
 {
     setServiceType(ServiceUser);
-    slotting(ChatReq::GetProtoID(), std::bind(&User::onChatReq, this, _1, _2, _3));
+    slotting<ChatReq>(std::bind(&User::onChatReq, this, _1, _2));
 }
 User::~User() 
 {
 }
 
-void User::onChatReq(TcpSessionPtr&, const Tracing & trace, zsummer::proto4z::ReadStream &)
+void User::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
 {
     //globalCall;
     ChatAck ack;
