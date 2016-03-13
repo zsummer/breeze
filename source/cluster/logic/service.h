@@ -91,7 +91,8 @@ private:
     SessionID _sID = InvalidSessionID;
     ServiceID _serviceID = InvalidServiceID;
     ui32 _seqID = 0;
-    std::map<ui32, ServiceCallback> _cbs;
+    std::map<ui32, std::pair<time_t,ServiceCallback> > _cbs;
+    time_t _lastCheckCallback = 0;
 };
 using ServicePtr = std::shared_ptr<Service>;
 

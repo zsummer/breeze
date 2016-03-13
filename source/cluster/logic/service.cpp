@@ -25,10 +25,30 @@ void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned 
     trace._traceID = ++_seqID;
     trace._toService = st;
     trace._toServiceID = svcID;
+    time_t now = getNowTime();
     if (cb)
     {
-        _cbs.insert(std::make_pair(trace._traceID, cb));
+        LOGD("Service::globalCall make callback. cbid=" << trace._traceID << ", call time=" << now);
+        _cbs.insert(std::make_pair(trace._traceID, std::make_pair(now, cb)));
     }
+    
+    if (now - _lastCheckCallback > 180)
+    {
+        _lastCheckCallback = now;
+        for (auto iter = _cbs.begin(); iter != _cbs.end();)
+        {
+            if (now - iter->second.first > 600)
+            {
+                LOGW("Service::globalCall waiting callback timeout. cbid=" << iter->first << ", call time=" << iter->second.first);
+                iter = _cbs.erase(iter);
+            }
+            else
+            {
+                iter++;
+            }
+        }
+    }
+    
     Application::getRef().globalCall(trace, block, len);
 }
 
@@ -75,42 +95,52 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
 
 void Service::onBacking(const Tracing & trace, const char * block, unsigned int len)
 {
-    auto founder = _cbs.find(trace._traceBackID);
-    if (founder != _cbs.end())
+    if (trace._traceBackID > 0)
     {
-        try
+        auto founder = _cbs.find(trace._traceBackID);
+        if (founder != _cbs.end())
         {
-            auto cb = std::move(founder->second);
-            _cbs.erase(founder);
-            ReadStream rs(block, len);
-            cb(rs);
-        }
-        catch (std::runtime_error e)
-        {
-            LOGE("Service::onBacking catch except. e=" << e.what());
-        }
-    }
-    else
-    {
-        LOGW("Service::onBacking not found callback. try call process...");
-        try
-        {
-            ReadStream rs(block, len);
-            auto fder = _slots.find(rs.getProtoID());
-            if (fder != _slots.end())
+            try
             {
-                fder->second(trace, rs);
+                auto cb = std::move(founder->second.second);
+                _cbs.erase(founder);
+                ReadStream rs(block, len);
+                cb(rs);
+                return;
             }
-            else
+            catch (std::runtime_error e)
             {
-                LOGE("Service::onBacking try call process error. not found maping function. pID=" << rs.getProtoID());
+                LOGE("Service::onBacking catch except. e=" << e.what() << ", trace=" << trace);
+                return;
             }
         }
-        catch (std::runtime_error e)
+        else
         {
-            LOGE("Service::onBacking try call process catch except. e=" << e.what());
+            LOGE("Service::onBacking not found callback function. trace=" << trace);
+            return;
+        }
+        //return;
+    }
+
+    LOGW("Service::onBacking. try call process...");
+    try
+    {
+        ReadStream rs(block, len);
+        auto fder = _slots.find(rs.getProtoID());
+        if (fder != _slots.end())
+        {
+            fder->second(trace, rs);
+        }
+        else
+        {
+            LOGE("Service::onBacking try call process error. not found maping function. pID=" << rs.getProtoID() << ", trace=" << trace);
         }
     }
+    catch (std::runtime_error e)
+    {
+        LOGE("Service::onBacking try call process catch except. e=" << e.what() << ", trace=" << trace);
+    }
+
 }
 
 
