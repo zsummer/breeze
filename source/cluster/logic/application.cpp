@@ -21,6 +21,10 @@ bool Application::init(const std::string & config, ClusterIndex idx)
     SessionManager::getRef().setStopServersHandler(std::bind(&Application::onNetworkStoped, Application::getPtr()));
     return true;
 }
+void sigInt(int sig)
+{
+    Application::getRef().stop();
+}
 void Application::onNetworkStoped()
 {
     LOGA("Application::onNetworkStoped. check service.");

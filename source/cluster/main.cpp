@@ -22,13 +22,8 @@ using namespace zsummer::log4z;
 
 
 
-void sigInt(int sig)
-{
-    SessionManager::getRef().post(std::bind(&SessionManager::stopAccept, SessionManager::getPtr()));
-    SessionManager::getRef().post(std::bind(&SessionManager::stopClients, SessionManager::getPtr()));
-    SessionManager::getRef().post(std::bind(&SessionManager::stopServers, SessionManager::getPtr()));
-    SessionManager::getRef().post(std::bind(&SessionManager::stop, SessionManager::getPtr()));
-}
+void sigInt(int sig);
+
 
 int main(int argc, char* argv[])
 {
