@@ -52,7 +52,7 @@ public:
     virtual ~Service(){};
     using Slots = std::unordered_map<unsigned short, Slot>;
 
-    inline ServiceType getServiceType(){ return _st; }
+    inline ui16 getServiceType(){ return _st; }
     inline ServiceID getServiceID(){ return _serviceID; }
     inline SessionID getSessionID(){ return _sID; }
     inline bool getShell(){ return _sID != InvalidSessionID; }
@@ -64,12 +64,12 @@ protected:
     inline void slotting(const Slot & msgfun){ _slots[Proto::GetProtoID()] = msgfun; _slotsName[Proto::GetProtoID()] = Proto::GetProtoName(); }
 
 protected:
-    inline void setServiceType(ServiceType st){ _st = st; }
+    inline void setServiceType(ui16 st){ _st = st; }
     inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
     virtual bool onInit() = 0;
     void setWorked();
     //call 其他服务.
-    void globalCall(ServiceType st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
+    void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
     void backCall(const Tracing & trace, const char * block, unsigned int len);
 private:
     friend Application;
@@ -84,7 +84,7 @@ private:
 private:
     Slots _slots;
     std::map<ProtoID, std::string> _slotsName;
-    ServiceType _st = ServiceInvalid;
+    ui16 _st = (ui16)ServiceInvalid;
     bool _inited = false;
     bool _worked = false;
     bool _shell = false;

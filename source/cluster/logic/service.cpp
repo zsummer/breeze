@@ -16,7 +16,7 @@ void Service::setWorked()
     _worked = true;
 }
 
-void Service::globalCall(ServiceType st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
+void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trace;
     trace._fromService = getServiceType();

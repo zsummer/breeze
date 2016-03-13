@@ -147,6 +147,10 @@ const std::vector<std::string> ServiceNames =
     "DictDBMgr",
     "InfoDBMgr",
     "LogDBMgr",
+
+
+    //...
+    "InvalidName",
 };
 
 struct Tracing
@@ -158,7 +162,6 @@ struct Tracing
     ui16 _fromLocal = 0;
     ui32 _traceID = 0;
     ui32 _traceBackID = 0;
-    
 };
 
 
@@ -176,7 +179,7 @@ struct ClusterConfig
     std::string _wideIP;
     unsigned short _widePort = 0;
     std::vector<std::string> _whiteList;
-    std::vector<ServiceType> _services;
+    std::vector<ui16> _services;
     ClusterIndex _cluster = InvalidClusterIndex;
 };
 
@@ -219,23 +222,26 @@ enum SessionUserData
 };
 
 
-template <class MSG>
-void sendMessage(zsummer::network::TcpSessionPtr & session, MSG & msg)
+
+
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const Tracing & trace)
 {
-    zsummer::proto4z::WriteStream ws(MSG::GetProtoID());
-    ws << msg;
-    session->send(ws.getStream(), ws.getStreamLen());
+    if (trace._fromService < ServiceMax && trace._toService < ServiceMax)
+    {
+        os << "[_toService=" << ServiceNames.at(trace._toService) << ", _toServiceID=" << trace._toServiceID
+            << ", _fromService=" << ServiceNames.at(trace._fromService) << ", _fromServiceD=" << trace._fromServiceD
+            << ", _fromLocal=" << trace._fromLocal << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
+            << "]";
+    }
+    else
+    {
+        os << "[_toService=" << trace._toService << ", _toServiceID=" << trace._toServiceID
+            << ", _fromService=" << trace._fromService << ", _fromServiceD=" << trace._fromServiceD
+            << ", _fromLocal=" << trace._fromLocal << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
+            << "]";
+    }
+    return os;
 }
-
-template <class MSG>
-void sendMessage(zsummer::network::SessionID & sID, MSG & msg)
-{
-    zsummer::proto4z::WriteStream ws(MSG::GetProtoID());
-    ws << msg;
-    zsummer::network::SessionManager::getRef().sendSessionData(sID, ws.getStream(), ws.getStreamLen());
-}
-
-
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ClusterConfig & config)
 {

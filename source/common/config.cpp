@@ -168,7 +168,7 @@ bool ServerConfig::parse(std::string filename, ClusterIndex idx)
                 auto founder = std::find(ServiceNames.begin(), ServiceNames.end(), service);
                 if (founder != ServiceNames.end())
                 {
-                    lconfig._services.push_back((ServiceType)(founder - ServiceNames.begin()));
+                    lconfig._services.push_back((founder - ServiceNames.begin()));
                 }
                 else
                 {

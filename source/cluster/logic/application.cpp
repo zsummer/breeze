@@ -60,9 +60,9 @@ bool Application::start()
         }
         _clusterState[cID].first = cluster._cluster;
         _clusterState[cID].second = 0;
-        for (auto serviceType : cluster._services)
+        for (auto st : cluster._services)
         {
-            auto & second = _services[serviceType];
+            auto & second = _services[st];
             auto & servicePtr =  second[InvalidServiceID];
             if (servicePtr)
             {
@@ -71,7 +71,7 @@ bool Application::start()
             }
             else
             {
-                servicePtr = createLocalService(serviceType);
+                servicePtr = createLocalService(st);
             }
             if (!servicePtr)
             {
@@ -79,7 +79,7 @@ bool Application::start()
                 return false;
             }
             
-            servicePtr->setServiceType(serviceType);
+            servicePtr->setServiceType(st);
             if (cluster._cluster == ServerConfig::getRef().getClusterID())
             {
             }
@@ -199,7 +199,7 @@ void Application::event_onServiceClosed(TcpSessionPtr session)
 }
 
 
-ServicePtr Application::createLocalService(ServiceType st)
+ServicePtr Application::createLocalService(ui16 st)
 {
     if (st == ServiceDictDBMgr)
     {
@@ -215,6 +215,10 @@ ServicePtr Application::createLocalService(ServiceType st)
     }
     else if (st == ServiceUserMgr)
     {
+    }
+    else
+    {
+        LOGE("Application::createLocalService invalid service type " << st);
     }
     return nullptr;
 }
@@ -404,14 +408,9 @@ void Application::event_onClientMessage(TcpSessionPtr   session, const char * be
 
 void Application::globalCall(Tracing trace, const char * block, unsigned int len)
 {
-    if (trace._fromService >= ServiceMax)
+    if (trace._fromService >= ServiceMax || trace._toService >= ServiceMax)
     {
-        LOGF("Application::globalBack Illegality _fromService [" << trace._fromService << "], ServiceMax[" << ServiceMax << "]");
-        return;
-    }
-    if (trace._toService >= ServiceMax)
-    {
-        LOGF("Application::globalBack Illegality _toService [" << trace._fromService << "], ServiceMax[" << ServiceMax << "]");
+        LOGF("Application::globalCall Illegality trace. trace=" << trace << ", block len=" << len);
         return;
     }
     auto founder = _services.find(trace._toService);
@@ -437,25 +436,20 @@ void Application::globalCall(Tracing trace, const char * block, unsigned int len
         }
         else
         {
-            LOGD("Application::globalCall can not found _toService ID " << ServiceNames.at(trace._toService) << "[" << trace._toServiceID << "]");
+            LOGD("Application::globalCall can not found _toService ID. trace =" << trace << ", block len=" << len);
         }
     }
     else
     {
-        LOGF("Application::globalCall can not found _toService type " << trace._toService << ", typename=" << ServiceNames.at(trace._toService));
+        LOGF("Application::globalCall can not found _toService type  trace =" << trace << ", block len=" << len);
     }
 }
 
 void Application::globalBack(const Tracing & trace, const char * block, unsigned int len)
 {
-    if (trace._fromService >= ServiceMax)
+    if (trace._fromService >= ServiceMax || trace._toService >= ServiceMax)
     {
-        LOGF("Application::globalBack Illegality _fromService [" << trace._fromService << "], ServiceMax[" << ServiceMax << "]");
-        return;
-    }
-    if (trace._toService >= ServiceMax)
-    {
-        LOGF("Application::globalBack Illegality _toService [" << trace._fromService << "], ServiceMax[" << ServiceMax << "]");
+        LOGF("Application::globalBack Illegality trace. trace=" << trace << ", block len=" << len);
         return;
     }
     auto founder = _services.find(trace._toService);
@@ -471,12 +465,12 @@ void Application::globalBack(const Tracing & trace, const char * block, unsigned
         }
         else
         {
-            LOGD("Application::globalBack can not found _toService ID " << ServiceNames.at(trace._toService) << "[" << trace._toServiceID << "]");
+            LOGD("Application::globalBack can not found _toService ID.  trace=" << trace << ", block len=" << len);
         }
     }
     else
     {
-        LOGF("Application::globalBack can not found _toService type " << trace._toService << ", typename=" << ServiceNames.at(trace._toService));
+        LOGF("Application::globalBack can not found _toService type .  trace=" << trace << ", block len=" << len);
     }
 }
 

@@ -49,7 +49,7 @@ protected:
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    ServicePtr createLocalService(ServiceType st);
+    ServicePtr createLocalService(ui16 st);
     void checkServiceState();
 
     void event_onClientLinked(TcpSessionPtr session);
