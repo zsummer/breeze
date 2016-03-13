@@ -133,6 +133,10 @@ enum ServiceType : ui16
     ServiceDictDBMgr,
     ServiceInfoDBMgr,
     ServiceLogDBMgr,
+
+
+    //...
+    ServiceMax,
 };
 const std::vector<std::string> ServiceNames =
 {

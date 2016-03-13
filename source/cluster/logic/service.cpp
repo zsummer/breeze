@@ -69,7 +69,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
     }
     catch (std::runtime_error e)
     {
-        LOGE("e=" << e.what());
+        LOGE("Service::process catch except. e=" << e.what());
     }
 }
 
@@ -87,12 +87,12 @@ void Service::onBacking(const Tracing & trace, const char * block, unsigned int 
         }
         catch (std::runtime_error e)
         {
-            LOGE("e=" << e.what());
+            LOGE("Service::onBacking catch except. e=" << e.what());
         }
     }
     else
     {
-        LOGW("Service::onBacking not found callback");
+        LOGW("Service::onBacking not found callback. try call process...");
         try
         {
             ReadStream rs(block, len);
@@ -103,15 +103,13 @@ void Service::onBacking(const Tracing & trace, const char * block, unsigned int 
             }
             else
             {
-                LOGE("Service::onBacking not found maping function. pID=" << rs.getProtoID());
+                LOGE("Service::onBacking try call process error. not found maping function. pID=" << rs.getProtoID());
             }
         }
         catch (std::runtime_error e)
         {
-            LOGE("e=" << e.what());
+            LOGE("Service::onBacking try call process catch except. e=" << e.what());
         }
-
-
     }
 }
 

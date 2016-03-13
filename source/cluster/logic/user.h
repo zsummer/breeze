@@ -35,7 +35,7 @@
 
 
 
-class User : public Service, public std::enable_shared_from_this<User>
+class User : public Service
 {
 public:
     User();

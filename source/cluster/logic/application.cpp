@@ -100,7 +100,7 @@ bool Application::start()
             auto &options = SessionManager::getRef().getAccepterOptions(aID);
             options._whitelistIP = cluster._whiteList;
             options._maxSessions = 1000;
-            options._sessionOptions._sessionPulseInterval = 10000;
+            options._sessionOptions._sessionPulseInterval = 5000;
             options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
             {
                 ClusterPulse pulse;
@@ -170,6 +170,10 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
     founder->second.second = 1;
     for (auto & second : _services)
     {
+        if (second.first == ServiceClient || second.first == ServiceUser)
+        {
+            continue;
+        }
         for (auto & svc : second.second )
         {
             if (!svc.second->getShell() && svc.second->getInited())
@@ -179,7 +183,6 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
             }
         }
     }
-    
     checkServiceState();
 }
 
@@ -401,6 +404,16 @@ void Application::event_onClientMessage(TcpSessionPtr   session, const char * be
 
 void Application::globalCall(Tracing trace, const char * block, unsigned int len)
 {
+    if (trace._fromService >= ServiceMax)
+    {
+        LOGF("Application::globalBack Illegality _fromService [" << trace._fromService << "], ServiceMax[" << ServiceMax << "]");
+        return;
+    }
+    if (trace._toService >= ServiceMax)
+    {
+        LOGF("Application::globalBack Illegality _toService [" << trace._fromService << "], ServiceMax[" << ServiceMax << "]");
+        return;
+    }
     auto founder = _services.find(trace._toService);
     if (founder != _services.end())
     {
@@ -422,11 +435,29 @@ void Application::globalCall(Tracing trace, const char * block, unsigned int len
             }
             
         }
+        else
+        {
+            LOGD("Application::globalCall can not found _toService ID " << ServiceNames.at(trace._toService) << "[" << trace._toServiceID << "]");
+        }
+    }
+    else
+    {
+        LOGF("Application::globalCall can not found _toService type " << trace._toService << ", typename=" << ServiceNames.at(trace._toService));
     }
 }
 
 void Application::globalBack(const Tracing & trace, const char * block, unsigned int len)
 {
+    if (trace._fromService >= ServiceMax)
+    {
+        LOGF("Application::globalBack Illegality _fromService [" << trace._fromService << "], ServiceMax[" << ServiceMax << "]");
+        return;
+    }
+    if (trace._toService >= ServiceMax)
+    {
+        LOGF("Application::globalBack Illegality _toService [" << trace._fromService << "], ServiceMax[" << ServiceMax << "]");
+        return;
+    }
     auto founder = _services.find(trace._toService);
     if (founder != _services.end())
     {
@@ -438,6 +469,14 @@ void Application::globalBack(const Tracing & trace, const char * block, unsigned
             ws.appendOriginalData(block, len);
             SessionManager::getRef().sendSessionData(fder->second->getSessionID(), ws.getStream(), ws.getStreamLen());
         }
+        else
+        {
+            LOGD("Application::globalBack can not found _toService ID " << ServiceNames.at(trace._toService) << "[" << trace._toServiceID << "]");
+        }
+    }
+    else
+    {
+        LOGF("Application::globalBack can not found _toService type " << trace._toService << ", typename=" << ServiceNames.at(trace._toService));
     }
 }
 

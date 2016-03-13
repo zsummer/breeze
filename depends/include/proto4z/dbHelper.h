@@ -1,7 +1,7 @@
 ﻿
 /*
 * dbHelper License
-* Copyright (C) 2014-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -57,57 +57,33 @@ namespace  zsummer
         //! db query
         class DBQuery
         {
+        private:
+            inline bool insertParam(const std::string & param, bool isString);
         public:
             DBQuery(){}
             DBQuery(const std::string & init) :_sql(init){}
             DBQuery(DBQuery && q){ this->_sql = std::move(q._sql); this->_fmtPos = q._fmtPos; q._fmtPos = 0; }
+            DBQuery(const DBQuery & q){ this->_sql = q._sql; this->_fmtPos = q._fmtPos;}
+
             inline void init(const std::string & init){ _sql = init; _fmtPos = 0; }
 
             inline bool add(long long data);
             inline bool add(unsigned long long data);
+            inline bool add(double data);
+
             inline bool add(char data){ return add((long long)data); } // char [i8] type is the same as as long long
             inline bool add(unsigned char data){ return add((unsigned long long)data); }//unsigned char [ui8] type is the same as as long long
             inline bool add(short data){ return add((long long)data); }
             inline bool add(unsigned short data){ return add((unsigned long long)data); }
             inline bool add(int data){ return add((long long)data); }
             inline bool add(unsigned int data){ return add((unsigned long long)data); }
-            inline bool add(double data)
-            {
-                char buf[64];
-                buf[0] = '\0';
-                sprintf(buf, "%lf", data);
-                return insertParam(buf, false);
-            }
             inline bool add(float data){ return add((double)data); }
-
-            inline bool add(const char *  param, size_t len)
-            {
-                return insertParam(escapeString(param, len), true);
-            }
-            inline bool add(const std::string & param)
-            {
-                return insertParam(escapeString(param), true);
-            }
+            inline bool add(const char *  param, size_t len){ return insertParam(escapeString(param, len), true); }
+            inline bool add(const std::string & param){return insertParam(escapeString(param), true);}
             template<class T>
-            inline DBQuery & operator << (const T & t)
-            {
-                add(t);
-                return *this;
-            }
-
-
-            inline std::string popSQL()
-            {
-                size_t pos = _sql.find('?', _fmtPos);
-                if (pos != std::string::npos)
-                {
-                    LOGE("DBQuery param is not enough. current sql=" << _sql);
-                }
-                return std::move(_sql);
-            }
-
-        protected:
-            inline bool insertParam(const std::string & param, bool isString);
+            inline DBQuery & operator << (const T & t){add(t);return *this;}
+            inline std::string pickSQL();
+            inline std::string peekSQL();
         private:
             std::string _sql;
             std::string::size_type _fmtPos = 0;
@@ -122,140 +98,25 @@ namespace  zsummer
         public:
             DBResult(){}
             ~DBResult(){}
+            typedef std::vector<std::string> MysqlResult;
         public:
-            //get sql string
-            inline const std::string & sqlString(){ return _sql; }
-
-            //get error info
+            inline void buildResult(QueryErrorCode qec, const std::string & errMsg, const std::string & sql, unsigned long long affected, MysqlResult & result);
+            inline void buildResult(QueryErrorCode qec, const std::string & sql, MYSQL * db);
+        public:
+            inline const std::string & peekSQL(){ return _sql; }
             inline QueryErrorCode getErrorCode(){ return _ec; }
-            inline std::string getLastError(){ return _lastErrorMsg; }
-
-            //get affected rows
+            inline std::string getErrorMsg(){ return _errMsg; }
             inline unsigned long long getAffectedRows(){ return _affectedRows; }
-
-            //get result
             inline bool haveRow(){ return _curIter != _result.end(); }
 
-            inline DBResult & operator >>(long long & t)
-            {
-                std::string  field = popOrgField();
-                if (field.empty())
-                {
-                    t = 0;
-                }
-                else
-                {
-                    t = atoll(field.c_str());
-                }
-                return *this;
-            }
-            inline DBResult & operator >>(int & t)
-            {
-                long long tt;
-                *this >> tt;
-                t = (int)tt;
-                return *this;
-            }
-            inline DBResult & operator >>(short & t)
-            {
-                long long tt;
-                *this >> tt;
-                t = (short)tt;
-                return *this;
-            }
-            inline DBResult & operator >>(char & t)
-            {
-                char tt;
-                *this >> tt;
-                t = (char)tt;
-                return *this;
-            }
-            inline DBResult & operator >>(unsigned long long & t)
-            {
-                std::string  field = popOrgField();
-                if (field.empty())
-                {
-                    t = 0;
-                }
-                else
-                {
-                    char *cursor = nullptr;
-                    t =  strtoull(field.c_str(), &cursor, 10);
-                }
-                return *this;
-            }
-            inline DBResult & operator >>(unsigned int & t)
-            {
-                unsigned long long tt;
-                *this >> tt;
-                t = (unsigned int)tt;
-                return *this;
-            }
-            inline DBResult & operator >>(unsigned short & t)
-            {
-                unsigned long long tt;
-                *this >> tt;
-                t = (unsigned short)tt;
-                return *this;
-            }
-            inline DBResult & operator >>(unsigned char & t)
-            {
-                unsigned long long tt;
-                *this >> tt;
-                t = (unsigned char)tt;
-                return *this;
-            }
-
-            inline DBResult & operator >>(double & t)
-            {
-                std::string field = popOrgField();
-                if (field.empty())
-                {
-                    t = 0.0;
-                }
-                else
-                {
-                    char *cursor = nullptr;
-                    t = strtold(field.c_str(), &cursor);
-                }
-                return *this;
-            }
-            inline DBResult & operator >>(float & t)
-            {
-                double tt;
-                *this >> tt;
-                t = (float)tt;
-                return *this;
-            }
-            inline DBResult & operator >>(std::string & t)
-            {
-                t = popOrgField();
-                return *this;
-            }
         public:
-            inline void _setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db);
-        private:
-            inline std::string popOrgField()
-            {
-                if (_curIter == _result.end())
-                {
-                    throw std::runtime_error("result have not any row.");
-                }
-                auto curIter = _curIter++;
-                return std::move(*curIter);
-            }
-
-            
-
+            inline MysqlResult && popResult(){ return std::move(_result); }
+            inline std::string popOrgField();
         private:
             QueryErrorCode _ec = QueryErrorCode::QEC_UNQUERY;
-            //sql
+            std::string _errMsg;
             std::string _sql;
-            //error
-            std::string _lastErrorMsg;
-            //res
             unsigned long long _affectedRows = 0;
-            typedef std::list<std::string> MysqlResult;
             MysqlResult _result;
             MysqlResult::iterator _curIter = _result.begin();
         };
@@ -332,6 +193,15 @@ namespace  zsummer
             }
             return std::move(ret);
         }
+
+        inline bool DBQuery::add(double data)
+        {
+            char buf[64];
+            buf[0] = '\0';
+            sprintf(buf, "%lf", data);
+            return insertParam(buf, false);
+        }
+
         inline bool DBQuery::add(long long data)
         {
             char buf[64];
@@ -381,12 +251,47 @@ namespace  zsummer
             }
             return true;
         }
+        inline std::string DBQuery::pickSQL()
+        {
+            size_t pos = _sql.find('?', _fmtPos);
+            if (pos != std::string::npos)
+            {
+                LOGE("DBQuery param is not enough. current sql=" << _sql);
+            }
+            return std::move(_sql);
+        }
+        inline std::string DBQuery::peekSQL()
+        {
+            size_t pos = _sql.find('?', _fmtPos);
+            if (pos != std::string::npos)
+            {
+                LOGE("DBQuery param is not enough. current sql=" << _sql);
+            }
+            return _sql;
+        }
 
 
+        inline std::string DBResult::popOrgField()
+        {
+            if (_curIter == _result.end())
+            {
+                throw std::runtime_error("result have not any row.");
+            }
+            auto curIter = _curIter++;
+            return std::move(*curIter);
+        }
 
+        void DBResult::buildResult(QueryErrorCode qec, const std::string & errMsg, const std::string & sql, unsigned long long affected, MysqlResult & result)
+        {
+            _ec = qec;
+            _errMsg = errMsg;
+            _sql = sql;
+            _affectedRows = affected;
+            _result = std::move(result);
+            _curIter = result.begin();
+        }
 
-
-        void DBResult::_setQueryResult(QueryErrorCode qec, const std::string & sql, MYSQL * db)
+        void DBResult::buildResult(QueryErrorCode qec, const std::string & sql, MYSQL * db)
         {
             _ec = qec;
             _sql = sql;
@@ -394,11 +299,11 @@ namespace  zsummer
             {
                 char buf[20];
                 sprintf(buf, "%d", mysql_errno(db));
-                _lastErrorMsg = "[MYSQL_ERRNO:";
-                _lastErrorMsg += buf;
-                _lastErrorMsg += "]";
+                _errMsg = "[MYSQL_ERRNO:";
+                _errMsg += buf;
+                _errMsg += "]";
                 const char * msg = mysql_error(db);
-                _lastErrorMsg += msg == NULL ? "" : msg;
+                _errMsg += msg == NULL ? "" : msg;
             }
             else if (qec == QueryErrorCode::QEC_SUCCESS)
             {
@@ -508,23 +413,117 @@ namespace  zsummer
                     {
                         if (mysql_real_query(_mysql, sql.c_str(), (unsigned long)sql.length()) == 0)
                         {
-                            ret->_setQueryResult(QueryErrorCode::QEC_SUCCESS, sql, _mysql);
+                            ret->buildResult(QueryErrorCode::QEC_SUCCESS, sql, _mysql);
                             return ret;
                         }
                     }
                 }
-                ret->_setQueryResult(QueryErrorCode::QEC_MYSQLERROR, sql, _mysql);
+                ret->buildResult(QueryErrorCode::QEC_MYSQLERROR, sql, _mysql);
                 return ret;
             }
-            ret->_setQueryResult(QueryErrorCode::QEC_SUCCESS, sql, _mysql);
+            ret->buildResult(QueryErrorCode::QEC_SUCCESS, sql, _mysql);
             return ret;
         }
 
 
 
 
+        inline DBResult & operator >>(DBResult &result, long long & t)
+        {
+            std::string  field = result.popOrgField();
+            if (field.empty())
+            {
+                t = 0;
+            }
+            else
+            {
+                t = atoll(field.c_str());
+            }
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, int & t)
+        {
+            long long tt;
+            result >> tt;
+            t = (int)tt;
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, short & t)
+        {
+            long long tt;
+            result >> tt;
+            t = (short)tt;
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, char & t)
+        {
+            char tt;
+            result >> tt;
+            t = (char)tt;
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, unsigned long long & t)
+        {
+            std::string  field = result.popOrgField();
+            if (field.empty())
+            {
+                t = 0;
+            }
+            else
+            {
+                char *cursor = nullptr;
+                t = strtoull(field.c_str(), &cursor, 10);
+            }
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, unsigned int & t)
+        {
+            unsigned long long tt;
+            result >> tt;
+            t = (unsigned int)tt;
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, unsigned short & t)
+        {
+            unsigned long long tt;
+            result >> tt;
+            t = (unsigned short)tt;
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, unsigned char & t)
+        {
+            unsigned long long tt;
+            result >> tt;
+            t = (unsigned char)tt;
+            return result;
+        }
 
-
+        inline DBResult & operator >>(DBResult &result, double & t)
+        {
+            std::string field = result.popOrgField();
+            if (field.empty())
+            {
+                t = 0.0;
+            }
+            else
+            {
+                char *cursor = nullptr;
+                t = strtold(field.c_str(), &cursor);
+            }
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, float & t)
+        {
+            double tt;
+            result >> tt;
+            t = (float)tt;
+            return result;
+        }
+        inline DBResult & operator >>(DBResult &result, std::string & t)
+        {
+            t = result.popOrgField();
+            return result;
+        }
 
 
 

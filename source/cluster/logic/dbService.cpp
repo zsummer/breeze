@@ -59,15 +59,34 @@ bool DBService::onInit()
 
 void DBService::onSQLQueryReq(Tracing trace, ReadStream &rs)
 {
+    SQLQueryReq req;
+    rs >> req;
+    asyncQuery(req.sql, std::bind(&DBService::onAsyncSQLQueryReq, std::static_pointer_cast<DBService>(shared_from_this()), _1, trace));
+
+}
+
+void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
+{
     SQLQueryResp resp;
+    resp.retCode = EC_SUCCESS;
+    resp.result.qc = result->getErrorCode();
+    resp.result.errMsg = result->getErrorMsg();
+    resp.result.sql = result->peekSQL();
+    resp.result.affected = result->getAffectedRows();
+    resp.result.fields = std::move(result->popResult());
     WriteStream ws(SQLQueryResp::GetProtoID());
     ws << resp;
-    
     backCall(trace, ws.getStream(), ws.getStreamLen());
 }
 
-
-
+void DBService::onTest(ReadStream & rs)
+{
+    SQLQueryResp resp;
+    rs >> resp;
+    DBResult result;
+    LOGD("onTest qc=" << resp.result.qc << ", errMSG=" << resp.result.errMsg << ", affected=" << resp.result.affected << ", fields=" << resp.result.fields.size());
+    result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
+}
 
 bool DBService::stop(std::function<void()> onSafeClosed)
 {
@@ -100,7 +119,7 @@ static void defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
 {
     if (ptr->getErrorCode() != zsummer::mysql::QEC_SUCCESS)
     {
-        LOGE("_defaultAsyncHandler error. msg=" << ptr->getLastError() << ", org sql=" << ptr->sqlString());
+        LOGE("_defaultAsyncHandler error. msg=" << ptr->getErrorMsg() << ", org sql=" << ptr->peekSQL());
     }
 }
 void DBService::asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)

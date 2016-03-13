@@ -44,9 +44,6 @@ public:
     void globalCall(Tracing trace, const char * block, unsigned int len);
     void globalBack(const Tracing & trace, const char * block, unsigned int len);
 protected:
-protected:
-
-
 
 protected:
     void event_onServiceLinked(TcpSessionPtr session);

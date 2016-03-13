@@ -36,7 +36,7 @@
 
 #ifndef BREEZE_SERVICE_H_
 #define BREEZE_SERVICE_H_
-#include "defined.h"
+#include <common.h>
 
 
 using Slot = std::function < void(const Tracing & trace, zsummer::proto4z::ReadStream &) >;

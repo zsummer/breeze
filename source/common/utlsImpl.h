@@ -44,13 +44,16 @@ RET fromString(const std::string & t, RET def)
     }
     else if (typeid(RET) == typeid(unsigned long long))
     {
-        unsigned long long ull = 0;
-#ifndef WIN32
-        sscanf(t.c_str(), "%llu", &ull);
-#else
-        int count = sscanf(t.c_str(), "%I64u", &ull);
-#endif
-        return (RET)ull;
+
+        char *cursor = nullptr;
+        return (RET)strtoull(t.c_str(), &cursor, 10);
+//        unsigned long long ull = 0;
+//#ifndef WIN32
+//        sscanf(t.c_str(), "%llu", &ull);
+//#else
+//        int count = sscanf(t.c_str(), "%I64u", &ull);
+//#endif
+//        return (RET)ull;
     }
     return (RET)atoll(t.c_str());
 }

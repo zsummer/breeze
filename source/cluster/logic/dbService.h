@@ -42,7 +42,9 @@ public:
     bool stop(std::function<void()> onSafeClosed);
 public:
     void onSQLQueryReq(Tracing trace, ReadStream &rs);
-    inline void onTest(ReadStream & rs){ LOGD("onTest"); }
+    void onAsyncSQLQueryReq(DBResultPtr result, Tracing trace);
+
+    void onTest(ReadStream & rs);
 
     void asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
     void asyncQuery(const std::string &sql);
