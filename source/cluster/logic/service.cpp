@@ -4,7 +4,19 @@
 #include <ProtoCluster.h>
 
 
-
+void Service::setInited()
+{
+    _inited = true;
+    if (_timerID == InvalidTimerID)
+    {
+        _timerID = SessionManager::getRef().createTimer(3000, std::bind(&Service::_onTimer, shared_from_this()));
+    }
+}
+void Service::_onTimer()
+{
+    _timerID = SessionManager::getRef().createTimer(3000, std::bind(&Service::_onTimer, shared_from_this()));
+    onTick();
+}
 void Service::setWorked()
 {
     if (!getShell())

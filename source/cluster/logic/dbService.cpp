@@ -78,7 +78,10 @@ void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
     ws << resp;
     backCall(trace, ws.getStream(), ws.getStreamLen(), nullptr);
 }
+void DBService::onTick()
+{
 
+}
 void DBService::onTest(ReadStream & rs)
 {
     SQLQueryResp resp;

@@ -45,7 +45,7 @@ public:
     void onAsyncSQLQueryReq(DBResultPtr result, Tracing trace);
 
     void onTest(ReadStream & rs);
-
+    void onTick();
     void asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
     void asyncQuery(const std::string &sql);
     zsummer::mysql::DBResultPtr query(const std::string &sql);

@@ -67,15 +67,16 @@ protected:
     inline void setServiceType(ui16 st){ _st = st; }
     inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
     virtual bool onInit() = 0;
+    virtual void onTick() = 0;
     void setWorked();
-    //call 其他服务.
     void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
     void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb);
 private:
+    void _onTimer();
+private:
     friend Application;
-    inline void setInited(){ _inited = true; }
+    void setInited();
     inline void setShell(SessionID sID){ _sID = sID; }
-    //处理服务
     void process(const Tracing & trace, const char * block, unsigned int len);
 
 
@@ -91,6 +92,7 @@ private:
     ui32 _seqID = 0;
     std::map<ui32, std::pair<time_t,ServiceCallback> > _cbs;
     time_t _lastCheckCallback = 0;
+    TimerID _timerID = InvalidTimerID;
 };
 using ServicePtr = std::shared_ptr<Service>;
 

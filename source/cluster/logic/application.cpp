@@ -13,13 +13,52 @@ bool Application::init(const std::string & config, ClusterIndex idx)
     {
         return false;
     }
+    SessionManager::getRef().setStopClientsHandler([]()
+                                                   {
+                                                       SessionManager::getRef().setStopServersHandler(
+                                                               std::bind(&Application::onNetworkStoped, Application::getPtr())
+                                                       );
+                                                   });
     return true;
+}
+void Application::onNetworkStoped()
+{
+    _closed = true;
+    bool safe =  true;
+    for(auto &second : _services)
+    {
+        if (second.first == ServiceClient || second.first == ServiceUser || second.first == ServiceInvalid)
+        {
+            continue;
+        }
+        for (auto & svc : second.second)
+        {
+            if (svc.second->getWorked())
+            {
+                safe = false;
+                break;
+            }
+        }
+    }
+    if(safe)
+    {
+        SessionManager::getRef().stop();
+    }
+    else
+    {
+        SessionManager::getRef().createTimer(1000, std::bind(&Application::onNetworkStoped, this));
+    }
 }
 bool Application::run()
 {
     return SessionManager::getRef().run();
 }
-
+void Application::stop()
+{
+    SessionManager::getRef().stopAccept();
+    SessionManager::getRef().stopClients();
+    return ;
+}
 bool Application::start()
 {
     const auto & clusters = ServerConfig::getRef().getClusterConfig();
@@ -188,6 +227,14 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
 
 void Application::event_onServiceClosed(TcpSessionPtr session)
 {
+    for (auto & second : _services)
+    {
+        if(second.first == ServiceClient) continue;
+        for (auto &svc: second.second)
+        {
+            //svc.second->setWorked();
+        }
+    }
     auto founder = _clusterState.find(session->getSessionID());
     if (founder == _clusterState.end())
     {

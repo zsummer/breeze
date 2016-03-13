@@ -42,6 +42,8 @@ public:
     template<class Proto>
     void broadcast(const Proto & proto);
     void globalCall(Tracing trace, const char * block, unsigned int len);
+    void stop();
+    void onNetworkStoped();
 protected:
 
 protected:
@@ -64,7 +66,7 @@ private:
     bool _clusterServiceWorking = false;
     bool _clusterServiceInited = false;
 
-
+    bool _closed = false;
 
 };
 
