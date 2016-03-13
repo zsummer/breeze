@@ -47,6 +47,7 @@ const ProtoID InvalidProtoID = -1;
 class Application;
 class Service : public std::enable_shared_from_this<Service>
 {
+    friend Application;
 public:
     Service(){}
     virtual ~Service(){};
@@ -74,7 +75,7 @@ protected:
 private:
     void _onTimer();
 private:
-    friend Application;
+    
     void setInited();
     inline void setShell(SessionID sID){ _sID = sID; }
     void process(const Tracing & trace, const char * block, unsigned int len);

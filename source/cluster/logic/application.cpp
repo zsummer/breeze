@@ -15,14 +15,15 @@ bool Application::init(const std::string & config, ClusterIndex idx)
     }
     SessionManager::getRef().setStopClientsHandler([]()
                                                    {
-                                                       SessionManager::getRef().setStopServersHandler(
-                                                               std::bind(&Application::onNetworkStoped, Application::getPtr())
-                                                       );
+                                                        LOGA("all client socket closed.");
+                                                        SessionManager::getRef().stopServers();
                                                    });
+    SessionManager::getRef().setStopServersHandler(std::bind(&Application::onNetworkStoped, Application::getPtr()));
     return true;
 }
 void Application::onNetworkStoped()
 {
+    LOGA("Application::onNetworkStoped. check service.");
     _closed = true;
     bool safe =  true;
     for(auto &second : _services)
@@ -33,7 +34,8 @@ void Application::onNetworkStoped()
         }
         for (auto & svc : second.second)
         {
-            if (svc.second->getWorked())
+            auto sptr = SessionManager::getRef().getTcpSession(svc.second->getSessionID());
+            if (sptr && !sptr->isInvalidSession())
             {
                 safe = false;
                 break;
@@ -42,6 +44,7 @@ void Application::onNetworkStoped()
     }
     if(safe)
     {
+        LOGA("Application::onNetworkStoped. service all closed.");
         SessionManager::getRef().stop();
     }
     else
@@ -296,8 +299,18 @@ void Application::checkServiceState()
                 {
                     LOGI("Application initing local service [" << ServiceNames.at(service.second->getServiceType()) << "][" << service.second->getServiceID() << "] ...");
                     service.second->setInited();
-                    service.second->onInit();
-                    LOGI("Application inited local service [" << ServiceNames.at(service.second->getServiceType()) << "][" << service.second->getServiceID() << "] ...");
+                    bool ret = service.second->onInit();
+                    if (ret)
+                    {
+                        LOGI("Application inited local service [" << ServiceNames.at(service.second->getServiceType()) << "][" << service.second->getServiceID() << "] ...");
+                    }
+                    else
+                    {
+                        LOGE("Application inited local service  error. [" << ServiceNames.at(service.second->getServiceType()) << "][" << service.second->getServiceID() << "] ...");
+                        Application::getRef().stop();
+                        return;
+                    }
+                    
                 }
             }
         }
