@@ -55,7 +55,7 @@ private:
 };
 inline bool Balance::enableNode(ClusterIndex node)
 {
-    if(node < 0 || node == InvalidClusterIndex)
+    if(node == InvalidClusterIndex)
     {
         return false;
     }
