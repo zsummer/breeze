@@ -61,18 +61,4 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-struct ClusterShellBack //壳子请求  
-{ 
-    static const unsigned short GetProtoID() { return 40004;} 
-    static const std::string GetProtoName() { return "ID_ClusterShellBack";} 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterShellBack & data) 
-{ 
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterShellBack & data) 
-{ 
-    return rs; 
-} 
- 
 #endif 

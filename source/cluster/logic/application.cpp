@@ -331,27 +331,7 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
         }
         svc.process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
     }
-    if (rs.getProtoID() == ClusterShellBack::GetProtoID())
-    {
-        Tracing trace;
-        rs >> trace;
-        auto founder = _services.find(trace._toService);
-        if (founder == _services.end())
-        {
-            return;
-        }
-        auto fder = founder->second.find(trace._toServiceID);
-        if (fder == founder->second.end())
-        {
-            return;
-        }
-        Service & svc = *fder->second;
-        if (svc.getShell())
-        {
-            return;
-        }
-        svc.onBacking(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
-    }
+
     
 }
 
@@ -429,7 +409,6 @@ void Application::globalCall(Tracing trace, const char * block, unsigned int len
             }
             else //direct process
             {
-                trace._fromLocal = 1;
                 service.process(trace, block, len);
             }
             
@@ -445,33 +424,6 @@ void Application::globalCall(Tracing trace, const char * block, unsigned int len
     }
 }
 
-void Application::globalBack(const Tracing & trace, const char * block, unsigned int len)
-{
-    if (trace._fromService >= ServiceMax || trace._toService >= ServiceMax)
-    {
-        LOGF("Application::globalBack Illegality trace. trace=" << trace << ", block len=" << len);
-        return;
-    }
-    auto founder = _services.find(trace._toService);
-    if (founder != _services.end())
-    {
-        auto fder = founder->second.find(trace._toServiceID);
-        if (fder != founder->second.end())
-        {
-            WriteStream ws(ClusterShellBack::GetProtoID());
-            ws << trace;
-            ws.appendOriginalData(block, len);
-            SessionManager::getRef().sendSessionData(fder->second->getSessionID(), ws.getStream(), ws.getStreamLen());
-        }
-        else
-        {
-            LOGD("Application::globalBack can not found _toService ID.  trace=" << trace << ", block len=" << len);
-        }
-    }
-    else
-    {
-        LOGF("Application::globalBack can not found _toService type .  trace=" << trace << ", block len=" << len);
-    }
-}
+
 
 

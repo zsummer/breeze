@@ -70,15 +70,13 @@ protected:
     void setWorked();
     //call 其他服务.
     void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
-    void backCall(const Tracing & trace, const char * block, unsigned int len);
+    void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb);
 private:
     friend Application;
     inline void setInited(){ _inited = true; }
     inline void setShell(SessionID sID){ _sID = sID; }
     //处理服务
     void process(const Tracing & trace, const char * block, unsigned int len);
-    //壳子处理
-    void onBacking(const Tracing & trace, const char * block, unsigned int len);
 
 
 private:

@@ -76,7 +76,7 @@ void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
     resp.result.fields = std::move(result->popResult());
     WriteStream ws(SQLQueryResp::GetProtoID());
     ws << resp;
-    backCall(trace, ws.getStream(), ws.getStreamLen());
+    backCall(trace, ws.getStream(), ws.getStreamLen(), nullptr);
 }
 
 void DBService::onTest(ReadStream & rs)

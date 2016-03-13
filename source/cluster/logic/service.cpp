@@ -52,7 +52,7 @@ void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned 
     Application::getRef().globalCall(trace, block, len);
 }
 
-void Service::backCall(const Tracing & trace, const char * block, unsigned int len)
+void Service::backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trc;
     trc._fromService = getServiceType();
@@ -61,39 +61,17 @@ void Service::backCall(const Tracing & trace, const char * block, unsigned int l
     trc._traceID = ++_seqID;
     trc._toService = trace._fromService;
     trc._toServiceID = trace._fromServiceD;
-    trc._fromLocal = trace._fromLocal;
-    if (trc._fromLocal)
+    time_t now = getNowTime();
+    if (cb)
     {
-        onBacking(trc, block, len);
+        LOGD("Service::backCall make callback. cbid=" << trace._traceID << ", call time=" << now);
+        _cbs.insert(std::make_pair(trace._traceID, std::make_pair(now, cb)));
     }
-    else
-    {
-        Application::getRef().globalBack(trc, block, len);
-    }
+    Application::getRef().globalCall(trc, block, len);
 }
+
 
 void Service::process(const Tracing & trace, const char * block, unsigned int len)
-{
-    try
-    {
-        ReadStream rs(block, len);
-        auto founder = _slots.find(rs.getProtoID());
-        if (founder != _slots.end())
-        {
-            founder->second(trace, rs);
-        }
-        else
-        {
-            LOGE("Service::process not found maping function. pID=" << rs.getProtoID());
-        }
-    }
-    catch (std::runtime_error e)
-    {
-        LOGE("Service::process catch except. e=" << e.what());
-    }
-}
-
-void Service::onBacking(const Tracing & trace, const char * block, unsigned int len)
 {
     if (trace._traceBackID > 0)
     {
@@ -110,19 +88,17 @@ void Service::onBacking(const Tracing & trace, const char * block, unsigned int 
             }
             catch (std::runtime_error e)
             {
-                LOGE("Service::onBacking catch except. e=" << e.what() << ", trace=" << trace);
+                LOGE("Service::process catch except. e=" << e.what() << ", trace=" << trace);
                 return;
             }
         }
         else
         {
-            LOGE("Service::onBacking not found callback function. trace=" << trace);
-            return;
+            LOGE("Service::process not found callback function. try to find slot. trace=" << trace);
         }
         //return;
     }
 
-    LOGW("Service::onBacking. try call process...");
     try
     {
         ReadStream rs(block, len);
@@ -133,15 +109,16 @@ void Service::onBacking(const Tracing & trace, const char * block, unsigned int 
         }
         else
         {
-            LOGE("Service::onBacking try call process error. not found maping function. pID=" << rs.getProtoID() << ", trace=" << trace);
+            LOGE("Service::process call process error. not found maping function. pID=" << rs.getProtoID() << ", trace=" << trace);
         }
     }
     catch (std::runtime_error e)
     {
-        LOGE("Service::onBacking try call process catch except. e=" << e.what() << ", trace=" << trace);
+        LOGE("Service::process call process catch except. e=" << e.what() << ", trace=" << trace);
     }
-
 }
+
+
 
 
 

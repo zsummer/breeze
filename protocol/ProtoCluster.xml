@@ -18,8 +18,5 @@
 
     <proto name="ClusterShellForward" desc= "壳子转发">
     </proto>
-    <proto name="ClusterShellBack" desc= "壳子请求">
-    </proto>
-
 </Proto>
 

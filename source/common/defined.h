@@ -159,7 +159,6 @@ struct Tracing
     ServiceID _toServiceID = InvalidServiceID;
     ui16 _fromService;
     ServiceID _fromServiceD = InvalidServiceID;
-    ui16 _fromLocal = 0;
     ui32 _traceID = 0;
     ui32 _traceBackID = 0;
 };
@@ -230,14 +229,14 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
     {
         os << "[_toService=" << ServiceNames.at(trace._toService) << ", _toServiceID=" << trace._toServiceID
             << ", _fromService=" << ServiceNames.at(trace._fromService) << ", _fromServiceD=" << trace._fromServiceD
-            << ", _fromLocal=" << trace._fromLocal << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
+            << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
             << "]";
     }
     else
     {
         os << "[_toService=" << trace._toService << ", _toServiceID=" << trace._toServiceID
             << ", _fromService=" << trace._fromService << ", _fromServiceD=" << trace._fromServiceD
-            << ", _fromLocal=" << trace._fromLocal << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
+            << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
             << "]";
     }
     return os;
@@ -268,7 +267,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data._toServiceID;
     ws << data._fromService;
     ws << data._fromServiceD;
-    ws << data._fromLocal;
     ws << data._traceID;
     ws << data._traceBackID;
     return ws;
@@ -279,7 +277,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data._toServiceID;
     rs >> data._fromService;
     rs >> data._fromServiceD;
-    rs >> data._fromLocal;
     rs >> data._traceID;
     rs >> data._traceBackID;
     return rs;

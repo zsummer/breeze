@@ -15,8 +15,3 @@ Proto4z.register(40003,"ClusterShellForward")
 Proto4z.ClusterShellForward = {} --壳子转发 
 Proto4z.ClusterShellForward.__getID = 40003 
 Proto4z.ClusterShellForward.__getName = "ClusterShellForward" 
- 
-Proto4z.register(40004,"ClusterShellBack") 
-Proto4z.ClusterShellBack = {} --壳子请求 
-Proto4z.ClusterShellBack.__getID = 40004 
-Proto4z.ClusterShellBack.__getName = "ClusterShellBack" 

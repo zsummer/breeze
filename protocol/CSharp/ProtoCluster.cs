@@ -78,27 +78,6 @@ namespace Proto4z
         } 
     } 
  
-    public class ClusterShellBack: Proto4z.IProtoObject //壳子请求  
-    {     
-        //proto id   
-        public const ushort protoID = 40004;  
-        static public ushort getProtoID() { return 40004; } 
-        static public string getProtoName() { return "ClusterShellBack"; } 
-        //members   
-        public ClusterShellBack()  
-        { 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            return pos; 
-        } 
-    } 
- 
 } 
  
  

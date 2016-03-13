@@ -42,7 +42,6 @@ public:
     template<class Proto>
     void broadcast(const Proto & proto);
     void globalCall(Tracing trace, const char * block, unsigned int len);
-    void globalBack(const Tracing & trace, const char * block, unsigned int len);
 protected:
 
 protected:
