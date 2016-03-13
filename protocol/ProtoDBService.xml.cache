@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>925b6a92dc3abf210d3386462c2bf819</cppmd5> 
+<luamd5>f8ba73f3ffba0d29d607124c991c9236</luamd5> 
+<csharpmd5>c235393c9606eb7e963ae4d530c647de</csharpmd5> 
+<sqlmd5>4a547ae8795de08a38305896098a5592</sqlmd5> 
+<xmlmd5>21641ddd49bfcad165bd74363ff62ab1</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_SQLQueryReq" Number = "41000" /> 
+    <cache key = "ID_SQLQueryResp" Number = "41001" /> 
+</cacheNumber>

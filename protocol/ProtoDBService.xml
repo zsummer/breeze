@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>41000</MinNo>
+  <MaxNo>41100</MaxNo>
+  <UseLog4z>true</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+
+    <array name="SQLFieldArray" type="string" desc="" />
+
+    <struct name="SQLResult" desc="">
+        <member name="qc" type="ui16"  desc=""/>
+        <member name="errMsg" type="string"  desc=""/>
+        <member name="sql" type="string"  desc=""/>
+        <member name="affected" type="ui64"  desc=""/>
+        <member name="fields"  type="SQLFieldArray" desc=""/>
+    </struct>
+
+
+
+    <proto name="SQLQueryReq" desc= "">
+        <member name="sql" type="string"   desc=""/>
+    </proto>
+    <proto name="SQLQueryResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="result" type="SQLResult"   desc=""/>
+    </proto>
+
+
+
+
+  
+  
+
+
+</Proto>
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>08b42c3209fd50e9ce15eb2c8244b2c3</cppmd5> 
+<luamd5>0724ef38555a4254ca6192a879be93be</luamd5> 
+<csharpmd5>e94e60dd937f29e7107f502cae2e4dea</csharpmd5> 
+<sqlmd5>be80868adcec10ae00e00d266b31f7f7</sqlmd5> 
+<xmlmd5>2a387c382d47d2b4ff1ed3f7e4974710</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_ClusterPulse" Number = "40000" /> 
+    <cache key = "ID_ClusterRoute" Number = "40002" /> 
+    <cache key = "ID_ClusterServiceInited" Number = "40001" /> 
+    <cache key = "ID_ClusterShellBack" Number = "40004" /> 
+    <cache key = "ID_ClusterShellForward" Number = "40003" /> 
+</cacheNumber>
