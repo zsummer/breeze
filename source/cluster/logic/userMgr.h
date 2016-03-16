@@ -20,40 +20,28 @@
 
 
 
-#ifndef _DB_MANAGER_H_
-#define _DB_MANAGER_H_
+
+#ifndef _USER_MANAGER_H_
+#define _USER_MANAGER_H_
 #include <common.h>
 #include "service.h"
 
 
 
 
-class DBService : public Service
+class UserMgr : public Service
 {
 public:
-    DBService();
-    ~DBService();
+    UserMgr();
+    ~UserMgr();
     bool onInit() override final;
     void onStop() override final;
     void onTick() override final;
 public:
-    void onSQLQueryReq(Tracing trace, ReadStream &rs);
-    void onAsyncSQLQueryReq(DBResultPtr result, Tracing trace);
 
-    void onTest(ReadStream & rs);
-
-    void asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
-    void asyncQuery(const std::string &sql);
-    zsummer::mysql::DBResultPtr query(const std::string &sql);
 public:
 
-private:
-    std::string _db;
-    DBHelperPtr _dbHelper;
-    zsummer::mysql::DBAsyncPtr _dbAsync;
-    time_t _lastTime = getNowTime();
-private:
-    void _checkSafeClosed();
+    time_t _lastTime = 0;
 };
 
 

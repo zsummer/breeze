@@ -21,7 +21,7 @@ void DBService::onTick()
     if (now - _lastTime > 10)
     {
         _lastTime = now;
-        LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
+        LOGA("DBService [" << ServiceNames.at(getServiceType()) << "], finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
     }
 }
 
@@ -58,16 +58,19 @@ bool DBService::onInit()
         _dbHelper->init(dbConfig._ip, dbConfig._port, dbConfig._db, dbConfig._user, dbConfig._pwd);
        if (!_dbHelper->connect())
        {
+           LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] connect error");
            return false;
        }
        break;
     }
     if (!_dbHelper)
     {
+        LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] error. not found config");
         return false;
     }
     if (!_dbAsync->start())
     {
+        LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] error. start db thread error");
         return false;
     }
 

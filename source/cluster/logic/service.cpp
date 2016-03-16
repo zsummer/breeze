@@ -7,16 +7,8 @@
 void Service::setInited()
 {
     _inited = true;
-    if (_timerID == InvalidTimerID)
-    {
-        _timerID = SessionManager::getRef().createTimer(3000, std::bind(&Service::_onTimer, shared_from_this()));
-    }
 }
-void Service::_onTimer()
-{
-    _timerID = SessionManager::getRef().createTimer(3000, std::bind(&Service::_onTimer, shared_from_this()));
-    onTick();
-}
+
 void Service::setWorked(bool work)
 {
     if (!isShell() && work)
@@ -24,7 +16,29 @@ void Service::setWorked(bool work)
         ClusterServiceInited inited(getServiceType(), getServiceID());
         Application::getRef().broadcast(inited);
     }
-    LOGI("Service work [" << (work != 0) << "] service [" << ServiceNames.at(getServiceType()) << "][" << getServiceID() << "] ...");
+    if (isShell())
+    {
+        if (work)
+        {
+            LOGI("remote service [" << ServiceNames.at(getServiceType()) << "] begin worked [" << getServiceID() << "] ...");
+        }
+        else
+        {
+            LOGW("remote service [" << ServiceNames.at(getServiceType()) << "] end work [" << getServiceID() << "] ...");
+        }
+    }
+    else
+    {
+        if (work)
+        {
+            LOGI("local service [" << ServiceNames.at(getServiceType()) << "] begin worked [" << getServiceID() << "] ...");
+        }
+        else
+        {
+            LOGW("local service [" << ServiceNames.at(getServiceType()) << "] end work [" << getServiceID() << "] ...");
+        }
+    }
+
     _worked = work;
 }
 

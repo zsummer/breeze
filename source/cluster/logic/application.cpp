@@ -1,7 +1,7 @@
 ﻿#include "../config.h"
 #include "application.h"
 #include "dbService.h"
-
+#include "userMgr.h"
 int g_closeState = 0;
 
 Application::Application()
@@ -15,6 +15,8 @@ bool Application::init(const std::string & config, ClusterID idx)
     {
         return false;
     }
+    LOGA("Application::init clusterID=" << idx);
+    SessionManager::getRef().createTimer(1000, std::bind(&Application::checkServiceState, Application::getPtr()));
     return true;
 }
 void sigInt(int sig)
@@ -125,6 +127,7 @@ bool Application::start()
             LOGE("getTcpSession error. connect add faild");
             return false;
         }
+        LOGD("connect cluster. clusterID=" << cluster._cluster << ", cID=" << cID << ", ip=" << cluster._serviceIP << ", port=" << cluster._servicePort);
         auto &options = session->getOptions();
         options._onSessionLinked = std::bind(&Application::event_onServiceLinked, this, _1);
         options._onSessionClosed = std::bind(&Application::event_onServiceClosed, this, _1);
@@ -304,71 +307,91 @@ ServicePtr Application::createLocalService(ui16 st)
     }
     else if (st == ServiceUserMgr)
     {
+        return std::make_shared<UserMgr>();
     }
     else
     {
-        LOGE("Application::createLocalService invalid service type " << st);
+        LOGE("createLocalService invalid service type " << st);
     }
     return nullptr;
 }
 
 void Application::checkServiceState()
 {
-    for (auto & c : _clusterSession)
-    {
-        if (c.second.second == 0)
-        {
-            return;
-        }
-    }
+    SessionManager::getRef().createTimer(1000, std::bind(&Application::checkServiceState, Application::getPtr()));
     if (!_clusterNetWorking)
     {
-        _clusterNetWorking = true;
-        LOGA("Application cluster Net Worked");
-        
-    }
-    if (!_clusterServiceInited)
-    {
-        _clusterServiceInited = true;
-        for (auto & second :_services)
+        for (auto & c : _clusterSession)
         {
-            for (auto service : second.second)
-            {
-                if (service.second && !service.second->isShell() && !service.second->isInited())
-                {
-                    LOGI("Application initing local service [" << ServiceNames.at(service.second->getServiceType()) << "][" << service.second->getServiceID() << "] ...");
-                    service.second->setInited();
-                    bool ret = service.second->onInit();
-                    if (ret)
-                    {
-                        LOGI("Application inited local service [" << ServiceNames.at(service.second->getServiceType()) << "][" << service.second->getServiceID() << "] ...");
-                    }
-                    else
-                    {
-                        LOGE("Application inited local service  error. [" << ServiceNames.at(service.second->getServiceType()) << "][" << service.second->getServiceID() << "] ...");
-                        Application::getRef().stop();
-                        return;
-                    }
-                    
-                }
-            }
-        }
-    }
-    
-    for (auto & second : _services)
-    {
-        for (auto & service : second.second)
-        {
-            if (!service.second || !service.second->isInited() || !service.second->isWorked())
+            if (c.second.second == 0)
             {
                 return;
             }
         }
+        _clusterNetWorking = true;
+        LOGA("cluster net worked");
     }
+
+    for (auto & second : _services)
+    {
+        for (auto service : second.second)
+        {
+            if (service.second && !service.second->isShell() && service.second->isInited())
+            {
+                service.second->onTick();
+            }
+        }
+    }
+    if (!_clusterServiceInited)
+    {
+        for (ui16 i = ServiceInvalid+1; i != ServiceMax; i++)
+        {
+            auto founder = _services.find(i);
+            if (founder == _services.end())
+            {
+                LOGE("not found service id=" << i);
+                continue;
+            }
+            for (auto service : founder->second)
+            {
+                if (service.second && !service.second->isShell() && !service.second->isInited())
+                {
+                    LOGI("local service [" << ServiceNames.at(service.second->getServiceType()) << "] begin init. [" << service.second->getServiceID() << "] ...");
+                    service.second->setInited();
+                    bool ret = service.second->onInit();
+                    if (ret)
+                    {
+                        LOGI("local service [" << ServiceNames.at(service.second->getServiceType()) << "] inited. [" << service.second->getServiceID() << "] ...");
+                    }
+                    else
+                    {
+                        LOGE("local service [" << ServiceNames.at(service.second->getServiceType()) << "]  init error.[" << service.second->getServiceID() << "] ...");
+                        Application::getRef().stop();
+                        return;
+                    }
+                    return;
+                }
+            }
+        }
+        LOGA("all local service inited");
+        _clusterServiceInited = true;
+    }
+    
+
     if (!_clusterServiceWorking)
     {
+        for (auto & second : _services)
+        {
+            for (auto & service : second.second)
+            {
+                if (!service.second || !service.second->isInited() || !service.second->isWorked())
+                {
+                    return;
+                }
+            }
+        }
         _clusterServiceWorking = true;
-        LOGA("Application all service worked.");
+        LOGA("all service worked.");
     }
     
     
@@ -401,10 +424,10 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
         }
         if (fder->second->isShell() && !fder->second->isInited())
         {
-            LOGI("Application initing remote service [" << ServiceNames.at(fder->second->getServiceType()) << "][" << fder->second->getServiceID() << "] ...");
+            LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "]begin init. [" << fder->second->getServiceID() << "] ...");
             fder->second->setInited();
             fder->second->setWorked(true);
-            LOGI("Application inited remote service [" << ServiceNames.at(fder->second->getServiceType()) << "][" << fder->second->getServiceID() << "] ...");
+            LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "] inited. [" << fder->second->getServiceID() << "] ...");
             checkServiceState();
         }
         return;

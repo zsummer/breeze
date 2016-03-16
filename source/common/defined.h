@@ -124,30 +124,32 @@ const ClusterID InvalidClusterID = 0;
 typedef ui64 ServiceID;
 const ui64 InvalidServiceID = (ServiceID)0;
 
+
 enum ServiceType : ui16
 {
-    ServiceInvalid = 0,
     ServiceClient, 
     ServiceUser,
-    ServiceUserMgr,
+    ServiceInvalid, //有效的服务ID从这里开始到ServiceMax结束, 必须连续,  前后依赖
+
+    
     ServiceDictDBMgr,
     ServiceInfoDBMgr,
     ServiceLogDBMgr,
-
+    ServiceUserMgr,
 
     //...
     ServiceMax,
 };
 const std::vector<std::string> ServiceNames =
 {
-    "Unknown",
     "Client",
     "User",
-    "UserMgr",
+    "Unknown",
+
     "DictDBMgr",
     "InfoDBMgr",
     "LogDBMgr",
-
+    "UserMgr",
 
     //...
     "InvalidName",

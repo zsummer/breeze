@@ -36,6 +36,9 @@
     <ClCompile Include="logic\service.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\userMgr.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logic\user.h">
@@ -48,6 +51,9 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\service.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\userMgr.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>

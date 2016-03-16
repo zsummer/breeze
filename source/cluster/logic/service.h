@@ -74,9 +74,6 @@ protected:
     void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
     void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb);
 private:
-    void _onTimer();
-private:
-    
     void setInited();
     inline void setShell(ClusterID cltID){ _cltID = cltID; }
     void process(const Tracing & trace, const char * block, unsigned int len);
@@ -94,7 +91,6 @@ private:
     ui32 _seqID = 0;
     std::map<ui32, std::pair<time_t,ServiceCallback> > _cbs;
     time_t _lastCheckCallback = 0;
-    TimerID _timerID = InvalidTimerID;
 };
 using ServicePtr = std::shared_ptr<Service>;
 

@@ -16,10 +16,6 @@
 */
 
 
-/*
-*  file desc 
-*  network manager
-*/
 
 
 
@@ -44,7 +40,7 @@ public:
     void broadcast(const Proto & proto);
     void globalCall(Tracing trace, const char * block, unsigned int len);
     bool isStoping();
-
+    void _onTimer();
 protected:
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
@@ -63,8 +59,8 @@ private:
 
     std::map < ClusterID, std::pair<SessionID, int>> _clusterSession;
     bool _clusterNetWorking = false;
-    bool _clusterServiceWorking = false;
     bool _clusterServiceInited = false;
+    bool _clusterServiceWorking = false;
     AccepterID _wlisten = InvalidAccepterID;
     
 
