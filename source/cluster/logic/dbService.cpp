@@ -15,6 +15,36 @@ DBService::~DBService()
     
 }
 
+void DBService::onTick()
+{
+    time_t now = getNowTime();
+    if (now - _lastTime > 10)
+    {
+        _lastTime = now;
+        LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
+    }
+}
+
+void DBService::_checkSafeClosed()
+{
+    if (_dbAsync->isStoped())
+    {
+        setWorked(false);
+        LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
+        return;
+    }
+    else
+    {
+        SessionManager::getRef().createTimer(500, std::bind(&DBService::_checkSafeClosed, this));
+    }
+}
+
+void DBService::onStop()
+{
+    _dbAsync->stop();
+    _checkSafeClosed();
+}
+
 bool DBService::onInit()
 {
     const auto & dbConfigs = ServerConfig::getRef().getDBConfig();
@@ -41,7 +71,7 @@ bool DBService::onInit()
         return false;
     }
 
-    setWorked();
+    setWorked(true);
 
     if (getServiceType() == ServiceInfoDBMgr)
     {
@@ -55,6 +85,31 @@ bool DBService::onInit()
 
     return true;
 }
+
+
+static void defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
+{
+    if (ptr->getErrorCode() != zsummer::mysql::QEC_SUCCESS)
+    {
+        LOGE("_defaultAsyncHandler error. msg=" << ptr->getErrorMsg() << ", org sql=" << ptr->peekSQL());
+    }
+}
+
+
+void DBService::asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
+{
+    _dbAsync->asyncQuery(_dbHelper, sql, handler);
+}
+void DBService::asyncQuery(const std::string &sql)
+{
+    asyncQuery(sql, defaultAsyncHandler);
+}
+zsummer::mysql::DBResultPtr DBService::query(const std::string &sql)
+{
+    return _dbHelper->query(sql);
+}
+
+
 
 
 void DBService::onSQLQueryReq(Tracing trace, ReadStream &rs)
@@ -78,10 +133,7 @@ void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
     ws << resp;
     backCall(trace, ws.getStream(), ws.getStreamLen(), nullptr);
 }
-void DBService::onTick()
-{
 
-}
 void DBService::onTest(ReadStream & rs)
 {
     SQLQueryResp resp;
@@ -91,52 +143,7 @@ void DBService::onTest(ReadStream & rs)
     result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
 }
 
-bool DBService::stop(std::function<void()> onSafeClosed)
-{
-    _onSafeClosed = onSafeClosed;
-    SessionManager::getRef().createTimer(500, std::bind(&DBService::_checkSafeClosed, this));
-    return true;
-}
 
-void DBService::_checkSafeClosed()
-{
-    if (_dbAsync->getFinalCount() != _dbAsync->getPostCount())
-    {
-        SessionManager::getRef().createTimer(600, std::bind(&DBService::_checkSafeClosed, this));
-        LOGA("Waiting the db data to store. waiting count=" << _dbAsync->getPostCount() - _dbAsync->getFinalCount());
-        return;
-    }
-    LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() );
-    
-    _dbAsync->stop();
-
-    if (_onSafeClosed)
-    {
-        _onSafeClosed();
-        _onSafeClosed = nullptr;
-    }
-}
-
-
-static void defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
-{
-    if (ptr->getErrorCode() != zsummer::mysql::QEC_SUCCESS)
-    {
-        LOGE("_defaultAsyncHandler error. msg=" << ptr->getErrorMsg() << ", org sql=" << ptr->peekSQL());
-    }
-}
-void DBService::asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
-{
-    _dbAsync->asyncQuery(_dbHelper, sql, handler);
-}
-void DBService::asyncQuery(const std::string &sql)
-{
-    asyncQuery(sql, defaultAsyncHandler);
-}
-zsummer::mysql::DBResultPtr DBService::query(const std::string &sql)
-{
-    return _dbHelper->query(sql);
-}
 
 
 

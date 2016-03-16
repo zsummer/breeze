@@ -36,7 +36,7 @@ static int panichHandler(lua_State * L)
 }
 
 
-bool ServerConfig::parse(std::string filename, ClusterIndex idx)
+bool ServerConfig::parse(std::string filename, ClusterID idx)
 {
     _clusterIdx = idx;
     lua_State *L = luaL_newstate();
@@ -136,7 +136,7 @@ bool ServerConfig::parse(std::string filename, ClusterIndex idx)
 
 
         lua_getfield(L, -1, "cluster");
-        lconfig._cluster = (ClusterIndex)luaL_checkinteger(L, -1);
+        lconfig._cluster = (ClusterID)luaL_checkinteger(L, -1);
         lua_pop(L, 1);
 
         lua_getfield(L, -1, "serviceWhite");

@@ -55,14 +55,12 @@ bool DBAsync::start()
 }
 bool DBAsync::stop()
 {
-    if (_thread)
+    _bRuning = false;
+    if (!_thread)
     {
-        _bRuning = false;
-        _thread->join();
-        _thread.reset();
-        return true;
+        _bClosed = true;
     }
-    return false;
+    return true;
 }
 
 
@@ -89,7 +87,7 @@ void DBAsync::run()
 {
     do
     {
-        if (!_bRuning)
+        if (!_bRuning && _uPostCount == _uFinalCount)
         {
             break;
         }
@@ -102,6 +100,7 @@ void DBAsync::run()
         }
 
     } while (true);
+    _bClosed = true;
 }
 
 

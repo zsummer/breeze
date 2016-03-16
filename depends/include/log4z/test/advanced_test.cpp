@@ -3,6 +3,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <signal.h>
+#include <time.h>
+#include <fstream>
 #if WIN32
 #include <Windows.h>
 #include <process.h>
@@ -58,8 +60,8 @@ int main(int argc, char *argv[])
     
     //hot update configure
     ILog4zManager::getRef().setAutoUpdate(10);
-
-    while(g_quit)
+    time_t now = time(NULL);
+    while(g_quit &&  time(NULL) - now < 10)
     {
         LOG_TRACE(logid_fromfile, "fromfile LOG_TRACE");
         LOG_DEBUG(logid_fromfile, "fromfile LOG_DEBUG");
@@ -86,14 +88,38 @@ int main(int argc, char *argv[])
         LOGF("main LOGF");
         LOGF(" = = = = = = = = = = = = = = =  = = = = = ");
 #ifdef WIN32
-        ::Sleep(rand()%10000);
+        ::Sleep(rand()%3000);
 #else
-        usleep((rand()%10000)*1000);
+        usleep((rand()%3000)*1000);
 #endif
-
     }
 
-    LOGA("main quit ..");
+#ifdef WIN32
+    // test ANSI->OEM codepage converting, only interesting in Windows environment
+    // source file contains characters in ANSI CP1251
+    // log file should contain same coding as source ANSI CP1251
+    // console output should be OEM 866
+    // sorry guys, this test is in russian
+#ifdef LOG4Z_OEM_CONSOLE
+	LOGI("(LOG4Z_OEM_CONSOLE enabled)");
+    LOGI("Following string should be in CP1251 if compiled without LOG4Z_OEM_CONSOLE and in OEM coding if compiled with LOG4Z_OEM_CONSOLE (for RU locale oem=866)");
+    std::fstream fs;
+    fs.open("./oem_test_CP1251.txt", std::ios::binary | std::ios::in);
+    if (fs.is_open())
+    {
+        char buf[201] = { 0 };
+        fs.read(buf, 200);
+        LOGI(buf);
+        fs.close();
+    }
+#else
+	LOGI("(LOG4Z_OEM_CONSOLE disabled)");
+#endif
+
+#endif
+
+    LOGA("main quit .. hit 'enter' to exit.");
+    getchar();
     return 0;
 }
 

@@ -17,15 +17,15 @@ void Service::_onTimer()
     _timerID = SessionManager::getRef().createTimer(3000, std::bind(&Service::_onTimer, shared_from_this()));
     onTick();
 }
-void Service::setWorked()
+void Service::setWorked(bool work)
 {
-    if (!getShell())
+    if (!isShell() && work)
     {
         ClusterServiceInited inited(getServiceType(), getServiceID());
         Application::getRef().broadcast(inited);
     }
-    LOGI("Service worked service [" << ServiceNames.at(getServiceType()) << "][" << getServiceID() << "] ...");
-    _worked = true;
+    LOGI("Service work [" << (work != 0) << "] service [" << ServiceNames.at(getServiceType()) << "][" << getServiceID() << "] ...");
+    _worked = work;
 }
 
 void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)

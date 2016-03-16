@@ -55,10 +55,10 @@ public:
 
     inline ui16 getServiceType(){ return _st; }
     inline ServiceID getServiceID(){ return _serviceID; }
-    inline SessionID getSessionID(){ return _sID; }
-    inline bool getShell(){ return _sID != InvalidSessionID; }
-    inline bool getInited(){ return _inited; }
-    inline bool getWorked(){ return _worked; }
+    inline ClusterID getClusterID(){ return _cltID; }
+    inline bool isShell(){ return _cltID != InvalidClusterID; }
+    inline bool isInited(){ return _inited; }
+    inline bool isWorked(){ return _worked; }
 
 protected:
     template<class Proto>
@@ -67,9 +67,10 @@ protected:
 protected:
     inline void setServiceType(ui16 st){ _st = st; }
     inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
-    virtual bool onInit() = 0;
+    virtual bool onInit() = 0; //need call setWorked(true) when inited. 
     virtual void onTick() = 0;
-    void setWorked();
+    virtual void onStop() = 0;//need call setWorked(false) when stoped. 
+    void setWorked(bool work);
     void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
     void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb);
 private:
@@ -77,7 +78,7 @@ private:
 private:
     
     void setInited();
-    inline void setShell(SessionID sID){ _sID = sID; }
+    inline void setShell(ClusterID cltID){ _cltID = cltID; }
     void process(const Tracing & trace, const char * block, unsigned int len);
 
 
@@ -88,7 +89,7 @@ private:
     bool _inited = false;
     bool _worked = false;
     bool _shell = false;
-    SessionID _sID = InvalidSessionID;
+    ClusterID _cltID = InvalidClusterID;
     ServiceID _serviceID = InvalidServiceID;
     ui32 _seqID = 0;
     std::map<ui32, std::pair<time_t,ServiceCallback> > _cbs;

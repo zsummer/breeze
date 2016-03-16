@@ -118,8 +118,8 @@ using namespace zsummer::mysql;
 typedef ui32 AreaID;
 
 //节点索引ID
-typedef ui32 ClusterIndex;
-const ClusterIndex InvalidClusterIndex = 0;
+typedef ui32 ClusterID;
+const ClusterID InvalidClusterID = 0;
 
 typedef ui64 ServiceID;
 const ui64 InvalidServiceID = (ServiceID)0;
@@ -179,7 +179,7 @@ struct ClusterConfig
     unsigned short _widePort = 0;
     std::vector<std::string> _whiteList;
     std::vector<ui16> _services;
-    ClusterIndex _cluster = InvalidClusterIndex;
+    ClusterID _cluster = InvalidClusterID;
 };
 
 
@@ -201,19 +201,21 @@ const int MAX_ACCOUNT_USERS = 5;
 enum SessionStatus
 {
     SSTATUS_UNKNOW = 0,
+    SSTATUS_TRUST, //受信任的服务器内部session 
     SSTATUS_PLAT_LOGINING,
     SSTATUS_PLAT_LOGINED,
     SSTATUS_PLAT_LOADING,
     SSTATUS_PLAT_CREATING,
     SSTATUS_PLAT_SELECTING,
     SSTATUS_LOGINED,
-    SSTATUS_TRUST, //受信任的服务器内部session 
+    
 };
 
 enum SessionUserData
 {
     UPARAM_SESSION_STATUS,
     UPARAM_LAST_ACTIVE_TIME,
+    UPARAM_REMOTE_CLUSTER,
     UPARAM_ACCOUNT,
     UPARAM_USER_ID,
     UPARAM_LOGIN_TIME,

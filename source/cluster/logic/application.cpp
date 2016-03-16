@@ -2,33 +2,61 @@
 #include "application.h"
 #include "dbService.h"
 
+int g_closeState = 0;
+
 Application::Application()
 {
 
 }
 
-bool Application::init(const std::string & config, ClusterIndex idx)
+bool Application::init(const std::string & config, ClusterID idx)
 {
     if (!ServerConfig::getRef().parse(config, idx))
     {
         return false;
     }
-    SessionManager::getRef().setStopClientsHandler([]()
-                                                   {
-                                                        LOGA("all client socket closed.");
-                                                        SessionManager::getRef().stopServers();
-                                                   });
-    SessionManager::getRef().setStopServersHandler(std::bind(&Application::onNetworkStoped, Application::getPtr()));
     return true;
 }
 void sigInt(int sig)
 {
-    Application::getRef().stop();
+    if (g_closeState == 0)
+    {
+        g_closeState = 1;
+        SessionManager::getRef().post(std::bind(&Application::stop, Application::getPtr()));
+    }
 }
-void Application::onNetworkStoped()
+
+void Application::onCheckSafeExit()
 {
-    LOGA("Application::onNetworkStoped. check service.");
-    _closed = true;
+    LOGA("Application::onCheckSafeExit. checking.");
+    if (_wlisten != InvalidAccepterID)
+    {
+        auto &options = SessionManager::getRef().getAccepterOptions(_wlisten);
+        if (options._currentLinked != 0)
+        {
+            SessionManager::getRef().createTimer(1000, std::bind(&Application::onCheckSafeExit, this));
+            return;
+        }
+    }
+    if (g_closeState == 1)
+    {
+        g_closeState = 2;
+        for (auto &second : _services)
+        {
+            if (second.first == ServiceClient || second.first == ServiceInvalid)
+            {
+                continue;
+            }
+            for (auto & svc : second.second)
+            {
+                if (!svc.second->isShell())
+                {
+                    svc.second->onStop();
+                }
+            }
+        }
+    }
+
     bool safe =  true;
     for(auto &second : _services)
     {
@@ -38,34 +66,48 @@ void Application::onNetworkStoped()
         }
         for (auto & svc : second.second)
         {
-            auto sptr = SessionManager::getRef().getTcpSession(svc.second->getSessionID());
-            if (sptr && !sptr->isInvalidSession())
+            if (!svc.second->isShell() && svc.second->isWorked())
             {
                 safe = false;
-                break;
             }
         }
     }
     if(safe)
     {
         LOGA("Application::onNetworkStoped. service all closed.");
+        SessionManager::getRef().stopAccept();
+        SessionManager::getRef().kickClientSession();
+        SessionManager::getRef().kickConnect();
         SessionManager::getRef().stop();
     }
     else
     {
-        SessionManager::getRef().createTimer(1000, std::bind(&Application::onNetworkStoped, this));
+        SessionManager::getRef().createTimer(1000, std::bind(&Application::onCheckSafeExit, this));
     }
 }
 bool Application::run()
 {
-    return SessionManager::getRef().run();
+    SessionManager::getRef().run();
+    LOGA("Application::run exit!");
+    return true;
 }
+
+bool Application::isStoping()
+{
+    return g_closeState != 0;
+}
+
 void Application::stop()
 {
     SessionManager::getRef().stopAccept();
-    SessionManager::getRef().stopClients();
+    if (_wlisten != InvalidAccepterID)
+    {
+        SessionManager::getRef().kickClientSession(_wlisten);
+    }
+    onCheckSafeExit();
     return ;
 }
+
 bool Application::start()
 {
     const auto & clusters = ServerConfig::getRef().getClusterConfig();
@@ -83,7 +125,7 @@ bool Application::start()
             LOGE("getTcpSession error. connect add faild");
             return false;
         }
-        auto &options = SessionManager::getRef().getConnecterOptions(cID);
+        auto &options = session->getOptions();
         options._onSessionLinked = std::bind(&Application::event_onServiceLinked, this, _1);
         options._onSessionClosed = std::bind(&Application::event_onServiceClosed, this, _1);
         options._onBlockDispatch = std::bind(&Application::event_onServiceMessage, this, _1, _2, _3);
@@ -99,13 +141,15 @@ bool Application::start()
                 session->close();
             }
         };
+
         if (!SessionManager::getRef().openConnecter(cID))
         {
             LOGE("openConnecter error.");
             return false;
         }
-        _clusterState[cID].first = cluster._cluster;
-        _clusterState[cID].second = 0;
+        session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
+        session->setUserParam(UPARAM_REMOTE_CLUSTER, cluster._cluster);
+        _clusterSession[cluster._cluster] = std::make_pair(cID, 0);
         for (auto st : cluster._services)
         {
             auto & second = _services[st];
@@ -126,13 +170,11 @@ bool Application::start()
             }
             
             servicePtr->setServiceType(st);
-            if (cluster._cluster == ServerConfig::getRef().getClusterID())
+            if (cluster._cluster != ServerConfig::getRef().getClusterID())
             {
+                servicePtr->setShell(cluster._cluster);
             }
-            else
-            {
-                servicePtr->setShell(cID);
-            }
+
         }
 
         if (cluster._cluster == ServerConfig::getRef().getClusterID())
@@ -153,8 +195,6 @@ bool Application::start()
                 WriteStream ws(pulse.GetProtoID());
                 ws << pulse;
                 session->send(ws.getStream(), ws.getStreamLen());
-
-
             };
             options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onServiceMessage, this, _1, _2, _3);
             if (!SessionManager::getRef().openAccepter(aID))
@@ -193,6 +233,7 @@ bool Application::start()
                     LOGE("openAccepter error");
                     return false;
                 }
+                _wlisten = aID;
             }
         }
     }
@@ -206,23 +247,24 @@ bool Application::start()
 
 void Application::event_onServiceLinked(TcpSessionPtr session)
 {
-    auto founder = _clusterState.find(session->getSessionID());
-    if (founder == _clusterState.end())
+    ClusterID ci = (ClusterID)session->getUserParamNumber(UPARAM_REMOTE_CLUSTER);
+    auto founder = _clusterSession.find(ci);
+    if (founder == _clusterSession.end())
     {
-        LOGI("event_onServiceLinked error cID=" << session->getSessionID());
+        LOGE("event_onServiceLinked error cID=" << session->getSessionID() << ", clusterID=" << ci);
         return;
     }
-    LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", clusterID=" << founder->second.first);
+    LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", clusterID=" << ci);
     founder->second.second = 1;
     for (auto & second : _services)
     {
-        if (second.first == ServiceClient || second.first == ServiceUser)
+        if (second.first == ServiceClient || second.first == ServiceUser || second.first == ServiceInvalid)
         {
             continue;
         }
         for (auto & svc : second.second )
         {
-            if (!svc.second->getShell() && svc.second->getInited())
+            if (!svc.second->isShell() && svc.second->isInited())
             {
                 ClusterServiceInited inited(svc.second->getServiceType(), svc.second->getServiceID());
                 Application::getRef().broadcast(inited);
@@ -234,21 +276,14 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
 
 void Application::event_onServiceClosed(TcpSessionPtr session)
 {
-    for (auto & second : _services)
+    ClusterID ci = (ClusterID)session->getUserParamNumber(UPARAM_REMOTE_CLUSTER);
+    auto founder = _clusterSession.find(ci);
+    if (founder == _clusterSession.end())
     {
-        if(second.first == ServiceClient) continue;
-        for (auto &svc: second.second)
-        {
-            //svc.second->setWorked();
-        }
-    }
-    auto founder = _clusterState.find(session->getSessionID());
-    if (founder == _clusterState.end())
-    {
-        LOGE("event_onServiceClosed cID=" << session->getSessionID());
+        LOGE("event_onServiceClosed error cID=" << session->getSessionID() << ", clusterID=" << ci);
         return;
     }
-    LOGE("event_onServiceClosed cID=" << session->getSessionID() << ", clusterID=" << founder->second.first);
+    LOGW("event_onServiceClosed cID=" << session->getSessionID() << ", clusterID=" << ci);
     founder->second.second = 0;
 }
 
@@ -279,7 +314,7 @@ ServicePtr Application::createLocalService(ui16 st)
 
 void Application::checkServiceState()
 {
-    for (auto & c : _clusterState)
+    for (auto & c : _clusterSession)
     {
         if (c.second.second == 0)
         {
@@ -299,7 +334,7 @@ void Application::checkServiceState()
         {
             for (auto service : second.second)
             {
-                if (service.second && !service.second->getShell() && !service.second->getInited())
+                if (service.second && !service.second->isShell() && !service.second->isInited())
                 {
                     LOGI("Application initing local service [" << ServiceNames.at(service.second->getServiceType()) << "][" << service.second->getServiceID() << "] ...");
                     service.second->setInited();
@@ -324,7 +359,7 @@ void Application::checkServiceState()
     {
         for (auto & service : second.second)
         {
-            if (!service.second || !service.second->getInited() || !service.second->getWorked())
+            if (!service.second || !service.second->isInited() || !service.second->isWorked())
             {
                 return;
             }
@@ -364,11 +399,11 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
             LOGE("event_onServiceMessage can't founder remote service with id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
             return;
         }
-        if (fder->second->getShell() && !fder->second->getInited())
+        if (fder->second->isShell() && !fder->second->isInited())
         {
             LOGI("Application initing remote service [" << ServiceNames.at(fder->second->getServiceType()) << "][" << fder->second->getServiceID() << "] ...");
             fder->second->setInited();
-            fder->second->setWorked();
+            fder->second->setWorked(true);
             LOGI("Application inited remote service [" << ServiceNames.at(fder->second->getServiceType()) << "][" << fder->second->getServiceID() << "] ...");
             checkServiceState();
         }
@@ -389,7 +424,7 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
             return;
         }
         Service & svc = *fder->second;
-        if (svc.getShell())
+        if (svc.isShell())
         {
             return;
         }
@@ -464,12 +499,27 @@ void Application::globalCall(Tracing trace, const char * block, unsigned int len
         if (fder != founder->second.end())
         {
             auto & service = *fder->second;
-            if (service.getShell()) //forward 
+            if (service.isShell()) //forward 
             {
                 WriteStream ws(ClusterShellForward::GetProtoID());
                 ws << trace;
                 ws.appendOriginalData(block, len);
-                SessionManager::getRef().sendSessionData(service.getSessionID(), ws.getStream(), ws.getStreamLen());
+                ClusterID cltID = service.getClusterID();
+                auto fsder = _clusterSession.find(cltID);
+                if (fsder == _clusterSession.end())
+                {
+                    LOGE("Application::globalCall not found session by shell service. clusterID=" << cltID << ", tracing=" << trace);
+                }
+                else
+                {
+                    SessionManager::getRef().sendSessionData(fsder->second.first, ws.getStream(), ws.getStreamLen());
+                    if (fsder->second.second == 0)
+                    {
+                        LOGW("Application::globalCall session not connected when global call by shell service. sID=" << fsder->second.first 
+                            << ", clusterID=" << cltID << ", tracing=" << trace);
+                    }
+                }
+                
             }
             else //direct process
             {

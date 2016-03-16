@@ -43,6 +43,7 @@ namespace  zsummer
             ~DBAsync();
             bool start();
             bool stop();
+            inline bool isStoped(){ return _bClosed; }
         public:
 
             //无论mysql遇到任何错误, 在当前服务节点关闭时, Post出去的请求数量肯定和Final的完成数量相等.
@@ -63,6 +64,7 @@ namespace  zsummer
             std::shared_ptr<std::thread> _thread;
             zsummer::network::EventLoopPtr _event;
             bool _bRuning = false;
+            bool _bClosed = false;
             std::atomic_ullong _uPostCount;
             std::atomic_ullong _uFinalCount;
         };

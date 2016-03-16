@@ -38,14 +38,15 @@ class DBService : public Service
 public:
     DBService();
     ~DBService();
-    bool onInit();
-    bool stop(std::function<void()> onSafeClosed);
+    bool onInit() override final;
+    void onStop() override final;
+    void onTick() override final;
 public:
     void onSQLQueryReq(Tracing trace, ReadStream &rs);
     void onAsyncSQLQueryReq(DBResultPtr result, Tracing trace);
 
     void onTest(ReadStream & rs);
-    void onTick();
+
     void asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
     void asyncQuery(const std::string &sql);
     zsummer::mysql::DBResultPtr query(const std::string &sql);
@@ -55,7 +56,7 @@ private:
     std::string _db;
     DBHelperPtr _dbHelper;
     zsummer::mysql::DBAsyncPtr _dbAsync;
-    
+    time_t _lastTime = 0;
 private:
     void _checkSafeClosed();
     std::function<void()> _onSafeClosed;

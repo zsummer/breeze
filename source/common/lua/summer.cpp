@@ -240,22 +240,12 @@ static void _onSessionPulse(lua_State * L, TcpSessionPtr session)
     }
 }
 
-static void onStopServersFinish()
-{
-    SessionManager::getRef().stop();
-}
 
-static void onStopClientsFinish()
-{
-    SessionManager::getRef().stopServers();
-}
 
 
 static int start(lua_State *L)
 {
     SessionManager::getRef().start();
-    SessionManager::getRef().setStopClientsHandler(onStopClientsFinish);
-    SessionManager::getRef().setStopServersHandler(onStopServersFinish);
     return 0;
 }
 
@@ -263,7 +253,8 @@ static int start(lua_State *L)
 static int stop(lua_State *L)
 {
     SessionManager::getRef().stopAccept();
-    SessionManager::getRef().stopClients();
+    SessionManager::getRef().kickClientSession();
+    SessionManager::getRef().kickConnect();
     return 0;
 }
 

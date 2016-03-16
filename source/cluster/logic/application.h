@@ -35,16 +35,15 @@ class Application : public Singleton<Application>
 {
 public:
     Application();
-    bool init(const std::string & config, ClusterIndex idx);
+    bool init(const std::string & config, ClusterID idx);
     bool start();
+    void stop();
     bool run();
 public:
     template<class Proto>
     void broadcast(const Proto & proto);
     void globalCall(Tracing trace, const char * block, unsigned int len);
-    void stop();
-    void onNetworkStoped();
-protected:
+    bool isStoping();
 
 protected:
     void event_onServiceLinked(TcpSessionPtr session);
@@ -52,6 +51,7 @@ protected:
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
     ServicePtr createLocalService(ui16 st);
     void checkServiceState();
+    void onCheckSafeExit();
 
     void event_onClientLinked(TcpSessionPtr session);
     void event_onClientClosed(TcpSessionPtr session);
@@ -61,12 +61,12 @@ protected:
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
 
-    std::map<SessionID, std::pair<ClusterIndex, int>> _clusterState;
+    std::map < ClusterID, std::pair<SessionID, int>> _clusterSession;
     bool _clusterNetWorking = false;
     bool _clusterServiceWorking = false;
     bool _clusterServiceInited = false;
-
-    bool _closed = false;
+    AccepterID _wlisten = InvalidAccepterID;
+    
 
 };
 
@@ -80,7 +80,7 @@ void Application::broadcast(const Proto & proto)
 {
     WriteStream ws(Proto::GetProtoID());
     ws << proto;
-    for (const auto &c: _clusterState)
+    for (const auto &c: _clusterSession)
     {
         SessionManager::getRef().sendSessionData(c.first, ws.getStream(), ws.getStreamLen());
     }

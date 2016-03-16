@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
 
     std::string filename = "../config.lua";
-    ClusterIndex index = 0;
+    ClusterID index = 0;
     if (argc > 1)
     {
         index = atoi(argv[1]);
