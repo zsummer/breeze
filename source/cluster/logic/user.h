@@ -17,11 +17,6 @@
 */
 
 
-/*
-*  file desc 
-*  chat manager
-*/
-
 
 
 
@@ -29,7 +24,7 @@
 #define _USER_H_
 #include <common.h>
 #include "service.h"
-#include <ProtoChat.h>
+
 
 
 

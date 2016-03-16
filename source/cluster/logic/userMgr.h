@@ -37,10 +37,10 @@ public:
     bool onInit() override final;
     void onStop() override final;
     void onTick() override final;
+    void process(const Tracing & trace, const char * block, unsigned int len) override final;
 public:
-
+    void onAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 public:
-
     time_t _lastTime = 0;
 };
 

@@ -8,7 +8,6 @@
 
 
 <Proto>
-
     <proto name="ClusterPulse" desc= "集群脉冲">
     </proto>
     <proto name="ClusterServiceInited" desc= "服务初始化成功">
@@ -18,5 +17,10 @@
 
     <proto name="ClusterShellForward" desc= "壳子转发">
     </proto>
+
+    <proto name="ClusterClientForward" desc= "client转发">
+    </proto>
+
+    
 </Proto>
 

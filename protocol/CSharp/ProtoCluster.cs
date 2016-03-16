@@ -60,11 +60,32 @@ namespace Proto4z
     public class ClusterShellForward: Proto4z.IProtoObject //壳子转发  
     {     
         //proto id   
-        public const ushort protoID = 40003;  
-        static public ushort getProtoID() { return 40003; } 
+        public const ushort protoID = 40002;  
+        static public ushort getProtoID() { return 40002; } 
         static public string getProtoName() { return "ClusterShellForward"; } 
         //members   
         public ClusterShellForward()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class ClusterClientForward: Proto4z.IProtoObject //client转发  
+    {     
+        //proto id   
+        public const ushort protoID = 40003;  
+        static public ushort getProtoID() { return 40003; } 
+        static public string getProtoName() { return "ClusterClientForward"; } 
+        //members   
+        public ClusterClientForward()  
         { 
         } 
         public System.Collections.Generic.List<byte> __encode() 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>1000</MinNo>
+  <MaxNo>20000</MaxNo>
+  <UseLog4z>true</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+    <proto name="AuthReq" desc= "认证请求">
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+    </proto>
+     <proto name="AuthResp" desc= "认证返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="previews" type="UserPreviewArray"   desc=""/>
+    </proto>
+
+    <proto name="CreateUserReq" desc= "创角色请求">
+        <member name="nickname" type="string"   desc=""/>
+    </proto>
+     <proto name="CreateUserResp" desc= "创角色请求返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="previews" type="UserPreviewArray"   desc=""/>
+    </proto>
+
+    <proto name="SelectUserReq" desc= "选角色请求">
+        <member name="uID" type="ui64"   desc=""/>
+    </proto>
+     <proto name="SelectUserResp" desc= "选角色请求返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="svrIP" type="string"   desc=""/>
+        <member name="svrPort" type="ui16"   desc=""/>
+        <member name="uID" type="ui64"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+    </proto>
+
+    <proto name="LoginUserReq" desc= "登录角色请求">
+        <member name="uID" type="ui64"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+    </proto>
+     <proto name="LoginUserResp" desc= "登录角色返回">
+        <member name="retCode" type="ui16"   desc=""/>
+    </proto>
+
+
+</Proto>
+

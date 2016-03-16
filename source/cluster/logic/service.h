@@ -70,13 +70,14 @@ protected:
     virtual bool onInit() = 0; //need call setWorked(true) when inited. 
     virtual void onTick() = 0;
     virtual void onStop() = 0;//need call setWorked(false) when stoped. 
+    virtual void process(const Tracing & trace, const char * block, unsigned int len);
     void setWorked(bool work);
     void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
     void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb);
 private:
     void setInited();
     inline void setShell(ClusterID cltID){ _cltID = cltID; }
-    void process(const Tracing & trace, const char * block, unsigned int len);
+    
 
 
 private:

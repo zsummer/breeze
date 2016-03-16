@@ -75,38 +75,34 @@ inline std::string SessionToken_UPDATE( const SessionToken & info)
 } 
  
  
-inline std::vector<std::string> BaseInfo_BUILD() 
+inline std::vector<std::string> UserPreview_BUILD() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("desc `tb_BaseInfo`"); 
-    ret.push_back("CREATE TABLE `tb_BaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,         PRIMARY KEY(`uID`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_BaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_BaseInfo` add `nickName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_BaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_BaseInfo` add `diamond`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_BaseInfo` add `hisotryDiamond`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_BaseInfo` add `giftDiamond`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_BaseInfo` add `joinTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("desc `tb_UserPreview`"); 
+    ret.push_back("CREATE TABLE `tb_UserPreview` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,         PRIMARY KEY(`uID`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_UserPreview` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserPreview` add `nickName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserPreview` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
     return std::move(ret); 
 } 
  
-inline std::string BaseInfo_LOAD( unsigned long long curLoaded) 
+inline std::string UserPreview_LOAD( unsigned long long curLoaded) 
 { 
-    zsummer::mysql::DBQuery q(" select `uID`,`account`,`nickName`,`iconID`,`diamond`,`hisotryDiamond`,`giftDiamond`,`joinTime`from `tb_BaseInfo` order by `uID` desc limit ?, 1000 "); 
+    zsummer::mysql::DBQuery q(" select `uID`,`account`,`nickName`,`iconID`from `tb_UserPreview` order by `uID` desc limit ?, 1000 "); 
     q << curLoaded; 
     return q.popSQL(); 
 } 
  
-inline std::string BaseInfo_SELECT(unsigned long long uID) 
+inline std::string UserPreview_SELECT(unsigned long long uID) 
 { 
-    zsummer::mysql::DBQuery q(" select `uID`,`account`,`nickName`,`iconID`,`diamond`,`hisotryDiamond`,`giftDiamond`,`joinTime`from `tb_BaseInfo` where `uID` = ? "); 
+    zsummer::mysql::DBQuery q(" select `uID`,`account`,`nickName`,`iconID`from `tb_UserPreview` where `uID` = ? "); 
     q << uID; 
     return q.popSQL(); 
 } 
  
-inline std::map<unsigned long long, BaseInfo>  BaseInfo_FETCH(zsummer::mysql::DBResultPtr ptr) 
+inline std::map<unsigned long long, UserPreview>  UserPreview_FETCH(zsummer::mysql::DBResultPtr ptr) 
 { 
-    std::map<unsigned long long, BaseInfo>  ret; 
+    std::map<unsigned long long, UserPreview>  ret; 
     if (ptr->getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
     { 
         LOGE("fetch info from db found error. ErrorCode="  <<  ptr->getErrorCode() << ", Error=" << ptr->getLastError()); 
@@ -116,15 +112,11 @@ inline std::map<unsigned long long, BaseInfo>  BaseInfo_FETCH(zsummer::mysql::DB
     { 
         while (ptr->haveRow()) 
         { 
-            BaseInfo info; 
+            UserPreview info; 
             *ptr >> info.uID; 
             *ptr >> info.account; 
             *ptr >> info.nickName; 
             *ptr >> info.iconID; 
-            *ptr >> info.diamond; 
-            *ptr >> info.hisotryDiamond; 
-            *ptr >> info.giftDiamond; 
-            *ptr >> info.joinTime; 
             ret[info.uID] = info;  
         } 
     } 
@@ -137,32 +129,24 @@ inline std::map<unsigned long long, BaseInfo>  BaseInfo_FETCH(zsummer::mysql::DB
 } 
  
  
-inline std::string BaseInfo_INSERT( const BaseInfo & info)  
+inline std::string UserPreview_INSERT( const UserPreview & info)  
 { 
-    zsummer::mysql::DBQuery q(" insert into tb_BaseInfo( `uID`,`account`,`nickName`,`iconID`,`diamond`,`hisotryDiamond`,`giftDiamond`,`joinTime`) values(?,?,?,?,?,?,?,?)"); 
+    zsummer::mysql::DBQuery q(" insert into tb_UserPreview( `uID`,`account`,`nickName`,`iconID`) values(?,?,?,?)"); 
     q << info.uID; 
     q << info.account; 
     q << info.nickName; 
     q << info.iconID; 
-    q << info.diamond; 
-    q << info.hisotryDiamond; 
-    q << info.giftDiamond; 
-    q << info.joinTime; 
     return q.popSQL(); 
 } 
  
  
-inline std::string BaseInfo_UPDATE( const BaseInfo & info)  
+inline std::string UserPreview_UPDATE( const UserPreview & info)  
 { 
-    zsummer::mysql::DBQuery q(" insert into tb_BaseInfo(uID) values(? ) on duplicate key update `account` = ?,`nickName` = ?,`iconID` = ?,`diamond` = ?,`hisotryDiamond` = ?,`giftDiamond` = ?,`joinTime` = ? "); 
+    zsummer::mysql::DBQuery q(" insert into tb_UserPreview(uID) values(? ) on duplicate key update `account` = ?,`nickName` = ?,`iconID` = ? "); 
     q << info.uID; 
     q << info.account; 
     q << info.nickName; 
     q << info.iconID; 
-    q << info.diamond; 
-    q << info.hisotryDiamond; 
-    q << info.giftDiamond; 
-    q << info.joinTime; 
     return q.popSQL(); 
 } 
  

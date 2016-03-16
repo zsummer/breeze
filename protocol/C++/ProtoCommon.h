@@ -54,72 +54,46 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
  
-struct BaseInfo //用户基础信息  
+struct UserPreview //用户预览信息  
 { 
     unsigned long long uID; //用户唯一ID  
     std::string account; //帐号  
     std::string nickName; //昵称  
     short iconID; //头像  
-    int diamond; //当前剩余的充值钻石  
-    int hisotryDiamond; //历史充值钻石总额  
-    int giftDiamond; //当前剩余的赠送钻石  
-    unsigned int joinTime; //加入时间  
-    BaseInfo() 
+    UserPreview() 
     { 
         uID = 0; 
         iconID = 0; 
-        diamond = 0; 
-        hisotryDiamond = 0; 
-        giftDiamond = 0; 
-        joinTime = 0; 
     } 
-    BaseInfo(const unsigned long long & uID, const std::string & account, const std::string & nickName, const short & iconID, const int & diamond, const int & hisotryDiamond, const int & giftDiamond, const unsigned int & joinTime) 
+    UserPreview(const unsigned long long & uID, const std::string & account, const std::string & nickName, const short & iconID) 
     { 
         this->uID = uID; 
         this->account = account; 
         this->nickName = nickName; 
         this->iconID = iconID; 
-        this->diamond = diamond; 
-        this->hisotryDiamond = hisotryDiamond; 
-        this->giftDiamond = giftDiamond; 
-        this->joinTime = joinTime; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const BaseInfo & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserPreview & data) 
 { 
     ws << data.uID;  
     ws << data.account;  
     ws << data.nickName;  
     ws << data.iconID;  
-    ws << data.diamond;  
-    ws << data.hisotryDiamond;  
-    ws << data.giftDiamond;  
-    ws << data.joinTime;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, BaseInfo & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPreview & data) 
 { 
         rs >> data.uID;  
         rs >> data.account;  
         rs >> data.nickName;  
         rs >> data.iconID;  
-        rs >> data.diamond;  
-        rs >> data.hisotryDiamond;  
-        rs >> data.giftDiamond;  
-        rs >> data.joinTime;  
     return rs; 
 } 
  
  
-typedef std::vector<BaseInfo> BaseInfoArray;  
+typedef std::vector<UserPreview> UserPreviewArray;  
  
  
 typedef std::vector<unsigned long long> UIDS;  
- 
-enum  : unsigned short 
-{ 
-    ETRIGGER_USER_LOGIN = 0, //用户登录, 用户ID  
-    ETRIGGER_USER_LOGOUT = 1, //用户登出, 用户ID  
-}; 
  
 #endif 

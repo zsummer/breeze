@@ -41,27 +41,19 @@
     </struct>
 
 
-        <!-- 用户基础信息 -->
-    <struct name="BaseInfo" store="true" desc="用户基础信息">
+        <!-- 用户预览信息 -->
+    <struct name="UserPreview" store="true" desc="用户预览信息">
         <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
         <member name="account"  type="string" desc="帐号"/>
         <member name="nickName" type="string"   desc="昵称"/>
         <member name="iconID"  type="i16" desc="头像"/>
-        <member name="diamond"  type="i32" desc="当前剩余的充值钻石"/>
-        <member name="hisotryDiamond"  type="i32" desc="历史充值钻石总额"/>
-        <member name="giftDiamond"  type="i32" desc="当前剩余的赠送钻石"/>
-        <member name="joinTime"  type="ui32" desc="加入时间"/>
     </struct>
-    <array name="BaseInfoArray" type="BaseInfo" desc="" />
+    <array name="UserPreviewArray" type="UserPreview" desc="" />
     <array name="UIDS" type="ui64" desc="" />
 
 
 
-    <!-- 事件触发码 -->
-    <enum type="ui16" >
-        <member name="ETRIGGER_USER_LOGIN" value="0"   desc="用户登录, 用户ID"/>
-        <member name="ETRIGGER_USER_LOGOUT"   desc="用户登出, 用户ID"/>
-    </enum>
+
 
 
 

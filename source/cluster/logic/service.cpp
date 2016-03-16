@@ -84,10 +84,12 @@ void Service::backCall(const Tracing & trace, const char * block, unsigned int l
     Tracing trc;
     trc._fromService = getServiceType();
     trc._fromServiceD = getServiceID();
+    trc._fromClusterID = ServerConfig::getRef().getClusterID();
     trc._traceBackID = trace._traceID;
     trc._traceID = ++_seqID;
     trc._toService = trace._fromService;
     trc._toServiceID = trace._fromServiceD;
+    trc._toClusterID = trace._fromClusterID;
     time_t now = getNowTime();
     if (cb)
     {

@@ -11,7 +11,12 @@ Proto4z.ClusterServiceInited.__getName = "ClusterServiceInited"
 Proto4z.ClusterServiceInited[1] = {name="serviceType", type="ui16" }  
 Proto4z.ClusterServiceInited[2] = {name="serviceID", type="ui64" }  
  
-Proto4z.register(40003,"ClusterShellForward") 
+Proto4z.register(40002,"ClusterShellForward") 
 Proto4z.ClusterShellForward = {} --壳子转发 
-Proto4z.ClusterShellForward.__getID = 40003 
+Proto4z.ClusterShellForward.__getID = 40002 
 Proto4z.ClusterShellForward.__getName = "ClusterShellForward" 
+ 
+Proto4z.register(40003,"ClusterClientForward") 
+Proto4z.ClusterClientForward = {} --client转发 
+Proto4z.ClusterClientForward.__getID = 40003 
+Proto4z.ClusterClientForward.__getName = "ClusterClientForward" 

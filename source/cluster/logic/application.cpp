@@ -2,6 +2,7 @@
 #include "application.h"
 #include "dbService.h"
 #include "userMgr.h"
+#include <ProtoUser.h>
 int g_closeState = 0;
 
 Application::Application()
@@ -463,7 +464,16 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
         }
         svc.process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
     }
+    if (rs.getProtoID() == ClusterClientForward::GetProtoID())
+    {
+        Tracing trace;
+        rs >> trace;
+        ReadStream crs(rs.getStreamUnread(), rs.getStreamUnreadLen());
+        if (crs.getProtoID() == AuthResp::GetProtoID())
+        {
 
+        }
+    }
     
 }
 
@@ -513,8 +523,21 @@ void Application::event_onClientClosed(TcpSessionPtr session)
 
 
 
-void Application::event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
+void Application::event_onClientMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
+    ReadStream rs(begin, len);
+    if (rs.getProtoID() == AuthReq::GetProtoID()
+        || rs.getProtoID() == CreateUserReq::GetProtoID()
+        || rs.getProtoID() == SelectUserReq::GetProtoID())
+    {
+        Tracing trace;
+        trace._fromService = ServiceClient;
+        trace._fromServiceD = session->getSessionID();
+        trace._fromClusterID = ServerConfig::getRef().getClusterID();
+        trace._toService = ServiceUserMgr;
+        trace._toServiceID = InvalidServiceID;
+        globalCall(trace, begin, len);
+    }
 
 }
 
@@ -525,50 +548,75 @@ void Application::globalCall(Tracing trace, const char * block, unsigned int len
         LOGF("Application::globalCall Illegality trace. trace=" << trace << ", block len=" << len);
         return;
     }
-    auto founder = _services.find(trace._toService);
-    if (founder != _services.end())
+    if (trace._toService == ServiceClient)
     {
-        auto fder = founder->second.find(trace._toServiceID);
-        if (fder != founder->second.end())
+        WriteStream ws(ClusterClientForward::GetProtoID());
+        ws << trace;
+        ws.appendOriginalData(block, len);
+        auto fsder = _clusterSession.find(trace._toClusterID);
+        if (fsder == _clusterSession.end())
         {
-            auto & service = *fder->second;
-            if (service.isShell()) //forward 
-            {
-                WriteStream ws(ClusterShellForward::GetProtoID());
-                ws << trace;
-                ws.appendOriginalData(block, len);
-                ClusterID cltID = service.getClusterID();
-                auto fsder = _clusterSession.find(cltID);
-                if (fsder == _clusterSession.end())
-                {
-                    LOGE("Application::globalCall not found session by shell service. clusterID=" << cltID << ", tracing=" << trace);
-                }
-                else
-                {
-                    SessionManager::getRef().sendSessionData(fsder->second.first, ws.getStream(), ws.getStreamLen());
-                    if (fsder->second.second == 0)
-                    {
-                        LOGW("Application::globalCall session not connected when global call by shell service. sID=" << fsder->second.first 
-                            << ", clusterID=" << cltID << ", tracing=" << trace);
-                    }
-                }
-                
-            }
-            else //direct process
-            {
-                service.process(trace, block, len);
-            }
-            
+            LOGE("Application::globalCall not found session by shell service. clusterID=" << trace._toClusterID << ", tracing=" << trace);
+            return;
         }
-        else
+        SessionManager::getRef().sendSessionData(fsder->second.first, ws.getStream(), ws.getStreamLen());
+        if (fsder->second.second == 0)
         {
-            LOGD("Application::globalCall can not found _toService ID. trace =" << trace << ", block len=" << len);
+            LOGW("Application::globalCall session not connected when global call by shell service. sID=" << fsder->second.first
+                << ", clusterID=" << trace._toClusterID << ", tracing=" << trace);
         }
     }
     else
     {
-        LOGF("Application::globalCall can not found _toService type  trace =" << trace << ", block len=" << len);
+        ui16 toService = trace._toService;
+        if (trace._toService == ServiceUser && trace._fromService != ServiceUserMgr)
+        {
+            toService = ServiceUserMgr;
+        }
+
+        auto founder = _services.find(toService);
+        if (founder == _services.end())
+        {
+            LOGF("Application::globalCall can not found _toService type  trace =" << trace << ", block len=" << len);
+            return;
+        }
+        auto fder = founder->second.find(trace._toServiceID);
+        if (fder == founder->second.end())
+        {
+            LOGD("Application::globalCall can not found _toService ID. trace =" << trace << ", block len=" << len);
+            return;
+        }
+        auto & service = *fder->second;
+        if (service.isShell()) //forward 
+        {
+            WriteStream ws(ClusterShellForward::GetProtoID());
+            ws << trace;
+            ws.appendOriginalData(block, len);
+            ClusterID cltID = service.getClusterID();
+            auto fsder = _clusterSession.find(cltID);
+            if (fsder == _clusterSession.end())
+            {
+                LOGE("Application::globalCall not found session by shell service. clusterID=" << cltID << ", tracing=" << trace);
+            }
+            else
+            {
+                SessionManager::getRef().sendSessionData(fsder->second.first, ws.getStream(), ws.getStreamLen());
+                if (fsder->second.second == 0)
+                {
+                    LOGW("Application::globalCall session not connected when global call by shell service. sID=" << fsder->second.first
+                        << ", clusterID=" << cltID << ", tracing=" << trace);
+                }
+            }
+
+        }
+        else //direct process
+        {
+            service.process(trace, block, len);
+        }
+
+
     }
+
 }
 
 

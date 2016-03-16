@@ -49,7 +49,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
  
 struct ClusterShellForward //壳子转发  
 { 
-    static const unsigned short GetProtoID() { return 40003;} 
+    static const unsigned short GetProtoID() { return 40002;} 
     static const std::string GetProtoName() { return "ID_ClusterShellForward";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterShellForward & data) 
@@ -57,6 +57,20 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterShellForward & data) 
+{ 
+    return rs; 
+} 
+ 
+struct ClusterClientForward //client转发  
+{ 
+    static const unsigned short GetProtoID() { return 40003;} 
+    static const std::string GetProtoName() { return "ID_ClusterClientForward";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterClientForward & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterClientForward & data) 
 { 
     return rs; 
 } 

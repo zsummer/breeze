@@ -56,38 +56,26 @@ namespace Proto4z
         } 
     } 
  
-    public class BaseInfo: Proto4z.IProtoObject //用户基础信息  
+    public class UserPreview: Proto4z.IProtoObject //用户预览信息  
     {     
         //members   
         public ulong uID; //用户唯一ID  
         public string account; //帐号  
         public string nickName; //昵称  
         public short iconID; //头像  
-        public int diamond; //当前剩余的充值钻石  
-        public int hisotryDiamond; //历史充值钻石总额  
-        public int giftDiamond; //当前剩余的赠送钻石  
-        public uint joinTime; //加入时间  
-        public BaseInfo()  
+        public UserPreview()  
         { 
             uID = 0;  
             account = "";  
             nickName = "";  
             iconID = 0;  
-            diamond = 0;  
-            hisotryDiamond = 0;  
-            giftDiamond = 0;  
-            joinTime = 0;  
         } 
-        public BaseInfo(ulong uID, string account, string nickName, short iconID, int diamond, int hisotryDiamond, int giftDiamond, uint joinTime) 
+        public UserPreview(ulong uID, string account, string nickName, short iconID) 
         { 
             this.uID = uID; 
             this.account = account; 
             this.nickName = nickName; 
             this.iconID = iconID; 
-            this.diamond = diamond; 
-            this.hisotryDiamond = hisotryDiamond; 
-            this.giftDiamond = giftDiamond; 
-            this.joinTime = joinTime; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -96,10 +84,6 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.nickName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.diamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.hisotryDiamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.giftDiamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.joinTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -108,16 +92,12 @@ namespace Proto4z
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.nickName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
-            this.diamond = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.hisotryDiamond = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.giftDiamond = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.joinTime = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
     } 
  
  
-    public class BaseInfoArray : System.Collections.Generic.List<BaseInfo>, Proto4z.IProtoObject  
+    public class UserPreviewArray : System.Collections.Generic.List<UserPreview>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -138,7 +118,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new BaseInfo(); 
+                    var data = new UserPreview(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
@@ -175,12 +155,6 @@ namespace Proto4z
             return pos; 
         } 
     } 
- 
-    public enum  : ushort 
-    { 
-        ETRIGGER_USER_LOGIN = 0, //用户登录, 用户ID  
-        ETRIGGER_USER_LOGOUT = 1, //用户登出, 用户ID  
-    }; 
  
 } 
  
