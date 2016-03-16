@@ -78,7 +78,7 @@ void Application::broadcast(const Proto & proto)
     ws << proto;
     for (const auto &c: _clusterSession)
     {
-        SessionManager::getRef().sendSessionData(c.first, ws.getStream(), ws.getStreamLen());
+        SessionManager::getRef().sendSessionData(c.second.first, ws.getStream(), ws.getStreamLen());
     }
 }
 

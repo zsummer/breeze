@@ -13,6 +13,7 @@ void Service::setWorked(bool work)
 {
     if (!isShell() && work)
     {
+        LOGD("Service::setWorked broadcast. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
         ClusterServiceInited inited(getServiceType(), getServiceID());
         Application::getRef().broadcast(inited);
     }

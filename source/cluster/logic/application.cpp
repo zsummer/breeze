@@ -354,7 +354,17 @@ void Application::checkServiceState()
             }
             for (auto service : founder->second)
             {
-                if (service.second && !service.second->isShell() && !service.second->isInited())
+                if (!service.second)
+                {
+                    LOGE("local service nulptr ...");
+                    Application::getRef().stop();
+                    return;
+                }
+                if (service.second->isShell() && (!service.second->isInited() || !service.second->isWorked()))
+                {
+                    return;
+                }
+                if (!service.second->isShell() && !service.second->isInited())
                 {
                     LOGI("local service [" << ServiceNames.at(service.second->getServiceType()) << "] begin init. [" << service.second->getServiceID() << "] ...");
                     service.second->setInited();
