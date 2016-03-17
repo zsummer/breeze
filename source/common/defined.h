@@ -159,10 +159,8 @@ struct Tracing
 {
     ui16 _toService;
     ServiceID _toServiceID = InvalidServiceID;
-    ClusterID _toClusterID = InvalidClusterID;
     ui16 _fromService;
     ServiceID _fromServiceD = InvalidServiceID;
-    ClusterID _fromClusterID = InvalidClusterID;
     ui32 _traceID = 0;
     ui32 _traceBackID = 0;
 };
@@ -271,10 +269,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 {
     ws << data._toService;
     ws << data._toServiceID;
-    ws << data._toClusterID;
     ws << data._fromService;
     ws << data._fromServiceD;
-    ws << data._fromClusterID;
     ws << data._traceID;
     ws << data._traceBackID;
     return ws;
@@ -283,10 +279,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 {
     rs >> data._toService;
     rs >> data._toServiceID;
-    rs >> data._toClusterID;
     rs >> data._fromService;
     rs >> data._fromServiceD;
-    rs >> data._fromClusterID;
     rs >> data._traceID;
     rs >> data._traceBackID;
     return rs;

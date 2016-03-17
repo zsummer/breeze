@@ -71,9 +71,15 @@ protected:
     virtual void onTick() = 0;
     virtual void onStop() = 0;//need call setWorked(false) when stoped. 
     virtual void process(const Tracing & trace, const char * block, unsigned int len);
+
     void setWorked(bool work);
-    void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb);
-    void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb);
+    virtual void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    virtual void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+
+    ui32 makeCallback(const ServiceCallback &cb);
+    void checkCallback();
+    ServiceCallback checkCallback(ui32 cbid);
+
 private:
     void setInited();
     inline void setShell(ClusterID cltID){ _cltID = cltID; }
@@ -89,9 +95,10 @@ private:
     bool _shell = false;
     ClusterID _cltID = InvalidClusterID;
     ServiceID _serviceID = InvalidServiceID;
-    ui32 _seqID = 0;
+    ui32 _callbackSeq = 0;
+    time_t _callbackCheck = 0;
     std::map<ui32, std::pair<time_t,ServiceCallback> > _cbs;
-    time_t _lastCheckCallback = 0;
+    
 };
 using ServicePtr = std::shared_ptr<Service>;
 

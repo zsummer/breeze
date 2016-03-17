@@ -26,12 +26,36 @@ void  UserMgr::process(const Tracing & trace, const char * block, unsigned int l
         Service::process(trace, block, len);
         return;
     }
-    if (trace._toService != ServiceUser)
+    if (trace._toService == ServiceUser || trace._toService == ServiceClient)
     {
-        LOGE("unknown ");
+        auto founder = _userShells.find(trace._toServiceID);
+        if (founder == _userShells.end())
+        {
+            LOGE("UserMgr not found the user/client id trace=" << trace);
+            return;
+        }
+        const ServiceUserShell & shell = founder->second;
+        if (shell._uID != trace._toServiceID)
+        {
+            LOGF("UserMgr found the user/client id, but user shell store service id not user id or cluster id invalid. trace=" << trace
+                <<", shell.uID=" << shell._uID << ", shell.cltID=" << shell._cltID);
+            return;
+        }
+        
+        try
+        {
+            WriteStream ws(ClusterClientForward::GetProtoID());
+            ws << trace;
+            ws.appendOriginalData(block, len);
+            Application::getRef().callOtherCluster(shell._cltID, ws.getStream(), ws.getStreamLen());
+        }
+        catch (std::runtime_error e)
+        {
+            LOGE("UserMgr::process catch except error. e=" << e.what());
+        }
         return;
     }
-    globalCall(trace._toService, trace._toServiceID, block, len, nullptr);
+    LOGF("UserMgr::process trace=" << trace);
 }
 void UserMgr::onStop()
 {
@@ -46,16 +70,13 @@ bool UserMgr::onInit()
 
 UserMgr::UserMgr()
 {
-    slotting<AuthReq>(std::bind(&UserMgr::onAuthReq, this, _1, _2));
+    slotting<UserAuthReq>(std::bind(&UserMgr::onAuthReq, this, _1, _2));
 }
 
 
 
 void UserMgr::onAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
 {
-    AuthResp resp;
-    WriteStream ws(AuthResp::GetProtoID());
-    ws << resp;
-    backCall(trace, ws.getStream(), ws.getStreamLen(), nullptr);
+
 }
 

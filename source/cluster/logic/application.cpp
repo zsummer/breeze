@@ -464,6 +464,57 @@ void Application::checkServiceState()
     
     
 }
+void Application::event_onRemoteShellForward(TcpSessionPtr session, ReadStream & rs)
+{
+    Tracing trace;
+    rs >> trace;
+    auto founder = _services.find(trace._toService);
+    if (founder == _services.end())
+    {
+        LOGE("Application::event_onRemoteShellForward error. unknown service. trace=" << trace);
+        return;
+    }
+    auto fder = founder->second.find(trace._toServiceID);
+    if (fder == founder->second.end())
+    {
+        LOGE("Application::event_onRemoteShellForward error. not found service id. trace=" << trace);
+        return;
+    }
+    Service & svc = *fder->second;
+    if (svc.isShell())
+    {
+        LOGE("Application::event_onRemoteShellForward error. service not local. trace=" << trace);
+        return;
+    }
+    svc.process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
+}
+
+void Application::event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs)
+{
+    ClusterServiceInited service;
+    rs >> service;
+
+    auto founder = _services.find(service.serviceType);
+    if (founder == _services.end())
+    {
+        LOGE("event_onServiceMessage can't founder remote service. service=" << ServiceNames.at(service.serviceType));
+        return;
+    }
+    auto fder = founder->second.find(service.serviceID);
+    if (fder == founder->second.end() || !fder->second)
+    {
+        LOGE("event_onServiceMessage can't founder remote service with id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
+        return;
+    }
+    if (fder->second->isShell() && !fder->second->isInited())
+    {
+        LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "]begin init. [" << fder->second->getServiceID() << "] ...");
+        fder->second->setInited();
+        fder->second->setWorked(true);
+        LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "] inited. [" << fder->second->getServiceID() << "] ...");
+        checkServiceState();
+    }
+}
 
 void Application::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
@@ -475,60 +526,36 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
     }
     if (rs.getProtoID() == ClusterServiceInited::GetProtoID())
     {
-        ClusterServiceInited service;
-        rs >> service;
-
-        auto founder = _services.find(service.serviceType);
-        if (founder == _services.end())
-        {
-            LOGE("event_onServiceMessage can't founder remote service. service=" << ServiceNames.at(service.serviceType));
-            return;
-        }
-        auto fder = founder->second.find(service.serviceID);
-        if (fder == founder->second.end() || !fder->second)
-        {
-            LOGE("event_onServiceMessage can't founder remote service with id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
-            return;
-        }
-        if (fder->second->isShell() && !fder->second->isInited())
-        {
-            LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "]begin init. [" << fder->second->getServiceID() << "] ...");
-            fder->second->setInited();
-            fder->second->setWorked(true);
-            LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "] inited. [" << fder->second->getServiceID() << "] ...");
-            checkServiceState();
-        }
+        event_onRemoteServiceInited(session, rs);
         return;
     }
     if (rs.getProtoID() == ClusterShellForward::GetProtoID())
     {
-        Tracing trace;
-        rs >> trace;
-        auto founder = _services.find(trace._toService);
-        if (founder == _services.end())
-        {
-            return;
-        }
-        auto fder = founder->second.find(trace._toServiceID);
-        if (fder == founder->second.end())
-        {
-            return;
-        }
-        Service & svc = *fder->second;
-        if (svc.isShell())
-        {
-            return;
-        }
-        svc.process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
+        event_onRemoteShellForward(session, rs);
+        return;
     }
     if (rs.getProtoID() == ClusterClientForward::GetProtoID())
     {
         Tracing trace;
         rs >> trace;
         ReadStream crs(rs.getStreamUnread(), rs.getStreamUnreadLen());
-        if (crs.getProtoID() == AuthResp::GetProtoID())
+        if (crs.getProtoID() == UserAuthResp::GetProtoID())
         {
 
+        }
+        else
+        {
+            auto founder = _services.find(ServiceUser);
+            if (founder == _services.end())
+            {
+                return;
+            }
+            auto fder = founder->second.find(trace._toServiceID);
+            if (fder == founder->second.end())
+            {
+                return;
+            }
+            fder->second->process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
         }
     }
     
@@ -583,98 +610,119 @@ void Application::event_onClientClosed(TcpSessionPtr session)
 void Application::event_onClientMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    if (rs.getProtoID() == AuthReq::GetProtoID()
-        || rs.getProtoID() == CreateUserReq::GetProtoID()
-        || rs.getProtoID() == SelectUserReq::GetProtoID())
+    SessionStatus ss = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
+    if (rs.getProtoID() == ClientAuthReq::GetProtoID())
     {
+        LOGD("ClientAuthReq sID=" << session->getSessionID() << ", block len=" << len);
+        if (ss != SSTATUS_UNKNOW)
+        {
+            LOGE("duplicate ClientAuthReq. sID=" << session->getSessionID());
+            return;
+        }
+        ClientAuthReq careq;
+        rs >> careq;
         Tracing trace;
         trace._fromService = ServiceClient;
         trace._fromServiceD = session->getSessionID();
-        trace._fromClusterID = ServerConfig::getRef().getClusterID();
         trace._toService = ServiceUserMgr;
         trace._toServiceID = InvalidServiceID;
-        globalCall(trace, begin, len);
-    }
-
-}
-
-void Application::globalCall(Tracing trace, const char * block, unsigned int len)
-{
-    if (trace._fromService >= ServiceMax || trace._toService >= ServiceMax)
-    {
-        LOGF("Application::globalCall Illegality trace. trace=" << trace << ", block len=" << len);
+        WriteStream ws(UserAuthReq::GetProtoID());
+        UserAuthReq req;
+        req.account = careq.account;
+        req.token = careq.token;
+        req.clientSessionID = session->getSessionID();
+        req.clientClusterID = ServerConfig::getRef().getClusterID();
+        ws << req;
+        callOtherService(trace, ws.getStream(), ws.getStreamLen());
         return;
     }
-    if (trace._toService == ServiceClient)
+
+}
+
+void Application::callOtherCluster(ClusterID cltID, const char * block, unsigned int len)
+{
+    auto founder = _clusterSession.find(cltID);
+    if (founder == _clusterSession.end())
     {
-        WriteStream ws(ClusterClientForward::GetProtoID());
+        LOGF("Application::callOtherCluster fatal error. cltID not found. cltID=" << cltID);
+        return;
+    }
+    if (founder->second.first == InvalidServiceID)
+    {
+        LOGF("Application::callOtherCluster fatal error. cltID not have session. cltID=" << cltID);
+        return;
+    }
+    if (founder->second.second == 0)
+    {
+        LOGW("Application::callOtherCluster warning error. session try connecting. cltID=" << cltID << ", client session ID=" << founder->second.first);
+    }
+    SessionManager::getRef().sendSessionData(founder->second.first, block, len);
+}
+
+void Application::callOtherService(Tracing trace, const char * block, unsigned int len)
+{
+    if (trace._fromService >= ServiceMax || trace._toService >= ServiceMax || trace._toService == ServiceInvalid)
+    {
+        LOGF("Application::callOtherService Illegality trace. trace=" << trace << ", block len=" << len);
+        return;
+    }
+    if (trace._fromService == ServiceUserMgr
+        && (trace._toService == ServiceUser || trace._toService == ServiceClient))
+    {
+        LOGF("call method to ServiceUser or ServiceClient from ServiceUserMgr is Illegality! trace=" << trace);
+        return;
+    }
+
+    ui16 toService = trace._toService;
+    if (trace._toService == ServiceUser && trace._toService == ServiceClient)
+    {
+        toService = ServiceUserMgr;
+    }
+
+    auto founder = _services.find(toService);
+    if (founder == _services.end())
+    {
+        LOGF("Application::callOtherService can not found _toService type  trace =" << trace << ", block len=" << len);
+        return;
+    }
+    auto fder = founder->second.find(trace._toServiceID);
+    if (fder == founder->second.end())
+    {
+        LOGD("Application::callOtherService can not found _toService ID. trace =" << trace << ", block len=" << len);
+        return;
+    }
+    auto & service = *fder->second;
+    if (service.isShell()) //forward 
+    {
+        WriteStream ws(ClusterShellForward::GetProtoID());
         ws << trace;
         ws.appendOriginalData(block, len);
-        auto fsder = _clusterSession.find(trace._toClusterID);
+        ClusterID cltID = service.getClusterID();
+        auto fsder = _clusterSession.find(cltID);
         if (fsder == _clusterSession.end())
         {
-            LOGE("Application::globalCall not found session by shell service. clusterID=" << trace._toClusterID << ", tracing=" << trace);
-            return;
+            LOGE("Application::callOtherService not found session by shell service. clusterID=" << cltID << ", tracing=" << trace);
         }
-        SessionManager::getRef().sendSessionData(fsder->second.first, ws.getStream(), ws.getStreamLen());
-        if (fsder->second.second == 0)
+        else
         {
-            LOGW("Application::globalCall session not connected when global call by shell service. sID=" << fsder->second.first
-                << ", clusterID=" << trace._toClusterID << ", tracing=" << trace);
+            SessionManager::getRef().sendSessionData(fsder->second.first, ws.getStream(), ws.getStreamLen());
+            if (fsder->second.second == 0)
+            {
+                LOGW("Application::callOtherService session not connected when global call by shell service. sID=" << fsder->second.first
+                    << ", clusterID=" << cltID << ", tracing=" << trace);
+            }
         }
+
     }
-    else
+    else //direct process
     {
-        ui16 toService = trace._toService;
-        if (trace._toService == ServiceUser && trace._fromService != ServiceUserMgr)
-        {
-            toService = ServiceUserMgr;
-        }
-
-        auto founder = _services.find(toService);
-        if (founder == _services.end())
-        {
-            LOGF("Application::globalCall can not found _toService type  trace =" << trace << ", block len=" << len);
-            return;
-        }
-        auto fder = founder->second.find(trace._toServiceID);
-        if (fder == founder->second.end())
-        {
-            LOGD("Application::globalCall can not found _toService ID. trace =" << trace << ", block len=" << len);
-            return;
-        }
-        auto & service = *fder->second;
-        if (service.isShell()) //forward 
-        {
-            WriteStream ws(ClusterShellForward::GetProtoID());
-            ws << trace;
-            ws.appendOriginalData(block, len);
-            ClusterID cltID = service.getClusterID();
-            auto fsder = _clusterSession.find(cltID);
-            if (fsder == _clusterSession.end())
-            {
-                LOGE("Application::globalCall not found session by shell service. clusterID=" << cltID << ", tracing=" << trace);
-            }
-            else
-            {
-                SessionManager::getRef().sendSessionData(fsder->second.first, ws.getStream(), ws.getStreamLen());
-                if (fsder->second.second == 0)
-                {
-                    LOGW("Application::globalCall session not connected when global call by shell service. sID=" << fsder->second.first
-                        << ", clusterID=" << cltID << ", tracing=" << trace);
-                }
-            }
-
-        }
-        else //direct process
-        {
-            service.process(trace, block, len);
-        }
-
-
+        service.process(trace, block, len);
     }
 
 }
+
+
+
 
 
 

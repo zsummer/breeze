@@ -27,6 +27,11 @@
 #include "service.h"
 
 
+struct ServiceUserShell 
+{
+    ServiceID _uID = InvalidServiceID;
+    ClusterID _cltID = InvalidClusterID;
+};
 
 
 class UserMgr : public Service
@@ -42,6 +47,7 @@ public:
     void onAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 public:
     time_t _lastTime = 0;
+    std::map<ServiceID, ServiceUserShell> _userShells;
 };
 
 

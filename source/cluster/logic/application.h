@@ -38,16 +38,19 @@ public:
 public:
     template<class Proto>
     void broadcast(const Proto & proto);
-    void globalCall(Tracing trace, const char * block, unsigned int len);
+    void callOtherCluster(ClusterID cltID, const char * block, unsigned int len);
+    void callOtherService(Tracing trace, const char * block, unsigned int len);
     bool isStoping();
     void _onTimer();
-protected:
+private:
     bool startClusterListen();
     bool startClusterConnect();
     bool startWideListen();
 
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
+    void event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs);
+    void event_onRemoteShellForward(TcpSessionPtr session, ReadStream & rs);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
     ServicePtr createLocalService(ui16 st);
     void checkServiceState();
@@ -57,7 +60,6 @@ protected:
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
     void event_onClientPulse(TcpSessionPtr   session);
-
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
 
@@ -78,11 +80,27 @@ private:
 template<class Proto>
 void Application::broadcast(const Proto & proto)
 {
-    WriteStream ws(Proto::GetProtoID());
-    ws << proto;
-    for (const auto &c: _clusterSession)
+    try
     {
-        SessionManager::getRef().sendSessionData(c.second.first, ws.getStream(), ws.getStreamLen());
+        WriteStream ws(Proto::GetProtoID());
+        ws << proto;
+        for (const auto &c : _clusterSession)
+        {
+            if (c.second.first == InvalidSessionID)
+            {
+                LOGF("Application::broadcast fatal error. cltID not have session. cltID=" << c.first << ", proto id=" << Proto::GetProtoID());
+                continue;
+            }
+            if (c.second.second == 0)
+            {
+                LOGW("Application::broadcast warning error. session try connecting. cltID=" << c.first << ", client session ID=" << c.second.first);
+            }
+            SessionManager::getRef().sendSessionData(c.second.first, ws.getStream(), ws.getStreamLen());
+        }
+    }
+    catch (std::runtime_error e)
+    {
+        LOGE("Application::broadcast catch except error. e=" << e.what());
     }
 }
 

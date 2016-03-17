@@ -9,12 +9,27 @@
 
 <Proto>
 
-    <proto name="AuthReq" desc= "认证请求">
+    <proto name="ClientAuthReq" desc= "认证请求">
         <member name="account" type="string"   desc=""/>
         <member name="token" type="string"   desc=""/>
     </proto>
-     <proto name="AuthResp" desc= "认证返回">
+     <proto name="ClientAuthResp" desc= "认证返回">
         <member name="retCode" type="ui16"   desc=""/>
+        <member name="previews" type="UserPreviewArray"   desc=""/>
+    </proto>
+
+    <proto name="UserAuthReq" desc= "认证请求">
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+        <member name="clientClusterID" type="ui32"   desc=""/>
+    </proto>
+    <proto name="UserAuthResp" desc= "认证回复">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+        <member name="clientClusterID" type="ui32"   desc=""/>
         <member name="previews" type="UserPreviewArray"   desc=""/>
     </proto>
 

@@ -43,25 +43,29 @@ void Service::setWorked(bool work)
     _worked = work;
 }
 
-void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
+ui32 Service::makeCallback(const ServiceCallback &cb)
 {
-    Tracing trace;
-    trace._fromService = getServiceType();
-    trace._fromServiceD = getServiceID();
-    trace._traceBackID = 0;
-    trace._traceID = ++_seqID;
-    trace._toService = st;
-    trace._toServiceID = svcID;
-    time_t now = getNowTime();
-    if (cb)
+    ui32 cbid = ++_callbackSeq;
+    _cbs.insert(std::make_pair(cbid, std::make_pair(getNowTime(), cb)));
+    return cbid;
+}
+ServiceCallback Service::checkCallback(ui32 cbid)
+{
+    auto founder = _cbs.find(cbid);
+    if (founder == _cbs.end())
     {
-        LOGD("Service::globalCall make callback. cbid=" << trace._traceID << ", call time=" << now);
-        _cbs.insert(std::make_pair(trace._traceID, std::make_pair(now, cb)));
+        return nullptr;
     }
-    
-    if (now - _lastCheckCallback > 180)
+    auto cb = std::move(founder->second.second);
+    _cbs.erase(founder);
+    return std::move(cb);
+}
+void Service::checkCallback()
+{
+    time_t now = getNowTime();
+    if (now - _callbackCheck > 180)
     {
-        _lastCheckCallback = now;
+        _callbackCheck = now;
         for (auto iter = _cbs.begin(); iter != _cbs.end();)
         {
             if (now - iter->second.first > 600)
@@ -75,8 +79,24 @@ void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned 
             }
         }
     }
+}
+
+void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
+{
+    Tracing trace;
+    trace._fromService = getServiceType();
+    trace._fromServiceD = getServiceID();
+    trace._traceBackID = 0;
+    trace._traceID = 0;
+    trace._toService = st;
+    trace._toServiceID = svcID;
+    checkCallback();
+    if (cb)
+    {
+        trace._traceID = makeCallback(cb);
+    }
     
-    Application::getRef().globalCall(trace, block, len);
+    Application::getRef().callOtherService(trace, block, len);
 }
 
 void Service::backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
@@ -84,19 +104,16 @@ void Service::backCall(const Tracing & trace, const char * block, unsigned int l
     Tracing trc;
     trc._fromService = getServiceType();
     trc._fromServiceD = getServiceID();
-    trc._fromClusterID = ServerConfig::getRef().getClusterID();
     trc._traceBackID = trace._traceID;
-    trc._traceID = ++_seqID;
+    trc._traceID = 0;
     trc._toService = trace._fromService;
     trc._toServiceID = trace._fromServiceD;
-    trc._toClusterID = trace._fromClusterID;
     time_t now = getNowTime();
     if (cb)
     {
-        LOGD("Service::backCall make callback. cbid=" << trace._traceID << ", call time=" << now);
-        _cbs.insert(std::make_pair(trace._traceID, std::make_pair(now, cb)));
+        trc._traceID = makeCallback(cb);
     }
-    Application::getRef().globalCall(trc, block, len);
+    Application::getRef().callOtherService(trace, block, len);
 }
 
 
@@ -104,28 +121,24 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
 {
     if (trace._traceBackID > 0)
     {
-        auto founder = _cbs.find(trace._traceBackID);
-        if (founder != _cbs.end())
+        auto cb = checkCallback(trace._traceBackID);
+        if (!cb)
         {
-            try
-            {
-                auto cb = std::move(founder->second.second);
-                _cbs.erase(founder);
-                ReadStream rs(block, len);
-                cb(rs);
-                return;
-            }
-            catch (std::runtime_error e)
-            {
-                LOGE("Service::process catch except. e=" << e.what() << ", trace=" << trace);
-                return;
-            }
+            LOGE("Service::process callback timeout. cbid=" << trace._traceBackID);
+            return;
         }
-        else
+        try
         {
-            LOGE("Service::process not found callback function. try to find slot. trace=" << trace);
+            ReadStream rs(block, len);
+            cb(rs);
+            return;
         }
-        //return;
+        catch (std::runtime_error e)
+        {
+            LOGE("Service::process catch except error. e=" << e.what() << ", trace=" << trace);
+            return;
+        }
+        return;
     }
 
     try
@@ -143,7 +156,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
     }
     catch (std::runtime_error e)
     {
-        LOGE("Service::process call process catch except. e=" << e.what() << ", trace=" << trace);
+        LOGE("Service::process call process catch except error. e=" << e.what() << ", trace=" << trace);
     }
 }
 
