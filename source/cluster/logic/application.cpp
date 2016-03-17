@@ -14,9 +14,22 @@ bool Application::init(const std::string & config, ClusterID idx)
 {
     if (!ServerConfig::getRef().parse(config, idx))
     {
+        LOGE("Application::init error. parse config error. config path=" << config << ", cluster ID = " << idx);
         return false;
     }
-    LOGA("Application::init clusterID=" << idx);
+    if (idx == InvalidClusterID)
+    {
+        LOGE("Application::init error. current cluster id invalid. config path=" << config << ", cluster ID = " << idx);
+        return false;
+    }
+    const auto & clusters = ServerConfig::getRef().getClusterConfig();
+    auto founder = std::find_if(clusters.begin(), clusters.end(), [](const ClusterConfig& cc){return cc._cluster == ServerConfig::getRef().getClusterID(); });
+    if (founder == clusters.end())
+    {
+        LOGE("Application::init error. current cluster id not found in config file.. config path=" << config << ", cluster ID = " << idx);
+        return false;
+    }
+    LOGA("Application::init  success. clusterID=" << idx);
     SessionManager::getRef().createTimer(1000, std::bind(&Application::checkServiceState, Application::getPtr()));
     return true;
 }
@@ -111,7 +124,49 @@ void Application::stop()
     return ;
 }
 
-bool Application::start()
+bool Application::startClusterListen()
+{
+    const auto & clusters = ServerConfig::getRef().getClusterConfig();
+    ServerConfig::getRef().getClusterID();
+    auto founder = std::find_if(clusters.begin(), clusters.end(), [](const ClusterConfig& cc){return cc._cluster == ServerConfig::getRef().getClusterID(); });
+    if (founder == clusters.end())
+    {
+        LOGE("Application::startClusterListen error. current cluster id not found in config file." );
+        return false;
+    }
+    const ClusterConfig & cluster = *founder;
+    if (cluster._serviceBindIP.empty() || cluster._servicePort == 0)
+    {
+        LOGE("Application::startClusterListen check config error. bind ip=" << cluster._serviceBindIP << ", bind port=" << cluster._servicePort);
+        return false;
+    }
+    AccepterID aID = SessionManager::getRef().addAccepter(cluster._serviceBindIP, cluster._servicePort);
+    if (aID == InvalidAccepterID)
+    {
+        LOGE("Application::startClusterListen addAccepter error. bind ip=" << cluster._serviceBindIP << ", bind port=" << cluster._servicePort);
+        return false;
+    }
+    auto &options = SessionManager::getRef().getAccepterOptions(aID);
+    options._whitelistIP = cluster._whiteList;
+    options._maxSessions = 1000;
+    options._sessionOptions._sessionPulseInterval = 5000;
+    options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
+    {
+        ClusterPulse pulse;
+        WriteStream ws(pulse.GetProtoID());
+        ws << pulse;
+        session->send(ws.getStream(), ws.getStreamLen());
+    };
+    options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onServiceMessage, this, _1, _2, _3);
+    if (!SessionManager::getRef().openAccepter(aID))
+    {
+        LOGE("Application::startClusterListen openAccepter error. bind ip=" << cluster._serviceBindIP << ", bind port=" << cluster._servicePort);
+        return false;
+    }
+    LOGA("Application::startClusterListen openAccepter success. bind ip=" << cluster._serviceBindIP << ", bind port=" << cluster._servicePort <<", aID=" << aID);
+    return true;
+}
+bool Application::startClusterConnect()
 {
     const auto & clusters = ServerConfig::getRef().getClusterConfig();
     for (const auto & cluster : clusters)
@@ -119,16 +174,15 @@ bool Application::start()
         SessionID cID = SessionManager::getRef().addConnecter(cluster._serviceIP, cluster._servicePort);
         if (cID == InvalidSessionID)
         {
-            LOGE("addConnecter error.");
+            LOGE("Application::startClusterConnect addConnecter error. remote ip=" << cluster._serviceIP << ", remote port=" << cluster._servicePort);
             return false;
         }
         auto session = SessionManager::getRef().getTcpSession(cID);
         if (!session)
         {
-            LOGE("getTcpSession error. connect add faild");
+            LOGE("Application::startClusterConnect addConnecter error.  not found connect session. remote ip=" << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
             return false;
         }
-        LOGD("connect cluster. clusterID=" << cluster._cluster << ", cID=" << cID << ", ip=" << cluster._serviceIP << ", port=" << cluster._servicePort);
         auto &options = session->getOptions();
         options._onSessionLinked = std::bind(&Application::event_onServiceLinked, this, _1);
         options._onSessionClosed = std::bind(&Application::event_onServiceClosed, this, _1);
@@ -148,19 +202,21 @@ bool Application::start()
 
         if (!SessionManager::getRef().openConnecter(cID))
         {
-            LOGE("openConnecter error.");
+            LOGE("Application::startClusterConnect openConnecter error. remote ip=" << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
             return false;
         }
+        LOGA("Application::startClusterConnect success. remote ip=" << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
         session->setUserParam(UPARAM_REMOTE_CLUSTER, cluster._cluster);
         _clusterSession[cluster._cluster] = std::make_pair(cID, 0);
         for (auto st : cluster._services)
         {
             auto & second = _services[st];
-            auto & servicePtr =  second[InvalidServiceID];
+            auto & servicePtr = second[InvalidServiceID];
             if (servicePtr)
             {
-                LOGE("duplicat service");
+                LOGE("Application::startClusterConnect add service error. service alread exist. type=" << st << ", remote ip="
+                    << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
                 return false;
             }
             else
@@ -169,79 +225,80 @@ bool Application::start()
             }
             if (!servicePtr)
             {
-                LOGE("unsupport service");
+                LOGE("Application::startClusterConnect add service error. unknown service type. type=" << st <<", remote ip="
+                    << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
                 return false;
             }
-            
+
             servicePtr->setServiceType(st);
             if (cluster._cluster != ServerConfig::getRef().getClusterID())
             {
+                LOGA("Application::startClusterConnect add remote service success. type=" << ServiceNames.at(st) << ", remote ip="
+                    << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
                 servicePtr->setShell(cluster._cluster);
             }
-
-        }
-
-        if (cluster._cluster == ServerConfig::getRef().getClusterID())
-        {
-            AccepterID aID = SessionManager::getRef().addAccepter(cluster._serviceBindIP, cluster._servicePort);
-            if (aID == InvalidAccepterID)
+            else
             {
-                LOGE("addAccepter error");
-                return false;
-            }
-            auto &options = SessionManager::getRef().getAccepterOptions(aID);
-            options._whitelistIP = cluster._whiteList;
-            options._maxSessions = 1000;
-            options._sessionOptions._sessionPulseInterval = 5000;
-            options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
-            {
-                ClusterPulse pulse;
-                WriteStream ws(pulse.GetProtoID());
-                ws << pulse;
-                session->send(ws.getStream(), ws.getStreamLen());
-            };
-            options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onServiceMessage, this, _1, _2, _3);
-            if (!SessionManager::getRef().openAccepter(aID))
-            {
-                LOGE("openAccepter error");
-                return false;
-            }
-
-
-            if (!cluster._wideIP.empty() && cluster._widePort != 0)
-            {
-                aID = SessionManager::getRef().addAccepter("0.0.0.0", cluster._widePort);
-                if (aID == InvalidAccepterID)
-                {
-                    LOGE("addAccepter error");
-                    return false;
-                }
-                auto &options = SessionManager::getRef().getAccepterOptions(aID);
-                options._whitelistIP = cluster._whiteList;
-                options._maxSessions = 5000;
-                options._sessionOptions._sessionPulseInterval = 10000;
-                options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
-                {
-                    auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-                    if (getNowTime() - (time_t)last > 45000)
-                    {
-                        LOGE("options._onSessionPulse check timeout failed. diff time=" << getNowTime() - (time_t)last);
-                        session->close();
-                    }
-                };
-                options._sessionOptions._onSessionLinked = std::bind(&Application::event_onClientLinked, this, _1);
-                options._sessionOptions._onSessionClosed = std::bind(&Application::event_onClientClosed, this, _1);
-                options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onClientMessage, this, _1, _2, _3);
-                if (!SessionManager::getRef().openAccepter(aID))
-                {
-                    LOGE("openAccepter error");
-                    return false;
-                }
-                _wlisten = aID;
+                LOGA("Application::startClusterConnect add local service success. type=" << ServiceNames.at(st) << ", remote ip="
+                    << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
             }
         }
     }
     return true;
+}
+bool Application::startWideListen()
+{
+    const auto & clusters = ServerConfig::getRef().getClusterConfig();
+    ServerConfig::getRef().getClusterID();
+    auto founder = std::find_if(clusters.begin(), clusters.end(), [](const ClusterConfig& cc){return cc._cluster == ServerConfig::getRef().getClusterID(); });
+    if (founder == clusters.end())
+    {
+        LOGE("Application::startWideListen error. current cluster id not found in config file.");
+        return false;
+    }
+    const ClusterConfig & cluster = *founder;
+    if (!cluster._wideIP.empty() && cluster._widePort != 0)
+    {
+        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", cluster._widePort);
+        if (aID == InvalidAccepterID)
+        {
+            LOGE("Application::startWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << cluster._wideIP << ", bind port=" << cluster._widePort);
+            return false;
+        }
+        auto &options = SessionManager::getRef().getAccepterOptions(aID);
+        options._whitelistIP = cluster._whiteList;
+        options._maxSessions = 5000;
+        options._sessionOptions._sessionPulseInterval = 10000;
+        options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
+        {
+            auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
+            if (getNowTime() - (time_t)last > 45000)
+            {
+                LOGE("options._onSessionPulse check timeout failed. diff time=" << getNowTime() - (time_t)last);
+                session->close();
+            }
+        };
+        options._sessionOptions._onSessionLinked = std::bind(&Application::event_onClientLinked, this, _1);
+        options._sessionOptions._onSessionClosed = std::bind(&Application::event_onClientClosed, this, _1);
+        options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onClientMessage, this, _1, _2, _3);
+        if (!SessionManager::getRef().openAccepter(aID))
+        {
+            LOGE("Application::startWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << cluster._wideIP << ", bind port=" << cluster._widePort);
+            return false;
+        }
+        LOGA("Application::startWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << cluster._wideIP << ", bind port=" << cluster._widePort << ", listen aID=" << aID);
+        _wlisten = aID;
+    }
+    return true;
+}
+
+bool Application::start()
+{
+    if (startClusterListen() && startClusterConnect() && startWideListen())
+    {
+        return true;
+    }
+    return false;
 }
 
 

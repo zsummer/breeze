@@ -42,6 +42,10 @@ public:
     bool isStoping();
     void _onTimer();
 protected:
+    bool startClusterListen();
+    bool startClusterConnect();
+    bool startWideListen();
+
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
