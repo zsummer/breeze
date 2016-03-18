@@ -48,26 +48,21 @@ void DBService::onStop()
 bool DBService::onInit()
 {
     const auto & dbConfigs = ServerConfig::getRef().getDBConfig();
-    for (const auto & dbConfig : dbConfigs)
-    {
-        if (dbConfig._name != ServiceNames.at(getServiceType()))
-        {
-            continue;
-        }
-        _dbHelper = std::make_shared<DBHelper>();
-        _dbHelper->init(dbConfig._ip, dbConfig._port, dbConfig._db, dbConfig._user, dbConfig._pwd);
-       if (!_dbHelper->connect())
-       {
-           LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] connect error");
-           return false;
-       }
-       break;
-    }
-    if (!_dbHelper)
+    auto founder = std::find_if(dbConfigs.begin(), dbConfigs.end(), [this](const DBConfig & dbc){return dbc._name == ServiceNames.at(getServiceType()); });
+    if (founder == dbConfigs.end())
     {
         LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] error. not found config");
         return false;
     }
+    const auto & dbConfig = *founder;
+    _dbHelper = std::make_shared<DBHelper>();
+    _dbHelper->init(dbConfig._ip, dbConfig._port, dbConfig._db, dbConfig._user, dbConfig._pwd, true);
+    if (!_dbHelper->connect())
+    {
+        LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] connect error");
+        return false;
+    }
+
     if (!_dbAsync->start())
     {
         LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] error. start db thread error");

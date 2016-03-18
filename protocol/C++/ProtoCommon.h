@@ -22,38 +22,6 @@ enum  : unsigned short
     EC_FRIEND_NOT_EXIST = 103, //好友不存在  
 }; 
  
-struct SessionToken //认证令牌  
-{ 
-    unsigned long long uID;  
-    std::string token;  
-    unsigned int expire;  
-    SessionToken() 
-    { 
-        uID = 0; 
-        expire = 0; 
-    } 
-    SessionToken(const unsigned long long & uID, const std::string & token, const unsigned int & expire) 
-    { 
-        this->uID = uID; 
-        this->token = token; 
-        this->expire = expire; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SessionToken & data) 
-{ 
-    ws << data.uID;  
-    ws << data.token;  
-    ws << data.expire;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SessionToken & data) 
-{ 
-        rs >> data.uID;  
-        rs >> data.token;  
-        rs >> data.expire;  
-    return rs; 
-} 
- 
 struct UserPreview //用户预览信息  
 { 
     unsigned long long uID; //用户唯一ID  
@@ -82,6 +50,48 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPreview & data) 
+{ 
+        rs >> data.uID;  
+        rs >> data.account;  
+        rs >> data.nickName;  
+        rs >> data.iconID;  
+    return rs; 
+} 
+ 
+ 
+typedef std::vector<UserPreview> UserPreviewArray;  
+ 
+ 
+typedef std::vector<unsigned long long> UIDS;  
+ 
+struct UserBaseInfo //用户预览信息  
+{ 
+    unsigned long long uID; //用户唯一ID  
+    std::string account; //帐号  
+    std::string nickName; //昵称  
+    short iconID; //头像  
+    UserBaseInfo() 
+    { 
+        uID = 0; 
+        iconID = 0; 
+    } 
+    UserBaseInfo(const unsigned long long & uID, const std::string & account, const std::string & nickName, const short & iconID) 
+    { 
+        this->uID = uID; 
+        this->account = account; 
+        this->nickName = nickName; 
+        this->iconID = iconID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserBaseInfo & data) 
+{ 
+    ws << data.uID;  
+    ws << data.account;  
+    ws << data.nickName;  
+    ws << data.iconID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserBaseInfo & data) 
 { 
         rs >> data.uID;  
         rs >> data.account;  

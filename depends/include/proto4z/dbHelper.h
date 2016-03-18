@@ -130,13 +130,14 @@ namespace  zsummer
         public:
             DBHelper(){}
             ~DBHelper(){ if (_mysql){ mysql_close(_mysql); _mysql = nullptr; } }
-            inline void init(const std::string & ip, unsigned short port, const std::string & db, const std::string & user, const std::string & pwd)
+            inline void init(const std::string & ip, unsigned short port, const std::string & db, const std::string & user, const std::string & pwd, bool autoBuildDB = false)
             {
                 _ip = ip;
                 _port = port;
                 _db = db;
                 _user = user;
                 _pwd = pwd;
+                _autobuild = autoBuildDB;
             }
             inline bool connect();
             inline bool waitEnable();
@@ -146,12 +147,13 @@ namespace  zsummer
         private:
             DBHelper(const DBHelper &) = delete;
             MYSQL * _mysql = nullptr;
-            bool  _waiting = true;
+            bool  _waiting = false;
             std::string _ip;
             unsigned short _port = 3306;
             std::string _db;
             std::string _user;
             std::string _pwd;
+            bool _autobuild = false;
         };
         typedef std::shared_ptr<DBHelper> DBHelperPtr;
 
@@ -365,12 +367,51 @@ namespace  zsummer
             mysql_options(_mysql, MYSQL_OPT_CONNECT_TIMEOUT, "5");
             mysql_options(_mysql, MYSQL_SET_CHARSET_NAME, "UTF8");
             mysql_set_character_set(_mysql, "UTF8");
-            MYSQL * ret = mysql_real_connect(_mysql, _ip.c_str(), _user.c_str(), _pwd.c_str(), _db.c_str(), _port, nullptr, 0);
-            if (!ret)
+            if (!_autobuild)
             {
-                return false;
+                MYSQL * ret = mysql_real_connect(_mysql, _ip.c_str(), _user.c_str(), _pwd.c_str(), _db.c_str(), _port, nullptr, 0);
+                if (ret)
+                {
+                    _waiting = true;
+                    return true;
+                }
             }
-            return true;
+            else
+            {
+                MYSQL * ret = mysql_real_connect(_mysql, _ip.c_str(), _user.c_str(), _pwd.c_str(), "mysql", _port, nullptr, 0);
+                if (ret)
+                {
+                    std::string sql = "use `" + _db + "`";
+                    auto result = query(sql);
+                    if (result->getErrorCode() == QEC_SUCCESS)
+                    {
+                        _waiting = true;
+                        return true;
+                    }
+                    else
+                    {
+                        sql = "create database `" + _db + "`";
+                        result = query(sql);
+                        if (result->getErrorCode() == QEC_SUCCESS)
+                        {
+                            sql = "use `" + _db + "`";
+                            result = query(sql);
+                            if (result->getErrorCode() == QEC_SUCCESS)
+                            {
+                                _waiting = true;
+                                return true;
+                            }
+                        }
+                    }
+                }
+                
+            }
+            if (_mysql)
+            {
+                mysql_close(_mysql);
+                _mysql = nullptr;
+            }
+            return false;
         }
 
         bool DBHelper::waitEnable()

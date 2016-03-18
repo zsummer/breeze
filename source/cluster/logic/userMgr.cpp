@@ -3,7 +3,7 @@
 #include <ProtoCommon.h>
 #include <ProtoDBService.h>
 #include <ProtoUser.h>
-
+#include <ProtoCommon_SQL.h>
 
 
 UserMgr::~UserMgr()
@@ -74,6 +74,11 @@ bool UserMgr::onInit()
             _balance.enableNode(cluster._cluster);
         }
     }
+
+    SQLQueryReq req;
+    DBQuery q;
+
+    
     setWorked(true);
     return true;
 }

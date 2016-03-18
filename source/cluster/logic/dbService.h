@@ -50,7 +50,7 @@ public:
 private:
     std::string _db;
     DBHelperPtr _dbHelper;
-    zsummer::mysql::DBAsyncPtr _dbAsync;
+    DBAsyncPtr _dbAsync;
     time_t _lastTime = getNowTime();
 private:
     void _checkSafeClosed();

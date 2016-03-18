@@ -33,17 +33,12 @@
     </enum>
 
 
-    <!-- 认证令牌 -->
-    <struct name="SessionToken" store="true" desc="认证令牌">
-        <member name="uID" type="ui64"  tag="key" desc=""/>
-        <member name="token" type="string"   desc=""/>
-        <member name="expire"  type="ui32" desc=""/>
-    </struct>
+
 
 
         <!-- 用户预览信息 -->
-    <struct name="UserPreview" store="true" desc="用户预览信息">
-        <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
+    <struct name="UserPreview" desc="用户预览信息">
+        <member name="uID" type="ui64" desc="用户唯一ID"/>
         <member name="account"  type="string" desc="帐号"/>
         <member name="nickName" type="string"   desc="昵称"/>
         <member name="iconID"  type="i16" desc="头像"/>
@@ -53,7 +48,15 @@
 
 
 
-
+    <!-- 用户预览信息 -->
+    <struct name="UserBaseInfo" store="true" desc="用户预览信息">
+        <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
+        <member name="account"  type="string" desc="帐号"/>
+        <member name="nickName" type="string"   desc="昵称"/>
+        <member name="iconID"  type="i16" desc="头像"/>
+    </struct>
+    <array name="UserPreviewArray" type="UserPreview" desc="" />
+    <array name="UIDS" type="ui64" desc="" />
 
 
 
