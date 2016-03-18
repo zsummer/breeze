@@ -160,7 +160,7 @@ struct Tracing
     ui16 _toService;
     ServiceID _toServiceID = InvalidServiceID;
     ui16 _fromService;
-    ServiceID _fromServiceD = InvalidServiceID;
+    ServiceID _fromServiceID = InvalidServiceID;
     ui32 _traceID = 0;
     ui32 _traceBackID = 0;
 };
@@ -204,6 +204,8 @@ enum SessionStatus
 {
     SSTATUS_UNKNOW = 0,
     SSTATUS_TRUST, //受信任的服务器内部session 
+    SSTATUS_AUTHING,
+    SSTATUS_AUTHED,
     SSTATUS_PLAT_LOGINING,
     SSTATUS_PLAT_LOGINED,
     SSTATUS_PLAT_LOADING,
@@ -232,14 +234,14 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
     if (trace._fromService < ServiceMax && trace._toService < ServiceMax)
     {
         os << "[_toService=" << ServiceNames.at(trace._toService) << ", _toServiceID=" << trace._toServiceID
-            << ", _fromService=" << ServiceNames.at(trace._fromService) << ", _fromServiceD=" << trace._fromServiceD
+            << ", _fromService=" << ServiceNames.at(trace._fromService) << ", _fromServiceID=" << trace._fromServiceID
             << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
             << "]";
     }
     else
     {
         os << "[_toService=" << trace._toService << ", _toServiceID=" << trace._toServiceID
-            << ", _fromService=" << trace._fromService << ", _fromServiceD=" << trace._fromServiceD
+            << ", _fromService=" << trace._fromService << ", _fromServiceID=" << trace._fromServiceID
             << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
             << "]";
     }
@@ -270,7 +272,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data._toService;
     ws << data._toServiceID;
     ws << data._fromService;
-    ws << data._fromServiceD;
+    ws << data._fromServiceID;
     ws << data._traceID;
     ws << data._traceBackID;
     return ws;
@@ -280,7 +282,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data._toService;
     rs >> data._toServiceID;
     rs >> data._fromService;
-    rs >> data._fromServiceD;
+    rs >> data._fromServiceID;
     rs >> data._traceID;
     rs >> data._traceBackID;
     return rs;

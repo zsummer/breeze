@@ -44,21 +44,29 @@ namespace Proto4z
         static public string getProtoName() { return "ClientAuthResp"; } 
         //members   
         public ushort retCode;  
+        public string account;  
+        public string token;  
         public UserPreviewArray previews;  
         public ClientAuthResp()  
         { 
             retCode = 0;  
+            account = "";  
+            token = "";  
             previews = new UserPreviewArray();  
         } 
-        public ClientAuthResp(ushort retCode, UserPreviewArray previews) 
+        public ClientAuthResp(ushort retCode, string account, string token, UserPreviewArray previews) 
         { 
             this.retCode = retCode; 
+            this.account = account; 
+            this.token = token; 
             this.previews = previews; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             if (this.previews == null) this.previews = new UserPreviewArray(); 
             data.AddRange(this.previews.__encode()); 
             return data; 
@@ -66,6 +74,8 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.previews = new UserPreviewArray(); 
             this.previews.__decode(binData, ref pos); 
             return pos; 

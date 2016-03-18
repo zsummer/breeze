@@ -394,7 +394,7 @@ void Application::checkServiceState()
     {
         for (auto service : second.second)
         {
-            if (service.second && !service.second->isShell() && service.second->isInited())
+            if (service.second && !service.second->isShell() && service.second->isInited() && service.second->getServiceType() != ServiceUser)
             {
                 service.second->onTick();
             }
@@ -518,44 +518,68 @@ void Application::event_onRemoteServiceInited(TcpSessionPtr session, ReadStream 
 
 void Application::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
-    ReadStream rs(begin, len);
-    if (rs.getProtoID() == ClusterPulse::GetProtoID())
+    ReadStream rsShell(begin, len);
+    if (rsShell.getProtoID() == ClusterPulse::GetProtoID())
     {
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
         return;
     }
-    if (rs.getProtoID() == ClusterServiceInited::GetProtoID())
+    if (rsShell.getProtoID() == ClusterServiceInited::GetProtoID())
     {
-        event_onRemoteServiceInited(session, rs);
+        event_onRemoteServiceInited(session, rsShell);
         return;
     }
-    if (rs.getProtoID() == ClusterShellForward::GetProtoID())
+    if (rsShell.getProtoID() == ClusterShellForward::GetProtoID())
     {
-        event_onRemoteShellForward(session, rs);
+        event_onRemoteShellForward(session, rsShell);
         return;
     }
-    if (rs.getProtoID() == ClusterClientForward::GetProtoID())
+    if (rsShell.getProtoID() == ClusterClientForward::GetProtoID())
     {
         Tracing trace;
-        rs >> trace;
-        ReadStream crs(rs.getStreamUnread(), rs.getStreamUnreadLen());
-        if (crs.getProtoID() == UserAuthResp::GetProtoID())
+        rsShell >> trace;
+        ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
+        if (rs.getProtoID() == UserAuthResp::GetProtoID())
         {
-
+            UserAuthResp resp;
+            rs >> resp;
+            auto client = SessionManager::getRef().getTcpSession(resp.clientSessionID);
+            if (client)
+            {
+                if (resp.retCode == EC_SUCCESS)
+                {
+                    client->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
+                }
+                else
+                {
+                    client->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+                }
+                ClientAuthResp clientresp;
+                clientresp.retCode = resp.retCode;
+                clientresp.account = resp.account;
+                clientresp.token = resp.token;
+                clientresp.previews = resp.previews;
+                WriteStream ws(ClientAuthResp::GetProtoID());
+                ws << clientresp;
+                client->send(ws.getStream(), ws.getStreamLen());
+            }
+            return;
         }
         else
         {
             auto founder = _services.find(ServiceUser);
             if (founder == _services.end())
             {
+                LOGW("not have any client.");
                 return;
             }
             auto fder = founder->second.find(trace._toServiceID);
             if (fder == founder->second.end())
             {
+                LOGW("not have the client.");
                 return;
             }
-            fder->second->process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
+            fder->second->process(trace, rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
         }
     }
     
@@ -623,7 +647,7 @@ void Application::event_onClientMessage(TcpSessionPtr session, const char * begi
         rs >> careq;
         Tracing trace;
         trace._fromService = ServiceClient;
-        trace._fromServiceD = session->getSessionID();
+        trace._fromServiceID = session->getSessionID();
         trace._toService = ServiceUserMgr;
         trace._toServiceID = InvalidServiceID;
         WriteStream ws(UserAuthReq::GetProtoID());
@@ -634,6 +658,7 @@ void Application::event_onClientMessage(TcpSessionPtr session, const char * begi
         req.clientClusterID = ServerConfig::getRef().getClusterID();
         ws << req;
         callOtherService(trace, ws.getStream(), ws.getStreamLen());
+        session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
         return;
     }
 
@@ -716,7 +741,9 @@ void Application::callOtherService(Tracing trace, const char * block, unsigned i
     }
     else //direct process
     {
-        service.process(trace, block, len);
+        std::string bk;
+        bk.assign(block, len);
+        SessionManager::getRef().post(std::bind(&Service::process2, fder->second, trace, std::move(bk)));
     }
 
 }

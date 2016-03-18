@@ -20,7 +20,7 @@ config.cluster =
         serviceWhite={"192.168.", "127.0."},
         wideIP="127.0.0.1",
         widePort=26000,
-        services={"DictDBMgr"},
+        services={"DictDBMgr", "UserMgr"},
         cluster = 1,
     },
     {

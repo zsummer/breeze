@@ -172,7 +172,7 @@ bool ServerConfig::parse(std::string filename, ClusterID idx)
                 }
                 else
                 {
-                    LOGE("not found service");
+                    LOGE("not found service [" << service << "]");
                     return false;
                 }
                 lua_pop(L, 1);

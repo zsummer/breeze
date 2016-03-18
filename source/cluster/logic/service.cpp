@@ -7,6 +7,22 @@
 void Service::setInited()
 {
     _inited = true;
+    if (_timer == InvalidTimerID)
+    {
+        _timer = SessionManager::getRef().createTimer(5000, std::bind(&Service::onTimer, shared_from_this()));
+    }
+}
+void Service::onTimer()
+{
+    _timer = SessionManager::getRef().createTimer(5000, std::bind(&Service::onTimer, shared_from_this()));
+    try
+    {
+        onTick();
+    }
+    catch (std::runtime_error e)
+    {
+        LOGE("Service::onTimer catch except error. e=" << e.what() << ", service=" << ServiceNames.at(getServiceType()) << ", service id=" << getServiceID());
+    }
 }
 
 void Service::setWorked(bool work)
@@ -85,17 +101,15 @@ void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned 
 {
     Tracing trace;
     trace._fromService = getServiceType();
-    trace._fromServiceD = getServiceID();
+    trace._fromServiceID = getServiceID();
     trace._traceBackID = 0;
     trace._traceID = 0;
     trace._toService = st;
     trace._toServiceID = svcID;
-    checkCallback();
     if (cb)
     {
         trace._traceID = makeCallback(cb);
     }
-    
     Application::getRef().callOtherService(trace, block, len);
 }
 
@@ -103,19 +117,23 @@ void Service::backCall(const Tracing & trace, const char * block, unsigned int l
 {
     Tracing trc;
     trc._fromService = getServiceType();
-    trc._fromServiceD = getServiceID();
+    trc._fromServiceID = getServiceID();
     trc._traceBackID = trace._traceID;
     trc._traceID = 0;
     trc._toService = trace._fromService;
-    trc._toServiceID = trace._fromServiceD;
+    trc._toServiceID = trace._fromServiceID;
     time_t now = getNowTime();
     if (cb)
     {
         trc._traceID = makeCallback(cb);
     }
-    Application::getRef().callOtherService(trace, block, len);
+    Application::getRef().callOtherService(trc, block, len);
 }
 
+void Service::process2(const Tracing & trace, const std::string & block)
+{
+    process(trace, block.c_str(), block.length());
+}
 
 void Service::process(const Tracing & trace, const char * block, unsigned int len)
 {

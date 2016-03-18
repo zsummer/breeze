@@ -18,7 +18,7 @@ DBService::~DBService()
 void DBService::onTick()
 {
     time_t now = getNowTime();
-    if (now - _lastTime > 10)
+    if (now - _lastTime > 60)
     {
         _lastTime = now;
         LOGA("DBService [" << ServiceNames.at(getServiceType()) << "], finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());

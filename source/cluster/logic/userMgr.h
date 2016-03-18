@@ -34,6 +34,22 @@ struct ServiceUserShell
 };
 
 
+struct UserPreviewCache
+{
+    int _status = 0; //0 no Client no User,  1 Creating User, 2 had User
+    UserPreview _preview;
+    ClusterID _cltID = InvalidClusterID;
+};
+
+
+struct AccountCache
+{
+    std::string account;
+    std::string token;
+    std::vector<UserPreviewCache> _previewCache;
+};
+
+
 class UserMgr : public Service
 {
 public:
@@ -44,10 +60,13 @@ public:
     void onTick() override final;
     void process(const Tracing & trace, const char * block, unsigned int len) override final;
 public:
-    void onAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+
+    void onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 public:
     time_t _lastTime = 0;
     std::map<ServiceID, ServiceUserShell> _userShells;
+    std::map<std::string, std::vector<AccountCache>> _accountCache;
+    Balance _balance;
 };
 
 

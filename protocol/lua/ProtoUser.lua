@@ -11,7 +11,9 @@ Proto4z.ClientAuthResp = {} --认证返回
 Proto4z.ClientAuthResp.__getID = 1001 
 Proto4z.ClientAuthResp.__getName = "ClientAuthResp" 
 Proto4z.ClientAuthResp[1] = {name="retCode", type="ui16" }  
-Proto4z.ClientAuthResp[2] = {name="previews", type="UserPreviewArray" }  
+Proto4z.ClientAuthResp[2] = {name="account", type="string" }  
+Proto4z.ClientAuthResp[3] = {name="token", type="string" }  
+Proto4z.ClientAuthResp[4] = {name="previews", type="UserPreviewArray" }  
  
 Proto4z.register(1002,"UserAuthReq") 
 Proto4z.UserAuthReq = {} --认证请求 

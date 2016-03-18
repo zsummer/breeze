@@ -1,5 +1,6 @@
 ﻿#include "application.h"
 #include "userMgr.h"
+#include <ProtoCommon.h>
 #include <ProtoDBService.h>
 #include <ProtoUser.h>
 
@@ -19,6 +20,7 @@ void UserMgr::onTick()
         LOGA("UserMgr::onTick");
     }
 }
+
 void  UserMgr::process(const Tracing & trace, const char * block, unsigned int len)
 {
     if (trace._toService == ServiceUserMgr)
@@ -64,19 +66,51 @@ void UserMgr::onStop()
 
 bool UserMgr::onInit()
 {
+    const auto  & config = ServerConfig::getRef().getClusterConfig();
+    for (const auto & cluster : config)
+    {
+        if (!cluster._wideIP.empty() && cluster._widePort != 0)
+        {
+            _balance.enableNode(cluster._cluster);
+        }
+    }
     setWorked(true);
     return true;
 }
 
 UserMgr::UserMgr()
 {
-    slotting<UserAuthReq>(std::bind(&UserMgr::onAuthReq, this, _1, _2));
+    slotting<UserAuthReq>(std::bind(&UserMgr::onUserAuthReq, this, _1, _2));
 }
 
 
 
-void UserMgr::onAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
+void UserMgr::onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
+    UserAuthReq req;
+    rs >> req;
+    UserAuthResp resp;
+    resp.account = req.account;
+    resp.token = req.token;
+    resp.previews;
+    resp.clientClusterID = req.clientClusterID;
+    resp.clientSessionID = req.clientSessionID;
+    resp.retCode = EC_SUCCESS;
 
+    auto founder = _accountCache.find(req.account);
+    if (founder == _accountCache.end())
+    {
+        return;
+    }
+
+    
+    
+    WriteStream ws(UserAuthResp::GetProtoID());
+    ws << resp;
+
+    WriteStream wsf(ClusterClientForward::GetProtoID());
+    wsf << trace;
+    wsf.appendOriginalData(ws.getStream(), ws.getStreamLen());
+    Application::getRef().callOtherCluster(resp.clientClusterID, wsf.getStream(), wsf.getStreamLen());
 }
 

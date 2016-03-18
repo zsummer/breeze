@@ -36,26 +36,34 @@ struct ClientAuthResp //认证返回
     static const unsigned short GetProtoID() { return 1001;} 
     static const std::string GetProtoName() { return "ID_ClientAuthResp";} 
     unsigned short retCode;  
+    std::string account;  
+    std::string token;  
     UserPreviewArray previews;  
     ClientAuthResp() 
     { 
         retCode = 0; 
     } 
-    ClientAuthResp(const unsigned short & retCode, const UserPreviewArray & previews) 
+    ClientAuthResp(const unsigned short & retCode, const std::string & account, const std::string & token, const UserPreviewArray & previews) 
     { 
         this->retCode = retCode; 
+        this->account = account; 
+        this->token = token; 
         this->previews = previews; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClientAuthResp & data) 
 { 
     ws << data.retCode;  
+    ws << data.account;  
+    ws << data.token;  
     ws << data.previews;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClientAuthResp & data) 
 { 
         rs >> data.retCode;  
+        rs >> data.account;  
+        rs >> data.token;  
         rs >> data.previews;  
     return rs; 
 } 

@@ -71,6 +71,7 @@ protected:
     virtual void onTick() = 0;
     virtual void onStop() = 0;//need call setWorked(false) when stoped. 
     virtual void process(const Tracing & trace, const char * block, unsigned int len);
+    virtual void process2(const Tracing & trace, const std::string & block);
 
     void setWorked(bool work);
     virtual void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
@@ -83,9 +84,8 @@ protected:
 private:
     void setInited();
     inline void setShell(ClusterID cltID){ _cltID = cltID; }
-    
 
-
+    void onTimer();
 private:
     Slots _slots;
     std::map<ProtoID, std::string> _slotsName;
@@ -98,7 +98,7 @@ private:
     ui32 _callbackSeq = 0;
     time_t _callbackCheck = 0;
     std::map<ui32, std::pair<time_t,ServiceCallback> > _cbs;
-    
+    TimerID _timer = InvalidTimerID;
 };
 using ServicePtr = std::shared_ptr<Service>;
 
