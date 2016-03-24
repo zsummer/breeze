@@ -97,7 +97,7 @@ void UserMgr::onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream 
     UserAuthResp resp;
     resp.account = req.account;
     resp.token = req.token;
-    resp.previews;
+    resp.previews.clear();
     resp.clientClusterID = req.clientClusterID;
     resp.clientSessionID = req.clientSessionID;
     resp.retCode = EC_SUCCESS;

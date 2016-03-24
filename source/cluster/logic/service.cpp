@@ -122,7 +122,6 @@ void Service::backCall(const Tracing & trace, const char * block, unsigned int l
     trc._traceID = 0;
     trc._toService = trace._fromService;
     trc._toServiceID = trace._fromServiceID;
-    time_t now = getNowTime();
     if (cb)
     {
         trc._traceID = makeCallback(cb);
@@ -132,7 +131,7 @@ void Service::backCall(const Tracing & trace, const char * block, unsigned int l
 
 void Service::process2(const Tracing & trace, const std::string & block)
 {
-    process(trace, block.c_str(), block.length());
+    process(trace, block.c_str(), (unsigned int)block.length());
 }
 
 void Service::process(const Tracing & trace, const char * block, unsigned int len)

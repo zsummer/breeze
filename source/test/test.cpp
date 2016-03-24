@@ -451,8 +451,8 @@ int checkFloat()
         {
             f = isEqual(1e55, 1e55);
         }
-
-        std::cout << "isEqual used time=" << (getTick() - now) << std::endl;
+        f = 0.0;
+        LOGD("isEqual used time=" << (getTick() - now) << f);
     }
     
 
