@@ -64,6 +64,37 @@ void UserMgr::onStop()
     setWorked(false);
 }
 
+void UserMgr::onBuildDB(ReadStream & rs, bool isLast)
+{
+    SQLQueryResp resp;
+    rs >> resp;
+    if (resp.retCode == EC_SUCCESS)
+    {
+        DBResult result;
+        result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
+        if (result.getErrorCode() == QEC_SUCCESS)
+        {
+            if (isLast)
+            {
+                setWorked(true);
+                LOGI("build usermgr success");
+            }
+            return;
+        }
+        else
+        {
+            if (isLast)
+            {
+                LOGE("build usermgr error");
+                Application::getRef().stop();
+            }
+            
+            LOGE("resp:" << result.getErrorMsg());
+        }
+    }
+
+    
+}
 bool UserMgr::onInit()
 {
     const auto  & config = ServerConfig::getRef().getClusterConfig();
@@ -75,11 +106,25 @@ bool UserMgr::onInit()
         }
     }
 
-    SQLQueryReq req;
-    DBQuery q;
-
+    auto builds = UserBaseInfo_BUILD();
+    for (auto iter = builds.begin(); iter != builds.end(); ++iter)
+    {
+        SQLQueryReq req;
+        DBQuery q(*iter);
+        req.sql = q.pickSQL();
+        WriteStream ws(SQLQueryReq::GetProtoID());
+        ws << req;
+        if (iter + 1 != builds.end())
+        {
+            globalCall(ServiceInfoDBMgr, InvalidServiceID, ws.getStream(), ws.getStreamLen(), std::bind(&UserMgr::onBuildDB, std::static_pointer_cast<UserMgr>(shared_from_this()), _1, false));
+        }
+        else
+        {
+            globalCall(ServiceInfoDBMgr, InvalidServiceID, ws.getStream(), ws.getStreamLen(), std::bind(&UserMgr::onBuildDB, std::static_pointer_cast<UserMgr>(shared_from_this()), _1, true));
+        }
+    }
     
-    setWorked(true);
+
     return true;
 }
 
