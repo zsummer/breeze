@@ -188,7 +188,7 @@ inline bool isSameDay(time_t first, time_t second, time_t offset)
 
 inline bool isZero(double f, double acc)
 {
-    return fabs(f) <= acc;
+    return fabs(f) < acc;
 }
 
 using std::max;

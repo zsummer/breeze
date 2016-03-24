@@ -343,62 +343,118 @@ int checkTime()
 
 int checkFloat()
 {
-    if(isZero(POINT_DOUBLE*2))
+    if (isZero(POINT_DOUBLE))
     {
         return 1;
     }
-    if (!isZero(POINT_DOUBLE / -10.0))
+    if (!isZero(0.0))
     {
         return 2;
     }
-    if (!isZero(POINT_DOUBLE / 10.0))
+    if(isZero(POINT_DOUBLE*1.00000000001))
     {
         return 3;
     }
-    if (!isEqual(1.0 + POINT_DOUBLE, 1.0 + POINT_DOUBLE/2.0))
+    if (isZero(POINT_DOUBLE*-1.00000000001))
     {
         return 4;
     }
-    if (isEqual(1.0 + POINT_DOUBLE*2, 1.0))
+    if (!isZero(POINT_DOUBLE * 0.999999999))
     {
         return 5;
     }
-    if (!isEqual(getDistance(1.0, -1.0), 2.0))
+    if (!isZero(POINT_DOUBLE * -0.999999999))
     {
         return 6;
     }
-    if (!isEqual(getDistance(1.0, 0.0, 2.0, 0.0), 1.0))
+    if (!isEqual(0.0, 0.0))
     {
         return 7;
     }
-    if (!isEqual(getRadian(0.0, 0.0, 1.0, 0.0), 0.0))
+    if (isEqual(0.0, POINT_DOUBLE))
     {
         return 8;
     }
-    if (!isEqual(getRadian(0.0, 0.0, -1.0, 0.0), PI))
+    if (isEqual(0.0, POINT_DOUBLE*0.999999))
     {
         return 9;
     }
-    if (!isEqual(std::get<1>(getFarPoint(0.0, 0.0, PI/2.0*3.0, 1.0)), -1.0))
+    if (isEqual(0.0, POINT_DOUBLE*-0.999999))
     {
         return 10;
     }
-    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, -2.0, 1.0)), -1.0))
+
+    if (!isEqual(POINT_DOUBLE, POINT_DOUBLE))
     {
         return 11;
     }
-    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, 2.0, 1.0)), 1.0))
+
+
+    if (isEqual(POINT_DOUBLE*1E55, POINT_DOUBLE*1E55 + POINT_DOUBLE*1E55*POINT_DOUBLE*1.1))
     {
         return 12;
     }
-    if (!isEqual(std::get<0>(rotatePoint(0.0, 0.0, PI/2.0, 1.0, PI/2.0)), -1.0))
+    if (!isEqual(POINT_DOUBLE*1E55, POINT_DOUBLE*1E55 + (POINT_DOUBLE*1E55*POINT_DOUBLE)*0.99999))
+    {
+        return 13;
+    }
+    if (isEqual(POINT_DOUBLE*1E-55, POINT_DOUBLE*1E-55 + POINT_DOUBLE*1E-55*POINT_DOUBLE*1.1))
+    {
+        return 14;
+    }
+    if (!isEqual(POINT_DOUBLE*1E-55, POINT_DOUBLE*1E-55 - (POINT_DOUBLE*1E-55*POINT_DOUBLE)*0.99999))
     {
         return 15;
     }
-    if (!isEqual(std::get<1>(rotatePoint(0.0, 0.0, PI / 2.0, 1.0, PI)), -1.0))
+    if (!isEqual(getDistance(1.0, -1.0), 2.0))
     {
         return 16;
     }
+    if (!isEqual(getDistance(1.0, 0.0, 2.0, 0.0), 1.0))
+    {
+        return 17;
+    }
+    if (!isEqual(getRadian(0.0, 0.0, 1.0, 0.0), 0.0))
+    {
+        return 18;
+    }
+    if (!isEqual(getRadian(0.0, 0.0, -1.0, 0.0), PI))
+    {
+        return 19;
+    }
+    if (!isEqual(std::get<1>(getFarPoint(0.0, 0.0, PI/2.0*3.0, 1.0)), -1.0))
+    {
+        return 20;
+    }
+    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, -2.0, 1.0)), -1.0))
+    {
+        return 21;
+    }
+    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, 2.0, 1.0)), 1.0))
+    {
+        return 22;
+    }
+    if (!isEqual(std::get<0>(rotatePoint(0.0, 0.0, PI/2.0, 1.0, PI/2.0)), -1.0))
+    {
+        return 25;
+    }
+    if (!isEqual(std::get<1>(rotatePoint(0.0, 0.0, PI / 2.0, 1.0, PI)), -1.0))
+    {
+        return 26;
+    }
+
+    if (true)
+    {
+        double now = getTick();
+        volatile double f = 0.0;
+        for (int i = 0; i < 100 * 10000; i++)
+        {
+            f = isEqual(1e55, 1e55);
+        }
+
+        std::cout << "isEqual used time=" << (getTick() - now) << std::endl;
+    }
+    
 
     return 0;
 }

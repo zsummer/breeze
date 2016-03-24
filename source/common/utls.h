@@ -163,7 +163,7 @@ inline bool isSameDay(time_t first, time_t second, time_t offset = 0);
 
 //float
 //==========================================================================
-const double POINT_DOUBLE = 1e-14;
+const double POINT_DOUBLE = 1E-15; // the number N is decimal places (decimalism). N=log10(1/POINT_DOUBLE) . example 1E-15 ==> 15 number of decimal places.
 const double PI = 3.14159265358979323;
 
 inline bool isEqual(double f1, double f2, double acc = POINT_DOUBLE);
