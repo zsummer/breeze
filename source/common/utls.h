@@ -82,10 +82,20 @@
 std::string readFileContent(const std::string & filename, bool isBinary = false, size_t limitSize = 1024 * 1024, size_t beginIndex = 0);
 size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend = true);
 bool isDirectory(const std::string & path);
-bool createRecursionDir(std::string path);
+bool createDirectory(std::string path);
 bool removeFile(const std::string &pathfile);
 bool removeDir(const std::string &path);
 bool hadFile(const std::string &pathfile);
+std::string fixPathString(const std::string &path);
+struct SearchFileInfo
+{
+    char filename[260];
+    char fullpath[260];
+    unsigned long long filesize;
+    bool bDir;
+};
+bool searchFiles(std::string path, std::vector<SearchFileInfo> & files);
+
 //md5
 class MD5Data;
 std::string genFileMD5(std::string filename);

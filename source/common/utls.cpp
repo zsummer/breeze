@@ -133,7 +133,7 @@ bool hadFile(const std::string &pathfile)
 #endif
 }
 
-bool createRecursionDir(std::string  path)
+bool createDirectory(std::string  path)
 {
     if (path.empty()) return false;
     std::string sub;
@@ -164,6 +164,117 @@ bool createRecursionDir(std::string  path)
     }
     return true;
 }
+
+
+
+
+std::string fixPathString(const std::string &path)
+{
+    if (path.empty()) return path;
+    auto ret = path;
+    std::for_each(ret.begin(), ret.end(), [](char &ch){ if (ch == '\\') ch = '/'; });
+    if (ret.back() != '/') ret += "/";
+    return ret;
+}
+
+static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files)
+{
+    if (path.length() == 0)
+    {
+        return false;
+    }
+    path = fixPathString(path);
+
+#ifdef WIN32
+    WIN32_FIND_DATAA fd;
+    std::string findpath = path;
+    findpath.append("*");
+    HANDLE hFile = FindFirstFileA(findpath.c_str(), &fd);
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+        return false;
+    }
+    SearchFileInfo file;
+    do
+    {
+        if (fd.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
+        {
+            if (strcmp(fd.cFileName, ".") != 0 && strcmp(fd.cFileName, "..") != 0)
+            {
+                memset(&file, 0, sizeof(file));
+                file.bDir = true;
+                strcpy_s(file.filename, sizeof(file.filename), fd.cFileName);
+                sprintf(file.fullpath, "%s%s", path.c_str(), fd.cFileName);
+                files.push_back(file);
+                tmpSearchPath(file.fullpath, files);
+            }
+        }
+        else
+        {
+            memset(&file, 0, sizeof(file));
+            file.bDir = false;
+            file.filesize = fd.nFileSizeHigh;
+            file.filesize = file.filesize << 32;
+            file.filesize += fd.nFileSizeLow;
+            strcpy_s(file.filename, sizeof(file.filename), fd.cFileName);
+            sprintf(file.fullpath, "%s%s", path.c_str(), fd.cFileName);
+            files.push_back(file);
+        }
+    } while (FindNextFileA(hFile, &fd));
+    FindClose(hFile);
+
+#else
+    DIR *dp;
+    struct dirent *entry;
+    struct stat statbuf;
+    if ((dp = opendir(path.c_str())) == NULL)
+    {
+        return false;
+    }
+    SearchFileInfo file;
+    while ((entry = readdir(dp)) != NULL)
+    {
+        lstat(entry->d_name, &statbuf);
+        if (S_ISDIR(statbuf.st_mode))
+        {
+            if (strcmp(".", entry->d_name) == 0 || strcmp("..", entry->d_name) == 0)
+            {
+                continue;
+            }
+            memset(&file, 0, sizeof(file));
+            file.bDir = true;
+            file.filesize = statbuf.st_size;
+            strcpy(file.filename, entry->d_name);
+            sprintf(file.fullpath, "%s%s", path.c_str(), entry->d_name);
+            files.push_back(file);
+            tmpSearchPath(file.fullpath, files);
+        }
+        else
+        {
+            memset(&file, 0, sizeof(file));
+            file.bDir = false;
+            file.filesize = statbuf.st_size;
+            strcpy(file.filename, entry->d_name);
+            file.fullpath[0] = '\0';
+            files.push_back(file);
+        }
+    }
+    closedir(dp);
+#endif
+    return true;
+}
+
+bool searchFiles(std::string path, std::vector<SearchFileInfo> & files)
+{
+    if (files.capacity() < 100)
+    {
+        files.reserve(100);
+    }
+    return tmpSearchPath(path, files);
+}
+
+
+
 
 std::string genFileMD5(std::string filename)
 {

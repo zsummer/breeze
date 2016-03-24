@@ -157,7 +157,7 @@ int checkFile()
     {
         return 1;
     }
-    if (!createRecursionDir(path))
+    if (!createDirectory(path))
     {
         return 2;
     }
