@@ -8,6 +8,8 @@ typedef std::vector<std::string> SQLFieldArray;
  
 struct SQLResult 
 { 
+    static const unsigned short getProtoID() { return 41002;} 
+    static const std::string getProtoName() { return "ID_SQLResult";} 
     unsigned short qc;  
     std::string errMsg;  
     std::string sql;  
@@ -48,8 +50,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
  
 struct SQLQueryReq 
 { 
-    static const unsigned short GetProtoID() { return 41000;} 
-    static const std::string GetProtoName() { return "ID_SQLQueryReq";} 
+    static const unsigned short getProtoID() { return 41000;} 
+    static const std::string getProtoName() { return "ID_SQLQueryReq";} 
     std::string sql;  
     SQLQueryReq() 
     { 
@@ -72,8 +74,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
  
 struct SQLQueryResp 
 { 
-    static const unsigned short GetProtoID() { return 41001;} 
-    static const std::string GetProtoName() { return "ID_SQLQueryResp";} 
+    static const unsigned short getProtoID() { return 41001;} 
+    static const std::string getProtoName() { return "ID_SQLQueryResp";} 
     unsigned short retCode;  
     SQLResult result;  
     SQLQueryResp() 

@@ -3,7 +3,7 @@
 #include <ProtoCommon.h>
 #include <ProtoDBService.h>
 #include <ProtoUser.h>
-#include <ProtoCommon_SQL.h>
+
 
 
 UserMgr::~UserMgr()
@@ -46,7 +46,7 @@ void  UserMgr::process(const Tracing & trace, const char * block, unsigned int l
         
         try
         {
-            WriteStream ws(ClusterClientForward::GetProtoID());
+            WriteStream ws(ClusterClientForward::getProtoID());
             ws << trace;
             ws.appendOriginalData(block, len);
             Application::getRef().callOtherCluster(shell._cltID, ws.getStream(), ws.getStreamLen());
@@ -106,13 +106,13 @@ bool UserMgr::onInit()
         }
     }
 
-    auto builds = UserBaseInfo_BUILD();
+    auto builds = UserBaseInfo().getDBBuild();
     for (auto iter = builds.begin(); iter != builds.end(); ++iter)
     {
         SQLQueryReq req;
         DBQuery q(*iter);
         req.sql = q.pickSQL();
-        WriteStream ws(SQLQueryReq::GetProtoID());
+        WriteStream ws(SQLQueryReq::getProtoID());
         ws << req;
         if (iter + 1 != builds.end())
         {
@@ -155,10 +155,10 @@ void UserMgr::onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream 
 
     
     
-    WriteStream ws(UserAuthResp::GetProtoID());
+    WriteStream ws(UserAuthResp::getProtoID());
     ws << resp;
 
-    WriteStream wsf(ClusterClientForward::GetProtoID());
+    WriteStream wsf(ClusterClientForward::getProtoID());
     wsf << trace;
     wsf.appendOriginalData(ws.getStream(), ws.getStreamLen());
     Application::getRef().callOtherCluster(resp.clientClusterID, wsf.getStream(), wsf.getStreamLen());

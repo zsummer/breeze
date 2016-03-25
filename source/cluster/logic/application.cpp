@@ -153,7 +153,7 @@ bool Application::startClusterListen()
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
         ClusterPulse pulse;
-        WriteStream ws(pulse.GetProtoID());
+        WriteStream ws(pulse.getProtoID());
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
     };
@@ -519,27 +519,27 @@ void Application::event_onRemoteServiceInited(TcpSessionPtr session, ReadStream 
 void Application::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
     ReadStream rsShell(begin, len);
-    if (rsShell.getProtoID() == ClusterPulse::GetProtoID())
+    if (rsShell.getProtoID() == ClusterPulse::getProtoID())
     {
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
         return;
     }
-    if (rsShell.getProtoID() == ClusterServiceInited::GetProtoID())
+    if (rsShell.getProtoID() == ClusterServiceInited::getProtoID())
     {
         event_onRemoteServiceInited(session, rsShell);
         return;
     }
-    if (rsShell.getProtoID() == ClusterShellForward::GetProtoID())
+    if (rsShell.getProtoID() == ClusterShellForward::getProtoID())
     {
         event_onRemoteShellForward(session, rsShell);
         return;
     }
-    if (rsShell.getProtoID() == ClusterClientForward::GetProtoID())
+    if (rsShell.getProtoID() == ClusterClientForward::getProtoID())
     {
         Tracing trace;
         rsShell >> trace;
         ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
-        if (rs.getProtoID() == UserAuthResp::GetProtoID())
+        if (rs.getProtoID() == UserAuthResp::getProtoID())
         {
             UserAuthResp resp;
             rs >> resp;
@@ -559,7 +559,7 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
                 clientresp.account = resp.account;
                 clientresp.token = resp.token;
                 clientresp.previews = resp.previews;
-                WriteStream ws(ClientAuthResp::GetProtoID());
+                WriteStream ws(ClientAuthResp::getProtoID());
                 ws << clientresp;
                 client->send(ws.getStream(), ws.getStreamLen());
             }
@@ -635,7 +635,7 @@ void Application::event_onClientMessage(TcpSessionPtr session, const char * begi
 {
     ReadStream rs(begin, len);
     SessionStatus ss = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
-    if (rs.getProtoID() == ClientAuthReq::GetProtoID())
+    if (rs.getProtoID() == ClientAuthReq::getProtoID())
     {
         LOGD("ClientAuthReq sID=" << session->getSessionID() << ", block len=" << len);
         if (ss != SSTATUS_UNKNOW)
@@ -650,7 +650,7 @@ void Application::event_onClientMessage(TcpSessionPtr session, const char * begi
         trace._fromServiceID = session->getSessionID();
         trace._toService = ServiceUserMgr;
         trace._toServiceID = InvalidServiceID;
-        WriteStream ws(UserAuthReq::GetProtoID());
+        WriteStream ws(UserAuthReq::getProtoID());
         UserAuthReq req;
         req.account = careq.account;
         req.token = careq.token;
@@ -719,7 +719,7 @@ void Application::callOtherService(Tracing trace, const char * block, unsigned i
     auto & service = *fder->second;
     if (service.isShell()) //forward 
     {
-        WriteStream ws(ClusterShellForward::GetProtoID());
+        WriteStream ws(ClusterShellForward::getProtoID());
         ws << trace;
         ws.appendOriginalData(block, len);
         ClusterID cltID = service.getClusterID();

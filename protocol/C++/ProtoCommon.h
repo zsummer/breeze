@@ -24,6 +24,8 @@ enum  : unsigned short
  
 struct UserPreview //用户预览信息  
 { 
+    static const unsigned short getProtoID() { return 200;} 
+    static const std::string getProtoName() { return "ID_UserPreview";} 
     unsigned long long uID; //用户唯一ID  
     std::string account; //帐号  
     std::string nickName; //昵称  
@@ -66,6 +68,14 @@ typedef std::vector<unsigned long long> UIDS;
  
 struct UserBaseInfo //用户预览信息  
 { 
+    static const unsigned short getProtoID() { return 201;} 
+    static const std::string getProtoName() { return "ID_UserBaseInfo";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long uID; //用户唯一ID  
     std::string account; //帐号  
     std::string nickName; //昵称  
@@ -83,6 +93,80 @@ struct UserBaseInfo //用户预览信息
         this->iconID = iconID; 
     } 
 }; 
+ 
+const std::vector<std::string>  UserBaseInfo::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("desc `tb_UserBaseInfo`"); 
+    ret.push_back("CREATE TABLE `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        `nickName` varchar(255) NOT NULL DEFAULT '' ,        `iconID` bigint(20) NOT NULL DEFAULT '0' ,        PRIMARY KEY(`uID`)  ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `uID`  `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `nickName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `nickName`  `nickName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
+    return std::move(ret); 
+} 
+std::string  UserBaseInfo::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `uID`,`account`,`nickName`,`iconID` from `tb_UserBaseInfo` where `uID` = ? "); 
+    q << this->uID; 
+    return q.pickSQL(); 
+} 
+std::string  UserBaseInfo::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_UserBaseInfo`(`uID`,`account`,`nickName`,`iconID`) values(?,?,?,?)"); 
+    q << this->uID; 
+    q << this->account; 
+    q << this->nickName; 
+    q << this->iconID; 
+    return q.pickSQL(); 
+} 
+std::string  UserBaseInfo::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_UserBaseInfo` where `uID` = ? "); 
+    q << this->uID; 
+    return q.pickSQL(); 
+} 
+std::string  UserBaseInfo::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_UserBaseInfo`(uID) values(? ) on duplicate key update `account` = ?,`nickName` = ?,`iconID` = ? "); 
+    q << this->account; 
+    q << this->nickName; 
+    q << this->iconID; 
+    return q.pickSQL(); 
+} 
+bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch UserBaseInfo from table `tb_UserBaseInfo` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->uID; 
+            result >> this->account; 
+            result >> this->nickName; 
+            result >> this->iconID; 
+            return true;  
+        } 
+    } 
+    catch(std::runtime_error e) 
+    { 
+        LOGE("catch one except error when fetch UserBaseInfo from table `tb_UserBaseInfo` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserBaseInfo & data) 
 { 
     ws << data.uID;  

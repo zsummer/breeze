@@ -62,7 +62,7 @@ public:
 
 protected:
     template<class Proto>
-    inline void slotting(const Slot & msgfun){ _slots[Proto::GetProtoID()] = msgfun; _slotsName[Proto::GetProtoID()] = Proto::GetProtoName(); }
+    inline void slotting(const Slot & msgfun){ _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
 
 protected:
     inline void setServiceType(ui16 st){ _st = st; }

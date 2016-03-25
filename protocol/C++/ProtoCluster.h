@@ -5,8 +5,8 @@
  
 struct ClusterPulse //集群脉冲  
 { 
-    static const unsigned short GetProtoID() { return 40000;} 
-    static const std::string GetProtoName() { return "ID_ClusterPulse";} 
+    static const unsigned short getProtoID() { return 40000;} 
+    static const std::string getProtoName() { return "ID_ClusterPulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterPulse & data) 
 { 
@@ -19,8 +19,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
  
 struct ClusterServiceInited //服务初始化成功  
 { 
-    static const unsigned short GetProtoID() { return 40001;} 
-    static const std::string GetProtoName() { return "ID_ClusterServiceInited";} 
+    static const unsigned short getProtoID() { return 40001;} 
+    static const std::string getProtoName() { return "ID_ClusterServiceInited";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     ClusterServiceInited() 
@@ -49,8 +49,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
  
 struct ClusterShellForward //壳子转发  
 { 
-    static const unsigned short GetProtoID() { return 40002;} 
-    static const std::string GetProtoName() { return "ID_ClusterShellForward";} 
+    static const unsigned short getProtoID() { return 40002;} 
+    static const std::string getProtoName() { return "ID_ClusterShellForward";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterShellForward & data) 
 { 
@@ -63,8 +63,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
  
 struct ClusterClientForward //client转发  
 { 
-    static const unsigned short GetProtoID() { return 40003;} 
-    static const std::string GetProtoName() { return "ID_ClusterClientForward";} 
+    static const unsigned short getProtoID() { return 40003;} 
+    static const std::string getProtoName() { return "ID_ClusterClientForward";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterClientForward & data) 
 { 

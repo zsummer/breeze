@@ -82,13 +82,13 @@ void Application::broadcast(const Proto & proto)
 {
     try
     {
-        WriteStream ws(Proto::GetProtoID());
+        WriteStream ws(Proto::getProtoID());
         ws << proto;
         for (const auto &c : _clusterSession)
         {
             if (c.second.first == InvalidSessionID)
             {
-                LOGF("Application::broadcast fatal error. cltID not have session. cltID=" << c.first << ", proto id=" << Proto::GetProtoID());
+                LOGF("Application::broadcast fatal error. cltID not have session. cltID=" << c.first << ", proto id=" << Proto::getProtoID());
                 continue;
             }
             if (c.second.second == 0)

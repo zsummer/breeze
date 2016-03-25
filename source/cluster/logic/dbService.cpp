@@ -73,7 +73,7 @@ bool DBService::onInit()
 
     if (getServiceType() == ServiceInfoDBMgr)
     {
-        WriteStream ws(SQLQueryReq::GetProtoID());
+        WriteStream ws(SQLQueryReq::getProtoID());
         SQLQueryReq req;
         req.sql = "select 1";
         ws << req;
@@ -127,7 +127,7 @@ void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
     resp.result.sql = result->peekSQL();
     resp.result.affected = result->getAffectedRows();
     resp.result.fields = std::move(result->popResult());
-    WriteStream ws(SQLQueryResp::GetProtoID());
+    WriteStream ws(SQLQueryResp::getProtoID());
     ws << resp;
     backCall(trace, ws.getStream(), ws.getStreamLen(), nullptr);
 }
