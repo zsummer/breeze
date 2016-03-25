@@ -16,6 +16,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     return rs; 
 } 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClusterPulse & info) 
+{ 
+    stm << "[\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
  
 struct ClusterServiceInited //服务初始化成功  
 { 
@@ -42,9 +48,17 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterServiceInited & data) 
 { 
-        rs >> data.serviceType;  
-        rs >> data.serviceID;  
+    rs >> data.serviceType;  
+    rs >> data.serviceID;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClusterServiceInited & info) 
+{ 
+    stm << "[\n"; 
+    stm << "serviceType=" << info.serviceType << "\n"; 
+    stm << "serviceID=" << info.serviceID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct ClusterShellForward //壳子转发  
@@ -60,6 +74,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     return rs; 
 } 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClusterShellForward & info) 
+{ 
+    stm << "[\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
  
 struct ClusterClientForward //client转发  
 { 
@@ -73,6 +93,12 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterClientForward & data) 
 { 
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClusterClientForward & info) 
+{ 
+    stm << "[\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 #endif 

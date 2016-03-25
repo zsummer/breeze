@@ -36,12 +36,15 @@ public:
     bool onInit() override final;
     void onStop() override final;
     void onTick() override final;
+    bool onBuildDB();
 public:
     void onSQLQueryReq(Tracing trace, ReadStream &rs);
     void onAsyncSQLQueryReq(DBResultPtr result, Tracing trace);
 
     void onTest(ReadStream & rs);
-
+    template<class T>
+    bool buildDB();
+public:
     void asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler);
     void asyncQuery(const std::string &sql);
     zsummer::mysql::DBResultPtr query(const std::string &sql);
@@ -60,7 +63,32 @@ private:
 
 
 
-
+template<class T>
+bool DBService::buildDB()
+{
+    DBResultPtr ret;
+    const auto & builds = T().getDBBuild();
+    auto iter = builds.begin();
+    if (_dbHelper->query(*iter++)->getErrorCode() != QEC_SUCCESS)
+    {
+        ret = _dbHelper->query(*iter);
+        if (ret->getErrorCode() != QEC_SUCCESS)
+        {
+            LOGE("create table error. error=" << ret->getErrorMsg() << ", sql=" << ret->peekSQL());
+            return false;
+        }
+    }
+    for (; iter != builds.end(); iter++)
+    {
+        ret = _dbHelper->query(*iter);
+        if (iter + 1 == builds.end() && ret->getErrorCode() != QEC_SUCCESS)
+        {
+            LOGE("alter filed error. error=" << ret->getErrorMsg() << ", sql=" << ret->peekSQL());
+            return false;
+        }
+    }
+    return true;
+}
 
 
 

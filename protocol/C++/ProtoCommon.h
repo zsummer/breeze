@@ -53,11 +53,21 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPreview & data) 
 { 
-        rs >> data.uID;  
-        rs >> data.account;  
-        rs >> data.nickName;  
-        rs >> data.iconID;  
+    rs >> data.uID;  
+    rs >> data.account;  
+    rs >> data.nickName;  
+    rs >> data.iconID;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserPreview & info) 
+{ 
+    stm << "[\n"; 
+    stm << "uID=" << info.uID << "\n"; 
+    stm << "account=" << info.account << "\n"; 
+    stm << "nickName=" << info.nickName << "\n"; 
+    stm << "iconID=" << info.iconID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
  
@@ -177,11 +187,21 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserBaseInfo & data) 
 { 
-        rs >> data.uID;  
-        rs >> data.account;  
-        rs >> data.nickName;  
-        rs >> data.iconID;  
+    rs >> data.uID;  
+    rs >> data.account;  
+    rs >> data.nickName;  
+    rs >> data.iconID;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserBaseInfo & info) 
+{ 
+    stm << "[\n"; 
+    stm << "uID=" << info.uID << "\n"; 
+    stm << "account=" << info.account << "\n"; 
+    stm << "nickName=" << info.nickName << "\n"; 
+    stm << "iconID=" << info.iconID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
  

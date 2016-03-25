@@ -40,12 +40,23 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SQLResult & data) 
 { 
-        rs >> data.qc;  
-        rs >> data.errMsg;  
-        rs >> data.sql;  
-        rs >> data.affected;  
-        rs >> data.fields;  
+    rs >> data.qc;  
+    rs >> data.errMsg;  
+    rs >> data.sql;  
+    rs >> data.affected;  
+    rs >> data.fields;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SQLResult & info) 
+{ 
+    stm << "[\n"; 
+    stm << "qc=" << info.qc << "\n"; 
+    stm << "errMsg=" << info.errMsg << "\n"; 
+    stm << "sql=" << info.sql << "\n"; 
+    stm << "affected=" << info.affected << "\n"; 
+    stm << "fields=" << info.fields << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct SQLQueryReq 
@@ -68,8 +79,15 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SQLQueryReq & data) 
 { 
-        rs >> data.sql;  
+    rs >> data.sql;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SQLQueryReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "sql=" << info.sql << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct SQLQueryResp 
@@ -96,9 +114,17 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SQLQueryResp & data) 
 { 
-        rs >> data.retCode;  
-        rs >> data.result;  
+    rs >> data.retCode;  
+    rs >> data.result;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SQLQueryResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "result=" << info.result << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 #endif 

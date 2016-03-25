@@ -5,7 +5,7 @@
  
 struct ClientAuthReq //认证请求  
 { 
-    static const unsigned short getProtoID() { return 1008;} 
+    static const unsigned short getProtoID() { return 1000;} 
     static const std::string getProtoName() { return "ID_ClientAuthReq";} 
     std::string account;  
     std::string token;  
@@ -26,14 +26,22 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClientAuthReq & data) 
 { 
-        rs >> data.account;  
-        rs >> data.token;  
+    rs >> data.account;  
+    rs >> data.token;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClientAuthReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "account=" << info.account << "\n"; 
+    stm << "token=" << info.token << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct ClientAuthResp //认证返回  
 { 
-    static const unsigned short getProtoID() { return 1009;} 
+    static const unsigned short getProtoID() { return 1001;} 
     static const std::string getProtoName() { return "ID_ClientAuthResp";} 
     unsigned short retCode;  
     std::string account;  
@@ -61,16 +69,26 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClientAuthResp & data) 
 { 
-        rs >> data.retCode;  
-        rs >> data.account;  
-        rs >> data.token;  
-        rs >> data.previews;  
+    rs >> data.retCode;  
+    rs >> data.account;  
+    rs >> data.token;  
+    rs >> data.previews;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClientAuthResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "account=" << info.account << "\n"; 
+    stm << "token=" << info.token << "\n"; 
+    stm << "previews=" << info.previews << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct UserAuthReq //认证请求  
 { 
-    static const unsigned short getProtoID() { return 1010;} 
+    static const unsigned short getProtoID() { return 1002;} 
     static const std::string getProtoName() { return "ID_UserAuthReq";} 
     std::string account;  
     std::string token;  
@@ -99,16 +117,26 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserAuthReq & data) 
 { 
-        rs >> data.account;  
-        rs >> data.token;  
-        rs >> data.clientSessionID;  
-        rs >> data.clientClusterID;  
+    rs >> data.account;  
+    rs >> data.token;  
+    rs >> data.clientSessionID;  
+    rs >> data.clientClusterID;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserAuthReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "account=" << info.account << "\n"; 
+    stm << "token=" << info.token << "\n"; 
+    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
+    stm << "clientClusterID=" << info.clientClusterID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct UserAuthResp //认证回复  
 { 
-    static const unsigned short getProtoID() { return 1011;} 
+    static const unsigned short getProtoID() { return 1003;} 
     static const std::string getProtoName() { return "ID_UserAuthResp";} 
     unsigned short retCode;  
     std::string account;  
@@ -144,18 +172,30 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserAuthResp & data) 
 { 
-        rs >> data.retCode;  
-        rs >> data.account;  
-        rs >> data.token;  
-        rs >> data.clientSessionID;  
-        rs >> data.clientClusterID;  
-        rs >> data.previews;  
+    rs >> data.retCode;  
+    rs >> data.account;  
+    rs >> data.token;  
+    rs >> data.clientSessionID;  
+    rs >> data.clientClusterID;  
+    rs >> data.previews;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserAuthResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "account=" << info.account << "\n"; 
+    stm << "token=" << info.token << "\n"; 
+    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
+    stm << "clientClusterID=" << info.clientClusterID << "\n"; 
+    stm << "previews=" << info.previews << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct CreateUserReq //创角色请求  
 { 
-    static const unsigned short getProtoID() { return 1002;} 
+    static const unsigned short getProtoID() { return 1004;} 
     static const std::string getProtoName() { return "ID_CreateUserReq";} 
     std::string nickname;  
     CreateUserReq() 
@@ -173,13 +213,20 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserReq & data) 
 { 
-        rs >> data.nickname;  
+    rs >> data.nickname;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateUserReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "nickname=" << info.nickname << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct CreateUserResp //创角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 1003;} 
+    static const unsigned short getProtoID() { return 1005;} 
     static const std::string getProtoName() { return "ID_CreateUserResp";} 
     unsigned short retCode;  
     UserPreviewArray previews;  
@@ -201,14 +248,22 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserResp & data) 
 { 
-        rs >> data.retCode;  
-        rs >> data.previews;  
+    rs >> data.retCode;  
+    rs >> data.previews;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateUserResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "previews=" << info.previews << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct SelectUserReq //选角色请求  
 { 
-    static const unsigned short getProtoID() { return 1004;} 
+    static const unsigned short getProtoID() { return 1006;} 
     static const std::string getProtoName() { return "ID_SelectUserReq";} 
     unsigned long long uID;  
     SelectUserReq() 
@@ -227,13 +282,20 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserReq & data) 
 { 
-        rs >> data.uID;  
+    rs >> data.uID;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SelectUserReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "uID=" << info.uID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct SelectUserResp //选角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 1005;} 
+    static const unsigned short getProtoID() { return 1007;} 
     static const std::string getProtoName() { return "ID_SelectUserResp";} 
     unsigned short retCode;  
     std::string svrIP;  
@@ -266,17 +328,28 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserResp & data) 
 { 
-        rs >> data.retCode;  
-        rs >> data.svrIP;  
-        rs >> data.svrPort;  
-        rs >> data.uID;  
-        rs >> data.token;  
+    rs >> data.retCode;  
+    rs >> data.svrIP;  
+    rs >> data.svrPort;  
+    rs >> data.uID;  
+    rs >> data.token;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SelectUserResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "svrIP=" << info.svrIP << "\n"; 
+    stm << "svrPort=" << info.svrPort << "\n"; 
+    stm << "uID=" << info.uID << "\n"; 
+    stm << "token=" << info.token << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct LoginUserReq //登录角色请求  
 { 
-    static const unsigned short getProtoID() { return 1006;} 
+    static const unsigned short getProtoID() { return 1008;} 
     static const std::string getProtoName() { return "ID_LoginUserReq";} 
     unsigned long long uID;  
     std::string token;  
@@ -298,14 +371,22 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LoginUserReq & data) 
 { 
-        rs >> data.uID;  
-        rs >> data.token;  
+    rs >> data.uID;  
+    rs >> data.token;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LoginUserReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "uID=" << info.uID << "\n"; 
+    stm << "token=" << info.token << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 struct LoginUserResp //登录角色返回  
 { 
-    static const unsigned short getProtoID() { return 1007;} 
+    static const unsigned short getProtoID() { return 1009;} 
     static const std::string getProtoName() { return "ID_LoginUserResp";} 
     unsigned short retCode;  
     LoginUserResp() 
@@ -324,8 +405,15 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LoginUserResp & data) 
 { 
-        rs >> data.retCode;  
+    rs >> data.retCode;  
     return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LoginUserResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "]\n"; 
+    return stm; 
 } 
  
 #endif 

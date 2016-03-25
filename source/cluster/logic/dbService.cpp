@@ -69,7 +69,7 @@ bool DBService::onInit()
         return false;
     }
 
-    setWorked(true);
+    
 
     if (getServiceType() == ServiceInfoDBMgr)
     {
@@ -79,11 +79,29 @@ bool DBService::onInit()
         ws << req;
         globalCall(ServiceDictDBMgr, InvalidServiceID, ws.getStream(), ws.getStreamLen(), std::bind(&DBService::onTest, std::static_pointer_cast<DBService>(shared_from_this()), _1));
     }
-    
-
-    return true;
+    if (onBuildDB())
+    {
+        setWorked(true);
+        return true;
+    }
+    return false;
 }
 
+
+
+
+bool DBService::onBuildDB()
+{
+    if (getServiceType() == ServiceInfoDBMgr)
+    {
+        if (!buildDB<UserBaseInfo>())
+        {
+            return false;
+        }
+        
+    }
+    return true;
+}
 
 static void defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
 {

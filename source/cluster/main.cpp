@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
         return ret;
     }
     LOGA("version released by " << __DATE__ << " " << __TIME__);
-
+    LOGD(UserBaseInfo());
     try
     {
         if (!SessionManager::getRef().start())
