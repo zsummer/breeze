@@ -71,10 +71,10 @@ std::string readFileContent(const std::string & filename, bool isBinary, size_t 
 }
 size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend)
 {
-    std::string mod = "b+";
+    std::string mod = "ab+";
     if (!isAppend)
     {
-        mod = "w+";
+        mod = "wb+";
     }
     
     FILE * f = fopen(filename.c_str(), mod.c_str());
