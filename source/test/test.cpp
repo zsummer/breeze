@@ -144,6 +144,53 @@ int checkString()
     {
         return 16;
     }
+    if (!compareStringWildcard("", ""))
+    {
+        return 17;
+    }
+    if (!compareStringWildcard("", "*"))
+    {
+        return 18;
+    }
+    if (!compareStringWildcard("afda*fa", "*"))
+    {
+        return 19;
+    }
+    if (!compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e", false))
+    {
+        return 21;
+    }
+    if (compareStringWildcard("a---bc-e-bc-----------e-", "a*bc***e*e", false))
+    {
+        return 22;
+    }
+    if (!compareStringWildcard("a---bc-e-bc-----------e", "a*bc****e", true))
+    {
+        return 23;
+    }
+    if (compareStringWildcard("a---bc-e-bc-----------e-", "a*bc****e", true))
+    {
+        return 24;
+    }
+
+    if (subStringFront("aa/bb/cc", "/") != "aa")
+    {
+        return 25;
+    }
+    if (subStringBack("aa/bb/cc", "/") != "cc")
+    {
+        return 26;
+    }
+    if (subStringWithoutFront("aa/bb/cc", "/") != "bb/cc")
+    {
+        return 27;
+    }
+    if (subStringWithoutBack("aa/bb/cc", "/") != "aa/bb")
+    {
+        return 28;
+    }
+
+
     return 0;
 }
 

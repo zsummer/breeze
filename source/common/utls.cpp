@@ -387,6 +387,44 @@ std::vector<std::string> splitString(std::string text, std::string deli, std::st
     return std::move(ret);
 }
 
+std::string subStringFront(const std::string & text, const std::string & deli)
+{
+    auto pos = text.find(deli);
+    if (pos == std::string::npos)
+    {
+        return text;
+    }
+    return text.substr(0, pos - 0);
+}
+std::string subStringBack(const std::string & text, const std::string & deli)
+{
+    auto pos = text.rfind(deli);
+    if (pos == std::string::npos)
+    {
+        return text;
+    }
+    return text.substr(pos+deli.length());
+}
+
+std::string subStringWithoutFront(const std::string & text, const std::string & deli)
+{
+    auto pos = text.find(deli);
+    if (pos == std::string::npos)
+    {
+        return text;
+    }
+    return text.substr(pos+deli.length());
+}
+
+std::string subStringWithoutBack(const std::string & text, const std::string & deli)
+{
+    auto pos = text.rfind(deli);
+    if (pos == std::string::npos)
+    {
+        return text;
+    }
+    return text.substr(0, pos - 0);
+}
 std::string toUpperString(std::string  org)
 {
     std::for_each(org.begin(), org.end(), [](char &ch){ch = toupper(ch); });
@@ -420,6 +458,73 @@ bool compareStringIgnCase(const std::string & left, const std::string & right, b
     
 }
 
+bool compareStringWildcard(std::string source, std::string mod, bool isGreedy)
+{
+    while (!source.empty() || !mod.empty())
+    {
+        //clean wildcard
+        if (mod.size() >= 2 && mod.at(0) == '*' && mod.at(1) == mod.at(0))
+        {
+            mod.erase(mod.begin());
+            continue;
+        }
+
+        if (mod.empty())
+        {
+            if (source.empty())
+            {
+                return true;
+            }
+            return false;
+        }
+        if (mod.size() == 1 && mod.front() == '*')
+        {
+            return true;
+        }
+        auto posBegin = mod.front() == '*' ? 1 : 0; //skip *
+        auto posEnd = mod.find('*', posBegin);
+        std::string cleanmod = mod.substr(posBegin, posEnd - posBegin);
+        if (cleanmod.length() > source.length())
+        {
+            return false;
+        }
+        //greedy
+        auto posMatching = std::string::npos;
+        for (size_t i = 0; i < source.length(); i++)
+        {
+            if (source.length() - i < cleanmod.length())
+            {
+                break;
+            }
+            if (cleanmod.compare(0, cleanmod.length(), &source[i], 0, cleanmod.length()) == 0)
+            {
+                posMatching = i;
+            }
+            if (!isGreedy)
+            {
+                break;
+            }
+        }
+        if (posMatching != std::string::npos)
+        {
+            if (posEnd == std::string::npos)
+            {
+                mod.clear();
+            }
+            else
+            {
+                mod = mod.substr(posEnd);
+            }
+            source = source.substr(posMatching + cleanmod.length());
+            continue;
+        }
+        if (source.empty())
+        {
+            return false;
+        }
+        source.erase(source.begin());
+    }
+}
 
 
 time_t getUTCTimeFromLocalString(const std::string & str)
