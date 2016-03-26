@@ -9,58 +9,58 @@
 
 <Proto>
 
-    <proto name="ClientAuthReq" desc= "认证请求">
+    <packet name="ClientAuthReq" desc= "认证请求">
         <member name="account" type="string"   desc=""/>
         <member name="token" type="string"   desc=""/>
-    </proto>
-     <proto name="ClientAuthResp" desc= "认证返回">
+    </packet>
+     <packet name="ClientAuthResp" desc= "认证返回">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="account" type="string"   desc=""/>
         <member name="token" type="string"   desc=""/>
         <member name="previews" type="UserPreviewArray"   desc=""/>
-    </proto>
+    </packet>
 
-    <proto name="UserAuthReq" desc= "认证请求">
+    <packet name="UserAuthReq" desc= "认证请求">
         <member name="account" type="string"   desc=""/>
         <member name="token" type="string"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
         <member name="clientClusterID" type="ui32"   desc=""/>
-    </proto>
-    <proto name="UserAuthResp" desc= "认证回复">
+    </packet>
+    <packet name="UserAuthResp" desc= "认证回复">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="account" type="string"   desc=""/>
         <member name="token" type="string"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
         <member name="clientClusterID" type="ui32"   desc=""/>
         <member name="previews" type="UserPreviewArray"   desc=""/>
-    </proto>
+    </packet>
 
-    <proto name="CreateUserReq" desc= "创角色请求">
+    <packet name="CreateUserReq" desc= "创角色请求">
         <member name="nickname" type="string"   desc=""/>
-    </proto>
-     <proto name="CreateUserResp" desc= "创角色请求返回">
+    </packet>
+     <packet name="CreateUserResp" desc= "创角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="previews" type="UserPreviewArray"   desc=""/>
-    </proto>
+    </packet>
 
-    <proto name="SelectUserReq" desc= "选角色请求">
+    <packet name="SelectUserReq" desc= "选角色请求">
         <member name="uID" type="ui64"   desc=""/>
-    </proto>
-     <proto name="SelectUserResp" desc= "选角色请求返回">
+    </packet>
+     <packet name="SelectUserResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="svrIP" type="string"   desc=""/>
         <member name="svrPort" type="ui16"   desc=""/>
         <member name="uID" type="ui64"   desc=""/>
         <member name="token" type="string"   desc=""/>
-    </proto>
+    </packet>
 
-    <proto name="LoginUserReq" desc= "登录角色请求">
+    <packet name="LoginUserReq" desc= "登录角色请求">
         <member name="uID" type="ui64"   desc=""/>
         <member name="token" type="string"   desc=""/>
-    </proto>
-     <proto name="LoginUserResp" desc= "登录角色返回">
+    </packet>
+     <packet name="LoginUserResp" desc= "登录角色返回">
         <member name="retCode" type="ui16"   desc=""/>
-    </proto>
+    </packet>
 
 
 </Proto>

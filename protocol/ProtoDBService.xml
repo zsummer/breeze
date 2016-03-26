@@ -12,23 +12,23 @@
 
     <array name="SQLFieldArray" type="string" desc="" />
 
-    <struct name="SQLResult" desc="">
+    <packet name="SQLResult" desc="">
         <member name="qc" type="ui16"  desc=""/>
         <member name="errMsg" type="string"  desc=""/>
         <member name="sql" type="string"  desc=""/>
         <member name="affected" type="ui64"  desc=""/>
         <member name="fields"  type="SQLFieldArray" desc=""/>
-    </struct>
+    </packet>
 
 
 
-    <proto name="SQLQueryReq" desc= "">
+    <packet name="SQLQueryReq" desc= "">
         <member name="sql" type="string"   desc=""/>
-    </proto>
-    <proto name="SQLQueryResp" desc= "">
+    </packet>
+    <packet name="SQLQueryResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="result" type="SQLResult"   desc=""/>
-    </proto>
+    </packet>
 
 
 

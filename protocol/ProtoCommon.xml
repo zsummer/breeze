@@ -37,24 +37,24 @@
 
 
         <!-- 用户预览信息 -->
-    <struct name="UserPreview" desc="用户预览信息">
+    <packet name="UserPreview" desc="用户预览信息">
         <member name="uID" type="ui64" desc="用户唯一ID"/>
         <member name="account"  type="string" desc="帐号"/>
         <member name="nickName" type="string"   desc="昵称"/>
         <member name="iconID"  type="i16" desc="头像"/>
-    </struct>
+    </packet>
     <array name="UserPreviewArray" type="UserPreview" desc="" />
     <array name="UIDS" type="ui64" desc="" />
 
 
 
     <!-- 用户预览信息 -->
-    <struct name="UserBaseInfo" store="true" desc="用户预览信息">
+    <packet name="UserBaseInfo" store="true" desc="用户预览信息">
         <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
         <member name="account"  type="string" desc="帐号"/>
         <member name="nickName" type="string"   desc="昵称"/>
         <member name="iconID"  type="i16" desc="头像"/>
-    </struct>
+    </packet>
     <array name="UserPreviewArray" type="UserPreview" desc="" />
     <array name="UIDS" type="ui64" desc="" />
 

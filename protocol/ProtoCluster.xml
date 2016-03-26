@@ -8,18 +8,18 @@
 
 
 <Proto>
-    <proto name="ClusterPulse" desc= "集群脉冲">
-    </proto>
-    <proto name="ClusterServiceInited" desc= "服务初始化成功">
+    <packet name="ClusterPulse" desc= "集群脉冲">
+    </packet>
+    <packet name="ClusterServiceInited" desc= "服务初始化成功">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
-    </proto>
+    </packet>
 
-    <proto name="ClusterShellForward" desc= "壳子转发">
-    </proto>
+    <packet name="ClusterShellForward" desc= "壳子转发">
+    </packet>
 
-    <proto name="ClusterClientForward" desc= "client转发">
-    </proto>
+    <packet name="ClusterClientForward" desc= "client转发">
+    </packet>
 
     
 </Proto>
