@@ -94,7 +94,7 @@ struct SearchFileInfo
     unsigned long long filesize;
     bool bDir;
 };
-bool searchFiles(std::string path, std::vector<SearchFileInfo> & files);
+bool searchFiles(std::string path, std::vector<SearchFileInfo> & files, bool recursion = false);
 
 //md5
 class MD5Data;

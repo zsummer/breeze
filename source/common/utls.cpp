@@ -173,17 +173,26 @@ std::string fixPathString(const std::string &path)
     if (path.empty()) return path;
     auto ret = path;
     std::for_each(ret.begin(), ret.end(), [](char &ch){ if (ch == '\\') ch = '/'; });
-    if (ret.back() != '/') ret += "/";
+    if (isDirectory(path))
+    {
+        if (ret.back() != '/') ret += "/";
+    }
     return ret;
 }
 
-static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files)
+static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files, bool recursion)
 {
     if (path.length() == 0)
     {
         return false;
     }
     path = fixPathString(path);
+    std::string wildcard = subStringBack(path, "/");
+    if (!wildcard.empty())
+    {
+        path = subStringWithoutBack(path, "/") + "/";
+    }
+    
 
 #ifdef WIN32
     WIN32_FIND_DATAA fd;
@@ -205,8 +214,15 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
                 file.bDir = true;
                 strcpy_s(file.filename, sizeof(file.filename), fd.cFileName);
                 sprintf(file.fullpath, "%s%s", path.c_str(), fd.cFileName);
-                files.push_back(file);
-                tmpSearchPath(file.fullpath, files);
+                if (wildcard.empty())
+                {
+                    files.push_back(file);
+                }
+                if (recursion)
+                {
+                    tmpSearchPath(fixPathString(file.fullpath) + wildcard, files, recursion);
+                }
+                
             }
         }
         else
@@ -218,7 +234,10 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
             file.filesize += fd.nFileSizeLow;
             strcpy_s(file.filename, sizeof(file.filename), fd.cFileName);
             sprintf(file.fullpath, "%s%s", path.c_str(), fd.cFileName);
-            files.push_back(file);
+            if (wildcard.empty() || compareStringWildcard(file.filename, wildcard))
+            {
+                files.push_back(file);
+            }
         }
     } while (FindNextFileA(hFile, &fd));
     FindClose(hFile);
@@ -246,8 +265,14 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
             file.filesize = statbuf.st_size;
             strcpy(file.filename, entry->d_name);
             sprintf(file.fullpath, "%s%s", path.c_str(), entry->d_name);
-            files.push_back(file);
-            tmpSearchPath(file.fullpath, files);
+            if (wildcard.empty())
+            {
+                files.push_back(file);
+            }
+            if (recursion)
+            {
+                tmpSearchPath(fixPathString(file.fullpath)+wildcard, files, recursion);
+            }
         }
         else
         {
@@ -256,7 +281,10 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
             file.filesize = statbuf.st_size;
             strcpy(file.filename, entry->d_name);
             file.fullpath[0] = '\0';
-            files.push_back(file);
+            if (wildcard.empty() || compareStringWildcard(file.filename, wildcard))
+            {
+                files.push_back(file);
+            }
         }
     }
     closedir(dp);
@@ -264,13 +292,13 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
     return true;
 }
 
-bool searchFiles(std::string path, std::vector<SearchFileInfo> & files)
+bool searchFiles(std::string path, std::vector<SearchFileInfo> & files, bool recursion)
 {
     if (files.capacity() < 100)
     {
         files.reserve(100);
     }
-    return tmpSearchPath(path, files);
+    return tmpSearchPath(path, files, recursion);
 }
 
 
@@ -524,6 +552,7 @@ bool compareStringWildcard(std::string source, std::string mod, bool isGreedy)
         }
         source.erase(source.begin());
     }
+    return true;
 }
 
 
