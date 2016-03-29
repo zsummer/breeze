@@ -487,74 +487,76 @@ bool compareStringIgnCase(const std::string & left, const std::string & right, b
 }
 
 
-static int compareStringWildcard(std::list<std::pair<std::string,std::string>> & stk)
+static int compareStringWildcard(std::vector<std::pair<std::string::size_type, std::string::size_type>> & stk, const std::string &src, const std::string & md)
 {
     int searchCount = 1;
     while (!stk.empty())
     {
-        std::string source = std::move(stk.back().first);
-        std::string mod = std::move(stk.back().second);
+        std::string::size_type srcBeginPos = stk.back().first;
+        std::string::size_type mdBeginPos = stk.back().second;
         stk.pop_back();
 
         while (true)
         {
             searchCount++;
-            if (mod.empty() && source.empty())
+            if (mdBeginPos >= md.length() )
             {
-                return searchCount;
-            }
-            if (mod.empty() && !source.empty())
-            {
-                break;
-            }
-            auto wdPos = mod.find('*');
-            if (wdPos == std::string::npos)
-            {
-                if (source == mod)
+                if (srcBeginPos >= src.length())
                 {
                     return searchCount;
-                }
-                break;
-            }
-            if (wdPos != 0)
-            {
-                std::string preMod = mod.substr(0, wdPos - 0);
-                if (source.length() < preMod.length())
-                {
-                    break;
-                }
-                if (preMod.compare(0, preMod.length(), source.c_str(), 0, preMod.length()) == 0)
-                {
-                    source = source.substr(preMod.length());
-                    mod = mod.substr(preMod.length());
-                    continue;
-                }
-                break;
-            }
-            if (wdPos == 0)
-            {
-                if (mod.size() == 1)
-                {
-                    return searchCount;
-                }
-                auto wdSecond = mod.find('*', 1);
-                std::string nextSeg;
-                if (wdSecond == std::string::npos)
-                {
-                    nextSeg = mod.substr(1);
                 }
                 else
                 {
-                    nextSeg = mod.substr(1, wdSecond - 1);
+                    break;
                 }
-                auto foundPos = source.find(nextSeg);
+            }
+            auto wcFirstPos = md.find('*', mdBeginPos);
+            if (wcFirstPos == std::string::npos)
+            {
+                if (srcBeginPos >= src.length() 
+                    || md.length() - mdBeginPos != src.length() - srcBeginPos
+                    || md.compare(mdBeginPos, md.length() - mdBeginPos, src.c_str(), src.length() - srcBeginPos) != 0)
+                {
+                    break;
+                }
+                return searchCount;
+            }
+            //pre char matching
+            if (wcFirstPos != mdBeginPos)
+            {
+                if (srcBeginPos >= src.length() || src.length() - srcBeginPos < wcFirstPos - mdBeginPos)
+                {
+                    break;
+                }
+                if (md.compare(mdBeginPos, wcFirstPos - mdBeginPos, src.c_str(), srcBeginPos, wcFirstPos - mdBeginPos) != 0)
+                {
+                    break;
+                }
+                mdBeginPos = wcFirstPos;
+                srcBeginPos = srcBeginPos + (wcFirstPos - mdBeginPos);
+                continue;
+            }
+            //next segment matching
+            else
+            {
+                if (md.length() == wcFirstPos + 1)
+                {
+                    return searchCount;
+                }
+                auto wcSecondPos = md.find('*', mdBeginPos+1);
+                if (wcSecondPos == std::string::npos)
+                {
+                    wcSecondPos = md.length();
+                }
+                auto foundPos = src.find(md.c_str() + mdBeginPos + 1, srcBeginPos,  wcSecondPos - mdBeginPos - 1);
                 if (foundPos == std::string::npos)
                 {
                     break;
                 }
-                stk.push_back(std::make_pair(source.substr(foundPos + 1), mod));
-                mod = mod.substr(1 + nextSeg.length());
-                source = source.substr(foundPos + nextSeg.length());
+                stk.push_back(std::make_pair(foundPos + 1, mdBeginPos));
+                
+                srcBeginPos = foundPos + (wcSecondPos - mdBeginPos - 1);
+                mdBeginPos = wcSecondPos;
             }
         }
     }
@@ -573,9 +575,10 @@ bool compareStringWildcard(std::string source, std::string mod)
         }
         iter++;
     }
-    std::list<std::pair<std::string, std::string>> stk;
-    stk.push_back(std::make_pair(source, mod));
-    return compareStringWildcard(stk) != 0;
+    std::vector<std::pair<std::string::size_type, std::string::size_type>> stk;
+    stk.reserve(10);
+    stk.push_back(std::make_pair(0, 0));
+    return compareStringWildcard(stk, source, mod) != 0;
 }
 
 
