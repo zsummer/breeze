@@ -118,7 +118,7 @@ std::string subStringWithoutBack(const std::string & text, const std::string & d
 std::string toUpperString(std::string  org);
 std::string toLowerString(std::string  org);
 bool compareStringIgnCase(const std::string & left, const std::string & right, bool canTruncate = false);
-bool compareStringWildcard(std::string source, std::string mod, bool isGreedy = true);
+bool compareStringWildcard(std::string source, std::string mod);
 
 //date, time, tick
 //==========================================================================

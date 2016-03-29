@@ -156,21 +156,24 @@ int checkString()
     {
         return 19;
     }
-    if (!compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e", false))
+    if (!compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e"))
     {
         return 21;
     }
-    if (compareStringWildcard("a---bc-e-bc-----------e-", "a*bc***e*e", false))
+    if (compareStringWildcard("a---bc-e-bc-----------e-", "a*bc***e*e"))
     {
         return 22;
     }
-    if (!compareStringWildcard("a---bc-e-bc-----------e", "a*bc****e", true))
+    if (true)
     {
-        return 23;
-    }
-    if (compareStringWildcard("a---bc-e-bc-----------e-", "a*bc****e", true))
-    {
-        return 24;
+        double now = getTick();
+        volatile int f = 0.0;
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            f = compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
+        }
+        f = 0.0;
+        LOGD("compareStringWildcard used time=" << (getTick() - now) << f);
     }
 
     if (subStringFront("aa/bb/cc", "/") != "aa")

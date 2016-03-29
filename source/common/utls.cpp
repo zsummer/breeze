@@ -486,73 +486,96 @@ bool compareStringIgnCase(const std::string & left, const std::string & right, b
     
 }
 
-bool compareStringWildcard(std::string source, std::string mod, bool isGreedy)
-{
-    while (!source.empty() || !mod.empty())
-    {
-        //clean wildcard
-        if (mod.size() >= 2 && mod.at(0) == '*' && mod.at(1) == mod.at(0))
-        {
-            mod.erase(mod.begin());
-            continue;
-        }
 
-        if (mod.empty())
+static int compareStringWildcard(std::list<std::pair<std::string,std::string>> & stk)
+{
+    int searchCount = 1;
+    while (!stk.empty())
+    {
+        std::string source = std::move(stk.back().first);
+        std::string mod = std::move(stk.back().second);
+        stk.pop_back();
+
+        while (true)
         {
-            if (source.empty())
+            searchCount++;
+            if (mod.empty() && source.empty())
             {
-                return true;
+                return searchCount;
             }
-            return false;
-        }
-        if (mod.size() == 1 && mod.front() == '*')
-        {
-            return true;
-        }
-        auto posBegin = mod.front() == '*' ? 1 : 0; //skip *
-        auto posEnd = mod.find('*', posBegin);
-        std::string cleanmod = mod.substr(posBegin, posEnd - posBegin);
-        if (cleanmod.length() > source.length())
-        {
-            return false;
-        }
-        //greedy
-        auto posMatching = std::string::npos;
-        for (size_t i = 0; i < source.length(); i++)
-        {
-            if (source.length() - i < cleanmod.length())
+            if (mod.empty() && !source.empty())
             {
                 break;
             }
-            if (cleanmod.compare(0, cleanmod.length(), &source[i], 0, cleanmod.length()) == 0)
+            auto wdPos = mod.find('*');
+            if (wdPos == std::string::npos)
             {
-                posMatching = i;
-            }
-            if (!isGreedy)
-            {
+                if (source == mod)
+                {
+                    return searchCount;
+                }
                 break;
             }
+            if (wdPos != 0)
+            {
+                std::string preMod = mod.substr(0, wdPos - 0);
+                if (source.length() < preMod.length())
+                {
+                    break;
+                }
+                if (preMod.compare(0, preMod.length(), source.c_str(), 0, preMod.length()) == 0)
+                {
+                    source = source.substr(preMod.length());
+                    mod = mod.substr(preMod.length());
+                    continue;
+                }
+                break;
+            }
+            if (wdPos == 0)
+            {
+                if (mod.size() == 1)
+                {
+                    return searchCount;
+                }
+                auto wdSecond = mod.find('*', 1);
+                std::string nextSeg;
+                if (wdSecond == std::string::npos)
+                {
+                    nextSeg = mod.substr(1);
+                }
+                else
+                {
+                    nextSeg = mod.substr(1, wdSecond - 1);
+                }
+                auto foundPos = source.find(nextSeg);
+                if (foundPos == std::string::npos)
+                {
+                    break;
+                }
+                stk.push_back(std::make_pair(source.substr(foundPos + 1), mod));
+                mod = mod.substr(1 + nextSeg.length());
+                source = source.substr(foundPos + nextSeg.length());
+            }
         }
-        if (posMatching != std::string::npos)
+    }
+    return 0;
+}
+
+bool compareStringWildcard(std::string source, std::string mod)
+{
+    for (auto iter = mod.begin(); iter != mod.end();)
+    {
+        auto next = iter + 1;
+        if (*iter == '*' && next != mod.end() && *next == '*')
         {
-            if (posEnd == std::string::npos)
-            {
-                mod.clear();
-            }
-            else
-            {
-                mod = mod.substr(posEnd);
-            }
-            source = source.substr(posMatching + cleanmod.length());
+            iter = mod.erase(iter);
             continue;
         }
-        if (source.empty())
-        {
-            return false;
-        }
-        source.erase(source.begin());
+        iter++;
     }
-    return true;
+    std::list<std::pair<std::string, std::string>> stk;
+    stk.push_back(std::make_pair(source, mod));
+    return compareStringWildcard(stk) != 0;
 }
 
 
