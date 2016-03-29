@@ -60,7 +60,6 @@ public:
     void onTick() override final;
     void process(const Tracing & trace, const char * block, unsigned int len) override final;
 public:
-    void onBuildDB(ReadStream & rs, bool isLast);
     void onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 public:
     time_t _lastTime = 0;
