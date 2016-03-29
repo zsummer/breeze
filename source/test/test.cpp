@@ -167,10 +167,10 @@ int checkString()
     if (true)
     {
         double now = getTick();
-        volatile int f = 0.0;
+        volatile double f = 0.0;
         for (int i = 0; i < 10 * 10000; i++)
         {
-            f = compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
+            compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
         }
         f = 0.0;
         LOGD("compareStringWildcard used time=" << (getTick() - now) << f);
