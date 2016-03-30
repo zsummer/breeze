@@ -563,7 +563,7 @@ static int compareStringWildcard(std::vector<std::pair<std::string::size_type, s
     return 0;
 }
 
-bool compareStringWildcard(std::string source, std::string mod)
+bool compareStringWildcard(std::string source, std::string mod, bool ignCase)
 {
     for (auto iter = mod.begin(); iter != mod.end();)
     {
@@ -574,6 +574,11 @@ bool compareStringWildcard(std::string source, std::string mod)
             continue;
         }
         iter++;
+    }
+    if (ignCase)
+    {
+        mod = toLowerString(mod);
+        source = toLowerString(source);
     }
     std::vector<std::pair<std::string::size_type, std::string::size_type>> stk;
     stk.reserve(10);

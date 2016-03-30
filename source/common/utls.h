@@ -110,15 +110,20 @@ RET fromString(const std::string & t, RET def);
 //tonumber
 //both 1 left, 2right, 3 both
 void trim(std::string &str, std::string ign, int both = 3);
+
 std::vector<std::string> splitString(std::string text, std::string deli, std::string ign);
+
 std::string subStringFront(const std::string & text, const std::string & deli);
 std::string subStringBack(const std::string & text, const std::string & deli);
 std::string subStringWithoutFront(const std::string & text, const std::string & deli);
 std::string subStringWithoutBack(const std::string & text, const std::string & deli);
+
 std::string toUpperString(std::string  org);
 std::string toLowerString(std::string  org);
+
 bool compareStringIgnCase(const std::string & left, const std::string & right, bool canTruncate = false);
-bool compareStringWildcard(std::string source, std::string mod);
+bool compareStringWildcard(std::string source, std::string mod, bool ignCase = false);
+
 
 //date, time, tick
 //==========================================================================
