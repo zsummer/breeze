@@ -621,7 +621,6 @@ bool hadIllegalChar(const std::string & str) // return true when have invisible 
     //0xc0 == 1100 0000
     //0xe0 == 1110 0000
     //0xef == 1110 1111
-    int count = 0;
     int cur = 0;
     for (auto ch : str)
     {
@@ -850,7 +849,7 @@ thread_local std::mt19937 __genRandom; //vs2015 support
 //==========================================================================
 unsigned int realRand()
 {
-    return (rand() & 0xffff) << 48 | (rand() & 0xffff) << 32 | (rand() & 0xffff) << 16 | (rand() & 0xffff);
+    return (rand() & 0xffff) << 16 | (rand() & 0xffff);
 #ifdef WIN32
     return (rand() << 20) | (rand() << 8) | (rand() &0xff);
 //    if (!__genRandomInited)
