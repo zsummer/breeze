@@ -192,7 +192,28 @@ int checkString()
     {
         return 28;
     }
+    if (true)
+    {
+        //蓝天and҉😌   
+        char org[] = { 0xe8, 0x93, 0x9d,   0xe5, 0xa4, 0xa9,   0x61, 0x6e, 0x64,   0xd2, 0x89,   0xf0,0x9f,0x98,0x8c,  0x00 };
+        if (getCharCount(org) != 7)
+        {
+            return 29;
+        }
+        if (getCharASCIICount(org) != 3)
+        {
+            return 30;
+        }
+        if (getCharNoASCIICount(org) != 4)
+        {
+            return 31;
+        }
+        if (!hadIllegalChar(org))
+        {
+            return 32;
+        }
 
+    }
 
     return 0;
 }

@@ -124,6 +124,10 @@ std::string toLowerString(std::string  org);
 bool compareStringIgnCase(const std::string & left, const std::string & right, bool canTruncate = false);
 bool compareStringWildcard(std::string source, std::string mod, bool ignCase = false);
 
+int getCharCount(const std::string & str);
+int getCharASCIICount(const std::string & str);
+int getCharNoASCIICount(const std::string & str);
+bool hadIllegalChar(const std::string & str); // return true when have invisible char, mysql unsupport char, mysql escape char.
 
 //date, time, tick
 //==========================================================================

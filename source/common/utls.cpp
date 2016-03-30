@@ -585,7 +585,70 @@ bool compareStringWildcard(std::string source, std::string mod, bool ignCase)
     stk.push_back(std::make_pair(0, 0));
     return compareStringWildcard(stk, source, mod) != 0;
 }
+/*
+Char. number range  |        UTF-8 octet sequence
+(hexadecimal)    |              (binary)
+--------------------+---------------------------------------------
+0000 0000-0000 007F | 0xxxxxxx
+0000 0080-0000 07FF | 110xxxxx 10xxxxxx
+0000 0800-0000 FFFF | 1110xxxx 10xxxxxx 10xxxxxx
+0001 0000-0010 FFFF | 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+*/
+int getCharCount(const std::string & str)
+{
+    //0x7f == 0111 1111
+    //0xc0 == 1100 0000
+    int count = 0;
+    std::for_each(str.begin(), str.end(), [&count](char ch){ if ((unsigned char)ch <= 0x7f || (unsigned char)ch >= 0xc0) count++; });
+    return count;
+}
+int getCharASCIICount(const std::string & str)
+{
+    int count = 0;
+    std::for_each(str.begin(), str.end(), [&count](char ch){ if ((unsigned char)ch <= 0x7f) count++; });
+    return count;
+}
+int getCharNoASCIICount(const std::string & str)
+{
+    int count = 0;
+    std::for_each(str.begin(), str.end(), [&count](char ch){ if ((unsigned char)ch >= 0xc0) count++; });
+    return count;
+}
 
+bool hadIllegalChar(const std::string & str) // return true when have invisible char, mysql unsupport char, mysql escape char.
+{
+    //0x7f == 0111 1111
+    //0xc0 == 1100 0000
+    //0xe0 == 1110 0000
+    //0xef == 1110 1111
+    int count = 0;
+    int cur = 0;
+    for (auto ch : str)
+    {
+        unsigned char b = (unsigned char)ch;
+        if (b > 0xef)
+        {
+            return true;
+        }
+        if (b < ' ' || b == 0x7f) //invisible
+        {
+            return true;
+        }
+        if (ch == ' ' || ch == '\"' || ch == '\'' || ch == '\\') //unsafe 
+        {
+            return true;
+        }
+        if (b >= 0xc0 && b < 0xe0 && (str.length() - cur < 2))
+        {
+            return true;
+        }
+        if (b >= 0xe0 && b < 0xf0 && (str.length() - cur < 3))
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
 time_t getUTCTimeFromLocalString(const std::string & str)
 {
@@ -787,8 +850,9 @@ thread_local std::mt19937 __genRandom; //vs2015 support
 //==========================================================================
 unsigned int realRand()
 {
+    return (rand() & 0xffff) << 48 | (rand() & 0xffff) << 32 | (rand() & 0xffff) << 16 | (rand() & 0xffff);
 #ifdef WIN32
-    return (rand() << 20) | (rand() << 8) | rand();
+    return (rand() << 20) | (rand() << 8) | (rand() &0xff);
 //    if (!__genRandomInited)
 //    {
 //        __genRandom = new(__genRandomBacking)std::mt19937();
