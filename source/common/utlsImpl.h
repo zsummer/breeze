@@ -349,7 +349,12 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWe
 }
 
 
-
+inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag)
+{
+    double base = winFlag == 0 ? 0.5 : (winFlag > 0 ? 1.0 : 0);
+    double winRate = 1.0 / (1.0 + pow(10.0, (dstScore - ownerScore) / 400.0));
+    return 32.0 * (base - winRate);
+}
 
 
 

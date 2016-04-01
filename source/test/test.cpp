@@ -167,13 +167,17 @@ int checkString()
     if (true)
     {
         double now = getTick();
-        volatile double f = 0.0;
         for (int i = 0; i < 10 * 10000; i++)
         {
             compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
         }
-        f = 0.0;
-        LOGD("compareStringWildcard used time=" << (getTick() - now) << f);
+        LOGD("compareStringWildcard used time=" << (getTick() - now));
+        now = getTick();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            
+        }
+        LOGD("compareStringWildcard used time=" << (getTick() - now));
     }
 
     if (subStringFront("aa/bb/cc", "/") != "aa")
@@ -513,7 +517,10 @@ int checkFloat()
     {
         return 26;
     }
-
+    if (!isEqual(calcELORatingUpper(1500, 1800, 1), 1527, 1E0))
+    {
+        return 27;
+    }
     if (true)
     {
         double now = getTick();

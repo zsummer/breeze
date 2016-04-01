@@ -224,6 +224,15 @@ template<class RandIt>
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount);
 template<class RandIt, class GetWeightFunc> // func example  [](RandIt iter){return iter->weight;}
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight);
+
+//rank,rating
+//==========================================================================
+//winFlag:
+//     1 win,  0 draw, -1 lose
+//return:
+//      return the upper score
+inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag);
+
 //integer
 //==========================================================================
 //return value is [min, max]
