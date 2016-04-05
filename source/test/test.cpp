@@ -532,7 +532,20 @@ int checkFloat()
         f = 0.0;
         LOGD("isEqual used time=" << (getTick() - now) << f);
     }
-    
+    if (true)
+    {
+        double owner = 2500;
+        double dst = 2500;
+        for (int i = 0; i < 10; i++)
+        {
+            double newOwner = owner + calcELORatingUpper(owner, dst, 1);
+            double newDst = dst + calcELORatingUpper(dst, owner, -1);
+            LOGD("owner[" << newOwner << ":" << 1.0 - (newOwner - owner) / 32 << "] , dst[" << newDst << ":" <<  (newDst - dst) / -32 << "]");
+            owner = newOwner;
+            dst = newDst;
+        }
+    }
+
 
     return 0;
 }
