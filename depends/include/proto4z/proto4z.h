@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2013-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2013-2016 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -338,7 +338,7 @@ inline ReadStream & operator >> (ReadStream & rs, std::vector<T, _Alloc> & vct)
     rs >> totalCount;
     if (totalCount > 0)
     {
-        vct.reserve(totalCount);
+        vct.reserve(totalCount > 100 ? 100 : totalCount);
         for (Integer i = 0; i < totalCount; ++i)
         {
             T t;
