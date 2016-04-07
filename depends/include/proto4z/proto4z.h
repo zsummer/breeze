@@ -63,10 +63,23 @@
 #include <queue>
 #include <deque>
 #include <assert.h>
+#include <sstream>
+#include <algorithm>
 #ifndef WIN32
 #include <stdexcept>
+#include <unistd.h>
+#include <execinfo.h>
 #else
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 #include <exception>
+#include <windows.h>
+#pragma warning(push)
+#pragma warning(disable : 4091)
+#include <DbgHelp.h>
+#pragma warning(pop)
+#pragma comment(lib, "Dbghelp")
 #endif
 #ifndef _ZSUMMER_BEGIN
 #define _ZSUMMER_BEGIN namespace zsummer {
@@ -87,7 +100,14 @@ enum ZSummer_EndianType
     LittleEndian,
 };
 
+inline std::string proto4z_traceback();
 
+#define PROTO4Z_THROW(log)\
+do{\
+    std::stringstream ss; \
+    ss << log << " throw by " << __FILE__ << ":" << __LINE__  << " ==> " << proto4z_traceback() << "\r\n"; \
+    throw std::runtime_error(ss.str()); \
+} while (0)
 
 
 
@@ -543,7 +563,7 @@ BaseType streamToBaseType(const char stream[sizeof(BaseType)])
 {
     if (stream == NULL)
     {
-        throw std::runtime_error("streamToBaseType stream is NULL");
+        PROTO4Z_THROW("streamToBaseType stream is NULL");
     }
     
     unsigned short bytes = sizeof(BaseType);
@@ -676,19 +696,19 @@ inline void WriteStream::checkMoveCursor(Integer unit)
 {
     if (_attachLen < _headLen)
     {
-        throw std::runtime_error("construction param error. attach memory size less than mini size.");
+        PROTO4Z_THROW("construction param error. attach memory size less than mini size. _attachLen=" << _attachLen << ", _headLen=" << _headLen);
     }
     if (_cursor > _attachLen)
     {
-        throw std::runtime_error("bound over. cursor in end-of-data.");
+        PROTO4Z_THROW("bound over. cursor in end-of-data. _attachLen=" << _attachLen << ", _cursor=" << _cursor);
     }
     if (unit > _attachLen)
     {
-        throw std::runtime_error("bound over. new unit be discarded.");
+        PROTO4Z_THROW("bound over. new unit be discarded. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", unit=" << unit);
     }
     if (_attachLen - _cursor < unit)
     {
-        throw std::runtime_error("bound over. new unit be discarded.");
+        PROTO4Z_THROW("bound over. new unit be discarded. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", unit=" << unit);
     }
 }
 
@@ -772,7 +792,7 @@ inline WriteStream & WriteStream::fixOriginalData(Integer offset, T unit)
 {
     if (offset + sizeof(unit) > _cursor)
     {
-        throw std::runtime_error("fixOriginalData over stream.");
+        PROTO4Z_THROW("fixOriginalData over stream. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", unit=" << unit << ", offset=" << offset);
     }
     if (_attach)
     {
@@ -789,7 +809,7 @@ inline WriteStream & WriteStream::fixOriginalData(Integer offset, const void * d
 {
     if (offset + len > _cursor)
     {
-        throw std::runtime_error("fixOriginalData over stream.");
+        PROTO4Z_THROW("fixOriginalData over stream. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", data len=" << len << ", offset=" << offset);
     }
     if (_attach)
     {
@@ -889,7 +909,7 @@ inline ReadStream::ReadStream(const char *attach, Integer attachLen, bool isHave
     {
         if (_attachLen < sizeof(Integer) + sizeof(ReserveInteger) + sizeof(ProtoInteger))
         {
-            throw std::runtime_error("ReadStream attach buff less then head len");
+            PROTO4Z_THROW("ReadStream attach buff less then head len. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", _isHaveHeader=" << _isHaveHeader );
         }
 
         _cursor = sizeof(Integer) + sizeof(ReserveInteger) + sizeof(ProtoInteger);
@@ -925,15 +945,15 @@ inline void ReadStream::checkMoveCursor(Integer unit)
 {
     if (_cursor > _attachLen)
     {
-        throw std::runtime_error("bound over. cursor in end-of-data.");
+        PROTO4Z_THROW("bound over. cursor in end-of-data. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", _isHaveHeader=" << _isHaveHeader);
     }
     if (unit > _attachLen)
     {
-        throw std::runtime_error("bound over. new unit be discarded.");
+        PROTO4Z_THROW("bound over. new unit be discarded. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", _isHaveHeader=" << _isHaveHeader);
     }
     if (_attachLen - _cursor < unit)
     {
-        throw std::runtime_error("bound over. new unit be discarded.");
+        PROTO4Z_THROW("bound over. new unit be discarded. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", _isHaveHeader=" << _isHaveHeader);
     }
 }
 
@@ -1381,6 +1401,85 @@ inline std::pair<INTEGRITY_RET_TYPE, unsigned int> checkHTTPBuffIntegrity(const 
 }
 
 
+
+
+inline std::string proto4z_traceback()
+{
+    std::stringstream ss;
+#ifdef WIN32
+
+    SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
+    if (!SymInitialize(GetCurrentProcess(), NULL, TRUE))
+    {
+        ss << "SymInitialize returned error " << GetLastError();
+        return ss.str();
+    }
+
+    //     typedef USHORT(WINAPI *CaptureStackBackTraceType)(__in ULONG, __in ULONG, __out PVOID*, __out_opt PULONG);
+    //     CaptureStackBackTraceType capture = (CaptureStackBackTraceType)(GetProcAddress(LoadLibraryA("kernel32.dll"), "RtlCaptureStackBackTrace"));
+    //     if (capture == NULL) return;
+    const int stackMax = 128;
+    void* trace[stackMax];
+    //    int count = (capture)(0, stackMax, trace, NULL);
+    int count = (CaptureStackBackTrace)(0, stackMax, trace, NULL);
+    for (int i = 1; i < count; i++)
+    {
+        ULONG64 buffer[(sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR) + sizeof(ULONG64) - 1) / sizeof(ULONG64)];
+        PSYMBOL_INFO pSymbol = (PSYMBOL_INFO)buffer;
+        pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+        pSymbol->MaxNameLen = MAX_SYM_NAME;
+        DWORD64 dwDisplacement = 0;
+        if (SymFromAddr(GetCurrentProcess(), (DWORD64)trace[i], &dwDisplacement, pSymbol))
+        {
+            ss << "bt[" << i - 1 << "]       --[ " << pSymbol->Name << " ]--              from     ";
+        }
+        else
+        {
+            ss << "bt[" << i - 1 << "]   " << "error[" << GetLastError() << "]              from     ";
+        }
+
+        IMAGEHLP_LINE64 lineInfo = { sizeof(IMAGEHLP_LINE64) };
+        DWORD dwLineDisplacement;
+        if (SymGetLineFromAddr64(GetCurrentProcess(), (DWORD64)trace[i], &dwLineDisplacement, &lineInfo))
+        {
+            std::string pathfile = lineInfo.FileName;
+            if (pathfile.empty())
+            {
+                ss << "\r\n";
+                continue;
+            }
+            std::for_each(pathfile.begin(), pathfile.end(), [](char &ch) { if (ch == '/') ch = '\\'; });
+            auto pos = pathfile.find_last_of('\\');
+            if (pos != std::string::npos) pathfile[pos] = '/';
+            pos = pathfile.find_last_of('\\');
+            if (pos != std::string::npos) pathfile[pos] = '/'; else pos = -1;
+            ss << pathfile.substr(pos + 1) << ":" << lineInfo.LineNumber;
+        }
+        else
+        {
+            ss << "------:0";
+        }
+        ss << "\r\n";
+        if (strcmp(pSymbol->Name, "main") == 0) break;
+    }
+#else
+    void *stack[200];
+    size_t size = backtrace(stack, 200);
+    char **stackSymbol = backtrace_symbols(stack, size);
+    ss << "backtrace: ";
+    for (size_t i = 1; i < size; i++)
+    {
+        ss << stack[i] << "  ";
+    }
+    ss << "\r\n";
+    for (size_t i = 1; i < size && stackSymbol != NULL; i++)
+    {
+        ss << "bt[" << i - 1 << "] " << stackSymbol[i] << "\r\n";
+    }
+    free(stackSymbol);
+#endif
+    return std::move(ss.str());
+}
 
 
 
