@@ -6,7 +6,7 @@
 
 void Service::setInited()
 {
-    _inited = true;
+    setBitFlag(_status, SS_INITED);
     if (_timer == InvalidTimerID)
     {
         _timer = SessionManager::getRef().createTimer(5000, std::bind(&Service::onTimer, shared_from_this()));
@@ -27,36 +27,20 @@ void Service::onTimer()
 
 void Service::setWorked(bool work)
 {
-    if (!isShell() && work)
+    if (!isShell())
     {
-        LOGD("Service::setWorked broadcast. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
-        ClusterServiceInited inited(getServiceType(), getServiceID());
-        Application::getRef().broadcast(inited);
-    }
-    if (isShell())
-    {
+        LOGD("local service switch[" << work << "]. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
         if (work)
         {
-            LOGI("remote service [" << ServiceNames.at(getServiceType()) << "] begin worked [" << getServiceID() << "] ...");
-        }
-        else
-        {
-            LOGW("remote service [" << ServiceNames.at(getServiceType()) << "] end work [" << getServiceID() << "] ...");
+            ClusterServiceInited inited(getServiceType(), getServiceID());
+            Application::getRef().broadcast(inited);
         }
     }
     else
     {
-        if (work)
-        {
-            LOGI("local service [" << ServiceNames.at(getServiceType()) << "] begin worked [" << getServiceID() << "] ...");
-        }
-        else
-        {
-            LOGW("local service [" << ServiceNames.at(getServiceType()) << "] end work [" << getServiceID() << "] ...");
-        }
+        LOGI("remote service switch [" << work  << "] service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
     }
-
-    _worked = work;
+    setBitFlag(_status, SS_WORKED, work);
 }
 
 ui32 Service::makeCallback(const ServiceCallback &cb)
@@ -65,8 +49,9 @@ ui32 Service::makeCallback(const ServiceCallback &cb)
     _cbs.insert(std::make_pair(cbid, std::make_pair(getNowTime(), cb)));
     return cbid;
 }
-ServiceCallback Service::checkCallback(ui32 cbid)
+ServiceCallback Service::checkoutCallback(ui32 cbid)
 {
+    cleanCallback();
     auto founder = _cbs.find(cbid);
     if (founder == _cbs.end())
     {
@@ -76,17 +61,18 @@ ServiceCallback Service::checkCallback(ui32 cbid)
     _cbs.erase(founder);
     return std::move(cb);
 }
-void Service::checkCallback()
+
+void Service::cleanCallback()
 {
     time_t now = getNowTime();
-    if (now - _callbackCheck > 180)
+    if (now - _callbackCleanTS > 180)
     {
-        _callbackCheck = now;
+        _callbackCleanTS = now;
         for (auto iter = _cbs.begin(); iter != _cbs.end();)
         {
             if (now - iter->second.first > 600)
             {
-                LOGW("Service::globalCall waiting callback timeout. cbid=" << iter->first << ", call time=" << iter->second.first);
+                LOGW("Service::cleanCallback waiting callback timeout. cbid=" << iter->first << ", call time=" << iter->second.first);
                 iter = _cbs.erase(iter);
             }
             else
@@ -129,7 +115,7 @@ void Service::backCall(const Tracing & trace, const char * block, unsigned int l
     Application::getRef().callOtherService(trc, block, len);
 }
 
-void Service::process2(const Tracing & trace, const std::string & block)
+void Service::process4bind(const Tracing & trace, const std::string & block)
 {
     process(trace, block.c_str(), (unsigned int)block.length());
 }
@@ -138,7 +124,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
 {
     if (trace._traceBackID > 0)
     {
-        auto cb = checkCallback(trace._traceBackID);
+        auto cb = checkoutCallback(trace._traceBackID);
         if (!cb)
         {
             LOGE("Service::process callback timeout. cbid=" << trace._traceBackID);

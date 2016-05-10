@@ -17,9 +17,9 @@ void User::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
     //globalCall("client",_uID, ack);
 }
 
-void  User::process2(const Tracing & trace, const std::string & block)
+void  User::process4bind(const Tracing & trace, const std::string & block)
 {
-    Service::process2(trace, block);
+    Service::process4bind(trace, block);
 }
 
 void  User::process(const Tracing & trace, const char * block, unsigned int len)

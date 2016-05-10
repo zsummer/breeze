@@ -372,22 +372,22 @@ int checkTime()
     if (true)
     {
         int bit = 0;
-        bit = appendBitFlag(bit, 1);
-        bit = appendBitFlag(bit, 2);
-        if (!checkBitFlag(bit, 1))
+        bit = setBitFlag(bit, 1);
+        bit = setBitFlag(bit, 2);
+        if (!getBitFlag(bit, 1))
         {
             return 16;
         }
-        bit = removeBitFlag(bit, 1);
-        if (checkBitFlag(bit, 1))
+        bit = setBitFlag(bit, 1, false);
+        if (getBitFlag(bit, 1))
         {
             return 17;
         }
-        if (!checkBitFlag(bit, 2))
+        if (!getBitFlag(bit, 2))
         {
             return 18;
         }
-        bit = removeBitFlag(bit, 2);
+        bit = setBitFlag(bit, 2, false);
         if (bit != 0)
         {
             return 19;

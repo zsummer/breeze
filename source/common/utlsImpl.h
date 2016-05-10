@@ -248,23 +248,22 @@ inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double o
 
 
 
-template<class Integer, class Number>
-inline bool checkBitFlag(Integer n, Number f)
+template<class Integer, class Pos>
+inline bool getBitFlag(Integer bin, Pos pos)
 {
-    return (n & ((Integer)1 << (f - 1))) != 0;
+    return (bin & ((Integer)1 << (pos - 1))) != 0;
 }
 
-template<class Integer, class Number>
-inline Integer appendBitFlag(Integer n, Number f)
+template<class Integer, class Pos>
+inline Integer setBitFlag(Integer bin, Pos pos, bool flag = true)
 {
-    return n | ((Integer)1 << (f - 1));
+    if (flag)
+    {
+        return bin | ((Integer)1 << (pos - 1));
+    }
+    return bin & ~((Integer)1 << (pos - 1));
 }
 
-template<class Integer, class Number>
-inline Integer removeBitFlag(Integer n, Number f)
-{
-    return n & ~((Integer)1 << (f - 1));
-}
 
 
 

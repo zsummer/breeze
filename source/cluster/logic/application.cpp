@@ -739,7 +739,7 @@ void Application::callOtherService(Tracing trace, const char * block, unsigned i
     {
         std::string bk;
         bk.assign(block, len);
-        SessionManager::getRef().post(std::bind(&Service::process2, fder->second, trace, std::move(bk)));
+        SessionManager::getRef().post(std::bind(&Service::process4bind, fder->second, trace, std::move(bk)));
     }
 
 }

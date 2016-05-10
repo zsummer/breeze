@@ -38,7 +38,7 @@ public:
 public:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void process(const Tracing & trace, const char * block, unsigned int len) override final;
-    void process2(const Tracing & trace, const std::string & block) override final;
+    void process4bind(const Tracing & trace, const std::string & block) override final;
     virtual void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr)override final;
     virtual void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr)override final;
 private:

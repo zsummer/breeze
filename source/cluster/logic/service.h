@@ -44,6 +44,17 @@ using ServiceCallback = std::function<void(zsummer::proto4z::ReadStream &)>;
 
 using ProtoID = zsummer::proto4z::ProtoInteger;
 const ProtoID InvalidProtoID = -1;
+
+enum ServiceStatus
+{
+    SS_INITED = 1,
+    SS_WORKED = 2,
+    SS_IS_SHELL= 3,
+    SS_STOP = 4,
+};
+
+
+
 class Application;
 class Service : public std::enable_shared_from_this<Service>
 {
@@ -53,52 +64,51 @@ public:
     virtual ~Service(){};
     using Slots = std::unordered_map<unsigned short, Slot>;
 
-    inline ui16 getServiceType(){ return _st; }
+    inline ui16 getServiceType(){ return _type; }
     inline ServiceID getServiceID(){ return _serviceID; }
     inline ClusterID getClusterID(){ return _cltID; }
     inline bool isShell(){ return _cltID != InvalidClusterID; }
-    inline bool isInited(){ return _inited; }
-    inline bool isWorked(){ return _worked; }
-
+    inline bool isInited(){ return getBitFlag(_status, SS_INITED); }
+    inline bool isWorked(){ return getBitFlag(_status, SS_WORKED) && !getBitFlag(_status, SS_STOP); }
+protected:
+    inline void setServiceType(ui16 st) { _type = st; }
+    inline void setServiceID(ServiceID serviceID) { _serviceID = serviceID; }
+    void setWorked(bool work);
+private:
+    void setInited();
+    inline void setShell(ClusterID cltID) { _cltID = cltID; }
+    void onTimer();
+protected:
+    virtual bool onInit() = 0; //user must setWorked(true) when init finish & success. 
+    virtual void onTick() = 0; //
+    virtual void onStop() = 0; //user must setWorked(false) when stop finish & success. 
 protected:
     template<class Proto>
-    inline void slotting(const Slot & msgfun){ _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
-
-protected:
-    inline void setServiceType(ui16 st){ _st = st; }
-    inline void setServiceID(ServiceID serviceID){ _serviceID = serviceID; }
-    virtual bool onInit() = 0; //need call setWorked(true) when inited. 
-    virtual void onTick() = 0;
-    virtual void onStop() = 0;//need call setWorked(false) when stoped. 
+    inline void slotting(const Slot & msgfun) { _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
+    
     virtual void process(const Tracing & trace, const char * block, unsigned int len);
-    virtual void process2(const Tracing & trace, const std::string & block);
+    virtual void process4bind(const Tracing & trace, const std::string & block);
 
-    void setWorked(bool work);
     virtual void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     virtual void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
 
     ui32 makeCallback(const ServiceCallback &cb);
-    void checkCallback();
-    ServiceCallback checkCallback(ui32 cbid);
+    void cleanCallback();
+    ServiceCallback checkoutCallback(ui32 cbid);
 
-private:
-    void setInited();
-    inline void setShell(ClusterID cltID){ _cltID = cltID; }
-
-    void onTimer();
 private:
     Slots _slots;
     std::map<ProtoID, std::string> _slotsName;
-    ui16 _st = (ui16)ServiceInvalid;
-    bool _inited = false;
-    bool _worked = false;
-    bool _shell = false;
+    ui16 _type = (ui16)ServiceInvalid;
+    short _status = 0;
     ClusterID _cltID = InvalidClusterID;
     ServiceID _serviceID = InvalidServiceID;
-    ui32 _callbackSeq = 0;
-    time_t _callbackCheck = 0;
-    std::map<ui32, std::pair<time_t,ServiceCallback> > _cbs;
     TimerID _timer = InvalidTimerID;
+private:
+    ui32 _callbackSeq = 0;
+    time_t _callbackCleanTS = 0;
+    std::map<ui32, std::pair<time_t,ServiceCallback> > _cbs;
+
 };
 using ServicePtr = std::shared_ptr<Service>;
 
