@@ -51,7 +51,7 @@ void  UserMgr::process(const Tracing & trace, const char * block, unsigned int l
             ws.appendOriginalData(block, len);
             Application::getRef().callOtherCluster(shell._cltID, ws.getStream(), ws.getStreamLen());
         }
-        catch (std::runtime_error e)
+        catch (const std::exception & e)
         {
             LOGE("UserMgr::process catch except error. e=" << e.what());
         }

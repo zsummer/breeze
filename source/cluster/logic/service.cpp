@@ -19,7 +19,7 @@ void Service::onTimer()
     {
         onTick();
     }
-    catch (std::runtime_error e)
+    catch (const std::exception & e)
     {
         LOGE("Service::onTimer catch except error. e=" << e.what() << ", service=" << ServiceNames.at(getServiceType()) << ", service id=" << getServiceID());
     }
@@ -150,7 +150,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
             cb(rs);
             return;
         }
-        catch (std::runtime_error e)
+        catch (const std::exception & e)
         {
             LOGE("Service::process catch except error. e=" << e.what() << ", trace=" << trace);
             return;
@@ -171,7 +171,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
             LOGE("Service::process call process error. not found maping function. pID=" << rs.getProtoID() << ", trace=" << trace);
         }
     }
-    catch (std::runtime_error e)
+    catch (const std::exception & e)
     {
         LOGE("Service::process call process catch except error. e=" << e.what() << ", trace=" << trace);
     }

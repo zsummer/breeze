@@ -98,7 +98,7 @@ void Application::broadcast(const Proto & proto)
             SessionManager::getRef().sendSessionData(c.second.first, ws.getStream(), ws.getStreamLen());
         }
     }
-    catch (std::runtime_error e)
+    catch (const std::exception & e)
     {
         LOGE("Application::broadcast catch except error. e=" << e.what());
     }

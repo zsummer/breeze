@@ -91,10 +91,10 @@ int main(int argc, char* argv[])
         
         
     }
-    catch (std::runtime_error e)
+    catch (const std::exception & e)
     {
         LOGE("Appliction::init have runtime error. what=" << e.what());
-        return 1;
+        return -1;
     }
 
     

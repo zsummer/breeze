@@ -294,11 +294,7 @@ bool Application::startWideListen()
 
 bool Application::start()
 {
-    if (startClusterListen() && startClusterConnect() && startWideListen())
-    {
-        return true;
-    }
-    return false;
+    return startClusterListen() && startClusterConnect() && startWideListen();
 }
 
 
