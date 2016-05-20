@@ -241,7 +241,7 @@ int checkFile()
         return 3;
     }
     writeFileContent(path + filename, content.c_str(), content.length(), false);
-    if (!hadFile(path + filename))
+    if (!accessFile(path + filename))
     {
         return 4;
     }
@@ -281,7 +281,7 @@ int checkFile()
     {
         return 8;
     }
-    if (hadFile(path + filename))
+    if (accessFile(path + filename))
     {
         return 9;
     }

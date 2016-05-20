@@ -124,7 +124,7 @@ bool removeDir(const std::string &path)
 {
     return ::rmdir(path.c_str()) == 0;
 }
-bool hadFile(const std::string &pathfile)
+bool accessFile(const std::string &pathfile)
 {
 #ifdef WIN32
     return ::_access(pathfile.c_str(), 0) == 0;
@@ -336,9 +336,9 @@ void sleepMillisecond(unsigned int ms)
 #endif
 }
 
-void trim(std::string &str, std::string ign, int both)
+std::string trim(const std::string &str, const std::string & ign, int both)
 {
-    if (str.empty() || ign.empty()){ return; }
+    if (str.empty() || ign.empty()){ return ""; }
     size_t length = str.length();
     size_t posBegin = 0;
     size_t posEnd = 0;
@@ -349,7 +349,7 @@ void trim(std::string &str, std::string ign, int both)
         bool bCheck = false;
         for (size_t j = 0; j < ign.length(); j++)
         {
-            if (str[i] == ign[j])
+            if (str.at(i) == ign.at(j))
             {
                 bCheck = true;
             }
@@ -377,21 +377,19 @@ void trim(std::string &str, std::string ign, int both)
     
     if (posBegin < posEnd)
     {
-        str = str.substr(posBegin, posEnd - posBegin);
+        return str.substr(posBegin, posEnd - posBegin);
     }
-    else
-    {
-        str.clear();
-    }
+
+    return "";
 }
 std::vector<std::string> splitString(std::string text, std::string deli, std::string ign)
 {
-    trim(text, ign);
+    text = trim(text, ign);
     std::vector<std::string> ret;
     if (deli.empty())
     {
         ret.push_back(text);
-        trim(ret.back(), ign);
+        ret.back() = trim(ret.back(), ign);
         return std::move(ret);
     }
     size_t beginPos = 0;
@@ -405,13 +403,13 @@ std::vector<std::string> splitString(std::string text, std::string deli, std::st
         if (matched == deli)
         {
             ret.push_back(text.substr(beginPos, i + 1 - deli.length() - beginPos));
-            trim(ret.back(), ign);
+            ret.back() = trim(ret.back(), ign);
             beginPos = i + 1;
             matched.clear();
         }
     }
     ret.push_back(text.substr(beginPos, text.length() - beginPos));
-    trim(ret.back(), ign);
+    ret.back() = trim(ret.back(), ign);
     return std::move(ret);
 }
 
@@ -667,13 +665,11 @@ time_t getUTCTimeFromLocalString(const std::string & str)
     {
         if (str.find(':') != std::string::npos)
         {
-            stime = str;
-            trim(stime, " ");
+            stime = trim(str, " ");
         }
         else
         {
-            sdate = str;
-            trim(sdate, " ");
+            sdate = trim(str, " ");
         }
     }
     struct tm st;

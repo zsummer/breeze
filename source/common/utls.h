@@ -78,14 +78,14 @@
 
 //file
 //==========================================================================
-//isBinary if false it's will auto fix UTF-8 BOM. only this.
+//it's will jump UTF-8 BOM when isBinary  is false .
 std::string readFileContent(const std::string & filename, bool isBinary = false, size_t limitSize = 1024 * 1024, size_t beginIndex = 0);
 size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend = true);
 bool isDirectory(const std::string & path);
 bool createDirectory(std::string path);
 bool removeFile(const std::string &pathfile);
 bool removeDir(const std::string &path);
-bool hadFile(const std::string &pathfile);
+bool accessFile(const std::string &pathfile);
 std::string fixPathString(const std::string &path);
 struct SearchFileInfo
 {
@@ -94,6 +94,13 @@ struct SearchFileInfo
     unsigned long long filesize;
     bool bDir;
 };
+//path support wildcard like : 
+//  /var/log
+//  /var/log/
+//  /var/log/*
+//  /var/log/*.log
+//  /var/log/mysql*1*2.log
+//it's will recursion subdirectory when recursion is true
 bool searchFiles(std::string path, std::vector<SearchFileInfo> & files, bool recursion = false);
 
 //md5
@@ -107,9 +114,9 @@ template<class T>
 std::string toString(const T &t);
 template<class RET>
 RET fromString(const std::string & t, RET def);
-//tonumber
+
 //both 1 left, 2right, 3 both
-void trim(std::string &str, std::string ign, int both = 3);
+std::string trim(const std::string &str, const std::string& ign, int both = 3);
 
 std::vector<std::string> splitString(std::string text, std::string deli, std::string ign);
 
