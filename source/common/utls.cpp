@@ -592,7 +592,7 @@ Char. number range  |        UTF-8 octet sequence
 0000 0800-0000 FFFF | 1110xxxx 10xxxxxx 10xxxxxx
 0001 0000-0010 FFFF | 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 */
-int getCharCount(const std::string & str)
+int getCharUTF8Count(const std::string & str)
 {
     //0x7f == 0111 1111
     //0xc0 == 1100 0000

@@ -200,7 +200,7 @@ int checkString()
     {
         //蓝天and҉😌   
         char org[] = { (char)0xe8,  (char)0x93,  (char)0x9d,    (char)0xe5,  (char)0xa4,  (char)0xa9,    (char)0x61,  (char)0x6e,  (char)0x64,    (char)0xd2,  (char)0x89,    (char)0xf0, (char)0x9f, (char)0x98, (char)0x8c,   (char)0x00 };
-        if (getCharCount(org) != 7)
+        if (getCharUTF8Count(org) != 7)
         {
             return 29;
         }
