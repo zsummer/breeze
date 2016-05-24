@@ -209,6 +209,10 @@ bool Application::startClusterConnect()
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
         session->setUserParam(UPARAM_REMOTE_CLUSTER, cluster._cluster);
         _clusterSession[cluster._cluster] = std::make_pair(cID, 0);
+        for (ui16 i = ServiceClient; i < ServiceMax; i++)
+        {
+            _services.insert(std::make_pair(i, std::unordered_map<ServiceID, ServicePtr >()));
+        }
         for (auto st : cluster._services)
         {
             auto & second = _services[st];
