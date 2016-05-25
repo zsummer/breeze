@@ -41,20 +41,26 @@ public:
     void callOtherCluster(ClusterID cltID, const char * block, unsigned int len);
     void callOtherService(Tracing trace, const char * block, unsigned int len);
     bool isStoping();
-    void _onTimer();
+
 private:
     bool startClusterListen();
     bool startClusterConnect();
     bool startWideListen();
 
+public:
+    bool createService(ui16 serviceType, ServiceID serviceID, ClusterID clusterID, bool isShell, bool failExit);
+    bool destroyService(ui16 serviceType, ServiceID serviceID);
+    void checkServiceState();
+    void onCheckSafeExit();
+
+
+private:
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
     void event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs);
     void event_onRemoteShellForward(TcpSessionPtr session, ReadStream & rs);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    ServicePtr createService(ui16 serviceType, ServiceID serviceID, bool isShell);
-    void checkServiceState();
-    void onCheckSafeExit();
+
 
     void event_onClientLinked(TcpSessionPtr session);
     void event_onClientClosed(TcpSessionPtr session);

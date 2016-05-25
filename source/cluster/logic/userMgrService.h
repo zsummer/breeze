@@ -21,8 +21,8 @@
 
 
 
-#ifndef _USER_MANAGER_H_
-#define _USER_MANAGER_H_
+#ifndef _USER_MGR_SERVICE_H_
+#define _USER_MGR_SERVICE_H_
 #include <common.h>
 #include "service.h"
 

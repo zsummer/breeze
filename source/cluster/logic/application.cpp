@@ -217,36 +217,9 @@ bool Application::startClusterConnect()
         }
         for (auto st : cluster._services)
         {
-            auto & second = _services[st];
-            auto & servicePtr = second[InvalidServiceID];
-            if (servicePtr)
+            if (!createService(st, InvalidServiceID, cluster._cluster, cluster._cluster != ServerConfig::getRef().getClusterID(), true))
             {
-                LOGE("Application::startClusterConnect add service error. service alread exist. type=" << st << ", remote ip="
-                    << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
                 return false;
-            }
-            else
-            {
-                servicePtr = createService(st, ServiceInvalid, false);
-            }
-            if (!servicePtr)
-            {
-                LOGE("Application::startClusterConnect add service error. unknown service type. type=" << st <<", remote ip="
-                    << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
-                return false;
-            }
-
-            servicePtr->setServiceType(st);
-            if (cluster._cluster != ServerConfig::getRef().getClusterID())
-            {
-                LOGA("Application::startClusterConnect add remote service success. type=" << ServiceNames.at(st) << ", remote ip="
-                    << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
-                servicePtr->setShell(cluster._cluster);
-            }
-            else
-            {
-                LOGA("Application::startClusterConnect add local service success. type=" << ServiceNames.at(st) << ", remote ip="
-                    << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
             }
         }
     }
@@ -350,10 +323,35 @@ void Application::event_onServiceClosed(TcpSessionPtr session)
     founder->second.second = 0;
 }
 
-
-ServicePtr Application::createService(ui16 serviceType, ServiceID serviceID, bool isShell)
+bool Application::destroyService(ui16 serviceType, ServiceID serviceID)
 {
-    ServicePtr service;
+    auto founder = _services.find(serviceType);
+    if (founder == _services.end())
+    {
+        return false;
+    }
+    auto fder = founder->second.find(serviceID);
+    if (fder == founder->second.end())
+    {
+        return false;
+    }
+    founder->second.erase(fder);
+    return true;
+}
+
+bool Application::createService(ui16 serviceType, ServiceID serviceID, ClusterID clusterID, bool isShell, bool failExit)
+{
+    ServicePtr & service = _services[serviceType][InvalidServiceID];
+    if (service)
+    {
+        LOGE("Application::createService error. service alread exist. serviceType=" << serviceType << ", serviceID="
+            << serviceID << ", clusterID=" << clusterID << ", isShell=" << isShell << ", failExit=" << failExit);
+        if (failExit)
+        {
+            goto goExit;
+        }
+        return false;
+    }
     if (isShell)
     {
         service = std::make_shared<ShellService>();
@@ -382,13 +380,22 @@ ServicePtr Application::createService(ui16 serviceType, ServiceID serviceID, boo
     else
     {
         LOGE("createService invalid service type " << serviceType);
+        if (failExit)
+        {
+            goto goExit;
+        }
+        return false;
     }
-
     service->setServiceType(serviceType);
     service->setServiceID(serviceID);
-
+    service->setClusterID(clusterID);
     service->setStatus(SS_CREATED);
-    return service;
+
+
+    return true;
+goExit:
+    Application::getRef().stop();
+    return false;
 }
 
 void Application::checkServiceState()

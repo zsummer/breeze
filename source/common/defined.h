@@ -142,19 +142,19 @@ enum ServiceType : ui16
 };
 const std::vector<std::string> ServiceNames =
 {
-    "Unknown",
-    "DictDBMgr",
-    "InfoDBMgr",
-    "LogDBMgr",
+    "UnknownService",
+    "DictDBMgrService",
+    "InfoDBMgrService",
+    "LogDBMgrService",
     "UserMgrService",
 
-    "Unknown",
+    "UnknownService",
 
-    "Client",
+    "ClientService",
     "UserService",
     
     //...
-    "Unknown",
+    "UnknownService",
 };
 
 struct Tracing

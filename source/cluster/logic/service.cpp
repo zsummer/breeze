@@ -13,6 +13,10 @@ void Service::beginTimer()
 }
 void Service::onTimer()
 {
+    if (_timer == InvalidTimerID)
+    {
+        return;
+    }
     _timer = SessionManager::getRef().createTimer(5000, std::bind(&Service::onTimer, shared_from_this()));
     try
     {
@@ -52,6 +56,7 @@ bool Service::finishUninit()
         LOGD("remote service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
     }
     setStatus(SS_DESTROY);
+    SessionManager::getRef().post(std::bind(&Application::destroyService, Application::getPtr(), getServiceType(), getServiceID()));
     return true;
 }
 
