@@ -24,9 +24,6 @@
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="logic\user.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="logic\application.cpp">
       <Filter>logic</Filter>
     </ClCompile>
@@ -36,14 +33,17 @@
     <ClCompile Include="logic\service.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="logic\userMgr.cpp">
+    <ClCompile Include="logic\shellService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\userMgrService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\userService.cpp">
       <Filter>logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="logic\user.h">
-      <Filter>logic</Filter>
-    </ClInclude>
     <ClInclude Include="logic\application.h">
       <Filter>logic</Filter>
     </ClInclude>
@@ -53,7 +53,13 @@
     <ClInclude Include="logic\service.h">
       <Filter>logic</Filter>
     </ClInclude>
-    <ClInclude Include="logic\userMgr.h">
+    <ClInclude Include="logic\shellService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\userMgrService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\userService.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>

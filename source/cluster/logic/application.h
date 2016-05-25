@@ -52,7 +52,7 @@ private:
     void event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs);
     void event_onRemoteShellForward(TcpSessionPtr session, ReadStream & rs);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    ServicePtr createLocalService(ui16 st);
+    ServicePtr createService(ui16 serviceType, ServiceID serviceID, bool isShell);
     void checkServiceState();
     void onCheckSafeExit();
 

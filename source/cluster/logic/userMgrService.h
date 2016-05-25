@@ -36,7 +36,7 @@ struct ServiceUserShell
 
 struct UserPreviewCache
 {
-    int _status = 0; //0 no Client no User,  1 Creating User, 2 had User
+    int _status = 0; //0 no Client no UserService,  1 Creating UserService, 2 had UserService
     UserPreview _preview;
     ClusterID _cltID = InvalidClusterID;
 };
@@ -50,11 +50,11 @@ struct AccountCache
 };
 
 
-class UserMgr : public Service
+class UserMgrService : public Service
 {
 public:
-    UserMgr();
-    ~UserMgr();
+    UserMgrService();
+    ~UserMgrService();
     bool onInit() override final;
     void onUninit() override final;
     void onTick() override final;

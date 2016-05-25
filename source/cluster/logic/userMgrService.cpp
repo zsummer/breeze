@@ -1,27 +1,27 @@
 ﻿#include "application.h"
-#include "userMgr.h"
+#include "userMgrService.h"
 #include <ProtoCommon.h>
 #include <ProtoDBService.h>
 #include <ProtoUser.h>
 
 
 
-UserMgr::~UserMgr()
+UserMgrService::~UserMgrService()
 {
     
 }
 
-void UserMgr::onTick()
+void UserMgrService::onTick()
 {
     time_t now = getNowTime();
     if (now - _lastTime > 10)
     {
         _lastTime = now;
-        LOGA("UserMgr::onTick");
+        LOGA("UserMgrService::onTick");
     }
 }
 
-void  UserMgr::process(const Tracing & trace, const char * block, unsigned int len)
+void  UserMgrService::process(const Tracing & trace, const char * block, unsigned int len)
 {
     if (trace._toService == ServiceUserMgr)
     {
@@ -33,13 +33,13 @@ void  UserMgr::process(const Tracing & trace, const char * block, unsigned int l
         auto founder = _userShells.find(trace._toServiceID);
         if (founder == _userShells.end())
         {
-            LOGE("UserMgr not found the user/client id trace=" << trace);
+            LOGE("UserMgrService not found the user/client id trace=" << trace);
             return;
         }
         const ServiceUserShell & shell = founder->second;
         if (shell._uID != trace._toServiceID)
         {
-            LOGF("UserMgr found the user/client id, but user shell store service id not user id or cluster id invalid. trace=" << trace
+            LOGF("UserMgrService found the user/client id, but user shell store service id not user id or cluster id invalid. trace=" << trace
                 <<", shell.uID=" << shell._uID << ", shell.cltID=" << shell._cltID);
             return;
         }
@@ -53,19 +53,19 @@ void  UserMgr::process(const Tracing & trace, const char * block, unsigned int l
         }
         catch (const std::exception & e)
         {
-            LOGE("UserMgr::process catch except error. e=" << e.what());
+            LOGE("UserMgrService::process catch except error. e=" << e.what());
         }
         return;
     }
-    LOGF("UserMgr::process trace=" << trace);
+    LOGF("UserMgrService::process trace=" << trace);
 }
-void UserMgr::onUninit()
+void UserMgrService::onUninit()
 {
     finishUninit();
 }
 
 
-bool UserMgr::onInit()
+bool UserMgrService::onInit()
 {
     const auto  & config = ServerConfig::getRef().getClusterConfig();
     for (const auto & cluster : config)
@@ -79,14 +79,14 @@ bool UserMgr::onInit()
     return true;
 }
 
-UserMgr::UserMgr()
+UserMgrService::UserMgrService()
 {
-    slotting<UserAuthReq>(std::bind(&UserMgr::onUserAuthReq, this, _1, _2));
+    slotting<UserAuthReq>(std::bind(&UserMgrService::onUserAuthReq, this, _1, _2));
 }
 
 
 
-void UserMgr::onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     UserAuthReq req;
     rs >> req;

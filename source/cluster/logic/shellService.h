@@ -20,32 +20,24 @@
 
 
 
-#ifndef _USER_H_
-#define _USER_H_
+#ifndef _SHELL_SERVICE_H_
+#define _SHELL_SERVICE_H_
 #include <common.h>
 #include "service.h"
 
 
 
 
-
-
-class User : public Service
+class ShellService : public Service
 {
 public:
-    User();
-    ~User();
-public:
-    void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void process(const Tracing & trace, const char * block, unsigned int len) override final;
-    void process4bind(const Tracing & trace, const std::string & block) override final;
-    virtual void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr)override final;
-    virtual void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr)override final;
+    ShellService();
+    ~ShellService();
+    bool onInit() override final;
+    void onUninit() override final;
+    void onTick() override final;
 private:
-    SessionID _clientID = InvalidSessionID;
 };
-
-
 
 
 

@@ -146,12 +146,12 @@ const std::vector<std::string> ServiceNames =
     "DictDBMgr",
     "InfoDBMgr",
     "LogDBMgr",
-    "UserMgr",
+    "UserMgrService",
 
     "Unknown",
 
     "Client",
-    "User",
+    "UserService",
     
     //...
     "Unknown",

@@ -1,28 +1,28 @@
-﻿#include "user.h"
+﻿#include "userService.h"
 
-User::User()
+UserService::UserService()
 {
     setServiceType(ServiceUser);
 
 }
 
-User::~User() 
+UserService::~UserService() 
 {
 }
 
-void User::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
+void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
 {
     //globalCall;
 
     //globalCall("client",_uID, ack);
 }
 
-void  User::process4bind(const Tracing & trace, const std::string & block)
+void  UserService::process4bind(const Tracing & trace, const std::string & block)
 {
     Service::process4bind(trace, block);
 }
 
-void  User::process(const Tracing & trace, const char * block, unsigned int len)
+void  UserService::process(const Tracing & trace, const char * block, unsigned int len)
 {
     if (trace._toService == ServiceUser && trace._toServiceID == getServiceID())
     {
@@ -42,10 +42,10 @@ void  User::process(const Tracing & trace, const char * block, unsigned int len)
         return;
     }
     
-    LOGF("User::process trace=" << trace);
+    LOGF("UserService::process trace=" << trace);
 }
 
-void User::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
+void UserService::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
 {
     if ((st == ServiceClient && svcID != getServiceID())
         || (st != ServiceUser && st != ServiceClient))
@@ -68,7 +68,7 @@ void User::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int
     LOGE("globalCall unknown flow");
 }
 
-void User::backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
+void UserService::backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {
     if ((trace._fromService == ServiceClient && trace._fromServiceID != getServiceID())
         || (trace._fromService != ServiceUser && trace._fromService != ServiceClient))

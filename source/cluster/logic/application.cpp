@@ -1,7 +1,9 @@
 ﻿#include "../config.h"
 #include "application.h"
 #include "dbService.h"
-#include "userMgr.h"
+#include "userMgrService.h"
+#include "userService.h"
+#include "shellService.h"
 #include <ProtoUser.h>
 int g_closeState = 0;
 
@@ -225,7 +227,7 @@ bool Application::startClusterConnect()
             }
             else
             {
-                servicePtr = createLocalService(st);
+                servicePtr = createService(st, ServiceInvalid, false);
             }
             if (!servicePtr)
             {
@@ -349,29 +351,44 @@ void Application::event_onServiceClosed(TcpSessionPtr session)
 }
 
 
-ServicePtr Application::createLocalService(ui16 st)
+ServicePtr Application::createService(ui16 serviceType, ServiceID serviceID, bool isShell)
 {
-    if (st == ServiceDictDBMgr)
+    ServicePtr service;
+    if (isShell)
     {
-        return std::make_shared<DBService>();
+        service = std::make_shared<ShellService>();
+        service->setShell(isShell);
     }
-    else if (st == ServiceInfoDBMgr)
+    else if (serviceType == ServiceDictDBMgr)
     {
-        return std::make_shared<DBService>();
+        service = std::make_shared<DBService>();
     }
-    else if (st == ServiceLogDBMgr)
+    else if (serviceType == ServiceInfoDBMgr)
     {
-        return std::make_shared<DBService>();
+        service = std::make_shared<DBService>();
     }
-    else if (st == ServiceUserMgr)
+    else if (serviceType == ServiceLogDBMgr)
     {
-        return std::make_shared<UserMgr>();
+        service = std::make_shared<DBService>();
+    }
+    else if (serviceType == ServiceUserMgr)
+    {
+        service = std::make_shared<UserMgrService>();
+    }
+    else if (serviceType == ServiceUser)
+    {
+        service = std::make_shared<UserService>();
     }
     else
     {
-        LOGE("createLocalService invalid service type " << st);
+        LOGE("createService invalid service type " << serviceType);
     }
-    return nullptr;
+
+    service->setServiceType(serviceType);
+    service->setServiceID(serviceID);
+
+    service->setStatus(SS_CREATED);
+    return service;
 }
 
 void Application::checkServiceState()

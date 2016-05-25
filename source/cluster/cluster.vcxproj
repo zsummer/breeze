@@ -99,16 +99,18 @@
     <ClCompile Include="logic\dbService.cpp" />
     <ClCompile Include="logic\application.cpp" />
     <ClCompile Include="logic\service.cpp" />
-    <ClCompile Include="logic\user.cpp" />
-    <ClCompile Include="logic\userMgr.cpp" />
+    <ClCompile Include="logic\shellService.cpp" />
+    <ClCompile Include="logic\userMgrService.cpp" />
+    <ClCompile Include="logic\userService.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logic\dbService.h" />
     <ClInclude Include="logic\application.h" />
     <ClInclude Include="logic\service.h" />
-    <ClInclude Include="logic\user.h" />
-    <ClInclude Include="logic\userMgr.h" />
+    <ClInclude Include="logic\shellService.h" />
+    <ClInclude Include="logic\userMgrService.h" />
+    <ClInclude Include="logic\userService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
