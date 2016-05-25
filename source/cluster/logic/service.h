@@ -47,10 +47,11 @@ const ProtoID InvalidProtoID = -1;
 
 enum ServiceStatus
 {
-    SS_INITED = 1,
-    SS_WORKED = 2,
-    SS_IS_SHELL= 3,
-    SS_STOP = 4,
+    SS_CREATED,
+    SS_INITING,
+    SS_WORKING,
+    SS_UNINITING,
+    SS_DESTROY,
 };
 
 
@@ -62,27 +63,33 @@ class Service : public std::enable_shared_from_this<Service>
 public:
     Service(){}
     virtual ~Service(){};
-    using Slots = std::unordered_map<unsigned short, Slot>;
 
-    inline ui16 getServiceType(){ return _type; }
+public:
+    inline ui16 getServiceType(){ return _serviceType; }
     inline ServiceID getServiceID(){ return _serviceID; }
     inline ClusterID getClusterID(){ return _cltID; }
-    inline bool isShell(){ return _cltID != InvalidClusterID; }
-    inline bool isInited(){ return getBitFlag(_status, SS_INITED); }
-    inline bool isWorked(){ return getBitFlag(_status, SS_WORKED) && !getBitFlag(_status, SS_STOP); }
+    inline ui16 getStatus() { return _status; }
+    inline bool isShell() { return _shell; }
 protected:
-    inline void setServiceType(ui16 st) { _type = st; }
+    inline void setServiceType(ui16 serviceType) { _serviceType = serviceType; }
     inline void setServiceID(ServiceID serviceID) { _serviceID = serviceID; }
-    void setWorked(bool work);
+    inline void setStatus(ui16 status) { _status = status; };
+    inline void setClusterID(ClusterID cltID) { _cltID = cltID; }
+    inline void setShell(bool shell) { _shell = shell; }
+
 private:
-    void setInited();
-    inline void setShell(ClusterID cltID) { _cltID = cltID; }
+    void beginTimer();
     void onTimer();
 protected:
-    virtual bool onInit() = 0; //user must setWorked(true) when init finish & success. 
     virtual void onTick() = 0; //
-    virtual void onStop() = 0; //user must setWorked(false) when stop finish & success. 
+
+    virtual bool onInit() = 0; 
+    bool finishInit();
+    virtual void onUninit() = 0;
+    bool finishUninit();
+
 protected:
+    using Slots = std::unordered_map<unsigned short, Slot>;
     template<class Proto>
     inline void slotting(const Slot & msgfun) { _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
     
@@ -99,11 +106,16 @@ protected:
 private:
     Slots _slots;
     std::map<ProtoID, std::string> _slotsName;
-    ui16 _type = (ui16)ServiceInvalid;
-    short _status = 0;
-    ClusterID _cltID = InvalidClusterID;
-    ServiceID _serviceID = InvalidServiceID;
+
     TimerID _timer = InvalidTimerID;
+
+private:
+    ui16 _serviceType = (ui16)ServiceInvalid;
+    ServiceID _serviceID = InvalidServiceID;
+    short _status = 0;
+    bool _shell = false;
+    ClusterID _cltID = InvalidClusterID;
+
 private:
     ui32 _callbackSeq = 0;
     time_t _callbackCleanTS = 0;

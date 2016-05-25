@@ -65,7 +65,6 @@ private:
 
     std::map < ClusterID, std::pair<SessionID, int>> _clusterSession;
     bool _clusterNetWorking = false;
-    bool _clusterServiceInited = false;
     bool _clusterServiceWorking = false;
     AccepterID _wlisten = InvalidAccepterID;
     

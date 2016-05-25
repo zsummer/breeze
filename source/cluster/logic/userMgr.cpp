@@ -59,9 +59,9 @@ void  UserMgr::process(const Tracing & trace, const char * block, unsigned int l
     }
     LOGF("UserMgr::process trace=" << trace);
 }
-void UserMgr::onStop()
+void UserMgr::onUninit()
 {
-    setWorked(false);
+    finishUninit();
 }
 
 
@@ -75,8 +75,7 @@ bool UserMgr::onInit()
             _balance.enableNode(cluster._cluster);
         }
     }
-    
-    setWorked(true);
+    finishInit();
     return true;
 }
 

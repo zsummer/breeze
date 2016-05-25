@@ -127,32 +127,34 @@ const ui64 InvalidServiceID = (ServiceID)0;
 
 enum ServiceType : ui16
 {
-    ServiceClient, 
-    ServiceUser,
-    ServiceInvalid, //有效的服务ID从这里开始到ServiceMax结束, 必须连续,  前后依赖
-
-    
+    ServiceInvalid = 0,//有效的服务ID从这里开始到ServiceMax结束, 必须连续,  前后依赖 
     ServiceDictDBMgr,
     ServiceInfoDBMgr,
     ServiceLogDBMgr,
     ServiceUserMgr,
 
+    ServiceMulti,
+
+    ServiceClient, 
+    ServiceUser,
     //...
     ServiceMax,
 };
 const std::vector<std::string> ServiceNames =
 {
-    "Client",
-    "User",
     "Unknown",
-
     "DictDBMgr",
     "InfoDBMgr",
     "LogDBMgr",
     "UserMgr",
 
+    "Unknown",
+
+    "Client",
+    "User",
+    
     //...
-    "InvalidName",
+    "Unknown",
 };
 
 struct Tracing

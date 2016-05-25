@@ -4,9 +4,8 @@
 #include <ProtoCluster.h>
 
 
-void Service::setInited()
+void Service::beginTimer()
 {
-    setBitFlag(_status, SS_INITED);
     if (_timer == InvalidTimerID)
     {
         _timer = SessionManager::getRef().createTimer(5000, std::bind(&Service::onTimer, shared_from_this()));
@@ -25,23 +24,37 @@ void Service::onTimer()
     }
 }
 
-void Service::setWorked(bool work)
+bool Service::finishInit()
 {
     if (!isShell())
     {
-        LOGD("local service switch[" << work << "]. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
-        if (work)
-        {
-            ClusterServiceInited inited(getServiceType(), getServiceID());
-            Application::getRef().broadcast(inited);
-        }
+        LOGD("local service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
+        ClusterServiceInited inited(getServiceType(), getServiceID());
+        Application::getRef().broadcast(inited);
     }
     else
     {
-        LOGI("remote service switch [" << work  << "] service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGD("remote service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
     }
-    setBitFlag(_status, SS_WORKED, work);
+    setStatus(SS_WORKING);
+    return true;
 }
+bool Service::finishUninit()
+{
+    if (!isShell())
+    {
+        LOGD("local service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
+        ClusterServiceInited inited(getServiceType(), getServiceID());
+        Application::getRef().broadcast(inited);
+    }
+    else
+    {
+        LOGD("remote service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
+    }
+    setStatus(SS_DESTROY);
+    return true;
+}
+
 
 ui32 Service::makeCallback(const ServiceCallback &cb)
 {

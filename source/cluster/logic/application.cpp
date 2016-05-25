@@ -67,7 +67,7 @@ void Application::onCheckSafeExit()
             {
                 if (!svc.second->isShell())
                 {
-                    svc.second->onStop();
+                    svc.second->onUninit(); //需要逐依赖关系uninit  
                 }
             }
         }
@@ -82,7 +82,7 @@ void Application::onCheckSafeExit()
         }
         for (auto & svc : second.second)
         {
-            if (!svc.second->isShell() && svc.second->isWorked())
+            if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)   //状态判断需要改  
             {
                 safe = false;
             }
@@ -209,7 +209,7 @@ bool Application::startClusterConnect()
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
         session->setUserParam(UPARAM_REMOTE_CLUSTER, cluster._cluster);
         _clusterSession[cluster._cluster] = std::make_pair(cID, 0);
-        for (ui16 i = ServiceClient; i < ServiceMax; i++)
+        for (ui16 i = ServiceInvalid; i <= ServiceMax; i++)
         {
             _services.insert(std::make_pair(i, std::unordered_map<ServiceID, ServicePtr >()));
         }
@@ -325,7 +325,7 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
         }
         for (auto & svc : second.second )
         {
-            if (!svc.second->isShell() && svc.second->isInited())
+            if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
                 ClusterServiceInited inited(svc.second->getServiceType(), svc.second->getServiceID());
                 Application::getRef().broadcast(inited);
@@ -394,15 +394,16 @@ void Application::checkServiceState()
     {
         for (auto service : second.second)
         {
-            if (service.second && !service.second->isShell() && service.second->isInited() && service.second->getServiceType() != ServiceUser)
+            if (service.second && !service.second->isShell() && service.second->getServiceType() != ServiceUser 
+                && (service.second->getStatus() == SS_INITING || service.second->getStatus() == SS_WORKING || service.second->getStatus() == SS_UNINITING) )
             {
                 service.second->onTick();
             }
         }
     }
-    if (!_clusterServiceInited)
+    if (!_clusterServiceWorking)
     {
-        for (ui16 i = ServiceInvalid+1; i != ServiceMax; i++)
+        for (ui16 i = ServiceInvalid+1; i != ServiceMulti; i++)
         {
             auto founder = _services.find(i);
             if (founder == _services.end())
@@ -418,14 +419,20 @@ void Application::checkServiceState()
                     Application::getRef().stop();
                     return;
                 }
-                if (service.second->isShell() && (!service.second->isInited() || !service.second->isWorked()))
+                if (service.second->isShell() && service.second->getStatus() != SS_WORKING)
                 {
+                    LOGD("waiting shell service[" << service.second->getServiceType() << "] working.. ");
                     return;
                 }
-                if (!service.second->isShell() && !service.second->isInited())
+                if (!service.second->isShell() && service.second->getStatus() == SS_INITING)
+                {
+                    LOGD("waiting local service[" << service.second->getServiceType() << "] initing.. ");
+                    return;
+                }
+                if (!service.second->isShell() && service.second->getStatus() == SS_CREATED)
                 {
                     LOGI("local service [" << ServiceNames.at(service.second->getServiceType()) << "] begin init. [" << service.second->getServiceID() << "] ...");
-                    service.second->setInited();
+                    service.second->setStatus(SS_INITING);
                     bool ret = service.second->onInit();
                     if (ret)
                     {
@@ -439,30 +446,19 @@ void Application::checkServiceState()
                     }
                     return;
                 }
-            }
-        }
-        LOGA("all local service inited");
-        _clusterServiceInited = true;
-    }
-    
-
-    if (!_clusterServiceWorking)
-    {
-        for (auto & second : _services)
-        {
-            for (auto & service : second.second)
-            {
-                if (!service.second || !service.second->isInited() || !service.second->isWorked())
+                if (service.second->getStatus() == SS_DESTROY || service.second->getStatus() == SS_UNINITING)
                 {
+                    LOGE("local service [" << ServiceNames.at(service.second->getServiceType()) << "]  init error.[" << service.second->getServiceID() << "] ...");
+                    Application::getRef().stop();
                     return;
                 }
             }
         }
-        _clusterServiceWorking = true;
         LOGA("all service worked.");
+        _clusterServiceWorking = true;
+
     }
-    
-    
+   
 }
 void Application::event_onRemoteShellForward(TcpSessionPtr session, ReadStream & rs)
 {
@@ -506,11 +502,10 @@ void Application::event_onRemoteServiceInited(TcpSessionPtr session, ReadStream 
         LOGE("event_onServiceMessage can't founder remote service with id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
         return;
     }
-    if (fder->second->isShell() && !fder->second->isInited())
+    if (fder->second->isShell() && fder->second->getStatus() != SS_WORKING)
     {
         LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "]begin init. [" << fder->second->getServiceID() << "] ...");
-        fder->second->setInited();
-        fder->second->setWorked(true);
+        fder->second->setStatus(SS_WORKING);  //serviceShell
         LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "] inited. [" << fder->second->getServiceID() << "] ...");
         checkServiceState();
     }
