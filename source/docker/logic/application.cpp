@@ -303,7 +303,17 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
             if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
                 CreateServiceNotice notice(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getDockerID(), svc.second->getClientID());
-                Application::getRef().broadcast(notice);
+                try
+                {
+                    WriteStream ws(notice.getProtoID());
+                    ws << notice;
+                    SessionManager::getRef().sendSessionData(session->getSessionID(), ws.getStream(), ws.getStreamLen());
+                }
+                catch (const std::exception&)
+                {
+
+                }
+                
             }
         }
     }
@@ -339,10 +349,10 @@ bool Application::destroyService(ui16 serviceType, ServiceID serviceID)
     return true;
 }
 
-bool Application::createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit)
+ServicePtr Application::createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit)
 {
-    ServicePtr & service = _services[serviceType][InvalidServiceID];
-    if (service)
+    ServicePtr & service = _services[serviceType][serviceID];
+    if (service && !service->isShell())
     {
         LOGE("Application::createService error. service alread exist. serviceType=" << serviceType << ", serviceID="
             << serviceID << ", dockerID=" << dockerID << ", isShell=" << isShell << ", failExit=" << failExit);
@@ -350,7 +360,7 @@ bool Application::createService(ui16 serviceType, ServiceID serviceID, DockerID 
         {
             goto goExit;
         }
-        return false;
+        return nullptr;
     }
     if (isShell)
     {
@@ -384,19 +394,25 @@ bool Application::createService(ui16 serviceType, ServiceID serviceID, DockerID 
         {
             goto goExit;
         }
-        return false;
+        return nullptr;
     }
     service->setServiceType(serviceType);
     service->setServiceID(serviceID);
     service->setDockerID(dockerID);
     service->setClientID(clientID);
-    service->setStatus(SS_CREATED);
-
-
-    return true;
+    if (isShell)
+    {
+        service->setStatus(SS_WORKING);
+    }
+    else
+    {
+        service->setStatus(SS_CREATED);
+    }
+    
+    return service;
 goExit:
     Application::getRef().stop();
-    return false;
+    return nullptr;
 }
 
 void Application::checkServiceState()
@@ -512,6 +528,24 @@ void Application::event_onRemoteShellForward(TcpSessionPtr session, ReadStream &
 
 void Application::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs)
 {
+    CreateServiceInDocker service;
+    rs >> service;
+
+    auto founder = _services.find(service.serviceType);
+    if (founder == _services.end())
+    {
+        LOGE("event_onServiceMessage can't founder remote service. service=" << ServiceNames.at(service.serviceType));
+        return;
+    }
+    auto ret = createService(service.serviceType, service.serviceID, ServerConfig::getRef().getDockerID(), service.clientID, false, false);
+    if (ret)
+    {
+        ret->onInit();
+    }
+}
+
+void Application::event_onCreateServiceNotice(TcpSessionPtr session, ReadStream & rs)
+{
     CreateServiceNotice service;
     rs >> service;
 
@@ -521,20 +555,42 @@ void Application::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStrea
         LOGE("event_onServiceMessage can't founder remote service. service=" << ServiceNames.at(service.serviceType));
         return;
     }
-    auto fder = founder->second.find(service.serviceID);
-    if (fder == founder->second.end() || !fder->second)
+    createService(service.serviceType, service.serviceID, service.dockerID, service.clientID, true, false);
+}
+
+void Application::event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs)
+{
+    DestroyServiceInDocker service;
+    rs >> service;
+
+    auto founder = _services.find(service.serviceType);
+    if (founder == _services.end())
     {
-        LOGE("event_onServiceMessage can't founder remote service with id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
+        LOGE("event_onServiceMessage can't founder remote service. service=" << ServiceNames.at(service.serviceType));
         return;
     }
-    if (fder->second->isShell() && fder->second->getStatus() != SS_WORKING)
+    auto fder = founder->second.find(service.serviceID);
+    if (fder != founder->second.end() && fder->second && fder->second->getStatus() == SS_WORKING && !fder->second->isShell())
     {
-        LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "]begin init. [" << fder->second->getServiceID() << "] ...");
-        fder->second->setStatus(SS_WORKING);  //serviceShell
-        LOGI("remote service [" << ServiceNames.at(fder->second->getServiceType()) << "] inited. [" << fder->second->getServiceID() << "] ...");
-        checkServiceState();
+        fder->second->setStatus(SS_UNINITING);
+        fder->second->onUninit();
     }
 }
+
+void Application::event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs)
+{
+    DestroyServiceNotice service;
+    rs >> service;
+
+    auto founder = _services.find(service.serviceType);
+    if (founder == _services.end())
+    {
+        LOGE("event_onServiceMessage can't founder remote service. service=" << ServiceNames.at(service.serviceType));
+        return;
+    }
+    destroyService(service.serviceType, service.serviceID);
+}
+
 
 void Application::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {

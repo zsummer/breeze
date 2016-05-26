@@ -37,7 +37,11 @@ public:
     bool run();
 public:
     template<class Proto>
-    void broadcast(const Proto & proto);
+    void broadcast(const Proto & proto, bool withme);
+    template<class Proto>
+    void sendToDocker(DockerID dockerID, const Proto & proto);
+
+
     void callOtherDocker(DockerID cltID, const char * block, unsigned int len);
     void callOtherService(Tracing trace, const char * block, unsigned int len);
     bool isStoping();
@@ -48,7 +52,7 @@ private:
     bool startWideListen();
 
 public:
-    bool createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit);
+    ServicePtr createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit);
     bool destroyService(ui16 serviceType, ServiceID serviceID);
     void checkServiceState();
     void onCheckSafeExit();
@@ -86,7 +90,7 @@ private:
 
 
 template<class Proto>
-void Application::broadcast(const Proto & proto)
+void Application::broadcast(const Proto & proto, bool withme)
 {
     try
     {
@@ -103,7 +107,10 @@ void Application::broadcast(const Proto & proto)
             {
                 LOGW("Application::broadcast warning error. session try connecting. cltID=" << c.first << ", client session ID=" << c.second.first);
             }
-            SessionManager::getRef().sendSessionData(c.second.first, ws.getStream(), ws.getStreamLen());
+            if (withme || ServerConfig::getRef().getDockerID() != c.first)
+            {
+                SessionManager::getRef().sendSessionData(c.second.first, ws.getStream(), ws.getStreamLen());
+            }
         }
     }
     catch (const std::exception & e)
@@ -112,6 +119,25 @@ void Application::broadcast(const Proto & proto)
     }
 }
 
+template<class Proto>
+void Application::sendToDocker(DockerID dockerID, const Proto & proto)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        auto founder = _dockerSession.find(dockerID);
+        if (founder != _dockerSession.end() && founder->second.first != InvalidSessionID && founder->second.second != 0)
+        {
+            SessionManager::getRef().sendSessionData(founder->second.first, ws.getStream(), ws.getStreamLen());
+        }
+
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Application::broadcast catch except error. e=" << e.what());
+    }
+}
 
 
 

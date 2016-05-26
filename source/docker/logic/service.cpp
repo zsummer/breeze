@@ -34,7 +34,7 @@ bool Service::finishInit()
     {
         LOGD("local service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
         CreateServiceNotice notice(getServiceType(), getServiceID(), getDockerID(), getClientID());
-        Application::getRef().broadcast(notice);
+        Application::getRef().broadcast(notice, false);
     }
     else
     {
@@ -49,7 +49,7 @@ bool Service::finishUninit()
     {
         LOGD("local service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
         DestroyServiceNotice notice(getServiceType(), getServiceID());
-        Application::getRef().broadcast(notice);
+        Application::getRef().broadcast(notice, true);
     }
     else
     {
