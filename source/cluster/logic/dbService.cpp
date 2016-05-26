@@ -70,7 +70,6 @@ bool DBService::onInit()
         return false;
     }
 
-    
 
     if (getServiceType() == ServiceInfoDBMgr)
     {

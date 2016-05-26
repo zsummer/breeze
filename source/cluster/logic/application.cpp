@@ -302,7 +302,7 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
         {
             if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
-                ClusterServiceInited inited(svc.second->getServiceType(), svc.second->getServiceID());
+                ClusterServiceCreateNotice inited(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getClusterID());
                 Application::getRef().broadcast(inited);
             }
         }
@@ -511,7 +511,7 @@ void Application::event_onRemoteShellForward(TcpSessionPtr session, ReadStream &
 
 void Application::event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs)
 {
-    ClusterServiceInited service;
+    ClusterServiceCreateNotice service;
     rs >> service;
 
     auto founder = _services.find(service.serviceType);
@@ -543,7 +543,7 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
         return;
     }
-    if (rsShell.getProtoID() == ClusterServiceInited::getProtoID())
+    if (rsShell.getProtoID() == ClusterServiceCreateNotice::getProtoID())
     {
         event_onRemoteServiceInited(session, rsShell);
         return;

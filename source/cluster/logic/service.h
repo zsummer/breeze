@@ -81,11 +81,11 @@ private:
     void beginTimer();
     void onTimer();
 protected:
-    virtual void onTick() = 0; //
+    virtual void onTick() = 0; //仅限单例模式并且非shell的service才会调用这个 
 
-    virtual bool onInit() = 0; 
+    virtual bool onInit() = 0; //service初始化好之后要调用finishInit 
     bool finishInit();
-    virtual void onUninit() = 0;
+    virtual void onUninit() = 0;//service卸载好之后要调用finishUninit 
     bool finishUninit();
 
 protected:

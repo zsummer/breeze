@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>e4db65e6aa30c0ff7857a02e8e63ab19</cppmd5> 
-<luamd5>8196e81e27ffbb92094ffcae500d0c74</luamd5> 
-<csharpmd5>8a89c956f2b3ad3efc86f31ab7ee7d20</csharpmd5> 
+<cppmd5>533daa96c9442b128f74a00e4033fd8e</cppmd5> 
+<luamd5>d664598bdd1e7b76a8d5e3546007a069</luamd5> 
+<csharpmd5>3415781bbc820273457d5cb98f95980e</csharpmd5> 
 <xmlmd5>d41d8cd98f00b204e9800998ecf8427e</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_ClusterClientForward" Number = "40003" /> 
     <cache key = "ID_ClusterPulse" Number = "40000" /> 
+    <cache key = "ID_ClusterServiceCreate" Number = "40004" /> 
+    <cache key = "ID_ClusterServiceCreateNotice" Number = "40006" /> 
+    <cache key = "ID_ClusterServiceDestroy" Number = "40007" /> 
+    <cache key = "ID_ClusterServiceDestroyNotice" Number = "40008" /> 
     <cache key = "ID_ClusterServiceInited" Number = "40001" /> 
+    <cache key = "ID_ClusterServiceInitedNotice" Number = "40005" /> 
     <cache key = "ID_ClusterShellForward" Number = "40002" /> 
 </cacheNumber>

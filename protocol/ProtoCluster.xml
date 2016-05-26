@@ -10,10 +10,28 @@
 <Proto>
     <packet name="ClusterPulse" desc= "集群脉冲">
     </packet>
-    <packet name="ClusterServiceInited" desc= "服务初始化成功">
+    <packet name="ClusterServiceCreate" desc= "创建并初始化一个service">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clusterID" type="ui32"   desc=""/>
     </packet>
+     <packet name="ClusterServiceCreateNotice" desc= "服务创建好并初始化成功,广播给所有docker">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clusterID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="ClusterServiceDestroy" desc= "销毁一个Service">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clusterID" type="ui32"   desc=""/>
+    </packet>
+     <packet name="ClusterServiceDestroyNotice" desc= "已卸载并完成销毁,广播给所有docker">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clusterID" type="ui32"   desc=""/>
+    </packet>
+
 
     <packet name="ClusterShellForward" desc= "壳子转发">
     </packet>
