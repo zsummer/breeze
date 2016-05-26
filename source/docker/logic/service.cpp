@@ -33,7 +33,7 @@ bool Service::finishInit()
     if (!isShell())
     {
         LOGD("local service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
-        ClusterServiceCreateNotice inited(getServiceType(), getServiceID(), getClusterID());
+        CreateServiceNotice inited(getServiceType(), getServiceID(), getClusterID());
         Application::getRef().broadcast(inited);
     }
     else
@@ -48,7 +48,7 @@ bool Service::finishUninit()
     if (!isShell())
     {
         LOGD("local service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
-        ClusterServiceCreateNotice inited(getServiceType(), getServiceID(), getClusterID());
+        CreateServiceNotice inited(getServiceType(), getServiceID(), getClusterID());
         Application::getRef().broadcast(inited);
     }
     else

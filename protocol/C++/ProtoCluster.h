@@ -23,41 +23,41 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct ClusterServiceCreate //创建并初始化一个service  
+struct CreateServiceInDocker //创建并初始化一个service  
 { 
-    static const unsigned short getProtoID() { return 40004;} 
-    static const std::string getProtoName() { return "ID_ClusterServiceCreate";} 
+    static const unsigned short getProtoID() { return 40013;} 
+    static const std::string getProtoName() { return "ID_CreateServiceInDocker";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     unsigned int clusterID;  
-    ClusterServiceCreate() 
+    CreateServiceInDocker() 
     { 
         serviceType = 0; 
         serviceID = 0; 
         clusterID = 0; 
     } 
-    ClusterServiceCreate(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clusterID) 
+    CreateServiceInDocker(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clusterID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
         this->clusterID = clusterID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterServiceCreate & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateServiceInDocker & data) 
 { 
     ws << data.serviceType;  
     ws << data.serviceID;  
     ws << data.clusterID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterServiceCreate & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateServiceInDocker & data) 
 { 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
     rs >> data.clusterID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClusterServiceCreate & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateServiceInDocker & info) 
 { 
     stm << "[\n"; 
     stm << "serviceType=" << info.serviceType << "\n"; 
@@ -67,41 +67,41 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct ClusterServiceCreateNotice //服务创建好并初始化成功,广播给所有docker  
+struct CreateServiceNotice //服务创建好并初始化成功,广播给所有docker  
 { 
-    static const unsigned short getProtoID() { return 40006;} 
-    static const std::string getProtoName() { return "ID_ClusterServiceCreateNotice";} 
+    static const unsigned short getProtoID() { return 40010;} 
+    static const std::string getProtoName() { return "ID_CreateServiceNotice";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     unsigned int clusterID;  
-    ClusterServiceCreateNotice() 
+    CreateServiceNotice() 
     { 
         serviceType = 0; 
         serviceID = 0; 
         clusterID = 0; 
     } 
-    ClusterServiceCreateNotice(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clusterID) 
+    CreateServiceNotice(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clusterID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
         this->clusterID = clusterID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterServiceCreateNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateServiceNotice & data) 
 { 
     ws << data.serviceType;  
     ws << data.serviceID;  
     ws << data.clusterID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterServiceCreateNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateServiceNotice & data) 
 { 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
     rs >> data.clusterID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClusterServiceCreateNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateServiceNotice & info) 
 { 
     stm << "[\n"; 
     stm << "serviceType=" << info.serviceType << "\n"; 
@@ -111,90 +111,78 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct ClusterServiceDestroy //销毁一个Service  
+struct DestroyServiceInDocker //销毁一个Service  
 { 
-    static const unsigned short getProtoID() { return 40007;} 
-    static const std::string getProtoName() { return "ID_ClusterServiceDestroy";} 
+    static const unsigned short getProtoID() { return 40014;} 
+    static const std::string getProtoName() { return "ID_DestroyServiceInDocker";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
-    unsigned int clusterID;  
-    ClusterServiceDestroy() 
+    DestroyServiceInDocker() 
     { 
         serviceType = 0; 
         serviceID = 0; 
-        clusterID = 0; 
     } 
-    ClusterServiceDestroy(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clusterID) 
+    DestroyServiceInDocker(const unsigned short & serviceType, const unsigned long long & serviceID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
-        this->clusterID = clusterID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterServiceDestroy & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DestroyServiceInDocker & data) 
 { 
     ws << data.serviceType;  
     ws << data.serviceID;  
-    ws << data.clusterID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterServiceDestroy & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DestroyServiceInDocker & data) 
 { 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
-    rs >> data.clusterID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClusterServiceDestroy & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DestroyServiceInDocker & info) 
 { 
     stm << "[\n"; 
     stm << "serviceType=" << info.serviceType << "\n"; 
     stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "clusterID=" << info.clusterID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct ClusterServiceDestroyNotice //已卸载并完成销毁,广播给所有docker  
+struct DestroyServiceNotice //已卸载并完成销毁,广播给所有docker  
 { 
-    static const unsigned short getProtoID() { return 40008;} 
-    static const std::string getProtoName() { return "ID_ClusterServiceDestroyNotice";} 
+    static const unsigned short getProtoID() { return 40012;} 
+    static const std::string getProtoName() { return "ID_DestroyServiceNotice";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
-    unsigned int clusterID;  
-    ClusterServiceDestroyNotice() 
+    DestroyServiceNotice() 
     { 
         serviceType = 0; 
         serviceID = 0; 
-        clusterID = 0; 
     } 
-    ClusterServiceDestroyNotice(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clusterID) 
+    DestroyServiceNotice(const unsigned short & serviceType, const unsigned long long & serviceID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
-        this->clusterID = clusterID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClusterServiceDestroyNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DestroyServiceNotice & data) 
 { 
     ws << data.serviceType;  
     ws << data.serviceID;  
-    ws << data.clusterID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClusterServiceDestroyNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DestroyServiceNotice & data) 
 { 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
-    rs >> data.clusterID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClusterServiceDestroyNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DestroyServiceNotice & info) 
 { 
     stm << "[\n"; 
     stm << "serviceType=" << info.serviceType << "\n"; 
     stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "clusterID=" << info.clusterID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

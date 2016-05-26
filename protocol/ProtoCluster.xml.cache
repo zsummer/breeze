@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>533daa96c9442b128f74a00e4033fd8e</cppmd5> 
-<luamd5>d664598bdd1e7b76a8d5e3546007a069</luamd5> 
-<csharpmd5>3415781bbc820273457d5cb98f95980e</csharpmd5> 
+<cppmd5>f5ebf26de343666ae67bdeea19ce65e9</cppmd5> 
+<luamd5>bc96c6235ded2ac6624d3d0e06f0fd3d</luamd5> 
+<csharpmd5>dee29645115a81403f63392d5c25c09f</csharpmd5> 
 <xmlmd5>d41d8cd98f00b204e9800998ecf8427e</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_ClusterClientForward" Number = "40003" /> 
@@ -14,4 +14,10 @@
     <cache key = "ID_ClusterServiceInited" Number = "40001" /> 
     <cache key = "ID_ClusterServiceInitedNotice" Number = "40005" /> 
     <cache key = "ID_ClusterShellForward" Number = "40002" /> 
+    <cache key = "ID_CreateService" Number = "40009" /> 
+    <cache key = "ID_CreateServiceInDocker" Number = "40013" /> 
+    <cache key = "ID_CreateServiceNotice" Number = "40010" /> 
+    <cache key = "ID_DestroyService" Number = "40011" /> 
+    <cache key = "ID_DestroyServiceInDocker" Number = "40014" /> 
+    <cache key = "ID_DestroyServiceNotice" Number = "40012" /> 
 </cacheNumber>
