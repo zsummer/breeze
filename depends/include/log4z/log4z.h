@@ -373,7 +373,7 @@ _ZSUMMER_END
 
 
 //! base macro.
-#define LOG_STREAM(id, level, log)\
+#define LOG_STREAM(id, level, file, line, log)\
 do{\
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
@@ -381,19 +381,19 @@ do{\
         zsummer::log4z::Log4zStream ss(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen);\
         ss << log;\
         pLog->_contentLen += ss.getCurrentLen(); \
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, __FILE__, __LINE__);\
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line);\
     }\
 } while (0)
 
 
 //! fast macro
-#define LOG_TRACE(id, log) LOG_STREAM(id, LOG_LEVEL_TRACE, log)
-#define LOG_DEBUG(id, log) LOG_STREAM(id, LOG_LEVEL_DEBUG, log)
-#define LOG_INFO(id, log)  LOG_STREAM(id, LOG_LEVEL_INFO, log)
-#define LOG_WARN(id, log)  LOG_STREAM(id, LOG_LEVEL_WARN, log)
-#define LOG_ERROR(id, log) LOG_STREAM(id, LOG_LEVEL_ERROR, log)
-#define LOG_ALARM(id, log) LOG_STREAM(id, LOG_LEVEL_ALARM, log)
-#define LOG_FATAL(id, log) LOG_STREAM(id, LOG_LEVEL_FATAL, log)
+#define LOG_TRACE(id, log) LOG_STREAM(id, LOG_LEVEL_TRACE, __FILE__, __LINE__, log)
+#define LOG_DEBUG(id, log) LOG_STREAM(id, LOG_LEVEL_DEBUG, __FILE__, __LINE__, log)
+#define LOG_INFO(id, log)  LOG_STREAM(id, LOG_LEVEL_INFO, __FILE__, __LINE__, log)
+#define LOG_WARN(id, log)  LOG_STREAM(id, LOG_LEVEL_WARN, __FILE__, __LINE__, log)
+#define LOG_ERROR(id, log) LOG_STREAM(id, LOG_LEVEL_ERROR, __FILE__, __LINE__, log)
+#define LOG_ALARM(id, log) LOG_STREAM(id, LOG_LEVEL_ALARM, __FILE__, __LINE__, log)
+#define LOG_FATAL(id, log) LOG_STREAM(id, LOG_LEVEL_FATAL, __FILE__, __LINE__, log)
 
 //! super macro.
 #define LOGT( log ) LOG_TRACE(LOG4Z_MAIN_LOGGER_ID, log )
@@ -408,7 +408,7 @@ do{\
 //! format input log.
 #ifdef LOG4Z_FORMAT_INPUT_ENABLE
 #ifdef WIN32
-#define LOG_FORMAT(id, level, logformat, ...) \
+#define LOG_FORMAT(id, level, file, line, logformat, ...) \
 do{ \
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
@@ -416,11 +416,11 @@ do{ \
         int len = _snprintf_s(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen, _TRUNCATE, logformat, ##__VA_ARGS__); \
         if (len < 0) len = LOG4Z_LOG_BUF_SIZE - pLog->_contentLen; \
         pLog->_contentLen += len; \
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, __FILE__, __LINE__); \
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line); \
     }\
 } while (0)
 #else
-#define LOG_FORMAT(id, level, logformat, ...) \
+#define LOG_FORMAT(id, level, file, line, logformat, ...) \
 do{ \
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
@@ -429,18 +429,18 @@ do{ \
         if (len < 0) len = 0; \
         if (len > LOG4Z_LOG_BUF_SIZE - pLog->_contentLen) len = LOG4Z_LOG_BUF_SIZE - pLog->_contentLen; \
         pLog->_contentLen += len; \
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, __FILE__, __LINE__); \
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line); \
     } \
 }while(0)
 #endif
 //!format string
-#define LOGFMT_TRACE(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_TRACE, fmt, ##__VA_ARGS__)
-#define LOGFMT_DEBUG(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
-#define LOGFMT_INFO(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_INFO, fmt, ##__VA_ARGS__)
-#define LOGFMT_WARN(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
-#define LOGFMT_ERROR(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
-#define LOGFMT_ALARM(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_ALARM, fmt, ##__VA_ARGS__)
-#define LOGFMT_FATAL(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_FATAL, fmt, ##__VA_ARGS__)
+#define LOGFMT_TRACE(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_DEBUG(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_INFO(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_INFO, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_WARN(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_WARN, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_ERROR(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_ALARM(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_ALARM, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_FATAL(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_FATAL, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
 #define LOGFMTT( fmt, ...) LOGFMT_TRACE(LOG4Z_MAIN_LOGGER_ID, fmt,  ##__VA_ARGS__)
 #define LOGFMTD( fmt, ...) LOGFMT_DEBUG(LOG4Z_MAIN_LOGGER_ID, fmt,  ##__VA_ARGS__)
 #define LOGFMTI( fmt, ...) LOGFMT_INFO(LOG4Z_MAIN_LOGGER_ID, fmt,  ##__VA_ARGS__)

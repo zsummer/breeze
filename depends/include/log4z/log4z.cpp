@@ -387,7 +387,7 @@ protected:
     virtual LogData * makeLogData(LoggerId id, int level);
     virtual void freeLogData(LogData * log);
     void showColorText(const char *text, int level = LOG_LEVEL_DEBUG);
-    bool onHotChange(LoggerInfo & logger, LogDataType ldt, int num, const std::string & text);
+    bool onHotChange(LoggerId id, LogDataType ldt, int num, const std::string & text);
     bool openLogger(LogData * log);
     bool closeLogger(LoggerId id);
     bool popLog(LogData *& log);
@@ -1459,7 +1459,7 @@ bool LogerManager::pushLog(LogData * pLog, const char * file, int line)
     pLog->_content[pLog->_contentLen - 1] = '\0';
     pLog->_content[pLog->_contentLen - 2] = '\n';
     pLog->_content[pLog->_contentLen - 3] = '\r';
-
+    pLog->_contentLen--; //clean '\0'
 
 
     if (_loggers[pLog->_id]._display && LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
@@ -1514,7 +1514,10 @@ bool LogerManager::hotChange(LoggerId id, LogDataType ldt, int num, const std::s
 {
     if (id <0 || id > _lastId) return false;
     if (text.length() >= LOG4Z_LOG_BUF_SIZE) return false;
-    
+    if (!_runing || LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
+    {
+        return onHotChange(id, ldt, num, text);
+    }
     LogData * pLog = makeLogData(id, LOG4Z_DEFAULT_LEVEL);
     pLog->_id = id;
     pLog->_type = ldt;
@@ -1526,8 +1529,13 @@ bool LogerManager::hotChange(LoggerId id, LogDataType ldt, int num, const std::s
     return true;
 }
 
-bool LogerManager::onHotChange(LoggerInfo & logger, LogDataType ldt, int num, const std::string & text)
+bool LogerManager::onHotChange(LoggerId id, LogDataType ldt, int num, const std::string & text)
 {
+    if (id < LOG4Z_MAIN_LOGGER_ID || id > _lastId)
+    {
+        return false;
+    }
+    LoggerInfo & logger = _loggers[id];
     if (ldt == LDT_ENABLE_LOGGER) logger._enable = num != 0;
     else if (ldt == LDT_SET_LOGGER_NAME) logger._name = text;
     else if (ldt == LDT_SET_LOGGER_PATH) logger._path = text;
@@ -1543,13 +1551,21 @@ bool LogerManager::onHotChange(LoggerInfo & logger, LogDataType ldt, int num, co
 bool LogerManager::enableLogger(LoggerId id, bool enable) 
 {
     if (id < 0 || id > _lastId) return false;
-    if (enable) _loggers[id]._enable = true;
-    return hotChange(id, LDT_ENABLE_LOGGER, enable, ""); 
+    if (enable)
+    {
+        _loggers[id]._enable = true;
+        return true;
+    }
+    return hotChange(id, LDT_ENABLE_LOGGER, false, ""); 
 }
 bool LogerManager::setLoggerLevel(LoggerId id, int level) 
 { 
     if (id < 0 || id > _lastId) return false;
-    if (level < _loggers[id]._level) _loggers[id]._level = level;
+    if (level <= _loggers[id]._level)
+    {
+        _loggers[id]._level = level;
+        return true;
+    }
     return hotChange(id, LDT_SET_LOGGER_LEVEL, level, ""); 
 }
 bool LogerManager::setLoggerDisplay(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_DISPLAY, enable, ""); }
@@ -1588,7 +1604,7 @@ bool LogerManager::setLoggerPath(LoggerId id, const char * path)
             copyPath.append("/");
         }
     }
-    return hotChange(id, LDT_SET_LOGGER_PATH, 0, path);
+    return hotChange(id, LDT_SET_LOGGER_PATH, 0, copyPath);
 }
 bool LogerManager::setAutoUpdate(int interval)
 {
@@ -1773,7 +1789,7 @@ void LogerManager::run()
 
             if (pLog->_type != LDT_GENERAL)
             {
-                onHotChange(curLogger, (LogDataType)pLog->_type, pLog->_typeval, std::string(pLog->_content, pLog->_contentLen));
+                onHotChange(pLog->_id, (LogDataType)pLog->_type, pLog->_typeval, std::string(pLog->_content, pLog->_contentLen));
                 curLogger._handle.close();
                 freeLogData(pLog);
                 continue;
