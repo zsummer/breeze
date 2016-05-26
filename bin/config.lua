@@ -11,7 +11,7 @@ config.db =
     LogDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
 }
 
-config.cluster = 
+config.docker = 
 {
     {
         serviceBindIP="0.0.0.0",
@@ -21,7 +21,7 @@ config.cluster =
         wideIP="127.0.0.1",
         widePort=26000,
         services={"DictDBMgrService", "UserMgrService", "LogDBMgrService"},
-        cluster = 1,
+        docker = 1,
     },
     {
         serviceBindIP="0.0.0.0",
@@ -31,7 +31,7 @@ config.cluster =
         wideIP="127.0.0.1",
         widePort=26001,
         services={"InfoDBMgrService"},
-        cluster = 2,
+        docker = 2,
     },
 
 

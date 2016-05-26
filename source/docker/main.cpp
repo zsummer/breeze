@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
 
     std::string filename = "../config.lua";
-    ClusterID index = 0;
+    DockerID index = 0;
     if (argc > 1)
     {
         index = atoi(argv[1]);
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
         filename = argv[2];
     }
     bool ret = false;
-    ILog4zManager::getPtr()->config("../log.cluster.config");
+    ILog4zManager::getPtr()->config("../log.docker.config");
     ret = ILog4zManager::getPtr()->start();
     if (!ret)
     {

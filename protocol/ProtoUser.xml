@@ -24,14 +24,14 @@
         <member name="account" type="string"   desc=""/>
         <member name="token" type="string"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
-        <member name="clientClusterID" type="ui32"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
     </packet>
     <packet name="UserAuthResp" desc= "认证回复">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="account" type="string"   desc=""/>
         <member name="token" type="string"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
-        <member name="clientClusterID" type="ui32"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="previews" type="UserPreviewArray"   desc=""/>
     </packet>
 

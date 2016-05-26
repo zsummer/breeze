@@ -34,16 +34,16 @@
 class ServerConfig : public Singleton<ServerConfig>
 {
 public:
-    bool parse(std::string filename, ClusterID idx);
+    bool parse(std::string filename, DockerID idx);
 public:
-    inline const std::vector<ClusterConfig> & getClusterConfig(){ return _configCluster; }
+    inline const std::vector<DockerConfig> & getDockerConfig(){ return _configDocker; }
     inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
-    inline ClusterID getClusterID(){ return _clusterIdx; }
+    inline DockerID getDockerID(){ return _dockerIdx; }
     inline AreaID getAreaID() { return _areaid; }
 private:
-    ClusterID _clusterIdx = InvalidClusterID;
+    DockerID _dockerIdx = InvalidDockerID;
     AreaID _areaid = 0;
-    std::vector<ClusterConfig> _configCluster;
+    std::vector<DockerConfig> _configDocker;
     std::vector<DBConfig> _configDB;
 };
 

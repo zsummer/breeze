@@ -36,9 +36,9 @@ static int panichHandler(lua_State * L)
 }
 
 
-bool ServerConfig::parse(std::string filename, ClusterID idx)
+bool ServerConfig::parse(std::string filename, DockerID idx)
 {
-    _clusterIdx = idx;
+    _dockerIdx = idx;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {
@@ -104,17 +104,17 @@ bool ServerConfig::parse(std::string filename, ClusterID idx)
     lua_pop(L, 1);
 
 
-    lua_getfield(L, -1, "cluster");
+    lua_getfield(L, -1, "docker");
     lua_pushnil(L);
     while (lua_next(L, -2))
     {
         if (!lua_istable(L, -1))
         {
-            LOGE("config parse cluster false. value is not table type");
+            LOGE("config parse docker false. value is not table type");
             return false;
         }
 
-        ClusterConfig lconfig;
+        DockerConfig lconfig;
         lua_getfield(L, -1, "serviceBindIP");
         lconfig._serviceBindIP = luaL_optstring(L, -1, "0.0.0.0");
         lua_pop(L, 1);
@@ -135,8 +135,8 @@ bool ServerConfig::parse(std::string filename, ClusterID idx)
         lua_pop(L, 1);
 
 
-        lua_getfield(L, -1, "cluster");
-        lconfig._cluster = (ClusterID)luaL_checkinteger(L, -1);
+        lua_getfield(L, -1, "docker");
+        lconfig._docker = (DockerID)luaL_checkinteger(L, -1);
         lua_pop(L, 1);
 
         lua_getfield(L, -1, "serviceWhite");
@@ -179,7 +179,7 @@ bool ServerConfig::parse(std::string filename, ClusterID idx)
             }
             lua_pop(L, 1);
         }
-        _configCluster.push_back(lconfig);
+        _configDocker.push_back(lconfig);
         lua_pop(L, 1);
     }
     //pop listen table.

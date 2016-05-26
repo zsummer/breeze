@@ -92,20 +92,20 @@ namespace Proto4z
         public string account;  
         public string token;  
         public uint clientSessionID;  
-        public uint clientClusterID;  
+        public uint clientDockerID;  
         public UserAuthReq()  
         { 
             account = "";  
             token = "";  
             clientSessionID = 0;  
-            clientClusterID = 0;  
+            clientDockerID = 0;  
         } 
-        public UserAuthReq(string account, string token, uint clientSessionID, uint clientClusterID) 
+        public UserAuthReq(string account, string token, uint clientSessionID, uint clientDockerID) 
         { 
             this.account = account; 
             this.token = token; 
             this.clientSessionID = clientSessionID; 
-            this.clientClusterID = clientClusterID; 
+            this.clientDockerID = clientDockerID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -113,7 +113,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientClusterID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -121,7 +121,7 @@ namespace Proto4z
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.clientClusterID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -137,7 +137,7 @@ namespace Proto4z
         public string account;  
         public string token;  
         public uint clientSessionID;  
-        public uint clientClusterID;  
+        public uint clientDockerID;  
         public UserPreviewArray previews;  
         public UserAuthResp()  
         { 
@@ -145,16 +145,16 @@ namespace Proto4z
             account = "";  
             token = "";  
             clientSessionID = 0;  
-            clientClusterID = 0;  
+            clientDockerID = 0;  
             previews = new UserPreviewArray();  
         } 
-        public UserAuthResp(ushort retCode, string account, string token, uint clientSessionID, uint clientClusterID, UserPreviewArray previews) 
+        public UserAuthResp(ushort retCode, string account, string token, uint clientSessionID, uint clientDockerID, UserPreviewArray previews) 
         { 
             this.retCode = retCode; 
             this.account = account; 
             this.token = token; 
             this.clientSessionID = clientSessionID; 
-            this.clientClusterID = clientClusterID; 
+            this.clientDockerID = clientDockerID; 
             this.previews = previews; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -164,7 +164,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientClusterID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
             if (this.previews == null) this.previews = new UserPreviewArray(); 
             data.AddRange(this.previews.__encode()); 
             return data; 
@@ -175,7 +175,7 @@ namespace Proto4z
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.clientClusterID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.previews = new UserPreviewArray(); 
             this.previews.__decode(binData, ref pos); 
             return pos; 

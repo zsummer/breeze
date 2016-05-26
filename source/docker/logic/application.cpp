@@ -12,26 +12,26 @@ Application::Application()
 
 }
 
-bool Application::init(const std::string & config, ClusterID idx)
+bool Application::init(const std::string & config, DockerID idx)
 {
     if (!ServerConfig::getRef().parse(config, idx))
     {
-        LOGE("Application::init error. parse config error. config path=" << config << ", cluster ID = " << idx);
+        LOGE("Application::init error. parse config error. config path=" << config << ", docker ID = " << idx);
         return false;
     }
-    if (idx == InvalidClusterID)
+    if (idx == InvalidDockerID)
     {
-        LOGE("Application::init error. current cluster id invalid. config path=" << config << ", cluster ID = " << idx);
+        LOGE("Application::init error. current docker id invalid. config path=" << config << ", docker ID = " << idx);
         return false;
     }
-    const auto & clusters = ServerConfig::getRef().getClusterConfig();
-    auto founder = std::find_if(clusters.begin(), clusters.end(), [](const ClusterConfig& cc){return cc._cluster == ServerConfig::getRef().getClusterID(); });
-    if (founder == clusters.end())
+    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._docker == ServerConfig::getRef().getDockerID(); });
+    if (founder == dockers.end())
     {
-        LOGE("Application::init error. current cluster id not found in config file.. config path=" << config << ", cluster ID = " << idx);
+        LOGE("Application::init error. current docker id not found in config file.. config path=" << config << ", docker ID = " << idx);
         return false;
     }
-    LOGA("Application::init  success. clusterID=" << idx);
+    LOGA("Application::init  success. dockerID=" << idx);
     SessionManager::getRef().createTimer(1000, std::bind(&Application::checkServiceState, Application::getPtr()));
     return true;
 }
@@ -126,35 +126,35 @@ void Application::stop()
     return ;
 }
 
-bool Application::startClusterListen()
+bool Application::startDockerListen()
 {
-    const auto & clusters = ServerConfig::getRef().getClusterConfig();
-    ServerConfig::getRef().getClusterID();
-    auto founder = std::find_if(clusters.begin(), clusters.end(), [](const ClusterConfig& cc){return cc._cluster == ServerConfig::getRef().getClusterID(); });
-    if (founder == clusters.end())
+    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    ServerConfig::getRef().getDockerID();
+    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._docker == ServerConfig::getRef().getDockerID(); });
+    if (founder == dockers.end())
     {
-        LOGE("Application::startClusterListen error. current cluster id not found in config file." );
+        LOGE("Application::startDockerListen error. current docker id not found in config file." );
         return false;
     }
-    const ClusterConfig & cluster = *founder;
-    if (cluster._serviceBindIP.empty() || cluster._servicePort == 0)
+    const DockerConfig & docker = *founder;
+    if (docker._serviceBindIP.empty() || docker._servicePort == 0)
     {
-        LOGE("Application::startClusterListen check config error. bind ip=" << cluster._serviceBindIP << ", bind port=" << cluster._servicePort);
+        LOGE("Application::startDockerListen check config error. bind ip=" << docker._serviceBindIP << ", bind port=" << docker._servicePort);
         return false;
     }
-    AccepterID aID = SessionManager::getRef().addAccepter(cluster._serviceBindIP, cluster._servicePort);
+    AccepterID aID = SessionManager::getRef().addAccepter(docker._serviceBindIP, docker._servicePort);
     if (aID == InvalidAccepterID)
     {
-        LOGE("Application::startClusterListen addAccepter error. bind ip=" << cluster._serviceBindIP << ", bind port=" << cluster._servicePort);
+        LOGE("Application::startDockerListen addAccepter error. bind ip=" << docker._serviceBindIP << ", bind port=" << docker._servicePort);
         return false;
     }
     auto &options = SessionManager::getRef().getAccepterOptions(aID);
-    options._whitelistIP = cluster._whiteList;
+    options._whitelistIP = docker._whiteList;
     options._maxSessions = 1000;
     options._sessionOptions._sessionPulseInterval = 5000;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
-        ClusterPulse pulse;
+        DockerPulse pulse;
         WriteStream ws(pulse.getProtoID());
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
@@ -162,27 +162,27 @@ bool Application::startClusterListen()
     options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onServiceMessage, this, _1, _2, _3);
     if (!SessionManager::getRef().openAccepter(aID))
     {
-        LOGE("Application::startClusterListen openAccepter error. bind ip=" << cluster._serviceBindIP << ", bind port=" << cluster._servicePort);
+        LOGE("Application::startDockerListen openAccepter error. bind ip=" << docker._serviceBindIP << ", bind port=" << docker._servicePort);
         return false;
     }
-    LOGA("Application::startClusterListen openAccepter success. bind ip=" << cluster._serviceBindIP << ", bind port=" << cluster._servicePort <<", aID=" << aID);
+    LOGA("Application::startDockerListen openAccepter success. bind ip=" << docker._serviceBindIP << ", bind port=" << docker._servicePort <<", aID=" << aID);
     return true;
 }
-bool Application::startClusterConnect()
+bool Application::startDockerConnect()
 {
-    const auto & clusters = ServerConfig::getRef().getClusterConfig();
-    for (const auto & cluster : clusters)
+    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    for (const auto & docker : dockers)
     {
-        SessionID cID = SessionManager::getRef().addConnecter(cluster._serviceIP, cluster._servicePort);
+        SessionID cID = SessionManager::getRef().addConnecter(docker._serviceIP, docker._servicePort);
         if (cID == InvalidSessionID)
         {
-            LOGE("Application::startClusterConnect addConnecter error. remote ip=" << cluster._serviceIP << ", remote port=" << cluster._servicePort);
+            LOGE("Application::startDockerConnect addConnecter error. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort);
             return false;
         }
         auto session = SessionManager::getRef().getTcpSession(cID);
         if (!session)
         {
-            LOGE("Application::startClusterConnect addConnecter error.  not found connect session. remote ip=" << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
+            LOGE("Application::startDockerConnect addConnecter error.  not found connect session. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
             return false;
         }
         auto &options = session->getOptions();
@@ -204,20 +204,20 @@ bool Application::startClusterConnect()
 
         if (!SessionManager::getRef().openConnecter(cID))
         {
-            LOGE("Application::startClusterConnect openConnecter error. remote ip=" << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
+            LOGE("Application::startDockerConnect openConnecter error. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
             return false;
         }
-        LOGA("Application::startClusterConnect success. remote ip=" << cluster._serviceIP << ", remote port=" << cluster._servicePort << ", cID=" << cID);
+        LOGA("Application::startDockerConnect success. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
-        session->setUserParam(UPARAM_REMOTE_CLUSTER, cluster._cluster);
-        _clusterSession[cluster._cluster] = std::make_pair(cID, 0);
+        session->setUserParam(UPARAM_REMOTE_CLUSTER, docker._docker);
+        _dockerSession[docker._docker] = std::make_pair(cID, 0);
         for (ui16 i = ServiceInvalid; i <= ServiceMax; i++)
         {
             _services.insert(std::make_pair(i, std::unordered_map<ServiceID, ServicePtr >()));
         }
-        for (auto st : cluster._services)
+        for (auto st : docker._services)
         {
-            if (!createService(st, InvalidServiceID, cluster._cluster, cluster._cluster != ServerConfig::getRef().getClusterID(), true))
+            if (!createService(st, InvalidServiceID, docker._docker, docker._docker != ServerConfig::getRef().getDockerID(), InvalidSessionID,true))
             {
                 return false;
             }
@@ -227,25 +227,25 @@ bool Application::startClusterConnect()
 }
 bool Application::startWideListen()
 {
-    const auto & clusters = ServerConfig::getRef().getClusterConfig();
-    ServerConfig::getRef().getClusterID();
-    auto founder = std::find_if(clusters.begin(), clusters.end(), [](const ClusterConfig& cc){return cc._cluster == ServerConfig::getRef().getClusterID(); });
-    if (founder == clusters.end())
+    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    ServerConfig::getRef().getDockerID();
+    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._docker == ServerConfig::getRef().getDockerID(); });
+    if (founder == dockers.end())
     {
-        LOGE("Application::startWideListen error. current cluster id not found in config file.");
+        LOGE("Application::startWideListen error. current docker id not found in config file.");
         return false;
     }
-    const ClusterConfig & cluster = *founder;
-    if (!cluster._wideIP.empty() && cluster._widePort != 0)
+    const DockerConfig & docker = *founder;
+    if (!docker._wideIP.empty() && docker._widePort != 0)
     {
-        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", cluster._widePort);
+        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._widePort);
         if (aID == InvalidAccepterID)
         {
-            LOGE("Application::startWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << cluster._wideIP << ", bind port=" << cluster._widePort);
+            LOGE("Application::startWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
             return false;
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
-        options._whitelistIP = cluster._whiteList;
+        options._whitelistIP = docker._whiteList;
         options._maxSessions = 5000;
         options._sessionOptions._sessionPulseInterval = 10000;
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
@@ -262,10 +262,10 @@ bool Application::startWideListen()
         options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onClientMessage, this, _1, _2, _3);
         if (!SessionManager::getRef().openAccepter(aID))
         {
-            LOGE("Application::startWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << cluster._wideIP << ", bind port=" << cluster._widePort);
+            LOGE("Application::startWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
             return false;
         }
-        LOGA("Application::startWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << cluster._wideIP << ", bind port=" << cluster._widePort << ", listen aID=" << aID);
+        LOGA("Application::startWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort << ", listen aID=" << aID);
         _wlisten = aID;
     }
     return true;
@@ -273,7 +273,7 @@ bool Application::startWideListen()
 
 bool Application::start()
 {
-    return startClusterListen() && startClusterConnect() && startWideListen();
+    return startDockerListen() && startDockerConnect() && startWideListen();
 }
 
 
@@ -283,14 +283,14 @@ bool Application::start()
 
 void Application::event_onServiceLinked(TcpSessionPtr session)
 {
-    ClusterID ci = (ClusterID)session->getUserParamNumber(UPARAM_REMOTE_CLUSTER);
-    auto founder = _clusterSession.find(ci);
-    if (founder == _clusterSession.end())
+    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_CLUSTER);
+    auto founder = _dockerSession.find(ci);
+    if (founder == _dockerSession.end())
     {
-        LOGE("event_onServiceLinked error cID=" << session->getSessionID() << ", clusterID=" << ci);
+        LOGE("event_onServiceLinked error cID=" << session->getSessionID() << ", dockerID=" << ci);
         return;
     }
-    LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", clusterID=" << ci);
+    LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", dockerID=" << ci);
     founder->second.second = 1;
     for (auto & second : _services)
     {
@@ -302,8 +302,8 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
         {
             if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
-                CreateServiceNotice inited(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getClusterID());
-                Application::getRef().broadcast(inited);
+                CreateServiceNotice notice(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getDockerID(), svc.second->getClientID());
+                Application::getRef().broadcast(notice);
             }
         }
     }
@@ -312,14 +312,14 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
 
 void Application::event_onServiceClosed(TcpSessionPtr session)
 {
-    ClusterID ci = (ClusterID)session->getUserParamNumber(UPARAM_REMOTE_CLUSTER);
-    auto founder = _clusterSession.find(ci);
-    if (founder == _clusterSession.end())
+    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_CLUSTER);
+    auto founder = _dockerSession.find(ci);
+    if (founder == _dockerSession.end())
     {
-        LOGE("event_onServiceClosed error cID=" << session->getSessionID() << ", clusterID=" << ci);
+        LOGE("event_onServiceClosed error cID=" << session->getSessionID() << ", dockerID=" << ci);
         return;
     }
-    LOGW("event_onServiceClosed cID=" << session->getSessionID() << ", clusterID=" << ci);
+    LOGW("event_onServiceClosed cID=" << session->getSessionID() << ", dockerID=" << ci);
     founder->second.second = 0;
 }
 
@@ -339,13 +339,13 @@ bool Application::destroyService(ui16 serviceType, ServiceID serviceID)
     return true;
 }
 
-bool Application::createService(ui16 serviceType, ServiceID serviceID, ClusterID clusterID, bool isShell, bool failExit)
+bool Application::createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit)
 {
     ServicePtr & service = _services[serviceType][InvalidServiceID];
     if (service)
     {
         LOGE("Application::createService error. service alread exist. serviceType=" << serviceType << ", serviceID="
-            << serviceID << ", clusterID=" << clusterID << ", isShell=" << isShell << ", failExit=" << failExit);
+            << serviceID << ", dockerID=" << dockerID << ", isShell=" << isShell << ", failExit=" << failExit);
         if (failExit)
         {
             goto goExit;
@@ -388,7 +388,8 @@ bool Application::createService(ui16 serviceType, ServiceID serviceID, ClusterID
     }
     service->setServiceType(serviceType);
     service->setServiceID(serviceID);
-    service->setClusterID(clusterID);
+    service->setDockerID(dockerID);
+    service->setClientID(clientID);
     service->setStatus(SS_CREATED);
 
 
@@ -401,17 +402,17 @@ goExit:
 void Application::checkServiceState()
 {
     SessionManager::getRef().createTimer(1000, std::bind(&Application::checkServiceState, Application::getPtr()));
-    if (!_clusterNetWorking)
+    if (!_dockerNetWorking)
     {
-        for (auto & c : _clusterSession)
+        for (auto & c : _dockerSession)
         {
             if (c.second.second == 0)
             {
                 return;
             }
         }
-        _clusterNetWorking = true;
-        LOGA("cluster net worked");
+        _dockerNetWorking = true;
+        LOGA("docker net worked");
     }
 
     for (auto & second : _services)
@@ -425,7 +426,7 @@ void Application::checkServiceState()
             }
         }
     }
-    if (!_clusterServiceWorking)
+    if (!_dockerServiceWorking)
     {
         for (ui16 i = ServiceInvalid+1; i != ServiceMulti; i++)
         {
@@ -479,7 +480,7 @@ void Application::checkServiceState()
             }
         }
         LOGA("all service worked.");
-        _clusterServiceWorking = true;
+        _dockerServiceWorking = true;
 
     }
    
@@ -509,7 +510,7 @@ void Application::event_onRemoteShellForward(TcpSessionPtr session, ReadStream &
     svc.process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
 }
 
-void Application::event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs)
+void Application::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs)
 {
     CreateServiceNotice service;
     rs >> service;
@@ -538,22 +539,22 @@ void Application::event_onRemoteServiceInited(TcpSessionPtr session, ReadStream 
 void Application::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
     ReadStream rsShell(begin, len);
-    if (rsShell.getProtoID() == ClusterPulse::getProtoID())
+    if (rsShell.getProtoID() == DockerPulse::getProtoID())
     {
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
         return;
     }
     if (rsShell.getProtoID() == CreateServiceNotice::getProtoID())
     {
-        event_onRemoteServiceInited(session, rsShell);
+        event_onCreateServiceInDocker(session, rsShell);
         return;
     }
-    if (rsShell.getProtoID() == ClusterShellForward::getProtoID())
+    if (rsShell.getProtoID() == ShellForward::getProtoID())
     {
         event_onRemoteShellForward(session, rsShell);
         return;
     }
-    if (rsShell.getProtoID() == ClusterClientForward::getProtoID())
+    if (rsShell.getProtoID() == ClientForward::getProtoID())
     {
         Tracing trace;
         rsShell >> trace;
@@ -674,7 +675,7 @@ void Application::event_onClientMessage(TcpSessionPtr session, const char * begi
         req.account = careq.account;
         req.token = careq.token;
         req.clientSessionID = session->getSessionID();
-        req.clientClusterID = ServerConfig::getRef().getClusterID();
+        req.clientDockerID = ServerConfig::getRef().getDockerID();
         ws << req;
         callOtherService(trace, ws.getStream(), ws.getStreamLen());
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
@@ -683,22 +684,22 @@ void Application::event_onClientMessage(TcpSessionPtr session, const char * begi
 
 }
 
-void Application::callOtherCluster(ClusterID cltID, const char * block, unsigned int len)
+void Application::callOtherDocker(DockerID cltID, const char * block, unsigned int len)
 {
-    auto founder = _clusterSession.find(cltID);
-    if (founder == _clusterSession.end())
+    auto founder = _dockerSession.find(cltID);
+    if (founder == _dockerSession.end())
     {
-        LOGF("Application::callOtherCluster fatal error. cltID not found. cltID=" << cltID);
+        LOGF("Application::callOtherDocker fatal error. cltID not found. cltID=" << cltID);
         return;
     }
     if (founder->second.first == InvalidServiceID)
     {
-        LOGF("Application::callOtherCluster fatal error. cltID not have session. cltID=" << cltID);
+        LOGF("Application::callOtherDocker fatal error. cltID not have session. cltID=" << cltID);
         return;
     }
     if (founder->second.second == 0)
     {
-        LOGW("Application::callOtherCluster warning error. session try connecting. cltID=" << cltID << ", client session ID=" << founder->second.first);
+        LOGW("Application::callOtherDocker warning error. session try connecting. cltID=" << cltID << ", client session ID=" << founder->second.first);
     }
     SessionManager::getRef().sendSessionData(founder->second.first, block, len);
 }
@@ -708,12 +709,6 @@ void Application::callOtherService(Tracing trace, const char * block, unsigned i
     if (trace._fromService >= ServiceMax || trace._toService >= ServiceMax || trace._toService == ServiceInvalid)
     {
         LOGF("Application::callOtherService Illegality trace. trace=" << trace << ", block len=" << len);
-        return;
-    }
-    if (trace._fromService == ServiceUserMgr
-        && (trace._toService == ServiceUser || trace._toService == ServiceClient))
-    {
-        LOGF("call method to ServiceUser or ServiceClient from ServiceUserMgr is Illegality! trace=" << trace);
         return;
     }
 
@@ -738,14 +733,14 @@ void Application::callOtherService(Tracing trace, const char * block, unsigned i
     auto & service = *fder->second;
     if (service.isShell()) //forward 
     {
-        WriteStream ws(ClusterShellForward::getProtoID());
+        WriteStream ws(ShellForward::getProtoID());
         ws << trace;
         ws.appendOriginalData(block, len);
-        ClusterID cltID = service.getClusterID();
-        auto fsder = _clusterSession.find(cltID);
-        if (fsder == _clusterSession.end())
+        DockerID cltID = service.getDockerID();
+        auto fsder = _dockerSession.find(cltID);
+        if (fsder == _dockerSession.end())
         {
-            LOGE("Application::callOtherService not found session by shell service. clusterID=" << cltID << ", tracing=" << trace);
+            LOGE("Application::callOtherService not found session by shell service. dockerID=" << cltID << ", tracing=" << trace);
         }
         else
         {
@@ -753,10 +748,9 @@ void Application::callOtherService(Tracing trace, const char * block, unsigned i
             if (fsder->second.second == 0)
             {
                 LOGW("Application::callOtherService session not connected when global call by shell service. sID=" << fsder->second.first
-                    << ", clusterID=" << cltID << ", tracing=" << trace);
+                    << ", dockerID=" << cltID << ", tracing=" << trace);
             }
         }
-
     }
     else //direct process
     {

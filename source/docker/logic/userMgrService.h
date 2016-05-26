@@ -30,7 +30,7 @@
 struct ServiceUserShell 
 {
     ServiceID _uID = InvalidServiceID;
-    ClusterID _cltID = InvalidClusterID;
+    DockerID _dockerID = InvalidDockerID;
 };
 
 
@@ -38,7 +38,7 @@ struct UserPreviewCache
 {
     int _status = 0; //0 no Client no UserService,  1 Creating UserService, 2 had UserService
     UserPreview _preview;
-    ClusterID _cltID = InvalidClusterID;
+    DockerID _dockerID = InvalidDockerID;
 };
 
 

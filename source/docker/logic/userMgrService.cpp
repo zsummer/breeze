@@ -39,17 +39,17 @@ void  UserMgrService::process(const Tracing & trace, const char * block, unsigne
         const ServiceUserShell & shell = founder->second;
         if (shell._uID != trace._toServiceID)
         {
-            LOGF("UserMgrService found the user/client id, but user shell store service id not user id or cluster id invalid. trace=" << trace
-                <<", shell.uID=" << shell._uID << ", shell.cltID=" << shell._cltID);
+            LOGF("UserMgrService found the user/client id, but user shell store service id not user id or docker id invalid. trace=" << trace
+                <<", shell.uID=" << shell._uID << ", shell.cltID=" << shell._dockerID);
             return;
         }
         
         try
         {
-            WriteStream ws(ClusterClientForward::getProtoID());
+            WriteStream ws(ClientForward::getProtoID());
             ws << trace;
             ws.appendOriginalData(block, len);
-            Application::getRef().callOtherCluster(shell._cltID, ws.getStream(), ws.getStreamLen());
+            Application::getRef().callOtherDocker(shell._dockerID, ws.getStream(), ws.getStreamLen());
         }
         catch (const std::exception & e)
         {
@@ -67,12 +67,12 @@ void UserMgrService::onUninit()
 
 bool UserMgrService::onInit()
 {
-    const auto  & config = ServerConfig::getRef().getClusterConfig();
-    for (const auto & cluster : config)
+    const auto  & config = ServerConfig::getRef().getDockerConfig();
+    for (const auto & docker : config)
     {
-        if (!cluster._wideIP.empty() && cluster._widePort != 0)
+        if (!docker._wideIP.empty() && docker._widePort != 0)
         {
-            _balance.enableNode(cluster._cluster);
+            _balance.enableNode(docker._docker);
         }
     }
     finishInit();
@@ -94,7 +94,7 @@ void UserMgrService::onUserAuthReq(const Tracing & trace, zsummer::proto4z::Read
     resp.account = req.account;
     resp.token = req.token;
     resp.previews.clear();
-    resp.clientClusterID = req.clientClusterID;
+    resp.clientDockerID = req.clientDockerID;
     resp.clientSessionID = req.clientSessionID;
     resp.retCode = EC_SUCCESS;
 
@@ -109,9 +109,9 @@ void UserMgrService::onUserAuthReq(const Tracing & trace, zsummer::proto4z::Read
     WriteStream ws(UserAuthResp::getProtoID());
     ws << resp;
 
-    WriteStream wsf(ClusterClientForward::getProtoID());
+    WriteStream wsf(ClientForward::getProtoID());
     wsf << trace;
     wsf.appendOriginalData(ws.getStream(), ws.getStreamLen());
-    Application::getRef().callOtherCluster(resp.clientClusterID, wsf.getStream(), wsf.getStreamLen());
+    Application::getRef().callOtherDocker(resp.clientDockerID, wsf.getStream(), wsf.getStreamLen());
 }
 

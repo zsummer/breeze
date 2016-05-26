@@ -118,8 +118,8 @@ using namespace zsummer::mysql;
 typedef ui32 AreaID;
 
 //节点索引ID
-typedef ui32 ClusterID;
-const ClusterID InvalidClusterID = 0;
+typedef ui32 DockerID;
+const DockerID InvalidDockerID = 0;
 
 typedef ui64 ServiceID;
 const ui64 InvalidServiceID = (ServiceID)0;
@@ -174,7 +174,7 @@ struct Tracing
 
 
 
-struct ClusterConfig
+struct DockerConfig
 {
     std::string _serviceBindIP;
     std::string _serviceIP;
@@ -183,7 +183,7 @@ struct ClusterConfig
     unsigned short _widePort = 0;
     std::vector<std::string> _whiteList;
     std::vector<ui16> _services;
-    ClusterID _cluster = InvalidClusterID;
+    DockerID _docker = InvalidDockerID;
 };
 
 
@@ -250,12 +250,12 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
     return os;
 }
 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const ClusterConfig & config)
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DockerConfig & config)
 {
     os << "[_serviceBindIP=" << config._serviceBindIP << ", _serviceIP=" << config._serviceIP
         << ", _servicePort=" << config._servicePort << ", _wideIP=" << config._wideIP
         << ", _widePort=" << config._widePort << ", _whiteList=" << config._whiteList
-        << ", _services=" << config._services << ", _cluster=" << config._cluster
+        << ", _services=" << config._services << ", _docker=" << config._docker
         << "]";
     return os;
 }

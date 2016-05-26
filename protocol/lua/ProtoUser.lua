@@ -22,7 +22,7 @@ Proto4z.UserAuthReq.__getName = "UserAuthReq"
 Proto4z.UserAuthReq[1] = {name="account", type="string" }  
 Proto4z.UserAuthReq[2] = {name="token", type="string" }  
 Proto4z.UserAuthReq[3] = {name="clientSessionID", type="ui32" }  
-Proto4z.UserAuthReq[4] = {name="clientClusterID", type="ui32" }  
+Proto4z.UserAuthReq[4] = {name="clientDockerID", type="ui32" }  
  
 Proto4z.register(1003,"UserAuthResp") 
 Proto4z.UserAuthResp = {} --认证回复 
@@ -32,7 +32,7 @@ Proto4z.UserAuthResp[1] = {name="retCode", type="ui16" }
 Proto4z.UserAuthResp[2] = {name="account", type="string" }  
 Proto4z.UserAuthResp[3] = {name="token", type="string" }  
 Proto4z.UserAuthResp[4] = {name="clientSessionID", type="ui32" }  
-Proto4z.UserAuthResp[5] = {name="clientClusterID", type="ui32" }  
+Proto4z.UserAuthResp[5] = {name="clientDockerID", type="ui32" }  
 Proto4z.UserAuthResp[6] = {name="previews", type="UserPreviewArray" }  
  
 Proto4z.register(1004,"CreateUserReq") 

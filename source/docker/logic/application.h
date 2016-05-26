@@ -24,31 +24,31 @@
 #define _NET_MANAGER_H_
 #include <common.h>
 #include "service.h"
-#include <ProtoCluster.h>
+#include <ProtoDocker.h>
 
 
 class Application : public Singleton<Application>
 {
 public:
     Application();
-    bool init(const std::string & config, ClusterID idx);
+    bool init(const std::string & config, DockerID idx);
     bool start();
     void stop();
     bool run();
 public:
     template<class Proto>
     void broadcast(const Proto & proto);
-    void callOtherCluster(ClusterID cltID, const char * block, unsigned int len);
+    void callOtherDocker(DockerID cltID, const char * block, unsigned int len);
     void callOtherService(Tracing trace, const char * block, unsigned int len);
     bool isStoping();
 
 private:
-    bool startClusterListen();
-    bool startClusterConnect();
+    bool startDockerListen();
+    bool startDockerConnect();
     bool startWideListen();
 
 public:
-    bool createService(ui16 serviceType, ServiceID serviceID, ClusterID clusterID, bool isShell, bool failExit);
+    bool createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit);
     bool destroyService(ui16 serviceType, ServiceID serviceID);
     void checkServiceState();
     void onCheckSafeExit();
@@ -57,7 +57,10 @@ public:
 private:
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
-    void event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs);
+    void event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onCreateServiceNotice(TcpSessionPtr session, ReadStream & rs);
+    void event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onRemoteShellForward(TcpSessionPtr session, ReadStream & rs);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
@@ -69,9 +72,9 @@ private:
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
 
-    std::map < ClusterID, std::pair<SessionID, int>> _clusterSession;
-    bool _clusterNetWorking = false;
-    bool _clusterServiceWorking = false;
+    std::map < DockerID, std::pair<SessionID, int>> _dockerSession;
+    bool _dockerNetWorking = false;
+    bool _dockerServiceWorking = false;
     AccepterID _wlisten = InvalidAccepterID;
     
 
@@ -89,7 +92,7 @@ void Application::broadcast(const Proto & proto)
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        for (const auto &c : _clusterSession)
+        for (const auto &c : _dockerSession)
         {
             if (c.second.first == InvalidSessionID)
             {

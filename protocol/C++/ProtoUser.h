@@ -93,18 +93,18 @@ struct UserAuthReq //认证请求
     std::string account;  
     std::string token;  
     unsigned int clientSessionID;  
-    unsigned int clientClusterID;  
+    unsigned int clientDockerID;  
     UserAuthReq() 
     { 
         clientSessionID = 0; 
-        clientClusterID = 0; 
+        clientDockerID = 0; 
     } 
-    UserAuthReq(const std::string & account, const std::string & token, const unsigned int & clientSessionID, const unsigned int & clientClusterID) 
+    UserAuthReq(const std::string & account, const std::string & token, const unsigned int & clientSessionID, const unsigned int & clientDockerID) 
     { 
         this->account = account; 
         this->token = token; 
         this->clientSessionID = clientSessionID; 
-        this->clientClusterID = clientClusterID; 
+        this->clientDockerID = clientDockerID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserAuthReq & data) 
@@ -112,7 +112,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.account;  
     ws << data.token;  
     ws << data.clientSessionID;  
-    ws << data.clientClusterID;  
+    ws << data.clientDockerID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserAuthReq & data) 
@@ -120,7 +120,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.account;  
     rs >> data.token;  
     rs >> data.clientSessionID;  
-    rs >> data.clientClusterID;  
+    rs >> data.clientDockerID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserAuthReq & info) 
@@ -129,7 +129,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "account=" << info.account << "\n"; 
     stm << "token=" << info.token << "\n"; 
     stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "clientClusterID=" << info.clientClusterID << "\n"; 
+    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -142,21 +142,21 @@ struct UserAuthResp //认证回复
     std::string account;  
     std::string token;  
     unsigned int clientSessionID;  
-    unsigned int clientClusterID;  
+    unsigned int clientDockerID;  
     UserPreviewArray previews;  
     UserAuthResp() 
     { 
         retCode = 0; 
         clientSessionID = 0; 
-        clientClusterID = 0; 
+        clientDockerID = 0; 
     } 
-    UserAuthResp(const unsigned short & retCode, const std::string & account, const std::string & token, const unsigned int & clientSessionID, const unsigned int & clientClusterID, const UserPreviewArray & previews) 
+    UserAuthResp(const unsigned short & retCode, const std::string & account, const std::string & token, const unsigned int & clientSessionID, const unsigned int & clientDockerID, const UserPreviewArray & previews) 
     { 
         this->retCode = retCode; 
         this->account = account; 
         this->token = token; 
         this->clientSessionID = clientSessionID; 
-        this->clientClusterID = clientClusterID; 
+        this->clientDockerID = clientDockerID; 
         this->previews = previews; 
     } 
 }; 
@@ -166,7 +166,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.account;  
     ws << data.token;  
     ws << data.clientSessionID;  
-    ws << data.clientClusterID;  
+    ws << data.clientDockerID;  
     ws << data.previews;  
     return ws; 
 } 
@@ -176,7 +176,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.account;  
     rs >> data.token;  
     rs >> data.clientSessionID;  
-    rs >> data.clientClusterID;  
+    rs >> data.clientDockerID;  
     rs >> data.previews;  
     return rs; 
 } 
@@ -187,7 +187,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "account=" << info.account << "\n"; 
     stm << "token=" << info.token << "\n"; 
     stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "clientClusterID=" << info.clientClusterID << "\n"; 
+    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
     stm << "previews=" << info.previews << "\n"; 
     stm << "]\n"; 
     return stm; 

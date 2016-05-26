@@ -67,14 +67,18 @@ public:
 public:
     inline ui16 getServiceType(){ return _serviceType; }
     inline ServiceID getServiceID(){ return _serviceID; }
-    inline ClusterID getClusterID(){ return _cltID; }
+    inline DockerID getDockerID() { return _dockerID; }
+    inline SessionID getClientID() { return _clientID; }
+
     inline ui16 getStatus() { return _status; }
     inline bool isShell() { return _shell; }
 protected:
     inline void setServiceType(ui16 serviceType) { _serviceType = serviceType; }
     inline void setServiceID(ServiceID serviceID) { _serviceID = serviceID; }
+    inline void setDockerID(DockerID cltID) { _dockerID = cltID; }
+    inline void setClientID(SessionID clientID) { _clientID = clientID; }
+
     inline void setStatus(ui16 status) { _status = status; };
-    inline void setClusterID(ClusterID cltID) { _cltID = cltID; }
     inline void setShell(bool shell) { _shell = shell; }
 
 private:
@@ -112,9 +116,11 @@ private:
 private:
     ui16 _serviceType = (ui16)ServiceInvalid;
     ServiceID _serviceID = InvalidServiceID;
+    DockerID _dockerID = InvalidDockerID; //实际所在的docker
+    SessionID _clientID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限UserService使用
     short _status = 0;
     bool _shell = false;
-    ClusterID _cltID = InvalidClusterID;
+    
 
 private:
     ui32 _callbackSeq = 0;

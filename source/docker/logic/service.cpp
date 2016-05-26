@@ -1,7 +1,7 @@
 
 #include "service.h"
 #include "application.h"
-#include <ProtoCluster.h>
+#include <ProtoDocker.h>
 
 
 void Service::beginTimer()
@@ -33,8 +33,8 @@ bool Service::finishInit()
     if (!isShell())
     {
         LOGD("local service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
-        CreateServiceNotice inited(getServiceType(), getServiceID(), getClusterID());
-        Application::getRef().broadcast(inited);
+        CreateServiceNotice notice(getServiceType(), getServiceID(), getDockerID(), getClientID());
+        Application::getRef().broadcast(notice);
     }
     else
     {
@@ -48,8 +48,8 @@ bool Service::finishUninit()
     if (!isShell())
     {
         LOGD("local service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
-        CreateServiceNotice inited(getServiceType(), getServiceID(), getClusterID());
-        Application::getRef().broadcast(inited);
+        DestroyServiceNotice notice(getServiceType(), getServiceID());
+        Application::getRef().broadcast(notice);
     }
     else
     {
