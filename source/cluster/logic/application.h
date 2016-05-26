@@ -58,6 +58,7 @@ private:
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
     void event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs);
+    void event_onRemoteServiceInited(TcpSessionPtr session, ReadStream & rs);
     void event_onRemoteShellForward(TcpSessionPtr session, ReadStream & rs);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
