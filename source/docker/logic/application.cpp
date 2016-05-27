@@ -323,7 +323,7 @@ void Application::event_onServiceClosed(TcpSessionPtr session)
     founder->second.second = 0;
 }
 
-bool Application::destroyService(ui16 serviceType, ServiceID serviceID)
+void Application::destroyService(ui16 serviceType, ServiceID serviceID)
 {
     auto founder = _services.find(serviceType);
     if (founder == _services.end())

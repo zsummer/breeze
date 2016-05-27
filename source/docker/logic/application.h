@@ -70,7 +70,7 @@ private:
 
 public:
     ServicePtr createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit);
-    bool destroyService(ui16 serviceType, ServiceID serviceID);
+    void destroyService(ui16 serviceType, ServiceID serviceID);
     void checkServiceState();
     void onCheckSafeExit();
 
