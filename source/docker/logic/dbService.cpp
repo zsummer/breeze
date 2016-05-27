@@ -70,7 +70,7 @@ bool DBService::onInit()
         return false;
     }
 
-
+    //debug
     if (getServiceType() == ServiceInfoDBMgr)
     {
         WriteStream ws(SQLQueryReq::getProtoID());
@@ -79,6 +79,8 @@ bool DBService::onInit()
         ws << req;
         toService(ServiceDictDBMgr, InvalidServiceID, ws.getStream(), ws.getStreamLen(), std::bind(&DBService::onTest, std::static_pointer_cast<DBService>(shared_from_this()), _1));
     }
+    //debug end
+
     if (onBuildDB())
     {
         finishInit();

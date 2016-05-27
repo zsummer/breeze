@@ -33,7 +33,7 @@ bool Service::finishInit()
     if (!isShell())
     {
         LOGD("local service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
-        CreateServiceNotice notice(getServiceType(), getServiceID(), getDockerID(), getClientID());
+        CreateOrRefreshServiceNotice notice(getServiceType(), getServiceID(), getDockerID(), getClientID());
         Application::getRef().broadcast(notice, false);
     }
     else

@@ -71,6 +71,7 @@ private:
 public:
     ServicePtr createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit);
     void destroyService(ui16 serviceType, ServiceID serviceID);
+public:
     void checkServiceState();
     void onCheckSafeExit();
 
@@ -78,20 +79,20 @@ public:
 private:
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
-
-    void event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs);
-    void event_onCreateServiceNotice(TcpSessionPtr session, ReadStream & rs);
-    void event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs);
-    void event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs);
-
-    void event_onRemoteShellForward(TcpSessionPtr session, ReadStream & rs);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-
-
     void event_onClientLinked(TcpSessionPtr session);
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
     void event_onClientPulse(TcpSessionPtr   session);
+private:
+    void event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onChangeServiceClientID(TcpSessionPtr session, ReadStream & rs);
+    void event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs);
+    void event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs);
+
+    void event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs);
+
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
 

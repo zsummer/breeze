@@ -62,25 +62,64 @@ namespace Proto4z
         } 
     } 
  
-    public class CreateServiceNotice: Proto4z.IProtoObject //服务创建好并初始化成功,广播给所有docker  
+    public class ChangeServiceClientID: Proto4z.IProtoObject //更改clientID  
     {     
         //proto id   
-        public const ushort protoID = 40002;  
-        static public ushort getProtoID() { return 40002; } 
-        static public string getProtoName() { return "CreateServiceNotice"; } 
+        public const ushort protoID = 40009;  
+        static public ushort getProtoID() { return 40009; } 
+        static public string getProtoName() { return "ChangeServiceClientID"; } 
+        //members   
+        public ushort serviceType;  
+        public ulong serviceID;  
+        public uint clientID;  
+        public ChangeServiceClientID()  
+        { 
+            serviceType = 0;  
+            serviceID = 0;  
+            clientID = 0;  
+        } 
+        public ChangeServiceClientID(ushort serviceType, ulong serviceID, uint clientID) 
+        { 
+            this.serviceType = serviceType; 
+            this.serviceID = serviceID; 
+            this.clientID = clientID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.serviceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.clientID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class CreateOrRefreshServiceNotice: Proto4z.IProtoObject //广播给所有docker  
+    {     
+        //proto id   
+        public const ushort protoID = 40010;  
+        static public ushort getProtoID() { return 40010; } 
+        static public string getProtoName() { return "CreateOrRefreshServiceNotice"; } 
         //members   
         public ushort serviceType;  
         public ulong serviceID;  
         public uint dockerID;  
         public uint clientID;  
-        public CreateServiceNotice()  
+        public CreateOrRefreshServiceNotice()  
         { 
             serviceType = 0;  
             serviceID = 0;  
             dockerID = 0;  
             clientID = 0;  
         } 
-        public CreateServiceNotice(ushort serviceType, ulong serviceID, uint dockerID, uint clientID) 
+        public CreateOrRefreshServiceNotice(ushort serviceType, ulong serviceID, uint dockerID, uint clientID) 
         { 
             this.serviceType = serviceType; 
             this.serviceID = serviceID; 

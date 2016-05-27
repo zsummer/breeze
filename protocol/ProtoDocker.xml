@@ -15,7 +15,12 @@
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="clientID" type="ui32"   desc=""/>
     </packet>
-     <packet name="CreateServiceNotice" desc= "服务创建好并初始化成功,广播给所有docker">
+    <packet name="ChangeServiceClientID" desc= "更改clientID">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clientID" type="ui32"   desc=""/>
+    </packet>
+     <packet name="CreateOrRefreshServiceNotice" desc= "广播给所有docker">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="dockerID" type="ui32"   desc=""/>

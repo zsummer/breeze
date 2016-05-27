@@ -67,22 +67,66 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct CreateServiceNotice //服务创建好并初始化成功,广播给所有docker  
+struct ChangeServiceClientID //更改clientID  
 { 
-    static const unsigned short getProtoID() { return 40002;} 
-    static const std::string getProtoName() { return "ID_CreateServiceNotice";} 
+    static const unsigned short getProtoID() { return 40009;} 
+    static const std::string getProtoName() { return "ID_ChangeServiceClientID";} 
+    unsigned short serviceType;  
+    unsigned long long serviceID;  
+    unsigned int clientID;  
+    ChangeServiceClientID() 
+    { 
+        serviceType = 0; 
+        serviceID = 0; 
+        clientID = 0; 
+    } 
+    ChangeServiceClientID(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clientID) 
+    { 
+        this->serviceType = serviceType; 
+        this->serviceID = serviceID; 
+        this->clientID = clientID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChangeServiceClientID & data) 
+{ 
+    ws << data.serviceType;  
+    ws << data.serviceID;  
+    ws << data.clientID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChangeServiceClientID & data) 
+{ 
+    rs >> data.serviceType;  
+    rs >> data.serviceID;  
+    rs >> data.clientID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChangeServiceClientID & info) 
+{ 
+    stm << "[\n"; 
+    stm << "serviceType=" << info.serviceType << "\n"; 
+    stm << "serviceID=" << info.serviceID << "\n"; 
+    stm << "clientID=" << info.clientID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct CreateOrRefreshServiceNotice //广播给所有docker  
+{ 
+    static const unsigned short getProtoID() { return 40010;} 
+    static const std::string getProtoName() { return "ID_CreateOrRefreshServiceNotice";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     unsigned int dockerID;  
     unsigned int clientID;  
-    CreateServiceNotice() 
+    CreateOrRefreshServiceNotice() 
     { 
         serviceType = 0; 
         serviceID = 0; 
         dockerID = 0; 
         clientID = 0; 
     } 
-    CreateServiceNotice(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & dockerID, const unsigned int & clientID) 
+    CreateOrRefreshServiceNotice(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & dockerID, const unsigned int & clientID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
@@ -90,7 +134,7 @@ struct CreateServiceNotice //服务创建好并初始化成功,广播给所有do
         this->clientID = clientID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateServiceNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateOrRefreshServiceNotice & data) 
 { 
     ws << data.serviceType;  
     ws << data.serviceID;  
@@ -98,7 +142,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.clientID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateServiceNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateOrRefreshServiceNotice & data) 
 { 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
@@ -106,7 +150,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.clientID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateServiceNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateOrRefreshServiceNotice & info) 
 { 
     stm << "[\n"; 
     stm << "serviceType=" << info.serviceType << "\n"; 
