@@ -75,7 +75,7 @@ public:
 protected:
     inline void setServiceType(ui16 serviceType) { _serviceType = serviceType; }
     inline void setServiceID(ServiceID serviceID) { _serviceID = serviceID; }
-    inline void setDockerID(DockerID cltID) { _dockerID = cltID; }
+    inline void setDockerID(DockerID dockerID) { _dockerID = dockerID; }
     inline void setClientID(SessionID clientID) { _clientID = clientID; }
 
     inline void setStatus(ui16 status) { _status = status; };

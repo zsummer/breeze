@@ -40,7 +40,7 @@ void  UserMgrService::process(const Tracing & trace, const char * block, unsigne
         if (shell._uID != trace._toServiceID)
         {
             LOGF("UserMgrService found the user/client id, but user shell store service id not user id or docker id invalid. trace=" << trace
-                <<", shell.uID=" << shell._uID << ", shell.cltID=" << shell._dockerID);
+                <<", shell.uID=" << shell._uID << ", shell.dockerID=" << shell._dockerID);
             return;
         }
         
@@ -49,7 +49,7 @@ void  UserMgrService::process(const Tracing & trace, const char * block, unsigne
             WriteStream ws(ClientForward::getProtoID());
             ws << trace;
             ws.appendOriginalData(block, len);
-            Application::getRef().callOtherDocker(shell._dockerID, ws.getStream(), ws.getStreamLen());
+            Application::getRef().sendToDocker(shell._dockerID, ws.getStream(), ws.getStreamLen());
         }
         catch (const std::exception & e)
         {
@@ -112,6 +112,6 @@ void UserMgrService::onUserAuthReq(const Tracing & trace, zsummer::proto4z::Read
     WriteStream wsf(ClientForward::getProtoID());
     wsf << trace;
     wsf.appendOriginalData(ws.getStream(), ws.getStreamLen());
-    Application::getRef().callOtherDocker(resp.clientDockerID, wsf.getStream(), wsf.getStreamLen());
+    Application::getRef().sendToDocker(resp.clientDockerID, wsf.getStream(), wsf.getStreamLen());
 }
 

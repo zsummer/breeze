@@ -303,17 +303,7 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
             if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
                 CreateServiceNotice notice(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getDockerID(), svc.second->getClientID());
-                try
-                {
-                    WriteStream ws(notice.getProtoID());
-                    ws << notice;
-                    SessionManager::getRef().sendSessionData(session->getSessionID(), ws.getStream(), ws.getStreamLen());
-                }
-                catch (const std::exception&)
-                {
-
-                }
-                
+                Application::getRef().sendToSession(session->getSessionID(), notice);
             }
         }
     }
@@ -740,22 +730,22 @@ void Application::event_onClientMessage(TcpSessionPtr session, const char * begi
 
 }
 
-void Application::callOtherDocker(DockerID cltID, const char * block, unsigned int len)
+void Application::sendToDocker(DockerID dockerID, const char * block, unsigned int len)
 {
-    auto founder = _dockerSession.find(cltID);
+    auto founder = _dockerSession.find(dockerID);
     if (founder == _dockerSession.end())
     {
-        LOGF("Application::callOtherDocker fatal error. cltID not found. cltID=" << cltID);
+        LOGF("Application::sendToDocker fatal error. dockerID not found. dockerID=" << dockerID);
         return;
     }
     if (founder->second.first == InvalidServiceID)
     {
-        LOGF("Application::callOtherDocker fatal error. cltID not have session. cltID=" << cltID);
+        LOGF("Application::sendToDocker fatal error. dockerID not have session. dockerID=" << dockerID);
         return;
     }
     if (founder->second.second == 0)
     {
-        LOGW("Application::callOtherDocker warning error. session try connecting. cltID=" << cltID << ", client session ID=" << founder->second.first);
+        LOGW("Application::sendToDocker warning error. session try connecting. dockerID=" << dockerID << ", client session ID=" << founder->second.first);
     }
     SessionManager::getRef().sendSessionData(founder->second.first, block, len);
 }
@@ -792,11 +782,11 @@ void Application::callOtherService(Tracing trace, const char * block, unsigned i
         WriteStream ws(ShellForward::getProtoID());
         ws << trace;
         ws.appendOriginalData(block, len);
-        DockerID cltID = service.getDockerID();
-        auto fsder = _dockerSession.find(cltID);
+        DockerID dockerID = service.getDockerID();
+        auto fsder = _dockerSession.find(dockerID);
         if (fsder == _dockerSession.end())
         {
-            LOGE("Application::callOtherService not found session by shell service. dockerID=" << cltID << ", tracing=" << trace);
+            LOGE("Application::callOtherService not found session by shell service. dockerID=" << dockerID << ", tracing=" << trace);
         }
         else
         {
@@ -804,7 +794,7 @@ void Application::callOtherService(Tracing trace, const char * block, unsigned i
             if (fsder->second.second == 0)
             {
                 LOGW("Application::callOtherService session not connected when global call by shell service. sID=" << fsder->second.first
-                    << ", dockerID=" << cltID << ", tracing=" << trace);
+                    << ", dockerID=" << dockerID << ", tracing=" << trace);
             }
         }
     }
