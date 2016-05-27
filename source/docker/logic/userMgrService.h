@@ -58,7 +58,6 @@ public:
     bool onInit() override final;
     void onUninit() override final;
     void onTick() override final;
-    void process(const Tracing & trace, const char * block, unsigned int len) override final;
 public:
     void onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 public:

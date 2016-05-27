@@ -32,11 +32,10 @@
     </packet>
 
 
-    <packet name="ShellForward" desc= "壳子转发">
+    <packet name="ForwardToDocker" desc= "转发到其他docker">
     </packet>
 
-    <packet name="ClientForward" desc= "client转发">
-    </packet>
+
 
     
 </Proto>

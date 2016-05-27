@@ -43,16 +43,24 @@ public:
 
     template<class Proto>
     void sendToSession(SessionID sessionID, const Proto & proto);
+    void sendToSession(SessionID sessionID, const char * block, unsigned int len);
+
+    void forwardToSession(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len);
     template<class Proto>
-    void sendToSession(SessionID sessionID, const Tracing & trace, const Proto & proto);
+    void forwardToSession(SessionID sessionID, const Tracing & trace, const Proto & proto);
 
     template<class Proto>
     void sendToDocker(DockerID dockerID, const Proto & proto);
-    template<class Proto>
-    void sendToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto);
     void sendToDocker(DockerID dockerID, const char * block, unsigned int len);
 
-    void callOtherService(Tracing trace, const char * block, unsigned int len);
+    template<class Proto>
+    void forwardToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto);
+    void forwardToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len);
+
+    void toService(Tracing trace, const char * block, unsigned int len, bool isFromeOtherDocker);
+    template<class Proto>
+    void toService(Tracing trace, Proto proto, bool isFromeOtherDocker);
+public:
     bool isStoping();
 
 private:
@@ -174,18 +182,21 @@ void Application::sendToSession(SessionID sessionID, const Proto & proto)
         LOGE("Application::sendToSession catch except error. e=" << e.what());
     }
 }
+
+
+
 template<class Proto>
-void Application::sendToSession(SessionID sessionID, const Tracing & trace, const Proto & proto)
+void Application::forwardToSession(SessionID sessionID, const Tracing & trace, const Proto & proto)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
-        ws << trace << proto;
-        SessionManager::getRef().sendSessionData(sessionID, ws.getStream(), ws.getStreamLen());
+        ws << proto;
+        forwardToSession(sessionID, trace, ws.getStream(), ws.getStreamLen());
     }
     catch (const std::exception & e)
     {
-        LOGE("Application::sendToSession catch except error. e=" << e.what());
+        LOGE("Application::forwardToSession catch except error. e=" << e.what());
     }
 }
 
@@ -204,16 +215,16 @@ void Application::sendToDocker(DockerID dockerID, const Proto & proto)
 }
 
 template<class Proto>
-void Application::sendToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto)
+void Application::forwardToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto)
 {
     auto founder = _dockerSession.find(dockerID);
     if (founder != _dockerSession.end() && founder->second.first != InvalidSessionID && founder->second.second != 0)
     {
-        sendToSession(founder->second.first, trace, proto);
+        forwardToSession(founder->second.first, trace, proto);
     }
     else
     {
-        LOGE("Application::sendToDocker not found docker. dockerID=" << dockerID);
+        LOGE("Application::forwardToDocker not found docker. dockerID=" << dockerID);
     }
 }
 
@@ -221,6 +232,20 @@ void Application::sendToDocker(DockerID dockerID, const Tracing & trace, const P
 
 
 
+template<class Proto>
+void Application::toService(Tracing trace, Proto proto, bool isFromeOtherDocker)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        toService(trace, ws.getStream(), ws.getStreamLen(), isFromeOtherDocker);
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Application::toService catch except error. e=" << e.what());
+    }
+}
 
 
 

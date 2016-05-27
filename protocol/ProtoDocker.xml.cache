@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>7890188fcf29633bf65bc7217dbcd089</cppmd5> 
-<luamd5>d95719226694ac35e80258faa9f1df46</luamd5> 
-<csharpmd5>225fc69952ac840af75311346a213fc0</csharpmd5> 
+<cppmd5>986a785cf3e88e02488a5051e0477fbe</cppmd5> 
+<luamd5>f0ea6f71ffa0d6bedb23c011e5e751ef</luamd5> 
+<csharpmd5>7e3bfd77b94859e35a5c451dd30fba2b</csharpmd5> 
 <xmlmd5>d41d8cd98f00b204e9800998ecf8427e</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_ClientForward" Number = "40006" /> 
@@ -12,5 +12,6 @@
     <cache key = "ID_DestroyServiceInDocker" Number = "40003" /> 
     <cache key = "ID_DestroyServiceNotice" Number = "40004" /> 
     <cache key = "ID_DockerPulse" Number = "40007" /> 
+    <cache key = "ID_ForwardToDocker" Number = "40008" /> 
     <cache key = "ID_ShellForward" Number = "40005" /> 
 </cacheNumber>

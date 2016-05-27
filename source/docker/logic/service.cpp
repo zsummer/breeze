@@ -101,7 +101,7 @@ void Service::cleanCallback()
     }
 }
 
-void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
+void Service::toService(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trace;
     trace._fromService = getServiceType();
@@ -114,10 +114,15 @@ void Service::globalCall(ui16 st, ServiceID svcID, const char * block, unsigned 
     {
         trace._traceID = makeCallback(cb);
     }
-    Application::getRef().callOtherService(trace, block, len);
+    Application::getRef().toService(trace, block, len, false);
 }
 
-void Service::backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
+void Service::toService(ui16 st, const char * block, unsigned int len, ServiceCallback cb)
+{
+    toService(st, InvalidServiceID, block, len, cb);
+}
+
+void Service::backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trc;
     trc._fromService = getServiceType();
@@ -130,7 +135,7 @@ void Service::backCall(const Tracing & trace, const char * block, unsigned int l
     {
         trc._traceID = makeCallback(cb);
     }
-    Application::getRef().callOtherService(trc, block, len);
+    Application::getRef().toService(trc, block, len, false);
 }
 
 void Service::process4bind(const Tracing & trace, const std::string & block)

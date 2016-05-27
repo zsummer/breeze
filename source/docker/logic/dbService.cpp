@@ -77,7 +77,7 @@ bool DBService::onInit()
         SQLQueryReq req;
         req.sql = "select 1";
         ws << req;
-        globalCall(ServiceDictDBMgr, InvalidServiceID, ws.getStream(), ws.getStreamLen(), std::bind(&DBService::onTest, std::static_pointer_cast<DBService>(shared_from_this()), _1));
+        toService(ServiceDictDBMgr, InvalidServiceID, ws.getStream(), ws.getStreamLen(), std::bind(&DBService::onTest, std::static_pointer_cast<DBService>(shared_from_this()), _1));
     }
     if (onBuildDB())
     {
@@ -147,7 +147,7 @@ void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
     resp.result.fields = std::move(result->popResult());
     WriteStream ws(SQLQueryResp::getProtoID());
     ws << resp;
-    backCall(trace, ws.getStream(), ws.getStreamLen(), nullptr);
+    backToService(trace, ws.getStream(), ws.getStreamLen(), nullptr);
 }
 
 void DBService::onTest(ReadStream & rs)

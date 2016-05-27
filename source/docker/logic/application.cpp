@@ -595,58 +595,10 @@ void Application::event_onServiceMessage(TcpSessionPtr   session, const char * b
         event_onCreateServiceInDocker(session, rsShell);
         return;
     }
-    if (rsShell.getProtoID() == ShellForward::getProtoID())
+    if (rsShell.getProtoID() == ForwardToDocker::getProtoID())
     {
         event_onRemoteShellForward(session, rsShell);
         return;
-    }
-    if (rsShell.getProtoID() == ClientForward::getProtoID())
-    {
-        Tracing trace;
-        rsShell >> trace;
-        ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
-        if (rs.getProtoID() == UserAuthResp::getProtoID())
-        {
-            UserAuthResp resp;
-            rs >> resp;
-            auto client = SessionManager::getRef().getTcpSession(resp.clientSessionID);
-            if (client)
-            {
-                if (resp.retCode == EC_SUCCESS)
-                {
-                    client->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
-                }
-                else
-                {
-                    client->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
-                }
-                ClientAuthResp clientresp;
-                clientresp.retCode = resp.retCode;
-                clientresp.account = resp.account;
-                clientresp.token = resp.token;
-                clientresp.previews = resp.previews;
-                WriteStream ws(ClientAuthResp::getProtoID());
-                ws << clientresp;
-                client->send(ws.getStream(), ws.getStreamLen());
-            }
-            return;
-        }
-        else
-        {
-            auto founder = _services.find(ServiceUser);
-            if (founder == _services.end())
-            {
-                LOGW("not have any client.");
-                return;
-            }
-            auto fder = founder->second.find(trace._toServiceID);
-            if (fder == founder->second.end())
-            {
-                LOGW("not have the client.");
-                return;
-            }
-            fder->second->process(trace, rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
-        }
     }
     
 }
@@ -723,7 +675,7 @@ void Application::event_onClientMessage(TcpSessionPtr session, const char * begi
         req.clientSessionID = session->getSessionID();
         req.clientDockerID = ServerConfig::getRef().getDockerID();
         ws << req;
-        callOtherService(trace, ws.getStream(), ws.getStreamLen());
+        toService(trace, ws.getStream(), ws.getStreamLen(), true);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
         return;
     }
@@ -747,65 +699,106 @@ void Application::sendToDocker(DockerID dockerID, const char * block, unsigned i
     {
         LOGW("Application::sendToDocker warning error. session try connecting. dockerID=" << dockerID << ", client session ID=" << founder->second.first);
     }
-    SessionManager::getRef().sendSessionData(founder->second.first, block, len);
+    sendToSession(founder->second.first, block, len);
 }
 
-void Application::callOtherService(Tracing trace, const char * block, unsigned int len)
+void Application::toService(Tracing trace, const char * block, unsigned int len, bool isFromeOtherDocker)
 {
     if (trace._fromService >= ServiceMax || trace._toService >= ServiceMax || trace._toService == ServiceInvalid)
     {
-        LOGF("Application::callOtherService Illegality trace. trace=" << trace << ", block len=" << len);
+        LOGF("Application::sendToService Illegality trace. trace=" << trace << ", block len=" << len);
         return;
     }
 
     ui16 toService = trace._toService;
-    if (trace._toService == ServiceUser && trace._toService == ServiceClient)
+    if (trace._toService == ServiceClient)
     {
-        toService = ServiceUserMgr;
+        toService = ServiceUser;
     }
 
     auto founder = _services.find(toService);
     if (founder == _services.end())
     {
-        LOGF("Application::callOtherService can not found _toService type  trace =" << trace << ", block len=" << len);
+        LOGF("Application::toService can not found _toService type  trace =" << trace << ", block len=" << len);
         return;
     }
     auto fder = founder->second.find(trace._toServiceID);
     if (fder == founder->second.end())
     {
-        LOGD("Application::callOtherService can not found _toService ID. trace =" << trace << ", block len=" << len);
+        LOGD("Application::toService can not found _toService ID. trace =" << trace << ", block len=" << len);
         return;
     }
     auto & service = *fder->second;
+    if (service.isShell() && isFromeOtherDocker)
+    {
+        LOGE("local service is shell but the call from other docker.");
+        return;
+    }
     if (service.isShell()) //forward 
     {
-        WriteStream ws(ShellForward::getProtoID());
-        ws << trace;
-        ws.appendOriginalData(block, len);
         DockerID dockerID = service.getDockerID();
-        auto fsder = _dockerSession.find(dockerID);
-        if (fsder == _dockerSession.end())
-        {
-            LOGE("Application::callOtherService not found session by shell service. dockerID=" << dockerID << ", tracing=" << trace);
-        }
-        else
-        {
-            SessionManager::getRef().sendSessionData(fsder->second.first, ws.getStream(), ws.getStreamLen());
-            if (fsder->second.second == 0)
-            {
-                LOGW("Application::callOtherService session not connected when global call by shell service. sID=" << fsder->second.first
-                    << ", dockerID=" << dockerID << ", tracing=" << trace);
-            }
-        }
+        forwardToDocker(dockerID, trace, block, len);
     }
     else //direct process
     {
-        std::string bk;
-        bk.assign(block, len);
-        SessionManager::getRef().post(std::bind(&Service::process4bind, fder->second, trace, std::move(bk)));
+        if (trace._toService == ServiceClient)
+        {
+            if (service.getClientID() != InvalidSessionID)
+            {
+                sendToSession(service.getClientID(), block, len);
+            }
+        }
+        else if (isFromeOtherDocker)
+        {
+            fder->second->process(trace, block, len);
+        }
+        else
+        {
+            std::string bk;
+            bk.assign(block, len);
+            SessionManager::getRef().post(std::bind(&Service::process4bind, fder->second, trace, std::move(bk)));
+        }
     }
 
 }
+
+
+void Application::forwardToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len)
+{
+    auto founder = _dockerSession.find(dockerID);
+    if (founder != _dockerSession.end() && founder->second.first != InvalidSessionID && founder->second.second != 0)
+    {
+        forwardToSession(founder->second.first, trace, block, len);
+    }
+    else
+    {
+        LOGE("Application::forwardToDocker not found docker. dockerID=" << dockerID);
+    }
+}
+
+
+
+void Application::sendToSession(SessionID sessionID, const char * block, unsigned int len)
+{
+    SessionManager::getRef().sendSessionData(sessionID, block, len);
+}
+
+
+void Application::forwardToSession(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len)
+{
+    try
+    {
+        WriteStream ws(ForwardToDocker::getProtoID());
+        ws << trace;
+        ws.appendOriginalData(block, len);
+        sendToSession(sessionID, ws.getStream(), ws.getStreamLen());
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Application::forwardToSession catch except error. e=" << e.what());
+    }
+}
+
 
 
 

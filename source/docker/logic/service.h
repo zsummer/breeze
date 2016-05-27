@@ -100,8 +100,16 @@ protected:
     virtual void process(const Tracing & trace, const char * block, unsigned int len);
     virtual void process4bind(const Tracing & trace, const std::string & block);
 
-    virtual void globalCall(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
-    virtual void backCall(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ui16 st, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    template<class Proto>
+    void toService(ui16 st, Proto proto, ServiceCallback cb = nullptr);
+    template<class Proto>
+    void toService(ui16 st, ServiceID svcID, Proto proto, ServiceCallback cb = nullptr);
+
+    void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    template<class Proto>
+    void backToService(const Tracing & trace, Proto proto, ServiceCallback cb = nullptr);
 
     ui32 makeCallback(const ServiceCallback &cb);
     void cleanCallback();
@@ -129,6 +137,59 @@ private:
 
 };
 using ServicePtr = std::shared_ptr<Service>;
+
+template<class Proto>
+void Service::toService(ui16 st, Proto proto, ServiceCallback cb)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        toService(st, ws.getStream(), ws.getStreamLen(), cb);
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Service::toService catch except error. e=" << e.what());
+    }
+}
+template<class Proto>
+void Service::toService(ui16 st, ServiceID svcID, Proto proto, ServiceCallback cb)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        toService(st, svcID, ws.getStream(), ws.getStreamLen(), cb);
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Service::toService catch except error. e=" << e.what());
+    }
+}
+
+template<class Proto>
+void Service::backToService(const Tracing & trace, Proto proto, ServiceCallback cb)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        backToService(trace, ws.getStream(), ws.getStreamLen(), cb);
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Service::backToService catch except error. e=" << e.what());
+    }
+}
+
+
+
+
+
+
+
+
+
 
 
 

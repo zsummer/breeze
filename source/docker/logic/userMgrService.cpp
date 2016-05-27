@@ -21,44 +21,6 @@ void UserMgrService::onTick()
     }
 }
 
-void  UserMgrService::process(const Tracing & trace, const char * block, unsigned int len)
-{
-    if (trace._toService == ServiceUserMgr)
-    {
-        Service::process(trace, block, len);
-        return;
-    }
-    if (trace._toService == ServiceUser || trace._toService == ServiceClient)
-    {
-        auto founder = _userShells.find(trace._toServiceID);
-        if (founder == _userShells.end())
-        {
-            LOGE("UserMgrService not found the user/client id trace=" << trace);
-            return;
-        }
-        const ServiceUserShell & shell = founder->second;
-        if (shell._uID != trace._toServiceID)
-        {
-            LOGF("UserMgrService found the user/client id, but user shell store service id not user id or docker id invalid. trace=" << trace
-                <<", shell.uID=" << shell._uID << ", shell.dockerID=" << shell._dockerID);
-            return;
-        }
-        
-        try
-        {
-            WriteStream ws(ClientForward::getProtoID());
-            ws << trace;
-            ws.appendOriginalData(block, len);
-            Application::getRef().sendToDocker(shell._dockerID, ws.getStream(), ws.getStreamLen());
-        }
-        catch (const std::exception & e)
-        {
-            LOGE("UserMgrService::process catch except error. e=" << e.what());
-        }
-        return;
-    }
-    LOGF("UserMgrService::process trace=" << trace);
-}
 void UserMgrService::onUninit()
 {
     finishUninit();
@@ -109,9 +71,9 @@ void UserMgrService::onUserAuthReq(const Tracing & trace, zsummer::proto4z::Read
     WriteStream ws(UserAuthResp::getProtoID());
     ws << resp;
 
-    WriteStream wsf(ClientForward::getProtoID());
-    wsf << trace;
-    wsf.appendOriginalData(ws.getStream(), ws.getStreamLen());
-    Application::getRef().sendToDocker(resp.clientDockerID, wsf.getStream(), wsf.getStreamLen());
+//     WriteStream wsf(ClientForward::getProtoID());
+//     wsf << trace;
+//     wsf.appendOriginalData(ws.getStream(), ws.getStreamLen());
+//     Application::getRef().sendToDocker(resp.clientDockerID, wsf.getStream(), wsf.getStreamLen());
 }
 

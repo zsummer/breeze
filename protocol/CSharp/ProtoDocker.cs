@@ -32,20 +32,17 @@ namespace Proto4z
         //members   
         public ushort serviceType;  
         public ulong serviceID;  
-        public uint dockerID;  
         public uint clientID;  
         public CreateServiceInDocker()  
         { 
             serviceType = 0;  
             serviceID = 0;  
-            dockerID = 0;  
             clientID = 0;  
         } 
-        public CreateServiceInDocker(ushort serviceType, ulong serviceID, uint dockerID, uint clientID) 
+        public CreateServiceInDocker(ushort serviceType, ulong serviceID, uint clientID) 
         { 
             this.serviceType = serviceType; 
             this.serviceID = serviceID; 
-            this.dockerID = dockerID; 
             this.clientID = clientID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -53,7 +50,6 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.serviceType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.dockerID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientID)); 
             return data; 
         } 
@@ -61,7 +57,6 @@ namespace Proto4z
         { 
             this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.dockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.clientID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
@@ -179,35 +174,14 @@ namespace Proto4z
         } 
     } 
  
-    public class ShellForward: Proto4z.IProtoObject //壳子转发  
+    public class ForwardToDocker: Proto4z.IProtoObject //转发到其他docker  
     {     
         //proto id   
-        public const ushort protoID = 40005;  
-        static public ushort getProtoID() { return 40005; } 
-        static public string getProtoName() { return "ShellForward"; } 
+        public const ushort protoID = 40008;  
+        static public ushort getProtoID() { return 40008; } 
+        static public string getProtoName() { return "ForwardToDocker"; } 
         //members   
-        public ShellForward()  
-        { 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            return pos; 
-        } 
-    } 
- 
-    public class ClientForward: Proto4z.IProtoObject //client转发  
-    {     
-        //proto id   
-        public const ushort protoID = 40006;  
-        static public ushort getProtoID() { return 40006; } 
-        static public string getProtoName() { return "ClientForward"; } 
-        //members   
-        public ClientForward()  
+        public ForwardToDocker()  
         { 
         } 
         public System.Collections.Generic.List<byte> __encode() 
