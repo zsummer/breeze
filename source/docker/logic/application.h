@@ -211,9 +211,9 @@ template<class Proto>
 void Application::sendToDocker(DockerID dockerID, const Proto & proto)
 {
     auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.first != InvalidSessionID && founder->second.second != 0)
+    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
     {
-        sendToSession(founder->second.first, proto);
+        sendToSession(founder->second.sessionID, proto);
     }
     else
     {
@@ -225,9 +225,9 @@ template<class Proto>
 void Application::forwardToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto)
 {
     auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.first != InvalidSessionID && founder->second.second != 0)
+    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
     {
-        forwardToSession(founder->second.first, trace, proto);
+        forwardToSession(founder->second.sessionID, trace, proto);
     }
     else
     {
