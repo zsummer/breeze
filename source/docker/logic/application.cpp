@@ -210,7 +210,9 @@ bool Application::startDockerConnect()
         LOGA("Application::startDockerConnect success. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
         session->setUserParam(UPARAM_REMOTE_CLUSTER, docker._docker);
-        _dockerSession[docker._docker] = std::make_pair(cID, 0);
+        auto &ds = _dockerSession[docker._docker];
+        ds.dokerID = docker._docker;
+        ds.sessionID = cID;
         for (ui16 i = ServiceInvalid; i <= ServiceMax; i++)
         {
             _services.insert(std::make_pair(i, std::unordered_map<ServiceID, ServicePtr >()));
@@ -291,7 +293,7 @@ void Application::event_onServiceLinked(TcpSessionPtr session)
         return;
     }
     LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", dockerID=" << ci);
-    founder->second.second = 1;
+    founder->second.status = 1;
     for (auto & second : _services)
     {
         if (second.first == ServiceClient || second.first == ServiceUser || second.first == ServiceInvalid)
@@ -320,7 +322,7 @@ void Application::event_onServiceClosed(TcpSessionPtr session)
         return;
     }
     LOGW("event_onServiceClosed cID=" << session->getSessionID() << ", dockerID=" << ci);
-    founder->second.second = 0;
+    founder->second.status = 0;
 }
 
 void Application::destroyService(ui16 serviceType, ServiceID serviceID)
@@ -412,7 +414,7 @@ void Application::checkServiceState()
     {
         for (auto & c : _dockerSession)
         {
-            if (c.second.second == 0)
+            if (c.second.status == 0)
             {
                 return;
             }
@@ -731,16 +733,16 @@ void Application::sendToDocker(DockerID dockerID, const char * block, unsigned i
         LOGF("Application::sendToDocker fatal error. dockerID not found. dockerID=" << dockerID);
         return;
     }
-    if (founder->second.first == InvalidServiceID)
+    if (founder->second.sessionID == InvalidSessionID)
     {
         LOGF("Application::sendToDocker fatal error. dockerID not have session. dockerID=" << dockerID);
         return;
     }
-    if (founder->second.second == 0)
+    if (founder->second.status == 0)
     {
-        LOGW("Application::sendToDocker warning error. session try connecting. dockerID=" << dockerID << ", client session ID=" << founder->second.first);
+        LOGW("Application::sendToDocker warning error. session try connecting. dockerID=" << dockerID << ", client session ID=" << founder->second.sessionID);
     }
-    sendToSession(founder->second.first, block, len);
+    sendToSession(founder->second.sessionID, block, len);
 }
 
 void Application::toService(Tracing trace, const char * block, unsigned int len, bool isFromeOtherDocker)
@@ -807,9 +809,9 @@ void Application::toService(Tracing trace, const char * block, unsigned int len,
 void Application::forwardToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len)
 {
     auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.first != InvalidSessionID && founder->second.second != 0)
+    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
     {
-        forwardToSession(founder->second.first, trace, block, len);
+        forwardToSession(founder->second.sessionID, trace, block, len);
     }
     else
     {

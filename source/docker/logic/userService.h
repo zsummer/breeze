@@ -41,8 +41,6 @@ public:
     void onTick() override final;
 
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void process(const Tracing & trace, const char * block, unsigned int len) override final;
-    void process4bind(const Tracing & trace, const std::string & block) override final;
 private:
     SessionID _clientID = InvalidSessionID;
 };

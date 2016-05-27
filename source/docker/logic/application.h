@@ -26,6 +26,12 @@
 #include "service.h"
 #include <ProtoDocker.h>
 
+struct DockerSession
+{
+    DockerID dokerID = InvalidDockerID;
+    SessionID sessionID = InvalidSessionID;
+    int status; //0 invalid, 1 valid
+};
 
 class Application : public Singleton<Application>
 {
@@ -95,12 +101,12 @@ private:
 
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
-
-    std::map < DockerID, std::pair<SessionID, int>> _dockerSession;
+    std::map <DockerID, DockerSession> _dockerSession;
     bool _dockerNetWorking = false;
     bool _dockerServiceWorking = false;
     AccepterID _wlisten = InvalidAccepterID;
-    
+private:
+
 
 };
 
@@ -118,18 +124,18 @@ void Application::broadcast(const Proto & proto, bool withme)
         ws << proto;
         for (const auto &c : _dockerSession)
         {
-            if (c.second.first == InvalidSessionID)
+            if (c.second.sessionID == InvalidSessionID)
             {
                 LOGF("Application::broadcast fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
                 continue;
             }
-            if (c.second.second == 0)
+            if (c.second.status == 0)
             {
-                LOGW("Application::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.first);
+                LOGW("Application::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
             }
             if (withme || ServerConfig::getRef().getDockerID() != c.first)
             {
-                SessionManager::getRef().sendSessionData(c.second.first, ws.getStream(), ws.getStreamLen());
+                SessionManager::getRef().sendSessionData(c.second.sessionID, ws.getStream(), ws.getStreamLen());
             }
         }
     }
