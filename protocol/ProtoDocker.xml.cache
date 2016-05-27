@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>7890188fcf29633bf65bc7217dbcd089</cppmd5> 
+<luamd5>d95719226694ac35e80258faa9f1df46</luamd5> 
+<csharpmd5>225fc69952ac840af75311346a213fc0</csharpmd5> 
+<xmlmd5>d41d8cd98f00b204e9800998ecf8427e</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_ClientForward" Number = "40006" /> 
+    <cache key = "ID_ClusterPulse" Number = "40000" /> 
+    <cache key = "ID_CreateServiceInDocker" Number = "40001" /> 
+    <cache key = "ID_CreateServiceNotice" Number = "40002" /> 
+    <cache key = "ID_DestroyServiceInDocker" Number = "40003" /> 
+    <cache key = "ID_DestroyServiceNotice" Number = "40004" /> 
+    <cache key = "ID_DockerPulse" Number = "40007" /> 
+    <cache key = "ID_ShellForward" Number = "40005" /> 
+</cacheNumber>

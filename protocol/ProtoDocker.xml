@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>40000</MinNo>
+  <MaxNo>40100</MaxNo>
+  <UseLog4z>true</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+    <packet name="DockerPulse" desc= "集群脉冲">
+    </packet>
+    <packet name="CreateServiceInDocker" desc= "创建并初始化一个service">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clientID" type="ui32"   desc=""/>
+    </packet>
+     <packet name="CreateServiceNotice" desc= "服务创建好并初始化成功,广播给所有docker">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="dockerID" type="ui32"   desc=""/>
+        <member name="clientID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="DestroyServiceInDocker" desc= "销毁一个Service">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+    </packet>
+     <packet name="DestroyServiceNotice" desc= "已卸载并完成销毁,广播给所有docker">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+    </packet>
+
+
+    <packet name="ShellForward" desc= "壳子转发">
+    </packet>
+
+    <packet name="ClientForward" desc= "client转发">
+    </packet>
+
+    
+</Proto>
+
