@@ -66,7 +66,7 @@ public:
 private:
     bool startDockerListen();
     bool startDockerConnect();
-    bool startWideListen();
+    bool startDockerWideListen();
 
 public:
     ServicePtr createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit);

@@ -225,14 +225,14 @@ bool Application::startDockerConnect()
     }
     return true;
 }
-bool Application::startWideListen()
+bool Application::startDockerWideListen()
 {
     const auto & dockers = ServerConfig::getRef().getDockerConfig();
     ServerConfig::getRef().getDockerID();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._docker == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
-        LOGE("Application::startWideListen error. current docker id not found in config file.");
+        LOGE("Application::startDockerWideListen error. current docker id not found in config file.");
         return false;
     }
     const DockerConfig & docker = *founder;
@@ -241,7 +241,7 @@ bool Application::startWideListen()
         AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._widePort);
         if (aID == InvalidAccepterID)
         {
-            LOGE("Application::startWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
+            LOGE("Application::startDockerWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
             return false;
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
@@ -262,10 +262,10 @@ bool Application::startWideListen()
         options._sessionOptions._onBlockDispatch = std::bind(&Application::event_onClientMessage, this, _1, _2, _3);
         if (!SessionManager::getRef().openAccepter(aID))
         {
-            LOGE("Application::startWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
+            LOGE("Application::startDockerWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
             return false;
         }
-        LOGA("Application::startWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort << ", listen aID=" << aID);
+        LOGA("Application::startDockerWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort << ", listen aID=" << aID);
         _wlisten = aID;
     }
     return true;
@@ -273,7 +273,7 @@ bool Application::startWideListen()
 
 bool Application::start()
 {
-    return startDockerListen() && startDockerConnect() && startWideListen();
+    return startDockerListen() && startDockerConnect() && startDockerWideListen();
 }
 
 
