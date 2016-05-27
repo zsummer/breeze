@@ -328,15 +328,15 @@ void Application::destroyService(ui16 serviceType, ServiceID serviceID)
     auto founder = _services.find(serviceType);
     if (founder == _services.end())
     {
-        return false;
+        return;
     }
     auto fder = founder->second.find(serviceID);
     if (fder == founder->second.end())
     {
-        return false;
+        return;
     }
     founder->second.erase(fder);
-    return true;
+    return;
 }
 
 ServicePtr Application::createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit)
