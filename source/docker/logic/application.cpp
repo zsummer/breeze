@@ -509,13 +509,12 @@ void Application::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs
         LOGE("Application::event_onRemoteShellForward error. not found service id. trace=" << trace);
         return;
     }
-    Service & svc = *fder->second;
-    if (svc.isShell())
+    if (fder->second->isShell())
     {
         LOGE("Application::event_onRemoteShellForward error. service not local. trace=" << trace);
         return;
     }
-    svc.process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
+    fder->second->process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
 }
 
 void Application::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs)

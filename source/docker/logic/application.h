@@ -154,18 +154,18 @@ void Application::broadcast(const Proto & proto, const Tracing & trace, bool wit
         ws << trace << proto;
         for (const auto &c : _dockerSession)
         {
-            if (c.second.first == InvalidSessionID)
+            if (c.second.sessionID == InvalidSessionID)
             {
                 LOGF("Application::broadcast fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
                 continue;
             }
-            if (c.second.second == 0)
+            if (c.second.status == 0)
             {
-                LOGW("Application::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.first);
+                LOGW("Application::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
             }
             if (withme || ServerConfig::getRef().getDockerID() != c.first)
             {
-                SessionManager::getRef().sendSessionData(c.second.first, ws.getStream(), ws.getStreamLen());
+                SessionManager::getRef().sendSessionData(c.second.sessionID, ws.getStream(), ws.getStreamLen());
             }
         }
     }
