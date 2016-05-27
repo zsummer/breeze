@@ -33,6 +33,7 @@ struct DockerSession
     int status; //0 invalid, 1 valid
 };
 
+
 class Application : public Singleton<Application>
 {
 public:
@@ -106,8 +107,7 @@ private:
     bool _dockerServiceWorking = false;
     AccepterID _wlisten = InvalidAccepterID;
 private:
-
-
+    //std::map<SessionID, ServiceID> _clientToService; //store in session
 };
 
 
