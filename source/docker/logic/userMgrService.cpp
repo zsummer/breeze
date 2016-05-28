@@ -34,7 +34,7 @@ bool UserMgrService::onInit()
     {
         if (!docker._wideIP.empty() && docker._widePort != 0)
         {
-            _balance.enableNode(docker._docker);
+            _balance.enableNode(docker._dockerID);
         }
     }
     finishInit();

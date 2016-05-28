@@ -1,5 +1,5 @@
 #!/bin/bash
-for svr in agent auth center  logic  dbagent logic StressTest; 
+for svr in docker StressTest; 
 do
 	ps -ef|grep "\b$svr\b"	
 done

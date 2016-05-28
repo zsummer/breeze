@@ -25,7 +25,7 @@ bool Docker::init(const std::string & config, DockerID idx)
         return false;
     }
     const auto & dockers = ServerConfig::getRef().getDockerConfig();
-    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._docker == ServerConfig::getRef().getDockerID(); });
+    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
         LOGE("Docker::init error. current docker id not found in config file.. config path=" << config << ", docker ID = " << idx);
@@ -130,7 +130,7 @@ bool Docker::startDockerListen()
 {
     const auto & dockers = ServerConfig::getRef().getDockerConfig();
     ServerConfig::getRef().getDockerID();
-    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._docker == ServerConfig::getRef().getDockerID(); });
+    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
         LOGE("Docker::startDockerListen error. current docker id not found in config file." );
@@ -209,9 +209,9 @@ bool Docker::startDockerConnect()
         }
         LOGA("Docker::startDockerConnect success. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
-        session->setUserParam(UPARAM_REMOTE_CLUSTER, docker._docker);
-        auto &ds = _dockerSession[docker._docker];
-        ds.dokerID = docker._docker;
+        session->setUserParam(UPARAM_REMOTE_CLUSTER, docker._dockerID);
+        auto &ds = _dockerSession[docker._dockerID];
+        ds.dokerID = docker._dockerID;
         ds.sessionID = cID;
         for (ui16 i = ServiceInvalid; i <= ServiceMax; i++)
         {
@@ -219,7 +219,7 @@ bool Docker::startDockerConnect()
         }
         for (auto st : docker._services)
         {
-            if (!createService(st, InvalidServiceID, docker._docker, docker._docker != ServerConfig::getRef().getDockerID(), InvalidSessionID,true))
+            if (!createService(st, InvalidServiceID, docker._dockerID, docker._dockerID != ServerConfig::getRef().getDockerID(), InvalidSessionID,true))
             {
                 return false;
             }
@@ -231,7 +231,7 @@ bool Docker::startDockerWideListen()
 {
     const auto & dockers = ServerConfig::getRef().getDockerConfig();
     ServerConfig::getRef().getDockerID();
-    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._docker == ServerConfig::getRef().getDockerID(); });
+    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
         LOGE("Docker::startDockerWideListen error. current docker id not found in config file.");
@@ -552,7 +552,7 @@ void Docker::event_onChangeServiceClientID(TcpSessionPtr session, ReadStream & r
     }
     fder->second->setClientID(service.clientID);
     CreateOrRefreshServiceNotice notice(service.serviceType, service.serviceID, ServerConfig::getRef().getDockerID(), service.clientID);
-    broadcast(notice, false);
+    broadcastToDockers(notice, false);
 }
 
 void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs)

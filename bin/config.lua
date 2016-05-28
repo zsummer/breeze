@@ -6,9 +6,9 @@ config.areaid = 1000
 
 config.db = 
 {
-    DictDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
-    InfoDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
-    LogDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
+    ServiceDictDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
+    ServiceInfoDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
+    ServiceLogDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
 }
 
 config.docker = 
@@ -20,8 +20,8 @@ config.docker =
         serviceWhite={"192.168.", "127.0."},
         wideIP="127.0.0.1",
         widePort=26000,
-        services={"DictDBMgrService", "UserMgrService", "LogDBMgrService"},
-        docker = 1,
+        services={"ServiceDictDBMgr", "ServiceLogDBMgr", "ServiceUserMgr"},
+        dockerID = 1,
     },
     {
         serviceBindIP="0.0.0.0",
@@ -30,8 +30,8 @@ config.docker =
         serviceWhite={"192.168.", "127.0."},
         wideIP="127.0.0.1",
         widePort=26001,
-        services={"InfoDBMgrService"},
-        docker = 2,
+        services={"ServiceInfoDBMgr"},
+        dockerID = 2,
     },
 
 

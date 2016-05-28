@@ -142,19 +142,19 @@ enum ServiceType : ui16
 };
 const std::vector<std::string> ServiceNames =
 {
-    "UnknownService",
-    "DictDBMgrService",
-    "InfoDBMgrService",
-    "LogDBMgrService",
-    "UserMgrService",
+    "ServiceInvalid",
+    "ServiceDictDBMgr",
+    "ServiceInfoDBMgr",
+    "ServiceLogDBMgr",
+    "ServiceUserMgr",
 
-    "UnknownService",
+    "ServiceMulti",
 
-    "ClientService",
-    "UserService",
+    "ServiceClient",
+    "ServiceUser",
     
     //...
-    "UnknownService",
+    "ServiceMax",
 };
 
 struct Tracing
@@ -183,7 +183,7 @@ struct DockerConfig
     unsigned short _widePort = 0;
     std::vector<std::string> _whiteList;
     std::vector<ui16> _services;
-    DockerID _docker = InvalidDockerID;
+    DockerID _dockerID = InvalidDockerID;
 };
 
 
@@ -255,7 +255,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
     os << "[_serviceBindIP=" << config._serviceBindIP << ", _serviceIP=" << config._serviceIP
         << ", _servicePort=" << config._servicePort << ", _wideIP=" << config._wideIP
         << ", _widePort=" << config._widePort << ", _whiteList=" << config._whiteList
-        << ", _services=" << config._services << ", _docker=" << config._docker
+        << ", _services=" << config._services << ", _dockerID=" << config._dockerID
         << "]";
     return os;
 }

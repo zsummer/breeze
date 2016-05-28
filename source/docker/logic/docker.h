@@ -20,8 +20,8 @@
 
 
 
-#ifndef _NET_MANAGER_H_
-#define _NET_MANAGER_H_
+#ifndef _DOCKER_H_
+#define _DOCKER_H_
 #include <common.h>
 #include "service.h"
 #include <ProtoDocker.h>
@@ -44,11 +44,6 @@ public:
     bool run();
 public:
     template<class Proto>
-    void broadcast(const Proto & proto, bool withme);
-    template<class Proto>
-    void broadcast(const Proto & proto, const Tracing & trace, bool withme);
-
-    template<class Proto>
     void sendToSession(SessionID sessionID, const Proto & proto);
     void sendToSession(SessionID sessionID, const char * block, unsigned int len);
 
@@ -63,6 +58,15 @@ public:
     template<class Proto>
     void forwardToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto);
     void forwardToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len);
+
+    template<class Proto>
+    void broadcastToDockers(const Proto & proto, bool withme);
+    template<class Proto>
+    void broadcastToDockers(const Proto & proto, const Tracing & trace, bool withme);
+
+public:
+
+
 
     void toService(Tracing trace, const char * block, unsigned int len, bool isFromeOtherDocker);
     template<class Proto>
@@ -116,7 +120,7 @@ private:
 
 
 template<class Proto>
-void Docker::broadcast(const Proto & proto, bool withme)
+void Docker::broadcastToDockers(const Proto & proto, bool withme)
 {
     try
     {
@@ -126,16 +130,16 @@ void Docker::broadcast(const Proto & proto, bool withme)
         {
             if (c.second.sessionID == InvalidSessionID)
             {
-                LOGF("Docker::broadcast fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
+                LOGF("Docker::broadcastToDockers fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
                 continue;
             }
             if (c.second.status == 0)
             {
-                LOGW("Docker::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
+                LOGW("Docker::broadcastToDockers warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
             }
             if (withme || ServerConfig::getRef().getDockerID() != c.first)
             {
-                SessionManager::getRef().sendSessionData(c.second.sessionID, ws.getStream(), ws.getStreamLen());
+                sendToSession(c.second.sessionID, ws.getStream(), ws.getStreamLen());
             }
         }
     }
@@ -146,26 +150,29 @@ void Docker::broadcast(const Proto & proto, bool withme)
 }
 
 template<class Proto>
-void Docker::broadcast(const Proto & proto, const Tracing & trace, bool withme)
+void Docker::broadcastToDockers(const Proto & proto, const Tracing & trace, bool withme)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
-        ws << trace << proto;
+        ws << proto;
+        WriteStream forward(ForwardToDocker::getProtoID());
+        forward << trace;
+        forward.appendOriginalData(ws.getStream(), ws.getStreamLen());
         for (const auto &c : _dockerSession)
         {
             if (c.second.sessionID == InvalidSessionID)
             {
-                LOGF("Docker::broadcast fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
+                LOGF("Docker::broadcastToDockers fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
                 continue;
             }
             if (c.second.status == 0)
             {
-                LOGW("Docker::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
+                LOGW("Docker::broadcastToDockers warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
             }
             if (withme || ServerConfig::getRef().getDockerID() != c.first)
             {
-                SessionManager::getRef().sendSessionData(c.second.sessionID, ws.getStream(), ws.getStreamLen());
+                sendToSession(c.second.sessionID, forward.getStream(), forward.getStreamLen());
             }
         }
     }

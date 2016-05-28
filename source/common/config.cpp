@@ -26,7 +26,7 @@ extern "C"
 int luaopen_protoz_util(lua_State *L);
 int luaopen_cjson(lua_State *l);
 }
-
+#include "utls.h"
 
 static int panichHandler(lua_State * L)
 {
@@ -135,8 +135,8 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
         lua_pop(L, 1);
 
 
-        lua_getfield(L, -1, "docker");
-        lconfig._docker = (DockerID)luaL_checkinteger(L, -1);
+        lua_getfield(L, -1, "dockerID");
+        lconfig._dockerID = (DockerID)luaL_checkinteger(L, -1);
         lua_pop(L, 1);
 
         lua_getfield(L, -1, "serviceWhite");
