@@ -75,16 +75,16 @@ int main(int argc, char* argv[])
             return 1;
         }
         
-        if (!Application::getRef().init(filename, index))
+        if (!Docker::getRef().init(filename, index))
         {
             LOGE("Appliction init false.");
             return 2;
         }
-        if (!Application::getRef().start())
+        if (!Docker::getRef().start())
         {
             return 3;
         }
-        if (Application::getRef().run())
+        if (Docker::getRef().run())
         {
             return 4;
         }

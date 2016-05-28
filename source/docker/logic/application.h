@@ -34,10 +34,10 @@ struct DockerSession
 };
 
 
-class Application : public Singleton<Application>
+class Docker : public Singleton<Docker>
 {
 public:
-    Application();
+    Docker();
     bool init(const std::string & config, DockerID idx);
     bool start();
     void stop();
@@ -116,7 +116,7 @@ private:
 
 
 template<class Proto>
-void Application::broadcast(const Proto & proto, bool withme)
+void Docker::broadcast(const Proto & proto, bool withme)
 {
     try
     {
@@ -126,12 +126,12 @@ void Application::broadcast(const Proto & proto, bool withme)
         {
             if (c.second.sessionID == InvalidSessionID)
             {
-                LOGF("Application::broadcast fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
+                LOGF("Docker::broadcast fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
                 continue;
             }
             if (c.second.status == 0)
             {
-                LOGW("Application::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
+                LOGW("Docker::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
             }
             if (withme || ServerConfig::getRef().getDockerID() != c.first)
             {
@@ -141,12 +141,12 @@ void Application::broadcast(const Proto & proto, bool withme)
     }
     catch (const std::exception & e)
     {
-        LOGE("Application::broadcast catch except error. e=" << e.what());
+        LOGE("Docker::broadcast catch except error. e=" << e.what());
     }
 }
 
 template<class Proto>
-void Application::broadcast(const Proto & proto, const Tracing & trace, bool withme)
+void Docker::broadcast(const Proto & proto, const Tracing & trace, bool withme)
 {
     try
     {
@@ -156,12 +156,12 @@ void Application::broadcast(const Proto & proto, const Tracing & trace, bool wit
         {
             if (c.second.sessionID == InvalidSessionID)
             {
-                LOGF("Application::broadcast fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
+                LOGF("Docker::broadcast fatal error. dockerID not have session. dockerID=" << c.first << ", proto id=" << Proto::getProtoID());
                 continue;
             }
             if (c.second.status == 0)
             {
-                LOGW("Application::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
+                LOGW("Docker::broadcast warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
             }
             if (withme || ServerConfig::getRef().getDockerID() != c.first)
             {
@@ -171,12 +171,12 @@ void Application::broadcast(const Proto & proto, const Tracing & trace, bool wit
     }
     catch (const std::exception & e)
     {
-        LOGE("Application::broadcast catch except error. e=" << e.what());
+        LOGE("Docker::broadcast catch except error. e=" << e.what());
     }
 }
 
 template<class Proto>
-void Application::sendToSession(SessionID sessionID, const Proto & proto)
+void Docker::sendToSession(SessionID sessionID, const Proto & proto)
 {
     try
     {
@@ -186,14 +186,14 @@ void Application::sendToSession(SessionID sessionID, const Proto & proto)
     }
     catch (const std::exception & e)
     {
-        LOGE("Application::sendToSession catch except error. e=" << e.what());
+        LOGE("Docker::sendToSession catch except error. e=" << e.what());
     }
 }
 
 
 
 template<class Proto>
-void Application::forwardToSession(SessionID sessionID, const Tracing & trace, const Proto & proto)
+void Docker::forwardToSession(SessionID sessionID, const Tracing & trace, const Proto & proto)
 {
     try
     {
@@ -203,12 +203,12 @@ void Application::forwardToSession(SessionID sessionID, const Tracing & trace, c
     }
     catch (const std::exception & e)
     {
-        LOGE("Application::forwardToSession catch except error. e=" << e.what());
+        LOGE("Docker::forwardToSession catch except error. e=" << e.what());
     }
 }
 
 template<class Proto>
-void Application::sendToDocker(DockerID dockerID, const Proto & proto)
+void Docker::sendToDocker(DockerID dockerID, const Proto & proto)
 {
     auto founder = _dockerSession.find(dockerID);
     if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
@@ -217,12 +217,12 @@ void Application::sendToDocker(DockerID dockerID, const Proto & proto)
     }
     else
     {
-        LOGE("Application::sendToDocker not found docker. dockerID=" << dockerID);
+        LOGE("Docker::sendToDocker not found docker. dockerID=" << dockerID);
     }
 }
 
 template<class Proto>
-void Application::forwardToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto)
+void Docker::forwardToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto)
 {
     auto founder = _dockerSession.find(dockerID);
     if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
@@ -231,7 +231,7 @@ void Application::forwardToDocker(DockerID dockerID, const Tracing & trace, cons
     }
     else
     {
-        LOGE("Application::forwardToDocker not found docker. dockerID=" << dockerID);
+        LOGE("Docker::forwardToDocker not found docker. dockerID=" << dockerID);
     }
 }
 
@@ -240,7 +240,7 @@ void Application::forwardToDocker(DockerID dockerID, const Tracing & trace, cons
 
 
 template<class Proto>
-void Application::toService(Tracing trace, Proto proto, bool isFromeOtherDocker)
+void Docker::toService(Tracing trace, Proto proto, bool isFromeOtherDocker)
 {
     try
     {
@@ -250,7 +250,7 @@ void Application::toService(Tracing trace, Proto proto, bool isFromeOtherDocker)
     }
     catch (const std::exception & e)
     {
-        LOGE("Application::toService catch except error. e=" << e.what());
+        LOGE("Docker::toService catch except error. e=" << e.what());
     }
 }
 

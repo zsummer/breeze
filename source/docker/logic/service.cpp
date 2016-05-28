@@ -34,7 +34,7 @@ bool Service::finishInit()
     {
         LOGD("local service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
         CreateOrRefreshServiceNotice notice(getServiceType(), getServiceID(), getDockerID(), getClientID());
-        Application::getRef().broadcast(notice, false);
+        Docker::getRef().broadcast(notice, false);
     }
     else
     {
@@ -49,14 +49,14 @@ bool Service::finishUninit()
     {
         LOGD("local service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
         DestroyServiceNotice notice(getServiceType(), getServiceID());
-        Application::getRef().broadcast(notice, true);
+        Docker::getRef().broadcast(notice, true);
     }
     else
     {
         LOGD("remote service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
     }
     setStatus(SS_DESTROY);
-    SessionManager::getRef().post(std::bind(&Application::destroyService, Application::getPtr(), getServiceType(), getServiceID()));
+    SessionManager::getRef().post(std::bind(&Docker::destroyService, Docker::getPtr(), getServiceType(), getServiceID()));
     return true;
 }
 
@@ -114,7 +114,7 @@ void Service::toService(ui16 st, ServiceID svcID, const char * block, unsigned i
     {
         trace._traceID = makeCallback(cb);
     }
-    Application::getRef().toService(trace, block, len, false);
+    Docker::getRef().toService(trace, block, len, false);
 }
 
 void Service::toService(ui16 st, const char * block, unsigned int len, ServiceCallback cb)
@@ -135,7 +135,7 @@ void Service::backToService(const Tracing & trace, const char * block, unsigned 
     {
         trc._traceID = makeCallback(cb);
     }
-    Application::getRef().toService(trc, block, len, false);
+    Docker::getRef().toService(trc, block, len, false);
 }
 
 void Service::process4bind(const Tracing & trace, const std::string & block)

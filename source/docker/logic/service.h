@@ -56,10 +56,10 @@ enum ServiceStatus
 
 
 
-class Application;
+class Docker;
 class Service : public std::enable_shared_from_this<Service>
 {
-    friend Application;
+    friend Docker;
 public:
     Service(){}
     virtual ~Service(){};

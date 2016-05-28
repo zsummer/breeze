@@ -74,6 +74,6 @@ void UserMgrService::onUserAuthReq(const Tracing & trace, zsummer::proto4z::Read
 //     WriteStream wsf(ClientForward::getProtoID());
 //     wsf << trace;
 //     wsf.appendOriginalData(ws.getStream(), ws.getStreamLen());
-//     Application::getRef().sendToDocker(resp.clientDockerID, wsf.getStream(), wsf.getStreamLen());
+//     Docker::getRef().sendToDocker(resp.clientDockerID, wsf.getStream(), wsf.getStreamLen());
 }
 
