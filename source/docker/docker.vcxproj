@@ -97,7 +97,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="logic\dbService.cpp" />
-    <ClCompile Include="logic\application.cpp" />
+    <ClCompile Include="logic\docker.cpp" />
     <ClCompile Include="logic\service.cpp" />
     <ClCompile Include="logic\shellService.cpp" />
     <ClCompile Include="logic\userMgrService.cpp" />
@@ -106,7 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logic\dbService.h" />
-    <ClInclude Include="logic\application.h" />
+    <ClInclude Include="logic\docker.h" />
     <ClInclude Include="logic\service.h" />
     <ClInclude Include="logic\shellService.h" />
     <ClInclude Include="logic\userMgrService.h" />

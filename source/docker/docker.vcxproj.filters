@@ -7,25 +7,10 @@
     <Filter Include="logic">
       <UniqueIdentifier>{f9cdd186-985b-4536-b830-420c0d6f254c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="logic\mission">
-      <UniqueIdentifier>{6170ecf2-f3d2-4744-94cf-89a0e852dba9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="logic\testBlob">
-      <UniqueIdentifier>{4e2165f0-cde5-400c-94a4-0c5b8c3f3a56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="logic\chat">
-      <UniqueIdentifier>{d00be9fd-3cd5-4ab8-878c-f5fe675b6e4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="logic\follow">
-      <UniqueIdentifier>{a6da4f1a-5fc7-47a2-9877-aa219f626887}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\application.cpp">
-      <Filter>logic</Filter>
     </ClCompile>
     <ClCompile Include="logic\dbService.cpp">
       <Filter>logic</Filter>
@@ -42,11 +27,11 @@
     <ClCompile Include="logic\userService.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\docker.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="logic\application.h">
-      <Filter>logic</Filter>
-    </ClInclude>
     <ClInclude Include="logic\dbService.h">
       <Filter>logic</Filter>
     </ClInclude>
@@ -60,6 +45,9 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\userService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\docker.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>

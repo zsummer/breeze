@@ -16,7 +16,7 @@
 * limitations under the License.
 */
 
-#include "logic/application.h"
+#include "logic/docker.h"
 using namespace zsummer::log4z;
 
 
@@ -71,13 +71,13 @@ int main(int argc, char* argv[])
     {
         if (!SessionManager::getRef().start())
         {
-            LOGE("Appliction init false.");
+            LOGE("Docker init false.");
             return 1;
         }
         
         if (!Docker::getRef().init(filename, index))
         {
-            LOGE("Appliction init false.");
+            LOGE("Docker init false.");
             return 2;
         }
         if (!Docker::getRef().start())
@@ -93,13 +93,13 @@ int main(int argc, char* argv[])
     }
     catch (const std::exception & e)
     {
-        LOGE("Appliction::init have runtime error. what=" << e.what());
+        LOGE("Docker::init have runtime error. what=" << e.what());
         return -1;
     }
 
     
 
-    LOGI("Appliction exit.");
+    LOGI("Docker exit.");
 
     return 0;
 }
