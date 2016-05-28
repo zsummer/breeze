@@ -20,7 +20,7 @@ config.docker =
         serviceWhite={"192.168.", "127.0."},
         wideIP="127.0.0.1",
         widePort=26000,
-        services={"ServiceDictDBMgr", "ServiceLogDBMgr", "ServiceUserMgr"},
+        services={"ServiceDictDBMgr", "ServiceLogDBMgr", "ServiceUserMgr", "ServiceUser"},
         dockerID = 1,
     },
     {
@@ -30,7 +30,7 @@ config.docker =
         serviceWhite={"192.168.", "127.0."},
         wideIP="127.0.0.1",
         widePort=26001,
-        services={"ServiceInfoDBMgr"},
+        services={"ServiceInfoDBMgr", "ServiceUser"},
         dockerID = 2,
     },
 

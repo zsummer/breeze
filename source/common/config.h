@@ -36,7 +36,8 @@ class ServerConfig : public Singleton<ServerConfig>
 public:
     bool parse(std::string filename, DockerID idx);
 public:
-    inline const std::vector<DockerConfig> & getDockerConfig(){ return _configDocker; }
+    inline const std::vector<DockerConfig> & getDockerConfig() { return _configDocker; }
+    inline const std::map<ui16, std::vector<DockerID> > & getServiceTypeConfig() { return _configServiceType; }
     inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
     inline DockerID getDockerID(){ return _dockerIdx; }
     inline AreaID getAreaID() { return _areaid; }
@@ -45,6 +46,8 @@ private:
     AreaID _areaid = 0;
     std::vector<DockerConfig> _configDocker;
     std::vector<DBConfig> _configDB;
+    std::map<ui16, std::vector<DockerID> > _configServiceType;
+
 };
 
 

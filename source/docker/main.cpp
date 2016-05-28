@@ -66,12 +66,14 @@ int main(int argc, char* argv[])
         return ret;
     }
     LOGA("version released by " << __DATE__ << " " << __TIME__);
-    LOGD(UserBaseInfo());
+    LOGA("dockerID=" << index << ", config file=" << filename);
+    LOGD("filecontent=" << readFileContent(filename));
+    LOGA("begin start docker ...");
     try
     {
         if (!SessionManager::getRef().start())
         {
-            LOGE("Docker init false.");
+            LOGE("SessionManager start false.");
             return 1;
         }
         
@@ -82,6 +84,7 @@ int main(int argc, char* argv[])
         }
         if (!Docker::getRef().start())
         {
+            LOGE("Docker start false.");
             return 3;
         }
         if (Docker::getRef().run())

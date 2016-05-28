@@ -135,8 +135,9 @@ enum ServiceType : ui16
 
     ServiceMulti,
 
-    ServiceClient, 
     ServiceUser,
+    ServiceClient, 
+    
     //...
     ServiceMax,
 };
@@ -150,8 +151,9 @@ const std::vector<std::string> ServiceNames =
 
     "ServiceMulti",
 
-    "ServiceClient",
     "ServiceUser",
+    "ServiceClient",
+    
     
     //...
     "ServiceMax",

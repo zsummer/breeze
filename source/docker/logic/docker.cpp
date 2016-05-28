@@ -1,4 +1,4 @@
-﻿#include "../config.h"
+﻿
 #include "docker.h"
 #include "dbService.h"
 #include "userMgrService.h"
@@ -213,16 +213,18 @@ bool Docker::startDockerConnect()
         auto &ds = _dockerSession[docker._dockerID];
         ds.dokerID = docker._dockerID;
         ds.sessionID = cID;
-        for (ui16 i = ServiceInvalid; i <= ServiceMax; i++)
+    }
+
+    for (ui16 i = ServiceInvalid; i <= ServiceMax; i++)
+    {
+        _services.insert(std::make_pair(i, std::unordered_map<ServiceID, ServicePtr >()));
+    }
+    const auto & stc = ServerConfig::getRef().getServiceTypeConfig();
+    for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+    {
+        if (!createService(i, InvalidServiceID, stc.at(i).front(), stc.at(i).front() != ServerConfig::getRef().getDockerID(), InvalidSessionID, true))
         {
-            _services.insert(std::make_pair(i, std::unordered_map<ServiceID, ServicePtr >()));
-        }
-        for (auto st : docker._services)
-        {
-            if (!createService(st, InvalidServiceID, docker._dockerID, docker._dockerID != ServerConfig::getRef().getDockerID(), InvalidSessionID,true))
-            {
-                return false;
-            }
+            return false;
         }
     }
     return true;
@@ -346,8 +348,8 @@ ServicePtr Docker::createService(ui16 serviceType, ServiceID serviceID, DockerID
     ServicePtr & service = _services[serviceType][serviceID];
     if (service && !service->isShell())
     {
-        LOGE("Docker::createService error. service alread exist. serviceType=" << serviceType << ", serviceID="
-            << serviceID << ", dockerID=" << dockerID << ", isShell=" << isShell << ", failExit=" << failExit);
+        LOGE("Docker::createService error. service alread exist. serviceType=" << ServiceNames.at(serviceType) << ", serviceID="
+            << serviceID << ", dockerID=" << dockerID << ", isShell=" << isShell << ", failExit=" << failExit << zsummer::traceback());
         if (failExit)
         {
             goto goExit;
@@ -551,8 +553,6 @@ void Docker::event_onChangeServiceClientID(TcpSessionPtr session, ReadStream & r
         return;
     }
     fder->second->setClientID(service.clientID);
-    CreateOrRefreshServiceNotice notice(service.serviceType, service.serviceID, ServerConfig::getRef().getDockerID(), service.clientID);
-    broadcastToDockers(notice, false);
 }
 
 void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs)

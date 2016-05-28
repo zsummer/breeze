@@ -185,9 +185,44 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
     //pop listen table.
     lua_pop(L, 1);
 
-
-    
     lua_close(L);
+
+    for (auto & config : _configDocker)
+    {
+        for (auto & serviceType : config._services)
+        {
+            auto &dockerIDs = _configServiceType[serviceType];
+            dockerIDs.push_back(config._dockerID);
+        }
+    }
+    for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+    {
+        auto founder = _configServiceType.find(i);
+        if (founder == _configServiceType.end() || founder->second.empty())
+        {
+            LOGE("not found service in docker config. the service name=" << ServiceNames.at(i));
+            return false;
+        }
+        if (founder->second.size() != 1)
+        {
+            LOGE("service in docker config not single. the service name=" << ServiceNames.at(i));
+            return false;
+        }
+    }
+    for (ui16 i = ServiceMulti + 1; i < ServiceMax; i++)
+    {
+        if (i == ServiceClient)
+        {
+            continue;
+        }
+        auto founder = _configServiceType.find(i);
+        if (founder == _configServiceType.end() || founder->second.empty())
+        {
+            LOGE("not found service in docker config. the service name=" << ServiceNames.at(i));
+            return false;
+        }
+    }
+
     return true;
 }
 
