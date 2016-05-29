@@ -26,46 +26,46 @@ struct UserPreview //用户预览信息
 { 
     static const unsigned short getProtoID() { return 200;} 
     static const std::string getProtoName() { return "ID_UserPreview";} 
-    unsigned long long uID; //用户唯一ID  
-    std::string account; //帐号  
-    std::string nickName; //昵称  
+    unsigned long long uID; //用户ID  
+    std::string uName; //昵称  
     short iconID; //头像  
+    std::string account; //帐号  
     UserPreview() 
     { 
         uID = 0; 
         iconID = 0; 
     } 
-    UserPreview(const unsigned long long & uID, const std::string & account, const std::string & nickName, const short & iconID) 
+    UserPreview(const unsigned long long & uID, const std::string & uName, const short & iconID, const std::string & account) 
     { 
         this->uID = uID; 
-        this->account = account; 
-        this->nickName = nickName; 
+        this->uName = uName; 
         this->iconID = iconID; 
+        this->account = account; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserPreview & data) 
 { 
     ws << data.uID;  
-    ws << data.account;  
-    ws << data.nickName;  
+    ws << data.uName;  
     ws << data.iconID;  
+    ws << data.account;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPreview & data) 
 { 
     rs >> data.uID;  
-    rs >> data.account;  
-    rs >> data.nickName;  
+    rs >> data.uName;  
     rs >> data.iconID;  
+    rs >> data.account;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserPreview & info) 
 { 
     stm << "[\n"; 
     stm << "uID=" << info.uID << "\n"; 
-    stm << "account=" << info.account << "\n"; 
-    stm << "nickName=" << info.nickName << "\n"; 
+    stm << "uName=" << info.uName << "\n"; 
     stm << "iconID=" << info.iconID << "\n"; 
+    stm << "account=" << info.account << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -76,7 +76,7 @@ typedef std::vector<UserPreview> UserPreviewArray;
  
 typedef std::vector<unsigned long long> UIDS;  
  
-struct UserBaseInfo //用户预览信息  
+struct UserBaseInfo //用户基础数据  
 { 
     static const unsigned short getProtoID() { return 201;} 
     static const std::string getProtoName() { return "ID_UserBaseInfo";} 
@@ -90,17 +90,20 @@ struct UserBaseInfo //用户预览信息
     std::string account; //帐号  
     std::string nickName; //昵称  
     short iconID; //头像  
+    int level; //等级  
     UserBaseInfo() 
     { 
         uID = 0; 
         iconID = 0; 
+        level = 0; 
     } 
-    UserBaseInfo(const unsigned long long & uID, const std::string & account, const std::string & nickName, const short & iconID) 
+    UserBaseInfo(const unsigned long long & uID, const std::string & account, const std::string & nickName, const short & iconID, const int & level) 
     { 
         this->uID = uID; 
         this->account = account; 
         this->nickName = nickName; 
         this->iconID = iconID; 
+        this->level = level; 
     } 
 }; 
  
@@ -108,7 +111,7 @@ const std::vector<std::string>  UserBaseInfo::getDBBuild()
 { 
     std::vector<std::string> ret; 
     ret.push_back("desc `tb_UserBaseInfo`"); 
-    ret.push_back("CREATE TABLE `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        `nickName` varchar(255) NOT NULL DEFAULT '' ,        `iconID` bigint(20) NOT NULL DEFAULT '0' ,        PRIMARY KEY(`uID`)  ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("CREATE TABLE `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        `nickName` varchar(255) NOT NULL DEFAULT '' ,        `iconID` bigint(20) NOT NULL DEFAULT '0' ,        `level` bigint(20) NOT NULL DEFAULT '0' ,        PRIMARY KEY(`uID`)  ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_UserBaseInfo` add `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `uID`  `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
@@ -117,23 +120,26 @@ const std::vector<std::string>  UserBaseInfo::getDBBuild()
     ret.push_back("alter table `tb_UserBaseInfo` change `nickName`  `nickName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
     return std::move(ret); 
 } 
 std::string  UserBaseInfo::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `uID`,`account`,`nickName`,`iconID` from `tb_UserBaseInfo` where `uID` = ? "); 
+    q.init("select `uID`,`account`,`nickName`,`iconID`,`level` from `tb_UserBaseInfo` where `uID` = ? "); 
     q << this->uID; 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(`uID`,`account`,`nickName`,`iconID`) values(?,?,?,?)"); 
+    q.init("insert into `tb_UserBaseInfo`(`uID`,`account`,`nickName`,`iconID`,`level`) values(?,?,?,?,?)"); 
     q << this->uID; 
     q << this->account; 
     q << this->nickName; 
     q << this->iconID; 
+    q << this->level; 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBDelete() 
@@ -146,10 +152,11 @@ std::string  UserBaseInfo::getDBDelete()
 std::string  UserBaseInfo::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(uID) values(? ) on duplicate key update `account` = ?,`nickName` = ?,`iconID` = ? "); 
+    q.init("insert into `tb_UserBaseInfo`(uID) values(? ) on duplicate key update `account` = ?,`nickName` = ?,`iconID` = ?,`level` = ? "); 
     q << this->account; 
     q << this->nickName; 
     q << this->iconID; 
+    q << this->level; 
     return q.pickSQL(); 
 } 
 bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result) 
@@ -167,6 +174,7 @@ bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->account; 
             result >> this->nickName; 
             result >> this->iconID; 
+            result >> this->level; 
             return true;  
         } 
     } 
@@ -183,6 +191,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.account;  
     ws << data.nickName;  
     ws << data.iconID;  
+    ws << data.level;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserBaseInfo & data) 
@@ -191,6 +200,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.account;  
     rs >> data.nickName;  
     rs >> data.iconID;  
+    rs >> data.level;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserBaseInfo & info) 
@@ -200,14 +210,12 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "account=" << info.account << "\n"; 
     stm << "nickName=" << info.nickName << "\n"; 
     stm << "iconID=" << info.iconID << "\n"; 
+    stm << "level=" << info.level << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
  
-typedef std::vector<UserPreview> UserPreviewArray;  
- 
- 
-typedef std::vector<unsigned long long> UIDS;  
+typedef std::vector<UserBaseInfo> UserBaseInfoArray;  
  
 #endif 

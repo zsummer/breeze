@@ -67,10 +67,10 @@ public:
 public:
 
 
-
-    void toService(Tracing trace, const char * block, unsigned int len, bool isFromeOtherDocker);
+    //isFromeOtherDocker 
+    void toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService);
     template<class Proto>
-    void toService(Tracing trace, Proto proto, bool isFromeOtherDocker);
+    void toService(Tracing trace, Proto proto, bool canForwardToOtherService);
 public:
     bool isStoping();
 
@@ -247,13 +247,13 @@ void Docker::forwardToDocker(DockerID dockerID, const Tracing & trace, const Pro
 
 
 template<class Proto>
-void Docker::toService(Tracing trace, Proto proto, bool isFromeOtherDocker)
+void Docker::toService(Tracing trace, Proto proto, bool canForwardToOtherService)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(trace, ws.getStream(), ws.getStreamLen(), isFromeOtherDocker);
+        toService(trace, ws.getStream(), ws.getStreamLen(), canForwardToOtherService);
     }
     catch (const std::exception & e)
     {

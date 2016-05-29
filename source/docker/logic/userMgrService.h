@@ -25,7 +25,7 @@
 #define _USER_MGR_SERVICE_H_
 #include <common.h>
 #include "service.h"
-
+#include <ProtoUserMgr.h>
 
 struct ServiceUserShell 
 {
@@ -59,7 +59,10 @@ public:
     void onUninit() override final;
     void onTick() override final;
 public:
-    void onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
+    void onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onSelectUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 public:
     time_t _lastTime = 0;
     std::map<ServiceID, ServiceUserShell> _userShells;

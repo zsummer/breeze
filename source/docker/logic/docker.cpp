@@ -5,6 +5,7 @@
 #include "userService.h"
 #include "shellService.h"
 #include <ProtoUser.h>
+#include <ProtoUserMgr.h>
 int g_closeState = 0;
 
 Docker::Docker()
@@ -209,7 +210,7 @@ bool Docker::startDockerConnect()
         }
         LOGA("Docker::startDockerConnect success. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
-        session->setUserParam(UPARAM_REMOTE_CLUSTER, docker._dockerID);
+        session->setUserParam(UPARAM_REMOTE_DOCKERID, docker._dockerID);
         auto &ds = _dockerSession[docker._dockerID];
         ds.dokerID = docker._dockerID;
         ds.sessionID = cID;
@@ -287,7 +288,7 @@ bool Docker::start()
 
 void Docker::event_onServiceLinked(TcpSessionPtr session)
 {
-    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_CLUSTER);
+    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
     auto founder = _dockerSession.find(ci);
     if (founder == _dockerSession.end())
     {
@@ -316,7 +317,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
 
 void Docker::event_onServiceClosed(TcpSessionPtr session)
 {
-    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_CLUSTER);
+    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
     auto founder = _dockerSession.find(ci);
     if (founder == _dockerSession.end())
     {
@@ -502,24 +503,7 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs)
 {
     Tracing trace;
     rs >> trace;
-    auto founder = _services.find(trace._toService);
-    if (founder == _services.end())
-    {
-        LOGE("Docker::event_onRemoteShellForward error. unknown service. trace=" << trace);
-        return;
-    }
-    auto fder = founder->second.find(trace._toServiceID);
-    if (fder == founder->second.end())
-    {
-        LOGE("Docker::event_onRemoteShellForward error. not found service id. trace=" << trace);
-        return;
-    }
-    if (fder->second->isShell())
-    {
-        LOGE("Docker::event_onRemoteShellForward error. service not local. trace=" << trace);
-        return;
-    }
-    fder->second->process(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
+    toService(trace, rs.getStreamUnread(), rs.getStreamUnreadLen(), false);
 }
 
 void Docker::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs)
@@ -706,25 +690,80 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
             LOGE("duplicate ClientAuthReq. sID=" << session->getSessionID());
             return;
         }
-        ClientAuthReq careq;
-        rs >> careq;
+        ClientAuthReq clientReq;
+        rs >> clientReq;
         Tracing trace;
-        trace._fromService = ServiceClient;
-        trace._fromServiceID = session->getSessionID();
-        trace._toService = ServiceUserMgr;
+        trace._fromServiceType = ServiceClient;
+        trace._fromServiceID = InvalidServiceID;
+        trace._toServiceType = ServiceUserMgr;
         trace._toServiceID = InvalidServiceID;
-        WriteStream ws(UserAuthReq::getProtoID());
-        UserAuthReq req;
-        req.account = careq.account;
-        req.token = careq.token;
-        req.clientSessionID = session->getSessionID();
-        req.clientDockerID = ServerConfig::getRef().getDockerID();
-        ws << req;
-        toService(trace, ws.getStream(), ws.getStreamLen(), true);
+
+        SelectUserPreviewsFromUserMgrReq serviceReq;
+        serviceReq.account = clientReq.account;
+        serviceReq.token = clientReq.token;
+        serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
+        serviceReq.clientSessionID = session->getSessionID();
+        toService(trace, serviceReq, true);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
         return;
     }
+    else if (rs.getProtoID() == CreateUserReq::getProtoID())
+    {
+        LOGD("CreateUserReq sID=" << session->getSessionID() << ", block len=" << len);
+        if (ss != SSTATUS_AUTHED)
+        {
+            LOGE("CreateUserReq : client not authed. sID=" << session->getSessionID());
+            return;
+        }
+        CreateUserReq clientReq;
+        rs >> clientReq;
+        Tracing trace;
+        trace._fromServiceType = ServiceClient;
+        trace._fromServiceID = InvalidServiceID;
+        trace._toServiceType = ServiceUserMgr;
+        trace._toServiceID = InvalidServiceID;
 
+        CreateUserFromUserMgrReq serviceReq;
+        serviceReq.account = session->getUserParamString(UPARAM_ACCOUNT);
+        serviceReq.nickname = clientReq.nickname;
+        serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
+        serviceReq.clientSessionID = session->getSessionID();
+        toService(trace, serviceReq, true);
+        return;
+    }
+    else if (rs.getProtoID() == SelectUserReq::getProtoID())
+    {
+        LOGD("SelectUserReq sID=" << session->getSessionID() << ", block len=" << len);
+        if (ss != SSTATUS_AUTHED)
+        {
+            LOGE("SelectUserReq : client not authed. sID=" << session->getSessionID());
+            return;
+        }
+        SelectUserReq clientReq;
+        rs >> clientReq;
+        Tracing trace;
+        trace._fromServiceType = ServiceClient;
+        trace._fromServiceID = InvalidServiceID;
+        trace._toServiceType = ServiceUserMgr;
+        trace._toServiceID = InvalidServiceID;
+
+        SelectUserFromUserMgrReq serviceReq;
+        serviceReq.uID = clientReq.uID;
+        serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
+        serviceReq.clientSessionID = session->getSessionID();
+        toService(trace, serviceReq, true);
+        return;
+    }
+    else
+    {
+        Tracing trace;
+        trace._fromServiceType = ServiceClient;
+        trace._fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+        trace._toServiceType = ServiceUser;
+        trace._toServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+
+        toService(trace, rs.getStream(), rs.getStreamLen(), true);
+    }
 }
 
 void Docker::sendToDocker(DockerID dockerID, const char * block, unsigned int len)
@@ -747,34 +786,34 @@ void Docker::sendToDocker(DockerID dockerID, const char * block, unsigned int le
     sendToSession(founder->second.sessionID, block, len);
 }
 
-void Docker::toService(Tracing trace, const char * block, unsigned int len, bool isFromeOtherDocker)
+void Docker::toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService)
 {
-    if (trace._fromService >= ServiceMax || trace._toService >= ServiceMax || trace._toService == ServiceInvalid)
+    if (trace._fromServiceType >= ServiceMax || trace._toServiceType >= ServiceMax || trace._toServiceType == ServiceInvalid)
     {
         LOGF("Docker::sendToService Illegality trace. trace=" << trace << ", block len=" << len);
         return;
     }
 
-    ui16 toService = trace._toService;
-    if (trace._toService == ServiceClient)
+    ui16 toServiceType = trace._toServiceType;
+    if (trace._toServiceType == ServiceClient)
     {
-        toService = ServiceUser;
+        toServiceType = ServiceUser;
     }
 
-    auto founder = _services.find(toService);
+    auto founder = _services.find(toServiceType);
     if (founder == _services.end())
     {
-        LOGF("Docker::toService can not found _toService type  trace =" << trace << ", block len=" << len);
+        LOGF("Docker::toService can not found _toServiceType type  trace =" << trace << ", block len=" << len);
         return;
     }
     auto fder = founder->second.find(trace._toServiceID);
     if (fder == founder->second.end())
     {
-        LOGD("Docker::toService can not found _toService ID. trace =" << trace << ", block len=" << len);
+        LOGD("Docker::toService can not found _toServiceType ID. trace =" << trace << ", block len=" << len);
         return;
     }
     auto & service = *fder->second;
-    if (service.isShell() && isFromeOtherDocker)
+    if (service.isShell() && !canForwardToOtherService)
     {
         LOGE("local service is shell but the call from other docker.");
         return;
@@ -786,16 +825,12 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     }
     else //direct process
     {
-        if (trace._toService == ServiceClient)
+        if (trace._toServiceType == ServiceClient)
         {
             if (service.getClientID() != InvalidSessionID)
             {
                 sendToSession(service.getClientID(), block, len);
             }
-        }
-        else if (isFromeOtherDocker)
-        {
-            fder->second->process(trace, block, len);
         }
         else
         {

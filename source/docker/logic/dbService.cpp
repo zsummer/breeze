@@ -7,7 +7,7 @@
 DBService::DBService() 
 {
     _dbAsync = std::make_shared<DBAsync>();
-    slotting<SQLQueryReq>(std::bind(&DBService::onSQLQueryReq, this, _1, _2)); //sloting都是同步调用 不需要shared_from_this
+    slotting<SQLQueryReq>(std::bind(&DBService::onSQLQueryReq, this, _1, _2)); //不需要shared_from_this
 }
 
 DBService::~DBService()
@@ -73,11 +73,9 @@ bool DBService::onInit()
     //debug
     if (getServiceType() == ServiceInfoDBMgr)
     {
-        WriteStream ws(SQLQueryReq::getProtoID());
         SQLQueryReq req;
         req.sql = "select 1";
-        ws << req;
-        toService(ServiceDictDBMgr, InvalidServiceID, ws.getStream(), ws.getStreamLen(), std::bind(&DBService::onTest, std::static_pointer_cast<DBService>(shared_from_this()), _1));
+        toService(ServiceDictDBMgr, req, std::bind(&DBService::onTest, std::static_pointer_cast<DBService>(shared_from_this()), _1));
     }
     //debug end
 
@@ -157,7 +155,7 @@ void DBService::onTest(ReadStream & rs)
     SQLQueryResp resp;
     rs >> resp;
     DBResult result;
-    LOGD("onTest qc=" << resp.result.qc << ", errMSG=" << resp.result.errMsg << ", affected=" << resp.result.affected << ", fields=" << resp.result.fields.size());
+    LOGA("----------------------- onTest qc=" << resp.result.qc << ", errMSG=" << resp.result.errMsg << ", affected=" << resp.result.affected << ", fields=" << resp.result.fields.size());
     result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
 }
 

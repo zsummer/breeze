@@ -161,12 +161,12 @@ const std::vector<std::string> ServiceNames =
 
 struct Tracing
 {
-    ui16 _toService;
+    ui16 _toServiceType;
     ServiceID _toServiceID = InvalidServiceID;
-    ui16 _fromService;
+    ui16 _fromServiceType;
     ServiceID _fromServiceID = InvalidServiceID;
-    ui32 _traceID = 0;
-    ui32 _traceBackID = 0;
+    ui32 _traceID = 0; //本地cbID  
+    ui32 _traceBackID = 0; //把远程cbID透传回去  
 };
 
 
@@ -210,24 +210,17 @@ enum SessionStatus
     SSTATUS_TRUST, //受信任的服务器内部session 
     SSTATUS_AUTHING,
     SSTATUS_AUTHED,
-    SSTATUS_PLAT_LOGINING,
-    SSTATUS_PLAT_LOGINED,
-    SSTATUS_PLAT_LOADING,
-    SSTATUS_PLAT_CREATING,
-    SSTATUS_PLAT_SELECTING,
     SSTATUS_LOGINED,
-    
 };
 
 enum SessionUserData
 {
     UPARAM_SESSION_STATUS,
     UPARAM_LAST_ACTIVE_TIME,
-    UPARAM_REMOTE_CLUSTER,
+    UPARAM_REMOTE_DOCKERID,
     UPARAM_ACCOUNT,
-    UPARAM_USER_ID,
+    UPARAM_SERVICE_ID,
     UPARAM_LOGIN_TIME,
-   
 };
 
 
@@ -235,17 +228,17 @@ enum SessionUserData
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const Tracing & trace)
 {
-    if (trace._fromService < ServiceMax && trace._toService < ServiceMax)
+    if (trace._fromServiceType < ServiceMax && trace._toServiceType < ServiceMax)
     {
-        os << "[_toService=" << ServiceNames.at(trace._toService) << ", _toServiceID=" << trace._toServiceID
-            << ", _fromService=" << ServiceNames.at(trace._fromService) << ", _fromServiceID=" << trace._fromServiceID
+        os << "[_toServiceType=" << ServiceNames.at(trace._toServiceType) << ", _toServiceID=" << trace._toServiceID
+            << ", _fromServiceType=" << ServiceNames.at(trace._fromServiceType) << ", _fromServiceID=" << trace._fromServiceID
             << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
             << "]";
     }
     else
     {
-        os << "[_toService=" << trace._toService << ", _toServiceID=" << trace._toServiceID
-            << ", _fromService=" << trace._fromService << ", _fromServiceID=" << trace._fromServiceID
+        os << "[_toServiceType=" << trace._toServiceType << ", _toServiceID=" << trace._toServiceID
+            << ", _fromServiceType=" << trace._fromServiceType << ", _fromServiceID=" << trace._fromServiceID
             << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
             << "]";
     }
@@ -273,9 +266,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data)
 {
-    ws << data._toService;
+    ws << data._toServiceType;
     ws << data._toServiceID;
-    ws << data._fromService;
+    ws << data._fromServiceType;
     ws << data._fromServiceID;
     ws << data._traceID;
     ws << data._traceBackID;
@@ -283,9 +276,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 }
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data)
 {
-    rs >> data._toService;
+    rs >> data._toServiceType;
     rs >> data._toServiceID;
-    rs >> data._fromService;
+    rs >> data._fromServiceType;
     rs >> data._fromServiceID;
     rs >> data._traceID;
     rs >> data._traceBackID;

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>f3ba7c931a827ee6f7b21d6b2b78a5a7</cppmd5> 
+<luamd5>0847b52ee8098d233b50dfd4c2482141</luamd5> 
+<csharpmd5>538058713417bf49fd4b30655576b553</csharpmd5> 
+<xmlmd5>d41d8cd98f00b204e9800998ecf8427e</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_CreateUserFromUserMgrReq" Number = "20002" /> 
+    <cache key = "ID_CreateUserFromUserMgrResp" Number = "20003" /> 
+    <cache key = "ID_SelectUserFromUserMgrReq" Number = "20004" /> 
+    <cache key = "ID_SelectUserFromUserMgrResp" Number = "20005" /> 
+    <cache key = "ID_SelectUserPreviewsFromUserMgrReq" Number = "20000" /> 
+    <cache key = "ID_SelectUserPreviewsFromUserMgrResp" Number = "20001" /> 
+</cacheNumber>

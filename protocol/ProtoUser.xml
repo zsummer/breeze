@@ -20,21 +20,6 @@
         <member name="previews" type="UserPreviewArray"   desc=""/>
     </packet>
 
-    <packet name="UserAuthReq" desc= "认证请求">
-        <member name="account" type="string"   desc=""/>
-        <member name="token" type="string"   desc=""/>
-        <member name="clientSessionID" type="ui32"   desc=""/>
-        <member name="clientDockerID" type="ui32"   desc=""/>
-    </packet>
-    <packet name="UserAuthResp" desc= "认证回复">
-        <member name="retCode" type="ui16"   desc=""/>
-        <member name="account" type="string"   desc=""/>
-        <member name="token" type="string"   desc=""/>
-        <member name="clientSessionID" type="ui32"   desc=""/>
-        <member name="clientDockerID" type="ui32"   desc=""/>
-        <member name="previews" type="UserPreviewArray"   desc=""/>
-    </packet>
-
     <packet name="CreateUserReq" desc= "创角色请求">
         <member name="nickname" type="string"   desc=""/>
     </packet>
@@ -48,19 +33,9 @@
     </packet>
      <packet name="SelectUserResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="svrIP" type="string"   desc=""/>
-        <member name="svrPort" type="ui16"   desc=""/>
-        <member name="uID" type="ui64"   desc=""/>
-        <member name="token" type="string"   desc=""/>
     </packet>
 
-    <packet name="LoginUserReq" desc= "登录角色请求">
-        <member name="uID" type="ui64"   desc=""/>
-        <member name="token" type="string"   desc=""/>
-    </packet>
-     <packet name="LoginUserResp" desc= "登录角色返回">
-        <member name="retCode" type="ui16"   desc=""/>
-    </packet>
+
 
 
 </Proto>

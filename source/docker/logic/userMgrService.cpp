@@ -43,16 +43,19 @@ bool UserMgrService::onInit()
 
 UserMgrService::UserMgrService()
 {
-    slotting<UserAuthReq>(std::bind(&UserMgrService::onUserAuthReq, this, _1, _2));
+    slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
+    slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
+    slotting<SelectUserFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserFromUserMgrReq, this, _1, _2));
 }
 
 
 
-void UserMgrService::onUserAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    UserAuthReq req;
+    SelectUserPreviewsFromUserMgrReq req;
     rs >> req;
-    UserAuthResp resp;
+
+    SelectUserPreviewsFromUserMgrResp resp;
     resp.account = req.account;
     resp.token = req.token;
     resp.previews.clear();
@@ -60,20 +63,47 @@ void UserMgrService::onUserAuthReq(const Tracing & trace, zsummer::proto4z::Read
     resp.clientSessionID = req.clientSessionID;
     resp.retCode = EC_SUCCESS;
 
-    auto founder = _accountCache.find(req.account);
-    if (founder == _accountCache.end())
+
+    if (req.account.empty() || req.token != req.token)
     {
-        return;
+        resp.retCode = EC_PERMISSION_DENIED;
+        //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        Tracing backTrace;
+        backTrace._toServiceType = trace._fromServiceType;
+        backTrace._toServiceID = trace._fromServiceID;
+        backTrace._fromServiceType = trace._toServiceType;
+        backTrace._fromServiceID = trace._toServiceID;
+        backTrace._traceID = trace._traceBackID;
+        backTrace._traceBackID = trace._traceID;
+        Docker::getRef().forwardToDocker(req.clientDockerID, backTrace, resp);
     }
-
-    
-    
-    WriteStream ws(UserAuthResp::getProtoID());
-    ws << resp;
-
-//     WriteStream wsf(ClientForward::getProtoID());
-//     wsf << trace;
-//     wsf.appendOriginalData(ws.getStream(), ws.getStreamLen());
-//     Docker::getRef().sendToDocker(resp.clientDockerID, wsf.getStream(), wsf.getStreamLen());
+    else
+    {
+        DBQuery q("select uID, account, nickName, iconID from tb_UserBaseInfo where account=?;");
+        q << req.account;
+        SQLQueryReq sql(q.pickSQL());
+        toService(ServiceInfoDBMgr, sql, 
+            std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
+    }
 }
+void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
+{
+    LOGD("UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB");
+}
+void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
+{
+
+}
+
+
+
+void UserMgrService::onSelectUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
+{
+
+}
+
+
+
+
+
 

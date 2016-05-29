@@ -34,8 +34,8 @@ namespace Proto4z
     public class SQLResult: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 41002;  
-        static public ushort getProtoID() { return 41002; } 
+        public const ushort protoID = 41000;  
+        static public ushort getProtoID() { return 41000; } 
         static public string getProtoName() { return "SQLResult"; } 
         //members   
         public ushort qc;  
@@ -85,8 +85,8 @@ namespace Proto4z
     public class SQLQueryReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 41000;  
-        static public ushort getProtoID() { return 41000; } 
+        public const ushort protoID = 41001;  
+        static public ushort getProtoID() { return 41001; } 
         static public string getProtoName() { return "SQLQueryReq"; } 
         //members   
         public string sql;  
@@ -114,8 +114,8 @@ namespace Proto4z
     public class SQLQueryResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 41001;  
-        static public ushort getProtoID() { return 41001; } 
+        public const ushort protoID = 41002;  
+        static public ushort getProtoID() { return 41002; } 
         static public string getProtoName() { return "SQLQueryResp"; } 
         //members   
         public ushort retCode;  

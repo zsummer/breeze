@@ -5,8 +5,8 @@ namespace Proto4z
     public class DockerPulse: Proto4z.IProtoObject //集群脉冲  
     {     
         //proto id   
-        public const ushort protoID = 40007;  
-        static public ushort getProtoID() { return 40007; } 
+        public const ushort protoID = 40000;  
+        static public ushort getProtoID() { return 40000; } 
         static public string getProtoName() { return "DockerPulse"; } 
         //members   
         public DockerPulse()  
@@ -65,8 +65,8 @@ namespace Proto4z
     public class ChangeServiceClientID: Proto4z.IProtoObject //更改clientID  
     {     
         //proto id   
-        public const ushort protoID = 40009;  
-        static public ushort getProtoID() { return 40009; } 
+        public const ushort protoID = 40002;  
+        static public ushort getProtoID() { return 40002; } 
         static public string getProtoName() { return "ChangeServiceClientID"; } 
         //members   
         public ushort serviceType;  
@@ -104,8 +104,8 @@ namespace Proto4z
     public class CreateOrRefreshServiceNotice: Proto4z.IProtoObject //广播给所有docker  
     {     
         //proto id   
-        public const ushort protoID = 40010;  
-        static public ushort getProtoID() { return 40010; } 
+        public const ushort protoID = 40003;  
+        static public ushort getProtoID() { return 40003; } 
         static public string getProtoName() { return "CreateOrRefreshServiceNotice"; } 
         //members   
         public ushort serviceType;  
@@ -148,8 +148,8 @@ namespace Proto4z
     public class DestroyServiceInDocker: Proto4z.IProtoObject //销毁一个Service  
     {     
         //proto id   
-        public const ushort protoID = 40003;  
-        static public ushort getProtoID() { return 40003; } 
+        public const ushort protoID = 40004;  
+        static public ushort getProtoID() { return 40004; } 
         static public string getProtoName() { return "DestroyServiceInDocker"; } 
         //members   
         public ushort serviceType;  
@@ -182,8 +182,8 @@ namespace Proto4z
     public class DestroyServiceNotice: Proto4z.IProtoObject //已卸载并完成销毁,广播给所有docker  
     {     
         //proto id   
-        public const ushort protoID = 40004;  
-        static public ushort getProtoID() { return 40004; } 
+        public const ushort protoID = 40005;  
+        static public ushort getProtoID() { return 40005; } 
         static public string getProtoName() { return "DestroyServiceNotice"; } 
         //members   
         public ushort serviceType;  
@@ -216,8 +216,8 @@ namespace Proto4z
     public class ForwardToDocker: Proto4z.IProtoObject //转发到其他docker  
     {     
         //proto id   
-        public const ushort protoID = 40008;  
-        static public ushort getProtoID() { return 40008; } 
+        public const ushort protoID = 40006;  
+        static public ushort getProtoID() { return 40006; } 
         static public string getProtoName() { return "ForwardToDocker"; } 
         //members   
         public ForwardToDocker()  
