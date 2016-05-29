@@ -222,7 +222,7 @@ bool Docker::startDockerConnect()
     const auto & stc = ServerConfig::getRef().getServiceTypeConfig();
     for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
     {
-        if (!createService(i, InvalidServiceID, stc.at(i).front(), stc.at(i).front() != ServerConfig::getRef().getDockerID(), InvalidSessionID, true))
+        if (!createService(i, InvalidServiceID, stc.at(i).front(), InvalidSessionID, stc.at(i).front() != ServerConfig::getRef().getDockerID(), true))
         {
             return false;
         }
@@ -345,6 +345,9 @@ void Docker::destroyService(ui16 serviceType, ServiceID serviceID)
 
 ServicePtr Docker::createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit)
 {
+    LOGD("Docker::createServic self dockerID=" << ServerConfig::getRef().getDockerID() << ", serviceType=" << serviceType
+         << ", serviceID=" << serviceID << ", dockerID=" << dockerID
+            <<", clientID=" << clientID << ", isShell=" << isShell <<",faileExit=" << failExit);
     ServicePtr & service = _services[serviceType][serviceID];
     if (service && !service->isShell())
     {
