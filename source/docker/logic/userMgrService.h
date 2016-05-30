@@ -55,6 +55,7 @@ public:
 public:
     time_t _lastTime = 0;
     std::map<ui64, UserStatus> _userStatus;
+    std::map<std::string, ui64> _userName;
     std::map<std::string, UserPreviewArray> _accountPreviews;
     Balance _balance;
 };

@@ -29,14 +29,18 @@ void UserMgrService::onUninit()
 
 bool UserMgrService::onInit()
 {
-    const auto  & config = ServerConfig::getRef().getDockerConfig();
-    for (const auto & docker : config)
+    const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(ServiceUser);
+    for (auto dockerID : config)
     {
-        if (!docker._wideIP.empty() && docker._widePort != 0)
-        {
-            _balance.enableNode(docker._dockerID);
-        }
+        _balance.enableNode(dockerID);
     }
+    if (config.empty())
+    {
+        LOGE("at least have one docker contain ServiceUser service ");
+        return false;
+    }
+
+  
     finishInit();
     return true;
 }
