@@ -499,11 +499,11 @@ void Docker::checkServiceState()
     }
    
 }
-void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs)
+void Docker::event_onForwardToService(TcpSessionPtr session, ReadStream & rs)
 {
     Tracing trace;
     rs >> trace;
-    toService(trace, rs.getStreamUnread(), rs.getStreamUnreadLen(), false);
+    toService(trace, rs.getStreamUnread(), rs.getStreamUnreadLen(), false, false);
 }
 
 void Docker::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs)
@@ -624,12 +624,24 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onDestroyServiceNotice(session, rsShell);
         return;
     }
-    else if (rsShell.getProtoID() == ForwardToDocker::getProtoID())
+    else if (rsShell.getProtoID() == ForwardToService::getProtoID())
     {
-        event_onForwardToDocker(session, rsShell);
+        event_onForwardToService(session, rsShell);
         return;
     }
-    
+
+    else if (rsShell.getProtoID() == SelectUserPreviewsFromUserMgrResp::getProtoID())
+    {
+        return;
+    }
+    else if (rsShell.getProtoID() == CreateUserFromUserMgrResp::getProtoID())
+    {
+        return;
+    }
+    else if (rsShell.getProtoID() == SelectUserFromUserMgrResp::getProtoID())
+    {
+        return;
+    }
 }
 
 
@@ -703,7 +715,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         serviceReq.token = clientReq.token;
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq, true);
+        toService(trace, serviceReq, true, true);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
         return;
     }
@@ -728,7 +740,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         serviceReq.nickname = clientReq.nickname;
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq, true);
+        toService(trace, serviceReq, true, true);
         return;
     }
     else if (rs.getProtoID() == SelectUserReq::getProtoID())
@@ -751,7 +763,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         serviceReq.uID = clientReq.uID;
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq, true);
+        toService(trace, serviceReq, true, true);
         return;
     }
     else
@@ -762,7 +774,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         trace._toServiceType = ServiceUser;
         trace._toServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
 
-        toService(trace, rs.getStream(), rs.getStreamLen(), true);
+        toService(trace, rs.getStream(), rs.getStreamLen(), true, true);
     }
 }
 
@@ -786,7 +798,7 @@ void Docker::sendToDocker(DockerID dockerID, const char * block, unsigned int le
     sendToSession(founder->second.sessionID, block, len);
 }
 
-void Docker::toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService)
+void Docker::toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost)
 {
     if (trace._fromServiceType >= ServiceMax || trace._toServiceType >= ServiceMax || trace._toServiceType == ServiceInvalid)
     {
@@ -832,11 +844,15 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
                 sendToSession(service.getClientID(), block, len);
             }
         }
-        else
+        else if (needPost)
         {
             std::string bk;
             bk.assign(block, len);
             SessionManager::getRef().post(std::bind(&Service::process4bind, fder->second, trace, std::move(bk)));
+        }
+        else
+        {
+            fder->second->process(trace, block, len);
         }
     }
 
@@ -868,7 +884,7 @@ void Docker::forwardToSession(SessionID sessionID, const Tracing & trace, const 
 {
     try
     {
-        WriteStream ws(ForwardToDocker::getProtoID());
+        WriteStream ws(ForwardToService::getProtoID());
         ws << trace;
         ws.appendOriginalData(block, len);
         sendToSession(sessionID, ws.getStream(), ws.getStreamLen());

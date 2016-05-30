@@ -237,20 +237,20 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct ForwardToDocker //转发到其他docker  
+struct ForwardToService //转发到其他docker上的Service  
 { 
-    static const unsigned short getProtoID() { return 40006;} 
-    static const std::string getProtoName() { return "ID_ForwardToDocker";} 
+    static const unsigned short getProtoID() { return 40007;} 
+    static const std::string getProtoName() { return "ID_ForwardToService";} 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToDocker & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToService & data) 
 { 
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ForwardToDocker & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ForwardToService & data) 
 { 
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ForwardToDocker & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ForwardToService & info) 
 { 
     stm << "[\n"; 
     stm << "]\n"; 

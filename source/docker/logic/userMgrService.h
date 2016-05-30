@@ -27,27 +27,16 @@
 #include "service.h"
 #include <ProtoUserMgr.h>
 
-struct ServiceUserShell 
-{
-    ServiceID _uID = InvalidServiceID;
-    DockerID _dockerID = InvalidDockerID;
-};
 
 
-struct UserPreviewCache
+struct UserStatus
 {
-    int _status = 0; //0 no Client no UserService,  1 Creating UserService, 2 had UserService
+    int _status = 0; //0 no Client no UserService,  1 Creating UserService, 2 normal, 3 destroying 
     UserPreview _preview;
-    DockerID _dockerID = InvalidDockerID;
 };
 
 
-struct AccountCache
-{
-    std::string account;
-    std::string token;
-    std::vector<UserPreviewCache> _previewCache;
-};
+
 
 
 class UserMgrService : public Service
@@ -65,8 +54,8 @@ public:
     void onSelectUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 public:
     time_t _lastTime = 0;
-    std::map<ServiceID, ServiceUserShell> _userShells;
-    std::map<std::string, std::vector<AccountCache>> _accountCache;
+    std::map<ui64, UserStatus> _userStatus;
+    std::map<std::string, UserPreviewArray> _accountPreviews;
     Balance _balance;
 };
 

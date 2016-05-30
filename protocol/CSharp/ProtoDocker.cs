@@ -213,14 +213,14 @@ namespace Proto4z
         } 
     } 
  
-    public class ForwardToDocker: Proto4z.IProtoObject //转发到其他docker  
+    public class ForwardToService: Proto4z.IProtoObject //转发到其他docker上的Service  
     {     
         //proto id   
-        public const ushort protoID = 40006;  
-        static public ushort getProtoID() { return 40006; } 
-        static public string getProtoName() { return "ForwardToDocker"; } 
+        public const ushort protoID = 40007;  
+        static public ushort getProtoID() { return 40007; } 
+        static public string getProtoName() { return "ForwardToService"; } 
         //members   
-        public ForwardToDocker()  
+        public ForwardToService()  
         { 
         } 
         public System.Collections.Generic.List<byte> __encode() 

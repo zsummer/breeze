@@ -154,6 +154,7 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
             }
             lua_pop(L, 1);
         }
+
         lua_getfield(L, -1, "services");
         if (lua_isnil(L, -1))
         {

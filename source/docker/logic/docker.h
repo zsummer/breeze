@@ -67,10 +67,11 @@ public:
 public:
 
 
-    //isFromeOtherDocker 
-    void toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService);
+    //canForwardToOtherService 如果是来自其他docker的转发 不应该再转发出去.  
+    //needPost 如果是来自本地到本地的服务, 需要进行post解耦, 不应该直接调用process. 
+    void toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost);
     template<class Proto>
-    void toService(Tracing trace, Proto proto, bool canForwardToOtherService);
+    void toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost);
 public:
     bool isStoping();
 
@@ -102,7 +103,8 @@ private:
     void event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs);
 
-    void event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onForwardToService(TcpSessionPtr session, ReadStream & rs);
+
 
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
@@ -156,7 +158,7 @@ void Docker::broadcastToDockers(const Proto & proto, const Tracing & trace, bool
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        WriteStream forward(ForwardToDocker::getProtoID());
+        WriteStream forward(ForwardToService::getProtoID());
         forward << trace;
         forward.appendOriginalData(ws.getStream(), ws.getStreamLen());
         for (const auto &c : _dockerSession)
@@ -247,13 +249,13 @@ void Docker::forwardToDocker(DockerID dockerID, const Tracing & trace, const Pro
 
 
 template<class Proto>
-void Docker::toService(Tracing trace, Proto proto, bool canForwardToOtherService)
+void Docker::toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(trace, ws.getStream(), ws.getStreamLen(), canForwardToOtherService);
+        toService(trace, ws.getStream(), ws.getStreamLen(), canForwardToOtherService, needPost);
     }
     catch (const std::exception & e)
     {

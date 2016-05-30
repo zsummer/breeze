@@ -43,7 +43,7 @@ Proto4z.DestroyServiceNotice.__getName = "DestroyServiceNotice"
 Proto4z.DestroyServiceNotice[1] = {name="serviceType", type="ui16" }  
 Proto4z.DestroyServiceNotice[2] = {name="serviceID", type="ui64" }  
  
-Proto4z.register(40006,"ForwardToDocker") 
-Proto4z.ForwardToDocker = {} --转发到其他docker 
-Proto4z.ForwardToDocker.__getID = 40006 
-Proto4z.ForwardToDocker.__getName = "ForwardToDocker" 
+Proto4z.register(40007,"ForwardToService") 
+Proto4z.ForwardToService = {} --转发到其他docker上的Service 
+Proto4z.ForwardToService.__getID = 40007 
+Proto4z.ForwardToService.__getName = "ForwardToService" 
