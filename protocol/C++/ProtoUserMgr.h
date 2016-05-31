@@ -6,7 +6,7 @@
 struct SelectUserPreviewsFromUserMgrReq //获取角色预览数据  
 { 
     static const unsigned short getProtoID() { return 20000;} 
-    static const std::string getProtoName() { return "ID_SelectUserPreviewsFromUserMgrReq";} 
+    static const std::string getProtoName() { return "SelectUserPreviewsFromUserMgrReq";} 
     std::string account;  
     std::string token;  
     unsigned int clientDockerID;  
@@ -54,7 +54,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct SelectUserPreviewsFromUserMgrResp //获取角色预览数据  
 { 
     static const unsigned short getProtoID() { return 20001;} 
-    static const std::string getProtoName() { return "ID_SelectUserPreviewsFromUserMgrResp";} 
+    static const std::string getProtoName() { return "SelectUserPreviewsFromUserMgrResp";} 
     unsigned short retCode;  
     std::string account;  
     std::string token;  
@@ -113,7 +113,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct CreateUserFromUserMgrReq //创角色请求  
 { 
     static const unsigned short getProtoID() { return 20002;} 
-    static const std::string getProtoName() { return "ID_CreateUserFromUserMgrReq";} 
+    static const std::string getProtoName() { return "CreateUserFromUserMgrReq";} 
     std::string account;  
     std::string nickname;  
     unsigned int clientDockerID;  
@@ -161,7 +161,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct CreateUserFromUserMgrResp //创角色请求返回  
 { 
     static const unsigned short getProtoID() { return 20003;} 
-    static const std::string getProtoName() { return "ID_CreateUserFromUserMgrResp";} 
+    static const std::string getProtoName() { return "CreateUserFromUserMgrResp";} 
     unsigned short retCode;  
     unsigned int clientDockerID;  
     unsigned int clientSessionID;  
@@ -210,7 +210,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct SelectUserFromUserMgrReq //选角色请求  
 { 
     static const unsigned short getProtoID() { return 20004;} 
-    static const std::string getProtoName() { return "ID_SelectUserFromUserMgrReq";} 
+    static const std::string getProtoName() { return "SelectUserFromUserMgrReq";} 
     unsigned long long uID;  
     unsigned int clientDockerID;  
     unsigned int clientSessionID;  
@@ -254,7 +254,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct SelectUserFromUserMgrResp //选角色请求返回  
 { 
     static const unsigned short getProtoID() { return 20005;} 
-    static const std::string getProtoName() { return "ID_SelectUserFromUserMgrResp";} 
+    static const std::string getProtoName() { return "SelectUserFromUserMgrResp";} 
     unsigned short retCode;  
     unsigned int clientDockerID;  
     unsigned int clientSessionID;  

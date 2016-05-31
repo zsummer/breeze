@@ -47,12 +47,14 @@ public:
     bool onInit() override final;
     void onUninit() override final;
     void onTick() override final;
-public:
+private:
+    void onInitDB(zsummer::proto4z::ReadStream & rs, int cur, int total);
+private:
     void onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
     void onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-public:
+private:
     time_t _lastTime = 0;
     std::map<ui64, UserStatus> _userStatus;
     std::map<std::string, ui64> _userName;

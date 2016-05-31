@@ -25,7 +25,7 @@ enum  : unsigned short
 struct UserPreview //用户预览信息  
 { 
     static const unsigned short getProtoID() { return 200;} 
-    static const std::string getProtoName() { return "ID_UserPreview";} 
+    static const std::string getProtoName() { return "UserPreview";} 
     unsigned long long uID; //用户ID  
     std::string uName; //昵称  
     short iconID; //头像  
@@ -79,7 +79,7 @@ typedef std::vector<unsigned long long> UIDS;
 struct UserBaseInfo //用户基础数据  
 { 
     static const unsigned short getProtoID() { return 201;} 
-    static const std::string getProtoName() { return "ID_UserBaseInfo";} 
+    static const std::string getProtoName() { return "UserBaseInfo";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
@@ -110,8 +110,7 @@ struct UserBaseInfo //用户基础数据
 const std::vector<std::string>  UserBaseInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("desc `tb_UserBaseInfo`"); 
-    ret.push_back("CREATE TABLE `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        `nickName` varchar(255) NOT NULL DEFAULT '' ,        `iconID` bigint(20) NOT NULL DEFAULT '0' ,        `level` bigint(20) NOT NULL DEFAULT '0' ,        PRIMARY KEY(`uID`)  ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`uID`)  ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_UserBaseInfo` add `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `uID`  `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 

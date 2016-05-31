@@ -9,7 +9,7 @@ typedef std::vector<std::string> SQLFieldArray;
 struct SQLResult 
 { 
     static const unsigned short getProtoID() { return 41000;} 
-    static const std::string getProtoName() { return "ID_SQLResult";} 
+    static const std::string getProtoName() { return "SQLResult";} 
     unsigned short qc;  
     std::string errMsg;  
     std::string sql;  
@@ -62,7 +62,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct SQLQueryReq 
 { 
     static const unsigned short getProtoID() { return 41001;} 
-    static const std::string getProtoName() { return "ID_SQLQueryReq";} 
+    static const std::string getProtoName() { return "SQLQueryReq";} 
     std::string sql;  
     SQLQueryReq() 
     { 
@@ -93,7 +93,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct SQLQueryResp 
 { 
     static const unsigned short getProtoID() { return 41002;} 
-    static const std::string getProtoName() { return "ID_SQLQueryResp";} 
+    static const std::string getProtoName() { return "SQLQueryResp";} 
     unsigned short retCode;  
     SQLResult result;  
     SQLQueryResp() 

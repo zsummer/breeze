@@ -6,7 +6,7 @@
 struct DockerPulse //集群脉冲  
 { 
     static const unsigned short getProtoID() { return 40000;} 
-    static const std::string getProtoName() { return "ID_DockerPulse";} 
+    static const std::string getProtoName() { return "DockerPulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DockerPulse & data) 
 { 
@@ -26,7 +26,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct CreateServiceInDocker //创建并初始化一个service  
 { 
     static const unsigned short getProtoID() { return 40001;} 
-    static const std::string getProtoName() { return "ID_CreateServiceInDocker";} 
+    static const std::string getProtoName() { return "CreateServiceInDocker";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     unsigned int clientID;  
@@ -70,7 +70,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct ChangeServiceClientID //更改clientID  
 { 
     static const unsigned short getProtoID() { return 40002;} 
-    static const std::string getProtoName() { return "ID_ChangeServiceClientID";} 
+    static const std::string getProtoName() { return "ChangeServiceClientID";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     unsigned int clientID;  
@@ -114,7 +114,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct CreateOrRefreshServiceNotice //广播给所有docker  
 { 
     static const unsigned short getProtoID() { return 40003;} 
-    static const std::string getProtoName() { return "ID_CreateOrRefreshServiceNotice";} 
+    static const std::string getProtoName() { return "CreateOrRefreshServiceNotice";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     unsigned int dockerID;  
@@ -164,7 +164,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct DestroyServiceInDocker //销毁一个Service  
 { 
     static const unsigned short getProtoID() { return 40004;} 
-    static const std::string getProtoName() { return "ID_DestroyServiceInDocker";} 
+    static const std::string getProtoName() { return "DestroyServiceInDocker";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     DestroyServiceInDocker() 
@@ -202,7 +202,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct DestroyServiceNotice //已卸载并完成销毁,广播给所有docker  
 { 
     static const unsigned short getProtoID() { return 40005;} 
-    static const std::string getProtoName() { return "ID_DestroyServiceNotice";} 
+    static const std::string getProtoName() { return "DestroyServiceNotice";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     DestroyServiceNotice() 
@@ -240,7 +240,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 struct ForwardToService //转发到其他docker上的Service  
 { 
     static const unsigned short getProtoID() { return 40007;} 
-    static const std::string getProtoName() { return "ID_ForwardToService";} 
+    static const std::string getProtoName() { return "ForwardToService";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToService & data) 
 { 
