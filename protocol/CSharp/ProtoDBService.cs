@@ -3,7 +3,7 @@ namespace Proto4z
 { 
  
  
-    public class SQLFieldArray : System.Collections.Generic.List<string>, Proto4z.IProtoObject  
+    public class SQLStringArray : System.Collections.Generic.List<string>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -42,16 +42,16 @@ namespace Proto4z
         public string errMsg;  
         public string sql;  
         public ulong affected;  
-        public SQLFieldArray fields;  
+        public SQLStringArray fields;  
         public SQLResult()  
         { 
             qc = 0;  
             errMsg = "";  
             sql = "";  
             affected = 0;  
-            fields = new SQLFieldArray();  
+            fields = new SQLStringArray();  
         } 
-        public SQLResult(ushort qc, string errMsg, string sql, ulong affected, SQLFieldArray fields) 
+        public SQLResult(ushort qc, string errMsg, string sql, ulong affected, SQLStringArray fields) 
         { 
             this.qc = qc; 
             this.errMsg = errMsg; 
@@ -66,7 +66,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.errMsg)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.sql)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.affected)); 
-            if (this.fields == null) this.fields = new SQLFieldArray(); 
+            if (this.fields == null) this.fields = new SQLStringArray(); 
             data.AddRange(this.fields.__encode()); 
             return data; 
         } 
@@ -76,13 +76,13 @@ namespace Proto4z
             this.errMsg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.sql = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.affected = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.fields = new SQLFieldArray(); 
+            this.fields = new SQLStringArray(); 
             this.fields.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class SQLQueryReq: Proto4z.IProtoObject 
+    public class SQLQueryReq: Proto4z.IProtoObject //通用SQL语句执行协议  
     {     
         //proto id   
         public const ushort protoID = 41001;  
@@ -111,7 +111,7 @@ namespace Proto4z
         } 
     } 
  
-    public class SQLQueryResp: Proto4z.IProtoObject 
+    public class SQLQueryResp: Proto4z.IProtoObject //通用SQL语句执行协议返回,SQLResult可以借助dbHepler进行构建DBResult  
     {     
         //proto id   
         public const ushort protoID = 41002;  
@@ -126,6 +126,73 @@ namespace Proto4z
             result = new SQLResult();  
         } 
         public SQLQueryResp(ushort retCode, SQLResult result) 
+        { 
+            this.retCode = retCode; 
+            this.result = result; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.result == null) this.result = new SQLResult(); 
+            data.AddRange(this.result.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.result = new SQLResult(); 
+            this.result.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SQLQueryArrayReq: Proto4z.IProtoObject //通用批量SQL语句执行协议  
+    {     
+        //proto id   
+        public const ushort protoID = 41005;  
+        static public ushort getProtoID() { return 41005; } 
+        static public string getProtoName() { return "SQLQueryArrayReq"; } 
+        //members   
+        public SQLStringArray sqls;  
+        public SQLQueryArrayReq()  
+        { 
+            sqls = new SQLStringArray();  
+        } 
+        public SQLQueryArrayReq(SQLStringArray sqls) 
+        { 
+            this.sqls = sqls; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            if (this.sqls == null) this.sqls = new SQLStringArray(); 
+            data.AddRange(this.sqls.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.sqls = new SQLStringArray(); 
+            this.sqls.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SQLQueryArrayResp: Proto4z.IProtoObject //通用批量SQL语句执行协议  
+    {     
+        //proto id   
+        public const ushort protoID = 41006;  
+        static public ushort getProtoID() { return 41006; } 
+        static public string getProtoName() { return "SQLQueryArrayResp"; } 
+        //members   
+        public ushort retCode;  
+        public SQLResult result; //只有错误时候才有数据  
+        public SQLQueryArrayResp()  
+        { 
+            retCode = 0;  
+            result = new SQLResult();  
+        } 
+        public SQLQueryArrayResp(ushort retCode, SQLResult result) 
         { 
             this.retCode = retCode; 
             this.result = result; 

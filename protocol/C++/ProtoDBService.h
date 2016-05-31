@@ -4,7 +4,7 @@
  
  
  
-typedef std::vector<std::string> SQLFieldArray;  
+typedef std::vector<std::string> SQLStringArray;  
  
 struct SQLResult 
 { 
@@ -14,13 +14,13 @@ struct SQLResult
     std::string errMsg;  
     std::string sql;  
     unsigned long long affected;  
-    SQLFieldArray fields;  
+    SQLStringArray fields;  
     SQLResult() 
     { 
         qc = 0; 
         affected = 0; 
     } 
-    SQLResult(const unsigned short & qc, const std::string & errMsg, const std::string & sql, const unsigned long long & affected, const SQLFieldArray & fields) 
+    SQLResult(const unsigned short & qc, const std::string & errMsg, const std::string & sql, const unsigned long long & affected, const SQLStringArray & fields) 
     { 
         this->qc = qc; 
         this->errMsg = errMsg; 
@@ -59,7 +59,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SQLQueryReq 
+struct SQLQueryReq //通用SQL语句执行协议  
 { 
     static const unsigned short getProtoID() { return 41001;} 
     static const std::string getProtoName() { return "SQLQueryReq";} 
@@ -90,7 +90,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SQLQueryResp 
+struct SQLQueryResp //通用SQL语句执行协议返回,SQLResult可以借助dbHepler进行构建DBResult  
 { 
     static const unsigned short getProtoID() { return 41002;} 
     static const std::string getProtoName() { return "SQLQueryResp";} 
@@ -119,6 +119,74 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SQLQueryResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "result=" << info.result << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct SQLQueryArrayReq //通用批量SQL语句执行协议  
+{ 
+    static const unsigned short getProtoID() { return 41005;} 
+    static const std::string getProtoName() { return "SQLQueryArrayReq";} 
+    SQLStringArray sqls;  
+    SQLQueryArrayReq() 
+    { 
+    } 
+    SQLQueryArrayReq(const SQLStringArray & sqls) 
+    { 
+        this->sqls = sqls; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SQLQueryArrayReq & data) 
+{ 
+    ws << data.sqls;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SQLQueryArrayReq & data) 
+{ 
+    rs >> data.sqls;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SQLQueryArrayReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "sqls=" << info.sqls << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct SQLQueryArrayResp //通用批量SQL语句执行协议  
+{ 
+    static const unsigned short getProtoID() { return 41006;} 
+    static const std::string getProtoName() { return "SQLQueryArrayResp";} 
+    unsigned short retCode;  
+    SQLResult result; //只有错误时候才有数据  
+    SQLQueryArrayResp() 
+    { 
+        retCode = 0; 
+    } 
+    SQLQueryArrayResp(const unsigned short & retCode, const SQLResult & result) 
+    { 
+        this->retCode = retCode; 
+        this->result = result; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SQLQueryArrayResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.result;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SQLQueryArrayResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.result;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SQLQueryArrayResp & info) 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 

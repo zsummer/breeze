@@ -50,11 +50,14 @@ public:
     //执行完毕后会在主线程中执行回调函数.
     void asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
         const std::function<void(DBResultPtr)> & handler);
-
+    void asyncQueryArray(DBHelperPtr &dbhelper, const std::vector<std::string> &sqls,
+        const std::function<void(bool, DBResultPtr)> & handler);
 
 protected:
     void _asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
         const std::function<void(DBResultPtr)> & handler);
+    void _asyncQueryArray(DBHelperPtr &dbhelper, const std::vector<std::string> &sqls,
+        const std::function<void(bool, DBResultPtr)> & handler);
     inline void run();
 private:
     std::shared_ptr<std::thread> _thread;

@@ -26,28 +26,7 @@ void UserMgrService::onUninit()
     finishUninit();
 }
 
-void UserMgrService::onInitDB(zsummer::proto4z::ReadStream & rs, int cur, int total)
-{
-    SQLQueryResp resp;
-    rs >> resp;
-    if (cur == 1 &&(resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS))
-    {
-        LOGE("UserMgrService::onInitDB error");
-        return;
-    }
-    else if (cur == total)
-    {
-        finishInit();
-    }
-    else
-    {
-        auto sqls = UserBaseInfo().getDBBuild();
-        SQLQueryReq req(sqls.at(cur));
-        toService(ServiceInfoDBMgr, req, std::bind(&UserMgrService::onInitDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, cur+1, (int)sqls.size()));
-    }
-    return;
 
-}
 bool UserMgrService::onInit()
 {
     const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(ServiceUser);
@@ -60,12 +39,7 @@ bool UserMgrService::onInit()
         LOGE("at least have one docker contain ServiceUser service ");
         return false;
     }
-    if (true)
-    {
-        auto sqls = UserBaseInfo().getDBBuild();
-        SQLQueryReq req(sqls.at(0));
-        toService(ServiceInfoDBMgr, req, std::bind(&UserMgrService::onInitDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, 1, (int)sqls.size()));
-    }
+    finishInit();
     return true;
 }
 

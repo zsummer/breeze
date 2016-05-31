@@ -8,6 +8,7 @@ DBService::DBService()
 {
     _dbAsync = std::make_shared<DBAsync>();
     slotting<SQLQueryReq>(std::bind(&DBService::onSQLQueryReq, this, _1, _2)); //不需要shared_from_this
+    slotting<SQLQueryArrayReq>(std::bind(&DBService::onSQLQueryArrayReq, this, _1, _2)); //不需要shared_from_this
 }
 
 DBService::~DBService()
@@ -112,14 +113,7 @@ static void defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
 }
 
 
-void DBService::asyncQuery(const std::string &sql, const std::function<void(zsummer::mysql::DBResultPtr)> & handler)
-{
-    _dbAsync->asyncQuery(_dbHelper, sql, handler);
-}
-void DBService::asyncQuery(const std::string &sql)
-{
-    asyncQuery(sql, defaultAsyncHandler);
-}
+
 zsummer::mysql::DBResultPtr DBService::query(const std::string &sql)
 {
     return _dbHelper->query(sql);
@@ -132,10 +126,14 @@ void DBService::onSQLQueryReq(Tracing trace, ReadStream &rs)
 {
     SQLQueryReq req;
     rs >> req;
-    asyncQuery(req.sql, std::bind(&DBService::onAsyncSQLQueryReq, std::static_pointer_cast<DBService>(shared_from_this()), _1, trace));
-
+    _dbAsync->asyncQuery(_dbHelper, req.sql, std::bind(&DBService::onAsyncSQLQueryReq, std::static_pointer_cast<DBService>(shared_from_this()), _1, trace));
 }
-
+void DBService::onSQLQueryArrayReq(Tracing trace, ReadStream &rs)
+{
+    SQLQueryArrayReq req;
+    rs >> req;
+    _dbAsync->asyncQueryArray(_dbHelper, req.sqls, std::bind(&DBService::onAsyncSQLQueryArrayReq, std::static_pointer_cast<DBService>(shared_from_this()), _1, _2, trace));
+}
 void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
 {
     SQLQueryResp resp;
@@ -145,11 +143,20 @@ void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
     resp.result.sql = result->peekSQL();
     resp.result.affected = result->getAffectedRows();
     resp.result.fields = std::move(result->popResult());
-    WriteStream ws(SQLQueryResp::getProtoID());
-    ws << resp;
-    backToService(trace, ws.getStream(), ws.getStreamLen(), nullptr);
+    backToService(trace, resp, nullptr);
 }
+void DBService::onAsyncSQLQueryArrayReq(bool ret, DBResultPtr result, Tracing trace)
+{
+    SQLQueryArrayResp resp;
+    resp.retCode = ret ? EC_SUCCESS : EC_ERROR;
+    resp.result.qc = result->getErrorCode();
+    resp.result.errMsg = result->getErrorMsg();
+    resp.result.sql = result->peekSQL();
+    resp.result.affected = result->getAffectedRows();
+    resp.result.fields = std::move(result->popResult());
+    backToService(trace, resp, nullptr);
 
+}
 void DBService::onTest(ReadStream & rs)
 {
     SQLQueryResp resp;

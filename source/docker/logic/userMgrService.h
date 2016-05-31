@@ -48,7 +48,6 @@ public:
     void onUninit() override final;
     void onTick() override final;
 private:
-    void onInitDB(zsummer::proto4z::ReadStream & rs, int cur, int total);
 private:
     void onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
