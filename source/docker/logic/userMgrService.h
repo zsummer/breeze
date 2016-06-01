@@ -34,8 +34,13 @@ struct UserStatus
     int _status = 0; //0 no Client no UserService,  1 Creating UserService, 2 normal, 3 destroying 
     UserPreview _preview;
 };
+using UserStatusPtr = std::shared_ptr<UserStatus>;
 
-
+struct AccountStatus
+{
+    int _lastCreateTime = 0;
+    std::map<ui64, UserStatusPtr> _users;
+};
 
 
 
@@ -45,9 +50,11 @@ public:
     UserMgrService();
     ~UserMgrService();
     bool onInit() override final;
+    void onInitLastUIDFromDB(zsummer::proto4z::ReadStream & rs);
     void onUninit() override final;
     void onTick() override final;
 private:
+    void updateUserPreview(const UserPreview & pre);
 private:
     void onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
@@ -55,9 +62,10 @@ private:
     void onSelectUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 private:
     time_t _lastTime = 0;
-    std::map<ui64, UserStatus> _userStatus;
-    std::map<std::string, ui64> _userName;
-    std::map<std::string, UserPreviewArray> _accountPreviews;
+    std::map<ui64, UserStatusPtr> _userStatusByID;
+    std::map<std::string, UserStatusPtr> _userStatusByName;
+    std::map<std::string, AccountStatus> _accountStatus;
+    ui64 _nextUserID = 0;
     Balance _balance;
 };
 

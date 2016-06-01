@@ -4,7 +4,12 @@
 #include <ProtoDBService.h>
 #include <ProtoUser.h>
 
-
+UserMgrService::UserMgrService()
+{
+    slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
+    slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
+    slotting<SelectUserFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserFromUserMgrReq, this, _1, _2));
+}
 
 UserMgrService::~UserMgrService()
 {
@@ -39,19 +44,66 @@ bool UserMgrService::onInit()
         LOGE("at least have one docker contain ServiceUser service ");
         return false;
     }
-    finishInit();
+
+    SQLQueryReq sql("select max(uID) from tb_UserBaseInfo");
+    toService(ServiceInfoDBMgr, sql,
+        std::bind(&UserMgrService::onInitLastUIDFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1));
     return true;
 }
 
-UserMgrService::UserMgrService()
+void UserMgrService::onInitLastUIDFromDB(zsummer::proto4z::ReadStream & rs)
 {
-    slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
-    slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
-    slotting<SelectUserFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserFromUserMgrReq, this, _1, _2));
+    SQLQueryResp resp;
+    rs >> resp;
+    if (resp.retCode != EC_SUCCESS)
+    {
+        LOGE("select max(uID) from tb_UserBaseInfo error.");
+        return;
+    }
+    if (resp.result.qc != QEC_SUCCESS || resp.result.fields.empty())
+    {
+        LOGE("select max(uID) from tb_UserBaseInfo error. error sql msg=" << resp.result.errMsg);
+        return;
+    }
+    _nextUserID = fromString<ui64>(resp.result.fields.front(), 0);
+    if (_nextUserID < ServerConfig::getRef().getAreaID() * pow(10,8))
+    {
+        _nextUserID = ServerConfig::getRef().getAreaID() * pow(10, 8);
+    }
+    
+    finishInit();
 }
 
 
 
+
+void UserMgrService::updateUserPreview(const UserPreview & pre)
+{
+    UserStatusPtr usp;
+    if (true)
+    {
+        auto founder = _userStatusByID.find(pre.uID);
+        if (founder == _userStatusByID.end())
+        {
+            usp = std::make_shared<UserStatus>();
+            usp->_status = 0;
+            usp->_preview = pre;
+            _userStatusByID[pre.uID] = usp;
+            _userStatusByName[pre.uName] = usp;
+        }
+        else
+        {
+            usp = founder->second;
+            usp->_preview = pre;
+        }
+        _userStatusByName[pre.uName] = usp;
+    }
+    if (true)
+    {
+        auto &acs = _accountStatus[pre.account];
+        acs._users[pre.uID] = usp;
+    }
+}
 void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     SelectUserPreviewsFromUserMgrReq req;
@@ -81,10 +133,14 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, z
 void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
 {
     LOGD("UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB");
-    SQLResult result;
-    rs >> result;
     DBResult dbResult;
-    dbResult.buildResult((QueryErrorCode)result.qc, result.errMsg, result.sql, result.affected, result.fields);
+    if (true)
+    {
+        SQLQueryResp resp;
+        rs >> resp;
+        dbResult.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
+    }
+
     SelectUserPreviewsFromUserMgrResp resp;
     resp.account = req.account;
     resp.token = req.token;
@@ -100,8 +156,8 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
         dbResult >> pre.uName;
         dbResult >> pre.iconID;
         resp.previews.push_back(pre);
+        updateUserPreview(pre);
     }
-    _accountPreviews[resp.account] = resp.previews;
     Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
 }
 
@@ -109,8 +165,27 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
 {
     CreateUserFromUserMgrReq req;
     rs >> req;
+    CreateUserFromUserMgrResp resp;
+    resp.retCode = EC_SUCCESS;
+    resp.previews.clear();
+    resp.clientDockerID = req.clientDockerID;
+    resp.clientSessionID = req.clientSessionID;
 
- 
+    auto founder = _accountStatus.find(req.account);
+    if (founder == _accountStatus.end() || founder->second._users.size() > 4 || getNowTime() - founder->second._lastCreateTime < 20)
+    {
+        resp.retCode = EC_ERROR;
+        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        return;
+    }
+
+    if (_userStatusByName.find(req.nickname) != _userStatusByName.end())
+    {
+        resp.retCode = EC_ERROR;
+        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        return;
+    }
+    founder->second._lastCreateTime = getNowTime();
 }
 
 
