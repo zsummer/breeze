@@ -81,7 +81,7 @@ private:
     bool startDockerWideListen();
 
 public:
-    ServicePtr createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit);
+    ServicePtr createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, DockerID clientDockerID, SessionID clientSession, bool isShell, bool failExit);
     void destroyService(ui16 serviceType, ServiceID serviceID);
 public:
     void checkServiceState();

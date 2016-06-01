@@ -207,66 +207,71 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SelectUserFromUserMgrReq //选角色请求  
+struct AttachUserFromUserMgrReq //选角色请求  
 { 
-    static const unsigned short getProtoID() { return 20004;} 
-    static const std::string getProtoName() { return "SelectUserFromUserMgrReq";} 
-    unsigned long long uID;  
+    static const unsigned short getProtoID() { return 20006;} 
+    static const std::string getProtoName() { return "AttachUserFromUserMgrReq";} 
+    unsigned long long userServiceID;  
+    std::string account;  
     unsigned int clientDockerID;  
     unsigned int clientSessionID;  
-    SelectUserFromUserMgrReq() 
+    AttachUserFromUserMgrReq() 
     { 
-        uID = 0; 
+        userServiceID = 0; 
         clientDockerID = 0; 
         clientSessionID = 0; 
     } 
-    SelectUserFromUserMgrReq(const unsigned long long & uID, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
+    AttachUserFromUserMgrReq(const unsigned long long & userServiceID, const std::string & account, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
     { 
-        this->uID = uID; 
+        this->userServiceID = userServiceID; 
+        this->account = account; 
         this->clientDockerID = clientDockerID; 
         this->clientSessionID = clientSessionID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserFromUserMgrReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachUserFromUserMgrReq & data) 
 { 
-    ws << data.uID;  
+    ws << data.userServiceID;  
+    ws << data.account;  
     ws << data.clientDockerID;  
     ws << data.clientSessionID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserFromUserMgrReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachUserFromUserMgrReq & data) 
 { 
-    rs >> data.uID;  
+    rs >> data.userServiceID;  
+    rs >> data.account;  
     rs >> data.clientDockerID;  
     rs >> data.clientSessionID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SelectUserFromUserMgrReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachUserFromUserMgrReq & info) 
 { 
     stm << "[\n"; 
-    stm << "uID=" << info.uID << "\n"; 
+    stm << "userServiceID=" << info.userServiceID << "\n"; 
+    stm << "account=" << info.account << "\n"; 
     stm << "clientDockerID=" << info.clientDockerID << "\n"; 
     stm << "clientSessionID=" << info.clientSessionID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct SelectUserFromUserMgrResp //选角色请求返回  
+struct AttachUserFromUserMgrResp //选角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 20005;} 
-    static const std::string getProtoName() { return "SelectUserFromUserMgrResp";} 
+    static const unsigned short getProtoID() { return 20007;} 
+    static const std::string getProtoName() { return "AttachUserFromUserMgrResp";} 
     unsigned short retCode;  
     unsigned int clientDockerID;  
     unsigned int clientSessionID;  
     unsigned long long userServiceID;  
-    SelectUserFromUserMgrResp() 
+    AttachUserFromUserMgrResp() 
     { 
         retCode = 0; 
         clientDockerID = 0; 
         clientSessionID = 0; 
         userServiceID = 0; 
     } 
-    SelectUserFromUserMgrResp(const unsigned short & retCode, const unsigned int & clientDockerID, const unsigned int & clientSessionID, const unsigned long long & userServiceID) 
+    AttachUserFromUserMgrResp(const unsigned short & retCode, const unsigned int & clientDockerID, const unsigned int & clientSessionID, const unsigned long long & userServiceID) 
     { 
         this->retCode = retCode; 
         this->clientDockerID = clientDockerID; 
@@ -274,7 +279,7 @@ struct SelectUserFromUserMgrResp //选角色请求返回
         this->userServiceID = userServiceID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserFromUserMgrResp & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachUserFromUserMgrResp & data) 
 { 
     ws << data.retCode;  
     ws << data.clientDockerID;  
@@ -282,7 +287,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.userServiceID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserFromUserMgrResp & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachUserFromUserMgrResp & data) 
 { 
     rs >> data.retCode;  
     rs >> data.clientDockerID;  
@@ -290,7 +295,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.userServiceID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SelectUserFromUserMgrResp & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachUserFromUserMgrResp & info) 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 

@@ -218,7 +218,7 @@ bool Docker::startDockerConnect()
     const auto & stc = ServerConfig::getRef().getServiceTypeConfig();
     for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
     {
-        if (!createService(i, InvalidServiceID, stc.at(i).front(), InvalidSessionID, stc.at(i).front() != ServerConfig::getRef().getDockerID(), true))
+        if (!createService(i, InvalidServiceID, stc.at(i).front(), InvalidDockerID, InvalidSessionID, stc.at(i).front() != ServerConfig::getRef().getDockerID(), true))
         {
             return false;
         }
@@ -302,7 +302,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
         {
             if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
-                CreateOrRefreshServiceNotice notice(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getDockerID(), svc.second->getClientID());
+                CreateOrRefreshServiceNotice notice(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getDockerID(), svc.second->getClientDockerID(), svc.second->getClientSessionID());
                 Docker::getRef().sendToSession(session->getSessionID(), notice);
             }
         }
@@ -339,16 +339,17 @@ void Docker::destroyService(ui16 serviceType, ServiceID serviceID)
     return;
 }
 
-ServicePtr Docker::createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit)
+ServicePtr Docker::createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit)
 {
     LOGI("Docker::createServic self dockerID=" << ServerConfig::getRef().getDockerID() << ", serviceType=" << serviceType
-         << ", serviceID=" << serviceID << ", dockerID=" << dockerID
-            <<", clientID=" << clientID << ", isShell=" << isShell <<",faileExit=" << failExit);
+         << ", serviceID=" << serviceID << ", dockerID=" << dockerID << ", clientDockerID=" << clientDockerID
+            <<", clientSessionID=" << clientSessionID << ", isShell=" << isShell <<",faileExit=" << failExit);
     ServicePtr & service = _services[serviceType][serviceID];
     if (service && !service->isShell())
     {
         LOGE("Docker::createService error. service alread exist. serviceType=" << ServiceNames.at(serviceType) << ", serviceID="
-            << serviceID << ", dockerID=" << dockerID << ", isShell=" << isShell << ", failExit=" << failExit << zsummer::traceback());
+            << serviceID << ", dockerID=" << dockerID << ", clientDockerID=" << clientDockerID << ", clientSessionID=" << clientSessionID 
+            << ", isShell=" << isShell << ", failExit=" << failExit << zsummer::traceback());
         if (failExit)
         {
             goto goExit;
@@ -392,7 +393,8 @@ ServicePtr Docker::createService(ui16 serviceType, ServiceID serviceID, DockerID
     service->setServiceType(serviceType);
     service->setServiceID(serviceID);
     service->setDockerID(dockerID);
-    service->setClientID(clientID);
+    service->setClientSessionID(clientSessionID);
+    service->setClientDockerID(clientDockerID);
     service->setStatus(SS_CREATED);
 
     
@@ -508,7 +510,7 @@ void Docker::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & r
         LOGE("CreateServiceInDocker can't founder service type. service=" << ServiceNames.at(service.serviceType));
         return;
     }
-    auto ret = createService(service.serviceType, service.serviceID, ServerConfig::getRef().getDockerID(), service.clientID, false, false);
+    auto ret = createService(service.serviceType, service.serviceID, ServerConfig::getRef().getDockerID(), service.clientDockerID, service.clientSessionID, false, false);
     if (ret)
     {
         ret->onInit();
@@ -531,7 +533,8 @@ void Docker::event_onChangeServiceClientID(TcpSessionPtr session, ReadStream & r
         LOGE("event_onChangeServiceClientID can't founder service id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
         return;
     }
-    fder->second->setClientID(service.clientID);
+    fder->second->setClientSessionID(service.clientSessionID);
+    fder->second->setClientDockerID(service.clientDockerID);
 }
 
 void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs)
@@ -545,7 +548,7 @@ void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStr
         LOGE("event_onCreateOrRefreshServiceNotice can't founder remote service. service=" << ServiceNames.at(service.serviceType));
         return;
     }
-    auto servicePtr = createService(service.serviceType, service.serviceID, service.dockerID, service.clientID, true, false);
+    auto servicePtr = createService(service.serviceType, service.serviceID, service.dockerID, service.clientDockerID, service.clientSessionID, true, false);
     if (servicePtr)
     {
         servicePtr->setStatus(SS_WORKING);
@@ -638,7 +641,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     {
         return;
     }
-    else if (rsShell.getProtoID() == SelectUserFromUserMgrResp::getProtoID())
+    else if (rsShell.getProtoID() == AttachUserFromUserMgrResp::getProtoID())
     {
         return;
     }
@@ -743,15 +746,15 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         toService(trace, serviceReq, true, true);
         return;
     }
-    else if (rs.getProtoID() == SelectUserReq::getProtoID())
+    else if (rs.getProtoID() == AttachUserReq::getProtoID())
     {
-        LOGD("SelectUserReq sID=" << session->getSessionID() << ", block len=" << len);
+        LOGD("AttachUserReq sID=" << session->getSessionID() << ", block len=" << len);
         if (ss != SSTATUS_AUTHED)
         {
-            LOGE("SelectUserReq : client not authed. sID=" << session->getSessionID());
+            LOGE("AttachUserReq : client not authed. sID=" << session->getSessionID());
             return;
         }
-        SelectUserReq clientReq;
+        AttachUserReq clientReq;
         rs >> clientReq;
         Tracing trace;
         trace._fromServiceType = ServiceClient;
@@ -759,8 +762,8 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         trace._toServiceType = ServiceUserMgr;
         trace._toServiceID = InvalidServiceID;
 
-        SelectUserFromUserMgrReq serviceReq;
-        serviceReq.uID = clientReq.uID;
+        AttachUserFromUserMgrReq serviceReq;
+        serviceReq.userServiceID = clientReq.uID;
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
         toService(trace, serviceReq, true, true);
@@ -840,16 +843,24 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     {
         if (trace._toServiceType == ServiceClient)
         {
-            if (service.getClientID() != InvalidSessionID)
+            if (service.getClientDockerID() == ServerConfig::getRef().getDockerID())
             {
-                LOGT("Docker::toService  sendToSession (client) " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-                sendToSession(service.getClientID(), block, len);
+                if (service.getClientSessionID() != InvalidSessionID)
+                {
+                    LOGT("Docker::toService  sendToSession (client) " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+                    sendToSession(service.getClientSessionID(), block, len);
+                }
+                else
+                {
+                    LOGW("Docker::toService  sendToSession (client) warning. client session id not found "
+                        << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+                }
             }
             else
             {
-                LOGW("Docker::toService  sendToSession (client) warning. client session id not found " 
-                    << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+                LOGF("waiting coding . ...............................     forward to client");
             }
+
         }
         else if (needPost)
         {

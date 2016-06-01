@@ -6,9 +6,9 @@
 
 UserMgrService::UserMgrService()
 {
-    slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
+    slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onAttachUserPreviewsFromUserMgrReq, this, _1, _2));
     slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
-    slotting<SelectUserFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserFromUserMgrReq, this, _1, _2));
+    slotting<AttachUserFromUserMgrReq>(std::bind(&UserMgrService::onAttachUserFromUserMgrReq, this, _1, _2));
 }
 
 UserMgrService::~UserMgrService()
@@ -105,7 +105,7 @@ void UserMgrService::updateUserPreview(const UserPreview & pre)
         acs._users[pre.uID] = usp;
     }
 }
-void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onAttachUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     SelectUserPreviewsFromUserMgrReq req;
     rs >> req;
@@ -128,10 +128,10 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, z
         q << req.account;
         SQLQueryReq sql(q.pickSQL());
         toService(ServiceInfoDBMgr, sql, 
-            std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
+            std::bind(&UserMgrService::onAttachUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
     }
 }
-void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
+void UserMgrService::onAttachUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
 {
     LOGD("UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB");
     DBResult dbResult;
@@ -229,12 +229,49 @@ void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStre
     Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
 }
 
-void UserMgrService::onSelectUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
+void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
+    AttachUserFromUserMgrReq req;
+    rs >> req;
+    AttachUserFromUserMgrResp resp;
+    resp.retCode = EC_SUCCESS;
+    resp.userServiceID = req.userServiceID;
+    resp.clientDockerID = req.clientDockerID;
+    resp.clientSessionID = req.clientSessionID;
+
+    auto founder = _userStatusByID.find(req.userServiceID);
+    if (founder == _userStatusByID.end() || founder->second->_preview.account != req.account)
+    {
+        resp.retCode = EC_ERROR;
+        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        return;
+    }
+    auto & status = *founder->second;
+    if (status._status == 1 || status._status == 3 )
+    {
+        resp.retCode = EC_ERROR;
+        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        return;
+    }
+    if (status._status == 0)
+    {
+        DockerID dockerID = _balance.selectAuto();
+        if (dockerID == InvalidDockerID)
+        {
+            resp.retCode = EC_ERROR;
+            Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+            return;
+        }
+        status._status = 1;
+        CreateOrRefreshServiceNotice notice(ServiceUser, req.userServiceID, dockerID, req.clientDockerID, req.clientSessionID);
+    }
 
 }
 
+void UserMgrService::onAttachUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req)
+{
 
+}
 
 
 

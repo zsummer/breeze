@@ -68,7 +68,8 @@ public:
     inline ui16 getServiceType(){ return _serviceType; }
     inline ServiceID getServiceID(){ return _serviceID; }
     inline DockerID getDockerID() { return _dockerID; }
-    inline SessionID getClientID() { return _clientID; }
+    inline SessionID getClientSessionID() { return _clientSessionID; }
+    inline DockerID getClientDockerID() { return _clientDockerID; }
 
     inline ui16 getStatus() { return _status; }
     inline bool isShell() { return _shell; }
@@ -76,7 +77,8 @@ protected:
     inline void setServiceType(ui16 serviceType) { _serviceType = serviceType; }
     inline void setServiceID(ServiceID serviceID) { _serviceID = serviceID; }
     inline void setDockerID(DockerID dockerID) { _dockerID = dockerID; }
-    inline void setClientID(SessionID clientID) { _clientID = clientID; }
+    inline void setClientSessionID(SessionID clientSessionID) { _clientSessionID = clientSessionID; }
+    inline void setClientDockerID(SessionID clientDockerID) { _clientDockerID = clientDockerID; }
 
     inline void setStatus(ui16 status) { _status = status; };
     inline void setShell(bool shell) { _shell = shell; }
@@ -125,7 +127,9 @@ private:
     ui16 _serviceType = (ui16)ServiceInvalid;
     ServiceID _serviceID = InvalidServiceID;
     DockerID _dockerID = InvalidDockerID; //实际所在的docker
-    SessionID _clientID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限UserService使用
+    SessionID _clientSessionID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限UserService使用
+    DockerID _clientDockerID = InvalidDockerID; //如果存在关联的客户端,则该ID代表在_clientSessionID所在dockerID. 目前仅限UserService使用
+
     short _status = 0;
     bool _shell = false;
     

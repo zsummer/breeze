@@ -38,12 +38,13 @@
         <member name="previews" type="UserPreviewArray"   desc=""/>
     </packet>
 
-    <packet name="SelectUserFromUserMgrReq" desc= "选角色请求">
-        <member name="uID" type="ui64"   desc=""/>
+    <packet name="AttachUserFromUserMgrReq" desc= "选角色请求">
+        <member name="userServiceID" type="ui64"   desc=""/>
+        <member name="account" type="string"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
-     <packet name="SelectUserFromUserMgrResp" desc= "选角色请求返回">
+     <packet name="AttachUserFromUserMgrResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>

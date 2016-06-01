@@ -10,7 +10,8 @@ Proto4z.CreateServiceInDocker.__getID = 40001
 Proto4z.CreateServiceInDocker.__getName = "CreateServiceInDocker" 
 Proto4z.CreateServiceInDocker[1] = {name="serviceType", type="ui16" }  
 Proto4z.CreateServiceInDocker[2] = {name="serviceID", type="ui64" }  
-Proto4z.CreateServiceInDocker[3] = {name="clientID", type="ui32" }  
+Proto4z.CreateServiceInDocker[3] = {name="clientDockerID", type="ui32" }  
+Proto4z.CreateServiceInDocker[4] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(40002,"ChangeServiceClientID") 
 Proto4z.ChangeServiceClientID = {} --更改clientID 
@@ -18,7 +19,8 @@ Proto4z.ChangeServiceClientID.__getID = 40002
 Proto4z.ChangeServiceClientID.__getName = "ChangeServiceClientID" 
 Proto4z.ChangeServiceClientID[1] = {name="serviceType", type="ui16" }  
 Proto4z.ChangeServiceClientID[2] = {name="serviceID", type="ui64" }  
-Proto4z.ChangeServiceClientID[3] = {name="clientID", type="ui32" }  
+Proto4z.ChangeServiceClientID[3] = {name="clientDockerID", type="ui32" }  
+Proto4z.ChangeServiceClientID[4] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(40003,"CreateOrRefreshServiceNotice") 
 Proto4z.CreateOrRefreshServiceNotice = {} --广播给所有docker 
@@ -27,7 +29,8 @@ Proto4z.CreateOrRefreshServiceNotice.__getName = "CreateOrRefreshServiceNotice"
 Proto4z.CreateOrRefreshServiceNotice[1] = {name="serviceType", type="ui16" }  
 Proto4z.CreateOrRefreshServiceNotice[2] = {name="serviceID", type="ui64" }  
 Proto4z.CreateOrRefreshServiceNotice[3] = {name="dockerID", type="ui32" }  
-Proto4z.CreateOrRefreshServiceNotice[4] = {name="clientID", type="ui32" }  
+Proto4z.CreateOrRefreshServiceNotice[4] = {name="clientDockerID", type="ui32" }  
+Proto4z.CreateOrRefreshServiceNotice[5] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(40004,"DestroyServiceInDocker") 
 Proto4z.DestroyServiceInDocker = {} --销毁一个Service 

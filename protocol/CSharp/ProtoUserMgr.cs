@@ -192,64 +192,69 @@ namespace Proto4z
         } 
     } 
  
-    public class SelectUserFromUserMgrReq: Proto4z.IProtoObject //选角色请求  
+    public class AttachUserFromUserMgrReq: Proto4z.IProtoObject //选角色请求  
     {     
         //proto id   
-        public const ushort protoID = 20004;  
-        static public ushort getProtoID() { return 20004; } 
-        static public string getProtoName() { return "SelectUserFromUserMgrReq"; } 
+        public const ushort protoID = 20006;  
+        static public ushort getProtoID() { return 20006; } 
+        static public string getProtoName() { return "AttachUserFromUserMgrReq"; } 
         //members   
-        public ulong uID;  
+        public ulong userServiceID;  
+        public string account;  
         public uint clientDockerID;  
         public uint clientSessionID;  
-        public SelectUserFromUserMgrReq()  
+        public AttachUserFromUserMgrReq()  
         { 
-            uID = 0;  
+            userServiceID = 0;  
+            account = "";  
             clientDockerID = 0;  
             clientSessionID = 0;  
         } 
-        public SelectUserFromUserMgrReq(ulong uID, uint clientDockerID, uint clientSessionID) 
+        public AttachUserFromUserMgrReq(ulong userServiceID, string account, uint clientDockerID, uint clientSessionID) 
         { 
-            this.uID = uID; 
+            this.userServiceID = userServiceID; 
+            this.account = account; 
             this.clientDockerID = clientDockerID; 
             this.clientSessionID = clientSessionID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userServiceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.userServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class SelectUserFromUserMgrResp: Proto4z.IProtoObject //选角色请求返回  
+    public class AttachUserFromUserMgrResp: Proto4z.IProtoObject //选角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 20005;  
-        static public ushort getProtoID() { return 20005; } 
-        static public string getProtoName() { return "SelectUserFromUserMgrResp"; } 
+        public const ushort protoID = 20007;  
+        static public ushort getProtoID() { return 20007; } 
+        static public string getProtoName() { return "AttachUserFromUserMgrResp"; } 
         //members   
         public ushort retCode;  
         public uint clientDockerID;  
         public uint clientSessionID;  
         public ulong userServiceID;  
-        public SelectUserFromUserMgrResp()  
+        public AttachUserFromUserMgrResp()  
         { 
             retCode = 0;  
             clientDockerID = 0;  
             clientSessionID = 0;  
             userServiceID = 0;  
         } 
-        public SelectUserFromUserMgrResp(ushort retCode, uint clientDockerID, uint clientSessionID, ulong userServiceID) 
+        public AttachUserFromUserMgrResp(ushort retCode, uint clientDockerID, uint clientSessionID, ulong userServiceID) 
         { 
             this.retCode = retCode; 
             this.clientDockerID = clientDockerID; 

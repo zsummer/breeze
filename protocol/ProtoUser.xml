@@ -28,10 +28,10 @@
         <member name="previews" type="UserPreviewArray"   desc=""/>
     </packet>
 
-    <packet name="SelectUserReq" desc= "选角色请求">
+    <packet name="AttachUserReq" desc= "选角色请求">
         <member name="uID" type="ui64"   desc=""/>
     </packet>
-     <packet name="SelectUserResp" desc= "选角色请求返回">
+     <packet name="AttachUserResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
 

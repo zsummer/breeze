@@ -154,31 +154,31 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SelectUserReq //选角色请求  
+struct AttachUserReq //选角色请求  
 { 
-    static const unsigned short getProtoID() { return 1004;} 
-    static const std::string getProtoName() { return "SelectUserReq";} 
+    static const unsigned short getProtoID() { return 1006;} 
+    static const std::string getProtoName() { return "AttachUserReq";} 
     unsigned long long uID;  
-    SelectUserReq() 
+    AttachUserReq() 
     { 
         uID = 0; 
     } 
-    SelectUserReq(const unsigned long long & uID) 
+    AttachUserReq(const unsigned long long & uID) 
     { 
         this->uID = uID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachUserReq & data) 
 { 
     ws << data.uID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachUserReq & data) 
 { 
     rs >> data.uID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SelectUserReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachUserReq & info) 
 { 
     stm << "[\n"; 
     stm << "uID=" << info.uID << "\n"; 
@@ -186,31 +186,31 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SelectUserResp //选角色请求返回  
+struct AttachUserResp //选角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 1005;} 
-    static const std::string getProtoName() { return "SelectUserResp";} 
+    static const unsigned short getProtoID() { return 1007;} 
+    static const std::string getProtoName() { return "AttachUserResp";} 
     unsigned short retCode;  
-    SelectUserResp() 
+    AttachUserResp() 
     { 
         retCode = 0; 
     } 
-    SelectUserResp(const unsigned short & retCode) 
+    AttachUserResp(const unsigned short & retCode) 
     { 
         this->retCode = retCode; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelectUserResp & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachUserResp & data) 
 { 
     ws << data.retCode;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelectUserResp & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachUserResp & data) 
 { 
     rs >> data.retCode;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SelectUserResp & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachUserResp & info) 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 

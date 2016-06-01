@@ -29,32 +29,37 @@ struct CreateServiceInDocker //创建并初始化一个service
     static const std::string getProtoName() { return "CreateServiceInDocker";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
-    unsigned int clientID;  
+    unsigned int clientDockerID;  
+    unsigned int clientSessionID;  
     CreateServiceInDocker() 
     { 
         serviceType = 0; 
         serviceID = 0; 
-        clientID = 0; 
+        clientDockerID = 0; 
+        clientSessionID = 0; 
     } 
-    CreateServiceInDocker(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clientID) 
+    CreateServiceInDocker(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
-        this->clientID = clientID; 
+        this->clientDockerID = clientDockerID; 
+        this->clientSessionID = clientSessionID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateServiceInDocker & data) 
 { 
     ws << data.serviceType;  
     ws << data.serviceID;  
-    ws << data.clientID;  
+    ws << data.clientDockerID;  
+    ws << data.clientSessionID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateServiceInDocker & data) 
 { 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
-    rs >> data.clientID;  
+    rs >> data.clientDockerID;  
+    rs >> data.clientSessionID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateServiceInDocker & info) 
@@ -62,7 +67,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "serviceType=" << info.serviceType << "\n"; 
     stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "clientID=" << info.clientID << "\n"; 
+    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
+    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -73,32 +79,37 @@ struct ChangeServiceClientID //更改clientID
     static const std::string getProtoName() { return "ChangeServiceClientID";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
-    unsigned int clientID;  
+    unsigned int clientDockerID;  
+    unsigned int clientSessionID;  
     ChangeServiceClientID() 
     { 
         serviceType = 0; 
         serviceID = 0; 
-        clientID = 0; 
+        clientDockerID = 0; 
+        clientSessionID = 0; 
     } 
-    ChangeServiceClientID(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clientID) 
+    ChangeServiceClientID(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
-        this->clientID = clientID; 
+        this->clientDockerID = clientDockerID; 
+        this->clientSessionID = clientSessionID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChangeServiceClientID & data) 
 { 
     ws << data.serviceType;  
     ws << data.serviceID;  
-    ws << data.clientID;  
+    ws << data.clientDockerID;  
+    ws << data.clientSessionID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChangeServiceClientID & data) 
 { 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
-    rs >> data.clientID;  
+    rs >> data.clientDockerID;  
+    rs >> data.clientSessionID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChangeServiceClientID & info) 
@@ -106,7 +117,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "serviceType=" << info.serviceType << "\n"; 
     stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "clientID=" << info.clientID << "\n"; 
+    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
+    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -118,20 +130,23 @@ struct CreateOrRefreshServiceNotice //广播给所有docker
     unsigned short serviceType;  
     unsigned long long serviceID;  
     unsigned int dockerID;  
-    unsigned int clientID;  
+    unsigned int clientDockerID;  
+    unsigned int clientSessionID;  
     CreateOrRefreshServiceNotice() 
     { 
         serviceType = 0; 
         serviceID = 0; 
         dockerID = 0; 
-        clientID = 0; 
+        clientDockerID = 0; 
+        clientSessionID = 0; 
     } 
-    CreateOrRefreshServiceNotice(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & dockerID, const unsigned int & clientID) 
+    CreateOrRefreshServiceNotice(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & dockerID, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
         this->dockerID = dockerID; 
-        this->clientID = clientID; 
+        this->clientDockerID = clientDockerID; 
+        this->clientSessionID = clientSessionID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateOrRefreshServiceNotice & data) 
@@ -139,7 +154,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.serviceType;  
     ws << data.serviceID;  
     ws << data.dockerID;  
-    ws << data.clientID;  
+    ws << data.clientDockerID;  
+    ws << data.clientSessionID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateOrRefreshServiceNotice & data) 
@@ -147,7 +163,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
     rs >> data.dockerID;  
-    rs >> data.clientID;  
+    rs >> data.clientDockerID;  
+    rs >> data.clientSessionID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateOrRefreshServiceNotice & info) 
@@ -156,7 +173,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "serviceType=" << info.serviceType << "\n"; 
     stm << "serviceID=" << info.serviceID << "\n"; 
     stm << "dockerID=" << info.dockerID << "\n"; 
-    stm << "clientID=" << info.clientID << "\n"; 
+    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
+    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

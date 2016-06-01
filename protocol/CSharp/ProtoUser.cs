@@ -147,19 +147,19 @@ namespace Proto4z
         } 
     } 
  
-    public class SelectUserReq: Proto4z.IProtoObject //选角色请求  
+    public class AttachUserReq: Proto4z.IProtoObject //选角色请求  
     {     
         //proto id   
-        public const ushort protoID = 1004;  
-        static public ushort getProtoID() { return 1004; } 
-        static public string getProtoName() { return "SelectUserReq"; } 
+        public const ushort protoID = 1006;  
+        static public ushort getProtoID() { return 1006; } 
+        static public string getProtoName() { return "AttachUserReq"; } 
         //members   
         public ulong uID;  
-        public SelectUserReq()  
+        public AttachUserReq()  
         { 
             uID = 0;  
         } 
-        public SelectUserReq(ulong uID) 
+        public AttachUserReq(ulong uID) 
         { 
             this.uID = uID; 
         } 
@@ -176,19 +176,19 @@ namespace Proto4z
         } 
     } 
  
-    public class SelectUserResp: Proto4z.IProtoObject //选角色请求返回  
+    public class AttachUserResp: Proto4z.IProtoObject //选角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 1005;  
-        static public ushort getProtoID() { return 1005; } 
-        static public string getProtoName() { return "SelectUserResp"; } 
+        public const ushort protoID = 1007;  
+        static public ushort getProtoID() { return 1007; } 
+        static public string getProtoName() { return "AttachUserResp"; } 
         //members   
         public ushort retCode;  
-        public SelectUserResp()  
+        public AttachUserResp()  
         { 
             retCode = 0;  
         } 
-        public SelectUserResp(ushort retCode) 
+        public AttachUserResp(ushort retCode) 
         { 
             this.retCode = retCode; 
         } 
