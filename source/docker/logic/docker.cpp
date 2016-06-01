@@ -48,17 +48,10 @@ void sigInt(int sig)
 void Docker::onCheckSafeExit()
 {
     LOGA("Docker::onCheckSafeExit. checking.");
-    if (_wlisten != InvalidAccepterID)
-    {
-        auto &options = SessionManager::getRef().getAccepterOptions(_wlisten);
-        if (options._currentLinked != 0)
-        {
-            SessionManager::getRef().createTimer(1000, std::bind(&Docker::onCheckSafeExit, this));
-            return;
-        }
-    }
+
     if (g_closeState == 1)
     {
+        LOGA("Docker::onCheckSafeExit. g_closeState change to 2.");
         g_closeState = 2;
         for (auto &second : _services)
         {
@@ -93,7 +86,7 @@ void Docker::onCheckSafeExit()
     }
     if(safe)
     {
-        LOGA("Docker::onNetworkStoped. service all closed.");
+        LOGA("all services closed.");
         SessionManager::getRef().stopAccept();
         SessionManager::getRef().kickClientSession();
         SessionManager::getRef().kickConnect();
@@ -118,9 +111,11 @@ bool Docker::isStoping()
 
 void Docker::stop()
 {
+    g_closeState = 1;
     SessionManager::getRef().stopAccept();
     if (_wlisten != InvalidAccepterID)
     {
+        SessionManager::getRef().stopAccept();
         SessionManager::getRef().kickClientSession(_wlisten);
     }
     onCheckSafeExit();
@@ -398,14 +393,8 @@ ServicePtr Docker::createService(ui16 serviceType, ServiceID serviceID, DockerID
     service->setServiceID(serviceID);
     service->setDockerID(dockerID);
     service->setClientID(clientID);
-    if (isShell)
-    {
-        service->setStatus(SS_WORKING);
-    }
-    else
-    {
-        service->setStatus(SS_CREATED);
-    }
+    service->setStatus(SS_CREATED);
+
     
     return service;
 goExit:
@@ -470,16 +459,16 @@ void Docker::checkServiceState()
                 }
                 if (!service.second->isShell() && service.second->getStatus() == SS_CREATED)
                 {
-                    LOGI("local service [" << ServiceNames.at(service.second->getServiceType()) << "] begin init. [" << service.second->getServiceID() << "] ...");
+                    LOGD("local service [" << ServiceNames.at(service.second->getServiceType()) << "] begin init. [" << service.second->getServiceID() << "] ...");
                     service.second->setStatus(SS_INITING);
                     bool ret = service.second->onInit();
                     if (ret)
                     {
-                        LOGI("local service [" << ServiceNames.at(service.second->getServiceType()) << "] inited. [" << service.second->getServiceID() << "] ...");
+                        LOGD("local service [" << ServiceNames.at(service.second->getServiceType()) << "] call onInit success. [" << service.second->getServiceID() << "] ...");
                     }
                     else
                     {
-                        LOGE("local service [" << ServiceNames.at(service.second->getServiceType()) << "]  init error.[" << service.second->getServiceID() << "] ...");
+                        LOGE("local service [" << ServiceNames.at(service.second->getServiceType()) << "]  call onInit error.[" << service.second->getServiceID() << "] ...");
                         Docker::getRef().stop();
                         return;
                     }
@@ -493,7 +482,9 @@ void Docker::checkServiceState()
                 }
             }
         }
-        LOGA("all service worked.");
+        LOGA("-----------------------------------------------");
+        LOGA("all service inited .  docker begin working ....");
+        LOGA("-----------------------------------------------");
         _dockerServiceWorking = true;
 
     }
@@ -503,6 +494,7 @@ void Docker::event_onForwardToService(TcpSessionPtr session, ReadStream & rs)
 {
     Tracing trace;
     rs >> trace;
+    LOGT("event_onForwardToService " << trace << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
     toService(trace, rs.getStreamUnread(), rs.getStreamUnreadLen(), false, false);
 }
 
@@ -553,7 +545,11 @@ void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStr
         LOGE("event_onCreateOrRefreshServiceNotice can't founder remote service. service=" << ServiceNames.at(service.serviceType));
         return;
     }
-    createService(service.serviceType, service.serviceID, service.dockerID, service.clientID, true, false);
+    auto servicePtr = createService(service.serviceType, service.serviceID, service.dockerID, service.clientID, true, false);
+    if (servicePtr)
+    {
+        servicePtr->setStatus(SS_WORKING);
+    }
 }
 
 void Docker::event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs)
@@ -593,7 +589,11 @@ void Docker::event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs
 void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
     ReadStream rsShell(begin, len);
-
+    if (DockerPulse::getProtoID() != rsShell.getProtoID())
+    {
+        LOGT("event_onServiceMessage protoID=" << rsShell.getProtoID() << ", len=" << len);
+    }
+    
     if (rsShell.getProtoID() == DockerPulse::getProtoID())
     {
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
@@ -805,7 +805,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         LOGF("Docker::sendToService Illegality trace. trace=" << trace << ", block len=" << len);
         return;
     }
-
+    LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
     ui16 toServiceType = trace._toServiceType;
     if (trace._toServiceType == ServiceClient)
     {
@@ -834,6 +834,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     {
         DockerID dockerID = service.getDockerID();
         forwardToDocker(dockerID, trace, block, len);
+        LOGT("Docker::toService  forwardToDocker" << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
     }
     else //direct process
     {
@@ -841,17 +842,25 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         {
             if (service.getClientID() != InvalidSessionID)
             {
+                LOGT("Docker::toService  sendToSession (client) " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
                 sendToSession(service.getClientID(), block, len);
+            }
+            else
+            {
+                LOGW("Docker::toService  sendToSession (client) warning. client session id not found " 
+                    << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
             }
         }
         else if (needPost)
         {
+            LOGT("Docker::toService local post process4bind " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
             std::string bk;
             bk.assign(block, len);
             SessionManager::getRef().post(std::bind(&Service::process4bind, fder->second, trace, std::move(bk)));
         }
         else
         {
+            LOGT("Docker::toService  local process " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
             fder->second->process(trace, block, len);
         }
     }

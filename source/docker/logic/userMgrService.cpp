@@ -22,7 +22,7 @@ void UserMgrService::onTick()
     if (now - _lastTime > 10)
     {
         _lastTime = now;
-        LOGA("UserMgrService::onTick");
+        LOGD("UserMgrService::onTick");
     }
 }
 
@@ -70,7 +70,8 @@ void UserMgrService::onInitLastUIDFromDB(zsummer::proto4z::ReadStream & rs)
     {
         _nextUserID = ServerConfig::getRef().getAreaID() * pow(10, 8);
     }
-    
+    LOGD("onInitLastUIDFromDB _nextUserID=" << _nextUserID << ", areaID=" << ServerConfig::getRef().getAreaID() 
+        << ", area begin uid=" << ServerConfig::getRef().getAreaID() * pow(10, 8));
     finishInit();
 }
 
