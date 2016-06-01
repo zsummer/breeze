@@ -341,7 +341,7 @@ void Docker::destroyService(ui16 serviceType, ServiceID serviceID)
 
 ServicePtr Docker::createService(ui16 serviceType, ServiceID serviceID, DockerID dockerID, SessionID clientID, bool isShell, bool failExit)
 {
-    LOGD("Docker::createServic self dockerID=" << ServerConfig::getRef().getDockerID() << ", serviceType=" << serviceType
+    LOGI("Docker::createServic self dockerID=" << ServerConfig::getRef().getDockerID() << ", serviceType=" << serviceType
          << ", serviceID=" << serviceID << ", dockerID=" << dockerID
             <<", clientID=" << clientID << ", isShell=" << isShell <<",faileExit=" << failExit);
     ServicePtr & service = _services[serviceType][serviceID];
@@ -459,7 +459,7 @@ void Docker::checkServiceState()
                 }
                 if (!service.second->isShell() && service.second->getStatus() == SS_CREATED)
                 {
-                    LOGD("local service [" << ServiceNames.at(service.second->getServiceType()) << "] begin init. [" << service.second->getServiceID() << "] ...");
+                    LOGI("local service [" << ServiceNames.at(service.second->getServiceType()) << "] begin init. [" << service.second->getServiceID() << "] ...");
                     service.second->setStatus(SS_INITING);
                     bool ret = service.second->onInit();
                     if (ret)

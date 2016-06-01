@@ -32,13 +32,13 @@ bool Service::finishInit()
 {
     if (!isShell())
     {
-        LOGD("local service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGI("local service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
         CreateOrRefreshServiceNotice notice(getServiceType(), getServiceID(), getDockerID(), getClientID());
         Docker::getRef().broadcastToDockers(notice, false);
     }
     else
     {
-        LOGD("remote service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGI("remote service finish init. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
     }
     setStatus(SS_WORKING);
     return true;
@@ -47,13 +47,13 @@ bool Service::finishUninit()
 {
     if (!isShell())
     {
-        LOGD("local service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGI("local service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
         DestroyServiceNotice notice(getServiceType(), getServiceID());
         Docker::getRef().broadcastToDockers(notice, true);
     }
     else
     {
-        LOGD("remote service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGI("remote service finish uninit. service=" << ServiceNames.at(getServiceType()) << ", id=" << getServiceID());
     }
     setStatus(SS_DESTROY);
     SessionManager::getRef().post(std::bind(&Docker::destroyService, Docker::getPtr(), getServiceType(), getServiceID()));

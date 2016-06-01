@@ -135,11 +135,11 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
 {
     LOGD("UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB");
     DBResult dbResult;
-    if (true)
+    SQLQueryResp sqlResp;
+    rs >> sqlResp;
+    if (sqlResp.retCode == EC_SUCCESS)
     {
-        SQLQueryResp resp;
-        rs >> resp;
-        dbResult.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
+        dbResult.buildResult((QueryErrorCode)sqlResp.result.qc, sqlResp.result.errMsg, sqlResp.result.sql, sqlResp.result.affected, sqlResp.result.fields);
     }
 
     SelectUserPreviewsFromUserMgrResp resp;
@@ -148,8 +148,8 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
     resp.previews.clear();
     resp.clientDockerID = req.clientDockerID;
     resp.clientSessionID = req.clientSessionID;
-    resp.retCode = dbResult.getErrorCode() == QEC_SUCCESS ? EC_SUCCESS : EC_DB_ERROR;
-    while (dbResult.getErrorCode() == QEC_SUCCESS && dbResult.haveRow())
+    resp.retCode = sqlResp.retCode != EC_SUCCESS ? sqlResp.retCode : (dbResult.getErrorCode() != QEC_SUCCESS ? EC_DB_ERROR : EC_SUCCESS);
+    while (sqlResp.retCode == EC_SUCCESS && dbResult.getErrorCode() == QEC_SUCCESS && dbResult.haveRow())
     {
         UserPreview pre;
         dbResult >> pre.uID;
@@ -173,7 +173,7 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
     resp.clientSessionID = req.clientSessionID;
 
     auto founder = _accountStatus.find(req.account);
-    if (founder == _accountStatus.end() || founder->second._users.size() > 4 || getNowTime() - founder->second._lastCreateTime < 20)
+    if (founder == _accountStatus.end() || founder->second._users.size() > 4 || getNowTime() - founder->second._lastCreateTime < 60)
     {
         resp.retCode = EC_ERROR;
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
@@ -187,9 +187,47 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
         return;
     }
     founder->second._lastCreateTime = getNowTime();
+    UserBaseInfo userBaseInfo;
+    userBaseInfo.account = req.account;
+    userBaseInfo.uID = ++_nextUserID;
+    userBaseInfo.nickName = req.nickname;
+    userBaseInfo.level = 1;
+    userBaseInfo.iconID = 0;
+
+    SQLQueryReq sql(userBaseInfo.getDBInsert());
+    toService(ServiceInfoDBMgr, sql,
+        std::bind(&UserMgrService::onCreateUserFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, userBaseInfo, req));
 }
 
+void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req)
+{
+    LOGD("UserMgrService::onCreateUserFromUserMgrReqFromDB");
+    SQLQueryResp sqlResp;
+    rs >> sqlResp;
 
+    CreateUserFromUserMgrResp resp;
+    resp.retCode = EC_SUCCESS;
+    resp.previews.clear();
+    resp.clientDockerID = req.clientDockerID;
+    resp.clientSessionID = req.clientSessionID;
+    resp.retCode = sqlResp.retCode;
+    
+    if (sqlResp.result.qc != QEC_SUCCESS || sqlResp.result.affected == 0)
+    {
+        resp.retCode = EC_DB_ERROR;
+    }
+    if (resp.retCode == EC_SUCCESS)
+    {
+        UserPreview up(ubi.uID, ubi.nickName, ubi.iconID, ubi.account);
+        updateUserPreview(up);
+        for (const auto & kv : _accountStatus[ubi.account]._users)
+        {
+            resp.previews.push_back(kv.second->_preview);
+        }
+    }
+
+    Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+}
 
 void UserMgrService::onSelectUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
 {
