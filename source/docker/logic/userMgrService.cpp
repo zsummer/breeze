@@ -263,7 +263,12 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
             return;
         }
         status._status = 1;
-        CreateOrRefreshServiceNotice notice(ServiceUser, req.userServiceID, dockerID, req.clientDockerID, req.clientSessionID);
+        CreateServiceInDocker notice(ServiceUser, req.userServiceID, req.clientDockerID, req.clientSessionID);
+        Docker::getRef().sendToDocker(dockerID, notice);
+    }
+    else
+    {
+        ChangeServiceClient change(ServiceUser, req.userServiceID, req.clientDockerID, req.clientSessionID);
     }
 
 }
