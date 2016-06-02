@@ -142,6 +142,7 @@ private:
 
 };
 using ServicePtr = std::shared_ptr<Service>;
+using ServiceWeakPtr = std::shared_ptr<Service>;
 
 template<class Proto>
 void Service::toService(ui16 st, Proto proto, ServiceCallback cb)
