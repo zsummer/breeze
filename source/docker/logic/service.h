@@ -113,6 +113,7 @@ protected:
     template<class Proto>
     void backToService(const Tracing & trace, Proto proto, ServiceCallback cb = nullptr);
 
+private:
     ui32 makeCallback(const ServiceCallback &cb);
     void cleanCallback();
     ServiceCallback checkoutCallback(ui32 cbid);

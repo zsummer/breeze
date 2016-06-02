@@ -1,9 +1,10 @@
 ﻿#include "userService.h"
 
+
+
 UserService::UserService()
 {
     setServiceType(ServiceUser);
-
 }
 
 UserService::~UserService() 
