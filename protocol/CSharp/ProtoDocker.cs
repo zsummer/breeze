@@ -67,25 +67,25 @@ namespace Proto4z
         } 
     } 
  
-    public class ChangeServiceClientID: Proto4z.IProtoObject //更改clientID  
+    public class ChangeServiceClient: Proto4z.IProtoObject //更改clientID  
     {     
         //proto id   
-        public const ushort protoID = 40002;  
-        static public ushort getProtoID() { return 40002; } 
-        static public string getProtoName() { return "ChangeServiceClientID"; } 
+        public const ushort protoID = 40010;  
+        static public ushort getProtoID() { return 40010; } 
+        static public string getProtoName() { return "ChangeServiceClient"; } 
         //members   
         public ushort serviceType;  
         public ulong serviceID;  
         public uint clientDockerID;  
         public uint clientSessionID;  
-        public ChangeServiceClientID()  
+        public ChangeServiceClient()  
         { 
             serviceType = 0;  
             serviceID = 0;  
             clientDockerID = 0;  
             clientSessionID = 0;  
         } 
-        public ChangeServiceClientID(ushort serviceType, ulong serviceID, uint clientDockerID, uint clientSessionID) 
+        public ChangeServiceClient(ushort serviceType, ulong serviceID, uint clientDockerID, uint clientSessionID) 
         { 
             this.serviceType = serviceType; 
             this.serviceID = serviceID; 
@@ -236,6 +236,27 @@ namespace Proto4z
         static public string getProtoName() { return "ForwardToService"; } 
         //members   
         public ForwardToService()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class ForwardToRealClient: Proto4z.IProtoObject //转发给真正的client  
+    {     
+        //proto id   
+        public const ushort protoID = 40009;  
+        static public ushort getProtoID() { return 40009; } 
+        static public string getProtoName() { return "ForwardToRealClient"; } 
+        //members   
+        public ForwardToRealClient()  
         { 
         } 
         public System.Collections.Generic.List<byte> __encode() 

@@ -10,13 +10,14 @@
 <Proto>
     <packet name="DockerPulse" desc= "集群脉冲">
     </packet>
+
     <packet name="CreateServiceInDocker" desc= "创建并初始化一个service">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
-    <packet name="ChangeServiceClientID" desc= "更改clientID">
+    <packet name="ChangeServiceClient" desc= "更改clientID">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
@@ -41,9 +42,18 @@
 
 
     <packet name="ForwardToService" desc= "转发到其他docker上的Service">
+        <header name="trace" type="tracing" desc="header field" />
+        <body>
+            <attachment name="proto" type="any" desc="full proto serialize" />
+        </body>
     </packet>
 
-
+    <packet name="ForwardToRealClient" desc= "转发给真正的client">
+        <header name="sessionID" type="SessionID" desc="header field" />
+        <body>
+            <attachment name="proto" type="any" desc="full proto serialize" />
+        </body>
+    </packet>
 
     
 </Proto>

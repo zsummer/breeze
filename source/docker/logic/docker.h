@@ -60,6 +60,11 @@ public:
     void forwardToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len);
 
     template<class Proto>
+    void forwardToClient(DockerID dockerID, SessionID clientSessionID, const Proto & proto);
+    void forwardToClient(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len);
+
+
+    template<class Proto>
     void broadcastToDockers(const Proto & proto, bool withme);
     template<class Proto>
     void broadcastToDockers(const Proto & proto, const Tracing & trace, bool withme);
@@ -98,12 +103,13 @@ private:
     void event_onClientPulse(TcpSessionPtr   session);
 private:
     void event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs);
-    void event_onChangeServiceClientID(TcpSessionPtr session, ReadStream & rs);
+    void event_onChangeServiceClient(TcpSessionPtr session, ReadStream & rs);
     void event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs);
 
     void event_onForwardToService(TcpSessionPtr session, ReadStream & rs);
+    void event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs);
 
 
 private:
@@ -244,7 +250,13 @@ void Docker::forwardToDocker(DockerID dockerID, const Tracing & trace, const Pro
     }
 }
 
-
+template<class Proto>
+void Docker::forwardToClient(DockerID dockerID, SessionID clientSessionID, const Proto & proto)
+{
+    WriteStream ws(proto::getProtoID());
+    ws << proto;
+    forwardToDocker(dockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
+}
 
 
 

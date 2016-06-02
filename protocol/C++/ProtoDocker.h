@@ -73,22 +73,22 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct ChangeServiceClientID //更改clientID  
+struct ChangeServiceClient //更改clientID  
 { 
-    static const unsigned short getProtoID() { return 40002;} 
-    static const std::string getProtoName() { return "ChangeServiceClientID";} 
+    static const unsigned short getProtoID() { return 40010;} 
+    static const std::string getProtoName() { return "ChangeServiceClient";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
     unsigned int clientDockerID;  
     unsigned int clientSessionID;  
-    ChangeServiceClientID() 
+    ChangeServiceClient() 
     { 
         serviceType = 0; 
         serviceID = 0; 
         clientDockerID = 0; 
         clientSessionID = 0; 
     } 
-    ChangeServiceClientID(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
+    ChangeServiceClient(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
     { 
         this->serviceType = serviceType; 
         this->serviceID = serviceID; 
@@ -96,7 +96,7 @@ struct ChangeServiceClientID //更改clientID
         this->clientSessionID = clientSessionID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChangeServiceClientID & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChangeServiceClient & data) 
 { 
     ws << data.serviceType;  
     ws << data.serviceID;  
@@ -104,7 +104,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.clientSessionID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChangeServiceClientID & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChangeServiceClient & data) 
 { 
     rs >> data.serviceType;  
     rs >> data.serviceID;  
@@ -112,7 +112,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.clientSessionID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChangeServiceClientID & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChangeServiceClient & info) 
 { 
     stm << "[\n"; 
     stm << "serviceType=" << info.serviceType << "\n"; 
@@ -269,6 +269,26 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ForwardToService & info) 
+{ 
+    stm << "[\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct ForwardToRealClient //转发给真正的client  
+{ 
+    static const unsigned short getProtoID() { return 40009;} 
+    static const std::string getProtoName() { return "ForwardToRealClient";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToRealClient & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ForwardToRealClient & data) 
+{ 
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ForwardToRealClient & info) 
 { 
     stm << "[\n"; 
     stm << "]\n"; 

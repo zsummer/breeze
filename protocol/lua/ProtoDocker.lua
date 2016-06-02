@@ -13,14 +13,14 @@ Proto4z.CreateServiceInDocker[2] = {name="serviceID", type="ui64" }
 Proto4z.CreateServiceInDocker[3] = {name="clientDockerID", type="ui32" }  
 Proto4z.CreateServiceInDocker[4] = {name="clientSessionID", type="ui32" }  
  
-Proto4z.register(40002,"ChangeServiceClientID") 
-Proto4z.ChangeServiceClientID = {} --更改clientID 
-Proto4z.ChangeServiceClientID.__getID = 40002 
-Proto4z.ChangeServiceClientID.__getName = "ChangeServiceClientID" 
-Proto4z.ChangeServiceClientID[1] = {name="serviceType", type="ui16" }  
-Proto4z.ChangeServiceClientID[2] = {name="serviceID", type="ui64" }  
-Proto4z.ChangeServiceClientID[3] = {name="clientDockerID", type="ui32" }  
-Proto4z.ChangeServiceClientID[4] = {name="clientSessionID", type="ui32" }  
+Proto4z.register(40010,"ChangeServiceClient") 
+Proto4z.ChangeServiceClient = {} --更改clientID 
+Proto4z.ChangeServiceClient.__getID = 40010 
+Proto4z.ChangeServiceClient.__getName = "ChangeServiceClient" 
+Proto4z.ChangeServiceClient[1] = {name="serviceType", type="ui16" }  
+Proto4z.ChangeServiceClient[2] = {name="serviceID", type="ui64" }  
+Proto4z.ChangeServiceClient[3] = {name="clientDockerID", type="ui32" }  
+Proto4z.ChangeServiceClient[4] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(40003,"CreateOrRefreshServiceNotice") 
 Proto4z.CreateOrRefreshServiceNotice = {} --广播给所有docker 
@@ -50,3 +50,8 @@ Proto4z.register(40007,"ForwardToService")
 Proto4z.ForwardToService = {} --转发到其他docker上的Service 
 Proto4z.ForwardToService.__getID = 40007 
 Proto4z.ForwardToService.__getName = "ForwardToService" 
+ 
+Proto4z.register(40009,"ForwardToRealClient") 
+Proto4z.ForwardToRealClient = {} --转发给真正的client 
+Proto4z.ForwardToRealClient.__getID = 40009 
+Proto4z.ForwardToRealClient.__getName = "ForwardToRealClient" 

@@ -500,6 +500,14 @@ void Docker::event_onForwardToService(TcpSessionPtr session, ReadStream & rs)
     toService(trace, rs.getStreamUnread(), rs.getStreamUnreadLen(), false, false);
 }
 
+void Docker::event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs)
+{
+    SessionID sID;
+    rs >> sID;
+    LOGT("event_onForwardToRealClient sessionID=" << sID << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
+    SessionManager::getRef().sendSessionData(sID, rs.getStreamUnread(), rs.getStreamUnreadLen());
+}
+
 void Docker::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs)
 {
     CreateServiceInDocker service;
@@ -517,20 +525,20 @@ void Docker::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & r
     }
 }
 
-void Docker::event_onChangeServiceClientID(TcpSessionPtr session, ReadStream & rs)
+void Docker::event_onChangeServiceClient(TcpSessionPtr session, ReadStream & rs)
 {
     CreateServiceInDocker service;
     rs >> service;
     auto founder = _services.find(service.serviceType);
     if (founder == _services.end())
     {
-        LOGE("event_onChangeServiceClientID can't founder service type. service=" << ServiceNames.at(service.serviceType));
+        LOGE("event_onChangeServiceClient can't founder service type. service=" << ServiceNames.at(service.serviceType));
         return;
     }
     auto fder = founder->second.find(service.serviceID);
     if (fder == founder->second.end() || fder->second->isShell())
     {
-        LOGE("event_onChangeServiceClientID can't founder service id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
+        LOGE("event_onChangeServiceClient can't founder service id. service=" << ServiceNames.at(service.serviceType) << ", id=" << service.serviceID);
         return;
     }
     fder->second->setClientSessionID(service.clientSessionID);
@@ -607,9 +615,9 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onCreateServiceInDocker(session, rsShell);
         return;
     }
-    else if (rsShell.getProtoID() == ChangeServiceClientID::getProtoID())
+    else if (rsShell.getProtoID() == ChangeServiceClient::getProtoID())
     {
-        event_onChangeServiceClientID(session, rsShell);
+        event_onChangeServiceClient(session, rsShell);
         return;
     }
     else if (rsShell.getProtoID() == CreateOrRefreshServiceNotice::getProtoID())
@@ -632,7 +640,11 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onForwardToService(session, rsShell);
         return;
     }
-
+    else if (rsShell.getProtoID() == ForwardToRealClient::getProtoID())
+    {
+        event_onForwardToRealClient(session, rsShell);
+        return;
+    }
     else if (rsShell.getProtoID() == SelectUserPreviewsFromUserMgrResp::getProtoID())
     {
         return;
@@ -843,22 +855,27 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     {
         if (trace._toServiceType == ServiceClient)
         {
+            if (service.getClientDockerID() == InvalidDockerID || service.getClientSessionID() != InvalidSessionID)
+            {
+                LOGW("Docker::toService  ServiceClient sendToSession (client) warning. client dockerID or sessionID is Invalid "
+                    <<", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
+                    << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+            }
             if (service.getClientDockerID() == ServerConfig::getRef().getDockerID())
             {
-                if (service.getClientSessionID() != InvalidSessionID)
-                {
-                    LOGT("Docker::toService  sendToSession (client) " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-                    sendToSession(service.getClientSessionID(), block, len);
-                }
-                else
-                {
-                    LOGW("Docker::toService  sendToSession (client) warning. client session id not found "
-                        << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-                }
+
+                LOGT("Docker::toService  ServiceClient sendToSession (client) " << trace 
+                    << ", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
+                    << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+                sendToSession(service.getClientSessionID(), block, len);
+
             }
             else
             {
-                LOGF("waiting coding . ...............................     forward to client");
+                LOGT("Docker::toService  ServiceClient ForwardToRealClient " << trace
+                    << ", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
+                    << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+                forwardToClient(service.getClientDockerID(), service.getClientSessionID(), block, len);
             }
 
         }
@@ -892,7 +909,21 @@ void Docker::forwardToDocker(DockerID dockerID, const Tracing & trace, const cha
     }
 }
 
-
+void Docker::forwardToClient(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len)
+{
+    auto founder = _dockerSession.find(dockerID);
+    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
+    {
+        WriteStream ws(ForwardToRealClient::getProtoID());
+        ws << clientSessionID;
+        ws.appendOriginalData(block, len);
+        sendToSession(founder->second.sessionID, ws.getStream(), ws.getStreamLen());
+    }
+    else
+    {
+        LOGE("Docker::forwardToClient not found docker. dockerID=" << dockerID);
+    }
+}
 
 void Docker::sendToSession(SessionID sessionID, const char * block, unsigned int len)
 {

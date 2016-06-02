@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>820bc78db1ed71b1954becfeb95990e1</cppmd5> 
-<luamd5>83d0fc10d17592b9ad06cf0e7311ce1d</luamd5> 
-<csharpmd5>f28f6db4f3761395f1cba7e66121f5c8</csharpmd5> 
-<xmlmd5>7c023465e6df8f98a0ae0500137c16f0</xmlmd5> 
+<cppmd5>f4ede79ee7257b73d807cf898f72cda8</cppmd5> 
+<luamd5>cea7cef903a2e1934c3dde90c31c22e5</luamd5> 
+<csharpmd5>7aeced3daaf300ced8206ed556c50715</csharpmd5> 
+<xmlmd5>53cb88f62756f2d46b31d88f7ce80e87</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_ChangeServiceClient" Number = "40010" /> 
     <cache key = "ID_ChangeServiceClientID" Number = "40002" /> 
     <cache key = "ID_CreateOrRefreshServiceNotice" Number = "40003" /> 
     <cache key = "ID_CreateServiceInDocker" Number = "40001" /> 
@@ -13,5 +14,6 @@
     <cache key = "ID_DockerPulse" Number = "40000" /> 
     <cache key = "ID_ForwardToClient" Number = "40008" /> 
     <cache key = "ID_ForwardToDocker" Number = "40006" /> 
+    <cache key = "ID_ForwardToRealClient" Number = "40009" /> 
     <cache key = "ID_ForwardToService" Number = "40007" /> 
 </cacheNumber>
