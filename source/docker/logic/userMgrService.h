@@ -60,9 +60,8 @@ private:
     void onAttachUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
     void onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req);
-
     void onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onAttachUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req);
+
 private:
     time_t _lastTime = 0;
     std::map<ui64, UserStatusPtr> _userStatusByID;

@@ -543,6 +543,8 @@ void Docker::event_onChangeServiceClient(TcpSessionPtr session, ReadStream & rs)
     }
     fder->second->setClientSessionID(service.clientSessionID);
     fder->second->setClientDockerID(service.clientDockerID);
+    
+    Docker::getRef().broadcastToDockers(CreateOrRefreshServiceNotice(service.serviceType, service.serviceID, fder->second->getDockerID(), service.clientDockerID, service.clientSessionID), false);
 }
 
 void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs)
@@ -793,6 +795,33 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     }
 }
 
+
+
+
+
+
+void Docker::sendToSession(SessionID sessionID, const char * block, unsigned int len)
+{
+    SessionManager::getRef().sendSessionData(sessionID, block, len);
+}
+
+
+void Docker::sendToSession(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len)
+{
+    try
+    {
+        WriteStream ws(ForwardToService::getProtoID());
+        ws << trace;
+        ws.appendOriginalData(block, len);
+        sendToSession(sessionID, ws.getStream(), ws.getStreamLen());
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Docker::sendToSession catch except error. e=" << e.what());
+    }
+}
+
+
 void Docker::sendToDocker(DockerID dockerID, const char * block, unsigned int len)
 {
     auto founder = _dockerSession.find(dockerID);
@@ -812,6 +841,59 @@ void Docker::sendToDocker(DockerID dockerID, const char * block, unsigned int le
     }
     sendToSession(founder->second.sessionID, block, len);
 }
+
+
+void Docker::sendToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len)
+{
+    auto founder = _dockerSession.find(dockerID);
+    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
+    {
+        sendToSession(founder->second.sessionID, trace, block, len);
+    }
+    else
+    {
+        LOGE("Docker::sendToDocker not found docker. dockerID=" << dockerID);
+    }
+}
+
+void Docker::sendToDocker(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len)
+{
+    auto founder = _dockerSession.find(dockerID);
+    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
+    {
+        WriteStream ws(ForwardToRealClient::getProtoID());
+        ws << clientSessionID;
+        ws.appendOriginalData(block, len);
+        sendToSession(founder->second.sessionID, ws.getStream(), ws.getStreamLen());
+    }
+    else
+    {
+        LOGE("Docker::sendToDocker not found docker. dockerID=" << dockerID);
+    }
+}
+
+void Docker::sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len)
+{
+    LOGT("Docker::sendToDockerByService serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+    auto founder = _services.find(serviceType);
+    if (founder == _services.end())
+    {
+        LOGE("Docker::sendToDockerByService error. type not found. serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        return;
+    }
+    auto fder = founder->second.find(serviceID);
+    if (fder == founder->second.end())
+    {
+        LOGE("Docker::sendToDockerByService error. service id not found. serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        return;
+    }
+    sendToDocker(fder->second->getDockerID(), block, len);
+}
+
+
+
+
+
 
 void Docker::toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost)
 {
@@ -848,8 +930,8 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     if (service.isShell()) //forward 
     {
         DockerID dockerID = service.getDockerID();
-        forwardToDocker(dockerID, trace, block, len);
-        LOGT("Docker::toService  forwardToDocker" << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+        sendToDocker(dockerID, trace, block, len);
+        LOGT("Docker::toService  sendToDocker" << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
     }
     else //direct process
     {
@@ -875,7 +957,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
                 LOGT("Docker::toService  ServiceClient ForwardToRealClient " << trace
                     << ", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
                     << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-                forwardToClient(service.getClientDockerID(), service.getClientSessionID(), block, len);
+                sendToDocker(service.getClientDockerID(), service.getClientSessionID(), block, len);
             }
 
         }
@@ -894,59 +976,6 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     }
 
 }
-
-
-void Docker::forwardToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len)
-{
-    auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
-    {
-        forwardToSession(founder->second.sessionID, trace, block, len);
-    }
-    else
-    {
-        LOGE("Docker::forwardToDocker not found docker. dockerID=" << dockerID);
-    }
-}
-
-void Docker::forwardToClient(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len)
-{
-    auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
-    {
-        WriteStream ws(ForwardToRealClient::getProtoID());
-        ws << clientSessionID;
-        ws.appendOriginalData(block, len);
-        sendToSession(founder->second.sessionID, ws.getStream(), ws.getStreamLen());
-    }
-    else
-    {
-        LOGE("Docker::forwardToClient not found docker. dockerID=" << dockerID);
-    }
-}
-
-void Docker::sendToSession(SessionID sessionID, const char * block, unsigned int len)
-{
-    SessionManager::getRef().sendSessionData(sessionID, block, len);
-}
-
-
-void Docker::forwardToSession(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len)
-{
-    try
-    {
-        WriteStream ws(ForwardToService::getProtoID());
-        ws << trace;
-        ws.appendOriginalData(block, len);
-        sendToSession(sessionID, ws.getStream(), ws.getStreamLen());
-    }
-    catch (const std::exception & e)
-    {
-        LOGE("Docker::forwardToSession catch except error. e=" << e.what());
-    }
-}
-
-
 
 
 

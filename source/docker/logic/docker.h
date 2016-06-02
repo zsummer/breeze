@@ -43,25 +43,29 @@ public:
     void stop();
     bool run();
 public:
+    void sendToSession(SessionID sessionID, const char * block, unsigned int len);
+    void sendToSession(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len);
+
     template<class Proto>
     void sendToSession(SessionID sessionID, const Proto & proto);
-    void sendToSession(SessionID sessionID, const char * block, unsigned int len);
-
-    void forwardToSession(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len);
     template<class Proto>
-    void forwardToSession(SessionID sessionID, const Tracing & trace, const Proto & proto);
+    void sendToSession(SessionID sessionID, const Tracing & trace, const Proto & proto);
+
+    void sendToDocker(DockerID dockerID, const char * block, unsigned int len);
+    void sendToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len);
+    void sendToDocker(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len);
+    void sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len);
+
 
     template<class Proto>
     void sendToDocker(DockerID dockerID, const Proto & proto);
-    void sendToDocker(DockerID dockerID, const char * block, unsigned int len);
-
     template<class Proto>
-    void forwardToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto);
-    void forwardToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len);
-
+    void sendToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto);
     template<class Proto>
-    void forwardToClient(DockerID dockerID, SessionID clientSessionID, const Proto & proto);
-    void forwardToClient(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len);
+    void sendToDocker(DockerID dockerID, SessionID clientSessionID, const Proto & proto);
+    template<class Proto>
+    void sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const Proto & proto);
+    
 
 
     template<class Proto>
@@ -208,17 +212,17 @@ void Docker::sendToSession(SessionID sessionID, const Proto & proto)
 
 
 template<class Proto>
-void Docker::forwardToSession(SessionID sessionID, const Tracing & trace, const Proto & proto)
+void Docker::sendToSession(SessionID sessionID, const Tracing & trace, const Proto & proto)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        forwardToSession(sessionID, trace, ws.getStream(), ws.getStreamLen());
+        sendToSession(sessionID, trace, ws.getStream(), ws.getStreamLen());
     }
     catch (const std::exception & e)
     {
-        LOGE("Docker::forwardToSession catch except error. e=" << e.what());
+        LOGE("Docker::sendToSession catch except error. e=" << e.what());
     }
 }
 
@@ -237,28 +241,34 @@ void Docker::sendToDocker(DockerID dockerID, const Proto & proto)
 }
 
 template<class Proto>
-void Docker::forwardToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto)
+void Docker::sendToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto)
 {
     auto founder = _dockerSession.find(dockerID);
     if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
     {
-        forwardToSession(founder->second.sessionID, trace, proto);
+        sendToSession(founder->second.sessionID, trace, proto);
     }
     else
     {
-        LOGE("Docker::forwardToDocker not found docker. dockerID=" << dockerID);
+        LOGE("Docker::sendToDocker not found docker. dockerID=" << dockerID);
     }
 }
 
 template<class Proto>
-void Docker::forwardToClient(DockerID dockerID, SessionID clientSessionID, const Proto & proto)
+void Docker::sendToDocker(DockerID dockerID, SessionID clientSessionID, const Proto & proto)
 {
-    WriteStream ws(proto::getProtoID());
+    WriteStream ws(Proto::getProtoID());
     ws << proto;
-    forwardToDocker(dockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
+    sendToDocker(dockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
 }
 
-
+template<class Proto>
+void Docker::sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const Proto & proto)
+{
+    WriteStream ws(Proto::getProtoID());
+    ws << proto;
+    sendToDockerByService(serviceType, serviceID, ws.getStream(), ws.getStreamLen());
+}
 
 template<class Proto>
 void Docker::toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost)

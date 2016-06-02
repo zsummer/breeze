@@ -66,12 +66,12 @@ void UserMgrService::onInitLastUIDFromDB(zsummer::proto4z::ReadStream & rs)
         return;
     }
     _nextUserID = fromString<ui64>(resp.result.fields.front(), 0);
-    if (_nextUserID < ServerConfig::getRef().getAreaID() * pow(10,8))
+    if (_nextUserID < ServerConfig::getRef().getAreaID() * (ui64)pow(10,8))
     {
-        _nextUserID = ServerConfig::getRef().getAreaID() * pow(10, 8);
+        _nextUserID = ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8);
     }
     LOGD("onInitLastUIDFromDB _nextUserID=" << _nextUserID << ", areaID=" << ServerConfig::getRef().getAreaID() 
-        << ", area begin uid=" << ServerConfig::getRef().getAreaID() * pow(10, 8));
+        << ", area begin uid=" << ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8));
     finishInit();
 }
 
@@ -269,14 +269,12 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
     else
     {
         ChangeServiceClient change(ServiceUser, req.userServiceID, req.clientDockerID, req.clientSessionID);
+        Docker::getRef().sendToDockerByService(ServiceUser, req.userServiceID, change);
+        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
     }
-
 }
 
-void UserMgrService::onAttachUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req)
-{
 
-}
 
 
 
