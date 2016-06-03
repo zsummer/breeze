@@ -81,7 +81,7 @@ void Module<DBData>::writeToDB(std::function<void(bool)> cb)
         return;
     }
     SQLQueryReq req(_data.getDBUpdate());
-    service->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onUpdateFromDB, this, _1, service, cb));
+    guard->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onUpdateFromDB, this, _1, guard, cb));
 }
 
 template<class DBData>
@@ -121,7 +121,6 @@ void Module<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::fu
         SQLQueryReq req(_data.getDBInsert());
         service->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onInsertFromDB, this, _1, service, cb));
     }
-    
 }
 
 template<class DBData>
