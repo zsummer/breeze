@@ -50,7 +50,7 @@ public:
 public:
     //必须在default填充key内容, 否则无法自动创建或者自动加载  
     bool initFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)>);
-    void writeToDB(std::function<void(bool)> callback = nullptr);
+    void writeToDB(std::function<void(bool)> cb = nullptr);
 public:
     DBData _data;
 private:
@@ -73,7 +73,7 @@ bool Module<DBData>::initFromDB(ServicePtr service, const DBData & defaultData, 
 }
 
 template<class DBData>
-void Module<DBData>::writeToDB(std::function<void(bool)> callback)
+void Module<DBData>::writeToDB(std::function<void(bool)> cb)
 {
     ServicePtr guard = _weakPtr;
     if (!guard)
