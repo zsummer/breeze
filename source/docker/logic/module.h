@@ -69,6 +69,7 @@ bool Module<DBData>::initFromDB(ServicePtr service, const DBData & defaultData, 
     _data = defaultData;
     SQLQueryReq req(_data.getDBSelect());
     service->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onSelectFromDB, this, _1, service, cb));
+    return true;
 }
 
 template<class DBData>
@@ -77,7 +78,7 @@ void Module<DBData>::writeToDB(std::function<void(bool)> callback)
     ServicePtr guard = _weakPtr;
     if (!guard)
     {
-        return false;
+        return;
     }
     SQLQueryReq req(_data.getDBUpdate());
     service->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onUpdateFromDB, this, _1, service, cb));
