@@ -52,7 +52,7 @@ private:
 private:
     int _curInitedModuleCount = 0;
     int _totalInitedModuleCount = 1;
-    Module<UserBaseInfo> _baseInfo;
+    ModuleData<UserBaseInfo> _baseInfo;
 };
 
 
