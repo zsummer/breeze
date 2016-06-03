@@ -874,17 +874,17 @@ void Docker::sendToDocker(DockerID dockerID, SessionID clientSessionID, const ch
 
 void Docker::sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len)
 {
-    LOGT("Docker::sendToDockerByService serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+    LOGT("Docker::sendToDockerByService serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
     auto founder = _services.find(serviceType);
     if (founder == _services.end())
     {
-        LOGE("Docker::sendToDockerByService error. type not found. serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        LOGE("Docker::sendToDockerByService error. type not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
         return;
     }
     auto fder = founder->second.find(serviceID);
     if (fder == founder->second.end())
     {
-        LOGE("Docker::sendToDockerByService error. service id not found. serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        LOGE("Docker::sendToDockerByService error. service id not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
         return;
     }
     sendToDocker(fder->second->getDockerID(), block, len);
