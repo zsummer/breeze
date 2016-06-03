@@ -37,30 +37,63 @@
 #ifndef BREEZE_MODULE_H_
 #define BREEZE_MODULE_H_
 #include <common.h>
+#include "service.h"
+#include <ProtoDBService.h>
 
 
-template<class Proto>
+template<class DBData>
 class Module
 {
 public:
     Module(){}
     virtual ~Module(){};
-
-
+public:
+    bool initFromDB(ServicePtr service, std::function<void(bool)>);
+    void writeToDB(std::function<void(bool)> callback = nullptr) {}
+public:
+    DBData _data;
 private:
-
-
+    void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
+//    void onInsertFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
 private:
-
-
-private:
-
-    std::weak_ptr<>
+    ServiceWeakPtr _weakPtr;
 };
 
 
+template<class DBData>
+bool Module<DBData>::initFromDB(ServicePtr service, std::function<void(bool)> cb)
+{
+    _weakPtr = service;
+    SQLQueryReq req(_data.getDBSelect());
+    service->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onSelectFromDB, this, _1, service, cb));
+}
 
+template<class DBData>
+void Module<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
+{
+    SQLQueryResp resp;
+    rs >> resp;
+    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS)
+    {
+        LOGE("Module<DBData>::onSelectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        if (cb)
+        {
+            cb(false);
+        }
+        return;
+    }
+    DBResult result;
+    result.buildResult(resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
+/*    if (result.haveRow())
+    {
+        result >> _data;
+    }
+    else
+    {
 
+    }
+    */
+}
 
 
 

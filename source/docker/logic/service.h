@@ -102,6 +102,7 @@ protected:
     virtual void process(const Tracing & trace, const char * block, unsigned int len);
     virtual void process4bind(const Tracing & trace, const std::string & block);
 
+public:
     void toService(ui16 st, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     void toService(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>

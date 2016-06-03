@@ -24,7 +24,7 @@
 #define _USER_SERVICE_H_
 #include <common.h>
 #include "service.h"
-
+#include "module.h"
 
 
 
