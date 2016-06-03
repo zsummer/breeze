@@ -26,7 +26,7 @@ void UserService::onUninit()
 
 bool UserService::onInit()
 {
-    finishInit();
+    _baseInfo.initFromDB(shared_from_this(), UserBaseInfo(getServiceID(), "", "", 0, 0), nullptr);
     return true;
 }
 

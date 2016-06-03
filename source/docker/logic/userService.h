@@ -25,7 +25,7 @@
 #include <common.h>
 #include "service.h"
 #include "module.h"
-
+#include "docker.h"
 
 
 
@@ -39,8 +39,20 @@ public:
     bool onInit() override final;
     void onUninit() override final;
     void onTick() override final;
-
+private:
+    inline bool onModuleInit(bool success)
+    {
+        if (success) _curInitedModuleCount++;
+        else { Docker::getRef().stop(); return false; }
+        if (_curInitedModuleCount == _totalInitedModuleCount) finishInit();
+    }
+private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+
+private:
+    int _curInitedModuleCount = 0;
+    int _totalInitedModuleCount = 1;
+    Module<UserBaseInfo> _baseInfo;
 };
 
 

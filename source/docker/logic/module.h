@@ -48,24 +48,39 @@ public:
     Module(){}
     virtual ~Module(){};
 public:
-    bool initFromDB(ServicePtr service, std::function<void(bool)>);
-    void writeToDB(std::function<void(bool)> callback = nullptr) {}
+    //必须在default填充key内容, 否则无法自动创建或者自动加载  
+    bool initFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)>);
+    void writeToDB(std::function<void(bool)> callback = nullptr);
 public:
     DBData _data;
 private:
     void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
-//    void onInsertFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
+    void onInsertFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
+    void onUpdateFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
 private:
     ServiceWeakPtr _weakPtr;
 };
 
 
 template<class DBData>
-bool Module<DBData>::initFromDB(ServicePtr service, std::function<void(bool)> cb)
+bool Module<DBData>::initFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)> cb)
 {
     _weakPtr = service;
+    _data = defaultData;
     SQLQueryReq req(_data.getDBSelect());
     service->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onSelectFromDB, this, _1, service, cb));
+}
+
+template<class DBData>
+void Module<DBData>::writeToDB(std::function<void(bool)> callback)
+{
+    ServicePtr guard = _weakPtr;
+    if (!guard)
+    {
+        return false;
+    }
+    SQLQueryReq req(_data.getDBUpdate());
+    service->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onUpdateFromDB, this, _1, service, cb));
 }
 
 template<class DBData>
@@ -83,20 +98,71 @@ void Module<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::fu
         return;
     }
     DBResult result;
-    result.buildResult(resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
-/*    if (result.haveRow())
+    result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
+    if (result.haveRow())
     {
-        result >> _data;
+        if (!_data.fetchFromDBResult(result))
+        {
+            LOGE("Module<DBData>::onSelectFromDB fetchFromDBResult error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+            if (cb)
+            {
+                cb(false);
+            }
+            return;
+        }
+        if (cb)
+        {
+            cb(true);
+        }
     }
     else
     {
-
+        SQLQueryReq req(_data.getDBInsert());
+        service->toService(ServiceInfoDBMgr, req, std::bind(&Module<DBData>::onInsertFromDB, this, _1, service, cb));
     }
-    */
+    
+}
+
+template<class DBData>
+void Module<DBData>::onInsertFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
+{
+    SQLQueryResp resp;
+    rs >> resp;
+    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS || resp.result.affected != 1)
+    {
+        LOGE("Module<DBData>::onInsertFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        if (cb)
+        {
+            cb(false);
+        }
+        return;
+    }
+    if (cb)
+    {
+        cb(true);
+    }
 }
 
 
-
+template<class DBData>
+void Module<DBData>::onUpdateFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
+{
+    SQLQueryResp resp;
+    rs >> resp;
+    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS || resp.result.affected != 1)
+    {
+        LOGE("Module<DBData>::onUpdateFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        if (cb)
+        {
+            cb(false);
+        }
+        return;
+    }
+    if (cb)
+    {
+        cb(true);
+    }
+}
 
 
 #endif
