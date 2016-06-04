@@ -145,17 +145,21 @@ void DBService::onAsyncSQLQueryReq(DBResultPtr result, Tracing trace)
     resp.result.fields = std::move(result->popResult());
     backToService(trace, resp, nullptr);
 }
-void DBService::onAsyncSQLQueryArrayReq(bool ret, DBResultPtr result, Tracing trace)
+void DBService::onAsyncSQLQueryArrayReq(bool ret, std::vector<DBResultPtr> results, Tracing trace)
 {
     SQLQueryArrayResp resp;
-    resp.retCode = ret ? EC_SUCCESS : EC_ERROR;
-    resp.result.qc = result->getErrorCode();
-    resp.result.errMsg = result->getErrorMsg();
-    resp.result.sql = result->peekSQL();
-    resp.result.affected = result->getAffectedRows();
-    resp.result.fields = std::move(result->popResult());
+    resp.retCode = ret ? EC_SUCCESS : EC_DB_ERROR;
+    for (auto &result : results)
+    {
+        SQLResult ret;
+        ret.qc = result->getErrorCode();
+        ret.errMsg = result->getErrorMsg();
+        ret.sql = result->peekSQL();
+        ret.affected = result->getAffectedRows();
+        ret.fields = std::move(result->popResult());
+        resp.results.push_back(std::move(ret));
+    }
     backToService(trace, resp, nullptr);
-
 }
 void DBService::onTest(ReadStream & rs)
 {

@@ -41,7 +41,7 @@ public:
     void onSQLQueryReq(Tracing trace, ReadStream &rs);
     void onAsyncSQLQueryReq(DBResultPtr result, Tracing trace);
     void onSQLQueryArrayReq(Tracing trace, ReadStream &rs);
-    void onAsyncSQLQueryArrayReq(bool ret, DBResultPtr result, Tracing trace);
+    void onAsyncSQLQueryArrayReq(bool ret, std::vector<DBResultPtr> results, Tracing trace);
 
     void onTest(ReadStream & rs);
     template<class T>

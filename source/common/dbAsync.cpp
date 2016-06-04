@@ -71,7 +71,7 @@ void DBAsync::asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
     _event->post(std::bind(&DBAsync::_asyncQuery, this, dbhelper, sql, handler));
 }
 void DBAsync::asyncQueryArray(DBHelperPtr &dbhelper, const std::vector<std::string> &sqls,
-    const std::function<void(bool, DBResultPtr)> & handler)
+    const std::function<void(bool, std::vector<DBResultPtr>)> & handler)
 {
     _uPostCount++;
     _event->post(std::bind(&DBAsync::_asyncQueryArray, this, dbhelper, sqls, handler));
@@ -88,23 +88,24 @@ void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
     }
 }
 void DBAsync::_asyncQueryArray(DBHelperPtr &dbhelper, const std::vector<std::string> &sqls,
-    const std::function<void(bool, DBResultPtr)> & handler)
+    const std::function<void(bool, std::vector<DBResultPtr>)> & handler)
 {
     bool isSuccess = true;
-    DBResultPtr ret = std::make_shared<DBResult>();
+    std::vector<DBResultPtr> results;
     for (size_t i = 0; i < sqls.size(); i++)
     {
+        DBResultPtr ret = std::make_shared<DBResult>();
         ret = dbhelper->query(sqls.at(i));
         if (ret->getErrorCode() != QEC_SUCCESS)
         {
             isSuccess = false;
-            break;
         }
+        results.push_back(ret);
     }
     _uFinalCount++;
     if (handler)
     {
-        SessionManager::getRef().post(std::bind(handler, isSuccess, ret));
+        SessionManager::getRef().post(std::bind(handler, isSuccess, results));
     }
 }
 

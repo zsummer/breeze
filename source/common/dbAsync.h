@@ -51,13 +51,13 @@ public:
     void asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
         const std::function<void(DBResultPtr)> & handler);
     void asyncQueryArray(DBHelperPtr &dbhelper, const std::vector<std::string> &sqls,
-        const std::function<void(bool, DBResultPtr)> & handler);
+        const std::function<void(bool, std::vector<DBResultPtr>)> & handler);
 
 protected:
     void _asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
         const std::function<void(DBResultPtr)> & handler);
     void _asyncQueryArray(DBHelperPtr &dbhelper, const std::vector<std::string> &sqls,
-        const std::function<void(bool, DBResultPtr)> & handler);
+        const std::function<void(bool, std::vector<DBResultPtr>)> & handler);
     inline void run();
 private:
     std::shared_ptr<std::thread> _thread;
