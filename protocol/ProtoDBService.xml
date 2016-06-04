@@ -19,6 +19,7 @@
         <member name="affected" type="ui64"  desc=""/>
         <member name="fields"  type="SQLStringArray" desc=""/>
     </packet>
+    <array name="SQLResultArray" type="SQLResult" desc="" />
 
 
 
@@ -35,7 +36,7 @@
     </packet>
     <packet name="SQLQueryArrayResp" desc= "通用批量SQL语句执行协议">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="result" type="SQLResult"   desc="只有错误时候才有数据"/>
+        <member name="results" type="SQLResultArray"   desc="批量返回,注意不要超出协议包最大长度"/>
     </packet>
 
 

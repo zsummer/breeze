@@ -14,6 +14,11 @@ Proto4z.SQLResult[3] = {name="sql", type="string" }
 Proto4z.SQLResult[4] = {name="affected", type="ui64" }  
 Proto4z.SQLResult[5] = {name="fields", type="SQLStringArray" }  
  
+Proto4z.SQLResultArray = {}  
+Proto4z.SQLResultArray.__getName = "SQLResultArray" 
+Proto4z.SQLResultArray.__getDesc = "array" 
+Proto4z.SQLResultArray.__getTypeV = "SQLResult" 
+ 
 Proto4z.register(41001,"SQLQueryReq") 
 Proto4z.SQLQueryReq = {} --通用SQL语句执行协议 
 Proto4z.SQLQueryReq.__getID = 41001 
@@ -38,4 +43,4 @@ Proto4z.SQLQueryArrayResp = {} --通用批量SQL语句执行协议
 Proto4z.SQLQueryArrayResp.__getID = 41006 
 Proto4z.SQLQueryArrayResp.__getName = "SQLQueryArrayResp" 
 Proto4z.SQLQueryArrayResp[1] = {name="retCode", type="ui16" }  
-Proto4z.SQLQueryArrayResp[2] = {name="result", type="SQLResult" } --只有错误时候才有数据 
+Proto4z.SQLQueryArrayResp[2] = {name="results", type="SQLResultArray" } --批量返回,注意不要超出协议包最大长度 

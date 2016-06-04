@@ -82,6 +82,37 @@ namespace Proto4z
         } 
     } 
  
+ 
+    public class SQLResultArray : System.Collections.Generic.List<SQLResult>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new SQLResult(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
     public class SQLQueryReq: Proto4z.IProtoObject //通用SQL语句执行协议  
     {     
         //proto id   
@@ -186,30 +217,30 @@ namespace Proto4z
         static public string getProtoName() { return "SQLQueryArrayResp"; } 
         //members   
         public ushort retCode;  
-        public SQLResult result; //只有错误时候才有数据  
+        public SQLResultArray results; //批量返回,注意不要超出协议包最大长度  
         public SQLQueryArrayResp()  
         { 
             retCode = 0;  
-            result = new SQLResult();  
+            results = new SQLResultArray();  
         } 
-        public SQLQueryArrayResp(ushort retCode, SQLResult result) 
+        public SQLQueryArrayResp(ushort retCode, SQLResultArray results) 
         { 
             this.retCode = retCode; 
-            this.result = result; 
+            this.results = results; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            if (this.result == null) this.result = new SQLResult(); 
-            data.AddRange(this.result.__encode()); 
+            if (this.results == null) this.results = new SQLResultArray(); 
+            data.AddRange(this.results.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.result = new SQLResult(); 
-            this.result.__decode(binData, ref pos); 
+            this.results = new SQLResultArray(); 
+            this.results.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
