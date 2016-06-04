@@ -32,15 +32,15 @@ Proto4z.SQLQueryResp.__getName = "SQLQueryResp"
 Proto4z.SQLQueryResp[1] = {name="retCode", type="ui16" }  
 Proto4z.SQLQueryResp[2] = {name="result", type="SQLResult" }  
  
-Proto4z.register(41005,"SQLQueryArrayReq") 
+Proto4z.register(41003,"SQLQueryArrayReq") 
 Proto4z.SQLQueryArrayReq = {} --通用批量SQL语句执行协议 
-Proto4z.SQLQueryArrayReq.__getID = 41005 
+Proto4z.SQLQueryArrayReq.__getID = 41003 
 Proto4z.SQLQueryArrayReq.__getName = "SQLQueryArrayReq" 
 Proto4z.SQLQueryArrayReq[1] = {name="sqls", type="SQLStringArray" }  
  
-Proto4z.register(41006,"SQLQueryArrayResp") 
+Proto4z.register(41004,"SQLQueryArrayResp") 
 Proto4z.SQLQueryArrayResp = {} --通用批量SQL语句执行协议 
-Proto4z.SQLQueryArrayResp.__getID = 41006 
+Proto4z.SQLQueryArrayResp.__getID = 41004 
 Proto4z.SQLQueryArrayResp.__getName = "SQLQueryArrayResp" 
 Proto4z.SQLQueryArrayResp[1] = {name="retCode", type="ui16" }  
 Proto4z.SQLQueryArrayResp[2] = {name="results", type="SQLResultArray" } --批量返回,注意不要超出协议包最大长度 

@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>f4ede79ee7257b73d807cf898f72cda8</cppmd5> 
-<luamd5>cea7cef903a2e1934c3dde90c31c22e5</luamd5> 
-<csharpmd5>7aeced3daaf300ced8206ed556c50715</csharpmd5> 
+<cppmd5>d01727fbbb586297ea44d2ee0fd0bf5e</cppmd5> 
+<luamd5>d7d3dac799459bddfc8c9dab2071d4ef</luamd5> 
+<csharpmd5>38e3477ed8e7aa93747375c004914fe7</csharpmd5> 
 <xmlmd5>53cb88f62756f2d46b31d88f7ce80e87</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_ChangeServiceClient" Number = "40010" /> 
-    <cache key = "ID_ChangeServiceClientID" Number = "40002" /> 
+    <cache key = "ID_ChangeServiceClient" Number = "40002" /> 
     <cache key = "ID_CreateOrRefreshServiceNotice" Number = "40003" /> 
     <cache key = "ID_CreateServiceInDocker" Number = "40001" /> 
     <cache key = "ID_DestroyServiceInDocker" Number = "40004" /> 
     <cache key = "ID_DestroyServiceNotice" Number = "40005" /> 
     <cache key = "ID_DockerPulse" Number = "40000" /> 
-    <cache key = "ID_ForwardToClient" Number = "40008" /> 
-    <cache key = "ID_ForwardToDocker" Number = "40006" /> 
-    <cache key = "ID_ForwardToRealClient" Number = "40009" /> 
-    <cache key = "ID_ForwardToService" Number = "40007" /> 
+    <cache key = "ID_ForwardToRealClient" Number = "40007" /> 
+    <cache key = "ID_ForwardToService" Number = "40006" /> 
 </cacheNumber>

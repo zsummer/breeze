@@ -70,8 +70,8 @@ namespace Proto4z
     public class ChangeServiceClient: Proto4z.IProtoObject //更改clientID  
     {     
         //proto id   
-        public const ushort protoID = 40010;  
-        static public ushort getProtoID() { return 40010; } 
+        public const ushort protoID = 40002;  
+        static public ushort getProtoID() { return 40002; } 
         static public string getProtoName() { return "ChangeServiceClient"; } 
         //members   
         public ushort serviceType;  
@@ -231,8 +231,8 @@ namespace Proto4z
     public class ForwardToService: Proto4z.IProtoObject //转发到其他docker上的Service  
     {     
         //proto id   
-        public const ushort protoID = 40007;  
-        static public ushort getProtoID() { return 40007; } 
+        public const ushort protoID = 40006;  
+        static public ushort getProtoID() { return 40006; } 
         static public string getProtoName() { return "ForwardToService"; } 
         //members   
         public ForwardToService()  
@@ -252,8 +252,8 @@ namespace Proto4z
     public class ForwardToRealClient: Proto4z.IProtoObject //转发给真正的client  
     {     
         //proto id   
-        public const ushort protoID = 40009;  
-        static public ushort getProtoID() { return 40009; } 
+        public const ushort protoID = 40007;  
+        static public ushort getProtoID() { return 40007; } 
         static public string getProtoName() { return "ForwardToRealClient"; } 
         //members   
         public ForwardToRealClient()  

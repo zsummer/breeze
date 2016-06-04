@@ -132,7 +132,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SQLQueryArrayReq //通用批量SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 41005;} 
+    static const unsigned short getProtoID() { return 41003;} 
     static const std::string getProtoName() { return "SQLQueryArrayReq";} 
     SQLStringArray sqls;  
     SQLQueryArrayReq() 
@@ -163,7 +163,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SQLQueryArrayResp //通用批量SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 41006;} 
+    static const unsigned short getProtoID() { return 41004;} 
     static const std::string getProtoName() { return "SQLQueryArrayResp";} 
     unsigned short retCode;  
     SQLResultArray results; //批量返回,注意不要超出协议包最大长度  

@@ -85,6 +85,7 @@ struct UserBaseInfo //用户基础数据
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
     inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long uID; //用户唯一ID  
     std::string account; //帐号  
@@ -110,7 +111,7 @@ struct UserBaseInfo //用户基础数据
 const std::vector<std::string>  UserBaseInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`uID`)  ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`uID`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_UserBaseInfo` add `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `uID`  `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
@@ -130,15 +131,14 @@ std::string  UserBaseInfo::getDBSelect()
     q << this->uID; 
     return q.pickSQL(); 
 } 
+std::string  UserBaseInfo::getDBSelectPure() 
+{ 
+    return "select `uID`,`account`,`nickName`,`iconID`,`level` from `tb_UserBaseInfo` "; 
+} 
 std::string  UserBaseInfo::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(`uID`,`account`,`nickName`,`iconID`,`level`) values(?,?,?,?,?)"); 
-    q << this->uID; 
-    q << this->account; 
-    q << this->nickName; 
-    q << this->iconID; 
-    q << this->level; 
+    q.init("insert into `tb_UserBaseInfo`() values()"); 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBDelete() 

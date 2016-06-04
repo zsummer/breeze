@@ -37,18 +37,18 @@ Proto4z.CreateUserFromUserMgrResp[2] = {name="clientDockerID", type="ui32" }
 Proto4z.CreateUserFromUserMgrResp[3] = {name="clientSessionID", type="ui32" }  
 Proto4z.CreateUserFromUserMgrResp[4] = {name="previews", type="UserPreviewArray" }  
  
-Proto4z.register(20006,"AttachUserFromUserMgrReq") 
+Proto4z.register(20004,"AttachUserFromUserMgrReq") 
 Proto4z.AttachUserFromUserMgrReq = {} --选角色请求 
-Proto4z.AttachUserFromUserMgrReq.__getID = 20006 
+Proto4z.AttachUserFromUserMgrReq.__getID = 20004 
 Proto4z.AttachUserFromUserMgrReq.__getName = "AttachUserFromUserMgrReq" 
 Proto4z.AttachUserFromUserMgrReq[1] = {name="userServiceID", type="ui64" }  
 Proto4z.AttachUserFromUserMgrReq[2] = {name="account", type="string" }  
 Proto4z.AttachUserFromUserMgrReq[3] = {name="clientDockerID", type="ui32" }  
 Proto4z.AttachUserFromUserMgrReq[4] = {name="clientSessionID", type="ui32" }  
  
-Proto4z.register(20007,"AttachUserFromUserMgrResp") 
+Proto4z.register(20005,"AttachUserFromUserMgrResp") 
 Proto4z.AttachUserFromUserMgrResp = {} --选角色请求返回 
-Proto4z.AttachUserFromUserMgrResp.__getID = 20007 
+Proto4z.AttachUserFromUserMgrResp.__getID = 20005 
 Proto4z.AttachUserFromUserMgrResp.__getName = "AttachUserFromUserMgrResp" 
 Proto4z.AttachUserFromUserMgrResp[1] = {name="retCode", type="ui16" }  
 Proto4z.AttachUserFromUserMgrResp[2] = {name="clientDockerID", type="ui32" }  

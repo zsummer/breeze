@@ -181,8 +181,8 @@ namespace Proto4z
     public class SQLQueryArrayReq: Proto4z.IProtoObject //通用批量SQL语句执行协议  
     {     
         //proto id   
-        public const ushort protoID = 41005;  
-        static public ushort getProtoID() { return 41005; } 
+        public const ushort protoID = 41003;  
+        static public ushort getProtoID() { return 41003; } 
         static public string getProtoName() { return "SQLQueryArrayReq"; } 
         //members   
         public SQLStringArray sqls;  
@@ -212,8 +212,8 @@ namespace Proto4z
     public class SQLQueryArrayResp: Proto4z.IProtoObject //通用批量SQL语句执行协议  
     {     
         //proto id   
-        public const ushort protoID = 41006;  
-        static public ushort getProtoID() { return 41006; } 
+        public const ushort protoID = 41004;  
+        static public ushort getProtoID() { return 41004; } 
         static public string getProtoName() { return "SQLQueryArrayResp"; } 
         //members   
         public ushort retCode;  

@@ -75,7 +75,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ChangeServiceClient //更改clientID  
 { 
-    static const unsigned short getProtoID() { return 40010;} 
+    static const unsigned short getProtoID() { return 40002;} 
     static const std::string getProtoName() { return "ChangeServiceClient";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
@@ -257,7 +257,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ForwardToService //转发到其他docker上的Service  
 { 
-    static const unsigned short getProtoID() { return 40007;} 
+    static const unsigned short getProtoID() { return 40006;} 
     static const std::string getProtoName() { return "ForwardToService";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToService & data) 
@@ -277,7 +277,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ForwardToRealClient //转发给真正的client  
 { 
-    static const unsigned short getProtoID() { return 40009;} 
+    static const unsigned short getProtoID() { return 40007;} 
     static const std::string getProtoName() { return "ForwardToRealClient";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToRealClient & data) 

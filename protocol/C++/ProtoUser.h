@@ -156,7 +156,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AttachUserReq //选角色请求  
 { 
-    static const unsigned short getProtoID() { return 1006;} 
+    static const unsigned short getProtoID() { return 1004;} 
     static const std::string getProtoName() { return "AttachUserReq";} 
     unsigned long long uID;  
     AttachUserReq() 
@@ -188,7 +188,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AttachUserResp //选角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 1007;} 
+    static const unsigned short getProtoID() { return 1005;} 
     static const std::string getProtoName() { return "AttachUserResp";} 
     unsigned short retCode;  
     AttachUserResp() 

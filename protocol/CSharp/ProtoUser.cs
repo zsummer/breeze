@@ -150,8 +150,8 @@ namespace Proto4z
     public class AttachUserReq: Proto4z.IProtoObject //选角色请求  
     {     
         //proto id   
-        public const ushort protoID = 1006;  
-        static public ushort getProtoID() { return 1006; } 
+        public const ushort protoID = 1004;  
+        static public ushort getProtoID() { return 1004; } 
         static public string getProtoName() { return "AttachUserReq"; } 
         //members   
         public ulong uID;  
@@ -179,8 +179,8 @@ namespace Proto4z
     public class AttachUserResp: Proto4z.IProtoObject //选角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 1007;  
-        static public ushort getProtoID() { return 1007; } 
+        public const ushort protoID = 1005;  
+        static public ushort getProtoID() { return 1005; } 
         static public string getProtoName() { return "AttachUserResp"; } 
         //members   
         public ushort retCode;  

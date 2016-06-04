@@ -28,14 +28,14 @@ Proto4z.CreateUserResp.__getName = "CreateUserResp"
 Proto4z.CreateUserResp[1] = {name="retCode", type="ui16" }  
 Proto4z.CreateUserResp[2] = {name="previews", type="UserPreviewArray" }  
  
-Proto4z.register(1006,"AttachUserReq") 
+Proto4z.register(1004,"AttachUserReq") 
 Proto4z.AttachUserReq = {} --选角色请求 
-Proto4z.AttachUserReq.__getID = 1006 
+Proto4z.AttachUserReq.__getID = 1004 
 Proto4z.AttachUserReq.__getName = "AttachUserReq" 
 Proto4z.AttachUserReq[1] = {name="uID", type="ui64" }  
  
-Proto4z.register(1007,"AttachUserResp") 
+Proto4z.register(1005,"AttachUserResp") 
 Proto4z.AttachUserResp = {} --选角色请求返回 
-Proto4z.AttachUserResp.__getID = 1007 
+Proto4z.AttachUserResp.__getID = 1005 
 Proto4z.AttachUserResp.__getName = "AttachUserResp" 
 Proto4z.AttachUserResp[1] = {name="retCode", type="ui16" }  
