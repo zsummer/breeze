@@ -7,6 +7,9 @@
     <Filter Include="logic">
       <UniqueIdentifier>{f9cdd186-985b-4536-b830-420c0d6f254c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="protocol">
+      <UniqueIdentifier>{9953ee49-8ac5-4fa8-aa47-0bd06bc7851a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,5 +59,22 @@
     <ClInclude Include="logic\module.h">
       <Filter>logic</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\protocol\ProtoCommon.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoDBService.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoDocker.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoUser.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoUserMgr.xml">
+      <Filter>protocol</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

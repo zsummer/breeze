@@ -111,7 +111,7 @@ struct UserBaseInfo //用户基础数据
 const std::vector<std::string>  UserBaseInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`uID`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `uID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        `nickName` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`uID`),        KEY `account` (`account`),        UNIQUE KEY `nickName` (`nickName`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_UserBaseInfo` add `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `uID`  `uID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 

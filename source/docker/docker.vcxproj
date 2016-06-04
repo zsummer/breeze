@@ -114,6 +114,13 @@
     <ClInclude Include="logic\userMgrService.h" />
     <ClInclude Include="logic\userService.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\protocol\ProtoCommon.xml" />
+    <Xml Include="..\..\protocol\ProtoDBService.xml" />
+    <Xml Include="..\..\protocol\ProtoDocker.xml" />
+    <Xml Include="..\..\protocol\ProtoUser.xml" />
+    <Xml Include="..\..\protocol\ProtoUserMgr.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

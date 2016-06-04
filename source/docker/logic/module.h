@@ -1,4 +1,4 @@
-/*
+﻿/*
  * zsummerX License
  * -----------
  *
@@ -55,8 +55,7 @@ public:
     DBData _data;
 private:
     void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
-    void onInsertFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
-    void onUpdateFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
+    void onAffectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
 private:
     ServiceWeakPtr _weakPtr;
 };
@@ -68,7 +67,7 @@ public:
     ModuleMultiData() {}
     virtual ~ModuleMultiData() {};
 public:
-    //sql必须和结构体对应 
+    //sql通过协议工具生成的getDBSelectPure产生并手动追加where语句生成.
     bool initFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)>);
     //update和insert不会变更_data的数据,纯方法 
     void updateToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
@@ -77,11 +76,11 @@ public:
     std::vector<DBData> _data;
 private:
     void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
-    void onInsertFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
-    void onUpdateFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
+    void onAffectFromDB(ReadStream & rs, ServicePtr service, const DBData & data, std::function<void(bool, const DBData & data)>);
 private:
     ServiceWeakPtr _weakPtr;
 };
+
 
 
 
@@ -111,7 +110,7 @@ void ModuleData<DBData>::writeToDB(std::function<void(bool)> cb)
         return;
     }
     SQLQueryReq req(_data.getDBUpdate());
-    guard->toService(ServiceInfoDBMgr, req, std::bind(&ModuleData<DBData>::onUpdateFromDB, this, _1, guard, cb));
+    guard->toService(ServiceInfoDBMgr, req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, guard, cb));
 }
 
 template<class DBData>
@@ -149,18 +148,18 @@ void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std
     else
     {
         SQLQueryReq req(_data.getDBInsert());
-        service->toService(ServiceInfoDBMgr, req, std::bind(&ModuleData<DBData>::onInsertFromDB, this, _1, service, cb));
+        service->toService(ServiceInfoDBMgr, req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, service, cb));
     }
 }
 
 template<class DBData>
-void ModuleData<DBData>::onInsertFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
+void ModuleData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
 {
     SQLQueryResp resp;
     rs >> resp;
     if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS || resp.result.affected != 1)
     {
-        LOGE("ModuleData<DBData>::onInsertFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        LOGE("ModuleData<DBData>::onAffectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
         if (cb)
         {
             cb(false);
@@ -174,25 +173,100 @@ void ModuleData<DBData>::onInsertFromDB(ReadStream & rs, ServicePtr service, std
 }
 
 
+
 template<class DBData>
-void ModuleData<DBData>::onUpdateFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
+bool ModuleMultiData<DBData>::initFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)> cb)
+{
+    _weakPtr = service;
+    SQLQueryReq req(sql);
+    service->toService(ServiceInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onSelectFromDB, this, _1, service, cb));
+    return true;
+}
+
+template<class DBData>
+void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
 {
     SQLQueryResp resp;
     rs >> resp;
-    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS || resp.result.affected != 1)
+    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS)
     {
-        LOGE("ModuleData<DBData>::onUpdateFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        LOGE("ModuleMultiData<DBData>::onSelectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
         if (cb)
         {
             cb(false);
         }
         return;
     }
+    DBResult result;
+    result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
+    while (result.haveRow())
+    {
+        DBData data;
+        if (!data.fetchFromDBResult(result))
+        {
+            LOGE("ModuleMultiData<DBData>::onSelectFromDB fetchFromDBResult error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+            if (cb)
+            {
+                cb(false);
+            }
+            return;
+        }
+        _data.push_back(data);
+    }
     if (cb)
     {
         cb(true);
     }
 }
+
+template<class DBData>
+void ModuleMultiData<DBData>::updateToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb)
+{
+    ServicePtr guard = _weakPtr;
+    if (!guard)
+    {
+        return;
+    }
+    SQLQueryReq req(data.getDBUpdate());
+    guard->toService(ServiceInfoDBMgr, req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
+}
+
+template<class DBData>
+void ModuleMultiData<DBData>::insertToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb)
+{
+    ServicePtr guard = _weakPtr;
+    if (!guard)
+    {
+        return;
+    }
+    SQLQueryReq req(data.getDBInsert());
+    guard->toService(ServiceInfoDBMgr, req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
+}
+
+
+
+template<class DBData>
+void ModuleMultiData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service, const DBData & data, std::function<void(bool, const DBData & data)>  cb)
+{
+    SQLQueryResp resp;
+    rs >> resp;
+    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS || resp.result.affected != 1)
+    {
+        LOGE("ModuleMultiData<DBData>::onAffectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        if (cb)
+        {
+            cb(false, data);
+        }
+        return;
+    }
+    if (cb)
+    {
+        cb(true, data);
+    }
+}
+
+
+
 
 
 #endif
