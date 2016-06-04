@@ -48,7 +48,7 @@ public:
     ModuleData(){}
     virtual ~ModuleData(){};
 public:
-    //±ØĞëÔÚdefaultÌî³äkeyÄÚÈİ, ·ñÔòÎŞ·¨×Ô¶¯´´½¨»òÕß×Ô¶¯¼ÓÔØ  
+    //å¿…é¡»åœ¨defaultå¡«å……keyå†…å®¹, å¦åˆ™æ— æ³•è‡ªåŠ¨åˆ›å»ºæˆ–è€…è‡ªåŠ¨åŠ è½½  
     bool initFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)>);
     void writeToDB(std::function<void(bool)> cb = nullptr);
 public:
@@ -68,9 +68,9 @@ public:
     ModuleMultiData() {}
     virtual ~ModuleMultiData() {};
 public:
-    //sql±ØĞëºÍ½á¹¹Ìå¶ÔÓ¦ 
+    //sqlå¿…é¡»å’Œç»“æ„ä½“å¯¹åº” 
     bool initFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)>);
-    //updateºÍinsert²»»á±ä¸ü_dataµÄÊı¾İ,´¿·½·¨ 
+    //updateå’Œinsertä¸ä¼šå˜æ›´_dataçš„æ•°æ®,çº¯æ–¹æ³• 
     void updateToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
     void insertToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
 public:

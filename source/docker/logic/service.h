@@ -87,11 +87,11 @@ private:
     void beginTimer();
     void onTimer();
 protected:
-    virtual void onTick() = 0; //仅限单例模式并且非shell的service才会调用这个 
+    virtual void onTick() = 0; //浠呴檺鍗曚緥妯″紡骞朵笖闈瀞hell鐨剆ervice鎵嶄細璋冪敤杩欎釜 
 
-    virtual bool onInit() = 0; //service初始化好之后要调用finishInit 
+    virtual bool onInit() = 0; //service鍒濆鍖栧ソ涔嬪悗瑕佽皟鐢╢inishInit 
     bool finishInit();
-    virtual void onUninit() = 0;//service卸载好之后要调用finishUninit 
+    virtual void onUninit() = 0;//service鍗歌浇濂戒箣鍚庤璋冪敤finishUninit 
     bool finishUninit();
 
 protected:
@@ -128,9 +128,9 @@ private:
 private:
     ui16 _serviceType = (ui16)ServiceInvalid;
     ServiceID _serviceID = InvalidServiceID;
-    DockerID _dockerID = InvalidDockerID; //实际所在的docker
-    SessionID _clientSessionID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限UserService使用
-    DockerID _clientDockerID = InvalidDockerID; //如果存在关联的客户端,则该ID代表在_clientSessionID所在dockerID. 目前仅限UserService使用
+    DockerID _dockerID = InvalidDockerID; //瀹為檯鎵�鍦ㄧ殑docker
+    SessionID _clientSessionID = InvalidSessionID; //濡傛灉瀛樺湪鍏宠仈鐨勫鎴风,鍒欒ID浠ｈ〃鍦ㄥ疄闄呮墍鍦╠ocker涓殑sessionID. 鐩墠浠呴檺UserService浣跨敤
+    DockerID _clientDockerID = InvalidDockerID; //濡傛灉瀛樺湪鍏宠仈鐨勫鎴风,鍒欒ID浠ｈ〃鍦╛clientSessionID鎵�鍦╠ockerID. 鐩墠浠呴檺UserService浣跨敤
 
     short _status = 0;
     bool _shell = false;

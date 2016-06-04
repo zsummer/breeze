@@ -45,6 +45,7 @@ private:
         if (success) _curInitedModuleCount++;
         else { Docker::getRef().stop(); return false; }
         if (_curInitedModuleCount == _totalInitedModuleCount) finishInit();
+        return true;
     }
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
