@@ -382,7 +382,7 @@ std::string trim(const std::string &str, const std::string & ign, int both)
 
     return "";
 }
-std::vector<std::string> splitString(std::string text, std::string deli, std::string ign)
+std::vector<std::string> splitString(std::string text, const std::string & deli, const std::string & ign)
 {
     text = trim(text, ign);
     std::vector<std::string> ret;

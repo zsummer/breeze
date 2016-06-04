@@ -47,13 +47,6 @@ RET fromString(const std::string & t, RET def)
 
         char *cursor = nullptr;
         return (RET)strtoull(t.c_str(), &cursor, 10);
-//        unsigned long long ull = 0;
-//#ifndef WIN32
-//        sscanf(t.c_str(), "%llu", &ull);
-//#else
-//        int count = sscanf(t.c_str(), "%I64u", &ull);
-//#endif
-//        return (RET)ull;
     }
     return (RET)atoll(t.c_str());
 }
@@ -356,5 +349,34 @@ inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag
 }
 
 
+
+template<class Container>
+std::string mergeToString(const Container & contariner, const std::string& deli)
+{
+    std::string ret;
+    for (const auto &t : contariner)
+    {
+        ret += toString(t);
+        ret += deli;
+    }
+    if (!deli.empty())
+    {
+        for (size_t i = 0; i < deli.size(); i++)
+        {
+            ret.pop_back();
+        }
+    }
+    return std::move(ret);
+}
+
+template<class T>  //example: Container = std::vector<int>
+void mergeToString(std::string & dstString, const std::string& deli, const T & t)
+{
+    if (!dstString.empty())
+    {
+        dstString += deli;
+    }
+    dstString += toString(t);
+}
 
 #endif

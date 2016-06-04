@@ -118,7 +118,11 @@ RET fromString(const std::string & t, RET def);
 //both 1 left, 2right, 3 both
 std::string trim(const std::string &str, const std::string& ign, int both = 3);
 
-std::vector<std::string> splitString(std::string text, std::string deli, std::string ign);
+std::vector<std::string> splitString(std::string text, const std::string & deli, const std::string & ign);
+template<class Container>  //example: Container = std::vector<int>
+std::string mergeToString(const Container & contariner, const std::string& deli);
+template<class T>  //example: Container = std::vector<int>
+void mergeToString(std::string & dstString, const std::string& deli, const T & t);
 
 std::string subStringFront(const std::string & text, const std::string & deli);
 std::string subStringBack(const std::string & text, const std::string & deli);

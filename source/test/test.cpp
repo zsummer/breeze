@@ -104,37 +104,57 @@ int checkString()
     {
         return 4;
     }
+    if (true)
+    {
+        std::vector<int> array = { 1,2,3,4 };
+        std::string dstString = mergeToString(array, ",");
+        if (dstString.length() != 7)
+        {
+            return 5;
+        }
+        dstString.clear();
+        for (auto i : array)
+        {
+            mergeToString(dstString, ",", i);
+        }
+        if (dstString.length() != 7)
+        {
+            return 6;
+        }
+        
+    }
+    
     if (!compareStringIgnCase("Fad123123", "fAd123123"))
-    {
-        return 5;
-    }
-    if (compareStringIgnCase("1234", "123", true))
-    {
-        return 6;
-    }
-    if (!compareStringIgnCase("a123", "A1234", true))
     {
         return 7;
     }
-    if (compareStringIgnCase("a123", "A1234", false))
+    if (compareStringIgnCase("1234", "123", true))
     {
         return 8;
     }
-    if (strcmp(toUpperString("aaaa").c_str(), "AAAA") != 0)
+    if (!compareStringIgnCase("a123", "A1234", true))
     {
         return 9;
     }
-    if (strcmp(toLowerString("AAAA").c_str(), "aaaa") != 0)
+    if (compareStringIgnCase("a123", "A1234", false))
     {
         return 10;
     }
-    if (!isEqual(fromString<float>("0.1", 0.0), 0.1, 1e-5))
+    if (strcmp(toUpperString("aaaa").c_str(), "AAAA") != 0)
     {
         return 11;
     }
-    if (!isEqual(fromString<double>("1e-1", 0.0), 0.1))
+    if (strcmp(toLowerString("AAAA").c_str(), "aaaa") != 0)
     {
         return 12;
+    }
+    if (!isEqual(fromString<float>("0.1", 0.0), 0.1, 1e-5))
+    {
+        return 13;
+    }
+    if (!isEqual(fromString<double>("1e-1", 0.0), 0.1))
+    {
+        return 14;
     }
     if (fromString<int>("-1", 0) != -1)
     {
