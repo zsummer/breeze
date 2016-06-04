@@ -248,7 +248,7 @@ inline bool getBitFlag(Integer bin, Pos pos)
 }
 
 template<class Integer, class Pos>
-inline Integer setBitFlag(Integer bin, Pos pos, bool flag = true)
+inline Integer setBitFlag(Integer bin, Pos pos, bool flag)
 {
     if (flag)
     {

@@ -212,12 +212,11 @@ inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double o
 
 //bit
 //==========================================================================
-template<class Integer, class Number>
-inline bool checkBitFlag(Integer n, Number f); // f [1-32] or [1-64], begin 1 not 0.
-template<class Integer, class Number>
-inline Integer appendBitFlag(Integer n, Number f);
-template<class Integer, class Number>
-inline Integer removeBitFlag(Integer n, Number f);
+template<class Integer, class Pos>
+inline bool getBitFlag(Integer bin, Pos pos);// f [1-32] or [1-64], begin 1 not 0.
+template<class Integer, class Pos>
+inline Integer setBitFlag(Integer bin, Pos pos, bool flag = true);// f [1-32] or [1-64], begin 1 not 0.
+
 
 //rand
 //==========================================================================
