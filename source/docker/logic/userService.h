@@ -40,7 +40,7 @@ public:
     void onUninit() override final;
     void onTick() override final;
 private:
-    bool onModuleInit(bool success);
+    void onModuleInit(bool success);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 

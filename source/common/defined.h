@@ -159,12 +159,17 @@ const std::vector<std::string> ServiceNames =
     "ServiceMax",
 };
 
+//forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID 
 struct Tracing
 {
+    DockerID _toDockerID = InvalidDockerID;
     ui16 _toServiceType;
     ServiceID _toServiceID = InvalidServiceID;
+
+    DockerID _fromDockerID = InvalidDockerID;
     ui16 _fromServiceType;
     ServiceID _fromServiceID = InvalidServiceID;
+
     ui32 _traceID = 0; //本地cbID  
     ui32 _traceBackID = 0; //把远程cbID透传回去  
 };
@@ -266,8 +271,10 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data)
 {
+    ws << data._toDockerID;
     ws << data._toServiceType;
     ws << data._toServiceID;
+    ws << data._fromDockerID;
     ws << data._fromServiceType;
     ws << data._fromServiceID;
     ws << data._traceID;
@@ -276,8 +283,10 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 }
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data)
 {
+    rs >> data._toDockerID;
     rs >> data._toServiceType;
     rs >> data._toServiceID;
+    rs >> data._fromDockerID;
     rs >> data._fromServiceType;
     rs >> data._fromServiceID;
     rs >> data._traceID;

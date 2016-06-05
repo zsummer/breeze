@@ -31,7 +31,7 @@ bool UserService::onInit()
     return true;
 }
 
-bool UserService::onModuleInit(bool success)
+void UserService::onModuleInit(bool success)
 {
     if (success)
     {
@@ -40,7 +40,7 @@ bool UserService::onModuleInit(bool success)
     else 
     { 
         Docker::getRef().stop(); 
-        return false; 
+        return ; 
     }
     if (_curInitedModuleCount == _totalInitedModuleCount)
     {
@@ -48,7 +48,7 @@ bool UserService::onModuleInit(bool success)
         AttachUserFromUserMgrResp resp(EC_SUCCESS, getClientDockerID(), getClientSessionID(), getServiceID());
         Docker::getRef().sendToDocker(getClientDockerID(), resp);
     }
-    return true;
+    return ;
 }
 
 void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)

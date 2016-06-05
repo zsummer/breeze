@@ -101,15 +101,16 @@ void Service::cleanCallback()
     }
 }
 
-void Service::toService(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb)
+void Service::toService(ui16 serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trace;
     trace._fromServiceType = getServiceType();
     trace._fromServiceID = getServiceID();
+    trace._fromDockerID = getDockerID();
     trace._traceBackID = 0;
     trace._traceID = 0;
-    trace._toServiceType = st;
-    trace._toServiceID = svcID;
+    trace._toServiceType = serviceType;
+    trace._toServiceID = serviceID;
     if (cb)
     {
         trace._traceID = makeCallback(cb);
@@ -117,20 +118,22 @@ void Service::toService(ui16 st, ServiceID svcID, const char * block, unsigned i
     Docker::getRef().toService(trace, block, len, true, true);
 }
 
-void Service::toService(ui16 st, const char * block, unsigned int len, ServiceCallback cb)
+void Service::toService(ui16 serviceType, const char * block, unsigned int len, ServiceCallback cb)
 {
-    toService(st, InvalidServiceID, block, len, cb);
+    toService(serviceType, InvalidServiceID, block, len, cb);
 }
 
 void Service::backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trc;
+    trc._fromDockerID = getDockerID();
     trc._fromServiceType = getServiceType();
     trc._fromServiceID = getServiceID();
     trc._traceBackID = trace._traceID;
     trc._traceID = 0;
     trc._toServiceType = trace._fromServiceType;
     trc._toServiceID = trace._fromServiceID;
+    trc._toDockerID = trace._fromDockerID;
     if (cb)
     {
         trc._traceID = makeCallback(cb);

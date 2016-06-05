@@ -960,6 +960,13 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         return;
     }
     LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+
+    if (trace._toDockerID != InvalidDockerID && trace._toDockerID != ServerConfig::getRef().getDockerID())
+    {
+        sendToDocker(trace._toDockerID, trace, block, len);
+        LOGT("Docker::toService  sendToDocker" << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+        return;
+    }
     ui16 toServiceType = trace._toServiceType;
     if (trace._toServiceType == ServiceClient)
     {
@@ -975,7 +982,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     auto fder = founder->second.find(trace._toServiceID);
     if (fder == founder->second.end())
     {
-        LOGD("Docker::toService can not found _toServiceType ID. trace =" << trace << ", block len=" << len);
+        LOGE("Docker::toService can not found _toServiceType ID. trace =" << trace << ", block len=" << len);
         return;
     }
     auto & service = *fder->second;

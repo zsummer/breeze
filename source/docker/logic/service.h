@@ -103,12 +103,12 @@ protected:
     virtual void process4bind(const Tracing & trace, const std::string & block);
 
 public:
-    void toService(ui16 st, const char * block, unsigned int len, ServiceCallback cb = nullptr);
-    void toService(ui16 st, ServiceID svcID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ui16 serviceType, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ui16 serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
-    void toService(ui16 st, Proto proto, ServiceCallback cb = nullptr);
+    void toService(ui16 serviceType, Proto proto, ServiceCallback cb = nullptr);
     template<class Proto>
-    void toService(ui16 st, ServiceID svcID, Proto proto, ServiceCallback cb = nullptr);
+    void toService(ui16 serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb = nullptr);
 
     void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
@@ -146,13 +146,13 @@ using ServicePtr = std::shared_ptr<Service>;
 using ServiceWeakPtr = std::shared_ptr<Service>;
 
 template<class Proto>
-void Service::toService(ui16 st, Proto proto, ServiceCallback cb)
+void Service::toService(ui16 serviceType, Proto proto, ServiceCallback cb)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(st, ws.getStream(), ws.getStreamLen(), cb);
+        toService(serviceType, ws.getStream(), ws.getStreamLen(), cb);
     }
     catch (const std::exception & e)
     {
@@ -160,13 +160,13 @@ void Service::toService(ui16 st, Proto proto, ServiceCallback cb)
     }
 }
 template<class Proto>
-void Service::toService(ui16 st, ServiceID svcID, Proto proto, ServiceCallback cb)
+void Service::toService(ui16 serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(st, svcID, ws.getStream(), ws.getStreamLen(), cb);
+        toService(serviceType, serviceID, ws.getStream(), ws.getStreamLen(), cb);
     }
     catch (const std::exception & e)
     {
