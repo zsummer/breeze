@@ -290,7 +290,7 @@ namespace  zsummer
             _sql = sql;
             _affectedRows = affected;
             _result = std::move(result);
-            _curIter = result.begin();
+            _curIter = _result.begin();
         }
 
         void DBResult::buildResult(QueryErrorCode qec, const std::string & sql, MYSQL * db)
