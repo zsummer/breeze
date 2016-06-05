@@ -32,6 +32,7 @@
 struct UserStatus
 {
     int _status = 0; //0 no Client no UserService,  1 Creating UserService, 2 normal, 3 destroying 
+    time_t _lastChangeTime = 0;
     UserPreview _preview;
 };
 using UserStatusPtr = std::shared_ptr<UserStatus>;
@@ -61,9 +62,11 @@ private:
     void onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req);
     void onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onClientDisconnectReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
     time_t _lastTime = 0;
+    std::map<ui64, UserStatusPtr> _freeList;
     std::map<ui64, UserStatusPtr> _userStatusByID;
     std::map<std::string, UserStatusPtr> _userStatusByName;
     std::map<std::string, AccountStatus> _accountStatus;

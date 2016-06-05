@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>3230cb8e2de64908442a1c4b1d3e8e59</cppmd5> 
-<luamd5>125294beadbddbbb7107a7660d434b32</luamd5> 
-<csharpmd5>1dc1f77271e759f61ec29afe1960ac40</csharpmd5> 
-<xmlmd5>1a91e1dace19582db4a6c89e8e5f1562</xmlmd5> 
+<cppmd5>e0c92668e1cd69f1d89a17a5e3980ed9</cppmd5> 
+<luamd5>5682c58e0e7caf000ec14bc7161c27d7</luamd5> 
+<csharpmd5>acf8d71fd91548530182890317b1105f</csharpmd5> 
+<xmlmd5>eae4405cf29c75d35ca08b6926d9544b</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_AttachUserFromUserMgrReq" Number = "4010" /> 
-    <cache key = "ID_AttachUserFromUserMgrResp" Number = "4011" /> 
-    <cache key = "ID_AttachUserReq" Number = "4004" /> 
-    <cache key = "ID_AttachUserResp" Number = "4005" /> 
-    <cache key = "ID_ClientAuthReq" Number = "4000" /> 
-    <cache key = "ID_ClientAuthResp" Number = "4001" /> 
-    <cache key = "ID_CreateUserFromUserMgrReq" Number = "4008" /> 
-    <cache key = "ID_CreateUserFromUserMgrResp" Number = "4009" /> 
-    <cache key = "ID_CreateUserReq" Number = "4002" /> 
-    <cache key = "ID_CreateUserResp" Number = "4003" /> 
-    <cache key = "ID_SelectUserPreviewsFromUserMgrReq" Number = "4006" /> 
-    <cache key = "ID_SelectUserPreviewsFromUserMgrResp" Number = "4007" /> 
+    <cache key = "ID_AttachUserFromUserMgrReq" Number = "4004" /> 
+    <cache key = "ID_AttachUserFromUserMgrResp" Number = "4005" /> 
+    <cache key = "ID_ClientDisconnectReq" Number = "4006" /> 
+    <cache key = "ID_CreateUserFromUserMgrReq" Number = "4002" /> 
+    <cache key = "ID_CreateUserFromUserMgrResp" Number = "4003" /> 
+    <cache key = "ID_SelectUserPreviewsFromUserMgrReq" Number = "4000" /> 
+    <cache key = "ID_SelectUserPreviewsFromUserMgrResp" Number = "4001" /> 
 </cacheNumber>

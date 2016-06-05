@@ -724,9 +724,18 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
     {
         if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
         {
+            Tracing trace;
+            trace._fromServiceType = ServiceClient;
+            trace._fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+            trace._toServiceType = ServiceUserMgr;
+            trace._toServiceID = InvalidServiceID;
 
+            ClientDisconnectReq serviceReq;
+            serviceReq.serviceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+            serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
+            serviceReq.clientSessionID = session->getSessionID();
+            toService(trace, serviceReq, true, true);
         }
-
     }
 }
 
@@ -1004,6 +1013,23 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         }
     }
 
+}
+
+
+
+bool Docker::isHadService(ServiceType serviceType, ServiceID serviceID)
+{
+    auto founder = _services.find(serviceType);
+    if (founder == _services.end())
+    {
+        return false;
+    }
+    auto fder = founder->second.find(serviceID);
+    if (fder == founder->second.end())
+    {
+        return false;
+    }
+    return true;
 }
 
 

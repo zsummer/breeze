@@ -83,7 +83,7 @@ public:
     void toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost);
 public:
     bool isStoping();
-
+    bool isHadService(ServiceType serviceType, ServiceID serviceID);
 private:
     bool startDockerListen();
     bool startDockerConnect();

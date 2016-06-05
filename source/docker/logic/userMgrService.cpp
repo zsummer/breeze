@@ -9,6 +9,7 @@ UserMgrService::UserMgrService()
     slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
     slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
     slotting<AttachUserFromUserMgrReq>(std::bind(&UserMgrService::onAttachUserFromUserMgrReq, this, _1, _2));
+    slotting<ClientDisconnectReq>(std::bind(&UserMgrService::onClientDisconnectReq, this, _1, _2));
 }
 
 UserMgrService::~UserMgrService()
@@ -23,6 +24,36 @@ void UserMgrService::onTick()
     {
         _lastTime = now;
         LOGD("UserMgrService::onTick");
+        for (auto iter = _freeList.begin(); iter != _freeList.end();)
+        {
+            if (!iter->second)
+            {
+                iter = _freeList.erase(iter);
+                continue;
+            }
+            else if (iter->second->_status == 2 && getNowTime() - iter->second->_lastChangeTime > 5*60)
+            {
+                iter->second->_status = 3;
+                iter->second->_lastChangeTime = getNowTime();
+                DestroyServiceInDocker destroy(ServiceUser, iter->second->_preview.serviceID);
+                Docker::getRef().sendToDockerByService(ServiceUser, iter->second->_preview.serviceID, destroy);
+            }
+            else if (iter->second->_status = 3 && getNowTime() - iter->second->_lastChangeTime > 30)
+            {
+                if (!Docker::getRef().isHadService(ServiceUser, iter->second->_preview.serviceID))
+                {
+                    iter->second->_status = 0;
+                    iter->second->_lastChangeTime = getNowTime();
+                    iter = _freeList.erase(iter);
+                    continue;
+                }
+                else
+                {
+                    LOGE("service not uninit finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.serviceID);
+                }
+            }
+            iter++;
+        }
     }
 }
 
@@ -253,6 +284,8 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
         return;
     }
+    status._lastChangeTime = getNowTime();
+    _freeList.erase(req.serviceID);
     if (status._status == 0)
     {
         DockerID dockerID = _balance.selectAuto();
@@ -266,16 +299,37 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         CreateServiceInDocker notice(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDocker(dockerID, notice);
     }
-    else
+    else if(status._status == 2)
     {
         ChangeServiceClient change(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDockerByService(ServiceUser, req.serviceID, change);
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
     }
+    else
+    {
+        resp.retCode = EC_ERROR; 
+        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        return;
+    }
 }
 
 
-
+void UserMgrService::onClientDisconnectReq(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+{
+    ClientDisconnectReq req;
+    rs >> req;
+    auto founder = _userStatusByID.find(req.serviceID);
+    if (founder == _userStatusByID.end())
+    {
+        LOGE("onClientDisconnectReq not found service id.  " << req.serviceID);
+        return;
+    }
+    founder->second->_status = 2;
+    founder->second->_lastChangeTime = getNowTime();
+    _freeList[req.serviceID] = founder->second;
+    ChangeServiceClient change(ServiceUser, req.serviceID, InvalidDockerID, InvalidSessionID);
+    Docker::getRef().sendToDockerByService(ServiceUser, req.serviceID, change);
+}
 
 
 
