@@ -961,7 +961,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     }
     LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
 
-    if (trace._toDockerID != InvalidDockerID && trace._toDockerID != ServerConfig::getRef().getDockerID())
+    if (trace._toDockerID != InvalidDockerID && trace._toDockerID != ServerConfig::getRef().getDockerID()) //service shell maybe not success. do this.
     {
         sendToDocker(trace._toDockerID, trace, block, len);
         LOGT("Docker::toService  sendToDocker" << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
