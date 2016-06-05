@@ -6,7 +6,7 @@
 
 UserMgrService::UserMgrService()
 {
-    slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onAttachUserPreviewsFromUserMgrReq, this, _1, _2));
+    slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
     slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
     slotting<AttachUserFromUserMgrReq>(std::bind(&UserMgrService::onAttachUserFromUserMgrReq, this, _1, _2));
 }
@@ -45,7 +45,7 @@ bool UserMgrService::onInit()
         return false;
     }
 
-    SQLQueryReq sql("select max(uID) from tb_UserBaseInfo");
+    SQLQueryReq sql("select max(serviceID) from tb_UserBaseInfo");
     toService(ServiceInfoDBMgr, sql,
         std::bind(&UserMgrService::onInitLastUIDFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1));
     return true;
@@ -57,12 +57,12 @@ void UserMgrService::onInitLastUIDFromDB(zsummer::proto4z::ReadStream & rs)
     rs >> resp;
     if (resp.retCode != EC_SUCCESS)
     {
-        LOGE("select max(uID) from tb_UserBaseInfo error.");
+        LOGE("select max(serviceID) from tb_UserBaseInfo error.");
         return;
     }
     if (resp.result.qc != QEC_SUCCESS || resp.result.fields.empty())
     {
-        LOGE("select max(uID) from tb_UserBaseInfo error. error sql msg=" << resp.result.errMsg);
+        LOGE("select max(serviceID) from tb_UserBaseInfo error. error sql msg=" << resp.result.errMsg);
         return;
     }
     _nextUserID = fromString<ui64>(resp.result.fields.front(), 0);
@@ -83,29 +83,29 @@ void UserMgrService::updateUserPreview(const UserPreview & pre)
     UserStatusPtr usp;
     if (true)
     {
-        auto founder = _userStatusByID.find(pre.uID);
+        auto founder = _userStatusByID.find(pre.serviceID);
         if (founder == _userStatusByID.end())
         {
             usp = std::make_shared<UserStatus>();
             usp->_status = 0;
             usp->_preview = pre;
-            _userStatusByID[pre.uID] = usp;
-            _userStatusByName[pre.uName] = usp;
+            _userStatusByID[pre.serviceID] = usp;
+            _userStatusByName[pre.serviceName] = usp;
         }
         else
         {
             usp = founder->second;
             usp->_preview = pre;
         }
-        _userStatusByName[pre.uName] = usp;
+        _userStatusByName[pre.serviceName] = usp;
     }
     if (true)
     {
         auto &acs = _accountStatus[pre.account];
-        acs._users[pre.uID] = usp;
+        acs._users[pre.serviceID] = usp;
     }
 }
-void UserMgrService::onAttachUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     SelectUserPreviewsFromUserMgrReq req;
     rs >> req;
@@ -124,14 +124,14 @@ void UserMgrService::onAttachUserPreviewsFromUserMgrReq(const Tracing & trace, z
     }
     else
     {
-        DBQuery q("select uID, account, nickName, iconID from tb_UserBaseInfo where account=?;");
+        DBQuery q("select serviceID, account, serviceName, iconID from tb_UserBaseInfo where account=?;");
         q << req.account;
         SQLQueryReq sql(q.pickSQL());
         toService(ServiceInfoDBMgr, sql, 
-            std::bind(&UserMgrService::onAttachUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
+            std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
     }
 }
-void UserMgrService::onAttachUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
+void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
 {
     LOGD("UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB");
     DBResult dbResult;
@@ -152,9 +152,9 @@ void UserMgrService::onAttachUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
     while (sqlResp.retCode == EC_SUCCESS && dbResult.getErrorCode() == QEC_SUCCESS && dbResult.haveRow())
     {
         UserPreview pre;
-        dbResult >> pre.uID;
+        dbResult >> pre.serviceID;
         dbResult >> pre.account;
-        dbResult >> pre.uName;
+        dbResult >> pre.serviceName;
         dbResult >> pre.iconID;
         resp.previews.push_back(pre);
         updateUserPreview(pre);
@@ -180,7 +180,7 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
         return;
     }
 
-    if (_userStatusByName.find(req.nickname) != _userStatusByName.end())
+    if (_userStatusByName.find(req.serviceName) != _userStatusByName.end())
     {
         resp.retCode = EC_ERROR;
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
@@ -189,8 +189,8 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
     founder->second._lastCreateTime = getNowTime();
     UserBaseInfo userBaseInfo;
     userBaseInfo.account = req.account;
-    userBaseInfo.uID = ++_nextUserID;
-    userBaseInfo.nickName = req.nickname;
+    userBaseInfo.serviceID = ++_nextUserID;
+    userBaseInfo.serviceName = req.serviceName;
     userBaseInfo.level = 1;
     userBaseInfo.iconID = 0;
 
@@ -218,7 +218,7 @@ void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStre
     }
     if (resp.retCode == EC_SUCCESS)
     {
-        UserPreview up(ubi.uID, ubi.nickName, ubi.iconID, ubi.account);
+        UserPreview up(ubi.serviceID, ubi.serviceName, ubi.iconID, ubi.account);
         updateUserPreview(up);
         for (const auto & kv : _accountStatus[ubi.account]._users)
         {
@@ -235,11 +235,11 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
     rs >> req;
     AttachUserFromUserMgrResp resp;
     resp.retCode = EC_SUCCESS;
-    resp.userServiceID = req.userServiceID;
+    resp.serviceID = req.serviceID;
     resp.clientDockerID = req.clientDockerID;
     resp.clientSessionID = req.clientSessionID;
 
-    auto founder = _userStatusByID.find(req.userServiceID);
+    auto founder = _userStatusByID.find(req.serviceID);
     if (founder == _userStatusByID.end() || founder->second->_preview.account != req.account)
     {
         resp.retCode = EC_ERROR;
@@ -263,13 +263,13 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
             return;
         }
         status._status = 1;
-        CreateServiceInDocker notice(ServiceUser, req.userServiceID, req.clientDockerID, req.clientSessionID);
+        CreateServiceInDocker notice(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDocker(dockerID, notice);
     }
     else
     {
-        ChangeServiceClient change(ServiceUser, req.userServiceID, req.clientDockerID, req.clientSessionID);
-        Docker::getRef().sendToDockerByService(ServiceUser, req.userServiceID, change);
+        ChangeServiceClient change(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
+        Docker::getRef().sendToDockerByService(ServiceUser, req.serviceID, change);
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
     }
 }

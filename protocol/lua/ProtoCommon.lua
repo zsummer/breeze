@@ -19,8 +19,8 @@ Proto4z.register(1000,"UserPreview")
 Proto4z.UserPreview = {} --用户预览信息 
 Proto4z.UserPreview.__getID = 1000 
 Proto4z.UserPreview.__getName = "UserPreview" 
-Proto4z.UserPreview[1] = {name="uID", type="ui64" } --用户ID 
-Proto4z.UserPreview[2] = {name="uName", type="string" } --昵称 
+Proto4z.UserPreview[1] = {name="serviceID", type="ui64" } --用户ID 
+Proto4z.UserPreview[2] = {name="serviceName", type="string" } --昵称 
 Proto4z.UserPreview[3] = {name="iconID", type="i16" } --头像 
 Proto4z.UserPreview[4] = {name="account", type="string" } --帐号 
  
@@ -29,18 +29,18 @@ Proto4z.UserPreviewArray.__getName = "UserPreviewArray"
 Proto4z.UserPreviewArray.__getDesc = "array" 
 Proto4z.UserPreviewArray.__getTypeV = "UserPreview" 
  
-Proto4z.UIDS = {}  
-Proto4z.UIDS.__getName = "UIDS" 
-Proto4z.UIDS.__getDesc = "array" 
-Proto4z.UIDS.__getTypeV = "ui64" 
+Proto4z.ServiceIDArray = {}  
+Proto4z.ServiceIDArray.__getName = "ServiceIDArray" 
+Proto4z.ServiceIDArray.__getDesc = "array" 
+Proto4z.ServiceIDArray.__getTypeV = "ui64" 
  
 Proto4z.register(1001,"UserBaseInfo") 
 Proto4z.UserBaseInfo = {} --用户基础数据 
 Proto4z.UserBaseInfo.__getID = 1001 
 Proto4z.UserBaseInfo.__getName = "UserBaseInfo" 
-Proto4z.UserBaseInfo[1] = {name="uID", type="ui64" } --用户唯一ID 
-Proto4z.UserBaseInfo[2] = {name="account", type="string" } --帐号 
-Proto4z.UserBaseInfo[3] = {name="nickName", type="string" } --昵称 
+Proto4z.UserBaseInfo[1] = {name="serviceID", type="ui64" } --用户唯一ID 
+Proto4z.UserBaseInfo[2] = {name="serviceName", type="string" } --昵称 
+Proto4z.UserBaseInfo[3] = {name="account", type="string" } --帐号 
 Proto4z.UserBaseInfo[4] = {name="iconID", type="i16" } --头像 
 Proto4z.UserBaseInfo[5] = {name="level", type="i32" } --等级 
  

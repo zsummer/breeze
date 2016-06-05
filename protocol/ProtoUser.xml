@@ -9,31 +9,7 @@
 
 <Proto>
 
-    <packet name="ClientAuthReq" desc= "认证请求">
-        <member name="account" type="string"   desc=""/>
-        <member name="token" type="string"   desc=""/>
-    </packet>
-     <packet name="ClientAuthResp" desc= "认证返回">
-        <member name="retCode" type="ui16"   desc=""/>
-        <member name="account" type="string"   desc=""/>
-        <member name="token" type="string"   desc=""/>
-        <member name="previews" type="UserPreviewArray"   desc=""/>
-    </packet>
 
-    <packet name="CreateUserReq" desc= "创角色请求">
-        <member name="nickname" type="string"   desc=""/>
-    </packet>
-     <packet name="CreateUserResp" desc= "创角色请求返回">
-        <member name="retCode" type="ui16"   desc=""/>
-        <member name="previews" type="UserPreviewArray"   desc=""/>
-    </packet>
-
-    <packet name="AttachUserReq" desc= "选角色请求">
-        <member name="uID" type="ui64"   desc=""/>
-    </packet>
-     <packet name="AttachUserResp" desc= "选角色请求返回">
-        <member name="retCode" type="ui16"   desc=""/>
-    </packet>
 
 
 

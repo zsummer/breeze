@@ -649,14 +649,49 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     }
     else if (rsShell.getProtoID() == SelectUserPreviewsFromUserMgrResp::getProtoID())
     {
+        SelectUserPreviewsFromUserMgrResp resp;
+        rsShell >> resp;
+        if (resp.retCode == EC_SUCCESS)
+        {
+            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
+            session->setUserParam(UPARAM_ACCOUNT, resp.account);
+        }
+        else
+        {
+            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+        }
+        ClientAuthResp clientResp;
+        clientResp.account = resp.account;
+        clientResp.retCode = resp.retCode;
+        clientResp.token = resp.token;
+        clientResp.previews = std::move(resp.previews);
+        sendToSession(resp.clientSessionID, clientResp);
         return;
     }
     else if (rsShell.getProtoID() == CreateUserFromUserMgrResp::getProtoID())
     {
+        CreateUserFromUserMgrResp resp;
+        rsShell >> resp;
+        CreateUserResp clientResp;
+        clientResp.retCode = resp.retCode;
+        clientResp.serviceID = resp.serviceID;
+        clientResp.previews = std::move(resp.previews);
+        sendToSession(resp.clientSessionID, clientResp);
         return;
     }
     else if (rsShell.getProtoID() == AttachUserFromUserMgrResp::getProtoID())
     {
+        AttachUserFromUserMgrResp resp;
+        rsShell >> resp;
+        if (resp.retCode == EC_SUCCESS)
+        {
+            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
+            session->setUserParam(UPARAM_SERVICE_ID, resp.serviceID);
+            session->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
+        }
+        AttachUserResp clientResp;
+        clientResp.retCode = resp.retCode;
+        sendToSession(resp.clientSessionID, clientResp);
         return;
     }
 }
@@ -697,7 +732,7 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
     }
     else
     {
-        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_LOGINED)
+        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
         {
 
         }
@@ -710,11 +745,11 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
 void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    SessionStatus ss = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
+    SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
     if (rs.getProtoID() == ClientAuthReq::getProtoID())
     {
         LOGD("ClientAuthReq sID=" << session->getSessionID() << ", block len=" << len);
-        if (ss != SSTATUS_UNKNOW)
+        if (sessionStatus != SSTATUS_UNKNOW)
         {
             LOGE("duplicate ClientAuthReq. sID=" << session->getSessionID());
             return;
@@ -739,7 +774,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     else if (rs.getProtoID() == CreateUserReq::getProtoID())
     {
         LOGD("CreateUserReq sID=" << session->getSessionID() << ", block len=" << len);
-        if (ss != SSTATUS_AUTHED)
+        if (sessionStatus != SSTATUS_AUTHED)
         {
             LOGE("CreateUserReq : client not authed. sID=" << session->getSessionID());
             return;
@@ -754,7 +789,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
 
         CreateUserFromUserMgrReq serviceReq;
         serviceReq.account = session->getUserParamString(UPARAM_ACCOUNT);
-        serviceReq.nickname = clientReq.nickname;
+        serviceReq.serviceName = clientReq.serviceName;
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
         toService(trace, serviceReq, true, true);
@@ -763,7 +798,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     else if (rs.getProtoID() == AttachUserReq::getProtoID())
     {
         LOGD("AttachUserReq sID=" << session->getSessionID() << ", block len=" << len);
-        if (ss != SSTATUS_AUTHED)
+        if (sessionStatus != SSTATUS_AUTHED)
         {
             LOGE("AttachUserReq : client not authed. sID=" << session->getSessionID());
             return;
@@ -777,21 +812,25 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         trace._toServiceID = InvalidServiceID;
 
         AttachUserFromUserMgrReq serviceReq;
-        serviceReq.userServiceID = clientReq.uID;
+        serviceReq.serviceID = clientReq.serviceID;
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
         toService(trace, serviceReq, true, true);
         return;
     }
-    else
+    else if (rs.getProtoID() >= 40000 && sessionStatus == SSTATUS_ATTACHED)
     {
+        LOGD("client other proto to user service. sID=" << session->getSessionID() << ", block len=" << len);
         Tracing trace;
         trace._fromServiceType = ServiceClient;
         trace._fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
         trace._toServiceType = ServiceUser;
         trace._toServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
-
         toService(trace, rs.getStream(), rs.getStreamLen(), true, true);
+    }
+    else
+    {
+        LOGE("client unknow proto or wrong status. protoID=" << rs.getProtoID() << ", status=" << (ui16)sessionStatus << ", sessionID=" << session->getSessionID());
     }
 }
 

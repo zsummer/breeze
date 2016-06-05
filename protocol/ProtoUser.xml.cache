@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>f87594f76a26b5d7062e6b4315cf14e4</cppmd5> 
-<luamd5>ffefca1c96bc0839cd2715b1bd44b4d6</luamd5> 
-<csharpmd5>363641226e031f9807fe868a983f2a09</csharpmd5> 
-<xmlmd5>b59f5c42bf9039222a6e337ea8427b57</xmlmd5> 
+<cppmd5>62a883cfbde027a36ce8b34f2e979a8f</cppmd5> 
+<luamd5>d41d8cd98f00b204e9800998ecf8427e</luamd5> 
+<csharpmd5>4e1a1a9709a82c1d56ada9cec1df14eb</csharpmd5> 
+<xmlmd5>888e69b4f0f8b16173074a250359fe95</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_AttachUserReq" Number = "40004" /> 
-    <cache key = "ID_AttachUserResp" Number = "40005" /> 
-    <cache key = "ID_ClientAuthReq" Number = "40000" /> 
-    <cache key = "ID_ClientAuthResp" Number = "40001" /> 
-    <cache key = "ID_CreateUserReq" Number = "40002" /> 
-    <cache key = "ID_CreateUserResp" Number = "40003" /> 
 </cacheNumber>

@@ -204,13 +204,13 @@ struct DBConfig
 
 const int MAX_ACCOUNT_USERS = 5;
 
-enum SessionStatus
+enum SessionStatus : ui16
 {
     SSTATUS_UNKNOW = 0,
     SSTATUS_TRUST, //受信任的服务器内部session 
     SSTATUS_AUTHING,
     SSTATUS_AUTHED,
-    SSTATUS_LOGINED,
+    SSTATUS_ATTACHED,
 };
 
 enum SessionUserData
