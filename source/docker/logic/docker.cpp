@@ -254,7 +254,7 @@ bool Docker::startDockerWideListen()
             if (getNowTime() - (time_t)last > 45000)
             {
                 LOGE("options._onSessionPulse check timeout failed. diff time=" << getNowTime() - (time_t)last);
-                session->close();
+                //session->close();
             }
         };
         options._sessionOptions._onSessionLinked = std::bind(&Docker::event_onClientLinked, this, _1);
@@ -651,14 +651,20 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     {
         SelectUserPreviewsFromUserMgrResp resp;
         rsShell >> resp;
+        auto clientSession = SessionManager::getRef().getTcpSession(resp.clientSessionID);
+        if (!clientSession)
+        {
+            LOGE("can not found client session. sessionID=" << resp.clientSessionID);
+            return;
+        }
         if (resp.retCode == EC_SUCCESS)
         {
-            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
-            session->setUserParam(UPARAM_ACCOUNT, resp.account);
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
+            clientSession->setUserParam(UPARAM_ACCOUNT, resp.account);
         }
         else
         {
-            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
         }
         ClientAuthResp clientResp;
         clientResp.account = resp.account;
@@ -683,11 +689,17 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     {
         AttachUserFromUserMgrResp resp;
         rsShell >> resp;
+        auto clientSession = SessionManager::getRef().getTcpSession(resp.clientSessionID);
+        if (!clientSession)
+        {
+            LOGE("can not found client session. sessionID=" << resp.clientSessionID);
+            return;
+        }
         if (resp.retCode == EC_SUCCESS)
         {
-            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
-            session->setUserParam(UPARAM_SERVICE_ID, resp.serviceID);
-            session->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
+            clientSession->setUserParam(UPARAM_SERVICE_ID, resp.serviceID);
+            clientSession->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
         }
         AttachUserResp clientResp;
         clientResp.retCode = resp.retCode;
@@ -775,7 +787,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         LOGD("CreateUserReq sID=" << session->getSessionID() << ", block len=" << len);
         if (sessionStatus != SSTATUS_AUTHED)
         {
-            LOGE("CreateUserReq : client not authed. sID=" << session->getSessionID());
+            LOGE("CreateUserReq : client not authed. sID=" << session->getSessionID() << ", sessionStatus=" << (short)sessionStatus);
             return;
         }
         CreateUserReq clientReq;

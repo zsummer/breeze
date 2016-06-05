@@ -43,6 +43,8 @@ function Session:onClientAuthResp(sID, msg)
         else
             send(sID, "CreateUserReq", {serviceName=self.serviceName})
         end
+    else
+	dump(msg, "error Session:onClientAuthResp")
     end
 end
 
