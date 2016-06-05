@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
-  <MinNo>1000</MinNo>
-  <MaxNo>20000</MaxNo>
+  <MinNo>40000</MinNo>
+  <MaxNo>50000</MaxNo>
   <UseLog4z>true</UseLog4z>
 </ProtoTraits>
 

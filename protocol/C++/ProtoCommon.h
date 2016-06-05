@@ -24,7 +24,7 @@ enum  : unsigned short
  
 struct UserPreview //用户预览信息  
 { 
-    static const unsigned short getProtoID() { return 200;} 
+    static const unsigned short getProtoID() { return 1000;} 
     static const std::string getProtoName() { return "UserPreview";} 
     unsigned long long uID; //用户ID  
     std::string uName; //昵称  
@@ -78,7 +78,7 @@ typedef std::vector<unsigned long long> UIDS;
  
 struct UserBaseInfo //用户基础数据  
 { 
-    static const unsigned short getProtoID() { return 201;} 
+    static const unsigned short getProtoID() { return 1001;} 
     static const std::string getProtoName() { return "UserBaseInfo";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 

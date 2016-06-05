@@ -5,7 +5,7 @@
  
 struct ClientAuthReq //认证请求  
 { 
-    static const unsigned short getProtoID() { return 1000;} 
+    static const unsigned short getProtoID() { return 40000;} 
     static const std::string getProtoName() { return "ClientAuthReq";} 
     std::string account;  
     std::string token;  
@@ -41,7 +41,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientAuthResp //认证返回  
 { 
-    static const unsigned short getProtoID() { return 1001;} 
+    static const unsigned short getProtoID() { return 40001;} 
     static const std::string getProtoName() { return "ClientAuthResp";} 
     unsigned short retCode;  
     std::string account;  
@@ -88,7 +88,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct CreateUserReq //创角色请求  
 { 
-    static const unsigned short getProtoID() { return 1002;} 
+    static const unsigned short getProtoID() { return 40002;} 
     static const std::string getProtoName() { return "CreateUserReq";} 
     std::string nickname;  
     CreateUserReq() 
@@ -119,7 +119,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct CreateUserResp //创角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 1003;} 
+    static const unsigned short getProtoID() { return 40003;} 
     static const std::string getProtoName() { return "CreateUserResp";} 
     unsigned short retCode;  
     UserPreviewArray previews;  
@@ -156,7 +156,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AttachUserReq //选角色请求  
 { 
-    static const unsigned short getProtoID() { return 1004;} 
+    static const unsigned short getProtoID() { return 40004;} 
     static const std::string getProtoName() { return "AttachUserReq";} 
     unsigned long long uID;  
     AttachUserReq() 
@@ -188,7 +188,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AttachUserResp //选角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 1005;} 
+    static const unsigned short getProtoID() { return 40005;} 
     static const std::string getProtoName() { return "AttachUserResp";} 
     unsigned short retCode;  
     AttachUserResp() 

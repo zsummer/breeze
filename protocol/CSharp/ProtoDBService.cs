@@ -34,8 +34,8 @@ namespace Proto4z
     public class SQLResult: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 41000;  
-        static public ushort getProtoID() { return 41000; } 
+        public const ushort protoID = 3000;  
+        static public ushort getProtoID() { return 3000; } 
         static public string getProtoName() { return "SQLResult"; } 
         //members   
         public ushort qc;  
@@ -116,8 +116,8 @@ namespace Proto4z
     public class SQLQueryReq: Proto4z.IProtoObject //通用SQL语句执行协议  
     {     
         //proto id   
-        public const ushort protoID = 41001;  
-        static public ushort getProtoID() { return 41001; } 
+        public const ushort protoID = 3001;  
+        static public ushort getProtoID() { return 3001; } 
         static public string getProtoName() { return "SQLQueryReq"; } 
         //members   
         public string sql;  
@@ -145,8 +145,8 @@ namespace Proto4z
     public class SQLQueryResp: Proto4z.IProtoObject //通用SQL语句执行协议返回,SQLResult可以借助dbHepler进行构建DBResult  
     {     
         //proto id   
-        public const ushort protoID = 41002;  
-        static public ushort getProtoID() { return 41002; } 
+        public const ushort protoID = 3002;  
+        static public ushort getProtoID() { return 3002; } 
         static public string getProtoName() { return "SQLQueryResp"; } 
         //members   
         public ushort retCode;  
@@ -181,8 +181,8 @@ namespace Proto4z
     public class SQLQueryArrayReq: Proto4z.IProtoObject //通用批量SQL语句执行协议  
     {     
         //proto id   
-        public const ushort protoID = 41003;  
-        static public ushort getProtoID() { return 41003; } 
+        public const ushort protoID = 3003;  
+        static public ushort getProtoID() { return 3003; } 
         static public string getProtoName() { return "SQLQueryArrayReq"; } 
         //members   
         public SQLStringArray sqls;  
@@ -212,8 +212,8 @@ namespace Proto4z
     public class SQLQueryArrayResp: Proto4z.IProtoObject //通用批量SQL语句执行协议  
     {     
         //proto id   
-        public const ushort protoID = 41004;  
-        static public ushort getProtoID() { return 41004; } 
+        public const ushort protoID = 3004;  
+        static public ushort getProtoID() { return 3004; } 
         static public string getProtoName() { return "SQLQueryArrayResp"; } 
         //members   
         public ushort retCode;  

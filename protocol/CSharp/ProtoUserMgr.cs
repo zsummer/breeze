@@ -5,8 +5,8 @@ namespace Proto4z
     public class SelectUserPreviewsFromUserMgrReq: Proto4z.IProtoObject //获取角色预览数据  
     {     
         //proto id   
-        public const ushort protoID = 20000;  
-        static public ushort getProtoID() { return 20000; } 
+        public const ushort protoID = 4000;  
+        static public ushort getProtoID() { return 4000; } 
         static public string getProtoName() { return "SelectUserPreviewsFromUserMgrReq"; } 
         //members   
         public string account;  
@@ -49,8 +49,8 @@ namespace Proto4z
     public class SelectUserPreviewsFromUserMgrResp: Proto4z.IProtoObject //获取角色预览数据  
     {     
         //proto id   
-        public const ushort protoID = 20001;  
-        static public ushort getProtoID() { return 20001; } 
+        public const ushort protoID = 4001;  
+        static public ushort getProtoID() { return 4001; } 
         static public string getProtoName() { return "SelectUserPreviewsFromUserMgrResp"; } 
         //members   
         public ushort retCode;  
@@ -105,8 +105,8 @@ namespace Proto4z
     public class CreateUserFromUserMgrReq: Proto4z.IProtoObject //创角色请求  
     {     
         //proto id   
-        public const ushort protoID = 20002;  
-        static public ushort getProtoID() { return 20002; } 
+        public const ushort protoID = 4002;  
+        static public ushort getProtoID() { return 4002; } 
         static public string getProtoName() { return "CreateUserFromUserMgrReq"; } 
         //members   
         public string account;  
@@ -149,8 +149,8 @@ namespace Proto4z
     public class CreateUserFromUserMgrResp: Proto4z.IProtoObject //创角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 20003;  
-        static public ushort getProtoID() { return 20003; } 
+        public const ushort protoID = 4003;  
+        static public ushort getProtoID() { return 4003; } 
         static public string getProtoName() { return "CreateUserFromUserMgrResp"; } 
         //members   
         public ushort retCode;  
@@ -195,8 +195,8 @@ namespace Proto4z
     public class AttachUserFromUserMgrReq: Proto4z.IProtoObject //选角色请求  
     {     
         //proto id   
-        public const ushort protoID = 20004;  
-        static public ushort getProtoID() { return 20004; } 
+        public const ushort protoID = 4004;  
+        static public ushort getProtoID() { return 4004; } 
         static public string getProtoName() { return "AttachUserFromUserMgrReq"; } 
         //members   
         public ulong userServiceID;  
@@ -239,8 +239,8 @@ namespace Proto4z
     public class AttachUserFromUserMgrResp: Proto4z.IProtoObject //选角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 20005;  
-        static public ushort getProtoID() { return 20005; } 
+        public const ushort protoID = 4005;  
+        static public ushort getProtoID() { return 4005; } 
         static public string getProtoName() { return "AttachUserFromUserMgrResp"; } 
         //members   
         public ushort retCode;  

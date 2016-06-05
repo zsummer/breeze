@@ -15,9 +15,9 @@ Proto4z.EC_FRIEND_CEILING = 101--达到好友上限
 Proto4z.EC_FRIEND_REFUSE = 102--不能添加对方为好友 
 Proto4z.EC_FRIEND_NOT_EXIST = 103--好友不存在 
  
-Proto4z.register(200,"UserPreview") 
+Proto4z.register(1000,"UserPreview") 
 Proto4z.UserPreview = {} --用户预览信息 
-Proto4z.UserPreview.__getID = 200 
+Proto4z.UserPreview.__getID = 1000 
 Proto4z.UserPreview.__getName = "UserPreview" 
 Proto4z.UserPreview[1] = {name="uID", type="ui64" } --用户ID 
 Proto4z.UserPreview[2] = {name="uName", type="string" } --昵称 
@@ -34,9 +34,9 @@ Proto4z.UIDS.__getName = "UIDS"
 Proto4z.UIDS.__getDesc = "array" 
 Proto4z.UIDS.__getTypeV = "ui64" 
  
-Proto4z.register(201,"UserBaseInfo") 
+Proto4z.register(1001,"UserBaseInfo") 
 Proto4z.UserBaseInfo = {} --用户基础数据 
-Proto4z.UserBaseInfo.__getID = 201 
+Proto4z.UserBaseInfo.__getID = 1001 
 Proto4z.UserBaseInfo.__getName = "UserBaseInfo" 
 Proto4z.UserBaseInfo[1] = {name="uID", type="ui64" } --用户唯一ID 
 Proto4z.UserBaseInfo[2] = {name="account", type="string" } --帐号 

@@ -24,8 +24,8 @@ namespace Proto4z
     public class UserPreview: Proto4z.IProtoObject //用户预览信息  
     {     
         //proto id   
-        public const ushort protoID = 200;  
-        static public ushort getProtoID() { return 200; } 
+        public const ushort protoID = 1000;  
+        static public ushort getProtoID() { return 1000; } 
         static public string getProtoName() { return "UserPreview"; } 
         //members   
         public ulong uID; //用户ID  
@@ -128,8 +128,8 @@ namespace Proto4z
     public class UserBaseInfo: Proto4z.IProtoObject //用户基础数据  
     {     
         //proto id   
-        public const ushort protoID = 201;  
-        static public ushort getProtoID() { return 201; } 
+        public const ushort protoID = 1001;  
+        static public ushort getProtoID() { return 1001; } 
         static public string getProtoName() { return "UserBaseInfo"; } 
         //members   
         public ulong uID; //用户唯一ID  
