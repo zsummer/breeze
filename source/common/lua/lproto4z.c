@@ -380,19 +380,20 @@ static int unpack(lua_State * L)
             printUnpackError(L, pos, dataLen, "i64/ui64");
             return 0;
         }
-/*        {
-            lua_pushlstring(L, &data[pos - 1], 8);
-            lua_pushinteger(L, pos + 8);
-        } */
 
+        unsigned long long v = 0;
+        memcpy(&v, &data[pos - 1], 8);
+        if (!isLittleEndian())
         {
-            unsigned long long v = 0;
-            memcpy(&v, &data[pos - 1], 8);
-            if (!isLittleEndian())
-            {
-                byteRevese((char*)&v, 8);
-            }
-
+            byteRevese((char*)&v, 8);
+        }
+        if (true) // number类型实现, 需要小于pow(2,52)
+        {
+            lua_pushnumber(L, (lua_Number)v);
+            lua_pushinteger(L, pos + 8);
+        }
+        else //字符串来实现I64/UI64类型 
+        {
             char buf[50] = { 0 };
             if (strcmp(tp, "i64") == 0)
             {
@@ -413,6 +414,7 @@ static int unpack(lua_State * L)
             lua_pushstring(L, buf);
             lua_pushinteger(L, pos + 8);
         }
+
     }
     else if (strcmp(tp, "float") == 0)
     {

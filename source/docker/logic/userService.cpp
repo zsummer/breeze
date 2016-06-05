@@ -27,7 +27,7 @@ void UserService::onUninit()
 
 bool UserService::onInit()
 {
-    _baseInfo.initFromDB(shared_from_this(), UserBaseInfo(getServiceID(), "", "", 0, 0), nullptr);
+    _baseInfo.initFromDB(shared_from_this(), UserBaseInfo(getServiceID(), "", "", 0, 0), std::bind(&UserService::onModuleInit, std::static_pointer_cast<UserService>(shared_from_this()), _1));
     return true;
 }
 

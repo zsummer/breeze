@@ -122,8 +122,6 @@ private:
     bool _dockerNetWorking = false;
     bool _dockerServiceWorking = false;
     AccepterID _wlisten = InvalidAccepterID;
-private:
-    //std::map<SessionID, ServiceID> _clientToService; //store in session
 };
 
 

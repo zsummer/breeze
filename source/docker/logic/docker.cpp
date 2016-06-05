@@ -829,6 +829,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
 
         AttachUserFromUserMgrReq serviceReq;
         serviceReq.serviceID = clientReq.serviceID;
+        serviceReq.account = session->getUserParamString(UPARAM_ACCOUNT);
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
         toService(trace, serviceReq, true, true);
