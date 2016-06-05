@@ -105,7 +105,6 @@ private:
     void event_onClientLinked(TcpSessionPtr session);
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    void event_onClientPulse(TcpSessionPtr   session);
 private:
     void event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onChangeServiceClient(TcpSessionPtr session, ReadStream & rs);

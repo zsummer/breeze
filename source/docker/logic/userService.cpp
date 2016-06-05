@@ -1,5 +1,5 @@
 ﻿#include "userService.h"
-
+#include <ProtoUserMgr.h>
 
 
 UserService::UserService()
@@ -30,6 +30,25 @@ bool UserService::onInit()
     return true;
 }
 
+bool UserService::onModuleInit(bool success)
+{
+    if (success)
+    {
+        _curInitedModuleCount++;
+    }
+    else 
+    { 
+        Docker::getRef().stop(); 
+        return false; 
+    }
+    if (_curInitedModuleCount == _totalInitedModuleCount)
+    {
+        finishInit();
+        AttachUserFromUserMgrResp resp(EC_SUCCESS, getClientDockerID(), getClientSessionID(), getServiceID());
+        Docker::getRef().sendToDocker(getClientDockerID(), resp);
+    }
+    return true;
+}
 
 void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
 {

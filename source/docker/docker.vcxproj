@@ -121,6 +121,9 @@
     <Xml Include="..\..\protocol\ProtoUser.xml" />
     <Xml Include="..\..\protocol\ProtoUserMgr.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\config.lua" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

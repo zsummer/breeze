@@ -10,6 +10,9 @@
     <Filter Include="protocol">
       <UniqueIdentifier>{9953ee49-8ac5-4fa8-aa47-0bd06bc7851a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{fffa076f-2d53-440c-b3db-e36ad5907fec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -76,5 +79,10 @@
     <Xml Include="..\..\protocol\ProtoUserMgr.xml">
       <Filter>protocol</Filter>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\config.lua">
+      <Filter>config</Filter>
+    </None>
   </ItemGroup>
 </Project>

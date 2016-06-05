@@ -699,17 +699,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
 
 
 
-void Docker::event_onClientPulse(TcpSessionPtr session)
-{
-    if (isSessionID(session->getSessionID()))
-    {
-        if (time(NULL) - session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME) > session->getOptions()._sessionPulseInterval / 1000 * 2)
-        {
-            session->close();
-            return;
-        }
-    }
-}
+
 
 
 

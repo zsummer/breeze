@@ -40,13 +40,7 @@ public:
     void onUninit() override final;
     void onTick() override final;
 private:
-    inline bool onModuleInit(bool success)
-    {
-        if (success) _curInitedModuleCount++;
-        else { Docker::getRef().stop(); return false; }
-        if (_curInitedModuleCount == _totalInitedModuleCount) finishInit();
-        return true;
-    }
+    bool onModuleInit(bool success);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
