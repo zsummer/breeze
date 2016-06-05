@@ -66,7 +66,7 @@ local function whenMessage(sID, pID, binData)
         loge("not have the message process function. name=on_" .. proto)
         return
     end
-    dump(msg, "protoID=" .. pID)
+    dump(msg, "proto=" .. proto)
     session["on" .. proto](session, sID, msg)
 end
 summer.whenMessage(whenMessage)
