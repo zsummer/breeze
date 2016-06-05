@@ -2,11 +2,32 @@
 namespace Proto4z  
 { 
  
-    public class ClientAuthReq: Proto4z.IProtoObject //认证请求  
+    public class ClientPulse: Proto4z.IProtoObject //客户端脉冲请求  
     {     
         //proto id   
         public const ushort protoID = 40000;  
         static public ushort getProtoID() { return 40000; } 
+        static public string getProtoName() { return "ClientPulse"; } 
+        //members   
+        public ClientPulse()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class ClientAuthReq: Proto4z.IProtoObject //认证请求  
+    {     
+        //proto id   
+        public const ushort protoID = 40001;  
+        static public ushort getProtoID() { return 40001; } 
         static public string getProtoName() { return "ClientAuthReq"; } 
         //members   
         public string account;  
@@ -39,8 +60,8 @@ namespace Proto4z
     public class ClientAuthResp: Proto4z.IProtoObject //认证返回  
     {     
         //proto id   
-        public const ushort protoID = 40001;  
-        static public ushort getProtoID() { return 40001; } 
+        public const ushort protoID = 40002;  
+        static public ushort getProtoID() { return 40002; } 
         static public string getProtoName() { return "ClientAuthResp"; } 
         //members   
         public ushort retCode;  
@@ -85,8 +106,8 @@ namespace Proto4z
     public class CreateUserReq: Proto4z.IProtoObject //创角色请求  
     {     
         //proto id   
-        public const ushort protoID = 40002;  
-        static public ushort getProtoID() { return 40002; } 
+        public const ushort protoID = 40003;  
+        static public ushort getProtoID() { return 40003; } 
         static public string getProtoName() { return "CreateUserReq"; } 
         //members   
         public string serviceName;  
@@ -114,8 +135,8 @@ namespace Proto4z
     public class CreateUserResp: Proto4z.IProtoObject //创角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 40003;  
-        static public ushort getProtoID() { return 40003; } 
+        public const ushort protoID = 40004;  
+        static public ushort getProtoID() { return 40004; } 
         static public string getProtoName() { return "CreateUserResp"; } 
         //members   
         public ushort retCode;  
@@ -155,8 +176,8 @@ namespace Proto4z
     public class AttachUserReq: Proto4z.IProtoObject //选角色请求  
     {     
         //proto id   
-        public const ushort protoID = 40004;  
-        static public ushort getProtoID() { return 40004; } 
+        public const ushort protoID = 40005;  
+        static public ushort getProtoID() { return 40005; } 
         static public string getProtoName() { return "AttachUserReq"; } 
         //members   
         public ulong serviceID;  
@@ -184,8 +205,8 @@ namespace Proto4z
     public class AttachUserResp: Proto4z.IProtoObject //选角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 40005;  
-        static public ushort getProtoID() { return 40005; } 
+        public const ushort protoID = 40006;  
+        static public ushort getProtoID() { return 40006; } 
         static public string getProtoName() { return "AttachUserResp"; } 
         //members   
         public ushort retCode;  
@@ -213,8 +234,8 @@ namespace Proto4z
     public class UserChatReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40006;  
-        static public ushort getProtoID() { return 40006; } 
+        public const ushort protoID = 40007;  
+        static public ushort getProtoID() { return 40007; } 
         static public string getProtoName() { return "UserChatReq"; } 
         //members   
         public ulong toServiceID;  
@@ -247,8 +268,8 @@ namespace Proto4z
     public class UserChatResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40007;  
-        static public ushort getProtoID() { return 40007; } 
+        public const ushort protoID = 40008;  
+        static public ushort getProtoID() { return 40008; } 
         static public string getProtoName() { return "UserChatResp"; } 
         //members   
         public ulong fromServiceID;  

@@ -9,6 +9,8 @@
 
 <Proto>
 
+    <packet name="ClientPulse" desc= "客户端脉冲请求">
+    </packet>
 
     <packet name="ClientAuthReq" desc= "认证请求">
         <member name="account" type="string"   desc=""/>

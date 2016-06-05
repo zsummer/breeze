@@ -24,6 +24,7 @@ function Session:ctor(sID, account, token, serviceName, iconID)
 end
 function Session:whenPulse(sID)
     logi("Session:whenPulse.  sID=" .. sID)
+    send(sID, "ClientPulse", {})
 end
 
 

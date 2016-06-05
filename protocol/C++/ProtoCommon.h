@@ -138,7 +138,12 @@ std::string  UserBaseInfo::getDBSelectPure()
 std::string  UserBaseInfo::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`() values()"); 
+    q.init("insert into `tb_UserBaseInfo`(`serviceID`,`serviceName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
+    q << this->serviceID; 
+    q << this->serviceName; 
+    q << this->account; 
+    q << this->iconID; 
+    q << this->level; 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBDelete() 

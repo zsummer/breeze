@@ -168,10 +168,8 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
     DBResult dbResult;
     SQLQueryResp sqlResp;
     rs >> sqlResp;
-    if (sqlResp.retCode == EC_SUCCESS)
-    {
-        dbResult.buildResult((QueryErrorCode)sqlResp.result.qc, sqlResp.result.errMsg, sqlResp.result.sql, sqlResp.result.affected, sqlResp.result.fields);
-    }
+    dbResult.buildResult((QueryErrorCode)sqlResp.result.qc, sqlResp.result.errMsg, sqlResp.result.sql, sqlResp.result.affected, sqlResp.result.fields);
+
 
     SelectUserPreviewsFromUserMgrResp resp;
     resp.account = req.account;
@@ -180,15 +178,19 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
     resp.clientDockerID = req.clientDockerID;
     resp.clientSessionID = req.clientSessionID;
     resp.retCode = sqlResp.retCode != EC_SUCCESS ? sqlResp.retCode : (dbResult.getErrorCode() != QEC_SUCCESS ? EC_DB_ERROR : EC_SUCCESS);
-    while (sqlResp.retCode == EC_SUCCESS && dbResult.getErrorCode() == QEC_SUCCESS && dbResult.haveRow())
+    if (sqlResp.retCode == EC_SUCCESS && dbResult.getErrorCode() == QEC_SUCCESS )
     {
-        UserPreview pre;
-        dbResult >> pre.serviceID;
-        dbResult >> pre.account;
-        dbResult >> pre.serviceName;
-        dbResult >> pre.iconID;
-        resp.previews.push_back(pre);
-        updateUserPreview(pre);
+        _accountStatus[resp.account];
+        while (dbResult.haveRow())
+        {
+            UserPreview pre;
+            dbResult >> pre.serviceID;
+            dbResult >> pre.account;
+            dbResult >> pre.serviceName;
+            dbResult >> pre.iconID;
+            resp.previews.push_back(pre);
+            updateUserPreview(pre);
+        }
     }
     Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
 }

@@ -191,7 +191,7 @@ bool Docker::startDockerConnect()
         options._onSessionPulse = [](TcpSessionPtr session)
         {
             auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-            if (last != 0 && getNowTime() - (time_t)last > 30000)
+            if (last != 0 && getNowTime() - (time_t)last > session->getOptions()._connectPulseInterval * 3)
             {
                 LOGE("options._onSessionPulse check timeout failed. diff time=" << getNowTime() - (time_t)last);
                 session->close();
@@ -251,10 +251,10 @@ bool Docker::startDockerWideListen()
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
         {
             auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-            if (getNowTime() - (time_t)last > 45000)
+            if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
             {
                 LOGE("options._onSessionPulse check timeout failed. diff time=" << getNowTime() - (time_t)last);
-                //session->close();
+                session->close();
             }
         };
         options._sessionOptions._onSessionLinked = std::bind(&Docker::event_onClientLinked, this, _1);
@@ -757,7 +757,12 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
 {
     ReadStream rs(begin, len);
     SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
-    if (rs.getProtoID() == ClientAuthReq::getProtoID())
+    if (rs.getProtoID() == ClientPulse::getProtoID())
+    {
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
+        return;
+    }
+    else if (rs.getProtoID() == ClientAuthReq::getProtoID())
     {
         LOGD("ClientAuthReq sID=" << session->getSessionID() << ", block len=" << len);
         if (sessionStatus != SSTATUS_UNKNOW)
@@ -838,6 +843,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         trace._toServiceType = ServiceUser;
         trace._toServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
         toService(trace, rs.getStream(), rs.getStreamLen(), true, true);
+        return;
     }
     else
     {

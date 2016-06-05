@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>55bd92b208c0deb306a76fd4df111b85</cppmd5> 
-<luamd5>93d26bf959e404d01c930a3ffbecb107</luamd5> 
-<csharpmd5>78406fcc2a26ec967deb3c42dcd72226</csharpmd5> 
-<xmlmd5>6c1fdc9076e2ec17996732ff07be7f85</xmlmd5> 
+<cppmd5>bcfeec7844d706babca70f6f239bbdf9</cppmd5> 
+<luamd5>7d87dc701a27a6a502acf4baea17b79a</luamd5> 
+<csharpmd5>eb2ce3e1d78c91bcbfb9b51a27e9de7b</csharpmd5> 
+<xmlmd5>8fb8c87820f3016e9f686507f218f24b</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_AttachUserReq" Number = "40004" /> 
-    <cache key = "ID_AttachUserResp" Number = "40005" /> 
-    <cache key = "ID_ClientAuthReq" Number = "40000" /> 
-    <cache key = "ID_ClientAuthResp" Number = "40001" /> 
-    <cache key = "ID_CreateUserReq" Number = "40002" /> 
-    <cache key = "ID_CreateUserResp" Number = "40003" /> 
-    <cache key = "ID_UserChatReq" Number = "40006" /> 
-    <cache key = "ID_UserChatResp" Number = "40007" /> 
+    <cache key = "ID_AttachUserReq" Number = "40005" /> 
+    <cache key = "ID_AttachUserResp" Number = "40006" /> 
+    <cache key = "ID_ClientAuthReq" Number = "40001" /> 
+    <cache key = "ID_ClientAuthResp" Number = "40002" /> 
+    <cache key = "ID_ClientPulse" Number = "40000" /> 
+    <cache key = "ID_CreateUserReq" Number = "40003" /> 
+    <cache key = "ID_CreateUserResp" Number = "40004" /> 
+    <cache key = "ID_UserChatReq" Number = "40007" /> 
+    <cache key = "ID_UserChatResp" Number = "40008" /> 
 </cacheNumber>

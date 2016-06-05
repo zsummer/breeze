@@ -82,6 +82,10 @@ void DBAsync::_asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
 {
     DBResultPtr ret = dbhelper->query(sql);
     _uFinalCount++;
+    if (ret->getErrorCode() != QEC_SUCCESS)
+    {
+        LOGE("_asyncQuery MYSQL ERROR. sql=" << ret->peekSQL() << " $$$$  error msg=" << ret->getErrorMsg());
+    }
     if (handler)
     {
         SessionManager::getRef().post(std::bind(handler, ret));
@@ -98,6 +102,10 @@ void DBAsync::_asyncQueryArray(DBHelperPtr &dbhelper, const std::vector<std::str
         ret = dbhelper->query(sqls.at(i));
         if (ret->getErrorCode() != QEC_SUCCESS)
         {
+            if (ret->getErrorCode() != QEC_SUCCESS)
+            {
+                LOGE("_asyncQueryArray MYSQL ERROR. sql=" << ret->peekSQL() << " $$$$  error msg=" << ret->getErrorMsg());
+            }
             isSuccess = false;
         }
         results.push_back(ret);
