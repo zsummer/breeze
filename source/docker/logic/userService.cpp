@@ -1,10 +1,11 @@
 ﻿#include "userService.h"
 #include <ProtoUserMgr.h>
+#include <ProtoUser.h>
 
 
 UserService::UserService()
 {
-    setServiceType(ServiceUser);
+    slotting<UserChatReq>(std::bind(&UserService::onChatReq, this, _1, _2));
 }
 
 UserService::~UserService() 
@@ -50,10 +51,13 @@ bool UserService::onModuleInit(bool success)
     return true;
 }
 
-void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &)
+void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    //toService;
-
-    //toService("client",_uID, ack);
+    UserChatReq req;
+    rs >> req;
+    UserChatResp resp;
+    resp.fromServiceID = getServiceID();
+    resp.msg = req.msg;
+    toService(ServiceClient, req.toServiceID, resp);
 }
 

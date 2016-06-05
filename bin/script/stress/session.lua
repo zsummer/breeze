@@ -1,7 +1,7 @@
 ﻿require("proto4z")
 require("ProtoCommon")
-require("ProtoLogin")
-require("ProtoChat")
+require("ProtoUser")
+
 
 Session = {}
 
@@ -14,69 +14,56 @@ function Session.new(...)
     return session
 end
 
-function Session:ctor(sID, account, token, nickName, iconID)
+function Session:ctor(sID, account, token, serviceName, iconID)
     self.sID=sID
     self.account=account
     self.token=token
-    self.nickName=nickName
+    self.serviceName=serviceName
+    self.serviceID=0
     self.iconID = iconID
 end
 function Session:whenPulse(sID)
     logi("Session:whenPulse.  sID=" .. sID)
 end
 
-function Session:onHeartbeat(sID, msg)
-    send(sID, "HeartbeatEcho", {timeStamp=msg.timeStamp,timeTick=msg.timeTick})
-end
 
 function Session:whenLinked(sID, remoteIP, remotePort)
-    if self.authed then
-        send(sID, "AttachLogicReq", {uID=self.uID, token=self.token})
-    else
-        send(sID, "PlatAuthReq", {account=self.account, token=self.token})
-    end
+    send(sID, "ClientAuthReq", {account=self.account, token=self.token})
 end
 
 function Session:onDisconnect(sID, remoteIP, remotePort)
 	logi("session is on disconnect. sID=" .. sID .. ", remoteIP=" .. remoteIP .. ", remotePort=" .. remotePort)
 end
 
-function Session:onPlatAuthAck(sID, msg)
+function Session:onClientAuthResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
-        if next(msg.users) then
-            send(sID, "SelectUserReq", {uID=msg.users[1].uID})
+        if next(msg.previews) then
+            self.serviceID = msg.previews[1].serviceID
+            send(sID, "AttachUserReq", {serviceID=msg.previews[1].serviceID})
         else
-            send(sID, "CreateUserReq", {nickName=self.nickName, iconID=self.iconID})
+            send(sID, "CreateUserReq", {serviceName=self.serviceName})
         end
     end
 end
 
-function Session:onCreateUserAck(sID, msg)
-    if next(msg.users) then
-        send(sID, "SelectUserReq", {uID=msg.users[1].uID})
+function Session:onCreateUserResp(sID, msg)
+    if next(msg.previews) then
+        self.serviceID = msg.previews[1].serviceID
+        send(sID, "AttachUserReq", {serviceID=msg.previews[1].serviceID})
+    else
+        loge("onCreateUserResp error.")
     end
 end
 
-function Session:onSelectUserAck(sID, msg)
+function Session:onAttachUserResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
-        self.uID = msg.uID
-        self.token = msg.token
-        self.ip = msg.ip
-        self.port = msg.port
-        self.authed = true
-        summer.kick(sID)
-        _sessions[sID] = nil
-        local newID = summer.addConnect(self.ip, self.port, nil, 4)
-        _sessions[newID] = self
+        if self.serviceID > 0 then
+            send(sID, "UserChatReq", {toServiceID=self.serviceID-1, msg="hellow"})
+        end
     end
 end
 
 -- 登录游戏
-function Session:onAttachLogicAck(sID, msg)
-    if msg.retCode == Proto4z.EC_SUCCESS then
-        logi("Session:onAttachLogicAck success")
-    else
-        loge("Session:onAttachLogicAck failed")
-    end
-
+function Session:onUserChatResp(sID, msg)
+    dump(msg)
 end

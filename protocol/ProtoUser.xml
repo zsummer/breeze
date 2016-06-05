@@ -38,7 +38,14 @@
     </packet>
 
 
-
+    <packet name="UserChatReq" desc= "">
+        <member name="toServiceID" type="ui64"   desc=""/>
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+     <packet name="UserChatResp" desc= "">
+        <member name="fromServiceID" type="ui64"   desc=""/>
+        <member name="msg" type="string"   desc=""/>
+    </packet>
 
 
 

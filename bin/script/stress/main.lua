@@ -79,7 +79,7 @@ summer.whenMessage(whenMessage)
 summer.start()
 
 
-for i=1, 3 do
+for i=1, 1 do
 	local sID = summer.addConnect(config.connect.stress[1].ip, config.connect.stress[1].port, nil, 0)
 	if sID == nil then
 		summer.logw("sID == nil when addConnect")

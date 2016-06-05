@@ -210,6 +210,74 @@ namespace Proto4z
         } 
     } 
  
+    public class UserChatReq: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40006;  
+        static public ushort getProtoID() { return 40006; } 
+        static public string getProtoName() { return "UserChatReq"; } 
+        //members   
+        public ulong toServiceID;  
+        public string msg;  
+        public UserChatReq()  
+        { 
+            toServiceID = 0;  
+            msg = "";  
+        } 
+        public UserChatReq(ulong toServiceID, string msg) 
+        { 
+            this.toServiceID = toServiceID; 
+            this.msg = msg; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.toServiceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.toServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class UserChatResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40007;  
+        static public ushort getProtoID() { return 40007; } 
+        static public string getProtoName() { return "UserChatResp"; } 
+        //members   
+        public ulong fromServiceID;  
+        public string msg;  
+        public UserChatResp()  
+        { 
+            fromServiceID = 0;  
+            msg = "";  
+        } 
+        public UserChatResp(ulong fromServiceID, string msg) 
+        { 
+            this.fromServiceID = fromServiceID; 
+            this.msg = msg; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromServiceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.fromServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
 } 
  
  

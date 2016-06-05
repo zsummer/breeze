@@ -40,3 +40,17 @@ Proto4z.AttachUserResp = {} --选角色请求返回
 Proto4z.AttachUserResp.__getID = 40005 
 Proto4z.AttachUserResp.__getName = "AttachUserResp" 
 Proto4z.AttachUserResp[1] = {name="retCode", type="ui16" }  
+ 
+Proto4z.register(40006,"UserChatReq") 
+Proto4z.UserChatReq = {}  
+Proto4z.UserChatReq.__getID = 40006 
+Proto4z.UserChatReq.__getName = "UserChatReq" 
+Proto4z.UserChatReq[1] = {name="toServiceID", type="ui64" }  
+Proto4z.UserChatReq[2] = {name="msg", type="string" }  
+ 
+Proto4z.register(40007,"UserChatResp") 
+Proto4z.UserChatResp = {}  
+Proto4z.UserChatResp.__getID = 40007 
+Proto4z.UserChatResp.__getName = "UserChatResp" 
+Proto4z.UserChatResp[1] = {name="fromServiceID", type="ui64" }  
+Proto4z.UserChatResp[2] = {name="msg", type="string" }  

@@ -224,4 +224,78 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct UserChatReq 
+{ 
+    static const unsigned short getProtoID() { return 40006;} 
+    static const std::string getProtoName() { return "UserChatReq";} 
+    unsigned long long toServiceID;  
+    std::string msg;  
+    UserChatReq() 
+    { 
+        toServiceID = 0; 
+    } 
+    UserChatReq(const unsigned long long & toServiceID, const std::string & msg) 
+    { 
+        this->toServiceID = toServiceID; 
+        this->msg = msg; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserChatReq & data) 
+{ 
+    ws << data.toServiceID;  
+    ws << data.msg;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserChatReq & data) 
+{ 
+    rs >> data.toServiceID;  
+    rs >> data.msg;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserChatReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "toServiceID=" << info.toServiceID << "\n"; 
+    stm << "msg=" << info.msg << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct UserChatResp 
+{ 
+    static const unsigned short getProtoID() { return 40007;} 
+    static const std::string getProtoName() { return "UserChatResp";} 
+    unsigned long long fromServiceID;  
+    std::string msg;  
+    UserChatResp() 
+    { 
+        fromServiceID = 0; 
+    } 
+    UserChatResp(const unsigned long long & fromServiceID, const std::string & msg) 
+    { 
+        this->fromServiceID = fromServiceID; 
+        this->msg = msg; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserChatResp & data) 
+{ 
+    ws << data.fromServiceID;  
+    ws << data.msg;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserChatResp & data) 
+{ 
+    rs >> data.fromServiceID;  
+    rs >> data.msg;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserChatResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "fromServiceID=" << info.fromServiceID << "\n"; 
+    stm << "msg=" << info.msg << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 #endif 
