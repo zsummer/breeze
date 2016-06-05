@@ -61,7 +61,7 @@ end
 function Session:onAttachUserResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
         if self.serviceID > 0 then
-            send(sID, "UserChatReq", {toServiceID=self.serviceID-1, msg="hellow"})
+            send(sID, "UserChatReq", {toServiceID=self.serviceID-1, msg="hello"})
         end
     end
 end
