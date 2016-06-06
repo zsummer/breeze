@@ -19,10 +19,11 @@ Proto4z.register(1000,"UserPreview")
 Proto4z.UserPreview = {} --用户预览信息 
 Proto4z.UserPreview.__getID = 1000 
 Proto4z.UserPreview.__getName = "UserPreview" 
-Proto4z.UserPreview[1] = {name="serviceID", type="ui64" } --用户ID 
+Proto4z.UserPreview[1] = {name="serviceID", type="ui64" } --用户唯一ID 
 Proto4z.UserPreview[2] = {name="serviceName", type="string" } --昵称 
-Proto4z.UserPreview[3] = {name="iconID", type="i16" } --头像 
-Proto4z.UserPreview[4] = {name="account", type="string" } --帐号 
+Proto4z.UserPreview[3] = {name="account", type="string" } --帐号 
+Proto4z.UserPreview[4] = {name="iconID", type="i16" } --头像 
+Proto4z.UserPreview[5] = {name="level", type="i32" } --等级 
  
 Proto4z.UserPreviewArray = {}  
 Proto4z.UserPreviewArray.__getName = "UserPreviewArray" 

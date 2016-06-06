@@ -28,39 +28,44 @@ namespace Proto4z
         static public ushort getProtoID() { return 1000; } 
         static public string getProtoName() { return "UserPreview"; } 
         //members   
-        public ulong serviceID; //用户ID  
+        public ulong serviceID; //用户唯一ID  
         public string serviceName; //昵称  
-        public short iconID; //头像  
         public string account; //帐号  
+        public short iconID; //头像  
+        public int level; //等级  
         public UserPreview()  
         { 
             serviceID = 0;  
             serviceName = "";  
-            iconID = 0;  
             account = "";  
+            iconID = 0;  
+            level = 0;  
         } 
-        public UserPreview(ulong serviceID, string serviceName, short iconID, string account) 
+        public UserPreview(ulong serviceID, string serviceName, string account, short iconID, int level) 
         { 
             this.serviceID = serviceID; 
             this.serviceName = serviceName; 
-            this.iconID = iconID; 
             this.account = account; 
+            this.iconID = iconID; 
+            this.level = level; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
+            this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             return pos; 
         } 
     } 

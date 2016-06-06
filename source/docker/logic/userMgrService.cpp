@@ -75,35 +75,76 @@ bool UserMgrService::onInit()
         LOGE("at least have one docker contain ServiceUser service ");
         return false;
     }
+    _nextUserID = ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8);
 
-    SQLQueryReq sql("select max(serviceID) from tb_UserBaseInfo");
-    toService(ServiceInfoDBMgr, sql,
-        std::bind(&UserMgrService::onInitLastUIDFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1));
+    std::string sql = trim(UserPreview().getDBSelectPure(), " ");
+    sql = subStringWithoutBack(sql, " ");
+    sql += " `tb_UserBaseInfo` ";
+    int curLimit = 0;
+    SQLQueryReq req(sql + "limit 0, 100");
+    toService(ServiceInfoDBMgr, req,
+        std::bind(&UserMgrService::onInitUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit, sql));
     return true;
 }
 
-void UserMgrService::onInitLastUIDFromDB(zsummer::proto4z::ReadStream & rs)
+void UserMgrService::onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql)
 {
     SQLQueryResp resp;
     rs >> resp;
     if (resp.retCode != EC_SUCCESS)
     {
-        LOGE("select max(serviceID) from tb_UserBaseInfo error.");
+        LOGE("onInitUserPreviewsFromDB error. errCode=" << resp.retCode 
+            << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() <<  ", sql=" << sql);
         return;
     }
-    if (resp.result.qc != QEC_SUCCESS || resp.result.fields.empty())
+    if (resp.result.qc != QEC_SUCCESS )
     {
-        LOGE("select max(serviceID) from tb_UserBaseInfo error. error sql msg=" << resp.result.errMsg);
+        LOGE("onInitUserPreviewsFromDB error. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+            << ", sql msg=" << resp.result.errMsg
+            << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
         return;
     }
-    _nextUserID = fromString<ui64>(resp.result.fields.front(), 0);
-    if (_nextUserID < ServerConfig::getRef().getAreaID() * (ui64)pow(10,8))
+    if (resp.result.fields.empty())
     {
-        _nextUserID = ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8);
+        LOGA("onInitUserPreviewsFromDB success. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+            << ", sql msg=" << resp.result.errMsg
+            << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
+
+        LOGD("onInitLastUIDFromDB _nextUserID=" << _nextUserID << ", areaID=" << ServerConfig::getRef().getAreaID()
+            << ", area begin uid=" << ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8));
+        finishInit();
+        return;
     }
-    LOGD("onInitLastUIDFromDB _nextUserID=" << _nextUserID << ", areaID=" << ServerConfig::getRef().getAreaID() 
-        << ", area begin uid=" << ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8));
-    finishInit();
+    DBResult result;
+    result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
+    while (result.haveRow())
+    {
+        UserStatusPtr usp = std::make_shared<UserStatus>();
+        usp->_status = 0;
+        usp->_lastChangeTime = getNowTime();
+        usp->_preview.fetchFromDBResult(result);
+
+        if (_userStatusByID.find(usp->_preview.serviceID) != _userStatusByID.end()
+            || _userStatusByName.find(usp->_preview.serviceName) != _userStatusByName.end())
+        {
+            LOGA("onInitUserPreviewsFromDB . errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+                << ", sql msg=" << resp.result.errMsg
+                << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
+            LOGE("User ID or Name conflict. " << usp->_preview);
+            return;
+        }
+        _userStatusByID[usp->_preview.serviceID] = usp;
+        _userStatusByName[usp->_preview.serviceName] = usp;
+        _accountStatus[usp->_preview.account]._users[usp->_preview.serviceID] = usp;
+        if (_nextUserID < usp->_preview.serviceID)
+        {
+            _nextUserID = usp->_preview.serviceID;
+        }
+    }
+    SQLQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
+    toService(ServiceInfoDBMgr, req,
+        std::bind(&UserMgrService::onInitUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit+100, sql));
+
 }
 
 
@@ -251,7 +292,7 @@ void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStre
     }
     if (resp.retCode == EC_SUCCESS)
     {
-        UserPreview up(ubi.serviceID, ubi.serviceName, ubi.iconID, ubi.account);
+        UserPreview up(ubi.serviceID, ubi.serviceName, ubi.account, ubi.iconID, ubi.level);
         updateUserPreview(up);
         for (const auto & kv : _accountStatus[ubi.account]._users)
         {

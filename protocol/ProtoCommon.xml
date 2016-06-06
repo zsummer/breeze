@@ -36,11 +36,12 @@
 
 
         <!-- 用户预览信息 -->
-    <packet name="UserPreview" desc="用户预览信息">
-        <member name="serviceID" type="ui64" desc="用户ID"/>
-        <member name="serviceName" type="string"   desc="昵称"/>
+    <packet name="UserPreview" store="MyISAM" desc="用户预览信息">
+        <member name="serviceID" type="ui64"  tag="key" desc="用户唯一ID"/>
+        <member name="serviceName" type="string" tag="uni"   desc="昵称"/>
+        <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i16" desc="头像"/>
-        <member name="account"  type="string" desc="帐号"/>
+        <member name="level"  type="i32" desc="等级"/>
     </packet>
     <array name="UserPreviewArray" type="UserPreview" desc="" />
     <array name="ServiceIDArray" type="ui64" desc="" />

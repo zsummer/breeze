@@ -51,7 +51,7 @@ public:
     UserMgrService();
     ~UserMgrService();
     bool onInit() override final;
-    void onInitLastUIDFromDB(zsummer::proto4z::ReadStream & rs);
+    void onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql);
     void onUninit() override final;
     void onTick() override final;
 private:
