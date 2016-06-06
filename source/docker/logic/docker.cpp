@@ -125,7 +125,6 @@ void Docker::stop()
 bool Docker::startDockerListen()
 {
     const auto & dockers = ServerConfig::getRef().getDockerConfig();
-    ServerConfig::getRef().getDockerID();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -228,7 +227,6 @@ bool Docker::startDockerConnect()
 bool Docker::startDockerWideListen()
 {
     const auto & dockers = ServerConfig::getRef().getDockerConfig();
-    ServerConfig::getRef().getDockerID();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -302,7 +300,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
         {
             if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
-                CreateOrRefreshServiceNotice notice(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getDockerID(), svc.second->getClientDockerID(), svc.second->getClientSessionID());
+                CreateOrRefreshServiceNotice notice(svc.second->getServiceType(), svc.second->getServiceID(), svc.second->getServiceDockerID(), svc.second->getClientDockerID(), svc.second->getClientSessionID());
                 Docker::getRef().sendToSession(session->getSessionID(), notice);
             }
         }
@@ -391,7 +389,7 @@ ServicePtr Docker::createService(ui16 serviceType, ServiceID serviceID, DockerID
         return nullptr;
     }
     service->setServiceType(serviceType);
-    service->setServiceID(serviceID);
+    service->setServiceDockerID(serviceID);
     service->setDockerID(dockerID);
     service->setClientSessionID(clientSessionID);
     service->setClientDockerID(clientDockerID);
@@ -544,7 +542,7 @@ void Docker::event_onChangeServiceClient(TcpSessionPtr session, ReadStream & rs)
     fder->second->setClientSessionID(service.clientSessionID);
     fder->second->setClientDockerID(service.clientDockerID);
     
-    Docker::getRef().broadcastToDockers(CreateOrRefreshServiceNotice(service.serviceType, service.serviceID, fder->second->getDockerID(), service.clientDockerID, service.clientSessionID), false);
+    Docker::getRef().broadcastToDockers(CreateOrRefreshServiceNotice(service.serviceType, service.serviceID, fder->second->getServiceDockerID(), service.clientDockerID, service.clientSessionID), false);
 }
 
 void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs)
@@ -944,7 +942,7 @@ void Docker::sendToDockerByService(ServiceType serviceType, ServiceID serviceID,
         LOGE("Docker::sendToDockerByService error. service id not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
         return;
     }
-    sendToDocker(fder->second->getDockerID(), block, len);
+    sendToDocker(fder->second->getServiceDockerID(), block, len);
 }
 
 
@@ -993,7 +991,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     }
     if (service.isShell()) //forward 
     {
-        DockerID dockerID = service.getDockerID();
+        DockerID dockerID = service.getServiceDockerID();
         sendToDocker(dockerID, trace, block, len);
         LOGT("Docker::toService  sendToDocker" << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
     }

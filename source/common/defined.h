@@ -121,9 +121,12 @@ typedef ui32 AreaID;
 typedef ui32 DockerID;
 const DockerID InvalidDockerID = 0;
 
+//每个service拥有两个唯一的基础属性ServiceID, ServiceName
 typedef ui64 ServiceID;
 const ui64 InvalidServiceID = (ServiceID)0;
 
+typedef std::string ServiceName;
+const ServiceName InvalidServiceName = "";
 
 enum ServiceType : ui16
 {
