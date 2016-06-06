@@ -38,7 +38,7 @@ void UserMgrService::onTick()
                 DestroyServiceInDocker destroy(ServiceUser, iter->second->_preview.serviceID);
                 Docker::getRef().sendToDockerByService(ServiceUser, iter->second->_preview.serviceID, destroy);
             }
-            else if (iter->second->_status = 3 && getNowTime() - iter->second->_lastChangeTime > 30)
+            else if (iter->second->_status == 3 && getNowTime() - iter->second->_lastChangeTime > 30)
             {
                 if (!Docker::getRef().isHadService(ServiceUser, iter->second->_preview.serviceID))
                 {

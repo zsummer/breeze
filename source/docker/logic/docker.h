@@ -180,7 +180,7 @@ void Docker::broadcastToDockers(const Proto & proto, const Tracing & trace, bool
             {
                 LOGW("Docker::broadcastToDockers warning error. session try connecting. dockerID=" << c.first << ", client session ID=" << c.second.sessionID);
             }
-            if (withme || ServerConfig::getRef().getServiceDockerID() != c.first)
+            if (withme || ServerConfig::getRef().getDockerID() != c.first)
             {
                 sendToSession(c.second.sessionID, forward.getStream(), forward.getStreamLen());
             }
