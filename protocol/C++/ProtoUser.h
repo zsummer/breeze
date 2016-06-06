@@ -318,4 +318,66 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct UserPingPongReq 
+{ 
+    static const unsigned short getProtoID() { return 40009;} 
+    static const std::string getProtoName() { return "UserPingPongReq";} 
+    std::string msg;  
+    UserPingPongReq() 
+    { 
+    } 
+    UserPingPongReq(const std::string & msg) 
+    { 
+        this->msg = msg; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserPingPongReq & data) 
+{ 
+    ws << data.msg;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPingPongReq & data) 
+{ 
+    rs >> data.msg;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserPingPongReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "msg=" << info.msg << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct UserPingPongResp 
+{ 
+    static const unsigned short getProtoID() { return 40010;} 
+    static const std::string getProtoName() { return "UserPingPongResp";} 
+    std::string msg;  
+    UserPingPongResp() 
+    { 
+    } 
+    UserPingPongResp(const std::string & msg) 
+    { 
+        this->msg = msg; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserPingPongResp & data) 
+{ 
+    ws << data.msg;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPingPongResp & data) 
+{ 
+    rs >> data.msg;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserPingPongResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "msg=" << info.msg << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 #endif 

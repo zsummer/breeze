@@ -6,6 +6,7 @@
 UserService::UserService()
 {
     slotting<UserChatReq>(std::bind(&UserService::onChatReq, this, _1, _2));
+    slotting<UserPingPongReq>(std::bind(&UserService::onUserPingPongReq, this, _1, _2));
 }
 
 UserService::~UserService() 
@@ -59,5 +60,20 @@ void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream 
     resp.fromServiceID = getServiceID();
     resp.msg = req.msg;
     toService(ServiceClient, req.toServiceID, resp);
+}
+
+void UserService::onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+    UserPingPongReq req;
+    rs >> req;
+    UserPingPongResp resp;
+    resp.msg = req.msg;
+    toService(ServiceClient, getServiceID(), resp);
+    static int testCount = 0;
+    testCount++;
+    if (testCount %10000 == 0)
+    {
+        LOGA("onUserPingPongReq count=" << testCount);
+    }
 }
 

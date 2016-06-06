@@ -299,6 +299,64 @@ namespace Proto4z
         } 
     } 
  
+    public class UserPingPongReq: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40009;  
+        static public ushort getProtoID() { return 40009; } 
+        static public string getProtoName() { return "UserPingPongReq"; } 
+        //members   
+        public string msg;  
+        public UserPingPongReq()  
+        { 
+            msg = "";  
+        } 
+        public UserPingPongReq(string msg) 
+        { 
+            this.msg = msg; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class UserPingPongResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40010;  
+        static public ushort getProtoID() { return 40010; } 
+        static public string getProtoName() { return "UserPingPongResp"; } 
+        //members   
+        public string msg;  
+        public UserPingPongResp()  
+        { 
+            msg = "";  
+        } 
+        public UserPingPongResp(string msg) 
+        { 
+            this.msg = msg; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
 } 
  
  

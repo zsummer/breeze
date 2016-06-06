@@ -63,10 +63,15 @@ function Session:onAttachUserResp(sID, msg)
         if self.serviceID > 0 then
             send(sID, "UserChatReq", {toServiceID=self.serviceID-1, msg="hello"})
         end
+        send(sID, "UserPingPongReq", { msg="hello"})
     end
 end
 
 -- 登录游戏
 function Session:onUserChatResp(sID, msg)
     dump(msg)
+end
+-- 登录游戏
+function Session:onUserPingPongResp(sID, msg)
+    send(sID, "UserPingPongReq", { msg="hello"})
 end

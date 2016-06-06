@@ -59,3 +59,15 @@ Proto4z.UserChatResp.__getID = 40008
 Proto4z.UserChatResp.__getName = "UserChatResp" 
 Proto4z.UserChatResp[1] = {name="fromServiceID", type="ui64" }  
 Proto4z.UserChatResp[2] = {name="msg", type="string" }  
+ 
+Proto4z.register(40009,"UserPingPongReq") 
+Proto4z.UserPingPongReq = {}  
+Proto4z.UserPingPongReq.__getID = 40009 
+Proto4z.UserPingPongReq.__getName = "UserPingPongReq" 
+Proto4z.UserPingPongReq[1] = {name="msg", type="string" }  
+ 
+Proto4z.register(40010,"UserPingPongResp") 
+Proto4z.UserPingPongResp = {}  
+Proto4z.UserPingPongResp.__getID = 40010 
+Proto4z.UserPingPongResp.__getName = "UserPingPongResp" 
+Proto4z.UserPingPongResp[1] = {name="msg", type="string" }  

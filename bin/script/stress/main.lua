@@ -66,7 +66,7 @@ local function whenMessage(sID, pID, binData)
         loge("not have the message process function. name=on_" .. proto)
         return
     end
-    dump(msg, "proto=" .. proto)
+    --dump(msg, "proto=" .. proto)
     session["on" .. proto](session, sID, msg)
 end
 summer.whenMessage(whenMessage)
@@ -80,7 +80,7 @@ summer.whenMessage(whenMessage)
 summer.start()
 
 
-for i=1, 2 do
+for i=1, 5 do
 	local sID = summer.addConnect(config.docker[1].wideIP, config.docker[1].widePort, nil, 0)
 	if sID == nil then
 		summer.logw("sID == nil when addConnect")

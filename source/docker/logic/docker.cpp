@@ -1006,7 +1006,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     {
         if (trace._toServiceType == ServiceClient)
         {
-            if (service.getClientDockerID() == InvalidDockerID || service.getClientSessionID() != InvalidSessionID)
+            if (service.getClientDockerID() == InvalidDockerID || service.getClientSessionID() == InvalidSessionID)
             {
                 LOGW("Docker::toService  ServiceClient sendToSession (client) warning. client dockerID or sessionID is Invalid "
                     <<", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()

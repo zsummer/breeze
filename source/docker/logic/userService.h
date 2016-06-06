@@ -43,11 +43,15 @@ private:
     void onModuleInit(bool success);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
     int _curInitedModuleCount = 0;
     int _totalInitedModuleCount = 1;
     ModuleData<UserBaseInfo> _baseInfo;
+
+
+    int _testCount = 0;
 };
 
 

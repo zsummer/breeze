@@ -49,7 +49,12 @@
         <member name="msg" type="string"   desc=""/>
     </packet>
 
-
+    <packet name="UserPingPongReq" desc= "">
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+     <packet name="UserPingPongResp" desc= "">
+        <member name="msg" type="string"   desc=""/>
+    </packet>
 
 </Proto>
 
