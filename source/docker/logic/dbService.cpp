@@ -22,7 +22,7 @@ void DBService::onTick()
     if (now - _lastTime > 60)
     {
         _lastTime = now;
-        LOGA("DBService [" << ServiceNames.at(getServiceType()) << "], finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
+        LOGA("DBService [" << ServiceTypeNames.at(getServiceType()) << "], finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
     }
 }
 
@@ -50,10 +50,10 @@ void DBService::onUninit()
 bool DBService::onInit()
 {
     const auto & dbConfigs = ServerConfig::getRef().getDBConfig();
-    auto founder = std::find_if(dbConfigs.begin(), dbConfigs.end(), [this](const DBConfig & dbc){return dbc._name == ServiceNames.at(getServiceType()); });
+    auto founder = std::find_if(dbConfigs.begin(), dbConfigs.end(), [this](const DBConfig & dbc){return dbc._name == ServiceTypeNames.at(getServiceType()); });
     if (founder == dbConfigs.end())
     {
-        LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] error. not found config");
+        LOGE("DBService::onInit [" << ServiceTypeNames.at(getServiceType()) << "] error. not found config");
         return false;
     }
     const auto & dbConfig = *founder;
@@ -61,13 +61,13 @@ bool DBService::onInit()
     _dbHelper->init(dbConfig._ip, dbConfig._port, dbConfig._db, dbConfig._user, dbConfig._pwd, true);
     if (!_dbHelper->connect())
     {
-        LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] connect error");
+        LOGE("DBService::onInit [" << ServiceTypeNames.at(getServiceType()) << "] connect error");
         return false;
     }
 
     if (!_dbAsync->start())
     {
-        LOGE("DBService::onInit [" << ServiceNames.at(getServiceType()) << "] error. start db thread error");
+        LOGE("DBService::onInit [" << ServiceTypeNames.at(getServiceType()) << "] error. start db thread error");
         return false;
     }
 

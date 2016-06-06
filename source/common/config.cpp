@@ -166,10 +166,10 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
             while (lua_next(L, -2))
             {
                 std::string service = luaL_checkstring(L, -1);
-                auto founder = std::find(ServiceNames.begin(), ServiceNames.end(), service);
-                if (founder != ServiceNames.end())
+                auto founder = std::find(ServiceTypeNames.begin(), ServiceTypeNames.end(), service);
+                if (founder != ServiceTypeNames.end())
                 {
-                    lconfig._services.push_back((founder - ServiceNames.begin()));
+                    lconfig._services.push_back((founder - ServiceTypeNames.begin()));
                 }
                 else
                 {
@@ -201,12 +201,12 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
         auto founder = _configServiceType.find(i);
         if (founder == _configServiceType.end() || founder->second.empty())
         {
-            LOGE("not found service in docker config. the service name=" << ServiceNames.at(i));
+            LOGE("not found service in docker config. the service name=" << ServiceTypeNames.at(i));
             return false;
         }
         if (founder->second.size() != 1)
         {
-            LOGE("service in docker config not single. the service name=" << ServiceNames.at(i));
+            LOGE("service in docker config not single. the service name=" << ServiceTypeNames.at(i));
             return false;
         }
     }
@@ -219,7 +219,7 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
         auto founder = _configServiceType.find(i);
         if (founder == _configServiceType.end() || founder->second.empty())
         {
-            LOGE("not found service in docker config. the service name=" << ServiceNames.at(i));
+            LOGE("not found service in docker config. the service name=" << ServiceTypeNames.at(i));
             return false;
         }
     }

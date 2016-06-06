@@ -66,17 +66,19 @@ public:
 
 public:
     inline ui16 getServiceType(){ return _serviceType; }
-    inline ServiceID getServiceID(){ return _serviceID; }
+    inline ServiceID getServiceID() { return _serviceID; }
+    inline ServiceName getServiceName() { return _serviceName; }
     inline DockerID getServiceDockerID() { return _serviceDockerID; }
-    inline SessionID getClientSessionID() { return _clientSessionID; }
     inline DockerID getClientDockerID() { return _clientDockerID; }
+    inline SessionID getClientSessionID() { return _clientSessionID; }
 
     inline ui16 getStatus() { return _status; }
     inline bool isShell() { return _shell; }
 protected:
     inline void setServiceType(ui16 serviceType) { _serviceType = serviceType; }
-    inline void setServiceDockerID(ServiceID serviceID) { _serviceID = serviceID; }
-    inline void setDockerID(DockerID dockerID) { _serviceDockerID = dockerID; }
+    inline void setServiceID(ServiceID serviceID) { _serviceID = serviceID; }
+    inline void setServiceName(ServiceName serviceName) { _serviceName = serviceName; }
+    inline void setServiceDockerID(DockerID dockerID) { _serviceDockerID = dockerID; }
     inline void setClientSessionID(SessionID clientSessionID) { _clientSessionID = clientSessionID; }
     inline void setClientDockerID(SessionID clientDockerID) { _clientDockerID = clientDockerID; }
 

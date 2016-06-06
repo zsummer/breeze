@@ -298,7 +298,7 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
             return;
         }
         status._status = 1;
-        CreateServiceInDocker notice(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
+        CreateServiceInDocker notice(ServiceUser, req.serviceID, status._preview.serviceName, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDocker(dockerID, notice);
     }
     else if(status._status == 2)

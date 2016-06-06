@@ -14,22 +14,27 @@
     <packet name="CreateServiceInDocker" desc= "创建并初始化一个service">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
+        <member name="serviceName" type="string"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
+
+    <packet name="CreateOrRefreshServiceNotice" desc= "广播给所有docker">
+        <member name="serviceDockerID" type="ui32"   desc=""/>
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="serviceName" type="string"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
     <packet name="ChangeServiceClient" desc= "更改clientID">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
-     <packet name="CreateOrRefreshServiceNotice" desc= "广播给所有docker">
-        <member name="serviceType" type="ui16"   desc=""/>
-        <member name="serviceID" type="ui64"   desc=""/>
-        <member name="dockerID" type="ui32"   desc=""/>
-        <member name="clientDockerID" type="ui32"   desc=""/>
-        <member name="clientSessionID" type="ui32"   desc=""/>
-    </packet>
+
 
     <packet name="DestroyServiceInDocker" desc= "销毁一个Service">
         <member name="serviceType" type="ui16"   desc=""/>

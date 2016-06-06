@@ -144,7 +144,7 @@ enum ServiceType : ui16
     //...
     ServiceMax,
 };
-const std::vector<std::string> ServiceNames =
+const std::vector<std::string> ServiceTypeNames =
 {
     "ServiceInvalid",
     "ServiceDictDBMgr",
@@ -238,8 +238,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
 {
     if (trace._fromServiceType < ServiceMax && trace._toServiceType < ServiceMax)
     {
-        os << "[_toServiceType=" << ServiceNames.at(trace._toServiceType) << ", _toServiceID=" << trace._toServiceID
-            << ", _fromServiceType=" << ServiceNames.at(trace._fromServiceType) << ", _fromServiceID=" << trace._fromServiceID
+        os << "[_toServiceType=" << ServiceTypeNames.at(trace._toServiceType) << ", _toServiceID=" << trace._toServiceID
+            << ", _fromServiceType=" << ServiceTypeNames.at(trace._fromServiceType) << ", _fromServiceID=" << trace._fromServiceID
             << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
             << "]";
     }
