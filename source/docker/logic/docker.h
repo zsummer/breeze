@@ -93,9 +93,10 @@ public:
     ServicePtr createService(DockerID serviceDockerID, ui16 serviceType, ServiceID serviceID, ServiceName serviceName, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit);
     void destroyService(ui16 serviceType, ServiceID serviceID);
 public:
-    void checkServiceState();
-    void onCheckSafeExit();
-
+    void buildCluster();
+    void destroyCluster();
+public:
+    void uninitAllService();
 
 private:
     void event_onServiceLinked(TcpSessionPtr session);

@@ -39,7 +39,7 @@ public:
     ~DBAsync();
     bool start();
     bool stop();
-    inline bool isStoped(){ return _bClosed; }
+    bool isStoped();
 public:
 
     //无论mysql遇到任何错误, 在当前服务节点关闭时, Post出去的请求数量肯定和Final的完成数量相等.

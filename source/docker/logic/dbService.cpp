@@ -31,8 +31,9 @@ void DBService::_checkSafeClosed()
 {
     if (_dbAsync->isStoped())
     {
-        finishUninit();
         LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
+        _dbHelper->stop();
+        finishUninit();
         return;
     }
     else
@@ -45,7 +46,6 @@ void DBService::onUninit()
 {
     _dbAsync->stop();
     _checkSafeClosed();
-    finishUninit();
 }
 
 void DBService::onClientChange()
@@ -105,7 +105,6 @@ bool DBService::onBuildDB()
         {
             return false;
         }
-        
     }
     return true;
 }

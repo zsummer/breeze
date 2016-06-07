@@ -311,6 +311,27 @@ namespace Proto4z
         } 
     } 
  
+    public class ShutdownClusterServer: Proto4z.IProtoObject //关闭服务器集群  
+    {     
+        //proto id   
+        public const ushort protoID = 2010;  
+        static public ushort getProtoID() { return 2010; } 
+        static public string getProtoName() { return "ShutdownClusterServer"; } 
+        //members   
+        public ShutdownClusterServer()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
     public class ForwardToService: Proto4z.IProtoObject //转发到其他docker上的Service  
     {     
         //proto id   

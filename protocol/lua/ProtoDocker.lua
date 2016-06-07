@@ -63,6 +63,11 @@ Proto4z.DestroyServiceNotice.__getName = "DestroyServiceNotice"
 Proto4z.DestroyServiceNotice[1] = {name="serviceType", type="ui16" }  
 Proto4z.DestroyServiceNotice[2] = {name="serviceID", type="ui64" }  
  
+Proto4z.register(2010,"ShutdownClusterServer") 
+Proto4z.ShutdownClusterServer = {} --关闭服务器集群 
+Proto4z.ShutdownClusterServer.__getID = 2010 
+Proto4z.ShutdownClusterServer.__getName = "ShutdownClusterServer" 
+ 
 Proto4z.register(2006,"ForwardToService") 
 Proto4z.ForwardToService = {} --转发到其他docker上的Service 
 Proto4z.ForwardToService.__getID = 2006 

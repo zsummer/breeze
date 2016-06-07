@@ -55,6 +55,9 @@
         <member name="serviceID" type="ui64"   desc=""/>
     </packet>
 
+    <packet name="ShutdownClusterServer" desc= "关闭服务器集群">
+    </packet>
+
 
     <packet name="ForwardToService" desc= "转发到其他docker上的Service">
         <header name="trace" type="tracing" desc="header field" />
@@ -69,6 +72,9 @@
             <attachment name="proto" type="any" desc="full proto serialize" />
         </body>
     </packet>
+
+
+
 
 
 </Proto>

@@ -62,7 +62,15 @@ bool DBAsync::stop()
     }
     return true;
 }
-
+bool DBAsync::isStoped() 
+{
+    if (!_bClosed)
+    {
+        return false;
+    }
+    _thread->join();
+    return true;
+}
 
 void DBAsync::asyncQuery(DBHelperPtr &dbhelper, const std::string &sql,
     const std::function<void(DBResultPtr)> & handler)

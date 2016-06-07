@@ -33,52 +33,57 @@ bool Docker::init(const std::string & config, DockerID idx)
         return false;
     }
     LOGA("Docker::init  success. dockerID=" << idx);
-    SessionManager::getRef().createTimer(1000, std::bind(&Docker::checkServiceState, Docker::getPtr()));
+    SessionManager::getRef().createTimer(1000, std::bind(&Docker::buildCluster, Docker::getPtr()));
     return true;
 }
+
 void sigInt(int sig)
 {
     if (g_closeState == 0)
     {
-        g_closeState = 1;
-        SessionManager::getRef().post(std::bind(&Docker::stop, Docker::getPtr()));
+        SessionManager::getRef().post(std::bind(&Docker::uninitAllService, Docker::getPtr()));
     }
 }
 
-void Docker::onCheckSafeExit()
+
+void Docker::uninitAllService()
 {
-    LOGA("Docker::onCheckSafeExit. checking.");
-
-    if (g_closeState == 1)
+    for (auto &second : _services)
     {
-        LOGA("Docker::onCheckSafeExit. g_closeState change to 2.");
-        g_closeState = 2;
-        for (auto &second : _services)
-        {
-            if (second.first == ServiceClient || second.first == ServiceInvalid)
-            {
-                continue;
-            }
-            for (auto & svc : second.second)
-            {
-                if (!svc.second->isShell())
-                {
-                    svc.second->onUninit(); //需要逐依赖关系uninit  
-                }
-            }
-        }
-    }
-
-    bool safe =  true;
-    for(auto &second : _services)
-    {
-        if (second.first == ServiceClient || second.first == ServiceUser || second.first == ServiceInvalid)
+        if (second.first == ServiceClient || second.first == ServiceInvalid)
         {
             continue;
         }
         for (auto & svc : second.second)
         {
-            if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)   //状态判断需要改  
+            if (!svc.second->isShell())
+            {
+                svc.second->onUninit();
+            }
+            else
+            {
+                DestroyServiceInDocker notice(svc.second->getServiceType(), svc.second->getServiceID());
+                sendToDockerByService((ServiceType)svc.second->getServiceType(), svc.second->getServiceID(), notice);
+            }
+        }
+    }
+    Docker::getRef().stop();
+}
+
+void Docker::destroyCluster()
+{
+    LOGA("Docker::destroyCluster. checking.");
+
+    bool safe =  true;
+    for(auto &second : _services)
+    {
+        if (second.first == ServiceClient || second.first == ServiceInvalid)
+        {
+            continue;
+        }
+        for (auto & svc : second.second)
+        {
+            if (!svc.second->isShell() && (svc.second->getStatus() == SS_WORKING || svc.second->getStatus() == SS_UNINITING))   //状态判断需要改  
             {
                 safe = false;
             }
@@ -94,7 +99,7 @@ void Docker::onCheckSafeExit()
     }
     else
     {
-        SessionManager::getRef().createTimer(1000, std::bind(&Docker::onCheckSafeExit, this));
+        SessionManager::getRef().createTimer(1000, std::bind(&Docker::destroyCluster, this));
     }
 }
 bool Docker::run()
@@ -111,14 +116,17 @@ bool Docker::isStoping()
 
 void Docker::stop()
 {
-    g_closeState = 1;
-    SessionManager::getRef().stopAccept();
-    if (_wlisten != InvalidAccepterID)
+    if (g_closeState == 0)
     {
+        g_closeState = 1;
         SessionManager::getRef().stopAccept();
-        SessionManager::getRef().kickClientSession(_wlisten);
+        if (_wlisten != InvalidAccepterID)
+        {
+            SessionManager::getRef().stopAccept();
+            SessionManager::getRef().kickClientSession(_wlisten);
+        }
+        destroyCluster();
     }
-    onCheckSafeExit();
     return ;
 }
 
@@ -312,7 +320,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
             }
         }
     }
-    checkServiceState();
+    buildCluster();
 }
 
 void Docker::event_onServiceClosed(TcpSessionPtr session)
@@ -410,9 +418,9 @@ goExit:
     return nullptr;
 }
 
-void Docker::checkServiceState()
+void Docker::buildCluster()
 {
-    SessionManager::getRef().createTimer(1000, std::bind(&Docker::checkServiceState, Docker::getPtr()));
+    SessionManager::getRef().createTimer(1000, std::bind(&Docker::buildCluster, Docker::getPtr()));
     if (!_dockerNetWorking)
     {
         for (auto & c : _dockerSession)
@@ -628,10 +636,16 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     {
         LOGT("event_onServiceMessage protoID=" << rsShell.getProtoID() << ", len=" << len);
     }
-    
+
     if (rsShell.getProtoID() == DockerPulse::getProtoID())
     {
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
+        return;
+    }
+    else if (rsShell.getProtoID() == ShutdownClusterServer::getProtoID() )
+    {
+        LOGA("on ShutdownClusterServer..");
+        stop();
         return;
     }
     else if (rsShell.getProtoID() == CreateServiceInDocker::getProtoID())

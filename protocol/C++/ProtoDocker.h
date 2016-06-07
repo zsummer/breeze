@@ -347,6 +347,26 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct ShutdownClusterServer //关闭服务器集群  
+{ 
+    static const unsigned short getProtoID() { return 2010;} 
+    static const std::string getProtoName() { return "ShutdownClusterServer";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ShutdownClusterServer & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ShutdownClusterServer & data) 
+{ 
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ShutdownClusterServer & info) 
+{ 
+    stm << "[\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct ForwardToService //转发到其他docker上的Service  
 { 
     static const unsigned short getProtoID() { return 2006;} 
