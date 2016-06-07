@@ -10,7 +10,6 @@
 <Proto>
 
 
-
     <packet name="SelectUserPreviewsFromUserMgrReq" desc= "获取角色预览数据">
         <member name="account" type="string"   desc=""/>
         <member name="token" type="string"   desc=""/>
@@ -55,11 +54,5 @@
     </packet>
 
 
-     <packet name="ClientDisconnectReq" desc= "客户端断开了,通知给UserMgr">
-        <member name="retCode" type="ui16"   desc=""/>
-        <member name="clientDockerID" type="ui32"   desc=""/>
-        <member name="clientSessionID" type="ui32"   desc=""/>
-        <member name="serviceID" type="ui64"   desc=""/>
-    </packet>
 </Proto>
 

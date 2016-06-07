@@ -30,17 +30,29 @@ void Service::onTimer()
 
 bool Service::finishInit()
 {
+    setStatus(SS_WORKING);
     if (!isShell())
     {
         LOGI("local service finish init. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
-        CreateOrRefreshServiceNotice notice(getServiceDockerID(), getServiceType(), getServiceID(), getServiceName(),  getClientDockerID(), getClientSessionID());
+        CreateOrRefreshServiceNotice notice(
+            getServiceDockerID(), 
+            getServiceType(), 
+            getServiceID(), 
+            getServiceName(), 
+            getStatus(),  
+            getClientDockerID(), 
+            getClientSessionID());
         Docker::getRef().broadcastToDockers(notice, false);
+        for (ui16 i= ServiceInvalid+1; i < ServiceMulti; i++)
+        {
+            toService(i, notice, nullptr);
+        }
     }
     else
     {
         LOGI("remote service finish init. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
     }
-    setStatus(SS_WORKING);
+    
     return true;
 }
 bool Service::finishUninit()
@@ -180,7 +192,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
         }
         else
         {
-            LOGE("Service::process call process error. not found maping function. pID=" << rs.getProtoID() << ", trace=" << trace);
+            LOGW("Service::process call process warnning. not found maping function. pID=" << rs.getProtoID() << ", trace=" << trace);
         }
     }
     catch (const std::exception & e)

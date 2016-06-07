@@ -34,6 +34,7 @@ public:
     ShellService();
     ~ShellService();
     bool onInit() override final;
+    void onClientChange() override final;
     void onUninit() override final;
     void onTick() override final;
 private:

@@ -24,6 +24,7 @@
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="serviceName" type="string"   desc=""/>
+        <member name="status" type="ui16"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
@@ -35,6 +36,15 @@
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
 
+    <packet name="KickRealClient" desc= "踢掉一个客户端">
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="RealClientClosedNotice" desc= "客户端离线通知">
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
 
     <packet name="DestroyServiceInDocker" desc= "销毁一个Service">
         <member name="serviceType" type="ui16"   desc=""/>
@@ -60,6 +70,6 @@
         </body>
     </packet>
 
-    
+
 </Proto>
 

@@ -7,6 +7,7 @@
 DBService::DBService() 
 {
     _dbAsync = std::make_shared<DBAsync>();
+    slotting<CreateOrRefreshServiceNotice>([](Tracing, ReadStream &rs) {});
     slotting<SQLQueryReq>(std::bind(&DBService::onSQLQueryReq, this, _1, _2)); //不需要shared_from_this
     slotting<SQLQueryArrayReq>(std::bind(&DBService::onSQLQueryArrayReq, this, _1, _2)); //不需要shared_from_this
 }
@@ -45,6 +46,11 @@ void DBService::onUninit()
     _dbAsync->stop();
     _checkSafeClosed();
     finishUninit();
+}
+
+void DBService::onClientChange()
+{
+    return ;
 }
 
 bool DBService::onInit()
@@ -104,13 +110,7 @@ bool DBService::onBuildDB()
     return true;
 }
 
-static void defaultAsyncHandler(zsummer::mysql::DBResultPtr ptr)
-{
-    if (ptr->getErrorCode() != zsummer::mysql::QEC_SUCCESS)
-    {
-        LOGE("_defaultAsyncHandler error. msg=" << ptr->getErrorMsg() << ", org sql=" << ptr->peekSQL());
-    }
-}
+
 
 
 

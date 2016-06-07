@@ -60,7 +60,7 @@ end
 
 function Session:onAttachUserResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
-        if self.serviceID > 0 then
+        if math.fmod(self.serviceID, 10)  > 1 then
             send(sID, "UserChatReq", {toServiceID=self.serviceID-1, msg="hello"})
         end
         send(sID, "UserPingPongReq", { msg="hello"})

@@ -38,6 +38,7 @@ public:
 public:
     bool onInit() override final;
     void onUninit() override final;
+    void onClientChange() override final;
     void onTick() override final;
 private:
     void onModuleInit(bool success);

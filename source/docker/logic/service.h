@@ -47,6 +47,7 @@ const ProtoID InvalidProtoID = -1;
 
 enum ServiceStatus
 {
+    SS_NONE,
     SS_CREATED,
     SS_INITING,
     SS_WORKING,
@@ -93,6 +94,8 @@ protected:
 
     virtual bool onInit() = 0; //service初始化好之后要调用finishInit 
     bool finishInit();
+
+    virtual void onClientChange() = 0;
     virtual void onUninit() = 0;//service卸载好之后要调用finishUninit 
     bool finishUninit();
 
@@ -135,7 +138,7 @@ private:
     SessionID _clientSessionID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限UserService使用
     DockerID _clientDockerID = InvalidDockerID; //如果存在关联的客户端,则该ID代表在_clientSessionID所在dockerID. 目前仅限UserService使用
 
-    short _status = 0;
+    ui16 _status = SS_CREATED;
     bool _shell = false;
     
 

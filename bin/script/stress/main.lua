@@ -6,13 +6,14 @@ require("proto4z")
 require("session")
 
 dump = Proto4z.dump
-
+dump = function(...) end
 
 --{sID : {account, token, uID, nickName, iconID, ip, port, authed}}
 -- if authed then login logic server, else login login server.
 _sessions = {}
 
 function send(sID, protoName, proto)
+    logd("send " .. protoName)
     local data = Proto4z.encode(proto, protoName)
     summer.sendContent(sID, Proto4z[protoName].__getID, data)
 end
@@ -66,7 +67,7 @@ local function whenMessage(sID, pID, binData)
         loge("not have the message process function. name=on_" .. proto)
         return
     end
-    --dump(msg, "proto=" .. proto)
+    dump(msg, "proto=" .. proto)
     session["on" .. proto](session, sID, msg)
 end
 summer.whenMessage(whenMessage)
@@ -80,8 +81,10 @@ summer.whenMessage(whenMessage)
 summer.start()
 
 
-for i=1, 5 do
-	local sID = summer.addConnect(config.docker[1].wideIP, config.docker[1].widePort, nil, 0)
+for i=1, 6 do
+    local cur = #config.docker
+    cur = math.fmod (i, cur) + 1
+	local sID = summer.addConnect(config.docker[cur].wideIP, config.docker[cur].widePort, nil, 0)
 	if sID == nil then
 		summer.logw("sID == nil when addConnect")
     else

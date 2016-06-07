@@ -26,6 +26,15 @@ void UserService::onUninit()
     finishUninit();
 }
 
+void UserService::onClientChange()
+{
+    if (getClientDockerID() != InvalidDockerID && getClientSessionID() != InvalidSessionID)
+    {
+        AttachUserFromUserMgrResp resp(EC_SUCCESS, getClientDockerID(), getClientSessionID(), getServiceID());
+        Docker::getRef().sendToDocker(getClientDockerID(), resp);
+    }
+}
+
 bool UserService::onInit()
 {
     _baseInfo.initFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleInit, std::static_pointer_cast<UserService>(shared_from_this()), _1));

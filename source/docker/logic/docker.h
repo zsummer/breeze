@@ -77,13 +77,13 @@ public:
 
 
     //canForwardToOtherService 如果是来自其他docker的转发 不应该再转发出去.  
-    //needPost 如果是来自本地到本地的服务, 需要进行post解耦, 不应该直接调用process. 
+    //needPost 如果不清楚,就要填写true.   防止函数重入带来流程bug.
     void toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost);
     template<class Proto>
     void toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost);
 public:
     bool isStoping();
-    bool isHadService(ServiceType serviceType, ServiceID serviceID);
+    ServicePtr peekService(ServiceType serviceType, ServiceID serviceID);
 private:
     bool startDockerListen();
     bool startDockerConnect();
@@ -109,6 +109,7 @@ private:
     void event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onChangeServiceClient(TcpSessionPtr session, ReadStream & rs);
     void event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs);
+    void event_onKickRealClient(TcpSessionPtr session, ReadStream & rs);
     void event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs);
 

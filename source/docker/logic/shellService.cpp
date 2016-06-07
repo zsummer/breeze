@@ -31,6 +31,10 @@ bool ShellService::onInit()
     return true;
 }
 
+void ShellService::onClientChange()
+{
+    return ;
+}
 
 
 

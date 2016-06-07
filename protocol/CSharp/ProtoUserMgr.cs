@@ -285,50 +285,6 @@ namespace Proto4z
         } 
     } 
  
-    public class ClientDisconnectReq: Proto4z.IProtoObject //客户端断开了,通知给UserMgr  
-    {     
-        //proto id   
-        public const ushort protoID = 4006;  
-        static public ushort getProtoID() { return 4006; } 
-        static public string getProtoName() { return "ClientDisconnectReq"; } 
-        //members   
-        public ushort retCode;  
-        public uint clientDockerID;  
-        public uint clientSessionID;  
-        public ulong serviceID;  
-        public ClientDisconnectReq()  
-        { 
-            retCode = 0;  
-            clientDockerID = 0;  
-            clientSessionID = 0;  
-            serviceID = 0;  
-        } 
-        public ClientDisconnectReq(ushort retCode, uint clientDockerID, uint clientSessionID, ulong serviceID) 
-        { 
-            this.retCode = retCode; 
-            this.clientDockerID = clientDockerID; 
-            this.clientSessionID = clientSessionID; 
-            this.serviceID = serviceID; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
 } 
  
  

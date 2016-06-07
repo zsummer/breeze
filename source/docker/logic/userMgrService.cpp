@@ -6,10 +6,11 @@
 
 UserMgrService::UserMgrService()
 {
+    slotting<CreateOrRefreshServiceNotice>(std::bind(&UserMgrService::onCreateOrRefreshServiceNotice, this, _1, _2));
+    slotting<RealClientClosedNotice>(std::bind(&UserMgrService::onRealClientClosedNotice, this, _1, _2));
     slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
     slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
     slotting<AttachUserFromUserMgrReq>(std::bind(&UserMgrService::onAttachUserFromUserMgrReq, this, _1, _2));
-    slotting<ClientDisconnectReq>(std::bind(&UserMgrService::onClientDisconnectReq, this, _1, _2));
 }
 
 UserMgrService::~UserMgrService()
@@ -31,19 +32,10 @@ void UserMgrService::onTick()
                 iter = _freeList.erase(iter);
                 continue;
             }
-            else if (iter->second->_status == 2 && getNowTime() - iter->second->_lastChangeTime > 5*60)
+            else if (iter->second->_status == SS_DESTROY || (iter->second->_status == SS_UNINITING && getNowTime() - iter->second->_lastChangeTime > 30))
             {
-                iter->second->_status = 3;
-                iter->second->_lastChangeTime = getNowTime();
-                DestroyServiceInDocker destroy(ServiceUser, iter->second->_preview.serviceID);
-                Docker::getRef().sendToDockerByService(ServiceUser, iter->second->_preview.serviceID, destroy);
-            }
-            else if (iter->second->_status == 3 && getNowTime() - iter->second->_lastChangeTime > 30)
-            {
-                if (!Docker::getRef().isHadService(ServiceUser, iter->second->_preview.serviceID))
+                if (!Docker::getRef().peekService(ServiceUser, iter->second->_preview.serviceID))
                 {
-                    iter->second->_status = 0;
-                    iter->second->_lastChangeTime = getNowTime();
                     iter = _freeList.erase(iter);
                     continue;
                 }
@@ -60,6 +52,10 @@ void UserMgrService::onTick()
 void UserMgrService::onUninit()
 {
     finishUninit();
+}
+void UserMgrService::onClientChange()
+{
+    return ;
 }
 
 
@@ -119,26 +115,22 @@ void UserMgrService::onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
     result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
     while (result.haveRow())
     {
-        UserStatusPtr usp = std::make_shared<UserStatus>();
-        usp->_status = 0;
-        usp->_lastChangeTime = getNowTime();
-        usp->_preview.fetchFromDBResult(result);
+        UserPreview up;
+        up.fetchFromDBResult(result);
 
-        if (_userStatusByID.find(usp->_preview.serviceID) != _userStatusByID.end()
-            || _userStatusByName.find(usp->_preview.serviceName) != _userStatusByName.end())
+        if (_userStatusByID.find(up.serviceID) != _userStatusByID.end()
+            || _userStatusByName.find(up.serviceName) != _userStatusByName.end())
         {
             LOGA("onInitUserPreviewsFromDB . errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
                 << ", sql msg=" << resp.result.errMsg
                 << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
-            LOGE("User ID or Name conflict. " << usp->_preview);
+            LOGE("User ID or Name conflict. " << up);
             return;
         }
-        _userStatusByID[usp->_preview.serviceID] = usp;
-        _userStatusByName[usp->_preview.serviceName] = usp;
-        _accountStatus[usp->_preview.account]._users[usp->_preview.serviceID] = usp;
-        if (_nextUserID < usp->_preview.serviceID)
+        updateUserPreview(up);
+        if (_nextUserID < up.serviceID)
         {
-            _nextUserID = usp->_preview.serviceID;
+            _nextUserID = up.serviceID;
         }
     }
     SQLQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
@@ -159,7 +151,7 @@ void UserMgrService::updateUserPreview(const UserPreview & pre)
         if (founder == _userStatusByID.end())
         {
             usp = std::make_shared<UserStatus>();
-            usp->_status = 0;
+            usp->_status = SS_NONE;
             usp->_preview = pre;
             _userStatusByID[pre.serviceID] = usp;
             _userStatusByName[pre.serviceName] = usp;
@@ -177,6 +169,27 @@ void UserMgrService::updateUserPreview(const UserPreview & pre)
         acs._users[pre.serviceID] = usp;
     }
 }
+
+void UserMgrService::onCreateOrRefreshServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+    CreateOrRefreshServiceNotice notice;
+    rs >> notice;
+    if (notice.serviceType == ServiceUser)
+    {
+        auto founder = _userStatusByID.find(notice.serviceID);
+        if (founder == _userStatusByID.end())
+        {
+            LOGE("error");
+            return;
+        }
+        founder->second->_status = notice.status;
+        founder->second->_lastChangeTime = getNowTime();
+    }
+}
+
+
+
+
 void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     SelectUserPreviewsFromUserMgrReq req;
@@ -192,14 +205,17 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, z
         resp.clientSessionID = req.clientSessionID;
         resp.retCode = EC_PERMISSION_DENIED;
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
-
     }
     else
     {
-        DBQuery q("select serviceID, account, serviceName, iconID from tb_UserBaseInfo where account=?;");
+        std::string sql = trim(UserPreview().getDBSelectPure(), " ");
+        sql = subStringWithoutBack(sql, " ");
+        sql += " `tb_UserBaseInfo` where account=?;";
+ 
+        DBQuery q(sql);
         q << req.account;
-        SQLQueryReq sql(q.pickSQL());
-        toService(ServiceInfoDBMgr, sql, 
+        SQLQueryReq sqlReq(q.pickSQL());
+        toService(ServiceInfoDBMgr, sqlReq,
             std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
     }
 }
@@ -225,10 +241,7 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
         while (dbResult.haveRow())
         {
             UserPreview pre;
-            dbResult >> pre.serviceID;
-            dbResult >> pre.account;
-            dbResult >> pre.serviceName;
-            dbResult >> pre.iconID;
+            pre.fetchFromDBResult(dbResult);
             resp.previews.push_back(pre);
             updateUserPreview(pre);
         }
@@ -321,7 +334,7 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         return;
     }
     auto & status = *founder->second;
-    if (status._status == 1 || status._status == 3 )
+    if (status._status == SS_UNINITING || status._status == SS_INITING )
     {
         resp.retCode = EC_ERROR;
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
@@ -329,7 +342,7 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
     }
     status._lastChangeTime = getNowTime();
     _freeList.erase(req.serviceID);
-    if (status._status == 0)
+    if (status._status == SS_NONE || status._status == SS_DESTROY)
     {
         DockerID dockerID = _balance.selectAuto();
         if (dockerID == InvalidDockerID)
@@ -338,15 +351,18 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
             Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
             return;
         }
-        status._status = 1;
+        status._status = SS_INITING;
+        status._clientDockerID = req.clientDockerID;
+        status._clientSessionID = req.clientSessionID;
         CreateServiceInDocker notice(ServiceUser, req.serviceID, status._preview.serviceName, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDocker(dockerID, notice);
     }
-    else if(status._status == 2)
+    else if(status._status == SS_WORKING)
     {
+        status._clientDockerID = req.clientDockerID;
+        status._clientSessionID = req.clientSessionID;
         ChangeServiceClient change(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDockerByService(ServiceUser, req.serviceID, change);
-        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
     }
     else
     {
@@ -357,21 +373,26 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
 }
 
 
-void UserMgrService::onClientDisconnectReq(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+void UserMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
-    ClientDisconnectReq req;
-    rs >> req;
-    auto founder = _userStatusByID.find(req.serviceID);
+    RealClientClosedNotice notice;
+    rs >> notice;
+    auto founder = _userStatusByID.find(notice.serviceID);
     if (founder == _userStatusByID.end())
     {
-        LOGE("onClientDisconnectReq not found service id.  " << req.serviceID);
+        LOGE("onRealClientClosedNotice not found service id.  " << notice.serviceID);
         return;
     }
-    founder->second->_status = 2;
-    founder->second->_lastChangeTime = getNowTime();
-    _freeList[req.serviceID] = founder->second;
-    ChangeServiceClient change(ServiceUser, req.serviceID, InvalidDockerID, InvalidSessionID);
-    Docker::getRef().sendToDockerByService(ServiceUser, req.serviceID, change);
+    if (founder->second->_clientDockerID == notice.clientDockerID
+        && founder->second->_clientSessionID == notice.clientSessionID
+        && founder->second->_status == SS_WORKING)
+    {
+        ChangeServiceClient change(ServiceUser, notice.serviceID, InvalidDockerID, InvalidSessionID);
+        Docker::getRef().sendToDockerByService(ServiceUser, notice.serviceID, change);
+        founder->second->_lastChangeTime = getNowTime();
+        _freeList[notice.serviceID] = founder->second;
+    }
+
 }
 
 

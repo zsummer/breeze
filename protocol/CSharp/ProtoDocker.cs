@@ -83,6 +83,7 @@ namespace Proto4z
         public ushort serviceType;  
         public ulong serviceID;  
         public string serviceName;  
+        public ushort status;  
         public uint clientDockerID;  
         public uint clientSessionID;  
         public CreateOrRefreshServiceNotice()  
@@ -91,15 +92,17 @@ namespace Proto4z
             serviceType = 0;  
             serviceID = 0;  
             serviceName = "";  
+            status = 0;  
             clientDockerID = 0;  
             clientSessionID = 0;  
         } 
-        public CreateOrRefreshServiceNotice(uint serviceDockerID, ushort serviceType, ulong serviceID, string serviceName, uint clientDockerID, uint clientSessionID) 
+        public CreateOrRefreshServiceNotice(uint serviceDockerID, ushort serviceType, ulong serviceID, string serviceName, ushort status, uint clientDockerID, uint clientSessionID) 
         { 
             this.serviceDockerID = serviceDockerID; 
             this.serviceType = serviceType; 
             this.serviceID = serviceID; 
             this.serviceName = serviceName; 
+            this.status = status; 
             this.clientDockerID = clientDockerID; 
             this.clientSessionID = clientSessionID; 
         } 
@@ -110,6 +113,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.serviceType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
             return data; 
@@ -120,6 +124,7 @@ namespace Proto4z
             this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
@@ -163,6 +168,74 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class KickRealClient: Proto4z.IProtoObject //踢掉一个客户端  
+    {     
+        //proto id   
+        public const ushort protoID = 2008;  
+        static public ushort getProtoID() { return 2008; } 
+        static public string getProtoName() { return "KickRealClient"; } 
+        //members   
+        public uint clientSessionID;  
+        public KickRealClient()  
+        { 
+            clientSessionID = 0;  
+        } 
+        public KickRealClient(uint clientSessionID) 
+        { 
+            this.clientSessionID = clientSessionID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class RealClientClosedNotice: Proto4z.IProtoObject //客户端离线通知  
+    {     
+        //proto id   
+        public const ushort protoID = 2009;  
+        static public ushort getProtoID() { return 2009; } 
+        static public string getProtoName() { return "RealClientClosedNotice"; } 
+        //members   
+        public ulong serviceID;  
+        public uint clientDockerID;  
+        public uint clientSessionID;  
+        public RealClientClosedNotice()  
+        { 
+            serviceID = 0;  
+            clientDockerID = 0;  
+            clientSessionID = 0;  
+        } 
+        public RealClientClosedNotice(ulong serviceID, uint clientDockerID, uint clientSessionID) 
+        { 
+            this.serviceID = serviceID; 
+            this.clientDockerID = clientDockerID; 
+            this.clientSessionID = clientSessionID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
             this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 

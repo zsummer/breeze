@@ -27,11 +27,22 @@
 #include "service.h"
 #include <ProtoUserMgr.h>
 
-
+/*
+enum ServiceStatus
+{
+    SS_CREATED,
+    SS_INITING,
+    SS_WORKING,
+    SS_UNINITING,
+    SS_DESTROY,
+};
+*/
 
 struct UserStatus
 {
-    int _status = 0; //0 no Client no UserService,  1 Creating UserService, 2 normal, 3 destroying 
+    ui16 _status = SS_NONE;
+    DockerID _clientDockerID = InvalidDockerID;
+    SessionID _clientSessionID = InvalidSessionID;
     time_t _lastChangeTime = 0;
     UserPreview _preview;
 };
@@ -52,17 +63,19 @@ public:
     ~UserMgrService();
     bool onInit() override final;
     void onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql);
+    void onClientChange() override final;
     void onUninit() override final;
     void onTick() override final;
 private:
     void updateUserPreview(const UserPreview & pre);
 private:
+    void onCreateOrRefreshServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
     void onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req);
     void onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onClientDisconnectReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
     time_t _lastTime = 0;

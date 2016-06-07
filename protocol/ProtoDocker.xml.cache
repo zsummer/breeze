@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>87fa3de8625eda1c48af59d5e26ac073</cppmd5> 
-<luamd5>531ca7a66ab3cfae813064c5d2822400</luamd5> 
-<csharpmd5>0a5fac711e02fcee38aeb228fea1ffd6</csharpmd5> 
-<xmlmd5>99964abf6f7aa32f876b9a1c1a24c6fa</xmlmd5> 
+<cppmd5>f36b0f89348c113066cffdf37d491d65</cppmd5> 
+<luamd5>8a61db45d82ed1df61fb117eb6ca4af1</luamd5> 
+<csharpmd5>ee724b09824964e0aa0a7fdd2e52c2a0</csharpmd5> 
+<xmlmd5>017f6108bc2e0be56e7d910411738fef</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_ChangeServiceClient" Number = "2002" /> 
     <cache key = "ID_CreateOrRefreshServiceNotice" Number = "2003" /> 
@@ -13,4 +13,6 @@
     <cache key = "ID_DockerPulse" Number = "2000" /> 
     <cache key = "ID_ForwardToRealClient" Number = "2007" /> 
     <cache key = "ID_ForwardToService" Number = "2006" /> 
+    <cache key = "ID_KickRealClient" Number = "2008" /> 
+    <cache key = "ID_RealClientClosedNotice" Number = "2009" /> 
 </cacheNumber>

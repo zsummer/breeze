@@ -55,12 +55,3 @@ Proto4z.AttachUserFromUserMgrResp[1] = {name="retCode", type="ui16" }
 Proto4z.AttachUserFromUserMgrResp[2] = {name="clientDockerID", type="ui32" }  
 Proto4z.AttachUserFromUserMgrResp[3] = {name="clientSessionID", type="ui32" }  
 Proto4z.AttachUserFromUserMgrResp[4] = {name="serviceID", type="ui64" }  
- 
-Proto4z.register(4006,"ClientDisconnectReq") 
-Proto4z.ClientDisconnectReq = {} --客户端断开了,通知给UserMgr 
-Proto4z.ClientDisconnectReq.__getID = 4006 
-Proto4z.ClientDisconnectReq.__getName = "ClientDisconnectReq" 
-Proto4z.ClientDisconnectReq[1] = {name="retCode", type="ui16" }  
-Proto4z.ClientDisconnectReq[2] = {name="clientDockerID", type="ui32" }  
-Proto4z.ClientDisconnectReq[3] = {name="clientSessionID", type="ui32" }  
-Proto4z.ClientDisconnectReq[4] = {name="serviceID", type="ui64" }  

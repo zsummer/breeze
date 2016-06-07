@@ -22,8 +22,9 @@ Proto4z.CreateOrRefreshServiceNotice[1] = {name="serviceDockerID", type="ui32" }
 Proto4z.CreateOrRefreshServiceNotice[2] = {name="serviceType", type="ui16" }  
 Proto4z.CreateOrRefreshServiceNotice[3] = {name="serviceID", type="ui64" }  
 Proto4z.CreateOrRefreshServiceNotice[4] = {name="serviceName", type="string" }  
-Proto4z.CreateOrRefreshServiceNotice[5] = {name="clientDockerID", type="ui32" }  
-Proto4z.CreateOrRefreshServiceNotice[6] = {name="clientSessionID", type="ui32" }  
+Proto4z.CreateOrRefreshServiceNotice[5] = {name="status", type="ui16" }  
+Proto4z.CreateOrRefreshServiceNotice[6] = {name="clientDockerID", type="ui32" }  
+Proto4z.CreateOrRefreshServiceNotice[7] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(2002,"ChangeServiceClient") 
 Proto4z.ChangeServiceClient = {} --更改clientID 
@@ -33,6 +34,20 @@ Proto4z.ChangeServiceClient[1] = {name="serviceType", type="ui16" }
 Proto4z.ChangeServiceClient[2] = {name="serviceID", type="ui64" }  
 Proto4z.ChangeServiceClient[3] = {name="clientDockerID", type="ui32" }  
 Proto4z.ChangeServiceClient[4] = {name="clientSessionID", type="ui32" }  
+ 
+Proto4z.register(2008,"KickRealClient") 
+Proto4z.KickRealClient = {} --踢掉一个客户端 
+Proto4z.KickRealClient.__getID = 2008 
+Proto4z.KickRealClient.__getName = "KickRealClient" 
+Proto4z.KickRealClient[1] = {name="clientSessionID", type="ui32" }  
+ 
+Proto4z.register(2009,"RealClientClosedNotice") 
+Proto4z.RealClientClosedNotice = {} --客户端离线通知 
+Proto4z.RealClientClosedNotice.__getID = 2009 
+Proto4z.RealClientClosedNotice.__getName = "RealClientClosedNotice" 
+Proto4z.RealClientClosedNotice[1] = {name="serviceID", type="ui64" }  
+Proto4z.RealClientClosedNotice[2] = {name="clientDockerID", type="ui32" }  
+Proto4z.RealClientClosedNotice[3] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(2004,"DestroyServiceInDocker") 
 Proto4z.DestroyServiceInDocker = {} --销毁一个Service 

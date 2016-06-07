@@ -301,10 +301,11 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
             if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
                 CreateOrRefreshServiceNotice notice(
-                    svc.second->getServiceDockerID(), 
-                    svc.second->getServiceType(), 
+                    svc.second->getServiceDockerID(),
+                    svc.second->getServiceType(),
                     svc.second->getServiceID(),
                     svc.second->getServiceName(),
+                    svc.second->getStatus(),
                     svc.second->getClientDockerID(), 
                     svc.second->getClientSessionID());
                 Docker::getRef().sendToSession(session->getSessionID(), notice);
@@ -532,24 +533,29 @@ void Docker::event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & r
 
 void Docker::event_onChangeServiceClient(TcpSessionPtr session, ReadStream & rs)
 {
-    CreateServiceInDocker service;
-    rs >> service;
-    auto founder = _services.find(service.serviceType);
+    ChangeServiceClient change;
+    rs >> change;
+    auto founder = _services.find(change.serviceType);
     if (founder == _services.end())
     {
-        LOGE("event_onChangeServiceClient can't founder service type. service=" << ServiceTypeNames.at(service.serviceType));
+        LOGE("event_onChangeServiceClient can't founder service type. service=" << ServiceTypeNames.at(change.serviceType));
         return;
     }
-    auto fder = founder->second.find(service.serviceID);
+    auto fder = founder->second.find(change.serviceID);
     if (fder == founder->second.end() || fder->second->isShell())
     {
-        LOGE("event_onChangeServiceClient can't founder service id. service=" << ServiceTypeNames.at(service.serviceType) << ", id=" << service.serviceID);
+        LOGE("event_onChangeServiceClient can't founder service id. service=" << ServiceTypeNames.at(change.serviceType) << ", id=" << change.serviceID);
         return;
     }
-    fder->second->setClientSessionID(service.clientSessionID);
-    fder->second->setClientDockerID(service.clientDockerID);
-    
-    Docker::getRef().broadcastToDockers(CreateOrRefreshServiceNotice(fder->second->getServiceDockerID(), fder->second->getServiceType(), service.serviceID, fder->second->getServiceName(), service.clientDockerID, service.clientSessionID), false);
+    if (fder->second->getClientSessionID() != InvalidSessionID)
+    {
+        KickRealClient kick(fder->second->getClientSessionID());
+        Docker::getRef().sendToDocker(fder->second->getClientDockerID(), kick);
+    }
+    fder->second->setClientSessionID(change.clientSessionID);
+    fder->second->setClientDockerID(change.clientDockerID);
+    fder->second->onClientChange();
+    fder->second->finishInit();
 }
 
 void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs)
@@ -569,6 +575,17 @@ void Docker::event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStr
         servicePtr->setStatus(SS_WORKING);
     }
 }
+
+void Docker::event_onKickRealClient(TcpSessionPtr session, ReadStream & rs)
+{
+    KickRealClient notice;
+    rs >> notice;
+    SessionManager::getRef().kickSession(notice.clientSessionID);
+    LOGI("Docker::event_onKickRealClient kick client .  client session id=" << notice.clientSessionID);
+}
+
+
+
 
 void Docker::event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs)
 {
@@ -630,6 +647,11 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     else if (rsShell.getProtoID() == CreateOrRefreshServiceNotice::getProtoID())
     {
         event_onCreateOrRefreshServiceNotice(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == KickRealClient::getProtoID())
+    {
+        event_onKickRealClient(session, rsShell);
         return;
     }
     else if (rsShell.getProtoID() == DestroyServiceInDocker::getProtoID())
@@ -736,6 +758,7 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
         << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
     if (isConnectID(session->getSessionID()))
     {
+        LOGF("Unexpected");
     }
     else
     {
@@ -747,11 +770,11 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
             trace._toServiceType = ServiceUserMgr;
             trace._toServiceID = InvalidServiceID;
 
-            ClientDisconnectReq serviceReq;
-            serviceReq.serviceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
-            serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
-            serviceReq.clientSessionID = session->getSessionID();
-            toService(trace, serviceReq, true, true);
+            RealClientClosedNotice notice;
+            notice.serviceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+            notice.clientDockerID = ServerConfig::getRef().getDockerID();
+            notice.clientSessionID = session->getSessionID();
+            toService(trace, notice, true, true);
         }
     }
 }
@@ -1047,19 +1070,19 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
 
 
 
-bool Docker::isHadService(ServiceType serviceType, ServiceID serviceID)
+ServicePtr Docker::peekService(ServiceType serviceType, ServiceID serviceID)
 {
     auto founder = _services.find(serviceType);
     if (founder == _services.end())
     {
-        return false;
+        return nullptr;
     }
     auto fder = founder->second.find(serviceID);
     if (fder == founder->second.end())
     {
-        return false;
+        return nullptr;
     }
-    return true;
+    return fder->second;
 }
 
 
