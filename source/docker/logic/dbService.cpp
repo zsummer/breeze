@@ -27,7 +27,7 @@ void DBService::onTick()
     }
 }
 
-void DBService::_checkSafeClosed()
+void DBService::_checkSafeDestroy()
 {
     bool safe = true;
     auto service = Docker::getRef().peekService(ServiceUserMgr, InvalidServiceID);
@@ -42,13 +42,12 @@ void DBService::_checkSafeClosed()
             return;
         }
     }
-    SessionManager::getRef().createTimer(500, std::bind(&DBService::_checkSafeClosed, this));
+    SessionManager::getRef().createTimer(500, std::bind(&DBService::_checkSafeDestroy, this));
 }
 
 void DBService::onUninit()
 {
-
-    _checkSafeClosed();
+    _checkSafeDestroy();
 }
 
 void DBService::onClientChange()

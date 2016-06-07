@@ -67,6 +67,8 @@ public:
     void onUninit() override final;
     void onTick() override final;
 private:
+    void _checkSafeDestroy();
+private:
     void updateUserPreview(const UserPreview & pre);
 private:
     void onCreateOrRefreshServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);

@@ -57,7 +57,7 @@ private:
     DBAsyncPtr _dbAsync;
     time_t _lastTime = getNowTime();
 private:
-    void _checkSafeClosed();
+    void _checkSafeDestroy();
 };
 
 
