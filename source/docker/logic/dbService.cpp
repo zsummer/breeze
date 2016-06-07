@@ -29,22 +29,25 @@ void DBService::onTick()
 
 void DBService::_checkSafeClosed()
 {
-    if (_dbAsync->isStoped())
+    bool safe = true;
+    auto service = Docker::getRef().peekService(ServiceUserMgr, InvalidServiceID);
+    if (!service)
     {
-        LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
-        _dbHelper->stop();
-        finishUninit();
-        return;
+        _dbAsync->stop();
+        if (_dbAsync->isStoped())
+        {
+            LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
+            _dbHelper->stop();
+            finishUninit();
+            return;
+        }
     }
-    else
-    {
-        SessionManager::getRef().createTimer(500, std::bind(&DBService::_checkSafeClosed, this));
-    }
+    SessionManager::getRef().createTimer(500, std::bind(&DBService::_checkSafeClosed, this));
 }
 
 void DBService::onUninit()
 {
-    _dbAsync->stop();
+
     _checkSafeClosed();
 }
 

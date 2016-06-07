@@ -67,7 +67,8 @@ void Docker::uninitAllService()
             }
         }
     }
-    Docker::getRef().stop();
+    ShutdownClusterServer notice;
+    Docker::getRef().broadcastToDockers(notice, true);
 }
 
 void Docker::destroyCluster()
