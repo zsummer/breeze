@@ -37,22 +37,22 @@ void UserService::onClientChange()
 
 bool UserService::onLoad()
 {
-    _baseInfo.loadFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleInit, std::static_pointer_cast<UserService>(shared_from_this()), _1));
+    _baseInfo.loadFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleLoad, std::static_pointer_cast<UserService>(shared_from_this()), _1));
     return true;
 }
 
-void UserService::onModuleInit(bool success)
+void UserService::onModuleLoad(bool success)
 {
     if (success)
     {
-        _curInitedModuleCount++;
+        _curLoadModuleCount++;
     }
     else 
     { 
-        Docker::getRef().forceStop();
+        LOGE(" UserService::onModuleLoad false");
         return ; 
     }
-    if (_curInitedModuleCount == _totalInitedModuleCount)
+    if (_curLoadModuleCount == _totalModuleCount)
     {
         finishLoad();
         AttachUserFromUserMgrResp resp(EC_SUCCESS, getClientDockerID(), getClientSessionID(), getServiceID());
@@ -60,6 +60,26 @@ void UserService::onModuleInit(bool success)
     }
     return ;
 }
+
+
+void UserService::onModuleUnload(bool success)
+{
+    if (success)
+    {
+        _curUnloadModuleCount++;
+    }
+    else
+    {
+        LOGE(" UserService::onModuleUnload false");
+        return;
+    }
+    if (_curLoadModuleCount == _totalModuleCount)
+    {
+        finishUnload();
+    }
+    return;
+}
+
 
 void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {

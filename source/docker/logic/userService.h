@@ -41,14 +41,16 @@ public:
     void onClientChange() override final;
     void onTick() override final;
 private:
-    void onModuleInit(bool success);
+    void onModuleLoad(bool success);
+    void onModuleUnload(bool success);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
-    int _curInitedModuleCount = 0;
-    int _totalInitedModuleCount = 1;
+    int _curLoadModuleCount = 0;
+    int _curUnloadModuleCount = 0;
+    int _totalModuleCount = 1;
     ModuleData<UserBaseInfo> _baseInfo;
 
 
