@@ -29,7 +29,6 @@ void DBService::onTick()
 
 void DBService::_checkSafeDestroy()
 {
-    bool safe = true;
     auto service = Docker::getRef().peekService(ServiceUserMgr, InvalidServiceID);
     if (!service)
     {

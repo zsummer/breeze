@@ -89,12 +89,7 @@ int main(int argc, char* argv[])
             LOGE("Docker start false.");
             return 3;
         }
-        if (Docker::getRef().run())
-        {
-            return 4;
-        }
-        
-        
+        Docker::getRef().run();
     }
     catch (const std::exception & e)
     {
