@@ -6,7 +6,7 @@
 
 UserMgrService::UserMgrService()
 {
-    slotting<CreateOrRefreshServiceNotice>(std::bind(&UserMgrService::onCreateOrRefreshServiceNotice, this, _1, _2));
+    slotting<LoadServiceNotice>(std::bind(&UserMgrService::onLoadServiceNotice, this, _1, _2));
     slotting<RealClientClosedNotice>(std::bind(&UserMgrService::onRealClientClosedNotice, this, _1, _2));
     slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
     slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
@@ -32,7 +32,7 @@ void UserMgrService::onTick()
                 iter = _freeList.erase(iter);
                 continue;
             }
-            else if (iter->second->_status == SS_DESTROY || (iter->second->_status == SS_UNINITING && getNowTime() - iter->second->_lastChangeTime > 30))
+            else if (iter->second->_status == SS_DESTROY || (iter->second->_status == SS_UNLOADING && getNowTime() - iter->second->_lastChangeTime > 30))
             {
                 if (!Docker::getRef().peekService(ServiceUser, iter->second->_preview.serviceID))
                 {
@@ -41,7 +41,7 @@ void UserMgrService::onTick()
                 }
                 else
                 {
-                    LOGE("service not uninit finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.serviceID);
+                    LOGE("service not unload finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.serviceID);
                 }
             }
             iter++;
@@ -49,7 +49,7 @@ void UserMgrService::onTick()
     }
 }
 
-void UserMgrService::onUninit()
+void UserMgrService::onUnload()
 {
     _checkSafeDestroy();
 }
@@ -58,7 +58,7 @@ void UserMgrService::_checkSafeDestroy()
     bool safe = true;
     for (auto kv : _userStatusByID)
     {
-        if (kv.second->_status == SS_WORKING || kv.second->_status == SS_UNINITING)
+        if (kv.second->_status == SS_WORKING || kv.second->_status == SS_UNLOADING)
         {
             safe = false;
             break;
@@ -66,7 +66,7 @@ void UserMgrService::_checkSafeDestroy()
     }
     if (safe)
     {
-        finishUninit();
+        finishUnload();
         return;
     }
     SessionManager::getRef().createTimer(500, std::bind(&UserMgrService::_checkSafeDestroy, this));
@@ -188,9 +188,9 @@ void UserMgrService::updateUserPreview(const UserPreview & pre)
     }
 }
 
-void UserMgrService::onCreateOrRefreshServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onLoadServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    CreateOrRefreshServiceNotice notice;
+    LoadServiceNotice notice;
     rs >> notice;
     if (notice.serviceType == ServiceUser)
     {
@@ -352,7 +352,7 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         return;
     }
     auto & status = *founder->second;
-    if (status._status == SS_UNINITING || status._status == SS_INITING )
+    if (status._status == SS_UNLOADING || status._status == SS_INITING )
     {
         resp.retCode = EC_ERROR;
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
@@ -372,14 +372,14 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         status._status = SS_INITING;
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
-        CreateServiceInDocker notice(ServiceUser, req.serviceID, status._preview.serviceName, req.clientDockerID, req.clientSessionID);
+        LoadServiceInDocker notice(ServiceUser, req.serviceID, status._preview.serviceName, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDocker(dockerID, notice);
     }
     else if(status._status == SS_WORKING)
     {
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
-        ChangeServiceClient change(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
+        SwitchServiceClient change(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDockerByService(ServiceUser, req.serviceID, change);
     }
     else
@@ -405,7 +405,7 @@ void UserMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::pr
         && founder->second->_clientSessionID == notice.clientSessionID
         && founder->second->_status == SS_WORKING)
     {
-        ChangeServiceClient change(ServiceUser, notice.serviceID, InvalidDockerID, InvalidSessionID);
+        SwitchServiceClient change(ServiceUser, notice.serviceID, InvalidDockerID, InvalidSessionID);
         Docker::getRef().sendToDockerByService(ServiceUser, notice.serviceID, change);
         founder->second->_lastChangeTime = getNowTime();
         _freeList[notice.serviceID] = founder->second;

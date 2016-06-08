@@ -129,7 +129,8 @@ void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std
     rs >> resp;
     if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS)
     {
-        LOGE("ModuleData<DBData>::onSelectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        LOGE("ModuleData<DBData>::onSelectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc
+            << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
         if (cb)
         {
             cb(false);
@@ -142,7 +143,8 @@ void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std
     {
         if (!_data.fetchFromDBResult(result))
         {
-            LOGE("ModuleData<DBData>::onSelectFromDB fetchFromDBResult error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+            LOGE("ModuleData<DBData>::onSelectFromDB fetchFromDBResult error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc 
+                << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg );
             if (cb)
             {
                 cb(false);
@@ -166,14 +168,25 @@ void ModuleData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service, std
 {
     SQLQueryResp resp;
     rs >> resp;
-    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS || resp.result.affected != 1)
+    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS )
     {
-        LOGE("ModuleData<DBData>::onAffectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        LOGE("ModuleData<DBData>::onAffectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc
+            << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
         if (cb)
         {
             cb(false);
         }
         return;
+    }
+    if (resp.result.affected == 0)
+    {
+        LOGW("ModuleData<DBData>::onAffectFromDB warning. no affect. retCode=" << resp.retCode << ", querry code=" << resp.result.qc 
+            << ", querry affect=" << resp.result.affected << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
+    }
+    if (resp.result.affected > 2)
+    {
+        LOGW("ModuleData<DBData>::onAffectFromDB warning.  more affect line . retCode=" << resp.retCode << ", querry code=" << resp.result.qc 
+            << ", querry affect=" << resp.result.affected << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
     }
     if (cb)
     {
@@ -199,7 +212,8 @@ void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service
     rs >> resp;
     if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS)
     {
-        LOGE("ModuleMultiData<DBData>::onSelectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        LOGE("ModuleMultiData<DBData>::onSelectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc
+            << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
         if (cb)
         {
             cb(false);
@@ -213,7 +227,8 @@ void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service
         DBData data;
         if (!data.fetchFromDBResult(result))
         {
-            LOGE("ModuleMultiData<DBData>::onSelectFromDB fetchFromDBResult error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+            LOGE("ModuleMultiData<DBData>::onSelectFromDB fetchFromDBResult error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc
+                << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
             if (cb)
             {
                 cb(false);
@@ -259,9 +274,10 @@ void ModuleMultiData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service
 {
     SQLQueryResp resp;
     rs >> resp;
-    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS || resp.result.affected != 1)
+    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS)
     {
-        LOGE("ModuleMultiData<DBData>::onAffectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc);
+        LOGE("ModuleMultiData<DBData>::onAffectFromDB error. retCode=" << resp.retCode << ", querry code=" << resp.result.qc
+            << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
         if (cb)
         {
             cb(false, data);

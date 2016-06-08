@@ -51,7 +51,7 @@ enum ServiceStatus
     SS_CREATED,
     SS_INITING,
     SS_WORKING,
-    SS_UNINITING,
+    SS_UNLOADING,
     SS_DESTROY,
 };
 
@@ -96,8 +96,8 @@ protected:
     bool finishInit();
 
     virtual void onClientChange() = 0;
-    virtual void onUninit() = 0;//service卸载好之后要调用finishUninit 
-    bool finishUninit();
+    virtual void onUnload() = 0;//service卸载好之后要调用finishUnload 
+    bool finishUnload();
 
 protected:
     using Slots = std::unordered_map<unsigned short, Slot>;

@@ -103,6 +103,7 @@ std::string  UserPreview::getDBUpdate()
 { 
     zsummer::mysql::DBQuery q; 
     q.init("insert into `tb_UserPreview`(serviceID) values(? ) on duplicate key update `serviceName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
+    q << this->serviceID; 
     q << this->serviceName; 
     q << this->account; 
     q << this->iconID; 
@@ -252,6 +253,7 @@ std::string  UserBaseInfo::getDBUpdate()
 { 
     zsummer::mysql::DBQuery q; 
     q.init("insert into `tb_UserBaseInfo`(serviceID) values(? ) on duplicate key update `serviceName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
+    q << this->serviceID; 
     q << this->serviceName; 
     q << this->account; 
     q << this->iconID; 

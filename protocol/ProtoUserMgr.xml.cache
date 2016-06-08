@@ -7,7 +7,6 @@
 <cacheNumber>
     <cache key = "ID_AttachUserFromUserMgrReq" Number = "4004" /> 
     <cache key = "ID_AttachUserFromUserMgrResp" Number = "4005" /> 
-    <cache key = "ID_ClientDisconnectReq" Number = "4006" /> 
     <cache key = "ID_CreateUserFromUserMgrReq" Number = "4002" /> 
     <cache key = "ID_CreateUserFromUserMgrResp" Number = "4003" /> 
     <cache key = "ID_SelectUserPreviewsFromUserMgrReq" Number = "4000" /> 

@@ -34,7 +34,7 @@ bool Service::finishInit()
     if (!isShell())
     {
         LOGI("local service finish init. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
-        CreateOrRefreshServiceNotice notice(
+        LoadServiceNotice notice(
             getServiceDockerID(), 
             getServiceType(), 
             getServiceID(), 
@@ -55,33 +55,35 @@ bool Service::finishInit()
     
     return true;
 }
-bool Service::finishUninit()
+bool Service::finishUnload()
 {
     setStatus(SS_DESTROY);
     if (!isShell())
     {
-        LOGI("local service finish uninit. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
-        CreateOrRefreshServiceNotice refreshNotice(
-            getServiceDockerID(),
-            getServiceType(),
-            getServiceID(),
-            getServiceName(),
-            getStatus(),
-            getClientDockerID(),
-            getClientSessionID());
-        Docker::getRef().broadcastToDockers(refreshNotice, false);
-        for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+        if (getServiceType() > ServiceMulti)
         {
-            toService(i, refreshNotice, nullptr);
+            LoadServiceNotice refreshNotice(
+                getServiceDockerID(),
+                getServiceType(),
+                getServiceID(),
+                getServiceName(),
+                getStatus(),
+                getClientDockerID(),
+                getClientSessionID());
+            Docker::getRef().broadcastToDockers(refreshNotice, false);
+            for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+            {
+                toService(i, refreshNotice, nullptr);
+            }
         }
 
-        LOGI("local service finish uninit. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
-        DestroyServiceNotice notice(getServiceType(), getServiceID());
+        LOGI("local service finish unload. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
+        UnloadedServiceNotice notice(getServiceType(), getServiceID());
         Docker::getRef().broadcastToDockers(notice, true);
     }
     else
     {
-        LOGI("remote service finish uninit. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGI("remote service finish unload. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
     }
     
     return true;

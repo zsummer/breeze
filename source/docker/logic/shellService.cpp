@@ -20,9 +20,9 @@ void ShellService::onTick()
 
 
 
-void ShellService::onUninit()
+void ShellService::onUnload()
 {
-    finishUninit();
+    finishUnload();
 }
 
 bool ShellService::onInit()

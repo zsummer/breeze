@@ -33,7 +33,7 @@ enum ServiceStatus
     SS_CREATED,
     SS_INITING,
     SS_WORKING,
-    SS_UNINITING,
+    SS_UNLOADING,
     SS_DESTROY,
 };
 */
@@ -64,14 +64,14 @@ public:
     bool onInit() override final;
     void onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql);
     void onClientChange() override final;
-    void onUninit() override final;
+    void onUnload() override final;
     void onTick() override final;
 private:
     void _checkSafeDestroy();
 private:
     void updateUserPreview(const UserPreview & pre);
 private:
-    void onCreateOrRefreshServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onLoadServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
     void onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);

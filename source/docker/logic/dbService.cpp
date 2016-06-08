@@ -7,7 +7,7 @@
 DBService::DBService() 
 {
     _dbAsync = std::make_shared<DBAsync>();
-    slotting<CreateOrRefreshServiceNotice>([](Tracing, ReadStream &rs) {});
+    slotting<LoadServiceNotice>([](Tracing, ReadStream &rs) {});
     slotting<SQLQueryReq>(std::bind(&DBService::onSQLQueryReq, this, _1, _2)); //不需要shared_from_this
     slotting<SQLQueryArrayReq>(std::bind(&DBService::onSQLQueryArrayReq, this, _1, _2)); //不需要shared_from_this
 }
@@ -38,14 +38,14 @@ void DBService::_checkSafeDestroy()
         {
             LOGA("_dbAsync finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
             _dbHelper->stop();
-            finishUninit();
+            finishUnload();
             return;
         }
     }
     SessionManager::getRef().createTimer(500, std::bind(&DBService::_checkSafeDestroy, this));
 }
 
-void DBService::onUninit()
+void DBService::onUnload()
 {
     _checkSafeDestroy();
 }

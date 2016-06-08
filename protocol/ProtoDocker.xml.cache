@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>dea04945e7e19abd74652ca73b29e841</cppmd5> 
-<luamd5>4b02fde51e6d27331e63771fda9d7502</luamd5> 
-<csharpmd5>ad611337e317ea8ad993a82e6ea61958</csharpmd5> 
-<xmlmd5>3bf5cec84c83cb7e83d20b6324052468</xmlmd5> 
+<cppmd5>82c5594c4c3ee7fca0ef861f26c328a7</cppmd5> 
+<luamd5>5e1df009a0c7ab88d5886f2fab885eba</luamd5> 
+<csharpmd5>37212584837c22a90cce05a288270817</csharpmd5> 
+<xmlmd5>924acdfeae8dc77218ae0762fe2e0c7e</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_ChangeServiceClient" Number = "2002" /> 
-    <cache key = "ID_CreateOrRefreshServiceNotice" Number = "2003" /> 
+    <cache key = "ID_ChangeServiceClient" Number = "2003" /> 
+    <cache key = "ID_CreateOrRefreshServiceNotice" Number = "2002" /> 
     <cache key = "ID_CreateServiceInDocker" Number = "2001" /> 
-    <cache key = "ID_DestroyServiceInDocker" Number = "2004" /> 
-    <cache key = "ID_DestroyServiceNotice" Number = "2005" /> 
+    <cache key = "ID_DestroyServiceInDocker" Number = "2006" /> 
+    <cache key = "ID_DestroyServiceNotice" Number = "2007" /> 
     <cache key = "ID_DockerPulse" Number = "2000" /> 
-    <cache key = "ID_ForwardToRealClient" Number = "2007" /> 
-    <cache key = "ID_ForwardToService" Number = "2006" /> 
-    <cache key = "ID_KickRealClient" Number = "2008" /> 
-    <cache key = "ID_RealClientClosedNotice" Number = "2009" /> 
-    <cache key = "ID_ShutdownClusterServer" Number = "2010" /> 
+    <cache key = "ID_ForwardToRealClient" Number = "2010" /> 
+    <cache key = "ID_ForwardToService" Number = "2009" /> 
+    <cache key = "ID_KickRealClient" Number = "2004" /> 
+    <cache key = "ID_LoadServiceInDocker" Number = "2014" /> 
+    <cache key = "ID_LoadServiceNotice" Number = "2016" /> 
+    <cache key = "ID_RealClientClosedNotice" Number = "2005" /> 
+    <cache key = "ID_RefreshShellServiceNotice" Number = "2015" /> 
+    <cache key = "ID_ShutdownClusterServer" Number = "2008" /> 
+    <cache key = "ID_SwitchServiceClient" Number = "2017" /> 
+    <cache key = "ID_UnloadServiceInDocker" Number = "2011" /> 
+    <cache key = "ID_UnloadedServiceNotice" Number = "2013" /> 
+    <cache key = "ID_UnloadederviceNotice" Number = "2012" /> 
 </cacheNumber>

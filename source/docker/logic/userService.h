@@ -37,7 +37,7 @@ public:
     ~UserService();
 public:
     bool onInit() override final;
-    void onUninit() override final;
+    void onUnload() override final;
     void onClientChange() override final;
     void onTick() override final;
 private:

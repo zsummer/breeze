@@ -21,9 +21,9 @@ void UserService::onTick()
 
 
 
-void UserService::onUninit()
+void UserService::onUnload()
 {
-    finishUninit();
+    finishUnload();
 }
 
 void UserService::onClientChange()
@@ -65,6 +65,10 @@ void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream 
 {
     UserChatReq req;
     rs >> req;
+
+    _baseInfo._data.level++;
+    _baseInfo.writeToDB();
+
     UserChatResp resp;
     resp.fromServiceID = getServiceID();
     resp.msg = req.msg;

@@ -82,7 +82,7 @@ public:
     template<class Proto>
     void toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost);
 public:
-    bool isStoping();
+    bool isStopping();
     ServicePtr peekService(ServiceType serviceType, ServiceID serviceID);
 private:
     bool startDockerListen();
@@ -96,7 +96,7 @@ public:
     void buildCluster();
     void destroyCluster();
 public:
-    void uninitAllService();
+    void unloadAllService();
 
 private:
     void event_onServiceLinked(TcpSessionPtr session);
@@ -107,12 +107,12 @@ private:
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 private:
-    void event_onCreateServiceInDocker(TcpSessionPtr session, ReadStream & rs);
-    void event_onChangeServiceClient(TcpSessionPtr session, ReadStream & rs);
-    void event_onCreateOrRefreshServiceNotice(TcpSessionPtr session, ReadStream & rs);
+    void event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs);
+    void event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onKickRealClient(TcpSessionPtr session, ReadStream & rs);
-    void event_onDestroyServiceInDocker(TcpSessionPtr session, ReadStream & rs);
-    void event_onDestroyServiceNotice(TcpSessionPtr session, ReadStream & rs);
+    void event_onUnloadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & rs);
 
     void event_onForwardToService(TcpSessionPtr session, ReadStream & rs);
     void event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs);
@@ -123,6 +123,7 @@ private:
     std::map <DockerID, DockerSession> _dockerSession;
     bool _dockerNetWorking = false;
     bool _dockerServiceWorking = false;
+    bool _dockerStopping = false;
     AccepterID _wlisten = InvalidAccepterID;
 };
 

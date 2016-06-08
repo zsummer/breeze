@@ -60,9 +60,12 @@ end
 
 function Session:onAttachUserResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
-        if math.fmod(self.serviceID, 10)  > 1 then
-            send(sID, "UserChatReq", {toServiceID=self.serviceID-1, msg="hello"})
+        __global_serviceID_array = __global_serviceID_array or {}
+        if #__global_serviceID_array > 0 then
+            local rdx = math.random(#__global_serviceID_array)
+            send(sID, "UserChatReq", {toServiceID=__global_serviceID_array[rdx], msg="hello"})
         end
+        table.insert(__global_serviceID_array, self.serviceID)
         send(sID, "UserPingPongReq", { msg="hello"})
     end
 end

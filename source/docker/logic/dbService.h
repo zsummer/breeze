@@ -35,7 +35,7 @@ public:
     ~DBService();
     bool onInit() override final;
     void onClientChange() override final;
-    void onUninit() override final;
+    void onUnload() override final;
     void onTick() override final;
     bool onBuildDB();
 public:
