@@ -41,8 +41,8 @@ public:
     void onClientChange() override final;
     void onTick() override final;
 private:
-    void onModuleLoad(bool success);
-    void onModuleUnload(bool success);
+    void onModuleLoad(bool success, const std::string & moduleName);
+    void onModuleUnload(bool success, const std::string & moduleName);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);

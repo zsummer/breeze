@@ -52,13 +52,13 @@ public:
     virtual ~ModuleData(){};
 public:
     //必须在default填充key内容, 否则无法自动创建或者自动加载  
-    bool loadFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)>);
-    void writeToDB(std::function<void(bool)> cb = nullptr);
+    bool loadFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool, const std::string&)>);
+    void writeToDB(std::function<void(bool, const std::string&)> cb = nullptr);
 public:
     DBData _data;
 private:
-    void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
-    void onAffectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
+    void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)>);
+    void onAffectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)>);
 private:
     ServiceWeakPtr _weakPtr;
 };
@@ -77,14 +77,14 @@ public:
     virtual ~ModuleMultiData() {};
 public:
     //sql通过协议工具生成的getDBSelectPure产生并手动追加where语句生成.
-    bool loadFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)>);
+    bool loadFromDB(ServicePtr service, const std::string & sql, std::function<void(bool, const std::string&)>);
     //update和insert不会变更_data的数据,纯方法 
     void updateToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
     void insertToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
 public:
     std::vector<DBData> _data;
 private:
-    void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)>);
+    void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)>);
     void onAffectFromDB(ReadStream & rs, ServicePtr service, const DBData & data, std::function<void(bool, const DBData & data)>);
 private:
     ServiceWeakPtr _weakPtr;
@@ -101,7 +101,7 @@ private:
 
 
 template<class DBData>
-bool ModuleData<DBData>::loadFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)> cb)
+bool ModuleData<DBData>::loadFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool, const std::string&)> cb)
 {
     _weakPtr = service;
     _data = defaultData;
@@ -111,7 +111,7 @@ bool ModuleData<DBData>::loadFromDB(ServicePtr service, const DBData & defaultDa
 }
 
 template<class DBData>
-void ModuleData<DBData>::writeToDB(std::function<void(bool)> cb)
+void ModuleData<DBData>::writeToDB(std::function<void(bool, const std::string&)> cb)
 {
     ServicePtr guard = _weakPtr;
     if (!guard)
@@ -123,7 +123,7 @@ void ModuleData<DBData>::writeToDB(std::function<void(bool)> cb)
 }
 
 template<class DBData>
-void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
+void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)> cb)
 {
     SQLQueryResp resp;
     rs >> resp;
@@ -133,7 +133,7 @@ void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std
             << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
         if (cb)
         {
-            cb(false);
+            cb(false, DBData::getProtoName());
         }
         return;
     }
@@ -147,13 +147,13 @@ void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std
                 << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg );
             if (cb)
             {
-                cb(false);
+                cb(false, DBData::getProtoName());
             }
             return;
         }
         if (cb)
         {
-            cb(true);
+            cb(true, DBData::getProtoName());
         }
     }
     else
@@ -164,7 +164,7 @@ void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std
 }
 
 template<class DBData>
-void ModuleData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
+void ModuleData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)> cb)
 {
     SQLQueryResp resp;
     rs >> resp;
@@ -174,7 +174,7 @@ void ModuleData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service, std
             << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
         if (cb)
         {
-            cb(false);
+            cb(false, DBData::getProtoName());
         }
         return;
     }
@@ -190,14 +190,14 @@ void ModuleData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service, std
     }
     if (cb)
     {
-        cb(true);
+        cb(true, DBData::getProtoName());
     }
 }
 
 
 
 template<class DBData>
-bool ModuleMultiData<DBData>::loadFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)> cb)
+bool ModuleMultiData<DBData>::loadFromDB(ServicePtr service, const std::string & sql, std::function<void(bool, const std::string&)> cb)
 {
     _weakPtr = service;
     SQLQueryReq req(sql);
@@ -206,7 +206,7 @@ bool ModuleMultiData<DBData>::loadFromDB(ServicePtr service, const std::string &
 }
 
 template<class DBData>
-void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool)> cb)
+void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)> cb)
 {
     SQLQueryResp resp;
     rs >> resp;
@@ -216,7 +216,7 @@ void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service
             << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
         if (cb)
         {
-            cb(false);
+            cb(false, DBData::getProtoName());
         }
         return;
     }
@@ -231,7 +231,7 @@ void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service
                 << ", sql=" << resp.result.sql << ", err msg=" << resp.result.errMsg);
             if (cb)
             {
-                cb(false);
+                cb(false, DBData::getProtoName());
             }
             return;
         }
@@ -239,7 +239,7 @@ void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service
     }
     if (cb)
     {
-        cb(true);
+        cb(true, DBData::getProtoName());
     }
 }
 

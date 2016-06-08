@@ -21,10 +21,6 @@ void UserService::onTick()
 
 
 
-void UserService::onUnload()
-{
-    finishUnload();
-}
 
 void UserService::onClientChange()
 {
@@ -37,11 +33,17 @@ void UserService::onClientChange()
 
 bool UserService::onLoad()
 {
-    _baseInfo.loadFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleLoad, std::static_pointer_cast<UserService>(shared_from_this()), _1));
+    _baseInfo.loadFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleLoad, std::static_pointer_cast<UserService>(shared_from_this()), _1, _2));
     return true;
 }
 
-void UserService::onModuleLoad(bool success)
+void UserService::onUnload()
+{
+    _baseInfo.writeToDB(std::bind(&UserService::onModuleUnload, std::static_pointer_cast<UserService>(shared_from_this()), _1, _2));
+}
+
+
+void UserService::onModuleLoad(bool success, const std::string & moduleName)
 {
     if (success)
     {
@@ -62,7 +64,7 @@ void UserService::onModuleLoad(bool success)
 }
 
 
-void UserService::onModuleUnload(bool success)
+void UserService::onModuleUnload(bool success, const std::string & moduleName)
 {
     if (success)
     {
