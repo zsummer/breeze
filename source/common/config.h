@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -26,35 +26,28 @@
 #ifndef _SERVER_CONFIG_H_
 #define _SERVER_CONFIG_H_
 
-#include <defined.h>
-#include <single.h>
 
-
+#include "defined.h"
+#include "single.h"
 
 
 class ServerConfig : public Singleton<ServerConfig>
 {
 public:
-    bool parse(std::string filename, ServerType ownType,ServerNode ownNode);
+    bool parse(std::string filename, DockerID idx);
 public:
-    const ListenConfig& getConfigListen(ServerType node, ServerNode index = InvalidServerNode);
-    std::vector<ConnectConfig > getConfigConnect(ServerType node);
-    const DBConfig & getDBConfig(DBConfigID id);
-
-    inline ServerType getOwnServerType(){ return _ownServerType; }
-    inline ServerNode getOwnServerNode(){ return _ownServerNode; }
+    inline const std::vector<DockerConfig> & getDockerConfig() { return _configDocker; }
+    inline const std::map<ui16, std::vector<DockerID> > & getServiceTypeConfig() { return _configServiceType; }
+    inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
+    inline DockerID getDockerID(){ return _dockerIdx; }
     inline AreaID getAreaID() { return _areaid; }
-
-
-
 private:
-    ServerType _ownServerType = InvalidServerType;
-    ServerNode _ownServerNode = InvalidServerNode;
+    DockerID _dockerIdx = InvalidDockerID;
     AreaID _areaid = 0;
-
-    std::vector<ListenConfig> _configListen;
-    std::vector<ConnectConfig> _configConnect;
+    std::vector<DockerConfig> _configDocker;
     std::vector<DBConfig> _configDB;
+    std::map<ui16, std::vector<DockerID> > _configServiceType;
+
 };
 
 

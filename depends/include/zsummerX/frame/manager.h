@@ -92,9 +92,11 @@ namespace zsummer
 
             //退出消息循环.
             void stop();
+            
 
             //阻塞当前线程并开始消息循环. 默认选用这个比较好. 当希望有更细力度的控制run的时候推荐使用runOnce
             bool run();
+            inline bool isRunning(){ return _running; }
 
             //执行一次消息处理, 如果isImmediately为true, 则无论当前处理有无数据 都需要立即返回, 可以嵌入到任意一个线程中灵活使用
             //默认为false,  如果没有网络消息和事件消息 则会阻塞一小段时间, 有消息通知会立刻被唤醒.
@@ -131,21 +133,18 @@ namespace zsummer
             //send data.
             void sendSessionData(SessionID sID, const char * orgData, unsigned int orgDataLen);
 
+            void fakeSessionData(SessionID sID, const char * orgData, unsigned int orgDataLen);
 
             //close session socket.
             void kickSession(SessionID sID);
-
+            void kickClientSession(AccepterID aID = InvalidAccepterID);
+            void kickConnect(SessionID cID = InvalidSessionID);
+            void stopAccept(AccepterID aID = InvalidAccepterID);
         public:
             //statistical information
             inline unsigned long long getStatInfo(int stat){ return _statInfo[stat]; }
             unsigned long long _statInfo[STAT_SIZE];
-        public:
-            // stopXXXX系列接口可以在信号处理函数中调用.
-            void stopAccept();
-            void stopClients();
-            void setStopClientsHandler(std::function<void()> handler);
-            void stopServers();
-            void setStopServersHandler(std::function<void()> handler);
+
         public:
             SessionBlock * CreateBlock();
             void FreeBlock(SessionBlock * sb);
@@ -165,17 +164,11 @@ namespace zsummer
 
             //! 以下一组参数均为控制消息循环的开启和关闭用的
             bool  _running = true;  //默认是开启, 否则会在合适的时候退出消息循环.
-            bool _stopAccept = false; //停止accept新的连接.
-            char _stopClients = 0; //关掉所有客户端连接.
-            std::function<void()> _funClientsStop; // 所有客户端都被关闭后则执行这个回调.
-            char _stopServers = 0; //关掉所有连出的连接.
-            std::function<void()> _funServerStop; // 所有连出连接被关闭后执行的回调.
-
 
             //!以下一组ID用于生成对应的unique ID. 
-            SessionID _lastAcceptID = 0; //accept ID sequence. range  [0 - (unsigned int)-1)
-            SessionID _lastSessionID = 0;//session ID sequence. range  [0 - __MIDDLE_SEGMENT_VALUE)
-            SessionID _lastConnectID = 0;//connect ID sequence. range  [__MIDDLE_SEGMENT_VALUE - -1)
+            AccepterID _lastAcceptID = InvalidAccepterID; //accept ID sequence. range  (0 - power(2,32))
+            SessionID _lastSessionID = InvalidSessionID;//session ID sequence. range  (0 - __MIDDLE_SEGMENT_VALUE)
+            SessionID _lastConnectID = InvalidSessionID;//connect ID sequence. range  (__MIDDLE_SEGMENT_VALUE - power(2,32))
 
             //!存储当前的连入连出的session信息和accept监听器信息.
             std::unordered_map<SessionID, TcpSessionPtr> _mapTcpSessionPtr;

@@ -15,32 +15,37 @@ Proto4z.EC_FRIEND_CEILING = 101--达到好友上限
 Proto4z.EC_FRIEND_REFUSE = 102--不能添加对方为好友 
 Proto4z.EC_FRIEND_NOT_EXIST = 103--好友不存在 
  
-Proto4z.SessionToken = {} --认证令牌 
-Proto4z.SessionToken.__getName = "SessionToken" 
-Proto4z.SessionToken[1] = {name="uID", type="ui64" }  
-Proto4z.SessionToken[2] = {name="token", type="string" }  
-Proto4z.SessionToken[3] = {name="expire", type="ui32" }  
+Proto4z.register(1000,"UserPreview") 
+Proto4z.UserPreview = {} --用户预览信息 
+Proto4z.UserPreview.__getID = 1000 
+Proto4z.UserPreview.__getName = "UserPreview" 
+Proto4z.UserPreview[1] = {name="serviceID", type="ui64" } --用户唯一ID 
+Proto4z.UserPreview[2] = {name="serviceName", type="string" } --昵称 
+Proto4z.UserPreview[3] = {name="account", type="string" } --帐号 
+Proto4z.UserPreview[4] = {name="iconID", type="i16" } --头像 
+Proto4z.UserPreview[5] = {name="level", type="i32" } --等级 
  
-Proto4z.BaseInfo = {} --用户基础信息 
-Proto4z.BaseInfo.__getName = "BaseInfo" 
-Proto4z.BaseInfo[1] = {name="uID", type="ui64" } --用户唯一ID 
-Proto4z.BaseInfo[2] = {name="account", type="string" } --帐号 
-Proto4z.BaseInfo[3] = {name="nickName", type="string" } --昵称 
-Proto4z.BaseInfo[4] = {name="iconID", type="i16" } --头像 
-Proto4z.BaseInfo[5] = {name="diamond", type="i32" } --当前剩余的充值钻石 
-Proto4z.BaseInfo[6] = {name="hisotryDiamond", type="i32" } --历史充值钻石总额 
-Proto4z.BaseInfo[7] = {name="giftDiamond", type="i32" } --当前剩余的赠送钻石 
-Proto4z.BaseInfo[8] = {name="joinTime", type="ui32" } --加入时间 
+Proto4z.UserPreviewArray = {}  
+Proto4z.UserPreviewArray.__getName = "UserPreviewArray" 
+Proto4z.UserPreviewArray.__getDesc = "array" 
+Proto4z.UserPreviewArray.__getTypeV = "UserPreview" 
  
-Proto4z.BaseInfoArray = {}  
-Proto4z.BaseInfoArray.__getName = "BaseInfoArray" 
-Proto4z.BaseInfoArray.__getDesc = "array" 
-Proto4z.BaseInfoArray.__getTypeV = "BaseInfo" 
+Proto4z.ServiceIDArray = {}  
+Proto4z.ServiceIDArray.__getName = "ServiceIDArray" 
+Proto4z.ServiceIDArray.__getDesc = "array" 
+Proto4z.ServiceIDArray.__getTypeV = "ui64" 
  
-Proto4z.UIDS = {}  
-Proto4z.UIDS.__getName = "UIDS" 
-Proto4z.UIDS.__getDesc = "array" 
-Proto4z.UIDS.__getTypeV = "ui64" 
+Proto4z.register(1001,"UserBaseInfo") 
+Proto4z.UserBaseInfo = {} --用户基础数据 
+Proto4z.UserBaseInfo.__getID = 1001 
+Proto4z.UserBaseInfo.__getName = "UserBaseInfo" 
+Proto4z.UserBaseInfo[1] = {name="serviceID", type="ui64" } --用户唯一ID 
+Proto4z.UserBaseInfo[2] = {name="serviceName", type="string" } --昵称 
+Proto4z.UserBaseInfo[3] = {name="account", type="string" } --帐号 
+Proto4z.UserBaseInfo[4] = {name="iconID", type="i16" } --头像 
+Proto4z.UserBaseInfo[5] = {name="level", type="i32" } --等级 
  
-Proto4z.ETRIGGER_USER_LOGIN = 0--用户登录, 用户ID 
-Proto4z.ETRIGGER_USER_LOGOUT = 1--用户登出, 用户ID 
+Proto4z.UserBaseInfoArray = {}  
+Proto4z.UserBaseInfoArray.__getName = "UserBaseInfoArray" 
+Proto4z.UserBaseInfoArray.__getDesc = "array" 
+Proto4z.UserBaseInfoArray.__getTypeV = "UserBaseInfo" 

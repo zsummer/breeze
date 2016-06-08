@@ -60,6 +60,20 @@ struct TABLE_SHARE;
 
 struct sql_digest_storage;
 
+#ifdef __cplusplus
+  class THD;
+#else
+  /*
+    Phony declaration when compiling C code.
+    This is ok, because the C code will never have a THD anyway.
+  */
+  struct opaque_THD
+  {
+    int dummy;
+  };
+  typedef struct opaque_THD THD;
+#endif
+
 /**
   @file mysql/psi/psi.h
   Performance schema instrumentation interface.
@@ -187,6 +201,17 @@ typedef struct PSI_sp_locker PSI_sp_locker;
 */
 struct PSI_metadata_lock;
 typedef struct PSI_metadata_lock PSI_metadata_lock;
+
+/**
+  Interface for an instrumented stage progress.
+  This is a public structure, for efficiency.
+*/
+struct PSI_stage_progress
+{
+  ulonglong m_work_completed;
+  ulonglong m_work_estimated;
+};
+typedef struct PSI_stage_progress PSI_stage_progress;
 
 /** Entry point for the performance schema interface. */
 struct PSI_bootstrap
@@ -533,7 +558,12 @@ enum PSI_mutex_operation
 };
 typedef enum PSI_mutex_operation PSI_mutex_operation;
 
-/** Operation performed on an instrumented rwlock. */
+/**
+  Operation performed on an instrumented rwlock.
+  For basic READ / WRITE lock,
+  operations are "READ" or "WRITE".
+  For SX-locks, operations are "SHARED", "SHARED-EXCLUSIVE" or "EXCLUSIVE".
+*/
 enum PSI_rwlock_operation
 {
   /** Read lock. */
@@ -543,7 +573,21 @@ enum PSI_rwlock_operation
   /** Read lock attempt. */
   PSI_RWLOCK_TRYREADLOCK= 2,
   /** Write lock attempt. */
-  PSI_RWLOCK_TRYWRITELOCK= 3
+  PSI_RWLOCK_TRYWRITELOCK= 3,
+
+  /** Shared lock. */
+  PSI_RWLOCK_SHAREDLOCK= 4,
+  /** Shared Exclusive lock. */
+  PSI_RWLOCK_SHAREDEXCLUSIVELOCK= 5,
+  /** Exclusive lock. */
+  PSI_RWLOCK_EXCLUSIVELOCK= 6,
+  /** Shared lock attempt. */
+  PSI_RWLOCK_TRYSHAREDLOCK= 7,
+  /** Shared Exclusive lock attempt. */
+  PSI_RWLOCK_TRYSHAREDEXCLUSIVELOCK= 8,
+  /** Exclusive lock attempt. */
+  PSI_RWLOCK_TRYEXCLUSIVELOCK= 9
+
 };
 typedef enum PSI_rwlock_operation PSI_rwlock_operation;
 
@@ -1479,7 +1523,8 @@ typedef PSI_table* (*rebind_table_v1_t)
   Note that the table handle is invalid after this call.
   @param table the table handle to close
 */
-typedef void (*close_table_v1_t)(struct PSI_table *table);
+typedef void (*close_table_v1_t)(struct TABLE_SHARE *server_share,
+                                 struct PSI_table *table);
 
 /**
   Create a file instrumentation for a created file.
@@ -1514,6 +1559,14 @@ typedef int (*spawn_thread_v1_t)(PSI_thread_key key,
 */
 typedef struct PSI_thread* (*new_thread_v1_t)
   (PSI_thread_key key, const void *identity, ulonglong thread_id);
+
+/**
+  Assign a THD to an instrumented thread.
+  @param thread the instrumented thread
+  @param THD the sql layer THD to assign
+*/
+typedef void (*set_thread_THD_v1_t)(struct PSI_thread *thread,
+                                    THD *thd);
 
 /**
   Assign an id to an instrumented thread.
@@ -1776,8 +1829,11 @@ typedef struct PSI_table_locker* (*start_table_io_wait_v1_t)
 /**
   Record a table instrumentation io wait end event.
   @param locker a table locker for the running thread
+  @param numrows the number of rows involved in io
 */
-typedef void (*end_table_io_wait_v1_t)(struct PSI_table_locker *locker);
+typedef void (*end_table_io_wait_v1_t)
+  (struct PSI_table_locker *locker,
+   ulonglong numrows);
 
 /**
   Record a table instrumentation lock wait start event.
@@ -1878,9 +1934,12 @@ typedef void (*end_file_close_wait_v1_t)
   @param key the key of the new stage
   @param src_file the source file name
   @param src_line the source line number
+  @return the new stage progress
 */
-typedef void (*start_stage_v1_t)
+typedef PSI_stage_progress* (*start_stage_v1_t)
   (PSI_stage_key key, const char *src_file, int src_line);
+
+typedef PSI_stage_progress* (*get_current_stage_progress_v1_t)(void);
 
 /** End the current stage. */
 typedef void (*end_stage_v1_t) (void);
@@ -2390,6 +2449,8 @@ struct PSI_v1
   new_thread_v1_t new_thread;
   /** @sa set_thread_id_v1_t. */
   set_thread_id_v1_t set_thread_id;
+  /** @sa set_thread_THD_v1_t. */
+  set_thread_THD_v1_t set_thread_THD;
   /** @sa get_thread_v1_t. */
   get_thread_v1_t get_thread;
   /** @sa set_thread_user_v1_t. */
@@ -2471,6 +2532,8 @@ struct PSI_v1
   end_file_close_wait_v1_t end_file_close_wait;
   /** @sa start_stage_v1_t. */
   start_stage_v1_t start_stage;
+  /** @sa get_current_stage_progress_v1_t. */
+  get_current_stage_progress_v1_t get_current_stage_progress;
   /** @sa end_stage_v1_t. */
   end_stage_v1_t end_stage;
   /** @sa get_thread_statement_locker_v1_t. */

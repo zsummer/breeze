@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>e485a11d068c51e79116b5028542c7f9</cppmd5> 
-<luamd5>05d94729cc2ba0debb1599d5aab69cbc</luamd5> 
-<csharpmd5>5b90c6df2dd4c288c2e4bf96b682ad51</csharpmd5> 
-<sqlmd5>d3d17438c623a0a6d781d020618b927e</sqlmd5> 
-<xmlmd5>9d020c4216be4a193a694dc1a3596fec</xmlmd5> 
+<cppmd5>764114b44f800bcca2ee2406d23bc693</cppmd5> 
+<luamd5>7b6d568fd2e91eba1fe68675890de237</luamd5> 
+<csharpmd5>b940a67e59c7535ac571f981102c8b50</csharpmd5> 
+<xmlmd5>592515d058cf775a16ef8c33cb09195e</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_UserBaseInfo" Number = "1001" /> 
+    <cache key = "ID_UserPreview" Number = "1000" /> 
 </cacheNumber>

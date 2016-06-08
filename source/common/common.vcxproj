@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -13,8 +13,8 @@
   <ItemGroup>
     <ClInclude Include="balance.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="dbAsync.h" />
-    <ClInclude Include="dispatch.h" />
     <ClInclude Include="genID.h" />
     <ClInclude Include="defined.h" />
     <ClInclude Include="lua\fpconv.h" />
@@ -48,14 +48,13 @@
     <ClInclude Include="lua\strbuf.h" />
     <ClInclude Include="lua\summer.h" />
     <ClInclude Include="md5\md5.h" />
-    <ClInclude Include="config.h" />
     <ClInclude Include="single.h" />
     <ClInclude Include="utls.h" />
     <ClInclude Include="utlsImpl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="config.cpp" />
     <ClCompile Include="dbAsync.cpp" />
-    <ClCompile Include="dispatch.cpp" />
     <ClCompile Include="lua\fpconv.c" />
     <ClCompile Include="lua\lapi.c" />
     <ClCompile Include="lua\lauxlib.c" />
@@ -95,7 +94,6 @@
     <ClCompile Include="lua\strbuf.c" />
     <ClCompile Include="lua\summer.cpp" />
     <ClCompile Include="md5\md5.cpp" />
-    <ClCompile Include="config.cpp" />
     <ClCompile Include="utls.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -107,13 +105,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>

@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -26,82 +26,7 @@ extern "C"
 int luaopen_protoz_util(lua_State *L);
 int luaopen_cjson(lua_State *l);
 }
-
-
-static ServerType toServerType(std::string strType)
-{
-    if (strType == "logic")
-    {
-        return LogicServer;
-    }
-    else if (strType == "stress")
-    {
-        return StressClient;
-    }
-    return InvalidServerType;
-}
-
-static DBConfigID toDBConfigID(std::string db)
-{
-    if (db == "info")
-    {
-        return InfoDB;
-    }
-    else if (db == "log")
-    {
-        return LogDB;
-    }
-    return InvalidDB;
-}
-
-
-const ListenConfig & ServerConfig::getConfigListen(ServerType node, ServerNode index)
-{
-    if (index == InvalidServerNode)
-    {
-        index = _ownServerNode;
-    }
-    auto founder = std::find_if(_configListen.begin(), _configListen.end(),
-        [node, index](const ListenConfig & lc){return lc._node == node && lc._index == index; });
-    if (founder == _configListen.end())
-    {
-        std::stringstream os;
-        os << "getConfigListen not found config. the dest node=" << node << ", the dest index=" << index;
-        throw std::runtime_error(os.str());
-    }
-    return *founder;
-}
-
-
-std::vector<ConnectConfig > ServerConfig::getConfigConnect(ServerType node)
-{
-    std::vector<ConnectConfig > ret;
-    for (const auto & cc : _configConnect)
-    {
-        if (cc._srcType != node)
-        {
-            continue;
-        }
-        ret.push_back(cc);
-    }
-    
-    return ret;
-}
-
-
-const DBConfig & ServerConfig::getDBConfig(DBConfigID id)
-{
-    auto founder = std::find_if(_configDB.begin(), _configDB.end(),
-        [id](const DBConfig & db){return db._id == id; });
-    if (founder == _configDB.end())
-    {
-        static DBConfig db;
-        return db;
-    }
-    return *founder;
-}
-
-
+#include "utls.h"
 
 static int panichHandler(lua_State * L)
 {
@@ -111,12 +36,9 @@ static int panichHandler(lua_State * L)
 }
 
 
-bool ServerConfig::parse(std::string filename, ServerType ownType, ServerNode ownNode)
+bool ServerConfig::parse(std::string filename, DockerID idx)
 {
-    _ownServerType = ownType;
-    _ownServerNode = ownNode;
-
-
+    _dockerIdx = idx;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {
@@ -142,8 +64,12 @@ bool ServerConfig::parse(std::string filename, ServerType ownType, ServerNode ow
             LOGE("config parse db false. key is not string type");
             return false;
         }
+        if (!lua_istable(L, -1))
+        {
+            LOGE("config parse db false. value is not table type");
+            return false;
+        }
         
-
         DBConfig lconfig;
         lua_getfield(L, -1, "ip");
         lconfig._ip = luaL_checkstring(L, -1);
@@ -169,154 +95,135 @@ bool ServerConfig::parse(std::string filename, ServerType ownType, ServerNode ow
         lconfig._db = luaL_checkstring(L, -1);
         lua_pop(L, 1);
 
-        lconfig._id = toDBConfigID(luaL_checkstring(L, -2));
-        if (lconfig._id != InvalidDB)
-        {
-            _configDB.push_back(lconfig);
-            LOGI("DBConfig=" << lconfig);
-        }
-        else
-        {
-            LOGE("unknown DBConfig=" << lconfig);
-        }
-
-        //saved key to next while.
+        lconfig._name = luaL_checkstring(L, -2);
+        _configDB.push_back(lconfig);
+        LOGI("DBConfig=" << lconfig);
         lua_pop(L, 1);
     }
-    //pop "db" table.
+    //pop key "db".
     lua_pop(L, 1);
 
 
-    lua_getfield(L, -1, "listen");
+    lua_getfield(L, -1, "docker");
     lua_pushnil(L);
     while (lua_next(L, -2))
     {
-        if (!lua_isstring(L, -2))
+        if (!lua_istable(L, -1))
         {
-            LOGE("config parse listen false. key is not string type");
+            LOGE("config parse docker false. value is not table type");
             return false;
         }
-        std::string node = luaL_checkstring(L, -2);
 
-        lua_pushnil(L);
-        while (lua_next(L, -2))
+        DockerConfig lconfig;
+        lua_getfield(L, -1, "serviceBindIP");
+        lconfig._serviceBindIP = luaL_optstring(L, -1, "0.0.0.0");
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "serviceIP");
+        lconfig._serviceIP = luaL_optstring(L, -1, "127.0.0.1");
+        lua_pop(L, 1);
+        lua_getfield(L, -1, "servicePort");
+        lconfig._servicePort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
+
+
+        lua_getfield(L, -1, "wideIP");
+        lconfig._wideIP = luaL_optstring(L, -1, "127.0.0.1");
+        lua_pop(L, 1);
+        lua_getfield(L, -1, "widePort");
+        lconfig._widePort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
+
+
+        lua_getfield(L, -1, "dockerID");
+        lconfig._dockerID = (DockerID)luaL_checkinteger(L, -1);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "serviceWhite");
+        if (lua_isnil(L, -1))
         {
-            ListenConfig lconfig;
-
-            lua_getfield(L, -1, "ip");
-            lconfig._ip = luaL_checkstring(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, -1, "port");
-            lconfig._port = (unsigned short)luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, -1, "wip");
-            lconfig._wip = luaL_optstring(L, -1, "0.0.0.0");
-            lua_pop(L, 1);
-
-            lua_getfield(L, -1, "wport");
-            lconfig._wport = (unsigned short)luaL_optinteger(L, -1, 0);
-            lua_pop(L, 1);
-
-            lua_getfield(L, -1, "index");
-            lconfig._index = (ServerNode)luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, -1, "white");
-            if (lua_isnil(L, -1))
-            {
-                lua_pop(L, 1);
-            }
-            else
-            {
-                lua_pushnil(L);
-                while (lua_next(L, -2))
-                {
-                    lconfig._whiteList.push_back(luaL_checkstring(L, -1));
-                    lua_pop(L, 1);
-                }
-                //pop white table
-                lua_pop(L, 1);
-            }
-            
-
-            lconfig._node = toServerType(node);
-            if (lconfig._node != InvalidServerType)
-            {
-                _configListen.push_back(lconfig);
-                LOGI("ListenConfig=" << lconfig);
-            }
-            else
-            {
-                LOGE("UNKNOWN ListenConfig=" << lconfig);
-            }
-            //pop node table
             lua_pop(L, 1);
         }
-        
-        //pop node tables
+        else
+        {
+            lua_pushnil(L);
+            while (lua_next(L, -2))
+            {
+                lconfig._whiteList.push_back(luaL_checkstring(L, -1));
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 1);
+        }
+
+        lua_getfield(L, -1, "services");
+        if (lua_isnil(L, -1))
+        {
+            lua_pop(L, 1);
+        }
+        else
+        {
+            lua_pushnil(L);
+            while (lua_next(L, -2))
+            {
+                std::string service = luaL_checkstring(L, -1);
+                auto founder = std::find(ServiceTypeNames.begin(), ServiceTypeNames.end(), service);
+                if (founder != ServiceTypeNames.end())
+                {
+                    lconfig._services.push_back((founder - ServiceTypeNames.begin()));
+                }
+                else
+                {
+                    LOGE("not found service [" << service << "]");
+                    return false;
+                }
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 1);
+        }
+        _configDocker.push_back(lconfig);
         lua_pop(L, 1);
     }
     //pop listen table.
     lua_pop(L, 1);
 
+    lua_close(L);
 
-    lua_getfield(L, -1, "connect");
-    lua_pushnil(L);
-    while (lua_next(L, -2))
+    for (auto & config : _configDocker)
     {
-        if (!lua_isstring(L, -2))
+        for (auto & serviceType : config._services)
         {
-            LOGE("config parse connect false. key is not string type");
+            auto &dockerIDs = _configServiceType[serviceType];
+            dockerIDs.push_back(config._dockerID);
+        }
+    }
+    for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+    {
+        auto founder = _configServiceType.find(i);
+        if (founder == _configServiceType.end() || founder->second.empty())
+        {
+            LOGE("not found service in docker config. the service name=" << ServiceTypeNames.at(i));
             return false;
         }
-        std::string node = luaL_checkstring(L, -2);
-
-        lua_pushnil(L);
-        while (lua_next(L, -2))
+        if (founder->second.size() != 1)
         {
-            ConnectConfig lconfig;
-
-            lua_getfield(L, -1, "ip");
-            lconfig._remoteIP = luaL_checkstring(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, -1, "port");
-            lconfig._remotePort = (unsigned short)luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, -1, "index");
-            lconfig._dstServerNode = (ServerNode)luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, -1, "dstType");
-            lconfig._dstType = toServerType(luaL_checkstring(L, -1));
-            lua_pop(L, 1);
-
-            lconfig._srcType = toServerType(node);
-
-            if (lconfig._srcType != InvalidServerType && lconfig._dstType != InvalidServerType)
-            {
-                _configConnect.push_back(lconfig);
-                LOGI("_configConnect=" << lconfig);
-            }
-            else
-            {
-                LOGE("UNKNOWN ConnectConfig=" << lconfig);
-            }
-
-            //saved key to next while.
-            lua_pop(L, 1);
+            LOGE("service in docker config not single. the service name=" << ServiceTypeNames.at(i));
+            return false;
         }
-
-        //saved key to next while.
-        lua_pop(L, 1);
     }
-    //pop "connect" table.
-    lua_pop(L, 1);
+    for (ui16 i = ServiceMulti + 1; i < ServiceMax; i++)
+    {
+        if (i == ServiceClient)
+        {
+            continue;
+        }
+        auto founder = _configServiceType.find(i);
+        if (founder == _configServiceType.end() || founder->second.empty())
+        {
+            LOGE("not found service in docker config. the service name=" << ServiceTypeNames.at(i));
+            return false;
+        }
+    }
 
-    lua_close(L);
     return true;
 }
 

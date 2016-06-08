@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
-  <MinNo>200</MinNo>
-  <MaxNo>500</MaxNo>
+  <MinNo>1000</MinNo>
+  <MaxNo>2000</MaxNo>
   <UseLog4z>1</UseLog4z>
 </ProtoTraits>
 
@@ -33,38 +33,30 @@
     </enum>
 
 
-    <!-- 认证令牌 -->
-    <struct name="SessionToken" store="true" desc="认证令牌">
-        <member name="uID" type="ui64"  tag="key" desc=""/>
-        <member name="token" type="string"   desc=""/>
-        <member name="expire"  type="ui32" desc=""/>
-    </struct>
 
 
-        <!-- 用户基础信息 -->
-    <struct name="BaseInfo" store="true" desc="用户基础信息">
-        <member name="uID" type="ui64"  tag="key" desc="用户唯一ID"/>
-        <member name="account"  type="string" desc="帐号"/>
-        <member name="nickName" type="string"   desc="昵称"/>
+        <!-- 用户预览信息 -->
+    <packet name="UserPreview" store="MyISAM" desc="用户预览信息">
+        <member name="serviceID" type="ui64"  tag="key" desc="用户唯一ID"/>
+        <member name="serviceName" type="string" tag="uni"   desc="昵称"/>
+        <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i16" desc="头像"/>
-        <member name="diamond"  type="i32" desc="当前剩余的充值钻石"/>
-        <member name="hisotryDiamond"  type="i32" desc="历史充值钻石总额"/>
-        <member name="giftDiamond"  type="i32" desc="当前剩余的赠送钻石"/>
-        <member name="joinTime"  type="ui32" desc="加入时间"/>
-    </struct>
-    <array name="BaseInfoArray" type="BaseInfo" desc="" />
-    <array name="UIDS" type="ui64" desc="" />
+        <member name="level"  type="i32" desc="等级"/>
+    </packet>
+    <array name="UserPreviewArray" type="UserPreview" desc="" />
+    <array name="ServiceIDArray" type="ui64" desc="" />
 
 
 
-    <!-- 事件触发码 -->
-    <enum type="ui16" >
-        <member name="ETRIGGER_USER_LOGIN" value="0"   desc="用户登录, 用户ID"/>
-        <member name="ETRIGGER_USER_LOGOUT"   desc="用户登出, 用户ID"/>
-    </enum>
-
-
-
+    <!-- 用户基础信息 -->
+    <packet name="UserBaseInfo" store="MyISAM" desc="用户基础数据">
+        <member name="serviceID" type="ui64"  tag="key" desc="用户唯一ID"/>
+        <member name="serviceName" type="string" tag="uni"   desc="昵称"/>
+        <member name="account"  type="string" tag="idx" desc="帐号"/>
+        <member name="iconID"  type="i16" desc="头像"/>
+        <member name="level"  type="i32" desc="等级"/>
+    </packet>
+    <array name="UserBaseInfoArray" type="UserBaseInfo" desc="" />
 
 
 

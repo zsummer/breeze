@@ -6,37 +6,37 @@ config.areaid = 1000
 
 config.db = 
 {
-	info = {ip = "192.168.15.216", port = 3306, db = "db_info", user = "root", pwd = "123456"},
-	log = {ip = "192.168.15.216", port = 3306, db = "db_log", user = "root", pwd = "123456"},
-	--info = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
-	--log = {ip = "127.0.0.1", port = 3306, db = "db_log", user = "root", pwd = "123456"},
+    ServiceDictDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
+    ServiceInfoDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
+    ServiceLogDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
 }
 
-
-
-config.listen = 
+config.docker = 
 {
-	logic= 
-		{
-			{
-				ip = "0.0.0.0", 
-				port=8081,
-				white={"192.168.", "127.0."},
-				wip="127.0.0.1", 
-				wport=20000,
-				index = 0
-			},
-		},
-}
+    {
+        serviceBindIP="0.0.0.0",
+        serviceIP="127.0.0.1",
+        servicePort=16000,
+        serviceWhite={"192.168.", "127.0."},
+        wideIP="127.0.0.1",
+        widePort=26000,
+        services={"ServiceDictDBMgr", "ServiceLogDBMgr", "ServiceUserMgr", "ServiceUser"},
+        dockerID = 1,
+    },
+    {
+        serviceBindIP="0.0.0.0",
+        serviceIP="127.0.0.1",
+        servicePort=16001,
+        serviceWhite={"192.168.", "127.0."},
+        wideIP="127.0.0.1",
+        widePort=26001,
+        services={"ServiceInfoDBMgr", "ServiceUser"},
+        dockerID = 2,
+    },
 
 
-config.connect = 
-{
-	stress =
-		{
-			{dstType = "logic", ip="127.0.0.1", port=20000, index = 0},
-		},
 }
+
 
 
 return config

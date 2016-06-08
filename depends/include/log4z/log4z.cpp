@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -75,8 +75,12 @@
 
 
 #ifdef __APPLE__
+#include "TargetConditionals.h"
 #include <dispatch/dispatch.h>
+#include <sys/proc.h>
+#if !TARGET_OS_IPHONE
 #include <libproc.h>
+#endif
 #endif
 
 
@@ -298,17 +302,7 @@ enum LogDataType
     LDT_SET_LOGGER_MONTHDIR,
 //    LDT_SET_LOGGER_,
 };
-struct LogData
-{
-    LoggerId _id;        //dest logger id
-    int    _type;     //type.
-    int    _typeval;
-    int    _level;    //log level
-    time_t _time;        //create time
-    unsigned int _precise; //create time 
-    int _contentLen;
-    char _content[LOG4Z_LOG_BUF_SIZE]; //content
-};
+
 
 //////////////////////////////////////////////////////////////////////////
 //! LoggerInfo
@@ -372,7 +366,7 @@ public:
     virtual bool start();
     virtual bool stop();
     virtual bool prePushLog(LoggerId id, int level);
-    virtual bool pushLog(LoggerId id, int level, const char * log, const char * file, int line);
+    virtual bool pushLog(LogData * pLog, const char * file, int line);
     //! 查找ID
     virtual LoggerId findLogger(const char*  key);
     bool hotChange(LoggerId id, LogDataType ldt, int num, const std::string & text);
@@ -394,8 +388,10 @@ public:
     virtual unsigned long long getStatusWaitingCount(){return _ullStatusTotalPushLog - _ullStatusTotalPopLog;}
     virtual unsigned int getStatusActiveLoggers();
 protected:
+    virtual LogData * makeLogData(LoggerId id, int level);
+    virtual void freeLogData(LogData * log);
     void showColorText(const char *text, int level = LOG_LEVEL_DEBUG);
-    bool onHotChange(LoggerInfo & logger, LogDataType ldt, int num, const std::string & text);
+    bool onHotChange(LoggerId id, LogDataType ldt, int num, const std::string & text);
     bool openLogger(LogData * log);
     bool closeLogger(LoggerId id);
     bool popLog(LogData *& log);
@@ -426,8 +422,9 @@ private:
     LoggerInfo _loggers[LOG4Z_LOGGER_MAX];
 
     //! log queue
-    std::list<LogData *> _logs;
     LockHelper    _logLock;
+    std::list<LogData *> _logs;
+    std::vector<LogData*> _freeLogDatas;
 
     //show color lock
     LockHelper _scLock;
@@ -439,6 +436,8 @@ private:
     //Log queue statistics
     unsigned long long _ullStatusTotalPushLog;
     unsigned long long _ullStatusTotalPopLog;
+
+
 
 };
 
@@ -1158,7 +1157,80 @@ LogerManager::~LogerManager()
 }
 
 
+LogData * LogerManager::makeLogData(LoggerId id, int level)
+{
+    LogData * pLog = NULL;
+    if (true)
+    {
+        if (!_freeLogDatas.empty())
+        {
+            AutoLock l(_logLock);
+            if (!_freeLogDatas.empty())
+            {
+                pLog = _freeLogDatas.back();
+                _freeLogDatas.pop_back();
+            }
+        }
+        if (pLog == NULL)
+        {
+            pLog = new LogData();
+        }
+    }
+    //append precise time to log
+    if (true)
+    {
+        pLog->_id = id;
+        pLog->_level = level;
+        pLog->_type = LDT_GENERAL;
+        pLog->_typeval = 0;
+        pLog->_contentLen = 0;
+#ifdef WIN32
+        FILETIME ft;
+        GetSystemTimeAsFileTime(&ft);
+        unsigned long long now = ft.dwHighDateTime;
+        now <<= 32;
+        now |= ft.dwLowDateTime;
+        now /= 10;
+        now -= 11644473600000000ULL;
+        now /= 1000;
+        pLog->_time = now / 1000;
+        pLog->_precise = (unsigned int)(now % 1000);
+#else
+        struct timeval tm;
+        gettimeofday(&tm, NULL);
+        pLog->_time = tm.tv_sec;
+        pLog->_precise = tm.tv_usec / 1000;
+#endif
+    }
 
+    //format log
+    if (true)
+    {
+        tm tt = timeToTm(pLog->_time);
+
+        pLog->_contentLen = sprintf(pLog->_content, "%d-%02d-%02d %02d:%02d:%02d.%03u %s ",
+            tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
+            LOG_STRING[pLog->_level]);
+        if (pLog->_contentLen < 0)
+        {
+            pLog->_contentLen = 0;
+        }
+    }
+    return pLog;
+}
+void LogerManager::freeLogData(LogData * log)
+{
+    
+    if (_freeLogDatas.size() < 200)
+    {
+        AutoLock l(_logLock);
+        _freeLogDatas.push_back(log);
+    }
+    else
+    {
+        delete log;
+    }
+}
 
 void LogerManager::showColorText(const char *text, int level)
 {
@@ -1357,122 +1429,42 @@ bool LogerManager::prePushLog(LoggerId id, int level)
     }
     return true;
 }
-bool LogerManager::pushLog(LoggerId id, int level, const char * log, const char * file, int line)
+bool LogerManager::pushLog(LogData * pLog, const char * file, int line)
 {
     // discard log
-    if (id < 0 || id > _lastId || !_runing || !_loggers[id]._enable)
+    if (pLog->_id < 0 || pLog->_id > _lastId || !_runing || !_loggers[pLog->_id]._enable)
     {
+        freeLogData(pLog);
         return false;
     }
 
     //filter log
-    if (level < _loggers[id]._level)
+    if (pLog->_level < _loggers[pLog->_id]._level)
     {
+        freeLogData(pLog);
         return false;
     }
-
-    //create log data
-    LogData * pLog = new LogData;
-    pLog->_id =id;
-    pLog->_type = LDT_GENERAL;
-    pLog->_typeval = 0;
-    pLog->_level = level;
-    
-    //append precise time to log
+    if (_loggers[pLog->_id]._fileLine && file)
     {
-#ifdef WIN32
-        FILETIME ft;
-        GetSystemTimeAsFileTime(&ft);
-        unsigned long long now = ft.dwHighDateTime;
-        now <<= 32;
-        now |= ft.dwLowDateTime;
-        now /=10;
-        now -=11644473600000000ULL;
-        now /=1000;
-        pLog->_time = now/1000;
-        pLog->_precise = (unsigned int)(now%1000);
-#else
-        struct timeval tm;
-        gettimeofday(&tm, NULL);
-        pLog->_time = tm.tv_sec;
-        pLog->_precise = tm.tv_usec/1000;
-#endif
+        const char * pNameBegin = file + strlen(file);
+        do
+        {
+            if (*pNameBegin == '\\' || *pNameBegin == '/') { pNameBegin++; break; }
+            if (pNameBegin == file) { break; }
+            pNameBegin--;
+        } while (true);
+        zsummer::log4z::Log4zStream ss(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen); 
+        ss << " " << pNameBegin << ":" << line;
+        pLog->_contentLen += ss.getCurrentLen();
     }
+    if (pLog->_contentLen < 3) pLog->_contentLen = 3;
+    if (pLog->_contentLen +3 <= LOG4Z_LOG_BUF_SIZE ) pLog->_contentLen += 3;
 
-    //format log
-    {
-        tm tt = timeToTm(pLog->_time);
-        if (file == NULL || !_loggers[pLog->_id]._fileLine)
-        {
-#ifdef WIN32
-            int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03u %s %s \r\n",
-                tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
-                LOG_STRING[pLog->_level], log);
-            if (ret == -1)
-            {
-                ret = LOG4Z_LOG_BUF_SIZE - 1;
-            }
-            pLog->_contentLen = ret;
-#else
-            int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03u %s %s \r\n",
-                tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
-                LOG_STRING[pLog->_level], log);
-            if (ret == -1)
-            {
-                ret = 0;
-            }
-            if (ret >= LOG4Z_LOG_BUF_SIZE)
-            {
-                ret = LOG4Z_LOG_BUF_SIZE-1;
-            }
+    pLog->_content[pLog->_contentLen - 1] = '\0';
+    pLog->_content[pLog->_contentLen - 2] = '\n';
+    pLog->_content[pLog->_contentLen - 3] = '\r';
+    pLog->_contentLen--; //clean '\0'
 
-            pLog->_contentLen = ret;
-#endif
-        }
-        else
-        {
-            const char * pNameBegin = file+strlen(file);
-            do 
-            {
-                if (*pNameBegin == '\\' || *pNameBegin == '/'){ pNameBegin++; break;}
-                if (pNameBegin == file){break;}
-                pNameBegin--;
-            } while (true);
-            
-            
-#ifdef WIN32
-            int ret = _snprintf_s(pLog->_content, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, "%d-%02d-%02d %02d:%02d:%02d.%03u %s %s (%s):%d \r\n",
-                tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
-                LOG_STRING[pLog->_level], log, pNameBegin, line);
-            if (ret == -1)
-            {
-                ret = LOG4Z_LOG_BUF_SIZE - 1;
-            }
-            pLog->_contentLen = ret;
-#else
-            int ret = snprintf(pLog->_content, LOG4Z_LOG_BUF_SIZE, "%d-%02d-%02d %02d:%02d:%02d.%03u %s %s (%s):%d \r\n",
-                tt.tm_year + 1900, tt.tm_mon + 1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec, pLog->_precise,
-                LOG_STRING[pLog->_level], log, pNameBegin, line);
-            if (ret == -1)
-            {
-                ret = 0;
-            }
-            if (ret >= LOG4Z_LOG_BUF_SIZE)
-            {
-                ret = LOG4Z_LOG_BUF_SIZE-1;
-            }
-
-            pLog->_contentLen = ret;
-#endif
-        }
-    
-        if (pLog->_contentLen >= 2)
-        {
-            pLog->_content[pLog->_contentLen - 2] = '\r';
-            pLog->_content[pLog->_contentLen - 1] = '\n';
-        }
-    
-    }
 
     if (_loggers[pLog->_id]._display && LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
     {
@@ -1500,7 +1492,7 @@ bool LogerManager::pushLog(LoggerId id, int level, const char * log, const char 
 
     if (LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
     {
-        delete pLog;
+        freeLogData(pLog);
         return true;
     }
     
@@ -1526,7 +1518,11 @@ bool LogerManager::hotChange(LoggerId id, LogDataType ldt, int num, const std::s
 {
     if (id <0 || id > _lastId) return false;
     if (text.length() >= LOG4Z_LOG_BUF_SIZE) return false;
-    LogData * pLog = new LogData;
+    if (!_runing || LOG4Z_ALL_SYNCHRONOUS_OUTPUT)
+    {
+        return onHotChange(id, ldt, num, text);
+    }
+    LogData * pLog = makeLogData(id, LOG4Z_DEFAULT_LEVEL);
     pLog->_id = id;
     pLog->_type = ldt;
     pLog->_typeval = num;
@@ -1537,8 +1533,13 @@ bool LogerManager::hotChange(LoggerId id, LogDataType ldt, int num, const std::s
     return true;
 }
 
-bool LogerManager::onHotChange(LoggerInfo & logger, LogDataType ldt, int num, const std::string & text)
+bool LogerManager::onHotChange(LoggerId id, LogDataType ldt, int num, const std::string & text)
 {
+    if (id < LOG4Z_MAIN_LOGGER_ID || id > _lastId)
+    {
+        return false;
+    }
+    LoggerInfo & logger = _loggers[id];
     if (ldt == LDT_ENABLE_LOGGER) logger._enable = num != 0;
     else if (ldt == LDT_SET_LOGGER_NAME) logger._name = text;
     else if (ldt == LDT_SET_LOGGER_PATH) logger._path = text;
@@ -1554,13 +1555,21 @@ bool LogerManager::onHotChange(LoggerInfo & logger, LogDataType ldt, int num, co
 bool LogerManager::enableLogger(LoggerId id, bool enable) 
 {
     if (id < 0 || id > _lastId) return false;
-    if (enable) _loggers[id]._enable = true;
-    return hotChange(id, LDT_ENABLE_LOGGER, enable, ""); 
+    if (enable)
+    {
+        _loggers[id]._enable = true;
+        return true;
+    }
+    return hotChange(id, LDT_ENABLE_LOGGER, false, ""); 
 }
 bool LogerManager::setLoggerLevel(LoggerId id, int level) 
 { 
     if (id < 0 || id > _lastId) return false;
-    if (level < _loggers[id]._level) _loggers[id]._level = level;
+    if (level <= _loggers[id]._level)
+    {
+        _loggers[id]._level = level;
+        return true;
+    }
     return hotChange(id, LDT_SET_LOGGER_LEVEL, level, ""); 
 }
 bool LogerManager::setLoggerDisplay(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_DISPLAY, enable, ""); }
@@ -1599,7 +1608,7 @@ bool LogerManager::setLoggerPath(LoggerId id, const char * path)
             copyPath.append("/");
         }
     }
-    return hotChange(id, LDT_SET_LOGGER_PATH, 0, path);
+    return hotChange(id, LDT_SET_LOGGER_PATH, 0, copyPath);
 }
 bool LogerManager::setAutoUpdate(int interval)
 {
@@ -1751,19 +1760,17 @@ bool LogerManager::popLog(LogData *& log)
 void LogerManager::run()
 {
     _runing = true;
-    pushLog(0, LOG_LEVEL_ALARM, "-----------------  log4z thread started!   ----------------------------", NULL, 0);
+    LOGA("-----------------  log4z thread started!   ----------------------------");
     for (int i = 0; i <= _lastId; i++)
     {
         if (_loggers[i]._enable)
         {
-            std::stringstream ss;
-            ss <<"logger id=" <<i 
-                <<" key=" <<_loggers[i]._key
-                <<" name=" <<_loggers[i]._name
-                <<" path=" <<_loggers[i]._path
-                <<" level=" << _loggers[i]._level
-                <<" display=" << _loggers[i]._display;
-            pushLog(0, LOG_LEVEL_ALARM, ss.str().c_str(), NULL, 0);
+            LOGA("logger id=" << i
+                << " key=" << _loggers[i]._key
+                << " name=" << _loggers[i]._name
+                << " path=" << _loggers[i]._path
+                << " level=" << _loggers[i]._level
+                << " display=" << _loggers[i]._display);
         }
     }
 
@@ -1779,16 +1786,16 @@ void LogerManager::run()
         {
             if (pLog->_id <0 || pLog->_id > _lastId)
             {
-                delete pLog;
+                freeLogData(pLog);
                 continue;
             }
             LoggerInfo & curLogger = _loggers[pLog->_id];
 
             if (pLog->_type != LDT_GENERAL)
             {
-                onHotChange(curLogger, (LogDataType)pLog->_type, pLog->_typeval, std::string(pLog->_content, pLog->_contentLen));
+                onHotChange(pLog->_id, (LogDataType)pLog->_type, pLog->_typeval, std::string(pLog->_content, pLog->_contentLen));
                 curLogger._handle.close();
-                delete pLog;
+                freeLogData(pLog);
                 continue;
             }
             
@@ -1798,8 +1805,7 @@ void LogerManager::run()
             
             if (!curLogger._enable || pLog->_level <curLogger._level  )
             {
-                delete pLog;
-                pLog = NULL;
+                freeLogData(pLog);
                 continue;
             }
 
@@ -1820,8 +1826,7 @@ void LogerManager::run()
             {
                 if (!openLogger(pLog))
                 {
-                    delete pLog;
-                    pLog = NULL;
+                    freeLogData(pLog);
                     continue;
                 }
 
@@ -1837,8 +1842,7 @@ void LogerManager::run()
                 _ullStatusTotalWriteFileBytes += pLog->_contentLen;
             }
 
-            delete pLog;
-            pLog = NULL;
+            freeLogData(pLog);
         }
 
         for (int i=0; i<=_lastId; i++)

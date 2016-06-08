@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>2000</MinNo>
+  <MaxNo>3000</MaxNo>
+  <UseLog4z>true</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+    <packet name="DockerPulse" desc= "集群脉冲">
+    </packet>
+
+    <packet name="LoadServiceInDocker" desc= "在Docker中装载一个Service">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="serviceName" type="string"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="LoadServiceNotice" desc= "通知其他Docker有Service已装载">
+        <member name="serviceDockerID" type="ui32"   desc=""/>
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="serviceName" type="string"   desc=""/>
+        <member name="status" type="ui16"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="RefreshServiceToMgrNotice" desc= "Multi-Servie发生状态变化时候通知给管理器">
+        <member name="serviceDockerID" type="ui32"   desc=""/>
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="serviceName" type="string"   desc=""/>
+        <member name="status" type="ui16"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="SwitchServiceClient" desc= "更改clientID">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="SwitchServiceClientNotice" desc= "更改clientID">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="KickRealClient" desc= "踢掉一个客户端">
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="RealClientClosedNotice" desc= "客户端离线通知">
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="UnloadServiceInDocker" desc= "卸载一个Service">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+    </packet>
+     <packet name="UnloadedServiceNotice" desc= "已卸载并完成销毁,广播给所有docker">
+        <member name="serviceType" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+    </packet>
+
+    <packet name="ShutdownClusterServer" desc= "关闭服务器集群">
+    </packet>
+
+
+    <packet name="ForwardToService" desc= "转发到其他docker上的Service">
+        <header name="trace" type="tracing" desc="header field" />
+        <body>
+            <attachment name="proto" type="any" desc="full proto serialize" />
+        </body>
+    </packet>
+
+    <packet name="ForwardToRealClient" desc= "转发给真正的client">
+        <header name="sessionID" type="SessionID" desc="header field" />
+        <body>
+            <attachment name="proto" type="any" desc="full proto serialize" />
+        </body>
+    </packet>
+
+
+
+
+
+</Proto>
+

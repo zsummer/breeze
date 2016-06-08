@@ -104,37 +104,57 @@ int checkString()
     {
         return 4;
     }
+    if (true)
+    {
+        std::vector<int> array = { 1,2,3,4 };
+        std::string dstString = mergeToString(array, ",");
+        if (dstString.length() != 7)
+        {
+            return 5;
+        }
+        dstString.clear();
+        for (auto i : array)
+        {
+            mergeToString(dstString, ",", i);
+        }
+        if (dstString.length() != 7)
+        {
+            return 6;
+        }
+        
+    }
+    
     if (!compareStringIgnCase("Fad123123", "fAd123123"))
-    {
-        return 5;
-    }
-    if (compareStringIgnCase("1234", "123", true))
-    {
-        return 6;
-    }
-    if (!compareStringIgnCase("a123", "A1234", true))
     {
         return 7;
     }
-    if (compareStringIgnCase("a123", "A1234", false))
+    if (compareStringIgnCase("1234", "123", true))
     {
         return 8;
     }
-    if (strcmp(toUpperString("aaaa").c_str(), "AAAA") != 0)
+    if (!compareStringIgnCase("a123", "A1234", true))
     {
         return 9;
     }
-    if (strcmp(toLowerString("AAAA").c_str(), "aaaa") != 0)
+    if (compareStringIgnCase("a123", "A1234", false))
     {
         return 10;
     }
-    if (!isEqual(fromString<float>("0.1", 0.0), 0.1, 1e-5))
+    if (strcmp(toUpperString("aaaa").c_str(), "AAAA") != 0)
     {
         return 11;
     }
-    if (!isEqual(fromString<double>("1e-1", 0.0), 0.1))
+    if (strcmp(toLowerString("AAAA").c_str(), "aaaa") != 0)
     {
         return 12;
+    }
+    if (!isEqual(fromString<float>("0.1", 0.0), 0.1, 1e-5))
+    {
+        return 13;
+    }
+    if (!isEqual(fromString<double>("1e-1", 0.0), 0.1))
+    {
+        return 14;
     }
     if (fromString<int>("-1", 0) != -1)
     {
@@ -144,6 +164,81 @@ int checkString()
     {
         return 16;
     }
+    if (!compareStringWildcard("", ""))
+    {
+        return 17;
+    }
+    if (!compareStringWildcard("", "*"))
+    {
+        return 18;
+    }
+    if (!compareStringWildcard("afda*fa", "*"))
+    {
+        return 19;
+    }
+    if (!compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e"))
+    {
+        return 21;
+    }
+    if (compareStringWildcard("a---bc-e-bc-----------e-", "a*bc***e*e"))
+    {
+        return 22;
+    }
+    if (true)
+    {
+        double now = getTick();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
+        }
+        LOGD("compareStringWildcard used time=" << (getTick() - now));
+        now = getTick();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            
+        }
+        LOGD("compareStringWildcard used time=" << (getTick() - now));
+    }
+
+    if (subStringFront("aa/bb/cc", "/") != "aa")
+    {
+        return 25;
+    }
+    if (subStringBack("aa/bb/cc", "/") != "cc")
+    {
+        return 26;
+    }
+    if (subStringWithoutFront("aa/bb/cc", "/") != "bb/cc")
+    {
+        return 27;
+    }
+    if (subStringWithoutBack("aa/bb/cc", "/") != "aa/bb")
+    {
+        return 28;
+    }
+    if (true)
+    {
+        //蓝天and҉😌   
+        char org[] = { (char)0xe8,  (char)0x93,  (char)0x9d,    (char)0xe5,  (char)0xa4,  (char)0xa9,    (char)0x61,  (char)0x6e,  (char)0x64,    (char)0xd2,  (char)0x89,    (char)0xf0, (char)0x9f, (char)0x98, (char)0x8c,   (char)0x00 };
+        if (getCharUTF8Count(org) != 7)
+        {
+            return 29;
+        }
+        if (getCharASCIICount(org) != 3)
+        {
+            return 30;
+        }
+        if (getCharNoASCIICount(org) != 4)
+        {
+            return 31;
+        }
+        if (!hadIllegalChar(org))
+        {
+            return 32;
+        }
+
+    }
+
     return 0;
 }
 
@@ -157,7 +252,7 @@ int checkFile()
     {
         return 1;
     }
-    if (!createRecursionDir(path))
+    if (!createDirectory(path))
     {
         return 2;
     }
@@ -166,7 +261,7 @@ int checkFile()
         return 3;
     }
     writeFileContent(path + filename, content.c_str(), content.length(), false);
-    if (!hadFile(path + filename))
+    if (!accessFile(path + filename))
     {
         return 4;
     }
@@ -206,7 +301,7 @@ int checkFile()
     {
         return 8;
     }
-    if (hadFile(path + filename))
+    if (accessFile(path + filename))
     {
         return 9;
     }
@@ -297,22 +392,22 @@ int checkTime()
     if (true)
     {
         int bit = 0;
-        bit = appendBitFlag(bit, 1);
-        bit = appendBitFlag(bit, 2);
-        if (!checkBitFlag(bit, 1))
+        bit = setBitFlag(bit, 1);
+        bit = setBitFlag(bit, 2);
+        if (!getBitFlag(bit, 1))
         {
             return 16;
         }
-        bit = removeBitFlag(bit, 1);
-        if (checkBitFlag(bit, 1))
+        bit = setBitFlag(bit, 1, false);
+        if (getBitFlag(bit, 1))
         {
             return 17;
         }
-        if (!checkBitFlag(bit, 2))
+        if (!getBitFlag(bit, 2))
         {
             return 18;
         }
-        bit = removeBitFlag(bit, 2);
+        bit = setBitFlag(bit, 2, false);
         if (bit != 0)
         {
             return 19;
@@ -343,62 +438,134 @@ int checkTime()
 
 int checkFloat()
 {
-    if(isZero(POINT_DOUBLE*2))
+    if (isZero(POINT_DOUBLE))
     {
         return 1;
     }
-    if (!isZero(POINT_DOUBLE / -10.0))
+    if (!isZero(0.0))
     {
         return 2;
     }
-    if (!isZero(POINT_DOUBLE / 10.0))
+    if(isZero(POINT_DOUBLE*1.00000000001))
     {
         return 3;
     }
-    if (!isEqual(1.0 + POINT_DOUBLE, 1.0 + POINT_DOUBLE/2.0))
+    if (isZero(POINT_DOUBLE*-1.00000000001))
     {
         return 4;
     }
-    if (isEqual(1.0 + POINT_DOUBLE*2, 1.0))
+    if (!isZero(POINT_DOUBLE * 0.999999999))
     {
         return 5;
     }
-    if (!isEqual(getDistance(1.0, -1.0), 2.0))
+    if (!isZero(POINT_DOUBLE * -0.999999999))
     {
         return 6;
     }
-    if (!isEqual(getDistance(1.0, 0.0, 2.0, 0.0), 1.0))
+    if (!isEqual(0.0, 0.0))
     {
         return 7;
     }
-    if (!isEqual(getRadian(0.0, 0.0, 1.0, 0.0), 0.0))
+    if (isEqual(0.0, POINT_DOUBLE))
     {
         return 8;
     }
-    if (!isEqual(getRadian(0.0, 0.0, -1.0, 0.0), PI))
+    if (isEqual(0.0, POINT_DOUBLE*0.999999))
     {
         return 9;
     }
-    if (!isEqual(std::get<1>(getFarPoint(0.0, 0.0, PI/2.0*3.0, 1.0)), -1.0))
+    if (isEqual(0.0, POINT_DOUBLE*-0.999999))
     {
         return 10;
     }
-    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, -2.0, 1.0)), -1.0))
+
+    if (!isEqual(POINT_DOUBLE, POINT_DOUBLE))
     {
         return 11;
     }
-    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, 2.0, 1.0)), 1.0))
+
+
+    if (isEqual(POINT_DOUBLE*1E55, POINT_DOUBLE*1E55 + POINT_DOUBLE*1E55*POINT_DOUBLE*1.1))
     {
         return 12;
     }
-    if (!isEqual(std::get<0>(rotatePoint(0.0, 0.0, PI/2.0, 1.0, PI/2.0)), -1.0))
+    if (!isEqual(POINT_DOUBLE*1E55, POINT_DOUBLE*1E55 + (POINT_DOUBLE*1E55*POINT_DOUBLE)*0.99999))
+    {
+        return 13;
+    }
+    if (isEqual(POINT_DOUBLE*1E-55, POINT_DOUBLE*1E-55 + POINT_DOUBLE*1E-55*POINT_DOUBLE*1.1))
+    {
+        return 14;
+    }
+    if (!isEqual(POINT_DOUBLE*1E-55, POINT_DOUBLE*1E-55 - (POINT_DOUBLE*1E-55*POINT_DOUBLE)*0.99999))
     {
         return 15;
     }
-    if (!isEqual(std::get<1>(rotatePoint(0.0, 0.0, PI / 2.0, 1.0, PI)), -1.0))
+    if (!isEqual(getDistance(1.0, -1.0), 2.0))
     {
         return 16;
     }
+    if (!isEqual(getDistance(1.0, 0.0, 2.0, 0.0), 1.0))
+    {
+        return 17;
+    }
+    if (!isEqual(getRadian(0.0, 0.0, 1.0, 0.0), 0.0))
+    {
+        return 18;
+    }
+    if (!isEqual(getRadian(0.0, 0.0, -1.0, 0.0), PI))
+    {
+        return 19;
+    }
+    if (!isEqual(std::get<1>(getFarPoint(0.0, 0.0, PI/2.0*3.0, 1.0)), -1.0))
+    {
+        return 20;
+    }
+    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, -2.0, 1.0)), -1.0))
+    {
+        return 21;
+    }
+    if (!isEqual(std::get<1>(getFarOffset(0.0, 0.0, 0.0, 2.0, 1.0)), 1.0))
+    {
+        return 22;
+    }
+    if (!isEqual(std::get<0>(rotatePoint(0.0, 0.0, PI/2.0, 1.0, PI/2.0)), -1.0))
+    {
+        return 25;
+    }
+    if (!isEqual(std::get<1>(rotatePoint(0.0, 0.0, PI / 2.0, 1.0, PI)), -1.0))
+    {
+        return 26;
+    }
+    if (!isEqual(calcELORatingUpper(1500, 1800, 1), 1527, 1E0))
+    {
+        return 27;
+    }
+    if (true)
+    {
+        double now = getTick();
+        volatile double f = 0.0;
+        for (int i = 0; i < 100 * 10000; i++)
+        {
+            f = isEqual(1e55, 1e55);
+        }
+        f = 0.0;
+        LOGD("isEqual used time=" << (getTick() - now) << f);
+    }
+    if (true)
+    {
+        double owner = 2500;
+        double dst = 2500;
+        for (int i = 0; i < 10; i++)
+        {
+            double newOwner = owner + calcELORatingUpper(owner, dst, 1);
+            double newDst = dst + calcELORatingUpper(dst, owner, -1);
+            LOGD("owner[" << newOwner << ":" << 1.0 - (newOwner - owner) / 32 << "] , dst[" << newDst << ":" <<  (newDst - dst) / -32 << "]");
+            owner = newOwner;
+            dst = newDst;
+        }
+    }
+
 
     return 0;
 }
@@ -410,14 +577,14 @@ int checkBalance()
     balance.enableNode(1);
     balance.enableNode(2);
     balance.enableNode(3);
-    for (int i = 0; i <6 ; ++i)
+    for (unsigned i = 0; i <6 ; ++i)
     {
         if(balance.selectAuto() != i%3+1)
         {
             return 1;
         }
     }
-    for (int i=0; i<6; ++i)
+    for (unsigned i = 0; i<6; ++i)
     {
         if(balance.selectManual() != i%3+1)
         {
@@ -426,14 +593,14 @@ int checkBalance()
         balance.changeWeight(i%3+1, 5);
     }
     balance.disableNode(3);
-    for (int i = 0; i < 6; ++i)
+    for (unsigned i = 0; i < 6; ++i)
     {
         if(balance.selectAuto() != i%2+1)
         {
             return 3;
         }
     }
-    for (int i = 0; i < 6; ++i)
+    for (unsigned i = 0; i < 6; ++i)
     {
         if(balance.selectManual() != i%2+1)
         {
@@ -442,7 +609,7 @@ int checkBalance()
         balance.changeWeight(i%2+1, 5);
     }
     balance.enableNode(4);
-    for (int i = 0; i < 3; ++i)
+    for (unsigned i = 0; i < 3; ++i)
     {
         if(balance.selectAuto() != 4)
         {

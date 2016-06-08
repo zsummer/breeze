@@ -186,6 +186,7 @@
 #include <sstream>
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -239,9 +240,9 @@ enum ENUM_LOG_LEVEL
 //! -----------------default logger config, can change on this.-----------
 //////////////////////////////////////////////////////////////////////////
 //! the max logger count.
-const int LOG4Z_LOGGER_MAX = 10;
+const int LOG4Z_LOGGER_MAX = 20;
 //! the max log content length.
-const int LOG4Z_LOG_BUF_SIZE = 2048;
+const int LOG4Z_LOG_BUF_SIZE = 1024 * 8;
 //! the max stl container depth.
 const int LOG4Z_LOG_CONTAINER_DEPTH = 5;
 
@@ -279,6 +280,19 @@ const bool LOG4Z_DEFAULT_SHOWSUFFIX = true;
 _ZSUMMER_BEGIN
 _ZSUMMER_LOG4Z_BEGIN
 
+
+struct LogData
+{
+    LoggerId _id;        //dest logger id
+    int    _type;     //type.
+    int    _typeval;
+    int    _level;    //log level
+    time_t _time;        //create time
+    unsigned int _precise; //create time 
+    int _contentLen;
+    char _content[LOG4Z_LOG_BUF_SIZE]; //content
+};
+
 //! log4z class
 class ILog4zManager
 {
@@ -314,7 +328,7 @@ public:
     //pre-check the log filter. if filter out return false. 
     virtual bool prePushLog(LoggerId id, int level) = 0;
     //! Push log, thread safe.
-    virtual bool pushLog(LoggerId id, int level, const char * log, const char * file = NULL, int line = 0) = 0;
+    virtual bool pushLog(LogData * pLog, const char * file = NULL, int line = 0) = 0;
 
     //! set logger's attribute, thread safe.
     virtual bool enableLogger(LoggerId id, bool enable) = 0; // immediately when enable, and queue up when disable. 
@@ -338,6 +352,9 @@ public:
     virtual unsigned long long getStatusTotalWriteBytes() = 0;
     virtual unsigned long long getStatusWaitingCount() = 0;
     virtual unsigned int getStatusActiveLoggers() = 0;
+
+    virtual LogData * makeLogData(LoggerId id, int level) = 0;
+    virtual void freeLogData(LogData * log) = 0;
 };
 
 class Log4zStream;
@@ -356,26 +373,27 @@ _ZSUMMER_END
 
 
 //! base macro.
-#define LOG_STREAM(id, level, log)\
+#define LOG_STREAM(id, level, file, line, log)\
 do{\
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
-        char logBuf[LOG4Z_LOG_BUF_SIZE];\
-        zsummer::log4z::Log4zStream ss(logBuf, LOG4Z_LOG_BUF_SIZE);\
+        zsummer::log4z::LogData * pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
+        zsummer::log4z::Log4zStream ss(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen);\
         ss << log;\
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logBuf, __FILE__, __LINE__);\
+        pLog->_contentLen += ss.getCurrentLen(); \
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line);\
     }\
 } while (0)
 
 
 //! fast macro
-#define LOG_TRACE(id, log) LOG_STREAM(id, LOG_LEVEL_TRACE, log)
-#define LOG_DEBUG(id, log) LOG_STREAM(id, LOG_LEVEL_DEBUG, log)
-#define LOG_INFO(id, log)  LOG_STREAM(id, LOG_LEVEL_INFO, log)
-#define LOG_WARN(id, log)  LOG_STREAM(id, LOG_LEVEL_WARN, log)
-#define LOG_ERROR(id, log) LOG_STREAM(id, LOG_LEVEL_ERROR, log)
-#define LOG_ALARM(id, log) LOG_STREAM(id, LOG_LEVEL_ALARM, log)
-#define LOG_FATAL(id, log) LOG_STREAM(id, LOG_LEVEL_FATAL, log)
+#define LOG_TRACE(id, log) LOG_STREAM(id, LOG_LEVEL_TRACE, __FILE__, __LINE__, log)
+#define LOG_DEBUG(id, log) LOG_STREAM(id, LOG_LEVEL_DEBUG, __FILE__, __LINE__, log)
+#define LOG_INFO(id, log)  LOG_STREAM(id, LOG_LEVEL_INFO, __FILE__, __LINE__, log)
+#define LOG_WARN(id, log)  LOG_STREAM(id, LOG_LEVEL_WARN, __FILE__, __LINE__, log)
+#define LOG_ERROR(id, log) LOG_STREAM(id, LOG_LEVEL_ERROR, __FILE__, __LINE__, log)
+#define LOG_ALARM(id, log) LOG_STREAM(id, LOG_LEVEL_ALARM, __FILE__, __LINE__, log)
+#define LOG_FATAL(id, log) LOG_STREAM(id, LOG_LEVEL_FATAL, __FILE__, __LINE__, log)
 
 //! super macro.
 #define LOGT( log ) LOG_TRACE(LOG4Z_MAIN_LOGGER_ID, log )
@@ -390,34 +408,39 @@ do{\
 //! format input log.
 #ifdef LOG4Z_FORMAT_INPUT_ENABLE
 #ifdef WIN32
-#define LOG_FORMAT(id, level, logformat, ...) \
+#define LOG_FORMAT(id, level, file, line, logformat, ...) \
 do{ \
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
-        char logbuf[LOG4Z_LOG_BUF_SIZE]; \
-        _snprintf_s(logbuf, LOG4Z_LOG_BUF_SIZE, _TRUNCATE, logformat, ##__VA_ARGS__); \
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf, __FILE__, __LINE__); \
+        zsummer::log4z::LogData * pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
+        int len = _snprintf_s(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen, _TRUNCATE, logformat, ##__VA_ARGS__); \
+        if (len < 0) len = LOG4Z_LOG_BUF_SIZE - pLog->_contentLen; \
+        pLog->_contentLen += len; \
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line); \
     }\
 } while (0)
 #else
-#define LOG_FORMAT(id, level, logformat, ...) \
+#define LOG_FORMAT(id, level, file, line, logformat, ...) \
 do{ \
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
-        char logbuf[LOG4Z_LOG_BUF_SIZE]; \
-        snprintf(logbuf, LOG4Z_LOG_BUF_SIZE,logformat, ##__VA_ARGS__); \
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(id, level, logbuf, __FILE__, __LINE__); \
+        zsummer::log4z::LogData * pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
+        int len = snprintf(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen,logformat, ##__VA_ARGS__); \
+        if (len < 0) len = 0; \
+        if (len > LOG4Z_LOG_BUF_SIZE - pLog->_contentLen) len = LOG4Z_LOG_BUF_SIZE - pLog->_contentLen; \
+        pLog->_contentLen += len; \
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line); \
     } \
 }while(0)
 #endif
 //!format string
-#define LOGFMT_TRACE(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_TRACE, fmt, ##__VA_ARGS__)
-#define LOGFMT_DEBUG(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
-#define LOGFMT_INFO(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_INFO, fmt, ##__VA_ARGS__)
-#define LOGFMT_WARN(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
-#define LOGFMT_ERROR(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
-#define LOGFMT_ALARM(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_ALARM, fmt, ##__VA_ARGS__)
-#define LOGFMT_FATAL(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_FATAL, fmt, ##__VA_ARGS__)
+#define LOGFMT_TRACE(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_DEBUG(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_INFO(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_INFO, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_WARN(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_WARN, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_ERROR(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_ALARM(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_ALARM, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOGFMT_FATAL(id, fmt, ...)  LOG_FORMAT(id, LOG_LEVEL_FATAL, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
 #define LOGFMTT( fmt, ...) LOGFMT_TRACE(LOG4Z_MAIN_LOGGER_ID, fmt,  ##__VA_ARGS__)
 #define LOGFMTD( fmt, ...) LOGFMT_DEBUG(LOG4Z_MAIN_LOGGER_ID, fmt,  ##__VA_ARGS__)
 #define LOGFMTI( fmt, ...) LOGFMT_INFO(LOG4Z_MAIN_LOGGER_ID, fmt,  ##__VA_ARGS__)
@@ -475,13 +498,13 @@ private:
     inline Log4zStream & writeLongLong(long long t);
     inline Log4zStream & writeULongLong(unsigned long long t);
     inline Log4zStream & writePointer(const void * t);
-    inline Log4zStream & writeString(const wchar_t* t){ return writeData("%s", t); }
+    inline Log4zStream & writeString(const char * t, size_t len);
     inline Log4zStream & writeWString(const wchar_t* t);
     inline Log4zStream & writeBinary(const Log4zBinary & t);
 public:
     inline Log4zStream & operator <<(const void * t){ return  writePointer(t); }
 
-    inline Log4zStream & operator <<(const char * t){return writeData("%s", t);}
+    inline Log4zStream & operator <<(const char * t){return writeString(t, strlen(t));}
 #ifdef WIN32
     inline Log4zStream & operator <<(const wchar_t * t){ return writeWString(t);}
 #endif
@@ -512,7 +535,7 @@ public:
     inline Log4zStream & operator <<(double t){return writeData("%.4lf", t);}
 
     template<class _Elem,class _Traits,class _Alloc> //support std::string, std::wstring
-    inline Log4zStream & operator <<(const std::basic_string<_Elem, _Traits, _Alloc> & t){ return *this << t.c_str(); }
+    inline Log4zStream & operator <<(const std::basic_string<_Elem, _Traits, _Alloc> & t){ return writeString(t.c_str(), t.length()); }
 
     inline Log4zStream & operator << (const zsummer::log4z::Log4zBinary & binary){ return writeBinary(binary); }
 
@@ -649,15 +672,10 @@ inline Log4zStream& Log4zStream::writeData(const char * ft, T t)
         int count = (int)(_end - _cur);
 #ifdef WIN32
         len = _snprintf(_cur, count, ft, t);
-        if (len == count || (len == -1 && errno == ERANGE))
+        if (len == count || len < 0)
         {
             len = count;
             *(_end - 1) = '\0';
-        }
-        else if (len < 0)
-        {
-            *_cur = '\0';
-            len = 0;
         }
 #else
         len = snprintf(_cur, count, ft, t);
@@ -723,7 +741,28 @@ inline Log4zStream & Log4zStream::writeBinary(const Log4zBinary & t)
     writeData("%s", "\r\n\t]\r\n\t");
     return *this;
 }
-
+inline Log4zStream & zsummer::log4z::Log4zStream::writeString(const char * t, size_t len)
+{
+    if (_cur < _end)
+    {
+        size_t count = (size_t)(_end - _cur);
+        if (len > count)
+        {
+            len = count;
+        }
+        memcpy(_cur, t, len);
+        _cur += len;
+        if (_cur >= _end - 1)
+        {
+            *(_end - 1) = '\0';
+        }
+        else
+        {
+            *(_cur + 1) = '\0';
+        }
+    }
+    return *this;
+}
 inline zsummer::log4z::Log4zStream & zsummer::log4z::Log4zStream::writeWString(const wchar_t* t)
 {
 #ifdef WIN32

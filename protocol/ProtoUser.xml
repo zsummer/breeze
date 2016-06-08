@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>40000</MinNo>
+  <MaxNo>50000</MaxNo>
+  <UseLog4z>true</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+    <packet name="ClientPulse" desc= "客户端脉冲请求">
+    </packet>
+
+    <packet name="ClientAuthReq" desc= "认证请求">
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+    </packet>
+     <packet name="ClientAuthResp" desc= "认证返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+        <member name="previews" type="UserPreviewArray"   desc=""/>
+    </packet>
+
+    <packet name="CreateUserReq" desc= "创角色请求">
+        <member name="serviceName" type="string"   desc=""/>
+    </packet>
+     <packet name="CreateUserResp" desc= "创角色请求返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="previews" type="UserPreviewArray"   desc=""/>
+    </packet>
+
+    <packet name="AttachUserReq" desc= "选角色请求">
+        <member name="serviceID" type="ui64"   desc=""/>
+    </packet>
+     <packet name="AttachUserResp" desc= "选角色请求返回">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
+
+    <packet name="UserChatReq" desc= "">
+        <member name="toServiceID" type="ui64"   desc=""/>
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+     <packet name="UserChatResp" desc= "">
+        <member name="fromServiceID" type="ui64"   desc=""/>
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+
+    <packet name="UserPingPongReq" desc= "">
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+     <packet name="UserPingPongResp" desc= "">
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+
+</Proto>
+

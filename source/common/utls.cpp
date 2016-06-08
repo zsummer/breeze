@@ -71,10 +71,10 @@ std::string readFileContent(const std::string & filename, bool isBinary, size_t 
 }
 size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend)
 {
-    std::string mod = "b+";
+    std::string mod = "ab+";
     if (!isAppend)
     {
-        mod = "w+";
+        mod = "wb+";
     }
     
     FILE * f = fopen(filename.c_str(), mod.c_str());
@@ -124,7 +124,7 @@ bool removeDir(const std::string &path)
 {
     return ::rmdir(path.c_str()) == 0;
 }
-bool hadFile(const std::string &pathfile)
+bool accessFile(const std::string &pathfile)
 {
 #ifdef WIN32
     return ::_access(pathfile.c_str(), 0) == 0;
@@ -133,7 +133,7 @@ bool hadFile(const std::string &pathfile)
 #endif
 }
 
-bool createRecursionDir(std::string  path)
+bool createDirectory(std::string  path)
 {
     if (path.empty()) return false;
     std::string sub;
@@ -164,6 +164,145 @@ bool createRecursionDir(std::string  path)
     }
     return true;
 }
+
+
+
+
+std::string fixPathString(const std::string &path)
+{
+    if (path.empty()) return path;
+    auto ret = path;
+    std::for_each(ret.begin(), ret.end(), [](char &ch){ if (ch == '\\') ch = '/'; });
+    if (isDirectory(path))
+    {
+        if (ret.back() != '/') ret += "/";
+    }
+    return ret;
+}
+
+static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files, bool recursion)
+{
+    if (path.length() == 0)
+    {
+        return false;
+    }
+    path = fixPathString(path);
+    std::string wildcard = subStringBack(path, "/");
+    if (!wildcard.empty())
+    {
+        path = subStringWithoutBack(path, "/") + "/";
+    }
+    
+
+#ifdef WIN32
+    WIN32_FIND_DATAA fd;
+    std::string findpath = path;
+    findpath.append("*");
+    HANDLE hFile = FindFirstFileA(findpath.c_str(), &fd);
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+        return false;
+    }
+    SearchFileInfo file;
+    do
+    {
+        if (fd.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
+        {
+            if (strcmp(fd.cFileName, ".") != 0 && strcmp(fd.cFileName, "..") != 0)
+            {
+                memset(&file, 0, sizeof(file));
+                file.bDir = true;
+                strcpy_s(file.filename, sizeof(file.filename), fd.cFileName);
+                sprintf(file.fullpath, "%s%s", path.c_str(), fd.cFileName);
+                if (wildcard.empty())
+                {
+                    files.push_back(file);
+                }
+                if (recursion)
+                {
+                    tmpSearchPath(fixPathString(file.fullpath) + wildcard, files, recursion);
+                }
+                
+            }
+        }
+        else
+        {
+            memset(&file, 0, sizeof(file));
+            file.bDir = false;
+            file.filesize = fd.nFileSizeHigh;
+            file.filesize = file.filesize << 32;
+            file.filesize += fd.nFileSizeLow;
+            strcpy_s(file.filename, sizeof(file.filename), fd.cFileName);
+            sprintf(file.fullpath, "%s%s", path.c_str(), fd.cFileName);
+            if (wildcard.empty() || compareStringWildcard(file.filename, wildcard))
+            {
+                files.push_back(file);
+            }
+        }
+    } while (FindNextFileA(hFile, &fd));
+    FindClose(hFile);
+
+#else
+    DIR *dp;
+    struct dirent *entry;
+    struct stat statbuf;
+    if ((dp = opendir(path.c_str())) == NULL)
+    {
+        return false;
+    }
+    SearchFileInfo file;
+    while ((entry = readdir(dp)) != NULL)
+    {
+        lstat(entry->d_name, &statbuf);
+        if (S_ISDIR(statbuf.st_mode))
+        {
+            if (strcmp(".", entry->d_name) == 0 || strcmp("..", entry->d_name) == 0)
+            {
+                continue;
+            }
+            memset(&file, 0, sizeof(file));
+            file.bDir = true;
+            file.filesize = statbuf.st_size;
+            strcpy(file.filename, entry->d_name);
+            sprintf(file.fullpath, "%s%s", path.c_str(), entry->d_name);
+            if (wildcard.empty())
+            {
+                files.push_back(file);
+            }
+            if (recursion)
+            {
+                tmpSearchPath(fixPathString(file.fullpath)+wildcard, files, recursion);
+            }
+        }
+        else
+        {
+            memset(&file, 0, sizeof(file));
+            file.bDir = false;
+            file.filesize = statbuf.st_size;
+            strcpy(file.filename, entry->d_name);
+            file.fullpath[0] = '\0';
+            if (wildcard.empty() || compareStringWildcard(file.filename, wildcard))
+            {
+                files.push_back(file);
+            }
+        }
+    }
+    closedir(dp);
+#endif
+    return true;
+}
+
+bool searchFiles(std::string path, std::vector<SearchFileInfo> & files, bool recursion)
+{
+    if (files.capacity() < 100)
+    {
+        files.reserve(100);
+    }
+    return tmpSearchPath(path, files, recursion);
+}
+
+
+
 
 std::string genFileMD5(std::string filename)
 {
@@ -197,9 +336,9 @@ void sleepMillisecond(unsigned int ms)
 #endif
 }
 
-void trim(std::string &str, std::string ign, int both)
+std::string trim(const std::string &str, const std::string & ign, int both)
 {
-    if (str.empty() || ign.empty()){ return; }
+    if (str.empty() || ign.empty()){ return ""; }
     size_t length = str.length();
     size_t posBegin = 0;
     size_t posEnd = 0;
@@ -210,7 +349,7 @@ void trim(std::string &str, std::string ign, int both)
         bool bCheck = false;
         for (size_t j = 0; j < ign.length(); j++)
         {
-            if (str[i] == ign[j])
+            if (str.at(i) == ign.at(j))
             {
                 bCheck = true;
             }
@@ -238,21 +377,19 @@ void trim(std::string &str, std::string ign, int both)
     
     if (posBegin < posEnd)
     {
-        str = str.substr(posBegin, posEnd - posBegin);
+        return str.substr(posBegin, posEnd - posBegin);
     }
-    else
-    {
-        str.clear();
-    }
+
+    return "";
 }
-std::vector<std::string> splitString(std::string text, std::string deli, std::string ign)
+std::vector<std::string> splitString(std::string text, const std::string & deli, const std::string & ign)
 {
-    trim(text, ign);
+    text = trim(text, ign);
     std::vector<std::string> ret;
     if (deli.empty())
     {
         ret.push_back(text);
-        trim(ret.back(), ign);
+        ret.back() = trim(ret.back(), ign);
         return std::move(ret);
     }
     size_t beginPos = 0;
@@ -266,16 +403,54 @@ std::vector<std::string> splitString(std::string text, std::string deli, std::st
         if (matched == deli)
         {
             ret.push_back(text.substr(beginPos, i + 1 - deli.length() - beginPos));
-            trim(ret.back(), ign);
+            ret.back() = trim(ret.back(), ign);
             beginPos = i + 1;
             matched.clear();
         }
     }
     ret.push_back(text.substr(beginPos, text.length() - beginPos));
-    trim(ret.back(), ign);
+    ret.back() = trim(ret.back(), ign);
     return std::move(ret);
 }
 
+std::string subStringFront(const std::string & text, const std::string & deli)
+{
+    auto pos = text.find(deli);
+    if (pos == std::string::npos)
+    {
+        return text;
+    }
+    return text.substr(0, pos - 0);
+}
+std::string subStringBack(const std::string & text, const std::string & deli)
+{
+    auto pos = text.rfind(deli);
+    if (pos == std::string::npos)
+    {
+        return text;
+    }
+    return text.substr(pos+deli.length());
+}
+
+std::string subStringWithoutFront(const std::string & text, const std::string & deli)
+{
+    auto pos = text.find(deli);
+    if (pos == std::string::npos)
+    {
+        return text;
+    }
+    return text.substr(pos+deli.length());
+}
+
+std::string subStringWithoutBack(const std::string & text, const std::string & deli)
+{
+    auto pos = text.rfind(deli);
+    if (pos == std::string::npos)
+    {
+        return text;
+    }
+    return text.substr(0, pos - 0);
+}
 std::string toUpperString(std::string  org)
 {
     std::for_each(org.begin(), org.end(), [](char &ch){ch = toupper(ch); });
@@ -310,6 +485,167 @@ bool compareStringIgnCase(const std::string & left, const std::string & right, b
 }
 
 
+static int compareStringWildcard(std::vector<std::pair<std::string::size_type, std::string::size_type>> & stk, const std::string &src, const std::string & md)
+{
+    int searchCount = 1;
+    while (!stk.empty())
+    {
+        std::string::size_type srcBeginPos = stk.back().first;
+        std::string::size_type mdBeginPos = stk.back().second;
+        stk.pop_back();
+
+        while (true)
+        {
+            searchCount++;
+            if (mdBeginPos >= md.length() )
+            {
+                if (srcBeginPos >= src.length())
+                {
+                    return searchCount;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            auto wcFirstPos = md.find('*', mdBeginPos);
+            if (wcFirstPos == std::string::npos)
+            {
+                if (srcBeginPos >= src.length() 
+                    || md.length() - mdBeginPos != src.length() - srcBeginPos
+                    || md.compare(mdBeginPos, md.length() - mdBeginPos, src.c_str(), src.length() - srcBeginPos) != 0)
+                {
+                    break;
+                }
+                return searchCount;
+            }
+            //pre char matching
+            if (wcFirstPos != mdBeginPos)
+            {
+                if (srcBeginPos >= src.length() || src.length() - srcBeginPos < wcFirstPos - mdBeginPos)
+                {
+                    break;
+                }
+                if (md.compare(mdBeginPos, wcFirstPos - mdBeginPos, src.c_str(), srcBeginPos, wcFirstPos - mdBeginPos) != 0)
+                {
+                    break;
+                }
+                mdBeginPos = wcFirstPos;
+                srcBeginPos = srcBeginPos + (wcFirstPos - mdBeginPos);
+                continue;
+            }
+            //next segment matching
+            else
+            {
+                if (md.length() == wcFirstPos + 1)
+                {
+                    return searchCount;
+                }
+                auto wcSecondPos = md.find('*', mdBeginPos+1);
+                if (wcSecondPos == std::string::npos)
+                {
+                    wcSecondPos = md.length();
+                }
+                auto foundPos = src.find(md.c_str() + mdBeginPos + 1, srcBeginPos,  wcSecondPos - mdBeginPos - 1);
+                if (foundPos == std::string::npos)
+                {
+                    break;
+                }
+                stk.push_back(std::make_pair(foundPos + 1, mdBeginPos));
+                
+                srcBeginPos = foundPos + (wcSecondPos - mdBeginPos - 1);
+                mdBeginPos = wcSecondPos;
+            }
+        }
+    }
+    return 0;
+}
+
+bool compareStringWildcard(std::string source, std::string mod, bool ignCase)
+{
+    for (auto iter = mod.begin(); iter != mod.end();)
+    {
+        auto next = iter + 1;
+        if (*iter == '*' && next != mod.end() && *next == '*')
+        {
+            iter = mod.erase(iter);
+            continue;
+        }
+        iter++;
+    }
+    if (ignCase)
+    {
+        mod = toLowerString(mod);
+        source = toLowerString(source);
+    }
+    std::vector<std::pair<std::string::size_type, std::string::size_type>> stk;
+    stk.reserve(10);
+    stk.push_back(std::make_pair(0, 0));
+    return compareStringWildcard(stk, source, mod) != 0;
+}
+/*
+Char. number range  |        UTF-8 octet sequence
+(hexadecimal)    |              (binary)
+--------------------+---------------------------------------------
+0000 0000-0000 007F | 0xxxxxxx
+0000 0080-0000 07FF | 110xxxxx 10xxxxxx
+0000 0800-0000 FFFF | 1110xxxx 10xxxxxx 10xxxxxx
+0001 0000-0010 FFFF | 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+*/
+int getCharUTF8Count(const std::string & str)
+{
+    //0x7f == 0111 1111
+    //0xc0 == 1100 0000
+    int count = 0;
+    std::for_each(str.begin(), str.end(), [&count](char ch){ if ((unsigned char)ch <= 0x7f || (unsigned char)ch >= 0xc0) count++; });
+    return count;
+}
+int getCharASCIICount(const std::string & str)
+{
+    int count = 0;
+    std::for_each(str.begin(), str.end(), [&count](char ch){ if ((unsigned char)ch <= 0x7f) count++; });
+    return count;
+}
+int getCharNoASCIICount(const std::string & str)
+{
+    int count = 0;
+    std::for_each(str.begin(), str.end(), [&count](char ch){ if ((unsigned char)ch >= 0xc0) count++; });
+    return count;
+}
+
+bool hadIllegalChar(const std::string & str) // return true when have invisible char, mysql unsupport char, mysql escape char.
+{
+    //0x7f == 0111 1111
+    //0xc0 == 1100 0000
+    //0xe0 == 1110 0000
+    //0xef == 1110 1111
+    int cur = 0;
+    for (auto ch : str)
+    {
+        unsigned char b = (unsigned char)ch;
+        if (b > 0xef)
+        {
+            return true;
+        }
+        if (b < ' ' || b == 0x7f) //invisible
+        {
+            return true;
+        }
+        if (ch == ' ' || ch == '\"' || ch == '\'' || ch == '\\') //unsafe 
+        {
+            return true;
+        }
+        if (b >= 0xc0 && b < 0xe0 && (str.length() - cur < 2))
+        {
+            return true;
+        }
+        if (b >= 0xe0 && b < 0xf0 && (str.length() - cur < 3))
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
 time_t getUTCTimeFromLocalString(const std::string & str)
 {
@@ -329,13 +665,11 @@ time_t getUTCTimeFromLocalString(const std::string & str)
     {
         if (str.find(':') != std::string::npos)
         {
-            stime = str;
-            trim(stime, " ");
+            stime = trim(str, " ");
         }
         else
         {
-            sdate = str;
-            trim(sdate, " ");
+            sdate = trim(str, " ");
         }
     }
     struct tm st;
@@ -511,8 +845,9 @@ thread_local std::mt19937 __genRandom; //vs2015 support
 //==========================================================================
 unsigned int realRand()
 {
+    return (rand() & 0xffff) << 16 | (rand() & 0xffff);
 #ifdef WIN32
-    return (rand() << 20) | (rand() << 8) | rand();
+    return (rand() << 20) | (rand() << 8) | (rand() &0xff);
 //    if (!__genRandomInited)
 //    {
 //        __genRandom = new(__genRandomBacking)std::mt19937();

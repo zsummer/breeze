@@ -78,14 +78,31 @@
 
 //file
 //==========================================================================
-//isBinary if false it's will auto fix UTF-8 BOM. only this.
+//it's will jump UTF-8 BOM when isBinary  is false .
 std::string readFileContent(const std::string & filename, bool isBinary = false, size_t limitSize = 1024 * 1024, size_t beginIndex = 0);
 size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend = true);
 bool isDirectory(const std::string & path);
-bool createRecursionDir(std::string path);
+bool createDirectory(std::string path);
 bool removeFile(const std::string &pathfile);
 bool removeDir(const std::string &path);
-bool hadFile(const std::string &pathfile);
+bool accessFile(const std::string &pathfile);
+std::string fixPathString(const std::string &path);
+struct SearchFileInfo
+{
+    char filename[260];
+    char fullpath[260];
+    unsigned long long filesize;
+    bool bDir;
+};
+//path support wildcard like : 
+//  /var/log
+//  /var/log/
+//  /var/log/*
+//  /var/log/*.log
+//  /var/log/mysql*1*2.log
+//it's will recursion subdirectory when recursion is true
+bool searchFiles(std::string path, std::vector<SearchFileInfo> & files, bool recursion = false);
+
 //md5
 class MD5Data;
 std::string genFileMD5(std::string filename);
@@ -97,13 +114,31 @@ template<class T>
 std::string toString(const T &t);
 template<class RET>
 RET fromString(const std::string & t, RET def);
-//tonumber
+
 //both 1 left, 2right, 3 both
-void trim(std::string &str, std::string ign, int both = 3);
-std::vector<std::string> splitString(std::string text, std::string deli, std::string ign);
+std::string trim(const std::string &str, const std::string& ign, int both = 3);
+
+std::vector<std::string> splitString(std::string text, const std::string & deli, const std::string & ign);
+template<class Container>  //example: Container = std::vector<int>
+std::string mergeToString(const Container & contariner, const std::string& deli);
+template<class T>  //example: Container = std::vector<int>
+void mergeToString(std::string & dstString, const std::string& deli, const T & t);
+
+std::string subStringFront(const std::string & text, const std::string & deli);
+std::string subStringBack(const std::string & text, const std::string & deli);
+std::string subStringWithoutFront(const std::string & text, const std::string & deli);
+std::string subStringWithoutBack(const std::string & text, const std::string & deli);
+
 std::string toUpperString(std::string  org);
 std::string toLowerString(std::string  org);
+
 bool compareStringIgnCase(const std::string & left, const std::string & right, bool canTruncate = false);
+bool compareStringWildcard(std::string source, std::string mod, bool ignCase = false);
+
+int getCharUTF8Count(const std::string & str);
+int getCharASCIICount(const std::string & str);
+int getCharNoASCIICount(const std::string & str);
+bool hadIllegalChar(const std::string & str); // return true when have invisible char, mysql unsupport char, mysql escape char.
 
 //date, time, tick
 //==========================================================================
@@ -163,7 +198,7 @@ inline bool isSameDay(time_t first, time_t second, time_t offset = 0);
 
 //float
 //==========================================================================
-const double POINT_DOUBLE = 1e-14;
+const double POINT_DOUBLE = 1E-15; // the number N is decimal places (decimalism). N=log10(1/POINT_DOUBLE) . example 1E-15 ==> 15 number of decimal places.
 const double PI = 3.14159265358979323;
 
 inline bool isEqual(double f1, double f2, double acc = POINT_DOUBLE);
@@ -177,12 +212,11 @@ inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double o
 
 //bit
 //==========================================================================
-template<class Integer, class Number>
-inline bool checkBitFlag(Integer n, Number f); // f [1-32] or [1-64], begin 1 not 0.
-template<class Integer, class Number>
-inline Integer appendBitFlag(Integer n, Number f);
-template<class Integer, class Number>
-inline Integer removeBitFlag(Integer n, Number f);
+template<class Integer, class Pos>
+inline bool getBitFlag(Integer bin, Pos pos);// f [1-32] or [1-64], begin 1 not 0.
+template<class Integer, class Pos>
+inline Integer setBitFlag(Integer bin, Pos pos, bool flag = true);// f [1-32] or [1-64], begin 1 not 0.
+
 
 //rand
 //==========================================================================
@@ -200,6 +234,15 @@ template<class RandIt>
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount);
 template<class RandIt, class GetWeightFunc> // func example  [](RandIt iter){return iter->weight;}
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight);
+
+//rank,rating
+//==========================================================================
+//winFlag:
+//     1 win,  0 draw, -1 lose
+//return:
+//      return the upper score
+inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag);
+
 //integer
 //==========================================================================
 //return value is [min, max]

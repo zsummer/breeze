@@ -228,3 +228,7 @@
 { ER_ACCESS_DENIED_CHANGE_USER_ERROR      ,"28000", "" },
 { ER_GET_STACKED_DA_WITHOUT_ACTIVE_HANDLER,"0Z002", "" },
 { ER_INVALID_ARGUMENT_FOR_LOGARITHM       ,"2201E", "" },
+{ ER_GIS_INVALID_DATA                     ,"22023", "" },
+{ ER_USER_LOCK_WRONG_NAME                 ,"42000", "" },
+{ ER_ILLEGAL_USER_VAR                     ,"42000", "S1009" },
+{ ER_NET_OK_PACKET_TOO_LARGE              ,"08S01", "" },

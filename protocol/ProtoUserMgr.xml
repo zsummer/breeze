@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>4000</MinNo>
+  <MaxNo>5000</MaxNo>
+  <UseLog4z>true</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+
+    <packet name="SelectUserPreviewsFromUserMgrReq" desc= "获取角色预览数据">
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+
+    <packet name="SelectUserPreviewsFromUserMgrResp" desc= "获取角色预览数据">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+        <member name="previews" type="UserPreviewArray"   desc=""/>
+    </packet>
+
+    <packet name="CreateUserFromUserMgrReq" desc= "创角色请求">
+        <member name="account" type="string"   desc=""/>
+        <member name="serviceName" type="string"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+     <packet name="CreateUserFromUserMgrResp" desc= "创角色请求返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="previews" type="UserPreviewArray"   desc=""/>
+    </packet>
+
+    <packet name="AttachUserFromUserMgrReq" desc= "选角色请求">
+        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="account" type="string"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+    </packet>
+     <packet name="AttachUserFromUserMgrResp" desc= "选角色请求返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="clientDockerID" type="ui32"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
+        <member name="serviceID" type="ui64"   desc=""/>
+    </packet>
+
+
+</Proto>
+

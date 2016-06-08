@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -28,17 +28,17 @@ class GenObjectID
 {
 public:
     GenObjectID(){}
-    inline void initConfig(AreaID aID)
+    inline void initConfig(ui64 areaID)
     {
-        _areaID = aID;
-        _uniqueObjID = aID * 1000 * 1000 * 100;
+        _areaID = areaID;
+        _uniqueObjID = areaID * 1000 * 1000 * 100;
     }
     inline void setCurID(ui64 uniqueID){ _uniqueObjID = uniqueID; }
     inline ui64 getCurID(){ return _uniqueObjID; }
-    inline AreaID getCurAreaID(){ return _areaID; }
+    inline ui64 getCurAreaID(){ return _areaID; }
     inline ui64 genNewObjID(){ return ++_uniqueObjID; }
 private:
-    AreaID _areaID = 0;
+    ui64 _areaID = 0;
     ui64 _uniqueObjID = 0;
 };
 #endif

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>aa846d6c5ff401dc2d52ddda9bd26e6d</cppmd5> 
+<luamd5>ffe43f6029b35c6f2d353329e59eb16a</luamd5> 
+<csharpmd5>040e4ca22d9dc9c8f25282cdf214143c</csharpmd5> 
+<xmlmd5>4541a16a2ffed668f314f335ca3d3128</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_AttachUserReq" Number = "40005" /> 
+    <cache key = "ID_AttachUserResp" Number = "40006" /> 
+    <cache key = "ID_ClientAuthReq" Number = "40001" /> 
+    <cache key = "ID_ClientAuthResp" Number = "40002" /> 
+    <cache key = "ID_ClientPulse" Number = "40000" /> 
+    <cache key = "ID_CreateUserReq" Number = "40003" /> 
+    <cache key = "ID_CreateUserResp" Number = "40004" /> 
+    <cache key = "ID_UserChatReq" Number = "40007" /> 
+    <cache key = "ID_UserChatResp" Number = "40008" /> 
+    <cache key = "ID_UserPingPongReq" Number = "40009" /> 
+    <cache key = "ID_UserPingPongResp" Number = "40010" /> 
+</cacheNumber>

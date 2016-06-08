@@ -21,103 +21,57 @@ namespace Proto4z
         EC_FRIEND_NOT_EXIST = 103, //好友不存在  
     }; 
  
-    public class SessionToken: Proto4z.IProtoObject //认证令牌  
+    public class UserPreview: Proto4z.IProtoObject //用户预览信息  
     {     
+        //proto id   
+        public const ushort protoID = 1000;  
+        static public ushort getProtoID() { return 1000; } 
+        static public string getProtoName() { return "UserPreview"; } 
         //members   
-        public ulong uID;  
-        public string token;  
-        public uint expire;  
-        public SessionToken()  
-        { 
-            uID = 0;  
-            token = "";  
-            expire = 0;  
-        } 
-        public SessionToken(ulong uID, string token, uint expire) 
-        { 
-            this.uID = uID; 
-            this.token = token; 
-            this.expire = expire; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.expire)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.expire = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class BaseInfo: Proto4z.IProtoObject //用户基础信息  
-    {     
-        //members   
-        public ulong uID; //用户唯一ID  
+        public ulong serviceID; //用户唯一ID  
+        public string serviceName; //昵称  
         public string account; //帐号  
-        public string nickName; //昵称  
         public short iconID; //头像  
-        public int diamond; //当前剩余的充值钻石  
-        public int hisotryDiamond; //历史充值钻石总额  
-        public int giftDiamond; //当前剩余的赠送钻石  
-        public uint joinTime; //加入时间  
-        public BaseInfo()  
+        public int level; //等级  
+        public UserPreview()  
         { 
-            uID = 0;  
+            serviceID = 0;  
+            serviceName = "";  
             account = "";  
-            nickName = "";  
             iconID = 0;  
-            diamond = 0;  
-            hisotryDiamond = 0;  
-            giftDiamond = 0;  
-            joinTime = 0;  
+            level = 0;  
         } 
-        public BaseInfo(ulong uID, string account, string nickName, short iconID, int diamond, int hisotryDiamond, int giftDiamond, uint joinTime) 
+        public UserPreview(ulong serviceID, string serviceName, string account, short iconID, int level) 
         { 
-            this.uID = uID; 
+            this.serviceID = serviceID; 
+            this.serviceName = serviceName; 
             this.account = account; 
-            this.nickName = nickName; 
             this.iconID = iconID; 
-            this.diamond = diamond; 
-            this.hisotryDiamond = hisotryDiamond; 
-            this.giftDiamond = giftDiamond; 
-            this.joinTime = joinTime; 
+            this.level = level; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.nickName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.diamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.hisotryDiamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.giftDiamond)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.joinTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.uID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.nickName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
-            this.diamond = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.hisotryDiamond = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.giftDiamond = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.joinTime = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             return pos; 
         } 
     } 
  
  
-    public class BaseInfoArray : System.Collections.Generic.List<BaseInfo>, Proto4z.IProtoObject  
+    public class UserPreviewArray : System.Collections.Generic.List<UserPreview>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -138,7 +92,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new BaseInfo(); 
+                    var data = new UserPreview(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
@@ -148,7 +102,7 @@ namespace Proto4z
     } 
  
  
-    public class UIDS : System.Collections.Generic.List<ulong>, Proto4z.IProtoObject  
+    public class ServiceIDArray : System.Collections.Generic.List<ulong>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -176,11 +130,85 @@ namespace Proto4z
         } 
     } 
  
-    public enum  : ushort 
+    public class UserBaseInfo: Proto4z.IProtoObject //用户基础数据  
+    {     
+        //proto id   
+        public const ushort protoID = 1001;  
+        static public ushort getProtoID() { return 1001; } 
+        static public string getProtoName() { return "UserBaseInfo"; } 
+        //members   
+        public ulong serviceID; //用户唯一ID  
+        public string serviceName; //昵称  
+        public string account; //帐号  
+        public short iconID; //头像  
+        public int level; //等级  
+        public UserBaseInfo()  
+        { 
+            serviceID = 0;  
+            serviceName = "";  
+            account = "";  
+            iconID = 0;  
+            level = 0;  
+        } 
+        public UserBaseInfo(ulong serviceID, string serviceName, string account, short iconID, int level) 
+        { 
+            this.serviceID = serviceID; 
+            this.serviceName = serviceName; 
+            this.account = account; 
+            this.iconID = iconID; 
+            this.level = level; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
+            this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class UserBaseInfoArray : System.Collections.Generic.List<UserBaseInfo>, Proto4z.IProtoObject  
     { 
-        ETRIGGER_USER_LOGIN = 0, //用户登录, 用户ID  
-        ETRIGGER_USER_LOGOUT = 1, //用户登出, 用户ID  
-    }; 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new UserBaseInfo(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
  
 } 
  

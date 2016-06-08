@@ -11,15 +11,15 @@
 #include <custom_conf.h>
 #else
 #define PROTOCOL_VERSION            10
-#define MYSQL_SERVER_VERSION       "5.7.5-m15"
-#define MYSQL_VERSION_ID            50705
+#define MYSQL_SERVER_VERSION       "5.7.6-m16"
+#define MYSQL_VERSION_ID            50706
 #define MYSQL_PORT                  3306
 #define MYSQL_PORT_DEFAULT          0
 #define MYSQL_UNIX_ADDR            "/tmp/mysql.sock"
 #define MYSQL_CONFIG_NAME          "my"
 #define MYSQL_COMPILATION_COMMENT  "Source distribution"
-#define LIBMYSQL_VERSION           "6.1.5"
-#define LIBMYSQL_VERSION_ID         60105
+#define LIBMYSQL_VERSION           "6.1.6"
+#define LIBMYSQL_VERSION_ID         60106
 
 /* mysqld compile time options */
 #endif /* _CUSTOMCONFIG_ */

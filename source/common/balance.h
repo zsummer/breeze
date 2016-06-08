@@ -39,23 +39,23 @@ class Balance
 {
 public:
     //server node, isAble, manual weight, auto weight, total select count
-    using BalanceInfo = std::tuple<ServerNode, bool, float, float, float>;
+    using BalanceInfo = std::tuple<DockerID, bool, float, float, float>;
     Balance(){}
-    inline bool enableNode(ServerNode node);
-    inline bool cleanNode(ServerNode node);
-    inline bool disableNode(ServerNode node);
-    inline bool changeWeight(ServerNode node, float weight);
+    inline bool enableNode(DockerID node);
+    inline bool cleanNode(DockerID node);
+    inline bool disableNode(DockerID node);
+    inline bool changeWeight(DockerID node, float weight);
 
-    inline ServerNode selectAuto();
-    inline ServerNode selectManual();
+    inline DockerID selectAuto();
+    inline DockerID selectManual();
     inline float getBalanceRate();
     inline std::string getBalanceStatus();
 private:
     std::vector<BalanceInfo> _balance;
 };
-inline bool Balance::enableNode(ServerNode node)
+inline bool Balance::enableNode(DockerID node)
 {
-    if(node < 0 || node == InvalidServerNode)
+    if(node == InvalidDockerID)
     {
         return false;
     }
@@ -70,7 +70,7 @@ inline bool Balance::enableNode(ServerNode node)
     }
     return true;
 }
-inline bool Balance::cleanNode(ServerNode node)
+inline bool Balance::cleanNode(DockerID node)
 {
     auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
     if (founder == _balance.end())
@@ -82,7 +82,7 @@ inline bool Balance::cleanNode(ServerNode node)
     std::get<4>(*founder) = 0;
     return true;
 }
-inline bool Balance::disableNode(ServerNode node)
+inline bool Balance::disableNode(DockerID node)
 {
     auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
     if(founder == _balance.end())
@@ -92,7 +92,7 @@ inline bool Balance::disableNode(ServerNode node)
     std::get<1>(*founder) = false;
     return true;
 }
-inline bool Balance::changeWeight(ServerNode node, float weight)
+inline bool Balance::changeWeight(DockerID node, float weight)
 {
     auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
     if (founder == _balance.end())
@@ -109,7 +109,7 @@ inline bool Balance::changeWeight(ServerNode node, float weight)
     return true;
 }
 
-inline ServerNode Balance::selectAuto()
+inline DockerID Balance::selectAuto()
 {
     size_t idx = (size_t)-1;
     float weight = (float)1E15;
@@ -123,13 +123,13 @@ inline ServerNode Balance::selectAuto()
     }
     if (idx == (size_t)-1)
     {
-        return InvalidServerNode;
+        return InvalidDockerID;
     }
     std::get<3>(_balance[idx]) ++;
     std::get<4>(_balance[idx]) ++;
     return std::get<0>(_balance[idx]);
 }
-inline ServerNode Balance::selectManual()
+inline DockerID Balance::selectManual()
 {
     size_t idx = (size_t)-1;
     float weight = (float)1E15;
@@ -143,7 +143,7 @@ inline ServerNode Balance::selectManual()
     }
     if (idx == (size_t)-1)
     {
-        return InvalidServerNode;
+        return InvalidDockerID;
     }
     std::get<4>(_balance[idx]) ++;
     return std::get<0>(_balance[idx]);

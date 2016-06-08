@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="main">
+      <UniqueIdentifier>{90323d0d-a637-4874-8f5e-bf757167f244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="logic">
+      <UniqueIdentifier>{f9cdd186-985b-4536-b830-420c0d6f254c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="protocol">
+      <UniqueIdentifier>{9953ee49-8ac5-4fa8-aa47-0bd06bc7851a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{fffa076f-2d53-440c-b3db-e36ad5907fec}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\dbService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\service.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\shellService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\userMgrService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\userService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\docker.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\module.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="logic\dbService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\service.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\shellService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\userMgrService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\userService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\docker.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\module.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\protocol\ProtoCommon.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoDBService.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoDocker.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoUser.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoUserMgr.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\config.lua">
+      <Filter>config</Filter>
+    </None>
+  </ItemGroup>
+</Project>

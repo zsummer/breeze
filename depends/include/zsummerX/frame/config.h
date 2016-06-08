@@ -75,17 +75,20 @@ namespace zsummer
     {
         //! define network type
         using SessionID = unsigned int;
-        const SessionID InvalidSessionID = -1;
+        const SessionID InvalidSessionID = 0;
         using AccepterID = unsigned int;
-        const AccepterID InvalidAccepterID = -1;
+        const AccepterID InvalidAccepterID = 0;
 
 
         //! define session id range.
         const unsigned int __MIDDLE_SEGMENT_VALUE = 300 * 1000 * 1000;
-        inline bool isSessionID(unsigned int unknowID){ return unknowID < __MIDDLE_SEGMENT_VALUE ? true : false; }
-        inline bool isConnectID(unsigned int unknowID){ return unknowID != InvalidSessionID && !isSessionID(unknowID); }
-        inline unsigned int nextSessionID(unsigned int curSessionID){ return (curSessionID + 1) % __MIDDLE_SEGMENT_VALUE; }
-        inline unsigned int nextConnectID(unsigned int curSessionID){ return (curSessionID + 1 < __MIDDLE_SEGMENT_VALUE || curSessionID + 1 == InvalidSessionID) ? __MIDDLE_SEGMENT_VALUE : curSessionID + 1; }
+        //(InvalidSessionID - __MIDDLE_SEGMENT_VALUE)
+        inline bool isSessionID(unsigned int unknowID){ return unknowID != InvalidSessionID && unknowID < __MIDDLE_SEGMENT_VALUE; }
+        //(InvalidSessionID - power(2, 32))
+        inline bool isConnectID(unsigned int unknowID){ return unknowID != InvalidSessionID && unknowID >= __MIDDLE_SEGMENT_VALUE; }
+        inline SessionID nextSessionID(SessionID curSessionID){ return curSessionID + 1 >= __MIDDLE_SEGMENT_VALUE ? 1 : curSessionID + 1; }
+        inline SessionID nextConnectID(SessionID curSessionID){ return curSessionID + 1 <= __MIDDLE_SEGMENT_VALUE ? __MIDDLE_SEGMENT_VALUE +1 : curSessionID + 1; }
+        inline AccepterID nextAccepterID(AccepterID AccepterID){ return AccepterID + 1 >= __MIDDLE_SEGMENT_VALUE ? 1 : AccepterID + 1; }
 
 
         const unsigned int SESSION_BLOCK_SIZE = 200 * 1024;
@@ -217,6 +220,7 @@ namespace zsummer
             std::vector<std::string> _whitelistIP;
             unsigned long long _totalAcceptCount = 0;
             unsigned long long _currentLinked = 0;
+            bool _closed = false;
             SessionOptions _sessionOptions;
         };
 
