@@ -41,6 +41,8 @@ public:
     bool init(const std::string & config, DockerID idx);
     bool start();
     void stop();
+    void forceStop();
+    void onShutdown();
     bool run();
 public:
     void sendToSession(SessionID sessionID, const char * block, unsigned int len);
@@ -95,8 +97,8 @@ public:
 public:
     void buildCluster();
     void destroyCluster();
-public:
-    void unloadAllService();
+
+    
 
 private:
     void event_onServiceLinked(TcpSessionPtr session);

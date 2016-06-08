@@ -62,6 +62,7 @@ bool DBService::onLoad()
     if (founder == dbConfigs.end())
     {
         LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] error. not found config");
+        Docker::getRef().forceStop();
         return false;
     }
     const auto & dbConfig = *founder;
@@ -70,12 +71,14 @@ bool DBService::onLoad()
     if (!_dbHelper->connect())
     {
         LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] connect error");
+        Docker::getRef().forceStop();
         return false;
     }
 
     if (!_dbAsync->start())
     {
         LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] error. start db thread error");
+        Docker::getRef().forceStop();
         return false;
     }
 
@@ -93,6 +96,7 @@ bool DBService::onLoad()
         finishLoad();
         return true;
     }
+    Docker::getRef().forceStop();
     return false;
 }
 

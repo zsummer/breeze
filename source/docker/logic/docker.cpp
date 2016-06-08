@@ -41,15 +41,27 @@ void sigInt(int sig)
 {
     if (!Docker::getRef().isStopping())
     {
-        SessionManager::getRef().post(std::bind(&Docker::unloadAllService, Docker::getPtr()));
+        SessionManager::getRef().post(std::bind(&Docker::stop, Docker::getPtr()));
     }
 }
 
-
-void Docker::unloadAllService()
+void Docker::forceStop()
 {
-    LOGA("Docker::unloadAllService");
-    Docker::getRef().stop();
+    if (!_dockerStopping)
+    {
+        _dockerStopping = true;
+        SessionManager::getRef().stopAccept();
+        SessionManager::getRef().kickClientSession();
+        SessionManager::getRef().kickClientSession();
+        SessionManager::getRef().kickConnect();
+        SessionManager::getRef().stop();
+    }
+}
+
+void Docker::stop()
+{
+    LOGA("Docker::stop");
+    Docker::getRef().onShutdown();
     ShutdownClusterServer notice;
     Docker::getRef().broadcastToDockers(notice, false);
 
@@ -74,7 +86,7 @@ void Docker::unloadAllService()
             }
         }
     }
-    LOGA("Docker::unloadAllService  broadcast all docker. ");
+    LOGA("Docker::stop  broadcast all docker. ");
 }
 
 void Docker::destroyCluster()
@@ -119,7 +131,7 @@ bool Docker::isStopping()
     return _dockerStopping;
 }
 
-void Docker::stop()
+void Docker::onShutdown()
 {
     if (!_dockerStopping)
     {
@@ -428,7 +440,7 @@ ServicePtr Docker::createService(DockerID serviceDockerID, ui16 serviceType, Ser
 
     return service;
 goExit:
-    Docker::getRef().stop();
+    Docker::getRef().forceStop();
     return nullptr;
 }
 
@@ -474,7 +486,7 @@ void Docker::buildCluster()
                 if (!service.second)
                 {
                     LOGE("local service nulptr ...");
-                    Docker::getRef().stop();
+                    Docker::getRef().forceStop();
                     return;
                 }
                 if (service.second->isShell() && service.second->getStatus() != SS_WORKING)
@@ -499,7 +511,7 @@ void Docker::buildCluster()
                     else
                     {
                         LOGE("local service [" << ServiceTypeNames.at(service.second->getServiceType()) << "]  call onLoad error.[" << service.second->getServiceID() << "] ...");
-                        Docker::getRef().stop();
+                        Docker::getRef().forceStop();
                         return;
                     }
                     return;
@@ -507,7 +519,7 @@ void Docker::buildCluster()
                 if (service.second->getStatus() == SS_DESTROY || service.second->getStatus() == SS_UNLOADING)
                 {
                     LOGE("local service [" << ServiceTypeNames.at(service.second->getServiceType()) << "]  init error.[" << service.second->getServiceID() << "] ...");
-                    Docker::getRef().stop();
+                    Docker::getRef().forceStop();
                     return;
                 }
             }
@@ -607,7 +619,7 @@ void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream
     auto founder = _services.find(change.serviceType);
     if (founder == _services.end())
     {
-        LOGE("event_onSwitchServiceClientNotice can't founder remote service type. type=" << change.serviceType << ", id=" << change.serviceID);
+        LOGW("event_onSwitchServiceClientNotice can't founder remote service type. type=" << change.serviceType << ", id=" << change.serviceID);
         return;
     }
     auto fder = founder->second.find(change.serviceID);
@@ -619,7 +631,7 @@ void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream
     }
     else
     {
-        LOGE("event_onSwitchServiceClientNotice can't founder remote service id. type=" << change.serviceType << ", id=" << change.serviceID);
+        LOGW("event_onSwitchServiceClientNotice can't founder remote service id. type=" << change.serviceType << ", id=" << change.serviceID);
     }
 }
 
@@ -705,7 +717,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     else if (rsShell.getProtoID() == ShutdownClusterServer::getProtoID() )
     {
         LOGA("onShutdownClusterServer.. fromSessionID=" << session->getSessionID());
-        stop();
+        onShutdown();
         return;
     }
     else if (rsShell.getProtoID() == LoadServiceInDocker::getProtoID())

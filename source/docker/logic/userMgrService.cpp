@@ -109,6 +109,7 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
     {
         LOGE("onLoadUserPreviewsFromDB error. errCode=" << resp.retCode 
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() <<  ", sql=" << sql);
+        Docker::getRef().forceStop();
         return;
     }
     if (resp.result.qc != QEC_SUCCESS )
@@ -116,6 +117,7 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
         LOGE("onLoadUserPreviewsFromDB error. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
             << ", sql msg=" << resp.result.errMsg
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
+        Docker::getRef().forceStop();
         return;
     }
     if (resp.result.fields.empty())

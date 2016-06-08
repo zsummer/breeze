@@ -49,7 +49,7 @@ void UserService::onModuleInit(bool success)
     }
     else 
     { 
-        Docker::getRef().stop(); 
+        Docker::getRef().forceStop();
         return ; 
     }
     if (_curInitedModuleCount == _totalInitedModuleCount)
