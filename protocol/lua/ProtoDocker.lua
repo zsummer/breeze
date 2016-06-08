@@ -26,6 +26,18 @@ Proto4z.LoadServiceNotice[5] = {name="status", type="ui16" }
 Proto4z.LoadServiceNotice[6] = {name="clientDockerID", type="ui32" }  
 Proto4z.LoadServiceNotice[7] = {name="clientSessionID", type="ui32" }  
  
+Proto4z.register(2018,"RefreshServiceToMgrNotice") 
+Proto4z.RefreshServiceToMgrNotice = {} --Multi-Servie发生状态变化时候通知给管理器 
+Proto4z.RefreshServiceToMgrNotice.__getID = 2018 
+Proto4z.RefreshServiceToMgrNotice.__getName = "RefreshServiceToMgrNotice" 
+Proto4z.RefreshServiceToMgrNotice[1] = {name="serviceDockerID", type="ui32" }  
+Proto4z.RefreshServiceToMgrNotice[2] = {name="serviceType", type="ui16" }  
+Proto4z.RefreshServiceToMgrNotice[3] = {name="serviceID", type="ui64" }  
+Proto4z.RefreshServiceToMgrNotice[4] = {name="serviceName", type="string" }  
+Proto4z.RefreshServiceToMgrNotice[5] = {name="status", type="ui16" }  
+Proto4z.RefreshServiceToMgrNotice[6] = {name="clientDockerID", type="ui32" }  
+Proto4z.RefreshServiceToMgrNotice[7] = {name="clientSessionID", type="ui32" }  
+ 
 Proto4z.register(2017,"SwitchServiceClient") 
 Proto4z.SwitchServiceClient = {} --更改clientID 
 Proto4z.SwitchServiceClient.__getID = 2017 
@@ -34,6 +46,15 @@ Proto4z.SwitchServiceClient[1] = {name="serviceType", type="ui16" }
 Proto4z.SwitchServiceClient[2] = {name="serviceID", type="ui64" }  
 Proto4z.SwitchServiceClient[3] = {name="clientDockerID", type="ui32" }  
 Proto4z.SwitchServiceClient[4] = {name="clientSessionID", type="ui32" }  
+ 
+Proto4z.register(2019,"SwitchServiceClientNotice") 
+Proto4z.SwitchServiceClientNotice = {} --更改clientID 
+Proto4z.SwitchServiceClientNotice.__getID = 2019 
+Proto4z.SwitchServiceClientNotice.__getName = "SwitchServiceClientNotice" 
+Proto4z.SwitchServiceClientNotice[1] = {name="serviceType", type="ui16" }  
+Proto4z.SwitchServiceClientNotice[2] = {name="serviceID", type="ui64" }  
+Proto4z.SwitchServiceClientNotice[3] = {name="clientDockerID", type="ui32" }  
+Proto4z.SwitchServiceClientNotice[4] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(2004,"KickRealClient") 
 Proto4z.KickRealClient = {} --踢掉一个客户端 

@@ -108,8 +108,9 @@ private:
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 private:
     void event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
-    void event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs);
     void event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs);
+    void event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs);
+    void event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onKickRealClient(TcpSessionPtr session, ReadStream & rs);
     void event_onUnloadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & rs);

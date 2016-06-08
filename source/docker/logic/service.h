@@ -92,8 +92,8 @@ private:
 protected:
     virtual void onTick() = 0; //仅限单例模式并且非shell的service才会调用这个 
 
-    virtual bool onInit() = 0; //service初始化好之后要调用finishInit 
-    bool finishInit();
+    virtual bool onLoad() = 0; //service初始化好之后要调用finishLoad 
+    bool finishLoad();
 
     virtual void onClientChange() = 0;
     virtual void onUnload() = 0;//service卸载好之后要调用finishUnload 

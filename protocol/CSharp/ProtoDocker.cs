@@ -131,6 +131,65 @@ namespace Proto4z
         } 
     } 
  
+    public class RefreshServiceToMgrNotice: Proto4z.IProtoObject //Multi-Servie发生状态变化时候通知给管理器  
+    {     
+        //proto id   
+        public const ushort protoID = 2018;  
+        static public ushort getProtoID() { return 2018; } 
+        static public string getProtoName() { return "RefreshServiceToMgrNotice"; } 
+        //members   
+        public uint serviceDockerID;  
+        public ushort serviceType;  
+        public ulong serviceID;  
+        public string serviceName;  
+        public ushort status;  
+        public uint clientDockerID;  
+        public uint clientSessionID;  
+        public RefreshServiceToMgrNotice()  
+        { 
+            serviceDockerID = 0;  
+            serviceType = 0;  
+            serviceID = 0;  
+            serviceName = "";  
+            status = 0;  
+            clientDockerID = 0;  
+            clientSessionID = 0;  
+        } 
+        public RefreshServiceToMgrNotice(uint serviceDockerID, ushort serviceType, ulong serviceID, string serviceName, ushort status, uint clientDockerID, uint clientSessionID) 
+        { 
+            this.serviceDockerID = serviceDockerID; 
+            this.serviceType = serviceType; 
+            this.serviceID = serviceID; 
+            this.serviceName = serviceName; 
+            this.status = status; 
+            this.clientDockerID = clientDockerID; 
+            this.clientSessionID = clientSessionID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.serviceDockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.serviceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.serviceDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class SwitchServiceClient: Proto4z.IProtoObject //更改clientID  
     {     
         //proto id   
@@ -150,6 +209,50 @@ namespace Proto4z
             clientSessionID = 0;  
         } 
         public SwitchServiceClient(ushort serviceType, ulong serviceID, uint clientDockerID, uint clientSessionID) 
+        { 
+            this.serviceType = serviceType; 
+            this.serviceID = serviceID; 
+            this.clientDockerID = clientDockerID; 
+            this.clientSessionID = clientSessionID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.serviceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SwitchServiceClientNotice: Proto4z.IProtoObject //更改clientID  
+    {     
+        //proto id   
+        public const ushort protoID = 2019;  
+        static public ushort getProtoID() { return 2019; } 
+        static public string getProtoName() { return "SwitchServiceClientNotice"; } 
+        //members   
+        public ushort serviceType;  
+        public ulong serviceID;  
+        public uint clientDockerID;  
+        public uint clientSessionID;  
+        public SwitchServiceClientNotice()  
+        { 
+            serviceType = 0;  
+            serviceID = 0;  
+            clientDockerID = 0;  
+            clientSessionID = 0;  
+        } 
+        public SwitchServiceClientNotice(ushort serviceType, ulong serviceID, uint clientDockerID, uint clientSessionID) 
         { 
             this.serviceType = serviceType; 
             this.serviceID = serviceID; 

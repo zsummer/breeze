@@ -7,7 +7,7 @@
 DBService::DBService() 
 {
     _dbAsync = std::make_shared<DBAsync>();
-    slotting<LoadServiceNotice>([](Tracing, ReadStream &rs) {});
+    slotting<RefreshServiceToMgrNotice>([](Tracing, ReadStream &rs) {});
     slotting<SQLQueryReq>(std::bind(&DBService::onSQLQueryReq, this, _1, _2)); //不需要shared_from_this
     slotting<SQLQueryArrayReq>(std::bind(&DBService::onSQLQueryArrayReq, this, _1, _2)); //不需要shared_from_this
 }
@@ -55,13 +55,13 @@ void DBService::onClientChange()
     return ;
 }
 
-bool DBService::onInit()
+bool DBService::onLoad()
 {
     const auto & dbConfigs = ServerConfig::getRef().getDBConfig();
     auto founder = std::find_if(dbConfigs.begin(), dbConfigs.end(), [this](const DBConfig & dbc){return dbc._name == ServiceTypeNames.at(getServiceType()); });
     if (founder == dbConfigs.end())
     {
-        LOGE("DBService::onInit [" << ServiceTypeNames.at(getServiceType()) << "] error. not found config");
+        LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] error. not found config");
         return false;
     }
     const auto & dbConfig = *founder;
@@ -69,13 +69,13 @@ bool DBService::onInit()
     _dbHelper->init(dbConfig._ip, dbConfig._port, dbConfig._db, dbConfig._user, dbConfig._pwd, true);
     if (!_dbHelper->connect())
     {
-        LOGE("DBService::onInit [" << ServiceTypeNames.at(getServiceType()) << "] connect error");
+        LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] connect error");
         return false;
     }
 
     if (!_dbAsync->start())
     {
-        LOGE("DBService::onInit [" << ServiceTypeNames.at(getServiceType()) << "] error. start db thread error");
+        LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] error. start db thread error");
         return false;
     }
 
@@ -90,7 +90,7 @@ bool DBService::onInit()
 
     if (onBuildDB())
     {
-        finishInit();
+        finishLoad();
         return true;
     }
     return false;

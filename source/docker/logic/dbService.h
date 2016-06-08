@@ -33,7 +33,7 @@ class DBService : public Service
 public:
     DBService();
     ~DBService();
-    bool onInit() override final;
+    bool onLoad() override final;
     void onClientChange() override final;
     void onUnload() override final;
     void onTick() override final;

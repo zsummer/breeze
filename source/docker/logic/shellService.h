@@ -33,7 +33,7 @@ class ShellService : public Service
 public:
     ShellService();
     ~ShellService();
-    bool onInit() override final;
+    bool onLoad() override final;
     void onClientChange() override final;
     void onUnload() override final;
     void onTick() override final;

@@ -6,7 +6,7 @@
 
 UserMgrService::UserMgrService()
 {
-    slotting<LoadServiceNotice>(std::bind(&UserMgrService::onLoadServiceNotice, this, _1, _2));
+    slotting<RefreshServiceToMgrNotice>(std::bind(&UserMgrService::onRefreshServiceToMgrNotice, this, _1, _2));
     slotting<RealClientClosedNotice>(std::bind(&UserMgrService::onRealClientClosedNotice, this, _1, _2));
     slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
     slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
@@ -77,7 +77,7 @@ void UserMgrService::onClientChange()
 }
 
 
-bool UserMgrService::onInit()
+bool UserMgrService::onLoad()
 {
     const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(ServiceUser);
     for (auto dockerID : config)
@@ -97,36 +97,36 @@ bool UserMgrService::onInit()
     int curLimit = 0;
     SQLQueryReq req(sql + "limit 0, 100");
     toService(ServiceInfoDBMgr, req,
-        std::bind(&UserMgrService::onInitUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit, sql));
+        std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit, sql));
     return true;
 }
 
-void UserMgrService::onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql)
+void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql)
 {
     SQLQueryResp resp;
     rs >> resp;
     if (resp.retCode != EC_SUCCESS)
     {
-        LOGE("onInitUserPreviewsFromDB error. errCode=" << resp.retCode 
+        LOGE("onLoadUserPreviewsFromDB error. errCode=" << resp.retCode 
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() <<  ", sql=" << sql);
         return;
     }
     if (resp.result.qc != QEC_SUCCESS )
     {
-        LOGE("onInitUserPreviewsFromDB error. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+        LOGE("onLoadUserPreviewsFromDB error. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
             << ", sql msg=" << resp.result.errMsg
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
         return;
     }
     if (resp.result.fields.empty())
     {
-        LOGA("onInitUserPreviewsFromDB success. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+        LOGA("onLoadUserPreviewsFromDB success. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
             << ", sql msg=" << resp.result.errMsg
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
 
-        LOGD("onInitLastUIDFromDB _nextUserID=" << _nextUserID << ", areaID=" << ServerConfig::getRef().getAreaID()
+        LOGD("onLoadLastUIDFromDB _nextUserID=" << _nextUserID << ", areaID=" << ServerConfig::getRef().getAreaID()
             << ", area begin uid=" << ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8));
-        finishInit();
+        finishLoad();
         return;
     }
     DBResult result;
@@ -139,7 +139,7 @@ void UserMgrService::onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
         if (_userStatusByID.find(up.serviceID) != _userStatusByID.end()
             || _userStatusByName.find(up.serviceName) != _userStatusByName.end())
         {
-            LOGA("onInitUserPreviewsFromDB . errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+            LOGA("onLoadUserPreviewsFromDB . errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
                 << ", sql msg=" << resp.result.errMsg
                 << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
             LOGE("User ID or Name conflict. " << up);
@@ -153,7 +153,7 @@ void UserMgrService::onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
     }
     SQLQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
     toService(ServiceInfoDBMgr, req,
-        std::bind(&UserMgrService::onInitUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit+100, sql));
+        std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit+100, sql));
 
 }
 
@@ -188,7 +188,7 @@ void UserMgrService::updateUserPreview(const UserPreview & pre)
     }
 }
 
-void UserMgrService::onLoadServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     LoadServiceNotice notice;
     rs >> notice;

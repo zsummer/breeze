@@ -35,9 +35,9 @@ void UserService::onClientChange()
     }
 }
 
-bool UserService::onInit()
+bool UserService::onLoad()
 {
-    _baseInfo.initFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleInit, std::static_pointer_cast<UserService>(shared_from_this()), _1));
+    _baseInfo.loadFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleInit, std::static_pointer_cast<UserService>(shared_from_this()), _1));
     return true;
 }
 
@@ -54,7 +54,7 @@ void UserService::onModuleInit(bool success)
     }
     if (_curInitedModuleCount == _totalInitedModuleCount)
     {
-        finishInit();
+        finishLoad();
         AttachUserFromUserMgrResp resp(EC_SUCCESS, getClientDockerID(), getClientSessionID(), getServiceID());
         Docker::getRef().sendToDocker(getClientDockerID(), resp);
     }

@@ -49,6 +49,10 @@ void sigInt(int sig)
 void Docker::unloadAllService()
 {
     LOGA("Docker::unloadAllService");
+    Docker::getRef().stop();
+    ShutdownClusterServer notice;
+    Docker::getRef().broadcastToDockers(notice, false);
+
     for (auto &second : _services)
     {
         if (second.first == ServiceClient || second.first == ServiceInvalid)
@@ -59,6 +63,7 @@ void Docker::unloadAllService()
         {
             if (!svc.second->isShell())
             {
+                LOGD("unload service [" << svc.second->getServiceName() << "], cur DockerID=" << svc.second->getServiceDockerID());
                 svc.second->setStatus(SS_UNLOADING);
                 svc.second->onUnload();
             }
@@ -70,9 +75,6 @@ void Docker::unloadAllService()
         }
     }
     LOGA("Docker::unloadAllService  broadcast all docker. ");
-    ShutdownClusterServer notice;
-    Docker::getRef().broadcastToDockers(notice, false);
-    Docker::getRef().stop();
 }
 
 void Docker::destroyCluster()
@@ -97,8 +99,6 @@ void Docker::destroyCluster()
     if(safe)
     {
         LOGA("all services closed.");
-        SessionManager::getRef().stopAccept();
-        SessionManager::getRef().kickClientSession();
         SessionManager::getRef().kickConnect();
         SessionManager::getRef().stop();
     }
@@ -124,10 +124,9 @@ void Docker::stop()
     if (!_dockerStopping)
     {
         _dockerStopping = true;
-        SessionManager::getRef().stopAccept();
         if (_wlisten != InvalidAccepterID)
         {
-            SessionManager::getRef().stopAccept();
+            SessionManager::getRef().stopAccept(_wlisten);
             SessionManager::getRef().kickClientSession(_wlisten);
         }
         destroyCluster();
@@ -492,14 +491,14 @@ void Docker::buildCluster()
                 {
                     LOGI("local service [" << ServiceTypeNames.at(service.second->getServiceType()) << "] begin init. [" << service.second->getServiceID() << "] ...");
                     service.second->setStatus(SS_INITING);
-                    bool ret = service.second->onInit();
+                    bool ret = service.second->onLoad();
                     if (ret)
                     {
-                        LOGD("local service [" << ServiceTypeNames.at(service.second->getServiceType()) << "] call onInit success. [" << service.second->getServiceID() << "] ...");
+                        LOGD("local service [" << ServiceTypeNames.at(service.second->getServiceType()) << "] call onLoad success. [" << service.second->getServiceID() << "] ...");
                     }
                     else
                     {
-                        LOGE("local service [" << ServiceTypeNames.at(service.second->getServiceType()) << "]  call onInit error.[" << service.second->getServiceID() << "] ...");
+                        LOGE("local service [" << ServiceTypeNames.at(service.second->getServiceType()) << "]  call onLoad error.[" << service.second->getServiceID() << "] ...");
                         Docker::getRef().stop();
                         return;
                     }
@@ -541,6 +540,7 @@ void Docker::event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs)
 {
     LoadServiceInDocker service;
     rs >> service;
+    LOGI("Docker::event_onLoadServiceInDocker type=" << service.serviceType << ", name=" << service.serviceName << ", id=" << service.serviceID);
     auto founder = _services.find(service.serviceType);
     if (founder == _services.end())
     {
@@ -550,7 +550,7 @@ void Docker::event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs)
     auto ret = createService(ServerConfig::getRef().getDockerID(), service.serviceType, service.serviceID, service.serviceName, service.clientDockerID, service.clientSessionID, false, false);
     if (ret)
     {
-        ret->onInit();
+        ret->onLoad();
     }
 }
 
@@ -558,6 +558,7 @@ void Docker::event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs)
 {
     SwitchServiceClient change;
     rs >> change;
+    LOGI("Docker::event_onSwitchServiceClient type=" << change.serviceType << ", id=" << change.serviceID);
     auto founder = _services.find(change.serviceType);
     if (founder == _services.end())
     {
@@ -578,13 +579,56 @@ void Docker::event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs)
     fder->second->setClientSessionID(change.clientSessionID);
     fder->second->setClientDockerID(change.clientDockerID);
     fder->second->onClientChange();
-    fder->second->finishInit();
+    SwitchServiceClientNotice notice(change.serviceType, change.serviceID, change.clientDockerID, change.clientSessionID);
+    Docker::getRef().broadcastToDockers(notice, false);
+
+    if (fder->second->getServiceType() > ServiceMulti)
+    {
+        RefreshServiceToMgrNotice refreshNotice(
+            fder->second->getServiceDockerID(),
+            fder->second->getServiceType(),
+            fder->second->getServiceID(),
+            fder->second->getServiceName(),
+            fder->second->getStatus(),
+            fder->second->getClientDockerID(),
+            fder->second->getClientSessionID());
+        for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+        {
+            fder->second->toService(i, refreshNotice, nullptr);
+        }
+    }
 }
+void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream & rs)
+{
+    SwitchServiceClientNotice change;
+    rs >> change;
+    LOGI("Docker::event_onSwitchServiceClient type=" << change.serviceType << ", id=" << change.serviceID);
+
+    auto founder = _services.find(change.serviceType);
+    if (founder == _services.end())
+    {
+        LOGE("event_onSwitchServiceClientNotice can't founder remote service type. type=" << change.serviceType << ", id=" << change.serviceID);
+        return;
+    }
+    auto fder = founder->second.find(change.serviceID);
+    if (fder != founder->second.end() && fder->second)
+    {
+        fder->second->setClientSessionID(change.clientSessionID);
+        fder->second->setClientDockerID(change.clientDockerID);
+        fder->second->onClientChange();
+    }
+    else
+    {
+        LOGE("event_onSwitchServiceClientNotice can't founder remote service id. type=" << change.serviceType << ", id=" << change.serviceID);
+    }
+}
+
 
 void Docker::event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs)
 {
     LoadServiceNotice service;
     rs >> service;
+    LOGI("Docker::event_onLoadServiceNotice type=" << service.serviceType << ", name=" << service.serviceName << ", id=" << service.serviceID);
 
     auto founder = _services.find(service.serviceType);
     if (founder == _services.end())
@@ -603,8 +647,8 @@ void Docker::event_onKickRealClient(TcpSessionPtr session, ReadStream & rs)
 {
     KickRealClient notice;
     rs >> notice;
-    SessionManager::getRef().kickSession(notice.clientSessionID);
     LOGI("Docker::event_onKickRealClient kick client .  client session id=" << notice.clientSessionID);
+    SessionManager::getRef().kickSession(notice.clientSessionID);
 }
 
 
@@ -614,7 +658,7 @@ void Docker::event_onUnloadServiceInDocker(TcpSessionPtr session, ReadStream & r
 {
     UnloadServiceInDocker service;
     rs >> service;
-
+    LOGD("event_onUnloadServiceInDocker. type=" << service.serviceType << ", id=" << service.serviceID);
     auto founder = _services.find(service.serviceType);
     if (founder == _services.end())
     {
@@ -624,6 +668,7 @@ void Docker::event_onUnloadServiceInDocker(TcpSessionPtr session, ReadStream & r
     auto fder = founder->second.find(service.serviceID);
     if (fder != founder->second.end() && fder->second && fder->second->getStatus() == SS_WORKING && !fder->second->isShell())
     {
+        LOGD("unload service [" << fder->second->getServiceName() << "], cur DockerID=" << fder->second->getServiceDockerID());
         fder->second->setStatus(SS_UNLOADING);
         fder->second->onUnload();
     }
@@ -668,16 +713,22 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onLoadServiceInDocker(session, rsShell);
         return;
     }
-    else if (rsShell.getProtoID() == SwitchServiceClient::getProtoID())
-    {
-        event_onSwitchServiceClient(session, rsShell);
-        return;
-    }
     else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
     {
         event_onLoadServiceNotice(session, rsShell);
         return;
     }
+    else if (rsShell.getProtoID() == SwitchServiceClient::getProtoID())
+    {
+        event_onSwitchServiceClient(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == SwitchServiceClientNotice::getProtoID())
+    {
+        event_onSwitchServiceClientNotice(session, rsShell);
+        return;
+    }
+
     else if (rsShell.getProtoID() == KickRealClient::getProtoID())
     {
         event_onKickRealClient(session, rsShell);
@@ -1026,7 +1077,6 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     if (trace._toDockerID != InvalidDockerID && trace._toDockerID != ServerConfig::getRef().getDockerID()) //service shell maybe not success. do this.
     {
         sendToDocker(trace._toDockerID, trace, block, len);
-        LOGT("Docker::toService  sendToDocker" << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
         return;
     }
     ui16 toServiceType = trace._toServiceType;
@@ -1064,7 +1114,6 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     {
         DockerID dockerID = service.getServiceDockerID();
         sendToDocker(dockerID, trace, block, len);
-        LOGT("Docker::toService  sendToDocker" << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
     }
     else //direct process
     {

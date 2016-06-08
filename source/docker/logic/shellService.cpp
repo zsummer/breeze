@@ -25,9 +25,9 @@ void ShellService::onUnload()
     finishUnload();
 }
 
-bool ShellService::onInit()
+bool ShellService::onLoad()
 {
-    finishInit();
+    finishLoad();
     return true;
 }
 

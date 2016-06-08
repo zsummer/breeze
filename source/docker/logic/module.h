@@ -52,7 +52,7 @@ public:
     virtual ~ModuleData(){};
 public:
     //必须在default填充key内容, 否则无法自动创建或者自动加载  
-    bool initFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)>);
+    bool loadFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)>);
     void writeToDB(std::function<void(bool)> cb = nullptr);
 public:
     DBData _data;
@@ -77,7 +77,7 @@ public:
     virtual ~ModuleMultiData() {};
 public:
     //sql通过协议工具生成的getDBSelectPure产生并手动追加where语句生成.
-    bool initFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)>);
+    bool loadFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)>);
     //update和insert不会变更_data的数据,纯方法 
     void updateToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
     void insertToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
@@ -101,7 +101,7 @@ private:
 
 
 template<class DBData>
-bool ModuleData<DBData>::initFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)> cb)
+bool ModuleData<DBData>::loadFromDB(ServicePtr service, const DBData & defaultData, std::function<void(bool)> cb)
 {
     _weakPtr = service;
     _data = defaultData;
@@ -197,7 +197,7 @@ void ModuleData<DBData>::onAffectFromDB(ReadStream & rs, ServicePtr service, std
 
 
 template<class DBData>
-bool ModuleMultiData<DBData>::initFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)> cb)
+bool ModuleMultiData<DBData>::loadFromDB(ServicePtr service, const std::string & sql, std::function<void(bool)> cb)
 {
     _weakPtr = service;
     SQLQueryReq req(sql);

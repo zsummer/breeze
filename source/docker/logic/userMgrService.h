@@ -61,8 +61,8 @@ class UserMgrService : public Service
 public:
     UserMgrService();
     ~UserMgrService();
-    bool onInit() override final;
-    void onInitUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql);
+    bool onLoad() override final;
+    void onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql);
     void onClientChange() override final;
     void onUnload() override final;
     void onTick() override final;
@@ -71,7 +71,7 @@ private:
 private:
     void updateUserPreview(const UserPreview & pre);
 private:
-    void onLoadServiceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
     void onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
