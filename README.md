@@ -4,36 +4,33 @@ Welcome to the breeze wiki!
 breeze是一个C++的轻量级服务器框架, 适合端游/页游/手游/棋牌/IM的分布式服务器端.  
   
 #主要依赖模块  
-DB使用mysql,   
-kv-cache使用redis,   
-网络模块部分使用zsummerX: 支持协议加密, 支持TCP/UDP/HTTP协议, 支持断点重传, 支持windows/linux/iOS/android.    
-协议解析使用proto4z: 支持C++/lua/C#  
+DB使用mysql,通过proto4z根据原生数据结构生成对应的SQL模板并通过接口动态生成直接可以交给mysql服务执行的最终的增删改查SQL语句.    
+网络模块部分使用zsummerX.  
+协议解析使用proto4z.  
+日志模块使用log4z.
 
   
 #特点:    
   
 总代码量很小 非常轻量级, 可以快速上手使用.  
 使用C++11标准, 在满足高性能的同时满足快速开发要求.  
-支持分布式的扩展, 使用预留的扩展方案可以快速构建起大型的分布式服务器端.  
+天然的分布式方案,(架构思想上可以参考skynet,bigworld,gce等), 融合了docker的集装箱思想和bigworld的一切皆实体思想.   
 网络库使用zsummerX, 可以直接嵌入到移动平台的客户端中, 打通移动客户端到服务端的通讯.  
 协议为原生的二进制数据流, 支持lua客户端的使用, 性能非常高(相对于json等方案带来的是更小的流量,更快的响应速度).  
 支持HTTP协议, 可以方便的接入第三方的认证充值平台.  
 数据采用RC4流式加密, 最小的性能损失和更可靠的加密效果.  
 
-#### cluster版本开发进度  
+#### cluster版本当前开发进度  
 
-- [x] docker网络通讯实现  
+ 
 - [x] docker起服物理拓扑连接构建  
-- [x] docker起服service初始化依赖关系  
-- [x] docker起服service拓扑构建
-- [x] docker间通讯  
-- [x] service间通讯  
-- [x] service间rpc通讯,支持回调,并自动清理超时等待的call.  
-- [x] service卸载机制实现  
-- [x] service卸载流程  
-- [x] docker安全关停流程  
+- [x] docker起服service依赖机制实现,拓扑构建实现.  
+- [x] docker起服间,正常运作状态,关服间的service与service, service与docker间的通讯实现.  
+- [x] service间rpc通讯实现,支持回调,并自动清理超时等待的call. 
 - [x] module机制的实现并无缝集成给service.  
 - [x] client==>ServiceUserMgr(用户中心service)==>动态构建ServiceUser ==>回写数据库并卸载==>通知给客户端 用户登录,创角,通讯,离线后一段时间后回写数据库并卸载ServiceUser.  
+- [x] service卸载机制实现, 按照依赖顺序反向卸载service, service卸载需要所有module卸载完毕.    
+- [x] docker安全关停流程  
 - [x] 压测脚本实现,实现一定数量的机器人自动登录,创角,互相通讯,然后仿业务pingpong.  目前测试QPS单节点10K QPS的性能, 未经优化.    
 - [x] 通过配置构建10个以上的docker集群, 并进行合理的service划分,然后压测.  
 - [x] 鲁棒性更强的负载均衡,非关键service所属的docker宕机后可以保证关键业务的正常运作,并通过在线重启快速恢复服务.  
