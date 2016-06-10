@@ -38,7 +38,7 @@ DB使用mysql,通过proto4z根据原生数据结构生成对应的SQL模板并�
 - [ ] ServiceOfflineMgr 离线消息管理器实现, 需要记录到数据库, 玩家上线后拉取离线消息或者离线奖励等.  
 - [ ] ServiceWebAgent http协议的对外接口实现, 可能需要配置文件中有对应配置.  
 - [ ] ItemModule实现, 实现道具背包系统.  
-MissionModule实现  
+- [ ] MissionModule实现  
 - [ ] 整体性review代码,优化实现.  
 
 
