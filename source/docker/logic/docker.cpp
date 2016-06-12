@@ -224,7 +224,7 @@ bool Docker::startDockerConnect()
             auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
             if (last != 0 && getNowTime() - (time_t)last > session->getOptions()._connectPulseInterval * 3)
             {
-                LOGE("options._onSessionPulse check docker timeout failed. diff time=" << getNowTime() - (time_t)last);
+                LOGE("docker timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
                 session->close();
             }
         };
@@ -283,7 +283,7 @@ bool Docker::startDockerWideListen()
             auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
             if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
             {
-                LOGW("options._onSessionPulse check client timeout failed. diff time=" << getNowTime() - (time_t)last);
+                LOGW("client timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
                 session->close();
             }
         };
@@ -329,7 +329,7 @@ bool Docker::startDockerWebListen()
             auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
             if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
             {
-                LOGW("options._onSessionPulse check web client timeout failed. diff time=" << getNowTime() - (time_t)last);
+                LOGW("web client timeout diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
                 session->close();
             }
         };
