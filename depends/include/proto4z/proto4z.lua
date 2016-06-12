@@ -53,7 +53,7 @@ Proto4z = Proto4z or {}
 function Proto4z.pack(obj, name)
     local data = {}
     data[1] = Proto4zUtil.pack(0, "ui16") -- reseve field
-    data[2] = Proto4zUtil.pack(Proto4z[name].__getID, "ui16") -- proto id field
+    data[2] = Proto4zUtil.pack(Proto4z[name].__protoID, "ui16") -- proto id field
     Proto4z.__encode(obj, name, data)
     local dst = table.concat(data)
     local head = Proto4zUtil.pack(#dst+4, "ui32") -- proto len field
@@ -153,30 +153,30 @@ function Proto4z.__decode(binData, pos, name, result)
     local proto = Proto4z[name]
     local v, p
     p = pos
-    if proto.__getDesc == "array" then
+    if proto.__protoDesc == "array" then
         local len
         len, p = Proto4zUtil.unpack(binData, p, "ui32")
         for i=1, len do
-            v, p = Proto4zUtil.unpack(binData, p, proto.__getTypeV)
+            v, p = Proto4zUtil.unpack(binData, p, proto.__protoTypeV)
             if v ~= nil then
                 result[i] = v
             else
                 result[i] = {}
-                p = Proto4z.__decode(binData, p, proto.__getTypeV, result[i])
+                p = Proto4z.__decode(binData, p, proto.__protoTypeV, result[i])
             end
         end
-    elseif proto.__getDesc == "map" then
+    elseif proto.__protoDesc == "map" then
         local len
         local k
         len, p = Proto4zUtil.unpack(binData, p, "ui32")
         for j=1, len do
-            k, p = Proto4zUtil.unpack(binData, p, proto.__getTypeK)
-            v, p = Proto4zUtil.unpack(binData, p, proto.__getTypeV)
+            k, p = Proto4zUtil.unpack(binData, p, proto.__protoTypeK)
+            v, p = Proto4zUtil.unpack(binData, p, proto.__protoTypeV)
             if v ~= nil then
                 result[k] = v
             else
                 result[k] = {}
-                p = Proto4z.__decode(binData, p, proto.__getTypeV, result[k])
+                p = Proto4z.__decode(binData, p, proto.__protoTypeV, result[k])
             end
         end
     else
@@ -218,44 +218,44 @@ function Proto4z.__encode(obj, name, data)
     local proto = Proto4z[name]
     --array
     --------------------------------------
-    if proto.__getDesc == "array" then
+    if proto.__protoDesc == "array" then
         local obj = obj or {}
         table.insert(data, Proto4zUtil.pack(#obj, "ui32", name))
         for i =1, #obj do
             local v = obj[i]
-            if proto.__getTypeV == "string" then
+            if proto.__protoTypeV == "string" then
                 local v = ""
                 table.insert(data, Proto4zUtil.pack(#v, "ui32", name))
                 table.insert(data, v)
-            elseif isInnerType(proto.__getTypeV) then
-                table.insert(data, Proto4zUtil.pack(v, proto.__getTypeV, name))
+            elseif isInnerType(proto.__protoTypeV) then
+                table.insert(data, Proto4zUtil.pack(v, proto.__protoTypeV, name))
             else
-                Proto4z.__encode(v, proto.__getTypeV, data)
+                Proto4z.__encode(v, proto.__protoTypeV, data)
             end
         end
     --map
     --------------------------------------
-    elseif proto.__getDesc == "map" then
+    elseif proto.__protoDesc == "map" then
         local obj = obj or {}
         table.insert(data, Proto4zUtil.pack(#obj, "ui32", name))
         for i =1, #obj do
             local k = obj[i] and obj[i].k
             local v = obj[i] and obj[i].v
-            if proto.__getTypeK == "string" then
+            if proto.__protoTypeK == "string" then
                 local k = k or ""
                 table.insert(data, Proto4zUtil.pack(#k, "ui32", name))
                 table.insert(data, k)
             else
-                table.insert(data, Proto4zUtil.pack(k, proto.__getTypeK, name))
+                table.insert(data, Proto4zUtil.pack(k, proto.__protoTypeK, name))
             end
-            if proto.__getTypeV == "string" then
+            if proto.__protoTypeV == "string" then
                 local v = v or ""
                 table.insert(data, Proto4zUtil.pack(#v, "ui32", name))
                 table.insert(data, v)
-            elseif  isInnerType(proto.__getTypeV) then
-                table.insert(data, Proto4zUtil.pack(v, proto.__getTypeV, name))
+            elseif  isInnerType(proto.__protoTypeV) then
+                table.insert(data, Proto4zUtil.pack(v, proto.__protoTypeV, name))
             else
-                Proto4z.__encode(v, proto.__getTypeV, data)
+                Proto4z.__encode(v, proto.__protoTypeV, data)
             end
         end
     --base typ or struct or proto
