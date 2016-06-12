@@ -15,7 +15,6 @@ ShellService::~ShellService()
 
 void ShellService::onTick()
 {
-    LOGE("ShellService::onTick");
 }
 
 

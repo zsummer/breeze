@@ -4,6 +4,9 @@
 #include "userMgrService.h"
 #include "userService.h"
 #include "shellService.h"
+#include "webService.h"
+#include "monitorService.h"
+#include "offlineService.h"
 #include <ProtoUser.h>
 #include <ProtoUserMgr.h>
 
@@ -419,6 +422,18 @@ ServicePtr Docker::createService(DockerID serviceDockerID, ui16 serviceType, Ser
     else if (serviceType == ServiceUser)
     {
         service = std::make_shared<UserService>();
+    }
+    else if (serviceType == ServiceWebAgent)
+    {
+        service = std::make_shared<WebService>();
+    }
+    else if (serviceType == ServiceOfflineMgr)
+    {
+        service = std::make_shared<OfflineService>();
+    }
+    else if (serviceType == ServiceMinitorMgr)
+    {
+        service = std::make_shared<MonitorService>();
     }
     else
     {

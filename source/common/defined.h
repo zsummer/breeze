@@ -135,7 +135,10 @@ enum ServiceType : ui16
     ServiceInfoDBMgr,
     ServiceLogDBMgr,
     ServiceUserMgr,
-
+    ServiceWebAgent,
+    ServiceOfflineMgr,
+    ServiceMinitorMgr,
+    
     ServiceMulti,
 
     ServiceUser,
@@ -151,6 +154,9 @@ const std::vector<std::string> ServiceTypeNames =
     "ServiceInfoDBMgr",
     "ServiceLogDBMgr",
     "ServiceUserMgr",
+    "ServiceWebAgent",
+    "ServiceOfflineMgr",
+    "ServiceMinitorMgr",
 
     "ServiceMulti",
 
@@ -217,7 +223,7 @@ const int MAX_ACCOUNT_USERS = 5;
 enum SessionStatus : ui16
 {
     SSTATUS_UNKNOW = 0,
-    SSTATUS_TRUST, //受信任的服务器内部session 
+    SSTATUS_TRUST, //受信任的服务器内部session, docker 互通session  
     SSTATUS_AUTHING,
     SSTATUS_AUTHED,
     SSTATUS_ATTACHED,

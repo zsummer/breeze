@@ -39,6 +39,15 @@
     <ClCompile Include="logic\module.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\monitorService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\offlineService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\webService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logic\dbService.h">
@@ -60,6 +69,15 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\module.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\monitorService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\offlineService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\webService.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>
