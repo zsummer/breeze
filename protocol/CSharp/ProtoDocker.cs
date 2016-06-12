@@ -26,8 +26,8 @@ namespace Proto4z
     public class LoadServiceInDocker: Proto4z.IProtoObject //在Docker中装载一个Service  
     {     
         //proto id   
-        public const ushort protoID = 2014;  
-        static public ushort getProtoID() { return 2014; } 
+        public const ushort protoID = 2001;  
+        static public ushort getProtoID() { return 2001; } 
         static public string getProtoName() { return "LoadServiceInDocker"; } 
         //members   
         public ushort serviceType;  
@@ -75,8 +75,8 @@ namespace Proto4z
     public class LoadServiceNotice: Proto4z.IProtoObject //通知其他Docker有Service已装载  
     {     
         //proto id   
-        public const ushort protoID = 2016;  
-        static public ushort getProtoID() { return 2016; } 
+        public const ushort protoID = 2002;  
+        static public ushort getProtoID() { return 2002; } 
         static public string getProtoName() { return "LoadServiceNotice"; } 
         //members   
         public uint serviceDockerID;  
@@ -134,8 +134,8 @@ namespace Proto4z
     public class RefreshServiceToMgrNotice: Proto4z.IProtoObject //Multi-Servie发生状态变化时候通知给管理器  
     {     
         //proto id   
-        public const ushort protoID = 2018;  
-        static public ushort getProtoID() { return 2018; } 
+        public const ushort protoID = 2003;  
+        static public ushort getProtoID() { return 2003; } 
         static public string getProtoName() { return "RefreshServiceToMgrNotice"; } 
         //members   
         public uint serviceDockerID;  
@@ -193,8 +193,8 @@ namespace Proto4z
     public class SwitchServiceClient: Proto4z.IProtoObject //更改clientID  
     {     
         //proto id   
-        public const ushort protoID = 2017;  
-        static public ushort getProtoID() { return 2017; } 
+        public const ushort protoID = 2004;  
+        static public ushort getProtoID() { return 2004; } 
         static public string getProtoName() { return "SwitchServiceClient"; } 
         //members   
         public ushort serviceType;  
@@ -237,8 +237,8 @@ namespace Proto4z
     public class SwitchServiceClientNotice: Proto4z.IProtoObject //更改clientID  
     {     
         //proto id   
-        public const ushort protoID = 2019;  
-        static public ushort getProtoID() { return 2019; } 
+        public const ushort protoID = 2005;  
+        static public ushort getProtoID() { return 2005; } 
         static public string getProtoName() { return "SwitchServiceClientNotice"; } 
         //members   
         public ushort serviceType;  
@@ -281,8 +281,8 @@ namespace Proto4z
     public class KickRealClient: Proto4z.IProtoObject //踢掉一个客户端  
     {     
         //proto id   
-        public const ushort protoID = 2004;  
-        static public ushort getProtoID() { return 2004; } 
+        public const ushort protoID = 2006;  
+        static public ushort getProtoID() { return 2006; } 
         static public string getProtoName() { return "KickRealClient"; } 
         //members   
         public uint clientSessionID;  
@@ -310,8 +310,8 @@ namespace Proto4z
     public class RealClientClosedNotice: Proto4z.IProtoObject //客户端离线通知  
     {     
         //proto id   
-        public const ushort protoID = 2005;  
-        static public ushort getProtoID() { return 2005; } 
+        public const ushort protoID = 2007;  
+        static public ushort getProtoID() { return 2007; } 
         static public string getProtoName() { return "RealClientClosedNotice"; } 
         //members   
         public ulong serviceID;  
@@ -349,8 +349,8 @@ namespace Proto4z
     public class UnloadServiceInDocker: Proto4z.IProtoObject //卸载一个Service  
     {     
         //proto id   
-        public const ushort protoID = 2011;  
-        static public ushort getProtoID() { return 2011; } 
+        public const ushort protoID = 2008;  
+        static public ushort getProtoID() { return 2008; } 
         static public string getProtoName() { return "UnloadServiceInDocker"; } 
         //members   
         public ushort serviceType;  
@@ -383,8 +383,8 @@ namespace Proto4z
     public class UnloadedServiceNotice: Proto4z.IProtoObject //已卸载并完成销毁,广播给所有docker  
     {     
         //proto id   
-        public const ushort protoID = 2013;  
-        static public ushort getProtoID() { return 2013; } 
+        public const ushort protoID = 2009;  
+        static public ushort getProtoID() { return 2009; } 
         static public string getProtoName() { return "UnloadedServiceNotice"; } 
         //members   
         public ushort serviceType;  
@@ -417,8 +417,8 @@ namespace Proto4z
     public class ShutdownClusterServer: Proto4z.IProtoObject //关闭服务器集群  
     {     
         //proto id   
-        public const ushort protoID = 2008;  
-        static public ushort getProtoID() { return 2008; } 
+        public const ushort protoID = 2010;  
+        static public ushort getProtoID() { return 2010; } 
         static public string getProtoName() { return "ShutdownClusterServer"; } 
         //members   
         public ShutdownClusterServer()  
@@ -438,8 +438,8 @@ namespace Proto4z
     public class ForwardToService: Proto4z.IProtoObject //转发到其他docker上的Service  
     {     
         //proto id   
-        public const ushort protoID = 2009;  
-        static public ushort getProtoID() { return 2009; } 
+        public const ushort protoID = 2011;  
+        static public ushort getProtoID() { return 2011; } 
         static public string getProtoName() { return "ForwardToService"; } 
         //members   
         public ForwardToService()  
@@ -459,8 +459,8 @@ namespace Proto4z
     public class ForwardToRealClient: Proto4z.IProtoObject //转发给真正的client  
     {     
         //proto id   
-        public const ushort protoID = 2010;  
-        static public ushort getProtoID() { return 2010; } 
+        public const ushort protoID = 2012;  
+        static public ushort getProtoID() { return 2012; } 
         static public string getProtoName() { return "ForwardToRealClient"; } 
         //members   
         public ForwardToRealClient()  

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>764114b44f800bcca2ee2406d23bc693</cppmd5> 
-<luamd5>7b6d568fd2e91eba1fe68675890de237</luamd5> 
-<csharpmd5>b940a67e59c7535ac571f981102c8b50</csharpmd5> 
-<xmlmd5>592515d058cf775a16ef8c33cb09195e</xmlmd5> 
+<cppmd5>5077f9e2b4fe9212f37072220ca670a6</cppmd5> 
+<luamd5>9ed1342c9482b49f41f72716d12d9c73</luamd5> 
+<csharpmd5>540191594eca9b5b270448381f55a085</csharpmd5> 
+<xmlmd5>6f3977227386fa089e0ce6e71e29dc0a</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_MoneyTree" Number = "1002" /> 
+    <cache key = "ID_SimplePack" Number = "1003" /> 
     <cache key = "ID_UserBaseInfo" Number = "1001" /> 
     <cache key = "ID_UserPreview" Number = "1000" /> 
 </cacheNumber>

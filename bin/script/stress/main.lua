@@ -15,7 +15,7 @@ _sessions = {}
 function send(sID, protoName, proto)
     logd("send " .. protoName)
     local data = Proto4z.encode(proto, protoName)
-    summer.sendContent(sID, Proto4z[protoName].__getID, data)
+    summer.sendContent(sID, Proto4z[protoName].__protoID, data)
 end
 
 local function whenLinked(sID, ip, port)

@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>5a460efb3fc91c14c1ab6349f5dcd7bb</cppmd5> 
-<luamd5>879b7ae152c2a49fc196d05972622977</luamd5> 
-<csharpmd5>6123420fb06531125471a143028aa39b</csharpmd5> 
+<cppmd5>1ce60ad93c1b0e79bd6d075f16acb5c2</cppmd5> 
+<luamd5>ad3c3eee05d9cea808cca6e482884d21</luamd5> 
+<csharpmd5>ed0f154e521419c8963d6312a18fc90e</csharpmd5> 
 <xmlmd5>5549420fdfefd5c0f3b7645572b62b8c</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_ChangeServiceClient" Number = "2003" /> 
-    <cache key = "ID_CreateOrRefreshServiceNotice" Number = "2002" /> 
-    <cache key = "ID_CreateServiceInDocker" Number = "2001" /> 
-    <cache key = "ID_DestroyServiceInDocker" Number = "2006" /> 
-    <cache key = "ID_DestroyServiceNotice" Number = "2007" /> 
     <cache key = "ID_DockerPulse" Number = "2000" /> 
-    <cache key = "ID_ForwardToRealClient" Number = "2010" /> 
-    <cache key = "ID_ForwardToService" Number = "2009" /> 
-    <cache key = "ID_KickRealClient" Number = "2004" /> 
-    <cache key = "ID_LoadServiceInDocker" Number = "2014" /> 
-    <cache key = "ID_LoadServiceNotice" Number = "2016" /> 
-    <cache key = "ID_RealClientClosedNotice" Number = "2005" /> 
-    <cache key = "ID_RefreshServiceToMgrNotice" Number = "2018" /> 
-    <cache key = "ID_RefreshShellServiceNotice" Number = "2015" /> 
-    <cache key = "ID_ShutdownClusterServer" Number = "2008" /> 
-    <cache key = "ID_SwitchServiceClient" Number = "2017" /> 
-    <cache key = "ID_SwitchServiceClientNotice" Number = "2019" /> 
-    <cache key = "ID_UnloadServiceInDocker" Number = "2011" /> 
-    <cache key = "ID_UnloadedServiceNotice" Number = "2013" /> 
-    <cache key = "ID_UnloadederviceNotice" Number = "2012" /> 
+    <cache key = "ID_ForwardToRealClient" Number = "2012" /> 
+    <cache key = "ID_ForwardToService" Number = "2011" /> 
+    <cache key = "ID_KickRealClient" Number = "2006" /> 
+    <cache key = "ID_LoadServiceInDocker" Number = "2001" /> 
+    <cache key = "ID_LoadServiceNotice" Number = "2002" /> 
+    <cache key = "ID_RealClientClosedNotice" Number = "2007" /> 
+    <cache key = "ID_RefreshServiceToMgrNotice" Number = "2003" /> 
+    <cache key = "ID_ShutdownClusterServer" Number = "2010" /> 
+    <cache key = "ID_SwitchServiceClient" Number = "2004" /> 
+    <cache key = "ID_SwitchServiceClientNotice" Number = "2005" /> 
+    <cache key = "ID_UnloadServiceInDocker" Number = "2008" /> 
+    <cache key = "ID_UnloadedServiceNotice" Number = "2009" /> 
 </cacheNumber>
