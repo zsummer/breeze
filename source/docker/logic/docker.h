@@ -90,6 +90,7 @@ private:
     bool startDockerListen();
     bool startDockerConnect();
     bool startDockerWideListen();
+    bool startDockerWebListen();
 
 public:
     ServicePtr createService(DockerID serviceDockerID, ui16 serviceType, ServiceID serviceID, ServiceName serviceName, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit);
@@ -109,6 +110,8 @@ private:
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 private:
+    void event_onWebMessage(TcpSessionPtr session, const zsummer::proto4z::PairString & commonLine, const MapString &head, const std::string & body);
+private:
     void event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs);
@@ -127,7 +130,8 @@ private:
     bool _dockerNetWorking = false;
     bool _dockerServiceWorking = false;
     bool _dockerStopping = false;
-    AccepterID _wlisten = InvalidAccepterID;
+    AccepterID _widelisten = InvalidAccepterID;
+    AccepterID _weblisten = InvalidAccepterID;
 };
 
 

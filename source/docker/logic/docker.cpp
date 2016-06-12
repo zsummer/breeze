@@ -139,10 +139,15 @@ void Docker::onShutdown()
     if (!_dockerStopping)
     {
         _dockerStopping = true;
-        if (_wlisten != InvalidAccepterID)
+        if (_widelisten != InvalidAccepterID)
         {
-            SessionManager::getRef().stopAccept(_wlisten);
-            SessionManager::getRef().kickClientSession(_wlisten);
+            SessionManager::getRef().stopAccept(_widelisten);
+            SessionManager::getRef().kickClientSession(_widelisten);
+        }
+        if (_weblisten != InvalidAccepterID)
+        {
+            SessionManager::getRef().stopAccept(_weblisten);
+            SessionManager::getRef().kickClientSession(_weblisten);
         }
         destroyCluster();
     }
@@ -270,9 +275,9 @@ bool Docker::startDockerWideListen()
             return false;
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
-        options._whitelistIP = docker._whiteList;
+        options._whitelistIP;// = docker._whiteList;
         options._maxSessions = 5000;
-        options._sessionOptions._sessionPulseInterval = 10000;
+        options._sessionOptions._sessionPulseInterval = 40000;
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
         {
             auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
@@ -291,14 +296,70 @@ bool Docker::startDockerWideListen()
             return false;
         }
         LOGA("Docker::startDockerWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort << ", listen aID=" << aID);
-        _wlisten = aID;
+        _widelisten = aID;
     }
+    return true;
+}
+
+bool Docker::startDockerWebListen()
+{
+    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc) {return cc._dockerID == ServerConfig::getRef().getDockerID(); });
+    if (founder == dockers.end())
+    {
+        LOGE("Docker::startDockerWebListen error. current docker id not found in config file.");
+        return false;
+    }
+    const DockerConfig & docker = *founder;
+    if (!docker._webIP.empty() && docker._webPort != 0)
+    {
+        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._webPort);
+        if (aID == InvalidAccepterID)
+        {
+            LOGE("Docker::startDockerWebListen addAccepter error. bind ip=0.0.0.0, show web ip=" << docker._webIP << ", bind port=" << docker._webPort);
+            return false;
+        }
+        auto &options = SessionManager::getRef().getAccepterOptions(aID);
+        options._sessionOptions._protoType = PT_HTTP;
+        options._whitelistIP;// = docker._whiteList;
+        options._maxSessions = 200;
+        options._sessionOptions._sessionPulseInterval = 10000; 
+        options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
+        {
+            auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
+            if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
+            {
+                LOGW("options._onSessionPulse check web client timeout failed. diff time=" << getNowTime() - (time_t)last);
+                session->close();
+            }
+        };
+        options._sessionOptions._onSessionLinked = [](TcpSessionPtr session)
+        {
+            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+            LOGD("Docker::event_onWebLinked. SessionID=" << session->getSessionID()
+                << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
+        };
+        options._sessionOptions._onSessionClosed = [](TcpSessionPtr session)
+        {
+            LOGD("Docker::event_onWebClosed. SessionID=" << session->getSessionID()
+                << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
+        };
+        options._sessionOptions._onHTTPBlockDispatch = std::bind(&Docker::event_onWebMessage, this, _1, _2, _3, _4);
+        if (!SessionManager::getRef().openAccepter(aID))
+        {
+            LOGE("Docker::startDockerWebListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
+            return false;
+        }
+        LOGA("Docker::startDockerWebListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort << ", listen aID=" << aID);
+        _weblisten = aID;
+    }
+
     return true;
 }
 
 bool Docker::start()
 {
-    return startDockerListen() && startDockerConnect() && startDockerWideListen();
+    return startDockerListen() && startDockerConnect() && startDockerWideListen() && startDockerWebListen();
 }
 
 
@@ -994,7 +1055,10 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
 
 
 
+void Docker::event_onWebMessage(TcpSessionPtr session, const zsummer::proto4z::PairString & commonLine, const MapString &head, const std::string & body)
+{
 
+}
 
 
 void Docker::sendToSession(SessionID sessionID, const char * block, unsigned int len)
