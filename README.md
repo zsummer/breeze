@@ -41,6 +41,11 @@ DB使用mysql,通过proto4z根据原生数据结构生成对应的SQL模板并�
 - [ ] MissionModule实现  
 - [ ] 整体性review代码,优化实现.  
 
+## 添加一个service  
+1.  在defined.h中添加service类型和类型名字.  
+2.  在config.lua配置文件中给新加的service配置一个docker来装载该服务.  
+2.  添加一个类并继承Service. 可以直接copy shellService然后修改.  
+3.  在docker.cpp中include新添加的文件并在createService中写一行实例化代码.  
 
 #About The Author  
 Auther: YaweiZhang  
