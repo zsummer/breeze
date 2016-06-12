@@ -128,12 +128,18 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
 
 
         lua_getfield(L, -1, "wideIP");
-        lconfig._wideIP = luaL_optstring(L, -1, "127.0.0.1");
+        lconfig._wideIP = luaL_optstring(L, -1, "");
         lua_pop(L, 1);
         lua_getfield(L, -1, "widePort");
         lconfig._widePort = (unsigned short)luaL_optinteger(L, -1, 0);
         lua_pop(L, 1);
 
+        lua_getfield(L, -1, "webIP");
+        lconfig._webIP = luaL_optstring(L, -1, "");
+        lua_pop(L, 1);
+        lua_getfield(L, -1, "webPort");
+        lconfig._webPort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
 
         lua_getfield(L, -1, "dockerID");
         lconfig._dockerID = (DockerID)luaL_checkinteger(L, -1);
