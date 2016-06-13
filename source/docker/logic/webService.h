@@ -38,6 +38,7 @@ public:
     void onUnload() override final;
     void onTick() override final;
 private:
+    void _checkSafeDestroy();
     void onWebAgentToService(Tracing trace, ReadStream &rs);
 private:
 };

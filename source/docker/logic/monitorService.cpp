@@ -20,10 +20,19 @@ void MonitorService::onTick()
 }
 
 
-
+void MonitorService::_checkSafeDestroy()
+{
+    auto service = Docker::getRef().peekService(ServiceUserMgr, InvalidServiceID);
+    if (!service)
+    {
+        finishUnload();
+        return;
+    }
+    SessionManager::getRef().createTimer(500, std::bind(&MonitorService::_checkSafeDestroy, this));
+}
 void MonitorService::onUnload()
 {
-    finishUnload();
+    _checkSafeDestroy();
 }
 
 bool MonitorService::onLoad()

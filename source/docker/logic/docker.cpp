@@ -1207,95 +1207,113 @@ void Docker::sendToDocker(ServiceType serviceType, ServiceID serviceID, const ch
 
 void Docker::toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost)
 {
-    if (trace._fromServiceType >= ServiceMax || trace._toServiceType >= ServiceMax || trace._toServiceType == ServiceInvalid)
+    try
     {
-        LOGF("Docker::sendToService Illegality trace. trace=" << trace << ", block len=" << len);
-        return;
-    }
-    LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-
-    if (trace._toDockerID != InvalidDockerID && trace._toDockerID != ServerConfig::getRef().getDockerID()) //service shell maybe not success. do this.
-    {
-        packetToDockerWithTracing(trace._toDockerID, trace, block, len);
-        return;
-    }
-    ui16 toServiceType = trace._toServiceType;
-    if (trace._toServiceType == ServiceClient)
-    {
-        toServiceType = ServiceUser;
-    }
-
-    auto founder = _services.find(toServiceType);
-    if (founder == _services.end())
-    {
-        LOGF("Docker::toService can not found _toServiceType type  trace =" << trace << ", block len=" << len);
-        return;
-    }
-    auto fder = founder->second.find(trace._toServiceID);
-    if (fder == founder->second.end())
-    {
-        if (toServiceType == ServiceUser)
+        ProtoID protoID = InvalidProtoID;
+        if (trace._toServiceType != ServiceClient)
         {
-            LOGW("Docker::toService can not found ServiceUser ID. trace =" << trace << ", block len=" << len);
+            ReadStream rs(block, len);
+            protoID = rs.getProtoID();
         }
-        else
+        if (trace._fromServiceType >= ServiceMax || trace._toServiceType >= ServiceMax || trace._toServiceType == ServiceInvalid)
         {
-            LOGE("Docker::toService can not found _toServiceType ID. trace =" << trace << ", block len=" << len);
+            LOGF("Docker::sendToService Illegality trace. trace=" << trace << ", block len=" << len << ", protoID=" << protoID);
+            return;
         }
-        return;
-    }
-    auto & service = *fder->second;
-    if (service.isShell() && !canForwardToOtherService)
-    {
-        LOGE("local service is shell but the call from other docker.");
-        return;
-    }
-    if (service.isShell()) //forward 
-    {
-        DockerID dockerID = service.getServiceDockerID();
-        packetToDockerWithTracing(dockerID, trace, block, len);
-    }
-    else //direct process
-    {
+        LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+
+        if (trace._toDockerID != InvalidDockerID && trace._toDockerID != ServerConfig::getRef().getDockerID()) //service shell maybe not success. do this.
+        {
+            packetToDockerWithTracing(trace._toDockerID, trace, block, len);
+            return;
+        }
+        ui16 toServiceType = trace._toServiceType;
         if (trace._toServiceType == ServiceClient)
         {
-            if (service.getClientDockerID() == InvalidDockerID || service.getClientSessionID() == InvalidSessionID)
-            {
-                LOGW("Docker::toService  ServiceClient sendToSession (client) warning. client dockerID or sessionID is Invalid "
-                    <<", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
-                    << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-            }
-            else if (service.getClientDockerID() == ServerConfig::getRef().getDockerID())
-            {
+            toServiceType = ServiceUser;
+        }
 
-                LOGT("Docker::toService  ServiceClient sendToSession (client) " << trace 
-                    << ", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
-                    << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-                sendToSession(service.getClientSessionID(), block, len);
+        auto founder = _services.find(toServiceType);
+        if (founder == _services.end())
+        {
+            LOGF("Docker::toService can not found _toServiceType type  trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
+            return;
+        }
+        auto fder = founder->second.find(trace._toServiceID);
+        if (fder == founder->second.end())
+        {
+            if (toServiceType == ServiceUser)
+            {
+                LOGW("Docker::toService can not found ServiceUser ID. trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
             }
             else
             {
-                LOGT("Docker::toService  ServiceClient ForwardToRealClient " << trace
-                    << ", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
-                    << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-                packetToClientViaDocker(service.getClientDockerID(), service.getClientSessionID(), block, len);
+                LOGE("Docker::toService can not found _toServiceType ID. trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
             }
+            return;
+        }
+        auto & service = *fder->second;
+        if (service.isShell() && !canForwardToOtherService)
+        {
+            LOGE("local service is shell but the call from other docker. trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
+            return;
+        }
+        if (service.isShell()) //forward 
+        {
+            DockerID dockerID = service.getServiceDockerID();
+            packetToDockerWithTracing(dockerID, trace, block, len);
+        }
+        else //direct process
+        {
+            if (trace._toServiceType == ServiceClient)
+            {
+                if (service.getClientDockerID() == InvalidDockerID || service.getClientSessionID() == InvalidSessionID)
+                {
+                    LOGW("Docker::toService  ServiceClient sendToSession (client) warning. client dockerID or sessionID is Invalid "
+                        <<", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
+                        << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
+                }
+                else if (service.getClientDockerID() == ServerConfig::getRef().getDockerID())
+                {
 
-        }
-        else if (needPost)
-        {
-            LOGT("Docker::toService local post process4bind " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-            std::string bk;
-            bk.assign(block, len);
-            SessionManager::getRef().post(std::bind(&Service::process4bind, fder->second, trace, std::move(bk)));
-        }
-        else
-        {
-            LOGT("Docker::toService  local process " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-            fder->second->process(trace, block, len);
+                    LOGT("Docker::toService  ServiceClient sendToSession (client) " << trace 
+                        << ", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
+                        << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
+                    sendToSession(service.getClientSessionID(), block, len);
+                }
+                else
+                {
+                    LOGT("Docker::toService  ServiceClient ForwardToRealClient " << trace
+                        << ", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
+                        << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
+                    packetToClientViaDocker(service.getClientDockerID(), service.getClientSessionID(), block, len);
+                }
+
+            }
+            else if (needPost)
+            {
+                LOGT("Docker::toService local post process4bind " << trace << ", len=" << len 
+                    << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
+                std::string bk;
+                bk.assign(block, len);
+                SessionManager::getRef().post(std::bind(&Service::process4bind, fder->second, trace, std::move(bk)));
+            }
+            else
+            {
+                LOGT("Docker::toService  local process " << trace << ", len=" << len 
+                    << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
+                fder->second->process(trace, block, len);
+            }
         }
     }
-
+    catch (const std::exception& e)
+    {
+        LOGE("Docker::toService catch one exception. trace=" << trace << ", block len=" << len << ", e=" << e.what() );
+    }
+    catch (...)
+    {
+        LOGE("Docker::toService catch one exception. trace=" << trace << ", block len=" << len );
+    }
 }
 
 
