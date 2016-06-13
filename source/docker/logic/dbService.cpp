@@ -1,7 +1,7 @@
 ﻿#include "docker.h"
 #include "dbService.h"
 #include <ProtoDBService.h>
-
+#include <ProtoOffline.h>
 
 
 DBService::DBService() 
@@ -107,6 +107,10 @@ bool DBService::onBuildDB()
     if (getServiceType() == ServiceInfoDBMgr)
     {
         if (!buildDB<UserBaseInfo>())
+        {
+            return false;
+        }
+        if (!buildDB<UserOffline>())
         {
             return false;
         }

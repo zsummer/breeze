@@ -28,14 +28,14 @@ namespace Proto4z
         static public ushort getProtoID() { return 1004; } 
         static public string getProtoName() { return "Tracing"; } 
         //members   
-        public uint toDockerID;  
+        public uint toDockerID; //forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID   
         public ushort toServiceType;  
         public ulong toServiceID;  
         public uint fromDockerID;  
         public ushort fromServiceType;  
         public ulong fromServiceID;  
-        public uint traceID;  
-        public uint traceBackID;  
+        public uint traceID; //本地cbID    
+        public uint traceBackID; //把远程cbID透传回去   
         public Tracing()  
         { 
             toDockerID = 0;  

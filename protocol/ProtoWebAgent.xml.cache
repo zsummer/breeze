@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>4c68fc0bc171182d183f5ae0e2695535</cppmd5> 
+<luamd5>0e86dfcb39d7005ce7c0e7cd78600c46</luamd5> 
+<csharpmd5>e678bc86c8178e8a48d0114258d54a81</csharpmd5> 
+<xmlmd5>3343271e9b778715b350fca98a2e0062</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_WebAgentToClient" Number = "5101" /> 
+    <cache key = "ID_WebAgentToService" Number = "5100" /> 
+</cacheNumber>

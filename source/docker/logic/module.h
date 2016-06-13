@@ -56,7 +56,7 @@ public:
     void writeToDB(std::function<void(bool, const std::string&)> cb = nullptr);
 public:
     DBData _data;
-private:
+public:
     void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)>);
     void onAffectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)>);
 private:
@@ -76,15 +76,15 @@ public:
     ModuleMultiData() {}
     virtual ~ModuleMultiData() {};
 public:
-    //sql通过协议工具生成的getDBSelectPure产生并手动追加where语句生成.
+    //sql通过协议工具生成的getDBSelectPure产生并手动追加where语句生成,注意不要limit分页.
     bool loadFromDB(ServicePtr service, const std::string & sql, std::function<void(bool, const std::string&)>);
     //update和insert不会变更_data的数据,纯方法 
     void updateToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
     void insertToDB(const DBData & data, std::function<void(bool, const DBData & data)> cb = nullptr);
 public:
     std::vector<DBData> _data;
-private:
-    void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)>);
+public:
+    void onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)>, const std::string & sql, int curLimit);
     void onAffectFromDB(ReadStream & rs, ServicePtr service, const DBData & data, std::function<void(bool, const DBData & data)>);
 private:
     ServiceWeakPtr _weakPtr;
@@ -200,13 +200,13 @@ template<class DBData>
 bool ModuleMultiData<DBData>::loadFromDB(ServicePtr service, const std::string & sql, std::function<void(bool, const std::string&)> cb)
 {
     _weakPtr = service;
-    SQLQueryReq req(sql);
-    service->toService(ServiceInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onSelectFromDB, this, _1, service, cb));
+    SQLQueryReq req(sql + " limit 0, 100");
+    service->toService(ServiceInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onSelectFromDB, this, _1, service, cb, sql, 0));
     return true;
 }
 
 template<class DBData>
-void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)> cb)
+void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std::function<void(bool, const std::string&)> cb, const std::string & sql, int curLimit)
 {
     SQLQueryResp resp;
     rs >> resp;
@@ -219,6 +219,14 @@ void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service
             cb(false, DBData::getProtoName());
         }
         return;
+    }
+    if (resp.result.fields.empty())
+    {
+        if (cb)
+        {
+            cb(true, DBData::getProtoName());
+            return;
+        }
     }
     DBResult result;
     result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
@@ -237,10 +245,8 @@ void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service
         }
         _data.push_back(data);
     }
-    if (cb)
-    {
-        cb(true, DBData::getProtoName());
-    }
+    SQLQueryReq req(sql + " limit " + toString(curLimit+100) +", 100");
+    service->toService(ServiceInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onSelectFromDB, this, _1, service, cb, sql, curLimit+100));
 }
 
 template<class DBData>
@@ -251,8 +257,9 @@ void ModuleMultiData<DBData>::updateToDB(const DBData & data, std::function<void
     {
         return;
     }
-    SQLQueryReq req(data.getDBUpdate());
-    guard->toService(ServiceInfoDBMgr, req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
+    DBData tmp = data;
+    SQLQueryReq req(tmp.getDBUpdate());
+    guard->toService(ServiceInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
 }
 
 template<class DBData>
@@ -263,8 +270,9 @@ void ModuleMultiData<DBData>::insertToDB(const DBData & data, std::function<void
     {
         return;
     }
-    SQLQueryReq req(data.getDBInsert());
-    guard->toService(ServiceInfoDBMgr, req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
+    DBData tmp = data;
+    SQLQueryReq req(tmp.getDBInsert());
+    guard->toService(ServiceInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
 }
 
 

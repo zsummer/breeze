@@ -24,8 +24,9 @@
 #define _OFFLINE_SERVICE_H_
 #include <common.h>
 #include "service.h"
-
-
+#include "module.h"
+#include <ProtoOffline.h>
+#include <ProtoDBService.h>
 
 
 class OfflineService : public Service
@@ -34,11 +35,19 @@ public:
     OfflineService();
     ~OfflineService();
     bool onLoad() override final;
+    void onModuleLoad(bool success, const std::string & moduleName);
     void onClientChange() override final;
     void onUnload() override final;
     void onTick() override final;
 private:
+    void onUserOffline(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onInsert(bool success, const UserOffline & offline);
+    void onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
+
+
+private:
     void _checkSafeDestroy();
+    ModuleMultiData<UserOffline> _offlines;
 };
 
 

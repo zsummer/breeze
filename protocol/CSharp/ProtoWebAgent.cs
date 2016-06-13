@@ -37,8 +37,8 @@ namespace Proto4z
     public class WebAgentToService: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 3000;  
-        static public ushort getProtoID() { return 3000; } 
+        public const ushort protoID = 5100;  
+        static public ushort getProtoID() { return 5100; } 
         static public string getProtoName() { return "WebAgentToService"; } 
         //members   
         public uint webClientID;  
@@ -88,8 +88,8 @@ namespace Proto4z
     public class WebAgentToClient: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 3001;  
-        static public ushort getProtoID() { return 3001; } 
+        public const ushort protoID = 5101;  
+        static public ushort getProtoID() { return 5101; } 
         static public string getProtoName() { return "WebAgentToClient"; } 
         //members   
         public string method;  

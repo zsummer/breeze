@@ -19,14 +19,14 @@ Proto4z.register(1004,"Tracing")
 Proto4z.Tracing = {} --docker间追踪数据 
 Proto4z.Tracing.__protoID = 1004 
 Proto4z.Tracing.__protoName = "Tracing" 
-Proto4z.Tracing[1] = {name="toDockerID", type="ui32" }  
+Proto4z.Tracing[1] = {name="toDockerID", type="ui32" } --forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID  
 Proto4z.Tracing[2] = {name="toServiceType", type="ui16" }  
 Proto4z.Tracing[3] = {name="toServiceID", type="ui64" }  
 Proto4z.Tracing[4] = {name="fromDockerID", type="ui32" }  
 Proto4z.Tracing[5] = {name="fromServiceType", type="ui16" }  
 Proto4z.Tracing[6] = {name="fromServiceID", type="ui64" }  
-Proto4z.Tracing[7] = {name="traceID", type="ui32" }  
-Proto4z.Tracing[8] = {name="traceBackID", type="ui32" }  
+Proto4z.Tracing[7] = {name="traceID", type="ui32" } --本地cbID   
+Proto4z.Tracing[8] = {name="traceBackID", type="ui32" } --把远程cbID透传回去  
  
 Proto4z.register(1000,"UserPreview") 
 Proto4z.UserPreview = {} --用户预览信息 

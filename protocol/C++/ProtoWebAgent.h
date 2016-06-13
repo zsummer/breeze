@@ -8,7 +8,7 @@ typedef std::map<std::string, std::string> WebAgentHead;
  
 struct WebAgentToService 
 { 
-    static const unsigned short getProtoID() { return 3000;} 
+    static const unsigned short getProtoID() { return 5100;} 
     static const std::string getProtoName() { return "WebAgentToService";} 
     unsigned int webClientID;  
     std::string method;  
@@ -60,7 +60,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct WebAgentToClient 
 { 
-    static const unsigned short getProtoID() { return 3001;} 
+    static const unsigned short getProtoID() { return 5101;} 
     static const std::string getProtoName() { return "WebAgentToClient";} 
     std::string method;  
     std::string methodLine;  
