@@ -27,22 +27,20 @@ void UserMgrService::onTick()
         LOGD("UserMgrService::onTick");
         for (auto iter = _freeList.begin(); iter != _freeList.end();)
         {
-            if (!iter->second)
+            if (iter->second->_status == SS_WORKING && getNowTime() - iter->second->_lastChangeTime > 30)
             {
-                iter = _freeList.erase(iter);
-                continue;
-            }
-            else if (iter->second->_status == SS_DESTROY || (iter->second->_status == SS_UNLOADING && getNowTime() - iter->second->_lastChangeTime > 30))
-            {
-                if (!Docker::getRef().peekService(ServiceUser, iter->second->_preview.serviceID))
+                auto service = Docker::getRef().peekService(ServiceUser, iter->second->_preview.serviceID);
+                if (service)
                 {
-                    iter = _freeList.erase(iter);
-                    continue;
+                    UnloadServiceInDocker unload(service->getServiceType(), service->getServiceID());
+                    Docker::getRef().sendToDocker(service->getServiceDockerID(), unload);
                 }
                 else
                 {
                     LOGE("service not unload finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.serviceID);
                 }
+                iter = _freeList.erase(iter);
+                continue;
             }
             iter++;
         }
