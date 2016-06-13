@@ -966,10 +966,10 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
         if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
         {
             Tracing trace;
-            trace._fromServiceType = ServiceClient;
-            trace._fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
-            trace._toServiceType = ServiceUserMgr;
-            trace._toServiceID = InvalidServiceID;
+            trace.fromServiceType = ServiceClient;
+            trace.fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+            trace.toServiceType = ServiceUserMgr;
+            trace.toServiceID = InvalidServiceID;
 
             RealClientClosedNotice notice;
             notice.serviceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
@@ -1007,10 +1007,10 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         ClientAuthReq clientReq;
         rs >> clientReq;
         Tracing trace;
-        trace._fromServiceType = ServiceClient;
-        trace._fromServiceID = InvalidServiceID;
-        trace._toServiceType = ServiceUserMgr;
-        trace._toServiceID = InvalidServiceID;
+        trace.fromServiceType = ServiceClient;
+        trace.fromServiceID = InvalidServiceID;
+        trace.toServiceType = ServiceUserMgr;
+        trace.toServiceID = InvalidServiceID;
 
         SelectUserPreviewsFromUserMgrReq serviceReq;
         serviceReq.account = clientReq.account;
@@ -1032,10 +1032,10 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         CreateUserReq clientReq;
         rs >> clientReq;
         Tracing trace;
-        trace._fromServiceType = ServiceClient;
-        trace._fromServiceID = InvalidServiceID;
-        trace._toServiceType = ServiceUserMgr;
-        trace._toServiceID = InvalidServiceID;
+        trace.fromServiceType = ServiceClient;
+        trace.fromServiceID = InvalidServiceID;
+        trace.toServiceType = ServiceUserMgr;
+        trace.toServiceID = InvalidServiceID;
 
         CreateUserFromUserMgrReq serviceReq;
         serviceReq.account = session->getUserParamString(UPARAM_ACCOUNT);
@@ -1056,10 +1056,10 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         AttachUserReq clientReq;
         rs >> clientReq;
         Tracing trace;
-        trace._fromServiceType = ServiceClient;
-        trace._fromServiceID = InvalidServiceID;
-        trace._toServiceType = ServiceUserMgr;
-        trace._toServiceID = InvalidServiceID;
+        trace.fromServiceType = ServiceClient;
+        trace.fromServiceID = InvalidServiceID;
+        trace.toServiceType = ServiceUserMgr;
+        trace.toServiceID = InvalidServiceID;
 
         AttachUserFromUserMgrReq serviceReq;
         serviceReq.serviceID = clientReq.serviceID;
@@ -1073,10 +1073,10 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     {
         LOGD("client other proto to user service. sID=" << session->getSessionID() << ", block len=" << len);
         Tracing trace;
-        trace._fromServiceType = ServiceClient;
-        trace._fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
-        trace._toServiceType = ServiceUser;
-        trace._toServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+        trace.fromServiceType = ServiceClient;
+        trace.fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+        trace.toServiceType = ServiceUser;
+        trace.toServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
         toService(trace, rs.getStream(), rs.getStreamLen(), true, true);
         return;
     }
@@ -1100,12 +1100,12 @@ void Docker::event_onWebMessage(TcpSessionPtr session, const std::string & metho
     notice.body = body;
 
     Tracing trace;
-    trace._fromDockerID = ServerConfig::getRef().getDockerID();
-    trace._fromServiceType = ServiceInvalid;
-    trace._fromServiceID = InvalidServiceID;
-    trace._toDockerID = InvalidDockerID;
-    trace._toServiceType = ServiceWebAgent;
-    trace._toServiceID = InvalidServiceID;
+    trace.fromDockerID = ServerConfig::getRef().getDockerID();
+    trace.fromServiceType = ServiceInvalid;
+    trace.fromServiceID = InvalidServiceID;
+    trace.toDockerID = InvalidDockerID;
+    trace.toServiceType = ServiceWebAgent;
+    trace.toServiceID = InvalidServiceID;
     toService(trace, notice, true, false);
 }
 
@@ -1210,25 +1210,25 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     try
     {
         ProtoID protoID = InvalidProtoID;
-        if (trace._toServiceType != ServiceClient)
+        if (trace.toServiceType != ServiceClient)
         {
             ReadStream rs(block, len);
             protoID = rs.getProtoID();
         }
-        if (trace._fromServiceType >= ServiceMax || trace._toServiceType >= ServiceMax || trace._toServiceType == ServiceInvalid)
+        if (trace.fromServiceType >= ServiceMax || trace.toServiceType >= ServiceMax || trace.toServiceType == ServiceInvalid)
         {
             LOGF("Docker::sendToService Illegality trace. trace=" << trace << ", block len=" << len << ", protoID=" << protoID);
             return;
         }
         LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
 
-        if (trace._toDockerID != InvalidDockerID && trace._toDockerID != ServerConfig::getRef().getDockerID()) //service shell maybe not success. do this.
+        if (trace.toDockerID != InvalidDockerID && trace.toDockerID != ServerConfig::getRef().getDockerID()) //service shell maybe not success. do this.
         {
-            packetToDockerWithTracing(trace._toDockerID, trace, block, len);
+            packetToDockerWithTracing(trace.toDockerID, trace, block, len);
             return;
         }
-        ui16 toServiceType = trace._toServiceType;
-        if (trace._toServiceType == ServiceClient)
+        ui16 toServiceType = trace.toServiceType;
+        if (trace.toServiceType == ServiceClient)
         {
             toServiceType = ServiceUser;
         }
@@ -1236,10 +1236,10 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         auto founder = _services.find(toServiceType);
         if (founder == _services.end())
         {
-            LOGF("Docker::toService can not found _toServiceType type  trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
+            LOGF("Docker::toService can not found toServiceType type  trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
             return;
         }
-        auto fder = founder->second.find(trace._toServiceID);
+        auto fder = founder->second.find(trace.toServiceID);
         if (fder == founder->second.end())
         {
             if (toServiceType == ServiceUser)
@@ -1248,7 +1248,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
             }
             else
             {
-                LOGE("Docker::toService can not found _toServiceType ID. trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
+                LOGE("Docker::toService can not found toServiceType ID. trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
             }
             return;
         }
@@ -1265,7 +1265,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         }
         else //direct process
         {
-            if (trace._toServiceType == ServiceClient)
+            if (trace.toServiceType == ServiceClient)
             {
                 if (service.getClientDockerID() == InvalidDockerID || service.getClientSessionID() == InvalidSessionID)
                 {

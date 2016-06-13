@@ -22,6 +22,80 @@ enum  : unsigned short
     EC_FRIEND_NOT_EXIST = 103, //好友不存在  
 }; 
  
+struct Tracing //docker间追踪数据  
+{ 
+    static const unsigned short getProtoID() { return 1004;} 
+    static const std::string getProtoName() { return "Tracing";} 
+    unsigned int toDockerID;  
+    unsigned short toServiceType;  
+    unsigned long long toServiceID;  
+    unsigned int fromDockerID;  
+    unsigned short fromServiceType;  
+    unsigned long long fromServiceID;  
+    unsigned int traceID;  
+    unsigned int traceBackID;  
+    Tracing() 
+    { 
+        toDockerID = 0; 
+        toServiceType = 0; 
+        toServiceID = 0; 
+        fromDockerID = 0; 
+        fromServiceType = 0; 
+        fromServiceID = 0; 
+        traceID = 0; 
+        traceBackID = 0; 
+    } 
+    Tracing(const unsigned int & toDockerID, const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned int & fromDockerID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID) 
+    { 
+        this->toDockerID = toDockerID; 
+        this->toServiceType = toServiceType; 
+        this->toServiceID = toServiceID; 
+        this->fromDockerID = fromDockerID; 
+        this->fromServiceType = fromServiceType; 
+        this->fromServiceID = fromServiceID; 
+        this->traceID = traceID; 
+        this->traceBackID = traceBackID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data) 
+{ 
+    ws << data.toDockerID;  
+    ws << data.toServiceType;  
+    ws << data.toServiceID;  
+    ws << data.fromDockerID;  
+    ws << data.fromServiceType;  
+    ws << data.fromServiceID;  
+    ws << data.traceID;  
+    ws << data.traceBackID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data) 
+{ 
+    rs >> data.toDockerID;  
+    rs >> data.toServiceType;  
+    rs >> data.toServiceID;  
+    rs >> data.fromDockerID;  
+    rs >> data.fromServiceType;  
+    rs >> data.fromServiceID;  
+    rs >> data.traceID;  
+    rs >> data.traceBackID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Tracing & info) 
+{ 
+    stm << "[\n"; 
+    stm << "toDockerID=" << info.toDockerID << "\n"; 
+    stm << "toServiceType=" << info.toServiceType << "\n"; 
+    stm << "toServiceID=" << info.toServiceID << "\n"; 
+    stm << "fromDockerID=" << info.fromDockerID << "\n"; 
+    stm << "fromServiceType=" << info.fromServiceType << "\n"; 
+    stm << "fromServiceID=" << info.fromServiceID << "\n"; 
+    stm << "traceID=" << info.traceID << "\n"; 
+    stm << "traceBackID=" << info.traceBackID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct UserPreview //用户预览信息  
 { 
     static const unsigned short getProtoID() { return 1000;} 

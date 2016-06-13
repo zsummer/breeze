@@ -145,16 +145,16 @@ void Service::cleanCallback()
 void Service::toService(ui16 serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trace;
-    trace._fromServiceType = getServiceType();
-    trace._fromServiceID = getServiceID();
-    trace._fromDockerID = getServiceDockerID();
-    trace._traceBackID = 0;
-    trace._traceID = 0;
-    trace._toServiceType = serviceType;
-    trace._toServiceID = serviceID;
+    trace.fromServiceType = getServiceType();
+    trace.fromServiceID = getServiceID();
+    trace.fromDockerID = getServiceDockerID();
+    trace.traceBackID = 0;
+    trace.traceID = 0;
+    trace.toServiceType = serviceType;
+    trace.toServiceID = serviceID;
     if (cb)
     {
-        trace._traceID = makeCallback(cb);
+        trace.traceID = makeCallback(cb);
     }
     Docker::getRef().toService(trace, block, len, true, true);
 }
@@ -167,17 +167,17 @@ void Service::toService(ui16 serviceType, const char * block, unsigned int len, 
 void Service::backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trc;
-    trc._fromDockerID = getServiceDockerID();
-    trc._fromServiceType = getServiceType();
-    trc._fromServiceID = getServiceID();
-    trc._traceBackID = trace._traceID;
-    trc._traceID = 0;
-    trc._toServiceType = trace._fromServiceType;
-    trc._toServiceID = trace._fromServiceID;
-    trc._toDockerID = trace._fromDockerID;
+    trc.fromDockerID = getServiceDockerID();
+    trc.fromServiceType = getServiceType();
+    trc.fromServiceID = getServiceID();
+    trc.traceBackID = trace.traceID;
+    trc.traceID = 0;
+    trc.toServiceType = trace.fromServiceType;
+    trc.toServiceID = trace.fromServiceID;
+    trc.toDockerID = trace.fromDockerID;
     if (cb)
     {
-        trc._traceID = makeCallback(cb);
+        trc.traceID = makeCallback(cb);
     }
     Docker::getRef().toService(trc, block, len, true, true);
 }
@@ -189,12 +189,12 @@ void Service::process4bind(const Tracing & trace, const std::string & block)
 
 void Service::process(const Tracing & trace, const char * block, unsigned int len)
 {
-    if (trace._traceBackID > 0)
+    if (trace.traceBackID > 0)
     {
-        auto cb = checkoutCallback(trace._traceBackID);
+        auto cb = checkoutCallback(trace.traceBackID);
         if (!cb)
         {
-            LOGE("Service::process callback timeout. cbid=" << trace._traceBackID);
+            LOGE("Service::process callback timeout. cbid=" << trace.traceBackID);
             return;
         }
         try

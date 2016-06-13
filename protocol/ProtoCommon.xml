@@ -32,6 +32,18 @@
 
     </enum>
 
+    <packet name="Tracing"  desc="docker间追踪数据">
+        <member name="toDockerID" type="ui32" desc="forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID "/>
+        <member name="toServiceType" type="ui16" desc=""/>
+        <member name="toServiceID" type="ui64" desc=""/>
+
+        <member name="fromDockerID" type="ui32" desc=""/>
+        <member name="fromServiceType" type="ui16" desc=""/>
+        <member name="fromServiceID" type="ui64" desc=""/>
+
+        <member name="traceID" type="ui32" desc="本地cbID  "/>
+        <member name="traceBackID" type="ui32" desc="把远程cbID透传回去 "/>
+    </packet>
 
 
 

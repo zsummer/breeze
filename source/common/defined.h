@@ -168,20 +168,6 @@ const std::vector<std::string> ServiceTypeNames =
     "ServiceMax",
 };
 
-//forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID 
-struct Tracing
-{
-    DockerID _toDockerID = InvalidDockerID;
-    ui16 _toServiceType;
-    ServiceID _toServiceID = InvalidServiceID;
-
-    DockerID _fromDockerID = InvalidDockerID;
-    ui16 _fromServiceType;
-    ServiceID _fromServiceID = InvalidServiceID;
-
-    ui32 _traceID = 0; //本地cbID  
-    ui32 _traceBackID = 0; //把远程cbID透传回去  
-};
 
 
 
@@ -241,26 +227,6 @@ enum SessionUserData
 
 
 
-
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const Tracing & trace)
-{
-    if (trace._fromServiceType < ServiceMax && trace._toServiceType < ServiceMax)
-    {
-        os << "[_toServiceType=" << ServiceTypeNames.at(trace._toServiceType) << ", _toServiceID=" << trace._toServiceID
-            << ", _fromServiceType=" << ServiceTypeNames.at(trace._fromServiceType) << ", _fromServiceID=" << trace._fromServiceID
-            << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
-            << "]";
-    }
-    else
-    {
-        os << "[_toServiceType=" << trace._toServiceType << ", _toServiceID=" << trace._toServiceID
-            << ", _fromServiceType=" << trace._fromServiceType << ", _fromServiceID=" << trace._fromServiceID
-            << ", _traceID=" << trace._traceID << ", _traceBackID=" << trace._traceBackID
-            << "]";
-    }
-    return os;
-}
-
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DockerConfig & config)
 {
     os << "[_serviceBindIP=" << config._serviceBindIP << ", _serviceIP=" << config._serviceIP
@@ -277,32 +243,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
     os << "[_name=" << config._name << ", ip=" << config._ip << ", port=" << config._port
         << ", db=" << config._db << ", user=" << config._user << ", pwd=" << config._pwd << "]";
     return os;
-}
-
-
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data)
-{
-    ws << data._toDockerID;
-    ws << data._toServiceType;
-    ws << data._toServiceID;
-    ws << data._fromDockerID;
-    ws << data._fromServiceType;
-    ws << data._fromServiceID;
-    ws << data._traceID;
-    ws << data._traceBackID;
-    return ws;
-}
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data)
-{
-    rs >> data._toDockerID;
-    rs >> data._toServiceType;
-    rs >> data._toServiceID;
-    rs >> data._fromDockerID;
-    rs >> data._fromServiceType;
-    rs >> data._fromServiceID;
-    rs >> data._traceID;
-    rs >> data._traceBackID;
-    return rs;
 }
 
 

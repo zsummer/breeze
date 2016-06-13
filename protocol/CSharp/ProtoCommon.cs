@@ -21,6 +21,70 @@ namespace Proto4z
         EC_FRIEND_NOT_EXIST = 103, //好友不存在  
     }; 
  
+    public class Tracing: Proto4z.IProtoObject //docker间追踪数据  
+    {     
+        //proto id   
+        public const ushort protoID = 1004;  
+        static public ushort getProtoID() { return 1004; } 
+        static public string getProtoName() { return "Tracing"; } 
+        //members   
+        public uint toDockerID;  
+        public ushort toServiceType;  
+        public ulong toServiceID;  
+        public uint fromDockerID;  
+        public ushort fromServiceType;  
+        public ulong fromServiceID;  
+        public uint traceID;  
+        public uint traceBackID;  
+        public Tracing()  
+        { 
+            toDockerID = 0;  
+            toServiceType = 0;  
+            toServiceID = 0;  
+            fromDockerID = 0;  
+            fromServiceType = 0;  
+            fromServiceID = 0;  
+            traceID = 0;  
+            traceBackID = 0;  
+        } 
+        public Tracing(uint toDockerID, ushort toServiceType, ulong toServiceID, uint fromDockerID, ushort fromServiceType, ulong fromServiceID, uint traceID, uint traceBackID) 
+        { 
+            this.toDockerID = toDockerID; 
+            this.toServiceType = toServiceType; 
+            this.toServiceID = toServiceID; 
+            this.fromDockerID = fromDockerID; 
+            this.fromServiceType = fromServiceType; 
+            this.fromServiceID = fromServiceID; 
+            this.traceID = traceID; 
+            this.traceBackID = traceBackID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.toDockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.toServiceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.toServiceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.fromDockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.fromServiceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromServiceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.traceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.traceBackID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.toDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.toServiceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.toServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.fromDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.fromServiceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.fromServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.traceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.traceBackID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class UserPreview: Proto4z.IProtoObject //用户预览信息  
     {     
         //proto id   

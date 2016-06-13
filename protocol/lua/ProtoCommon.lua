@@ -15,6 +15,19 @@ Proto4z.EC_FRIEND_CEILING = 101--达到好友上限
 Proto4z.EC_FRIEND_REFUSE = 102--不能添加对方为好友 
 Proto4z.EC_FRIEND_NOT_EXIST = 103--好友不存在 
  
+Proto4z.register(1004,"Tracing") 
+Proto4z.Tracing = {} --docker间追踪数据 
+Proto4z.Tracing.__protoID = 1004 
+Proto4z.Tracing.__protoName = "Tracing" 
+Proto4z.Tracing[1] = {name="toDockerID", type="ui32" }  
+Proto4z.Tracing[2] = {name="toServiceType", type="ui16" }  
+Proto4z.Tracing[3] = {name="toServiceID", type="ui64" }  
+Proto4z.Tracing[4] = {name="fromDockerID", type="ui32" }  
+Proto4z.Tracing[5] = {name="fromServiceType", type="ui16" }  
+Proto4z.Tracing[6] = {name="fromServiceID", type="ui64" }  
+Proto4z.Tracing[7] = {name="traceID", type="ui32" }  
+Proto4z.Tracing[8] = {name="traceBackID", type="ui32" }  
+ 
 Proto4z.register(1000,"UserPreview") 
 Proto4z.UserPreview = {} --用户预览信息 
 Proto4z.UserPreview.__protoID = 1000 
