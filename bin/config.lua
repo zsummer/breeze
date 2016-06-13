@@ -30,6 +30,8 @@ config.docker =
         serviceWhite={"192.168.", "127.0."},
         wideIP="127.0.0.1",
         widePort=26001,
+        webIP="127.0.0.1",
+        webPort=26080,
         services={"ServiceWebAgent", "ServiceOfflineMgr", "ServiceMinitorMgr", "ServiceUser"},
         dockerID = 2,
     },

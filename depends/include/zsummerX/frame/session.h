@@ -120,10 +120,11 @@ namespace zsummer
             zsummer::network::NetErrorCode _lastRecvError = NEC_SUCCESS;
 
             //! http status data
-            bool _httpHadHeader = false;
             bool _httpIsChunked = false;
-            PairString  _httpCommonLine;
-            MapString _httpHeader;
+            std::string _httpMethod;
+            std::string _httpMethodLine;
+            std::map<std::string, std::string> _httpHeader;
+
             
             //! user param
             std::vector<TupleParam> _param;

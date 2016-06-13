@@ -9,6 +9,7 @@
 #include "offlineService.h"
 #include <ProtoUser.h>
 #include <ProtoUserMgr.h>
+#include <ProtoWebAgent.h>
 
 
 Docker::Docker()
@@ -85,7 +86,7 @@ void Docker::stop()
             else
             {
                 UnloadServiceInDocker notice(svc.second->getServiceType(), svc.second->getServiceID());
-                sendToDockerByService((ServiceType)svc.second->getServiceType(), svc.second->getServiceID(), notice);
+                sendToDocker((ServiceType)svc.second->getServiceType(), svc.second->getServiceID(), notice);
             }
         }
     }
@@ -344,7 +345,7 @@ bool Docker::startDockerWebListen()
             LOGD("Docker::event_onWebClosed. SessionID=" << session->getSessionID()
                 << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
         };
-        options._sessionOptions._onHTTPBlockDispatch = std::bind(&Docker::event_onWebMessage, this, _1, _2, _3, _4);
+        options._sessionOptions._onHTTPBlockDispatch = std::bind(&Docker::event_onWebMessage, this, _1, _2, _3, _4, _5);
         if (!SessionManager::getRef().openAccepter(aID))
         {
             LOGE("Docker::startDockerWebListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
@@ -1055,9 +1056,25 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
 
 
 
-void Docker::event_onWebMessage(TcpSessionPtr session, const zsummer::proto4z::PairString & commonLine, const MapString &head, const std::string & body)
+void Docker::event_onWebMessage(TcpSessionPtr session, const std::string & method, const std::string & methodLine, 
+    const std::map<std::string,std::string> &head, const std::string & body)
 {
+    LOGD("onWebMessage sessionID=" << session->getSessionID() << ", method=" << method << ", methodLine=" << methodLine);
+    WebAgentToService notice;
+    notice.webClientID = session->getSessionID();
+    notice.method = method;
+    notice.methodLine = methodLine;
+    notice.heads = head;
+    notice.body = body;
 
+    Tracing trace;
+    trace._fromDockerID = ServerConfig::getRef().getDockerID();
+    trace._fromServiceType = ServiceInvalid;
+    trace._fromServiceID = InvalidServiceID;
+    trace._toDockerID = InvalidDockerID;
+    trace._toServiceType = ServiceWebAgent;
+    trace._toServiceID = InvalidServiceID;
+    toService(trace, notice, true, false);
 }
 
 
@@ -1067,7 +1084,7 @@ void Docker::sendToSession(SessionID sessionID, const char * block, unsigned int
 }
 
 
-void Docker::sendToSession(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len)
+void Docker::packetToSessionWithTracing(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len)
 {
     try
     {
@@ -1078,7 +1095,7 @@ void Docker::sendToSession(SessionID sessionID, const Tracing & trace, const cha
     }
     catch (const std::exception & e)
     {
-        LOGE("Docker::sendToSession catch except error. e=" << e.what());
+        LOGE("Docker::packetToSessionWithTracing catch except error. e=" << e.what());
     }
 }
 
@@ -1104,20 +1121,20 @@ void Docker::sendToDocker(DockerID dockerID, const char * block, unsigned int le
 }
 
 
-void Docker::sendToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len)
+void Docker::packetToDockerWithTracing(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len)
 {
     auto founder = _dockerSession.find(dockerID);
     if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
     {
-        sendToSession(founder->second.sessionID, trace, block, len);
+        packetToSessionWithTracing(founder->second.sessionID, trace, block, len);
     }
     else
     {
-        LOGE("Docker::sendToDocker not found docker. dockerID=" << dockerID);
+        LOGE("Docker::packetToDockerWithTracing not found docker. dockerID=" << dockerID);
     }
 }
 
-void Docker::sendToDocker(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len)
+void Docker::packetToClientViaDocker(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len)
 {
     auto founder = _dockerSession.find(dockerID);
     if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
@@ -1129,23 +1146,23 @@ void Docker::sendToDocker(DockerID dockerID, SessionID clientSessionID, const ch
     }
     else
     {
-        LOGE("Docker::sendToDocker not found docker. dockerID=" << dockerID);
+        LOGE("Docker::packetToClientViaDocker not found docker. dockerID=" << dockerID);
     }
 }
 
-void Docker::sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len)
+void Docker::sendToDocker(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len)
 {
-    LOGT("Docker::sendToDockerByService serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+    LOGT("Docker::sendToDocker serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
     auto founder = _services.find(serviceType);
     if (founder == _services.end())
     {
-        LOGE("Docker::sendToDockerByService error. type not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        LOGE("Docker::sendToDocker error. type not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
         return;
     }
     auto fder = founder->second.find(serviceID);
     if (fder == founder->second.end())
     {
-        LOGE("Docker::sendToDockerByService error. service id not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        LOGE("Docker::sendToDocker error. service id not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
         return;
     }
     sendToDocker(fder->second->getServiceDockerID(), block, len);
@@ -1167,7 +1184,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
 
     if (trace._toDockerID != InvalidDockerID && trace._toDockerID != ServerConfig::getRef().getDockerID()) //service shell maybe not success. do this.
     {
-        sendToDocker(trace._toDockerID, trace, block, len);
+        packetToDockerWithTracing(trace._toDockerID, trace, block, len);
         return;
     }
     ui16 toServiceType = trace._toServiceType;
@@ -1204,7 +1221,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     if (service.isShell()) //forward 
     {
         DockerID dockerID = service.getServiceDockerID();
-        sendToDocker(dockerID, trace, block, len);
+        packetToDockerWithTracing(dockerID, trace, block, len);
     }
     else //direct process
     {
@@ -1229,7 +1246,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
                 LOGT("Docker::toService  ServiceClient ForwardToRealClient " << trace
                     << ", clientDockerID=" << service.getClientDockerID() << ", clientSessionID=" << service.getClientSessionID()
                     << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-                sendToDocker(service.getClientDockerID(), service.getClientSessionID(), block, len);
+                packetToClientViaDocker(service.getClientDockerID(), service.getClientSessionID(), block, len);
             }
 
         }
@@ -1266,7 +1283,15 @@ ServicePtr Docker::peekService(ServiceType serviceType, ServiceID serviceID)
     return fder->second;
 }
 
-
+const std::unordered_map<ServiceID, ServicePtr > & Docker::peekService(ServiceType serviceType)
+{
+    auto founder = _services.find(serviceType);
+    if (founder == _services.end())
+    {
+        return std::unordered_map<ServiceID, ServicePtr >();
+    }
+    return founder->second;
+}
 
 
 

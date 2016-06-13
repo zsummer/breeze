@@ -1051,11 +1051,10 @@ const char CR = '\r'; //CRLF
 const char LF = '\n';
 const char SEGM = ':';
 const char BLANK = ' ';
-typedef std::pair<std::string, std::string> PairString;
-typedef std::map<std::string, std::string> HTTPHeadMap;
+
 
 inline std::pair<INTEGRITY_RET_TYPE, unsigned int> checkHTTPBuffIntegrity(const char * buff, unsigned int curBuffLen, unsigned int maxBuffLen,
-                            bool hadHeader, bool & isChunked, PairString& commonLine, HTTPHeadMap & head, std::string & body);
+                            bool & isChunked, std::string & method, std::string & line, std::map<std::string,std::string> & head, std::string & body);
 
 std::string urlEncode(const std::string& orgString);
 //"Content-Type" value is "application/x-www-form-urlencoded" means that your POST body will need to be URL encoded just like a GET parameter string.  
@@ -1099,13 +1098,35 @@ public:
 protected:
     void writeGeneralHead()
     {
-        for (HTTPHeadMap::iterator iter = _head.begin(); iter != _head.end(); ++iter)
+        if (_head.find("Connection") == _head.end())
+        {
+            _head.insert(std::make_pair("Connection", " keep-alive"));
+        }
+        if (_head.find("Accept") == _head.end())
+        {
+            _head.insert(std::make_pair("Accept", " */*"));
+        }
+        if (_head.find("User-Agent") == _head.end())
+        {
+            _head.insert(std::make_pair("User-Agent", " Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.101"));
+        }
+        if (_head.find("Accept-Languaget") == _head.end())
+        {
+            _head.insert(std::make_pair("Accept-Languaget", " zh-CN,zh;q=0.8"));
+        }
+        if (_head.find("Content-Type") == _head.end())
+        {
+            _head.insert(std::make_pair("Content-Type", " text/html; charset=utf-8"));
+        }     
+
+        for (auto iter = _head.begin(); iter != _head.end(); ++iter)
         {
             _buff.append(iter->first + ":" + iter->second + CRLF);
         }
+
     }
 private:
-    HTTPHeadMap _head;
+    std::map<std::string, std::string> _head;
     std::string _buff;
 };
 
@@ -1191,11 +1212,6 @@ inline std::string urlDecode(const std::string & orgString)
 inline unsigned int InnerReadLine(const char * buff, unsigned int curBuffLen, unsigned int maxBuffLen,  bool isKV, bool isCommondLine,
     std::string & outStringKey, std::string &outStringValue)
 {
-    if (curBuffLen == 0)
-    {
-        return IRT_CORRUPTION;
-    }
-    
     unsigned int cursor = 0;
     short readStatus = 0;
     INTEGRITY_RET_TYPE isIntegrityData = IRT_SHORTAGE;
@@ -1233,7 +1249,7 @@ inline unsigned int InnerReadLine(const char * buff, unsigned int curBuffLen, un
             {
                 if (buff[cursor] == BLANK)
                 {
-                    readStatus++;
+                    readStatus ++;
                     cursor++;
                     continue;
                 }
@@ -1242,7 +1258,7 @@ inline unsigned int InnerReadLine(const char * buff, unsigned int curBuffLen, un
             {
                 if (buff[cursor] == SEGM)
                 {
-                    readStatus++;
+                    readStatus ++;
                     cursor++;
                     continue;
                 }
@@ -1278,24 +1294,24 @@ inline unsigned int InnerReadLine(const char * buff, unsigned int curBuffLen, un
 }
 
 inline std::pair<INTEGRITY_RET_TYPE, unsigned int> checkHTTPBuffIntegrity(const char * buff, unsigned int curBuffLen, unsigned int maxBuffLen,
-    bool hadHeader, bool &isChunked, PairString& commonLine, HTTPHeadMap & head, std::string & body)
+    bool & isChunked, std::string & method, std::string & line, std::map<std::string, std::string> & head, std::string & body)
 {
-    if (!hadHeader)
+    if (head.empty())
     {
         isChunked = false;
     }
     int bodyLenght = -1;
     unsigned int usedCount = 0;
-    PairString keyValue;
+
 
     //extract head
-    if (!hadHeader)
+    if (!isChunked)
     {
 
         //extract common line
         try
         {
-            usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, true, true, commonLine.first, commonLine.second);
+            usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, true, true, method, line);
         }
         catch (INTEGRITY_RET_TYPE t)
         {
@@ -1306,24 +1322,26 @@ inline std::pair<INTEGRITY_RET_TYPE, unsigned int> checkHTTPBuffIntegrity(const 
         head.clear();
         try
         {
+            std::string tmpMethod;
+            std::string tmpLine;
             do
             {
-                keyValue.first.clear();
-                keyValue.second.clear();
-                usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, true, false, keyValue.first, keyValue.second);
-                if (keyValue.first.empty() && keyValue.second.empty())
+                tmpMethod.clear();
+                tmpLine.clear();
+                usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, true, false, tmpMethod, tmpLine);
+                if (tmpMethod.empty() && tmpLine.empty())
                 {
                     break;
                 }
-                if (keyValue.first == "Content-Length")
+                if (tmpMethod == "Content-Length")
                 {
-                    bodyLenght = atoi(keyValue.second.c_str());
+                    bodyLenght = atoi(tmpLine.c_str());
                 }
-                else if (keyValue.first == "Transfer-Encoding")
+                else if (tmpMethod == "Transfer-Encoding")
                 {
                     isChunked = true;
                 }
-                head.insert(keyValue);
+                head.insert(std::make_pair(std::move(tmpMethod), std::move(tmpLine)));
             } while (true);
         }
         catch (INTEGRITY_RET_TYPE t)
@@ -1339,15 +1357,15 @@ inline std::pair<INTEGRITY_RET_TYPE, unsigned int> checkHTTPBuffIntegrity(const 
     {
         try
         {
-            keyValue.first.clear();
-            keyValue.second.clear();
-            usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, false, false, keyValue.first, keyValue.second);
+            std::string tmpMethod;
+            std::string tmpLine;
+            usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, false, false, tmpMethod, tmpLine);
             //chunked end. need closed.
-            if (keyValue.first.empty())
+            if (tmpMethod.empty())
             {
                 return std::make_pair(IRT_CORRUPTION, 0);
             }
-            sscanf(keyValue.first.c_str(), "%x", &bodyLenght);
+            sscanf(tmpMethod.c_str(), "%x", &bodyLenght);
             if (bodyLenght == 0)
             {
                 //http socket end.
@@ -1360,11 +1378,11 @@ inline std::pair<INTEGRITY_RET_TYPE, unsigned int> checkHTTPBuffIntegrity(const 
             return std::make_pair(t, 0);
         }
     }
-    else if (hadHeader)
+    else if (head.empty())
     {
         return std::make_pair(IRT_SHORTAGE, 0);
     }
-    else if (commonLine.first == "GET")
+    else if (method == "GET")
     {
         return std::make_pair(IRT_SUCCESS, usedCount);
     }
@@ -1384,11 +1402,11 @@ inline std::pair<INTEGRITY_RET_TYPE, unsigned int> checkHTTPBuffIntegrity(const 
     {
         try
         {
-            keyValue.first.clear();
-            keyValue.second.clear();
-            usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, false, false, keyValue.first, keyValue.second);
+            std::string tmpMethod;
+            std::string tmpLine;
+            usedCount += InnerReadLine(buff + usedCount, curBuffLen - usedCount, maxBuffLen - usedCount, false, false, tmpMethod, tmpLine);
             //chunked end. need closed.
-            if (!keyValue.first.empty())
+            if (!tmpMethod.empty())
             {
                 return std::make_pair(IRT_CORRUPTION, 0);
             }

@@ -173,14 +173,13 @@ namespace zsummer
         //!event linked, closed, ontimer
         using OnSessionEvent = std::function<void(TcpSessionPtr   /*session*/)>;
 
-        using PairString = std::pair<std::string, std::string>;
-        using MapString = std::map<std::string, std::string>;
+ 
         //!HTTP unpack, hadHeader used by 'chunked', commonLine can be GET, POST RESPONSE.  
         using OnHTTPBlockCheck = std::function<OnBlockCheckResult(const char * /*begin*/, unsigned int /*len*/, unsigned int /*bound*/,
-            bool /*hadHeader*/, bool & /*isChunked*/, PairString& /*commonLine*/, MapString & /*head*/, std::string & /*body*/)>;
+            bool & /*isChunked*/, std::string& /*method*/, std::string &methodLine/*method line*/, std::map<std::string,std::string> & /*head*/, std::string & /*body*/)>;
         //!HTTP dispatch  
         using OnHTTPBlockDispatch = std::function<
-            void(TcpSessionPtr /*session*/, const PairString & /*commonLine*/, const MapString &/*head*/, const std::string & /*body*/)>;
+            void(TcpSessionPtr /*session*/, const std::string& /*method*/, const std::string &methodLine/*method line*/ , const std::map<std::string, std::string> &/*head*/, const std::string & /*body*/)>;
         
 
 

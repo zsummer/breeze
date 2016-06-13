@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>3000</MinNo>
+  <MaxNo>4000</MaxNo>
+  <UseLog4z>true</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+
+    <map name="WebAgentHead" key="string" value="string" desc="" />
+
+    <packet name="WebAgentToService" desc="">
+        <member name="webClientID" type="ui32"  desc=""/>
+        <member name="method" type="string"  desc=""/>
+        <member name="methodLine" type="string"  desc=""/>
+        <member name="heads" type="WebAgentHead"  desc=""/>
+        <member name="body" type="string"  desc=""/>
+    </packet>
+
+    <packet name="WebAgentToClient" desc="">
+        <member name="method" type="string"  desc=""/>
+        <member name="methodLine" type="string"  desc=""/>
+        <member name="heads" type="WebAgentHead"  desc=""/>
+        <member name="body" type="string"  desc=""/>
+    </packet>
+
+
+</Proto>
+

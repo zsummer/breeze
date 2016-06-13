@@ -46,28 +46,28 @@ public:
     bool run();
 public:
     void sendToSession(SessionID sessionID, const char * block, unsigned int len);
-    void sendToSession(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len);
-
     template<class Proto>
     void sendToSession(SessionID sessionID, const Proto & proto);
-    template<class Proto>
-    void sendToSession(SessionID sessionID, const Tracing & trace, const Proto & proto);
 
     void sendToDocker(DockerID dockerID, const char * block, unsigned int len);
-    void sendToDocker(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len);
-    void sendToDocker(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len);
-    void sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len);
-
-
     template<class Proto>
     void sendToDocker(DockerID dockerID, const Proto & proto);
+    void sendToDocker(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len);
     template<class Proto>
-    void sendToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto);
+    void sendToDocker(ServiceType serviceType, ServiceID serviceID, const Proto & proto);
+
+
+    void packetToSessionWithTracing(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len);
     template<class Proto>
-    void sendToDocker(DockerID dockerID, SessionID clientSessionID, const Proto & proto);
+    void packetToSessionWithTracing(SessionID sessionID, const Tracing & trace, const Proto & proto);
+
+    void packetToDockerWithTracing(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len);
     template<class Proto>
-    void sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const Proto & proto);
-    
+    void packetToDockerWithTracing(DockerID dockerID, const Tracing & trace, const Proto & proto);
+
+    void packetToClientViaDocker(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len);
+    template<class Proto>
+    void packetToClientViaDocker(DockerID dockerID, SessionID clientSessionID, const Proto & proto);
 
 
     template<class Proto>
@@ -77,7 +77,6 @@ public:
 
 public:
 
-
     //canForwardToOtherService 如果是来自其他docker的转发 不应该再转发出去.  
     //needPost 如果不清楚,就要填写true.   防止函数重入带来流程bug.
     void toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost);
@@ -86,6 +85,7 @@ public:
 public:
     bool isStopping();
     ServicePtr peekService(ServiceType serviceType, ServiceID serviceID);
+    const std::unordered_map<ServiceID, ServicePtr > & peekService(ServiceType serviceType);
 private:
     bool startDockerListen();
     bool startDockerConnect();
@@ -110,7 +110,8 @@ private:
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 private:
-    void event_onWebMessage(TcpSessionPtr session, const zsummer::proto4z::PairString & commonLine, const MapString &head, const std::string & body);
+    void event_onWebMessage(TcpSessionPtr session, const std::string & method, const std::string & methodLine,
+        const std::map<std::string, std::string> &head, const std::string & body);
 private:
     void event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs);
@@ -220,17 +221,17 @@ void Docker::sendToSession(SessionID sessionID, const Proto & proto)
 
 
 template<class Proto>
-void Docker::sendToSession(SessionID sessionID, const Tracing & trace, const Proto & proto)
+void Docker::packetToSessionWithTracing(SessionID sessionID, const Tracing & trace, const Proto & proto)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        sendToSession(sessionID, trace, ws.getStream(), ws.getStreamLen());
+        packetToSessionWithTracing(sessionID, trace, ws.getStream(), ws.getStreamLen());
     }
     catch (const std::exception & e)
     {
-        LOGE("Docker::sendToSession catch except error. e=" << e.what());
+        LOGE("Docker::packetToSessionWithTracing catch except error. e=" << e.what());
     }
 }
 
@@ -249,21 +250,21 @@ void Docker::sendToDocker(DockerID dockerID, const Proto & proto)
 }
 
 template<class Proto>
-void Docker::sendToDocker(DockerID dockerID, const Tracing & trace, const Proto & proto)
+void Docker::packetToDockerWithTracing(DockerID dockerID, const Tracing & trace, const Proto & proto)
 {
     auto founder = _dockerSession.find(dockerID);
     if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
     {
-        sendToSession(founder->second.sessionID, trace, proto);
+        packetToSessionWithTracing(founder->second.sessionID, trace, proto);
     }
     else
     {
-        LOGE("Docker::sendToDocker not found docker. dockerID=" << dockerID);
+        LOGE("Docker::packetToDockerWithTracing not found docker. dockerID=" << dockerID);
     }
 }
 
 template<class Proto>
-void Docker::sendToDocker(DockerID dockerID, SessionID clientSessionID, const Proto & proto)
+void Docker::packetToClientViaDocker(DockerID dockerID, SessionID clientSessionID, const Proto & proto)
 {
     WriteStream ws(Proto::getProtoID());
     ws << proto;
@@ -271,11 +272,11 @@ void Docker::sendToDocker(DockerID dockerID, SessionID clientSessionID, const Pr
 }
 
 template<class Proto>
-void Docker::sendToDockerByService(ServiceType serviceType, ServiceID serviceID, const Proto & proto)
+void Docker::sendToDocker(ServiceType serviceType, ServiceID serviceID, const Proto & proto)
 {
     WriteStream ws(Proto::getProtoID());
     ws << proto;
-    sendToDockerByService(serviceType, serviceID, ws.getStream(), ws.getStreamLen());
+    sendToDocker(serviceType, serviceID, ws.getStream(), ws.getStreamLen());
 }
 
 template<class Proto>

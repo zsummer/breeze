@@ -115,7 +115,7 @@ void hook_run_fn(lua_State *L, lua_Debug *ar)
         {
             __perf.call(key, std::get<1>(t), std::get<2>(t));
         }
-        if (__perf.expire(10000.0))
+        if (__perf.expire(50000.0))
         {
             __perf.dump(100);
         }

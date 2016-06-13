@@ -38,6 +38,8 @@ public:
     void onUnload() override final;
     void onTick() override final;
 private:
+    void onWebAgentToService(Tracing trace, ReadStream &rs);
+private:
 };
 
 

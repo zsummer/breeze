@@ -151,16 +151,16 @@ static void _onMessage(lua_State * L, TcpSessionPtr session, const char * begin,
     }
 }
 //param: sID, {key=,value=}, {head kv}, body
-static void _onWebMessage(lua_State * L, TcpSessionPtr session, const zsummer::network::PairString & commonLine,
-                          const MapString &head, const std::string & body)
+static void _onWebMessage(lua_State * L, TcpSessionPtr session, const std::string & method, const std::string &methodLine, 
+    const std::map<std::string, std::string> &head, const std::string & body)
 {
     lua_pushcfunction(L, pcall_error);
     lua_rawgeti(L, LUA_REGISTRYINDEX, _webMessageRef);
     lua_pushinteger(L, session->getSessionID());
     lua_newtable(L);
-    lua_pushstring(L, commonLine.first.c_str());
+    lua_pushstring(L, method.c_str());
     lua_setfield(L, -2, "key");
-    lua_pushstring(L, commonLine.second.c_str());
+    lua_pushstring(L, method.c_str());
     lua_setfield(L, -2, "value");
     lua_newtable(L);
     bool needUrlDecode = false;
@@ -190,7 +190,7 @@ static void _onWebMessage(lua_State * L, TcpSessionPtr session, const zsummer::n
         const char *msg = lua_tostring(L, -1);
         if (msg == NULL) msg = "(error object is not a string)";
         LOGE("code crash when process web message. sID=" << session->getSessionID()
-            << ", commond line=" << commonLine.first << " " << commonLine.second << ", body(max500byte)=" << body.substr(0, 500)
+            << ", commond line=" << method << " " << methodLine << ", body(max500byte)=" << body.substr(0, 500)
             << ", head=" << head);
         LOGE(msg);
         lua_pop(L, 1);
@@ -284,7 +284,7 @@ static int addConnect(lua_State *L)
     traits._onSessionLinked = std::bind(_onSessionLinked, L, std::placeholders::_1);
     traits._onBlockDispatch = std::bind(_onMessage, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     traits._onHTTPBlockDispatch = std::bind(_onWebMessage, L, std::placeholders::_1, std::placeholders::_2,
-                                            std::placeholders::_3, std::placeholders::_4);
+                                            std::placeholders::_3, std::placeholders::_4, std::placeholders::_5);
     traits._onSessionClosed = std::bind(_onSessionClosed, L, std::placeholders::_1);
     traits._onSessionPulse = std::bind(_onSessionPulse, L, std::placeholders::_1);
 
@@ -309,7 +309,7 @@ static int addListen(lua_State *L)
     extend._sessionOptions._onSessionLinked = std::bind(_onSessionLinked, L, std::placeholders::_1);
     extend._sessionOptions._onBlockDispatch = std::bind(_onMessage, L, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     extend._sessionOptions._onHTTPBlockDispatch = std::bind(_onWebMessage, L, std::placeholders::_1, std::placeholders::_2,
-                                            std::placeholders::_3, std::placeholders::_4);
+                                            std::placeholders::_3, std::placeholders::_4, std::placeholders::_5);
     extend._sessionOptions._onSessionClosed = std::bind(_onSessionClosed, L, std::placeholders::_1);
     extend._sessionOptions._onSessionPulse = std::bind(_onSessionPulse, L, std::placeholders::_1);
 
