@@ -6,6 +6,8 @@
 
 OfflineService::OfflineService()
 {
+    slotting<RefreshServiceToMgrNotice>([](Tracing, ReadStream &rs) {});
+
 }
 
 OfflineService::~OfflineService()

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>1ce60ad93c1b0e79bd6d075f16acb5c2</cppmd5> 
-<luamd5>ad3c3eee05d9cea808cca6e482884d21</luamd5> 
-<csharpmd5>ed0f154e521419c8963d6312a18fc90e</csharpmd5> 
-<xmlmd5>5549420fdfefd5c0f3b7645572b62b8c</xmlmd5> 
+<cppmd5>a593a64cc3e1249c89b1507f7d953663</cppmd5> 
+<luamd5>a16536095ff44457f2774c8e2ab3e911</luamd5> 
+<csharpmd5>179c88af87d4d594436a6466be8e01c0</csharpmd5> 
+<xmlmd5>42a5e9e445e2a0c0cf309d7cde1109b6</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_ClientPulse" Number = "2013" /> 
     <cache key = "ID_DockerPulse" Number = "2000" /> 
     <cache key = "ID_ForwardToRealClient" Number = "2012" /> 
     <cache key = "ID_ForwardToService" Number = "2011" /> 
@@ -13,6 +14,7 @@
     <cache key = "ID_LoadServiceNotice" Number = "2002" /> 
     <cache key = "ID_RealClientClosedNotice" Number = "2007" /> 
     <cache key = "ID_RefreshServiceToMgrNotice" Number = "2003" /> 
+    <cache key = "ID_SessionPulse" Number = "2014" /> 
     <cache key = "ID_ShutdownClusterServer" Number = "2010" /> 
     <cache key = "ID_SwitchServiceClient" Number = "2004" /> 
     <cache key = "ID_SwitchServiceClientNotice" Number = "2005" /> 

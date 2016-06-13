@@ -16,7 +16,7 @@ UserService::~UserService()
 
 void UserService::onTick()
 {
-    LOGE("UserService::onTick");
+    LOGI("UserService::onTick");
 }
 
 

@@ -6,6 +6,7 @@
 
 WebService::WebService()
 {
+    slotting<RefreshServiceToMgrNotice>([](Tracing, ReadStream &rs) {});
     slotting<WebAgentToService>(std::bind(&WebService::onWebAgentToService, this, _1, _2)); //不需要shared_from_this
 }
 

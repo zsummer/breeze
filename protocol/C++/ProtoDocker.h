@@ -23,6 +23,38 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct SessionPulse //对于建立了UserService的客户端,通过该消息驱动onTick  
+{ 
+    static const unsigned short getProtoID() { return 2014;} 
+    static const std::string getProtoName() { return "SessionPulse";} 
+    unsigned long long serviceID;  
+    SessionPulse() 
+    { 
+        serviceID = 0; 
+    } 
+    SessionPulse(const unsigned long long & serviceID) 
+    { 
+        this->serviceID = serviceID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SessionPulse & data) 
+{ 
+    ws << data.serviceID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SessionPulse & data) 
+{ 
+    rs >> data.serviceID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SessionPulse & info) 
+{ 
+    stm << "[\n"; 
+    stm << "serviceID=" << info.serviceID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct LoadServiceInDocker //在Docker中装载一个Service  
 { 
     static const unsigned short getProtoID() { return 2001;} 

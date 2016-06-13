@@ -11,6 +11,10 @@
     <packet name="DockerPulse" desc= "集群脉冲">
     </packet>
 
+    <packet name="SessionPulse" desc= "对于建立了UserService的客户端,通过该消息驱动onTick">
+        <member name="serviceID" type="ui64"   desc=""/>
+    </packet> 
+
     <packet name="LoadServiceInDocker" desc= "在Docker中装载一个Service">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
@@ -74,6 +78,7 @@
 
     <packet name="ShutdownClusterServer" desc= "关闭服务器集群">
     </packet>
+
 
 
     <packet name="ForwardToService" desc= "转发到其他docker上的Service">

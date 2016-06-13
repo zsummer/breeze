@@ -279,15 +279,7 @@ bool Docker::startDockerWideListen()
         //options._whitelistIP;// = docker._whiteList;
         options._maxSessions = 5000;
         options._sessionOptions._sessionPulseInterval = 40000;
-        options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
-        {
-            auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-            if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
-            {
-                LOGW("client timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
-                session->close();
-            }
-        };
+        options._sessionOptions._onSessionPulse = std::bind(&Docker::event_onClientPulse, this, _1);
         options._sessionOptions._onSessionLinked = std::bind(&Docker::event_onClientLinked, this, _1);
         options._sessionOptions._onSessionClosed = std::bind(&Docker::event_onClientClosed, this, _1);
         options._sessionOptions._onBlockDispatch = std::bind(&Docker::event_onClientMessage, this, _1, _2, _3);
@@ -843,6 +835,20 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onForwardToRealClient(session, rsShell);
         return;
     }
+    else if (rsShell.getProtoID() == SessionPulse::getProtoID())
+    {
+        SessionPulse pulse;
+        rsShell >> pulse;
+        auto service = peekService(ServiceUser, pulse.serviceID);
+        if (service && !service->isShell() && service->getStatus() == SS_WORKING)
+        {
+            service->onTick();
+        }
+        else
+        {
+            LOGE("onSessionPulse error. serviceID=" << pulse.serviceID);
+        }
+    }
     else if (rsShell.getProtoID() == SelectUserPreviewsFromUserMgrResp::getProtoID())
     {
         SelectUserPreviewsFromUserMgrResp resp;
@@ -920,7 +926,33 @@ void Docker::event_onClientLinked(TcpSessionPtr session)
     LOGD("Docker::event_onClientLinked. SessionID=" << session->getSessionID() 
         << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
 }
-
+void Docker::event_onClientPulse(TcpSessionPtr session)
+{
+    auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
+    if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
+    {
+        LOGW("client timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
+        session->close();
+        return;
+    }
+    SessionStatus sStatus = (SessionStatus)session->getUserParamNumber(UPARAM_SESSION_STATUS);
+    if (sStatus == SSTATUS_ATTACHED)
+    {
+        const auto & services = peekService(ServiceUser);
+        ServiceID serviceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+        auto iter = services.find(serviceID);
+        if (iter == services.end())
+        {
+            LOGE("SSTATUS_ATTACHED session not found service ID. service id=" << serviceID << ", session id=" << session->getSessionID());
+        }
+        else
+        {
+            SessionPulse pulse;
+            pulse.serviceID = serviceID;
+            sendToDocker(iter->second->getServiceDockerID(), pulse);
+        }
+    }
+}
 void Docker::event_onClientClosed(TcpSessionPtr session)
 {
     LOGD("Docker::event_onClientClosed. SessionID=" << session->getSessionID() 
@@ -1283,7 +1315,7 @@ ServicePtr Docker::peekService(ServiceType serviceType, ServiceID serviceID)
     return fder->second;
 }
 
-const std::unordered_map<ServiceID, ServicePtr > & Docker::peekService(ServiceType serviceType)
+std::unordered_map<ServiceID, ServicePtr > & Docker::peekService(ServiceType serviceType)
 {
     auto founder = _services.find(serviceType);
     if (founder == _services.end())

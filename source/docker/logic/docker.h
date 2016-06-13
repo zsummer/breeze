@@ -85,7 +85,7 @@ public:
 public:
     bool isStopping();
     ServicePtr peekService(ServiceType serviceType, ServiceID serviceID);
-    const std::unordered_map<ServiceID, ServicePtr > & peekService(ServiceType serviceType);
+    std::unordered_map<ServiceID, ServicePtr > & peekService(ServiceType serviceType);
 private:
     bool startDockerListen();
     bool startDockerConnect();
@@ -107,6 +107,7 @@ private:
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 private:
     void event_onClientLinked(TcpSessionPtr session);
+    void event_onClientPulse(TcpSessionPtr session);
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 private:

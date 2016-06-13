@@ -6,6 +6,8 @@
 
 MonitorService::MonitorService()
 {
+    slotting<RefreshServiceToMgrNotice>([](Tracing, ReadStream &rs) {});
+
 }
 
 MonitorService::~MonitorService()

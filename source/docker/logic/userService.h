@@ -39,7 +39,7 @@ public:
     bool onLoad() override final;
     void onUnload() override final;
     void onClientChange() override final;
-    void onTick() override final;
+    void onTick() override final; //只有client在线时候才会被调用, 间隔为session pulse的间隔. 精度为分钟.  
 private:
     void onModuleLoad(bool success, const std::string & moduleName);
     void onModuleUnload(bool success, const std::string & moduleName);

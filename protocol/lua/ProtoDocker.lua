@@ -4,6 +4,12 @@ Proto4z.DockerPulse = {} --集群脉冲
 Proto4z.DockerPulse.__protoID = 2000 
 Proto4z.DockerPulse.__protoName = "DockerPulse" 
  
+Proto4z.register(2014,"SessionPulse") 
+Proto4z.SessionPulse = {} --对于建立了UserService的客户端,通过该消息驱动onTick 
+Proto4z.SessionPulse.__protoID = 2014 
+Proto4z.SessionPulse.__protoName = "SessionPulse" 
+Proto4z.SessionPulse[1] = {name="serviceID", type="ui64" }  
+ 
 Proto4z.register(2001,"LoadServiceInDocker") 
 Proto4z.LoadServiceInDocker = {} --在Docker中装载一个Service 
 Proto4z.LoadServiceInDocker.__protoID = 2001 
