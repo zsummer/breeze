@@ -276,7 +276,7 @@ bool Docker::startDockerWideListen()
             return false;
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
-        options._whitelistIP;// = docker._whiteList;
+        //options._whitelistIP;// = docker._whiteList;
         options._maxSessions = 5000;
         options._sessionOptions._sessionPulseInterval = 40000;
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
@@ -322,7 +322,7 @@ bool Docker::startDockerWebListen()
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
         options._sessionOptions._protoType = PT_HTTP;
-        options._whitelistIP;// = docker._whiteList;
+        //options._whitelistIP;// = docker._whiteList;
         options._maxSessions = 200;
         options._sessionOptions._sessionPulseInterval = 10000; 
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
@@ -1288,7 +1288,7 @@ const std::unordered_map<ServiceID, ServicePtr > & Docker::peekService(ServiceTy
     auto founder = _services.find(serviceType);
     if (founder == _services.end())
     {
-        return std::unordered_map<ServiceID, ServicePtr >();
+        return _invalidServices;
     }
     return founder->second;
 }

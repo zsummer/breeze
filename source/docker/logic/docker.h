@@ -127,6 +127,7 @@ private:
 
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;
+    std::unordered_map<ServiceID, ServicePtr > _invalidServices;
     std::map <DockerID, DockerSession> _dockerSession;
     bool _dockerNetWorking = false;
     bool _dockerServiceWorking = false;
@@ -268,7 +269,7 @@ void Docker::packetToClientViaDocker(DockerID dockerID, SessionID clientSessionI
 {
     WriteStream ws(Proto::getProtoID());
     ws << proto;
-    sendToDocker(dockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
+    packetToClientViaDocker(dockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
 }
 
 template<class Proto>

@@ -46,6 +46,7 @@ void WebService::onWebAgentToService(Tracing trace, ReadStream &rs)
     {
         WriteHTTP wh;
         wh.addHead("Content-type", "application/json");
+        wh.addHead("Keep-Alive", "timeout=2, max=200");
         wh.response("200", R"({"online":)" + toString(Docker::getRef().peekService(ServiceUser).size()) + "}");
         Docker::getRef().packetToClientViaDocker(trace._fromDockerID, notice.webClientID, wh.getStream(), wh.getStreamLen());
     }
