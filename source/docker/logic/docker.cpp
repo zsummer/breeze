@@ -1140,6 +1140,7 @@ void Docker::event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs)
         {
             wh.addHead(head.first, head.second);
         }
+        wh.addHead("Host", req.host);
         if (req.isGet)
         {
             wh.get(req.uri + "?" + urlEncode(req.params));

@@ -97,6 +97,7 @@ namespace Proto4z
         public uint traceID;  
         public string ip;  
         public ushort port;  
+        public string host;  
         public string uri;  
         public string params;  
         public WebAgentHead heads;  
@@ -108,18 +109,20 @@ namespace Proto4z
             traceID = 0;  
             ip = "";  
             port = 0;  
+            host = "";  
             uri = "";  
             params = "";  
             heads = new WebAgentHead();  
             isGet = 0;  
         } 
-        public WebServerRequest(uint fromServiceType, ulong fromServiceID, uint traceID, string ip, ushort port, string uri, string params, WebAgentHead heads, byte isGet) 
+        public WebServerRequest(uint fromServiceType, ulong fromServiceID, uint traceID, string ip, ushort port, string host, string uri, string params, WebAgentHead heads, byte isGet) 
         { 
             this.fromServiceType = fromServiceType; 
             this.fromServiceID = fromServiceID; 
             this.traceID = traceID; 
             this.ip = ip; 
             this.port = port; 
+            this.host = host; 
             this.uri = uri; 
             this.params = params; 
             this.heads = heads; 
@@ -133,6 +136,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.traceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.ip)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.uri)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.params)); 
             if (this.heads == null) this.heads = new WebAgentHead(); 
@@ -147,6 +151,7 @@ namespace Proto4z
             this.traceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.ip = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.uri = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.params = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.heads = new WebAgentHead(); 

@@ -26,6 +26,7 @@
         <member name="traceID" type="ui32"  desc=""/>
         <member name="ip" type="string"  desc=""/>
         <member name="port" type="ui16"  desc=""/>
+        <member name="host" type="string"  desc=""/>
         <member name="uri" type="string"  desc=""/>
         <member name="params" type="string"  desc=""/>
         <member name="heads" type="WebAgentHead"  desc=""/>

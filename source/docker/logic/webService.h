@@ -51,6 +51,7 @@ private:
 private:
     void responseError(DockerID dockerID, SessionID clientID);
     void responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body);
+    void responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body, const std::map<std::string, std::string> &  heads);
 private:
     Balance _balance;
 };
