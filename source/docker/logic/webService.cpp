@@ -1,7 +1,8 @@
 ﻿#include "docker.h"
 #include "webService.h"
 #include <ProtoWebAgent.h>
-
+#include <ProtoUser.h>
+#include <ProtoOffline.h>
 
 
 WebService::WebService()
@@ -69,7 +70,7 @@ void WebService::onWebAgentToService(Tracing trace, ReadStream &rs)
     {
         std::string uri;
         std::vector<std::pair<std::string,std::string>> params;
-        bool needUrldecode = false;
+        bool needUrldecode = true;
         if (compareStringIgnCase(notice.method, "get"))
         {
             uri = notice.methodLine;
@@ -78,12 +79,9 @@ void WebService::onWebAgentToService(Tracing trace, ReadStream &rs)
         {
             uri = notice.body;
             auto founder = notice.heads.find("Content-Type");
-            if (founder != notice.heads.end())
+            if (founder == notice.heads.end() || founder->second.find("urlencoded") == std::string::npos)
             {
-                if (founder->second.find("urlencoded") != std::string::npos)
-                {
-                    needUrldecode = true;
-                }
+                needUrldecode = false;
             }
         }
         auto pr = splitPairString(uri, "?");
@@ -104,11 +102,35 @@ void WebService::onWebAgentToService(Tracing trace, ReadStream &rs)
 
         if (uri == "/getonline")
         {
-            responseSuccess(trace.fromDockerID, notice.webClientID, R"({"online":)" + toString(Docker::getRef().peekService(ServiceUser).size()) + "}");
+            responseSuccess(trace.fromDockerID, notice.webClientID, R"({"result":"success","online":)" + toString(Docker::getRef().peekService(ServiceUser).size()) + "}");
         }
         else if (uri == "/offlinechat")
         {
+            UserChatReq req;
+            for (auto & pm : params)
+            {
+                if (pm.first == "serviceID")
+                {
+                    req.toServiceID = fromString<ui64>(pm.second, InvalidServiceID);
+                }
+                if (pm.first == "msg")
+                {
+                    req.msg = pm.second;
+                }
+            }
+            if (req.toServiceID != InvalidServiceID)
+            {
+                UserOffline offline;
+                offline.serviceID = req.toServiceID;
+                offline.status = 0;
+                offline.timestamp = getNowTime();
+                WriteStream ws(UserChatReq::getProtoID());
+                ws << req;
+                offline.streamBlob.assign(ws.getStream(), ws.getStreamLen());
+                toService(ServiceOfflineMgr, offline);
+                responseSuccess(trace.fromDockerID, notice.webClientID, R"({"result":"success"})");
 
+            }
         }
         else
         {

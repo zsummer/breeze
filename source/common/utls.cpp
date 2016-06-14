@@ -338,7 +338,8 @@ void sleepMillisecond(unsigned int ms)
 
 std::string trim(const std::string &str, const std::string & ign, int both)
 {
-    if (str.empty() || ign.empty()){ return ""; }
+    if (str.empty() ){ return ""; }
+    if (ign.empty()) { return str; }
     size_t length = str.length();
     size_t posBegin = 0;
     size_t posEnd = 0;

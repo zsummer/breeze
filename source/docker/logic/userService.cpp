@@ -87,7 +87,7 @@ void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream 
 {
     UserChatReq req;
     rs >> req;
-
+    LOGI("onChatReq" << req << ", self serviceID=" << getServiceID());
     _baseInfo._data.level++;
     _baseInfo.writeToDB();
 
