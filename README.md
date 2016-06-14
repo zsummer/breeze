@@ -34,9 +34,9 @@ DB使用mysql,通过proto4z根据原生数据结构生成对应的SQL模板并�
 - [x] 压测脚本实现,实现一定数量的机器人自动登录,创角,互相通讯,然后仿业务pingpong.  目前测试QPS单节点10K QPS的性能, 未经优化.    
 - [x] 通过配置构建10个以上的docker集群, 并进行合理的service划分,然后压测.  
 - [x] 鲁棒性更强的负载均衡,非关键service所属的docker宕机后可以保证关键业务的正常运作,并通过在线重启快速恢复服务.  
-- [ ] ServiceMinitorMgr 监控和统计服务实现  
-- [ ] ServiceOfflineMgr 离线消息管理器实现, 需要记录到数据库, 玩家上线后拉取离线消息或者离线奖励等.  
-- [ ] ServiceWebAgent http协议的对外接口实现, 可能需要配置文件中有对应配置.  
+- [x] ServiceMinitorMgr 监控和统计服务  
+- [x] ServiceOfflineMgr 离线消息管理器实现, 需要记录到数据库, 玩家上线后拉取离线消息或者离线奖励等.  
+- [x] ServiceWebAgent http协议的对外web server接口实现, http协议连接外部网站并获得数据的web client实现.  
 - [ ] ItemModule实现, 实现道具背包系统.  
 - [ ] MissionModule实现  
 - [ ] 整体性review代码,优化实现.  
