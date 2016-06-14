@@ -106,14 +106,18 @@ void OfflineService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
     rs >> ref;
     if (ref.status == SS_WORKING && ref.clientSessionID != InvalidSessionID)
     {
-        for (auto & offline : _offlines._data)
+        for (auto iter = _offlines._data.begin(); iter != _offlines._data.end();)
         {
+            auto offline = *iter;
             if (offline.serviceID == ref.serviceID && offline.status == 0)
             {
                 toService(ServiceUser, offline.serviceID, offline.streamBlob.c_str(), offline.streamBlob.length());
                 offline.status = 1;
                 _offlines.updateToDB(offline);
+                iter = _offlines._data.erase(iter);
+                continue;
             }
+            iter++;
         }
     }
 }
