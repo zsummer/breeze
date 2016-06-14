@@ -118,6 +118,7 @@ RET fromString(const std::string & t, RET def);
 //both 1 left, 2right, 3 both
 std::string trim(const std::string &str, const std::string& ign, int both = 3);
 
+std::pair<std::string, std::string> splitPairString(const std::string & str, const std::string & delimiter);
 std::vector<std::string> splitString(std::string text, const std::string & deli, const std::string & ign);
 template<class Container>  //example: Container = std::vector<int>
 std::string mergeToString(const Container & contariner, const std::string& deli);

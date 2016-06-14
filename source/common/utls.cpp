@@ -382,6 +382,18 @@ std::string trim(const std::string &str, const std::string & ign, int both)
 
     return "";
 }
+
+
+std::pair<std::string, std::string> splitPairString(const std::string & str, const std::string & delimiter)
+{
+    std::string::size_type pos = str.find(delimiter.c_str());
+    if (pos == std::string::npos)
+    {
+        return std::make_pair(str, "");
+    }
+    return std::make_pair(str.substr(0, pos), str.substr(pos + delimiter.length()));
+}
+
 std::vector<std::string> splitString(std::string text, const std::string & deli, const std::string & ign)
 {
     text = trim(text, ign);

@@ -39,7 +39,11 @@ public:
     void onTick() override final;
 private:
     void _checkSafeDestroy();
+private:
     void onWebAgentToService(Tracing trace, ReadStream &rs);
+private:
+    void responseError(DockerID dockerID, SessionID clientID);
+    void responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body);
 private:
 };
 
