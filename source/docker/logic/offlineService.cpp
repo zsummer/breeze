@@ -58,6 +58,10 @@ void OfflineService::onLoadMaxOfflineID(zsummer::proto4z::ReadStream &rs)
     {
         _offlineNextID = fromString<ui32>(resp.result.fields.front(), 0)+1;
     }
+    if (_offlineNextID < ServerConfig::getRef().getMinServiceID())
+    {
+        _offlineNextID = ServerConfig::getRef().getMinServiceID() + 1;
+    }
     auto sql = UserOffline().getDBSelectPure() + " where status=0 ";
     _offlines.loadFromDB(shared_from_this(), sql, std::bind(&OfflineService::onModuleLoad,
         std::static_pointer_cast<OfflineService>(shared_from_this()), _1, _2));

@@ -9,7 +9,7 @@ namespace Proto4z
         static public ushort getProtoID() { return 5200; } 
         static public string getProtoName() { return "UserOffline"; } 
         //members   
-        public uint id;  
+        public ulong id;  
         public ulong serviceID;  
         public string streamBlob;  
         public ushort status;  
@@ -22,7 +22,7 @@ namespace Proto4z
             status = 0;  
             timestamp = 0;  
         } 
-        public UserOffline(uint id, ulong serviceID, string streamBlob, ushort status, uint timestamp) 
+        public UserOffline(ulong id, ulong serviceID, string streamBlob, ushort status, uint timestamp) 
         { 
             this.id = id; 
             this.serviceID = serviceID; 
@@ -33,7 +33,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.id)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.streamBlob)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
@@ -42,7 +42,7 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.id = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.streamBlob = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 

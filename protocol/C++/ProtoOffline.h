@@ -14,7 +14,7 @@ struct UserOffline
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned int id;  
+    unsigned long long id;  
     unsigned long long serviceID;  
     std::string streamBlob;  
     unsigned short status;  
@@ -26,7 +26,7 @@ struct UserOffline
         status = 0; 
         timestamp = 0; 
     } 
-    UserOffline(const unsigned int & id, const unsigned long long & serviceID, const std::string & streamBlob, const unsigned short & status, const unsigned int & timestamp) 
+    UserOffline(const unsigned long long & id, const unsigned long long & serviceID, const std::string & streamBlob, const unsigned short & status, const unsigned int & timestamp) 
     { 
         this->id = id; 
         this->serviceID = serviceID; 

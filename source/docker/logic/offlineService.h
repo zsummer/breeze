@@ -48,7 +48,7 @@ private:
 
 private:
     void _checkSafeDestroy();
-    ui32 _offlineNextID = 0;
+    ui64 _offlineNextID = 0;
     ModuleMultiData<UserOffline> _offlines;
 };
 

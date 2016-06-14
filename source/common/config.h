@@ -41,6 +41,7 @@ public:
     inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
     inline DockerID getDockerID(){ return _dockerIdx; }
     inline AreaID getAreaID() { return _areaid; }
+    inline ui64   getMinServiceID() { return _areaid * (ui64)pow(10, 8); }
 private:
     DockerID _dockerIdx = InvalidDockerID;
     AreaID _areaid = 0;

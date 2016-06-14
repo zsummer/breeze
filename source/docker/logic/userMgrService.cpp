@@ -87,7 +87,7 @@ bool UserMgrService::onLoad()
         LOGE("at least have one docker contain ServiceUser service ");
         return false;
     }
-    _nextUserID = ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8);
+    _nextUserID = ServerConfig::getRef().getMinServiceID()+1;
 
     std::string sql = trim(UserPreview().getDBSelectPure(), " ");
     sql = subStringWithoutBack(sql, " ");
@@ -125,7 +125,7 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
 
         LOGD("onLoadLastUIDFromDB _nextUserID=" << _nextUserID << ", areaID=" << ServerConfig::getRef().getAreaID()
-            << ", area begin uid=" << ServerConfig::getRef().getAreaID() * (ui64)pow(10, 8));
+            << ", area begin uid=" << ServerConfig::getRef().getMinServiceID());
         finishLoad();
         return;
     }

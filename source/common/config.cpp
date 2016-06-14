@@ -54,6 +54,7 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
     lua_getfield(L, -1, "areaid");
     _areaid = (unsigned short)luaL_optinteger(L, -1, 0);
     lua_pop(L, 1);
+    LOGI("ServerConfig::parse dockerID=" << idx << ", areaid=" << _areaid << ", getMinServiceID=" << getMinServiceID());
 
     lua_getfield(L, -1, "db");
     lua_pushnil(L);
