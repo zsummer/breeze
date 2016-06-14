@@ -39,9 +39,9 @@ struct UserOffline
 const std::vector<std::string>  UserOffline::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserOffline` (        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,        `serviceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `streamBlob` longblob NOT NULL ,        `status` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `timestamp` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `serviceID` (`serviceID`),        KEY `status` (`status`),        KEY `timestamp` (`timestamp`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_UserOffline` add `id`  bigint(20) unsigned NOT NULL AUTO_INCREMENT "); 
-    ret.push_back("alter table `tb_UserOffline` change `id`  `id`  bigint(20) unsigned NOT NULL AUTO_INCREMENT "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserOffline` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `serviceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `streamBlob` longblob NOT NULL ,        `status` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `timestamp` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `serviceID` (`serviceID`),        KEY `status` (`status`),        KEY `timestamp` (`timestamp`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_UserOffline` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserOffline` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserOffline` add `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserOffline` change `serviceID`  `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserOffline` add `streamBlob`  longblob NOT NULL "); 
@@ -66,7 +66,8 @@ std::string  UserOffline::getDBSelectPure()
 std::string  UserOffline::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserOffline`(`serviceID`,`streamBlob`,`status`,`timestamp`) values(?,?,?,?)"); 
+    q.init("insert into `tb_UserOffline`(`id`,`serviceID`,`streamBlob`,`status`,`timestamp`) values(?,?,?,?,?)"); 
+    q << this->id; 
     q << this->serviceID; 
     q << this->streamBlob; 
     q << this->status; 

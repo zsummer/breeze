@@ -40,6 +40,7 @@ public:
     void onUnload() override final;
     void onTick() override final;
 private:
+    void onLoadMaxOfflineID(zsummer::proto4z::ReadStream &);
     void onUserOffline(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onInsert(bool success, const UserOffline & offline);
     void onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
@@ -47,6 +48,7 @@ private:
 
 private:
     void _checkSafeDestroy();
+    ui32 _offlineNextID = 0;
     ModuleMultiData<UserOffline> _offlines;
 };
 

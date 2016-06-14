@@ -51,7 +51,7 @@ void WebService::responseError(DockerID dockerID, SessionID clientID)
 {
     WriteHTTP wh;
     wh.addHead("Content-type", "application/json");
-    wh.response("404", R"(   {"result":"error", "support apis":"/getonline, /offlinechat?ServiceID=2222&msg=2222"}      )");
+    wh.response("404", R"(   {"result":"error", "support apis":"/getonline, /offlinechat?serviceID=2222&msg=2222"}      )");
     Docker::getRef().packetToClientViaDocker(dockerID, clientID, wh.getStream(), wh.getStreamLen());
 }
 void WebService::responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body)
@@ -130,6 +130,10 @@ void WebService::onWebAgentToService(Tracing trace, ReadStream &rs)
                 toService(ServiceOfflineMgr, offline);
                 responseSuccess(trace.fromDockerID, notice.webClientID, R"({"result":"success"})");
 
+            }
+            else
+            {
+                responseError(trace.fromDockerID, notice.webClientID);
             }
         }
         else

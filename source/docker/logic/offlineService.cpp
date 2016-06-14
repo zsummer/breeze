@@ -36,12 +36,33 @@ void OfflineService::onUnload()
 
 bool OfflineService::onLoad()
 {
-    auto sql = UserOffline().getDBSelectPure();
-    sql += " where status=0 ";
-    _offlines.loadFromDB(shared_from_this(), sql, std::bind(&OfflineService::onModuleLoad,
-        std::static_pointer_cast<OfflineService>(shared_from_this()), _1, _2));
+    SQLQueryReq req("SELECT max(id) FROM `tb_useroffline`");
+    toService(ServiceInfoDBMgr, req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
     return true;
 }
+
+void OfflineService::onLoadMaxOfflineID(zsummer::proto4z::ReadStream &rs)
+{
+    SQLQueryResp resp;
+    rs >> resp;
+    if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS)
+    {
+        Docker::getRef().forceStop();
+        return;
+    }
+    if (resp.result.fields.empty())
+    {
+        _offlineNextID = 1;
+    }
+    else
+    {
+        _offlineNextID = fromString<ui32>(resp.result.fields.front(), 0)+1;
+    }
+    auto sql = UserOffline().getDBSelectPure() + " where status=0 ";
+    _offlines.loadFromDB(shared_from_this(), sql, std::bind(&OfflineService::onModuleLoad,
+        std::static_pointer_cast<OfflineService>(shared_from_this()), _1, _2));
+}
+
 void OfflineService::onModuleLoad(bool success, const std::string & moduleName)
 {
     if (success)
@@ -63,6 +84,7 @@ void OfflineService::onUserOffline(const Tracing & trace, zsummer::proto4z::Read
     rs >> offline;
     offline.timestamp = getNowTime();
     offline.status = 0;
+    offline.id = _offlineNextID++;
     _offlines.insertToDB(offline, std::bind(&OfflineService::onInsert,
         std::static_pointer_cast<OfflineService>(shared_from_this()), _1, _2));
 }
@@ -75,7 +97,7 @@ void OfflineService::onInsert(bool success, const UserOffline & offline)
     }
     else
     {
-        LOGE("insert offline error");
+        LOGE("insert offline error. ");
     }
 }
 void OfflineService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
