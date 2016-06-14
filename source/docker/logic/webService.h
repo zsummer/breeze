@@ -40,11 +40,19 @@ public:
 private:
     void _checkSafeDestroy();
 private:
-    void onWebAgentToService(Tracing trace, ReadStream &rs);
+    void onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs);
+    void getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
+    void offlinechat(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
+
+private:
+    void onWebServerRequest(Tracing trace, ReadStream &rs);
+    void onWebServerResponseTest(Tracing trace, ReadStream &rs);
+    void onWebServerResponseTestCallback(ReadStream &rs, DockerID dockerID, SessionID clientID);
 private:
     void responseError(DockerID dockerID, SessionID clientID);
     void responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body);
 private:
+    Balance _balance;
 };
 
 

@@ -12,7 +12,7 @@
 
     <map name="WebAgentHead" key="string" value="string" desc="" />
 
-    <packet name="WebAgentToService" desc="">
+    <packet name="WebAgentClientRequestAPI" desc="">
         <member name="webClientID" type="ui32"  desc=""/>
         <member name="method" type="string"  desc=""/>
         <member name="methodLine" type="string"  desc=""/>
@@ -20,13 +20,23 @@
         <member name="body" type="string"  desc=""/>
     </packet>
 
-    <packet name="WebAgentToClient" desc="">
+    <packet name="WebServerRequest" desc="">
+        <member name="fromServiceType" type="ui32"  desc=""/>
+        <member name="fromServiceID" type="ui64"  desc=""/>
+        <member name="traceID" type="ui32"  desc=""/>
+        <member name="ip" type="string"  desc=""/>
+        <member name="port" type="ui16"  desc=""/>
+        <member name="uri" type="string"  desc=""/>
+        <member name="params" type="string"  desc=""/>
+        <member name="heads" type="WebAgentHead"  desc=""/>
+        <member name="isGet" type="ui8"  desc="get or post"/>
+    </packet>
+    <packet name="WebServerResponse" desc="">
         <member name="method" type="string"  desc=""/>
         <member name="methodLine" type="string"  desc=""/>
         <member name="heads" type="WebAgentHead"  desc=""/>
         <member name="body" type="string"  desc=""/>
     </packet>
-
 
 </Proto>
 

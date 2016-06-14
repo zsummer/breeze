@@ -337,7 +337,7 @@ bool Docker::startDockerWebListen()
             LOGD("Docker::event_onWebClosed. SessionID=" << session->getSessionID()
                 << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
         };
-        options._sessionOptions._onHTTPBlockDispatch = std::bind(&Docker::event_onWebMessage, this, _1, _2, _3, _4, _5);
+        options._sessionOptions._onHTTPBlockDispatch = std::bind(&Docker::event_onWebClientRequestAPI, this, _1, _2, _3, _4, _5);
         if (!SessionManager::getRef().openAccepter(aID))
         {
             LOGE("Docker::startDockerWebListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
@@ -835,6 +835,10 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onForwardToRealClient(session, rsShell);
         return;
     }
+    else if (rsShell.getProtoID() == WebServerRequest::getProtoID())
+    {
+        event_onWebServerRequest(session, rsShell);
+    }
     else if (rsShell.getProtoID() == SessionPulse::getProtoID())
     {
         SessionPulse pulse;
@@ -1088,11 +1092,11 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
 
 
 
-void Docker::event_onWebMessage(TcpSessionPtr session, const std::string & method, const std::string & methodLine, 
+void Docker::event_onWebClientRequestAPI(TcpSessionPtr session, const std::string & method, const std::string & methodLine, 
     const std::map<std::string,std::string> &head, const std::string & body)
 {
     LOGD("onWebMessage sessionID=" << session->getSessionID() << ", method=" << method << ", methodLine=" << methodLine);
-    WebAgentToService notice;
+    WebAgentClientRequestAPI notice;
     notice.webClientID = session->getSessionID();
     notice.method = method;
     notice.methodLine = methodLine;
@@ -1107,6 +1111,67 @@ void Docker::event_onWebMessage(TcpSessionPtr session, const std::string & metho
     trace.toServiceType = ServiceWebAgent;
     trace.toServiceID = InvalidServiceID;
     toService(trace, notice, true, false);
+}
+
+void Docker::event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs)
+{
+    WebServerRequest req;
+    rs >> req;
+    SessionID cID =  SessionManager::getRef().addConnecter(req.ip, req.port);
+    if (cID == InvalidServiceID)
+    {
+        LOGE("");
+        return;
+    }
+    auto  connecter = SessionManager::getRef().getTcpSession(cID);
+    if (!connecter)
+    {
+        LOGE("");
+        return;
+    }
+    auto & option = connecter->getOptions();
+    option._protoType = PT_HTTP;
+    option._connectPulseInterval = 10000;
+    option._reconnects = 0;
+    auto onLinked = [](TcpSessionPtr   session, const WebServerRequest & req)
+    {
+        WriteHTTP wh;
+        for (const auto & head : req.heads)
+        {
+            wh.addHead(head.first, head.second);
+        }
+        if (req.isGet)
+        {
+            wh.get(req.uri + "?" + urlEncode(req.params));
+        }
+        else
+        {
+            wh.post(req.uri, req.params);
+        }
+        SessionManager::getRef().sendSessionData(session->getSessionID(), wh.getStream(), wh.getStreamLen());
+    };
+    option._onSessionLinked = std::bind(onLinked, _1, req);
+    option._onSessionClosed = [](TcpSessionPtr   session)
+    {
+
+    };
+    auto onResponse = [this](TcpSessionPtr session, const std::string& method, const std::string &methodLine,
+        const std::map<std::string, std::string> &head, const std::string & body, const WebServerRequest & req)
+    {
+        SessionManager::getRef().kickConnect(session->getSessionID());
+        WebServerResponse resp;
+        resp.heads = head;
+        resp.method = method;
+        resp.methodLine = methodLine;
+        resp.body = body;
+        Tracing trace;
+        trace.toServiceType = req.fromServiceType;
+        trace.toServiceID = req.fromServiceID;
+        trace.traceBackID = req.traceID;
+        toService(trace, resp, true, false);
+    };
+    option._onHTTPBlockDispatch = std::bind(onResponse, _1, _2, _3, _4, _5, req);
+    SessionManager::getRef().openConnecter(cID);
 }
 
 

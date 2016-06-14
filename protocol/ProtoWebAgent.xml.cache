@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>4c68fc0bc171182d183f5ae0e2695535</cppmd5> 
-<luamd5>0e86dfcb39d7005ce7c0e7cd78600c46</luamd5> 
-<csharpmd5>e678bc86c8178e8a48d0114258d54a81</csharpmd5> 
-<xmlmd5>3343271e9b778715b350fca98a2e0062</xmlmd5> 
+<cppmd5>fe484d06b47cbd2506bb2fc5ca4f0872</cppmd5> 
+<luamd5>cce1e14b272f3753369a285625f19f95</luamd5> 
+<csharpmd5>c3e43acd421fc7f16da5271227eacc80</csharpmd5> 
+<xmlmd5>e7a27cd1bab98c58bd94b58d43e4c35d</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_WebAgentClientRequestAPI" Number = "5105" /> 
+    <cache key = "ID_WebAgentRequest" Number = "5103" /> 
+    <cache key = "ID_WebAgentResponse" Number = "5104" /> 
+    <cache key = "ID_WebAgentServerAPI" Number = "5102" /> 
     <cache key = "ID_WebAgentToClient" Number = "5101" /> 
     <cache key = "ID_WebAgentToService" Number = "5100" /> 
+    <cache key = "ID_WebServerRequest" Number = "5106" /> 
+    <cache key = "ID_WebServerResponse" Number = "5107" /> 
 </cacheNumber>

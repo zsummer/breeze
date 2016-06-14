@@ -25,6 +25,7 @@
 #include <common.h>
 #include "service.h"
 #include <ProtoDocker.h>
+#include <ProtoWebAgent.h>
 
 struct DockerSession
 {
@@ -44,7 +45,10 @@ public:
     void forceStop();
     void onShutdown();
     bool run();
+
+    
 public:
+    //该分块下为网络通讯用接口 
     void sendToSession(SessionID sessionID, const char * block, unsigned int len);
     template<class Proto>
     void sendToSession(SessionID sessionID, const Proto & proto);
@@ -76,43 +80,60 @@ public:
     void broadcastToDockers(const Proto & proto, const Tracing & trace, bool withme);
 
 public:
-
-    //canForwardToOtherService 如果是来自其他docker的转发 不应该再转发出去.  
-    //needPost 如果不清楚,就要填写true.   防止函数重入带来流程bug.
+    // 和上面不同, toService的目的是把数据丢给具体具体的service去执行.
+    // 如果service在本地 则直接调用本地service的process方法 
+    // 如果service在其他docker上, 则把数据转发给对应的docker.
+    // 如果是客户端 则找到对应的docker 然后通过该docker转发给客户端 
+    // canForwardToOtherService 是属于错误止损用参数, 如果是来自其他docker的转发 但service并不在本地,在这种特殊情况下 可能会造成docker内部pingpong.   
+    // needPost 是属于优化用参数, 填写true则不优化,但总是正确的. 
     void toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost);
     template<class Proto>
     void toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost);
+
 public:
     bool isStopping();
     ServicePtr peekService(ServiceType serviceType, ServiceID serviceID);
     std::unordered_map<ServiceID, ServicePtr > & peekService(ServiceType serviceType);
+
 private:
+    //内部接口 
+    //打开监听端口,新连接 
     bool startDockerListen();
     bool startDockerConnect();
     bool startDockerWideListen();
     bool startDockerWebListen();
 
 public:
+    //内部接口 
     ServicePtr createService(DockerID serviceDockerID, ui16 serviceType, ServiceID serviceID, ServiceName serviceName, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit);
     void destroyService(ui16 serviceType, ServiceID serviceID);
 public:
+    //内部接口 
     void buildCluster();
     void destroyCluster();
 
     
 
 private:
+    //docker间通讯处理 
     void event_onServiceLinked(TcpSessionPtr session);
     void event_onServiceClosed(TcpSessionPtr session);
     void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+
 private:
+    //客户端通讯处理 
     void event_onClientLinked(TcpSessionPtr session);
     void event_onClientPulse(TcpSessionPtr session);
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+
 private:
-    void event_onWebMessage(TcpSessionPtr session, const std::string & method, const std::string & methodLine,
+    //来自web客户端的请求
+    void event_onWebClientRequestAPI(TcpSessionPtr session, const std::string & method, const std::string & methodLine,
         const std::map<std::string, std::string> &head, const std::string & body);
+private:
+    void event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs);
+
 private:
     void event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs);
