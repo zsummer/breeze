@@ -299,32 +299,41 @@ inline void randomShuffle(RandIt first, RandIt end)
     std::random_shuffle(first, end);
 }
 
+// template<class RandIt>
+// inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount)
+// {
+//     std::vector<RandIt> temp;
+//     temp.reserve(128);
+//     if (true)
+//     {
+//         auto cur = first;
+//         while (cur != end)
+//         {
+//             temp.push_back(cur);
+//             cur++;
+//         }
+//     }
+//     randomShuffle(temp.begin(), temp.end());
+//     while (temp.size() > (size_t)takeCount)
+//     {
+//         temp.pop_back();
+//     }
+//     return std::move(temp);
+// }
+
+
 template<class RandIt>
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount)
 {
-    std::vector<RandIt> temp;
-    temp.reserve(128);
-    if (true)
-    {
-        auto cur = first;
-        while (cur != end)
-        {
-            temp.push_back(cur);
-            cur++;
-        }
-    }
-    randomShuffle(temp.begin(), temp.end());
-    while (temp.size() > (size_t)takeCount)
-    {
-        temp.pop_back();
-    }
-    return std::move(temp);
+    return raffle(first, end, takeCount, [](RandIt) {return 1; });
 }
 
 template<class RandIt, class GetWeightFunc> 
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight)
 {
     std::vector<std::pair<RandIt, int> > temp;
+    std::vector<RandIt> ret;
+    ret.reserve(takeCount);
     temp.reserve(128);
     int sumWeight = 0;
     if (true)
@@ -338,8 +347,13 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWe
             temp.push_back(std::make_pair(cur, curWeight));
             cur++;
         }
+        if (sumWeight == 0)
+        {
+            return ret;
+        }
     }
-    std::vector<RandIt> ret;
+    
+    
     while (ret.size() < (size_t)takeCount && ret.size() < temp.size())
     {
         int rd = realRand() % (sumWeight+1);

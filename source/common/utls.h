@@ -232,8 +232,16 @@ double realRandF();
 double realRandF(double mi, double mx);
 template<class RandIt>
 inline void randomShuffle(RandIt first, RandIt end);
+
 template<class RandIt>
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount);
+
+//从池子里面根据每个元素的权重获取元素, 获取后不从池子中移除该元素(返回集允许重复). 
+//概率算法是: 某个元素的权重/所有元素的权重  
+//takeCount为多次时 允许返回集重复. (每次获取都是从池子中重新寻找,但池子中的元素并不会因为抽取过而被移除) .
+//  要实现返回集不重复,则takeCount传参为1, 每次获取元素后就从池子中删除该元素即可.
+//某个元素的权重为0,则该元素永远不可能被获取到. 
+//如果池子为空, 或者所有元素的权重为0 则返回集为空,  否则必定返回takeCount个元素的返回集. 
 template<class RandIt, class GetWeightFunc> // func example  [](RandIt iter){return iter->weight;}
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight);
 

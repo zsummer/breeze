@@ -658,6 +658,33 @@ int checkRandom()
         continue;
     }
     std::vector<int> cards;
+    if (true)
+    {
+        cards.push_back(100);
+        cards.push_back(200);
+        auto ret = raffle(cards.begin(), cards.end(), 2, [](std::vector<int>::iterator iter) {return *iter; });
+        if (ret.size() != 2)
+        {
+            return 3;
+        }
+        ret = raffle(cards.begin(), cards.end(), 3, [](std::vector<int>::iterator iter) {return *iter; });
+        if (ret.size() != 2)
+        {
+            return 4;
+        }
+        ret = raffle(cards.begin(), cards.end(), 3, [](std::vector<int>::iterator iter) {return 0; });
+        if (ret.size() != 0)
+        {
+            return 5;
+        }
+        cards.clear();
+        ret = raffle(cards.begin(), cards.end(), 3, [](std::vector<int>::iterator iter) {return 1; });
+        if (ret.size() != 0)
+        {
+            return 6;
+        }
+    }
+    cards.clear();
     for (int i = 100; i > 0; i--)
     {
         cards.push_back(i);
@@ -704,7 +731,7 @@ int checkRandom()
         {
             return 6;
         }
-        if (raffle(cards.begin(), cards.end(), 101, [](std::vector<int>::iterator iter){return 0; }).size() != 100)
+        if (raffle(cards.begin(), cards.end(), 101, [](std::vector<int>::iterator iter){return 0; }).size() != 0)
         {
             return 7;
         }
