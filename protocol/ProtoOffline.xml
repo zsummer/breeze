@@ -14,7 +14,7 @@
         <member name="serviceID" type="ui64" tag="idx" desc=""/>
         <member name="streamBlob" type="string"  tag="blob" desc=""/>
         <member name="status" type="ui16"  tag="idx" desc=""/>
-        <member name="timestamp" type="ui32" tag="idx"  desc=""/>
+        <member name="timestamp" type="ui64" tag="idx"  desc=""/>
     </packet>
 
 </Proto>

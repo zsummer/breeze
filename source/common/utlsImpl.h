@@ -74,21 +74,21 @@ typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std
 
 
 
-inline double getTick()
+inline double getFloatTick()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
-inline double getSteadyTick()
+inline double getFloatSteadyTick()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-inline long long getMSecTick()
+inline long long getIntegerTick()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-inline long long getSteadyMSecTick()
+inline long long getIntegerSteadyTick()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }

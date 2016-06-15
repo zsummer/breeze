@@ -35,15 +35,15 @@ int checkRandom();
 #define TestUtls(func) do \
 { \
     LOGA("begin " << #func); \
-    double now = getTick(); \
+    double now = getFloatTick(); \
     int ret = func(); \
     if (ret == 0) \
     { \
-        LOGA("end " << #func << ", used second=" <<getTick() - now); \
+        LOGA("end " << #func << ", used second=" <<getFloatTick() - now); \
     } \
     else \
     { \
-        LOGE("end " << #func << ", used second=" <<getTick() - now << ", ret=" << ret); \
+        LOGE("end " << #func << ", used second=" <<getFloatTick() - now << ", ret=" << ret); \
         return ret; \
     } \
 } while (false)
@@ -186,7 +186,7 @@ int checkString()
     }
     if (true)
     {
-        double now = getTick();
+        double now = getFloatTick();
         for (int i = 0; i < 10 * 10000; i++)
         {
             if (fromString<unsigned long long>("18446744073709551615", 0) != 18446744073709551615U)
@@ -198,22 +198,22 @@ int checkString()
                 return 16;
             }
         }
-        LOGD("fromString used time=" << (getTick() - now));
+        LOGD("fromString used time=" << (getFloatTick() - now));
         for (int i = 0; i < 10 * 10000; i++)
         {
 
         }
-        LOGD("toString used time=" << (getTick() - now));
+        LOGD("toString used time=" << (getFloatTick() - now));
 
     }
     if (true)
     {
-        double now = getTick();
+        double now = getFloatTick();
         for (int i = 0; i < 10 * 10000; i++)
         {
             compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
         }
-        LOGD("compareStringWildcard used time=" << (getTick() - now));
+        LOGD("compareStringWildcard used time=" << (getFloatTick() - now));
     }
 
     if (subStringFront("aa/bb/cc", "/") != "aa")
@@ -328,16 +328,16 @@ int checkFile()
 int checkTime()
 {
     getLocalDay(0);
-    double now = getTick();
-    double snow = getSteadyTick();
-    long long nowt = getMSecTick();
-    long long nowst = getSteadyMSecTick();
+    double now = getFloatTick();
+    double snow = getFloatSteadyTick();
+    long long nowt = getIntegerTick();
+    long long nowst = getIntegerSteadyTick();
     time_t nowts = getNowTime();
     sleepMillisecond(3000);
-    now = getTick() - now - 3.0;
-    snow = getSteadyTick() - snow - 3.0;
-    nowt = getMSecTick() - nowt - 3000;
-    nowst = getSteadyMSecTick() - nowst - 3000;
+    now = getFloatTick() - now - 3.0;
+    snow = getFloatSteadyTick() - snow - 3.0;
+    nowt = getIntegerTick() - nowt - 3000;
+    nowst = getIntegerSteadyTick() - nowst - 3000;
     nowts = getNowTime() - nowts -3;
     if (now > 1 || snow > 1 || nowt >1000 || nowst >1000 || nowts > 1)
     {
@@ -559,14 +559,14 @@ int checkFloat()
     }
     if (true)
     {
-        double now = getTick();
+        double now = getFloatTick();
         volatile double f = 0.0;
         for (int i = 0; i < 100 * 10000; i++)
         {
             f = isEqual(1e55, 1e55);
         }
         f = 0.0;
-        LOGD("isEqual used time=" << (getTick() - now) << f);
+        LOGD("isEqual used time=" << (getFloatTick() - now) << f);
     }
     if (true)
     {

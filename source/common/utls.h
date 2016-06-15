@@ -150,10 +150,10 @@ void sleepMillisecond(unsigned int ms);
 
 //----- time check ------
 //check used time. don't used it as datetime.
-inline double getTick();
-inline double getSteadyTick();
-inline long long getMSecTick();
-inline long long getSteadyMSecTick();
+inline double getFloatTick();
+inline double getFloatSteadyTick();
+inline long long getIntegerTick();
+inline long long getIntegerSteadyTick();
 
 //-----date time---------
 //the second through 1900-01-01 00:00:00

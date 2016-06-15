@@ -50,7 +50,7 @@ using UserStatusPtr = std::shared_ptr<UserStatus>;
 
 struct AccountStatus
 {
-    int _lastCreateTime = 0;
+    ui64 _lastCreateTime = 0;
     std::map<ui64, UserStatusPtr> _users;
 };
 

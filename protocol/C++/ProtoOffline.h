@@ -18,7 +18,7 @@ struct UserOffline
     unsigned long long serviceID;  
     std::string streamBlob;  
     unsigned short status;  
-    unsigned int timestamp;  
+    unsigned long long timestamp;  
     UserOffline() 
     { 
         id = 0; 
@@ -26,7 +26,7 @@ struct UserOffline
         status = 0; 
         timestamp = 0; 
     } 
-    UserOffline(const unsigned long long & id, const unsigned long long & serviceID, const std::string & streamBlob, const unsigned short & status, const unsigned int & timestamp) 
+    UserOffline(const unsigned long long & id, const unsigned long long & serviceID, const std::string & streamBlob, const unsigned short & status, const unsigned long long & timestamp) 
     { 
         this->id = id; 
         this->serviceID = serviceID; 
