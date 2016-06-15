@@ -97,6 +97,12 @@
     <Xml Include="..\..\protocol\ProtoUserMgr.xml">
       <Filter>protocol</Filter>
     </Xml>
+    <Xml Include="..\..\protocol\ProtoOffline.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoWebAgent.xml">
+      <Filter>protocol</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\config.lua">

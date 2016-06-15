@@ -124,8 +124,10 @@
     <Xml Include="..\..\protocol\ProtoCommon.xml" />
     <Xml Include="..\..\protocol\ProtoDBService.xml" />
     <Xml Include="..\..\protocol\ProtoDocker.xml" />
+    <Xml Include="..\..\protocol\ProtoOffline.xml" />
     <Xml Include="..\..\protocol\ProtoUser.xml" />
     <Xml Include="..\..\protocol\ProtoUserMgr.xml" />
+    <Xml Include="..\..\protocol\ProtoWebAgent.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\config.lua" />
