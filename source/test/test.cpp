@@ -66,8 +66,12 @@ int main(int argc, char* argv[])
 #else
     //system("chcp 65001");
 #endif
-    
+    srand(time(NULL));
+
     ILog4zManager::getPtr()->start();
+
+
+
     LOGI("0second" << formatDateTimeString(0));
     LOGI("now" << formatDateTimeString(getNowTime()));
     LOGA("version released by " << __DATE__ << " " << __TIME__);
@@ -643,45 +647,95 @@ int checkBalance()
 
 int checkRandom()
 {
-    for (int i = 0; i < 10000; i++)
+    if (true)
     {
-        unsigned int rr = realRand(1000, 2000);
-        if (rr < 1000 || rr > 2000)
+        int sum1 = 0;
+        int sum50 = 0;
+        int sum100 = 0;
+        int loop = 10000 * 100;
+        for (int i = 0; i < loop; i++)
         {
-            return 1;
+            unsigned int rr = realRand(1000, 2000);
+            if (rr < 1000 || rr > 2000)
+            {
+                return 1;
+            }
+            double rrf = realRandF(100.234, 200.999);
+            if (rrf < 100.234 || rrf > 200.999)
+            {
+                return 2;
+            }
+            unsigned int rd = realRand(1, 100);
+            if (rd == 1)
+            {
+                sum1++;
+            }
+            if (rd == 50)
+            {
+                sum50++;
+            }
+            if (rd == 100)
+            {
+                sum100++;
+            }
         }
-        double rrf = realRandF(100.234, 200.999);
-        if (rrf < 100.234 || rrf > 200.999)
+        LOGD("realRand 1-100.  1=" << sum1 << ", 50=" << sum50 << ", sum100=" << sum100);
+        if (abs(sum1 - loop/100) > loop/100*20/100 || abs(sum50 - loop / 100) > loop / 100 * 20 / 100 || abs(sum100 - loop / 100) > loop / 100 * 20 / 100 )
         {
             return 2;
         }
-        continue;
+
+
     }
+
     std::vector<int> cards;
     if (true)
     {
         cards.push_back(100);
         cards.push_back(200);
-        auto ret = raffle(cards.begin(), cards.end(), 2, [](std::vector<int>::iterator iter) {return *iter; });
+        auto ret = raffle(cards.begin(), cards.end(), 2, false, [](std::vector<int>::iterator iter) {return *iter; });
         if (ret.size() != 2)
         {
             return 3;
         }
-        ret = raffle(cards.begin(), cards.end(), 3, [](std::vector<int>::iterator iter) {return *iter; });
-        if (ret.size() != 2)
+        ret = raffle(cards.begin(), cards.end(), 2, true, [](std::vector<int>::iterator iter) {return *iter; });
+        if (ret.size() != 2 || ret.front() == ret.back())
         {
             return 4;
         }
-        ret = raffle(cards.begin(), cards.end(), 3, [](std::vector<int>::iterator iter) {return 0; });
-        if (ret.size() != 0)
+
+        ret = raffle(cards.begin(), cards.end(), 3, false, [](std::vector<int>::iterator iter) {return *iter; });
+        if (ret.size() != 3)
         {
             return 5;
         }
-        cards.clear();
-        ret = raffle(cards.begin(), cards.end(), 3, [](std::vector<int>::iterator iter) {return 1; });
-        if (ret.size() != 0)
+        ret = raffle(cards.begin(), cards.end(), 3, true, [](std::vector<int>::iterator iter) {return *iter; });
+        if (ret.size() != 2)
         {
             return 6;
+        }
+        //weight is 0
+        ret = raffle(cards.begin(), cards.end(), 3, false, [](std::vector<int>::iterator iter) {return 0; });
+        if (ret.size() != 0)
+        {
+            return 7;
+        }
+        //pound is empty
+        ret = raffle(cards.end(), cards.end(), 3, false, [](std::vector<int>::iterator iter) {return *iter; });
+        if (ret.size() != 0)
+        {
+            return 8;
+        }
+        ret = raffle(cards.begin(), cards.end(), 3, true, [](std::vector<int>::iterator iter) {return 0; });
+        if (ret.size() != 0)
+        {
+            return 9;
+        }
+        //pound is empty
+        ret = raffle(cards.end(), cards.end(), 3, true, [](std::vector<int>::iterator iter) {return *iter; });
+        if (ret.size() != 0)
+        {
+            return 10;
         }
     }
     cards.clear();
@@ -692,11 +746,12 @@ int checkRandom()
     if (true)
     {
         int loopCount = 1*10000;
-        double sumRaffle = 0.0;
-        double sumRaffleWeight = 0.0;
+        int takeCount = 10;
+        double sumRaffle = 0.0;// sumRaffle ≈ (1/100)*loopCount*10
+        double sumRaffleWeight = 0.0; //sumRaffleWeight ≈ (100/5050)*loopCount*10
         for (int i = 0; i < loopCount; i++)
         {
-            auto ret = raffle(cards.begin(), cards.end(), 10);
+            auto ret = raffle(cards.begin(), cards.end(), takeCount, false);
             for (auto v : ret)
             {
                 if (*v == 100)
@@ -705,7 +760,7 @@ int checkRandom()
                     break;
                 }
             }
-            ret = raffle(cards.begin(), cards.end(), 10, [](std::vector<int>::iterator iter){return *iter; });
+            ret = raffle(cards.begin(), cards.end(), takeCount, false, [](std::vector<int>::iterator iter){return *iter; });
             for (auto v : ret)
             {
                 if (*v == 100)
@@ -715,34 +770,21 @@ int checkRandom()
                 }
             }
         }
-        if (fabs(sumRaffle - loopCount* (1.0 / 100.0) * 10.0) > loopCount* (1.0 / 100.0) * 10.0)
+        auto diff = fabs(sumRaffle - loopCount* (1.0 / 100.0)*takeCount);
+        auto target = loopCount* (1.0 / 100.0)*takeCount * 0.2;
+        LOGD("diff=" << diff << ", target=" << target);
+        if (fabs(sumRaffle - loopCount* (1.0 / 100.0)*takeCount) > loopCount* (1.0 / 100.0)*takeCount * 0.2)
         {
-            return 3;
+            return 11;
         }
-        if (fabs(sumRaffleWeight - loopCount *(100.0 / 5050.0) * 10.0) > loopCount *(100.0 / 5050.0) * 10.0)
+        diff = fabs(sumRaffleWeight - loopCount* (1.0 / 100.0)*takeCount);
+        target = loopCount* (1.0 / 5050.0)*takeCount * 0.2;
+        LOGD("diff=" << diff << ", target=" << target);
+        if (fabs(sumRaffleWeight - loopCount *(100.0 / 5050.0)*takeCount) > loopCount *(100.0 / 5050.0)*takeCount * 0.2)
         {
-            return 4;
+            return 12;
         }
-        if (raffle(cards.begin(), cards.end(), 101).size() != 100)
-        {
-            return 5;
-        }
-        if (raffle(cards.begin(), cards.end(), 101, [](std::vector<int>::iterator iter){return *iter; }).size() != 100)
-        {
-            return 6;
-        }
-        if (raffle(cards.begin(), cards.end(), 101, [](std::vector<int>::iterator iter){return 0; }).size() != 0)
-        {
-            return 7;
-        }
-        if (raffle(cards.end(), cards.end(), 101, [](std::vector<int>::iterator iter){return 0; }).size() != 0)
-        {
-            return 8;
-        }
-        if (raffle(cards.end(), cards.end(), 101).size() != 0)
-        {
-            return 9;
-        }
+
 
     }
 

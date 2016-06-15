@@ -858,7 +858,7 @@ thread_local std::mt19937 __genRandom; //vs2015 support
 //==========================================================================
 unsigned int realRand()
 {
-    return (rand() & 0xffff) << 16 | (rand() & 0xffff);
+    return (rand() &0x7fff) << 30 | (rand() & 0x7fff) << 15 | (rand() & 0x7fff);
 #ifdef WIN32
     return (rand() << 20) | (rand() << 8) | (rand() &0xff);
 //    if (!__genRandomInited)

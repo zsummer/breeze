@@ -38,6 +38,7 @@ static int panichHandler(lua_State * L)
 
 bool ServerConfig::parse(std::string filename, DockerID idx)
 {
+    srand(time(NULL));
     _dockerIdx = idx;
     lua_State *L = luaL_newstate();
     if (L == NULL)

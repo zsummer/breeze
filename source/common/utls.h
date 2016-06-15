@@ -220,7 +220,7 @@ template<class Integer, class Pos>
 inline Integer setBitFlag(Integer bin, Pos pos, bool flag = true);// f [1-32] or [1-64], begin 1 not 0.
 
 
-//rand
+//rand 随机数, 抽卡, 
 //==========================================================================
 //[0-0xffffffff]
 unsigned int realRand();
@@ -235,18 +235,17 @@ inline void randomShuffle(RandIt first, RandIt end);
 
 
 
-//从池子里面根据每个元素的权重获取元素, 获取后不从池子中移除该元素(返回集允许重复). 
-//概率算法是: 某个元素的权重/所有元素的权重  
-//takeCount为多次时 允许返回集重复. (每次获取都是从池子中重新寻找,但池子中的元素并不会因为抽取过而被移除) .
-//  要实现返回集不重复,则takeCount传参为1, 每次获取元素后就从池子中删除该元素即可.
+//从池子里面根据每个元素的权重获取元素.
+//某个元素被抽中的概率是: 该元素的权重/所有元素的权重
+//takeCount为抽取次数, 结果累加到返回集中 
+//uniqueTake为是否允许抽到同一个元素, 如果是false 则每次抽取会移除池子中的已抽取元素. 
 //某个元素的权重为0,则该元素永远不可能被获取到. 
-//如果池子为空, 或者所有元素的权重为0 则返回集为空,  否则必定返回takeCount个元素的返回集. 
 template<class RandIt, class GetWeightFunc> // func example  [](RandIt iter){return iter->weight;}
-inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight);
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, bool uniqueTake, GetWeightFunc getWeight);
 template<class RandIt>
-inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount)
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, bool uniqueTake)
 {
-    return raffle(first, end, takeCount, [](RandIt) {return 1; }); //平均权重 
+    return raffle(first, end, takeCount, uniqueTake, [](RandIt) {return 10; }); //平均权重 
 }
 
 

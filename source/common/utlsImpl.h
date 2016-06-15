@@ -324,7 +324,7 @@ inline void randomShuffle(RandIt first, RandIt end)
 
 
 template<class RandIt, class GetWeightFunc> 
-inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight)
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, bool uniqueTake, GetWeightFunc getWeight)
 {
     std::vector<std::pair<RandIt, int> > temp;
     std::vector<RandIt> ret;
@@ -337,36 +337,36 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWe
         while (cur != end)
         {
             int curWeight = getWeight(cur);
-            curWeight = curWeight >= 0 ? curWeight : 0;
-            sumWeight += curWeight;
-            temp.push_back(std::make_pair(cur, curWeight));
+            if (curWeight > 0)
+            {
+                sumWeight += curWeight;
+                temp.push_back(std::make_pair(cur, curWeight));
+            }
             cur++;
-        }
-        if (sumWeight == 0)
-        {
-            return ret;
         }
     }
     
-    
-    while (ret.size() < (size_t)takeCount && ret.size() < temp.size())
+    size_t curTakeCount = 0;
+    while (sumWeight > 0 && temp.size() > 0 && curTakeCount < (size_t)takeCount)
     {
+        curTakeCount++;
         int rd = realRand() % (sumWeight);
         int curWeight = 0;
-        for (auto &v: temp)
+        for (auto iter = temp.begin(); iter != temp.end();)
         {
-            if (v.second < 0)
-            {
-                continue;
-            }
+            auto & v = *iter;
             curWeight += v.second;
-            if (rd <= curWeight)
+            if (rd < curWeight)
             {
                 ret.push_back(v.first);
-                sumWeight -= v.second;
-                v.second = -1;
+                if (uniqueTake)
+                {
+                    sumWeight -= v.second;
+                    temp.erase(iter);
+                }
                 break;
             }
+            iter++;
         }
     }
     return std::move(ret);
