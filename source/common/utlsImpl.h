@@ -30,26 +30,49 @@ std::string toString(const T &t)
 {
     std::stringstream os;
     os << t;
-    return os.str();
+    return std::move(os.str());
 }
 
 
-template<class RET>
-RET fromString(const std::string & t, RET def)
+
+
+template<class To>
+typename std::enable_if<std::is_floating_point<To>::value, To>::type fromString(const std::string & t, To def)
 {
     if (t.empty()) return def;
-    if (typeid(RET) == typeid(float) || typeid(RET) == typeid(double))
-    {
-        return (RET)atof(t.c_str());
-    }
-    else if (typeid(RET) == typeid(unsigned long long))
-    {
-
-        char *cursor = nullptr;
-        return (RET)strtoull(t.c_str(), &cursor, 10);
-    }
-    return (RET)atoll(t.c_str());
+    return (To)atof(t.c_str());
 }
+
+template<class To>
+typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t, To def)
+{
+    if (t.empty()) return def;
+    if (t.length()>= 19)
+    {
+        if (typeid(To) == typeid(unsigned long long))
+        {
+            char *cursor = nullptr;
+            return (To)strtoull(t.c_str(), &cursor, 10);
+        }
+    }
+    return (To)atoll(t.c_str());
+}
+
+template<class To>
+typename std::enable_if<std::is_pointer<To>::value, To>::type fromString(const std::string & t, To def)
+{
+    if (t.empty()) return def;
+    return t.c_str();
+}
+
+template<class To>
+typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std::string & t, To def)
+{
+    if (t.empty()) return def;
+    return t;
+}
+
+
 
 inline double getTick()
 {

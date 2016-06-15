@@ -189,13 +189,29 @@ int checkString()
         double now = getTick();
         for (int i = 0; i < 10 * 10000; i++)
         {
-            compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
+            if (fromString<unsigned long long>("18446744073709551615", 0) != 18446744073709551615U)
+            {
+                return 16;
+            }
+            if (fromString<long long>("-8446744073709551615", 0) != -8446744073709551615L)
+            {
+                return 16;
+            }
         }
-        LOGD("compareStringWildcard used time=" << (getTick() - now));
-        now = getTick();
+        LOGD("fromString used time=" << (getTick() - now));
         for (int i = 0; i < 10 * 10000; i++)
         {
-            
+
+        }
+        LOGD("toString used time=" << (getTick() - now));
+
+    }
+    if (true)
+    {
+        double now = getTick();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
         }
         LOGD("compareStringWildcard used time=" << (getTick() - now));
     }
