@@ -248,7 +248,13 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, bool 
     return raffle(first, end, takeCount, uniqueTake, [](RandIt) {return 10; }); //平均权重 
 }
 
-
+//和上面的机制不同,根据每个元素的概率进行独立随机 然后加入返回集 
+//某个元素被抽中的概率是: 该元素的概率
+//某个元素的概率为0 则该元素永远不可能被获取到
+//某个元素的概率为1 则该元素一定会被获取到 
+//如果所有元素的概率介于0~1之间, 那么一次抽取可能所有元素都会被抽中 也可能一个也没有. 
+template<class RandIt, class GetProbabilityFunc> // func example  [](RandIt iter){return iter->probability;}
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetProbabilityFunc getProbability);
 //rank,rating
 //==========================================================================
 //winFlag:
