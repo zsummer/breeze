@@ -322,11 +322,6 @@ inline void randomShuffle(RandIt first, RandIt end)
 // }
 
 
-template<class RandIt>
-inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount)
-{
-    return raffle(first, end, takeCount, [](RandIt) {return 1; });
-}
 
 template<class RandIt, class GetWeightFunc> 
 inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWeightFunc getWeight)
@@ -356,7 +351,7 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetWe
     
     while (ret.size() < (size_t)takeCount && ret.size() < temp.size())
     {
-        int rd = realRand() % (sumWeight+1);
+        int rd = realRand() % (sumWeight);
         int curWeight = 0;
         for (auto &v: temp)
         {
