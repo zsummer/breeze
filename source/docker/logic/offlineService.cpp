@@ -36,7 +36,7 @@ void OfflineService::onUnload()
 
 bool OfflineService::onLoad()
 {
-    SQLQueryReq req("SELECT max(id) FROM `tb_useroffline`");
+    SQLQueryReq req("SELECT max(id) FROM `tb_UserOffline`");
     toService(ServiceInfoDBMgr, req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
     return true;
 }
