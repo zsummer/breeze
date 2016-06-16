@@ -9,7 +9,7 @@ add_executable(${BINNAME} ${source})
 if(APPLE)
   target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX_select${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread)
 else()
-  target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread rt dl m)
+  target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} tcmalloc_minimal pthread rt dl m )
 endif()
 
 #set_target_properties (${BINNAME} PROPERTIES LINK_FLAGS "${GLIBC_FLAG}")
