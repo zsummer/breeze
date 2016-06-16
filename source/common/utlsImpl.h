@@ -372,6 +372,27 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, bool 
     return std::move(ret);
 }
 
+template<class RandIt, class GetProbabilityFunc> // func example  [](RandIt iter){return iter->probability;}
+inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetProbabilityFunc getProbability)
+{
+    std::vector<RandIt> ret;
+    ret.reserve(takeCount);
+    auto cur = first;
+    while (cur != end)
+    {
+        double prob = getProbability(cur);
+        for (int i=0; i<takeCount; i++)
+        {
+            double rd = realRandF();
+            if (rd < prob)
+            {
+                ret.push_back(cur);
+            }
+        }
+        cur++;
+    }
+    return std::move(ret);
+}
 
 inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag)
 {

@@ -777,7 +777,7 @@ int checkRandom()
         {
             return 11;
         }
-        diff = fabs(sumRaffleWeight - loopCount* (1.0 / 100.0)*takeCount);
+        diff = fabs(sumRaffleWeight - loopCount* (100.0 / 5050.0)*takeCount);
         target = loopCount* (1.0 / 5050.0)*takeCount * 0.2;
         LOGD("diff=" << diff << ", target=" << target);
         if (fabs(sumRaffleWeight - loopCount *(100.0 / 5050.0)*takeCount) > loopCount *(100.0 / 5050.0)*takeCount * 0.2)
@@ -788,6 +788,54 @@ int checkRandom()
 
     }
 
+
+    if (true)
+    {
+        std::vector<std::pair<int, double>> cards;
+        for (int i=1; i<=100; i++)
+        {
+            cards.push_back(std::make_pair(i, i / 100.0));
+        }
+        int loop = 10000;
+        int takeCount = 10;
+        int sum1 = 0;   //sum 1 ≈ 0.01 * 10000*10
+        int sum50 = 0;   //sum 50 ≈ 0.5*10000*10
+        int sum100 = 0;  //sum 100 = 10000*10
+        for (int i=0; i<loop; i++)
+        {
+            auto ret = raffle(cards.begin(), cards.end(), takeCount, 
+                [](std::vector<std::pair<int, double>>::iterator iter) {return iter->second; });
+            for (auto iter : ret)
+            {
+                if (iter->first == 1)
+                {
+                    sum1++;
+                }
+                else if (iter->first == 50)
+                {
+                    sum50++;
+                }
+                else if (iter->first == 100)
+                {
+                    sum100++;
+                }
+            }
+            
+        }
+        LOGD("sum1=" << sum1 << ", sum50=" << sum50 << ", sum100=" << sum100);
+        if (sum100 != loop*takeCount)
+        {
+            return 20;
+        }
+        if (abs(sum1 - loop*takeCount/100) > (loop*takeCount/100*20/100))
+        {
+            return 21;
+        }
+        if (abs(sum50 - loop*takeCount / 2) > (loop*takeCount / 2 * 20 / 100))
+        {
+            return 22;
+        }
+    }
     return 0;
 }
 
