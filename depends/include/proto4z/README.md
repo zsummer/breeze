@@ -9,6 +9,7 @@ proto4z是一个序列化工具库, 可以通过一次编写xml格式的数据�
 **这里提供一套简单的模板配置和对应的测试代码. 完整版的测试见项目test/genCode目录下的测试例子.**
   
 ###xml idl  
+packet如果携带store属性,则会生成SQL相关代码. 支持的字段tag属性有auto 自增, key 主键(支持多主键), idx普通索引, uni唯一索引, ignore 不存储到数据库也不会在fetch时候进行初始化.  如果字段是自定义packet类型(嵌套类型), 则会调用序列化和反序列化以blob形式存储到数据库.    
 ```  
 <?xml version="1.0" encoding="utf-8"?>
 <ProtoTraits>
@@ -23,7 +24,7 @@ proto4z是一个序列化工具库, 可以通过一次编写xml格式的数据�
         <member name="statSum" type="ui32" desc="历史总和"/>
         <member name="statCount" type="ui32" desc="历史总次数"/>
     </packet>
-    <packet    name="SimplePack" desc= "简单示例">
+    <packet    name="SimplePack" store="true" desc= "简单示例">
         <member name="id" type="ui32" tag="auto,key"     desc="id, 对应数据库的结构为自增ID,key"/>
         <member name="name" type="string" tag="uni"     desc="昵称, 唯一索引"/>
         <member name="createTime" type="ui32" tag="idx"     desc="创建时间, 普通索引"/>

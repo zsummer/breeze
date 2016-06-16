@@ -169,7 +169,7 @@ void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::v
         offline.timestamp = getNowTime();
         WriteStream ws(UserChatReq::getProtoID());
         ws << req;
-        offline.streamBlob.assign(ws.getStream(), ws.getStreamLen());
+        offline.streamBlob = ws.pickStream();
         toService(ServiceOfflineMgr, offline);
         responseSuccess(dockerID, clientID, R"({"result":"success"})");
 

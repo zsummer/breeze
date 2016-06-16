@@ -40,7 +40,7 @@
  * VERSION:  1.0
  * PURPOSE:  A lightweight library for process protocol .
  * CREATION: 2013.07.04
- * LCHANGE:  2015.09.01
+ * LCHANGE:  2016.06.16
  * LICENSE:  Expat/MIT License, See Copyright Notice at the begin of this file.
  */
 
@@ -189,11 +189,14 @@ public:
     //get body stream length.
     inline Integer getStreamBodyLen(){ return _cursor - _headLen; }
 
+    inline std::string pickStream();
+    
     //write original data.
     inline WriteStream & appendOriginalData(const void * data, Integer len);
     template<class T>
     inline WriteStream & fixOriginalData(Integer offset, T unit);
     inline WriteStream & fixOriginalData(Integer offset, const void * data, Integer len);
+
 
     inline WriteStream & setReserve(ReserveInteger n);
 
@@ -734,7 +737,17 @@ inline void WriteStream::fixPackLen()
 }
 
 
-
+inline std::string WriteStream::pickStream()
+{
+    if (_attach)
+    {
+        return std::string(_attach, _cursor);
+    }
+    else
+    {
+        return std::move(_auto);
+    }
+}
 
 inline char* WriteStream::getStream()
 {
@@ -1074,6 +1087,14 @@ public:
         sprintf(buf, "%u", (unsigned int)content.length());
         _head.insert(std::make_pair("Content-Length", buf));
         _buff.append("POST " + uri + " HTTP/1.1" + CRLF);
+        if (_head.find("Connection") == _head.end())
+        {
+            _head.insert(std::make_pair("Connection", " keep-alive"));
+        }
+        if (_head.find("User-Agent") == _head.end())
+        {
+            _head.insert(std::make_pair("User-Agent", " Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) proto4z"));
+        }
         writeGeneralHead();
         _buff.append(CRLF);
         _buff.append(content);
@@ -1082,6 +1103,14 @@ public:
     {
         _head.insert(std::make_pair("Content-Length", "0"));
         _buff.append("GET " + uri + " HTTP/1.1" + CRLF);
+        if (_head.find("Connection") == _head.end())
+        {
+            _head.insert(std::make_pair("Connection", " keep-alive"));
+        }
+        if (_head.find("User-Agent") == _head.end())
+        {
+            _head.insert(std::make_pair("User-Agent", " Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) proto4z"));
+        }
         writeGeneralHead();
         _buff.append(CRLF);
     }
@@ -1098,18 +1127,12 @@ public:
 protected:
     void writeGeneralHead()
     {
-        if (_head.find("Connection") == _head.end())
-        {
-            _head.insert(std::make_pair("Connection", " keep-alive"));
-        }
+
         if (_head.find("Accept") == _head.end())
         {
             _head.insert(std::make_pair("Accept", " */*"));
         }
-        if (_head.find("User-Agent") == _head.end())
-        {
-            _head.insert(std::make_pair("User-Agent", " Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.101"));
-        }
+
         if (_head.find("Accept-Languaget") == _head.end())
         {
             _head.insert(std::make_pair("Accept-Languaget", " zh-CN,zh;q=0.8"));
