@@ -167,17 +167,8 @@ inline time_t getNowTime(){ return getUTCTime(); }
 //  like get server's local datetime in any area client. server date time = localtime(UTC + (server offset - client offset)); 
 //
 inline time_t getTZZoneOffset();
-//the day through 1900-01-01 00:00:00
-inline time_t getLocalDay(time_t offset);
-//the day through 1900-01-01 00:00:00 @ $t
-inline time_t getLocalDay(time_t t, time_t offset);
 //get current second from day begin.
 inline time_t getDaySecond(time_t t);
-//the day through 1900-01-01 00:00:00
-inline time_t getLocalDayByReadable(time_t offset);
-//the day through 1900-01-01 00:00:00 @ $t
-inline time_t getLocalDayByReadable(time_t t, time_t offset);
-
 
 //get struct tm via safe method
 inline tm gettm(time_t ts);
@@ -195,6 +186,8 @@ inline bool isSameYear(time_t first, time_t second, time_t offset = 0);
 inline bool isSameMonth(time_t first, time_t second, time_t offset = 0);
 inline bool isSameWeak(time_t first, time_t second, time_t offset = 0);
 inline bool isSameDay(time_t first, time_t second, time_t offset = 0);
+//
+inline int distanceDays(time_t first, time_t second);
 
 
 //float

@@ -103,28 +103,11 @@ inline time_t getTZZoneOffset()
     tm tm = gettm(fixday);
     return ((tm.tm_mday - 1) * 24 + tm.tm_hour) * 3600 - fixday;
 }
-inline time_t getLocalDay(time_t t, time_t offset)
-{
-    time_t fix = getTZZoneOffset();
-    return (t + fix + offset) / 24 / 3600;
-}
-inline time_t getLocalDay(time_t offset)
-{
-    return getLocalDay(getUTCTime(), offset);
-}
 inline time_t getDaySecond(time_t t)
 {
     return (t + getTZZoneOffset()) % (24 * 3600);
 }
-inline time_t getLocalDayByReadable(time_t t, time_t offset)
-{
-    tm st = gettm(t);
-    return (st.tm_year + 1900) * 10000 + (st.tm_mon + 1) * 100 + st.tm_mday;
-}
-inline time_t getLocalDayByReadable(time_t offset)
-{
-    return getLocalDayByReadable(getUTCTime(), offset);
-}
+
 //safe method for get tm from unix timestamp
 // 
 // struct tm {
@@ -198,7 +181,10 @@ inline bool isSameDay(time_t first, time_t second, time_t offset)
     return ftm.tm_year == stm.tm_year && ftm.tm_yday == stm.tm_yday;
 }
 
-
+inline int distanceDays(time_t first, time_t second)
+{
+    return (int)abs((long long)(second - getDaySecond(second)) - (long long)(first - getDaySecond(first))) / 3600 / 24;
+}
 
 
 

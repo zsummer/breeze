@@ -331,7 +331,6 @@ int checkFile()
 
 int checkTime()
 {
-    getLocalDay(0);
     double now = getFloatTick();
     double snow = getFloatSteadyTick();
     long long nowt = getIntegerTick();
@@ -372,11 +371,15 @@ int checkTime()
     {
         return 5;
     }
-    if (getLocalDay(1451577599, 0) == getLocalDay(1451577600, 0))
+    if (distanceDays(1451577599, 1451577599+1) != 1)
     {
         return 6;
     }
-    if (getLocalDayByReadable(1451577599, 0) == getLocalDayByReadable(1451577600, 0))
+    if (distanceDays(1451577599, 1451577599 + 1+24*3600) != 2)
+    {
+        return 7;
+    }
+    if (distanceDays(1451577599, 1451577599 +1 - 24 * 3600) != 0)
     {
         return 7;
     }
@@ -396,10 +399,7 @@ int checkTime()
     {
         return 10;
     }
-    if (!isSameDay(getUTCTimeFromLocalString(toString<time_t>(getLocalDayByReadable(1451577599, 0))), 1451577599))
-    {
-        return 11;
-    }
+
     //hypothesis server is GMT+9, unknown client time area, utc second is 1451577599, in client get server's localtime.
     if (gettm(1451577599 + (9 * 3600 - getTZZoneOffset())).tm_hour != 0)
     {
