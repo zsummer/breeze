@@ -143,26 +143,34 @@ const ServiceType STClient = (ServiceType)20;
 //std::tuple<isSingleton, serviceKey, serviceDepends>
 struct  ServiceDependInfo
 {
-    ServiceDependInfo(bool single, const ServiceName& name, const std::set<ServiceType>& dps)
+    ServiceDependInfo(bool single, const char *const name, const std::set<ServiceType>& dps)
         :isSingleton(single),
         serviceName(name),
         depends(dps)
     {
     }
-    bool isSingleton = true;
-    ServiceName serviceName = InvalidServiceName;
+    ServiceDependInfo(bool single, const char *const name)
+        :isSingleton(single),
+        serviceName(name)
+    {
+    }
+    bool isSingleton;
+    ServiceName serviceName;
     std::set<ServiceType > depends;
 };
+
+
+
 const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
 {
-    { STInfoDBMgr, { true, "STInfoDBMgr", {} } },
-    { STLogDBMgr,  { true, "STLogDBMgr",  {} } },
+    { STInfoDBMgr, { true, "STInfoDBMgr" } },
+    { STLogDBMgr,  { true, "STLogDBMgr" } },
     { STUserMgr, { true, "STUserMgr", { STInfoDBMgr , STLogDBMgr } } },
     { STWebAgent, { true, "STWebAgent",{ STInfoDBMgr , STLogDBMgr } } },
     { STOfflineMgr,{ true, "STOfflineMgr",{ STInfoDBMgr , STLogDBMgr } } },
     { STMinitorMgr,{ true, "STMinitorMgr",{ STInfoDBMgr , STLogDBMgr } } },
     { STUser,{ false, "STUser",{ STUserMgr } } },
-    { STClient,{ false, "STClient",{  } } },
+    { STClient,{ false, "STClient" } }
 };
 
 inline bool isSingletonService(ServiceType serviceType);
