@@ -49,26 +49,9 @@ void UserMgrService::onTick()
 
 void UserMgrService::onUnload()
 {
-    _checkSafeDestroy();
+    finishUnload();
 }
-void UserMgrService::_checkSafeDestroy()
-{
-    bool safe = true;
-    for (auto kv : _userStatusByID)
-    {
-        if (kv.second->_status == SS_WORKING || kv.second->_status == SS_UNLOADING)
-        {
-            safe = false;
-            break;
-        }
-    }
-    if (safe)
-    {
-        finishUnload();
-        return;
-    }
-    SessionManager::getRef().createTimer(500, std::bind(&UserMgrService::_checkSafeDestroy, this));
-}
+
 void UserMgrService::onClientChange()
 {
     return ;

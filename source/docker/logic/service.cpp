@@ -77,9 +77,6 @@ bool Service::finishUnload()
     setStatus(SS_DESTROY);
     if (!isShell())
     {
-        UnloadedServiceNotice notice(getServiceType(), getServiceID());
-        Docker::getRef().broadcastToDockers(notice, true);
-
         if (!isSingletonService(getServiceType()))
         {
             RefreshServiceToMgrNotice refreshNotice(
@@ -98,6 +95,9 @@ bool Service::finishUnload()
                 }
             }
         }
+
+        UnloadedServiceNotice notice(getServiceType(), getServiceID());
+        Docker::getRef().broadcastToDockers(notice, true);
         LOGI("local service finish unload. service=" << getServiceName() << ", id=" << getServiceID());
     }
     else

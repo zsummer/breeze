@@ -18,20 +18,11 @@ void OfflineService::onTick()
 {
 }
 
-void OfflineService::_checkSafeDestroy()
-{
-    auto service = Docker::getRef().peekService(STUserMgr, InvalidServiceID);
-    if (!service)
-    {
-        finishUnload();
-        return;
-    }
-    SessionManager::getRef().createTimer(500, std::bind(&OfflineService::_checkSafeDestroy, this));
-}
+
 
 void OfflineService::onUnload()
 {
-    _checkSafeDestroy();
+    finishUnload();
 }
 
 bool OfflineService::onLoad()

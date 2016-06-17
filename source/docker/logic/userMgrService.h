@@ -66,8 +66,7 @@ public:
     void onClientChange() override final;
     void onUnload() override final;
     void onTick() override final;
-private:
-    void _checkSafeDestroy();
+
 private:
     void updateUserPreview(const UserPreview & pre);
 private:

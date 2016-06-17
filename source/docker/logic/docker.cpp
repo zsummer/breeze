@@ -94,7 +94,7 @@ void Docker::destroyCluster()
                 continue;
             }
 
-            if (!isSingletonService(svc.second->getServiceType()))
+            if (!isSingletonService(svc.second->getServiceType()) && svc.second->getClientSessionID() == InvalidSessionID)
             {
                 LOGD("unload service [" << svc.second->getServiceName() << "] ..");
                 svc.second->setStatus(SS_UNLOADING);
@@ -688,13 +688,13 @@ void Docker::event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs)
     auto founder = _services.find(change.serviceType);
     if (founder == _services.end())
     {
-        LOGE("event_onSwitchServiceClient can't founder service type. service=" << getServiceName(change.serviceType));
+        LOGW("event_onSwitchServiceClient can't founder service type. service=" << getServiceName(change.serviceType));
         return;
     }
     auto fder = founder->second.find(change.serviceID);
     if (fder == founder->second.end() || fder->second->isShell())
     {
-        LOGE("event_onSwitchServiceClient can't founder service id. service=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
+        LOGW("event_onSwitchServiceClient can't founder service id. service=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
         return;
     }
     if (fder->second->getClientSessionID() != InvalidSessionID)
@@ -737,7 +737,7 @@ void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream
     auto founder = _services.find(change.serviceType);
     if (founder == _services.end())
     {
-        LOGW("event_onSwitchServiceClientNotice can't founder remote service type. type=" << change.serviceType << ", id=" << change.serviceID);
+        LOGE("event_onSwitchServiceClientNotice can't founder shell service type. type=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
         return;
     }
     auto fder = founder->second.find(change.serviceID);
@@ -749,7 +749,7 @@ void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream
     }
     else
     {
-        LOGW("event_onSwitchServiceClientNotice can't founder remote service id. type=" << change.serviceType << ", id=" << change.serviceID);
+        LOGE("event_onSwitchServiceClientNotice can't founder shell service id. type=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
     }
 }
 

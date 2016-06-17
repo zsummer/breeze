@@ -165,11 +165,15 @@ const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
 {
     { STInfoDBMgr, { true, "STInfoDBMgr" } },
     { STLogDBMgr,  { true, "STLogDBMgr" } },
-    { STUserMgr, { true, "STUserMgr", { STInfoDBMgr , STLogDBMgr } } },
-    { STWebAgent, { true, "STWebAgent",{ STInfoDBMgr , STLogDBMgr } } },
+
+    { STWebAgent,{ true, "STWebAgent",{ STInfoDBMgr , STLogDBMgr } } },
     { STOfflineMgr,{ true, "STOfflineMgr",{ STInfoDBMgr , STLogDBMgr } } },
     { STMinitorMgr,{ true, "STMinitorMgr",{ STInfoDBMgr , STLogDBMgr } } },
+
+    { STUserMgr, { true, "STUserMgr", { STInfoDBMgr , STLogDBMgr,STWebAgent, STOfflineMgr,STMinitorMgr } } },
+
     { STUser,{ false, "STUser",{ STUserMgr } } },
+
     { STClient,{ false, "STClient" } }
 };
 

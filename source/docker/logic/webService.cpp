@@ -22,20 +22,11 @@ void WebService::onTick()
 {
 }
 
-void WebService::_checkSafeDestroy()
-{
-    auto service = Docker::getRef().peekService(STUserMgr, InvalidServiceID);
-    if (!service)
-    {
-        finishUnload();
-        return;
-    }
-    SessionManager::getRef().createTimer(500, std::bind(&WebService::_checkSafeDestroy, this));
-}
+
 
 void WebService::onUnload()
 {
-    _checkSafeDestroy();
+    finishUnload();
 }
 
 bool WebService::onLoad()

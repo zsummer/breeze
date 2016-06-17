@@ -38,8 +38,6 @@ public:
     void onUnload() override final;
     void onTick() override final;
 private:
-    void _checkSafeDestroy();
-private:
     void onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs);
     void getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
     void offlinechat(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
