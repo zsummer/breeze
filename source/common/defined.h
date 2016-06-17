@@ -131,7 +131,6 @@ const ServiceName InvalidServiceName = "";
 enum ServiceType : ui16
 {
     ServiceInvalid = 0,//有效的服务ID从这里开始到ServiceMax结束, 必须连续,  前后依赖 
-    ServiceDictDBMgr,
     ServiceInfoDBMgr,
     ServiceLogDBMgr,
     ServiceUserMgr,
@@ -150,7 +149,6 @@ enum ServiceType : ui16
 const std::vector<std::string> ServiceTypeNames =
 {
     "ServiceInvalid",
-    "ServiceDictDBMgr",
     "ServiceInfoDBMgr",
     "ServiceLogDBMgr",
     "ServiceUserMgr",

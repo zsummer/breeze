@@ -81,14 +81,6 @@ bool DBService::onLoad()
         return false;
     }
 
-    //debug
-    if (getServiceType() == ServiceInfoDBMgr)
-    {
-        SQLQueryReq req;
-        req.sql = "select 1";
-        toService(ServiceDictDBMgr, req, std::bind(&DBService::onTest, std::static_pointer_cast<DBService>(shared_from_this()), _1));
-    }
-    //debug end
 
     if (onBuildDB())
     {

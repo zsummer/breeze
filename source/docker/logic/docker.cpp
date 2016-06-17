@@ -457,10 +457,6 @@ ServicePtr Docker::createService(DockerID serviceDockerID, ui16 serviceType, Ser
         service = std::make_shared<ShellService>();
         service->setShell(isShell);
     }
-    else if (serviceType == ServiceDictDBMgr)
-    {
-        service = std::make_shared<DBService>();
-    }
     else if (serviceType == ServiceInfoDBMgr)
     {
         service = std::make_shared<DBService>();
