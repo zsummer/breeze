@@ -131,7 +131,7 @@ private:
     TimerID _timer = InvalidTimerID;
 
 private:
-    ui16 _serviceType = (ui16)ServiceInvalid;
+    ui16 _serviceType = (ui16)InvalidServiceType;
     ServiceID _serviceID = InvalidServiceID;
     ServiceName _serviceName = InvalidServiceName;
     DockerID _serviceDockerID = InvalidDockerID; //实际所在的docker

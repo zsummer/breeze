@@ -24,7 +24,7 @@ void WebService::onTick()
 
 void WebService::_checkSafeDestroy()
 {
-    auto service = Docker::getRef().peekService(ServiceUserMgr, InvalidServiceID);
+    auto service = Docker::getRef().peekService(STUserMgr, InvalidServiceID);
     if (!service)
     {
         finishUnload();
@@ -129,8 +129,8 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
             request.isGet = true;
             request.host = "www.cnblogs.com";
             request.uri = "/";
-            toService(ServiceWebAgent, request);
-            toService(ServiceWebAgent, request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
+            toService(STWebAgent, request);
+            toService(STWebAgent, request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
                 _1, trace.fromDockerID, notice.webClientID));
             
         }
@@ -144,7 +144,7 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
 }
 void WebService::getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
 {
-    responseSuccess(dockerID, clientID, R"({"result":"success","online":)" + toString(Docker::getRef().peekService(ServiceUser).size()) + "}");
+    responseSuccess(dockerID, clientID, R"({"result":"success","online":)" + toString(Docker::getRef().peekService(STUser).size()) + "}");
 }
 
 void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
@@ -170,7 +170,7 @@ void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::v
         WriteStream ws(UserChatReq::getProtoID());
         ws << req;
         offline.streamBlob = ws.pickStream();
-        toService(ServiceOfflineMgr, offline);
+        toService(STOfflineMgr, offline);
         responseSuccess(dockerID, clientID, R"({"result":"success"})");
 
     }

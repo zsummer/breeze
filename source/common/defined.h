@@ -123,48 +123,54 @@ const DockerID InvalidDockerID = 0;
 
 //每个service拥有两个唯一的基础属性ServiceID, ServiceName
 typedef ui64 ServiceID;
-const ui64 InvalidServiceID = (ServiceID)0;
+const ServiceID InvalidServiceID = (ServiceID)0;
 
 typedef std::string ServiceName;
 const ServiceName InvalidServiceName = "";
 
-enum ServiceType : ui16
+typedef ui16 ServiceType;
+const ServiceType InvalidServiceType = (ServiceType)0;
+const ServiceType STInfoDBMgr = (ServiceType)1;
+const ServiceType STLogDBMgr = (ServiceType)2;
+const ServiceType STUserMgr = (ServiceType)3;
+const ServiceType STWebAgent = (ServiceType)4;
+const ServiceType STOfflineMgr = (ServiceType)5;
+const ServiceType STMinitorMgr = (ServiceType)6;
+
+const ServiceType STUser = (ServiceType)11;
+const ServiceType STClient = (ServiceType)20;
+
+//std::tuple<isSingleton, serviceKey, serviceDepends>
+struct  ServiceDependInfo
 {
-    ServiceInvalid = 0,//有效的服务ID从这里开始到ServiceMax结束, 必须连续,  前后依赖 
-    ServiceInfoDBMgr,
-    ServiceLogDBMgr,
-    ServiceUserMgr,
-    ServiceWebAgent,
-    ServiceOfflineMgr,
-    ServiceMinitorMgr,
-    
-    ServiceMulti,
-
-    ServiceUser,
-    ServiceClient, 
-    
-    //...
-    ServiceMax,
+    ServiceDependInfo(bool single, const ServiceName& name, const std::set<ServiceType>& dps)
+        :isSingleton(single),
+        serviceName(name),
+        depends(dps)
+    {
+    }
+    bool isSingleton = true;
+    ServiceName serviceName = InvalidServiceName;
+    std::set<ServiceType > depends;
 };
-const std::vector<std::string> ServiceTypeNames =
+const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
 {
-    "ServiceInvalid",
-    "ServiceInfoDBMgr",
-    "ServiceLogDBMgr",
-    "ServiceUserMgr",
-    "ServiceWebAgent",
-    "ServiceOfflineMgr",
-    "ServiceMinitorMgr",
-
-    "ServiceMulti",
-
-    "ServiceUser",
-    "ServiceClient",
-    
-    
-    //...
-    "ServiceMax",
+    { STInfoDBMgr, { true, "STInfoDBMgr", {} } },
+    { STLogDBMgr,  { true, "STLogDBMgr",  {} } },
+    { STUserMgr, { true, "STUserMgr", { STInfoDBMgr , STLogDBMgr } } },
+    { STWebAgent, { true, "STWebAgent",{ STInfoDBMgr , STLogDBMgr } } },
+    { STOfflineMgr,{ true, "STOfflineMgr",{ STInfoDBMgr , STLogDBMgr } } },
+    { STMinitorMgr,{ true, "STMinitorMgr",{ STInfoDBMgr , STLogDBMgr } } },
+    { STUser,{ false, "STUser",{ STUserMgr } } },
+    { STClient,{ false, "STClient",{  } } },
 };
+
+inline bool isSingletonService(ServiceType serviceType);
+inline ServiceType getServiceTypeByKey(const ServiceName & serviceName);
+inline const ServiceName& getServiceName(ServiceType serviceType);
+
+inline std::set<ServiceType> getServiceSubsidiary(ServiceType serviceType);
+
 
 
 
@@ -243,7 +249,69 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
     return os;
 }
 
+inline bool isSingletonService(ServiceType serviceType)
+{
+    auto founder = ServiceDepends.find(serviceType);
+    if (founder == ServiceDepends.end())
+    {
+        return false;
+    }
+    return founder->second.isSingleton;
+}
+inline const ServiceName& getServiceName(ServiceType serviceType)
+{
+    auto founder = ServiceDepends.find(serviceType);
+    if (founder == ServiceDepends.end())
+    {
+        return InvalidServiceName;
+    }
+    return founder->second.serviceName;
+}
+inline const std::set<ServiceType>& getServiceDepends(ServiceType serviceType)
+{
+    auto founder = ServiceDepends.find(serviceType);
+    if (founder == ServiceDepends.end())
+    {
+        static std::set<ServiceType> _noDepends;
+        return _noDepends;
+    }
+    return founder->second.depends;
+}
+
+inline ServiceType getServiceTypeByKey(const ServiceName & serviceName)
+{
+    if (serviceName.empty())
+    {
+        return InvalidServiceType;
+    }
+    for (const auto & sd : ServiceDepends)
+    {
+        if (sd.second.serviceName == serviceName)
+        {
+            return sd.first;
+        }
+    }
+    return InvalidServiceType;
+}
 
 
+
+
+
+inline std::set<ServiceType> getServiceSubsidiary(ServiceType serviceType)
+{
+    std::set<ServiceType> ret;
+    for (const auto & sd : ServiceDepends)
+    {
+        for (const auto & st : sd.second.depends)
+        {
+            if (st == serviceType)
+            {
+                ret.insert(sd.first);
+            }
+        }
+    }
+    return std::move(ret);
+}
 
 #endif

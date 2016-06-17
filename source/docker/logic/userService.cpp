@@ -94,7 +94,7 @@ void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream 
     UserChatResp resp;
     resp.fromServiceID = getServiceID();
     resp.msg = req.msg;
-    toService(ServiceClient, req.toServiceID, resp);
+    toService(STClient, req.toServiceID, resp);
 }
 
 void UserService::onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
@@ -103,7 +103,7 @@ void UserService::onUserPingPongReq(const Tracing & trace, zsummer::proto4z::Rea
     rs >> req;
     UserPingPongResp resp;
     resp.msg = req.msg;
-    toService(ServiceClient, getServiceID(), resp);
+    toService(STClient, getServiceID(), resp);
     static int testCount = 0;
     testCount++;
     if (testCount %10000 == 0)

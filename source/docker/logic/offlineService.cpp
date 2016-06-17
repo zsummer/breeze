@@ -20,7 +20,7 @@ void OfflineService::onTick()
 
 void OfflineService::_checkSafeDestroy()
 {
-    auto service = Docker::getRef().peekService(ServiceUserMgr, InvalidServiceID);
+    auto service = Docker::getRef().peekService(STUserMgr, InvalidServiceID);
     if (!service)
     {
         finishUnload();
@@ -37,7 +37,7 @@ void OfflineService::onUnload()
 bool OfflineService::onLoad()
 {
     SQLQueryReq req("SELECT max(id) FROM `tb_UserOffline`");
-    toService(ServiceInfoDBMgr, req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
+    toService(STInfoDBMgr, req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
     return true;
 }
 
@@ -115,7 +115,7 @@ void OfflineService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
             auto offline = *iter;
             if (offline.serviceID == ref.serviceID && offline.status == 0)
             {
-                toService(ServiceUser, offline.serviceID, offline.streamBlob.c_str(), offline.streamBlob.length());
+                toService(STUser, offline.serviceID, offline.streamBlob.c_str(), offline.streamBlob.length());
                 offline.status = 1;
                 _offlines.updateToDB(offline);
                 iter = _offlines._data.erase(iter);

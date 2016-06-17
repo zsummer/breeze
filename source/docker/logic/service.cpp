@@ -24,7 +24,7 @@ void Service::onTimer()
     }
     catch (const std::exception & e)
     {
-        LOGE("Service::onTimer catch except error. e=" << e.what() << ", service=" << ServiceTypeNames.at(getServiceType()) << ", service id=" << getServiceID());
+        LOGE("Service::onTimer catch except error. e=" << e.what() << ", service=" << getServiceName() << ", service id=" << getServiceID());
     }
 }
 
@@ -44,7 +44,7 @@ bool Service::finishLoad()
             getClientSessionID());
         Docker::getRef().broadcastToDockers(notice, false);
 
-        if (getServiceType() > ServiceMulti)
+        if (!isSingletonService(getServiceType()))
         {
             RefreshServiceToMgrNotice refreshNotice(
                 getServiceDockerID(),
@@ -54,16 +54,20 @@ bool Service::finishLoad()
                 getStatus(),
                 getClientDockerID(),
                 getClientSessionID());
-            for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+            for (auto sd : ServiceDepends)
             {
-                toService(i, refreshNotice, nullptr);
+                if (isSingletonService(sd.first))
+                {
+                    toService((ui16)sd.first, refreshNotice, nullptr);
+                }
             }
         }
-        LOGI("local service finish load. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
+
+        LOGI("local service finish load. service=" << getServiceName() << ", id=" << getServiceID());
     }
     else
     {
-        LOGI("remote service finish load. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGI("remote service finish load. service=" << getServiceName() << ", id=" << getServiceID());
     }
     
     return true;
@@ -76,7 +80,7 @@ bool Service::finishUnload()
         UnloadedServiceNotice notice(getServiceType(), getServiceID());
         Docker::getRef().broadcastToDockers(notice, true);
 
-        if (getServiceType() > ServiceMulti)
+        if (!isSingletonService(getServiceType()))
         {
             RefreshServiceToMgrNotice refreshNotice(
                 getServiceDockerID(),
@@ -86,16 +90,19 @@ bool Service::finishUnload()
                 getStatus(),
                 getClientDockerID(),
                 getClientSessionID());
-            for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+            for (auto sd : ServiceDepends)
             {
-                toService(i, refreshNotice, nullptr);
+                if (isSingletonService(sd.first))
+                {
+                    toService((ui16)sd.first, refreshNotice, nullptr);
+                }
             }
         }
-        LOGI("local service finish unload. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGI("local service finish unload. service=" << getServiceName() << ", id=" << getServiceID());
     }
     else
     {
-        LOGI("remote service finish unload. service=" << ServiceTypeNames.at(getServiceType()) << ", id=" << getServiceID());
+        LOGI("remote service finish unload. service=" << getServiceName() << ", id=" << getServiceID());
     }
     
     return true;

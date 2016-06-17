@@ -173,15 +173,15 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
             lua_pushnil(L);
             while (lua_next(L, -2))
             {
-                std::string service = luaL_checkstring(L, -1);
-                auto founder = std::find(ServiceTypeNames.begin(), ServiceTypeNames.end(), service);
-                if (founder != ServiceTypeNames.end())
+                std::string serviceName = luaL_checkstring(L, -1);
+                ServiceType serviceType = getServiceTypeByKey(serviceName);
+                if (serviceType != InvalidServiceType)
                 {
-                    lconfig._services.push_back((founder - ServiceTypeNames.begin()));
+                    lconfig._services.push_back((ui16)serviceType);
                 }
                 else
                 {
-                    LOGE("not found service [" << service << "]");
+                    LOGE("not found serviceName [" << serviceName << "]");
                     return false;
                 }
                 lua_pop(L, 1);
@@ -204,30 +204,21 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
             dockerIDs.push_back(config._dockerID);
         }
     }
-    for (ui16 i = ServiceInvalid + 1; i < ServiceMulti; i++)
+    for (const auto & sd : ServiceDepends)
     {
-        auto founder = _configServiceType.find(i);
-        if (founder == _configServiceType.end() || founder->second.empty())
-        {
-            LOGE("not found service in docker config. the service name=" << ServiceTypeNames.at(i));
-            return false;
-        }
-        if (founder->second.size() != 1)
-        {
-            LOGE("service in docker config not single. the service name=" << ServiceTypeNames.at(i));
-            return false;
-        }
-    }
-    for (ui16 i = ServiceMulti + 1; i < ServiceMax; i++)
-    {
-        if (i == ServiceClient)
+        if (sd.first == STClient)
         {
             continue;
         }
-        auto founder = _configServiceType.find(i);
+        auto founder = _configServiceType.find((ui16)sd.first);
         if (founder == _configServiceType.end() || founder->second.empty())
         {
-            LOGE("not found service in docker config. the service name=" << ServiceTypeNames.at(i));
+            LOGE("not found service in docker config. the service name=" << getServiceName(sd.first));
+            return false;
+        }
+        if (isSingletonService(sd.first) && founder->second.size() != 1)
+        {
+            LOGE("duplicate service name in docker config . the service name=" << getServiceName(sd.first));
             return false;
         }
     }

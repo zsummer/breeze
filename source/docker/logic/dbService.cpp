@@ -23,13 +23,13 @@ void DBService::onTick()
     if (now - _lastTime > 60)
     {
         _lastTime = now;
-        LOGA("DBService [" << ServiceTypeNames.at(getServiceType()) << "], finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
+        LOGA("DBService [" << getServiceName() << "], finish count=" << _dbAsync->getFinalCount() << "post count=" << _dbAsync->getPostCount());
     }
 }
 
 void DBService::_checkSafeDestroy()
 {
-    auto service = Docker::getRef().peekService(ServiceUserMgr, InvalidServiceID);
+    auto service = Docker::getRef().peekService(STUserMgr, InvalidServiceID);
     if (!service)
     {
         _dbAsync->stop();
@@ -57,10 +57,10 @@ void DBService::onClientChange()
 bool DBService::onLoad()
 {
     const auto & dbConfigs = ServerConfig::getRef().getDBConfig();
-    auto founder = std::find_if(dbConfigs.begin(), dbConfigs.end(), [this](const DBConfig & dbc){return dbc._name == ServiceTypeNames.at(getServiceType()); });
+    auto founder = std::find_if(dbConfigs.begin(), dbConfigs.end(), [this](const DBConfig & dbc){return dbc._name == getServiceName(); });
     if (founder == dbConfigs.end())
     {
-        LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] error. not found config");
+        LOGE("DBService::onLoad [" << getServiceName() << "] error. not found config");
         Docker::getRef().forceStop();
         return false;
     }
@@ -69,14 +69,14 @@ bool DBService::onLoad()
     _dbHelper->init(dbConfig._ip, dbConfig._port, dbConfig._db, dbConfig._user, dbConfig._pwd, true);
     if (!_dbHelper->connect())
     {
-        LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] connect error");
+        LOGE("DBService::onLoad [" << getServiceName() << "] connect error");
         Docker::getRef().forceStop();
         return false;
     }
 
     if (!_dbAsync->start())
     {
-        LOGE("DBService::onLoad [" << ServiceTypeNames.at(getServiceType()) << "] error. start db thread error");
+        LOGE("DBService::onLoad [" << getServiceName() << "] error. start db thread error");
         Docker::getRef().forceStop();
         return false;
     }
@@ -96,7 +96,7 @@ bool DBService::onLoad()
 
 bool DBService::onBuildDB()
 {
-    if (getServiceType() == ServiceInfoDBMgr)
+    if (getServiceType() == STInfoDBMgr)
     {
         if (!buildDB<UserBaseInfo>())
         {

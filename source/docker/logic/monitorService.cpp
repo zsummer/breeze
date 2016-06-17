@@ -22,7 +22,7 @@ void MonitorService::onTick()
 
 void MonitorService::_checkSafeDestroy()
 {
-    auto service = Docker::getRef().peekService(ServiceUserMgr, InvalidServiceID);
+    auto service = Docker::getRef().peekService(STUserMgr, InvalidServiceID);
     if (!service)
     {
         finishUnload();

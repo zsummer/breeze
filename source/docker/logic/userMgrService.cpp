@@ -29,7 +29,7 @@ void UserMgrService::onTick()
         {
             if (iter->second->_status == SS_WORKING && getNowTime() - iter->second->_lastChangeTime > 30)
             {
-                auto service = Docker::getRef().peekService(ServiceUser, iter->second->_preview.serviceID);
+                auto service = Docker::getRef().peekService(STUser, iter->second->_preview.serviceID);
                 if (service)
                 {
                     UnloadServiceInDocker unload(service->getServiceType(), service->getServiceID());
@@ -77,14 +77,14 @@ void UserMgrService::onClientChange()
 
 bool UserMgrService::onLoad()
 {
-    const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(ServiceUser);
+    const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(STUser);
     for (auto dockerID : config)
     {
         _balance.enableNode(dockerID);
     }
     if (config.empty())
     {
-        LOGE("at least have one docker contain ServiceUser service ");
+        LOGE("at least have one docker contain STUser service ");
         return false;
     }
     _nextUserID = ServerConfig::getRef().getMinServiceID()+1;
@@ -94,7 +94,7 @@ bool UserMgrService::onLoad()
     sql += " `tb_UserBaseInfo` ";
     int curLimit = 0;
     SQLQueryReq req(sql + "limit 0, 100");
-    toService(ServiceInfoDBMgr, req,
+    toService(STInfoDBMgr, req,
         std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit, sql));
     return true;
 }
@@ -152,7 +152,7 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
         }
     }
     SQLQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
-    toService(ServiceInfoDBMgr, req,
+    toService(STInfoDBMgr, req,
         std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit+100, sql));
 
 }
@@ -192,7 +192,7 @@ void UserMgrService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
 {
     LoadServiceNotice notice;
     rs >> notice;
-    if (notice.serviceType == ServiceUser)
+    if (notice.serviceType == STUser)
     {
         auto founder = _userStatusByID.find(notice.serviceID);
         if (founder == _userStatusByID.end())
@@ -233,7 +233,7 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, z
         DBQuery q(sql);
         q << req.account;
         SQLQueryReq sqlReq(q.pickSQL());
-        toService(ServiceInfoDBMgr, sqlReq,
+        toService(STInfoDBMgr, sqlReq,
             std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
     }
 }
@@ -300,7 +300,7 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
     userBaseInfo.iconID = 0;
 
     SQLQueryReq sql(userBaseInfo.getDBInsert());
-    toService(ServiceInfoDBMgr, sql,
+    toService(STInfoDBMgr, sql,
         std::bind(&UserMgrService::onCreateUserFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, userBaseInfo, req));
 }
 
@@ -372,15 +372,15 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         status._status = SS_INITING;
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
-        LoadServiceInDocker notice(ServiceUser, req.serviceID, status._preview.serviceName, req.clientDockerID, req.clientSessionID);
+        LoadServiceInDocker notice(STUser, req.serviceID, status._preview.serviceName, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDocker(dockerID, notice);
     }
     else if(status._status == SS_WORKING)
     {
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
-        SwitchServiceClient change(ServiceUser, req.serviceID, req.clientDockerID, req.clientSessionID);
-        Docker::getRef().sendToDocker(ServiceUser, req.serviceID, change);
+        SwitchServiceClient change(STUser, req.serviceID, req.clientDockerID, req.clientSessionID);
+        Docker::getRef().sendToDocker(STUser, req.serviceID, change);
     }
     else
     {
@@ -405,8 +405,8 @@ void UserMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::pr
         && founder->second->_clientSessionID == notice.clientSessionID
         && founder->second->_status == SS_WORKING)
     {
-        SwitchServiceClient change(ServiceUser, notice.serviceID, InvalidDockerID, InvalidSessionID);
-        Docker::getRef().sendToDocker(ServiceUser, notice.serviceID, change);
+        SwitchServiceClient change(STUser, notice.serviceID, InvalidDockerID, InvalidSessionID);
+        Docker::getRef().sendToDocker(STUser, notice.serviceID, change);
         founder->second->_lastChangeTime = getNowTime();
         _freeList[notice.serviceID] = founder->second;
     }
