@@ -242,6 +242,28 @@ enum SessionUserData
 };
 
 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os,  SessionStatus ss)
+{
+    switch (ss)
+    {
+    case SSTATUS_TRUST:
+        os << "SSTATUS_TRUST";
+        break;
+    case SSTATUS_AUTHING:
+        os << "SSTATUS_AUTHING";
+        break;
+    case SSTATUS_AUTHED:
+        os << "SSTATUS_AUTHED";
+        break;
+    case SSTATUS_ATTACHED:
+        os << "SSTATUS_ATTACHED";
+        break;
+    default:
+        os << "SSTATUS_UNKNOW";
+        break;
+    }
+    return os;
+}
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DockerConfig & config)
 {
