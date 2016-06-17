@@ -96,7 +96,7 @@ void Docker::destroyCluster()
 
             if (!isSingletonService(svc.second->getServiceType()) && svc.second->getClientSessionID() == InvalidSessionID)
             {
-                LOGD("unload service [" << svc.second->getServiceName() << "] ..");
+                LOGI("unload service [" << svc.second->getServiceName() << "] ..");
                 svc.second->setStatus(SS_UNLOADING);
                 svc.second->onUnload();
             }
@@ -114,7 +114,7 @@ void Docker::destroyCluster()
                 }
                 if (allsubsDestroy)
                 {
-                    LOGD("unload service [" << svc.second->getServiceName() << "] ..");
+                    LOGI("unload service [" << svc.second->getServiceName() << "] ..");
                     svc.second->setStatus(SS_UNLOADING);
                     svc.second->onUnload();
                 }
@@ -692,12 +692,12 @@ void Docker::event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs)
         return;
     }
     auto fder = founder->second.find(change.serviceID);
-    if (fder == founder->second.end() || fder->second->isShell())
+    if (fder == founder->second.end())
     {
         LOGW("event_onSwitchServiceClient can't founder service id. service=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
         return;
     }
-    if (fder->second->getClientSessionID() != InvalidSessionID)
+    if (fder->second->getClientSessionID() != InvalidSessionID && !fder->second->isShell())
     {
         KickRealClient kick(fder->second->getClientSessionID());
         Docker::getRef().sendToDocker(fder->second->getClientDockerID(), kick);
@@ -705,11 +705,11 @@ void Docker::event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs)
     fder->second->setClientSessionID(change.clientSessionID);
     fder->second->setClientDockerID(change.clientDockerID);
     fder->second->onClientChange();
-    SwitchServiceClientNotice notice(change.serviceType, change.serviceID, change.clientDockerID, change.clientSessionID);
-    Docker::getRef().broadcastToDockers(notice, false);
+//    SwitchServiceClientNotice notice(change.serviceType, change.serviceID, change.clientDockerID, change.clientSessionID);
+//    Docker::getRef().broadcastToDockers(notice, false);
 
 
-    if (!isSingletonService(fder->second->getServiceType()))
+    if (!isSingletonService(fder->second->getServiceType()) && !fder->second->isShell())
     {
         RefreshServiceToMgrNotice refreshNotice(
             fder->second->getServiceDockerID(),

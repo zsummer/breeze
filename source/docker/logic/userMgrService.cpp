@@ -367,7 +367,8 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
         SwitchServiceClient change(STUser, req.serviceID, req.clientDockerID, req.clientSessionID);
-        Docker::getRef().sendToDocker(STUser, req.serviceID, change);
+        Docker::getRef().broadcastToDockers(change, true);
+        //Docker::getRef().sendToDocker(STUser, req.serviceID, change);
     }
     else
     {
