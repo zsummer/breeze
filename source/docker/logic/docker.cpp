@@ -411,7 +411,7 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
     founder->second.status = 0;
 }
 
-void Docker::destroyService(ui16 serviceType, ServiceID serviceID)
+void Docker::destroyService(ServiceType serviceType, ServiceID serviceID)
 {
     auto founder = _services.find(serviceType);
     if (founder == _services.end())
@@ -427,7 +427,7 @@ void Docker::destroyService(ui16 serviceType, ServiceID serviceID)
     return;
 }
 
-ServicePtr Docker::createService(DockerID serviceDockerID, ui16 serviceType, ServiceID serviceID, ServiceName serviceName, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit)
+ServicePtr Docker::createService(DockerID serviceDockerID, ServiceType serviceType, ServiceID serviceID, ServiceName serviceName, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit)
 {
     if (isShell)
     {
@@ -1123,7 +1123,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     }
     else
     {
-        LOGE("client unknow proto or wrong status. protoID=" << rs.getProtoID() << ", status=" << (ui16)sessionStatus << ", sessionID=" << session->getSessionID());
+        LOGE("client unknow proto or wrong status. protoID=" << rs.getProtoID() << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
     }
 }
 
@@ -1287,17 +1287,17 @@ void Docker::packetToClientViaDocker(DockerID dockerID, SessionID clientSessionI
 
 void Docker::sendToDocker(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len)
 {
-    LOGT("Docker::sendToDocker serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+    LOGT("Docker::sendToDocker serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
     auto founder = _services.find(serviceType);
     if (founder == _services.end())
     {
-        LOGE("Docker::sendToDocker error. type not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        LOGE("Docker::sendToDocker error. type not found. serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
         return;
     }
     auto fder = founder->second.find(serviceID);
     if (fder == founder->second.end())
     {
-        LOGE("Docker::sendToDocker error. service id not found. serviceType=" << (ui16)serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        LOGE("Docker::sendToDocker error. service id not found. serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
         return;
     }
     sendToDocker(fder->second->getServiceDockerID(), block, len);

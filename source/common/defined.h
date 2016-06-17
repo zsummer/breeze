@@ -198,7 +198,7 @@ struct DockerConfig
     std::string _webIP;
     unsigned short _webPort = 0;
     std::vector<std::string> _whiteList;
-    std::vector<ui16> _services;
+    std::vector<ServiceType> _services;
     DockerID _dockerID = InvalidDockerID;
 };
 

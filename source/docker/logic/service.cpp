@@ -58,7 +58,7 @@ bool Service::finishLoad()
             {
                 if (isSingletonService(sd.first))
                 {
-                    toService((ui16)sd.first, refreshNotice, nullptr);
+                    toService(sd.first, refreshNotice, nullptr);
                 }
             }
         }
@@ -94,7 +94,7 @@ bool Service::finishUnload()
             {
                 if (isSingletonService(sd.first))
                 {
-                    toService((ui16)sd.first, refreshNotice, nullptr);
+                    toService(sd.first, refreshNotice, nullptr);
                 }
             }
         }
@@ -149,7 +149,7 @@ void Service::cleanCallback()
     }
 }
 
-void Service::toService(ui16 serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trace;
     trace.fromServiceType = getServiceType();
@@ -166,7 +166,7 @@ void Service::toService(ui16 serviceType, ServiceID serviceID, const char * bloc
     Docker::getRef().toService(trace, block, len, true, true);
 }
 
-void Service::toService(ui16 serviceType, const char * block, unsigned int len, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb)
 {
     toService(serviceType, InvalidServiceID, block, len, cb);
 }

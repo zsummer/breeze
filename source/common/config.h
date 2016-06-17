@@ -47,7 +47,7 @@ private:
     AreaID _areaid = 0;
     std::vector<DockerConfig> _configDocker;
     std::vector<DBConfig> _configDB;
-    std::map<ui16, std::vector<DockerID> > _configServiceType;
+    std::map<ServiceType, std::vector<DockerID> > _configServiceType;
 
 };
 

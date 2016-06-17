@@ -121,8 +121,8 @@ private:
 
 public:
     //内部接口 
-    ServicePtr createService(DockerID serviceDockerID, ui16 serviceType, ServiceID serviceID, ServiceName serviceName, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit);
-    void destroyService(ui16 serviceType, ServiceID serviceID);
+    ServicePtr createService(DockerID serviceDockerID, ServiceType serviceType, ServiceID serviceID, ServiceName serviceName, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit);
+    void destroyService(ServiceType serviceType, ServiceID serviceID);
 public:
     //内部接口 
     void buildCluster();

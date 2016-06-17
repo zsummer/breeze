@@ -76,7 +76,7 @@ public:
     inline ui16 getStatus() { return _status; }
     inline bool isShell() { return _shell; }
 protected:
-    inline void setServiceType(ui16 serviceType) { _serviceType = serviceType; }
+    inline void setServiceType(ServiceType serviceType) { _serviceType = serviceType; }
     inline void setServiceID(ServiceID serviceID) { _serviceID = serviceID; }
     inline void setServiceName(ServiceName serviceName) { _serviceName = serviceName; }
     inline void setServiceDockerID(DockerID dockerID) { _serviceDockerID = dockerID; }
@@ -108,12 +108,12 @@ protected:
     virtual void process4bind(const Tracing & trace, const std::string & block);
 
 public:
-    void toService(ui16 serviceType, const char * block, unsigned int len, ServiceCallback cb = nullptr);
-    void toService(ui16 serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
-    void toService(ui16 serviceType, Proto proto, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, Proto proto, ServiceCallback cb = nullptr);
     template<class Proto>
-    void toService(ui16 serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb = nullptr);
 
     void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
@@ -131,7 +131,7 @@ private:
     TimerID _timer = InvalidTimerID;
 
 private:
-    ui16 _serviceType = (ui16)InvalidServiceType;
+    ServiceType _serviceType = InvalidServiceType;
     ServiceID _serviceID = InvalidServiceID;
     ServiceName _serviceName = InvalidServiceName;
     DockerID _serviceDockerID = InvalidDockerID; //实际所在的docker
@@ -152,7 +152,7 @@ using ServicePtr = std::shared_ptr<Service>;
 using ServiceWeakPtr = std::shared_ptr<Service>;
 
 template<class Proto>
-void Service::toService(ui16 serviceType, Proto proto, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, Proto proto, ServiceCallback cb)
 {
     try
     {
@@ -166,7 +166,7 @@ void Service::toService(ui16 serviceType, Proto proto, ServiceCallback cb)
     }
 }
 template<class Proto>
-void Service::toService(ui16 serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb)
 {
     try
     {

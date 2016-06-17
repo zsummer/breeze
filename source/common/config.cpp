@@ -177,7 +177,7 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
                 ServiceType serviceType = getServiceTypeByKey(serviceName);
                 if (serviceType != InvalidServiceType)
                 {
-                    lconfig._services.push_back((ui16)serviceType);
+                    lconfig._services.push_back(serviceType);
                 }
                 else
                 {
@@ -210,7 +210,7 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
         {
             continue;
         }
-        auto founder = _configServiceType.find((ui16)sd.first);
+        auto founder = _configServiceType.find(sd.first);
         if (founder == _configServiceType.end() || founder->second.empty())
         {
             LOGE("not found service in docker config. the service name=" << getServiceName(sd.first));
