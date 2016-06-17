@@ -68,28 +68,6 @@ void Docker::stop()
     Docker::getRef().onShutdown();
     ShutdownClusterServer notice;
     Docker::getRef().broadcastToDockers(notice, false);
-
-    for (auto &second : _services)
-    {
-        if (second.first == STClient || second.first == InvalidServiceType)
-        {
-            continue;
-        }
-        for (auto & svc : second.second)
-        {
-            if (!svc.second->isShell())
-            {
-                LOGD("unload service [" << svc.second->getServiceName() << "], cur DockerID=" << svc.second->getServiceDockerID());
-                svc.second->setStatus(SS_UNLOADING);
-                svc.second->onUnload();
-            }
-            else
-            {
-                UnloadServiceInDocker notice(svc.second->getServiceType(), svc.second->getServiceID());
-                sendToDocker((ServiceType)svc.second->getServiceType(), svc.second->getServiceID(), notice);
-            }
-        }
-    }
     LOGA("Docker::stop  broadcast all docker. ");
 }
 
@@ -98,7 +76,7 @@ void Docker::destroyCluster()
     LOGA("Docker::destroyCluster. checking ....");
 
     bool safe =  true;
-    for(auto &second : _services)
+    for (auto &second : _services)
     {
         if (second.first == STClient || second.first == InvalidServiceType)
         {
@@ -106,15 +84,49 @@ void Docker::destroyCluster()
         }
         for (auto & svc : second.second)
         {
-            if (!svc.second->isShell() && (svc.second->getStatus() == SS_WORKING || svc.second->getStatus() == SS_UNLOADING))   //状态判断需要改  
+            safe = false;
+            if (svc.second->isShell())
             {
-                safe = false;
+                continue;
+            }
+            if (svc.second->getStatus() != SS_WORKING)
+            {
+                continue;
+            }
+
+            if (!isSingletonService(svc.second->getServiceType()))
+            {
+                LOGD("unload service [" << svc.second->getServiceName() << "] ..");
+                svc.second->setStatus(SS_UNLOADING);
+                svc.second->onUnload();
+            }
+            else
+            {
+                auto subs = getServiceSubsidiary(svc.second->getServiceType());
+                bool allsubsDestroy = true;
+                for (auto sub : subs)
+                {
+                    if (!peekService(sub).empty())
+                    {
+                        allsubsDestroy = false;
+                        break;
+                    }
+                }
+                if (allsubsDestroy)
+                {
+                    LOGD("unload service [" << svc.second->getServiceName() << "] ..");
+                    svc.second->setStatus(SS_UNLOADING);
+                    svc.second->onUnload();
+                }
             }
         }
     }
+
     if(safe)
     {
+        LOGA("------------------------------------------------------");
         LOGA("all services closed.");
+        LOGA("------------------------------------------------------");
         SessionManager::getRef().kickConnect();
         SessionManager::getRef().stop();
     }
