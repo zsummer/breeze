@@ -24,7 +24,11 @@ void UserMgrService::onTick()
     if (now - _lastTime > 10)
     {
         _lastTime = now;
-        LOGD("UserMgrService::onTick");
+
+
+        LOGI("UserMgrService::onTick balance=" << _balance.getBalanceStatus());
+
+
         for (auto iter = _freeList.begin(); iter != _freeList.end();)
         {
             if (iter->second->_status == SS_WORKING && getNowTime() - iter->second->_lastChangeTime > 30)

@@ -173,6 +173,7 @@ inline float Balance::getBalanceRate()
 inline std::string Balance::getBalanceStatus()
 {
     std::stringstream ss;
+    ss << "[balaceRate:" << getBalanceRate() << "],";
     for (size_t i= 0; i < _balance.size(); ++i)
     {
         ss << "[node=";
