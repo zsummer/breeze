@@ -1,16 +1,16 @@
 Welcome to the breeze wiki!
-#breeze简述  
+## breeze简述  
 [![Build Status](https://travis-ci.org/zsummer/breeze.svg?branch=master)](https://travis-ci.org/zsummer/breeze)  
 breeze是一个C++的轻量级服务器框架, 适合端游/页游/手游/棋牌/IM的分布式服务器端.  
   
-#主要依赖模块  
+## 主要依赖模块  
 DB使用mysql,通过proto4z根据原生数据结构生成对应的SQL模板并通过接口动态生成直接可以交给mysql服务执行的最终的增删改查SQL语句.    
 网络模块部分使用zsummerX.  
 协议解析使用proto4z.  
 日志模块使用log4z.
 
   
-#特点:    
+## 特点:    
   
 总代码量很小 非常轻量级, 可以快速上手使用.  
 使用C++11标准, 在满足高性能的同时满足快速开发要求.  
@@ -47,8 +47,18 @@ DB使用mysql,通过proto4z根据原生数据结构生成对应的SQL模板并�
 2.  添加一个类并继承Service. 可以直接copy shellService然后修改.  
 3.  在docker.cpp中include新添加的文件并在createService中写一行实例化代码.  
 
-#About The Author  
+## About The Author  
 Auther: YaweiZhang  
 Mail: yawei.zhang@foxmail.com  
 GitHub: https://github.com/zsummer  
   
+## Friend Open Source  
+**NoahGameFrame**  
+-  Auther: ketoo  
+-  GitHub: https://github.com/ketoo/NoahGameFrame  
+-  Description: A fast, scalable, distributed game server framework for C++, include actor library, network library,can be used as a real time multiplayer game engine ( MMO RPG ), which plan to support C#/Python/Lua script, and support Unity3d, Cocos2dx, FlashAir client access.  
+   
+**gce**  
+-  Auther: nousxiong  
+-  GitHub: https://github.com/nousxiong/gce  
+-  Description: The Game Communication Environment (GCE) is an actor model framework for online game development.  
