@@ -183,7 +183,7 @@ inline bool isSameDay(time_t first, time_t second, time_t offset)
 
 inline int distanceDays(time_t first, time_t second)
 {
-    return (int)abs((long long)(second - getDaySecond(second)) - (long long)(first - getDaySecond(first))) / 3600 / 24;
+    return (int)std::abs((long long)(second - getDaySecond(second)) - (long long)(first - getDaySecond(first))) / 3600 / 24;
 }
 
 

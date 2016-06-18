@@ -52,9 +52,6 @@ private:
     int _curUnloadModuleCount = 0;
     int _totalModuleCount = 1;
     ModuleData<UserBaseInfo> _baseInfo;
-
-
-    int _testCount = 0;
 };
 
 
