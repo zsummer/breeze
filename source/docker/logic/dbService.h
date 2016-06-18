@@ -39,10 +39,10 @@ public:
     void onTick() override final;
     bool onBuildDB();
 public:
-    void onSQLQueryReq(Tracing trace, ReadStream &rs);
-    void onAsyncSQLQueryReq(DBResultPtr result, Tracing trace);
-    void onSQLQueryArrayReq(Tracing trace, ReadStream &rs);
-    void onAsyncSQLQueryArrayReq(bool ret, std::vector<DBResultPtr> results, Tracing trace);
+    void onDBQueryReq(Tracing trace, ReadStream &rs);
+    void onAsyncDBQueryReq(DBResultPtr result, Tracing trace);
+    void onDBQueryArrayReq(Tracing trace, ReadStream &rs);
+    void onAsyncDBQueryArrayReq(bool ret, std::vector<DBResultPtr> results, Tracing trace);
 
     void onTest(ReadStream & rs);
     template<class T>

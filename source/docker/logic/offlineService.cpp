@@ -27,14 +27,14 @@ void OfflineService::onUnload()
 
 bool OfflineService::onLoad()
 {
-    SQLQueryReq req("SELECT max(id) FROM `tb_UserOffline`");
+    DBQueryReq req("SELECT max(id) FROM `tb_UserOffline`");
     toService(STInfoDBMgr, req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
     return true;
 }
 
 void OfflineService::onLoadMaxOfflineID(zsummer::proto4z::ReadStream &rs)
 {
-    SQLQueryResp resp;
+    DBQueryResp resp;
     rs >> resp;
     if (resp.retCode != EC_SUCCESS || resp.result.qc != QEC_SUCCESS)
     {

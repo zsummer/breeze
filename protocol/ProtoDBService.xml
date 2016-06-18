@@ -10,33 +10,33 @@
 <Proto>
 
 
-    <array name="SQLStringArray" type="string" desc="" />
+    <array name="DBStringArray" type="string" desc="" />
 
-    <packet name="SQLResult" desc="">
+    <packet name="DBDataResult" desc="">
         <member name="qc" type="ui16"  desc=""/>
         <member name="errMsg" type="string"  desc=""/>
         <member name="sql" type="string"  desc=""/>
         <member name="affected" type="ui64"  desc=""/>
-        <member name="fields"  type="SQLStringArray" desc=""/>
+        <member name="fields"  type="DBStringArray" desc=""/>
     </packet>
-    <array name="SQLResultArray" type="SQLResult" desc="" />
+    <array name="DBDataResultArray" type="DBDataResult" desc="" />
 
 
 
-    <packet name="SQLQueryReq" desc= "通用SQL语句执行协议">
+    <packet name="DBQueryReq" desc= "通用SQL语句执行协议">
         <member name="sql" type="string"   desc=""/>
     </packet>
-    <packet name="SQLQueryResp" desc= "通用SQL语句执行协议返回,SQLResult可以借助dbHepler进行构建DBResult">
+    <packet name="DBQueryResp" desc= "通用SQL语句执行协议返回,DBDataResult可以借助dbHepler进行构建DBResult">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="result" type="SQLResult"   desc=""/>
+        <member name="result" type="DBDataResult"   desc=""/>
     </packet>
 
-    <packet name="SQLQueryArrayReq" desc= "通用批量SQL语句执行协议">
-        <member name="sqls" type="SQLStringArray"   desc=""/>
+    <packet name="DBQueryArrayReq" desc= "通用批量SQL语句执行协议">
+        <member name="sqls" type="DBStringArray"   desc=""/>
     </packet>
-    <packet name="SQLQueryArrayResp" desc= "通用批量SQL语句执行协议">
+    <packet name="DBQueryArrayResp" desc= "通用批量SQL语句执行协议">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="results" type="SQLResultArray"   desc="批量返回,注意不要超出协议包最大长度"/>
+        <member name="results" type="DBDataResultArray"   desc="批量返回,注意不要超出协议包最大长度"/>
     </packet>
 
 

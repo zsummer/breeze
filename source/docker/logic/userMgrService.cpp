@@ -80,7 +80,7 @@ bool UserMgrService::onLoad()
     sql = subStringWithoutBack(sql, " ");
     sql += " `tb_UserBaseInfo` ";
     int curLimit = 0;
-    SQLQueryReq req(sql + "limit 0, 100");
+    DBQueryReq req(sql + "limit 0, 100");
     toService(STInfoDBMgr, req,
         std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit, sql));
     return true;
@@ -88,7 +88,7 @@ bool UserMgrService::onLoad()
 
 void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql)
 {
-    SQLQueryResp resp;
+    DBQueryResp resp;
     rs >> resp;
     if (resp.retCode != EC_SUCCESS)
     {
@@ -138,7 +138,7 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
             _nextUserID = up.serviceID;
         }
     }
-    SQLQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
+    DBQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
     toService(STInfoDBMgr, req,
         std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit+100, sql));
 
@@ -219,7 +219,7 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, z
  
         DBQuery q(sql);
         q << req.account;
-        SQLQueryReq sqlReq(q.pickSQL());
+        DBQueryReq sqlReq(q.pickSQL());
         toService(STInfoDBMgr, sqlReq,
             std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
     }
@@ -228,7 +228,7 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
 {
     LOGD("UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB");
     DBResult dbResult;
-    SQLQueryResp sqlResp;
+    DBQueryResp sqlResp;
     rs >> sqlResp;
     dbResult.buildResult((QueryErrorCode)sqlResp.result.qc, sqlResp.result.errMsg, sqlResp.result.sql, sqlResp.result.affected, sqlResp.result.fields);
 
@@ -286,7 +286,7 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
     userBaseInfo.level = 1;
     userBaseInfo.iconID = 0;
 
-    SQLQueryReq sql(userBaseInfo.getDBInsert());
+    DBQueryReq sql(userBaseInfo.getDBInsert());
     toService(STInfoDBMgr, sql,
         std::bind(&UserMgrService::onCreateUserFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, userBaseInfo, req));
 }
@@ -294,7 +294,7 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
 void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req)
 {
     LOGD("UserMgrService::onCreateUserFromUserMgrReqFromDB");
-    SQLQueryResp sqlResp;
+    DBQueryResp sqlResp;
     rs >> sqlResp;
 
     CreateUserFromUserMgrResp resp;

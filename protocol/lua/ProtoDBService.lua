@@ -1,46 +1,46 @@
  
-Proto4z.SQLStringArray = {}  
-Proto4z.SQLStringArray.__protoName = "SQLStringArray" 
-Proto4z.SQLStringArray.__protoDesc = "array" 
-Proto4z.SQLStringArray.__protoTypeV = "string" 
+Proto4z.DBStringArray = {}  
+Proto4z.DBStringArray.__protoName = "DBStringArray" 
+Proto4z.DBStringArray.__protoDesc = "array" 
+Proto4z.DBStringArray.__protoTypeV = "string" 
  
-Proto4z.register(3000,"SQLResult") 
-Proto4z.SQLResult = {}  
-Proto4z.SQLResult.__protoID = 3000 
-Proto4z.SQLResult.__protoName = "SQLResult" 
-Proto4z.SQLResult[1] = {name="qc", type="ui16" }  
-Proto4z.SQLResult[2] = {name="errMsg", type="string" }  
-Proto4z.SQLResult[3] = {name="sql", type="string" }  
-Proto4z.SQLResult[4] = {name="affected", type="ui64" }  
-Proto4z.SQLResult[5] = {name="fields", type="SQLStringArray" }  
+Proto4z.register(3005,"DBDataResult") 
+Proto4z.DBDataResult = {}  
+Proto4z.DBDataResult.__protoID = 3005 
+Proto4z.DBDataResult.__protoName = "DBDataResult" 
+Proto4z.DBDataResult[1] = {name="qc", type="ui16" }  
+Proto4z.DBDataResult[2] = {name="errMsg", type="string" }  
+Proto4z.DBDataResult[3] = {name="sql", type="string" }  
+Proto4z.DBDataResult[4] = {name="affected", type="ui64" }  
+Proto4z.DBDataResult[5] = {name="fields", type="DBStringArray" }  
  
-Proto4z.SQLResultArray = {}  
-Proto4z.SQLResultArray.__protoName = "SQLResultArray" 
-Proto4z.SQLResultArray.__protoDesc = "array" 
-Proto4z.SQLResultArray.__protoTypeV = "SQLResult" 
+Proto4z.DBDataResultArray = {}  
+Proto4z.DBDataResultArray.__protoName = "DBDataResultArray" 
+Proto4z.DBDataResultArray.__protoDesc = "array" 
+Proto4z.DBDataResultArray.__protoTypeV = "DBDataResult" 
  
-Proto4z.register(3001,"SQLQueryReq") 
-Proto4z.SQLQueryReq = {} --通用SQL语句执行协议 
-Proto4z.SQLQueryReq.__protoID = 3001 
-Proto4z.SQLQueryReq.__protoName = "SQLQueryReq" 
-Proto4z.SQLQueryReq[1] = {name="sql", type="string" }  
+Proto4z.register(3006,"DBQueryReq") 
+Proto4z.DBQueryReq = {} --通用SQL语句执行协议 
+Proto4z.DBQueryReq.__protoID = 3006 
+Proto4z.DBQueryReq.__protoName = "DBQueryReq" 
+Proto4z.DBQueryReq[1] = {name="sql", type="string" }  
  
-Proto4z.register(3002,"SQLQueryResp") 
-Proto4z.SQLQueryResp = {} --通用SQL语句执行协议返回,SQLResult可以借助dbHepler进行构建DBResult 
-Proto4z.SQLQueryResp.__protoID = 3002 
-Proto4z.SQLQueryResp.__protoName = "SQLQueryResp" 
-Proto4z.SQLQueryResp[1] = {name="retCode", type="ui16" }  
-Proto4z.SQLQueryResp[2] = {name="result", type="SQLResult" }  
+Proto4z.register(3007,"DBQueryResp") 
+Proto4z.DBQueryResp = {} --通用SQL语句执行协议返回,DBDataResult可以借助dbHepler进行构建DBResult 
+Proto4z.DBQueryResp.__protoID = 3007 
+Proto4z.DBQueryResp.__protoName = "DBQueryResp" 
+Proto4z.DBQueryResp[1] = {name="retCode", type="ui16" }  
+Proto4z.DBQueryResp[2] = {name="result", type="DBDataResult" }  
  
-Proto4z.register(3003,"SQLQueryArrayReq") 
-Proto4z.SQLQueryArrayReq = {} --通用批量SQL语句执行协议 
-Proto4z.SQLQueryArrayReq.__protoID = 3003 
-Proto4z.SQLQueryArrayReq.__protoName = "SQLQueryArrayReq" 
-Proto4z.SQLQueryArrayReq[1] = {name="sqls", type="SQLStringArray" }  
+Proto4z.register(3008,"DBQueryArrayReq") 
+Proto4z.DBQueryArrayReq = {} --通用批量SQL语句执行协议 
+Proto4z.DBQueryArrayReq.__protoID = 3008 
+Proto4z.DBQueryArrayReq.__protoName = "DBQueryArrayReq" 
+Proto4z.DBQueryArrayReq[1] = {name="sqls", type="DBStringArray" }  
  
-Proto4z.register(3004,"SQLQueryArrayResp") 
-Proto4z.SQLQueryArrayResp = {} --通用批量SQL语句执行协议 
-Proto4z.SQLQueryArrayResp.__protoID = 3004 
-Proto4z.SQLQueryArrayResp.__protoName = "SQLQueryArrayResp" 
-Proto4z.SQLQueryArrayResp[1] = {name="retCode", type="ui16" }  
-Proto4z.SQLQueryArrayResp[2] = {name="results", type="SQLResultArray" } --批量返回,注意不要超出协议包最大长度 
+Proto4z.register(3009,"DBQueryArrayResp") 
+Proto4z.DBQueryArrayResp = {} --通用批量SQL语句执行协议 
+Proto4z.DBQueryArrayResp.__protoID = 3009 
+Proto4z.DBQueryArrayResp.__protoName = "DBQueryArrayResp" 
+Proto4z.DBQueryArrayResp[1] = {name="retCode", type="ui16" }  
+Proto4z.DBQueryArrayResp[2] = {name="results", type="DBDataResultArray" } --批量返回,注意不要超出协议包最大长度 

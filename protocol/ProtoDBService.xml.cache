@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>2cbb32d9efa4d4596850cd432ecbf507</cppmd5> 
-<luamd5>900bf790b7efb45da18bb751c57c4bdf</luamd5> 
-<csharpmd5>89f5fb379bb77250965ba365d2ca1a66</csharpmd5> 
-<xmlmd5>7b3ba3bce1b593871b509c436e989e34</xmlmd5> 
+<cppmd5>d9d22c6a7ad520ddf01b32e23805a299</cppmd5> 
+<luamd5>dad051bbb9865a154418f6b51d0f3d2c</luamd5> 
+<csharpmd5>5eed92d9eedf2c1bb427f672b0790db6</csharpmd5> 
+<xmlmd5>a857baf5a8f3a61065fd2df6da388517</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_DBDataResult" Number = "3005" /> 
+    <cache key = "ID_DBQueryArrayReq" Number = "3008" /> 
+    <cache key = "ID_DBQueryArrayResp" Number = "3009" /> 
+    <cache key = "ID_DBQueryReq" Number = "3006" /> 
+    <cache key = "ID_DBQueryResp" Number = "3007" /> 
     <cache key = "ID_SQLQueryArrayReq" Number = "3003" /> 
     <cache key = "ID_SQLQueryArrayResp" Number = "3004" /> 
     <cache key = "ID_SQLQueryReq" Number = "3001" /> 
