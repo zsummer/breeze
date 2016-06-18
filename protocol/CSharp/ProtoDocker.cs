@@ -26,8 +26,8 @@ namespace Proto4z
     public class SessionPulse: Proto4z.IProtoObject //对于建立了UserService的客户端,通过该消息驱动onTick  
     {     
         //proto id   
-        public const ushort protoID = 2014;  
-        static public ushort getProtoID() { return 2014; } 
+        public const ushort protoID = 2001;  
+        static public ushort getProtoID() { return 2001; } 
         static public string getProtoName() { return "SessionPulse"; } 
         //members   
         public ulong serviceID;  
@@ -55,8 +55,8 @@ namespace Proto4z
     public class LoadServiceInDocker: Proto4z.IProtoObject //在Docker中装载一个Service  
     {     
         //proto id   
-        public const ushort protoID = 2001;  
-        static public ushort getProtoID() { return 2001; } 
+        public const ushort protoID = 2002;  
+        static public ushort getProtoID() { return 2002; } 
         static public string getProtoName() { return "LoadServiceInDocker"; } 
         //members   
         public ushort serviceType;  
@@ -104,8 +104,8 @@ namespace Proto4z
     public class LoadServiceNotice: Proto4z.IProtoObject //通知其他Docker有Service已装载  
     {     
         //proto id   
-        public const ushort protoID = 2002;  
-        static public ushort getProtoID() { return 2002; } 
+        public const ushort protoID = 2003;  
+        static public ushort getProtoID() { return 2003; } 
         static public string getProtoName() { return "LoadServiceNotice"; } 
         //members   
         public uint serviceDockerID;  
@@ -163,8 +163,8 @@ namespace Proto4z
     public class RefreshServiceToMgrNotice: Proto4z.IProtoObject //Multi-Servie发生状态变化时候通知给管理器  
     {     
         //proto id   
-        public const ushort protoID = 2003;  
-        static public ushort getProtoID() { return 2003; } 
+        public const ushort protoID = 2004;  
+        static public ushort getProtoID() { return 2004; } 
         static public string getProtoName() { return "RefreshServiceToMgrNotice"; } 
         //members   
         public uint serviceDockerID;  

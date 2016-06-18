@@ -25,6 +25,27 @@
 
 
 
+bool DBDict::initHelper()
+{
+    auto dbconfigs = ServerConfig::getRef().getDBConfig();
+    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STDictDBMgr"; });
+    if (founder == dbconfigs.end())
+    {
+        LOGE("STDictDBMgr not found");
+        return false;
+    }
+    _dictHelper = std::make_shared<DBHelper>();
+    _dictHelper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
+    if (!_dictHelper->connect())
+    {
+        LOGE("can't connect mysql STDictDBMgr. config=" << *founder);
+        return false;
+    }
+    return true;
+}
+
+
+
 
 
 

@@ -8,7 +8,7 @@ typedef std::vector<std::string> DBStringArray;
  
 struct DBDataResult 
 { 
-    static const unsigned short getProtoID() { return 3005;} 
+    static const unsigned short getProtoID() { return 3000;} 
     static const std::string getProtoName() { return "DBDataResult";} 
     unsigned short qc;  
     std::string errMsg;  
@@ -64,7 +64,7 @@ typedef std::vector<DBDataResult> DBDataResultArray;
  
 struct DBQueryReq //通用SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 3006;} 
+    static const unsigned short getProtoID() { return 3001;} 
     static const std::string getProtoName() { return "DBQueryReq";} 
     std::string sql;  
     DBQueryReq() 
@@ -95,7 +95,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryResp //通用SQL语句执行协议返回,DBDataResult可以借助dbHepler进行构建DBResult  
 { 
-    static const unsigned short getProtoID() { return 3007;} 
+    static const unsigned short getProtoID() { return 3002;} 
     static const std::string getProtoName() { return "DBQueryResp";} 
     unsigned short retCode;  
     DBDataResult result;  
@@ -132,7 +132,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryArrayReq //通用批量SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 3008;} 
+    static const unsigned short getProtoID() { return 3003;} 
     static const std::string getProtoName() { return "DBQueryArrayReq";} 
     DBStringArray sqls;  
     DBQueryArrayReq() 
@@ -163,7 +163,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryArrayResp //通用批量SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 3009;} 
+    static const unsigned short getProtoID() { return 3004;} 
     static const std::string getProtoName() { return "DBQueryArrayResp";} 
     unsigned short retCode;  
     DBDataResultArray results; //批量返回,注意不要超出协议包最大长度  

@@ -24,8 +24,8 @@ namespace Proto4z
     public class Tracing: Proto4z.IProtoObject //docker间追踪数据  
     {     
         //proto id   
-        public const ushort protoID = 1004;  
-        static public ushort getProtoID() { return 1004; } 
+        public const ushort protoID = 1000;  
+        static public ushort getProtoID() { return 1000; } 
         static public string getProtoName() { return "Tracing"; } 
         //members   
         public uint toDockerID; //forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID   
@@ -88,8 +88,8 @@ namespace Proto4z
     public class UserPreview: Proto4z.IProtoObject //用户预览信息  
     {     
         //proto id   
-        public const ushort protoID = 1000;  
-        static public ushort getProtoID() { return 1000; } 
+        public const ushort protoID = 1001;  
+        static public ushort getProtoID() { return 1001; } 
         static public string getProtoName() { return "UserPreview"; } 
         //members   
         public ulong serviceID; //用户唯一ID  
@@ -197,8 +197,8 @@ namespace Proto4z
     public class UserBaseInfo: Proto4z.IProtoObject //用户基础数据  
     {     
         //proto id   
-        public const ushort protoID = 1001;  
-        static public ushort getProtoID() { return 1001; } 
+        public const ushort protoID = 1002;  
+        static public ushort getProtoID() { return 1002; } 
         static public string getProtoName() { return "UserBaseInfo"; } 
         //members   
         public ulong serviceID; //用户唯一ID  
@@ -277,8 +277,8 @@ namespace Proto4z
     public class MoneyTree: Proto4z.IProtoObject //摇钱树功能模块  
     {     
         //proto id   
-        public const ushort protoID = 1002;  
-        static public ushort getProtoID() { return 1002; } 
+        public const ushort protoID = 1003;  
+        static public ushort getProtoID() { return 1003; } 
         static public string getProtoName() { return "MoneyTree"; } 
         //members   
         public uint lastTime; //最后一次执行时间  
@@ -326,8 +326,8 @@ namespace Proto4z
     public class SimplePack: Proto4z.IProtoObject //简单示例  
     {     
         //proto id   
-        public const ushort protoID = 1003;  
-        static public ushort getProtoID() { return 1003; } 
+        public const ushort protoID = 1004;  
+        static public ushort getProtoID() { return 1004; } 
         static public string getProtoName() { return "SimplePack"; } 
         //members   
         public uint id; //id, 对应数据库的结构为自增ID,key  

@@ -27,20 +27,94 @@
 #include "single.h"
 #include "dbAsync.h"
 #include "utls.h"
+#include <ProtoDict.h>
 
 template<class Packet>
 bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)>);
 
+template<class Packet>
+bool buildDict(DBHelperPtr helper);
+
+#define DefaultDefineDict(dict) public: 
 
 
 class DBDict : public Singleton<DBDict>
 {
-public:
+private:
+    DBHelperPtr _dictHelper;
+    std::map<ui32, DictGlobal> _dictGlobal;
+    std::map<ui32, DictRafflePool> _dictRafflePool;
+    std::map<ui32, DictFightEffect> _dictFightEffect;
+    std::map<ui32, DictItem> _dictItem;
 
 public:
+    bool initHelper();
 
+    inline bool buildDictTable()
+    {
+        buildDict<DictGlobal>(_dictHelper);
+        buildDict<DictRafflePool>(_dictHelper);
+        buildDict<DictFightEffect>(_dictHelper);
+        buildDict<DictItem>(_dictHelper);
+        return true;
+    }
+
+
+public:
+    inline bool DBDict::load()
+    {
+        if (!fetchDict<DictGlobal>(_dictHelper, [this](const DictGlobal & dict)
+        {
+            _dictGlobal[dict.id] = dict;
+        }))
+        {
+            LOGE("fetchDict DictGlobal error");
+            return false;
+        }
+
+
+        if (!fetchDict<DictRafflePool>(_dictHelper, [this](const DictRafflePool & dict)
+        {
+            _dictRafflePool[dict.id] = dict;
+        }))
+        {
+            LOGE("fetchDict DictRafflePool error");
+            return false;
+        }
+
+
+        if (!fetchDict<DictFightEffect>(_dictHelper, [this](const DictFightEffect & dict)
+        {
+            _dictFightEffect[dict.id] = dict;
+        }))
+        {
+            LOGE("fetchDict DictFightEffect error");
+            return false;
+        }
+
+
+        if (!fetchDict<DictItem>(_dictHelper, [this](const DictItem & dict)
+        {
+            _dictItem[dict.id] = dict;
+        }))
+        {
+            LOGE("fetchDict DictItem error");
+            return false;
+        }
+
+        return true;
+    }
 
 };
+
+
+
+
+
+
+
+
+
 
 template<class Packet>
 bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)> cb)
@@ -68,7 +142,7 @@ bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)> cb)
         Packet pkt;
         while(result->haveRow())
         {
-            auto ret = pkt.fetchFromDBResult(result);
+            auto ret = pkt.fetchFromDBResult(*result);
             if (!ret)
             {
                 LOGE("fetchDict errror when fetchFromDBResult to packet. dict name=" << Packet::getProtoName());
@@ -80,10 +154,16 @@ bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)> cb)
     return true;
 }
 
-
-
-
-
+template<class Packet>
+bool buildDict(DBHelperPtr helper)
+{
+    auto sqls = Packet().getDBBuild();
+    for (auto sql : sqls)
+    {
+        helper->query(sql);
+    }
+    return true;
+}
 
 
 

@@ -4,15 +4,15 @@ Proto4z.DockerPulse = {} --集群脉冲
 Proto4z.DockerPulse.__protoID = 2000 
 Proto4z.DockerPulse.__protoName = "DockerPulse" 
  
-Proto4z.register(2014,"SessionPulse") 
+Proto4z.register(2001,"SessionPulse") 
 Proto4z.SessionPulse = {} --对于建立了UserService的客户端,通过该消息驱动onTick 
-Proto4z.SessionPulse.__protoID = 2014 
+Proto4z.SessionPulse.__protoID = 2001 
 Proto4z.SessionPulse.__protoName = "SessionPulse" 
 Proto4z.SessionPulse[1] = {name="serviceID", type="ui64" }  
  
-Proto4z.register(2001,"LoadServiceInDocker") 
+Proto4z.register(2002,"LoadServiceInDocker") 
 Proto4z.LoadServiceInDocker = {} --在Docker中装载一个Service 
-Proto4z.LoadServiceInDocker.__protoID = 2001 
+Proto4z.LoadServiceInDocker.__protoID = 2002 
 Proto4z.LoadServiceInDocker.__protoName = "LoadServiceInDocker" 
 Proto4z.LoadServiceInDocker[1] = {name="serviceType", type="ui16" }  
 Proto4z.LoadServiceInDocker[2] = {name="serviceID", type="ui64" }  
@@ -20,9 +20,9 @@ Proto4z.LoadServiceInDocker[3] = {name="serviceName", type="string" }
 Proto4z.LoadServiceInDocker[4] = {name="clientDockerID", type="ui32" }  
 Proto4z.LoadServiceInDocker[5] = {name="clientSessionID", type="ui32" }  
  
-Proto4z.register(2002,"LoadServiceNotice") 
+Proto4z.register(2003,"LoadServiceNotice") 
 Proto4z.LoadServiceNotice = {} --通知其他Docker有Service已装载 
-Proto4z.LoadServiceNotice.__protoID = 2002 
+Proto4z.LoadServiceNotice.__protoID = 2003 
 Proto4z.LoadServiceNotice.__protoName = "LoadServiceNotice" 
 Proto4z.LoadServiceNotice[1] = {name="serviceDockerID", type="ui32" }  
 Proto4z.LoadServiceNotice[2] = {name="serviceType", type="ui16" }  
@@ -32,9 +32,9 @@ Proto4z.LoadServiceNotice[5] = {name="status", type="ui16" }
 Proto4z.LoadServiceNotice[6] = {name="clientDockerID", type="ui32" }  
 Proto4z.LoadServiceNotice[7] = {name="clientSessionID", type="ui32" }  
  
-Proto4z.register(2003,"RefreshServiceToMgrNotice") 
+Proto4z.register(2004,"RefreshServiceToMgrNotice") 
 Proto4z.RefreshServiceToMgrNotice = {} --Multi-Servie发生状态变化时候通知给管理器 
-Proto4z.RefreshServiceToMgrNotice.__protoID = 2003 
+Proto4z.RefreshServiceToMgrNotice.__protoID = 2004 
 Proto4z.RefreshServiceToMgrNotice.__protoName = "RefreshServiceToMgrNotice" 
 Proto4z.RefreshServiceToMgrNotice[1] = {name="serviceDockerID", type="ui32" }  
 Proto4z.RefreshServiceToMgrNotice[2] = {name="serviceType", type="ui16" }  

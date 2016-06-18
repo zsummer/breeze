@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>9bec0e4ccfa920a3137c2bee52d5d5db</cppmd5> 
+<luamd5>0182783f74472fb014d0cbe7affac88b</luamd5> 
+<csharpmd5>136aaf72bbbdffdfa895a8048e1ffcb3</csharpmd5> 
+<xmlmd5>b14116681d78d9284691b6cbf9b85ac0</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_DictFightEffect" Number = "10002" /> 
+    <cache key = "ID_DictGlobal" Number = "10000" /> 
+    <cache key = "ID_DictItem" Number = "10003" /> 
+    <cache key = "ID_DictRafflePool" Number = "10001" /> 
+</cacheNumber>

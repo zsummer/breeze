@@ -6,9 +6,9 @@ config.areaid = 1000
 
 config.db = 
 {
-    STDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
-    STInfoDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
-    STLogDBMgr = {ip = "127.0.0.1", port = 3306, db = "db_info", user = "root", pwd = "123456"},
+    STDictDBMgr = {ip = "127.0.0.1", port = 3306, db = "dict", user = "root", pwd = "123456"},
+    STInfoDBMgr = {ip = "127.0.0.1", port = 3306, db = "info", user = "root", pwd = "123456"},
+    STLogDBMgr = {ip = "127.0.0.1", port = 3306, db = "log", user = "root", pwd = "123456"},
 }
 
 config.docker = 

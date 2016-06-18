@@ -13,6 +13,7 @@
 #include <ProtoDocker.h>
 
 
+
 Docker::Docker()
 {
 
@@ -30,6 +31,22 @@ bool Docker::init(const std::string & config, DockerID idx)
         LOGE("Docker::init error. current docker id invalid. config path=" << config << ", docker ID = " << idx);
         return false;
     }
+    if (!DBDict::getRef().initHelper())
+    {
+        LOGE("Docker::init error. DBDict initHelper error. ");
+        return false;
+    }
+    if (!DBDict::getRef().buildDictTable())
+    {
+        LOGE("Docker::init error. DBDict buildDictTable error. ");
+        return false;
+    }
+    if (!DBDict::getRef().load())
+    {
+        LOGE("Docker::init error. DBDict load error. ");
+        return false;
+    }
+
     const auto & dockers = ServerConfig::getRef().getDockerConfig();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())

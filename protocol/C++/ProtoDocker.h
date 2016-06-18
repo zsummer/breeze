@@ -25,7 +25,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SessionPulse //对于建立了UserService的客户端,通过该消息驱动onTick  
 { 
-    static const unsigned short getProtoID() { return 2014;} 
+    static const unsigned short getProtoID() { return 2001;} 
     static const std::string getProtoName() { return "SessionPulse";} 
     unsigned long long serviceID;  
     SessionPulse() 
@@ -57,7 +57,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct LoadServiceInDocker //在Docker中装载一个Service  
 { 
-    static const unsigned short getProtoID() { return 2001;} 
+    static const unsigned short getProtoID() { return 2002;} 
     static const std::string getProtoName() { return "LoadServiceInDocker";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
@@ -112,7 +112,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct LoadServiceNotice //通知其他Docker有Service已装载  
 { 
-    static const unsigned short getProtoID() { return 2002;} 
+    static const unsigned short getProtoID() { return 2003;} 
     static const std::string getProtoName() { return "LoadServiceNotice";} 
     unsigned int serviceDockerID;  
     unsigned short serviceType;  
@@ -179,7 +179,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct RefreshServiceToMgrNotice //Multi-Servie发生状态变化时候通知给管理器  
 { 
-    static const unsigned short getProtoID() { return 2003;} 
+    static const unsigned short getProtoID() { return 2004;} 
     static const std::string getProtoName() { return "RefreshServiceToMgrNotice";} 
     unsigned int serviceDockerID;  
     unsigned short serviceType;  

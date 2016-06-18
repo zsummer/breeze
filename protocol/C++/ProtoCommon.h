@@ -24,7 +24,7 @@ enum  : unsigned short
  
 struct Tracing //docker间追踪数据  
 { 
-    static const unsigned short getProtoID() { return 1004;} 
+    static const unsigned short getProtoID() { return 1000;} 
     static const std::string getProtoName() { return "Tracing";} 
     unsigned int toDockerID; //forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID   
     unsigned short toServiceType;  
@@ -98,7 +98,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UserPreview //用户预览信息  
 { 
-    static const unsigned short getProtoID() { return 1000;} 
+    static const unsigned short getProtoID() { return 1001;} 
     static const std::string getProtoName() { return "UserPreview";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -248,7 +248,7 @@ typedef std::vector<unsigned long long> ServiceIDArray;
  
 struct UserBaseInfo //用户基础数据  
 { 
-    static const unsigned short getProtoID() { return 1001;} 
+    static const unsigned short getProtoID() { return 1002;} 
     static const std::string getProtoName() { return "UserBaseInfo";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -395,7 +395,7 @@ typedef std::vector<UserBaseInfo> UserBaseInfoArray;
  
 struct MoneyTree //摇钱树功能模块  
 { 
-    static const unsigned short getProtoID() { return 1002;} 
+    static const unsigned short getProtoID() { return 1003;} 
     static const std::string getProtoName() { return "MoneyTree";} 
     unsigned int lastTime; //最后一次执行时间  
     unsigned int freeCount; //今日剩余免费次数  
@@ -451,7 +451,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SimplePack //简单示例  
 { 
-    static const unsigned short getProtoID() { return 1003;} 
+    static const unsigned short getProtoID() { return 1004;} 
     static const std::string getProtoName() { return "SimplePack";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -488,8 +488,8 @@ const std::vector<std::string>  SimplePack::getDBBuild()
     ret.push_back("alter table `tb_SimplePack` change `name`  `name`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_SimplePack` add `createTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_SimplePack` change `createTime`  `createTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_SimplePack` add `moneyTree`  blob "); 
-    ret.push_back("alter table `tb_SimplePack` change `moneyTree`  `moneyTree`  blob "); 
+    ret.push_back("alter table `tb_SimplePack` add `moneyTree`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_SimplePack` change `moneyTree`  `moneyTree`  longblob NOT NULL "); 
     return std::move(ret); 
 } 
 std::string  SimplePack::getDBSelect() 

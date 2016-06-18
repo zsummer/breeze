@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>96ad22f688e6fd18a82468b900902a0e</cppmd5> 
-<luamd5>7ac49a66937e3e067050d353a8338b8e</luamd5> 
-<csharpmd5>abf2bc9cc29ad39449641e89ab073526</csharpmd5> 
+<cppmd5>bb32c69f7c78ce9e11aea01016709484</cppmd5> 
+<luamd5>7b116631c292fad3a07ce8a9c50f2cb9</luamd5> 
+<csharpmd5>5d01613e1136bdb04ca421f852d508da</csharpmd5> 
 <xmlmd5>63e1c4d669102a01a4aa18ac4b48971e</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_WebAgentClientRequestAPI" Number = "5105" /> 
-    <cache key = "ID_WebAgentRequest" Number = "5103" /> 
-    <cache key = "ID_WebAgentResponse" Number = "5104" /> 
-    <cache key = "ID_WebAgentServerAPI" Number = "5102" /> 
-    <cache key = "ID_WebAgentToClient" Number = "5101" /> 
-    <cache key = "ID_WebAgentToService" Number = "5100" /> 
-    <cache key = "ID_WebServerRequest" Number = "5106" /> 
-    <cache key = "ID_WebServerResponse" Number = "5107" /> 
+    <cache key = "ID_WebAgentClientRequestAPI" Number = "5100" /> 
+    <cache key = "ID_WebServerRequest" Number = "5101" /> 
+    <cache key = "ID_WebServerResponse" Number = "5102" /> 
 </cacheNumber>
