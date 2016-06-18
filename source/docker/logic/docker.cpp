@@ -680,21 +680,21 @@ void Docker::event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs)
     }
 }
 
-void Docker::event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs)
+void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream & rs)
 {
-    SwitchServiceClient change;
+    SwitchServiceClientNotice change;
     rs >> change;
-    LOGI("Docker::event_onSwitchServiceClient type=" << change.serviceType << ", id=" << change.serviceID);
+    LOGI("Docker::event_onSwitchServiceClientNotice type=" << change.serviceType << ", id=" << change.serviceID);
     auto founder = _services.find(change.serviceType);
     if (founder == _services.end())
     {
-        LOGW("event_onSwitchServiceClient can't founder service type. service=" << getServiceName(change.serviceType));
+        LOGW("event_onSwitchServiceClientNotice can't founder service type. service=" << getServiceName(change.serviceType));
         return;
     }
     auto fder = founder->second.find(change.serviceID);
     if (fder == founder->second.end())
     {
-        LOGW("event_onSwitchServiceClient can't founder service id. service=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
+        LOGW("event_onSwitchServiceClientNotice can't founder service id. service=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
         return;
     }
     if (fder->second->getClientSessionID() != InvalidSessionID && !fder->second->isShell())
@@ -705,8 +705,7 @@ void Docker::event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs)
     fder->second->setClientSessionID(change.clientSessionID);
     fder->second->setClientDockerID(change.clientDockerID);
     fder->second->onClientChange();
-//    SwitchServiceClientNotice notice(change.serviceType, change.serviceID, change.clientDockerID, change.clientSessionID);
-//    Docker::getRef().broadcastToDockers(notice, false);
+
 
 
     if (!isSingletonService(fder->second->getServiceType()) && !fder->second->isShell())
@@ -728,30 +727,7 @@ void Docker::event_onSwitchServiceClient(TcpSessionPtr session, ReadStream & rs)
         }
     }
 }
-void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream & rs)
-{
-    SwitchServiceClientNotice change;
-    rs >> change;
-    LOGI("Docker::event_onSwitchServiceClient type=" << change.serviceType << ", id=" << change.serviceID);
 
-    auto founder = _services.find(change.serviceType);
-    if (founder == _services.end())
-    {
-        LOGE("event_onSwitchServiceClientNotice can't founder shell service type. type=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
-        return;
-    }
-    auto fder = founder->second.find(change.serviceID);
-    if (fder != founder->second.end() && fder->second)
-    {
-        fder->second->setClientSessionID(change.clientSessionID);
-        fder->second->setClientDockerID(change.clientDockerID);
-        fder->second->onClientChange();
-    }
-    else
-    {
-        LOGE("event_onSwitchServiceClientNotice can't founder shell service id. type=" << getServiceName(change.serviceType) << ", id=" << change.serviceID);
-    }
-}
 
 
 void Docker::event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs)
@@ -848,16 +824,12 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onLoadServiceNotice(session, rsShell);
         return;
     }
-    else if (rsShell.getProtoID() == SwitchServiceClient::getProtoID())
-    {
-        event_onSwitchServiceClient(session, rsShell);
-        return;
-    }
     else if (rsShell.getProtoID() == SwitchServiceClientNotice::getProtoID())
     {
         event_onSwitchServiceClientNotice(session, rsShell);
         return;
     }
+
 
     else if (rsShell.getProtoID() == KickRealClient::getProtoID())
     {

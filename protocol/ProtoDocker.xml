@@ -43,14 +43,9 @@
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
 
-    <packet name="SwitchServiceClient" desc= "更改clientID">
-        <member name="serviceType" type="ui16"   desc=""/>
-        <member name="serviceID" type="ui64"   desc=""/>
-        <member name="clientDockerID" type="ui32"   desc=""/>
-        <member name="clientSessionID" type="ui32"   desc=""/>
-    </packet>
 
-    <packet name="SwitchServiceClientNotice" desc= "更改clientID">
+
+    <packet name="SwitchServiceClientNoticeNotice" desc= "更改clientID">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>

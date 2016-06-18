@@ -244,56 +244,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SwitchServiceClient //更改clientID  
-{ 
-    static const unsigned short getProtoID() { return 2004;} 
-    static const std::string getProtoName() { return "SwitchServiceClient";} 
-    unsigned short serviceType;  
-    unsigned long long serviceID;  
-    unsigned int clientDockerID;  
-    unsigned int clientSessionID;  
-    SwitchServiceClient() 
-    { 
-        serviceType = 0; 
-        serviceID = 0; 
-        clientDockerID = 0; 
-        clientSessionID = 0; 
-    } 
-    SwitchServiceClient(const unsigned short & serviceType, const unsigned long long & serviceID, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
-    { 
-        this->serviceType = serviceType; 
-        this->serviceID = serviceID; 
-        this->clientDockerID = clientDockerID; 
-        this->clientSessionID = clientSessionID; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SwitchServiceClient & data) 
-{ 
-    ws << data.serviceType;  
-    ws << data.serviceID;  
-    ws << data.clientDockerID;  
-    ws << data.clientSessionID;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SwitchServiceClient & data) 
-{ 
-    rs >> data.serviceType;  
-    rs >> data.serviceID;  
-    rs >> data.clientDockerID;  
-    rs >> data.clientSessionID;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SwitchServiceClient & info) 
-{ 
-    stm << "[\n"; 
-    stm << "serviceType=" << info.serviceType << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
-    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
 struct SwitchServiceClientNotice //更改clientID  
 { 
     static const unsigned short getProtoID() { return 2005;} 

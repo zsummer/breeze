@@ -44,15 +44,6 @@ Proto4z.RefreshServiceToMgrNotice[5] = {name="status", type="ui16" }
 Proto4z.RefreshServiceToMgrNotice[6] = {name="clientDockerID", type="ui32" }  
 Proto4z.RefreshServiceToMgrNotice[7] = {name="clientSessionID", type="ui32" }  
  
-Proto4z.register(2004,"SwitchServiceClient") 
-Proto4z.SwitchServiceClient = {} --更改clientID 
-Proto4z.SwitchServiceClient.__protoID = 2004 
-Proto4z.SwitchServiceClient.__protoName = "SwitchServiceClient" 
-Proto4z.SwitchServiceClient[1] = {name="serviceType", type="ui16" }  
-Proto4z.SwitchServiceClient[2] = {name="serviceID", type="ui64" }  
-Proto4z.SwitchServiceClient[3] = {name="clientDockerID", type="ui32" }  
-Proto4z.SwitchServiceClient[4] = {name="clientSessionID", type="ui32" }  
- 
 Proto4z.register(2005,"SwitchServiceClientNotice") 
 Proto4z.SwitchServiceClientNotice = {} --更改clientID 
 Proto4z.SwitchServiceClientNotice.__protoID = 2005 

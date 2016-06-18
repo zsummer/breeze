@@ -366,7 +366,7 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
     {
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
-        SwitchServiceClient change(STUser, req.serviceID, req.clientDockerID, req.clientSessionID);
+        SwitchServiceClientNotice change(STUser, req.serviceID, req.clientDockerID, req.clientSessionID);
         Docker::getRef().broadcastToDockers(change, true);
         //Docker::getRef().sendToDocker(STUser, req.serviceID, change);
     }
@@ -393,7 +393,7 @@ void UserMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::pr
         && founder->second->_clientSessionID == notice.clientSessionID
         && founder->second->_status == SS_WORKING)
     {
-        SwitchServiceClient change(STUser, notice.serviceID, InvalidDockerID, InvalidSessionID);
+        SwitchServiceClientNotice change(STUser, notice.serviceID, InvalidDockerID, InvalidSessionID);
         Docker::getRef().sendToDocker(STUser, notice.serviceID, change);
         founder->second->_lastChangeTime = getNowTime();
         _freeList[notice.serviceID] = founder->second;
