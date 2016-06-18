@@ -73,36 +73,6 @@ typedef std::shared_ptr<DBAsync> DBAsyncPtr;
 
 
 
-template<class Org, class MapOrg, class PageKey>
-class StorageHelper
-{
-public:
-    inline MapOrg & getMapOrg(){ return _alldata; }
-    inline bool hadMapOrg(){ return _hadAlldata; }
-    inline Org & getOrg(){ return _data; }    
-    inline bool hadOrg(){ return _hadData; }
-
-public:
-    std::function<MapOrg(DBResultPtr)> _fetchAllFunction;
-    std::function<bool (DBResultPtr, Org & info)> _fetchFunction;
-    std::function<PageKey(const MapOrg & curMap, PageKey lastKey)> _fetchNextKeyFunction;
-private:
-    MapOrg _alldata;
-    bool _hadAlldata = false;
-    Org _data;
-    bool _hadData = false;
-    std::vector<std::string> _buildSql; //0 desc, 1 create, 2,3,4, alter
-    std::string _loadSql;
-    std::string _selectSql;
-    std::string _updateSql;
-    std::string _insertSql;
-
-    PageKey _lastKey;
-    bool _needInsert = true;
-    bool _dirty = false; //set diry  when need insert or need update when inserting or updating.
-};
-
-
 
 
 

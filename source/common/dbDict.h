@@ -25,9 +25,11 @@
 
 #include "defined.h"
 #include "single.h"
+#include "dbAsync.h"
+#include "utls.h"
 
-
-
+template<class Packet>
+bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)>);
 
 
 
@@ -40,7 +42,43 @@ public:
 
 };
 
-
+template<class Packet>
+bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)> cb)
+{
+    auto sql = Packet().getDBSelectPure();
+    int cursor = 0;
+    DBResultPtr result;
+    do
+    {
+        result = helper->query(sql + " limit " + toString(cursor) + ", 100");
+        if(!result)
+        {
+            LOGE("fetchDict error. dict name=" << Packet::getProtoName());
+            return false;
+        }
+        if (result->getErrorCode() != QEC_SUCCESS)
+        {
+            LOGE("fetchDict error. dict name=" << Packet::getProtoName() << ", error=" << result->getErrorMsg());
+            return false;
+        }
+        if (!result->haveRow())
+        {
+            break;
+        }
+        Packet pkt;
+        while(result->haveRow())
+        {
+            auto ret = pkt.fetchFromDBResult(result);
+            if (!ret)
+            {
+                LOGE("fetchDict errror when fetchFromDBResult to packet. dict name=" << Packet::getProtoName());
+                return false;
+            }
+            cb(pkt);
+        }
+    }while(true);
+    return true;
+}
 
 
 
