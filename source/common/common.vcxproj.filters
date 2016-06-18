@@ -103,6 +103,7 @@
     <ClInclude Include="utlsImpl.h" />
     <ClInclude Include="balance.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="dbDict.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
@@ -225,6 +226,7 @@
     </ClCompile>
     <ClCompile Include="utls.cpp" />
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="dbDict.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lua">

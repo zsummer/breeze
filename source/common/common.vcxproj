@@ -15,6 +15,7 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="dbAsync.h" />
+    <ClInclude Include="dbDict.h" />
     <ClInclude Include="genID.h" />
     <ClInclude Include="defined.h" />
     <ClInclude Include="lua\fpconv.h" />
@@ -55,6 +56,7 @@
   <ItemGroup>
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dbAsync.cpp" />
+    <ClCompile Include="dbDict.cpp" />
     <ClCompile Include="lua\fpconv.c" />
     <ClCompile Include="lua\lapi.c" />
     <ClCompile Include="lua\lauxlib.c" />
