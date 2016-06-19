@@ -40,21 +40,21 @@ bool buildDict(DBHelperPtr helper);
 
 class DBDict : public Singleton<DBDict>
 {
+public:
+    bool initHelper();
+    bool buildDictTable();
+    bool load();
+    
+
+
+
+
 private:
     DBHelperPtr _dictHelper;
     std::map<ui32, DictGlobal> _dictGlobal;
     std::map<ui32, DictRafflePool> _dictRafflePool;
     std::map<ui32, DictFightEffect> _dictFightEffect;
     std::map<ui32, DictItem> _dictItem;
-
-public:
-    bool initHelper();
-
-    bool buildDictTable();
-
-    bool load();
-    
-
 };
 
 

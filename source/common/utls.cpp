@@ -385,46 +385,6 @@ std::string trim(const std::string &str, const std::string & ign, int both)
 }
 
 
-std::pair<std::string, std::string> splitPairString(const std::string & str, const std::string & delimiter)
-{
-    std::string::size_type pos = str.find(delimiter.c_str());
-    if (pos == std::string::npos)
-    {
-        return std::make_pair(str, "");
-    }
-    return std::make_pair(str.substr(0, pos), str.substr(pos + delimiter.length()));
-}
-
-std::vector<std::string> splitString(std::string text, const std::string & deli, const std::string & ign)
-{
-    text = trim(text, ign);
-    std::vector<std::string> ret;
-    if (deli.empty())
-    {
-        ret.push_back(text);
-        ret.back() = trim(ret.back(), ign);
-        return std::move(ret);
-    }
-    size_t beginPos = 0;
-    std::string matched;
-    for (size_t i = 0; i < text.length(); i++)
-    {
-        if ((matched.empty() && text[i] == deli[0]) || !matched.empty() )
-        {
-            matched.push_back(text[i]);
-        }
-        if (matched == deli)
-        {
-            ret.push_back(text.substr(beginPos, i + 1 - deli.length() - beginPos));
-            ret.back() = trim(ret.back(), ign);
-            beginPos = i + 1;
-            matched.clear();
-        }
-    }
-    ret.push_back(text.substr(beginPos, text.length() - beginPos));
-    ret.back() = trim(ret.back(), ign);
-    return std::move(ret);
-}
 
 std::string subStringFront(const std::string & text, const std::string & deli)
 {
@@ -666,7 +626,7 @@ time_t getUTCTimeFromLocalString(const std::string & str)
     std::string stime;
     if (str.find(' ') != std::string::npos)
     {
-        auto sp = splitString(str, " ", " ");
+        auto sp = splitString<std::string>(trim(str, " "), " ", " ");
         if (sp.size() < 2)
         {
             return 0;
@@ -705,7 +665,7 @@ time_t getUTCTimeFromLocalString(const std::string & str)
         std::vector<std::string> spdate;
         if (!deli.empty())
         {
-            spdate = splitString(sdate, deli, " ");
+            spdate = splitString<std::string>(sdate, deli, " ");
         }
         else if (sdate.size() == 8)
         {
@@ -743,7 +703,7 @@ time_t getUTCTimeFromLocalString(const std::string & str)
     } //sdate
     if (!stime.empty())
     {
-        auto sptime = splitString(stime, ":", " ");
+        auto sptime = splitString<std::string>(stime, ":", " ");
         if (sptime.size() >= 1)
         {
             st.tm_hour = fromString<int>(sptime[0], 0);
@@ -768,7 +728,7 @@ time_t getUTCTimeFromLocalString(const std::string & str)
 
 time_t getSecondFromTimeString(const std::string & str)
 {
-    auto sptime = splitString(str, ":", " ");
+    auto sptime = splitString<std::string>(str, ":", " ");
     int hour = 0;
     int minute = 0;
     int second = 0;

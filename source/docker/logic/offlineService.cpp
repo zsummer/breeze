@@ -106,7 +106,7 @@ void OfflineService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
             auto offline = *iter;
             if (offline.serviceID == ref.serviceID && offline.status == 0)
             {
-                toService(STUser, offline.serviceID, offline.streamBlob.c_str(), offline.streamBlob.length());
+                toService(STUser, offline.serviceID, offline.streamBlob.c_str(), (unsigned int)offline.streamBlob.length());
                 offline.status = 1;
                 _offlines.updateToDB(offline);
                 iter = _offlines._data.erase(iter);

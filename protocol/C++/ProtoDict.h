@@ -15,18 +15,21 @@ struct DictGlobal //全局配置
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned int id;  
-    unsigned long long val;  
-    std::string combo;  
+    unsigned long long val; //整数  
+    double valFloat; //浮点数  
+    std::string combo; //字符串  
     std::string desc;  
     DictGlobal() 
     { 
         id = 0; 
         val = 0; 
+        valFloat = 0.0; 
     } 
-    DictGlobal(const unsigned int & id, const unsigned long long & val, const std::string & combo, const std::string & desc) 
+    DictGlobal(const unsigned int & id, const unsigned long long & val, const double & valFloat, const std::string & combo, const std::string & desc) 
     { 
         this->id = id; 
         this->val = val; 
+        this->valFloat = valFloat; 
         this->combo = combo; 
         this->desc = desc; 
     } 
@@ -40,6 +43,8 @@ const std::vector<std::string>  DictGlobal::getDBBuild()
     ret.push_back("alter table `tb_DictGlobal` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictGlobal` add `val`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictGlobal` change `val`  `val`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictGlobal` add `valFloat`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictGlobal` change `valFloat`  `valFloat`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictGlobal` add `combo`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictGlobal` change `combo`  `combo`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictGlobal` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
@@ -49,20 +54,21 @@ const std::vector<std::string>  DictGlobal::getDBBuild()
 std::string  DictGlobal::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`val`,`combo`,`desc` from `tb_DictGlobal` where `id` = ? "); 
+    q.init("select `id`,`val`,`valFloat`,`combo`,`desc` from `tb_DictGlobal` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictGlobal::getDBSelectPure() 
 { 
-    return "select `id`,`val`,`combo`,`desc` from `tb_DictGlobal` "; 
+    return "select `id`,`val`,`valFloat`,`combo`,`desc` from `tb_DictGlobal` "; 
 } 
 std::string  DictGlobal::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictGlobal`(`id`,`val`,`combo`,`desc`) values(?,?,?,?)"); 
+    q.init("insert into `tb_DictGlobal`(`id`,`val`,`valFloat`,`combo`,`desc`) values(?,?,?,?,?)"); 
     q << this->id; 
     q << this->val; 
+    q << this->valFloat; 
     q << this->combo; 
     q << this->desc; 
     return q.pickSQL(); 
@@ -77,9 +83,10 @@ std::string  DictGlobal::getDBDelete()
 std::string  DictGlobal::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictGlobal`(id) values(? ) on duplicate key update `val` = ?,`combo` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictGlobal`(id) values(? ) on duplicate key update `val` = ?,`valFloat` = ?,`combo` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->val; 
+    q << this->valFloat; 
     q << this->combo; 
     q << this->desc; 
     return q.pickSQL(); 
@@ -97,6 +104,7 @@ bool DictGlobal::fetchFromDBResult(zsummer::mysql::DBResult &result)
         { 
             result >> this->id; 
             result >> this->val; 
+            result >> this->valFloat; 
             result >> this->combo; 
             result >> this->desc; 
             return true;  
@@ -113,6 +121,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.id;  
     ws << data.val;  
+    ws << data.valFloat;  
     ws << data.combo;  
     ws << data.desc;  
     return ws; 
@@ -121,6 +130,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.id;  
     rs >> data.val;  
+    rs >> data.valFloat;  
     rs >> data.combo;  
     rs >> data.desc;  
     return rs; 
@@ -130,11 +140,139 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "id=" << info.id << "\n"; 
     stm << "val=" << info.val << "\n"; 
+    stm << "valFloat=" << info.valFloat << "\n"; 
     stm << "combo=" << info.combo << "\n"; 
     stm << "desc=" << info.desc << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
+ 
+struct RaffleAward //奖池中的奖品  
+{ 
+    static const unsigned short getProtoID() { return 10004;} 
+    static const std::string getProtoName() { return "RaffleAward";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned int id; //奖品ID  
+    unsigned int weight; //本奖品在奖池中的权重, 总权重在[10000~30000]之间的随机效果最好  
+    double probability; //[0~1]独立随机的概率,0为永远无法随机到 1是100%随机到  
+    RaffleAward() 
+    { 
+        id = 0; 
+        weight = 0; 
+        probability = 0.0; 
+    } 
+    RaffleAward(const unsigned int & id, const unsigned int & weight, const double & probability) 
+    { 
+        this->id = id; 
+        this->weight = weight; 
+        this->probability = probability; 
+    } 
+}; 
+ 
+const std::vector<std::string>  RaffleAward::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_RaffleAward` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_RaffleAward` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_RaffleAward` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_RaffleAward` add `weight`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_RaffleAward` change `weight`  `weight`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_RaffleAward` add `probability`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_RaffleAward` change `probability`  `probability`  double NOT NULL DEFAULT '0' "); 
+    return std::move(ret); 
+} 
+std::string  RaffleAward::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `id`,`weight`,`probability` from `tb_RaffleAward` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  RaffleAward::getDBSelectPure() 
+{ 
+    return "select `id`,`weight`,`probability` from `tb_RaffleAward` "; 
+} 
+std::string  RaffleAward::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_RaffleAward`(`id`,`weight`,`probability`) values(?,?,?)"); 
+    q << this->id; 
+    q << this->weight; 
+    q << this->probability; 
+    return q.pickSQL(); 
+} 
+std::string  RaffleAward::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_RaffleAward` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  RaffleAward::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_RaffleAward`(id) values(? ) on duplicate key update `weight` = ?,`probability` = ? "); 
+    q << this->id; 
+    q << this->weight; 
+    q << this->probability; 
+    return q.pickSQL(); 
+} 
+bool RaffleAward::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch RaffleAward from table `tb_RaffleAward` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->id; 
+            result >> this->weight; 
+            result >> this->probability; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch RaffleAward from table `tb_RaffleAward` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RaffleAward & data) 
+{ 
+    ws << data.id;  
+    ws << data.weight;  
+    ws << data.probability;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RaffleAward & data) 
+{ 
+    rs >> data.id;  
+    rs >> data.weight;  
+    rs >> data.probability;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RaffleAward & info) 
+{ 
+    stm << "[\n"; 
+    stm << "id=" << info.id << "\n"; 
+    stm << "weight=" << info.weight << "\n"; 
+    stm << "probability=" << info.probability << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<RaffleAward> RaffleAwardArray;  
  
 struct DictRafflePool //道具抽奖,道具掉落  
 { 
@@ -148,21 +286,20 @@ struct DictRafflePool //道具抽奖,道具掉落
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned int id;  
-    unsigned short raffleType; //0 独立随机, 有多少个道具配置随机多少次, 1根据总体权重随机一个  
     int raffleCount; //批量抽取次数  
-    std::string pool; //格式为kv数据, 其中v为浮点 [道具ID:概率或权重, 道具ID:概率或权重]  
+    RaffleAwardArray pool; //奖池  
+    std::string poolString; //奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式  
     DictRafflePool() 
     { 
         id = 0; 
-        raffleType = 0; 
         raffleCount = 0; 
     } 
-    DictRafflePool(const unsigned int & id, const unsigned short & raffleType, const int & raffleCount, const std::string & pool) 
+    DictRafflePool(const unsigned int & id, const int & raffleCount, const RaffleAwardArray & pool, const std::string & poolString) 
     { 
         this->id = id; 
-        this->raffleType = raffleType; 
         this->raffleCount = raffleCount; 
         this->pool = pool; 
+        this->poolString = poolString; 
     } 
 }; 
  
@@ -172,33 +309,42 @@ const std::vector<std::string>  DictRafflePool::getDBBuild()
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictRafflePool` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_DictRafflePool` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRafflePool` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictRafflePool` add `raffleType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictRafflePool` change `raffleType`  `raffleType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRafflePool` add `raffleCount`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRafflePool` change `raffleCount`  `raffleCount`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictRafflePool` add `pool`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictRafflePool` change `pool`  `pool`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictRafflePool` add `pool`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_DictRafflePool` change `pool`  `pool`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_DictRafflePool` add `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictRafflePool` change `poolString`  `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
     return std::move(ret); 
 } 
 std::string  DictRafflePool::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`raffleType`,`raffleCount`,`pool` from `tb_DictRafflePool` where `id` = ? "); 
+    q.init("select `id`,`raffleCount`,`pool`,`poolString` from `tb_DictRafflePool` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictRafflePool::getDBSelectPure() 
 { 
-    return "select `id`,`raffleType`,`raffleCount`,`pool` from `tb_DictRafflePool` "; 
+    return "select `id`,`raffleCount`,`pool`,`poolString` from `tb_DictRafflePool` "; 
 } 
 std::string  DictRafflePool::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictRafflePool`(`id`,`raffleType`,`raffleCount`,`pool`) values(?,?,?,?)"); 
+    q.init("insert into `tb_DictRafflePool`(`id`,`raffleCount`,`pool`,`poolString`) values(?,?,?,?)"); 
     q << this->id; 
-    q << this->raffleType; 
     q << this->raffleCount; 
-    q << this->pool; 
+    try 
+    { 
+        zsummer::proto4z::WriteStream ws(0); 
+        ws <<  this->pool; 
+        q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGW("catch one except error when insert DictRafflePool.pool error=" << e.what()); 
+    } 
+    q << this->poolString; 
     return q.pickSQL(); 
 } 
 std::string  DictRafflePool::getDBDelete() 
@@ -211,11 +357,20 @@ std::string  DictRafflePool::getDBDelete()
 std::string  DictRafflePool::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictRafflePool`(id) values(? ) on duplicate key update `raffleType` = ?,`raffleCount` = ?,`pool` = ? "); 
+    q.init("insert into `tb_DictRafflePool`(id) values(? ) on duplicate key update `raffleCount` = ?,`pool` = ?,`poolString` = ? "); 
     q << this->id; 
-    q << this->raffleType; 
     q << this->raffleCount; 
-    q << this->pool; 
+    try 
+    { 
+        zsummer::proto4z::WriteStream ws(0); 
+        ws <<  this->pool; 
+        q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGW("catch one except error when update DictRafflePool.pool error=" << e.what()); 
+    } 
+    q << this->poolString; 
     return q.pickSQL(); 
 } 
 bool DictRafflePool::fetchFromDBResult(zsummer::mysql::DBResult &result) 
@@ -230,9 +385,22 @@ bool DictRafflePool::fetchFromDBResult(zsummer::mysql::DBResult &result)
         if (result.haveRow()) 
         { 
             result >> this->id; 
-            result >> this->raffleType; 
             result >> this->raffleCount; 
-            result >> this->pool; 
+            try 
+            { 
+                std::string blob; 
+                result >> blob; 
+                if(!blob.empty()) 
+                { 
+                    zsummer::proto4z::ReadStream rs(blob.c_str(), (zsummer::proto4z::Integer)blob.length(), false); 
+                    rs >> this->pool; 
+                } 
+            } 
+            catch(const std::exception & e) 
+            { 
+                LOGW("catch one except error when fetch DictRafflePool.pool  from table `tb_DictRafflePool` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+            } 
+            result >> this->poolString; 
             return true;  
         } 
     } 
@@ -246,26 +414,26 @@ bool DictRafflePool::fetchFromDBResult(zsummer::mysql::DBResult &result)
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictRafflePool & data) 
 { 
     ws << data.id;  
-    ws << data.raffleType;  
     ws << data.raffleCount;  
     ws << data.pool;  
+    ws << data.poolString;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictRafflePool & data) 
 { 
     rs >> data.id;  
-    rs >> data.raffleType;  
     rs >> data.raffleCount;  
     rs >> data.pool;  
+    rs >> data.poolString;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictRafflePool & info) 
 { 
     stm << "[\n"; 
     stm << "id=" << info.id << "\n"; 
-    stm << "raffleType=" << info.raffleType << "\n"; 
     stm << "raffleCount=" << info.raffleCount << "\n"; 
     stm << "pool=" << info.pool << "\n"; 
+    stm << "poolString=" << info.poolString << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

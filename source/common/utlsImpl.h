@@ -42,6 +42,11 @@ typename std::enable_if<std::is_floating_point<To>::value, To>::type fromString(
     if (t.empty()) return def;
     return (To)atof(t.c_str());
 }
+template<class To>
+typename std::enable_if<std::is_floating_point<To>::value, To>::type fromString(const std::string & t)
+{
+    return (To)atof(t.c_str());
+}
 
 template<class To>
 typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t, To def)
@@ -59,9 +64,28 @@ typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const 
 }
 
 template<class To>
+typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t)
+{
+    if (t.length() >= 19)
+    {
+        if (typeid(To) == typeid(unsigned long long))
+        {
+            char *cursor = nullptr;
+            return (To)strtoull(t.c_str(), &cursor, 10);
+        }
+    }
+    return (To)atoll(t.c_str());
+}
+
+template<class To>
 typename std::enable_if<std::is_pointer<To>::value, To>::type fromString(const std::string & t, To def)
 {
     if (t.empty()) return def;
+    return t.c_str();
+}
+template<class To>
+typename std::enable_if<std::is_pointer<To>::value, To>::type fromString(const std::string & t)
+{
     return t.c_str();
 }
 
@@ -71,7 +95,155 @@ typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std
     if (t.empty()) return def;
     return t;
 }
+template<class To>
+typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std::string & t)
+{
+    return t;
+}
 
+
+
+
+
+template<class _Tuple, class _This, class ... _Rest>
+void splitTupleStringImpl(_Tuple & ret, const std::tuple<_This, _Rest ...> & unused, const std::string & text, const std::string & deli, const std::string & ign)
+{
+    if (deli.empty())
+    {
+        std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(trim(text, ign));
+    }
+    else
+    {
+        std::size_t which = std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest);
+        std::size_t firstCursor = 0;
+        std::size_t secondCursor = 0;
+        std::size_t curFinder = 0;
+        while (curFinder <= which)
+        {
+            auto pos = text.find(deli, firstCursor);
+            if (curFinder < which &&  pos == std::string::npos)
+            {
+                // not found
+                return;
+            }
+            else if (curFinder < which)
+            {
+                curFinder++;
+                firstCursor = pos + deli.size();
+            }
+            else
+            {
+                secondCursor = pos;
+                break;
+            }
+        }
+        std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(trim(text.substr(firstCursor, secondCursor - firstCursor), ign));
+    }
+
+
+    splitTupleStringImpl<_Tuple, _Rest ...>(ret, std::tuple<_Rest ... >(), text, deli, ign);
+}
+
+template<class _Tuple>
+void splitTupleStringImpl(_Tuple & ret, const std::tuple<> & unused, const std::string & text, const std::string & deli, const std::string & ign)
+{
+}
+
+
+template<class ... T>
+typename std::enable_if<std::is_integral<int>::value, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, const std::string & ign)
+{
+    std::tuple<T ... > ret;
+    splitTupleStringImpl<std::tuple<T ... >, T ...>(ret, ret, text, deli, ign);
+    return ret;
+}
+
+template<class First, class Second>
+typename std::enable_if<std::is_integral<int>::value, std::pair<First, Second>>::type splitPairString(const std::string & str, const std::string & delimiter)
+{
+    auto tp = splitTupleString<First, Second>(str, delimiter, "");
+    return std::make_pair(std::get<0>(tp), std::get<1>(tp));
+}
+
+
+template<class ... T>
+typename std::enable_if<std::is_integral<int>::value, std::vector<std::tuple<T ...> >>::type
+splitArrayString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign)
+{
+    std::vector<std::tuple<T ...> > ret;
+    size_t beginPos = 0;
+    std::string matched;
+    for (size_t i = 0; i < text.length(); i++)
+    {
+        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
+        {
+            matched.push_back(text[i]);
+        }
+        if (matched == deli)
+        {
+            ret.push_back(splitTupleString<T...>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign), deliMeta, ign));
+            beginPos = i + 1;
+            matched.clear();
+        }
+    }
+    ret.push_back(splitTupleString<T...>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign), deliMeta, ign));
+    return std::move(ret);
+}
+
+
+template<class Key, class ... T>
+typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<T ...> >>::type
+splitDictString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign)
+{
+    std::map<Key, std::tuple<T ...> > ret;
+    size_t beginPos = 0;
+    std::string matched;
+    for (size_t i = 0; i < text.length(); i++)
+    {
+        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
+        {
+            matched.push_back(text[i]);
+        }
+        if (matched == deli)
+        {
+            auto tp = splitTupleString<Key, T...>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign), deliMeta, ign);
+            auto k = std::get<0>(tp);
+            ret[k] = std::move(tp);
+            beginPos = i + 1;
+            matched.clear();
+        }
+    }
+    auto tp = splitTupleString<Key, T...>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign), deliMeta, ign);
+    auto k = std::get<0>(tp);
+    ret[k] = std::move(tp);
+    return std::move(ret);
+}
+
+
+
+template<class Value>
+typename std::enable_if<std::is_integral<int>::value, std::vector<Value>>::type
+splitString(std::string text, const std::string & deli, const std::string & ign)
+{
+    std::vector<Value> ret;
+    size_t beginPos = 0;
+    std::string matched;
+    for (size_t i = 0; i < text.length(); i++)
+    {
+        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
+        {
+            matched.push_back(text[i]);
+        }
+        if (matched == deli)
+        {
+            ret.push_back(fromString<Value>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign)));
+            beginPos = i + 1;
+            matched.clear();
+        }
+    }
+    ret.push_back(fromString<Value>(trim(text.substr(beginPos, text.length() - beginPos), ign)));
+    return std::move(ret);
+}
 
 
 inline double getFloatTick()
@@ -285,27 +457,7 @@ inline void randomShuffle(RandIt first, RandIt end)
     std::random_shuffle(first, end);
 }
 
-// template<class RandIt>
-// inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount)
-// {
-//     std::vector<RandIt> temp;
-//     temp.reserve(128);
-//     if (true)
-//     {
-//         auto cur = first;
-//         while (cur != end)
-//         {
-//             temp.push_back(cur);
-//             cur++;
-//         }
-//     }
-//     randomShuffle(temp.begin(), temp.end());
-//     while (temp.size() > (size_t)takeCount)
-//     {
-//         temp.pop_back();
-//     }
-//     return std::move(temp);
-// }
+
 
 
 

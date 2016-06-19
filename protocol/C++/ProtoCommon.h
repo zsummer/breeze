@@ -511,7 +511,7 @@ std::string  SimplePack::getDBInsert()
     q << this->createTime; 
     try 
     { 
-        zsummer::proto4z::WriteStream ws(moneyTree.getProtoID()); 
+        zsummer::proto4z::WriteStream ws(0); 
         ws <<  this->moneyTree; 
         q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
     } 
@@ -537,7 +537,7 @@ std::string  SimplePack::getDBUpdate()
     q << this->createTime; 
     try 
     { 
-        zsummer::proto4z::WriteStream ws(moneyTree.getProtoID()); 
+        zsummer::proto4z::WriteStream ws(0); 
         ws <<  this->moneyTree; 
         q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
     } 

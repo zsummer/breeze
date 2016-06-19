@@ -118,8 +118,28 @@ typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const 
 //both 1 left, 2right, 3 both
 std::string trim(const std::string &str, const std::string& ign, int both = 3);
 
-std::pair<std::string, std::string> splitPairString(const std::string & str, const std::string & delimiter);
-std::vector<std::string> splitString(std::string text, const std::string & deli, const std::string & ign);
+template<class First, class Second>
+typename std::enable_if<std::is_integral<int>::value, std::pair<First, Second>>::type splitPairString(const std::string & str, const std::string & delimiter);
+
+
+template<class ... T>
+typename std::enable_if<std::is_integral<int>::value, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, const std::string & ign);
+
+template<class ... T>
+typename std::enable_if<std::is_integral<int>::value, std::vector<std::tuple<T ...> >>::type 
+splitArrayString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign);
+
+template<class Key, class ... T>
+typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<T ...> >>::type 
+splitDictString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign);
+
+
+template<class Value>
+typename std::enable_if<std::is_integral<int>::value, std::vector<Value>>::type
+splitString(std::string text, const std::string & deli, const std::string & ign);
+
+
+
 template<class Container>  //example: Container = std::vector<int>
 std::string mergeToString(const Container & contariner, const std::string& deli);
 template<class T>  //example: Container = std::vector<int>

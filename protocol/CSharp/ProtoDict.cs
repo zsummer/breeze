@@ -10,20 +10,23 @@ namespace Proto4z
         static public string getProtoName() { return "DictGlobal"; } 
         //members   
         public uint id;  
-        public ulong val;  
-        public string combo;  
+        public ulong val; //整数  
+        public double valFloat; //浮点数  
+        public string combo; //字符串  
         public string desc;  
         public DictGlobal()  
         { 
             id = 0;  
             val = 0;  
+            valFloat = 0.0;  
             combo = "";  
             desc = "";  
         } 
-        public DictGlobal(uint id, ulong val, string combo, string desc) 
+        public DictGlobal(uint id, ulong val, double valFloat, string combo, string desc) 
         { 
             this.id = id; 
             this.val = val; 
+            this.valFloat = valFloat; 
             this.combo = combo; 
             this.desc = desc; 
         } 
@@ -32,6 +35,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.id)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.val)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.valFloat)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.combo)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
@@ -40,8 +44,79 @@ namespace Proto4z
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.val = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.valFloat = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.combo = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class RaffleAward: Proto4z.IProtoObject //奖池中的奖品  
+    {     
+        //proto id   
+        public const ushort protoID = 10004;  
+        static public ushort getProtoID() { return 10004; } 
+        static public string getProtoName() { return "RaffleAward"; } 
+        //members   
+        public uint id; //奖品ID  
+        public uint weight; //本奖品在奖池中的权重, 总权重在[10000~30000]之间的随机效果最好  
+        public double probability; //[0~1]独立随机的概率,0为永远无法随机到 1是100%随机到  
+        public RaffleAward()  
+        { 
+            id = 0;  
+            weight = 0;  
+            probability = 0.0;  
+        } 
+        public RaffleAward(uint id, uint weight, double probability) 
+        { 
+            this.id = id; 
+            this.weight = weight; 
+            this.probability = probability; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.id)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.weight)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.probability)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.id = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.weight = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.probability = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class RaffleAwardArray : System.Collections.Generic.List<RaffleAward>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new RaffleAward(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
             return pos; 
         } 
     } 
@@ -54,38 +129,40 @@ namespace Proto4z
         static public string getProtoName() { return "DictRafflePool"; } 
         //members   
         public uint id;  
-        public ushort raffleType; //0 独立随机, 有多少个道具配置随机多少次, 1根据总体权重随机一个  
         public int raffleCount; //批量抽取次数  
-        public string pool; //格式为kv数据, 其中v为浮点 [道具ID:概率或权重, 道具ID:概率或权重]  
+        public RaffleAwardArray pool; //奖池  
+        public string poolString; //奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式  
         public DictRafflePool()  
         { 
             id = 0;  
-            raffleType = 0;  
             raffleCount = 0;  
-            pool = "";  
+            pool = new RaffleAwardArray();  
+            poolString = "";  
         } 
-        public DictRafflePool(uint id, ushort raffleType, int raffleCount, string pool) 
+        public DictRafflePool(uint id, int raffleCount, RaffleAwardArray pool, string poolString) 
         { 
             this.id = id; 
-            this.raffleType = raffleType; 
             this.raffleCount = raffleCount; 
             this.pool = pool; 
+            this.poolString = poolString; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.id)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.raffleType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.raffleCount)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.pool)); 
+            if (this.pool == null) this.pool = new RaffleAwardArray(); 
+            data.AddRange(this.pool.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.poolString)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.raffleType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.raffleCount = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.pool = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.pool = new RaffleAwardArray(); 
+            this.pool.__decode(binData, ref pos); 
+            this.poolString = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 

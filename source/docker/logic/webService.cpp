@@ -95,13 +95,14 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
                 uri = urlDecode(notice.body);;
             }
         }
-        auto pr = splitPairString(uri, "?");
+        auto pr = splitPairString<std::string,std::string>(uri, "?");
         uri = pr.first;
-        auto spts = splitString(pr.second, "&", "");
+        auto spts = splitString<std::string>(pr.second, "&", "");
         for (auto & pm : spts)
         {
-            pr = splitPairString(pm, "=");
+            pr = splitPairString<std::string, std::string>(pm, "=");
             params.push_back(pr);
+
         }
 
         if (uri == "/getonline")

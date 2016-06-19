@@ -70,6 +70,10 @@ int main(int argc, char* argv[])
 
     ILog4zManager::getPtr()->start();
 
+    std::tuple<int, double> kv1 = splitTupleString<int, double>("1:1.0", ":", "");
+
+    std::tuple<double, int, std::string> kvv = splitTupleString<double, int, std::string>("1.0:2:aha", ":", "");
+
 
 
     LOGI("0second" << formatDateTimeString(0));
@@ -91,7 +95,7 @@ int main(int argc, char* argv[])
 int checkString()
 {
     std::string t1 = "%^&123^=&";
-    auto ret = splitString(t1, "=", "&%^");
+    auto ret = splitString<std::string>(t1, "=", "&%^");
     if (ret.size() != 2)
     {
         return 1;
@@ -104,7 +108,7 @@ int checkString()
     {
         return 3;
     }
-    if (splitString("==", "==", "adf123").size() != 2)
+    if (splitString<std::string>("==", "==", "adf123").size() != 2)
     {
         return 4;
     }
@@ -745,7 +749,7 @@ int checkRandom()
     }
     if (true)
     {
-        int loopCount = 1*10000;
+        int loopCount = 1*1000;
         int takeCount = 10;
         double sumRaffle = 0.0;// sumRaffle ≈ (1/100)*loopCount*10
         double sumRaffleWeight = 0.0; //sumRaffleWeight ≈ (100/5050)*loopCount*10
@@ -796,7 +800,7 @@ int checkRandom()
         {
             cards.push_back(std::make_pair(i, i / 100.0));
         }
-        int loop = 10000;
+        int loop = 1000;
         int takeCount = 10;
         int sum1 = 0;   //sum 1 ≈ 0.01 * 10000*10
         int sum50 = 0;   //sum 50 ≈ 0.5*10000*10
