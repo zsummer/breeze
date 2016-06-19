@@ -410,6 +410,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
         {
             if (dockerID == ci)
             {
+                LOGA("_userBalance.enableNode dockerID=" << dockerID);
                 _userBalance.enableNode(dockerID);
             }
         }
@@ -421,6 +422,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
         {
             if(dc._dockerID == ci && !dc._webIP.empty()&& dc._webPort != 0)
             {
+                LOGA("_userBalance.enableNode dockerID=" << dc._dockerID << ", port=" << dc._webPort);
                 _webBalance.enableNode(dc._dockerID);
             }
         }
@@ -469,6 +471,7 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
         {
             if (dockerID == ci)
             {
+                LOGW("_userBalance.disableNode dockeriD=" << dockerID );
                 _userBalance.disableNode(dockerID);
             }
         }
@@ -480,6 +483,7 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
         {
             if(dc._dockerID == ci && !dc._webIP.empty()&& dc._webPort != 0)
             {
+                LOGW("_webBalance.disableNode dockeriD=" << dc._dockerID << ", webPort=" << dc._webPort);
                 _webBalance.disableNode(dc._dockerID);
             }
         }
