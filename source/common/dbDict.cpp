@@ -18,11 +18,19 @@
 */
 
 #include "dbDict.h"
-
+#include "config.h"
 #include "utls.h"
 
 
 
+bool DBDict::buildDictTable()
+{
+    buildDict<DictGlobal>(_dictHelper);
+    buildDict<DictRafflePool>(_dictHelper);
+    buildDict<DictFightEffect>(_dictHelper);
+    buildDict<DictItem>(_dictHelper);
+    return true;
+}
 
 
 bool DBDict::initHelper()
@@ -45,8 +53,49 @@ bool DBDict::initHelper()
 }
 
 
+bool DBDict::load()
+{
+    if (!fetchDict<DictGlobal>(_dictHelper, [this](const DictGlobal & dict)
+    {
+        _dictGlobal[dict.id] = dict;
+    }))
+    {
+        LOGE("fetchDict DictGlobal error");
+        return false;
+    }
 
 
+    if (!fetchDict<DictRafflePool>(_dictHelper, [this](const DictRafflePool & dict)
+    {
+        _dictRafflePool[dict.id] = dict;
+    }))
+    {
+        LOGE("fetchDict DictRafflePool error");
+        return false;
+    }
+
+
+    if (!fetchDict<DictFightEffect>(_dictHelper, [this](const DictFightEffect & dict)
+    {
+        _dictFightEffect[dict.id] = dict;
+    }))
+    {
+        LOGE("fetchDict DictFightEffect error");
+        return false;
+    }
+
+
+    if (!fetchDict<DictItem>(_dictHelper, [this](const DictItem & dict)
+    {
+        _dictItem[dict.id] = dict;
+    }))
+    {
+        LOGE("fetchDict DictItem error");
+        return false;
+    }
+
+    return true;
+}
 
 
 
