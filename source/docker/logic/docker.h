@@ -161,6 +161,12 @@ private:
     void event_onForwardToService(TcpSessionPtr session, ReadStream & rs);
     void event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs);
 
+public:
+    inline Balance & getUserBalance(){return _userBalance;}
+    inline Balance & getWebBalance(){return _webBalance;}
+private:
+    Balance _userBalance;
+    Balance _webBalance;
 
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;

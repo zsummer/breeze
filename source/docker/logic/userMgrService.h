@@ -85,7 +85,6 @@ private:
     std::map<std::string, UserStatusPtr> _userStatusByName;
     std::map<std::string, AccountStatus> _accountStatus;
     ui64 _nextUserID = 0;
-    Balance _balance;
 };
 
 

@@ -20,6 +20,13 @@ WebService::~WebService()
 
 void WebService::onTick()
 {
+    static time_t lastTick = getNowTime();
+    time_t now = getNowTime();
+    if (now - lastTick > 10 )
+    {
+        LOGA("WebService balance:" << Docker::getRef().getWebBalance().getBalanceStatus());
+        lastTick = now;
+    }
 }
 
 
@@ -31,13 +38,6 @@ void WebService::onUnload()
 
 bool WebService::onLoad()
 {
-    for (auto config : ServerConfig::getRef().getDockerConfig())
-    {
-        if (!config._webIP.empty() && config._webPort != 0)
-        {
-            _balance.enableNode(config._dockerID);
-        }
-    }
     finishLoad();
     return true;
 }
@@ -179,7 +179,7 @@ void WebService::onWebServerRequest(Tracing trace, ReadStream &rs)
     request.traceID = trace.traceID;
     request.fromServiceType = trace.fromServiceType;
     request.fromServiceID = trace.fromServiceID;
-    Docker::getRef().sendToDocker(_balance.selectAuto(), request);
+    Docker::getRef().sendToDocker(Docker::getRef().getWebBalance().selectAuto(), request);
 }
 
 void WebService::onWebServerResponseTest(Tracing trace, ReadStream &rs)

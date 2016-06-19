@@ -26,7 +26,7 @@ void UserMgrService::onTick()
         _lastTime = now;
 
 
-        LOGI("UserMgrService::onTick balance=" << _balance.getBalanceStatus());
+        LOGI("UserMgrService::onTick balance=" << Docker::getRef().getUserBalance().getBalanceStatus());
 
 
         for (auto iter = _freeList.begin(); iter != _freeList.end();)
@@ -64,16 +64,6 @@ void UserMgrService::onClientChange()
 
 bool UserMgrService::onLoad()
 {
-    const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(STUser);
-    for (auto dockerID : config)
-    {
-        _balance.enableNode(dockerID);
-    }
-    if (config.empty())
-    {
-        LOGE("at least have one docker contain STUser service ");
-        return false;
-    }
     _nextUserID = ServerConfig::getRef().getMinServiceID()+1;
 
     std::string sql = trim(UserPreview().getDBSelectPure(), " ");
@@ -349,7 +339,7 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
     _freeList.erase(req.serviceID);
     if (status._status == SS_NONE || status._status == SS_DESTROY)
     {
-        DockerID dockerID = _balance.selectAuto();
+        DockerID dockerID = Docker::getRef().getUserBalance().selectAuto();
         if (dockerID == InvalidDockerID)
         {
             resp.retCode = EC_ERROR;

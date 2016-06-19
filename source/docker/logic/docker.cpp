@@ -403,6 +403,29 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
     }
     LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", dockerID=" << ci);
     founder->second.status = 1;
+    if (true)
+    {
+        const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(STUser);
+        for (auto dockerID : config)
+        {
+            if (dockerID == ci)
+            {
+                _userBalance.enableNode(dockerID);
+            }
+        }
+    }
+    if (true)
+    {
+        const auto & config = ServerConfig::getRef().getDockerConfig();
+        for (const auto & dc: config)
+        {
+            if(dc._dockerID == ci && !dc._webIP.empty()&& dc._webPort != 0)
+            {
+                _webBalance.enableNode(dc._dockerID);
+            }
+        }
+    }
+
     for (auto & second : _services)
     {
         if (second.first == STClient || second.first == STUser || second.first == InvalidServiceType)
@@ -439,6 +462,29 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
     }
     LOGW("event_onServiceClosed cID=" << session->getSessionID() << ", dockerID=" << ci);
     founder->second.status = 0;
+    if (true)
+    {
+        const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(STUser);
+        for (auto dockerID : config)
+        {
+            if (dockerID == ci)
+            {
+                _userBalance.disableNode(dockerID);
+            }
+        }
+    }
+    if (true)
+    {
+        const auto & config = ServerConfig::getRef().getDockerConfig();
+        for (const auto & dc: config)
+        {
+            if(dc._dockerID == ci && !dc._webIP.empty()&& dc._webPort != 0)
+            {
+                _webBalance.disableNode(dc._dockerID);
+            }
+        }
+    }
+
 }
 
 void Docker::destroyService(ServiceType serviceType, ServiceID serviceID)
