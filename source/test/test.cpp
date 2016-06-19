@@ -656,7 +656,7 @@ int checkRandom()
         int sum1 = 0;
         int sum50 = 0;
         int sum100 = 0;
-        int loop = 10000 * 1;
+        int loop = 10000 * 10;
         for (int i = 0; i < loop; i++)
         {
             unsigned int rr = realRand(1000, 2000);
