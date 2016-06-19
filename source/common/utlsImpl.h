@@ -103,51 +103,42 @@ typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std
 
 
 
-
-
-template<class _Tuple, class _This, class ... _Rest>
-void splitTupleStringImpl(_Tuple & ret, const std::tuple<_This, _Rest ...> & unused, const std::string & text, const std::string & deli, const std::string & ign)
-{
-    if (deli.empty())
-    {
-        std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(trim(text, ign));
-    }
-    else
-    {
-        std::size_t which = std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest);
-        std::size_t firstCursor = 0;
-        std::size_t secondCursor = 0;
-        std::size_t curFinder = 0;
-        while (curFinder <= which)
-        {
-            auto pos = text.find(deli, firstCursor);
-            if (curFinder < which &&  pos == std::string::npos)
-            {
-                // not found
-                return;
-            }
-            else if (curFinder < which)
-            {
-                curFinder++;
-                firstCursor = pos + deli.size();
-            }
-            else
-            {
-                secondCursor = pos;
-                break;
-            }
-        }
-        std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(trim(text.substr(firstCursor, secondCursor - firstCursor), ign));
-    }
-
-
-    splitTupleStringImpl<_Tuple, _Rest ...>(ret, std::tuple<_Rest ... >(), text, deli, ign);
-}
-
 template<class _Tuple>
 void splitTupleStringImpl(_Tuple & ret, const std::tuple<> & unused, const std::string & text, const std::string & deli, const std::string & ign)
 {
 }
+
+template<class _Tuple, class _This, class ... _Rest>
+void splitTupleStringImpl(_Tuple & ret, const std::tuple<_This, _Rest ...> & unused, const std::string & text, const std::string & deli, const std::string & ign)
+{
+    std::size_t which = std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest);
+    std::size_t firstCursor = 0;
+    std::size_t secondCursor = 0;
+    std::size_t curFinder = 0;
+    while (curFinder <= which)
+    {
+        auto pos = text.find(deli, firstCursor);
+        if (curFinder < which &&  pos == std::string::npos)
+        {
+            // not found
+            return;
+        }
+        else if (curFinder < which)
+        {
+            curFinder++;
+            firstCursor = pos + deli.size();
+        }
+        else
+        {
+            secondCursor = pos;
+            break;
+        }
+    }
+    std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(trim(text.substr(firstCursor, secondCursor - firstCursor), ign));
+    splitTupleStringImpl<_Tuple, _Rest ...>(ret, std::tuple<_Rest ... >(), text, deli, ign);
+}
+
+
 
 
 template<class ... T>
@@ -184,7 +175,7 @@ splitArrayString(const std::string & text, const std::string & deli, const std::
             auto one = trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign);
             if (!one.empty())
             {
-                ret.push_back(splitTupleString<T...>(std::move(one), deliMeta, ign));
+                ret.push_back(splitTupleString<T...>(one, deliMeta, ign));
             }
             beginPos = i + 1;
             matched.clear();

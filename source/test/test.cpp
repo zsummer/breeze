@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 
     std::tuple<double, int, std::string> kvv = splitTupleString<double, int, std::string>("1.0:2:aha", ":", "");
 
-
+    LOGA("1=" << std::get<0>(kvv) << ", 2=" << std::get<1>(kvv) << ", 3=" << std::get<2>(kvv));
 
     LOGI("0second" << formatDateTimeString(0));
     LOGI("now" << formatDateTimeString(getNowTime()));
@@ -656,7 +656,7 @@ int checkRandom()
         int sum1 = 0;
         int sum50 = 0;
         int sum100 = 0;
-        int loop = 10000 * 100;
+        int loop = 10000 * 1;
         for (int i = 0; i < loop; i++)
         {
             unsigned int rr = realRand(1000, 2000);
@@ -749,7 +749,7 @@ int checkRandom()
     }
     if (true)
     {
-        int loopCount = 1*1000;
+        int loopCount = 1*10000;
         int takeCount = 10;
         double sumRaffle = 0.0;// sumRaffle ≈ (1/100)*loopCount*10
         double sumRaffleWeight = 0.0; //sumRaffleWeight ≈ (100/5050)*loopCount*10
@@ -800,7 +800,7 @@ int checkRandom()
         {
             cards.push_back(std::make_pair(i, i / 100.0));
         }
-        int loop = 1000;
+        int loop = 10000;
         int takeCount = 10;
         int sum1 = 0;   //sum 1 ≈ 0.01 * 10000*10
         int sum50 = 0;   //sum 50 ≈ 0.5*10000*10
