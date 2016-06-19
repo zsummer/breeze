@@ -27,15 +27,12 @@
 #include "service.h"
 #include <ProtoUserMgr.h>
 
+
+
+
 /*
-enum ServiceStatus
-{
-    SS_CREATED,
-    SS_INITING,
-    SS_WORKING,
-    SS_UNLOADING,
-    SS_DESTROY,
-};
+UserMgrService
+    userService管理器服务. 
 */
 
 struct UserStatus

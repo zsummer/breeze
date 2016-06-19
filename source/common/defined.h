@@ -128,6 +128,11 @@ const ServiceID InvalidServiceID = (ServiceID)0;
 typedef std::string ServiceName;
 const ServiceName InvalidServiceName = "";
 
+
+
+
+//以下位置定义服务类型和依赖关系
+
 typedef ui16 ServiceType;
 const ServiceType InvalidServiceType = (ServiceType)0;
 const ServiceType STInfoDBMgr = (ServiceType)1;
@@ -146,21 +151,16 @@ struct  ServiceDependInfo
     ServiceDependInfo(bool single, const char *const name, const std::set<ServiceType>& dps)
         :isSingleton(single),
         serviceName(name),
-        depends(dps)
-    {
-    }
+        depends(dps) {}
     ServiceDependInfo(bool single, const char *const name)
         :isSingleton(single),
-        serviceName(name)
-    {
-    }
+        serviceName(name) { }
     bool isSingleton;
     ServiceName serviceName;
     std::set<ServiceType > depends;
 };
 
-
-
+//{服务类型, {是否单例(如果是单例起服装载), 对应的字符串名称, {依赖的service列表(装载和卸载会根据这个依赖关系组织顺序)} }
 const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
 {
     { STInfoDBMgr, { true, "STInfoDBMgr" } },

@@ -25,7 +25,10 @@
 #include <common.h>
 #include "service.h"
 
-
+/*
+WebService
+    通过docker的支持, 该服务提供对外的web访问接口, 包括连入和连出.
+*/
 
 
 class WebService : public Service

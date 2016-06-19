@@ -39,6 +39,14 @@
 #include <common.h>
 
 
+ /*
+service是breeze引擎的核心结构, 通过包装对docker接口的再次包装, 实现了一切皆service的服务器架构.
+通过简单的toService即可把数据发往另外一个service而不需要关心对方装载在本地还是另外一个docker上.
+toService可以携带本地回调方法, 对方收到消息后通过backToService返回的消息可以直接在回调中处理. 
+通过sloting方法可以注册当前service可接收的消息类型和对应的处理方法
+ */
+
+
 using Slot = std::function < void(const Tracing & trace, zsummer::proto4z::ReadStream &) >;
 using ServiceCallback = std::function<void(zsummer::proto4z::ReadStream &)>;
 

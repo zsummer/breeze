@@ -28,6 +28,11 @@
 #include <ProtoOffline.h>
 #include <ProtoDBService.h>
 
+/*
+OfflineService
+    提供离线协议驻留.
+    比如给一个userservice发送离线消息,邮件等, 只需要检测玩家service没有装载直接发到该服务即可, 对应的玩家service装载后 会自动推送过去. 
+*/
 
 class OfflineService : public Service
 {

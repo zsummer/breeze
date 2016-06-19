@@ -18,20 +18,14 @@
 
 /*
 docker是用来托管service的专用vm. 
-    对service而言,托管掉和操作系统相关的网络通讯, docker间的网络拓扑构建. 
-    docker负责service和镜像service的创建,装载,卸载,销毁等管理操作. 
+    负责底层的网络通讯,多节点的网络拓扑构建, docker的多节点对上层透明化.
+    docker维护service和镜像service的创建,装载,卸载,销毁等管理操作. 
+    上层只需关注docker所装载的service. 
 
-docker接管一切和操作系统,网络,物理拓扑相关的工作, 给service提供一个纯粹简单的逻辑环境. 
-
-docker集群的socket数量开销= (docker个数的平方)*2
-docker集群的总端口占用数量开销=docker个数的平方
-操作系统的可用端口数量小于64k, 也就是docker无法突破的理论上限是252个docker进程.
-而需要调整系统参数(linux下默认的系统配置,ulimit单个进程打开的文件句柄数模式是1024)的阈值是22.
-
-当集群规模小于15个docker并且同时在线小于8000的规模下 不需要修改limit配置.
-推荐docker数量在1~150之间, 具体请依据上述公式和实际的网络环境自行测试. 
-
-
+docker的资源消耗:
+    docker集群的socket数量开销= (docker个数的平方)*2
+    docker集群的总端口占用数量开销=docker个数的平方
+    操作系统的可用端口数量小于64k, 也就是docker无法突破的理论上限是252个docker进程.
 */
 
 
@@ -161,7 +155,7 @@ private:
     void event_onForwardToService(TcpSessionPtr session, ReadStream & rs);
     void event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs);
 
-public:
+public://负载均衡 
     inline Balance & getUserBalance(){return _userBalance;}
     inline Balance & getWebBalance(){return _webBalance;}
 private:
