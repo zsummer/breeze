@@ -29,6 +29,14 @@
 #include "utls.h"
 #include <ProtoDict.h>
 
+/*
+服务器引擎的配置走数据库
+该字典类提供方法自动化的, 同步方式的, 在起服时候从数据库拉取所有配置并进行构建.
+所有service都可以直接通过单例直接查找配置并进行使用. 
+*/
+
+
+
 template<class Packet>
 bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)>);
 
