@@ -181,12 +181,20 @@ splitArrayString(const std::string & text, const std::string & deli, const std::
         }
         if (matched == deli)
         {
-            ret.push_back(splitTupleString<T...>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign), deliMeta, ign));
+            auto one = trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign);
+            if (!one.empty())
+            {
+                ret.push_back(splitTupleString<T...>(std::move(one), deliMeta, ign));
+            }
             beginPos = i + 1;
             matched.clear();
         }
     }
-    ret.push_back(splitTupleString<T...>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign), deliMeta, ign));
+    auto one = trim(text.substr(beginPos, text.length() - beginPos), ign);
+    if (!one.empty())
+    {
+        ret.push_back(splitTupleString<T...>(std::move(one), deliMeta, ign));
+    }
     return std::move(ret);
 }
 
@@ -206,16 +214,24 @@ splitDictString(const std::string & text, const std::string & deli, const std::s
         }
         if (matched == deli)
         {
-            auto tp = splitTupleString<Key, T...>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign), deliMeta, ign);
-            auto k = std::get<0>(tp);
-            ret[k] = std::move(tp);
+            auto one = trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign);
+            if (!one.empty())
+            {
+                auto tp = splitTupleString<Key, T...>(one, deliMeta, ign);
+                auto k = std::get<0>(tp);
+                ret[k] = std::move(tp);
+            }
             beginPos = i + 1;
             matched.clear();
         }
     }
-    auto tp = splitTupleString<Key, T...>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign), deliMeta, ign);
-    auto k = std::get<0>(tp);
-    ret[k] = std::move(tp);
+    auto one = trim(text.substr(beginPos, text.length() - beginPos), ign);
+    if (!one.empty())
+    {
+        auto tp = splitTupleString<Key, T...>(one, deliMeta, ign);
+        auto k = std::get<0>(tp);
+        ret[k] = std::move(tp);
+    }
     return std::move(ret);
 }
 

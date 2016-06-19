@@ -68,6 +68,14 @@ bool DBDict::load()
     if (!fetchDict<DictRafflePool>(_dictHelper, [this](const DictRafflePool & dict)
     {
         _dictRafflePool[dict.id] = dict;
+        RaffleAward award;
+        for (auto & tp : splitArrayString<unsigned int, unsigned int, double>(dict.poolString, ",", "|", " "))
+        {
+            award.id = std::get<0>(tp);
+            award.weight = std::get<1>(tp);
+            award.probability = std::get<2>(tp);
+            _dictRafflePool[dict.id].pool.push_back(award);
+        }
     }))
     {
         LOGE("fetchDict DictRafflePool error");

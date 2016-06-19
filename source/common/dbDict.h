@@ -75,6 +75,7 @@ bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)> cb)
     do
     {
         result = helper->query(sql + " limit " + toString(cursor) + ", 100");
+        cursor+=100;
         if(!result)
         {
             LOGE("fetchDict error. dict name=" << Packet::getProtoName());
