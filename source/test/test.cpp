@@ -129,8 +129,17 @@ int checkString()
         {
             return 6;
         }
-        
+
+         auto now = getFloatTick();
+         for (int i=0; i<10000; i++)
+         {
+             auto v = splitDictString<int, short, float, std::string>("1|2|3|a,|||,2|2|3|a,|||,3|2|3|a,|||,4|2|3|a,|||,5|2|3|a,|||,6|2|3|a,|||,7|2|3|a,|||,8|2|3|a,|||,8|2|3|a,|||,", ",", "|", " ");
+             std::get<0>(v.begin()->second) = 0;
+         }
+         LOGA("splitDictString used time=" << getFloatTick() - now);
+
     }
+
     
     if (!compareStringIgnCase("Fad123123", "fAd123123"))
     {

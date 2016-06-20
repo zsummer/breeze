@@ -375,16 +375,69 @@ std::string trim(const std::string &str, const std::string & ign, int both)
     {
         posBegin = 0;
     }
-    
-    if (posBegin < posEnd)
+
+    if (posBegin == 0 && posEnd == length)
+    {
+        return str;
+    }
+    else if (posBegin < posEnd)
     {
         return str.substr(posBegin, posEnd - posBegin);
     }
-
     return "";
 }
 
 
+std::string trim(std::string &&str, const std::string & ign, int both)
+{
+    if (str.empty()) { return ""; }
+    if (ign.empty()) { return std::move(str); }
+    size_t length = str.length();
+    size_t posBegin = 0;
+    size_t posEnd = 0;
+
+    //trim character 
+    for (size_t i = posBegin; i < length; i++)
+    {
+        bool bCheck = false;
+        for (size_t j = 0; j < ign.length(); j++)
+        {
+            if (str.at(i) == ign.at(j))
+            {
+                bCheck = true;
+            }
+        }
+        if (bCheck)
+        {
+            if (i == posBegin)
+            {
+                posBegin++;
+            }
+        }
+        else
+        {
+            posEnd = i + 1;
+        }
+    }
+    if (both == 1)
+    {
+        posEnd = length;
+    }
+    else if (both == 2)
+    {
+        posBegin = 0;
+    }
+
+    if (posBegin == 0 && posEnd == length)
+    {
+        return std::move(str);
+    }
+    else if (posBegin < posEnd)
+    {
+        return str.substr(posBegin, posEnd - posBegin);
+    }
+    return "";
+}
 
 std::string subStringFront(const std::string & text, const std::string & deli)
 {

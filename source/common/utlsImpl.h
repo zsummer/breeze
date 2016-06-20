@@ -101,15 +101,26 @@ typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std
     return t;
 }
 
+template<class To>
+typename std::enable_if<std::is_class<To>::value, To>::type fromString(std::string && t, To def)
+{
+    if (t.empty()) return def;
+    return std::move(t);
+}
+template<class To>
+typename std::enable_if<std::is_class<To>::value, To>::type fromString(std::string && t)
+{
+    return std::move(t);
+}
 
 
 template<class _Tuple>
-void splitTupleStringImpl(_Tuple & ret, const std::tuple<> & unused, const std::string & text, const std::string & deli, const std::string & ign)
+void splitTupleStringImpl(_Tuple & ret, const std::string & text, const std::string & deli, const std::string & ign)
 {
 }
 
 template<class _Tuple, class _This, class ... _Rest>
-void splitTupleStringImpl(_Tuple & ret, const std::tuple<_This, _Rest ...> & unused, const std::string & text, const std::string & deli, const std::string & ign)
+void splitTupleStringImpl(_Tuple & ret, const std::string & text, const std::string & deli, const std::string & ign)
 {
     std::size_t which = std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest);
     std::size_t firstCursor = 0;
@@ -135,7 +146,7 @@ void splitTupleStringImpl(_Tuple & ret, const std::tuple<_This, _Rest ...> & unu
         }
     }
     std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(trim(text.substr(firstCursor, secondCursor - firstCursor), ign));
-    splitTupleStringImpl<_Tuple, _Rest ...>(ret, std::tuple<_Rest ... >(), text, deli, ign);
+    splitTupleStringImpl<_Tuple, _Rest ...>(ret, text, deli, ign);
 }
 
 
@@ -145,7 +156,7 @@ template<class ... T>
 typename std::enable_if<std::is_integral<int>::value, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, const std::string & ign)
 {
     std::tuple<T ... > ret;
-    splitTupleStringImpl<std::tuple<T ... >, T ...>(ret, ret, text, deli, ign);
+    splitTupleStringImpl<std::tuple<T ... >, T ...>(ret, text, deli, ign);
     return ret;
 }
 
@@ -191,10 +202,10 @@ splitArrayString(const std::string & text, const std::string & deli, const std::
 
 
 template<class Key, class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<T ...> >>::type
+typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<Key, T ...> >>::type
 splitDictString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign)
 {
-    std::map<Key, std::tuple<T ...> > ret;
+    std::map<Key, std::tuple<Key, T ...> > ret;
     size_t beginPos = 0;
     std::string matched;
     for (size_t i = 0; i < text.length(); i++)
@@ -210,7 +221,15 @@ splitDictString(const std::string & text, const std::string & deli, const std::s
             {
                 auto tp = splitTupleString<Key, T...>(one, deliMeta, ign);
                 auto k = std::get<0>(tp);
-                ret[k] = std::move(tp);
+                auto founder = ret.find(k);
+                if (founder == ret.end())
+                {
+                    ret.insert(std::make_pair(k, std::move(tp)));
+                }
+                else
+                {
+                    founder->second = std::move(tp);
+                }
             }
             beginPos = i + 1;
             matched.clear();

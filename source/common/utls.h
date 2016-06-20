@@ -117,6 +117,7 @@ typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const 
 
 //both 1 left, 2right, 3 both
 std::string trim(const std::string &str, const std::string& ign, int both = 3);
+std::string trim(std::string &&str, const std::string & ign, int both);
 
 template<class First, class Second>
 typename std::enable_if<std::is_integral<int>::value, std::pair<First, Second>>::type splitPairString(const std::string & str, const std::string & delimiter);
@@ -130,7 +131,7 @@ typename std::enable_if<std::is_integral<int>::value, std::vector<std::tuple<T .
 splitArrayString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign);
 
 template<class Key, class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<T ...> >>::type 
+typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<Key, T ...> >>::type 
 splitDictString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign);
 
 
