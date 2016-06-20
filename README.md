@@ -2,7 +2,7 @@ Welcome to the breeze wiki!
 ## breeze简述  
 [![Build Status](https://travis-ci.org/zsummer/breeze.svg?branch=master)](https://travis-ci.org/zsummer/breeze)  
 breeze是一个C++的轻量级的分布式服务器引擎, 架构思想为一切皆service.   
-breeze is a lightweight, fast, scalable, distributed server engine. Greatly inspired by docker and Bigworld.  the thoughts is " all is service ".   
+breeze is a lightweight, fast, distributed server engine. greatly inspired by docker and bigworld.  the thoughts is " all is service ".   
   
   
 ## 特点:    
