@@ -110,10 +110,10 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct LoadServiceNotice //通知其他Docker有Service已装载  
+struct ShellServiceInfo //Service被装载或者属性更改,需要通知给其他Docker的信息  
 { 
-    static const unsigned short getProtoID() { return 2003;} 
-    static const std::string getProtoName() { return "LoadServiceNotice";} 
+    static const unsigned short getProtoID() { return 2013;} 
+    static const std::string getProtoName() { return "ShellServiceInfo";} 
     unsigned int serviceDockerID;  
     unsigned short serviceType;  
     unsigned long long serviceID;  
@@ -121,7 +121,7 @@ struct LoadServiceNotice //通知其他Docker有Service已装载
     unsigned short status;  
     unsigned int clientDockerID;  
     unsigned int clientSessionID;  
-    LoadServiceNotice() 
+    ShellServiceInfo() 
     { 
         serviceDockerID = 0; 
         serviceType = 0; 
@@ -130,7 +130,7 @@ struct LoadServiceNotice //通知其他Docker有Service已装载
         clientDockerID = 0; 
         clientSessionID = 0; 
     } 
-    LoadServiceNotice(const unsigned int & serviceDockerID, const unsigned short & serviceType, const unsigned long long & serviceID, const std::string & serviceName, const unsigned short & status, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
+    ShellServiceInfo(const unsigned int & serviceDockerID, const unsigned short & serviceType, const unsigned long long & serviceID, const std::string & serviceName, const unsigned short & status, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
     { 
         this->serviceDockerID = serviceDockerID; 
         this->serviceType = serviceType; 
@@ -141,7 +141,7 @@ struct LoadServiceNotice //通知其他Docker有Service已装载
         this->clientSessionID = clientSessionID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LoadServiceNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ShellServiceInfo & data) 
 { 
     ws << data.serviceDockerID;  
     ws << data.serviceType;  
@@ -152,7 +152,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.clientSessionID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LoadServiceNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ShellServiceInfo & data) 
 { 
     rs >> data.serviceDockerID;  
     rs >> data.serviceType;  
@@ -163,7 +163,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.clientSessionID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LoadServiceNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ShellServiceInfo & info) 
 { 
     stm << "[\n"; 
     stm << "serviceDockerID=" << info.serviceDockerID << "\n"; 
@@ -177,69 +177,67 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+ 
+typedef std::vector<ShellServiceInfo> ShellServiceInfoArray;  
+ 
+struct LoadServiceNotice //通知其他Docker有Service已装载  
+{ 
+    static const unsigned short getProtoID() { return 2003;} 
+    static const std::string getProtoName() { return "LoadServiceNotice";} 
+    ShellServiceInfoArray shellServiceInfos;  
+    LoadServiceNotice() 
+    { 
+    } 
+    LoadServiceNotice(const ShellServiceInfoArray & shellServiceInfos) 
+    { 
+        this->shellServiceInfos = shellServiceInfos; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LoadServiceNotice & data) 
+{ 
+    ws << data.shellServiceInfos;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LoadServiceNotice & data) 
+{ 
+    rs >> data.shellServiceInfos;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LoadServiceNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "shellServiceInfos=" << info.shellServiceInfos << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct RefreshServiceToMgrNotice //Multi-Servie发生状态变化时候通知给管理器  
 { 
     static const unsigned short getProtoID() { return 2004;} 
     static const std::string getProtoName() { return "RefreshServiceToMgrNotice";} 
-    unsigned int serviceDockerID;  
-    unsigned short serviceType;  
-    unsigned long long serviceID;  
-    std::string serviceName;  
-    unsigned short status;  
-    unsigned int clientDockerID;  
-    unsigned int clientSessionID;  
+    ShellServiceInfoArray shellServiceInfos;  
     RefreshServiceToMgrNotice() 
     { 
-        serviceDockerID = 0; 
-        serviceType = 0; 
-        serviceID = 0; 
-        status = 0; 
-        clientDockerID = 0; 
-        clientSessionID = 0; 
     } 
-    RefreshServiceToMgrNotice(const unsigned int & serviceDockerID, const unsigned short & serviceType, const unsigned long long & serviceID, const std::string & serviceName, const unsigned short & status, const unsigned int & clientDockerID, const unsigned int & clientSessionID) 
+    RefreshServiceToMgrNotice(const ShellServiceInfoArray & shellServiceInfos) 
     { 
-        this->serviceDockerID = serviceDockerID; 
-        this->serviceType = serviceType; 
-        this->serviceID = serviceID; 
-        this->serviceName = serviceName; 
-        this->status = status; 
-        this->clientDockerID = clientDockerID; 
-        this->clientSessionID = clientSessionID; 
+        this->shellServiceInfos = shellServiceInfos; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshServiceToMgrNotice & data) 
 { 
-    ws << data.serviceDockerID;  
-    ws << data.serviceType;  
-    ws << data.serviceID;  
-    ws << data.serviceName;  
-    ws << data.status;  
-    ws << data.clientDockerID;  
-    ws << data.clientSessionID;  
+    ws << data.shellServiceInfos;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshServiceToMgrNotice & data) 
 { 
-    rs >> data.serviceDockerID;  
-    rs >> data.serviceType;  
-    rs >> data.serviceID;  
-    rs >> data.serviceName;  
-    rs >> data.status;  
-    rs >> data.clientDockerID;  
-    rs >> data.clientSessionID;  
+    rs >> data.shellServiceInfos;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshServiceToMgrNotice & info) 
 { 
     stm << "[\n"; 
-    stm << "serviceDockerID=" << info.serviceDockerID << "\n"; 
-    stm << "serviceType=" << info.serviceType << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "serviceName=" << info.serviceName << "\n"; 
-    stm << "status=" << info.status << "\n"; 
-    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
-    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
+    stm << "shellServiceInfos=" << info.shellServiceInfos << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

@@ -97,22 +97,25 @@ void OfflineService::onInsert(bool success, const UserOffline & offline)
 }
 void OfflineService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    RefreshServiceToMgrNotice ref;
-    rs >> ref;
-    if (ref.status == SS_WORKING && ref.clientSessionID != InvalidSessionID)
+    RefreshServiceToMgrNotice notice;
+    rs >> notice;
+    for (const auto & si : notice.shellServiceInfos)
     {
-        for (auto iter = _offlines._data.begin(); iter != _offlines._data.end();)
+        if (si.status == SS_WORKING && si.clientSessionID != InvalidSessionID)
         {
-            auto offline = *iter;
-            if (offline.serviceID == ref.serviceID && offline.status == 0)
+            for (auto iter = _offlines._data.begin(); iter != _offlines._data.end();)
             {
-                toService(STUser, offline.serviceID, offline.streamBlob.c_str(), (unsigned int)offline.streamBlob.length());
-                offline.status = 1;
-                _offlines.updateToDB(offline);
-                iter = _offlines._data.erase(iter);
-                continue;
+                auto offline = *iter;
+                if (offline.serviceID == si.serviceID && offline.status == 0)
+                {
+                    toService(STUser, offline.serviceID, offline.streamBlob.c_str(), (unsigned int)offline.streamBlob.length());
+                    offline.status = 1;
+                    _offlines.updateToDB(offline);
+                    iter = _offlines._data.erase(iter);
+                    continue;
+                }
+                iter++;
             }
-            iter++;
         }
     }
 }

@@ -101,12 +101,12 @@ namespace Proto4z
         } 
     } 
  
-    public class LoadServiceNotice: Proto4z.IProtoObject //通知其他Docker有Service已装载  
+    public class ShellServiceInfo: Proto4z.IProtoObject //Service被装载或者属性更改,需要通知给其他Docker的信息  
     {     
         //proto id   
-        public const ushort protoID = 2003;  
-        static public ushort getProtoID() { return 2003; } 
-        static public string getProtoName() { return "LoadServiceNotice"; } 
+        public const ushort protoID = 2013;  
+        static public ushort getProtoID() { return 2013; } 
+        static public string getProtoName() { return "ShellServiceInfo"; } 
         //members   
         public uint serviceDockerID;  
         public ushort serviceType;  
@@ -115,7 +115,7 @@ namespace Proto4z
         public ushort status;  
         public uint clientDockerID;  
         public uint clientSessionID;  
-        public LoadServiceNotice()  
+        public ShellServiceInfo()  
         { 
             serviceDockerID = 0;  
             serviceType = 0;  
@@ -125,7 +125,7 @@ namespace Proto4z
             clientDockerID = 0;  
             clientSessionID = 0;  
         } 
-        public LoadServiceNotice(uint serviceDockerID, ushort serviceType, ulong serviceID, string serviceName, ushort status, uint clientDockerID, uint clientSessionID) 
+        public ShellServiceInfo(uint serviceDockerID, ushort serviceType, ulong serviceID, string serviceName, ushort status, uint clientDockerID, uint clientSessionID) 
         { 
             this.serviceDockerID = serviceDockerID; 
             this.serviceType = serviceType; 
@@ -160,6 +160,68 @@ namespace Proto4z
         } 
     } 
  
+ 
+    public class ShellServiceInfoArray : System.Collections.Generic.List<ShellServiceInfo>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new ShellServiceInfo(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class LoadServiceNotice: Proto4z.IProtoObject //通知其他Docker有Service已装载  
+    {     
+        //proto id   
+        public const ushort protoID = 2003;  
+        static public ushort getProtoID() { return 2003; } 
+        static public string getProtoName() { return "LoadServiceNotice"; } 
+        //members   
+        public ShellServiceInfoArray shellServiceInfos;  
+        public LoadServiceNotice()  
+        { 
+            shellServiceInfos = new ShellServiceInfoArray();  
+        } 
+        public LoadServiceNotice(ShellServiceInfoArray shellServiceInfos) 
+        { 
+            this.shellServiceInfos = shellServiceInfos; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            if (this.shellServiceInfos == null) this.shellServiceInfos = new ShellServiceInfoArray(); 
+            data.AddRange(this.shellServiceInfos.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.shellServiceInfos = new ShellServiceInfoArray(); 
+            this.shellServiceInfos.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class RefreshServiceToMgrNotice: Proto4z.IProtoObject //Multi-Servie发生状态变化时候通知给管理器  
     {     
         //proto id   
@@ -167,54 +229,26 @@ namespace Proto4z
         static public ushort getProtoID() { return 2004; } 
         static public string getProtoName() { return "RefreshServiceToMgrNotice"; } 
         //members   
-        public uint serviceDockerID;  
-        public ushort serviceType;  
-        public ulong serviceID;  
-        public string serviceName;  
-        public ushort status;  
-        public uint clientDockerID;  
-        public uint clientSessionID;  
+        public ShellServiceInfoArray shellServiceInfos;  
         public RefreshServiceToMgrNotice()  
         { 
-            serviceDockerID = 0;  
-            serviceType = 0;  
-            serviceID = 0;  
-            serviceName = "";  
-            status = 0;  
-            clientDockerID = 0;  
-            clientSessionID = 0;  
+            shellServiceInfos = new ShellServiceInfoArray();  
         } 
-        public RefreshServiceToMgrNotice(uint serviceDockerID, ushort serviceType, ulong serviceID, string serviceName, ushort status, uint clientDockerID, uint clientSessionID) 
+        public RefreshServiceToMgrNotice(ShellServiceInfoArray shellServiceInfos) 
         { 
-            this.serviceDockerID = serviceDockerID; 
-            this.serviceType = serviceType; 
-            this.serviceID = serviceID; 
-            this.serviceName = serviceName; 
-            this.status = status; 
-            this.clientDockerID = clientDockerID; 
-            this.clientSessionID = clientSessionID; 
+            this.shellServiceInfos = shellServiceInfos; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.serviceDockerID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.serviceType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
+            if (this.shellServiceInfos == null) this.shellServiceInfos = new ShellServiceInfoArray(); 
+            data.AddRange(this.shellServiceInfos.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.serviceDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.serviceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.shellServiceInfos = new ShellServiceInfoArray(); 
+            this.shellServiceInfos.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

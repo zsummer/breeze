@@ -22,8 +22,9 @@
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
+    
 
-    <packet name="LoadServiceNotice" desc= "通知其他Docker有Service已装载">
+    <packet name="ShellServiceInfo" desc= "Service被装载或者属性更改,需要通知给其他Docker的信息">
         <member name="serviceDockerID" type="ui32"   desc=""/>
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
@@ -32,15 +33,14 @@
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
+    <array name="ShellServiceInfoArray" type="ShellServiceInfo" desc="" />
+
+    <packet name="LoadServiceNotice" desc= "通知其他Docker有Service已装载">
+        <member name="shellServiceInfos" type="ShellServiceInfoArray"   desc=""/>
+    </packet>
 
     <packet name="RefreshServiceToMgrNotice" desc= "Multi-Servie发生状态变化时候通知给管理器">
-        <member name="serviceDockerID" type="ui32"   desc=""/>
-        <member name="serviceType" type="ui16"   desc=""/>
-        <member name="serviceID" type="ui64"   desc=""/>
-        <member name="serviceName" type="string"   desc=""/>
-        <member name="status" type="ui16"   desc=""/>
-        <member name="clientDockerID" type="ui32"   desc=""/>
-        <member name="clientSessionID" type="ui32"   desc=""/>
+        <member name="shellServiceInfos" type="ShellServiceInfoArray"   desc=""/>
     </packet>
 
 

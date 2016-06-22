@@ -428,6 +428,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
         }
     }
 
+    LoadServiceNotice notice;
     for (auto & second : _services)
     {
         if (second.first == STClient || second.first == STUser || second.first == InvalidServiceType)
@@ -438,18 +439,18 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
         {
             if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
             {
-                LoadServiceNotice notice(
+                notice.shellServiceInfos.push_back(ShellServiceInfo(
                     svc.second->getServiceDockerID(),
                     svc.second->getServiceType(),
                     svc.second->getServiceID(),
                     svc.second->getServiceName(),
                     svc.second->getStatus(),
-                    svc.second->getClientDockerID(), 
-                    svc.second->getClientSessionID());
-                Docker::getRef().sendToSession(session->getSessionID(), notice);
+                    svc.second->getClientDockerID(),
+                    svc.second->getClientSessionID()));
             }
         }
     }
+    Docker::getRef().sendToSession(session->getSessionID(), notice);
     buildCluster();
 }
 
@@ -778,14 +779,15 @@ void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream
 
     if (!isSingletonService(fder->second->getServiceType()) && !fder->second->isShell())
     {
-        RefreshServiceToMgrNotice refreshNotice(
+        RefreshServiceToMgrNotice refreshNotice;
+        refreshNotice.shellServiceInfos.push_back( ShellServiceInfo(
             fder->second->getServiceDockerID(),
             fder->second->getServiceType(),
             fder->second->getServiceID(),
             fder->second->getServiceName(),
             fder->second->getStatus(),
             fder->second->getClientDockerID(),
-            fder->second->getClientSessionID());
+            fder->second->getClientSessionID()));
         for (auto sd : ServiceDepends)
         {
             if (isSingletonService(sd.first))
@@ -802,19 +804,25 @@ void Docker::event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs)
 {
     LoadServiceNotice service;
     rs >> service;
-    LOGI("Docker::event_onLoadServiceNotice type=" << service.serviceType << ", name=" << service.serviceName << ", id=" << service.serviceID);
+    for (const auto & si : service.shellServiceInfos)
+    {
+        LOGI("Docker::event_onLoadServiceNotice type=" << si.serviceType
+            << ", name=" << si.serviceName << ", id=" << si.serviceID);
 
-    auto founder = _services.find(service.serviceType);
-    if (founder == _services.end())
-    {
-        LOGE("event_onLoadServiceNotice can't founder remote service. service=" << getServiceName(service.serviceType));
-        return;
+        auto founder = _services.find(si.serviceType);
+        if (founder == _services.end())
+        {
+            LOGE("event_onLoadServiceNotice can't founder remote service. service=" << getServiceName(si.serviceType));
+            return;
+        }
+        auto servicePtr = createService(si.serviceDockerID, si.serviceType, si.serviceID,
+            si.serviceName, si.clientDockerID, si.clientSessionID, true, false);
+        if (servicePtr)
+        {
+            servicePtr->setStatus(SS_WORKING);
+        }
     }
-    auto servicePtr = createService(service.serviceDockerID, service.serviceType, service.serviceID, service.serviceName, service.clientDockerID, service.clientSessionID, true, false);
-    if (servicePtr)
-    {
-        servicePtr->setStatus(SS_WORKING);
-    }
+ 
 }
 
 void Docker::event_onKickRealClient(TcpSessionPtr session, ReadStream & rs)

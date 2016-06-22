@@ -169,17 +169,21 @@ void UserMgrService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
 {
     LoadServiceNotice notice;
     rs >> notice;
-    if (notice.serviceType == STUser)
+    for (const auto & si : notice.shellServiceInfos)
     {
-        auto founder = _userStatusByID.find(notice.serviceID);
-        if (founder == _userStatusByID.end())
+        if (si.serviceType == STUser)
         {
-            LOGE("error");
-            return;
+            auto founder = _userStatusByID.find(si.serviceID);
+            if (founder == _userStatusByID.end())
+            {
+                LOGE("error");
+                return;
+            }
+            founder->second->_status = si.status;
+            founder->second->_lastChangeTime = getNowTime();
         }
-        founder->second->_status = notice.status;
-        founder->second->_lastChangeTime = getNowTime();
     }
+
 }
 
 

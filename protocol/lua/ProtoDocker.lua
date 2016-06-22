@@ -20,29 +20,34 @@ Proto4z.LoadServiceInDocker[3] = {name="serviceName", type="string" }
 Proto4z.LoadServiceInDocker[4] = {name="clientDockerID", type="ui32" }  
 Proto4z.LoadServiceInDocker[5] = {name="clientSessionID", type="ui32" }  
  
+Proto4z.register(2013,"ShellServiceInfo") 
+Proto4z.ShellServiceInfo = {} --Service被装载或者属性更改,需要通知给其他Docker的信息 
+Proto4z.ShellServiceInfo.__protoID = 2013 
+Proto4z.ShellServiceInfo.__protoName = "ShellServiceInfo" 
+Proto4z.ShellServiceInfo[1] = {name="serviceDockerID", type="ui32" }  
+Proto4z.ShellServiceInfo[2] = {name="serviceType", type="ui16" }  
+Proto4z.ShellServiceInfo[3] = {name="serviceID", type="ui64" }  
+Proto4z.ShellServiceInfo[4] = {name="serviceName", type="string" }  
+Proto4z.ShellServiceInfo[5] = {name="status", type="ui16" }  
+Proto4z.ShellServiceInfo[6] = {name="clientDockerID", type="ui32" }  
+Proto4z.ShellServiceInfo[7] = {name="clientSessionID", type="ui32" }  
+ 
+Proto4z.ShellServiceInfoArray = {}  
+Proto4z.ShellServiceInfoArray.__protoName = "ShellServiceInfoArray" 
+Proto4z.ShellServiceInfoArray.__protoDesc = "array" 
+Proto4z.ShellServiceInfoArray.__protoTypeV = "ShellServiceInfo" 
+ 
 Proto4z.register(2003,"LoadServiceNotice") 
 Proto4z.LoadServiceNotice = {} --通知其他Docker有Service已装载 
 Proto4z.LoadServiceNotice.__protoID = 2003 
 Proto4z.LoadServiceNotice.__protoName = "LoadServiceNotice" 
-Proto4z.LoadServiceNotice[1] = {name="serviceDockerID", type="ui32" }  
-Proto4z.LoadServiceNotice[2] = {name="serviceType", type="ui16" }  
-Proto4z.LoadServiceNotice[3] = {name="serviceID", type="ui64" }  
-Proto4z.LoadServiceNotice[4] = {name="serviceName", type="string" }  
-Proto4z.LoadServiceNotice[5] = {name="status", type="ui16" }  
-Proto4z.LoadServiceNotice[6] = {name="clientDockerID", type="ui32" }  
-Proto4z.LoadServiceNotice[7] = {name="clientSessionID", type="ui32" }  
+Proto4z.LoadServiceNotice[1] = {name="shellServiceInfos", type="ShellServiceInfoArray" }  
  
 Proto4z.register(2004,"RefreshServiceToMgrNotice") 
 Proto4z.RefreshServiceToMgrNotice = {} --Multi-Servie发生状态变化时候通知给管理器 
 Proto4z.RefreshServiceToMgrNotice.__protoID = 2004 
 Proto4z.RefreshServiceToMgrNotice.__protoName = "RefreshServiceToMgrNotice" 
-Proto4z.RefreshServiceToMgrNotice[1] = {name="serviceDockerID", type="ui32" }  
-Proto4z.RefreshServiceToMgrNotice[2] = {name="serviceType", type="ui16" }  
-Proto4z.RefreshServiceToMgrNotice[3] = {name="serviceID", type="ui64" }  
-Proto4z.RefreshServiceToMgrNotice[4] = {name="serviceName", type="string" }  
-Proto4z.RefreshServiceToMgrNotice[5] = {name="status", type="ui16" }  
-Proto4z.RefreshServiceToMgrNotice[6] = {name="clientDockerID", type="ui32" }  
-Proto4z.RefreshServiceToMgrNotice[7] = {name="clientSessionID", type="ui32" }  
+Proto4z.RefreshServiceToMgrNotice[1] = {name="shellServiceInfos", type="ShellServiceInfoArray" }  
  
 Proto4z.register(2005,"SwitchServiceClientNotice") 
 Proto4z.SwitchServiceClientNotice = {} --更改clientID 

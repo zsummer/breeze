@@ -25,7 +25,9 @@
 #include <common.h>
 #include "service.h"
 
-
+/*
+shell service. 
+*/
 
 
 class ShellService : public Service

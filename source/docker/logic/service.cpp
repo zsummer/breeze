@@ -33,27 +33,32 @@ bool Service::finishLoad()
     setStatus(SS_WORKING);
     if (!isShell())
     {
-       
-        LoadServiceNotice notice(
-            getServiceDockerID(), 
-            getServiceType(), 
-            getServiceID(), 
-            getServiceName(), 
-            getStatus(),  
-            getClientDockerID(), 
-            getClientSessionID());
-        Docker::getRef().broadcastToDockers(notice, false);
+       if (true)
+       {
+           LoadServiceNotice notice;
+           notice.shellServiceInfos.push_back(ShellServiceInfo(
+               getServiceDockerID(),
+               getServiceType(),
+               getServiceID(),
+               getServiceName(),
+               getStatus(),
+               getClientDockerID(),
+               getClientSessionID()));
+           Docker::getRef().broadcastToDockers(notice, false);
+       }
 
         if (!isSingletonService(getServiceType()))
         {
-            RefreshServiceToMgrNotice refreshNotice(
+            RefreshServiceToMgrNotice refreshNotice;
+            refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
                 getServiceDockerID(),
                 getServiceType(),
                 getServiceID(),
                 getServiceName(),
                 getStatus(),
                 getClientDockerID(),
-                getClientSessionID());
+                getClientSessionID()));
+
             for (auto sd : ServiceDepends)
             {
                 if (isSingletonService(sd.first))
@@ -79,14 +84,15 @@ bool Service::finishUnload()
     {
         if (!isSingletonService(getServiceType()))
         {
-            RefreshServiceToMgrNotice refreshNotice(
+            RefreshServiceToMgrNotice refreshNotice;
+            refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
                 getServiceDockerID(),
                 getServiceType(),
                 getServiceID(),
                 getServiceName(),
                 getStatus(),
                 getClientDockerID(),
-                getClientSessionID());
+                getClientSessionID()));
             for (auto sd : ServiceDepends)
             {
                 if (isSingletonService(sd.first))
