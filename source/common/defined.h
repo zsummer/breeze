@@ -142,8 +142,14 @@ const ServiceType STWebAgent = (ServiceType)4;
 const ServiceType STOfflineMgr = (ServiceType)5;
 const ServiceType STMinitorMgr = (ServiceType)6;
 
+
 const ServiceType STUser = (ServiceType)11;
 const ServiceType STClient = (ServiceType)20;
+
+const ServiceType STSpaceMgr = (ServiceType)30;
+const ServiceType STSpace = (ServiceType)31;
+
+
 
 //std::tuple<isSingleton, serviceKey, serviceDepends>
 struct  ServiceDependInfo
@@ -170,11 +176,15 @@ const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
     { STOfflineMgr,{ true, "STOfflineMgr",{ STInfoDBMgr , STLogDBMgr } } },
     { STMinitorMgr,{ true, "STMinitorMgr",{ STInfoDBMgr , STLogDBMgr } } },
 
-    { STUserMgr, { true, "STUserMgr", { STInfoDBMgr , STLogDBMgr,STWebAgent, STOfflineMgr,STMinitorMgr } } },
+    { STUserMgr,{ true, "STUserMgr",{ STInfoDBMgr , STLogDBMgr,STWebAgent, STOfflineMgr,STMinitorMgr } } },
+
+    { STSpaceMgr,{ true, "STSpaceMgr"} },
+    { STSpace,{ false, "STSpace",{ STSpaceMgr} } },
+
 
     { STUser,{ false, "STUser",{ STUserMgr } } },
 
-    { STClient,{ false, "STClient" } }
+    { STClient,{ false, "STClient" } },
 };
 
 inline bool isSingletonService(ServiceType serviceType);
@@ -204,6 +214,7 @@ struct DockerConfig
     std::vector<std::string> _whiteList;
     std::vector<ServiceType> _services;
     DockerID _dockerID = InvalidDockerID;
+    ui32 _areaID = 0;
 };
 
 

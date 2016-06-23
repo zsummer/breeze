@@ -1,7 +1,7 @@
 
 local config = {}
 
-config.areaid = 1000
+config.areaID = 1000
 
 
 config.db = 
@@ -20,8 +20,9 @@ config.docker =
         serviceWhite={"192.168.", "127.0."},
         wideIP="127.0.0.1",
         widePort=26000,
-        services={"STLogDBMgr", "STUserMgr", "STUser", "STInfoDBMgr"},
+        services={"STLogDBMgr", "STUserMgr", "STUser", "STInfoDBMgr", "STSpaceMgr"},
         dockerID = 1,
+        areaID = config.areaID,
     },
     {
         serviceBindIP="0.0.0.0",
@@ -32,11 +33,20 @@ config.docker =
         widePort=26001,
         webIP="127.0.0.1",
         webPort=26080,
-        services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STUser"},
+        services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STUser", "STSpace"},
         dockerID = 2,
+        areaID = config.areaID,
     },
-
-
+--[[
+    {
+        serviceBindIP="0.0.0.0",
+        serviceIP="127.0.0.1",
+        servicePort=16001,
+        serviceWhite={"192.168.", "127.0."},
+        services={"STSpaceMgr"},
+        dockerID = 3,
+        areaID = config.areaID+10,
+    },]]
 }
 
 

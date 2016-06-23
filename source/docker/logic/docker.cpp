@@ -7,6 +7,8 @@
 #include "webService.h"
 #include "monitorService.h"
 #include "offlineService.h"
+#include "space.h"
+#include "spaceMgr.h"
 #include <ProtoUser.h>
 #include <ProtoUserMgr.h>
 #include <ProtoWebAgent.h>
@@ -19,16 +21,16 @@ Docker::Docker()
 
 }
 
-bool Docker::init(const std::string & config, DockerID idx)
+bool Docker::init(const std::string & configName, DockerID configID)
 {
-    if (!ServerConfig::getRef().parse(config, idx))
+    if (!ServerConfig::getRef().parse(configName, configID))
     {
-        LOGE("Docker::init error. parse config error. config path=" << config << ", docker ID = " << idx);
+        LOGE("Docker::init error. parse config error. config path=" << configName << ", docker ID = " << configID);
         return false;
     }
-    if (idx == InvalidDockerID)
+    if (configID == InvalidDockerID)
     {
-        LOGE("Docker::init error. current docker id invalid. config path=" << config << ", docker ID = " << idx);
+        LOGE("Docker::init error. current docker id invalid. config path=" << configName << ", docker ID = " << configID);
         return false;
     }
     if (!DBDict::getRef().initHelper())
@@ -51,11 +53,11 @@ bool Docker::init(const std::string & config, DockerID idx)
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
-        LOGE("Docker::init error. current docker id not found in config file.. config path=" << config << ", docker ID = " << idx);
+        LOGE("Docker::init error. current docker id not found in config file.. config path=" << configName << ", docker ID = " << configID);
         return false;
     }
-    LOGA("Docker::init  success. dockerID=" << idx);
-    SessionManager::getRef().createTimer(1000, std::bind(&Docker::buildCluster, Docker::getPtr()));
+    LOGA("Docker::init  success. dockerID=" << configID);
+    SessionManager::getRef().createTimer(10, std::bind(&Docker::buildCluster, Docker::getPtr()));
     return true;
 }
 
@@ -272,7 +274,7 @@ bool Docker::startDockerConnect()
         ds.dokerID = docker._dockerID;
         ds.sessionID = cID;
     }
-    const auto & stc = ServerConfig::getRef().getServiceTypeConfig();
+    const auto & stc = ServerConfig::getRef().getLocalServiceDockers();
     for (auto sd: ServiceDepends)
     {
         _services.insert(std::make_pair(sd.first, std::unordered_map<ServiceID, ServicePtr >()));
@@ -405,7 +407,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
     founder->second.status = 1;
     if (true)
     {
-        const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(STUser);
+        const auto  & config = ServerConfig::getRef().getLocalServiceDockers().at(STUser);
         for (auto dockerID : config)
         {
             if (dockerID == ci)
@@ -467,7 +469,7 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
     founder->second.status = 0;
     if (true)
     {
-        const auto  & config = ServerConfig::getRef().getServiceTypeConfig().at(STUser);
+        const auto  & config = ServerConfig::getRef().getLocalServiceDockers().at(STUser);
         for (auto dockerID : config)
         {
             if (dockerID == ci)
@@ -567,6 +569,14 @@ ServicePtr Docker::createService(DockerID serviceDockerID, ServiceType serviceTy
     else if (serviceType == STMinitorMgr)
     {
         service = std::make_shared<MonitorService>();
+    }
+    else if (serviceType == STSpaceMgr)
+    {
+        service = std::make_shared<SpaceMgrService>();
+    }
+    else if (serviceType == STSpace)
+    {
+        service = std::make_shared<SpaceService>();
     }
     else
     {
@@ -1356,7 +1366,7 @@ void Docker::sendToDocker(ServiceType serviceType, ServiceID serviceID, const ch
     }
     if (isSingletonService(serviceType) && serviceID == InvalidServiceID)
     {
-        serviceID = ServerConfig::getRef().getServiceTypeConfig().at(serviceType).front();
+        serviceID = ServerConfig::getRef().getLocalServiceDockers().at(serviceType).front();
     }
     auto fder = founder->second.find(serviceID);
     if (fder == founder->second.end())
@@ -1398,7 +1408,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         }
         if (isSingletonService(toServiceType) && toServiceID == InvalidServiceID)
         {
-            toServiceID = ServerConfig::getRef().getServiceTypeConfig().at(toServiceType).front();
+            toServiceID = ServerConfig::getRef().getLocalServiceDockers().at(toServiceType).front();
         }
 
         auto founder = _services.find(toServiceType);
@@ -1490,7 +1500,7 @@ ServicePtr Docker::peekService(ServiceType serviceType, ServiceID serviceID)
 {
     if (isSingletonService(serviceType) && serviceID == InvalidServiceID)
     {
-        serviceID = ServerConfig::getRef().getServiceTypeConfig().at(serviceType).front();
+        serviceID = ServerConfig::getRef().getLocalServiceDockers().at(serviceType).front();
     }
     auto founder = _services.find(serviceType);
     if (founder == _services.end())

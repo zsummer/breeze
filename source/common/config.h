@@ -34,26 +34,29 @@
 class ServerConfig : public Singleton<ServerConfig>
 {
 public:
-    bool parse(std::string filename, DockerID idx);
+    bool parse(std::string configName, DockerID dockerID);
 public:
     //服务器配置 
-    inline const std::vector<DockerConfig> & getDockerConfig() { return _configDocker; }
-    //记录每个类型的service可以被装载的docker id
-    inline const std::map<ui16, std::vector<DockerID> > & getServiceTypeConfig() { return _configServiceType; }
+    inline const std::vector<DockerConfig> & getDockerConfig() { return _configs; }
+    //记录每个类型的service可以被装载的docker id, 不包含共享组的docker
+    inline const std::map<ui16, std::vector<DockerID> > & getLocalServiceDockers() { return _localServiceDockers; }
+    //共享组的single service
+    inline const std::map<ui16, std::vector<DockerID> > & getSharedServiceDockers() { return _sharedServiceDockers; }
     //所有数据库配置 
     inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
     //当前docker进程的docker id
-    inline DockerID getDockerID(){ return _dockerIdx; }
+    inline DockerID getDockerID(){ return _dockerID; }
     //本组服务器的区ID ,用于实例ID的分段, 用于分区和方便合服 
-    inline AreaID getAreaID() { return _areaid; }
+    inline AreaID getAreaID() { return _areaID; }
     //通过area id计算出的初始化实例id. 使用时候 要先自增. 
-    inline ui64   getMinServiceID() { return _areaid * (ui64)pow(10, 8); }
+    inline ui64   getMinServiceID() { return _areaID * (ui64)pow(10, 8); }
 private:
-    DockerID _dockerIdx = InvalidDockerID;
-    AreaID _areaid = 0;
-    std::vector<DockerConfig> _configDocker;
+    DockerID _dockerID = InvalidDockerID;
+    AreaID _areaID = 0;
+    std::vector<DockerConfig> _configs;
     std::vector<DBConfig> _configDB;
-    std::map<ServiceType, std::vector<DockerID> > _configServiceType;
+    std::map<ServiceType, std::vector<DockerID> > _localServiceDockers;
+    std::map<ServiceType, std::vector<DockerID> > _sharedServiceDockers;
 
 };
 

@@ -49,7 +49,7 @@ class Docker : public Singleton<Docker>
 {
 public:
     Docker();
-    bool init(const std::string & config, DockerID idx);
+    bool init(const std::string & configName, DockerID configID);
     bool start();
     void stop();
     void forceStop();

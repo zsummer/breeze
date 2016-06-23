@@ -36,10 +36,10 @@ static int panichHandler(lua_State * L)
 }
 
 
-bool ServerConfig::parse(std::string filename, DockerID idx)
+bool ServerConfig::parse(std::string configName, DockerID dockerID)
 {
     srand((unsigned int)time(NULL));
-    _dockerIdx = idx;
+    _dockerID = dockerID;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {
@@ -47,15 +47,15 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
     }
     luaL_openlibs(L);  /* open libraries */
     lua_atpanic(L, panichHandler);
-    if (luaL_dofile(L, filename.c_str()))
+    if (luaL_dofile(L, configName.c_str()))
     {
-        LOGE("can't found the config file. filename=" << filename);
+        LOGE("can't found the config file. configName=" << configName);
         return false;
     }
-    lua_getfield(L, -1, "areaid");
-    _areaid = (unsigned short)luaL_optinteger(L, -1, 0);
+    lua_getfield(L, -1, "areaID");
+    _areaID = (unsigned short)luaL_optinteger(L, -1, 0);
     lua_pop(L, 1);
-    LOGI("ServerConfig::parse dockerID=" << idx << ", areaid=" << _areaid << ", getMinServiceID=" << getMinServiceID());
+    LOGI("ServerConfig::parse dockerID=" << dockerID << ", _areaID=" << _areaID << ", getMinServiceID=" << getMinServiceID());
 
     lua_getfield(L, -1, "db");
     lua_pushnil(L);
@@ -147,6 +147,11 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
         lconfig._dockerID = (DockerID)luaL_checkinteger(L, -1);
         lua_pop(L, 1);
 
+        lua_getfield(L, -1, "areaID");
+        lconfig._areaID = luaL_optinteger(L, -1, _areaID);
+        lua_pop(L, 1);
+
+
         lua_getfield(L, -1, "serviceWhite");
         if (lua_isnil(L, -1))
         {
@@ -188,7 +193,7 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
             }
             lua_pop(L, 1);
         }
-        _configDocker.push_back(lconfig);
+        _configs.push_back(lconfig);
         lua_pop(L, 1);
     }
     //pop listen table.
@@ -196,12 +201,18 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
 
     lua_close(L);
 
-    for (auto & config : _configDocker)
+    for (auto & config : _configs)
     {
         for (auto & serviceType : config._services)
         {
-            auto &dockerIDs = _configServiceType[serviceType];
-            dockerIDs.push_back(config._dockerID);
+            if (config._areaID == _areaID)
+            {
+                _localServiceDockers[serviceType].push_back(config._dockerID);
+            }
+            else
+            {
+                _sharedServiceDockers[serviceType].push_back(config._dockerID);
+            }
         }
     }
     for (const auto & sd : ServiceDepends)
@@ -210,8 +221,8 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
         {
             continue;
         }
-        auto founder = _configServiceType.find(sd.first);
-        if (founder == _configServiceType.end() || founder->second.empty())
+        auto founder = _localServiceDockers.find(sd.first);
+        if (founder == _localServiceDockers.end() || founder->second.empty())
         {
             LOGE("not found service in docker config. the service name=" << getServiceName(sd.first));
             return false;
