@@ -278,7 +278,7 @@ bool Docker::startDockerConnect()
         _services.insert(std::make_pair(sd.first, std::unordered_map<ServiceID, ServicePtr >()));
         if (isSingletonService(sd.first))
         {
-            if (!createService(stc.at(sd.first).front(), sd.first, InvalidServiceID, getServiceName(sd.first), 
+            if (!createService(stc.at(sd.first).front(), sd.first, stc.at(sd.first).front(), getServiceName(sd.first),
                 InvalidDockerID, InvalidSessionID, stc.at(sd.first).front() != ServerConfig::getRef().getDockerID(), true))
             {
                 return false;
@@ -630,7 +630,7 @@ void Docker::buildCluster()
             auto service = peekService(sd.first, InvalidServiceID);
             if (!service)
             {
-                LOGD("nullptr ");
+                LOGE("nullptr ");
                 Docker::getRef().forceStop();
                 return;
             }
@@ -1215,7 +1215,7 @@ void Docker::event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs)
     WebServerRequest req;
     rs >> req;
     SessionID cID =  SessionManager::getRef().addConnecter(req.ip, req.port);
-    if (cID == InvalidServiceID)
+    if (cID == InvalidSessionID)
     {
         LOGE("");
         return;
@@ -1354,6 +1354,10 @@ void Docker::sendToDocker(ServiceType serviceType, ServiceID serviceID, const ch
         LOGE("Docker::sendToDocker error. type not found. serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
         return;
     }
+    if (isSingletonService(serviceType) && serviceID == InvalidServiceID)
+    {
+        serviceID = ServerConfig::getRef().getServiceTypeConfig().at(serviceType).front();
+    }
     auto fder = founder->second.find(serviceID);
     if (fder == founder->second.end())
     {
@@ -1381,15 +1385,20 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
 
         LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
 
-        if (trace.toDockerID != InvalidDockerID && trace.toDockerID != ServerConfig::getRef().getDockerID()) //service shell maybe not success. do this.
+        if (trace.toDockerID != InvalidDockerID && trace.toDockerID != ServerConfig::getRef().getDockerID()) //Specified DockerID is high priority.
         {
             packetToDockerWithTracing(trace.toDockerID, trace, block, len);
             return;
         }
         ui16 toServiceType = trace.toServiceType;
+        ServiceID toServiceID = trace.toServiceID;
         if (trace.toServiceType == STClient)
         {
             toServiceType = STUser;
+        }
+        if (isSingletonService(toServiceType) && toServiceID == InvalidServiceID)
+        {
+            toServiceID = ServerConfig::getRef().getServiceTypeConfig().at(toServiceType).front();
         }
 
         auto founder = _services.find(toServiceType);
@@ -1398,7 +1407,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
             LOGF("Docker::toService can not found toServiceType type  trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
             return;
         }
-        auto fder = founder->second.find(trace.toServiceID);
+        auto fder = founder->second.find(toServiceID);
         if (fder == founder->second.end())
         {
             if (toServiceType == STUser)
@@ -1479,6 +1488,10 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
 
 ServicePtr Docker::peekService(ServiceType serviceType, ServiceID serviceID)
 {
+    if (isSingletonService(serviceType) && serviceID == InvalidServiceID)
+    {
+        serviceID = ServerConfig::getRef().getServiceTypeConfig().at(serviceType).front();
+    }
     auto founder = _services.find(serviceType);
     if (founder == _services.end())
     {

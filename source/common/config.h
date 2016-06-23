@@ -36,11 +36,17 @@ class ServerConfig : public Singleton<ServerConfig>
 public:
     bool parse(std::string filename, DockerID idx);
 public:
+    //服务器配置 
     inline const std::vector<DockerConfig> & getDockerConfig() { return _configDocker; }
+    //记录每个类型的service可以被装载的docker id
     inline const std::map<ui16, std::vector<DockerID> > & getServiceTypeConfig() { return _configServiceType; }
+    //所有数据库配置 
     inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
+    //当前docker进程的docker id
     inline DockerID getDockerID(){ return _dockerIdx; }
+    //本组服务器的区ID ,用于实例ID的分段, 用于分区和方便合服 
     inline AreaID getAreaID() { return _areaid; }
+    //通过area id计算出的初始化实例id. 使用时候 要先自增. 
     inline ui64   getMinServiceID() { return _areaid * (ui64)pow(10, 8); }
 private:
     DockerID _dockerIdx = InvalidDockerID;
