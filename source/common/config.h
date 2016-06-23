@@ -37,7 +37,10 @@ public:
     bool parse(std::string configName, DockerID dockerID);
 public:
     //服务器配置 
-    inline const std::vector<DockerConfig> & getDockerConfig() { return _configs; }
+    inline const std::vector<DockerConfig> & getConfigs() { return _configs; }
+    inline bool isLocalDocker(DockerID dockerID) {
+        return std::find_if(_configs.begin(), _configs.end(),
+            [dockerID, this](const DockerConfig &dc) {return dc._dockerID == dockerID && dc._areaID == _areaID; }) != _configs.end();}
     //记录每个类型的service可以被装载的docker id, 不包含共享组的docker
     inline const std::map<ui16, std::vector<DockerID> > & getLocalServiceDockers() { return _localServiceDockers; }
     //共享组的single service

@@ -116,6 +116,7 @@ using namespace zsummer::mysql;
 
 //分区
 typedef ui32 AreaID;
+const AreaID InvalidAreaID = 0;
 
 //节点索引ID
 typedef ui32 DockerID;

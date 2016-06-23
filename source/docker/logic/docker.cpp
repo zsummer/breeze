@@ -49,7 +49,7 @@ bool Docker::init(const std::string & configName, DockerID configID)
         return false;
     }
 
-    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    const auto & dockers = ServerConfig::getRef().getConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -126,9 +126,17 @@ void Docker::destroyCluster()
                 bool allsubsDestroy = true;
                 for (auto sub : subs)
                 {
-                    if (!peekService(sub).empty())
+                    auto ss = peekService(sub);
+                    for (auto s: ss)
                     {
-                        allsubsDestroy = false;
+                        if (ServerConfig::getRef().isLocalDocker(s.second->getServiceDockerID()))
+                        {
+                            allsubsDestroy = false;
+                            break;
+                        }
+                    }
+                    if (!allsubsDestroy)
+                    {
                         break;
                     }
                 }
@@ -189,7 +197,7 @@ void Docker::onShutdown()
 
 bool Docker::startDockerListen()
 {
-    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    const auto & dockers = ServerConfig::getRef().getConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -230,7 +238,7 @@ bool Docker::startDockerListen()
 }
 bool Docker::startDockerConnect()
 {
-    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    const auto & dockers = ServerConfig::getRef().getConfigs();
     for (const auto & docker : dockers)
     {
         SessionID cID = SessionManager::getRef().addConnecter(docker._serviceIP, docker._servicePort);
@@ -293,7 +301,7 @@ bool Docker::startDockerConnect()
 }
 bool Docker::startDockerWideListen()
 {
-    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    const auto & dockers = ServerConfig::getRef().getConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -330,7 +338,7 @@ bool Docker::startDockerWideListen()
 
 bool Docker::startDockerWebListen()
 {
-    const auto & dockers = ServerConfig::getRef().getDockerConfig();
+    const auto & dockers = ServerConfig::getRef().getConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc) {return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -405,41 +413,48 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
     }
     LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", dockerID=" << ci);
     founder->second.status = 1;
+    DockerConfig dc;
     if (true)
     {
-        const auto  & config = ServerConfig::getRef().getLocalServiceDockers().at(STUser);
-        for (auto dockerID : config)
+        const auto & configs = ServerConfig::getRef().getConfigs();
+        for (const auto & ci : configs)
         {
-            if (dockerID == ci)
+            if (ci._dockerID == founder->second.dokerID)
             {
-                LOGA("_userBalance.enableNode dockerID=" << dockerID);
-                _userBalance.enableNode(dockerID);
+                dc = ci;
+                break;
             }
         }
     }
     if (true)
     {
-        const auto & config = ServerConfig::getRef().getDockerConfig();
-        for (const auto & dc: config)
+        if (dc._areaID == ServerConfig::getRef().getAreaID() 
+            && std::find_if(dc._services.begin(), dc._services.end(), [](ServiceType st) {return st == STUser; }) != dc._services.end())
         {
-            if(dc._dockerID == ci && !dc._webIP.empty()&& dc._webPort != 0)
-            {
-                LOGA("_userBalance.enableNode dockerID=" << dc._dockerID << ", port=" << dc._webPort);
-                _webBalance.enableNode(dc._dockerID);
-            }
+            LOGA("_userBalance.enableNode dockerID=" << dc._dockerID);
+            _userBalance.enableNode(dc._dockerID);
+        }
+    }
+    if (true)
+    {
+        if (dc._areaID == ServerConfig::getRef().getAreaID() && !dc._webIP.empty() && dc._webPort != 0)
+        {
+            LOGA("_userBalance.enableNode dockerID=" << dc._dockerID << ", port=" << dc._webPort);
+            _webBalance.enableNode(dc._dockerID);
         }
     }
 
     LoadServiceNotice notice;
     for (auto & second : _services)
     {
-        if (second.first == STClient || second.first == STUser || second.first == InvalidServiceType)
+        if (second.first == STClient || !isSingletonService(second.first) || second.first == InvalidServiceType)
         {
             continue;
         }
+
         for (auto & svc : second.second )
         {
-            if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING)
+            if (!svc.second->isShell() && svc.second->getStatus() == SS_WORKING )
             {
                 notice.shellServiceInfos.push_back(ShellServiceInfo(
                     svc.second->getServiceDockerID(),
@@ -467,28 +482,35 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
     }
     LOGW("event_onServiceClosed cID=" << session->getSessionID() << ", dockerID=" << ci);
     founder->second.status = 0;
+    DockerConfig dc;
     if (true)
     {
-        const auto  & config = ServerConfig::getRef().getLocalServiceDockers().at(STUser);
-        for (auto dockerID : config)
+        const auto & configs = ServerConfig::getRef().getConfigs();
+        for (const auto & ci : configs)
         {
-            if (dockerID == ci)
+            if (ci._dockerID == founder->second.dokerID)
             {
-                LOGW("_userBalance.disableNode dockeriD=" << dockerID );
-                _userBalance.disableNode(dockerID);
+                dc = ci;
+                break;
             }
+        }
+    }
+
+    if (true)
+    {
+        if (dc._areaID == ServerConfig::getRef().getAreaID()
+            && std::find_if(dc._services.begin(), dc._services.end(), [](ServiceType st) {return st == STUser; }) != dc._services.end())
+        {
+            LOGW("_userBalance.disableNode dockeriD=" << ci);
+            _userBalance.disableNode(ci);
         }
     }
     if (true)
     {
-        const auto & config = ServerConfig::getRef().getDockerConfig();
-        for (const auto & dc: config)
+        if (dc._areaID == ServerConfig::getRef().getAreaID() && !dc._webIP.empty() && dc._webPort != 0)
         {
-            if(dc._dockerID == ci && !dc._webIP.empty()&& dc._webPort != 0)
-            {
-                LOGW("_webBalance.disableNode dockeriD=" << dc._dockerID << ", webPort=" << dc._webPort);
-                _webBalance.disableNode(dc._dockerID);
-            }
+            LOGW("_webBalance.disableNode dockeriD=" << dc._dockerID << ", webPort=" << dc._webPort);
+            _webBalance.disableNode(dc._dockerID);
         }
     }
 
@@ -609,7 +631,7 @@ void Docker::buildCluster()
     {
         for (auto & c : _dockerSession)
         {
-            if (c.second.status == 0)
+            if (c.second.status == 0 && ServerConfig::getRef().isLocalDocker(c.first))
             {
                 return;
             }

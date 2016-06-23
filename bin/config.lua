@@ -37,16 +37,16 @@ config.docker =
         dockerID = 2,
         areaID = config.areaID,
     },
---[[
+
     {
         serviceBindIP="0.0.0.0",
         serviceIP="127.0.0.1",
-        servicePort=16001,
+        servicePort=17002,
         serviceWhite={"192.168.", "127.0."},
         services={"STSpaceMgr"},
         dockerID = 3,
         areaID = config.areaID+10,
-    },]]
+    },
 }
 
 
