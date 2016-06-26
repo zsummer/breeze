@@ -49,7 +49,7 @@ private:
     void onUserOffline(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onInsert(bool success, const UserOffline & offline);
     void onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
-
+    void toSpaceClient();
 
 private:
     ui64 _offlineNextID = 0;

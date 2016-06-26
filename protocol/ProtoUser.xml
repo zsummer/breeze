@@ -56,5 +56,8 @@
         <member name="msg" type="string"   desc=""/>
     </packet>
 
+
+
+
 </Proto>
 

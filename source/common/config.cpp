@@ -217,7 +217,7 @@ bool ServerConfig::parse(std::string configName, DockerID dockerID)
     }
     for (const auto & sd : ServiceDepends)
     {
-        if (sd.first == STClient)
+        if (sd.first == STClient || sd.first == STSpaceClient)
         {
             continue;
         }

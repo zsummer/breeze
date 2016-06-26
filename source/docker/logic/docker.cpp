@@ -98,7 +98,7 @@ void Docker::destroyCluster()
     bool safe =  true;
     for (auto &second : _services)
     {
-        if (second.first == STClient || second.first == InvalidServiceType)
+        if (second.first == STClient || second.first == InvalidServiceType || second.first == STSpaceClient)
         {
             continue;
         }
@@ -447,7 +447,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
     LoadServiceNotice notice;
     for (auto & second : _services)
     {
-        if (second.first == STClient || !isSingletonService(second.first) || second.first == InvalidServiceType)
+        if (second.first == STClient || second.first == STSpaceClient || !isSingletonService(second.first) || second.first == InvalidServiceType)
         {
             continue;
         }
@@ -1110,6 +1110,20 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
             notice.clientSessionID = session->getSessionID();
             toService(trace, notice, true, true);
         }
+        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_SPACE_ATTACHED)
+        {
+            Tracing trace;
+            trace.fromServiceType = STSpaceClient;
+            trace.fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+            trace.toServiceType = STSpaceMgr;
+            trace.toServiceID = InvalidServiceID;
+
+            RealClientClosedNotice notice;
+            notice.serviceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+            notice.clientDockerID = ServerConfig::getRef().getDockerID();
+            notice.clientSessionID = session->getSessionID();
+            toService(trace, notice, true, true);
+        }
     }
 }
 
@@ -1202,7 +1216,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         toService(trace, serviceReq, true, true);
         return;
     }
-    else if (rs.getProtoID() >= 40000 && sessionStatus == SSTATUS_ATTACHED)
+    else if (rs.getProtoID() >= 40000 && sessionStatus == SSTATUS_ATTACHED )
     {
         LOGD("client other proto to user service. sID=" << session->getSessionID() << ", block len=" << len);
         Tracing trace;
@@ -1210,6 +1224,17 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         trace.fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
         trace.toServiceType = STUser;
         trace.toServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+        toService(trace, rs.getStream(), rs.getStreamLen(), true, true);
+        return;
+    }
+    else if (rs.getProtoID() >= 50000 && sessionStatus == SSTATUS_SPACE_ATTACHED)
+    {
+        LOGD("client other proto to user service. sID=" << session->getSessionID() << ", block len=" << len);
+        Tracing trace;
+        trace.fromServiceType = STSpaceClient;
+        trace.fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+        trace.toServiceType = STSpace;
+        trace.toServiceID = session->getUserParamNumber(UPARAM_SPACE_ID);
         toService(trace, rs.getStream(), rs.getStreamLen(), true, true);
         return;
     }
@@ -1409,18 +1434,30 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     try
     {
         ProtoID protoID = InvalidProtoID;
-        if (trace.toServiceType != STClient)
+        if (true)
         {
             ReadStream rs(block, len);
             protoID = rs.getProtoID();
         }
 
         LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
-
-        if (trace.toDockerID != InvalidDockerID && trace.toDockerID != ServerConfig::getRef().getDockerID()) //Specified DockerID is high priority.
+        if (trace.toServiceType == STSpaceClient)
         {
-            packetToDockerWithTracing(trace.toDockerID, trace, block, len);
+            LOGE("toServiceType is STSpaceClient.  it's need call toSpaceClient not here.");
             return;
+        }
+        if (trace.toDockerID != InvalidDockerID) //Specified DockerID is high priority.
+        {
+            if (trace.toDockerID != ServerConfig::getRef().getDockerID())
+            {
+                packetToDockerWithTracing(trace.toDockerID, trace, block, len);
+                return;
+            }
+            else
+            {
+                
+                //return;
+            }
         }
         ui16 toServiceType = trace.toServiceType;
         ServiceID toServiceID = trace.toServiceID;

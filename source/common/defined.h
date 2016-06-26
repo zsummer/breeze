@@ -149,6 +149,7 @@ const ServiceType STClient = (ServiceType)20;
 
 const ServiceType STSpaceMgr = (ServiceType)30;
 const ServiceType STSpace = (ServiceType)31;
+const ServiceType STSpaceClient = (ServiceType)32;
 
 
 
@@ -186,6 +187,7 @@ const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
     { STUser,{ false, "STUser",{ STUserMgr } } },
 
     { STClient,{ false, "STClient" } },
+    { STSpaceClient,{ false, "STSpaceClient" } },
 };
 
 inline bool isSingletonService(ServiceType serviceType);
@@ -238,9 +240,12 @@ enum SessionStatus : ui16
 {
     SSTATUS_UNKNOW = 0,
     SSTATUS_TRUST, //受信任的服务器内部session, docker 互通session  
-    SSTATUS_AUTHING,
+    SSTATUS_AUTHING, //user
     SSTATUS_AUTHED,
     SSTATUS_ATTACHED,
+
+    SSTATUS_SPACE_ATTACHING, //客户端新连接连接上对应space的docker并向spacemgr发起space绑定 
+    SSTATUS_SPACE_ATTACHED, //绑定成功后,所有消息直接toService到绑定的space上, space通过toService STSpaceClient 到客户端, 保证客户端与战场的交互只走一次socket io
 };
 
 enum SessionUserData
@@ -251,6 +256,8 @@ enum SessionUserData
     UPARAM_ACCOUNT,
     UPARAM_SERVICE_ID,
     UPARAM_LOGIN_TIME,
+    UPARAM_SPACE_ID,
+
 };
 
 
