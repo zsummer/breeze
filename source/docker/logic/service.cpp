@@ -47,7 +47,7 @@ bool Service::finishLoad()
            Docker::getRef().broadcastToDockers(notice, false);
        }
 
-        if (!isSingletonService(getServiceType()))
+        if (getServiceTrait(getServiceType()) == STrait_Multi)
         {
             RefreshServiceToMgrNotice refreshNotice;
             refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
@@ -61,7 +61,7 @@ bool Service::finishLoad()
 
             for (auto sd : ServiceDepends)
             {
-                if (isSingletonService(sd.first))
+                if (getServiceTrait(sd.first) == STrait_Single )
                 {
                     toService(sd.first, refreshNotice, nullptr);
                 }
@@ -82,7 +82,7 @@ bool Service::finishUnload()
     setStatus(SS_DESTROY);
     if (!isShell())
     {
-        if (!isSingletonService(getServiceType()))
+        if (getServiceTrait(getServiceType()) == STrait_Multi)
         {
             RefreshServiceToMgrNotice refreshNotice;
             refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
@@ -95,7 +95,7 @@ bool Service::finishUnload()
                 getClientSessionID()));
             for (auto sd : ServiceDepends)
             {
-                if (isSingletonService(sd.first))
+                if (getServiceTrait(sd.first) == STrait_Single)
                 {
                     toService(sd.first, refreshNotice, nullptr);
                 }

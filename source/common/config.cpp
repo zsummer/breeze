@@ -147,9 +147,7 @@ bool ServerConfig::parse(std::string configName, DockerID dockerID)
         lconfig._dockerID = (DockerID)luaL_checkinteger(L, -1);
         lua_pop(L, 1);
 
-        lua_getfield(L, -1, "areaID");
-        lconfig._areaID = luaL_optinteger(L, -1, _areaID);
-        lua_pop(L, 1);
+
 
 
         lua_getfield(L, -1, "serviceWhite");
@@ -201,33 +199,37 @@ bool ServerConfig::parse(std::string configName, DockerID dockerID)
 
     lua_close(L);
 
+    //构建service和docker的装载关系  
     for (auto & config : _configs)
     {
         for (auto & serviceType : config._services)
         {
-            if (config._areaID == _areaID)
-            {
-                _localServiceDockers[serviceType].push_back(config._dockerID);
-            }
-            else
-            {
-                _sharedServiceDockers[serviceType].push_back(config._dockerID);
-            }
+             _serviceLoadDockers[serviceType].push_back(config._dockerID);
         }
     }
+    //异构Service如果没有配置docker 则添加一个空的关系
     for (const auto & sd : ServiceDepends)
     {
-        if (sd.first == STClient || sd.first == STSpaceClient)
+        if (getServiceTrait(sd.first) == STrait_Heterogenous )
+        {
+            _serviceLoadDockers[sd.first];
+        }
+    }
+
+    //检查装载关系, 单例模式必须有且只有一个docker, 多例模式必须有,但可以多于一个docker  
+    for (const auto & sd : ServiceDepends)
+    {
+        if (sd.first == STClient)
         {
             continue;
         }
-        auto founder = _localServiceDockers.find(sd.first);
-        if (founder == _localServiceDockers.end() || founder->second.empty())
+        auto founder = _serviceLoadDockers.find(sd.first);
+        if ((founder == _serviceLoadDockers.end() || founder->second.empty()) && getServiceTrait(sd.first) != STrait_Heterogenous)
         {
             LOGE("not found service in docker config. the service name=" << getServiceName(sd.first));
             return false;
         }
-        if (isSingletonService(sd.first) && founder->second.size() != 1)
+        if (getServiceTrait(sd.first) == STrait_Single  && founder->second.size() != 1)
         {
             LOGE("duplicate service name in docker config . the service name=" << getServiceName(sd.first));
             return false;

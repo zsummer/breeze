@@ -38,13 +38,8 @@ public:
 public:
     //服务器配置 
     inline const std::vector<DockerConfig> & getConfigs() { return _configs; }
-    inline bool isLocalDocker(DockerID dockerID) {
-        return std::find_if(_configs.begin(), _configs.end(),
-            [dockerID, this](const DockerConfig &dc) {return dc._dockerID == dockerID && dc._areaID == _areaID; }) != _configs.end();}
-    //记录每个类型的service可以被装载的docker id, 不包含共享组的docker
-    inline const std::map<ui16, std::vector<DockerID> > & getLocalServiceDockers() { return _localServiceDockers; }
-    //共享组的single service
-    inline const std::map<ui16, std::vector<DockerID> > & getSharedServiceDockers() { return _sharedServiceDockers; }
+    //记录每个类型的service可以被装载的docker id
+    inline const std::map<ui16, std::vector<DockerID> > & getServiceLoadDockers() { return _serviceLoadDockers; }
     //所有数据库配置 
     inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
     //当前docker进程的docker id
@@ -58,9 +53,7 @@ private:
     AreaID _areaID = 0;
     std::vector<DockerConfig> _configs;
     std::vector<DBConfig> _configDB;
-    std::map<ServiceType, std::vector<DockerID> > _localServiceDockers;
-    std::map<ServiceType, std::vector<DockerID> > _sharedServiceDockers;
-
+    std::map<ServiceType, std::vector<DockerID> > _serviceLoadDockers;
 };
 
 

@@ -20,9 +20,8 @@ config.docker =
         serviceWhite={"192.168.", "127.0."},
         wideIP="127.0.0.1",
         widePort=26000,
-        services={"STLogDBMgr", "STUserMgr", "STUser", "STInfoDBMgr", "STSpaceMgr"},
+        services={"STLogDBMgr", "STUserMgr", "STUser", "STInfoDBMgr"},
         dockerID = 1,
-        areaID = config.areaID,
     },
     {
         serviceBindIP="0.0.0.0",
@@ -33,11 +32,10 @@ config.docker =
         widePort=26001,
         webIP="127.0.0.1",
         webPort=26080,
-        services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STUser", "STSpace"},
+        services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STUser"},
         dockerID = 2,
-        areaID = config.areaID,
     },
-
+--[[
     {
         serviceBindIP="0.0.0.0",
         serviceIP="127.0.0.1",
@@ -45,8 +43,7 @@ config.docker =
         serviceWhite={"192.168.", "127.0."},
         services={"STSpaceMgr"},
         dockerID = 3,
-        areaID = config.areaID+10,
-    },
+    }, ]]
 }
 
 
