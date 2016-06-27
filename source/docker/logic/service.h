@@ -116,6 +116,7 @@ protected:
     virtual void process4bind(const Tracing & trace, const std::string & block);
 
 public:
+    bool canToService(ServiceType serviceType, ServiceID serviceID = InvalidServiceID);
     void toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     void toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>

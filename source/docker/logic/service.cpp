@@ -176,6 +176,20 @@ void Service::toService(ServiceType serviceType, const char * block, unsigned in
 {
     toService(serviceType, InvalidServiceID, block, len, cb);
 }
+bool Service::canToService(ServiceType serviceType, ServiceID serviceID)
+{
+    auto s = Docker::getRef().peekService(serviceType, serviceID);
+    if (!s)
+    {
+        return false;
+    }
+    if (Docker::getRef().getDockerLinked(s->getServiceDockerID()) == InvalidSessionID)
+    {
+        return false;
+    }
+    return true;
+}
+
 
 void Service::backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {

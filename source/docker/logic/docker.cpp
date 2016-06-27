@@ -1310,31 +1310,22 @@ void Docker::packetToSessionWithTracing(SessionID sessionID, const Tracing & tra
 
 void Docker::sendToDocker(DockerID dockerID, const char * block, unsigned int len)
 {
-    auto founder = _dockerSession.find(dockerID);
-    if (founder == _dockerSession.end())
+    SessionID sID = getDockerLinked(dockerID);
+    if (sID == InvalidSessionID)
     {
-        LOGF("Docker::sendToDocker fatal error. dockerID not found. dockerID=" << dockerID);
+        LOGF("Docker::sendToDocker fatal error. dockerID not linked. dockerID=" << dockerID);
         return;
     }
-    if (founder->second.sessionID == InvalidSessionID)
-    {
-        LOGF("Docker::sendToDocker fatal error. dockerID not have session. dockerID=" << dockerID);
-        return;
-    }
-    if (founder->second.status == 0)
-    {
-        LOGW("Docker::sendToDocker warning error. session try connecting. dockerID=" << dockerID << ", client session ID=" << founder->second.sessionID);
-    }
-    sendToSession(founder->second.sessionID, block, len);
+    sendToSession(sID, block, len);
 }
 
 
 void Docker::packetToDockerWithTracing(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len)
 {
-    auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
+    auto sID = getDockerLinked(dockerID);
+    if (sID != InvalidSessionID)
     {
-        packetToSessionWithTracing(founder->second.sessionID, trace, block, len);
+        packetToSessionWithTracing(sID, trace, block, len);
     }
     else
     {
@@ -1344,13 +1335,13 @@ void Docker::packetToDockerWithTracing(DockerID dockerID, const Tracing & trace,
 
 void Docker::packetToClientViaDocker(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len)
 {
-    auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
+    auto sID = getDockerLinked(dockerID);
+    if (sID != InvalidSessionID)
     {
         WriteStream ws(ForwardToRealClient::getProtoID());
         ws << clientSessionID;
         ws.appendOriginalData(block, len);
-        sendToSession(founder->second.sessionID, ws.getStream(), ws.getStreamLen());
+        sendToSession(sID, ws.getStream(), ws.getStreamLen());
     }
     else
     {
@@ -1513,6 +1504,17 @@ ServicePtr Docker::peekService(ServiceType serviceType, ServiceID serviceID)
         return nullptr;
     }
     return fder->second;
+}
+
+SessionID Docker::getDockerLinked(DockerID dockerID)
+{
+    auto founder = _dockerSession.find(dockerID);
+    if (founder == _dockerSession.end() || founder->second.status == 0)
+    {
+        return InvalidSessionID;
+    }
+
+    return founder->second.sessionID;
 }
 
 std::unordered_map<ServiceID, ServicePtr > & Docker::peekService(ServiceType serviceType)
