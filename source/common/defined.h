@@ -153,6 +153,8 @@ enum ServiceTrait
 {
     //非法服务 
     Strait_None,   
+
+
     //多例模式的Service . 
     //docker启动时 不会自动装载该类型Service, 所以需要对应的单例来触发装载和卸载 ,例如用户Service需要用户管理Service, 公会Service需要公会管理Service, 
     //      如果服务器不介意该类型的Service所占用的服务器资源, 也可以在管理器装载时候一次性手动装载全部 
@@ -161,11 +163,14 @@ enum ServiceTrait
     //对于'依赖'该服务的模块, 以模块的形式使用, 即ServiceMgr管理Service, Service管理Module. 
     STrait_Multi, 
 
+
     //单例模式的Service .
     //docker启动时 会根据依赖关系进行逐一装载 
     //docker关闭时 会根据被依赖关系逐一卸载 
     //单例模式的ServiceID使用装载该服务的dockerID, 默认在查找/使用时不传该参数或者传InvalidServiceID即可正确获得本组服务器的该服务. 
     STrait_Single,
+
+
     //异构系统的Service. 该状态服务不装载, 本地永远是一个shell .Heterogenous
     //docker启动时 如果有该service的配置,则进行网络连接操作, 并按照依赖关系装载本地单例. 
     //          如果没有该配置,则不进行网络连接操作,并设置该服务状态为未装载状态.  
