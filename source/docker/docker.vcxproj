@@ -103,8 +103,6 @@
     <ClCompile Include="logic\offlineService.cpp" />
     <ClCompile Include="logic\service.cpp" />
     <ClCompile Include="logic\shellService.cpp" />
-    <ClCompile Include="logic\space.cpp" />
-    <ClCompile Include="logic\spaceMgr.cpp" />
     <ClCompile Include="logic\userMgrService.cpp" />
     <ClCompile Include="logic\userService.cpp" />
     <ClCompile Include="logic\webService.cpp" />
@@ -118,8 +116,6 @@
     <ClInclude Include="logic\offlineService.h" />
     <ClInclude Include="logic\service.h" />
     <ClInclude Include="logic\shellService.h" />
-    <ClInclude Include="logic\space.h" />
-    <ClInclude Include="logic\spaceMgr.h" />
     <ClInclude Include="logic\userMgrService.h" />
     <ClInclude Include="logic\userService.h" />
     <ClInclude Include="logic\webService.h" />

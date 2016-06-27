@@ -7,8 +7,6 @@
 #include "webService.h"
 #include "monitorService.h"
 #include "offlineService.h"
-#include "space.h"
-#include "spaceMgr.h"
 #include <ProtoUser.h>
 #include <ProtoUserMgr.h>
 #include <ProtoWebAgent.h>
