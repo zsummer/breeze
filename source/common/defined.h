@@ -122,6 +122,10 @@ const AreaID InvalidAreaID = 0;
 typedef ui32 DockerID;
 const DockerID InvalidDockerID = 0;
 
+typedef ui32 SpaceID;
+const SpaceID InvalidSpaceID = 0;
+
+
 //每个service拥有两个唯一的基础属性ServiceID, ServiceName
 typedef ui64 ServiceID;
 const ServiceID InvalidServiceID = (ServiceID)0;
@@ -142,7 +146,7 @@ const ServiceType STUserMgr = (ServiceType)3;
 const ServiceType STWebAgent = (ServiceType)4;
 const ServiceType STOfflineMgr = (ServiceType)5;
 const ServiceType STMinitorMgr = (ServiceType)6;
-const ServiceType STSpaceMgr = (ServiceType)7;
+const ServiceType STWorldMgr = (ServiceType)7;
 
 
 const ServiceType STUser = (ServiceType)11;
@@ -205,7 +209,7 @@ const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
 
     { STUserMgr,{ STrait_Single, "STUserMgr",{ STInfoDBMgr , STLogDBMgr,STWebAgent, STOfflineMgr,STMinitorMgr } } },
 
-    { STSpaceMgr,{ STrait_Heterogenous, "STSpaceMgr"} },
+    { STWorldMgr,{ STrait_Heterogenous, "STWorldMgr"} },
 
     { STUser,{ STrait_Multi, "STUser",{ STUserMgr } } },
     { STClient,{ STrait_Multi, "STClient" } },
@@ -228,14 +232,14 @@ inline std::set<ServiceType> getServiceSubsidiary(ServiceType serviceType);
 
 struct DockerConfig
 {
-    std::string _serviceBindIP;
-    std::string _serviceIP;
-    unsigned short _servicePort = 0;
-    std::string _wideIP;
-    unsigned short _widePort = 0;
-    std::string _webIP;
-    unsigned short _webPort = 0;
-    std::vector<std::string> _whiteList;
+    std::string _dockerListenHost;
+    std::string _dockerPubHost;
+    unsigned short _dockerListenPort = 0;
+    std::string _clientPubHost;
+    unsigned short _clientPubPort = 0;
+    std::string _webPubHost;
+    unsigned short _webPubPort = 0;
+    std::vector<std::string> _dockerWhite;
     std::vector<ServiceType> _services;
     DockerID _dockerID = InvalidDockerID;
 };
@@ -253,6 +257,23 @@ struct DBConfig
 };
 
 
+
+struct WorldConfig 
+{
+    std::string _worldListenHost;
+    unsigned short _worldListenPort = 0;
+    std::string _spaceListenHost;
+    std::string _spacePubHost;
+    unsigned short _spaceListenPort = 0;
+};
+
+struct SpaceConfig
+{
+    std::string _clientListenHost;
+    std::string _clientPubHost;
+    unsigned short _clientListenPort = 0;
+    SpaceID _spaceID = InvalidSpaceID;
+};
 
 const int MAX_ACCOUNT_USERS = 5;
 
@@ -303,9 +324,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DockerConfig & config)
 {
-    os << "[_serviceBindIP=" << config._serviceBindIP << ", _serviceIP=" << config._serviceIP
-        << ", _servicePort=" << config._servicePort << ", _wideIP=" << config._wideIP
-        << ", _widePort=" << config._widePort << ", _whiteList=" << config._whiteList
+    os << "[_dockerListenHost=" << config._dockerListenHost << ", _dockerPubHost=" << config._dockerPubHost
+        << ", _dockerListenPort=" << config._dockerListenPort << ", _clientPubHost=" << config._clientPubHost
+        << ", _clientPubPort=" << config._clientPubPort << ", _dockerWhite=" << config._dockerWhite
         << ", _services=" << config._services << ", _dockerID=" << config._dockerID
         << "]";
     return os;

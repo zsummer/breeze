@@ -14,37 +14,77 @@ config.db =
 config.docker = 
 {
     {
-        serviceBindIP="0.0.0.0",
-        serviceIP="127.0.0.1",
-        servicePort=16000,
-        serviceWhite={"192.168.", "127.0."},
-        wideIP="127.0.0.1",
-        widePort=26000,
+        dockerListenHost="0.0.0.0",
+        dockerPubHost="127.0.0.1",
+        dockerListenPort=16000,
+        dockerWhite={"192.168.", "127.0."},
+        clientPubHost="127.0.0.1",
+        clientPubPort=26000,
         services={"STLogDBMgr", "STUserMgr", "STUser", "STInfoDBMgr"},
         dockerID = 1,
     },
     {
-        serviceBindIP="0.0.0.0",
-        serviceIP="127.0.0.1",
-        servicePort=16001,
-        serviceWhite={"192.168.", "127.0."},
-        wideIP="127.0.0.1",
-        widePort=26001,
-        webIP="127.0.0.1",
+        dockerListenHost="0.0.0.0",
+        dockerPubHost="127.0.0.1",
+        dockerListenPort=16001,
+        dockerWhite={"192.168.", "127.0."},
+        clientPubHost="127.0.0.1",
+        clientPubPort=26001,
+        webPubHost="127.0.0.1",
         webPort=26080,
         services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STUser"},
         dockerID = 2,
     },
 --[[
     {
-        serviceBindIP="0.0.0.0",
-        serviceIP="127.0.0.1",
-        servicePort=17002,
-        serviceWhite={"192.168.", "127.0."},
-        services={"STSpaceMgr"},
+        dockerListenHost="0.0.0.0",
+        dockerPubHost="127.0.0.1",
+        dockerListenPort=17002,
+        dockerWhite={"192.168.", "127.0."},
+        services={"STWorldMgr"},
         dockerID = 3,
     }, ]]
 }
+
+
+
+
+config.world = 
+{
+    worldListenHost="0.0.0.0",
+    worldListenPort=17002,
+    spaceListenHost="0.0.0.0",
+    spacePubHost="127.0.0.1",
+    spaceListenPort=17002,
+}
+
+
+
+
+config.spaces = 
+{
+    {
+        clientListenHost="0.0.0.0",
+        clientPubHost="127.0.0.1",
+        clientListenPort=17002,
+        spaceID = 1,
+    },
+    {
+        clientListenHost="0.0.0.0",
+        clientPubHost="127.0.0.1",
+        clientListenPort=17002,
+        spaceID = 2,
+    },
+    {
+        clientListenHost="0.0.0.0",
+        clientPubHost="127.0.0.1",
+        clientListenPort=17002,
+        spaceID = 3,
+    },
+
+}
+
+
 
 
 

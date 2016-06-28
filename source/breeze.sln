@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "common\common.vcxproj", "{AE557081-EA4D-49A7-A629-49EA151806DF}"
 EndProject
@@ -22,10 +22,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "docker", "docker\docker.vcx
 		{3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0} = {3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "world", "world\world.vcxproj", "{6E73F67A-5E0B-430C-BBEE-8195555FE667}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0} = {3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0}
+	EndProjectSection
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
@@ -47,6 +49,10 @@ Global
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Debug|x64.Build.0 = Debug|x64
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Release|x64.ActiveCfg = Release|x64
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Release|x64.Build.0 = Release|x64
+		{6E73F67A-5E0B-430C-BBEE-8195555FE667}.Debug|x64.ActiveCfg = Debug|x64
+		{6E73F67A-5E0B-430C-BBEE-8195555FE667}.Debug|x64.Build.0 = Debug|x64
+		{6E73F67A-5E0B-430C-BBEE-8195555FE667}.Release|x64.ActiveCfg = Release|x64
+		{6E73F67A-5E0B-430C-BBEE-8195555FE667}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

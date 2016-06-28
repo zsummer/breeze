@@ -33,15 +33,21 @@
 
 class ServerConfig : public Singleton<ServerConfig>
 {
+    //所有数据库配置 
 public:
-    bool parse(std::string configName, DockerID dockerID);
+    bool parseDB(std::string configName);
+    inline const std::vector<DBConfig> & getDBConfig() { return _configDB; }
+private:
+    std::vector<DBConfig> _configDB;
+
+    //service服务器配置  
+public:
+    bool parseDocker(std::string configName, DockerID dockerID);
 public:
     //服务器配置 
     inline const std::vector<DockerConfig> & getConfigs() { return _configs; }
     //记录每个类型的service可以被装载的docker id
     inline const std::map<ui16, std::vector<DockerID> > & getServiceLoadDockers() { return _serviceLoadDockers; }
-    //所有数据库配置 
-    inline const std::vector<DBConfig> & getDBConfig(){ return _configDB; }
     //当前docker进程的docker id
     inline DockerID getDockerID(){ return _dockerID; }
     //本组服务器的区ID ,用于实例ID的分段, 用于分区和方便合服 
@@ -52,8 +58,18 @@ private:
     DockerID _dockerID = InvalidDockerID;
     AreaID _areaID = 0;
     std::vector<DockerConfig> _configs;
-    std::vector<DBConfig> _configDB;
     std::map<ServiceType, std::vector<DockerID> > _serviceLoadDockers;
+
+    //异构的世界同步服务器 配置
+public:
+    bool parseWorld(std::string configName);
+    //异构的世界同步服务器的space配置
+private:
+    WorldConfig _worldConfig;
+public:
+    bool parseSpaces(std::string configName, SpaceID spaceID);
+private:
+    std::map<SpaceID, SpaceConfig> _spaces;
 };
 
 

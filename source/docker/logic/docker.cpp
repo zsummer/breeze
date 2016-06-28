@@ -21,7 +21,7 @@ Docker::Docker()
 
 bool Docker::init(const std::string & configName, DockerID configID)
 {
-    if (!ServerConfig::getRef().parse(configName, configID))
+    if (!ServerConfig::getRef().parseDB(configName) || !ServerConfig::getRef().parseDocker(configName, configID))
     {
         LOGE("Docker::init error. parse config error. config path=" << configName << ", docker ID = " << configID);
         return false;
@@ -196,19 +196,19 @@ bool Docker::startDockerListen()
         return false;
     }
     const DockerConfig & docker = *founder;
-    if (docker._serviceBindIP.empty() || docker._servicePort == 0)
+    if (docker._dockerListenHost.empty() || docker._dockerListenPort == 0)
     {
-        LOGE("Docker::startDockerListen check config error. bind ip=" << docker._serviceBindIP << ", bind port=" << docker._servicePort);
+        LOGE("Docker::startDockerListen check config error. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort);
         return false;
     }
-    AccepterID aID = SessionManager::getRef().addAccepter(docker._serviceBindIP, docker._servicePort);
+    AccepterID aID = SessionManager::getRef().addAccepter(docker._dockerListenHost, docker._dockerListenPort);
     if (aID == InvalidAccepterID)
     {
-        LOGE("Docker::startDockerListen addAccepter error. bind ip=" << docker._serviceBindIP << ", bind port=" << docker._servicePort);
+        LOGE("Docker::startDockerListen addAccepter error. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort);
         return false;
     }
     auto &options = SessionManager::getRef().getAccepterOptions(aID);
-    options._whitelistIP = docker._whiteList;
+    options._whitelistIP = docker._dockerWhite;
     options._maxSessions = 1000;
     options._sessionOptions._sessionPulseInterval = 5000;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
@@ -221,10 +221,10 @@ bool Docker::startDockerListen()
     options._sessionOptions._onBlockDispatch = std::bind(&Docker::event_onServiceMessage, this, _1, _2, _3);
     if (!SessionManager::getRef().openAccepter(aID))
     {
-        LOGE("Docker::startDockerListen openAccepter error. bind ip=" << docker._serviceBindIP << ", bind port=" << docker._servicePort);
+        LOGE("Docker::startDockerListen openAccepter error. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort);
         return false;
     }
-    LOGA("Docker::startDockerListen openAccepter success. bind ip=" << docker._serviceBindIP << ", bind port=" << docker._servicePort <<", aID=" << aID);
+    LOGA("Docker::startDockerListen openAccepter success. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort <<", aID=" << aID);
     return true;
 }
 bool Docker::startDockerConnect()
@@ -232,16 +232,16 @@ bool Docker::startDockerConnect()
     const auto & dockers = ServerConfig::getRef().getConfigs();
     for (const auto & docker : dockers)
     {
-        SessionID cID = SessionManager::getRef().addConnecter(docker._serviceIP, docker._servicePort);
+        SessionID cID = SessionManager::getRef().addConnecter(docker._dockerPubHost, docker._dockerListenPort);
         if (cID == InvalidSessionID)
         {
-            LOGE("Docker::startDockerConnect addConnecter error. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort);
+            LOGE("Docker::startDockerConnect addConnecter error. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort);
             return false;
         }
         auto session = SessionManager::getRef().getTcpSession(cID);
         if (!session)
         {
-            LOGE("Docker::startDockerConnect addConnecter error.  not found connect session. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
+            LOGE("Docker::startDockerConnect addConnecter error.  not found connect session. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort << ", cID=" << cID);
             return false;
         }
         auto &options = session->getOptions();
@@ -263,10 +263,10 @@ bool Docker::startDockerConnect()
 
         if (!SessionManager::getRef().openConnecter(cID))
         {
-            LOGE("Docker::startDockerConnect openConnecter error. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
+            LOGE("Docker::startDockerConnect openConnecter error. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort << ", cID=" << cID);
             return false;
         }
-        LOGA("Docker::startDockerConnect success. remote ip=" << docker._serviceIP << ", remote port=" << docker._servicePort << ", cID=" << cID);
+        LOGA("Docker::startDockerConnect success. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort << ", cID=" << cID);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
         session->setUserParam(UPARAM_REMOTE_DOCKERID, docker._dockerID);
         auto &ds = _dockerSession[docker._dockerID];
@@ -301,16 +301,16 @@ bool Docker::startDockerWideListen()
         return false;
     }
     const DockerConfig & docker = *founder;
-    if (!docker._wideIP.empty() && docker._widePort != 0)
+    if (!docker._clientPubHost.empty() && docker._clientPubPort != 0)
     {
-        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._widePort);
+        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._clientPubPort);
         if (aID == InvalidAccepterID)
         {
-            LOGE("Docker::startDockerWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
+            LOGE("Docker::startDockerWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
             return false;
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
-        //options._whitelistIP;// = docker._whiteList;
+        //options._whitelistIP;// = docker._dockerWhite;
         options._maxSessions = 5000;
         options._sessionOptions._sessionPulseInterval = 40000;
         options._sessionOptions._onSessionPulse = std::bind(&Docker::event_onClientPulse, this, _1);
@@ -319,10 +319,10 @@ bool Docker::startDockerWideListen()
         options._sessionOptions._onBlockDispatch = std::bind(&Docker::event_onClientMessage, this, _1, _2, _3);
         if (!SessionManager::getRef().openAccepter(aID))
         {
-            LOGE("Docker::startDockerWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
+            LOGE("Docker::startDockerWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
             return false;
         }
-        LOGA("Docker::startDockerWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort << ", listen aID=" << aID);
+        LOGA("Docker::startDockerWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort << ", listen aID=" << aID);
         _widelisten = aID;
     }
     return true;
@@ -338,17 +338,17 @@ bool Docker::startDockerWebListen()
         return false;
     }
     const DockerConfig & docker = *founder;
-    if (!docker._webIP.empty() && docker._webPort != 0)
+    if (!docker._webPubHost.empty() && docker._webPubPort != 0)
     {
-        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._webPort);
+        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._webPubPort);
         if (aID == InvalidAccepterID)
         {
-            LOGE("Docker::startDockerWebListen addAccepter error. bind ip=0.0.0.0, show web ip=" << docker._webIP << ", bind port=" << docker._webPort);
+            LOGE("Docker::startDockerWebListen addAccepter error. bind ip=0.0.0.0, show web ip=" << docker._webPubHost << ", bind port=" << docker._webPubPort);
             return false;
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
         options._sessionOptions._protoType = PT_HTTP;
-        //options._whitelistIP;// = docker._whiteList;
+        //options._whitelistIP;// = docker._dockerWhite;
         options._maxSessions = 200;
         options._sessionOptions._sessionPulseInterval = 10000; 
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
@@ -374,10 +374,10 @@ bool Docker::startDockerWebListen()
         options._sessionOptions._onHTTPBlockDispatch = std::bind(&Docker::event_onWebClientRequestAPI, this, _1, _2, _3, _4, _5);
         if (!SessionManager::getRef().openAccepter(aID))
         {
-            LOGE("Docker::startDockerWebListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort);
+            LOGE("Docker::startDockerWebListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
             return false;
         }
-        LOGA("Docker::startDockerWebListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._wideIP << ", bind port=" << docker._widePort << ", listen aID=" << aID);
+        LOGA("Docker::startDockerWebListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort << ", listen aID=" << aID);
         _weblisten = aID;
     }
 
@@ -428,9 +428,9 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
     }
     if (true)
     {
-        if (!dc._webIP.empty() && dc._webPort != 0)
+        if (!dc._webPubHost.empty() && dc._webPubPort != 0)
         {
-            LOGA("_userBalance.enableNode dockerID=" << dc._dockerID << ", port=" << dc._webPort);
+            LOGA("_userBalance.enableNode dockerID=" << dc._dockerID << ", port=" << dc._webPubPort);
             _webBalance.enableNode(dc._dockerID);
         }
     }
@@ -497,9 +497,9 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
     }
     if (true)
     {
-        if (!dc._webIP.empty() && dc._webPort != 0)
+        if (!dc._webPubHost.empty() && dc._webPubPort != 0)
         {
-            LOGW("_webBalance.disableNode dockeriD=" << dc._dockerID << ", webPort=" << dc._webPort);
+            LOGW("_webBalance.disableNode dockeriD=" << dc._dockerID << ", webPort=" << dc._webPubPort);
             _webBalance.disableNode(dc._dockerID);
         }
     }

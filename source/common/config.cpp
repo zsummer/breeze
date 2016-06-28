@@ -36,7 +36,7 @@ static int panichHandler(lua_State * L)
 }
 
 
-bool ServerConfig::parse(std::string configName, DockerID dockerID)
+bool ServerConfig::parseDocker(std::string configName, DockerID dockerID)
 {
     srand((unsigned int)time(NULL));
     _dockerID = dockerID;
@@ -57,53 +57,7 @@ bool ServerConfig::parse(std::string configName, DockerID dockerID)
     lua_pop(L, 1);
     LOGI("ServerConfig::parse dockerID=" << dockerID << ", _areaID=" << _areaID << ", getMinServiceID=" << getMinServiceID());
 
-    lua_getfield(L, -1, "db");
-    lua_pushnil(L);
-    while (lua_next(L, -2))
-    {
-        if (!lua_isstring(L, -2))
-        {
-            LOGE("config parse db false. key is not string type");
-            return false;
-        }
-        if (!lua_istable(L, -1))
-        {
-            LOGE("config parse db false. value is not table type");
-            return false;
-        }
-        
-        DBConfig lconfig;
-        lua_getfield(L, -1, "ip");
-        lconfig._ip = luaL_checkstring(L, -1);
-        lua_pop(L, 1);
 
-        lua_getfield(L, -1, "port");
-        lconfig._port = (unsigned short)luaL_checkinteger(L, -1);
-        lua_pop(L, 1);
-
-        lua_getfield(L, -1, "db");
-        lconfig._db = luaL_checkstring(L, -1);
-        lua_pop(L, 1);
-
-        lua_getfield(L, -1, "user");
-        lconfig._user = luaL_checkstring(L, -1);
-        lua_pop(L, 1);
-
-        lua_getfield(L, -1, "pwd");
-        lconfig._pwd = luaL_checkstring(L, -1);
-        lua_pop(L, 1);
-
-        lua_getfield(L, -1, "db");
-        lconfig._db = luaL_checkstring(L, -1);
-        lua_pop(L, 1);
-
-        lconfig._name = luaL_checkstring(L, -2);
-        _configDB.push_back(lconfig);
-        LOGI("DBConfig=" << lconfig);
-        lua_pop(L, 1);
-    }
-    //pop key "db".
-    lua_pop(L, 1);
 
 
     lua_getfield(L, -1, "docker");
@@ -117,30 +71,30 @@ bool ServerConfig::parse(std::string configName, DockerID dockerID)
         }
 
         DockerConfig lconfig;
-        lua_getfield(L, -1, "serviceBindIP");
-        lconfig._serviceBindIP = luaL_optstring(L, -1, "0.0.0.0");
+        lua_getfield(L, -1, "dockerListenHost");
+        lconfig._dockerListenHost = luaL_optstring(L, -1, "0.0.0.0");
         lua_pop(L, 1);
 
-        lua_getfield(L, -1, "serviceIP");
-        lconfig._serviceIP = luaL_optstring(L, -1, "127.0.0.1");
+        lua_getfield(L, -1, "dockerPubHost");
+        lconfig._dockerPubHost = luaL_optstring(L, -1, "127.0.0.1");
         lua_pop(L, 1);
-        lua_getfield(L, -1, "servicePort");
-        lconfig._servicePort = (unsigned short)luaL_optinteger(L, -1, 0);
-        lua_pop(L, 1);
-
-
-        lua_getfield(L, -1, "wideIP");
-        lconfig._wideIP = luaL_optstring(L, -1, "");
-        lua_pop(L, 1);
-        lua_getfield(L, -1, "widePort");
-        lconfig._widePort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_getfield(L, -1, "dockerListenPort");
+        lconfig._dockerListenPort = (unsigned short)luaL_optinteger(L, -1, 0);
         lua_pop(L, 1);
 
-        lua_getfield(L, -1, "webIP");
-        lconfig._webIP = luaL_optstring(L, -1, "");
+
+        lua_getfield(L, -1, "clientPubHost");
+        lconfig._clientPubHost = luaL_optstring(L, -1, "");
+        lua_pop(L, 1);
+        lua_getfield(L, -1, "clientPubPort");
+        lconfig._clientPubPort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "webPubHost");
+        lconfig._webPubHost = luaL_optstring(L, -1, "");
         lua_pop(L, 1);
         lua_getfield(L, -1, "webPort");
-        lconfig._webPort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lconfig._webPubPort = (unsigned short)luaL_optinteger(L, -1, 0);
         lua_pop(L, 1);
 
         lua_getfield(L, -1, "dockerID");
@@ -150,7 +104,7 @@ bool ServerConfig::parse(std::string configName, DockerID dockerID)
 
 
 
-        lua_getfield(L, -1, "serviceWhite");
+        lua_getfield(L, -1, "dockerWhite");
         if (lua_isnil(L, -1))
         {
             lua_pop(L, 1);
@@ -160,7 +114,7 @@ bool ServerConfig::parse(std::string configName, DockerID dockerID)
             lua_pushnil(L);
             while (lua_next(L, -2))
             {
-                lconfig._whiteList.push_back(luaL_checkstring(L, -1));
+                lconfig._dockerWhite.push_back(luaL_checkstring(L, -1));
                 lua_pop(L, 1);
             }
             lua_pop(L, 1);
@@ -242,8 +196,97 @@ bool ServerConfig::parse(std::string configName, DockerID dockerID)
 
 
 
+bool ServerConfig::parseDB(std::string configName)
+{
+    srand((unsigned int)time(NULL));
+    lua_State *L = luaL_newstate();
+    if (L == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+    luaL_openlibs(L);  /* open libraries */
+    lua_atpanic(L, panichHandler);
+    if (luaL_dofile(L, configName.c_str()))
+    {
+        LOGE("can't found the config file. configName=" << configName);
+        return false;
+    }
+
+    lua_getfield(L, -1, "db");
+    lua_pushnil(L);
+    while (lua_next(L, -2))
+    {
+        if (!lua_isstring(L, -2))
+        {
+            LOGE("config parse db false. key is not string type");
+            return false;
+        }
+        if (!lua_istable(L, -1))
+        {
+            LOGE("config parse db false. value is not table type");
+            return false;
+        }
+
+        DBConfig lconfig;
+        lua_getfield(L, -1, "ip");
+        lconfig._ip = luaL_checkstring(L, -1);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "port");
+        lconfig._port = (unsigned short)luaL_checkinteger(L, -1);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "db");
+        lconfig._db = luaL_checkstring(L, -1);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "user");
+        lconfig._user = luaL_checkstring(L, -1);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "pwd");
+        lconfig._pwd = luaL_checkstring(L, -1);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "db");
+        lconfig._db = luaL_checkstring(L, -1);
+        lua_pop(L, 1);
+
+        lconfig._name = luaL_checkstring(L, -2);
+        _configDB.push_back(lconfig);
+        LOGI("DBConfig=" << lconfig);
+        lua_pop(L, 1);
+    }
+    //pop key "db".
+    lua_pop(L, 1);
+    return true;
+}
+
+bool ServerConfig::parseWorld(std::string configName)
+{
+    srand((unsigned int)time(NULL));
+    lua_State *L = luaL_newstate();
+    if (L == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+    luaL_openlibs(L);  /* open libraries */
+    lua_atpanic(L, panichHandler);
+    if (luaL_dofile(L, configName.c_str()))
+    {
+        LOGE("can't found the config file. configName=" << configName);
+        return false;
+    }
 
 
+    return true;
+}
+
+
+bool ServerConfig::parseSpaces(std::string configName, SpaceID spaceID)
+{
+    return true;
+}
 
 
 
