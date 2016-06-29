@@ -36,18 +36,14 @@ bool Docker::init(const std::string & configName, DockerID configID)
         LOGE("Docker::init error. DBDict initHelper error. ");
         return false;
     }
-    if (!DBDict::getRef().buildDictTable())
-    {
-        LOGE("Docker::init error. DBDict buildDictTable error. ");
-        return false;
-    }
+    
     if (!DBDict::getRef().load())
     {
         LOGE("Docker::init error. DBDict load error. ");
         return false;
     }
 
-    const auto & dockers = ServerConfig::getRef().getConfigs();
+    const auto & dockers = ServerConfig::getRef().getDockerConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -188,7 +184,7 @@ void Docker::onShutdown()
 
 bool Docker::startDockerListen()
 {
-    const auto & dockers = ServerConfig::getRef().getConfigs();
+    const auto & dockers = ServerConfig::getRef().getDockerConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -229,7 +225,7 @@ bool Docker::startDockerListen()
 }
 bool Docker::startDockerConnect()
 {
-    const auto & dockers = ServerConfig::getRef().getConfigs();
+    const auto & dockers = ServerConfig::getRef().getDockerConfigs();
     for (const auto & docker : dockers)
     {
         SessionID cID = SessionManager::getRef().addConnecter(docker._dockerPubHost, docker._dockerListenPort);
@@ -293,7 +289,7 @@ bool Docker::startDockerConnect()
 }
 bool Docker::startDockerWideListen()
 {
-    const auto & dockers = ServerConfig::getRef().getConfigs();
+    const auto & dockers = ServerConfig::getRef().getDockerConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -330,7 +326,7 @@ bool Docker::startDockerWideListen()
 
 bool Docker::startDockerWebListen()
 {
-    const auto & dockers = ServerConfig::getRef().getConfigs();
+    const auto & dockers = ServerConfig::getRef().getDockerConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc) {return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -408,7 +404,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
     DockerConfig dc;
     if (true)
     {
-        const auto & configs = ServerConfig::getRef().getConfigs();
+        const auto & configs = ServerConfig::getRef().getDockerConfigs();
         for (const auto & ci : configs)
         {
             if (ci._dockerID == founder->second.dokerID)
@@ -476,7 +472,7 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
     DockerConfig dc;
     if (true)
     {
-        const auto & configs = ServerConfig::getRef().getConfigs();
+        const auto & configs = ServerConfig::getRef().getDockerConfigs();
         for (const auto & ci : configs)
         {
             if (ci._dockerID == founder->second.dokerID)

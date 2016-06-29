@@ -13,34 +13,25 @@ World::World()
 
 }
 
-bool World::init(const std::string & configName, DockerID configID)
+bool World::init(const std::string & configName)
 {
-    if (!ServerConfig::getRef().parseWorld(configName) && !ServerConfig::getRef().parseSpaces(configName, configID))
+    if (!ServerConfig::getRef().parseDB(configName) || !ServerConfig::getRef().parseWorld(configName) || !ServerConfig::getRef().parseSpaces(configName, 1))
     {
-        LOGE("World::init error. parse config error. config path=" << configName << ", docker ID = " << configID);
+        LOGE("World::init error. parse config error. config path=" << configName);
         return false;
     }
-    if (configID == InvalidDockerID)
-    {
-        LOGE("World::init error. current docker id invalid. config path=" << configName << ", docker ID = " << configID);
-        return false;
-    }
+
     if (!DBDict::getRef().initHelper())
     {
         LOGE("World::init error. DBDict initHelper error. ");
         return false;
     }
-    if (!DBDict::getRef().buildDictTable())
-    {
-        LOGE("World::init error. DBDict buildDictTable error. ");
-        return false;
-    }
+
     if (!DBDict::getRef().load())
     {
         LOGE("World::init error. DBDict load error. ");
         return false;
     }
-
 
     return true;
 }
@@ -96,7 +87,7 @@ void World::onShutdown()
 
 bool World::startDockerListen()
 {
-    const auto & dockers = ServerConfig::getRef().getConfigs();
+    const auto & dockers = ServerConfig::getRef().getDockerConfigs();
     auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
     if (founder == dockers.end())
     {
@@ -136,47 +127,11 @@ bool World::startDockerListen()
     return true;
 }
 
-bool World::startDockerWideListen()
-{
-    const auto & dockers = ServerConfig::getRef().getConfigs();
-    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
-    if (founder == dockers.end())
-    {
-        LOGE("World::startDockerWideListen error. current docker id not found in config file.");
-        return false;
-    }
-    const DockerConfig & docker = *founder;
-    if (!docker._clientPubHost.empty() && docker._clientPubPort != 0)
-    {
-        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._clientPubPort);
-        if (aID == InvalidAccepterID)
-        {
-            LOGE("World::startDockerWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
-            return false;
-        }
-        auto &options = SessionManager::getRef().getAccepterOptions(aID);
-        //options._whitelistIP;// = docker._dockerWhite;
-        options._maxSessions = 5000;
-        options._sessionOptions._sessionPulseInterval = 40000;
-        options._sessionOptions._onSessionPulse = std::bind(&World::event_onClientPulse, this, _1);
-        options._sessionOptions._onSessionLinked = std::bind(&World::event_onClientLinked, this, _1);
-        options._sessionOptions._onSessionClosed = std::bind(&World::event_onClientClosed, this, _1);
-        options._sessionOptions._onBlockDispatch = std::bind(&World::event_onClientMessage, this, _1, _2, _3);
-        if (!SessionManager::getRef().openAccepter(aID))
-        {
-            LOGE("World::startDockerWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
-            return false;
-        }
-        LOGA("World::startDockerWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort << ", listen aID=" << aID);
-        _widelisten = aID;
-    }
-    return true;
-}
 
 
 bool World::start()
 {
-    return startDockerListen()  && startDockerWideListen() ;
+    return startDockerListen()   ;
 }
 
 
@@ -187,25 +142,16 @@ bool World::start()
 void World::event_onServiceLinked(TcpSessionPtr session)
 {
     DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
-    auto founder = _dockerSession.find(ci);
-    if (founder == _dockerSession.end())
-    {
-        LOGE("event_onServiceLinked error cID=" << session->getSessionID() << ", dockerID=" << ci);
-        return;
-    }
+
     LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", dockerID=" << ci);
-    founder->second.status = 1;
+
     DockerConfig dc;
     if (true)
     {
-        const auto & configs = ServerConfig::getRef().getConfigs();
+        const auto & configs = ServerConfig::getRef().getDockerConfigs();
         for (const auto & ci : configs)
         {
-            if (ci._dockerID == founder->second.dokerID)
-            {
-                dc = ci;
-                break;
-            }
+
         }
     }
     if (true)
@@ -232,25 +178,16 @@ void World::event_onServiceLinked(TcpSessionPtr session)
 void World::event_onServiceClosed(TcpSessionPtr session)
 {
     DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
-    auto founder = _dockerSession.find(ci);
-    if (founder == _dockerSession.end())
-    {
-        LOGE("event_onServiceClosed error cID=" << session->getSessionID() << ", dockerID=" << ci);
-        return;
-    }
+   
     LOGW("event_onServiceClosed cID=" << session->getSessionID() << ", dockerID=" << ci);
-    founder->second.status = 0;
+    
     DockerConfig dc;
     if (true)
     {
-        const auto & configs = ServerConfig::getRef().getConfigs();
+        const auto & configs = ServerConfig::getRef().getDockerConfigs();
         for (const auto & ci : configs)
         {
-            if (ci._dockerID == founder->second.dokerID)
-            {
-                dc = ci;
-                break;
-            }
+
         }
     }
 
@@ -355,13 +292,7 @@ void World::event_onClientMessage(TcpSessionPtr session, const char * begin, uns
 
 SessionID World::getDockerLinked(DockerID dockerID)
 {
-    auto founder = _dockerSession.find(dockerID);
-    if (founder == _dockerSession.end() || founder->second.status == 0)
-    {
-        return InvalidSessionID;
-    }
-
-    return founder->second.sessionID;
+    return InvalidSessionID;
 }
 
 

@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
             return 1;
         }
         
-        if (!World::getRef().init(filename, index))
+        if (!World::getRef().init(filename))
         {
             LOGE("World init false.");
             return 2;
