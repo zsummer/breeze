@@ -41,6 +41,8 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -fpermissive")
 
 
 add_subdirectory(common)
+add_subdirectory(makedb)
+add_subdirectory(world)
 add_subdirectory(docker)
 add_subdirectory(stress)
 add_subdirectory(test)

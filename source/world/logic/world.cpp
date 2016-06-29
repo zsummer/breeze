@@ -135,61 +135,7 @@ bool World::startDockerListen()
     LOGA("World::startDockerListen openAccepter success. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort <<", aID=" << aID);
     return true;
 }
-bool World::startDockerConnect()
-{
-    const auto & dockers = ServerConfig::getRef().getConfigs();
-    for (const auto & docker : dockers)
-    {
-        SessionID cID = SessionManager::getRef().addConnecter(docker._dockerPubHost, docker._dockerListenPort);
-        if (cID == InvalidSessionID)
-        {
-            LOGE("World::startDockerConnect addConnecter error. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort);
-            return false;
-        }
-        auto session = SessionManager::getRef().getTcpSession(cID);
-        if (!session)
-        {
-            LOGE("World::startDockerConnect addConnecter error.  not found connect session. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort << ", cID=" << cID);
-            return false;
-        }
-        auto &options = session->getOptions();
-        options._onSessionLinked = std::bind(&World::event_onServiceLinked, this, _1);
-        options._onSessionClosed = std::bind(&World::event_onServiceClosed, this, _1);
-        options._onBlockDispatch = std::bind(&World::event_onServiceMessage, this, _1, _2, _3);
-        options._reconnects = 50;
-        options._connectPulseInterval = 5000;
-        options._reconnectClean = false;
-        options._onSessionPulse = [](TcpSessionPtr session)
-        {
-            auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-            if (last != 0 && getNowTime() - (time_t)last > session->getOptions()._connectPulseInterval * 3)
-            {
-                LOGE("docker timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
-                session->close();
-            }
-        };
 
-        if (!SessionManager::getRef().openConnecter(cID))
-        {
-            LOGE("World::startDockerConnect openConnecter error. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort << ", cID=" << cID);
-            return false;
-        }
-        LOGA("World::startDockerConnect success. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort << ", cID=" << cID);
-        session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
-        session->setUserParam(UPARAM_REMOTE_DOCKERID, docker._dockerID);
-        auto &ds = _dockerSession[docker._dockerID];
-        ds.dokerID = docker._dockerID;
-        ds.sessionID = cID;
-    }
-    const auto & stc = ServerConfig::getRef().getServiceLoadDockers();
-    for (auto sd: ServiceDepends)
-    {
-
-    }
-
-    
-    return true;
-}
 bool World::startDockerWideListen()
 {
     const auto & dockers = ServerConfig::getRef().getConfigs();
@@ -230,7 +176,7 @@ bool World::startDockerWideListen()
 
 bool World::start()
 {
-    return startDockerListen() && startDockerConnect() && startDockerWideListen() ;
+    return startDockerListen()  && startDockerWideListen() ;
 }
 
 

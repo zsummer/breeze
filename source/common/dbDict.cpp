@@ -20,17 +20,77 @@
 #include "dbDict.h"
 #include "config.h"
 #include "utls.h"
+#include <ProtoCommon.h>
+#include <ProtoUser.h>
+#include <ProtoOffline.h>
+
 
 
 
 bool DBDict::buildDictTable()
 {
-    buildDict<DictGlobal>(_dictHelper);
-    buildDict<DictRafflePool>(_dictHelper);
-    buildDict<DictFightEffect>(_dictHelper);
-    buildDict<DictItem>(_dictHelper);
+    auto dbconfigs = ServerConfig::getRef().getDBConfig();
+    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STDictDBMgr"; });
+    if (founder == dbconfigs.end())
+    {
+        LOGE("STDictDBMgr not found");
+        return false;
+    }
+    auto helper = std::make_shared<DBHelper>();
+    helper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
+    if (!helper->connect())
+    {
+        LOGE("can't connect mysql STDictDBMgr. config=" << *founder);
+        return false;
+    }
+
+    buildTable<DictGlobal>(helper);
+    buildTable<DictRafflePool>(helper);
+    buildTable<DictFightEffect>(helper);
+    buildTable<DictItem>(helper);
     return true;
 }
+
+bool DBDict::buildInfoTable()
+{
+    auto dbconfigs = ServerConfig::getRef().getDBConfig();
+    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STInfoDBMgr"; });
+    if (founder == dbconfigs.end())
+    {
+        LOGE("STInfoDBMgr not found");
+        return false;
+    }
+    DBHelperPtr helper = std::make_shared<DBHelper>();
+    helper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
+    if (!helper->connect())
+    {
+        LOGE("can't connect mysql STInfoDBMgr. config=" << *founder);
+        return false;
+    }
+    buildTable<UserBaseInfo>(helper);
+    buildTable<UserOffline>(helper);
+    return true;
+}
+
+
+bool DBDict::buildLogTable()
+{
+    auto dbconfigs = ServerConfig::getRef().getDBConfig();
+    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STLogDBMgr"; });
+    if (founder == dbconfigs.end())
+    {
+        LOGE("STLogDBMgr not found");
+        return false;
+    }
+    DBHelperPtr helper = std::make_shared<DBHelper>();
+    helper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
+    if (!helper->connect())
+    {
+        LOGE("can't connect mysql STLogDBMgr. config=" << *founder);
+        return false;
+    }
+}
+
 
 
 bool DBDict::initHelper()
@@ -43,7 +103,7 @@ bool DBDict::initHelper()
         return false;
     }
     _dictHelper = std::make_shared<DBHelper>();
-    _dictHelper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
+    _dictHelper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd);
     if (!_dictHelper->connect())
     {
         LOGE("can't connect mysql STDictDBMgr. config=" << *founder);
@@ -51,6 +111,8 @@ bool DBDict::initHelper()
     }
     return true;
 }
+
+
 
 
 bool DBDict::load()

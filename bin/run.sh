@@ -1,4 +1,12 @@
 #!/usr/bin/bash
+cd makedb
+./makedb
+if [ $? -ne 0 ]; then
+    echo "make had error. please check it !"
+    exit 1
+fi
+cd ..
+
 cd docker
 ./docker 1   &
 ./docker 2   &
@@ -13,7 +21,6 @@ cd docker
 #valgrind --tool=callgrind  --trace-children=yes ./docker 2 &
 
 
-ps -ef |grep "\bdocker\b" |grep -v "grep"
-sleep 2
+echo "success "
 
 

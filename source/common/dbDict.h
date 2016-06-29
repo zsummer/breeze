@@ -41,7 +41,7 @@ template<class Packet>
 bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)>);
 
 template<class Packet>
-bool buildDict(DBHelperPtr helper);
+bool buildTable(DBHelperPtr helper);
 
 #define DefaultDefineDict(dict) public: 
 
@@ -49,14 +49,14 @@ bool buildDict(DBHelperPtr helper);
 class DBDict : public Singleton<DBDict>
 {
 public:
-    bool initHelper();
     bool buildDictTable();
+    bool buildInfoTable();
+    bool buildLogTable();
+
+public:
+    bool initHelper();
     bool load();
     
-
-
-
-
 private:
     DBHelperPtr _dictHelper;
     std::map<ui32, DictGlobal> _dictGlobal;
@@ -114,7 +114,7 @@ bool fetchDict(DBHelperPtr helper, std::function<void(const Packet &)> cb)
 }
 
 template<class Packet>
-bool buildDict(DBHelperPtr helper)
+bool buildTable(DBHelperPtr helper)
 {
     auto sqls = Packet().getDBBuild();
     for (auto sql : sqls)

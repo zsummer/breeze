@@ -63,9 +63,7 @@ private:
     //内部接口 
     //打开监听端口,新连接 
     bool startDockerListen();
-    bool startDockerConnect();
     bool startDockerWideListen();
-    bool startDockerWebListen();
 
 
 
