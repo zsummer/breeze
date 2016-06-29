@@ -39,7 +39,7 @@ config.docker =
     {
         dockerListenHost="0.0.0.0",
         dockerPubHost="127.0.0.1",
-        dockerListenPort=17002,
+        dockerListenPort=17001,
         dockerWhite={"192.168.", "127.0."},
         services={"STWorldMgr"},
         dockerID = 3,
@@ -52,7 +52,7 @@ config.docker =
 config.world = 
 {
     worldListenHost="0.0.0.0",
-    worldListenPort=17002,
+    worldListenPort=17001,
     spaceListenHost="0.0.0.0",
     spacePubHost="127.0.0.1",
     spaceListenPort=17002,
@@ -66,19 +66,19 @@ config.spaces =
     {
         clientListenHost="0.0.0.0",
         clientPubHost="127.0.0.1",
-        clientListenPort=17002,
+        clientListenPort=17102,
         spaceID = 1,
     },
     {
         clientListenHost="0.0.0.0",
         clientPubHost="127.0.0.1",
-        clientListenPort=17002,
+        clientListenPort=17102,
         spaceID = 2,
     },
     {
         clientListenHost="0.0.0.0",
         clientPubHost="127.0.0.1",
-        clientListenPort=17002,
+        clientListenPort=17102,
         spaceID = 3,
     },
 

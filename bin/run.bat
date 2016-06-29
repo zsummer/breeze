@@ -8,8 +8,10 @@ cd ..
 cd docker
 start docker.exe 1
 start docker.exe 2
+cd ..
 
-
+cd world
+start world.exe
 
 
 
