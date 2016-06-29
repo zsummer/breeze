@@ -275,7 +275,25 @@ struct SpaceConfig
     SpaceID _spaceID = InvalidSpaceID;
 };
 
+using ProtoID = zsummer::proto4z::ProtoInteger;
+const ProtoID InvalidProtoID = -1;
+
+enum ServiceStatus
+{
+    SS_NONE,
+    SS_CREATED,
+    SS_INITING,
+    SS_WORKING,
+    SS_UNLOADING,
+    SS_DESTROY,
+};
+
+
+
+
 const int MAX_ACCOUNT_USERS = 5;
+
+
 
 enum SessionStatus : ui16
 {

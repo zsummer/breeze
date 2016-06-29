@@ -63,11 +63,14 @@ private:
     //异构的世界同步服务器 配置
 public:
     bool parseWorld(std::string configName);
-    //异构的世界同步服务器的space配置
+    inline const WorldConfig & getWorldConfig() { return _worldConfig; }
 private:
     WorldConfig _worldConfig;
+
+    //异构的世界同步服务器的space配置
 public:
     bool parseSpaces(std::string configName, SpaceID spaceID);
+    inline const SpaceConfig & getSpaceConfig() { return _space; }
 private:
     SpaceConfig _space;
 };

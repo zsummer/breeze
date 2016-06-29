@@ -87,27 +87,16 @@ void World::onShutdown()
 
 bool World::startDockerListen()
 {
-    const auto & dockers = ServerConfig::getRef().getDockerConfigs();
-    auto founder = std::find_if(dockers.begin(), dockers.end(), [](const DockerConfig& cc){return cc._dockerID == ServerConfig::getRef().getDockerID(); });
-    if (founder == dockers.end())
-    {
-        LOGE("World::startDockerListen error. current docker id not found in config file." );
-        return false;
-    }
-    const DockerConfig & docker = *founder;
-    if (docker._dockerListenHost.empty() || docker._dockerListenPort == 0)
-    {
-        LOGE("World::startDockerListen check config error. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort);
-        return false;
-    }
-    AccepterID aID = SessionManager::getRef().addAccepter(docker._dockerListenHost, docker._dockerListenPort);
+    auto wc = ServerConfig::getRef().getWorldConfig();
+
+    AccepterID aID = SessionManager::getRef().addAccepter(wc._worldListenHost, wc._worldListenPort);
     if (aID == InvalidAccepterID)
     {
-        LOGE("World::startDockerListen addAccepter error. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort);
+        LOGE("World::startDockerListen addAccepter error. bind ip=" << wc._worldListenHost << ", bind port=" << wc._worldListenPort);
         return false;
     }
     auto &options = SessionManager::getRef().getAccepterOptions(aID);
-    options._whitelistIP = docker._dockerWhite;
+//    options._whitelistIP = wc._worldListenHost;
     options._maxSessions = 1000;
     options._sessionOptions._sessionPulseInterval = 5000;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
@@ -117,13 +106,50 @@ bool World::startDockerListen()
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
     };
-    options._sessionOptions._onBlockDispatch = std::bind(&World::event_onServiceMessage, this, _1, _2, _3);
+    options._sessionOptions._onSessionLinked = std::bind(&World::event_onDockerLinked, this, _1);
+    options._sessionOptions._onSessionClosed = std::bind(&World::event_onDockerClosed, this, _1);
+    options._sessionOptions._onBlockDispatch = std::bind(&World::event_onDockerMessage, this, _1, _2, _3);
     if (!SessionManager::getRef().openAccepter(aID))
     {
-        LOGE("World::startDockerListen openAccepter error. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort);
+        LOGE("World::startDockerListen openAccepter error. bind ip=" << wc._worldListenHost << ", bind port=" << wc._worldListenPort);
         return false;
     }
-    LOGA("World::startDockerListen openAccepter success. bind ip=" << docker._dockerListenHost << ", bind port=" << docker._dockerListenPort <<", aID=" << aID);
+    LOGA("World::startDockerListen openAccepter success. bind ip=" << wc._worldListenHost << ", bind port=" << wc._worldListenPort
+        <<", aID=" << aID);
+    return true;
+}
+
+
+
+bool World::startSpaceListen()
+{
+    auto wc = ServerConfig::getRef().getWorldConfig();
+
+    AccepterID aID = SessionManager::getRef().addAccepter(wc._spaceListenHost, wc._spaceListenPort);
+    if (aID == InvalidAccepterID)
+    {
+        LOGE("World::startSpaceListen addAccepter error. bind ip=" << wc._spaceListenHost << ", bind port=" << wc._spaceListenPort);
+        return false;
+    }
+    auto &options = SessionManager::getRef().getAccepterOptions(aID);
+    options._maxSessions = 1000;
+    options._sessionOptions._sessionPulseInterval = 5000;
+    options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
+    {
+        DockerPulse pulse;
+        WriteStream ws(pulse.getProtoID());
+        ws << pulse;
+        session->send(ws.getStream(), ws.getStreamLen());
+    };
+    options._sessionOptions._onSessionLinked = std::bind(&World::event_onSpaceLinked, this, _1);
+    options._sessionOptions._onSessionClosed = std::bind(&World::event_onSpaceClosed, this, _1);
+    options._sessionOptions._onBlockDispatch = std::bind(&World::event_onSpaceMessage, this, _1, _2, _3);
+    if (!SessionManager::getRef().openAccepter(aID))
+    {
+        LOGE("World::startSpaceListen openAccepter error. bind ip=" << wc._spaceListenHost << ", bind port=" << wc._spaceListenPort);
+        return false;
+    }
+    LOGA("World::startSpaceListen openAccepter success. bind ip=" << wc._spaceListenHost << ", bind port=" << wc._spaceListenPort <<", aID=" << aID);
     return true;
 }
 
@@ -131,83 +157,29 @@ bool World::startDockerListen()
 
 bool World::start()
 {
-    return startDockerListen()   ;
+    return startDockerListen() && startSpaceListen();
+}
+
+void World::event_onDockerLinked(TcpSessionPtr session)
+{
+    LoadServiceNotice notice;
+    ShellServiceInfo info;
+    info.serviceDockerID = InvalidDockerID;
+    info.serviceType = STWorldMgr;
+    info.serviceID = InvalidServiceID;
+    info.serviceName = "STWorldMgr";
+    info.clientDockerID = InvalidDockerID;
+    info.clientSessionID = InvalidSessionID;
+    info.status = SS_WORKING;
+    notice.shellServiceInfos.push_back(info);
+    LOGI("event_onDockerLinked cID=" << session->getSessionID() );
 }
 
 
-
-
-
-
-void World::event_onServiceLinked(TcpSessionPtr session)
+void World::event_onDockerClosed(TcpSessionPtr session)
 {
     DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
-
-    LOGI("event_onServiceLinked cID=" << session->getSessionID() << ", dockerID=" << ci);
-
-    DockerConfig dc;
-    if (true)
-    {
-        const auto & configs = ServerConfig::getRef().getDockerConfigs();
-        for (const auto & ci : configs)
-        {
-
-        }
-    }
-    if (true)
-    {
-        if (std::find_if(dc._services.begin(), dc._services.end(), [](ServiceType st) {return st == STUser; }) != dc._services.end())
-        {
-            LOGA("_userBalance.enableNode dockerID=" << dc._dockerID);
-            _userBalance.enableNode(dc._dockerID);
-        }
-    }
-    if (true)
-    {
-        if (!dc._webPubHost.empty() && dc._webPubPort != 0)
-        {
-            LOGA("_userBalance.enableNode dockerID=" << dc._dockerID << ", port=" << dc._webPubPort);
-            _webBalance.enableNode(dc._dockerID);
-        }
-    }
-
-
-
-}
-
-void World::event_onServiceClosed(TcpSessionPtr session)
-{
-    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
-   
-    LOGW("event_onServiceClosed cID=" << session->getSessionID() << ", dockerID=" << ci);
-    
-    DockerConfig dc;
-    if (true)
-    {
-        const auto & configs = ServerConfig::getRef().getDockerConfigs();
-        for (const auto & ci : configs)
-        {
-
-        }
-    }
-
-    if (true)
-    {
-        if (std::find_if(dc._services.begin(), dc._services.end(), [](ServiceType st) {return st == STUser; }) != dc._services.end())
-        {
-            LOGW("_userBalance.disableNode dockeriD=" << ci);
-            _userBalance.disableNode(ci);
-        }
-    }
-    if (true)
-    {
-        if (!dc._webPubHost.empty() && dc._webPubPort != 0)
-        {
-            LOGW("_webBalance.disableNode dockeriD=" << dc._dockerID << ", webPort=" << dc._webPubPort);
-            _webBalance.disableNode(dc._dockerID);
-        }
-    }
-
+    LOGW("event_onDockerClosed cID=" << session->getSessionID() << ", dockerID=" << ci);
 }
 
 
@@ -216,12 +188,12 @@ void World::event_onServiceClosed(TcpSessionPtr session)
 
 
 
-void World::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
+void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
     ReadStream rsShell(begin, len);
     if (DockerPulse::getProtoID() != rsShell.getProtoID())
     {
-        LOGT("event_onServiceMessage protoID=" << rsShell.getProtoID() << ", len=" << len);
+        LOGT("event_onDockerMessage protoID=" << rsShell.getProtoID() << ", len=" << len);
     }
 
 }
@@ -236,13 +208,12 @@ void World::event_onServiceMessage(TcpSessionPtr   session, const char * begin, 
 
 
 
-void World::event_onClientLinked(TcpSessionPtr session)
+void World::event_onSpaceLinked(TcpSessionPtr session)
 {
-    session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
-    LOGD("World::event_onClientLinked. SessionID=" << session->getSessionID() 
+    LOGD("World::event_onSpaceLinked. SessionID=" << session->getSessionID() 
         << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
 }
-void World::event_onClientPulse(TcpSessionPtr session)
+void World::event_onSpacePulse(TcpSessionPtr session)
 {
     auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
     if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
@@ -251,15 +222,10 @@ void World::event_onClientPulse(TcpSessionPtr session)
         session->close();
         return;
     }
-    SessionStatus sStatus = (SessionStatus)session->getUserParamNumber(UPARAM_SESSION_STATUS);
-    if (sStatus == SSTATUS_ATTACHED)
-    {
-
-    }
 }
-void World::event_onClientClosed(TcpSessionPtr session)
+void World::event_onSpaceClosed(TcpSessionPtr session)
 {
-    LOGD("World::event_onClientClosed. SessionID=" << session->getSessionID() 
+    LOGD("World::event_onSpaceClosed. SessionID=" << session->getSessionID() 
         << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
     if (isConnectID(session->getSessionID()))
     {
@@ -276,7 +242,7 @@ void World::event_onClientClosed(TcpSessionPtr session)
 
 
 
-void World::event_onClientMessage(TcpSessionPtr session, const char * begin, unsigned int len)
+void World::event_onSpaceMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
     SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);

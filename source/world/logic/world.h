@@ -46,6 +46,7 @@ private:
     //内部接口 
     //打开监听端口,新连接 
     bool startDockerListen();
+    bool startSpaceListen();
 
 
 
@@ -54,23 +55,22 @@ private:
 
 private:
     //docker间通讯处理 
-    void event_onServiceLinked(TcpSessionPtr session);
-    void event_onServiceClosed(TcpSessionPtr session);
-    void event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+    void event_onDockerLinked(TcpSessionPtr session);
+    void event_onDockerClosed(TcpSessionPtr session);
+    void event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
 private:
     //客户端通讯处理 
-    void event_onClientLinked(TcpSessionPtr session);
-    void event_onClientPulse(TcpSessionPtr session);
-    void event_onClientClosed(TcpSessionPtr session);
-    void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+    void event_onSpaceLinked(TcpSessionPtr session);
+    void event_onSpacePulse(TcpSessionPtr session);
+    void event_onSpaceClosed(TcpSessionPtr session);
+    void event_onSpaceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
 private:
 
 
 private:
-    Balance _userBalance;
-    Balance _webBalance;
+    Balance _spaceBalance;
 
 private:
     AccepterID _widelisten = InvalidAccepterID;

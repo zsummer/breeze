@@ -50,18 +50,6 @@ toService可以携带本地回调方法, 对方收到消息后通过backToServic
 using Slot = std::function < void(const Tracing & trace, zsummer::proto4z::ReadStream &) >;
 using ServiceCallback = std::function<void(zsummer::proto4z::ReadStream &)>;
 
-using ProtoID = zsummer::proto4z::ProtoInteger;
-const ProtoID InvalidProtoID = -1;
-
-enum ServiceStatus
-{
-    SS_NONE,
-    SS_CREATED,
-    SS_INITING,
-    SS_WORKING,
-    SS_UNLOADING,
-    SS_DESTROY,
-};
 
 
 
