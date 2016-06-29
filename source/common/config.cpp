@@ -259,6 +259,7 @@ bool ServerConfig::parseDB(std::string configName)
     }
     //pop key "db".
     lua_pop(L, 1);
+    lua_close(L);
     return true;
 }
 
@@ -277,14 +278,98 @@ bool ServerConfig::parseWorld(std::string configName)
         LOGE("can't found the config file. configName=" << configName);
         return false;
     }
+    lua_getfield(L, -1, "world");
 
+    lua_getfield(L, -1, "worldListenHost");
+    _worldConfig._worldListenHost = luaL_checkstring(L, -1);
+    lua_pop(L, 1);
 
+    lua_getfield(L, -1, "worldListenPort");
+    _worldConfig._worldListenPort = (unsigned short)luaL_checkinteger(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, -1, "spaceListenHost");
+    _worldConfig._spaceListenHost = luaL_checkstring(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, -1, "spacePubHost");
+    _worldConfig._spacePubHost = luaL_checkstring(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, -1, "spaceListenPort");
+    _worldConfig._spaceListenPort = (unsigned short)luaL_checkinteger(L, -1);
+    lua_pop(L, 1);
+    lua_close(L);
     return true;
 }
 
 
 bool ServerConfig::parseSpaces(std::string configName, SpaceID spaceID)
 {
+    srand((unsigned int)time(NULL));
+    _space._spaceID = spaceID;
+    lua_State *L = luaL_newstate();
+    if (L == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+    luaL_openlibs(L);  /* open libraries */
+    lua_atpanic(L, panichHandler);
+    if (luaL_dofile(L, configName.c_str()))
+    {
+        LOGE("can't found the config file. configName=" << configName);
+        return false;
+    }
+
+    LOGI("ServerConfig::parse spaceID=" << spaceID << ", configName=" << configName);
+
+
+
+
+    lua_getfield(L, -1, "spaces");
+    lua_pushnil(L);
+    while (lua_next(L, -2))
+    {
+        if (!lua_istable(L, -1))
+        {
+            LOGE("config parse spaces false. value is not table type");
+            return false;
+        }
+
+        SpaceConfig sconfig;
+        lua_getfield(L, -1, "clientListenHost");
+        sconfig._clientListenHost = luaL_optstring(L, -1, "0.0.0.0");
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "clientPubHost");
+        sconfig._clientPubHost = luaL_optstring(L, -1, "127.0.0.1");
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "clientListenPort");
+        sconfig._clientListenPort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
+
+
+        lua_getfield(L, -1, "spaceID");
+        sconfig._spaceID = (unsigned int)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
+
+        if (_space._spaceID == sconfig._spaceID)
+        {
+            _space = sconfig;
+        }
+
+        lua_pop(L, 1);
+    }
+    //pop listen table.
+    lua_pop(L, 1);
+
+    lua_close(L);
+
+    if (_space._clientListenPort == 0)
+    {
+        return false;
+    }
     return true;
 }
 

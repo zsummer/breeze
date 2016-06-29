@@ -45,7 +45,7 @@ public:
     bool parseDocker(std::string configName, DockerID dockerID);
 public:
     //服务器配置 
-    inline const std::vector<DockerConfig> & getConfigs() { return _configs; }
+    inline const std::vector<DockerConfig> & getDockerConfigs() { return _configs; }
     //记录每个类型的service可以被装载的docker id
     inline const std::map<ui16, std::vector<DockerID> > & getServiceLoadDockers() { return _serviceLoadDockers; }
     //当前docker进程的docker id
@@ -69,7 +69,7 @@ private:
 public:
     bool parseSpaces(std::string configName, SpaceID spaceID);
 private:
-    std::map<SpaceID, SpaceConfig> _spaces;
+    SpaceConfig _space;
 };
 
 
