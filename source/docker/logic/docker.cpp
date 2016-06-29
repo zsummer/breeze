@@ -98,7 +98,14 @@ void Docker::destroyCluster()
         }
         for (auto & svc : second.second)
         {
-            safe = false;
+            if (true)
+            {
+                if (getServiceTrait(svc.second->getServiceType()) != STrait_Heterogenous)
+                {
+                    safe = false;
+                }
+            }
+            
             if (svc.second->isShell())
             {
                 continue;
@@ -107,6 +114,7 @@ void Docker::destroyCluster()
             {
                 continue;
             }
+
 
             if (getServiceTrait(svc.second->getServiceType()) == STrait_Multi && svc.second->getClientSessionID() == InvalidSessionID)
             {
@@ -123,8 +131,12 @@ void Docker::destroyCluster()
                     auto ss = peekService(sub);
                     if (!ss.empty())
                     {
-                        allsubsDestroy = false;
-                        break;
+                        auto checkHeterogenous = ss.begin();
+                        if (getServiceTrait(checkHeterogenous->second->getServiceType()) != STrait_Heterogenous)
+                        {
+                            allsubsDestroy = false;
+                            break;
+                        }
                     }
                 }
                 if (allsubsDestroy)

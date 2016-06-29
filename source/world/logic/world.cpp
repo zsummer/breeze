@@ -176,7 +176,6 @@ void World::event_onDockerLinked(TcpSessionPtr session)
     info.status = SS_WORKING;
     notice.shellServiceInfos.push_back(info);
     sendToSession(session->getSessionID(), notice);
-    sendToSession(session->getSessionID(), "fdsaf", 6);
     LOGI("event_onDockerLinked cID=" << session->getSessionID() );
 }
 
