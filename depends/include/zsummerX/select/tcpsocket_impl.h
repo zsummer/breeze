@@ -9,7 +9,7 @@
 * 
 * ===============================================================================
 * 
-* Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ namespace zsummer
             void OnPostClose();
 
             void onSelectMessage(bool rd, bool wt, bool err);
-            bool attachSocket(int fd, const std::string& remoteIP, unsigned short remotePort);
+            bool attachSocket(int fd, const std::string& remoteIP, unsigned short remotePort, bool isIPV6);
 
         private:
             std::string logSection();
@@ -79,7 +79,7 @@ namespace zsummer
             unsigned short _remotePort = 0;
             unsigned char _linkstat = LS_UNINITIALIZE;
             int _fd = InvalidFD;
-            
+            bool _isIPV6 = false;
             
             _OnConnectHandler _onConnectHandler;
 

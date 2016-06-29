@@ -200,6 +200,7 @@ namespace zsummer
             OnBlockDispatch _onBlockDispatch;
             OnHTTPBlockCheck _onHTTPBlockCheck;
             OnHTTPBlockDispatch _onHTTPBlockDispatch;
+            OnSessionEvent _onReconnectEnd;
             OnSessionEvent _onSessionClosed;
             OnSessionEvent _onSessionLinked;
             OnSessionEvent _onSessionPulse;
@@ -215,6 +216,7 @@ namespace zsummer
             TcpAcceptPtr _accepter;
             std::string        _listenIP;
             unsigned short    _listenPort = 0;
+            bool            _setReuse = true;
             unsigned int    _maxSessions = 5000;
             std::vector<std::string> _whitelistIP;
             unsigned long long _totalAcceptCount = 0;

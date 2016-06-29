@@ -54,9 +54,18 @@ namespace zsummer
 
             template <typename handle>
             inline void post(handle &&h){PostMessage(std::move(h));}
-            inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle){return _timer.createTimer(delayms, std::move(handle));}
-            inline bool cancelTimer(unsigned long long timerID){return _timer.cancelTimer(timerID);}
-
+            inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle, bool useSystemTime = true)
+            {
+                return _timer.createTimer(delayms, std::move(handle), useSystemTime);
+            }
+            inline unsigned long long createTimer(unsigned int delayms, const _OnTimerHandler &handle, bool useSystemTime = true)
+            {
+                return _timer.createTimer(delayms, handle, useSystemTime);
+            }
+            inline bool cancelTimer(unsigned long long timerID)
+            {
+                return _timer.cancelTimer(timerID);
+            }
         public:
             bool registerEvent(int op, EventData &ed);
             void PostMessage(_OnPostHandler &&handle);
