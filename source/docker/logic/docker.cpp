@@ -454,7 +454,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
             }
         }
     }
-    Docker::getRef().sendToSession(session->getSessionID(), notice);
+    sendToSession(session->getSessionID(), notice);
     buildCluster();
 }
 

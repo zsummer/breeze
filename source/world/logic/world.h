@@ -50,7 +50,10 @@ private:
 
 
 
-
+public:
+    void sendToSession(SessionID sessionID, const char * block, unsigned int len);
+    template<class Proto>
+    void sendToSession(SessionID sessionID, const Proto & proto);
     
 
 private:
@@ -81,7 +84,20 @@ private:
 
 
 
-
+template<class Proto>
+void World::sendToSession(SessionID sessionID, const Proto & proto)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        SessionManager::getRef().sendSessionData(sessionID, ws.getStream(), ws.getStreamLen());
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Docker::sendToSession catch except error. e=" << e.what());
+    }
+}
 
 
 

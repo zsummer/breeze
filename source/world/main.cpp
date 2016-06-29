@@ -59,8 +59,8 @@ int main(int argc, char* argv[])
     }
     bool ret = false;
     ILog4zManager::getPtr()->config("../log.docker.config");
-    ILog4zManager::getPtr()->setLoggerName(LOG4Z_MAIN_LOGGER_ID, (std::string("Main") + toString(index)).c_str());
-    ILog4zManager::getPtr()->setLoggerName(ILog4zManager::getRef().findLogger("NetWork"), (std::string("NetWork") + toString(index)).c_str());
+    ILog4zManager::getRef().setLoggerLevel(ILog4zManager::getRef().findLogger("NetWork"), LOG_LEVEL_TRACE);
+    ILog4zManager::getRef().setLoggerDisplay(ILog4zManager::getRef().findLogger("NetWork"), true);
     ret = ILog4zManager::getPtr()->start();
     if (!ret)
     {

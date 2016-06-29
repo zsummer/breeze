@@ -153,7 +153,10 @@ bool World::startSpaceListen()
     return true;
 }
 
-
+void World::sendToSession(SessionID sessionID, const char * block, unsigned int len)
+{
+    SessionManager::getRef().sendSessionData(sessionID, block, len);
+}
 
 bool World::start()
 {
@@ -172,6 +175,8 @@ void World::event_onDockerLinked(TcpSessionPtr session)
     info.clientSessionID = InvalidSessionID;
     info.status = SS_WORKING;
     notice.shellServiceInfos.push_back(info);
+    sendToSession(session->getSessionID(), notice);
+    sendToSession(session->getSessionID(), "fdsaf", 6);
     LOGI("event_onDockerLinked cID=" << session->getSessionID() );
 }
 
