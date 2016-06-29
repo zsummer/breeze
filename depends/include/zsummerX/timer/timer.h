@@ -38,7 +38,7 @@
 #ifndef _ZSUMMERX_TIMER_H_
 #define _ZSUMMERX_TIMER_H_
 #include "../common/common.h"
-
+#include <math.h>
 
 // one timmer system  based on red-black tree (std::map).
 namespace zsummer
@@ -47,29 +47,41 @@ namespace zsummer
     {
         using TimerID = unsigned long long;
         const unsigned long long   InvalidTimerID = 0;
-        const unsigned long long   ReserveBit = 20;
-        const unsigned long long   MaxSequence = ((unsigned long long)-1) >> (sizeof(TimerID)*8-ReserveBit);
+
+
+
         class Timer
         {
         public:
             Timer();
             ~Timer();
             //get current time tick. unit is millisecond.
-            unsigned  long long getSteadyTime();
-
+            unsigned long long getSteadyTick();
+            unsigned long long getSystemTick();
+            TimerID makeTimeID(bool useSystemTick, unsigned int delayTick);
+            std::pair<bool, unsigned long long> resolveTimeID(TimerID timerID);
             //get next expire time  be used to set timeout when calling select / epoll_wait / GetQueuedCompletionStatus.
             unsigned int getNextExpireTime();
 
-            TimerID createTimer(unsigned int delayms, _OnTimerHandler &&handle);
+            TimerID createTimer(unsigned int delayTick, _OnTimerHandler &&handle, bool useSysTime = true);
+            TimerID createTimer(unsigned int delayTick,const _OnTimerHandler &handle, bool useSysTime = true);
             bool cancelTimer(TimerID timerID);
             // if have expired timer. the timer will trigger.
             void checkTimer();
-            inline std::map<TimerID, _OnTimerHandler* >::size_type getTimersCount(){ return _queTimer.size(); }
+            inline std::map<TimerID, _OnTimerHandler* >::size_type getTimersCount(){ return _sysQue.size() + _steadyQue.size(); }
         private:
             //! timer queue
-            std::map<TimerID, _OnTimerHandler* > _queTimer;
-            unsigned long long _queSeq; //! single sequence . assure timer ID is global single.
-            unsigned long long _nextExpire; //! cache the next expire time for check timer with   performance 
+            std::map<TimerID, _OnTimerHandler* > _sysQue;
+            std::map<TimerID, _OnTimerHandler* > _steadyQue;
+            unsigned long long _queSeq = 0; //! single sequence . assure timer ID is global single.
+
+            const unsigned long long _startSystemTime = getSystemTick();
+            const unsigned long long _startSteadyTime = getSteadyTick();
+
+            const unsigned long long   SequenceBit = 15;
+            const unsigned long long   SequenceMask = (unsigned long long)pow(2, SequenceBit) - 1;
+            const unsigned long long   TimeSeqMask = (unsigned long long)pow(2, 51) - 1;
+            const unsigned long long   UsedSysMask = 1ULL << 51;
         };
     }
 }

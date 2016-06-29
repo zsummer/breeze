@@ -55,8 +55,18 @@ namespace zsummer
 
             bool initialize();
             void runOnce(bool isImmediately = false);
-            unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle);
-            bool cancelTimer(unsigned long long timerID);
+            inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle, bool useSystemTime = true)
+            {
+                return _timer.createTimer(delayms, std::move(handle), useSystemTime);
+            }
+            inline unsigned long long createTimer(unsigned int delayms, const _OnTimerHandler &handle, bool useSystemTime = true)
+            {
+                return _timer.createTimer(delayms, handle, useSystemTime);
+            }
+            inline bool cancelTimer(unsigned long long timerID)
+            {
+                return _timer.cancelTimer(timerID);
+            }
 
             //handle: std::function<void()>
             //switch initiative, in the multi-thread it's switch call thread simultaneously.

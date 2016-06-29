@@ -109,9 +109,17 @@ namespace zsummer
             template<class H>
             void post(H &&h){ _summer->post(std::move(h)); }
 
+            //it's blocking call. support ipv6 & ipv4 .
+            inline std::string getHostByName(const std::string & name) { return zsummer::network::getHostByName(name); }
             //创建定时器 单位是毫秒 非线程安全.
             template <class H>
-            zsummer::network::TimerID createTimer(unsigned int delayms, H &&h){ return _summer->createTimer(delayms, std::move(h)); }
+            zsummer::network::TimerID createTimer(unsigned int delayms, H &&h, bool useSystemTime = true)
+            { return _summer->createTimer(delayms, std::move(h), useSystemTime); }
+            template <class H>
+            zsummer::network::TimerID createTimer(unsigned int delayms, const H &h, bool useSystemTime = true)
+            {
+                return _summer->createTimer(delayms, h, useSystemTime);
+            }
             //取消定时器.  注意, 如果在定时器的回调handler中取消当前定时器 会失败的.
             bool cancelTimer(unsigned long long timerID){ return _summer->cancelTimer(timerID); }
 
@@ -123,7 +131,7 @@ namespace zsummer
             AccepterID getAccepterID(SessionID sID);
 
 
-            SessionID addConnecter(const std::string& remoteIP, unsigned short remotePort);
+            SessionID addConnecter(const std::string& remoteHost, unsigned short remotePort);
             SessionOptions & getConnecterOptions(SessionID cID);
             bool openConnecter(SessionID cID);
             TcpSessionPtr getTcpSession(SessionID sID);

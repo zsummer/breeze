@@ -51,7 +51,7 @@ namespace zsummer
             TcpAccept();
             ~TcpAccept();
             bool initialize(const EventLoopPtr &summer);
-            bool openAccept(const std::string & listenIP, unsigned short listenPort);
+            bool openAccept(const std::string & listenIP, unsigned short listenPort, bool reuse = true);
             bool doAccept(const TcpSocketPtr &s, _OnAcceptHandler &&handle);
             void onEPOLLMessage(uint32_t event);
             bool close();
@@ -62,8 +62,8 @@ namespace zsummer
             EventLoopPtr         _summer;
             std::string        _listenIP;
             short            _listenPort = 0;
+            bool _isIPV6 = false;
 
-            sockaddr_in        _addr;
 
             EventData _eventData;
             _OnAcceptHandler _onAcceptHandler;

@@ -49,9 +49,10 @@ namespace zsummer
             TcpAccept();
             ~TcpAccept();
             bool initialize(EventLoopPtr& summer);
-            bool openAccept(const std::string ip, unsigned short port);
+            bool openAccept(const std::string ip, unsigned short port, bool reuse = true);
             bool doAccept(const TcpSocketPtr& s, _OnAcceptHandler &&handler);
             bool onIOCPMessage(BOOL bSuccess);
+            bool close();
         private:
             std::string logSection();
         private:
@@ -61,9 +62,10 @@ namespace zsummer
 
             std::string        _ip;
             unsigned short    _port = 0;
+
             //listen
             SOCKET            _server = INVALID_SOCKET;
-
+            bool              _isIPV6 = false;
 
             //client
             SOCKET _socket = INVALID_SOCKET;
