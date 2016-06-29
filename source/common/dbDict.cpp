@@ -20,152 +20,34 @@
 #include "dbDict.h"
 #include "config.h"
 #include "utls.h"
-#include <ProtoCommon.h>
-#include <ProtoUser.h>
-#include <ProtoOffline.h>
 
 
 
-
-bool DBDict::buildDictTable()
+DBHelperPtr buildHelper(const std::string & db)
 {
     auto dbconfigs = ServerConfig::getRef().getDBConfig();
-    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STDictDBMgr"; });
+    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [db](const DBConfig & config) {return config._name == db; });
     if (founder == dbconfigs.end())
     {
-        LOGE("STDictDBMgr not found");
-        return false;
+        LOGE(db << " not found");
+        return nullptr;
     }
     auto helper = std::make_shared<DBHelper>();
     helper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
     if (!helper->connect())
     {
-        LOGE("can't connect mysql STDictDBMgr. config=" << *founder);
-        return false;
+        LOGE("can't connect mysql " << db << ",  config=" << *founder);
+        return nullptr;
     }
-
-    buildTable<DictGlobal>(helper);
-    buildTable<DictRafflePool>(helper);
-    buildTable<DictFightEffect>(helper);
-    buildTable<DictItem>(helper);
-    return true;
-}
-
-bool DBDict::buildInfoTable()
-{
-    auto dbconfigs = ServerConfig::getRef().getDBConfig();
-    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STInfoDBMgr"; });
-    if (founder == dbconfigs.end())
-    {
-        LOGE("STInfoDBMgr not found");
-        return false;
-    }
-    DBHelperPtr helper = std::make_shared<DBHelper>();
-    helper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
-    if (!helper->connect())
-    {
-        LOGE("can't connect mysql STInfoDBMgr. config=" << *founder);
-        return false;
-    }
-    buildTable<UserBaseInfo>(helper);
-    buildTable<UserOffline>(helper);
-    return true;
-}
-
-
-bool DBDict::buildLogTable()
-{
-    auto dbconfigs = ServerConfig::getRef().getDBConfig();
-    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STLogDBMgr"; });
-    if (founder == dbconfigs.end())
-    {
-        LOGE("STLogDBMgr not found");
-        return false;
-    }
-    DBHelperPtr helper = std::make_shared<DBHelper>();
-    helper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
-    if (!helper->connect())
-    {
-        LOGE("can't connect mysql STLogDBMgr. config=" << *founder);
-        return false;
-    }
-}
-
-
-
-bool DBDict::initHelper()
-{
-    auto dbconfigs = ServerConfig::getRef().getDBConfig();
-    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STDictDBMgr"; });
-    if (founder == dbconfigs.end())
-    {
-        LOGE("STDictDBMgr not found");
-        return false;
-    }
-    _dictHelper = std::make_shared<DBHelper>();
-    _dictHelper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd);
-    if (!_dictHelper->connect())
-    {
-        LOGE("can't connect mysql STDictDBMgr. config=" << *founder);
-        return false;
-    }
-    return true;
+    return helper;
 }
 
 
 
 
-bool DBDict::load()
-{
-    if (!fetchDict<DictGlobal>(_dictHelper, [this](const DictGlobal & dict)
-    {
-        _dictGlobal[dict.id] = dict;
-    }))
-    {
-        LOGE("fetchDict DictGlobal error");
-        return false;
-    }
 
 
-    if (!fetchDict<DictRafflePool>(_dictHelper, [this](const DictRafflePool & dict)
-    {
-        _dictRafflePool[dict.id] = dict;
-        RaffleAward award;
-        for (auto & tp : splitArrayString<unsigned int, unsigned int, double>(dict.poolString, ",", "|", " "))
-        {
-            award.id = std::get<0>(tp);
-            award.weight = std::get<1>(tp);
-            award.probability = std::get<2>(tp);
-            _dictRafflePool[dict.id].pool.push_back(award);
-        }
-    }))
-    {
-        LOGE("fetchDict DictRafflePool error");
-        return false;
-    }
 
-
-    if (!fetchDict<DictFightEffect>(_dictHelper, [this](const DictFightEffect & dict)
-    {
-        _dictFightEffect[dict.id] = dict;
-    }))
-    {
-        LOGE("fetchDict DictFightEffect error");
-        return false;
-    }
-
-
-    if (!fetchDict<DictItem>(_dictHelper, [this](const DictItem & dict)
-    {
-        _dictItem[dict.id] = dict;
-    }))
-    {
-        LOGE("fetchDict DictItem error");
-        return false;
-    }
-
-    return true;
-}
 
 
 
