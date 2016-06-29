@@ -3,6 +3,7 @@ file(GLOB_RECURSE source "*.cpp")
 set(BINNAME ${PROJECT_NAME})
 
 set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/../bin/${BINNAME}/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 add_executable(${BINNAME} ${source})
 
