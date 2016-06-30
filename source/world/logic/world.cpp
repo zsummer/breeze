@@ -239,9 +239,21 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
             wss.sessionID = session->getSessionID();
         }
     }
+    else if (rsShell.getProtoID() == ForwardToService::getProtoID())
+    {
+        Tracing trace;
+        rsShell >> trace;
+        event_onServiceForwardMessage(session, trace.fromServiceType, ReadStream(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen()));
+    }
 }
 
 
+
+
+void World::event_onServiceForwardMessage(TcpSessionPtr   session, ServiceType serviceType, ReadStream & rs)
+{
+
+}
 
 
 
@@ -299,8 +311,25 @@ void World::event_onSpaceMessage(TcpSessionPtr session, const char * begin, unsi
 
 
 
-SessionID World::getDockerLinked(DockerID dockerID)
+SessionID World::getDockerLinked(AreaID areaID, ServiceType serviceType)
 {
+    auto founder = _services.find(areaID);
+    if (founder == _services.end())
+    {
+        return InvalidSessionID;
+    }
+    auto fder = founder->second.find(serviceType);
+    if (fder != founder->second.end() && fder->second.sessionID != InvalidSessionID)
+    {
+        return fder->second.sessionID;
+    }
+    for (auto &wss : founder->second)
+    {
+        if (wss.second.sessionID != InvalidSessionID)
+        {
+            return wss.second.sessionID;
+        }
+    }
     return InvalidSessionID;
 }
 

@@ -519,6 +519,157 @@ void Docker::event_onServiceClosed(TcpSessionPtr session)
 
 }
 
+
+
+void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
+{
+    ReadStream rsShell(begin, len);
+
+    if (rsShell.getProtoID() == SelfBeingPulse::getProtoID())
+    {
+        SelfBeingPulse pulse;
+        rsShell >> pulse;
+        LOGA("event_onServiceMessage sessionID=" << session->getSessionID()
+            << ", areaID=" << pulse.areaID << ", dockerID=" << pulse.dockerID);
+        session->setUserParam(UPARAM_AREA_ID, pulse.areaID);
+    }
+    else if (rsShell.getProtoID() == DockerPulse::getProtoID())
+    {
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
+        return;
+    }
+    else if (rsShell.getProtoID() == ShutdownClusterServer::getProtoID())
+    {
+        LOGA("onShutdownClusterServer.. fromSessionID=" << session->getSessionID());
+        onShutdown();
+        return;
+    }
+    else if (rsShell.getProtoID() == LoadServiceInDocker::getProtoID())
+    {
+        event_onLoadServiceInDocker(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
+    {
+        event_onLoadServiceNotice(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == SwitchServiceClientNotice::getProtoID())
+    {
+        event_onSwitchServiceClientNotice(session, rsShell);
+        return;
+    }
+
+
+    else if (rsShell.getProtoID() == KickRealClient::getProtoID())
+    {
+        event_onKickRealClient(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == UnloadServiceInDocker::getProtoID())
+    {
+        event_onUnloadServiceInDocker(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == UnloadedServiceNotice::getProtoID())
+    {
+        event_onUnloadedServiceNotice(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == ForwardToService::getProtoID())
+    {
+        event_onForwardToService(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == ForwardToRealClient::getProtoID())
+    {
+        event_onForwardToRealClient(session, rsShell);
+        return;
+    }
+    else if (rsShell.getProtoID() == WebServerRequest::getProtoID())
+    {
+        event_onWebServerRequest(session, rsShell);
+    }
+    else if (rsShell.getProtoID() == SessionPulse::getProtoID())
+    {
+        SessionPulse pulse;
+        rsShell >> pulse;
+        auto service = peekService(STUser, pulse.serviceID);
+        if (service && !service->isShell() && service->getStatus() == SS_WORKING)
+        {
+            service->onTick();
+        }
+        else
+        {
+            LOGE("onSessionPulse error. serviceID=" << pulse.serviceID);
+        }
+    }
+    else if (rsShell.getProtoID() == SelectUserPreviewsFromUserMgrResp::getProtoID())
+    {
+        SelectUserPreviewsFromUserMgrResp resp;
+        rsShell >> resp;
+        auto clientSession = SessionManager::getRef().getTcpSession(resp.clientSessionID);
+        if (!clientSession)
+        {
+            LOGE("can not found client session. sessionID=" << resp.clientSessionID);
+            return;
+        }
+        if (resp.retCode == EC_SUCCESS)
+        {
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
+            clientSession->setUserParam(UPARAM_ACCOUNT, resp.account);
+        }
+        else
+        {
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+        }
+        ClientAuthResp clientResp;
+        clientResp.account = resp.account;
+        clientResp.retCode = resp.retCode;
+        clientResp.token = resp.token;
+        clientResp.previews = std::move(resp.previews);
+        sendToSession(resp.clientSessionID, clientResp);
+        return;
+    }
+    else if (rsShell.getProtoID() == CreateUserFromUserMgrResp::getProtoID())
+    {
+        CreateUserFromUserMgrResp resp;
+        rsShell >> resp;
+        CreateUserResp clientResp;
+        clientResp.retCode = resp.retCode;
+        clientResp.serviceID = resp.serviceID;
+        clientResp.previews = std::move(resp.previews);
+        sendToSession(resp.clientSessionID, clientResp);
+        return;
+    }
+    else if (rsShell.getProtoID() == AttachUserFromUserMgrResp::getProtoID())
+    {
+        AttachUserFromUserMgrResp resp;
+        rsShell >> resp;
+        auto clientSession = SessionManager::getRef().getTcpSession(resp.clientSessionID);
+        if (!clientSession)
+        {
+            LOGE("can not found client session. sessionID=" << resp.clientSessionID);
+            return;
+        }
+        if (resp.retCode == EC_SUCCESS)
+        {
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
+            clientSession->setUserParam(UPARAM_SERVICE_ID, resp.serviceID);
+            clientSession->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
+        }
+        AttachUserResp clientResp;
+        clientResp.retCode = resp.retCode;
+        sendToSession(resp.clientSessionID, clientResp);
+        return;
+    }
+}
+
+
+
+
+
+
 void Docker::destroyService(ServiceType serviceType, ServiceID serviceID)
 {
     auto founder = _services.find(serviceType);
@@ -894,154 +1045,6 @@ void Docker::event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & r
     }
     destroyService(service.serviceType, service.serviceID);
 }
-
-
-void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
-{
-    ReadStream rsShell(begin, len);
-
-    if (rsShell.getProtoID() == SelfBeingPulse::getProtoID())
-    {
-        SelfBeingPulse pulse;
-        rsShell >> pulse;
-        LOGA("event_onServiceMessage sessionID=" << session->getSessionID() 
-            << ", areaID=" << pulse.areaID << ", dockerID=" << pulse.dockerID);
-        session->setUserParam(UPARAM_AREA_ID, pulse.areaID);
-    }
-    else if (rsShell.getProtoID() == DockerPulse::getProtoID())
-    {
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
-        return;
-    }
-    else if (rsShell.getProtoID() == ShutdownClusterServer::getProtoID() )
-    {
-        LOGA("onShutdownClusterServer.. fromSessionID=" << session->getSessionID());
-        onShutdown();
-        return;
-    }
-    else if (rsShell.getProtoID() == LoadServiceInDocker::getProtoID())
-    {
-        event_onLoadServiceInDocker(session, rsShell);
-        return;
-    }
-    else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
-    {
-        event_onLoadServiceNotice(session, rsShell);
-        return;
-    }
-    else if (rsShell.getProtoID() == SwitchServiceClientNotice::getProtoID())
-    {
-        event_onSwitchServiceClientNotice(session, rsShell);
-        return;
-    }
-
-
-    else if (rsShell.getProtoID() == KickRealClient::getProtoID())
-    {
-        event_onKickRealClient(session, rsShell);
-        return;
-    }
-    else if (rsShell.getProtoID() == UnloadServiceInDocker::getProtoID())
-    {
-        event_onUnloadServiceInDocker(session, rsShell);
-        return;
-    }
-    else if (rsShell.getProtoID() == UnloadedServiceNotice::getProtoID())
-    {
-        event_onUnloadedServiceNotice(session, rsShell);
-        return;
-    }
-    else if (rsShell.getProtoID() == ForwardToService::getProtoID())
-    {
-        event_onForwardToService(session, rsShell);
-        return;
-    }
-    else if (rsShell.getProtoID() == ForwardToRealClient::getProtoID())
-    {
-        event_onForwardToRealClient(session, rsShell);
-        return;
-    }
-    else if (rsShell.getProtoID() == WebServerRequest::getProtoID())
-    {
-        event_onWebServerRequest(session, rsShell);
-    }
-    else if (rsShell.getProtoID() == SessionPulse::getProtoID())
-    {
-        SessionPulse pulse;
-        rsShell >> pulse;
-        auto service = peekService(STUser, pulse.serviceID);
-        if (service && !service->isShell() && service->getStatus() == SS_WORKING)
-        {
-            service->onTick();
-        }
-        else
-        {
-            LOGE("onSessionPulse error. serviceID=" << pulse.serviceID);
-        }
-    }
-    else if (rsShell.getProtoID() == SelectUserPreviewsFromUserMgrResp::getProtoID())
-    {
-        SelectUserPreviewsFromUserMgrResp resp;
-        rsShell >> resp;
-        auto clientSession = SessionManager::getRef().getTcpSession(resp.clientSessionID);
-        if (!clientSession)
-        {
-            LOGE("can not found client session. sessionID=" << resp.clientSessionID);
-            return;
-        }
-        if (resp.retCode == EC_SUCCESS)
-        {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
-            clientSession->setUserParam(UPARAM_ACCOUNT, resp.account);
-        }
-        else
-        {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
-        }
-        ClientAuthResp clientResp;
-        clientResp.account = resp.account;
-        clientResp.retCode = resp.retCode;
-        clientResp.token = resp.token;
-        clientResp.previews = std::move(resp.previews);
-        sendToSession(resp.clientSessionID, clientResp);
-        return;
-    }
-    else if (rsShell.getProtoID() == CreateUserFromUserMgrResp::getProtoID())
-    {
-        CreateUserFromUserMgrResp resp;
-        rsShell >> resp;
-        CreateUserResp clientResp;
-        clientResp.retCode = resp.retCode;
-        clientResp.serviceID = resp.serviceID;
-        clientResp.previews = std::move(resp.previews);
-        sendToSession(resp.clientSessionID, clientResp);
-        return;
-    }
-    else if (rsShell.getProtoID() == AttachUserFromUserMgrResp::getProtoID())
-    {
-        AttachUserFromUserMgrResp resp;
-        rsShell >> resp;
-        auto clientSession = SessionManager::getRef().getTcpSession(resp.clientSessionID);
-        if (!clientSession)
-        {
-            LOGE("can not found client session. sessionID=" << resp.clientSessionID);
-            return;
-        }
-        if (resp.retCode == EC_SUCCESS)
-        {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
-            clientSession->setUserParam(UPARAM_SERVICE_ID, resp.serviceID);
-            clientSession->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
-        }
-        AttachUserResp clientResp;
-        clientResp.retCode = resp.retCode;
-        sendToSession(resp.clientSessionID, clientResp);
-        return;
-    }
-}
-
-
-
 
 
 
