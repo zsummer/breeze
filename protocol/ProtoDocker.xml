@@ -2,13 +2,15 @@
 
 <ProtoTraits>
   <MinNo>2000</MinNo>
-  <MaxNo>3000</MaxNo>
+  <MaxNo>5000</MaxNo>
   <UseLog4z>true</UseLog4z>
 </ProtoTraits>
 
 
 <Proto>
-
+    <!-------------------------------------------------------------------------------------------->
+    <!-------------------------------  Pulse   --------------------------------------------------->
+    <!-------------------------------------------------------------------------------------------->
     <packet name="SelfBeingPulse" desc= "">
         <member name="areaID" type="ui64"   desc=""/>
         <member name="dockerID" type="ui64"   desc=""/>
@@ -21,6 +23,13 @@
         <member name="serviceID" type="ui64"   desc=""/>
     </packet> 
 
+
+
+
+
+    <!-------------------------------------------------------------------------------------------->
+    <!-------------------------------  docker cluster -------------------------------------------->
+    <!-------------------------------------------------------------------------------------------->
     <packet name="LoadServiceInDocker" desc= "在Docker中装载一个Service">
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
@@ -29,7 +38,6 @@
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
     
-
     <packet name="ShellServiceInfo" desc= "Service被装载或者属性更改,需要通知给其他Docker的信息">
         <member name="serviceDockerID" type="ui32"   desc=""/>
         <member name="serviceType" type="ui16"   desc=""/>
@@ -48,8 +56,6 @@
     <packet name="RefreshServiceToMgrNotice" desc= "Multi-Servie发生状态变化时候通知给管理器">
         <member name="shellServiceInfos" type="ShellServiceInfoArray"   desc=""/>
     </packet>
-
-
 
     <packet name="SwitchServiceClientNotice" desc= "更改clientID">
         <member name="serviceType" type="ui16"   desc=""/>
@@ -80,8 +86,6 @@
     <packet name="ShutdownClusterServer" desc= "关闭服务器集群">
     </packet>
 
-
-
     <packet name="ForwardToService" desc= "转发到其他docker上的Service">
         <header name="trace" type="tracing" desc="header field" />
         <body>
@@ -95,6 +99,98 @@
             <attachment name="proto" type="any" desc="full proto serialize" />
         </body>
     </packet>
+
+
+
+
+
+    <!-------------------------------------------------------------------------------------------->
+    <!--------------------------------   db service   -------------------------------------------->
+    <!-------------------------------------------------------------------------------------------->
+
+    <array name="DBStringArray" type="string" desc="" />
+
+    <packet name="DBDataResult" desc="">
+        <member name="qc" type="ui16"  desc=""/>
+        <member name="errMsg" type="string"  desc=""/>
+        <member name="sql" type="string"  desc=""/>
+        <member name="affected" type="ui64"  desc=""/>
+        <member name="fields"  type="DBStringArray" desc=""/>
+    </packet>
+    <array name="DBDataResultArray" type="DBDataResult" desc="" />
+
+    <packet name="DBQueryReq" desc= "通用SQL语句执行协议">
+        <member name="sql" type="string"   desc=""/>
+    </packet>
+    <packet name="DBQueryResp" desc= "通用SQL语句执行协议返回,DBDataResult可以借助dbHepler进行构建DBResult">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="result" type="DBDataResult"   desc=""/>
+    </packet>
+
+    <packet name="DBQueryArrayReq" desc= "通用批量SQL语句执行协议">
+        <member name="sqls" type="DBStringArray"   desc=""/>
+    </packet>
+    <packet name="DBQueryArrayResp" desc= "通用批量SQL语句执行协议">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="results" type="DBDataResultArray"   desc="批量返回,注意不要超出协议包最大长度"/>
+    </packet>
+
+
+
+
+    <!-------------------------------------------------------------------------------------------->
+    <!--------------------------------  web service  --------------------------------------------->
+    <!-------------------------------------------------------------------------------------------->
+    <map name="WebAgentHead" key="string" value="string" desc="" />
+
+    <packet name="WebAgentClientRequestAPI" desc="">
+        <member name="webClientID" type="ui32"  desc=""/>
+        <member name="method" type="string"  desc=""/>
+        <member name="methodLine" type="string"  desc=""/>
+        <member name="heads" type="WebAgentHead"  desc=""/>
+        <member name="body" type="string"  desc=""/>
+    </packet>
+
+    <packet name="WebServerRequest" desc="">
+        <member name="fromServiceType" type="ui32"  desc=""/>
+        <member name="fromServiceID" type="ui64"  desc=""/>
+        <member name="traceID" type="ui32"  desc=""/>
+        <member name="ip" type="string"  desc=""/>
+        <member name="port" type="ui16"  desc=""/>
+        <member name="host" type="string"  desc=""/>
+        <member name="uri" type="string"  desc=""/>
+        <member name="params" type="string"  desc=""/>
+        <member name="heads" type="WebAgentHead"  desc=""/>
+        <member name="isGet" type="ui8"  desc="get or post"/>
+    </packet>
+    <packet name="WebServerResponse" desc="">
+        <member name="method" type="string"  desc=""/>
+        <member name="methodLine" type="string"  desc=""/>
+        <member name="heads" type="WebAgentHead"  desc=""/>
+        <member name="body" type="string"  desc=""/>
+    </packet>
+
+
+
+
+    <!-------------------------------------------------------------------------------------------->
+    <!--------------------------------  offline service  ----------------------------------------->
+    <!-------------------------------------------------------------------------------------------->
+
+    <packet name="UserOffline" store="MyISAM" desc="">
+        <member name="id" type="ui64"  tag="key" desc=""/>
+        <member name="serviceID" type="ui64" tag="idx" desc=""/>
+        <member name="streamBlob" type="string"  tag="blob" desc=""/>
+        <member name="status" type="ui16"  tag="idx" desc=""/>
+        <member name="timestamp" type="ui64" tag="idx"  desc=""/>
+    </packet>
+
+
+
+
+
+
+
 
 
 

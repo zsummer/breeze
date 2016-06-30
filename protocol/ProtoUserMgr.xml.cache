@@ -3,7 +3,7 @@
 <cppmd5>b7b0571fb6ee9c37faf61a89aa37c0e7</cppmd5> 
 <luamd5>b806369ec3d7e7705f4e1869e50fbd18</luamd5> 
 <csharpmd5>f55c42ca237daf4bea05f152d89135bd</csharpmd5> 
-<xmlmd5>8e7c7ad78cf3a5d4cc2834188d88893b</xmlmd5> 
+<xmlmd5>ee65a79c5c59fac8a5fe71c7d58e9721</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_AttachUserFromUserMgrReq" Number = "4004" /> 
     <cache key = "ID_AttachUserFromUserMgrResp" Number = "4005" /> 

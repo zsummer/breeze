@@ -1,7 +1,6 @@
 ﻿#include "docker.h"
 #include "userMgrService.h"
 #include <ProtoCommon.h>
-#include <ProtoDBService.h>
 #include <ProtoUser.h>
 
 UserMgrService::UserMgrService()

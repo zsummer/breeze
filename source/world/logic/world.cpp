@@ -3,7 +3,6 @@
 
 #include <ProtoUser.h>
 #include <ProtoUserMgr.h>
-#include <ProtoWebAgent.h>
 #include <ProtoDocker.h>
 
 
@@ -243,7 +242,8 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
     {
         Tracing trace;
         rsShell >> trace;
-        event_onServiceForwardMessage(session, trace.fromServiceType, ReadStream(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen()));
+        ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
+        event_onServiceForwardMessage(session, trace.fromServiceType, rs);
     }
 }
 

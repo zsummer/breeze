@@ -125,7 +125,7 @@ void World::directToService(SessionID sessionID, ServiceType serviceType, const 
     ws << proto;
     fd << trace;
     fd.appendOriginalData(ws.getStream(), ws.getStreamLen());
-    SessionManager::getRef().sendSessionData(sID, fd.getStream(), fd.getStreamLen());
+    SessionManager::getRef().sendSessionData(sessionID, fd.getStream(), fd.getStreamLen());
 }
 
 template <class Proto>

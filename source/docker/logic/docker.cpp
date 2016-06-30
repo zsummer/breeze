@@ -9,7 +9,6 @@
 #include "offlineService.h"
 #include <ProtoUser.h>
 #include <ProtoUserMgr.h>
-#include <ProtoWebAgent.h>
 #include <ProtoDocker.h>
 
 

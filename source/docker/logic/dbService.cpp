@@ -1,7 +1,6 @@
 ﻿#include "docker.h"
 #include "dbService.h"
-#include <ProtoDBService.h>
-#include <ProtoOffline.h>
+#include <ProtoDocker.h>
 
 
 DBService::DBService() 

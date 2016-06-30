@@ -1,8 +1,6 @@
 ﻿#include "docker.h"
 #include "webService.h"
-#include <ProtoWebAgent.h>
 #include <ProtoUser.h>
-#include <ProtoOffline.h>
 
 
 WebService::WebService()

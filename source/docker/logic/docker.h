@@ -35,7 +35,7 @@ docker的资源消耗:
 #include <common.h>
 #include "service.h"
 #include <ProtoDocker.h>
-#include <ProtoWebAgent.h>
+
 
 struct DockerSession
 {

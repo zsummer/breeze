@@ -25,8 +25,7 @@
 #include <common.h>
 #include "service.h"
 #include "module.h"
-#include <ProtoOffline.h>
-#include <ProtoDBService.h>
+#include <ProtoDocker.h>
 
 /*
 OfflineService

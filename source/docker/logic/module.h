@@ -38,7 +38,7 @@
 #define BREEZE_MODULE_H_
 #include <common.h>
 #include "service.h"
-#include <ProtoDBService.h>
+#include <ProtoDocker.h>
 
 /*
 ModuleData

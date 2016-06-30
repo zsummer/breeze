@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>7f4f92f52228b0c5fcc2968b5b2791ff</cppmd5> 
-<luamd5>28457de652980770523b6833ea990fc9</luamd5> 
-<csharpmd5>0dacfc62dbf3129ebce0bd2b200b436e</csharpmd5> 
-<xmlmd5>6c16d29f8189589387a80c8013d3eece</xmlmd5> 
+<cppmd5>15a3c7929c91282ba2c45a95dba5043d</cppmd5> 
+<luamd5>6d142c2eb7444ce321afa3fd18086601</luamd5> 
+<csharpmd5>b8210642e0f4c21d55de5947bfc5ce25</csharpmd5> 
+<xmlmd5>f76883fb13f6af39ba6327cc4a611090</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_DBDataResult" Number = "2015" /> 
+    <cache key = "ID_DBQueryArrayReq" Number = "2018" /> 
+    <cache key = "ID_DBQueryArrayResp" Number = "2019" /> 
+    <cache key = "ID_DBQueryReq" Number = "2016" /> 
+    <cache key = "ID_DBQueryResp" Number = "2017" /> 
     <cache key = "ID_DockerPulse" Number = "2000" /> 
     <cache key = "ID_ForwardToRealClient" Number = "2012" /> 
     <cache key = "ID_ForwardToService" Number = "2011" /> 
@@ -20,4 +25,8 @@
     <cache key = "ID_SwitchServiceClientNotice" Number = "2005" /> 
     <cache key = "ID_UnloadServiceInDocker" Number = "2008" /> 
     <cache key = "ID_UnloadedServiceNotice" Number = "2009" /> 
+    <cache key = "ID_UserOffline" Number = "2023" /> 
+    <cache key = "ID_WebAgentClientRequestAPI" Number = "2020" /> 
+    <cache key = "ID_WebServerRequest" Number = "2021" /> 
+    <cache key = "ID_WebServerResponse" Number = "2022" /> 
 </cacheNumber>
