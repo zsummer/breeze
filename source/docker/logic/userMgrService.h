@@ -62,7 +62,7 @@ public:
     void onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql);
     void onClientChange() override final;
     void onUnload() override final;
-    void onTick() override final;
+    void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
 
 private:
     void updateUserPreview(const UserPreview & pre);

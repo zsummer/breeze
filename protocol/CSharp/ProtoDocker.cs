@@ -57,35 +57,6 @@ namespace Proto4z
         } 
     } 
  
-    public class SessionPulse: Proto4z.IProtoObject //对于建立了UserService的客户端,通过该消息驱动onTick  
-    {     
-        //proto id   
-        public const ushort protoID = 2001;  
-        static public ushort getProtoID() { return 2001; } 
-        static public string getProtoName() { return "SessionPulse"; } 
-        //members   
-        public ulong serviceID;  
-        public SessionPulse()  
-        { 
-            serviceID = 0;  
-        } 
-        public SessionPulse(ulong serviceID) 
-        { 
-            this.serviceID = serviceID; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
     public class LoadServiceInDocker: Proto4z.IProtoObject //在Docker中装载一个Service  
     {     
         //proto id   

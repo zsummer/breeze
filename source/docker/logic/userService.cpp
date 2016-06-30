@@ -14,7 +14,7 @@ UserService::~UserService()
 }
 
 
-void UserService::onTick()
+void UserService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
     LOGI("UserService::onTick");
 }

@@ -17,7 +17,7 @@ UserMgrService::~UserMgrService()
     
 }
 
-void UserMgrService::onTick()
+void UserMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
     time_t now = getNowTime();
     if (now - _lastTime > 10)

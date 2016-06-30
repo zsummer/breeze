@@ -50,8 +50,22 @@ toService可以携带本地回调方法, 对方收到消息后通过backToServic
 using Slot = std::function < void(const Tracing & trace, zsummer::proto4z::ReadStream &) >;
 using ServiceCallback = std::function<void(zsummer::proto4z::ReadStream &)>;
 
-
-
+struct RepeatTimerCounts 
+{
+    TimerID timerID = InvalidTimerID;
+    ui32 delay = 0;
+    ui32 interval = 0;
+    ui32 repeat = 0;
+    ui32 count = 0;
+    bool withSysTime = false;
+};
+using RepeatTimerCB = std::function<void(TimerID tID, ui32 curRepeat, ui32 maxRepeat)>;
+struct ReapeatTimerInfo
+{
+    RepeatTimerCounts counts;
+    RepeatTimerCB  callback;
+};
+using ReapeatTimerInfoPtr = std::shared_ptr<ReapeatTimerInfo>;
 
 class Docker;
 class Service : public std::enable_shared_from_this<Service>
@@ -82,28 +96,11 @@ protected:
     inline void setStatus(ui16 status) { _status = status; };
     inline void setShell(bool shell) { _shell = shell; }
 
-private:
-    void beginTimer();
-    void onTimer();
-protected:
-    virtual void onTick() = 0; //仅限单例模式并且非shell的service才会调用这个 
-
-    virtual bool onLoad() = 0; //service初始化好之后要调用finishLoad 
-    bool finishLoad();
-
-    virtual void onClientChange() = 0;
-    virtual void onUnload() = 0;//service卸载好之后要调用finishUnload 
-    bool finishUnload();
-
-protected:
+public:
     using Slots = std::unordered_map<unsigned short, Slot>;
     template<class Proto>
     inline void slotting(const Slot & msgfun) { _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
-    
-    virtual void process(const Tracing & trace, const char * block, unsigned int len);
-    virtual void process4bind(const Tracing & trace, const std::string & block);
 
-public:
     bool canToService(ServiceType serviceType, ServiceID serviceID = InvalidServiceID);
     void toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     void toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
@@ -115,6 +112,31 @@ public:
     void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
     void backToService(const Tracing & trace, Proto proto, ServiceCallback cb = nullptr);
+public:
+    
+    TimerID createTimer(ui32 delay, ui32 repeat, ui32 interval, bool withSysTime,
+        const RepeatTimerCB& cb);
+    bool cancelTimer(TimerID tID);
+
+protected:
+    virtual void onTick(TimerID tID, ui32 count, ui32 repeat) = 0; //仅限STrait_Single 特性且非shell的service才会调用该回调.  
+
+    virtual bool onLoad() = 0; //service初始化好之后要调用finishLoad 
+    bool finishLoad();
+
+    virtual void onClientChange() = 0;
+    virtual void onUnload() = 0;//service卸载好之后要调用finishUnload 
+    bool finishUnload();
+
+
+protected:
+
+    
+    virtual void process(const Tracing & trace, const char * block, unsigned int len);
+    virtual void process4bind(const Tracing & trace, const std::string & block);
+private:
+    void onTimer(const ReapeatTimerInfoPtr & rt);
+
 
 private:
     ui32 makeCallback(const ServiceCallback &cb);
@@ -124,9 +146,7 @@ private:
 private:
     Slots _slots;
     std::map<ProtoID, std::string> _slotsName;
-
-    TimerID _timer = InvalidTimerID;
-
+    std::set<TimerID> _repeatTimers;
 private:
     ServiceType _serviceType = InvalidServiceType;
     ServiceID _serviceID = InvalidServiceID;

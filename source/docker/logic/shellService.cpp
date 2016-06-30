@@ -13,7 +13,7 @@ ShellService::~ShellService()
     
 }
 
-void ShellService::onTick()
+void ShellService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
 }
 

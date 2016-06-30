@@ -39,7 +39,7 @@ public:
     bool onLoad() override final;
     void onClientChange() override final;
     void onUnload() override final;
-    void onTick() override final;
+    void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
 private:
     void onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs);
     void getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);

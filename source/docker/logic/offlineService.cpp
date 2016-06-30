@@ -14,7 +14,7 @@ OfflineService::~OfflineService()
     
 }
 
-void OfflineService::onTick()
+void OfflineService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
 }
 

@@ -589,20 +589,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     {
         event_onWebServerRequest(session, rsShell);
     }
-    else if (rsShell.getProtoID() == SessionPulse::getProtoID())
-    {
-        SessionPulse pulse;
-        rsShell >> pulse;
-        auto service = peekService(STUser, pulse.serviceID);
-        if (service && !service->isShell() && service->getStatus() == SS_WORKING)
-        {
-            service->onTick();
-        }
-        else
-        {
-            LOGE("onSessionPulse error. serviceID=" << pulse.serviceID);
-        }
-    }
+
     else if (rsShell.getProtoID() == SelectUserPreviewsFromUserMgrResp::getProtoID())
     {
         SelectUserPreviewsFromUserMgrResp resp;
@@ -785,17 +772,6 @@ void Docker::buildCluster()
         LOGA("docker net worked");
     }
 
-    for (auto & second : _services)
-    {
-        for (auto service : second.second)
-        {
-            if (service.second && !service.second->isShell() && service.second->getServiceType() != STUser 
-                && (service.second->getStatus() == SS_INITING || service.second->getStatus() == SS_WORKING || service.second->getStatus() == SS_UNLOADING) )
-            {
-                service.second->onTick();
-            }
-        }
-    }
     if (!_dockerServiceWorking)
     {
         for (auto sd : ServiceDepends)
@@ -852,6 +828,7 @@ void Docker::buildCluster()
                 if (ret)
                 {
                     LOGI("end call service [" << service->getServiceName() << "].onLoad()");
+                    service->createTimer(1000, -1, 1000, true, std::bind(&Service::onTick, service, _1, _2, _3));
                 }
                 else
                 {
@@ -1077,12 +1054,7 @@ void Docker::event_onClientPulse(TcpSessionPtr session)
         {
             LOGE("SSTATUS_ATTACHED session not found service ID. service id=" << serviceID << ", session id=" << session->getSessionID());
         }
-        else
-        {
-            SessionPulse pulse;
-            pulse.serviceID = serviceID;
-            sendToDocker(iter->second->getServiceDockerID(), pulse);
-        }
+
     }
 }
 void Docker::event_onClientClosed(TcpSessionPtr session)

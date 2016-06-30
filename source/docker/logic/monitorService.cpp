@@ -15,7 +15,7 @@ MonitorService::~MonitorService()
     
 }
 
-void MonitorService::onTick()
+void MonitorService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
 }
 

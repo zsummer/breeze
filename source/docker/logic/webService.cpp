@@ -16,7 +16,7 @@ WebService::~WebService()
     
 }
 
-void WebService::onTick()
+void WebService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
     static time_t lastTick = getNowTime();
     time_t now = getNowTime();
