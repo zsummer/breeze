@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>10000</MinNo>
+  <MaxNo>15000</MaxNo>
+  <UseLog4z>1</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+
+
+    <enum type="ui16" name="SCENE_STATUS" >
+        <member name="SCENE_STATUS_NONE" value="0"   desc="无效"/>
+        <member name="SCENE_STATUS_HOME"   desc="主城"/>
+        <member name="SCENE_STATUS_INSTANCING"  desc="副本"/>
+        <member name="SCENE_STATUS_ARENA" desc="竞技场"/>
+    </enum>
+
+
+
+
+    <struct name="SceneStatus" desc="场景状态数据">
+        <member name="type" type="ui16"  desc="类型"/>
+        <member name="state" type="ui16"  desc="状态"/>
+        <member name="host" type="string"  desc="服务器host"/>
+        <member name="port" type="ui16"  desc="服务器port"/>
+        <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场)的实例ID"/>
+        <member name="token" type="SessionToken"  desc="令牌"/>
+    </struct>
+
+</Proto>
+
