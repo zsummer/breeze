@@ -8,6 +8,12 @@
 
 
 <Proto>
+
+    <packet name="SelfBeingPulse" desc= "">
+        <member name="areaID" type="ui64"   desc=""/>
+        <member name="dockerID" type="ui64"   desc=""/>
+    </packet> 
+
     <packet name="DockerPulse" desc= "集群脉冲">
     </packet>
 

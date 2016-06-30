@@ -1,4 +1,11 @@
  
+Proto4z.register(2014,"SelfBeingPulse") 
+Proto4z.SelfBeingPulse = {}  
+Proto4z.SelfBeingPulse.__protoID = 2014 
+Proto4z.SelfBeingPulse.__protoName = "SelfBeingPulse" 
+Proto4z.SelfBeingPulse[1] = {name="areaID", type="ui64" }  
+Proto4z.SelfBeingPulse[2] = {name="dockerID", type="ui64" }  
+ 
 Proto4z.register(2000,"DockerPulse") 
 Proto4z.DockerPulse = {} --集群脉冲 
 Proto4z.DockerPulse.__protoID = 2000 

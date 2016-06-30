@@ -2,6 +2,40 @@
 namespace Proto4z  
 { 
  
+    public class SelfBeingPulse: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 2014;  
+        static public ushort getProtoID() { return 2014; } 
+        static public string getProtoName() { return "SelfBeingPulse"; } 
+        //members   
+        public ulong areaID;  
+        public ulong dockerID;  
+        public SelfBeingPulse()  
+        { 
+            areaID = 0;  
+            dockerID = 0;  
+        } 
+        public SelfBeingPulse(ulong areaID, ulong dockerID) 
+        { 
+            this.areaID = areaID; 
+            this.dockerID = dockerID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.areaID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.dockerID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.areaID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.dockerID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class DockerPulse: Proto4z.IProtoObject //集群脉冲  
     {     
         //proto id   

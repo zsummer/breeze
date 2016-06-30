@@ -27,11 +27,11 @@ struct Tracing //docker间追踪数据
     static const unsigned short getProtoID() { return 1000;} 
     static const std::string getProtoName() { return "Tracing";} 
     unsigned int toDockerID; //forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID   
-    unsigned short toServiceType;  
-    unsigned long long toServiceID;  
-    unsigned int fromDockerID;  
-    unsigned short fromServiceType;  
-    unsigned long long fromServiceID;  
+    unsigned short toServiceType; //目标service类型  
+    unsigned long long toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
+    unsigned int fromDockerID; //来源DockerID  
+    unsigned short fromServiceType; //来源  
+    unsigned long long fromServiceID; //来源  
     unsigned int traceID; //本地cbID    
     unsigned int traceBackID; //把远程cbID透传回去   
     Tracing() 

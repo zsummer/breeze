@@ -3,6 +3,44 @@
 #define _PROTODOCKER_H_ 
  
  
+struct SelfBeingPulse 
+{ 
+    static const unsigned short getProtoID() { return 2014;} 
+    static const std::string getProtoName() { return "SelfBeingPulse";} 
+    unsigned long long areaID;  
+    unsigned long long dockerID;  
+    SelfBeingPulse() 
+    { 
+        areaID = 0; 
+        dockerID = 0; 
+    } 
+    SelfBeingPulse(const unsigned long long & areaID, const unsigned long long & dockerID) 
+    { 
+        this->areaID = areaID; 
+        this->dockerID = dockerID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelfBeingPulse & data) 
+{ 
+    ws << data.areaID;  
+    ws << data.dockerID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelfBeingPulse & data) 
+{ 
+    rs >> data.areaID;  
+    rs >> data.dockerID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SelfBeingPulse & info) 
+{ 
+    stm << "[\n"; 
+    stm << "areaID=" << info.areaID << "\n"; 
+    stm << "dockerID=" << info.dockerID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct DockerPulse //集群脉冲  
 { 
     static const unsigned short getProtoID() { return 2000;} 

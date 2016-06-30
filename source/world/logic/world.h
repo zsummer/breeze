@@ -25,7 +25,12 @@
 
 
 
-
+struct WorldServiceSession
+{
+    AreaID areaID = InvalidAreaID;
+    ServiceType serviceType = InvalidServiceID; //all is singleton 
+    SessionID sessionID = InvalidSessionID;
+};
 
 class World : public Singleton<World>
 {
@@ -76,8 +81,9 @@ private:
     Balance _spaceBalance;
 
 private:
-    AccepterID _widelisten = InvalidAccepterID;
-    AccepterID _weblisten = InvalidAccepterID;
+    std::map<AreaID, std::map<ServiceType, WorldServiceSession> > _services;
+    AccepterID _dockerListen = InvalidAccepterID;
+    AccepterID _spaceListen = InvalidAccepterID;
 };
 
 

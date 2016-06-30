@@ -29,11 +29,11 @@ namespace Proto4z
         static public string getProtoName() { return "Tracing"; } 
         //members   
         public uint toDockerID; //forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID   
-        public ushort toServiceType;  
-        public ulong toServiceID;  
-        public uint fromDockerID;  
-        public ushort fromServiceType;  
-        public ulong fromServiceID;  
+        public ushort toServiceType; //目标service类型  
+        public ulong toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
+        public uint fromDockerID; //来源DockerID  
+        public ushort fromServiceType; //来源  
+        public ulong fromServiceID; //来源  
         public uint traceID; //本地cbID    
         public uint traceBackID; //把远程cbID透传回去   
         public Tracing()  

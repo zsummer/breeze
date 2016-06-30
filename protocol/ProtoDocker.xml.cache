@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>275517af6257a89244a70c04fd3edea3</cppmd5> 
-<luamd5>56d99b3abfd1254245ce00836fc35195</luamd5> 
-<csharpmd5>22f795690b7b0123da2e583b65f9da2e</csharpmd5> 
-<xmlmd5>7813c9d3bee6ed67e50ce7adba876c4a</xmlmd5> 
+<cppmd5>7f4f92f52228b0c5fcc2968b5b2791ff</cppmd5> 
+<luamd5>28457de652980770523b6833ea990fc9</luamd5> 
+<csharpmd5>0dacfc62dbf3129ebce0bd2b200b436e</csharpmd5> 
+<xmlmd5>6c16d29f8189589387a80c8013d3eece</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_DockerPulse" Number = "2000" /> 
     <cache key = "ID_ForwardToRealClient" Number = "2012" /> 
@@ -13,6 +13,7 @@
     <cache key = "ID_LoadServiceNotice" Number = "2003" /> 
     <cache key = "ID_RealClientClosedNotice" Number = "2007" /> 
     <cache key = "ID_RefreshServiceToMgrNotice" Number = "2004" /> 
+    <cache key = "ID_SelfBeingPulse" Number = "2014" /> 
     <cache key = "ID_SessionPulse" Number = "2001" /> 
     <cache key = "ID_ShellServiceInfo" Number = "2013" /> 
     <cache key = "ID_ShutdownClusterServer" Number = "2010" /> 

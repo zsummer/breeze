@@ -51,8 +51,8 @@ config.docker =
 
 config.world = 
 {
-    worldListenHost="0.0.0.0",
-    worldListenPort=17001,
+    dockerListenHost="0.0.0.0",
+    dockerListenPort=17001,
     spaceListenHost="0.0.0.0",
     spacePubHost="127.0.0.1",
     spaceListenPort=17002,

@@ -280,12 +280,12 @@ bool ServerConfig::parseWorld(std::string configName)
     }
     lua_getfield(L, -1, "world");
 
-    lua_getfield(L, -1, "worldListenHost");
-    _worldConfig._worldListenHost = luaL_checkstring(L, -1);
+    lua_getfield(L, -1, "dockerListenHost");
+    _worldConfig._dockerListenHost = luaL_checkstring(L, -1);
     lua_pop(L, 1);
 
-    lua_getfield(L, -1, "worldListenPort");
-    _worldConfig._worldListenPort = (unsigned short)luaL_checkinteger(L, -1);
+    lua_getfield(L, -1, "dockerListenPort");
+    _worldConfig._dockerListenPort = (unsigned short)luaL_checkinteger(L, -1);
     lua_pop(L, 1);
 
     lua_getfield(L, -1, "spaceListenHost");

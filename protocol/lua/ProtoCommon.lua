@@ -20,11 +20,11 @@ Proto4z.Tracing = {} --docker间追踪数据
 Proto4z.Tracing.__protoID = 1000 
 Proto4z.Tracing.__protoName = "Tracing" 
 Proto4z.Tracing[1] = {name="toDockerID", type="ui32" } --forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID  
-Proto4z.Tracing[2] = {name="toServiceType", type="ui16" }  
-Proto4z.Tracing[3] = {name="toServiceID", type="ui64" }  
-Proto4z.Tracing[4] = {name="fromDockerID", type="ui32" }  
-Proto4z.Tracing[5] = {name="fromServiceType", type="ui16" }  
-Proto4z.Tracing[6] = {name="fromServiceID", type="ui64" }  
+Proto4z.Tracing[2] = {name="toServiceType", type="ui16" } --目标service类型 
+Proto4z.Tracing[3] = {name="toServiceID", type="ui64" } --目标serviceID, 如果是单例 ID为InvalidServiceID.  
+Proto4z.Tracing[4] = {name="fromDockerID", type="ui32" } --来源DockerID 
+Proto4z.Tracing[5] = {name="fromServiceType", type="ui16" } --来源 
+Proto4z.Tracing[6] = {name="fromServiceID", type="ui64" } --来源 
 Proto4z.Tracing[7] = {name="traceID", type="ui32" } --本地cbID   
 Proto4z.Tracing[8] = {name="traceBackID", type="ui32" } --把远程cbID透传回去  
  

@@ -442,6 +442,11 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
             _webBalance.enableNode(dc._dockerID);
         }
     }
+    if (true)
+    {
+        SelfBeingPulse pulse(ServerConfig::getRef().getAreaID(), ServerConfig::getRef().getDockerID());
+        sendToSession(session->getSessionID(), pulse);
+    }
 
     LoadServiceNotice notice;
     for (auto & second : _services)
@@ -894,12 +899,16 @@ void Docker::event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & r
 void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
     ReadStream rsShell(begin, len);
-    if (DockerPulse::getProtoID() != rsShell.getProtoID())
-    {
-        LOGT("event_onServiceMessage protoID=" << rsShell.getProtoID() << ", len=" << len);
-    }
 
-    if (rsShell.getProtoID() == DockerPulse::getProtoID())
+    if (rsShell.getProtoID() == SelfBeingPulse::getProtoID())
+    {
+        SelfBeingPulse pulse;
+        rsShell >> pulse;
+        LOGA("event_onServiceMessage sessionID=" << session->getSessionID() 
+            << ", areaID=" << pulse.areaID << ", dockerID=" << pulse.dockerID);
+        session->setUserParam(UPARAM_AREA_ID, pulse.areaID);
+    }
+    else if (rsShell.getProtoID() == DockerPulse::getProtoID())
     {
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
         return;
@@ -1089,6 +1098,8 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
             Tracing trace;
             trace.fromServiceType = STClient;
             trace.fromServiceID = session->getUserParamNumber(UPARAM_SERVICE_ID);
+            trace.fromDockerID = ServerConfig::getRef().getDockerID();
+
             trace.toServiceType = STUserMgr;
             trace.toServiceID = InvalidServiceID;
 
@@ -1130,6 +1141,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         Tracing trace;
         trace.fromServiceType = STClient;
         trace.fromServiceID = InvalidServiceID;
+        trace.fromDockerID = ServerConfig::getRef().getDockerID();
         trace.toServiceType = STUserMgr;
         trace.toServiceID = InvalidServiceID;
 
@@ -1225,6 +1237,7 @@ void Docker::event_onWebClientRequestAPI(TcpSessionPtr session, const std::strin
     trace.fromDockerID = ServerConfig::getRef().getDockerID();
     trace.fromServiceType = InvalidServiceType;
     trace.fromServiceID = InvalidServiceID;
+
     trace.toDockerID = InvalidDockerID;
     trace.toServiceType = STWebAgent;
     trace.toServiceID = InvalidServiceID;

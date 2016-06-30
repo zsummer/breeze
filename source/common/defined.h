@@ -260,8 +260,8 @@ struct DBConfig
 
 struct WorldConfig 
 {
-    std::string _worldListenHost;
-    unsigned short _worldListenPort = 0;
+    std::string _dockerListenHost;
+    unsigned short _dockerListenPort = 0;
     std::string _spaceListenHost;
     std::string _spacePubHost;
     unsigned short _spaceListenPort = 0;
@@ -306,12 +306,15 @@ enum SessionStatus : ui16
 
 enum SessionUserData
 {
-    UPARAM_SESSION_STATUS,
-    UPARAM_LAST_ACTIVE_TIME,
-    UPARAM_REMOTE_DOCKERID,
+    UPARAM_SESSION_STATUS, //通用 
+    UPARAM_LAST_ACTIVE_TIME, //通用 
+
+    UPARAM_REMOTE_DOCKERID, //docker集群 
     UPARAM_ACCOUNT,
     UPARAM_SERVICE_ID,
     UPARAM_LOGIN_TIME,
+
+    UPARAM_AREA_ID, //world集群
     UPARAM_SPACE_ID,
 
 };
