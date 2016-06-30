@@ -10,25 +10,45 @@
 <Proto>
 
 
+    <proto name="SceneInfoReq" desc= "获取场景信息">
+    </proto>
+    <proto name="SceneInfoAck" desc= "获取场景信息">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc=""/>
+    </proto>
 
-    <enum type="ui16" name="SCENE_STATUS" >
-        <member name="SCENE_STATUS_NONE" value="0"   desc="无效"/>
-        <member name="SCENE_STATUS_HOME"   desc="主城"/>
-        <member name="SCENE_STATUS_INSTANCING"  desc="副本"/>
-        <member name="SCENE_STATUS_ARENA" desc="竞技场"/>
-    </enum>
+    <proto name="TryEnterSceneReq" desc= "进入场景">
+        <member name="type" type="ui16"  desc="类型, 如果是不同类型,该请求会触发场景切换动作"/>
+    </proto>
+    <proto name="TryEnterSceneAck" desc= "进入场景">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+    </proto>
 
+    <proto name="SceneInfoNotice" desc= "场景信息刷新,如果是匹配模式, 需要扩展当前匹配信息到该协议中">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+    </proto>
 
-
-
-    <struct name="SceneStatus" desc="场景状态数据">
+    <proto name="LeaveSceneReq" desc= "离开场景">
         <member name="type" type="ui16"  desc="类型"/>
-        <member name="state" type="ui16"  desc="状态"/>
-        <member name="host" type="string"  desc="服务器host"/>
-        <member name="port" type="ui16"  desc="服务器port"/>
-        <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场)的实例ID"/>
-        <member name="token" type="SessionToken"  desc="令牌"/>
-    </struct>
+    </proto>
+    <proto name="LeaveSceneAck" desc= "离开场景">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+    </proto>
+
+    <proto name="QuitSceneReq" desc= "退出场景">
+        <member name="type" type="ui16"  desc="类型"/>
+    </proto>
+    <proto name="QuitSceneAck" desc= "退出场景">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+    </proto>
+
+
+
+    
 
 </Proto>
 

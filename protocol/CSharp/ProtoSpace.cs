@@ -2,66 +2,290 @@
 namespace Proto4z  
 { 
  
-    public enum SCENE_STATUS : ushort 
-    { 
-        SCENE_STATUS_NONE = 0, //无效  
-        SCENE_STATUS_HOME = 1, //主城  
-        SCENE_STATUS_INSTANCING = 2, //副本  
-        SCENE_STATUS_ARENA = 3, //竞技场  
-    }; 
- 
-    public class SceneStatus: Proto4z.IProtoObject //场景状态数据  
+    public class SceneInfoReq: Proto4z.IProtoObject //获取场景信息  
     {     
         //proto id   
-        public const ushort protoID = 10000;  
-        static public ushort getProtoID() { return 10000; } 
-        static public string getProtoName() { return "SceneStatus"; } 
+        public const ushort protoID = 10001;  
+        static public ushort getProtoID() { return 10001; } 
+        static public string getProtoName() { return "SceneInfoReq"; } 
         //members   
-        public ushort type; //类型  
-        public ushort state; //状态  
-        public string host; //服务器host  
-        public ushort port; //服务器port  
-        public uint spaceID; //空间(场景,房间,战场)的实例ID  
-        public SessionToken token; //令牌  
-        public SceneStatus()  
+        public SceneInfoReq()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneInfoAck: Proto4z.IProtoObject //获取场景信息  
+    {     
+        //proto id   
+        public const ushort protoID = 10002;  
+        static public ushort getProtoID() { return 10002; } 
+        static public string getProtoName() { return "SceneInfoAck"; } 
+        //members   
+        public ushort retCode; //错误码  
+        public SceneInfoArray scenes;  
+        public SceneInfoAck()  
+        { 
+            retCode = 0;  
+            scenes = new SceneInfoArray();  
+        } 
+        public SceneInfoAck(ushort retCode, SceneInfoArray scenes) 
+        { 
+            this.retCode = retCode; 
+            this.scenes = scenes; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.scenes == null) this.scenes = new SceneInfoArray(); 
+            data.AddRange(this.scenes.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.scenes = new SceneInfoArray(); 
+            this.scenes.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class TryEnterSceneReq: Proto4z.IProtoObject //进入场景  
+    {     
+        //proto id   
+        public const ushort protoID = 10003;  
+        static public ushort getProtoID() { return 10003; } 
+        static public string getProtoName() { return "TryEnterSceneReq"; } 
+        //members   
+        public ushort type; //类型, 如果是不同类型,该请求会触发场景切换动作  
+        public TryEnterSceneReq()  
         { 
             type = 0;  
-            state = 0;  
-            host = "";  
-            port = 0;  
-            spaceID = 0;  
-            token = new SessionToken();  
         } 
-        public SceneStatus(ushort type, ushort state, string host, ushort port, uint spaceID, SessionToken token) 
+        public TryEnterSceneReq(ushort type) 
         { 
             this.type = type; 
-            this.state = state; 
-            this.host = host; 
-            this.port = port; 
-            this.spaceID = spaceID; 
-            this.token = token; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.type)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
-            if (this.token == null) this.token = new SessionToken(); 
-            data.AddRange(this.token.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.type = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.token = new SessionToken(); 
-            this.token.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class TryEnterSceneAck: Proto4z.IProtoObject //进入场景  
+    {     
+        //proto id   
+        public const ushort protoID = 10004;  
+        static public ushort getProtoID() { return 10004; } 
+        static public string getProtoName() { return "TryEnterSceneAck"; } 
+        //members   
+        public ushort retCode; //错误码  
+        public SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
+        public TryEnterSceneAck()  
+        { 
+            retCode = 0;  
+            scenes = new SceneInfoArray();  
+        } 
+        public TryEnterSceneAck(ushort retCode, SceneInfoArray scenes) 
+        { 
+            this.retCode = retCode; 
+            this.scenes = scenes; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.scenes == null) this.scenes = new SceneInfoArray(); 
+            data.AddRange(this.scenes.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.scenes = new SceneInfoArray(); 
+            this.scenes.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneInfoNotice: Proto4z.IProtoObject //场景信息刷新,如果是匹配模式, 需要扩展当前匹配信息到该协议中  
+    {     
+        //proto id   
+        public const ushort protoID = 10005;  
+        static public ushort getProtoID() { return 10005; } 
+        static public string getProtoName() { return "SceneInfoNotice"; } 
+        //members   
+        public ushort retCode; //错误码  
+        public SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
+        public SceneInfoNotice()  
+        { 
+            retCode = 0;  
+            scenes = new SceneInfoArray();  
+        } 
+        public SceneInfoNotice(ushort retCode, SceneInfoArray scenes) 
+        { 
+            this.retCode = retCode; 
+            this.scenes = scenes; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.scenes == null) this.scenes = new SceneInfoArray(); 
+            data.AddRange(this.scenes.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.scenes = new SceneInfoArray(); 
+            this.scenes.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class LeaveSceneReq: Proto4z.IProtoObject //离开场景  
+    {     
+        //proto id   
+        public const ushort protoID = 10006;  
+        static public ushort getProtoID() { return 10006; } 
+        static public string getProtoName() { return "LeaveSceneReq"; } 
+        //members   
+        public ushort type; //类型  
+        public LeaveSceneReq()  
+        { 
+            type = 0;  
+        } 
+        public LeaveSceneReq(ushort type) 
+        { 
+            this.type = type; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.type)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.type = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class LeaveSceneAck: Proto4z.IProtoObject //离开场景  
+    {     
+        //proto id   
+        public const ushort protoID = 10007;  
+        static public ushort getProtoID() { return 10007; } 
+        static public string getProtoName() { return "LeaveSceneAck"; } 
+        //members   
+        public ushort retCode; //错误码  
+        public SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
+        public LeaveSceneAck()  
+        { 
+            retCode = 0;  
+            scenes = new SceneInfoArray();  
+        } 
+        public LeaveSceneAck(ushort retCode, SceneInfoArray scenes) 
+        { 
+            this.retCode = retCode; 
+            this.scenes = scenes; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.scenes == null) this.scenes = new SceneInfoArray(); 
+            data.AddRange(this.scenes.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.scenes = new SceneInfoArray(); 
+            this.scenes.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class QuitSceneReq: Proto4z.IProtoObject //退出场景  
+    {     
+        //proto id   
+        public const ushort protoID = 10008;  
+        static public ushort getProtoID() { return 10008; } 
+        static public string getProtoName() { return "QuitSceneReq"; } 
+        //members   
+        public ushort type; //类型  
+        public QuitSceneReq()  
+        { 
+            type = 0;  
+        } 
+        public QuitSceneReq(ushort type) 
+        { 
+            this.type = type; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.type)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.type = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class QuitSceneAck: Proto4z.IProtoObject //退出场景  
+    {     
+        //proto id   
+        public const ushort protoID = 10009;  
+        static public ushort getProtoID() { return 10009; } 
+        static public string getProtoName() { return "QuitSceneAck"; } 
+        //members   
+        public ushort retCode; //错误码  
+        public SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
+        public QuitSceneAck()  
+        { 
+            retCode = 0;  
+            scenes = new SceneInfoArray();  
+        } 
+        public QuitSceneAck(ushort retCode, SceneInfoArray scenes) 
+        { 
+            this.retCode = retCode; 
+            this.scenes = scenes; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.scenes == null) this.scenes = new SceneInfoArray(); 
+            data.AddRange(this.scenes.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.scenes = new SceneInfoArray(); 
+            this.scenes.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
