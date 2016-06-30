@@ -113,9 +113,11 @@ public:
     template<class Proto>
     void backToService(const Tracing & trace, Proto proto, ServiceCallback cb = nullptr);
 public:
-    
+    //该定时器并不需要维护定时器ID 除非有需要cancel的情况. 
+    //对于repeat类型的定时器, 在service完成卸载后 会由该父类进行全部取消与清除操作, 无需担心定时器造成的引用计数问题. 
     TimerID createTimer(ui32 delay, ui32 repeat, ui32 interval, bool withSysTime,
         const RepeatTimerCB& cb);
+    //repeat类型的定时器, 取消时以最后一次回调中的tID为准. 每次repeat定时器ID都会换一次. 这里要注意. 
     bool cancelTimer(TimerID tID);
 
 protected:
