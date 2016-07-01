@@ -248,41 +248,41 @@ enum BUFF_TYPE : unsigned long long
     BUFF_LIGHT_SKILL = 50, //持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现  
 }; 
  
-struct EPosition 
+struct EPoint 
 { 
-    static const unsigned short getProtoID() { return 10010;} 
-    static const std::string getProtoName() { return "EPosition";} 
+    static const unsigned short getProtoID() { return 10018;} 
+    static const std::string getProtoName() { return "EPoint";} 
     double x;  
     double y;  
     double face;  
-    EPosition() 
+    EPoint() 
     { 
         x = 0.0; 
         y = 0.0; 
         face = 0.0; 
     } 
-    EPosition(const double & x, const double & y, const double & face) 
+    EPoint(const double & x, const double & y, const double & face) 
     { 
         this->x = x; 
         this->y = y; 
         this->face = face; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EPosition & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EPoint & data) 
 { 
     ws << data.x;  
     ws << data.y;  
     ws << data.face;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EPosition & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EPoint & data) 
 { 
     rs >> data.x;  
     rs >> data.y;  
     rs >> data.face;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EPosition & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EPoint & info) 
 { 
     stm << "[\n"; 
     stm << "x=" << info.x << "\n"; 
@@ -293,7 +293,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 } 
  
  
-typedef std::vector<EPosition> EPositions;  
+typedef std::vector<EPoint> EPoints;  
  
  
 typedef std::vector<unsigned int> SkillIDArray; //技能ID数组  
@@ -605,7 +605,7 @@ struct SkillInfo
     double start; //start (server)tick  
     double lastHitTick; //lastHitTick  
     unsigned int seq; //hit seq  
-    EPosition dst; //目标位置  
+    EPoint dst; //目标位置  
     unsigned int foe; //锁定的目标  
     SkillData data; //配置数据  
     SkillInfo() 
@@ -616,7 +616,7 @@ struct SkillInfo
         seq = 0; 
         foe = 0; 
     } 
-    SkillInfo(const unsigned int & skillID, const double & start, const double & lastHitTick, const unsigned int & seq, const EPosition & dst, const unsigned int & foe, const SkillData & data) 
+    SkillInfo(const unsigned int & skillID, const double & start, const double & lastHitTick, const unsigned int & seq, const EPoint & dst, const unsigned int & foe, const SkillData & data) 
     { 
         this->skillID = skillID; 
         this->start = start; 
@@ -782,9 +782,9 @@ struct EntityInfo //EntityInfo
     unsigned int eid; //eid  
     unsigned short color; //阵营  
     unsigned short state; //状态  
-    EPosition pos; //当前坐标  
+    EPoint pos; //当前坐标  
     unsigned short moveAction; //状态  
-    EPositions movePath; //当前的移动路径  
+    EPoints movePath; //当前的移动路径  
     unsigned int foe; //锁定的敌人  
     unsigned int leader; //实体的老大, 如果是飞行道具 这个指向施放飞行道具的人  
     unsigned int follow; //移动跟随的实体  
@@ -800,7 +800,7 @@ struct EntityInfo //EntityInfo
         follow = 0; 
         curHP = 0.0; 
     } 
-    EntityInfo(const unsigned int & eid, const unsigned short & color, const unsigned short & state, const EPosition & pos, const unsigned short & moveAction, const EPositions & movePath, const unsigned int & foe, const unsigned int & leader, const unsigned int & follow, const double & curHP) 
+    EntityInfo(const unsigned int & eid, const unsigned short & color, const unsigned short & state, const EPoint & pos, const unsigned short & moveAction, const EPoints & movePath, const unsigned int & foe, const unsigned int & leader, const unsigned int & follow, const double & curHP) 
     { 
         this->eid = eid; 
         this->color = color; 
@@ -871,14 +871,14 @@ struct EntityControl //EntityControl
     double extSpeed; //扩展速度  
     unsigned int extBeginTick; //扩展速度的开始时间  
     unsigned int extKeepTick; //扩展速度的保持时间  
-    EPosition spawnpoint; //出生点  
-    EPosition lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
+    EPoint spawnpoint; //出生点  
+    EPoint lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
     SkillInfoArray skills; //技能数据  
     BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
     unsigned int diedTick; //实体死亡时间点 -1为永久, 仅飞行道具类有效  
     int hitTimes; //实体碰撞 -1为永久, 仅飞行道具类有效  
     unsigned int lastMoveTick; //最后一次移动时间  
-    EPosition lastClientPos; //最后一次客户端提交的坐标  
+    EPoint lastClientPos; //最后一次客户端提交的坐标  
     EntityControl() 
     { 
         eid = 0; 
@@ -890,7 +890,7 @@ struct EntityControl //EntityControl
         hitTimes = 0; 
         lastMoveTick = 0; 
     } 
-    EntityControl(const unsigned int & eid, const unsigned int & stateChageTick, const double & extSpeed, const unsigned int & extBeginTick, const unsigned int & extKeepTick, const EPosition & spawnpoint, const EPosition & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const unsigned int & diedTick, const int & hitTimes, const unsigned int & lastMoveTick, const EPosition & lastClientPos) 
+    EntityControl(const unsigned int & eid, const unsigned int & stateChageTick, const double & extSpeed, const unsigned int & extBeginTick, const unsigned int & extKeepTick, const EPoint & spawnpoint, const EPoint & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const unsigned int & diedTick, const int & hitTimes, const unsigned int & lastMoveTick, const EPoint & lastClientPos) 
     { 
         this->eid = eid; 
         this->stateChageTick = stateChageTick; 

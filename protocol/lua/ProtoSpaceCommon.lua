@@ -117,18 +117,18 @@ Proto4z.BUFF_INC_SPEED = 37--属性加成: 速度加成, value1加法, value2乘
 Proto4z.BUFF_INC_SUCK_BLOOD = 38--属性加成: 吸血加成 value1加法 
 Proto4z.BUFF_LIGHT_SKILL = 50--持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现 
  
-Proto4z.register(10010,"EPosition") 
-Proto4z.EPosition = {}  
-Proto4z.EPosition.__protoID = 10010 
-Proto4z.EPosition.__protoName = "EPosition" 
-Proto4z.EPosition[1] = {name="x", type="double" }  
-Proto4z.EPosition[2] = {name="y", type="double" }  
-Proto4z.EPosition[3] = {name="face", type="double" }  
+Proto4z.register(10018,"EPoint") 
+Proto4z.EPoint = {}  
+Proto4z.EPoint.__protoID = 10018 
+Proto4z.EPoint.__protoName = "EPoint" 
+Proto4z.EPoint[1] = {name="x", type="double" }  
+Proto4z.EPoint[2] = {name="y", type="double" }  
+Proto4z.EPoint[3] = {name="face", type="double" }  
  
-Proto4z.EPositions = {}  
-Proto4z.EPositions.__protoName = "EPositions" 
-Proto4z.EPositions.__protoDesc = "array" 
-Proto4z.EPositions.__protoTypeV = "EPosition" 
+Proto4z.EPoints = {}  
+Proto4z.EPoints.__protoName = "EPoints" 
+Proto4z.EPoints.__protoDesc = "array" 
+Proto4z.EPoints.__protoTypeV = "EPoint" 
  
 Proto4z.SkillIDArray = {} --技能ID数组 
 Proto4z.SkillIDArray.__protoName = "SkillIDArray" 
@@ -214,7 +214,7 @@ Proto4z.SkillInfo[1] = {name="skillID", type="ui32" }
 Proto4z.SkillInfo[2] = {name="start", type="double" } --start (server)tick 
 Proto4z.SkillInfo[3] = {name="lastHitTick", type="double" } --lastHitTick 
 Proto4z.SkillInfo[4] = {name="seq", type="ui32" } --hit seq 
-Proto4z.SkillInfo[5] = {name="dst", type="EPosition" } --目标位置 
+Proto4z.SkillInfo[5] = {name="dst", type="EPoint" } --目标位置 
 Proto4z.SkillInfo[6] = {name="foe", type="ui32" } --锁定的目标 
 Proto4z.SkillInfo[7] = {name="data", type="SkillData" } --配置数据 
  
@@ -259,9 +259,9 @@ Proto4z.EntityInfo.__protoName = "EntityInfo"
 Proto4z.EntityInfo[1] = {name="eid", type="ui32" } --eid 
 Proto4z.EntityInfo[2] = {name="color", type="ui16" } --阵营 
 Proto4z.EntityInfo[3] = {name="state", type="ui16" } --状态 
-Proto4z.EntityInfo[4] = {name="pos", type="EPosition" } --当前坐标 
+Proto4z.EntityInfo[4] = {name="pos", type="EPoint" } --当前坐标 
 Proto4z.EntityInfo[5] = {name="moveAction", type="ui16" } --状态 
-Proto4z.EntityInfo[6] = {name="movePath", type="EPositions" } --当前的移动路径 
+Proto4z.EntityInfo[6] = {name="movePath", type="EPoints" } --当前的移动路径 
 Proto4z.EntityInfo[7] = {name="foe", type="ui32" } --锁定的敌人 
 Proto4z.EntityInfo[8] = {name="leader", type="ui32" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
 Proto4z.EntityInfo[9] = {name="follow", type="ui32" } --移动跟随的实体 
@@ -281,14 +281,14 @@ Proto4z.EntityControl[2] = {name="stateChageTick", type="ui32" } --状态改变�
 Proto4z.EntityControl[3] = {name="extSpeed", type="double" } --扩展速度 
 Proto4z.EntityControl[4] = {name="extBeginTick", type="ui32" } --扩展速度的开始时间 
 Proto4z.EntityControl[5] = {name="extKeepTick", type="ui32" } --扩展速度的保持时间 
-Proto4z.EntityControl[6] = {name="spawnpoint", type="EPosition" } --出生点 
-Proto4z.EntityControl[7] = {name="lastPos", type="EPosition" } --上一帧实体坐标, 如果是瞬移 则和pos相同 
+Proto4z.EntityControl[6] = {name="spawnpoint", type="EPoint" } --出生点 
+Proto4z.EntityControl[7] = {name="lastPos", type="EPoint" } --上一帧实体坐标, 如果是瞬移 则和pos相同 
 Proto4z.EntityControl[8] = {name="skills", type="SkillInfoArray" } --技能数据 
 Proto4z.EntityControl[9] = {name="buffs", type="BuffInfoArray" } --BUFF数据, 小标ID对应bufftype 
 Proto4z.EntityControl[10] = {name="diedTick", type="ui32" } --实体死亡时间点 -1为永久, 仅飞行道具类有效 
 Proto4z.EntityControl[11] = {name="hitTimes", type="i32" } --实体碰撞 -1为永久, 仅飞行道具类有效 
 Proto4z.EntityControl[12] = {name="lastMoveTick", type="ui32" } --最后一次移动时间 
-Proto4z.EntityControl[13] = {name="lastClientPos", type="EPosition" } --最后一次客户端提交的坐标 
+Proto4z.EntityControl[13] = {name="lastClientPos", type="EPoint" } --最后一次客户端提交的坐标 
  
 Proto4z.EntityControlArray = {}  
 Proto4z.EntityControlArray.__protoName = "EntityControlArray" 

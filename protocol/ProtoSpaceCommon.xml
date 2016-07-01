@@ -167,12 +167,12 @@
     </enum>
 
     <!-- 实体坐标 -->
-    <struct name="EPosition" desc="" >
+    <struct name="EPoint" desc="" >
         <member name="x" type="double" />
         <member name="y" type="double" />
         <member name="face" type="double" />
     </struct>
-    <array name="EPositions" type="EPosition" desc="" />
+    <array name="EPoints" type="EPoint" desc="" />
 
     <array name="SkillIDArray" type="ui32" desc="技能ID数组" />
     <array name="BuffIDArray" type="ui32" desc="buff ID 数组" />
@@ -236,7 +236,7 @@
         <member name="start" type="double" desc="start (server)tick"/>
         <member name="lastHitTick" type="double" desc="lastHitTick"/>
         <member name="seq" type="ui32" desc="hit seq"/>
-        <member name="dst"  type="EPosition" desc="目标位置"/>  
+        <member name="dst"  type="EPoint" desc="目标位置"/>  
         <member name="foe"  type="ui32" desc="锁定的目标"/>  
         <member name="data" type="SkillData" desc="配置数据"/>
     </struct>
@@ -275,9 +275,9 @@
         <member name="eid" type="ui32"  desc="eid"/>
         <member name="color" type="ui16"  desc="阵营"/>
         <member name="state" type="ui16"  desc="状态"/>
-        <member name="pos"  type="EPosition" desc="当前坐标"/>
+        <member name="pos"  type="EPoint" desc="当前坐标"/>
         <member name="moveAction" type="ui16"  desc="状态"/>
-        <member name="movePath"  type="EPositions" desc="当前的移动路径"/>
+        <member name="movePath"  type="EPoints" desc="当前的移动路径"/>
         <member name="foe"  type="ui32" desc="锁定的敌人"/>
         <member name="leader"  type="ui32" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
         <member name="follow"  type="ui32" desc="移动跟随的实体"/>
@@ -293,14 +293,14 @@
         <member name="extSpeed" type="double"  desc="扩展速度"/>
         <member name="extBeginTick" type="ui32"  desc="扩展速度的开始时间"/>
         <member name="extKeepTick" type="ui32"  desc="扩展速度的保持时间"/>
-        <member name="spawnpoint" type="EPosition"   desc="出生点"/>
-        <member name="lastPos"  type="EPosition" desc="上一帧实体坐标, 如果是瞬移 则和pos相同"/>
+        <member name="spawnpoint" type="EPoint"   desc="出生点"/>
+        <member name="lastPos"  type="EPoint" desc="上一帧实体坐标, 如果是瞬移 则和pos相同"/>
         <member name="skills"  type="SkillInfoArray" desc="技能数据"/>
         <member name="buffs"  type="BuffInfoArray" desc="BUFF数据, 小标ID对应bufftype"/>
         <member name="diedTick"  type="ui32" desc="实体死亡时间点 -1为永久, 仅飞行道具类有效"/>
         <member name="hitTimes"  type="i32" desc="实体碰撞 -1为永久, 仅飞行道具类有效"/>
         <member name="lastMoveTick"  type="ui32" desc="最后一次移动时间"/>
-        <member name="lastClientPos"  type="EPosition" desc="最后一次客户端提交的坐标"/>
+        <member name="lastClientPos"  type="EPoint" desc="最后一次客户端提交的坐标"/>
     </struct>
     <array name="EntityControlArray" type="EntityControl" desc="" />
 

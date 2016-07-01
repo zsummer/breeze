@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>057c8018e596139db2ce767753291b8a</cppmd5> 
-<luamd5>4f1fbe7f2ba837bb5d1bfb5c69e738b5</luamd5> 
-<csharpmd5>0192fe8abf89104fa3c3b34c81ef8ea4</csharpmd5> 
-<xmlmd5>8ce0e7f14e004fc42a9fbcdc2addb387</xmlmd5> 
+<cppmd5>c9d91ad9c2254cc83d62a976d53f9f2c</cppmd5> 
+<luamd5>c1ac2c120c5c6cd8d19a3402dc582638</luamd5> 
+<csharpmd5>352aceda9303baf28a538f3a16151620</csharpmd5> 
+<xmlmd5>80c212a34dc6430a949504348fe43d1b</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_BuffData" Number = "10005" /> 
     <cache key = "ID_BuffInfo" Number = "10008" /> 
+    <cache key = "ID_EPoint" Number = "10018" /> 
     <cache key = "ID_EPosition" Number = "10010" /> 
     <cache key = "ID_EntityControl" Number = "10012" /> 
     <cache key = "ID_EntityDict" Number = "10009" /> 

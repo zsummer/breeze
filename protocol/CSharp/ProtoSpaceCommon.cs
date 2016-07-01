@@ -290,23 +290,23 @@ namespace Proto4z
         BUFF_LIGHT_SKILL = 50, //持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现  
     }; 
  
-    public class EPosition: Proto4z.IProtoObject 
+    public class EPoint: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 10010;  
-        static public ushort getProtoID() { return 10010; } 
-        static public string getProtoName() { return "EPosition"; } 
+        public const ushort protoID = 10018;  
+        static public ushort getProtoID() { return 10018; } 
+        static public string getProtoName() { return "EPoint"; } 
         //members   
         public double x;  
         public double y;  
         public double face;  
-        public EPosition()  
+        public EPoint()  
         { 
             x = 0.0;  
             y = 0.0;  
             face = 0.0;  
         } 
-        public EPosition(double x, double y, double face) 
+        public EPoint(double x, double y, double face) 
         { 
             this.x = x; 
             this.y = y; 
@@ -330,7 +330,7 @@ namespace Proto4z
     } 
  
  
-    public class EPositions : System.Collections.Generic.List<EPosition>, Proto4z.IProtoObject  
+    public class EPoints : System.Collections.Generic.List<EPoint>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -351,7 +351,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new EPosition(); 
+                    var data = new EPoint(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
@@ -757,7 +757,7 @@ namespace Proto4z
         public double start; //start (server)tick  
         public double lastHitTick; //lastHitTick  
         public uint seq; //hit seq  
-        public EPosition dst; //目标位置  
+        public EPoint dst; //目标位置  
         public uint foe; //锁定的目标  
         public SkillData data; //配置数据  
         public SkillInfo()  
@@ -766,11 +766,11 @@ namespace Proto4z
             start = 0.0;  
             lastHitTick = 0.0;  
             seq = 0;  
-            dst = new EPosition();  
+            dst = new EPoint();  
             foe = 0;  
             data = new SkillData();  
         } 
-        public SkillInfo(uint skillID, double start, double lastHitTick, uint seq, EPosition dst, uint foe, SkillData data) 
+        public SkillInfo(uint skillID, double start, double lastHitTick, uint seq, EPoint dst, uint foe, SkillData data) 
         { 
             this.skillID = skillID; 
             this.start = start; 
@@ -787,7 +787,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.start)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastHitTick)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.seq)); 
-            if (this.dst == null) this.dst = new EPosition(); 
+            if (this.dst == null) this.dst = new EPoint(); 
             data.AddRange(this.dst.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.foe)); 
             if (this.data == null) this.data = new SkillData(); 
@@ -800,7 +800,7 @@ namespace Proto4z
             this.start = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.lastHitTick = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.seq = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.dst = new EPosition(); 
+            this.dst = new EPoint(); 
             this.dst.__decode(binData, ref pos); 
             this.foe = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.data = new SkillData(); 
@@ -1011,9 +1011,9 @@ namespace Proto4z
         public uint eid; //eid  
         public ushort color; //阵营  
         public ushort state; //状态  
-        public EPosition pos; //当前坐标  
+        public EPoint pos; //当前坐标  
         public ushort moveAction; //状态  
-        public EPositions movePath; //当前的移动路径  
+        public EPoints movePath; //当前的移动路径  
         public uint foe; //锁定的敌人  
         public uint leader; //实体的老大, 如果是飞行道具 这个指向施放飞行道具的人  
         public uint follow; //移动跟随的实体  
@@ -1023,15 +1023,15 @@ namespace Proto4z
             eid = 0;  
             color = 0;  
             state = 0;  
-            pos = new EPosition();  
+            pos = new EPoint();  
             moveAction = 0;  
-            movePath = new EPositions();  
+            movePath = new EPoints();  
             foe = 0;  
             leader = 0;  
             follow = 0;  
             curHP = 0.0;  
         } 
-        public EntityInfo(uint eid, ushort color, ushort state, EPosition pos, ushort moveAction, EPositions movePath, uint foe, uint leader, uint follow, double curHP) 
+        public EntityInfo(uint eid, ushort color, ushort state, EPoint pos, ushort moveAction, EPoints movePath, uint foe, uint leader, uint follow, double curHP) 
         { 
             this.eid = eid; 
             this.color = color; 
@@ -1050,10 +1050,10 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.eid)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.color)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
-            if (this.pos == null) this.pos = new EPosition(); 
+            if (this.pos == null) this.pos = new EPoint(); 
             data.AddRange(this.pos.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.moveAction)); 
-            if (this.movePath == null) this.movePath = new EPositions(); 
+            if (this.movePath == null) this.movePath = new EPoints(); 
             data.AddRange(this.movePath.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.foe)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.leader)); 
@@ -1066,10 +1066,10 @@ namespace Proto4z
             this.eid = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.color = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.pos = new EPosition(); 
+            this.pos = new EPoint(); 
             this.pos.__decode(binData, ref pos); 
             this.moveAction = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.movePath = new EPositions(); 
+            this.movePath = new EPoints(); 
             this.movePath.__decode(binData, ref pos); 
             this.foe = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.leader = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
@@ -1122,14 +1122,14 @@ namespace Proto4z
         public double extSpeed; //扩展速度  
         public uint extBeginTick; //扩展速度的开始时间  
         public uint extKeepTick; //扩展速度的保持时间  
-        public EPosition spawnpoint; //出生点  
-        public EPosition lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
+        public EPoint spawnpoint; //出生点  
+        public EPoint lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
         public SkillInfoArray skills; //技能数据  
         public BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
         public uint diedTick; //实体死亡时间点 -1为永久, 仅飞行道具类有效  
         public int hitTimes; //实体碰撞 -1为永久, 仅飞行道具类有效  
         public uint lastMoveTick; //最后一次移动时间  
-        public EPosition lastClientPos; //最后一次客户端提交的坐标  
+        public EPoint lastClientPos; //最后一次客户端提交的坐标  
         public EntityControl()  
         { 
             eid = 0;  
@@ -1137,16 +1137,16 @@ namespace Proto4z
             extSpeed = 0.0;  
             extBeginTick = 0;  
             extKeepTick = 0;  
-            spawnpoint = new EPosition();  
-            lastPos = new EPosition();  
+            spawnpoint = new EPoint();  
+            lastPos = new EPoint();  
             skills = new SkillInfoArray();  
             buffs = new BuffInfoArray();  
             diedTick = 0;  
             hitTimes = 0;  
             lastMoveTick = 0;  
-            lastClientPos = new EPosition();  
+            lastClientPos = new EPoint();  
         } 
-        public EntityControl(uint eid, uint stateChageTick, double extSpeed, uint extBeginTick, uint extKeepTick, EPosition spawnpoint, EPosition lastPos, SkillInfoArray skills, BuffInfoArray buffs, uint diedTick, int hitTimes, uint lastMoveTick, EPosition lastClientPos) 
+        public EntityControl(uint eid, uint stateChageTick, double extSpeed, uint extBeginTick, uint extKeepTick, EPoint spawnpoint, EPoint lastPos, SkillInfoArray skills, BuffInfoArray buffs, uint diedTick, int hitTimes, uint lastMoveTick, EPoint lastClientPos) 
         { 
             this.eid = eid; 
             this.stateChageTick = stateChageTick; 
@@ -1170,9 +1170,9 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.extSpeed)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.extBeginTick)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.extKeepTick)); 
-            if (this.spawnpoint == null) this.spawnpoint = new EPosition(); 
+            if (this.spawnpoint == null) this.spawnpoint = new EPoint(); 
             data.AddRange(this.spawnpoint.__encode()); 
-            if (this.lastPos == null) this.lastPos = new EPosition(); 
+            if (this.lastPos == null) this.lastPos = new EPoint(); 
             data.AddRange(this.lastPos.__encode()); 
             if (this.skills == null) this.skills = new SkillInfoArray(); 
             data.AddRange(this.skills.__encode()); 
@@ -1181,7 +1181,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.diedTick)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.hitTimes)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.lastMoveTick)); 
-            if (this.lastClientPos == null) this.lastClientPos = new EPosition(); 
+            if (this.lastClientPos == null) this.lastClientPos = new EPoint(); 
             data.AddRange(this.lastClientPos.__encode()); 
             return data; 
         } 
@@ -1192,9 +1192,9 @@ namespace Proto4z
             this.extSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.extBeginTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.extKeepTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.spawnpoint = new EPosition(); 
+            this.spawnpoint = new EPoint(); 
             this.spawnpoint.__decode(binData, ref pos); 
-            this.lastPos = new EPosition(); 
+            this.lastPos = new EPoint(); 
             this.lastPos.__decode(binData, ref pos); 
             this.skills = new SkillInfoArray(); 
             this.skills.__decode(binData, ref pos); 
@@ -1203,7 +1203,7 @@ namespace Proto4z
             this.diedTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.hitTimes = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             this.lastMoveTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.lastClientPos = new EPosition(); 
+            this.lastClientPos = new EPoint(); 
             this.lastClientPos.__decode(binData, ref pos); 
             return pos; 
         } 
