@@ -224,7 +224,7 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
     }
     else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
     {
-        AreaID areaID = session->getUserParamNumber(UPARAM_AREA_ID);
+        AreaID areaID = (ui32)session->getUserParamNumber(UPARAM_AREA_ID);
         if (areaID == InvalidAreaID)
         {
             LOGE("not found area id. sessionID=" << session->getSessionID());

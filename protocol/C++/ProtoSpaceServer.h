@@ -352,14 +352,14 @@ struct TokenInfoToSpaceNotice //token丢给space
     static const std::string getProtoName() { return "TokenInfoToSpaceNotice";} 
     unsigned long long userID;  
     std::string token; //服务器port  
-    spaceID spaceID; //类型  
+    SpaceID spaceID; //类型  
     UserBaseInfo baseInfo; //类型  
     FightEffect effects; //类型  
     TokenInfoToSpaceNotice() 
     { 
         userID = 0; 
     } 
-    TokenInfoToSpaceNotice(const unsigned long long & userID, const std::string & token, const spaceID & spaceID, const UserBaseInfo & baseInfo, const FightEffect & effects) 
+    TokenInfoToSpaceNotice(const unsigned long long & userID, const std::string & token, const SpaceID & spaceID, const UserBaseInfo & baseInfo, const FightEffect & effects) 
     { 
         this->userID = userID; 
         this->token = token; 

@@ -71,6 +71,6 @@ Proto4z.TokenInfoToSpaceNotice.__protoID = 39011
 Proto4z.TokenInfoToSpaceNotice.__protoName = "TokenInfoToSpaceNotice" 
 Proto4z.TokenInfoToSpaceNotice[1] = {name="userID", type="ui64" }  
 Proto4z.TokenInfoToSpaceNotice[2] = {name="token", type="string" } --服务器port 
-Proto4z.TokenInfoToSpaceNotice[3] = {name="spaceID", type="spaceID" } --类型 
+Proto4z.TokenInfoToSpaceNotice[3] = {name="spaceID", type="SpaceID" } --类型 
 Proto4z.TokenInfoToSpaceNotice[4] = {name="baseInfo", type="UserBaseInfo" } --类型 
 Proto4z.TokenInfoToSpaceNotice[5] = {name="effects", type="FightEffect" } --类型 
