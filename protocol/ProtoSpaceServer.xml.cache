@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>31bc9876d29fe371b58f22ccc0d43103</cppmd5> 
+<luamd5>7136ad0ac6c92e95d18f8aaea9538501</luamd5> 
+<csharpmd5>d2967c9fd91b2fa47a3ac80257069b6a</csharpmd5> 
+<xmlmd5>a084ce6a073185d2b295dbe8ab1f7700</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_SpaceInfoToWorldNotice" Number = "39010" /> 
+    <cache key = "ID_SpaceOnlineNotice" Number = "39009" /> 
+    <cache key = "ID_TokenInfoToSpaceNotice" Number = "39011" /> 
+    <cache key = "ID_WorldLeaveSceneAck" Number = "39006" /> 
+    <cache key = "ID_WorldLeaveSceneReq" Number = "39005" /> 
+    <cache key = "ID_WorldQuitSceneAck" Number = "39008" /> 
+    <cache key = "ID_WorldQuitSceneReq" Number = "39007" /> 
+    <cache key = "ID_WorldSceneInfoAck" Number = "39001" /> 
+    <cache key = "ID_WorldSceneInfoNotice" Number = "39004" /> 
+    <cache key = "ID_WorldSceneInfoReq" Number = "39000" /> 
+    <cache key = "ID_WorldTryEnterSceneAck" Number = "39003" /> 
+    <cache key = "ID_WorldTryEnterSceneReq" Number = "39002" /> 
+</cacheNumber>
