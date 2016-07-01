@@ -3,7 +3,7 @@
 <cppmd5>aa846d6c5ff401dc2d52ddda9bd26e6d</cppmd5> 
 <luamd5>0194352ef90130391b5f788e151e679a</luamd5> 
 <csharpmd5>040e4ca22d9dc9c8f25282cdf214143c</csharpmd5> 
-<xmlmd5>82741b662f55454494d3c6a475b3f180</xmlmd5> 
+<xmlmd5>728156907c2e635038b45534d3803145</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_AttachUserReq" Number = "40005" /> 
     <cache key = "ID_AttachUserResp" Number = "40006" /> 
@@ -12,6 +12,15 @@
     <cache key = "ID_ClientPulse" Number = "40000" /> 
     <cache key = "ID_CreateUserReq" Number = "40003" /> 
     <cache key = "ID_CreateUserResp" Number = "40004" /> 
+    <cache key = "ID_LeaveSceneAck" Number = "40017" /> 
+    <cache key = "ID_LeaveSceneReq" Number = "40016" /> 
+    <cache key = "ID_QuitSceneAck" Number = "40019" /> 
+    <cache key = "ID_QuitSceneReq" Number = "40018" /> 
+    <cache key = "ID_SceneInfoAck" Number = "40012" /> 
+    <cache key = "ID_SceneInfoNotice" Number = "40015" /> 
+    <cache key = "ID_SceneInfoReq" Number = "40011" /> 
+    <cache key = "ID_TryEnterSceneAck" Number = "40014" /> 
+    <cache key = "ID_TryEnterSceneReq" Number = "40013" /> 
     <cache key = "ID_UserChatReq" Number = "40007" /> 
     <cache key = "ID_UserChatResp" Number = "40008" /> 
     <cache key = "ID_UserPingPongReq" Number = "40009" /> 

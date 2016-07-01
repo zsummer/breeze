@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
-  <MinNo>10000</MinNo>
-  <MaxNo>15000</MaxNo>
+  <MinNo>50000</MinNo>
+  <MaxNo>51000</MaxNo>
   <UseLog4z>1</UseLog4z>
 </ProtoTraits>
 
 
 <Proto>
 
+
+
+<!------------------------------------ space --------------------------------------------->
 
     <proto name="SceneInfoReq" desc= "获取场景信息">
     </proto>
@@ -45,8 +48,6 @@
         <member name="retCode"  type="ui16" desc="错误码"/> 
         <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
     </proto>
-
-
 
     
 

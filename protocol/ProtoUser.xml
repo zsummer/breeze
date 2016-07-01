@@ -40,7 +40,11 @@
     </packet>
 
 
-    <packet name="UserChatReq" desc= "">
+ 
+
+<!------------------------------------ other --------------------------------------------->
+
+   <packet name="UserChatReq" desc= "">
         <member name="toServiceID" type="ui64"   desc=""/>
         <member name="msg" type="string"   desc=""/>
     </packet>

@@ -5,8 +5,8 @@ namespace Proto4z
     public class SceneInfoReq: Proto4z.IProtoObject //获取场景信息  
     {     
         //proto id   
-        public const ushort protoID = 10001;  
-        static public ushort getProtoID() { return 10001; } 
+        public const ushort protoID = 50000;  
+        static public ushort getProtoID() { return 50000; } 
         static public string getProtoName() { return "SceneInfoReq"; } 
         //members   
         public SceneInfoReq()  
@@ -26,8 +26,8 @@ namespace Proto4z
     public class SceneInfoAck: Proto4z.IProtoObject //获取场景信息  
     {     
         //proto id   
-        public const ushort protoID = 10002;  
-        static public ushort getProtoID() { return 10002; } 
+        public const ushort protoID = 50001;  
+        static public ushort getProtoID() { return 50001; } 
         static public string getProtoName() { return "SceneInfoAck"; } 
         //members   
         public ushort retCode; //错误码  
@@ -62,8 +62,8 @@ namespace Proto4z
     public class TryEnterSceneReq: Proto4z.IProtoObject //进入场景  
     {     
         //proto id   
-        public const ushort protoID = 10003;  
-        static public ushort getProtoID() { return 10003; } 
+        public const ushort protoID = 50002;  
+        static public ushort getProtoID() { return 50002; } 
         static public string getProtoName() { return "TryEnterSceneReq"; } 
         //members   
         public ushort type; //类型, 如果是不同类型,该请求会触发场景切换动作  
@@ -91,8 +91,8 @@ namespace Proto4z
     public class TryEnterSceneAck: Proto4z.IProtoObject //进入场景  
     {     
         //proto id   
-        public const ushort protoID = 10004;  
-        static public ushort getProtoID() { return 10004; } 
+        public const ushort protoID = 50003;  
+        static public ushort getProtoID() { return 50003; } 
         static public string getProtoName() { return "TryEnterSceneAck"; } 
         //members   
         public ushort retCode; //错误码  
@@ -127,8 +127,8 @@ namespace Proto4z
     public class SceneInfoNotice: Proto4z.IProtoObject //场景信息刷新,如果是匹配模式, 需要扩展当前匹配信息到该协议中  
     {     
         //proto id   
-        public const ushort protoID = 10005;  
-        static public ushort getProtoID() { return 10005; } 
+        public const ushort protoID = 50004;  
+        static public ushort getProtoID() { return 50004; } 
         static public string getProtoName() { return "SceneInfoNotice"; } 
         //members   
         public ushort retCode; //错误码  
@@ -163,8 +163,8 @@ namespace Proto4z
     public class LeaveSceneReq: Proto4z.IProtoObject //离开场景  
     {     
         //proto id   
-        public const ushort protoID = 10006;  
-        static public ushort getProtoID() { return 10006; } 
+        public const ushort protoID = 50005;  
+        static public ushort getProtoID() { return 50005; } 
         static public string getProtoName() { return "LeaveSceneReq"; } 
         //members   
         public ushort type; //类型  
@@ -192,8 +192,8 @@ namespace Proto4z
     public class LeaveSceneAck: Proto4z.IProtoObject //离开场景  
     {     
         //proto id   
-        public const ushort protoID = 10007;  
-        static public ushort getProtoID() { return 10007; } 
+        public const ushort protoID = 50006;  
+        static public ushort getProtoID() { return 50006; } 
         static public string getProtoName() { return "LeaveSceneAck"; } 
         //members   
         public ushort retCode; //错误码  
@@ -228,8 +228,8 @@ namespace Proto4z
     public class QuitSceneReq: Proto4z.IProtoObject //退出场景  
     {     
         //proto id   
-        public const ushort protoID = 10008;  
-        static public ushort getProtoID() { return 10008; } 
+        public const ushort protoID = 50007;  
+        static public ushort getProtoID() { return 50007; } 
         static public string getProtoName() { return "QuitSceneReq"; } 
         //members   
         public ushort type; //类型  
@@ -257,8 +257,8 @@ namespace Proto4z
     public class QuitSceneAck: Proto4z.IProtoObject //退出场景  
     {     
         //proto id   
-        public const ushort protoID = 10009;  
-        static public ushort getProtoID() { return 10009; } 
+        public const ushort protoID = 50008;  
+        static public ushort getProtoID() { return 50008; } 
         static public string getProtoName() { return "QuitSceneAck"; } 
         //members   
         public ushort retCode; //错误码  

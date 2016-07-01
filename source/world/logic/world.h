@@ -22,7 +22,10 @@
 #ifndef _WORLD_H_
 #define _WORLD_H_
 #include <common.h>
-
+#include <ProtoCommon.h>
+#include <ProtoDocker.h>
+#include <ProtoSpaceCommon.h>
+#include <ProtoSpaceClient.h>
 
 
 struct WorldServiceSession

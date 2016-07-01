@@ -9,6 +9,7 @@
 
 <Proto>
 
+    <!-- 概述  所有数据除非必要, 一律使用双精度浮点.  概率用浮点表达为[0.0-1.0], 时间用浮点表达单位为秒,精确到毫秒 -->
 
      <!-- 场景类型 -->
     <enum type="ui16" name="SCENE_TYPE" desc="场景类型, 每个space都绑定一个场景类型" >
@@ -35,7 +36,7 @@
         <member name="host" type="string"  desc="服务器host"/>
         <member name="port" type="ui16"  desc="服务器port"/>
         <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场,INSTANCING ID)的实例ID"/>
-        <member name="token" type="SessionToken"  desc="令牌"/>
+        <member name="token" type="string"  desc="令牌"/>
         <member name="isActive" type="ui8"  desc="当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况"/>
     </struct>
     <array name="SceneInfoArray" type="SceneInfo" desc="" />
@@ -46,15 +47,16 @@
     <!------------------------------------------  实体 ------------------------------------------------------------------>
     <!-- 实体状态-->
     <enum type="ui16" name="ENTITY_STATE" desc="">
-        <member name="ESTATE_FREEZING" value="0" desc="冻结, 不能移动,不能操作, 100%免伤" />
+        <member name="ESTATE_NONE" desc="无效" />
+        <member name="ESTATE_FREEZING" desc="冻结, 不可被攻击,不可主动移动,攻击等" />
         <member name="ESTATE_ACTIVE" desc="活跃状态" />
-        <member name="ESTATE_PRE_DIED" desc="进入死亡流程" />
-        <member name="ESTATE_DIED" desc="死亡状态" />
+        <member name="ESTATE_LIE" desc="跪, 不计死亡次数" />
+        <member name="ESTATE_DIED" desc="死, 记死亡次数" />
     </enum>
 
     <!-- 实体对象的类型, 区别玩家, AI, 技能-->
     <enum type="ui16" name="ENTITY_TYPE" desc="">
-        <member name="ETYPE_INVALID" value="0" desc="" />
+        <member name="ETYPE_NONE" desc="" />
         <member name="ETYPE_AVATAR" desc="" />
         <member name="ETYPE_AI" desc="" />
         <member name="ETYPE_FLIGHT" desc="飞行道具" />
@@ -62,7 +64,7 @@
 
     <!-- 实体阵营-->
     <enum type="ui16" name="ENTITY_COLOR" desc="">
-        <member name="ECOLOR_INVALID" value="0" desc="红方" />
+        <member name="ECOLOR_NONE" desc="" />
         <member name="ECOLOR_RED" desc="红方" />
         <member name="ECOLOR_BLUE" desc="蓝方" />
         <member name="ECOLOR_NEUTRAL" value="1000" desc="[0~ECOLOR_NEUTRAL)阵营相互敌对, [ECOLOR_NEUTRAL~)中立温和阵营" />
@@ -76,146 +78,151 @@
         <member name="MACTION_PATH" desc="路径" />
     </enum>
 
-    <!-- 搜索实体-->
-    <enum type="ui16" name="SEARCH_TYPE" desc="">
-        <member name="SEARCH_DISTANCE" value="1" desc="org 半径" />
-        <member name="SEARCH_SEACTOR" value="2" desc="org 扇形" />
-        <member name="SEARCH_RECT" value="3" desc="org 矩形" />
+    <!-- 搜索方法-->
+    <enum type="ui16" name="SEARCH_METHOD" desc="">
+        <member name="SEARCH_METHOD_DISTANCE" desc="org 半径,360度扇形的优化" />
+        <member name="SEARCH_METHOD_SEACTOR" desc="org 扇形" />
+        <member name="SEARCH_METHOD_RECT" desc="org 矩形" />
     </enum>
 
-    <!-- 搜索目标类型,组合位结构-->
-    <enum type="ui32" name="SEARCH_TARGET_TYPE" desc="">
-        <member name="SEARCH_TARGET_SELF" value="1" desc="自身, 玩家或者AI" />
-        <member name="SEARCH_TARGET_AVATAR" value="2" desc="施法者, 玩家或者AI" />
-        <member name="SEARCH_TARGET_AI" value="3" desc="施法者, 玩家或者AI" />
-        <member name="SEARCH_TARGET_BARRIER" value="4" desc="障碍" />
-        <member name="SEARCH_TARGET_FLIGHT" value="5" desc="飞行道具" />
-        <member name="SEARCH_TARGET_ENEMY" value="6" desc="敌人" />
-        <member name="SEARCH_TARGET_FRIEND" value="7" desc="全体友方" />
-        <member name="SEARCH_TARGET_NEUTRAL" value="8" desc="中立" />
+    <!-- 搜索目标阵营(组合位结构)-->
+    <enum type="ui64" name="SEARCH_TARGET" desc="">
+        <member name="SEARCH_TARGET_NONE"  desc="无" />
+        <member name="SEARCH_TARGET_SELF"  desc="自身, 玩家或者AI" />
+        <member name="SEARCH_TARGET_ENEMY"  desc="敌人" />
+        <member name="SEARCH_TARGET_FRIEND"  desc="友方" />
+        <member name="SEARCH_TARGET_NEUTRAL"  desc="中立" />
     </enum>
 
 
-    <!-- SKILL类型(组合位结构)  -->
+    <!-- SKILL类型 (组合位结构) -->
     <enum type="ui64" name="SKILL_TYPE" desc="">
-        <member name="SKILL_NORMAL_ATTACK"  value="1"  desc="普通攻击"/>
-        <member name="SKILL_AUTO"    desc="被动技能"/>
+        <member name="SKILL_NONE"  desc=""/>
+        <member name="SKILL_AUTO" desc="普攻"/>
+        <member name="SKILL_PASSIVE"    desc="被动技能"/>
         <member name="SKILL_CAN_BREAK"   desc="可被中断"/>
         <member name="SKILL_CAN_MOVE"   desc="可移动"/>
         <member name="SKILL_PHYSICAL"    desc="物理攻击"/>
         <member name="SKILL_MAGIC"    desc="魔法攻击"/>
-        <member name="SKILL_HARM"   desc="进行伤害计算"/>
-        <member name="SKILL_BREAK_SELF_MOVE"   desc="打断自己移动"/>
-        <member name="SKILL_BREAK_SELF_SKILL"   desc="打断自己的技能"/>
-        <member name="SKILL_BREAK_TARGET_MOVE"   desc="打断目标移动"/>
-        <member name="SKILL_BREAK_TARGET_SKILL"   desc="打断目标技能"/>
-        <member name="SKILL_BREAK_TARGET_DEBUFF"   desc="驱散目标减益BUFF"/>
-        <member name="SKILL_BREAK_TARGET_BUFF"   desc="驱散目标增益BUFF"/>
+    </enum>
+
+    <!-- SKILL行为(组合位结构)  -->
+    <enum type="ui64" name="SKILL_BEHAVIOUR" desc="">
+        <member name="SKILL_BEHAVIOUR_NONE"  desc=""/>
+        <member name="SKILL_BEHAVIOUR_HIT"   desc="攻击"/>
+        <member name="SKILL_BEHAVIOUR_TELEPORT_TARGET"   desc="瞬移到目标"/>
+        <member name="SKILL_BEHAVIOUR_BREAK_MOVE"   desc="打断移动"/>
+        <member name="SKILL_BEHAVIOUR_BREAK_SKILL"   desc="打断技能"/>
+        <member name="SKILL_BEHAVIOUR_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
+        <member name="SKILL_BEHAVIOUR_REMOVE_BUFF"   desc="驱散增益BUFF"/>
+        <member name="SKILL_BEHAVIOUR_TRIGGER_BUFF"   desc="触发buff"/>
+        <member name="SKILL_BEHAVIOUR_TRIGGER_SKILL"   desc="触发技能"/>
     </enum>
 
 
-    <!-- BUFF类型(组合位结构) 35以下可任意搭配, 如果多个类型组合需要避免value/effect字段的使用冲突-->
+    <!-- BUFF基础类型(组合位结构) 35以下可任意搭配, 如果多个类型组合需要避免value/effect字段的使用冲突-->
     <enum type="ui64" name="BUFF_TYPE" desc="">
-        <member name="BUFF_HALO"  value="1"  desc="组合类型: 光环"/>
-        <member name="BUFF_BUFF"  value="2"  desc="组合类型: 增益buff"/>
-        <member name="BUFF_DEBUFF"  value="3"  desc="组合类型: 减益BUFF"/>
-        <member name="BUFF_HIDE"  value="4"  desc="组合类型: 客户端不表现"/>
-        <member name="BUFF_SNEAK"  value="5"  desc="组合类型: 潜行 不会被非己方阵营的任何AOE技能搜索到"/>
+        <member name="BUFF_HALO"  value="1"  desc="非表达可检索类型: 光环"/>
+        <member name="BUFF_BUFF"  value="2"  desc="非表达可检索类型: 增益buff"/>
+        <member name="BUFF_DEBUFF"  value="3"  desc="非表达可检索类型: 减益BUFF"/>
+        <member name="BUFF_HIDE"  value="4"  desc="非表达可检索类型: 客户端不表现"/>
+
+        <member name="BUFF_SNEAK"  value="5"  desc="潜行类型: 潜行 不会被非己方阵营的任何AOE技能搜索到"/>
 
         <member name="BUFF_HOLD_MOVE"  value="15"  desc="控制: 禁止移动"/>
         <member name="BUFF_REVERSE_MOVE" value="16"  desc="控制: 移动反向"/>
-        <member name="BUFF_SILENCE" value="17"  desc="控制: 沉默所有技能"/>
-        <member name="BUFF_SILENCE_WITHOUT_NORMAL" value="18"  desc="控制: 沉默非普通攻击"/>
+        <member name="BUFF_SILENCE_AUTO_ATTACK" value="17"  desc="控制: 沉默普攻"/>
+        <member name="BUFF_SILENCE_WITHOUT_AUTO_ATTACK" value="18"  desc="控制: 沉默非普攻技能"/>
         <member name="BUFF_SILENCE_PHYSICAL" value="19"  desc="控制: 沉默物理攻击"/>
         <member name="BUFF_SILENCE_MAGIC" value="20"  desc="控制: 沉默魔法攻击"/>
 
-        <member name="BUFF_IMMUNE_MOVE" value="25"  desc="免疫: 免疫被控 移动禁止"/>
+        <member name="BUFF_IMMUNE_MOVE" value="25"  desc="免疫: 免疫移动类控制"/>
         <member name="BUFF_IMMUNE_SILENCE" value="26"  desc="免疫: 免疫沉默"/>
-        <member name="BUFF_IMMUNE_DEBUFF" value="27"  desc="免疫: 免疫DEBUFF"/>
-        <member name="BUFF_IMMUNE_PHYSICAL" value="28"  desc="免疫: 物攻免疫"/>
-        <member name="BUFF_IMMUNE_MAGIC" value="29"  desc="免疫: 法攻免疫"/>
-        <member name="BUFF_IMMUNE_BREAK" value="30"  desc="免疫: 不可被技能驱散"/>
+        <member name="BUFF_IMMUNE_DEBUFF" value="27"  desc="免疫: 免疫添加DEBUFF, 指被地方添加不利buff"/>
+        <member name="BUFF_IMMUNE_REMOVE_BUFF" value="28"  desc="免疫: 免疫驱散BUFF,指被敌方移除有益buff"/>
+        <member name="BUFF_IMMUNE_PHYSICAL" value="29"  desc="免疫: 物攻免疫"/>
+        <member name="BUFF_IMMUNE_MAGIC" value="30"  desc="免疫: 法攻免疫"/>
 
+        <member name="BUFF_INC_HARM" value="35"  desc="属性加成: 最终扣血加成, value1加法, value2乘法"/>
+        <member name="BUFF_INC_DAMAGE" value="36"  desc="属性加成: 伤害加成, value1加法, value2乘法"/>
+        <member name="BUFF_INC_SPEED" value="37"  desc="属性加成: 速度加成, value1加法, value2乘法"/>
+        <member name="BUFF_INC_SUCK_BLOOD" value="38"  desc="属性加成: 吸血加成 value1加法"/>
 
-        <member name="BUFF_INC_DAMAGE" value="35"  desc="属性加成: 加增伤率 万分比(除以10000)  value1为基础概率, value2为成长概率 "/>
-        <member name="BUFF_SUB_DAMAGE" value="36"  desc="属性加成: 减伤率 万分比(除以10000)  value1为基础概率, value2为成长概率 "/>
-        <member name="BUFF_INC_SPEED" value="41"  desc="属性加成: 加速度  万分比(除以10000) value1为固定速度加成, value2为概率加成"/>
-        <member name="BUFF_INC_SUCK_BLOOD" value="42"  desc="属性加成: 吸血率 万分比(除以10000)  value1为基础概率, value2为成长概率 "/>
-
-        <member name="BUFF_LIGHT_LIFE" value="50"  desc="持续性触发: 治疗(生命), 点燃(生命)   value1为每秒固定值, value2为每秒恢复/扣除相对于自己最大血量的万分比(除以10000)"/>
-        <member name="BUFF_LIGHT_RUNSKILL" value="51"  desc="持续性触发: 触发一个技能,  光环BUFF,   配置:value填写要触发的技能ID, value1为间隔时间"/>
+        <member name="BUFF_LIGHT_SKILL" value="50"  desc="持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现"/>
 
     </enum>
+
+    <!-- 实体坐标 -->
+    <struct name="EPosition" desc="" >
+        <member name="x" type="double" />
+        <member name="y" type="double" />
+        <member name="face" type="double" />
+    </struct>
+    <array name="EPositions" type="EPosition" desc="" />
 
     <array name="SkillIDArray" type="ui32" desc="技能ID数组" />
     <array name="BuffIDArray" type="ui32" desc="buff ID 数组" />
 
-    <struct name="TargetSearch" desc="">
-        <member name="searchType" type="ui16"  desc=""/>
-        <member name="targetType" type="ui64"  desc=""/>
-        <member name="distance" type="float"  desc="伤害距离"/>
-        <member name="radian" type="float"  desc="弧度或者宽度"/>
-        <member name="offsetX" type="float"  desc="坐标偏移量"/>
-        <member name="offsetY" type="float"  desc="坐标偏移量"/>
+    <struct name="SearchInfo" desc="">
+        <member name="searchMethod" type="ui16"  desc=""/>
+        <member name="searchTarget" type="ui64"  desc=""/>
+        <member name="rate" type="double"  desc="概率"/>
+        <member name="distance" type="double"  desc="伤害距离"/>
+        <member name="radian" type="double"  desc="弧度或者宽度"/>
+        <member name="offsetX" type="double"  desc="坐标偏移量, 正数为x = x + offset"/>
+        <member name="offsetY" type="double"  desc="坐标偏移量, 正数为y = y + offset"/>
         <member name="targetMaxCount" type="ui32"  desc="最大目标数"/>
     </struct>
 
-    <struct name="TargetAddSkillBuff" desc="目标上技能和buff">
-        <member name="search" type="TargetSearch"  desc=""/>
+    <struct name="SkillBehaviour" desc="技能触发行为">
+        <member name="behaviour" type="ui64"  desc=""/>
+        <member name="delay" type="double"  desc=""/>
+        <member name="search" type="SearchInfo"  desc=""/>
         <member name="skills" type="SkillIDArray"  desc=""/>
         <member name="buffs" type="BuffIDArray"  desc=""/>
     </struct>
-    <array name="TargetAddSkillBuffArray" type="TargetAddSkillBuff" desc="" />
+    <array name="SkillBehaviourArray" type="SkillBehaviour" desc="" />
 
-    <struct name="HitData" desc="技能">
-        <member name="act" type="ui16"  desc="序列"/>
-        <member name="rate" type="float"  desc="概率"/>
-        <member name="buffID" type="ui32"  desc=""/>
-        <member name="delay" type="ui32"  desc="序列延迟"/>
-    </struct>
-    <array name="HitDataArray" type="HitData" desc="" />
+
 
     <struct name="SkillData" desc="技能">
         <member name="skillID" type="ui32"  desc="skillID"/>
         <member name="skillType" type="ui64"  desc="SKILL_TYPE"/>
-        <member name="cd" type="ui32"  desc=""/>
-        <member name="hitActions" type="HitDataArray"  desc="动作触发序列"/>
-        <member name="targetAddSkillBuffs" type="TargetAddSkillBuffArray"  desc="上技能或者buff, 每个动作触发一次"/>
-        <member name="targetDamage" type="TargetSearch"  desc="触发伤害"/>
-        <member name="teleportDistance" type="float"  desc="瞬移"/>
+        <member name="behaviours" type="SkillBehaviourArray"  desc=""/>
+        <member name="cd" type="double"  desc=""/>
    </struct>
 
     <struct name="BuffData" desc="buff">
         <member name="buffID" type="ui32"  desc=""/>
-        <member name="piletime" type="ui32"  desc="最大叠加时间"/>
-        <member name="keepTime" type="ui32"  desc="保持时间"/>
         <member name="buffType" type="ui64"  desc="buff类型"/>
-        <member name="value1" type="i32"  desc="值1"/>
-        <member name="value2" type="i32"  desc="值2"/>
+        <member name="piletime" type="double"  desc="最大叠加时间"/>
+        <member name="keepTime" type="double"  desc="保持时间"/>
+        <member name="value1" type="double"  desc=""/>
+        <member name="value2" type="double"  desc=""/>
    </struct>
 
     <!-- 伤害类型-->
-    <enum type="ui16" name="HARM_TYPE" desc="已兼容客户端. 伤害类型">
-        <member name="HARMTYPE_GENERAL" value="0" desc="普通伤害" />
-        <member name="HARMTYPE_MISS" value="1" desc="闪避" />
-        <member name="HARMTYPE_CRITICAL" value="2" desc="暴击" />
-        <member name="HARMTYPE_HILL" value="3" desc="治疗" />
+    <enum type="ui16" name="HARM_TYPE" desc="伤害类型">
+        <member name="HARM_TYPE_GENERAL" value="0" desc="普通伤害" />
+        <member name="HARM_TYPE_MISS"  desc="闪避" />
+        <member name="HARM_TYPE_CRITICAL"  desc="暴击" />
+        <member name="HARM_TYPE_HILL" desc="治疗" />
     </enum>
 
     <struct name="HarmData" desc="伤害数据">
         <member name="eid" type="ui32"  desc="目标eid"/>
-        <member name="harm" type="float"  desc="如果为正是伤害, 为负则是回血"/>
         <member name="type" type="ui16"  desc="伤害类型HARM_TYPE"/>
+        <member name="harm" type="double"  desc="如果为正是伤害, 为负则是回血"/>
    </struct>
    <array name="HarmDataArray" type="HarmData" desc="" />
    
     <!-- SkillInfo -->
     <struct name="SkillInfo" desc="" >
         <member name="skillID" type="ui32" />
-        <member name="start" type="ui32" desc="start (server)tick"/>
-        <member name="lastHitTick" type="ui32" desc="lastHitTick"/>
+        <member name="start" type="double" desc="start (server)tick"/>
+        <member name="lastHitTick" type="double" desc="lastHitTick"/>
         <member name="seq" type="ui32" desc="hit seq"/>
-        <member name="dst"  type="EPosition" desc="目标位置,只有需要用到的这个参数的技能才会读这个字段"/>  
+        <member name="dst"  type="EPosition" desc="目标位置"/>  
         <member name="foe"  type="ui32" desc="锁定的目标"/>  
         <member name="data" type="SkillData" desc="配置数据"/>
     </struct>
@@ -227,8 +234,8 @@
         <member name="eid" type="ui32" desc="施放该buff的entity id"/>
         <member name="skillID" type="ui32" desc="如果该buff是被技能触发的 则记录该技能, 被动技能是0"/>
         <member name="buffID" type="ui32" />
-        <member name="start" type="ui32" desc="start (server)tick"/>
-        <member name="lastTrigerTick" type="ui32" desc="lastTrigerTick"/>
+        <member name="start" type="double" desc="start (server)tick"/>
+        <member name="lastTrigerTick" type="double" desc="lastTrigerTick"/>
         <member name="data" type="BuffData" desc="配置数据"/>
     </struct>
     <array name="BuffInfoArray" type="BuffInfo" desc="" />
@@ -245,13 +252,7 @@
     <array name="EntityDictArray" type="EntityDict" desc="" />
 
 
-    <!-- 实体坐标 -->
-    <struct name="EPosition" desc="" >
-        <member name="x" type="double" />
-        <member name="y" type="double" />
-        <member name="face" type="double" />
-    </struct>
-    <array name="EPositions" type="EPosition" desc="" />
+
 
 
 
@@ -262,7 +263,7 @@
         <member name="state" type="ui16"  desc="状态"/>
         <member name="pos"  type="EPosition" desc="当前坐标"/>
         <member name="moveAction" type="ui16"  desc="状态"/>
-        <member name="movePath"  type="EPoints" desc="当前的移动路径"/>
+        <member name="movePath"  type="EPositions" desc="当前的移动路径"/>
         <member name="foe"  type="ui32" desc="锁定的敌人"/>
         <member name="leader"  type="ui32" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
         <member name="follow"  type="ui32" desc="移动跟随的实体"/>
@@ -279,7 +280,7 @@
         <member name="extBeginTick" type="ui32"  desc="扩展速度的开始时间"/>
         <member name="extKeepTick" type="ui32"  desc="扩展速度的保持时间"/>
         <member name="spawnpoint" type="EPosition"   desc="出生点"/>
-        <member name="lastPos"  type="EPoint" desc="上一帧实体坐标, 如果是瞬移 则和pos相同"/>
+        <member name="lastPos"  type="EPosition" desc="上一帧实体坐标, 如果是瞬移 则和pos相同"/>
         <member name="skills"  type="SkillInfoArray" desc="技能数据"/>
         <member name="buffs"  type="BuffInfoArray" desc="BUFF数据, 小标ID对应bufftype"/>
         <member name="diedTick"  type="ui32" desc="实体死亡时间点 -1为永久, 仅飞行道具类有效"/>
