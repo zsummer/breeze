@@ -49,6 +49,13 @@
     <ClInclude Include="lua\strbuf.h" />
     <ClInclude Include="lua\summer.h" />
     <ClInclude Include="md5\md5.h" />
+    <ClInclude Include="rvo2\Agent.h" />
+    <ClInclude Include="rvo2\Definitions.h" />
+    <ClInclude Include="rvo2\KdTree.h" />
+    <ClInclude Include="rvo2\Obstacle.h" />
+    <ClInclude Include="rvo2\RVO.h" />
+    <ClInclude Include="rvo2\RVOSimulator.h" />
+    <ClInclude Include="rvo2\Vector2.h" />
     <ClInclude Include="single.h" />
     <ClInclude Include="utls.h" />
     <ClInclude Include="utlsImpl.h" />
@@ -96,6 +103,10 @@
     <ClCompile Include="lua\strbuf.c" />
     <ClCompile Include="lua\summer.cpp" />
     <ClCompile Include="md5\md5.cpp" />
+    <ClCompile Include="rvo2\Agent.cpp" />
+    <ClCompile Include="rvo2\KdTree.cpp" />
+    <ClCompile Include="rvo2\Obstacle.cpp" />
+    <ClCompile Include="rvo2\RVOSimulator.cpp" />
     <ClCompile Include="utls.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

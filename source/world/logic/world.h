@@ -26,7 +26,7 @@
 #include <ProtoDocker.h>
 #include <ProtoSpaceCommon.h>
 #include <ProtoSpaceClient.h>
-
+#include <rvo2/RVO.h>
 
 struct WorldServiceSession
 {

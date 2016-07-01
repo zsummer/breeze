@@ -104,6 +104,27 @@
     <ClInclude Include="balance.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="dbDict.h" />
+    <ClInclude Include="rvo2\Agent.h">
+      <Filter>rvo</Filter>
+    </ClInclude>
+    <ClInclude Include="rvo2\Definitions.h">
+      <Filter>rvo</Filter>
+    </ClInclude>
+    <ClInclude Include="rvo2\KdTree.h">
+      <Filter>rvo</Filter>
+    </ClInclude>
+    <ClInclude Include="rvo2\Obstacle.h">
+      <Filter>rvo</Filter>
+    </ClInclude>
+    <ClInclude Include="rvo2\RVO.h">
+      <Filter>rvo</Filter>
+    </ClInclude>
+    <ClInclude Include="rvo2\RVOSimulator.h">
+      <Filter>rvo</Filter>
+    </ClInclude>
+    <ClInclude Include="rvo2\Vector2.h">
+      <Filter>rvo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
@@ -227,6 +248,18 @@
     <ClCompile Include="utls.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dbDict.cpp" />
+    <ClCompile Include="rvo2\Agent.cpp">
+      <Filter>rvo</Filter>
+    </ClCompile>
+    <ClCompile Include="rvo2\KdTree.cpp">
+      <Filter>rvo</Filter>
+    </ClCompile>
+    <ClCompile Include="rvo2\Obstacle.cpp">
+      <Filter>rvo</Filter>
+    </ClCompile>
+    <ClCompile Include="rvo2\RVOSimulator.cpp">
+      <Filter>rvo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lua">
@@ -234,6 +267,9 @@
     </Filter>
     <Filter Include="md5">
       <UniqueIdentifier>{98f9fd42-664c-4abc-806c-c9dbc104141c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rvo">
+      <UniqueIdentifier>{3250f30c-9078-4fbe-935a-30ba88018f95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
