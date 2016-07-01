@@ -78,6 +78,7 @@ void World::onShutdown()
         SessionManager::getRef().stopAccept(_spaceListen);
         SessionManager::getRef().kickClientSession(_spaceListen);
     }
+    SessionManager::getRef().stop();
     return ;
 }
 

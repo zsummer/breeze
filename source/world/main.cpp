@@ -48,19 +48,13 @@ int main(int argc, char* argv[])
 
 
     std::string filename = "../config.lua";
-    DockerID index = 0;
+
     if (argc > 1)
     {
-        index = atoi(argv[1]);
-    }
-    if (argc > 2)
-    {
-        filename = argv[2];
+        filename = argv[1];
     }
     bool ret = false;
     ILog4zManager::getPtr()->config("../log.docker.config");
-    ILog4zManager::getRef().setLoggerLevel(ILog4zManager::getRef().findLogger("NetWork"), LOG_LEVEL_TRACE);
-    ILog4zManager::getRef().setLoggerDisplay(ILog4zManager::getRef().findLogger("NetWork"), true);
     ret = ILog4zManager::getPtr()->start();
     if (!ret)
     {
@@ -68,9 +62,9 @@ int main(int argc, char* argv[])
         return ret;
     }
     LOGA("version released by " << __DATE__ << " " << __TIME__);
-    LOGA("dockerID=" << index << ", config file=" << filename);
+    LOGA("config file=" << filename);
     LOGD("filecontent=" << readFileContent(filename));
-    LOGA("begin start docker ...");
+    LOGA("begin start World ...");
     try
     {
         if (!SessionManager::getRef().start())
