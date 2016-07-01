@@ -41,8 +41,13 @@
 #include <cstddef>
 #include <limits>
 #include <vector>
-
+#include <math.h>
+#include <algorithm>
+#include <limits>
 #include "Vector2.h"
+#ifdef max
+#undef max
+#endif
 
 namespace RVO {
 	/**
