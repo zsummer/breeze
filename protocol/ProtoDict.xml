@@ -33,7 +33,7 @@
         <member name="poolString" type="string"   desc="奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式"/>
     </packet>
 
-    <packet name="DictFightEffect" store="MyISAM"  desc= "战斗属性效果,用于装备,属性类增减益buff">
+    <packet name="FightEffect" store="MyISAM"  desc= "战斗属性效果,用于装备,属性类增减益buff">
         <member name="id" type="ui32" tag="key"  desc=""/>
         <member name="hp" type="double"   desc="血量值"/>
         <member name="hpRegen" type="double"   desc="每秒血量值恢复"/>

@@ -42,7 +42,21 @@
     <array name="SceneInfoArray" type="SceneInfo" desc="" />
 
 
+    <!-- 空域枚举-->
+    <enum type="ui16" name="SPACE_STATUS" desc="场景状态, 是否在某个场景中">
+        <member name="SPACE_STATUS_FREE" value="0" desc="自由" />
+        <member name="SCENE_STATUS_ACTIVE" desc="活跃" />
+        <member name="SCENE_STATUS_LINGER" desc="驻留" />
+    </enum>
 
+    <!-- 空间信息-->
+    <struct name="SpaceInfo" desc="空间信息">
+        <member name="spaceID" type="ui32"  desc=""/>
+        <member name="type" type="ui16"  desc="类型"/>
+        <member name="status" type="ui16"  desc="状态"/>
+        <member name="users" type="ui32"  desc="目前负载"/>
+    </struct>
+    <array name="SpaceInfoArray" type="SpaceInfo" desc="" />
 
     <!------------------------------------------  实体 ------------------------------------------------------------------>
     <!-- 实体状态-->
@@ -247,7 +261,7 @@
     <struct name="EntityDict" desc="字典属性">
         <member name="serviceID" type="ui64"  desc="用户ID, 非用户为InvalidServiceID"/>
         <member name="base" type="UserBaseInfo"  desc=""/>
-        <member name="fight" type="DictFightEffect"  desc="战斗属性"/>
+        <member name="fight" type="FightEffect"  desc="战斗属性"/>
     </struct>
     <array name="EntityDictArray" type="EntityDict" desc="" />
 

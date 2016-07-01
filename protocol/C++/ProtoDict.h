@@ -438,10 +438,10 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct DictFightEffect //战斗属性效果,用于装备,属性类增减益buff  
+struct FightEffect //战斗属性效果,用于装备,属性类增减益buff  
 { 
-    static const unsigned short getProtoID() { return 10002;} 
-    static const std::string getProtoName() { return "DictFightEffect";} 
+    static const unsigned short getProtoID() { return 10005;} 
+    static const std::string getProtoName() { return "FightEffect";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
@@ -459,7 +459,7 @@ struct DictFightEffect //战斗属性效果,用于装备,属性类增减益buff
     double moveSpeed; //移动速度  
     double attackSpeed; //攻击速度  
     double vampirk; //吸血  
-    DictFightEffect() 
+    FightEffect() 
     { 
         id = 0; 
         hp = 0.0; 
@@ -472,7 +472,7 @@ struct DictFightEffect //战斗属性效果,用于装备,属性类增减益buff
         attackSpeed = 0.0; 
         vampirk = 0.0; 
     } 
-    DictFightEffect(const unsigned int & id, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
+    FightEffect(const unsigned int & id, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
     { 
         this->id = id; 
         this->hp = hp; 
@@ -487,70 +487,47 @@ struct DictFightEffect //战斗属性效果,用于装备,属性类增减益buff
     } 
 }; 
  
-const std::vector<std::string>  DictFightEffect::getDBBuild() 
+const std::vector<std::string>  FightEffect::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictFightEffect` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_DictFightEffect` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `hp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `attack`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `defense`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `crit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `toughness`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` add `vampirk`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictFightEffect` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_FightEffect` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_FightEffect` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` add `vampirk`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_FightEffect` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
     return std::move(ret); 
 } 
-std::string  DictFightEffect::getDBSelect() 
+std::string  FightEffect::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_DictFightEffect` where `id` = ? "); 
+    q.init("select `id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_FightEffect` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
-std::string  DictFightEffect::getDBSelectPure() 
+std::string  FightEffect::getDBSelectPure() 
 { 
-    return "select `id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_DictFightEffect` "; 
+    return "select `id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_FightEffect` "; 
 } 
-std::string  DictFightEffect::getDBInsert() 
+std::string  FightEffect::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictFightEffect`(`id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`) values(?,?,?,?,?,?,?,?,?,?)"); 
-    q << this->id; 
-    q << this->hp; 
-    q << this->hpRegen; 
-    q << this->attack; 
-    q << this->defense; 
-    q << this->crit; 
-    q << this->toughness; 
-    q << this->moveSpeed; 
-    q << this->attackSpeed; 
-    q << this->vampirk; 
-    return q.pickSQL(); 
-} 
-std::string  DictFightEffect::getDBDelete() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_DictFightEffect` where `id` = ? "); 
-    q << this->id; 
-    return q.pickSQL(); 
-} 
-std::string  DictFightEffect::getDBUpdate() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictFightEffect`(id) values(? ) on duplicate key update `hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ? "); 
+    q.init("insert into `tb_FightEffect`(`id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`) values(?,?,?,?,?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->hp; 
     q << this->hpRegen; 
@@ -563,11 +540,34 @@ std::string  DictFightEffect::getDBUpdate()
     q << this->vampirk; 
     return q.pickSQL(); 
 } 
-bool DictFightEffect::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+std::string  FightEffect::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_FightEffect` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  FightEffect::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_FightEffect`(id) values(? ) on duplicate key update `hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ? "); 
+    q << this->id; 
+    q << this->hp; 
+    q << this->hpRegen; 
+    q << this->attack; 
+    q << this->defense; 
+    q << this->crit; 
+    q << this->toughness; 
+    q << this->moveSpeed; 
+    q << this->attackSpeed; 
+    q << this->vampirk; 
+    return q.pickSQL(); 
+} 
+bool FightEffect::fetchFromDBResult(zsummer::mysql::DBResult &result) 
 { 
     if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
     { 
-        LOGE("error fetch DictFightEffect from table `tb_DictFightEffect` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        LOGE("error fetch FightEffect from table `tb_FightEffect` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
         return false; 
     } 
     try 
@@ -589,12 +589,12 @@ bool DictFightEffect::fetchFromDBResult(zsummer::mysql::DBResult &result)
     } 
     catch(const std::exception & e) 
     { 
-        LOGE("catch one except error when fetch DictFightEffect from table `tb_DictFightEffect` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        LOGE("catch one except error when fetch FightEffect from table `tb_FightEffect` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
         return false; 
     } 
     return false; 
 } 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictFightEffect & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FightEffect & data) 
 { 
     ws << data.id;  
     ws << data.hp;  
@@ -608,7 +608,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.vampirk;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictFightEffect & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FightEffect & data) 
 { 
     rs >> data.id;  
     rs >> data.hp;  
@@ -622,7 +622,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.vampirk;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictFightEffect & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FightEffect & info) 
 { 
     stm << "[\n"; 
     stm << "id=" << info.id << "\n"; 

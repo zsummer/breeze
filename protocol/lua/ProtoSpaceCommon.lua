@@ -27,6 +27,24 @@ Proto4z.SceneInfoArray.__protoName = "SceneInfoArray"
 Proto4z.SceneInfoArray.__protoDesc = "array" 
 Proto4z.SceneInfoArray.__protoTypeV = "SceneInfo" 
  
+Proto4z.SPACE_STATUS_FREE = 0--自由 
+Proto4z.SCENE_STATUS_ACTIVE = 1--活跃 
+Proto4z.SCENE_STATUS_LINGER = 2--驻留 
+ 
+Proto4z.register(10017,"SpaceInfo") 
+Proto4z.SpaceInfo = {} --空间信息 
+Proto4z.SpaceInfo.__protoID = 10017 
+Proto4z.SpaceInfo.__protoName = "SpaceInfo" 
+Proto4z.SpaceInfo[1] = {name="spaceID", type="ui32" }  
+Proto4z.SpaceInfo[2] = {name="type", type="ui16" } --类型 
+Proto4z.SpaceInfo[3] = {name="status", type="ui16" } --状态 
+Proto4z.SpaceInfo[4] = {name="users", type="ui32" } --目前负载 
+ 
+Proto4z.SpaceInfoArray = {}  
+Proto4z.SpaceInfoArray.__protoName = "SpaceInfoArray" 
+Proto4z.SpaceInfoArray.__protoDesc = "array" 
+Proto4z.SpaceInfoArray.__protoTypeV = "SpaceInfo" 
+ 
 Proto4z.ESTATE_NONE = 0--无效 
 Proto4z.ESTATE_FREEZING = 1--冻结, 不可被攻击,不可主动移动,攻击等 
 Proto4z.ESTATE_ACTIVE = 2--活跃状态 
@@ -227,7 +245,7 @@ Proto4z.EntityDict.__protoID = 10009
 Proto4z.EntityDict.__protoName = "EntityDict" 
 Proto4z.EntityDict[1] = {name="serviceID", type="ui64" } --用户ID, 非用户为InvalidServiceID 
 Proto4z.EntityDict[2] = {name="base", type="UserBaseInfo" }  
-Proto4z.EntityDict[3] = {name="fight", type="DictFightEffect" } --战斗属性 
+Proto4z.EntityDict[3] = {name="fight", type="FightEffect" } --战斗属性 
  
 Proto4z.EntityDictArray = {}  
 Proto4z.EntityDictArray.__protoName = "EntityDictArray" 

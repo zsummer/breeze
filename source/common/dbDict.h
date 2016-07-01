@@ -94,7 +94,7 @@ public:
         if (!helper) return false;
         buildTable<DictGlobal>(helper);
         buildTable<DictRafflePool>(helper);
-        buildTable<DictFightEffect>(helper);
+        buildTable<FightEffect>(helper);
         buildTable<DictItem>(helper);
         return true;
     }
@@ -123,14 +123,14 @@ public:
     {
         LOAD_ONE_KEY_DICT(DictGlobal);
         LOAD_ONE_KEY_DICT(DictRafflePool);
-        LOAD_ONE_KEY_DICT(DictFightEffect);
+        LOAD_ONE_KEY_DICT(FightEffect);
         LOAD_ONE_KEY_DICT(DictItem);
         return true;
     }
     
     MAKE_ONE_KEY_DICT(DictGlobal, ui32, id);
     MAKE_ONE_KEY_DICT(DictRafflePool, ui32, id);
-    MAKE_ONE_KEY_DICT(DictFightEffect, ui32, id);
+    MAKE_ONE_KEY_DICT(FightEffect, ui32, id);
     MAKE_ONE_KEY_DICT(DictItem, ui32, id);
 
 private:

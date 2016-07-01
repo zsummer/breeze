@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>39000</MinNo>
+  <MaxNo>40000</MaxNo>
+  <UseLog4z>1</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+
+
+<!------------------------------------ docker --------------------------------------------->
+
+    <proto name="WorldSceneInfoReq" desc= "获取场景信息">
+    </proto>
+    <proto name="WorldSceneInfoAck" desc= "获取场景信息">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc=""/>
+    </proto>
+
+    <proto name="WorldTryEnterSceneReq" desc= "进入场景">
+        <member name="type" type="ui16"  desc="类型, 如果是不同类型,该请求会触发场景切换动作"/>
+    </proto>
+    <proto name="WorldTryEnterSceneAck" desc= "进入场景">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+    </proto>
+
+    <proto name="WorldSceneInfoNotice" desc= "场景信息刷新,如果是匹配模式, 需要扩展当前匹配信息到该协议中">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+    </proto>
+
+    <proto name="WorldLeaveSceneReq" desc= "离开场景">
+        <member name="type" type="ui16"  desc="类型"/>
+    </proto>
+    <proto name="WorldLeaveSceneAck" desc= "离开场景">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+    </proto>
+
+    <proto name="WorldQuitSceneReq" desc= "退出场景">
+        <member name="type" type="ui16"  desc="类型"/>
+    </proto>
+    <proto name="WorldQuitSceneAck" desc= "退出场景">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+    </proto>
+
+    <!------------------------------------ docker --------------------------------------------->
+
+    <proto name="SpaceInfoToWorldNotice" desc= "数据刷给world">
+        <member name="host" type="string"  desc="服务器host"/>
+        <member name="port" type="ui16"  desc="服务器port"/>
+        <member name="spaceInfos" type="SpaceInfoArray"  desc="类型"/>
+    </proto>
+
+    <proto name="TokenInfoToSpaceNotice" desc= "token丢给space">
+        <member name="userID" type="ui64"  desc=""/>
+        <member name="token" type="string"  desc="服务器port"/>
+        <member name="spaceID" type="spaceID"  desc="类型"/>
+        <member name="baseInfo" type="UserBaseInfo"  desc="类型"/>
+        <member name="effects" type="FightEffect"  desc="类型"/>
+    </proto>
+
+
+</Proto>
+

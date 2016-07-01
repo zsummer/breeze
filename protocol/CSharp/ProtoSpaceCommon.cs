@@ -109,6 +109,88 @@ namespace Proto4z
         } 
     } 
  
+    public enum SPACE_STATUS : ushort 
+    { 
+        SPACE_STATUS_FREE = 0, //自由  
+        SCENE_STATUS_ACTIVE = 1, //活跃  
+        SCENE_STATUS_LINGER = 2, //驻留  
+    }; 
+ 
+    public class SpaceInfo: Proto4z.IProtoObject //空间信息  
+    {     
+        //proto id   
+        public const ushort protoID = 10017;  
+        static public ushort getProtoID() { return 10017; } 
+        static public string getProtoName() { return "SpaceInfo"; } 
+        //members   
+        public uint spaceID;  
+        public ushort type; //类型  
+        public ushort status; //状态  
+        public uint users; //目前负载  
+        public SpaceInfo()  
+        { 
+            spaceID = 0;  
+            type = 0;  
+            status = 0;  
+            users = 0;  
+        } 
+        public SpaceInfo(uint spaceID, ushort type, ushort status, uint users) 
+        { 
+            this.spaceID = spaceID; 
+            this.type = type; 
+            this.status = status; 
+            this.users = users; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.type)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.users)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.type = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.users = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class SpaceInfoArray : System.Collections.Generic.List<SpaceInfo>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new SpaceInfo(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
     public enum ENTITY_STATE : ushort 
     { 
         ESTATE_NONE = 0, //无效  
@@ -854,14 +936,14 @@ namespace Proto4z
         //members   
         public ulong serviceID; //用户ID, 非用户为InvalidServiceID  
         public UserBaseInfo base;  
-        public DictFightEffect fight; //战斗属性  
+        public FightEffect fight; //战斗属性  
         public EntityDict()  
         { 
             serviceID = 0;  
             base = new UserBaseInfo();  
-            fight = new DictFightEffect();  
+            fight = new FightEffect();  
         } 
-        public EntityDict(ulong serviceID, UserBaseInfo base, DictFightEffect fight) 
+        public EntityDict(ulong serviceID, UserBaseInfo base, FightEffect fight) 
         { 
             this.serviceID = serviceID; 
             this.base = base; 
@@ -873,7 +955,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
             if (this.base == null) this.base = new UserBaseInfo(); 
             data.AddRange(this.base.__encode()); 
-            if (this.fight == null) this.fight = new DictFightEffect(); 
+            if (this.fight == null) this.fight = new FightEffect(); 
             data.AddRange(this.fight.__encode()); 
             return data; 
         } 
@@ -882,7 +964,7 @@ namespace Proto4z
             this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.base = new UserBaseInfo(); 
             this.base.__decode(binData, ref pos); 
-            this.fight = new DictFightEffect(); 
+            this.fight = new FightEffect(); 
             this.fight.__decode(binData, ref pos); 
             return pos; 
         } 

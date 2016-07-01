@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>5a8016c98b45bf92e8dec28e6ba8def2</cppmd5> 
-<luamd5>d7633448c63c24126145296120ce4b5a</luamd5> 
-<csharpmd5>12dd5f757210fd9b8aecf63c659b85c2</csharpmd5> 
-<xmlmd5>b48bda7582fab7fdc8e1cfea6f177ca2</xmlmd5> 
+<cppmd5>057c8018e596139db2ce767753291b8a</cppmd5> 
+<luamd5>4f1fbe7f2ba837bb5d1bfb5c69e738b5</luamd5> 
+<csharpmd5>0192fe8abf89104fa3c3b34c81ef8ea4</csharpmd5> 
+<xmlmd5>8ce0e7f14e004fc42a9fbcdc2addb387</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_BuffData" Number = "10005" /> 
     <cache key = "ID_BuffInfo" Number = "10008" /> 
@@ -20,6 +20,7 @@
     <cache key = "ID_SkillBehaviour" Number = "10016" /> 
     <cache key = "ID_SkillData" Number = "10004" /> 
     <cache key = "ID_SkillInfo" Number = "10007" /> 
+    <cache key = "ID_SpaceInfo" Number = "10017" /> 
     <cache key = "ID_TargetAddSkillBuff" Number = "10002" /> 
     <cache key = "ID_TargetSearch" Number = "10001" /> 
 </cacheNumber>

@@ -4,7 +4,8 @@
 #include <ProtoUser.h>
 #include <ProtoUserMgr.h>
 #include <ProtoDocker.h>
-
+#include <ProtoSpaceCommon.h>
+#include <ProtoSpaceServer.h>
 
 
 World::World()
@@ -301,6 +302,12 @@ void World::event_onSpaceClosed(TcpSessionPtr session)
 void World::event_onSpaceMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
+    if (rs.getProtoID() == SpaceInfoToWorldNotice::getProtoID())
+    {
+        SpaceInfoToWorldNotice notice;
+        rs >> notice;
+
+    }
     SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
  
     {

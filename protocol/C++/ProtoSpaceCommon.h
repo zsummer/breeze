@@ -89,6 +89,66 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 typedef std::vector<SceneInfo> SceneInfoArray;  
  
+enum SPACE_STATUS : unsigned short 
+{ 
+    SPACE_STATUS_FREE = 0, //自由  
+    SCENE_STATUS_ACTIVE = 1, //活跃  
+    SCENE_STATUS_LINGER = 2, //驻留  
+}; 
+ 
+struct SpaceInfo //空间信息  
+{ 
+    static const unsigned short getProtoID() { return 10017;} 
+    static const std::string getProtoName() { return "SpaceInfo";} 
+    unsigned int spaceID;  
+    unsigned short type; //类型  
+    unsigned short status; //状态  
+    unsigned int users; //目前负载  
+    SpaceInfo() 
+    { 
+        spaceID = 0; 
+        type = 0; 
+        status = 0; 
+        users = 0; 
+    } 
+    SpaceInfo(const unsigned int & spaceID, const unsigned short & type, const unsigned short & status, const unsigned int & users) 
+    { 
+        this->spaceID = spaceID; 
+        this->type = type; 
+        this->status = status; 
+        this->users = users; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SpaceInfo & data) 
+{ 
+    ws << data.spaceID;  
+    ws << data.type;  
+    ws << data.status;  
+    ws << data.users;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SpaceInfo & data) 
+{ 
+    rs >> data.spaceID;  
+    rs >> data.type;  
+    rs >> data.status;  
+    rs >> data.users;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SpaceInfo & info) 
+{ 
+    stm << "[\n"; 
+    stm << "spaceID=" << info.spaceID << "\n"; 
+    stm << "type=" << info.type << "\n"; 
+    stm << "status=" << info.status << "\n"; 
+    stm << "users=" << info.users << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<SpaceInfo> SpaceInfoArray;  
+ 
 enum ENTITY_STATE : unsigned short 
 { 
     ESTATE_NONE = 0, //无效  
@@ -676,12 +736,12 @@ struct EntityDict //字典属性
     static const std::string getProtoName() { return "EntityDict";} 
     unsigned long long serviceID; //用户ID, 非用户为InvalidServiceID  
     UserBaseInfo base;  
-    DictFightEffect fight; //战斗属性  
+    FightEffect fight; //战斗属性  
     EntityDict() 
     { 
         serviceID = 0; 
     } 
-    EntityDict(const unsigned long long & serviceID, const UserBaseInfo & base, const DictFightEffect & fight) 
+    EntityDict(const unsigned long long & serviceID, const UserBaseInfo & base, const FightEffect & fight) 
     { 
         this->serviceID = serviceID; 
         this->base = base; 

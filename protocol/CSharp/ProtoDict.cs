@@ -167,12 +167,12 @@ namespace Proto4z
         } 
     } 
  
-    public class DictFightEffect: Proto4z.IProtoObject //战斗属性效果,用于装备,属性类增减益buff  
+    public class FightEffect: Proto4z.IProtoObject //战斗属性效果,用于装备,属性类增减益buff  
     {     
         //proto id   
-        public const ushort protoID = 10002;  
-        static public ushort getProtoID() { return 10002; } 
-        static public string getProtoName() { return "DictFightEffect"; } 
+        public const ushort protoID = 10005;  
+        static public ushort getProtoID() { return 10005; } 
+        static public string getProtoName() { return "FightEffect"; } 
         //members   
         public uint id;  
         public double hp; //血量值  
@@ -184,7 +184,7 @@ namespace Proto4z
         public double moveSpeed; //移动速度  
         public double attackSpeed; //攻击速度  
         public double vampirk; //吸血  
-        public DictFightEffect()  
+        public FightEffect()  
         { 
             id = 0;  
             hp = 0.0;  
@@ -197,7 +197,7 @@ namespace Proto4z
             attackSpeed = 0.0;  
             vampirk = 0.0;  
         } 
-        public DictFightEffect(uint id, double hp, double hpRegen, double attack, double defense, double crit, double toughness, double moveSpeed, double attackSpeed, double vampirk) 
+        public FightEffect(uint id, double hp, double hpRegen, double attack, double defense, double crit, double toughness, double moveSpeed, double attackSpeed, double vampirk) 
         { 
             this.id = id; 
             this.hp = hp; 

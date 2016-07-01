@@ -31,20 +31,20 @@ Proto4z.DictRafflePool[2] = {name="raffleCount", type="i32" } --批量抽取次�
 Proto4z.DictRafflePool[3] = {name="pool", type="RaffleAwardArray" } --奖池 
 Proto4z.DictRafflePool[4] = {name="poolString", type="string" } --奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式 
  
-Proto4z.register(10002,"DictFightEffect") 
-Proto4z.DictFightEffect = {} --战斗属性效果,用于装备,属性类增减益buff 
-Proto4z.DictFightEffect.__protoID = 10002 
-Proto4z.DictFightEffect.__protoName = "DictFightEffect" 
-Proto4z.DictFightEffect[1] = {name="id", type="ui32" }  
-Proto4z.DictFightEffect[2] = {name="hp", type="double" } --血量值 
-Proto4z.DictFightEffect[3] = {name="hpRegen", type="double" } --每秒血量值恢复 
-Proto4z.DictFightEffect[4] = {name="attack", type="double" } --伤害 
-Proto4z.DictFightEffect[5] = {name="defense", type="double" } --防御 
-Proto4z.DictFightEffect[6] = {name="crit", type="double" } --暴击 
-Proto4z.DictFightEffect[7] = {name="toughness", type="double" } --韧性 
-Proto4z.DictFightEffect[8] = {name="moveSpeed", type="double" } --移动速度 
-Proto4z.DictFightEffect[9] = {name="attackSpeed", type="double" } --攻击速度 
-Proto4z.DictFightEffect[10] = {name="vampirk", type="double" } --吸血 
+Proto4z.register(10005,"FightEffect") 
+Proto4z.FightEffect = {} --战斗属性效果,用于装备,属性类增减益buff 
+Proto4z.FightEffect.__protoID = 10005 
+Proto4z.FightEffect.__protoName = "FightEffect" 
+Proto4z.FightEffect[1] = {name="id", type="ui32" }  
+Proto4z.FightEffect[2] = {name="hp", type="double" } --血量值 
+Proto4z.FightEffect[3] = {name="hpRegen", type="double" } --每秒血量值恢复 
+Proto4z.FightEffect[4] = {name="attack", type="double" } --伤害 
+Proto4z.FightEffect[5] = {name="defense", type="double" } --防御 
+Proto4z.FightEffect[6] = {name="crit", type="double" } --暴击 
+Proto4z.FightEffect[7] = {name="toughness", type="double" } --韧性 
+Proto4z.FightEffect[8] = {name="moveSpeed", type="double" } --移动速度 
+Proto4z.FightEffect[9] = {name="attackSpeed", type="double" } --攻击速度 
+Proto4z.FightEffect[10] = {name="vampirk", type="double" } --吸血 
  
 Proto4z.register(10003,"DictItem") 
 Proto4z.DictItem = {} --道具字典 
