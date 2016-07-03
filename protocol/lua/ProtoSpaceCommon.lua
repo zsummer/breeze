@@ -7,8 +7,9 @@ Proto4z.SCENE_TYPE_GUILD = 4--公会
  
 Proto4z.SCENE_STATUS_NONE = 0--不存在 
 Proto4z.SCENE_STATUS_MATCHING = 1--正在匹配 
-Proto4z.SCENE_STATUS_WAITING = 2--匹配成功,等待玩家进入 
-Proto4z.SCENE_STATUS_INSTANCING = 3--场景中 
+Proto4z.SCENE_STATUS_CHOISE = 2--匹配成功,选择英雄 
+Proto4z.SCENE_STATUS_WAITING = 3--匹配成功,等待玩家进入 
+Proto4z.SCENE_STATUS_INSTANCING = 4--场景中 
  
 Proto4z.register(10000,"SceneInfo") 
 Proto4z.SceneInfo = {} --场景信息 
@@ -21,7 +22,7 @@ Proto4z.SceneInfo[4] = {name="port", type="ui16" } --服务器port
 Proto4z.SceneInfo[5] = {name="spaceID", type="ui32" } --空间(场景,房间,战场,INSTANCING ID)的实例ID 
 Proto4z.SceneInfo[6] = {name="token", type="string" } --令牌 
 Proto4z.SceneInfo[7] = {name="isActive", type="ui8" } --当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况 
-Proto4z.SceneInfo[8] = {name="involed", type="UserPreviewArray" } --匹配列表中的玩家 
+Proto4z.SceneInfo[8] = {name="involeds", type="UserBaseInfoArray" } --匹配列表中的玩家 
  
 Proto4z.SceneInfoArray = {}  
 Proto4z.SceneInfoArray.__protoName = "SceneInfoArray" 

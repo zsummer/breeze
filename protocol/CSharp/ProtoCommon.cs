@@ -92,7 +92,7 @@ namespace Proto4z
         static public ushort getProtoID() { return 1006; } 
         static public string getProtoName() { return "OutOfBand"; } 
         //members   
-        public ulong userID;  
+        public ulong userID; //该数据由docker获得来自客户端的消息时自动填充.  
         public OutOfBand()  
         { 
             userID = 0;  

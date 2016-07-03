@@ -15,8 +15,9 @@ namespace Proto4z
     { 
         SCENE_STATUS_NONE = 0, //不存在  
         SCENE_STATUS_MATCHING = 1, //正在匹配  
-        SCENE_STATUS_WAITING = 2, //匹配成功,等待玩家进入  
-        SCENE_STATUS_INSTANCING = 3, //场景中  
+        SCENE_STATUS_CHOISE = 2, //匹配成功,选择英雄  
+        SCENE_STATUS_WAITING = 3, //匹配成功,等待玩家进入  
+        SCENE_STATUS_INSTANCING = 4, //场景中  
     }; 
  
     public class SceneInfo: Proto4z.IProtoObject //场景信息  
@@ -33,7 +34,7 @@ namespace Proto4z
         public uint spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
         public string token; //令牌  
         public byte isActive; //当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况  
-        public UserPreviewArray involed; //匹配列表中的玩家  
+        public UserBaseInfoArray involeds; //匹配列表中的玩家  
         public SceneInfo()  
         { 
             type = 0;  
@@ -43,9 +44,9 @@ namespace Proto4z
             spaceID = 0;  
             token = "";  
             isActive = 0;  
-            involed = new UserPreviewArray();  
+            involeds = new UserBaseInfoArray();  
         } 
-        public SceneInfo(ushort type, ushort status, string host, ushort port, uint spaceID, string token, byte isActive, UserPreviewArray involed) 
+        public SceneInfo(ushort type, ushort status, string host, ushort port, uint spaceID, string token, byte isActive, UserBaseInfoArray involeds) 
         { 
             this.type = type; 
             this.status = status; 
@@ -54,7 +55,7 @@ namespace Proto4z
             this.spaceID = spaceID; 
             this.token = token; 
             this.isActive = isActive; 
-            this.involed = involed; 
+            this.involeds = involeds; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -66,8 +67,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.isActive)); 
-            if (this.involed == null) this.involed = new UserPreviewArray(); 
-            data.AddRange(this.involed.__encode()); 
+            if (this.involeds == null) this.involeds = new UserBaseInfoArray(); 
+            data.AddRange(this.involeds.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -79,8 +80,8 @@ namespace Proto4z
             this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.isActive = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
-            this.involed = new UserPreviewArray(); 
-            this.involed.__decode(binData, ref pos); 
+            this.involeds = new UserBaseInfoArray(); 
+            this.involeds.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

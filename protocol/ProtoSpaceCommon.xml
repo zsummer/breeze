@@ -25,6 +25,7 @@
     <enum type="ui16" name="SCENE_STATUS" desc="场景状态, 是否在某个场景中">
         <member name="SCENE_STATUS_NONE" value="0" desc="不存在" />
         <member name="SCENE_STATUS_MATCHING" desc="正在匹配" />
+        <member name="SCENE_STATUS_CHOISE" desc="匹配成功,选择英雄" />
         <member name="SCENE_STATUS_WAITING" desc="匹配成功,等待玩家进入" />
         <member name="SCENE_STATUS_INSTANCING" desc="场景中" />
     </enum>
@@ -38,7 +39,7 @@
         <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场,INSTANCING ID)的实例ID"/>
         <member name="token" type="string"  desc="令牌"/>
         <member name="isActive" type="ui8"  desc="当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况"/>
-        <member name="involed" type="UserPreviewArray"  desc="匹配列表中的玩家"/>
+        <member name="involeds" type="UserBaseInfoArray"  desc="匹配列表中的玩家"/>
     </struct>
     <array name="SceneInfoArray" type="SceneInfo" desc="" />
 

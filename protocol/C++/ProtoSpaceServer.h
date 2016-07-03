@@ -3,367 +3,6 @@
 #define _PROTOSPACESERVER_H_ 
  
  
-struct WorldSceneInfoReq //获取场景信息  
-{ 
-    static const unsigned short getProtoID() { return 39000;} 
-    static const std::string getProtoName() { return "WorldSceneInfoReq";} 
-    unsigned long long userID;  
-    WorldSceneInfoReq() 
-    { 
-        userID = 0; 
-    } 
-    WorldSceneInfoReq(const unsigned long long & userID) 
-    { 
-        this->userID = userID; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldSceneInfoReq & data) 
-{ 
-    ws << data.userID;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldSceneInfoReq & data) 
-{ 
-    rs >> data.userID;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldSceneInfoReq & info) 
-{ 
-    stm << "[\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct WorldSceneInfoAck //获取场景信息  
-{ 
-    static const unsigned short getProtoID() { return 39001;} 
-    static const std::string getProtoName() { return "WorldSceneInfoAck";} 
-    unsigned short retCode; //错误码  
-    unsigned long long userID;  
-    SceneInfoArray scenes;  
-    WorldSceneInfoAck() 
-    { 
-        retCode = 0; 
-        userID = 0; 
-    } 
-    WorldSceneInfoAck(const unsigned short & retCode, const unsigned long long & userID, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->userID = userID; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldSceneInfoAck & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.userID;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldSceneInfoAck & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.userID;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldSceneInfoAck & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct WorldTryEnterSceneReq //进入场景  
-{ 
-    static const unsigned short getProtoID() { return 39002;} 
-    static const std::string getProtoName() { return "WorldTryEnterSceneReq";} 
-    unsigned long long userID;  
-    unsigned short type; //类型, 如果是不同类型,该请求会触发场景切换动作  
-    WorldTryEnterSceneReq() 
-    { 
-        userID = 0; 
-        type = 0; 
-    } 
-    WorldTryEnterSceneReq(const unsigned long long & userID, const unsigned short & type) 
-    { 
-        this->userID = userID; 
-        this->type = type; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldTryEnterSceneReq & data) 
-{ 
-    ws << data.userID;  
-    ws << data.type;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldTryEnterSceneReq & data) 
-{ 
-    rs >> data.userID;  
-    rs >> data.type;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldTryEnterSceneReq & info) 
-{ 
-    stm << "[\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct WorldTryEnterSceneAck //进入场景  
-{ 
-    static const unsigned short getProtoID() { return 39003;} 
-    static const std::string getProtoName() { return "WorldTryEnterSceneAck";} 
-    unsigned short retCode; //错误码  
-    unsigned long long userID;  
-    SceneInfoArray scenes; //要检查状态, 如果是主城则状态会直接切换为INSTACING, 如果是需要匹配的 状态为匹配中  
-    WorldTryEnterSceneAck() 
-    { 
-        retCode = 0; 
-        userID = 0; 
-    } 
-    WorldTryEnterSceneAck(const unsigned short & retCode, const unsigned long long & userID, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->userID = userID; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldTryEnterSceneAck & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.userID;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldTryEnterSceneAck & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.userID;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldTryEnterSceneAck & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct WorldSceneInfoNotice //场景信息刷新,如果是匹配模式, 需要扩展当前匹配信息到该协议中  
-{ 
-    static const unsigned short getProtoID() { return 39004;} 
-    static const std::string getProtoName() { return "WorldSceneInfoNotice";} 
-    unsigned short retCode; //错误码  
-    unsigned long long userID;  
-    SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
-    WorldSceneInfoNotice() 
-    { 
-        retCode = 0; 
-        userID = 0; 
-    } 
-    WorldSceneInfoNotice(const unsigned short & retCode, const unsigned long long & userID, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->userID = userID; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldSceneInfoNotice & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.userID;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldSceneInfoNotice & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.userID;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldSceneInfoNotice & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct WorldLeaveSceneReq //离开场景  
-{ 
-    static const unsigned short getProtoID() { return 39005;} 
-    static const std::string getProtoName() { return "WorldLeaveSceneReq";} 
-    unsigned long long userID;  
-    unsigned short type; //类型  
-    WorldLeaveSceneReq() 
-    { 
-        userID = 0; 
-        type = 0; 
-    } 
-    WorldLeaveSceneReq(const unsigned long long & userID, const unsigned short & type) 
-    { 
-        this->userID = userID; 
-        this->type = type; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldLeaveSceneReq & data) 
-{ 
-    ws << data.userID;  
-    ws << data.type;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldLeaveSceneReq & data) 
-{ 
-    rs >> data.userID;  
-    rs >> data.type;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldLeaveSceneReq & info) 
-{ 
-    stm << "[\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct WorldLeaveSceneAck //离开场景  
-{ 
-    static const unsigned short getProtoID() { return 39006;} 
-    static const std::string getProtoName() { return "WorldLeaveSceneAck";} 
-    unsigned short retCode; //错误码  
-    unsigned long long userID;  
-    SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
-    WorldLeaveSceneAck() 
-    { 
-        retCode = 0; 
-        userID = 0; 
-    } 
-    WorldLeaveSceneAck(const unsigned short & retCode, const unsigned long long & userID, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->userID = userID; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldLeaveSceneAck & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.userID;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldLeaveSceneAck & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.userID;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldLeaveSceneAck & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct WorldQuitSceneReq //退出场景  
-{ 
-    static const unsigned short getProtoID() { return 39007;} 
-    static const std::string getProtoName() { return "WorldQuitSceneReq";} 
-    unsigned long long userID;  
-    unsigned short type; //类型  
-    WorldQuitSceneReq() 
-    { 
-        userID = 0; 
-        type = 0; 
-    } 
-    WorldQuitSceneReq(const unsigned long long & userID, const unsigned short & type) 
-    { 
-        this->userID = userID; 
-        this->type = type; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldQuitSceneReq & data) 
-{ 
-    ws << data.userID;  
-    ws << data.type;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldQuitSceneReq & data) 
-{ 
-    rs >> data.userID;  
-    rs >> data.type;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldQuitSceneReq & info) 
-{ 
-    stm << "[\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct WorldQuitSceneAck //退出场景  
-{ 
-    static const unsigned short getProtoID() { return 39008;} 
-    static const std::string getProtoName() { return "WorldQuitSceneAck";} 
-    unsigned short retCode; //错误码  
-    unsigned long long userID;  
-    SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
-    WorldQuitSceneAck() 
-    { 
-        retCode = 0; 
-        userID = 0; 
-    } 
-    WorldQuitSceneAck(const unsigned short & retCode, const unsigned long long & userID, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->userID = userID; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WorldQuitSceneAck & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.userID;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WorldQuitSceneAck & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.userID;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WorldQuitSceneAck & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
 struct SpaceInfoToWorldNotice //数据刷给world  
 { 
     static const unsigned short getProtoID() { return 39010;} 
@@ -406,20 +45,20 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct TokenInfoToSpaceNotice //token丢给space  
+struct FillUserToSpaceNotice //token丢给space  
 { 
-    static const unsigned short getProtoID() { return 39011;} 
-    static const std::string getProtoName() { return "TokenInfoToSpaceNotice";} 
+    static const unsigned short getProtoID() { return 39012;} 
+    static const std::string getProtoName() { return "FillUserToSpaceNotice";} 
     unsigned long long userID;  
     std::string token; //服务器port  
     SpaceID spaceID; //类型  
     UserBaseInfo baseInfo; //类型  
     FightEffect effects; //类型  
-    TokenInfoToSpaceNotice() 
+    FillUserToSpaceNotice() 
     { 
         userID = 0; 
     } 
-    TokenInfoToSpaceNotice(const unsigned long long & userID, const std::string & token, const SpaceID & spaceID, const UserBaseInfo & baseInfo, const FightEffect & effects) 
+    FillUserToSpaceNotice(const unsigned long long & userID, const std::string & token, const SpaceID & spaceID, const UserBaseInfo & baseInfo, const FightEffect & effects) 
     { 
         this->userID = userID; 
         this->token = token; 
@@ -428,7 +67,7 @@ struct TokenInfoToSpaceNotice //token丢给space
         this->effects = effects; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const TokenInfoToSpaceNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FillUserToSpaceNotice & data) 
 { 
     ws << data.userID;  
     ws << data.token;  
@@ -437,7 +76,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.effects;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, TokenInfoToSpaceNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FillUserToSpaceNotice & data) 
 { 
     rs >> data.userID;  
     rs >> data.token;  
@@ -446,7 +85,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.effects;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const TokenInfoToSpaceNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FillUserToSpaceNotice & info) 
 { 
     stm << "[\n"; 
     stm << "userID=" << info.userID << "\n"; 

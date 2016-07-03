@@ -100,7 +100,7 @@ struct OutOfBand //带外信息
 { 
     static const unsigned short getProtoID() { return 1006;} 
     static const std::string getProtoName() { return "OutOfBand";} 
-    unsigned long long userID;  
+    unsigned long long userID; //该数据由docker获得来自客户端的消息时自动填充.  
     OutOfBand() 
     { 
         userID = 0; 

@@ -16,8 +16,9 @@ enum SCENE_STATUS : unsigned short
 { 
     SCENE_STATUS_NONE = 0, //不存在  
     SCENE_STATUS_MATCHING = 1, //正在匹配  
-    SCENE_STATUS_WAITING = 2, //匹配成功,等待玩家进入  
-    SCENE_STATUS_INSTANCING = 3, //场景中  
+    SCENE_STATUS_CHOISE = 2, //匹配成功,选择英雄  
+    SCENE_STATUS_WAITING = 3, //匹配成功,等待玩家进入  
+    SCENE_STATUS_INSTANCING = 4, //场景中  
 }; 
  
 struct SceneInfo //场景信息  
@@ -31,7 +32,7 @@ struct SceneInfo //场景信息
     unsigned int spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
     std::string token; //令牌  
     unsigned char isActive; //当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况  
-    UserPreviewArray involed; //匹配列表中的玩家  
+    UserBaseInfoArray involeds; //匹配列表中的玩家  
     SceneInfo() 
     { 
         type = 0; 
@@ -40,7 +41,7 @@ struct SceneInfo //场景信息
         spaceID = 0; 
         isActive = 0; 
     } 
-    SceneInfo(const unsigned short & type, const unsigned short & status, const std::string & host, const unsigned short & port, const unsigned int & spaceID, const std::string & token, const unsigned char & isActive, const UserPreviewArray & involed) 
+    SceneInfo(const unsigned short & type, const unsigned short & status, const std::string & host, const unsigned short & port, const unsigned int & spaceID, const std::string & token, const unsigned char & isActive, const UserBaseInfoArray & involeds) 
     { 
         this->type = type; 
         this->status = status; 
@@ -49,7 +50,7 @@ struct SceneInfo //场景信息
         this->spaceID = spaceID; 
         this->token = token; 
         this->isActive = isActive; 
-        this->involed = involed; 
+        this->involeds = involeds; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneInfo & data) 
@@ -61,7 +62,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.spaceID;  
     ws << data.token;  
     ws << data.isActive;  
-    ws << data.involed;  
+    ws << data.involeds;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneInfo & data) 
@@ -73,7 +74,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.spaceID;  
     rs >> data.token;  
     rs >> data.isActive;  
-    rs >> data.involed;  
+    rs >> data.involeds;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneInfo & info) 
@@ -86,7 +87,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "spaceID=" << info.spaceID << "\n"; 
     stm << "token=" << info.token << "\n"; 
     stm << "isActive=" << info.isActive << "\n"; 
-    stm << "involed=" << info.involed << "\n"; 
+    stm << "involeds=" << info.involeds << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
