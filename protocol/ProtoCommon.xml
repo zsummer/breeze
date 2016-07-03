@@ -46,7 +46,7 @@
         <member name="traceBackID" type="ui32" desc="远端产生的回调ID"/>
     </packet>
     <packet name="OutOfBand"  desc="带外信息">
-        <member name="userID" type="ui64" desc=""/>
+        <member name="userID" type="ui64" desc="该数据由docker获得来自客户端的消息时自动填充."/>
     </packet>
 
     <packet name="Tracing"  desc="docker间追踪数据">
