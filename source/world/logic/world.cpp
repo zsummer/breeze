@@ -245,14 +245,14 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
         Tracing trace;
         rsShell >> trace;
         ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
-        event_onServiceForwardMessage(session, trace.fromServiceType, rs);
+        event_onServiceForwardMessage(session, trace, rs);
     }
 }
 
 
 
 
-void World::event_onServiceForwardMessage(TcpSessionPtr   session, ServiceType serviceType, ReadStream & rs)
+void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs)
 {
 
 }

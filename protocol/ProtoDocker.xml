@@ -177,7 +177,7 @@
 
     <packet name="UserOffline" store="MyISAM" desc="">
         <member name="id" type="ui64"  tag="key" desc=""/>
-        <member name="serviceID" type="ui64" tag="idx" desc=""/>
+        <member name="userID" type="ui64" tag="idx" desc=""/>
         <member name="streamBlob" type="string"  tag="blob" desc=""/>
         <member name="status" type="ui16"  tag="idx" desc=""/>
         <member name="timestamp" type="ui64" tag="idx"  desc=""/>

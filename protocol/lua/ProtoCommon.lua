@@ -15,28 +15,38 @@ Proto4z.EC_FRIEND_CEILING = 101--达到好友上限
 Proto4z.EC_FRIEND_REFUSE = 102--不能添加对方为好友 
 Proto4z.EC_FRIEND_NOT_EXIST = 103--好友不存在 
  
+Proto4z.register(1005,"Routing") 
+Proto4z.Routing = {} --docker to docker 路由信息 
+Proto4z.Routing.__protoID = 1005 
+Proto4z.Routing.__protoName = "Routing" 
+Proto4z.Routing[1] = {name="toDockerID", type="ui32" } --Docker ID为第一优先级路由数据, service ID为第二优先级路由数据 
+Proto4z.Routing[2] = {name="toServiceType", type="ui16" } --目标service类型 
+Proto4z.Routing[3] = {name="toServiceID", type="ui64" } --目标serviceID, 如果是单例 ID为InvalidServiceID.  
+Proto4z.Routing[4] = {name="fromDockerID", type="ui32" } --来源 
+Proto4z.Routing[5] = {name="fromServiceType", type="ui16" } --来源 
+Proto4z.Routing[6] = {name="fromServiceID", type="ui64" } --来源 
+Proto4z.Routing[7] = {name="traceID", type="ui32" } --本地产生的回调ID 
+Proto4z.Routing[8] = {name="traceBackID", type="ui32" } --远端产生的回调ID 
+ 
+Proto4z.register(1006,"OutOfBand") 
+Proto4z.OutOfBand = {} --带外信息 
+Proto4z.OutOfBand.__protoID = 1006 
+Proto4z.OutOfBand.__protoName = "OutOfBand" 
+Proto4z.OutOfBand[1] = {name="userID", type="ui64" }  
+ 
 Proto4z.register(1000,"Tracing") 
 Proto4z.Tracing = {} --docker间追踪数据 
 Proto4z.Tracing.__protoID = 1000 
 Proto4z.Tracing.__protoName = "Tracing" 
-Proto4z.Tracing[1] = {name="toDockerID", type="ui32" } --forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID  
-Proto4z.Tracing[2] = {name="toServiceType", type="ui16" } --目标service类型 
-Proto4z.Tracing[3] = {name="toServiceID", type="ui64" } --目标serviceID, 如果是单例 ID为InvalidServiceID.  
-Proto4z.Tracing[4] = {name="fromDockerID", type="ui32" } --来源DockerID 
-Proto4z.Tracing[5] = {name="fromServiceType", type="ui16" } --来源 
-Proto4z.Tracing[6] = {name="fromServiceID", type="ui64" } --来源 
-Proto4z.Tracing[7] = {name="traceID", type="ui32" } --本地cbID   
-Proto4z.Tracing[8] = {name="traceBackID", type="ui32" } --把远程cbID透传回去  
-Proto4z.Tracing[9] = {name="orgDockerID", type="ui32" } --org DockerID 
-Proto4z.Tracing[10] = {name="orgServiceType", type="ui16" } --org 来源 
-Proto4z.Tracing[11] = {name="orgServiceID", type="ui64" } --org 来源 
+Proto4z.Tracing[1] = {name="routing", type="Routing" } --路由信息 
+Proto4z.Tracing[2] = {name="oob", type="OutOfBand" } --带外信息 
  
 Proto4z.register(1001,"UserPreview") 
 Proto4z.UserPreview = {} --用户预览信息 
 Proto4z.UserPreview.__protoID = 1001 
 Proto4z.UserPreview.__protoName = "UserPreview" 
-Proto4z.UserPreview[1] = {name="serviceID", type="ui64" } --用户唯一ID 
-Proto4z.UserPreview[2] = {name="serviceName", type="string" } --昵称 
+Proto4z.UserPreview[1] = {name="userID", type="ui64" } --用户唯一ID, 对应UserService的ServiceID 
+Proto4z.UserPreview[2] = {name="userName", type="string" } --用户唯一昵称, 对应UserService的ServiceName 
 Proto4z.UserPreview[3] = {name="account", type="string" } --帐号 
 Proto4z.UserPreview[4] = {name="iconID", type="i16" } --头像 
 Proto4z.UserPreview[5] = {name="level", type="i32" } --等级 
@@ -55,8 +65,8 @@ Proto4z.register(1002,"UserBaseInfo")
 Proto4z.UserBaseInfo = {} --用户基础数据 
 Proto4z.UserBaseInfo.__protoID = 1002 
 Proto4z.UserBaseInfo.__protoName = "UserBaseInfo" 
-Proto4z.UserBaseInfo[1] = {name="serviceID", type="ui64" } --用户唯一ID 
-Proto4z.UserBaseInfo[2] = {name="serviceName", type="string" } --昵称 
+Proto4z.UserBaseInfo[1] = {name="userID", type="ui64" } --用户唯一ID, 对应UserService的ServiceID 
+Proto4z.UserBaseInfo[2] = {name="userName", type="string" } --用户唯一昵称, 对应UserService的ServiceName 
 Proto4z.UserBaseInfo[3] = {name="account", type="string" } --帐号 
 Proto4z.UserBaseInfo[4] = {name="iconID", type="i16" } --头像 
 Proto4z.UserBaseInfo[5] = {name="level", type="i32" } --等级 

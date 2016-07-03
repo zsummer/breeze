@@ -22,22 +22,19 @@ enum  : unsigned short
     EC_FRIEND_NOT_EXIST = 103, //好友不存在  
 }; 
  
-struct Tracing //docker间追踪数据  
+struct Routing //docker to docker 路由信息  
 { 
-    static const unsigned short getProtoID() { return 1000;} 
-    static const std::string getProtoName() { return "Tracing";} 
-    unsigned int toDockerID; //forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID   
+    static const unsigned short getProtoID() { return 1005;} 
+    static const std::string getProtoName() { return "Routing";} 
+    unsigned int toDockerID; //Docker ID为第一优先级路由数据, service ID为第二优先级路由数据  
     unsigned short toServiceType; //目标service类型  
     unsigned long long toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
-    unsigned int fromDockerID; //来源DockerID  
+    unsigned int fromDockerID; //来源  
     unsigned short fromServiceType; //来源  
     unsigned long long fromServiceID; //来源  
-    unsigned int traceID; //本地cbID    
-    unsigned int traceBackID; //把远程cbID透传回去   
-    unsigned int orgDockerID; //org DockerID  
-    unsigned short orgServiceType; //org 来源  
-    unsigned long long orgServiceID; //org 来源  
-    Tracing() 
+    unsigned int traceID; //本地产生的回调ID  
+    unsigned int traceBackID; //远端产生的回调ID  
+    Routing() 
     { 
         toDockerID = 0; 
         toServiceType = 0; 
@@ -47,11 +44,8 @@ struct Tracing //docker间追踪数据
         fromServiceID = 0; 
         traceID = 0; 
         traceBackID = 0; 
-        orgDockerID = 0; 
-        orgServiceType = 0; 
-        orgServiceID = 0; 
     } 
-    Tracing(const unsigned int & toDockerID, const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned int & fromDockerID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID, const unsigned int & orgDockerID, const unsigned short & orgServiceType, const unsigned long long & orgServiceID) 
+    Routing(const unsigned int & toDockerID, const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned int & fromDockerID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID) 
     { 
         this->toDockerID = toDockerID; 
         this->toServiceType = toServiceType; 
@@ -61,12 +55,9 @@ struct Tracing //docker间追踪数据
         this->fromServiceID = fromServiceID; 
         this->traceID = traceID; 
         this->traceBackID = traceBackID; 
-        this->orgDockerID = orgDockerID; 
-        this->orgServiceType = orgServiceType; 
-        this->orgServiceID = orgServiceID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Routing & data) 
 { 
     ws << data.toDockerID;  
     ws << data.toServiceType;  
@@ -76,12 +67,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.fromServiceID;  
     ws << data.traceID;  
     ws << data.traceBackID;  
-    ws << data.orgDockerID;  
-    ws << data.orgServiceType;  
-    ws << data.orgServiceID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Routing & data) 
 { 
     rs >> data.toDockerID;  
     rs >> data.toServiceType;  
@@ -91,12 +79,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.fromServiceID;  
     rs >> data.traceID;  
     rs >> data.traceBackID;  
-    rs >> data.orgDockerID;  
-    rs >> data.orgServiceType;  
-    rs >> data.orgServiceID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Tracing & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Routing & info) 
 { 
     stm << "[\n"; 
     stm << "toDockerID=" << info.toDockerID << "\n"; 
@@ -107,9 +92,74 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "fromServiceID=" << info.fromServiceID << "\n"; 
     stm << "traceID=" << info.traceID << "\n"; 
     stm << "traceBackID=" << info.traceBackID << "\n"; 
-    stm << "orgDockerID=" << info.orgDockerID << "\n"; 
-    stm << "orgServiceType=" << info.orgServiceType << "\n"; 
-    stm << "orgServiceID=" << info.orgServiceID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct OutOfBand //带外信息  
+{ 
+    static const unsigned short getProtoID() { return 1006;} 
+    static const std::string getProtoName() { return "OutOfBand";} 
+    unsigned long long userID;  
+    OutOfBand() 
+    { 
+        userID = 0; 
+    } 
+    OutOfBand(const unsigned long long & userID) 
+    { 
+        this->userID = userID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const OutOfBand & data) 
+{ 
+    ws << data.userID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, OutOfBand & data) 
+{ 
+    rs >> data.userID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const OutOfBand & info) 
+{ 
+    stm << "[\n"; 
+    stm << "userID=" << info.userID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct Tracing //docker间追踪数据  
+{ 
+    static const unsigned short getProtoID() { return 1000;} 
+    static const std::string getProtoName() { return "Tracing";} 
+    Routing routing; //路由信息  
+    OutOfBand oob; //带外信息  
+    Tracing() 
+    { 
+    } 
+    Tracing(const Routing & routing, const OutOfBand & oob) 
+    { 
+        this->routing = routing; 
+        this->oob = oob; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data) 
+{ 
+    ws << data.routing;  
+    ws << data.oob;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data) 
+{ 
+    rs >> data.routing;  
+    rs >> data.oob;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Tracing & info) 
+{ 
+    stm << "[\n"; 
+    stm << "routing=" << info.routing << "\n"; 
+    stm << "oob=" << info.oob << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -125,21 +175,21 @@ struct UserPreview //用户预览信息
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long serviceID; //用户唯一ID  
-    std::string serviceName; //昵称  
+    unsigned long long userID; //用户唯一ID, 对应UserService的ServiceID  
+    std::string userName; //用户唯一昵称, 对应UserService的ServiceName  
     std::string account; //帐号  
     short iconID; //头像  
     int level; //等级  
     UserPreview() 
     { 
-        serviceID = 0; 
+        userID = 0; 
         iconID = 0; 
         level = 0; 
     } 
-    UserPreview(const unsigned long long & serviceID, const std::string & serviceName, const std::string & account, const short & iconID, const int & level) 
+    UserPreview(const unsigned long long & userID, const std::string & userName, const std::string & account, const short & iconID, const int & level) 
     { 
-        this->serviceID = serviceID; 
-        this->serviceName = serviceName; 
+        this->userID = userID; 
+        this->userName = userName; 
         this->account = account; 
         this->iconID = iconID; 
         this->level = level; 
@@ -149,11 +199,11 @@ struct UserPreview //用户预览信息
 const std::vector<std::string>  UserPreview::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserPreview` (        `serviceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `serviceName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`serviceID`),        UNIQUE KEY `serviceName` (`serviceName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_UserPreview` add `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` change `serviceID`  `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` add `serviceName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserPreview` change `serviceName`  `serviceName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserPreview` (        `userID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`userID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_UserPreview` add `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserPreview` change `userID`  `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserPreview` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserPreview` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserPreview` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserPreview` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserPreview` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
@@ -165,20 +215,20 @@ const std::vector<std::string>  UserPreview::getDBBuild()
 std::string  UserPreview::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `serviceID`,`serviceName`,`account`,`iconID`,`level` from `tb_UserPreview` where `serviceID` = ? "); 
-    q << this->serviceID; 
+    q.init("select `userID`,`userName`,`account`,`iconID`,`level` from `tb_UserPreview` where `userID` = ? "); 
+    q << this->userID; 
     return q.pickSQL(); 
 } 
 std::string  UserPreview::getDBSelectPure() 
 { 
-    return "select `serviceID`,`serviceName`,`account`,`iconID`,`level` from `tb_UserPreview` "; 
+    return "select `userID`,`userName`,`account`,`iconID`,`level` from `tb_UserPreview` "; 
 } 
 std::string  UserPreview::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserPreview`(`serviceID`,`serviceName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
-    q << this->serviceID; 
-    q << this->serviceName; 
+    q.init("insert into `tb_UserPreview`(`userID`,`userName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
+    q << this->userID; 
+    q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
@@ -187,16 +237,16 @@ std::string  UserPreview::getDBInsert()
 std::string  UserPreview::getDBDelete() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_UserPreview` where `serviceID` = ? "); 
-    q << this->serviceID; 
+    q.init("delete from `tb_UserPreview` where `userID` = ? "); 
+    q << this->userID; 
     return q.pickSQL(); 
 } 
 std::string  UserPreview::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserPreview`(serviceID) values(? ) on duplicate key update `serviceName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
-    q << this->serviceID; 
-    q << this->serviceName; 
+    q.init("insert into `tb_UserPreview`(userID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
+    q << this->userID; 
+    q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
@@ -213,8 +263,8 @@ bool UserPreview::fetchFromDBResult(zsummer::mysql::DBResult &result)
     { 
         if (result.haveRow()) 
         { 
-            result >> this->serviceID; 
-            result >> this->serviceName; 
+            result >> this->userID; 
+            result >> this->userName; 
             result >> this->account; 
             result >> this->iconID; 
             result >> this->level; 
@@ -230,8 +280,8 @@ bool UserPreview::fetchFromDBResult(zsummer::mysql::DBResult &result)
 } 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserPreview & data) 
 { 
-    ws << data.serviceID;  
-    ws << data.serviceName;  
+    ws << data.userID;  
+    ws << data.userName;  
     ws << data.account;  
     ws << data.iconID;  
     ws << data.level;  
@@ -239,8 +289,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPreview & data) 
 { 
-    rs >> data.serviceID;  
-    rs >> data.serviceName;  
+    rs >> data.userID;  
+    rs >> data.userName;  
     rs >> data.account;  
     rs >> data.iconID;  
     rs >> data.level;  
@@ -249,8 +299,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserPreview & info) 
 { 
     stm << "[\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "serviceName=" << info.serviceName << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
+    stm << "userName=" << info.userName << "\n"; 
     stm << "account=" << info.account << "\n"; 
     stm << "iconID=" << info.iconID << "\n"; 
     stm << "level=" << info.level << "\n"; 
@@ -275,21 +325,21 @@ struct UserBaseInfo //用户基础数据
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long serviceID; //用户唯一ID  
-    std::string serviceName; //昵称  
+    unsigned long long userID; //用户唯一ID, 对应UserService的ServiceID  
+    std::string userName; //用户唯一昵称, 对应UserService的ServiceName  
     std::string account; //帐号  
     short iconID; //头像  
     int level; //等级  
     UserBaseInfo() 
     { 
-        serviceID = 0; 
+        userID = 0; 
         iconID = 0; 
         level = 0; 
     } 
-    UserBaseInfo(const unsigned long long & serviceID, const std::string & serviceName, const std::string & account, const short & iconID, const int & level) 
+    UserBaseInfo(const unsigned long long & userID, const std::string & userName, const std::string & account, const short & iconID, const int & level) 
     { 
-        this->serviceID = serviceID; 
-        this->serviceName = serviceName; 
+        this->userID = userID; 
+        this->userName = userName; 
         this->account = account; 
         this->iconID = iconID; 
         this->level = level; 
@@ -299,11 +349,11 @@ struct UserBaseInfo //用户基础数据
 const std::vector<std::string>  UserBaseInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `serviceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `serviceName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`serviceID`),        UNIQUE KEY `serviceName` (`serviceName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `serviceID`  `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `serviceName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `serviceName`  `serviceName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `userID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`userID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `userID`  `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
@@ -315,20 +365,20 @@ const std::vector<std::string>  UserBaseInfo::getDBBuild()
 std::string  UserBaseInfo::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `serviceID`,`serviceName`,`account`,`iconID`,`level` from `tb_UserBaseInfo` where `serviceID` = ? "); 
-    q << this->serviceID; 
+    q.init("select `userID`,`userName`,`account`,`iconID`,`level` from `tb_UserBaseInfo` where `userID` = ? "); 
+    q << this->userID; 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBSelectPure() 
 { 
-    return "select `serviceID`,`serviceName`,`account`,`iconID`,`level` from `tb_UserBaseInfo` "; 
+    return "select `userID`,`userName`,`account`,`iconID`,`level` from `tb_UserBaseInfo` "; 
 } 
 std::string  UserBaseInfo::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(`serviceID`,`serviceName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
-    q << this->serviceID; 
-    q << this->serviceName; 
+    q.init("insert into `tb_UserBaseInfo`(`userID`,`userName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
+    q << this->userID; 
+    q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
@@ -337,16 +387,16 @@ std::string  UserBaseInfo::getDBInsert()
 std::string  UserBaseInfo::getDBDelete() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_UserBaseInfo` where `serviceID` = ? "); 
-    q << this->serviceID; 
+    q.init("delete from `tb_UserBaseInfo` where `userID` = ? "); 
+    q << this->userID; 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(serviceID) values(? ) on duplicate key update `serviceName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
-    q << this->serviceID; 
-    q << this->serviceName; 
+    q.init("insert into `tb_UserBaseInfo`(userID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
+    q << this->userID; 
+    q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
@@ -363,8 +413,8 @@ bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result)
     { 
         if (result.haveRow()) 
         { 
-            result >> this->serviceID; 
-            result >> this->serviceName; 
+            result >> this->userID; 
+            result >> this->userName; 
             result >> this->account; 
             result >> this->iconID; 
             result >> this->level; 
@@ -380,8 +430,8 @@ bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result)
 } 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserBaseInfo & data) 
 { 
-    ws << data.serviceID;  
-    ws << data.serviceName;  
+    ws << data.userID;  
+    ws << data.userName;  
     ws << data.account;  
     ws << data.iconID;  
     ws << data.level;  
@@ -389,8 +439,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserBaseInfo & data) 
 { 
-    rs >> data.serviceID;  
-    rs >> data.serviceName;  
+    rs >> data.userID;  
+    rs >> data.userName;  
     rs >> data.account;  
     rs >> data.iconID;  
     rs >> data.level;  
@@ -399,8 +449,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserBaseInfo & info) 
 { 
     stm << "[\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "serviceName=" << info.serviceName << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
+    stm << "userName=" << info.userName << "\n"; 
     stm << "account=" << info.account << "\n"; 
     stm << "iconID=" << info.iconID << "\n"; 
     stm << "level=" << info.level << "\n"; 

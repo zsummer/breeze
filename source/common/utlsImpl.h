@@ -23,7 +23,6 @@
 #define _UTLS_IMPL_H_
 
 
-
 //string
 template<class T>
 std::string toString(const T &t)
@@ -391,11 +390,10 @@ inline bool isZero(double f, double acc)
     return fabs(f) < acc;
 }
 
-using std::max;
-using std::min;
+
 inline bool isEqual(double f1, double f2, double acc)
 {
-    return fabs(f1 - f2) <= max(fabs(f1), fabs(f2)) * acc;
+    return fabs(f1 - f2) <= std::max(fabs(f1), fabs(f2)) * acc;
 }
 
 

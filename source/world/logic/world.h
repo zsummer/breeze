@@ -76,7 +76,7 @@ private:
     void event_onDockerLinked(TcpSessionPtr session);
     void event_onDockerClosed(TcpSessionPtr session);
     void event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    void event_onServiceForwardMessage(TcpSessionPtr   session, ServiceType serviceType, ReadStream & rs);
+    void event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs);
 
 private:
     //客户端通讯处理 
@@ -118,10 +118,10 @@ template <class Proto>
 void World::directToService(SessionID sessionID, ServiceType serviceType, const Proto & proto)
 {
     Tracing trace;
-    trace.toServiceType = serviceType;
-    trace.toServiceID = InvalidServiceID;
-    trace.fromServiceType = STWorldMgr;
-    trace.fromServiceID = InvalidServiceID;
+    trace.routing.toServiceType = serviceType;
+    trace.routing.toServiceID = InvalidServiceID;
+    trace.routing.fromServiceType = STWorldMgr;
+    trace.routing.fromServiceID = InvalidServiceID;
 
     WriteStream fd(ForwardToService::getProtoID());
     WriteStream ws(Proto::getProtoID());

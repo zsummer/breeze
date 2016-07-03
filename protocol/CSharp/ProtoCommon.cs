@@ -21,25 +21,22 @@ namespace Proto4z
         EC_FRIEND_NOT_EXIST = 103, //好友不存在  
     }; 
  
-    public class Tracing: Proto4z.IProtoObject //docker间追踪数据  
+    public class Routing: Proto4z.IProtoObject //docker to docker 路由信息  
     {     
         //proto id   
-        public const ushort protoID = 1000;  
-        static public ushort getProtoID() { return 1000; } 
-        static public string getProtoName() { return "Tracing"; } 
+        public const ushort protoID = 1005;  
+        static public ushort getProtoID() { return 1005; } 
+        static public string getProtoName() { return "Routing"; } 
         //members   
-        public uint toDockerID; //forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID   
+        public uint toDockerID; //Docker ID为第一优先级路由数据, service ID为第二优先级路由数据  
         public ushort toServiceType; //目标service类型  
         public ulong toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
-        public uint fromDockerID; //来源DockerID  
+        public uint fromDockerID; //来源  
         public ushort fromServiceType; //来源  
         public ulong fromServiceID; //来源  
-        public uint traceID; //本地cbID    
-        public uint traceBackID; //把远程cbID透传回去   
-        public uint orgDockerID; //org DockerID  
-        public ushort orgServiceType; //org 来源  
-        public ulong orgServiceID; //org 来源  
-        public Tracing()  
+        public uint traceID; //本地产生的回调ID  
+        public uint traceBackID; //远端产生的回调ID  
+        public Routing()  
         { 
             toDockerID = 0;  
             toServiceType = 0;  
@@ -49,11 +46,8 @@ namespace Proto4z
             fromServiceID = 0;  
             traceID = 0;  
             traceBackID = 0;  
-            orgDockerID = 0;  
-            orgServiceType = 0;  
-            orgServiceID = 0;  
         } 
-        public Tracing(uint toDockerID, ushort toServiceType, ulong toServiceID, uint fromDockerID, ushort fromServiceType, ulong fromServiceID, uint traceID, uint traceBackID, uint orgDockerID, ushort orgServiceType, ulong orgServiceID) 
+        public Routing(uint toDockerID, ushort toServiceType, ulong toServiceID, uint fromDockerID, ushort fromServiceType, ulong fromServiceID, uint traceID, uint traceBackID) 
         { 
             this.toDockerID = toDockerID; 
             this.toServiceType = toServiceType; 
@@ -63,9 +57,6 @@ namespace Proto4z
             this.fromServiceID = fromServiceID; 
             this.traceID = traceID; 
             this.traceBackID = traceBackID; 
-            this.orgDockerID = orgDockerID; 
-            this.orgServiceType = orgServiceType; 
-            this.orgServiceID = orgServiceID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -78,9 +69,6 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromServiceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.traceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.traceBackID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.orgDockerID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgServiceType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.orgServiceID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -93,9 +81,73 @@ namespace Proto4z
             this.fromServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.traceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.traceBackID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.orgDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.orgServiceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.orgServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class OutOfBand: Proto4z.IProtoObject //带外信息  
+    {     
+        //proto id   
+        public const ushort protoID = 1006;  
+        static public ushort getProtoID() { return 1006; } 
+        static public string getProtoName() { return "OutOfBand"; } 
+        //members   
+        public ulong userID;  
+        public OutOfBand()  
+        { 
+            userID = 0;  
+        } 
+        public OutOfBand(ulong userID) 
+        { 
+            this.userID = userID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class Tracing: Proto4z.IProtoObject //docker间追踪数据  
+    {     
+        //proto id   
+        public const ushort protoID = 1000;  
+        static public ushort getProtoID() { return 1000; } 
+        static public string getProtoName() { return "Tracing"; } 
+        //members   
+        public Routing routing; //路由信息  
+        public OutOfBand oob; //带外信息  
+        public Tracing()  
+        { 
+            routing = new Routing();  
+            oob = new OutOfBand();  
+        } 
+        public Tracing(Routing routing, OutOfBand oob) 
+        { 
+            this.routing = routing; 
+            this.oob = oob; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            if (this.routing == null) this.routing = new Routing(); 
+            data.AddRange(this.routing.__encode()); 
+            if (this.oob == null) this.oob = new OutOfBand(); 
+            data.AddRange(this.oob.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.routing = new Routing(); 
+            this.routing.__decode(binData, ref pos); 
+            this.oob = new OutOfBand(); 
+            this.oob.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -107,23 +159,23 @@ namespace Proto4z
         static public ushort getProtoID() { return 1001; } 
         static public string getProtoName() { return "UserPreview"; } 
         //members   
-        public ulong serviceID; //用户唯一ID  
-        public string serviceName; //昵称  
+        public ulong userID; //用户唯一ID, 对应UserService的ServiceID  
+        public string userName; //用户唯一昵称, 对应UserService的ServiceName  
         public string account; //帐号  
         public short iconID; //头像  
         public int level; //等级  
         public UserPreview()  
         { 
-            serviceID = 0;  
-            serviceName = "";  
+            userID = 0;  
+            userName = "";  
             account = "";  
             iconID = 0;  
             level = 0;  
         } 
-        public UserPreview(ulong serviceID, string serviceName, string account, short iconID, int level) 
+        public UserPreview(ulong userID, string userName, string account, short iconID, int level) 
         { 
-            this.serviceID = serviceID; 
-            this.serviceName = serviceName; 
+            this.userID = userID; 
+            this.userName = userName; 
             this.account = account; 
             this.iconID = iconID; 
             this.level = level; 
@@ -131,8 +183,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
@@ -140,8 +192,8 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
             this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
@@ -216,23 +268,23 @@ namespace Proto4z
         static public ushort getProtoID() { return 1002; } 
         static public string getProtoName() { return "UserBaseInfo"; } 
         //members   
-        public ulong serviceID; //用户唯一ID  
-        public string serviceName; //昵称  
+        public ulong userID; //用户唯一ID, 对应UserService的ServiceID  
+        public string userName; //用户唯一昵称, 对应UserService的ServiceName  
         public string account; //帐号  
         public short iconID; //头像  
         public int level; //等级  
         public UserBaseInfo()  
         { 
-            serviceID = 0;  
-            serviceName = "";  
+            userID = 0;  
+            userName = "";  
             account = "";  
             iconID = 0;  
             level = 0;  
         } 
-        public UserBaseInfo(ulong serviceID, string serviceName, string account, short iconID, int level) 
+        public UserBaseInfo(ulong userID, string userName, string account, short iconID, int level) 
         { 
-            this.serviceID = serviceID; 
-            this.serviceName = serviceName; 
+            this.userID = userID; 
+            this.userName = userName; 
             this.account = account; 
             this.iconID = iconID; 
             this.level = level; 
@@ -240,8 +292,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
@@ -249,8 +301,8 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
             this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 

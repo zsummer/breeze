@@ -102,12 +102,12 @@ public:
     inline void slotting(const Slot & msgfun) { _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
 
     bool canToService(ServiceType serviceType, ServiceID serviceID = InvalidServiceID);
-    void toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb = nullptr);
-    void toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
-    void toService(ServiceType serviceType, Proto proto, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, const OutOfBand &oob, Proto proto, ServiceCallback cb = nullptr);
     template<class Proto>
-    void toService(ServiceType serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, Proto proto, ServiceCallback cb = nullptr);
 
     void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
@@ -171,13 +171,13 @@ using ServicePtr = std::shared_ptr<Service>;
 using ServiceWeakPtr = std::shared_ptr<Service>;
 
 template<class Proto>
-void Service::toService(ServiceType serviceType, Proto proto, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, const OutOfBand &oob, Proto proto, ServiceCallback cb)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(serviceType, ws.getStream(), ws.getStreamLen(), cb);
+        toService(serviceType, oob, ws.getStream(), ws.getStreamLen(), cb);
     }
     catch (const std::exception & e)
     {
@@ -185,13 +185,13 @@ void Service::toService(ServiceType serviceType, Proto proto, ServiceCallback cb
     }
 }
 template<class Proto>
-void Service::toService(ServiceType serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, Proto proto, ServiceCallback cb)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(serviceType, serviceID, ws.getStream(), ws.getStreamLen(), cb);
+        toService(serviceType, serviceID, oob, ws.getStream(), ws.getStreamLen(), cb);
     }
     catch (const std::exception & e)
     {

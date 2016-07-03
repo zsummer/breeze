@@ -311,7 +311,7 @@ enum SessionUserData
 
     UPARAM_REMOTE_DOCKERID, //docker集群 
     UPARAM_ACCOUNT,
-    UPARAM_SERVICE_ID,
+    UPARAM_USER_ID,
     UPARAM_LOGIN_TIME,
 
     UPARAM_AREA_ID, //world集群

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>93409389a5c27a3628ad58c2314c78fe</cppmd5> 
-<luamd5>a86a28e5f2c3e682f57285a52ede6ead</luamd5> 
-<csharpmd5>617f0a30e4a5270c6b50df5d1ed40307</csharpmd5> 
-<xmlmd5>2b76d08483203882e3afa6b6bdca963f</xmlmd5> 
+<cppmd5>47fbaf84e3ea89d609930fd8d6333700</cppmd5> 
+<luamd5>3d5f734695fd693cb5409d0aa5c8afcc</luamd5> 
+<csharpmd5>8f634bc815360550cddb2ab4e9ac15fd</csharpmd5> 
+<xmlmd5>81ec59777caef008cc81452dc5bb98c8</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_MoneyTree" Number = "1003" /> 
+    <cache key = "ID_OutOfBand" Number = "1006" /> 
+    <cache key = "ID_Routing" Number = "1005" /> 
     <cache key = "ID_SimplePack" Number = "1004" /> 
     <cache key = "ID_Tracing" Number = "1000" /> 
     <cache key = "ID_UserBaseInfo" Number = "1002" /> 

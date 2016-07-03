@@ -105,11 +105,11 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
 
         if (uri == "/getonline")
         {
-            getonline(trace.fromDockerID, notice.webClientID, params);
+            getonline(trace.routing.fromDockerID, notice.webClientID, params);
         }
         else if (uri == "/offlinechat")
         {
-            offlinechat(trace.fromDockerID, notice.webClientID, params);
+            offlinechat(trace.routing.fromDockerID, notice.webClientID, params);
         }
         else if (uri == "/test")
         {
@@ -119,14 +119,14 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
             request.isGet = true;
             request.host = "www.cnblogs.com";
             request.uri = "/";
-            toService(STWebAgent, request);
-            toService(STWebAgent, request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
-                _1, trace.fromDockerID, notice.webClientID));
+            toService(STWebAgent, OutOfBand(InvalidServiceID), request);
+            toService(STWebAgent, OutOfBand(InvalidServiceID), request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
+                _1, trace.routing.fromDockerID, notice.webClientID));
             
         }
         else
         {
-            responseError(trace.fromDockerID, notice.webClientID);
+            responseError(trace.routing.fromDockerID, notice.webClientID);
         }
     }
 
@@ -144,23 +144,23 @@ void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::v
     {
         if (pm.first == "serviceID")
         {
-            req.toServiceID = fromString<ui64>(pm.second, InvalidServiceID);
+            req.userID = fromString<ui64>(pm.second, InvalidServiceID);
         }
         if (pm.first == "msg")
         {
             req.msg = pm.second;
         }
     }
-    if (req.toServiceID != InvalidServiceID)
+    if (req.userID != InvalidServiceID)
     {
         UserOffline offline;
-        offline.serviceID = req.toServiceID;
+        offline.userID = req.userID;
         offline.status = 0;
         offline.timestamp = getNowTime();
         WriteStream ws(UserChatReq::getProtoID());
         ws << req;
         offline.streamBlob = ws.pickStream();
-        toService(STOfflineMgr, offline);
+        toService(STOfflineMgr, OutOfBand(InvalidServiceID), offline);
         responseSuccess(dockerID, clientID, R"({"result":"success"})");
 
     }
@@ -174,9 +174,9 @@ void WebService::onWebServerRequest(Tracing trace, ReadStream &rs)
 {
     WebServerRequest request;
     rs >> request;
-    request.traceID = trace.traceID;
-    request.fromServiceType = trace.fromServiceType;
-    request.fromServiceID = trace.fromServiceID;
+    request.traceID = trace.routing.traceID;
+    request.fromServiceType = trace.routing.fromServiceType;
+    request.fromServiceID = trace.routing.fromServiceID;
     Docker::getRef().sendToDocker(Docker::getRef().getWebBalance().selectAuto(), request);
 }
 

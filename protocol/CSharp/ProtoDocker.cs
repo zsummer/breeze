@@ -957,22 +957,22 @@ namespace Proto4z
         static public string getProtoName() { return "UserOffline"; } 
         //members   
         public ulong id;  
-        public ulong serviceID;  
+        public ulong userID;  
         public string streamBlob;  
         public ushort status;  
         public ulong timestamp;  
         public UserOffline()  
         { 
             id = 0;  
-            serviceID = 0;  
+            userID = 0;  
             streamBlob = "";  
             status = 0;  
             timestamp = 0;  
         } 
-        public UserOffline(ulong id, ulong serviceID, string streamBlob, ushort status, ulong timestamp) 
+        public UserOffline(ulong id, ulong userID, string streamBlob, ushort status, ulong timestamp) 
         { 
             this.id = id; 
-            this.serviceID = serviceID; 
+            this.userID = userID; 
             this.streamBlob = streamBlob; 
             this.status = status; 
             this.timestamp = timestamp; 
@@ -981,7 +981,7 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.streamBlob)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.timestamp)); 
@@ -990,7 +990,7 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.streamBlob = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.timestamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 

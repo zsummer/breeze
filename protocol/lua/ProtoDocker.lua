@@ -193,7 +193,7 @@ Proto4z.UserOffline = {}
 Proto4z.UserOffline.__protoID = 2023 
 Proto4z.UserOffline.__protoName = "UserOffline" 
 Proto4z.UserOffline[1] = {name="id", type="ui64" }  
-Proto4z.UserOffline[2] = {name="serviceID", type="ui64" }  
+Proto4z.UserOffline[2] = {name="userID", type="ui64" }  
 Proto4z.UserOffline[3] = {name="streamBlob", type="string" }  
 Proto4z.UserOffline[4] = {name="status", type="ui16" }  
 Proto4z.UserOffline[5] = {name="timestamp", type="ui64" }  

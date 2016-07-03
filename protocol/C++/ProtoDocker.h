@@ -899,21 +899,21 @@ struct UserOffline
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long id;  
-    unsigned long long serviceID;  
+    unsigned long long userID;  
     std::string streamBlob;  
     unsigned short status;  
     unsigned long long timestamp;  
     UserOffline() 
     { 
         id = 0; 
-        serviceID = 0; 
+        userID = 0; 
         status = 0; 
         timestamp = 0; 
     } 
-    UserOffline(const unsigned long long & id, const unsigned long long & serviceID, const std::string & streamBlob, const unsigned short & status, const unsigned long long & timestamp) 
+    UserOffline(const unsigned long long & id, const unsigned long long & userID, const std::string & streamBlob, const unsigned short & status, const unsigned long long & timestamp) 
     { 
         this->id = id; 
-        this->serviceID = serviceID; 
+        this->userID = userID; 
         this->streamBlob = streamBlob; 
         this->status = status; 
         this->timestamp = timestamp; 
@@ -923,11 +923,11 @@ struct UserOffline
 const std::vector<std::string>  UserOffline::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserOffline` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `serviceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `streamBlob` longblob NOT NULL ,        `status` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `timestamp` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `serviceID` (`serviceID`),        KEY `status` (`status`),        KEY `timestamp` (`timestamp`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserOffline` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `streamBlob` longblob NOT NULL ,        `status` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `timestamp` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `userID` (`userID`),        KEY `status` (`status`),        KEY `timestamp` (`timestamp`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_UserOffline` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserOffline` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` add `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` change `serviceID`  `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserOffline` add `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserOffline` change `userID`  `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserOffline` add `streamBlob`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_UserOffline` change `streamBlob`  `streamBlob`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_UserOffline` add `status`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
@@ -939,20 +939,20 @@ const std::vector<std::string>  UserOffline::getDBBuild()
 std::string  UserOffline::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`serviceID`,`streamBlob`,`status`,`timestamp` from `tb_UserOffline` where `id` = ? "); 
+    q.init("select `id`,`userID`,`streamBlob`,`status`,`timestamp` from `tb_UserOffline` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  UserOffline::getDBSelectPure() 
 { 
-    return "select `id`,`serviceID`,`streamBlob`,`status`,`timestamp` from `tb_UserOffline` "; 
+    return "select `id`,`userID`,`streamBlob`,`status`,`timestamp` from `tb_UserOffline` "; 
 } 
 std::string  UserOffline::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserOffline`(`id`,`serviceID`,`streamBlob`,`status`,`timestamp`) values(?,?,?,?,?)"); 
+    q.init("insert into `tb_UserOffline`(`id`,`userID`,`streamBlob`,`status`,`timestamp`) values(?,?,?,?,?)"); 
     q << this->id; 
-    q << this->serviceID; 
+    q << this->userID; 
     q << this->streamBlob; 
     q << this->status; 
     q << this->timestamp; 
@@ -968,9 +968,9 @@ std::string  UserOffline::getDBDelete()
 std::string  UserOffline::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserOffline`(id) values(? ) on duplicate key update `serviceID` = ?,`streamBlob` = ?,`status` = ?,`timestamp` = ? "); 
+    q.init("insert into `tb_UserOffline`(id) values(? ) on duplicate key update `userID` = ?,`streamBlob` = ?,`status` = ?,`timestamp` = ? "); 
     q << this->id; 
-    q << this->serviceID; 
+    q << this->userID; 
     q << this->streamBlob; 
     q << this->status; 
     q << this->timestamp; 
@@ -988,7 +988,7 @@ bool UserOffline::fetchFromDBResult(zsummer::mysql::DBResult &result)
         if (result.haveRow()) 
         { 
             result >> this->id; 
-            result >> this->serviceID; 
+            result >> this->userID; 
             result >> this->streamBlob; 
             result >> this->status; 
             result >> this->timestamp; 
@@ -1005,7 +1005,7 @@ bool UserOffline::fetchFromDBResult(zsummer::mysql::DBResult &result)
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserOffline & data) 
 { 
     ws << data.id;  
-    ws << data.serviceID;  
+    ws << data.userID;  
     ws << data.streamBlob;  
     ws << data.status;  
     ws << data.timestamp;  
@@ -1014,7 +1014,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserOffline & data) 
 { 
     rs >> data.id;  
-    rs >> data.serviceID;  
+    rs >> data.userID;  
     rs >> data.streamBlob;  
     rs >> data.status;  
     rs >> data.timestamp;  
@@ -1024,7 +1024,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "id=" << info.id << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
     stm << "streamBlob=" << info.streamBlob << "\n"; 
     stm << "status=" << info.status << "\n"; 
     stm << "timestamp=" << info.timestamp << "\n"; 

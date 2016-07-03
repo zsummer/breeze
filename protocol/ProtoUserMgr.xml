@@ -28,7 +28,7 @@
 
     <packet name="CreateUserFromUserMgrReq" desc= "创角色请求">
         <member name="account" type="string"   desc=""/>
-        <member name="serviceName" type="string"   desc=""/>
+        <member name="userName" type="string"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
@@ -36,12 +36,12 @@
         <member name="retCode" type="ui16"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
-        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="userID" type="ui64"   desc=""/>
         <member name="previews" type="UserPreviewArray"   desc=""/>
     </packet>
 
     <packet name="AttachUserFromUserMgrReq" desc= "选角色请求">
-        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="userID" type="ui64"   desc=""/>
         <member name="account" type="string"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
@@ -50,7 +50,7 @@
         <member name="retCode" type="ui16"   desc=""/>
         <member name="clientDockerID" type="ui32"   desc=""/>
         <member name="clientSessionID" type="ui32"   desc=""/>
-        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="userID" type="ui64"   desc=""/>
     </packet>
 
 

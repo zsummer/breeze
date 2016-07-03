@@ -92,9 +92,9 @@ void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream 
     _baseInfo.writeToDB();
 
     UserChatResp resp;
-    resp.fromServiceID = getServiceID();
+    resp.fromUserID = getServiceID();
     resp.msg = req.msg;
-    toService(STClient, req.toServiceID, resp);
+    toService(STClient, req.userID, resp);
 }
 
 void UserService::onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)

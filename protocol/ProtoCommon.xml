@@ -32,29 +32,34 @@
 
     </enum>
 
-    <packet name="Tracing"  desc="docker间追踪数据">
-        <member name="toDockerID" type="ui32" desc="forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID "/>
+
+    <packet name="Routing"  desc="docker to docker 路由信息">
+        <member name="toDockerID" type="ui32" desc="Docker ID为第一优先级路由数据, service ID为第二优先级路由数据"/>
         <member name="toServiceType" type="ui16" desc="目标service类型"/>
         <member name="toServiceID" type="ui64" desc="目标serviceID, 如果是单例 ID为InvalidServiceID. "/>
 
-        <member name="fromDockerID" type="ui32" desc="来源DockerID"/>
+        <member name="fromDockerID" type="ui32" desc="来源"/>
         <member name="fromServiceType" type="ui16" desc="来源"/>
         <member name="fromServiceID" type="ui64" desc="来源"/>
 
-        <member name="traceID" type="ui32" desc="本地cbID  "/>
-        <member name="traceBackID" type="ui32" desc="把远程cbID透传回去 "/>
+        <member name="traceID" type="ui32" desc="本地产生的回调ID"/>
+        <member name="traceBackID" type="ui32" desc="远端产生的回调ID"/>
+    </packet>
+    <packet name="OutOfBand"  desc="带外信息">
+        <member name="userID" type="ui64" desc=""/>
+    </packet>
 
-        <member name="orgDockerID" type="ui32" desc="org DockerID"/>
-        <member name="orgServiceType" type="ui16" desc="org 来源"/>
-        <member name="orgServiceID" type="ui64" desc="org 来源"/>
+    <packet name="Tracing"  desc="docker间追踪数据">
+        <member name="routing" type="Routing" desc="路由信息"/>
+        <member name="oob" type="OutOfBand" desc="带外信息"/>
     </packet>
 
 
 
         <!-- 用户预览信息 -->
     <packet name="UserPreview" store="MyISAM" desc="用户预览信息">
-        <member name="serviceID" type="ui64"  tag="key" desc="用户唯一ID"/>
-        <member name="serviceName" type="string" tag="uni"   desc="昵称"/>
+        <member name="userID" type="ui64"  tag="key" desc="用户唯一ID, 对应UserService的ServiceID"/>
+        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应UserService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i16" desc="头像"/>
         <member name="level"  type="i32" desc="等级"/>
@@ -66,8 +71,8 @@
 
     <!-- 用户基础信息 -->
     <packet name="UserBaseInfo" store="MyISAM" desc="用户基础数据">
-        <member name="serviceID" type="ui64"  tag="key" desc="用户唯一ID"/>
-        <member name="serviceName" type="string" tag="uni"   desc="昵称"/>
+        <member name="userID" type="ui64"  tag="key" desc="用户唯一ID, 对应UserService的ServiceID"/>
+        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应UserService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i16" desc="头像"/>
         <member name="level"  type="i32" desc="等级"/>
