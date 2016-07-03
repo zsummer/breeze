@@ -14,38 +14,47 @@
 <!------------------------------------ docker --------------------------------------------->
 
     <proto name="WorldSceneInfoReq" desc= "获取场景信息">
+        <member name="userID"  type="ui64" desc=""/> 
     </proto>
     <proto name="WorldSceneInfoAck" desc= "获取场景信息">
         <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="userID"  type="ui64" desc=""/> 
         <member name="scenes" type="SceneInfoArray"  desc=""/>
     </proto>
 
     <proto name="WorldTryEnterSceneReq" desc= "进入场景">
+        <member name="userID"  type="ui64" desc=""/> 
         <member name="type" type="ui16"  desc="类型, 如果是不同类型,该请求会触发场景切换动作"/>
     </proto>
     <proto name="WorldTryEnterSceneAck" desc= "进入场景">
         <member name="retCode"  type="ui16" desc="错误码"/> 
-        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
+        <member name="userID"  type="ui64" desc=""/> 
+        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会直接切换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
     </proto>
 
     <proto name="WorldSceneInfoNotice" desc= "场景信息刷新,如果是匹配模式, 需要扩展当前匹配信息到该协议中">
         <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="userID"  type="ui64" desc=""/> 
         <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
     </proto>
 
     <proto name="WorldLeaveSceneReq" desc= "离开场景">
+        <member name="userID"  type="ui64" desc=""/> 
         <member name="type" type="ui16"  desc="类型"/>
     </proto>
     <proto name="WorldLeaveSceneAck" desc= "离开场景">
         <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="userID"  type="ui64" desc=""/> 
         <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
     </proto>
 
     <proto name="WorldQuitSceneReq" desc= "退出场景">
+        <member name="userID"  type="ui64" desc=""/> 
         <member name="type" type="ui16"  desc="类型"/>
     </proto>
     <proto name="WorldQuitSceneAck" desc= "退出场景">
         <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="userID"  type="ui64" desc=""/> 
         <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
     </proto>
 

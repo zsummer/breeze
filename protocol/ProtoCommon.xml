@@ -43,6 +43,10 @@
 
         <member name="traceID" type="ui32" desc="本地cbID  "/>
         <member name="traceBackID" type="ui32" desc="把远程cbID透传回去 "/>
+
+        <member name="orgDockerID" type="ui32" desc="org DockerID"/>
+        <member name="orgServiceType" type="ui16" desc="org 来源"/>
+        <member name="orgServiceID" type="ui64" desc="org 来源"/>
     </packet>
 
 

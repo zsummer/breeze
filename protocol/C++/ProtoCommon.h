@@ -34,6 +34,9 @@ struct Tracing //docker间追踪数据
     unsigned long long fromServiceID; //来源  
     unsigned int traceID; //本地cbID    
     unsigned int traceBackID; //把远程cbID透传回去   
+    unsigned int orgDockerID; //org DockerID  
+    unsigned short orgServiceType; //org 来源  
+    unsigned long long orgServiceID; //org 来源  
     Tracing() 
     { 
         toDockerID = 0; 
@@ -44,8 +47,11 @@ struct Tracing //docker间追踪数据
         fromServiceID = 0; 
         traceID = 0; 
         traceBackID = 0; 
+        orgDockerID = 0; 
+        orgServiceType = 0; 
+        orgServiceID = 0; 
     } 
-    Tracing(const unsigned int & toDockerID, const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned int & fromDockerID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID) 
+    Tracing(const unsigned int & toDockerID, const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned int & fromDockerID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID, const unsigned int & orgDockerID, const unsigned short & orgServiceType, const unsigned long long & orgServiceID) 
     { 
         this->toDockerID = toDockerID; 
         this->toServiceType = toServiceType; 
@@ -55,6 +61,9 @@ struct Tracing //docker间追踪数据
         this->fromServiceID = fromServiceID; 
         this->traceID = traceID; 
         this->traceBackID = traceBackID; 
+        this->orgDockerID = orgDockerID; 
+        this->orgServiceType = orgServiceType; 
+        this->orgServiceID = orgServiceID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data) 
@@ -67,6 +76,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.fromServiceID;  
     ws << data.traceID;  
     ws << data.traceBackID;  
+    ws << data.orgDockerID;  
+    ws << data.orgServiceType;  
+    ws << data.orgServiceID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data) 
@@ -79,6 +91,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.fromServiceID;  
     rs >> data.traceID;  
     rs >> data.traceBackID;  
+    rs >> data.orgDockerID;  
+    rs >> data.orgServiceType;  
+    rs >> data.orgServiceID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Tracing & info) 
@@ -92,6 +107,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "fromServiceID=" << info.fromServiceID << "\n"; 
     stm << "traceID=" << info.traceID << "\n"; 
     stm << "traceBackID=" << info.traceBackID << "\n"; 
+    stm << "orgDockerID=" << info.orgDockerID << "\n"; 
+    stm << "orgServiceType=" << info.orgServiceType << "\n"; 
+    stm << "orgServiceID=" << info.orgServiceID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

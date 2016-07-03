@@ -38,6 +38,7 @@
         <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场,INSTANCING ID)的实例ID"/>
         <member name="token" type="string"  desc="令牌"/>
         <member name="isActive" type="ui8"  desc="当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况"/>
+        <member name="involed" type="UserPreviewArray"  desc="匹配列表中的玩家"/>
     </struct>
     <array name="SceneInfoArray" type="SceneInfo" desc="" />
 
@@ -170,7 +171,6 @@
     <struct name="EPoint" desc="" >
         <member name="x" type="double" />
         <member name="y" type="double" />
-        <member name="face" type="double" />
     </struct>
     <array name="EPoints" type="EPoint" desc="" />
 

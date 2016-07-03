@@ -36,6 +36,9 @@ namespace Proto4z
         public ulong fromServiceID; //来源  
         public uint traceID; //本地cbID    
         public uint traceBackID; //把远程cbID透传回去   
+        public uint orgDockerID; //org DockerID  
+        public ushort orgServiceType; //org 来源  
+        public ulong orgServiceID; //org 来源  
         public Tracing()  
         { 
             toDockerID = 0;  
@@ -46,8 +49,11 @@ namespace Proto4z
             fromServiceID = 0;  
             traceID = 0;  
             traceBackID = 0;  
+            orgDockerID = 0;  
+            orgServiceType = 0;  
+            orgServiceID = 0;  
         } 
-        public Tracing(uint toDockerID, ushort toServiceType, ulong toServiceID, uint fromDockerID, ushort fromServiceType, ulong fromServiceID, uint traceID, uint traceBackID) 
+        public Tracing(uint toDockerID, ushort toServiceType, ulong toServiceID, uint fromDockerID, ushort fromServiceType, ulong fromServiceID, uint traceID, uint traceBackID, uint orgDockerID, ushort orgServiceType, ulong orgServiceID) 
         { 
             this.toDockerID = toDockerID; 
             this.toServiceType = toServiceType; 
@@ -57,6 +63,9 @@ namespace Proto4z
             this.fromServiceID = fromServiceID; 
             this.traceID = traceID; 
             this.traceBackID = traceBackID; 
+            this.orgDockerID = orgDockerID; 
+            this.orgServiceType = orgServiceType; 
+            this.orgServiceID = orgServiceID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -69,6 +78,9 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromServiceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.traceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.traceBackID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.orgDockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgServiceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.orgServiceID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -81,6 +93,9 @@ namespace Proto4z
             this.fromServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.traceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.traceBackID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.orgDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.orgServiceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.orgServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 

@@ -21,6 +21,7 @@ Proto4z.SceneInfo[4] = {name="port", type="ui16" } --服务器port
 Proto4z.SceneInfo[5] = {name="spaceID", type="ui32" } --空间(场景,房间,战场,INSTANCING ID)的实例ID 
 Proto4z.SceneInfo[6] = {name="token", type="string" } --令牌 
 Proto4z.SceneInfo[7] = {name="isActive", type="ui8" } --当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况 
+Proto4z.SceneInfo[8] = {name="involed", type="UserPreviewArray" } --匹配列表中的玩家 
  
 Proto4z.SceneInfoArray = {}  
 Proto4z.SceneInfoArray.__protoName = "SceneInfoArray" 
@@ -123,7 +124,6 @@ Proto4z.EPoint.__protoID = 10018
 Proto4z.EPoint.__protoName = "EPoint" 
 Proto4z.EPoint[1] = {name="x", type="double" }  
 Proto4z.EPoint[2] = {name="y", type="double" }  
-Proto4z.EPoint[3] = {name="face", type="double" }  
  
 Proto4z.EPoints = {}  
 Proto4z.EPoints.__protoName = "EPoints" 

@@ -27,6 +27,9 @@ Proto4z.Tracing[5] = {name="fromServiceType", type="ui16" } --来源
 Proto4z.Tracing[6] = {name="fromServiceID", type="ui64" } --来源 
 Proto4z.Tracing[7] = {name="traceID", type="ui32" } --本地cbID   
 Proto4z.Tracing[8] = {name="traceBackID", type="ui32" } --把远程cbID透传回去  
+Proto4z.Tracing[9] = {name="orgDockerID", type="ui32" } --org DockerID 
+Proto4z.Tracing[10] = {name="orgServiceType", type="ui16" } --org 来源 
+Proto4z.Tracing[11] = {name="orgServiceID", type="ui64" } --org 来源 
  
 Proto4z.register(1001,"UserPreview") 
 Proto4z.UserPreview = {} --用户预览信息 

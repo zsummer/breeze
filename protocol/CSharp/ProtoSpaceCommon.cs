@@ -33,6 +33,7 @@ namespace Proto4z
         public uint spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
         public string token; //令牌  
         public byte isActive; //当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况  
+        public UserPreviewArray involed; //匹配列表中的玩家  
         public SceneInfo()  
         { 
             type = 0;  
@@ -42,8 +43,9 @@ namespace Proto4z
             spaceID = 0;  
             token = "";  
             isActive = 0;  
+            involed = new UserPreviewArray();  
         } 
-        public SceneInfo(ushort type, ushort status, string host, ushort port, uint spaceID, string token, byte isActive) 
+        public SceneInfo(ushort type, ushort status, string host, ushort port, uint spaceID, string token, byte isActive, UserPreviewArray involed) 
         { 
             this.type = type; 
             this.status = status; 
@@ -52,6 +54,7 @@ namespace Proto4z
             this.spaceID = spaceID; 
             this.token = token; 
             this.isActive = isActive; 
+            this.involed = involed; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -63,6 +66,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.isActive)); 
+            if (this.involed == null) this.involed = new UserPreviewArray(); 
+            data.AddRange(this.involed.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -74,6 +79,8 @@ namespace Proto4z
             this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.isActive = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
+            this.involed = new UserPreviewArray(); 
+            this.involed.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -299,32 +306,27 @@ namespace Proto4z
         //members   
         public double x;  
         public double y;  
-        public double face;  
         public EPoint()  
         { 
             x = 0.0;  
             y = 0.0;  
-            face = 0.0;  
         } 
-        public EPoint(double x, double y, double face) 
+        public EPoint(double x, double y) 
         { 
             this.x = x; 
             this.y = y; 
-            this.face = face; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.x)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.y)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.face)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.x = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.y = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.face = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 
