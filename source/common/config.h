@@ -69,7 +69,7 @@ private:
 
     //异构的世界同步服务器的space配置
 public:
-    bool parseSpaces(std::string configName, SpaceID spaceID);
+    bool parseSpaces(std::string configName, ui32 serverID);
     inline const SpaceConfig & getSpaceConfig() { return _space; }
 private:
     SpaceConfig _space;

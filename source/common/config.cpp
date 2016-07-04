@@ -304,10 +304,10 @@ bool ServerConfig::parseWorld(std::string configName)
 }
 
 
-bool ServerConfig::parseSpaces(std::string configName, SpaceID spaceID)
+bool ServerConfig::parseSpaces(std::string configName, ui32 serverID)
 {
     srand((unsigned int)time(NULL));
-    _space._spaceID = spaceID;
+    _space._spaceID = serverID;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {
@@ -321,7 +321,7 @@ bool ServerConfig::parseSpaces(std::string configName, SpaceID spaceID)
         return false;
     }
 
-    LOGI("ServerConfig::parse spaceID=" << spaceID << ", configName=" << configName);
+    LOGI("ServerConfig::parse serverID=" << serverID << ", configName=" << configName);
 
 
 

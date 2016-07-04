@@ -124,7 +124,8 @@ const DockerID InvalidDockerID = 0;
 
 typedef ui32 SpaceID;
 const SpaceID InvalidSpaceID = 0;
-
+typedef ui32 EntityID;
+const EntityID InvalidEntityID = 0;
 
 //每个service拥有两个唯一的基础属性ServiceID, ServiceName
 typedef ui64 ServiceID;
