@@ -15,8 +15,8 @@ Proto4z.register(10000,"SceneInfo")
 Proto4z.SceneInfo = {} --场景信息 
 Proto4z.SceneInfo.__protoID = 10000 
 Proto4z.SceneInfo.__protoName = "SceneInfo" 
-Proto4z.SceneInfo[1] = {name="type", type="ui16" } --类型 
-Proto4z.SceneInfo[2] = {name="status", type="ui16" } --状态 
+Proto4z.SceneInfo[1] = {name="sceneType", type="ui16" } --类型 
+Proto4z.SceneInfo[2] = {name="spaceStatus", type="ui16" } --状态 
 Proto4z.SceneInfo[3] = {name="host", type="string" } --服务器host 
 Proto4z.SceneInfo[4] = {name="port", type="ui16" } --服务器port 
 Proto4z.SceneInfo[5] = {name="spaceID", type="ui32" } --空间(场景,房间,战场,INSTANCING ID)的实例ID 
@@ -29,17 +29,18 @@ Proto4z.SceneInfoArray.__protoName = "SceneInfoArray"
 Proto4z.SceneInfoArray.__protoDesc = "array" 
 Proto4z.SceneInfoArray.__protoTypeV = "SceneInfo" 
  
-Proto4z.SPACE_STATUS_FREE = 0--自由 
-Proto4z.SCENE_STATUS_ACTIVE = 1--活跃 
-Proto4z.SCENE_STATUS_LINGER = 2--驻留 
+Proto4z.SPACE_STATUS_NONE = 0--不存在 
+Proto4z.SPACE_STATUS_WAIT = 1--等待 
+Proto4z.SCENE_STATUS_ACTIVE = 2--活跃 
+Proto4z.SCENE_STATUS_LINGER = 3--驻留 
  
 Proto4z.register(10017,"SpaceInfo") 
 Proto4z.SpaceInfo = {} --空间信息 
 Proto4z.SpaceInfo.__protoID = 10017 
 Proto4z.SpaceInfo.__protoName = "SpaceInfo" 
 Proto4z.SpaceInfo[1] = {name="spaceID", type="ui32" }  
-Proto4z.SpaceInfo[2] = {name="type", type="ui16" } --类型 
-Proto4z.SpaceInfo[3] = {name="status", type="ui16" } --状态 
+Proto4z.SpaceInfo[2] = {name="sceneType", type="ui16" } --类型 
+Proto4z.SpaceInfo[3] = {name="spaceStatus", type="ui16" } --状态 
 Proto4z.SpaceInfo[4] = {name="users", type="ui32" } --目前负载 
  
 Proto4z.SpaceInfoArray = {}  

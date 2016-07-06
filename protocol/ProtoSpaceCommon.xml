@@ -32,8 +32,8 @@
 
     <!-- 场景信息-->
     <struct name="SceneInfo" desc="场景信息">
-        <member name="type" type="ui16"  desc="类型"/>
-        <member name="status" type="ui16"  desc="状态"/>
+        <member name="sceneType" type="ui16"  desc="类型"/>
+        <member name="spaceStatus" type="ui16"  desc="状态"/>
         <member name="host" type="string"  desc="服务器host"/>
         <member name="port" type="ui16"  desc="服务器port"/>
         <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场,INSTANCING ID)的实例ID"/>
@@ -44,18 +44,19 @@
     <array name="SceneInfoArray" type="SceneInfo" desc="" />
 
 
-    <!-- 空域枚举-->
+    <!-- space状态 -->
     <enum type="ui16" name="SPACE_STATUS" desc="场景状态, 是否在某个场景中">
-        <member name="SPACE_STATUS_FREE" value="0" desc="自由" />
+        <member name="SPACE_STATUS_NONE" value="0" desc="不存在" />
+        <member name="SPACE_STATUS_WAIT"  desc="等待" />
         <member name="SCENE_STATUS_ACTIVE" desc="活跃" />
         <member name="SCENE_STATUS_LINGER" desc="驻留" />
     </enum>
 
-    <!-- 空间信息-->
+    <!-- space信息-->
     <struct name="SpaceInfo" desc="空间信息">
         <member name="spaceID" type="ui32"  desc=""/>
-        <member name="type" type="ui16"  desc="类型"/>
-        <member name="status" type="ui16"  desc="状态"/>
+        <member name="sceneType" type="ui16"  desc="类型"/>
+        <member name="spaceStatus" type="ui16"  desc="状态"/>
         <member name="users" type="ui32"  desc="目前负载"/>
     </struct>
     <array name="SpaceInfoArray" type="SpaceInfo" desc="" />

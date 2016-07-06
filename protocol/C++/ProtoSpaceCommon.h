@@ -25,8 +25,8 @@ struct SceneInfo //场景信息
 { 
     static const unsigned short getProtoID() { return 10000;} 
     static const std::string getProtoName() { return "SceneInfo";} 
-    unsigned short type; //类型  
-    unsigned short status; //状态  
+    unsigned short sceneType; //类型  
+    unsigned short spaceStatus; //状态  
     std::string host; //服务器host  
     unsigned short port; //服务器port  
     unsigned int spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
@@ -35,16 +35,16 @@ struct SceneInfo //场景信息
     UserBaseInfoArray involeds; //匹配列表中的玩家  
     SceneInfo() 
     { 
-        type = 0; 
-        status = 0; 
+        sceneType = 0; 
+        spaceStatus = 0; 
         port = 0; 
         spaceID = 0; 
         isActive = 0; 
     } 
-    SceneInfo(const unsigned short & type, const unsigned short & status, const std::string & host, const unsigned short & port, const unsigned int & spaceID, const std::string & token, const unsigned char & isActive, const UserBaseInfoArray & involeds) 
+    SceneInfo(const unsigned short & sceneType, const unsigned short & spaceStatus, const std::string & host, const unsigned short & port, const unsigned int & spaceID, const std::string & token, const unsigned char & isActive, const UserBaseInfoArray & involeds) 
     { 
-        this->type = type; 
-        this->status = status; 
+        this->sceneType = sceneType; 
+        this->spaceStatus = spaceStatus; 
         this->host = host; 
         this->port = port; 
         this->spaceID = spaceID; 
@@ -55,8 +55,8 @@ struct SceneInfo //场景信息
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneInfo & data) 
 { 
-    ws << data.type;  
-    ws << data.status;  
+    ws << data.sceneType;  
+    ws << data.spaceStatus;  
     ws << data.host;  
     ws << data.port;  
     ws << data.spaceID;  
@@ -67,8 +67,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneInfo & data) 
 { 
-    rs >> data.type;  
-    rs >> data.status;  
+    rs >> data.sceneType;  
+    rs >> data.spaceStatus;  
     rs >> data.host;  
     rs >> data.port;  
     rs >> data.spaceID;  
@@ -80,8 +80,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneInfo & info) 
 { 
     stm << "[\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "status=" << info.status << "\n"; 
+    stm << "sceneType=" << info.sceneType << "\n"; 
+    stm << "spaceStatus=" << info.spaceStatus << "\n"; 
     stm << "host=" << info.host << "\n"; 
     stm << "port=" << info.port << "\n"; 
     stm << "spaceID=" << info.spaceID << "\n"; 
@@ -97,9 +97,10 @@ typedef std::vector<SceneInfo> SceneInfoArray;
  
 enum SPACE_STATUS : unsigned short 
 { 
-    SPACE_STATUS_FREE = 0, //自由  
-    SCENE_STATUS_ACTIVE = 1, //活跃  
-    SCENE_STATUS_LINGER = 2, //驻留  
+    SPACE_STATUS_NONE = 0, //不存在  
+    SPACE_STATUS_WAIT = 1, //等待  
+    SCENE_STATUS_ACTIVE = 2, //活跃  
+    SCENE_STATUS_LINGER = 3, //驻留  
 }; 
  
 struct SpaceInfo //空间信息  
@@ -107,37 +108,37 @@ struct SpaceInfo //空间信息
     static const unsigned short getProtoID() { return 10017;} 
     static const std::string getProtoName() { return "SpaceInfo";} 
     unsigned int spaceID;  
-    unsigned short type; //类型  
-    unsigned short status; //状态  
+    unsigned short sceneType; //类型  
+    unsigned short spaceStatus; //状态  
     unsigned int users; //目前负载  
     SpaceInfo() 
     { 
         spaceID = 0; 
-        type = 0; 
-        status = 0; 
+        sceneType = 0; 
+        spaceStatus = 0; 
         users = 0; 
     } 
-    SpaceInfo(const unsigned int & spaceID, const unsigned short & type, const unsigned short & status, const unsigned int & users) 
+    SpaceInfo(const unsigned int & spaceID, const unsigned short & sceneType, const unsigned short & spaceStatus, const unsigned int & users) 
     { 
         this->spaceID = spaceID; 
-        this->type = type; 
-        this->status = status; 
+        this->sceneType = sceneType; 
+        this->spaceStatus = spaceStatus; 
         this->users = users; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SpaceInfo & data) 
 { 
     ws << data.spaceID;  
-    ws << data.type;  
-    ws << data.status;  
+    ws << data.sceneType;  
+    ws << data.spaceStatus;  
     ws << data.users;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SpaceInfo & data) 
 { 
     rs >> data.spaceID;  
-    rs >> data.type;  
-    rs >> data.status;  
+    rs >> data.sceneType;  
+    rs >> data.spaceStatus;  
     rs >> data.users;  
     return rs; 
 } 
@@ -145,8 +146,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "spaceID=" << info.spaceID << "\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "status=" << info.status << "\n"; 
+    stm << "sceneType=" << info.sceneType << "\n"; 
+    stm << "spaceStatus=" << info.spaceStatus << "\n"; 
     stm << "users=" << info.users << "\n"; 
     stm << "]\n"; 
     return stm; 

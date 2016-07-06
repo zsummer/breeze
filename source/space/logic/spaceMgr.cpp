@@ -32,8 +32,80 @@ bool SpaceMgr::init(const std::string & configName, ui32 serverID)
         LOGE("SpaceMgr::init error. DBDict load error. ");
         return false;
     }
+    
+    return loadSpaces();
+}
 
+bool SpaceMgr::loadSpaces()
+{
+    _spaces.clear();
+    SpaceID lastID = ServerConfig::getRef().getSpaceConfig()._spaceID;
+    lastID *= 1000;
+    for (int i=0; i<1000; i++)
+    {
+        lastID++;
+        _spaces.insert(std::make_pair(lastID, std::make_shared<Space>(lastID)));
+    }
+    onTimer();
     return true;
+}
+
+SpacePtr SpaceMgr::getSpace(SpaceID spaceID)
+{
+    auto founder = _spaces.find(spaceID);
+    if (founder == _spaces.end())
+    {
+        return nullptr;
+    }
+    return founder->second;
+}
+
+void SpaceMgr::refreshSpaceStatusToWorld(SpaceID spaceID)
+{
+    auto spacePtr = getSpace(spaceID);
+    if (!spacePtr)
+    {
+        LOGE("");
+        return;
+    }
+    SpaceInfoToWorldNotice notice;
+    notice.host = ServerConfig::getRef().getSpaceConfig()._clientPubHost;
+    notice.port = ServerConfig::getRef().getSpaceConfig()._clientListenPort;
+    if(true)
+    {
+        SpaceInfo si;
+        si.sceneType = spacePtr->getSceneType();
+        si.spaceStatus = spacePtr->getSpaceStatus();
+        si.users = spacePtr->getUsersCount();
+        si.spaceID = spacePtr->getSpaceID();
+        notice.spaceInfos.push_back(si);
+    }
+    sendToWorld(notice);
+}
+
+void SpaceMgr::onTimer()
+{
+    if (isStopping())
+    {
+        return ;
+    }
+    SessionManager::getRef().createTimer(33, std::bind(&SpaceMgr::onTimer, this));
+    for (auto kv : _actives)
+    {
+        try
+        {
+            kv.second->onUpdate();
+        }
+        catch (const std::exception & e)
+        {
+            LOGE(e.what());
+        }
+        catch (...)
+        {
+            LOGE("...");
+        }
+    }
+    return ;
 }
 
 void sigInt(int sig)
@@ -117,13 +189,13 @@ bool SpaceMgr::startWorldConnect()
 {
     auto wc = ServerConfig::getRef().getWorldConfig();
     
-    SessionID worldID= SessionManager::getRef().addConnecter(wc._spaceListenHost, wc._spaceListenPort);
-    if (worldID == InvalidSessionID)
+    _worldSessionID = SessionManager::getRef().addConnecter(wc._spaceListenHost, wc._spaceListenPort);
+    if (_worldSessionID == InvalidSessionID)
     {
         LOGE("SpaceMgr::startWorldConnect openConnecter error. bind ip=" << wc._spaceListenHost << ", bind port=" << wc._spaceListenPort);
         return false;
     }
-    auto &options = SessionManager::getRef().getConnecterOptions(worldID);
+    auto &options = SessionManager::getRef().getConnecterOptions(_worldSessionID);
     options._sessionPulseInterval = 5000;
     options._onSessionPulse = [](TcpSessionPtr session)
     {
@@ -135,15 +207,16 @@ bool SpaceMgr::startWorldConnect()
     options._onSessionLinked = std::bind(&SpaceMgr::event_onWorldLinked, this, _1);
     options._onSessionClosed = std::bind(&SpaceMgr::event_onWorldClosed, this, _1);
     options._onBlockDispatch = std::bind(&SpaceMgr::event_onWorldMessage, this, _1, _2, _3);
-    if (!SessionManager::getRef().openConnecter(worldID))
+    if (!SessionManager::getRef().openConnecter(_worldSessionID))
     {
         LOGE("SpaceMgr::startWorldConnect openConnecter error. bind ip=" << wc._spaceListenHost << ", bind port=" << wc._spaceListenPort);
         return false;
     }
     LOGA("SpaceMgr::startWorldConnect openAccepter success. bind ip=" << wc._spaceListenHost 
-        << ", bind port=" << wc._spaceListenPort <<", openConnecter=" << worldID);
+        << ", bind port=" << wc._spaceListenPort <<", openConnecter=" << _worldSessionID);
     return true;
 }
+
 
 
 void SpaceMgr::sendToSession(SessionID sessionID, const char * block, unsigned int len)
@@ -154,6 +227,7 @@ void SpaceMgr::sendToSession(SessionID sessionID, const char * block, unsigned i
 bool SpaceMgr::start()
 {
     return startClientListen() && startWorldConnect();
+    
 }
 
 void SpaceMgr::event_onWorldLinked(TcpSessionPtr session)
@@ -165,6 +239,12 @@ void SpaceMgr::event_onWorldLinked(TcpSessionPtr session)
     notice.port = ServerConfig::getRef().getSpaceConfig()._clientListenPort;
     for (auto kv : _spaces)
     {
+        SpaceInfo si;
+        si.sceneType = kv.second->getSceneType();
+        si.spaceStatus = kv.second->getSpaceStatus();
+        si.users = kv.second->getUsersCount();
+        si.spaceID = kv.second->getSpaceID();
+        notice.spaceInfos.push_back(si);
     }
     sendToSession(session->getSessionID(), notice);
     LOGI("event_onWorldLinked cID=" << session->getSessionID() );
@@ -193,7 +273,9 @@ void SpaceMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
     }
     else if (rsShell.getProtoID() == FillUserToSpaceNotice::getProtoID())
     {
-
+        FillUserToSpaceNotice fn;
+        rsShell >> fn;
+     
     }
 
 }

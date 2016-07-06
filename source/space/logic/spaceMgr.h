@@ -50,14 +50,18 @@ public:
     template<class Proto>
     void sendToSession(SessionID sessionID, const Proto & proto);
 
-
+    template<class Proto>
+    void sendToWorld(const Proto & proto);
 private:
     //内部接口 
     //打开监听端口,新连接 
     bool startClientListen();
     bool startWorldConnect();
-
-
+    bool loadSpaces();
+    void onTimer();
+public:
+    SpacePtr getSpace(SpaceID);
+    void refreshSpaceStatusToWorld(SpaceID spaceID);
 private:
     //docker间通讯处理 
     void event_onWorldLinked(TcpSessionPtr session);
@@ -73,6 +77,10 @@ private:
 
 private:
     std::map<SpaceID, SpacePtr> _spaces;
+    std::map<SpaceID, SpacePtr> _actives;
+    std::map<SpaceID, SpacePtr> _frees;
+
+    SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;
 };
 
@@ -93,7 +101,14 @@ void SpaceMgr::sendToSession(SessionID sessionID, const Proto & proto)
         LOGE("Docker::sendToSession catch except error. e=" << e.what());
     }
 }
-
+template<class Proto>
+void SpaceMgr::sendToWorld(const Proto & proto)
+{
+    if (_worldSessionID != InvalidSessionID)
+    {
+        sendToSession(_worldSessionID, proto);
+    }
+}
 
 
 #endif

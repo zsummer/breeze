@@ -23,6 +23,8 @@
 #include <ProtoCommon.h>
 #include <ProtoUser.h>
 #include <ProtoSpaceCommon.h>
+#include <ProtoSpaceServer.h>
+#include <ProtoSpaceClient.h>
 
 
 class Entity
@@ -36,7 +38,7 @@ public:
     double getAttack();
 
     UserBaseInfo _base;
-    EntityInfo _info;
+    EntityInfo  _info;
     EntityControl _control;
     EntityReport _report;
     SessionID _clientSessionID = InvalidSessionID;

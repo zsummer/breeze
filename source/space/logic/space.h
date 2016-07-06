@@ -25,13 +25,30 @@ class Space
 {
     //space数据
 private:
-    SpaceID _spaceID = InvalidSpaceID;
-    EntityID _lastEID = ServerConfig::getRef().getSpaceConfig()._spaceID * 1000 + 1000;
+    SCENE_TYPE _sceneType;
+    SPACE_STATUS _spaceStatus;
+    double _lastSpaceStatusChangeTick;
+    SpaceID _spaceID;
+    EntityID _lastEID;
     std::map<EntityID, EntityPtr> _entitys;
     std::map<ServiceID, EntityPtr> _users;
 public:
-    Space();
-    ~Space();
+    inline SpaceID getSpaceID() { return _spaceID; }
+    inline SCENE_TYPE getSceneType() { return _sceneType; }
+    inline SPACE_STATUS getSpaceStatus() { return _spaceStatus; }
+    inline size_t getEntitysCount() { return _entitys.size(); }
+    inline size_t getUsersCount() { return _users.size(); }
+public:
+    Space(SpaceID id);
+    bool cleanSpace();
+    bool loadSpace(SCENE_TYPE sceneType);
+    bool onUpdate();
+public:
+
+
+
+
+
     //消息队列 
 public:
     template <typename MSG>
