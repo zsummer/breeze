@@ -33,7 +33,10 @@ void UserService::onClientChange()
 
 bool UserService::onLoad()
 {
-    _baseInfo.loadFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleLoad, std::static_pointer_cast<UserService>(shared_from_this()), _1, _2));
+    UserBaseInfo ubi;
+    ubi.userID = getServiceID();
+    ubi.userName = getServiceName();
+    _baseInfo.loadFromDB(shared_from_this(), ubi, std::bind(&UserService::onModuleLoad, std::static_pointer_cast<UserService>(shared_from_this()), _1, _2));
     return true;
 }
 

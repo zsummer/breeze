@@ -736,30 +736,26 @@ struct EntityDict //字典属性
     static const std::string getProtoName() { return "EntityDict";} 
     unsigned long long serviceID; //用户ID, 非用户为InvalidServiceID  
     UserBaseInfo base;  
-    FightEffect fight; //战斗属性  
     EntityDict() 
     { 
         serviceID = 0; 
     } 
-    EntityDict(const unsigned long long & serviceID, const UserBaseInfo & base, const FightEffect & fight) 
+    EntityDict(const unsigned long long & serviceID, const UserBaseInfo & base) 
     { 
         this->serviceID = serviceID; 
         this->base = base; 
-        this->fight = fight; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityDict & data) 
 { 
     ws << data.serviceID;  
     ws << data.base;  
-    ws << data.fight;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityDict & data) 
 { 
     rs >> data.serviceID;  
     rs >> data.base;  
-    rs >> data.fight;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityDict & info) 
@@ -767,7 +763,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "serviceID=" << info.serviceID << "\n"; 
     stm << "base=" << info.base << "\n"; 
-    stm << "fight=" << info.fight << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

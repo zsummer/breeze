@@ -53,18 +53,16 @@ struct FillUserToSpaceNotice //token丢给space
     std::string token; //服务器port  
     SpaceID spaceID; //类型  
     UserBaseInfo baseInfo; //类型  
-    FightEffect effects; //类型  
     FillUserToSpaceNotice() 
     { 
         userID = 0; 
     } 
-    FillUserToSpaceNotice(const unsigned long long & userID, const std::string & token, const SpaceID & spaceID, const UserBaseInfo & baseInfo, const FightEffect & effects) 
+    FillUserToSpaceNotice(const unsigned long long & userID, const std::string & token, const SpaceID & spaceID, const UserBaseInfo & baseInfo) 
     { 
         this->userID = userID; 
         this->token = token; 
         this->spaceID = spaceID; 
         this->baseInfo = baseInfo; 
-        this->effects = effects; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FillUserToSpaceNotice & data) 
@@ -73,7 +71,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.token;  
     ws << data.spaceID;  
     ws << data.baseInfo;  
-    ws << data.effects;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FillUserToSpaceNotice & data) 
@@ -82,7 +79,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.token;  
     rs >> data.spaceID;  
     rs >> data.baseInfo;  
-    rs >> data.effects;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FillUserToSpaceNotice & info) 
@@ -92,7 +88,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "token=" << info.token << "\n"; 
     stm << "spaceID=" << info.spaceID << "\n"; 
     stm << "baseInfo=" << info.baseInfo << "\n"; 
-    stm << "effects=" << info.effects << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

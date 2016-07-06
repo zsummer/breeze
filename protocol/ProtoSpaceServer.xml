@@ -25,7 +25,6 @@
         <member name="token" type="string"  desc="服务器port"/>
         <member name="spaceID" type="SpaceID"  desc="类型"/>
         <member name="baseInfo" type="UserBaseInfo"  desc="类型"/>
-        <member name="effects" type="FightEffect"  desc="类型"/>
     </proto>
 
 

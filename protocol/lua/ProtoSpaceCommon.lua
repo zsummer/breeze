@@ -246,7 +246,6 @@ Proto4z.EntityDict.__protoID = 10009
 Proto4z.EntityDict.__protoName = "EntityDict" 
 Proto4z.EntityDict[1] = {name="serviceID", type="ui64" } --用户ID, 非用户为InvalidServiceID 
 Proto4z.EntityDict[2] = {name="base", type="UserBaseInfo" }  
-Proto4z.EntityDict[3] = {name="fight", type="FightEffect" } --战斗属性 
  
 Proto4z.EntityDictArray = {}  
 Proto4z.EntityDictArray.__protoName = "EntityDictArray" 

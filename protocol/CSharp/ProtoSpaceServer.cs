@@ -54,22 +54,19 @@ namespace Proto4z
         public string token; //服务器port  
         public SpaceID spaceID; //类型  
         public UserBaseInfo baseInfo; //类型  
-        public FightEffect effects; //类型  
         public FillUserToSpaceNotice()  
         { 
             userID = 0;  
             token = "";  
             spaceID = new SpaceID();  
             baseInfo = new UserBaseInfo();  
-            effects = new FightEffect();  
         } 
-        public FillUserToSpaceNotice(ulong userID, string token, SpaceID spaceID, UserBaseInfo baseInfo, FightEffect effects) 
+        public FillUserToSpaceNotice(ulong userID, string token, SpaceID spaceID, UserBaseInfo baseInfo) 
         { 
             this.userID = userID; 
             this.token = token; 
             this.spaceID = spaceID; 
             this.baseInfo = baseInfo; 
-            this.effects = effects; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -80,8 +77,6 @@ namespace Proto4z
             data.AddRange(this.spaceID.__encode()); 
             if (this.baseInfo == null) this.baseInfo = new UserBaseInfo(); 
             data.AddRange(this.baseInfo.__encode()); 
-            if (this.effects == null) this.effects = new FightEffect(); 
-            data.AddRange(this.effects.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -92,8 +87,6 @@ namespace Proto4z
             this.spaceID.__decode(binData, ref pos); 
             this.baseInfo = new UserBaseInfo(); 
             this.baseInfo.__decode(binData, ref pos); 
-            this.effects = new FightEffect(); 
-            this.effects.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

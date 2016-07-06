@@ -27,7 +27,6 @@
 #include "single.h"
 #include "dbAsync.h"
 #include "utls.h"
-#include <ProtoDict.h>
 #include <ProtoCommon.h>
 #include <ProtoUser.h>
 #include <ProtoDocker.h>
@@ -94,7 +93,7 @@ public:
         if (!helper) return false;
         buildTable<DictGlobal>(helper);
         buildTable<DictRafflePool>(helper);
-        buildTable<FightEffect>(helper);
+        buildTable<DictBaseProps>(helper);
         buildTable<DictItem>(helper);
         return true;
     }
@@ -123,14 +122,14 @@ public:
     {
         LOAD_ONE_KEY_DICT(DictGlobal);
         LOAD_ONE_KEY_DICT(DictRafflePool);
-        LOAD_ONE_KEY_DICT(FightEffect);
+        LOAD_ONE_KEY_DICT(DictBaseProps);
         LOAD_ONE_KEY_DICT(DictItem);
         return true;
     }
     
     MAKE_ONE_KEY_DICT(DictGlobal, ui32, id);
     MAKE_ONE_KEY_DICT(DictRafflePool, ui32, id);
-    MAKE_ONE_KEY_DICT(FightEffect, ui32, id);
+    MAKE_ONE_KEY_DICT(DictBaseProps, ui32, id);
     MAKE_ONE_KEY_DICT(DictItem, ui32, id);
 
 private:

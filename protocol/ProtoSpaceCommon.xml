@@ -262,7 +262,6 @@
     <struct name="EntityDict" desc="字典属性">
         <member name="serviceID" type="ui64"  desc="用户ID, 非用户为InvalidServiceID"/>
         <member name="base" type="UserBaseInfo"  desc=""/>
-        <member name="fight" type="FightEffect"  desc="战斗属性"/>
     </struct>
     <array name="EntityDictArray" type="EntityDict" desc="" />
 

@@ -939,18 +939,15 @@ namespace Proto4z
         //members   
         public ulong serviceID; //用户ID, 非用户为InvalidServiceID  
         public UserBaseInfo base;  
-        public FightEffect fight; //战斗属性  
         public EntityDict()  
         { 
             serviceID = 0;  
             base = new UserBaseInfo();  
-            fight = new FightEffect();  
         } 
-        public EntityDict(ulong serviceID, UserBaseInfo base, FightEffect fight) 
+        public EntityDict(ulong serviceID, UserBaseInfo base) 
         { 
             this.serviceID = serviceID; 
             this.base = base; 
-            this.fight = fight; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -958,8 +955,6 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
             if (this.base == null) this.base = new UserBaseInfo(); 
             data.AddRange(this.base.__encode()); 
-            if (this.fight == null) this.fight = new FightEffect(); 
-            data.AddRange(this.fight.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -967,8 +962,6 @@ namespace Proto4z
             this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.base = new UserBaseInfo(); 
             this.base.__decode(binData, ref pos); 
-            this.fight = new FightEffect(); 
-            this.fight.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
