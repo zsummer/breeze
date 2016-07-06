@@ -13,5 +13,6 @@ Proto4z.FillUserToSpaceNotice.__protoID = 39012
 Proto4z.FillUserToSpaceNotice.__protoName = "FillUserToSpaceNotice" 
 Proto4z.FillUserToSpaceNotice[1] = {name="userID", type="ui64" }  
 Proto4z.FillUserToSpaceNotice[2] = {name="token", type="string" } --服务器port 
-Proto4z.FillUserToSpaceNotice[3] = {name="spaceID", type="SpaceID" } --类型 
-Proto4z.FillUserToSpaceNotice[4] = {name="baseInfo", type="UserBaseInfo" } --类型 
+Proto4z.FillUserToSpaceNotice[3] = {name="spaceID", type="SpaceID" } --id 
+Proto4z.FillUserToSpaceNotice[4] = {name="sceneType", type="ui16" } --类型 
+Proto4z.FillUserToSpaceNotice[5] = {name="baseInfo", type="UserBaseInfo" } --类型 

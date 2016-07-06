@@ -51,17 +51,20 @@ struct FillUserToSpaceNotice //token丢给space
     static const std::string getProtoName() { return "FillUserToSpaceNotice";} 
     unsigned long long userID;  
     std::string token; //服务器port  
-    SpaceID spaceID; //类型  
+    SpaceID spaceID; //id  
+    unsigned short sceneType; //类型  
     UserBaseInfo baseInfo; //类型  
     FillUserToSpaceNotice() 
     { 
         userID = 0; 
+        sceneType = 0; 
     } 
-    FillUserToSpaceNotice(const unsigned long long & userID, const std::string & token, const SpaceID & spaceID, const UserBaseInfo & baseInfo) 
+    FillUserToSpaceNotice(const unsigned long long & userID, const std::string & token, const SpaceID & spaceID, const unsigned short & sceneType, const UserBaseInfo & baseInfo) 
     { 
         this->userID = userID; 
         this->token = token; 
         this->spaceID = spaceID; 
+        this->sceneType = sceneType; 
         this->baseInfo = baseInfo; 
     } 
 }; 
@@ -70,6 +73,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.userID;  
     ws << data.token;  
     ws << data.spaceID;  
+    ws << data.sceneType;  
     ws << data.baseInfo;  
     return ws; 
 } 
@@ -78,6 +82,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.userID;  
     rs >> data.token;  
     rs >> data.spaceID;  
+    rs >> data.sceneType;  
     rs >> data.baseInfo;  
     return rs; 
 } 
@@ -87,6 +92,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "userID=" << info.userID << "\n"; 
     stm << "token=" << info.token << "\n"; 
     stm << "spaceID=" << info.spaceID << "\n"; 
+    stm << "sceneType=" << info.sceneType << "\n"; 
     stm << "baseInfo=" << info.baseInfo << "\n"; 
     stm << "]\n"; 
     return stm; 

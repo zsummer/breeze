@@ -275,7 +275,27 @@ void SpaceMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
     {
         FillUserToSpaceNotice fn;
         rsShell >> fn;
-     
+        auto space = getSpace(fn.spaceID);
+        if (!space)
+        {
+            LOGE(", spaceID=" << fn.spaceID);
+            return;
+        }
+        if (space->getSpaceStatus() == SPACE_STATUS_NONE)
+        {
+            if (!space->loadSpace((SCENE_TYPE)fn.sceneType))
+            {
+                LOGE("");
+                return;
+            }
+        }
+        else if (space->getSpaceStatus() == SCENE_STATUS_LINGER)
+        {
+            LOGE("");
+            return;
+        }
+        space->fillUserProp(fn);
+        return;
     }
 
 }

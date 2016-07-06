@@ -23,7 +23,8 @@
     <proto name="FillUserToSpaceNotice" desc= "token丢给space">
         <member name="userID" type="ui64"  desc=""/>
         <member name="token" type="string"  desc="服务器port"/>
-        <member name="spaceID" type="SpaceID"  desc="类型"/>
+        <member name="spaceID" type="SpaceID"  desc="id"/>
+        <member name="sceneType" type="ui16"  desc="类型"/>
         <member name="baseInfo" type="UserBaseInfo"  desc="类型"/>
     </proto>
 

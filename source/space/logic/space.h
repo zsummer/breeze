@@ -43,6 +43,8 @@ public:
     bool cleanSpace();
     bool loadSpace(SCENE_TYPE sceneType);
     bool onUpdate();
+
+    void fillUserProp(const FillUserToSpaceNotice& notice);
 public:
 
 

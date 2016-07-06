@@ -42,5 +42,8 @@ bool Space::onUpdate()
 }
 
 
+void Space::fillUserProp(const FillUserToSpaceNotice& notice)
+{
 
+}
 
