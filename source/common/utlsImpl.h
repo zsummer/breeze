@@ -271,21 +271,21 @@ splitString(std::string text, const std::string & deli, const std::string & ign)
 }
 
 
-inline double getFloatTick()
+inline double getFloatNowTime()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
-inline double getFloatSteadyTick()
+inline double getFloatSteadyNowTime()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-inline long long getIntegerTick()
+inline long long getNowTick()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-inline long long getIntegerSteadyTick()
+inline long long getNowSteadyTick()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }

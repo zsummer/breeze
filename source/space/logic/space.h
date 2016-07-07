@@ -49,6 +49,11 @@ public:
     EntityPtr getEntity(EntityID eID);
     EntityPtr getUserEntity(ServiceID userID);
 
+    bool addEntity(EntityPtr entity); 
+    bool removeEntity(EntityID eid); 
+    bool enterSpace(ServiceID userID); 
+    bool leaveSpace(ServiceID userID);
+
 public:
 
 

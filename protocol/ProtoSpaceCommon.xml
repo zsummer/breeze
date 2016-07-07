@@ -11,6 +11,19 @@
 
     <!-- 概述  所有数据除非必要, 一律使用双精度浮点.  概率用浮点表达为[0.0-1.0], 时间用浮点表达单位为秒,精确到毫秒 -->
 
+
+    <!--  -->
+    <array name="EntityIDArray" type="ui32" desc="" />
+    <struct name="EPoint" desc="" >
+        <member name="x" type="double" />
+        <member name="y" type="double" />
+    </struct>
+    <array name="EPoints" type="EPoint" desc="" />
+
+    <array name="SkillIDArray" type="ui32" desc="技能ID数组" />
+    <array name="BuffIDArray" type="ui32" desc="buff ID 数组" />
+
+
      <!-- 场景类型 -->
     <enum type="ui16" name="SCENE_TYPE" desc="场景类型, 每个space都绑定一个场景类型" >
         <member name="SCENE_TYPE_NONE" value="0"   desc="无效"/>
@@ -169,15 +182,7 @@
 
     </enum>
 
-    <!-- 实体坐标 -->
-    <struct name="EPoint" desc="" >
-        <member name="x" type="double" />
-        <member name="y" type="double" />
-    </struct>
-    <array name="EPoints" type="EPoint" desc="" />
 
-    <array name="SkillIDArray" type="ui32" desc="技能ID数组" />
-    <array name="BuffIDArray" type="ui32" desc="buff ID 数组" />
 
     <struct name="SearchInfo" desc="">
         <member name="searchMethod" type="ui16"  desc=""/>
@@ -235,8 +240,8 @@
     <!-- SkillInfo -->
     <struct name="SkillInfo" desc="" >
         <member name="skillID" type="ui32" />
-        <member name="start" type="double" desc="start (server)tick"/>
-        <member name="lastHitTick" type="double" desc="lastHitTick"/>
+        <member name="startTime" type="double" desc=""/>
+        <member name="lastHitTime" type="double" desc=""/>
         <member name="seq" type="ui32" desc="hit seq"/>
         <member name="dst"  type="EPoint" desc="目标位置"/>  
         <member name="foe"  type="ui32" desc="锁定的目标"/>  
@@ -256,15 +261,6 @@
     </struct>
     <array name="BuffInfoArray" type="BuffInfo" desc="" />
 
-
-
-
-    <!-- 字典属性 -->
-    <struct name="EntityDict" desc="字典属性">
-        <member name="serviceID" type="ui64"  desc="用户ID, 非用户为InvalidServiceID"/>
-        <member name="base" type="UserBaseInfo"  desc=""/>
-    </struct>
-    <array name="EntityDictArray" type="EntityDict" desc="" />
 
 
 
@@ -292,15 +288,15 @@
         <member name="eid" type="ui32"  desc="eid"/>
         <member name="stateChageTick" type="double"  desc="状态改变时间"/>
         <member name="extSpeed" type="double"  desc="扩展速度"/>
-        <member name="extBeginTick" type="double"  desc="扩展速度的开始时间"/>
-        <member name="extKeepTick" type="double"  desc="扩展速度的保持时间"/>
+        <member name="extBeginTime" type="double"  desc="扩展速度的开始时间"/>
+        <member name="extKeepTime" type="double"  desc="扩展速度的保持时间"/>
         <member name="spawnpoint" type="EPoint"   desc="出生点"/>
         <member name="lastPos"  type="EPoint" desc="上一帧实体坐标, 如果是瞬移 则和pos相同"/>
         <member name="skills"  type="SkillInfoArray" desc="技能数据"/>
         <member name="buffs"  type="BuffInfoArray" desc="BUFF数据, 小标ID对应bufftype"/>
-        <member name="diedTick"  type="double" desc="实体死亡时间点 -1为永久, 仅飞行道具类有效"/>
+        <member name="diedTime"  type="double" desc="实体死亡时间点 -1为永久, 仅飞行道具类有效"/>
         <member name="hitTimes"  type="i32" desc="实体碰撞 -1为永久, 仅飞行道具类有效"/>
-        <member name="lastMoveTick"  type="ui32" desc="最后一次移动时间"/>
+        <member name="lastMoveTime"  type="double" desc="最后一次移动时间"/>
         <member name="lastClientPos"  type="EPoint" desc="最后一次客户端提交的坐标"/>
     </struct>
     <array name="EntityControlArray" type="EntityControl" desc="" />
@@ -308,8 +304,8 @@
     <!-- 实体战报 -->
     <struct name="EntityReport" desc="EntityReport">
         <member name="eid" type="ui32"  desc="eid"/>
-        <member name="killCount" type="ui32"  desc="杀死其他玩家次数"/>
-        <member name="killTick" type="ui32"  desc="杀死其他玩家的时间"/>
+        <member name="killOtherCount" type="ui32"  desc="杀死其他玩家次数"/>
+        <member name="killOtherTime" type="ui32"  desc="杀死其他玩家的时间"/>
         <member name="diedCount" type="ui32"  desc="死亡次数"/>
         <member name="topMultiKills" type="ui32"  desc="最高连杀次数"/>
         <member name="curMultiKills" type="ui32"  desc="当前连杀次数"/>
@@ -318,7 +314,7 @@
 
     <!-- 一个实体的完整数据, 包括属性,状态 位置等. -->
     <struct name="EntityFullInfo" desc="EntityFullInfo">
-        <member name="dict" type="EntityDict"  desc=""/>
+        <member name="base" type="UserBaseInfo"  desc=""/>
         <member name="info" type="EntityInfo"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>

@@ -33,7 +33,7 @@ public:
     Entity();
     ~Entity();
     double getSpeed();
-    ui32 getElapsed(ui32 now);
+    double getElapsed(double now);
     double getSuckBlood();
     double getAttack();
 

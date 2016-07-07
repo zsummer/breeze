@@ -10,12 +10,12 @@ Entity::~Entity()
 }
 
 
-ui32 Entity::getElapsed(ui32 now)
+double Entity::getElapsed(double now)
 {
-    if (_control.lastMoveTick < _control.extBeginTick)_control.lastMoveTick = _control.extBeginTick;
-    if (_control.lastMoveTick > now) _control.lastMoveTick = now;
-    ui32 elapse = now - _control.lastMoveTick;
-    _control.lastMoveTick = now;
+    if (_control.lastMoveTime < _control.extBeginTime)_control.lastMoveTime = _control.extBeginTime;
+    if (_control.lastMoveTime > now) _control.lastMoveTime = now;
+    double elapse = now - _control.lastMoveTime;
+    _control.lastMoveTime = now;
     return elapse;
 }
 double Entity::getSpeed()

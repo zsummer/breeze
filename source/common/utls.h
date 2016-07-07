@@ -180,10 +180,10 @@ void sleepMillisecond(unsigned int ms);
 
 //----- time check ------
 //check used time. don't used it as datetime.
-inline double getFloatTick();
-inline double getFloatSteadyTick();
-inline long long getIntegerTick();
-inline long long getIntegerSteadyTick();
+inline double getFloatNowTime();
+inline double getFloatSteadyNowTime();
+inline long long getNowTick();
+inline long long getNowSteadyTick();
 
 //-----date time---------
 //the second through 1900-01-01 00:00:00

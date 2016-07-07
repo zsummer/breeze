@@ -51,5 +51,34 @@
 
     
 
+
+
+
+    <proto name="FillSpaceNotice" desc= "填充场景数据">
+        <member name="entitys"  type="EntityFullInfoArray" desc="这里包含有所有当前场景下的实体属性和状态数据"/>
+        <member name="spaceStartTime"  type="double" desc="服务器战场开始时间"/>
+        <member name="spaceEndTime"  type="double" desc="服务器战场结束时间"/>
+        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+    </proto>
+
+    <proto name="RefreshSpaceNotice" desc= "增量更新场景中的实体数据, 服务器定时100ms广播">
+        <member name="entitys"  type="EntityInfoArray" desc=""/>
+        <member name="reports"  type="EntityReportArray" desc=""/>
+        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+    </proto>
+
+
+     <proto name="AddEntityNotice" desc= "一批实体加入场景时, 把这些实体的数据广播给其他玩家">
+        <member name="entitys"  type="EntityFullInfoArray" desc=""/>
+        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+    </proto>
+
+     <proto name="RemoveEntityNotice" desc= "实体离开场景时, 把该实体的数据广播给其他玩家">
+        <member name="eids"  type="EntityIDArray" desc=""/>
+        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+    </proto>
+
+
+
 </Proto>
 

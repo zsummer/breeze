@@ -56,3 +56,34 @@ Proto4z.QuitSceneAck.__protoID = 50008
 Proto4z.QuitSceneAck.__protoName = "QuitSceneAck" 
 Proto4z.QuitSceneAck[1] = {name="retCode", type="ui16" } --错误码 
 Proto4z.QuitSceneAck[2] = {name="scenes", type="SceneInfoArray" } --要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中 
+ 
+Proto4z.register(50009,"FillSpaceNotice") 
+Proto4z.FillSpaceNotice = {} --填充场景数据 
+Proto4z.FillSpaceNotice.__protoID = 50009 
+Proto4z.FillSpaceNotice.__protoName = "FillSpaceNotice" 
+Proto4z.FillSpaceNotice[1] = {name="entitys", type="EntityFullInfoArray" } --这里包含有所有当前场景下的实体属性和状态数据 
+Proto4z.FillSpaceNotice[2] = {name="spaceStartTime", type="double" } --服务器战场开始时间 
+Proto4z.FillSpaceNotice[3] = {name="spaceEndTime", type="double" } --服务器战场结束时间 
+Proto4z.FillSpaceNotice[4] = {name="serverTime", type="double" } --服务器当前时间 
+ 
+Proto4z.register(50010,"RefreshSpaceNotice") 
+Proto4z.RefreshSpaceNotice = {} --增量更新场景中的实体数据, 服务器定时100ms广播 
+Proto4z.RefreshSpaceNotice.__protoID = 50010 
+Proto4z.RefreshSpaceNotice.__protoName = "RefreshSpaceNotice" 
+Proto4z.RefreshSpaceNotice[1] = {name="entitys", type="EntityInfoArray" }  
+Proto4z.RefreshSpaceNotice[2] = {name="reports", type="EntityReportArray" }  
+Proto4z.RefreshSpaceNotice[3] = {name="serverTime", type="double" } --服务器当前时间 
+ 
+Proto4z.register(50011,"AddEntityNotice") 
+Proto4z.AddEntityNotice = {} --一批实体加入场景时, 把这些实体的数据广播给其他玩家 
+Proto4z.AddEntityNotice.__protoID = 50011 
+Proto4z.AddEntityNotice.__protoName = "AddEntityNotice" 
+Proto4z.AddEntityNotice[1] = {name="entitys", type="EntityFullInfoArray" }  
+Proto4z.AddEntityNotice[2] = {name="serverTime", type="double" } --服务器当前时间 
+ 
+Proto4z.register(50012,"RemoveEntityNotice") 
+Proto4z.RemoveEntityNotice = {} --实体离开场景时, 把该实体的数据广播给其他玩家 
+Proto4z.RemoveEntityNotice.__protoID = 50012 
+Proto4z.RemoveEntityNotice.__protoName = "RemoveEntityNotice" 
+Proto4z.RemoveEntityNotice[1] = {name="eids", type="EntityIDArray" }  
+Proto4z.RemoveEntityNotice[2] = {name="serverTime", type="double" } --服务器当前时间 

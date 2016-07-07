@@ -304,4 +304,169 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct FillSpaceNotice //填充场景数据  
+{ 
+    static const unsigned short getProtoID() { return 50009;} 
+    static const std::string getProtoName() { return "FillSpaceNotice";} 
+    EntityFullInfoArray entitys; //这里包含有所有当前场景下的实体属性和状态数据  
+    double spaceStartTime; //服务器战场开始时间  
+    double spaceEndTime; //服务器战场结束时间  
+    double serverTime; //服务器当前时间  
+    FillSpaceNotice() 
+    { 
+        spaceStartTime = 0.0; 
+        spaceEndTime = 0.0; 
+        serverTime = 0.0; 
+    } 
+    FillSpaceNotice(const EntityFullInfoArray & entitys, const double & spaceStartTime, const double & spaceEndTime, const double & serverTime) 
+    { 
+        this->entitys = entitys; 
+        this->spaceStartTime = spaceStartTime; 
+        this->spaceEndTime = spaceEndTime; 
+        this->serverTime = serverTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FillSpaceNotice & data) 
+{ 
+    ws << data.entitys;  
+    ws << data.spaceStartTime;  
+    ws << data.spaceEndTime;  
+    ws << data.serverTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FillSpaceNotice & data) 
+{ 
+    rs >> data.entitys;  
+    rs >> data.spaceStartTime;  
+    rs >> data.spaceEndTime;  
+    rs >> data.serverTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FillSpaceNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "entitys=" << info.entitys << "\n"; 
+    stm << "spaceStartTime=" << info.spaceStartTime << "\n"; 
+    stm << "spaceEndTime=" << info.spaceEndTime << "\n"; 
+    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct RefreshSpaceNotice //增量更新场景中的实体数据, 服务器定时100ms广播  
+{ 
+    static const unsigned short getProtoID() { return 50010;} 
+    static const std::string getProtoName() { return "RefreshSpaceNotice";} 
+    EntityInfoArray entitys;  
+    EntityReportArray reports;  
+    double serverTime; //服务器当前时间  
+    RefreshSpaceNotice() 
+    { 
+        serverTime = 0.0; 
+    } 
+    RefreshSpaceNotice(const EntityInfoArray & entitys, const EntityReportArray & reports, const double & serverTime) 
+    { 
+        this->entitys = entitys; 
+        this->reports = reports; 
+        this->serverTime = serverTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshSpaceNotice & data) 
+{ 
+    ws << data.entitys;  
+    ws << data.reports;  
+    ws << data.serverTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshSpaceNotice & data) 
+{ 
+    rs >> data.entitys;  
+    rs >> data.reports;  
+    rs >> data.serverTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshSpaceNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "entitys=" << info.entitys << "\n"; 
+    stm << "reports=" << info.reports << "\n"; 
+    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct AddEntityNotice //一批实体加入场景时, 把这些实体的数据广播给其他玩家  
+{ 
+    static const unsigned short getProtoID() { return 50011;} 
+    static const std::string getProtoName() { return "AddEntityNotice";} 
+    EntityFullInfoArray entitys;  
+    double serverTime; //服务器当前时间  
+    AddEntityNotice() 
+    { 
+        serverTime = 0.0; 
+    } 
+    AddEntityNotice(const EntityFullInfoArray & entitys, const double & serverTime) 
+    { 
+        this->entitys = entitys; 
+        this->serverTime = serverTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AddEntityNotice & data) 
+{ 
+    ws << data.entitys;  
+    ws << data.serverTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AddEntityNotice & data) 
+{ 
+    rs >> data.entitys;  
+    rs >> data.serverTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AddEntityNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "entitys=" << info.entitys << "\n"; 
+    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct RemoveEntityNotice //实体离开场景时, 把该实体的数据广播给其他玩家  
+{ 
+    static const unsigned short getProtoID() { return 50012;} 
+    static const std::string getProtoName() { return "RemoveEntityNotice";} 
+    EntityIDArray eids;  
+    double serverTime; //服务器当前时间  
+    RemoveEntityNotice() 
+    { 
+        serverTime = 0.0; 
+    } 
+    RemoveEntityNotice(const EntityIDArray & eids, const double & serverTime) 
+    { 
+        this->eids = eids; 
+        this->serverTime = serverTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RemoveEntityNotice & data) 
+{ 
+    ws << data.eids;  
+    ws << data.serverTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RemoveEntityNotice & data) 
+{ 
+    rs >> data.eids;  
+    rs >> data.serverTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RemoveEntityNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "eids=" << info.eids << "\n"; 
+    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 #endif 

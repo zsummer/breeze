@@ -12,7 +12,7 @@ bool Space::cleanSpace()
     _users.clear();
     _sceneType = SCENE_TYPE_NONE;
     _spaceStatus = SPACE_STATUS_NONE;
-    _lastSpaceStatusChangeTick = getFloatTick();
+    _lastSpaceStatusChangeTick = getFloatNowTime();
     SpaceMgr::getRef().refreshSpaceStatusToWorld(getSpaceID());
     return true;
 }
@@ -26,7 +26,7 @@ bool Space::loadSpace(SCENE_TYPE sceneType)
     }
     _sceneType = sceneType;
     _spaceStatus = SPACE_STATUS_WAIT;
-    _lastSpaceStatusChangeTick = getFloatTick();
+    _lastSpaceStatusChangeTick = getFloatNowTime();
 
     
     //load map
@@ -68,7 +68,7 @@ EntityPtr Space::makeNewEntity(const UserBaseInfo & base)
     entity->_info.eid = ++_lastEID;
     entity->_control.eid = entity->_info.eid;
     entity->_report.eid = entity->_info.eid;
-    entity->_control.stateChageTick = getFloatTick();
+    entity->_control.stateChageTick = getFloatNowTime();
     entity->_info.color = ECOLOR_NONE;
     entity->_info.curHP = entity->_base.hp;
     entity->_info.moveAction = MACTION_IDLE;
@@ -90,4 +90,36 @@ void Space::fillUserProp(const FillUserToSpaceReq& req)
     entity->_info.state = ESTATE_FREEZING;
     entity->_isClientDirty = true;
 }
+
+bool Space::addEntity(EntityPtr entity)
+{
+    AddEntityNotice notice;
+    EntityFullInfo full;
+    full.base = entity->_base;
+    full.info = entity->_info;
+    full.report = entity->_report;
+    notice.entitys.push_back(full);
+    notice.serverTime = getFloatNowTime();
+    broadcast(notice);
+    return true;
+    return true;
+}
+bool Space::removeEntity(EntityID eid)
+{
+    return true;
+}
+bool Space::enterSpace(ServiceID userID)
+{
+    return true;
+}
+bool Space::leaveSpace(ServiceID userID)
+{
+    return true;
+}
+
+
+
+
+
+
 
