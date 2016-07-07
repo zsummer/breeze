@@ -25,7 +25,7 @@
 #include <ProtoSpaceCommon.h>
 #include <ProtoSpaceServer.h>
 #include <ProtoSpaceClient.h>
-
+#include <rvo2/RVO.h>
 
 class Entity
 {
@@ -36,7 +36,7 @@ public:
     double getElapsed(double now);
     double getSuckBlood();
     double getAttack();
-
+    void pickProto(EntityFullInfo & info);
     UserBaseInfo _base;
     EntityInfo  _info;
     EntityControl _control;

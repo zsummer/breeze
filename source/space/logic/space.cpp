@@ -12,7 +12,7 @@ bool Space::cleanSpace()
     _users.clear();
     _sceneType = SCENE_TYPE_NONE;
     _spaceStatus = SPACE_STATUS_NONE;
-    _lastSpaceStatusChangeTick = getFloatNowTime();
+    _lastStatusChangeTime = getFloatNowTime();
     SpaceMgr::getRef().refreshSpaceStatusToWorld(getSpaceID());
     return true;
 }
@@ -26,8 +26,9 @@ bool Space::loadSpace(SCENE_TYPE sceneType)
     }
     _sceneType = sceneType;
     _spaceStatus = SPACE_STATUS_WAIT;
-    _lastSpaceStatusChangeTick = getFloatNowTime();
-
+    _lastStatusChangeTime = getFloatNowTime();
+    _startTime = getFloatNowTime();
+    _endTime = getFloatNowTime() + 3600;
     
     //load map
     //load entitys
@@ -93,27 +94,63 @@ void Space::fillUserProp(const FillUserToSpaceReq& req)
 
 bool Space::addEntity(EntityPtr entity)
 {
+    _entitys.insert(std::make_pair(entity->_info.eid, entity));
     AddEntityNotice notice;
     EntityFullInfo full;
-    full.base = entity->_base;
-    full.info = entity->_info;
-    full.report = entity->_report;
+    entity->pickProto(full);
     notice.entitys.push_back(full);
     notice.serverTime = getFloatNowTime();
-    broadcast(notice);
-    return true;
+    broadcast(notice, entity->_base.userID);
     return true;
 }
 bool Space::removeEntity(EntityID eid)
 {
+    RemoveEntityNotice notice;
+    notice.eids.push_back(eid);
+    notice.serverTime = getFloatNowTime();
+    _entitys.erase(eid);
+    broadcast(notice);
     return true;
 }
-bool Space::enterSpace(ServiceID userID)
+bool Space::enterSpace(ServiceID userID, const std::string & token, SessionID sID)
 {
+    EntityPtr entity = getUserEntity(userID);
+    if (!entity)
+    {
+        return false;
+    }
+    if (entity->_token != token)
+    {
+        return false;
+    }
+    entity->_clientSessionID = sID;
+    if (!getEntity(entity->_info.eid))
+    {
+        addEntity(entity);
+    }
+    FillSpaceNotice notice;
+    EntityFullInfo info;
+    for (auto kv : _entitys)
+    {
+        kv.second->pickProto(info);
+        notice.entitys.push_back(info);
+    }
+    notice.serverTime = getFloatNowTime();
+    notice.spaceStartTime = _startTime;
+    notice.spaceEndTime = _endTime;
+    sendToClient(userID, notice);
     return true;
 }
-bool Space::leaveSpace(ServiceID userID)
+
+
+
+bool Space::leaveSpace(ServiceID userID, SessionID sID)
 {
+    auto entity = getUserEntity(userID);
+    if (entity && entity->_clientSessionID == sID)
+    {
+        entity->_clientSessionID = InvalidSessionID;
+    }
     return true;
 }
 

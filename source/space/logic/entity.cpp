@@ -41,7 +41,12 @@ double Entity::getAttack()
     return 1.0;
 }
 
-
+void Entity::pickProto(EntityFullInfo & info)
+{
+    info.base = _base;
+    info.info = _info;
+    info.report = _report;
+}
 
 
 

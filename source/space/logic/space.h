@@ -27,7 +27,10 @@ class Space
 private:
     SCENE_TYPE _sceneType;
     SPACE_STATUS _spaceStatus;
-    double _lastSpaceStatusChangeTick;
+    double _lastStatusChangeTime;
+    double _startTime;
+    double _endTime;
+
     SpaceID _spaceID;
     EntityID _lastEID;
     std::map<EntityID, EntityPtr> _entitys;
@@ -51,8 +54,8 @@ public:
 
     bool addEntity(EntityPtr entity); 
     bool removeEntity(EntityID eid); 
-    bool enterSpace(ServiceID userID); 
-    bool leaveSpace(ServiceID userID);
+    bool enterSpace(ServiceID userID, const std::string & token, SessionID sID);
+    bool leaveSpace(ServiceID userID, SessionID sID);
 
 public:
 
