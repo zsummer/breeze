@@ -278,15 +278,15 @@ Proto4z.EntityControl = {} --EntityControl
 Proto4z.EntityControl.__protoID = 10012 
 Proto4z.EntityControl.__protoName = "EntityControl" 
 Proto4z.EntityControl[1] = {name="eid", type="ui32" } --eid 
-Proto4z.EntityControl[2] = {name="stateChageTick", type="ui32" } --状态改变时间 
+Proto4z.EntityControl[2] = {name="stateChageTick", type="double" } --状态改变时间 
 Proto4z.EntityControl[3] = {name="extSpeed", type="double" } --扩展速度 
-Proto4z.EntityControl[4] = {name="extBeginTick", type="ui32" } --扩展速度的开始时间 
-Proto4z.EntityControl[5] = {name="extKeepTick", type="ui32" } --扩展速度的保持时间 
+Proto4z.EntityControl[4] = {name="extBeginTick", type="double" } --扩展速度的开始时间 
+Proto4z.EntityControl[5] = {name="extKeepTick", type="double" } --扩展速度的保持时间 
 Proto4z.EntityControl[6] = {name="spawnpoint", type="EPoint" } --出生点 
 Proto4z.EntityControl[7] = {name="lastPos", type="EPoint" } --上一帧实体坐标, 如果是瞬移 则和pos相同 
 Proto4z.EntityControl[8] = {name="skills", type="SkillInfoArray" } --技能数据 
 Proto4z.EntityControl[9] = {name="buffs", type="BuffInfoArray" } --BUFF数据, 小标ID对应bufftype 
-Proto4z.EntityControl[10] = {name="diedTick", type="ui32" } --实体死亡时间点 -1为永久, 仅飞行道具类有效 
+Proto4z.EntityControl[10] = {name="diedTick", type="double" } --实体死亡时间点 -1为永久, 仅飞行道具类有效 
 Proto4z.EntityControl[11] = {name="hitTimes", type="i32" } --实体碰撞 -1为永久, 仅飞行道具类有效 
 Proto4z.EntityControl[12] = {name="lastMoveTick", type="ui32" } --最后一次移动时间 
 Proto4z.EntityControl[13] = {name="lastClientPos", type="EPoint" } --最后一次客户端提交的坐标 

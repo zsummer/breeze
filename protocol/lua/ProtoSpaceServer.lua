@@ -7,12 +7,19 @@ Proto4z.SpaceInfoToWorldNotice[1] = {name="host", type="string" } --服务器hos
 Proto4z.SpaceInfoToWorldNotice[2] = {name="port", type="ui16" } --服务器port 
 Proto4z.SpaceInfoToWorldNotice[3] = {name="spaceInfos", type="SpaceInfoArray" } --类型 
  
-Proto4z.register(39012,"FillUserToSpaceNotice") 
-Proto4z.FillUserToSpaceNotice = {} --token丢给space 
-Proto4z.FillUserToSpaceNotice.__protoID = 39012 
-Proto4z.FillUserToSpaceNotice.__protoName = "FillUserToSpaceNotice" 
-Proto4z.FillUserToSpaceNotice[1] = {name="userID", type="ui64" }  
-Proto4z.FillUserToSpaceNotice[2] = {name="token", type="string" } --服务器port 
-Proto4z.FillUserToSpaceNotice[3] = {name="spaceID", type="SpaceID" } --id 
-Proto4z.FillUserToSpaceNotice[4] = {name="sceneType", type="ui16" } --类型 
-Proto4z.FillUserToSpaceNotice[5] = {name="baseInfo", type="UserBaseInfo" } --类型 
+Proto4z.register(39013,"FillUserToSpaceReq") 
+Proto4z.FillUserToSpaceReq = {} --token丢给space 
+Proto4z.FillUserToSpaceReq.__protoID = 39013 
+Proto4z.FillUserToSpaceReq.__protoName = "FillUserToSpaceReq" 
+Proto4z.FillUserToSpaceReq[1] = {name="spaceID", type="SpaceID" } --id 
+Proto4z.FillUserToSpaceReq[2] = {name="sceneType", type="ui16" } --类型 
+Proto4z.FillUserToSpaceReq[3] = {name="token", type="string" } --服务器port 
+Proto4z.FillUserToSpaceReq[4] = {name="baseInfo", type="UserBaseInfo" } --类型 
+ 
+Proto4z.register(39014,"FillUserToSpaceResp") 
+Proto4z.FillUserToSpaceResp = {} --token丢给space 
+Proto4z.FillUserToSpaceResp.__protoID = 39014 
+Proto4z.FillUserToSpaceResp.__protoName = "FillUserToSpaceResp" 
+Proto4z.FillUserToSpaceResp[1] = {name="userID", type="ui64" }  
+Proto4z.FillUserToSpaceResp[2] = {name="spaceID", type="SpaceID" } --id 
+Proto4z.FillUserToSpaceResp[3] = {name="sceneType", type="ui16" } --类型 

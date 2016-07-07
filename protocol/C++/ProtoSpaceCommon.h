@@ -863,30 +863,30 @@ struct EntityControl //EntityControl
     static const unsigned short getProtoID() { return 10012;} 
     static const std::string getProtoName() { return "EntityControl";} 
     unsigned int eid; //eid  
-    unsigned int stateChageTick; //状态改变时间  
+    double stateChageTick; //状态改变时间  
     double extSpeed; //扩展速度  
-    unsigned int extBeginTick; //扩展速度的开始时间  
-    unsigned int extKeepTick; //扩展速度的保持时间  
+    double extBeginTick; //扩展速度的开始时间  
+    double extKeepTick; //扩展速度的保持时间  
     EPoint spawnpoint; //出生点  
     EPoint lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
     SkillInfoArray skills; //技能数据  
     BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
-    unsigned int diedTick; //实体死亡时间点 -1为永久, 仅飞行道具类有效  
+    double diedTick; //实体死亡时间点 -1为永久, 仅飞行道具类有效  
     int hitTimes; //实体碰撞 -1为永久, 仅飞行道具类有效  
     unsigned int lastMoveTick; //最后一次移动时间  
     EPoint lastClientPos; //最后一次客户端提交的坐标  
     EntityControl() 
     { 
         eid = 0; 
-        stateChageTick = 0; 
+        stateChageTick = 0.0; 
         extSpeed = 0.0; 
-        extBeginTick = 0; 
-        extKeepTick = 0; 
-        diedTick = 0; 
+        extBeginTick = 0.0; 
+        extKeepTick = 0.0; 
+        diedTick = 0.0; 
         hitTimes = 0; 
         lastMoveTick = 0; 
     } 
-    EntityControl(const unsigned int & eid, const unsigned int & stateChageTick, const double & extSpeed, const unsigned int & extBeginTick, const unsigned int & extKeepTick, const EPoint & spawnpoint, const EPoint & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const unsigned int & diedTick, const int & hitTimes, const unsigned int & lastMoveTick, const EPoint & lastClientPos) 
+    EntityControl(const unsigned int & eid, const double & stateChageTick, const double & extSpeed, const double & extBeginTick, const double & extKeepTick, const EPoint & spawnpoint, const EPoint & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const double & diedTick, const int & hitTimes, const unsigned int & lastMoveTick, const EPoint & lastClientPos) 
     { 
         this->eid = eid; 
         this->stateChageTick = stateChageTick; 

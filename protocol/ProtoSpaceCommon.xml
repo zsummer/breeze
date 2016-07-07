@@ -290,15 +290,15 @@
     <!-- 实体控制属性, 对客户端不可见 -->
     <struct name="EntityControl" desc="EntityControl">
         <member name="eid" type="ui32"  desc="eid"/>
-        <member name="stateChageTick" type="ui32"  desc="状态改变时间"/>
+        <member name="stateChageTick" type="double"  desc="状态改变时间"/>
         <member name="extSpeed" type="double"  desc="扩展速度"/>
-        <member name="extBeginTick" type="ui32"  desc="扩展速度的开始时间"/>
-        <member name="extKeepTick" type="ui32"  desc="扩展速度的保持时间"/>
+        <member name="extBeginTick" type="double"  desc="扩展速度的开始时间"/>
+        <member name="extKeepTick" type="double"  desc="扩展速度的保持时间"/>
         <member name="spawnpoint" type="EPoint"   desc="出生点"/>
         <member name="lastPos"  type="EPoint" desc="上一帧实体坐标, 如果是瞬移 则和pos相同"/>
         <member name="skills"  type="SkillInfoArray" desc="技能数据"/>
         <member name="buffs"  type="BuffInfoArray" desc="BUFF数据, 小标ID对应bufftype"/>
-        <member name="diedTick"  type="ui32" desc="实体死亡时间点 -1为永久, 仅飞行道具类有效"/>
+        <member name="diedTick"  type="double" desc="实体死亡时间点 -1为永久, 仅飞行道具类有效"/>
         <member name="hitTimes"  type="i32" desc="实体碰撞 -1为永久, 仅飞行道具类有效"/>
         <member name="lastMoveTick"  type="ui32" desc="最后一次移动时间"/>
         <member name="lastClientPos"  type="EPoint" desc="最后一次客户端提交的坐标"/>

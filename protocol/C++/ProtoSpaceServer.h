@@ -45,55 +45,92 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct FillUserToSpaceNotice //token丢给space  
+struct FillUserToSpaceReq //token丢给space  
 { 
-    static const unsigned short getProtoID() { return 39012;} 
-    static const std::string getProtoName() { return "FillUserToSpaceNotice";} 
-    unsigned long long userID;  
-    std::string token; //服务器port  
+    static const unsigned short getProtoID() { return 39013;} 
+    static const std::string getProtoName() { return "FillUserToSpaceReq";} 
     SpaceID spaceID; //id  
     unsigned short sceneType; //类型  
+    std::string token; //服务器port  
     UserBaseInfo baseInfo; //类型  
-    FillUserToSpaceNotice() 
+    FillUserToSpaceReq() 
+    { 
+        sceneType = 0; 
+    } 
+    FillUserToSpaceReq(const SpaceID & spaceID, const unsigned short & sceneType, const std::string & token, const UserBaseInfo & baseInfo) 
+    { 
+        this->spaceID = spaceID; 
+        this->sceneType = sceneType; 
+        this->token = token; 
+        this->baseInfo = baseInfo; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FillUserToSpaceReq & data) 
+{ 
+    ws << data.spaceID;  
+    ws << data.sceneType;  
+    ws << data.token;  
+    ws << data.baseInfo;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FillUserToSpaceReq & data) 
+{ 
+    rs >> data.spaceID;  
+    rs >> data.sceneType;  
+    rs >> data.token;  
+    rs >> data.baseInfo;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FillUserToSpaceReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "spaceID=" << info.spaceID << "\n"; 
+    stm << "sceneType=" << info.sceneType << "\n"; 
+    stm << "token=" << info.token << "\n"; 
+    stm << "baseInfo=" << info.baseInfo << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct FillUserToSpaceResp //token丢给space  
+{ 
+    static const unsigned short getProtoID() { return 39014;} 
+    static const std::string getProtoName() { return "FillUserToSpaceResp";} 
+    unsigned long long userID;  
+    SpaceID spaceID; //id  
+    unsigned short sceneType; //类型  
+    FillUserToSpaceResp() 
     { 
         userID = 0; 
         sceneType = 0; 
     } 
-    FillUserToSpaceNotice(const unsigned long long & userID, const std::string & token, const SpaceID & spaceID, const unsigned short & sceneType, const UserBaseInfo & baseInfo) 
+    FillUserToSpaceResp(const unsigned long long & userID, const SpaceID & spaceID, const unsigned short & sceneType) 
     { 
         this->userID = userID; 
-        this->token = token; 
         this->spaceID = spaceID; 
         this->sceneType = sceneType; 
-        this->baseInfo = baseInfo; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FillUserToSpaceNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FillUserToSpaceResp & data) 
 { 
     ws << data.userID;  
-    ws << data.token;  
     ws << data.spaceID;  
     ws << data.sceneType;  
-    ws << data.baseInfo;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FillUserToSpaceNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FillUserToSpaceResp & data) 
 { 
     rs >> data.userID;  
-    rs >> data.token;  
     rs >> data.spaceID;  
     rs >> data.sceneType;  
-    rs >> data.baseInfo;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FillUserToSpaceNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FillUserToSpaceResp & info) 
 { 
     stm << "[\n"; 
     stm << "userID=" << info.userID << "\n"; 
-    stm << "token=" << info.token << "\n"; 
     stm << "spaceID=" << info.spaceID << "\n"; 
     stm << "sceneType=" << info.sceneType << "\n"; 
-    stm << "baseInfo=" << info.baseInfo << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

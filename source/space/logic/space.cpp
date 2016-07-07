@@ -41,9 +41,53 @@ bool Space::onUpdate()
     return true;
 }
 
-
-void Space::fillUserProp(const FillUserToSpaceNotice& notice)
+EntityPtr Space::getEntity(EntityID eID)
 {
+    auto founder = _entitys.find(eID);
+    if (founder == _entitys.end())
+    {
+        return nullptr;
+    }
+    return founder->second;
+}
+EntityPtr Space::getUserEntity(ServiceID userID)
+{
+    auto founder = _users.find(userID);
+    if (founder == _users.end())
+    {
+        return nullptr;
+    }
+    return founder->second;
+}
 
+EntityPtr Space::makeNewEntity(const UserBaseInfo & base)
+{
+    EntityPtr entity = std::make_shared<Entity>();
+    entity->_base = base;
+    entity->_control.spawnpoint = { 0.0,0.0 };
+    entity->_info.eid = ++_lastEID;
+    entity->_control.eid = entity->_info.eid;
+    entity->_report.eid = entity->_info.eid;
+    entity->_control.stateChageTick = getFloatTick();
+    entity->_info.color = ECOLOR_NONE;
+    entity->_info.curHP = entity->_base.hp;
+    entity->_info.moveAction = MACTION_IDLE;
+    entity->_info.pos = entity->_control.spawnpoint;
+    entity->_info.state = ESTATE_NONE;
+    return entity;
+}
+
+void Space::fillUserProp(const FillUserToSpaceReq& req)
+{
+    auto entity = getUserEntity(req.baseInfo.userID);
+    if (entity)
+    {
+        LOGE("already had");
+        return;
+    }
+    entity = makeNewEntity(req.baseInfo);
+    entity->_token = req.token;
+    entity->_info.state = ESTATE_FREEZING;
+    entity->_isClientDirty = true;
 }
 

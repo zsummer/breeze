@@ -44,7 +44,11 @@ public:
     bool loadSpace(SCENE_TYPE sceneType);
     bool onUpdate();
 
-    void fillUserProp(const FillUserToSpaceNotice& notice);
+    void fillUserProp(const FillUserToSpaceReq& req);
+    EntityPtr makeNewEntity(const UserBaseInfo & base);
+    EntityPtr getEntity(EntityID eID);
+    EntityPtr getUserEntity(ServiceID userID);
+
 public:
 
 

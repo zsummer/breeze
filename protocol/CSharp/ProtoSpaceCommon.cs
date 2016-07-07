@@ -1115,35 +1115,35 @@ namespace Proto4z
         static public string getProtoName() { return "EntityControl"; } 
         //members   
         public uint eid; //eid  
-        public uint stateChageTick; //状态改变时间  
+        public double stateChageTick; //状态改变时间  
         public double extSpeed; //扩展速度  
-        public uint extBeginTick; //扩展速度的开始时间  
-        public uint extKeepTick; //扩展速度的保持时间  
+        public double extBeginTick; //扩展速度的开始时间  
+        public double extKeepTick; //扩展速度的保持时间  
         public EPoint spawnpoint; //出生点  
         public EPoint lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
         public SkillInfoArray skills; //技能数据  
         public BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
-        public uint diedTick; //实体死亡时间点 -1为永久, 仅飞行道具类有效  
+        public double diedTick; //实体死亡时间点 -1为永久, 仅飞行道具类有效  
         public int hitTimes; //实体碰撞 -1为永久, 仅飞行道具类有效  
         public uint lastMoveTick; //最后一次移动时间  
         public EPoint lastClientPos; //最后一次客户端提交的坐标  
         public EntityControl()  
         { 
             eid = 0;  
-            stateChageTick = 0;  
+            stateChageTick = 0.0;  
             extSpeed = 0.0;  
-            extBeginTick = 0;  
-            extKeepTick = 0;  
+            extBeginTick = 0.0;  
+            extKeepTick = 0.0;  
             spawnpoint = new EPoint();  
             lastPos = new EPoint();  
             skills = new SkillInfoArray();  
             buffs = new BuffInfoArray();  
-            diedTick = 0;  
+            diedTick = 0.0;  
             hitTimes = 0;  
             lastMoveTick = 0;  
             lastClientPos = new EPoint();  
         } 
-        public EntityControl(uint eid, uint stateChageTick, double extSpeed, uint extBeginTick, uint extKeepTick, EPoint spawnpoint, EPoint lastPos, SkillInfoArray skills, BuffInfoArray buffs, uint diedTick, int hitTimes, uint lastMoveTick, EPoint lastClientPos) 
+        public EntityControl(uint eid, double stateChageTick, double extSpeed, double extBeginTick, double extKeepTick, EPoint spawnpoint, EPoint lastPos, SkillInfoArray skills, BuffInfoArray buffs, double diedTick, int hitTimes, uint lastMoveTick, EPoint lastClientPos) 
         { 
             this.eid = eid; 
             this.stateChageTick = stateChageTick; 
@@ -1163,10 +1163,10 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.eid)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.stateChageTick)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.stateChageTick)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.extSpeed)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.extBeginTick)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.extKeepTick)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.extBeginTick)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.extKeepTick)); 
             if (this.spawnpoint == null) this.spawnpoint = new EPoint(); 
             data.AddRange(this.spawnpoint.__encode()); 
             if (this.lastPos == null) this.lastPos = new EPoint(); 
@@ -1175,7 +1175,7 @@ namespace Proto4z
             data.AddRange(this.skills.__encode()); 
             if (this.buffs == null) this.buffs = new BuffInfoArray(); 
             data.AddRange(this.buffs.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.diedTick)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.diedTick)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.hitTimes)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.lastMoveTick)); 
             if (this.lastClientPos == null) this.lastClientPos = new EPoint(); 
@@ -1185,10 +1185,10 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.stateChageTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.stateChageTick = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.extSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.extBeginTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.extKeepTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.extBeginTick = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.extKeepTick = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.spawnpoint = new EPoint(); 
             this.spawnpoint.__decode(binData, ref pos); 
             this.lastPos = new EPoint(); 
@@ -1197,7 +1197,7 @@ namespace Proto4z
             this.skills.__decode(binData, ref pos); 
             this.buffs = new BuffInfoArray(); 
             this.buffs.__decode(binData, ref pos); 
-            this.diedTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.diedTick = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.hitTimes = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             this.lastMoveTick = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.lastClientPos = new EPoint(); 

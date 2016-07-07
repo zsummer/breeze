@@ -271,9 +271,9 @@ void SpaceMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
         return;
     }
-    else if (rsShell.getProtoID() == FillUserToSpaceNotice::getProtoID())
+    else if (rsShell.getProtoID() == FillUserToSpaceReq::getProtoID())
     {
-        FillUserToSpaceNotice fn;
+        FillUserToSpaceReq fn;
         rsShell >> fn;
         auto space = getSpace(fn.spaceID);
         if (!space)

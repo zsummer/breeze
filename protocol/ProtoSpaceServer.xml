@@ -20,12 +20,16 @@
         <member name="spaceInfos" type="SpaceInfoArray"  desc="类型"/>
     </proto>
 
-    <proto name="FillUserToSpaceNotice" desc= "token丢给space">
-        <member name="userID" type="ui64"  desc=""/>
-        <member name="token" type="string"  desc="服务器port"/>
+    <proto name="FillUserToSpaceReq" desc= "token丢给space">
         <member name="spaceID" type="SpaceID"  desc="id"/>
         <member name="sceneType" type="ui16"  desc="类型"/>
+        <member name="token" type="string"  desc="服务器port"/>
         <member name="baseInfo" type="UserBaseInfo"  desc="类型"/>
+    </proto>
+    <proto name="FillUserToSpaceResp" desc= "token丢给space">
+        <member name="userID" type="ui64"  desc=""/>
+        <member name="spaceID" type="SpaceID"  desc="id"/>
+        <member name="sceneType" type="ui16"  desc="类型"/>
     </proto>
 
 
