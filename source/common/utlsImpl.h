@@ -28,6 +28,7 @@ template<class T>
 std::string toString(const T &t)
 {
     std::stringstream os;
+    os.precision(16);
     os << t;
     return std::move(os.str());
 }
