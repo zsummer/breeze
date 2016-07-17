@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>ff91dc782f61410ed5d759b184075b47</cppmd5> 
-<luamd5>e876c633dc0d4dd758c80b690a0b7f42</luamd5> 
-<csharpmd5>8256fe898ee605672c3e925d3c19c065</csharpmd5> 
-<xmlmd5>6b411ba02d35403130818845e5a14b06</xmlmd5> 
+<cppmd5>83d2dd1976741f77ede590c26258ddf4</cppmd5> 
+<luamd5>04a1fb1b27befd6f2b9995ad88549c6c</luamd5> 
+<csharpmd5>7b5ad34f5a1f9cd51cb5bbb35ae9bc45</csharpmd5> 
+<xmlmd5>4d48a2a6291d5b8c13f4ef4681653ac1</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_BuffData" Number = "10005" /> 
     <cache key = "ID_BuffInfo" Number = "10008" /> 

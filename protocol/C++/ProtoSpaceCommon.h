@@ -992,29 +992,29 @@ struct EntityFullInfo //EntityFullInfo
 { 
     static const unsigned short getProtoID() { return 10014;} 
     static const std::string getProtoName() { return "EntityFullInfo";} 
-    UserBaseInfo base;  
+    UserBaseInfo userInfo;  
     EntityInfo info;  
     EntityReport report;  
     EntityFullInfo() 
     { 
     } 
-    EntityFullInfo(const UserBaseInfo & base, const EntityInfo & info, const EntityReport & report) 
+    EntityFullInfo(const UserBaseInfo & userInfo, const EntityInfo & info, const EntityReport & report) 
     { 
-        this->base = base; 
+        this->userInfo = userInfo; 
         this->info = info; 
         this->report = report; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityFullInfo & data) 
 { 
-    ws << data.base;  
+    ws << data.userInfo;  
     ws << data.info;  
     ws << data.report;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityFullInfo & data) 
 { 
-    rs >> data.base;  
+    rs >> data.userInfo;  
     rs >> data.info;  
     rs >> data.report;  
     return rs; 
@@ -1022,7 +1022,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityFullInfo & info) 
 { 
     stm << "[\n"; 
-    stm << "base=" << info.base << "\n"; 
+    stm << "userInfo=" << info.userInfo << "\n"; 
     stm << "info=" << info.info << "\n"; 
     stm << "report=" << info.report << "\n"; 
     stm << "]\n"; 

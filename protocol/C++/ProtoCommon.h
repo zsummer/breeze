@@ -3,7 +3,7 @@
 #define _PROTOCOMMON_H_ 
  
  
-enum  : unsigned short 
+enum ERROR_CODE : unsigned short 
 { 
     EC_SUCCESS = 0, //成功  
     EC_ERROR = 1, //错误  

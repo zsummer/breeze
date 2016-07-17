@@ -2,7 +2,7 @@
 namespace Proto4z  
 { 
  
-    public enum  : ushort 
+    public enum ERROR_CODE : ushort 
     { 
         EC_SUCCESS = 0, //成功  
         EC_ERROR = 1, //错误  

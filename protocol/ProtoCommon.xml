@@ -10,7 +10,7 @@
 <Proto>
 
     <!------------- 错误码 ---------------------->
-    <enum type="ui16" >
+    <enum type="ui16" name="ERROR_CODE">
         <member name="EC_SUCCESS" value="0"   desc="成功"/>
         <member name="EC_ERROR"   desc="错误"/>
         <member name="EC_INNER_ERROR"  desc="内部错误"/>

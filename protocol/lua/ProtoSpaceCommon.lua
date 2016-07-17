@@ -309,7 +309,7 @@ Proto4z.register(10014,"EntityFullInfo")
 Proto4z.EntityFullInfo = {} --EntityFullInfo 
 Proto4z.EntityFullInfo.__protoID = 10014 
 Proto4z.EntityFullInfo.__protoName = "EntityFullInfo" 
-Proto4z.EntityFullInfo[1] = {name="base", type="UserBaseInfo" }  
+Proto4z.EntityFullInfo[1] = {name="userInfo", type="UserBaseInfo" }  
 Proto4z.EntityFullInfo[2] = {name="info", type="EntityInfo" }  
 Proto4z.EntityFullInfo[3] = {name="report", type="EntityReport" }  
  

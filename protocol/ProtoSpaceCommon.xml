@@ -314,7 +314,7 @@
 
     <!-- 一个实体的完整数据, 包括属性,状态 位置等. -->
     <struct name="EntityFullInfo" desc="EntityFullInfo">
-        <member name="base" type="UserBaseInfo"  desc=""/>
+        <member name="userInfo" type="UserBaseInfo"  desc=""/>
         <member name="info" type="EntityInfo"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>

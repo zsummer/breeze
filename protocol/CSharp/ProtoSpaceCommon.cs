@@ -1291,26 +1291,26 @@ namespace Proto4z
         static public ushort getProtoID() { return 10014; } 
         static public string getProtoName() { return "EntityFullInfo"; } 
         //members   
-        public UserBaseInfo base;  
+        public UserBaseInfo userInfo;  
         public EntityInfo info;  
         public EntityReport report;  
         public EntityFullInfo()  
         { 
-            base = new UserBaseInfo();  
+            userInfo = new UserBaseInfo();  
             info = new EntityInfo();  
             report = new EntityReport();  
         } 
-        public EntityFullInfo(UserBaseInfo base, EntityInfo info, EntityReport report) 
+        public EntityFullInfo(UserBaseInfo userInfo, EntityInfo info, EntityReport report) 
         { 
-            this.base = base; 
+            this.userInfo = userInfo; 
             this.info = info; 
             this.report = report; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.base == null) this.base = new UserBaseInfo(); 
-            data.AddRange(this.base.__encode()); 
+            if (this.userInfo == null) this.userInfo = new UserBaseInfo(); 
+            data.AddRange(this.userInfo.__encode()); 
             if (this.info == null) this.info = new EntityInfo(); 
             data.AddRange(this.info.__encode()); 
             if (this.report == null) this.report = new EntityReport(); 
@@ -1319,8 +1319,8 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.base = new UserBaseInfo(); 
-            this.base.__decode(binData, ref pos); 
+            this.userInfo = new UserBaseInfo(); 
+            this.userInfo.__decode(binData, ref pos); 
             this.info = new EntityInfo(); 
             this.info.__decode(binData, ref pos); 
             this.report = new EntityReport(); 
