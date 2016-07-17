@@ -43,7 +43,7 @@ double Entity::getAttack()
 
 void Entity::pickProto(EntityFullInfo & info)
 {
-    info.base = _base;
+    info.userInfo = _base;
     info.info = _info;
     info.report = _report;
 }
