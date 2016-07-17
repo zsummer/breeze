@@ -24,21 +24,21 @@ Proto4z.register(40003,"CreateUserReq")
 Proto4z.CreateUserReq = {} --创角色请求 
 Proto4z.CreateUserReq.__protoID = 40003 
 Proto4z.CreateUserReq.__protoName = "CreateUserReq" 
-Proto4z.CreateUserReq[1] = {name="serviceName", type="string" }  
+Proto4z.CreateUserReq[1] = {name="userName", type="string" }  
  
 Proto4z.register(40004,"CreateUserResp") 
 Proto4z.CreateUserResp = {} --创角色请求返回 
 Proto4z.CreateUserResp.__protoID = 40004 
 Proto4z.CreateUserResp.__protoName = "CreateUserResp" 
 Proto4z.CreateUserResp[1] = {name="retCode", type="ui16" }  
-Proto4z.CreateUserResp[2] = {name="serviceID", type="ui64" }  
+Proto4z.CreateUserResp[2] = {name="userID", type="ui64" }  
 Proto4z.CreateUserResp[3] = {name="previews", type="UserPreviewArray" }  
  
 Proto4z.register(40005,"AttachUserReq") 
 Proto4z.AttachUserReq = {} --选角色请求 
 Proto4z.AttachUserReq.__protoID = 40005 
 Proto4z.AttachUserReq.__protoName = "AttachUserReq" 
-Proto4z.AttachUserReq[1] = {name="serviceID", type="ui64" }  
+Proto4z.AttachUserReq[1] = {name="userID", type="ui64" }  
  
 Proto4z.register(40006,"AttachUserResp") 
 Proto4z.AttachUserResp = {} --选角色请求返回 
@@ -50,14 +50,14 @@ Proto4z.register(40007,"UserChatReq")
 Proto4z.UserChatReq = {}  
 Proto4z.UserChatReq.__protoID = 40007 
 Proto4z.UserChatReq.__protoName = "UserChatReq" 
-Proto4z.UserChatReq[1] = {name="toServiceID", type="ui64" }  
+Proto4z.UserChatReq[1] = {name="userID", type="ui64" }  
 Proto4z.UserChatReq[2] = {name="msg", type="string" }  
  
 Proto4z.register(40008,"UserChatResp") 
 Proto4z.UserChatResp = {}  
 Proto4z.UserChatResp.__protoID = 40008 
 Proto4z.UserChatResp.__protoName = "UserChatResp" 
-Proto4z.UserChatResp[1] = {name="fromServiceID", type="ui64" }  
+Proto4z.UserChatResp[1] = {name="fromUserID", type="ui64" }  
 Proto4z.UserChatResp[2] = {name="msg", type="string" }  
  
 Proto4z.register(40009,"UserPingPongReq") 

@@ -110,24 +110,24 @@ namespace Proto4z
         static public ushort getProtoID() { return 40003; } 
         static public string getProtoName() { return "CreateUserReq"; } 
         //members   
-        public string serviceName;  
+        public string userName;  
         public CreateUserReq()  
         { 
-            serviceName = "";  
+            userName = "";  
         } 
-        public CreateUserReq(string serviceName) 
+        public CreateUserReq(string userName) 
         { 
-            this.serviceName = serviceName; 
+            this.userName = userName; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.serviceName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.serviceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -140,25 +140,25 @@ namespace Proto4z
         static public string getProtoName() { return "CreateUserResp"; } 
         //members   
         public ushort retCode;  
-        public ulong serviceID;  
+        public ulong userID;  
         public UserPreviewArray previews;  
         public CreateUserResp()  
         { 
             retCode = 0;  
-            serviceID = 0;  
+            userID = 0;  
             previews = new UserPreviewArray();  
         } 
-        public CreateUserResp(ushort retCode, ulong serviceID, UserPreviewArray previews) 
+        public CreateUserResp(ushort retCode, ulong userID, UserPreviewArray previews) 
         { 
             this.retCode = retCode; 
-            this.serviceID = serviceID; 
+            this.userID = userID; 
             this.previews = previews; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
             if (this.previews == null) this.previews = new UserPreviewArray(); 
             data.AddRange(this.previews.__encode()); 
             return data; 
@@ -166,7 +166,7 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.previews = new UserPreviewArray(); 
             this.previews.__decode(binData, ref pos); 
             return pos; 
@@ -180,24 +180,24 @@ namespace Proto4z
         static public ushort getProtoID() { return 40005; } 
         static public string getProtoName() { return "AttachUserReq"; } 
         //members   
-        public ulong serviceID;  
+        public ulong userID;  
         public AttachUserReq()  
         { 
-            serviceID = 0;  
+            userID = 0;  
         } 
-        public AttachUserReq(ulong serviceID) 
+        public AttachUserReq(ulong userID) 
         { 
-            this.serviceID = serviceID; 
+            this.userID = userID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.serviceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.serviceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -238,28 +238,28 @@ namespace Proto4z
         static public ushort getProtoID() { return 40007; } 
         static public string getProtoName() { return "UserChatReq"; } 
         //members   
-        public ulong toServiceID;  
+        public ulong userID;  
         public string msg;  
         public UserChatReq()  
         { 
-            toServiceID = 0;  
+            userID = 0;  
             msg = "";  
         } 
-        public UserChatReq(ulong toServiceID, string msg) 
+        public UserChatReq(ulong userID, string msg) 
         { 
-            this.toServiceID = toServiceID; 
+            this.userID = userID; 
             this.msg = msg; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.toServiceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.toServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
@@ -272,28 +272,28 @@ namespace Proto4z
         static public ushort getProtoID() { return 40008; } 
         static public string getProtoName() { return "UserChatResp"; } 
         //members   
-        public ulong fromServiceID;  
+        public ulong fromUserID;  
         public string msg;  
         public UserChatResp()  
         { 
-            fromServiceID = 0;  
+            fromUserID = 0;  
             msg = "";  
         } 
-        public UserChatResp(ulong fromServiceID, string msg) 
+        public UserChatResp(ulong fromUserID, string msg) 
         { 
-            this.fromServiceID = fromServiceID; 
+            this.fromUserID = fromUserID; 
             this.msg = msg; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromServiceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromUserID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.fromServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.fromUserID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 

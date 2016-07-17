@@ -80,7 +80,7 @@ namespace zsummer
             //         if you have not the operate and when you doClose the socket and immediate destroy this class object . in next do zsummerx's runOnce(), callback may be return and call operate in the bad memory . 
             bool doClose();
         public:
-            bool attachSocket(SOCKET s, std::string remoteIP, unsigned short remotePort);
+            bool attachSocket(SOCKET s, std::string remoteIP, unsigned short remotePort, bool isIPV6);
             void onIOCPMessage(BOOL bSuccess, DWORD dwTranceBytes, unsigned char cType);
             std::string logSection();
         public:
@@ -89,7 +89,7 @@ namespace zsummer
             SOCKET        _socket = INVALID_SOCKET;
             std::string _remoteIP;
             unsigned short _remotePort = 0;
-
+            bool _isIPV6 = false;
             //recv
             ExtendHandle _recvHandle;
             WSABUF         _recvWSABuf;

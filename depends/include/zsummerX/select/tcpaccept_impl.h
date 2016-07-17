@@ -9,7 +9,7 @@
 * 
 * ===============================================================================
 * 
-* Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,7 @@ namespace zsummer
             TcpAccept();
             ~TcpAccept();
             bool initialize(const EventLoopPtr &summer);
-            bool openAccept(const std::string& listenIP, unsigned short listenPort);
+            bool openAccept(const std::string& listenIP, unsigned short listenPort, bool reuse = true);
             bool doAccept(const TcpSocketPtr &s, _OnAcceptHandler && handle);
             void onSelectMessage();
             bool close();
@@ -71,7 +71,7 @@ namespace zsummer
             short            _listenPort = 0;
             unsigned char _linkstat = LS_UNINITIALIZE;
             int _fd = InvalidFD;
-            sockaddr_in        _addr;
+            bool _isIPV6 = false;
 
             _OnAcceptHandler _onAcceptHandler;
             TcpSocketPtr  _client;

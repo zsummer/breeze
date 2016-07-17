@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>275517af6257a89244a70c04fd3edea3</cppmd5> 
-<luamd5>56d99b3abfd1254245ce00836fc35195</luamd5> 
-<csharpmd5>22f795690b7b0123da2e583b65f9da2e</csharpmd5> 
-<xmlmd5>7813c9d3bee6ed67e50ce7adba876c4a</xmlmd5> 
+<cppmd5>e134f59281ec6e99c11aadb623dde06a</cppmd5> 
+<luamd5>20db7b509f785dbe45096225a880de16</luamd5> 
+<csharpmd5>a1eb68b4fe5296c258d67ef83a20e4d8</csharpmd5> 
+<xmlmd5>1d28ee2ab5e2d90c35e9446f8f99eb35</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_ClientPulse" Number = "2024" /> 
+    <cache key = "ID_DBDataResult" Number = "2015" /> 
+    <cache key = "ID_DBQueryArrayReq" Number = "2018" /> 
+    <cache key = "ID_DBQueryArrayResp" Number = "2019" /> 
+    <cache key = "ID_DBQueryReq" Number = "2016" /> 
+    <cache key = "ID_DBQueryResp" Number = "2017" /> 
     <cache key = "ID_DockerPulse" Number = "2000" /> 
     <cache key = "ID_ForwardToRealClient" Number = "2012" /> 
     <cache key = "ID_ForwardToService" Number = "2011" /> 
@@ -13,10 +19,15 @@
     <cache key = "ID_LoadServiceNotice" Number = "2003" /> 
     <cache key = "ID_RealClientClosedNotice" Number = "2007" /> 
     <cache key = "ID_RefreshServiceToMgrNotice" Number = "2004" /> 
+    <cache key = "ID_SelfBeingPulse" Number = "2014" /> 
     <cache key = "ID_SessionPulse" Number = "2001" /> 
     <cache key = "ID_ShellServiceInfo" Number = "2013" /> 
     <cache key = "ID_ShutdownClusterServer" Number = "2010" /> 
     <cache key = "ID_SwitchServiceClientNotice" Number = "2005" /> 
     <cache key = "ID_UnloadServiceInDocker" Number = "2008" /> 
     <cache key = "ID_UnloadedServiceNotice" Number = "2009" /> 
+    <cache key = "ID_UserOffline" Number = "2023" /> 
+    <cache key = "ID_WebAgentClientRequestAPI" Number = "2020" /> 
+    <cache key = "ID_WebServerRequest" Number = "2021" /> 
+    <cache key = "ID_WebServerResponse" Number = "2022" /> 
 </cacheNumber>

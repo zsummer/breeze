@@ -27,6 +27,8 @@
 #pragma warning(disable:4996)
 #pragma warning(disable:4819)
 #define WIN32_LEAN_AND_MEAN
+#include <WS2tcpip.h>
+#include <WinSock2.h>
 #include <windows.h>
 #include <io.h>
 #include <shlwapi.h>
@@ -44,6 +46,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #endif 
 
 #ifdef __APPLE__
@@ -75,6 +78,13 @@
 #include <list>
 #include <map>
 
+#ifdef max
+#undef  max
+#endif // max
+
+#ifdef min
+#undef  min
+#endif // min
 
 //file
 //==========================================================================
@@ -170,10 +180,10 @@ void sleepMillisecond(unsigned int ms);
 
 //----- time check ------
 //check used time. don't used it as datetime.
-inline double getFloatTick();
-inline double getFloatSteadyTick();
-inline long long getIntegerTick();
-inline long long getIntegerSteadyTick();
+inline double getFloatNowTime();
+inline double getFloatSteadyNowTime();
+inline long long getNowTick();
+inline long long getNowSteadyTick();
 
 //-----date time---------
 //the second through 1900-01-01 00:00:00
@@ -290,6 +300,15 @@ inline T pruning(T v, T min, T max);
 //==========================================================================
 std::string getProcessID();
 std::string getProcessName();
+
+//need call WSAStartup to init winsock in windows
+//support ipv6 & ipv4, it's will blocking when get host.
+std::string getHostByName(const std::string & name, unsigned short port);
+
+
+
+
+
 
 #include "utlsImpl.h"
 #endif

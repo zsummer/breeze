@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>0e8ffb031cc52ea0c8e26d116e98b2a1</cppmd5> 
-<luamd5>669e15bd27ca6a5aff5ab26d32833fa8</luamd5> 
-<csharpmd5>0e63cee7c1cd0d96fe29bcafc8116690</csharpmd5> 
-<xmlmd5>6c5cc35c7f532df0cbcb42bc9a47268b</xmlmd5> 
+<cppmd5>5ab64b8be8f4e642236f2e00b45fe84a</cppmd5> 
+<luamd5>cdbebdd800e928fabecaf569359dd7de</luamd5> 
+<csharpmd5>dacedadddd4c171e27198287864c4acc</csharpmd5> 
+<xmlmd5>a272548b0559cd9761ef8c83d4eb010d</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_DictFightEffect" Number = "10002" /> 
     <cache key = "ID_DictGlobal" Number = "10000" /> 
     <cache key = "ID_DictItem" Number = "10003" /> 
     <cache key = "ID_DictRafflePool" Number = "10001" /> 
+    <cache key = "ID_FightEffect" Number = "10005" /> 
     <cache key = "ID_RaffleAward" Number = "10004" /> 
 </cacheNumber>

@@ -23,12 +23,12 @@
 #define _UTLS_IMPL_H_
 
 
-
 //string
 template<class T>
 std::string toString(const T &t)
 {
     std::stringstream os;
+    os.precision(16);
     os << t;
     return std::move(os.str());
 }
@@ -272,21 +272,21 @@ splitString(std::string text, const std::string & deli, const std::string & ign)
 }
 
 
-inline double getFloatTick()
+inline double getFloatNowTime()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
-inline double getFloatSteadyTick()
+inline double getFloatSteadyNowTime()
 {
     return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-inline long long getIntegerTick()
+inline long long getNowTick()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-inline long long getIntegerSteadyTick()
+inline long long getNowSteadyTick()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
@@ -391,11 +391,10 @@ inline bool isZero(double f, double acc)
     return fabs(f) < acc;
 }
 
-using std::max;
-using std::min;
+
 inline bool isEqual(double f1, double f2, double acc)
 {
-    return fabs(f1 - f2) <= max(fabs(f1), fabs(f2)) * acc;
+    return fabs(f1 - f2) <= std::max(fabs(f1), fabs(f2)) * acc;
 }
 
 

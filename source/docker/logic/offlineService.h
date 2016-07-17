@@ -25,8 +25,7 @@
 #include <common.h>
 #include "service.h"
 #include "module.h"
-#include <ProtoOffline.h>
-#include <ProtoDBService.h>
+#include <ProtoDocker.h>
 
 /*
 OfflineService
@@ -43,7 +42,7 @@ public:
     void onModuleLoad(bool success, const std::string & moduleName);
     void onClientChange() override final;
     void onUnload() override final;
-    void onTick() override final;
+    void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
 private:
     void onLoadMaxOfflineID(zsummer::proto4z::ReadStream &);
     void onUserOffline(const Tracing & trace, zsummer::proto4z::ReadStream &);

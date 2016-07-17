@@ -50,20 +50,22 @@ toService可以携带本地回调方法, 对方收到消息后通过backToServic
 using Slot = std::function < void(const Tracing & trace, zsummer::proto4z::ReadStream &) >;
 using ServiceCallback = std::function<void(zsummer::proto4z::ReadStream &)>;
 
-using ProtoID = zsummer::proto4z::ProtoInteger;
-const ProtoID InvalidProtoID = -1;
-
-enum ServiceStatus
+struct RepeatTimerCounts 
 {
-    SS_NONE,
-    SS_CREATED,
-    SS_INITING,
-    SS_WORKING,
-    SS_UNLOADING,
-    SS_DESTROY,
+    TimerID timerID = InvalidTimerID;
+    ui32 delay = 0;
+    ui32 interval = 0;
+    ui32 repeat = 0;
+    ui32 count = 0;
+    bool withSysTime = false;
 };
-
-
+using RepeatTimerCB = std::function<void(TimerID tID, ui32 curRepeat, ui32 maxRepeat)>;
+struct ReapeatTimerInfo
+{
+    RepeatTimerCounts counts;
+    RepeatTimerCB  callback;
+};
+using ReapeatTimerInfoPtr = std::shared_ptr<ReapeatTimerInfo>;
 
 class Docker;
 class Service : public std::enable_shared_from_this<Service>
@@ -94,11 +96,32 @@ protected:
     inline void setStatus(ui16 status) { _status = status; };
     inline void setShell(bool shell) { _shell = shell; }
 
-private:
-    void beginTimer();
-    void onTimer();
+public:
+    using Slots = std::unordered_map<unsigned short, Slot>;
+    template<class Proto>
+    inline void slotting(const Slot & msgfun) { _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
+
+    bool canToService(ServiceType serviceType, ServiceID serviceID = InvalidServiceID);
+    void toService(ServiceType serviceType, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    template<class Proto>
+    void toService(ServiceType serviceType, const OutOfBand &oob, Proto proto, ServiceCallback cb = nullptr);
+    template<class Proto>
+    void toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, Proto proto, ServiceCallback cb = nullptr);
+
+    void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    template<class Proto>
+    void backToService(const Tracing & trace, Proto proto, ServiceCallback cb = nullptr);
+public:
+    //该定时器并不需要维护定时器ID 除非有需要cancel的情况. 
+    //对于repeat类型的定时器, 在service完成卸载后 会由该父类进行全部取消与清除操作, 无需担心定时器造成的引用计数问题. 
+    TimerID createTimer(ui32 delay, ui32 repeat, ui32 interval, bool withSysTime,
+        const RepeatTimerCB& cb);
+    //repeat类型的定时器, 取消时以最后一次回调中的tID为准. 每次repeat定时器ID都会换一次. 这里要注意. 
+    bool cancelTimer(TimerID tID);
+
 protected:
-    virtual void onTick() = 0; //仅限单例模式并且非shell的service才会调用这个 
+    virtual void onTick(TimerID tID, ui32 count, ui32 repeat) = 0; //仅限STrait_Single 特性且非shell的service才会调用该回调.  
 
     virtual bool onLoad() = 0; //service初始化好之后要调用finishLoad 
     bool finishLoad();
@@ -107,25 +130,15 @@ protected:
     virtual void onUnload() = 0;//service卸载好之后要调用finishUnload 
     bool finishUnload();
 
+
 protected:
-    using Slots = std::unordered_map<unsigned short, Slot>;
-    template<class Proto>
-    inline void slotting(const Slot & msgfun) { _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
+
     
     virtual void process(const Tracing & trace, const char * block, unsigned int len);
     virtual void process4bind(const Tracing & trace, const std::string & block);
+private:
+    void onTimer(const ReapeatTimerInfoPtr & rt);
 
-public:
-    void toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb = nullptr);
-    void toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
-    template<class Proto>
-    void toService(ServiceType serviceType, Proto proto, ServiceCallback cb = nullptr);
-    template<class Proto>
-    void toService(ServiceType serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb = nullptr);
-
-    void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
-    template<class Proto>
-    void backToService(const Tracing & trace, Proto proto, ServiceCallback cb = nullptr);
 
 private:
     ui32 makeCallback(const ServiceCallback &cb);
@@ -135,9 +148,7 @@ private:
 private:
     Slots _slots;
     std::map<ProtoID, std::string> _slotsName;
-
-    TimerID _timer = InvalidTimerID;
-
+    std::set<TimerID> _repeatTimers;
 private:
     ServiceType _serviceType = InvalidServiceType;
     ServiceID _serviceID = InvalidServiceID;
@@ -160,13 +171,13 @@ using ServicePtr = std::shared_ptr<Service>;
 using ServiceWeakPtr = std::shared_ptr<Service>;
 
 template<class Proto>
-void Service::toService(ServiceType serviceType, Proto proto, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, const OutOfBand &oob, Proto proto, ServiceCallback cb)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(serviceType, ws.getStream(), ws.getStreamLen(), cb);
+        toService(serviceType, oob, ws.getStream(), ws.getStreamLen(), cb);
     }
     catch (const std::exception & e)
     {
@@ -174,13 +185,13 @@ void Service::toService(ServiceType serviceType, Proto proto, ServiceCallback cb
     }
 }
 template<class Proto>
-void Service::toService(ServiceType serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, Proto proto, ServiceCallback cb)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(serviceType, serviceID, ws.getStream(), ws.getStreamLen(), cb);
+        toService(serviceType, serviceID, oob, ws.getStream(), ws.getStreamLen(), cb);
     }
     catch (const std::exception & e)
     {

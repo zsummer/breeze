@@ -36,10 +36,10 @@ static int panichHandler(lua_State * L)
 }
 
 
-bool ServerConfig::parse(std::string filename, DockerID idx)
+bool ServerConfig::parseDocker(std::string configName, DockerID dockerID)
 {
     srand((unsigned int)time(NULL));
-    _dockerIdx = idx;
+    _dockerID = dockerID;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {
@@ -47,15 +47,170 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
     }
     luaL_openlibs(L);  /* open libraries */
     lua_atpanic(L, panichHandler);
-    if (luaL_dofile(L, filename.c_str()))
+    if (luaL_dofile(L, configName.c_str()))
     {
-        LOGE("can't found the config file. filename=" << filename);
+        LOGE("can't found the config file. configName=" << configName);
         return false;
     }
-    lua_getfield(L, -1, "areaid");
-    _areaid = (unsigned short)luaL_optinteger(L, -1, 0);
+    lua_getfield(L, -1, "areaID");
+    _areaID = (unsigned short)luaL_optinteger(L, -1, 0);
     lua_pop(L, 1);
-    LOGI("ServerConfig::parse dockerID=" << idx << ", areaid=" << _areaid << ", getMinServiceID=" << getMinServiceID());
+    LOGI("ServerConfig::parse dockerID=" << dockerID << ", _areaID=" << _areaID << ", getMinServiceID=" << getMinServiceID());
+
+
+
+
+    lua_getfield(L, -1, "docker");
+    lua_pushnil(L);
+    while (lua_next(L, -2))
+    {
+        if (!lua_istable(L, -1))
+        {
+            LOGE("config parse docker false. value is not table type");
+            return false;
+        }
+
+        DockerConfig lconfig;
+        lua_getfield(L, -1, "dockerListenHost");
+        lconfig._dockerListenHost = luaL_optstring(L, -1, "0.0.0.0");
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "dockerPubHost");
+        lconfig._dockerPubHost = luaL_optstring(L, -1, "127.0.0.1");
+        lua_pop(L, 1);
+        lua_getfield(L, -1, "dockerListenPort");
+        lconfig._dockerListenPort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
+
+
+        lua_getfield(L, -1, "clientPubHost");
+        lconfig._clientPubHost = luaL_optstring(L, -1, "");
+        lua_pop(L, 1);
+        lua_getfield(L, -1, "clientPubPort");
+        lconfig._clientPubPort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "webPubHost");
+        lconfig._webPubHost = luaL_optstring(L, -1, "");
+        lua_pop(L, 1);
+        lua_getfield(L, -1, "webPort");
+        lconfig._webPubPort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_pop(L, 1);
+
+        lua_getfield(L, -1, "dockerID");
+        lconfig._dockerID = (DockerID)luaL_checkinteger(L, -1);
+        lua_pop(L, 1);
+
+
+
+
+        lua_getfield(L, -1, "dockerWhite");
+        if (lua_isnil(L, -1))
+        {
+            lua_pop(L, 1);
+        }
+        else
+        {
+            lua_pushnil(L);
+            while (lua_next(L, -2))
+            {
+                lconfig._dockerWhite.push_back(luaL_checkstring(L, -1));
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 1);
+        }
+
+        lua_getfield(L, -1, "services");
+        if (lua_isnil(L, -1))
+        {
+            lua_pop(L, 1);
+        }
+        else
+        {
+            lua_pushnil(L);
+            while (lua_next(L, -2))
+            {
+                std::string serviceName = luaL_checkstring(L, -1);
+                ServiceType serviceType = getServiceTypeByKey(serviceName);
+                if (serviceType != InvalidServiceType)
+                {
+                    lconfig._services.push_back(serviceType);
+                }
+                else
+                {
+                    LOGE("not found serviceName [" << serviceName << "]");
+                    return false;
+                }
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 1);
+        }
+        _configs.push_back(lconfig);
+        lua_pop(L, 1);
+    }
+    //pop listen table.
+    lua_pop(L, 1);
+
+    lua_close(L);
+
+    //构建service和docker的装载关系  
+    for (auto & config : _configs)
+    {
+        for (auto & serviceType : config._services)
+        {
+             _serviceLoadDockers[serviceType].push_back(config._dockerID);
+        }
+    }
+    //异构Service如果没有配置docker 则添加一个空的关系
+    for (const auto & sd : ServiceDepends)
+    {
+        if (getServiceTrait(sd.first) == STrait_Heterogenous )
+        {
+            _serviceLoadDockers[sd.first];
+        }
+    }
+
+    //检查装载关系, 单例模式必须有且只有一个docker, 多例模式必须有,但可以多于一个docker  
+    for (const auto & sd : ServiceDepends)
+    {
+        if (sd.first == STClient)
+        {
+            continue;
+        }
+        auto founder = _serviceLoadDockers.find(sd.first);
+        if ((founder == _serviceLoadDockers.end() || founder->second.empty()) && getServiceTrait(sd.first) != STrait_Heterogenous)
+        {
+            LOGE("not found service in docker config. the service name=" << getServiceName(sd.first));
+            return false;
+        }
+        if (getServiceTrait(sd.first) == STrait_Single  && founder->second.size() != 1)
+        {
+            LOGE("duplicate service name in docker config . the service name=" << getServiceName(sd.first));
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+
+
+bool ServerConfig::parseDB(std::string configName)
+{
+    srand((unsigned int)time(NULL));
+    lua_State *L = luaL_newstate();
+    if (L == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+    luaL_openlibs(L);  /* open libraries */
+    lua_atpanic(L, panichHandler);
+    if (luaL_dofile(L, configName.c_str()))
+    {
+        LOGE("can't found the config file. configName=" << configName);
+        return false;
+    }
 
     lua_getfield(L, -1, "db");
     lua_pushnil(L);
@@ -71,7 +226,7 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
             LOGE("config parse db false. value is not table type");
             return false;
         }
-        
+
         DBConfig lconfig;
         lua_getfield(L, -1, "ip");
         lconfig._ip = luaL_checkstring(L, -1);
@@ -104,91 +259,106 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
     }
     //pop key "db".
     lua_pop(L, 1);
+    lua_close(L);
+    return true;
+}
+
+bool ServerConfig::parseWorld(std::string configName)
+{
+    srand((unsigned int)time(NULL));
+    lua_State *L = luaL_newstate();
+    if (L == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+    luaL_openlibs(L);  /* open libraries */
+    lua_atpanic(L, panichHandler);
+    if (luaL_dofile(L, configName.c_str()))
+    {
+        LOGE("can't found the config file. configName=" << configName);
+        return false;
+    }
+    lua_getfield(L, -1, "world");
+
+    lua_getfield(L, -1, "dockerListenHost");
+    _worldConfig._dockerListenHost = luaL_checkstring(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, -1, "dockerListenPort");
+    _worldConfig._dockerListenPort = (unsigned short)luaL_checkinteger(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, -1, "spaceListenHost");
+    _worldConfig._spaceListenHost = luaL_checkstring(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, -1, "spacePubHost");
+    _worldConfig._spacePubHost = luaL_checkstring(L, -1);
+    lua_pop(L, 1);
+
+    lua_getfield(L, -1, "spaceListenPort");
+    _worldConfig._spaceListenPort = (unsigned short)luaL_checkinteger(L, -1);
+    lua_pop(L, 1);
+    lua_close(L);
+    return true;
+}
 
 
-    lua_getfield(L, -1, "docker");
+bool ServerConfig::parseSpaces(std::string configName, ui32 serverID)
+{
+    srand((unsigned int)time(NULL));
+    _space._spaceID = serverID;
+    lua_State *L = luaL_newstate();
+    if (L == NULL)
+    {
+        return EXIT_FAILURE;
+    }
+    luaL_openlibs(L);  /* open libraries */
+    lua_atpanic(L, panichHandler);
+    if (luaL_dofile(L, configName.c_str()))
+    {
+        LOGE("can't found the config file. configName=" << configName);
+        return false;
+    }
+
+    LOGI("ServerConfig::parse serverID=" << serverID << ", configName=" << configName);
+
+
+
+
+    lua_getfield(L, -1, "spaces");
     lua_pushnil(L);
     while (lua_next(L, -2))
     {
         if (!lua_istable(L, -1))
         {
-            LOGE("config parse docker false. value is not table type");
+            LOGE("config parse spaces false. value is not table type");
             return false;
         }
 
-        DockerConfig lconfig;
-        lua_getfield(L, -1, "serviceBindIP");
-        lconfig._serviceBindIP = luaL_optstring(L, -1, "0.0.0.0");
+        SpaceConfig sconfig;
+        lua_getfield(L, -1, "clientListenHost");
+        sconfig._clientListenHost = luaL_optstring(L, -1, "0.0.0.0");
         lua_pop(L, 1);
 
-        lua_getfield(L, -1, "serviceIP");
-        lconfig._serviceIP = luaL_optstring(L, -1, "127.0.0.1");
+        lua_getfield(L, -1, "clientPubHost");
+        sconfig._clientPubHost = luaL_optstring(L, -1, "127.0.0.1");
         lua_pop(L, 1);
-        lua_getfield(L, -1, "servicePort");
-        lconfig._servicePort = (unsigned short)luaL_optinteger(L, -1, 0);
+
+        lua_getfield(L, -1, "clientListenPort");
+        sconfig._clientListenPort = (unsigned short)luaL_optinteger(L, -1, 0);
         lua_pop(L, 1);
 
 
-        lua_getfield(L, -1, "wideIP");
-        lconfig._wideIP = luaL_optstring(L, -1, "");
-        lua_pop(L, 1);
-        lua_getfield(L, -1, "widePort");
-        lconfig._widePort = (unsigned short)luaL_optinteger(L, -1, 0);
+        lua_getfield(L, -1, "spaceID");
+        sconfig._spaceID = (unsigned int)luaL_optinteger(L, -1, 0);
         lua_pop(L, 1);
 
-        lua_getfield(L, -1, "webIP");
-        lconfig._webIP = luaL_optstring(L, -1, "");
-        lua_pop(L, 1);
-        lua_getfield(L, -1, "webPort");
-        lconfig._webPort = (unsigned short)luaL_optinteger(L, -1, 0);
-        lua_pop(L, 1);
-
-        lua_getfield(L, -1, "dockerID");
-        lconfig._dockerID = (DockerID)luaL_checkinteger(L, -1);
-        lua_pop(L, 1);
-
-        lua_getfield(L, -1, "serviceWhite");
-        if (lua_isnil(L, -1))
+        if (_space._spaceID == sconfig._spaceID)
         {
-            lua_pop(L, 1);
-        }
-        else
-        {
-            lua_pushnil(L);
-            while (lua_next(L, -2))
-            {
-                lconfig._whiteList.push_back(luaL_checkstring(L, -1));
-                lua_pop(L, 1);
-            }
-            lua_pop(L, 1);
+            _space = sconfig;
         }
 
-        lua_getfield(L, -1, "services");
-        if (lua_isnil(L, -1))
-        {
-            lua_pop(L, 1);
-        }
-        else
-        {
-            lua_pushnil(L);
-            while (lua_next(L, -2))
-            {
-                std::string serviceName = luaL_checkstring(L, -1);
-                ServiceType serviceType = getServiceTypeByKey(serviceName);
-                if (serviceType != InvalidServiceType)
-                {
-                    lconfig._services.push_back(serviceType);
-                }
-                else
-                {
-                    LOGE("not found serviceName [" << serviceName << "]");
-                    return false;
-                }
-                lua_pop(L, 1);
-            }
-            lua_pop(L, 1);
-        }
-        _configDocker.push_back(lconfig);
         lua_pop(L, 1);
     }
     //pop listen table.
@@ -196,41 +366,12 @@ bool ServerConfig::parse(std::string filename, DockerID idx)
 
     lua_close(L);
 
-    for (auto & config : _configDocker)
+    if (_space._clientListenPort == 0)
     {
-        for (auto & serviceType : config._services)
-        {
-            auto &dockerIDs = _configServiceType[serviceType];
-            dockerIDs.push_back(config._dockerID);
-        }
+        return false;
     }
-    for (const auto & sd : ServiceDepends)
-    {
-        if (sd.first == STClient)
-        {
-            continue;
-        }
-        auto founder = _configServiceType.find(sd.first);
-        if (founder == _configServiceType.end() || founder->second.empty())
-        {
-            LOGE("not found service in docker config. the service name=" << getServiceName(sd.first));
-            return false;
-        }
-        if (isSingletonService(sd.first) && founder->second.size() != 1)
-        {
-            LOGE("duplicate service name in docker config . the service name=" << getServiceName(sd.first));
-            return false;
-        }
-    }
-
     return true;
 }
-
-
-
-
-
-
 
 
 

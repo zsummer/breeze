@@ -110,29 +110,29 @@ struct CreateUserReq //创角色请求
 { 
     static const unsigned short getProtoID() { return 40003;} 
     static const std::string getProtoName() { return "CreateUserReq";} 
-    std::string serviceName;  
+    std::string userName;  
     CreateUserReq() 
     { 
     } 
-    CreateUserReq(const std::string & serviceName) 
+    CreateUserReq(const std::string & userName) 
     { 
-        this->serviceName = serviceName; 
+        this->userName = userName; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserReq & data) 
 { 
-    ws << data.serviceName;  
+    ws << data.userName;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserReq & data) 
 { 
-    rs >> data.serviceName;  
+    rs >> data.userName;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateUserReq & info) 
 { 
     stm << "[\n"; 
-    stm << "serviceName=" << info.serviceName << "\n"; 
+    stm << "userName=" << info.userName << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -142,31 +142,31 @@ struct CreateUserResp //创角色请求返回
     static const unsigned short getProtoID() { return 40004;} 
     static const std::string getProtoName() { return "CreateUserResp";} 
     unsigned short retCode;  
-    unsigned long long serviceID;  
+    unsigned long long userID;  
     UserPreviewArray previews;  
     CreateUserResp() 
     { 
         retCode = 0; 
-        serviceID = 0; 
+        userID = 0; 
     } 
-    CreateUserResp(const unsigned short & retCode, const unsigned long long & serviceID, const UserPreviewArray & previews) 
+    CreateUserResp(const unsigned short & retCode, const unsigned long long & userID, const UserPreviewArray & previews) 
     { 
         this->retCode = retCode; 
-        this->serviceID = serviceID; 
+        this->userID = userID; 
         this->previews = previews; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserResp & data) 
 { 
     ws << data.retCode;  
-    ws << data.serviceID;  
+    ws << data.userID;  
     ws << data.previews;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserResp & data) 
 { 
     rs >> data.retCode;  
-    rs >> data.serviceID;  
+    rs >> data.userID;  
     rs >> data.previews;  
     return rs; 
 } 
@@ -174,7 +174,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
     stm << "previews=" << info.previews << "\n"; 
     stm << "]\n"; 
     return stm; 
@@ -184,30 +184,30 @@ struct AttachUserReq //选角色请求
 { 
     static const unsigned short getProtoID() { return 40005;} 
     static const std::string getProtoName() { return "AttachUserReq";} 
-    unsigned long long serviceID;  
+    unsigned long long userID;  
     AttachUserReq() 
     { 
-        serviceID = 0; 
+        userID = 0; 
     } 
-    AttachUserReq(const unsigned long long & serviceID) 
+    AttachUserReq(const unsigned long long & userID) 
     { 
-        this->serviceID = serviceID; 
+        this->userID = userID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachUserReq & data) 
 { 
-    ws << data.serviceID;  
+    ws << data.userID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachUserReq & data) 
 { 
-    rs >> data.serviceID;  
+    rs >> data.userID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachUserReq & info) 
 { 
     stm << "[\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -248,34 +248,34 @@ struct UserChatReq
 { 
     static const unsigned short getProtoID() { return 40007;} 
     static const std::string getProtoName() { return "UserChatReq";} 
-    unsigned long long toServiceID;  
+    unsigned long long userID;  
     std::string msg;  
     UserChatReq() 
     { 
-        toServiceID = 0; 
+        userID = 0; 
     } 
-    UserChatReq(const unsigned long long & toServiceID, const std::string & msg) 
+    UserChatReq(const unsigned long long & userID, const std::string & msg) 
     { 
-        this->toServiceID = toServiceID; 
+        this->userID = userID; 
         this->msg = msg; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserChatReq & data) 
 { 
-    ws << data.toServiceID;  
+    ws << data.userID;  
     ws << data.msg;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserChatReq & data) 
 { 
-    rs >> data.toServiceID;  
+    rs >> data.userID;  
     rs >> data.msg;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserChatReq & info) 
 { 
     stm << "[\n"; 
-    stm << "toServiceID=" << info.toServiceID << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
     stm << "msg=" << info.msg << "\n"; 
     stm << "]\n"; 
     return stm; 
@@ -285,34 +285,34 @@ struct UserChatResp
 { 
     static const unsigned short getProtoID() { return 40008;} 
     static const std::string getProtoName() { return "UserChatResp";} 
-    unsigned long long fromServiceID;  
+    unsigned long long fromUserID;  
     std::string msg;  
     UserChatResp() 
     { 
-        fromServiceID = 0; 
+        fromUserID = 0; 
     } 
-    UserChatResp(const unsigned long long & fromServiceID, const std::string & msg) 
+    UserChatResp(const unsigned long long & fromUserID, const std::string & msg) 
     { 
-        this->fromServiceID = fromServiceID; 
+        this->fromUserID = fromUserID; 
         this->msg = msg; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserChatResp & data) 
 { 
-    ws << data.fromServiceID;  
+    ws << data.fromUserID;  
     ws << data.msg;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserChatResp & data) 
 { 
-    rs >> data.fromServiceID;  
+    rs >> data.fromUserID;  
     rs >> data.msg;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserChatResp & info) 
 { 
     stm << "[\n"; 
-    stm << "fromServiceID=" << info.fromServiceID << "\n"; 
+    stm << "fromUserID=" << info.fromUserID << "\n"; 
     stm << "msg=" << info.msg << "\n"; 
     stm << "]\n"; 
     return stm; 

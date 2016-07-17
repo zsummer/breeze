@@ -9,7 +9,7 @@
 * 
 * ===============================================================================
 * 
-* Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -71,9 +71,13 @@ namespace zsummer
             {
                 PostMessage(std::move(h));
             }
-            inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle)
+            inline unsigned long long createTimer(unsigned int delayms, _OnTimerHandler &&handle, bool useSystemTime = true)
             {
-                return _timer.createTimer(delayms, std::move(handle));
+                return _timer.createTimer(delayms, std::move(handle), useSystemTime);
+            }
+            inline unsigned long long createTimer(unsigned int delayms, const _OnTimerHandler &handle, bool useSystemTime = true)
+            {
+                return _timer.createTimer(delayms, handle, useSystemTime);
             }
             inline bool cancelTimer(unsigned long long timerID)
             {

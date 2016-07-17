@@ -479,9 +479,9 @@ _ZSUMMER_LOG4Z_BEGIN
 class Log4zBinary
 {
 public:
-    Log4zBinary(const char * buf, int len)
+    Log4zBinary(const void * buf, int len)
     {
-        _buf = buf;
+        _buf = (const char *)buf;
         _len = len;
     }
     const char * _buf;
@@ -728,16 +728,31 @@ inline Log4zStream & Log4zStream::writePointer(const void * t)
 inline Log4zStream & Log4zStream::writeBinary(const Log4zBinary & t)
 {
     writeData("%s", "\r\n\t[");
-    for (int i = 0; i < t._len; i++)
+    for (int i=0; i<(t._len / 16)+1; i++)
     {
-        if (i % 16 == 0)
+        writeData("%s", "\r\n\t");
+        *this << (void*)(t._buf + i*16);
+        writeData("%s", ": ");
+        for (int j=i*16; j < (i+1)*16 && j < t._len; j++)
         {
-            writeData("%s", "\r\n\t");
-            *this << (void*)(t._buf + i);
-            writeData("%s", ": ");
+            writeData("%02x ", (unsigned char)t._buf[j]);
         }
-        writeData("%02x ", (unsigned char)t._buf[i]);
+        writeData("%s", "\r\n\t");
+        *this << (void*)(t._buf + i*16);
+        writeData("%s", ": ");
+        for (int j = i * 16; j < (i + 1) * 16 && j < t._len; j++)
+        {
+            if (isprint((unsigned char)t._buf[j]))
+            {
+                writeData(" %c ", t._buf[j]);
+            }
+            else
+            {
+                *this << " . ";
+            }
+        }
     }
+
     writeData("%s", "\r\n\t]\r\n\t");
     return *this;
 }

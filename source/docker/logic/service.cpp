@@ -4,30 +4,57 @@
 #include <ProtoDocker.h>
 
 
-void Service::beginTimer()
+TimerID Service::createTimer(ui32 delay, ui32 repeat, ui32 interval, bool withSysTime,
+    const RepeatTimerCB& cb)
 {
-    if (_timer == InvalidTimerID)
-    {
-        _timer = SessionManager::getRef().createTimer(5000, std::bind(&Service::onTimer, shared_from_this()));
-    }
+    ReapeatTimerInfoPtr rt = std::make_shared<ReapeatTimerInfo>();
+    rt->counts.delay = delay;
+    rt->counts.repeat = repeat;
+    rt->counts.interval = interval;
+    rt->counts.count = 0;
+    rt->counts.withSysTime = withSysTime;
+    rt->callback = cb;
+    TimerID tID = SessionManager::getRef().createTimer(delay,
+        std::bind(&Service::onTimer, shared_from_this(), rt), withSysTime);
+    rt->counts.timerID = tID;
+    _repeatTimers.insert(tID);
+    return tID;
 }
-void Service::onTimer()
+bool Service::cancelTimer(TimerID tID)
 {
-    if (_timer == InvalidTimerID)
+    SessionManager::getRef().cancelTimer(tID);
+    _repeatTimers.erase(tID);
+    return true;
+}
+
+void Service::onTimer(const ReapeatTimerInfoPtr & rt)
+{
+    auto founder = _repeatTimers.find(rt->counts.timerID);
+    if (founder == _repeatTimers.end())
+    {
+        LOGE("Service::onTimer can't found repeat timerID");
+        return;
+    }
+
+    (rt->callback)(rt->counts.timerID, rt->counts.count, rt->counts.repeat);
+
+    founder = _repeatTimers.find(rt->counts.timerID);
+    if (founder == _repeatTimers.end())
+    {
+        LOGW("Service::onTimer can't found repeat timerID. maybe it's cancel. timerID=" << rt->counts.timerID);
+        return;
+    }
+    _repeatTimers.erase(founder);
+    if (rt->counts.count == rt->counts.repeat)
     {
         return;
     }
-    _timer = SessionManager::getRef().createTimer(5000, std::bind(&Service::onTimer, shared_from_this()));
-    try
-    {
-        onTick();
-    }
-    catch (const std::exception & e)
-    {
-        LOGE("Service::onTimer catch except error. e=" << e.what() << ", service=" << getServiceName() << ", service id=" << getServiceID());
-    }
+    rt->counts.count++;
+    TimerID tID = SessionManager::getRef().createTimer(rt->counts.interval,
+        std::bind(&Service::onTimer, shared_from_this(), rt), rt->counts.withSysTime);
+    rt->counts.timerID = tID;
+    _repeatTimers.insert(tID);
 }
-
 bool Service::finishLoad()
 {
     setStatus(SS_WORKING);
@@ -47,7 +74,7 @@ bool Service::finishLoad()
            Docker::getRef().broadcastToDockers(notice, false);
        }
 
-        if (!isSingletonService(getServiceType()))
+        if (getServiceTrait(getServiceType()) == STrait_Multi)
         {
             RefreshServiceToMgrNotice refreshNotice;
             refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
@@ -61,9 +88,9 @@ bool Service::finishLoad()
 
             for (auto sd : ServiceDepends)
             {
-                if (isSingletonService(sd.first))
+                if (getServiceTrait(sd.first) == STrait_Single )
                 {
-                    toService(sd.first, refreshNotice, nullptr);
+                    toService(sd.first, OutOfBand(InvalidServiceID),refreshNotice, nullptr);
                 }
             }
         }
@@ -82,7 +109,7 @@ bool Service::finishUnload()
     setStatus(SS_DESTROY);
     if (!isShell())
     {
-        if (!isSingletonService(getServiceType()))
+        if (getServiceTrait(getServiceType()) == STrait_Multi)
         {
             RefreshServiceToMgrNotice refreshNotice;
             refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
@@ -95,9 +122,9 @@ bool Service::finishUnload()
                 getClientSessionID()));
             for (auto sd : ServiceDepends)
             {
-                if (isSingletonService(sd.first))
+                if (getServiceTrait(sd.first) == STrait_Single)
                 {
-                    toService(sd.first, refreshNotice, nullptr);
+                    toService(sd.first, OutOfBand(InvalidServiceID),  refreshNotice, nullptr);
                 }
             }
         }
@@ -110,7 +137,11 @@ bool Service::finishUnload()
     {
         LOGI("remote service finish unload. service=" << getServiceName() << ", id=" << getServiceID());
     }
-    
+    for (auto tID : _repeatTimers)
+    {
+        SessionManager::getRef().cancelTimer(tID);
+    }
+    _repeatTimers.clear();
     return true;
 }
 
@@ -155,42 +186,58 @@ void Service::cleanCallback()
     }
 }
 
-void Service::toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob,  const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trace;
-    trace.fromServiceType = getServiceType();
-    trace.fromServiceID = getServiceID();
-    trace.fromDockerID = getServiceDockerID();
-    trace.traceBackID = 0;
-    trace.traceID = 0;
-    trace.toServiceType = serviceType;
-    trace.toServiceID = serviceID;
+    trace.routing.fromServiceType = getServiceType();
+    trace.routing.fromServiceID = getServiceID();
+    trace.routing.fromDockerID = getServiceDockerID();
+    trace.routing.traceBackID = 0;
+    trace.routing.traceID = 0;
+    trace.routing.toServiceType = serviceType;
+    trace.routing.toServiceID = serviceID;
+    trace.oob = oob;
     if (cb)
     {
-        trace.traceID = makeCallback(cb);
+        trace.routing.traceID = makeCallback(cb);
     }
     Docker::getRef().toService(trace, block, len, true, true);
 }
 
-void Service::toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb)
 {
-    toService(serviceType, InvalidServiceID, block, len, cb);
+    toService(serviceType, InvalidServiceID, oob, block, len, cb);
 }
+bool Service::canToService(ServiceType serviceType, ServiceID serviceID)
+{
+    auto s = Docker::getRef().peekService(serviceType, serviceID);
+    if (!s)
+    {
+        return false;
+    }
+    if (Docker::getRef().getDockerLinked(s->getServiceDockerID()) == InvalidSessionID)
+    {
+        return false;
+    }
+    return true;
+}
+
 
 void Service::backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trc;
-    trc.fromDockerID = getServiceDockerID();
-    trc.fromServiceType = getServiceType();
-    trc.fromServiceID = getServiceID();
-    trc.traceBackID = trace.traceID;
-    trc.traceID = 0;
-    trc.toServiceType = trace.fromServiceType;
-    trc.toServiceID = trace.fromServiceID;
-    trc.toDockerID = trace.fromDockerID;
+    trc.routing.fromDockerID = getServiceDockerID();
+    trc.routing.fromServiceType = getServiceType();
+    trc.routing.fromServiceID = getServiceID();
+    trc.routing.traceID = 0;
+    trc.routing.traceBackID = trace.routing.traceID;
+    trc.routing.toServiceType = trace.routing.fromServiceType;
+    trc.routing.toServiceID = trace.routing.fromServiceID;
+    trc.routing.toDockerID = trace.routing.fromDockerID;
+    trc.oob = trace.oob;
     if (cb)
     {
-        trc.traceID = makeCallback(cb);
+        trc.routing.traceID = makeCallback(cb);
     }
     Docker::getRef().toService(trc, block, len, true, true);
 }
@@ -202,12 +249,12 @@ void Service::process4bind(const Tracing & trace, const std::string & block)
 
 void Service::process(const Tracing & trace, const char * block, unsigned int len)
 {
-    if (trace.traceBackID > 0)
+    if (trace.routing.traceBackID > 0)
     {
-        auto cb = checkoutCallback(trace.traceBackID);
+        auto cb = checkoutCallback(trace.routing.traceBackID);
         if (!cb)
         {
-            LOGE("Service::process callback timeout. cbid=" << trace.traceBackID);
+            LOGE("Service::process callback timeout. cbid=" << trace.routing.traceBackID);
             return;
         }
         try

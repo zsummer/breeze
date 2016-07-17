@@ -14,7 +14,7 @@ OfflineService::~OfflineService()
     
 }
 
-void OfflineService::onTick()
+void OfflineService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
 }
 
@@ -28,7 +28,7 @@ void OfflineService::onUnload()
 bool OfflineService::onLoad()
 {
     DBQueryReq req("SELECT max(id) FROM `tb_UserOffline`");
-    toService(STInfoDBMgr, req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
+    toService(STInfoDBMgr, OutOfBand(InvalidServiceID), req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
     return true;
 }
 
@@ -106,9 +106,9 @@ void OfflineService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
             for (auto iter = _offlines._data.begin(); iter != _offlines._data.end();)
             {
                 auto offline = *iter;
-                if (offline.serviceID == si.serviceID && offline.status == 0)
+                if (offline.userID == si.serviceID && offline.status == 0)
                 {
-                    toService(STUser, offline.serviceID, offline.streamBlob.c_str(), (unsigned int)offline.streamBlob.length());
+                    toService(STUser, offline.userID, offline.streamBlob.c_str(), (unsigned int)offline.streamBlob.length());
                     offline.status = 1;
                     _offlines.updateToDB(offline);
                     iter = _offlines._data.erase(iter);

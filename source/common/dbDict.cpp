@@ -23,87 +23,31 @@
 
 
 
-bool DBDict::buildDictTable()
-{
-    buildDict<DictGlobal>(_dictHelper);
-    buildDict<DictRafflePool>(_dictHelper);
-    buildDict<DictFightEffect>(_dictHelper);
-    buildDict<DictItem>(_dictHelper);
-    return true;
-}
-
-
-bool DBDict::initHelper()
+DBHelperPtr buildHelper(const std::string & db)
 {
     auto dbconfigs = ServerConfig::getRef().getDBConfig();
-    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [](const DBConfig & config) {return config._name == "STDictDBMgr"; });
+    auto founder = std::find_if(dbconfigs.begin(), dbconfigs.end(), [db](const DBConfig & config) {return config._name == db; });
     if (founder == dbconfigs.end())
     {
-        LOGE("STDictDBMgr not found");
-        return false;
+        LOGE(db << " not found");
+        return nullptr;
     }
-    _dictHelper = std::make_shared<DBHelper>();
-    _dictHelper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
-    if (!_dictHelper->connect())
+    auto helper = std::make_shared<DBHelper>();
+    helper->init(founder->_ip, founder->_port, founder->_db, founder->_user, founder->_pwd, true);
+    if (!helper->connect())
     {
-        LOGE("can't connect mysql STDictDBMgr. config=" << *founder);
-        return false;
+        LOGE("can't connect mysql " << db << ",  config=" << *founder);
+        return nullptr;
     }
-    return true;
+    return helper;
 }
 
 
-bool DBDict::load()
-{
-    if (!fetchDict<DictGlobal>(_dictHelper, [this](const DictGlobal & dict)
-    {
-        _dictGlobal[dict.id] = dict;
-    }))
-    {
-        LOGE("fetchDict DictGlobal error");
-        return false;
-    }
 
 
-    if (!fetchDict<DictRafflePool>(_dictHelper, [this](const DictRafflePool & dict)
-    {
-        _dictRafflePool[dict.id] = dict;
-        RaffleAward award;
-        for (auto & tp : splitArrayString<unsigned int, unsigned int, double>(dict.poolString, ",", "|", " "))
-        {
-            award.id = std::get<0>(tp);
-            award.weight = std::get<1>(tp);
-            award.probability = std::get<2>(tp);
-            _dictRafflePool[dict.id].pool.push_back(award);
-        }
-    }))
-    {
-        LOGE("fetchDict DictRafflePool error");
-        return false;
-    }
 
 
-    if (!fetchDict<DictFightEffect>(_dictHelper, [this](const DictFightEffect & dict)
-    {
-        _dictFightEffect[dict.id] = dict;
-    }))
-    {
-        LOGE("fetchDict DictFightEffect error");
-        return false;
-    }
 
-
-    if (!fetchDict<DictItem>(_dictHelper, [this](const DictItem & dict)
-    {
-        _dictItem[dict.id] = dict;
-    }))
-    {
-        LOGE("fetchDict DictItem error");
-        return false;
-    }
-
-    return true;
-}
 
 
 

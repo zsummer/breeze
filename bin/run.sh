@@ -1,7 +1,21 @@
 #!/usr/bin/bash
+cd makedb
+./makedb
+if [ $? -ne 0 ]; then
+    echo "make had error. please check it !"
+    exit 1
+fi
+cd ..
+
 cd docker
 ./docker 1   &
 ./docker 2   &
+cd ..
+
+cd world
+./world &
+cd ..
+
 #valgrind --tool=massif --trace-children=yes --time-unit=B --max-snapshots=100 --pages-as-heap=yes --detailed-freq=1000 --massif-out-file=docker1.massif.out.%p ./docker 1 &
 #valgrind --tool=massif --trace-children=yes --time-unit=B --max-snapshots=100 --pages-as-heap=yes --detailed-freq=1000 --massif-out-file=docker2.massif.out.%p ./docker 2 &
 
@@ -13,7 +27,6 @@ cd docker
 #valgrind --tool=callgrind  --trace-children=yes ./docker 2 &
 
 
-ps -ef |grep "\bdocker\b" |grep -v "grep"
-sleep 2
+echo "success "
 
 

@@ -77,8 +77,8 @@
 #ifdef __APPLE__
 #include "TargetConditionals.h"
 #include <dispatch/dispatch.h>
-#include <sys/proc.h>
 #if !TARGET_OS_IPHONE
+#define LOG4Z_HAVE_LIBPROC
 #include <libproc.h>
 #endif
 #endif
@@ -404,7 +404,6 @@ private:
     SemHelper        _semaphore;
 
     //! hot change name or path for one logger
-    LockHelper _hotLock;
     int _hotUpdateInterval;
     unsigned int _checksum;
 
@@ -859,7 +858,7 @@ std::string getProcessID()
 
 std::string getProcessName()
 {
-    std::string name = LOG4Z_MAIN_LOGGER_KEY;
+    std::string name = "process";
     char buf[260] = {0};
 #ifdef WIN32
     if (GetModuleFileNameA(NULL, buf, 259) > 0)
@@ -877,8 +876,7 @@ std::string getProcessName()
         name = name.substr(0, pos-0);
     }
 
-#elif defined(__APPLE__)
-
+#elif defined(LOG4Z_HAVE_LIBPROC)
     proc_name(getpid(), buf, 260);
     name = buf;
     return name;;
@@ -1694,10 +1692,10 @@ bool LogerManager::openLogger(LogData * pLog)
         tm t = timeToTm(pLogger->_curFileCreateTime);
         std::string name;
         std::string path;
-        _hotLock.lock();
+
         name = pLogger->_name;
         path = pLogger->_path;
-        _hotLock.unLock();
+
         
         char buf[100] = { 0 };
         if (pLogger->_monthdir)

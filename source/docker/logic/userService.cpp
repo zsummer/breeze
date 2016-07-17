@@ -14,7 +14,7 @@ UserService::~UserService()
 }
 
 
-void UserService::onTick()
+void UserService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
     LOGI("UserService::onTick");
 }
@@ -33,7 +33,10 @@ void UserService::onClientChange()
 
 bool UserService::onLoad()
 {
-    _baseInfo.loadFromDB(shared_from_this(), UserBaseInfo(getServiceID(), getServiceName(), "", 0, 0), std::bind(&UserService::onModuleLoad, std::static_pointer_cast<UserService>(shared_from_this()), _1, _2));
+    UserBaseInfo ubi;
+    ubi.userID = getServiceID();
+    ubi.userName = getServiceName();
+    _baseInfo.loadFromDB(shared_from_this(), ubi, std::bind(&UserService::onModuleLoad, std::static_pointer_cast<UserService>(shared_from_this()), _1, _2));
     return true;
 }
 
@@ -92,9 +95,9 @@ void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream 
     _baseInfo.writeToDB();
 
     UserChatResp resp;
-    resp.fromServiceID = getServiceID();
+    resp.fromUserID = getServiceID();
     resp.msg = req.msg;
-    toService(STClient, req.toServiceID, resp);
+    toService(STClient, req.userID, resp);
 }
 
 void UserService::onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)

@@ -21,7 +21,8 @@
 #include "md5/md5.h"
 #ifdef WIN32
 #pragma comment(lib, "shlwapi")
-#pragma comment(lib, "User32.lib")
+#pragma comment(lib, "User32")
+#pragma comment(lib, "ws2_32")
 #endif // WIN32
 
 
@@ -900,4 +901,39 @@ double realRandF(double mi, double mx)
 }
 
 
+std::string getHostByName(const std::string & name, unsigned short port)
+{
+    auto ret = subStringBack(name, "https://");
+    ret = subStringBack(ret, "http://");
+    ret = subStringFront(ret, "/");
+    if (std::find_if(ret.begin(), ret.end(), [](char ch) {return !isdigit(ch) && ch != '.'; }) == ret.end())
+    {
+        return ret; //ipv4 
+    }
+    if (std::find_if(ret.begin(), ret.end(), [](char ch) {return !isxdigit(ch) && ch != ':'; }) == ret.end())
+    {
+        return ret; //ipv6 
+    }
+    struct addrinfo *res = nullptr;
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+    if (getaddrinfo(ret.c_str(), toString(port).c_str(), &hints, &res) == 0)
+    {
+        char buf[100] = { 0 };
+        if (res->ai_family == AF_INET)
+        {
+            inet_ntop(res->ai_family, &(((sockaddr_in*)res->ai_addr)->sin_addr), buf, 100);
+        }
+        else if (res->ai_family == AF_INET6)
+        {
+            inet_ntop(res->ai_family, &(((sockaddr_in6*)res->ai_addr)->sin6_addr), buf, 100);
+        }
+        return buf;
+    }
+
+    return "";
+}
 

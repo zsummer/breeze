@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>96265d2ed0df45a22f06290d3cb33288</cppmd5> 
-<luamd5>4ed451d6f24c8aaf1833813819a273a8</luamd5> 
-<csharpmd5>d1895fa7150088d1a96558b458ea81af</csharpmd5> 
-<xmlmd5>4562736748e8aad52a24947d9fdfb54e</xmlmd5> 
+<cppmd5>c8351c3564195e0ff9f189878a26cb6d</cppmd5> 
+<luamd5>6cd2beee981f8c0a851701bc694789ac</luamd5> 
+<csharpmd5>6873e0723efc4fc34d8daa78260576a2</csharpmd5> 
+<xmlmd5>b75f9fc6aa42da035165703e0fac69b9</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_DictBaseProps" Number = "1010" /> 
+    <cache key = "ID_DictGlobal" Number = "1007" /> 
+    <cache key = "ID_DictItem" Number = "1011" /> 
+    <cache key = "ID_DictRaffleAward" Number = "1008" /> 
+    <cache key = "ID_DictRafflePool" Number = "1009" /> 
+    <cache key = "ID_ItemInfo" Number = "1012" /> 
     <cache key = "ID_MoneyTree" Number = "1003" /> 
+    <cache key = "ID_OutOfBand" Number = "1006" /> 
+    <cache key = "ID_Routing" Number = "1005" /> 
     <cache key = "ID_SimplePack" Number = "1004" /> 
     <cache key = "ID_Tracing" Number = "1000" /> 
     <cache key = "ID_UserBaseInfo" Number = "1002" /> 

@@ -24,28 +24,32 @@
     </packet>
 
     <packet name="CreateUserReq" desc= "创角色请求">
-        <member name="serviceName" type="string"   desc=""/>
+        <member name="userName" type="string"   desc=""/>
     </packet>
      <packet name="CreateUserResp" desc= "创角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="userID" type="ui64"   desc=""/>
         <member name="previews" type="UserPreviewArray"   desc=""/>
     </packet>
 
     <packet name="AttachUserReq" desc= "选角色请求">
-        <member name="serviceID" type="ui64"   desc=""/>
+        <member name="userID" type="ui64"   desc=""/>
     </packet>
      <packet name="AttachUserResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
 
 
-    <packet name="UserChatReq" desc= "">
-        <member name="toServiceID" type="ui64"   desc=""/>
+ 
+
+<!------------------------------------ other --------------------------------------------->
+
+   <packet name="UserChatReq" desc= "">
+        <member name="userID" type="ui64"   desc=""/>
         <member name="msg" type="string"   desc=""/>
     </packet>
      <packet name="UserChatResp" desc= "">
-        <member name="fromServiceID" type="ui64"   desc=""/>
+        <member name="fromUserID" type="ui64"   desc=""/>
         <member name="msg" type="string"   desc=""/>
     </packet>
 
@@ -55,6 +59,9 @@
      <packet name="UserPingPongResp" desc= "">
         <member name="msg" type="string"   desc=""/>
     </packet>
+
+
+
 
 </Proto>
 

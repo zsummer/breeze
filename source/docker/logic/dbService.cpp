@@ -1,7 +1,6 @@
 ﻿#include "docker.h"
 #include "dbService.h"
-#include <ProtoDBService.h>
-#include <ProtoOffline.h>
+#include <ProtoDocker.h>
 
 
 DBService::DBService() 
@@ -17,7 +16,7 @@ DBService::~DBService()
     
 }
 
-void DBService::onTick()
+void DBService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
     time_t now = getNowTime();
     if (now - _lastTime > 60)

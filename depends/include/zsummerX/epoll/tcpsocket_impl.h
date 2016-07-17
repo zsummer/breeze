@@ -69,13 +69,14 @@ namespace zsummer
         public:
             void OnPostClose();
             void onEPOLLMessage(uint32_t event);
-            bool attachSocket(int fd, const std::string& remoteIP, unsigned short remotePort);
+            bool attachSocket(int fd, const std::string& remoteIP, unsigned short remotePort, bool isIPV6);
         private:
             std::string logSection();
         private:
             EventLoopPtr _summer;
             std::string _remoteIP;
             unsigned short _remotePort = 0;
+            bool _isIPV6 = false;
             EventData _eventData;
             
             _OnConnectHandler _onConnectHandler;

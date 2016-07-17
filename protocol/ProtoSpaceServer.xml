@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>39000</MinNo>
+  <MaxNo>40000</MaxNo>
+  <UseLog4z>1</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+
+
+    <!------------------------------------ docker <==> world --------------------------------------------->
+    <!------------------------------------ world <==> space --------------------------------------------->
+
+    <proto name="SpaceInfoToWorldNotice" desc= "数据刷给world">
+        <member name="host" type="string"  desc="服务器host"/>
+        <member name="port" type="ui16"  desc="服务器port"/>
+        <member name="spaceInfos" type="SpaceInfoArray"  desc="类型"/>
+    </proto>
+
+    <proto name="FillUserToSpaceReq" desc= "token丢给space">
+        <member name="spaceID" type="SpaceID"  desc="id"/>
+        <member name="sceneType" type="ui16"  desc="类型"/>
+        <member name="token" type="string"  desc="服务器port"/>
+        <member name="baseInfo" type="UserBaseInfo"  desc="类型"/>
+    </proto>
+    <proto name="FillUserToSpaceResp" desc= "token丢给space">
+        <member name="userID" type="ui64"  desc=""/>
+        <member name="spaceID" type="SpaceID"  desc="id"/>
+        <member name="sceneType" type="ui16"  desc="类型"/>
+    </proto>
+
+
+</Proto>
+

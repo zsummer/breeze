@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>25ecb4733b0b08561a48dda4a053ef85</cppmd5> 
+<luamd5>ea7b79241c45555770a07ea30e996ea8</luamd5> 
+<csharpmd5>c91e902256c801329a1435cfa54e03eb</csharpmd5> 
+<xmlmd5>1312dad080645ff7304315a35cf36171</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_AddEntityNotice" Number = "50011" /> 
+    <cache key = "ID_FillSpaceNotice" Number = "50009" /> 
+    <cache key = "ID_LeaveSceneAck" Number = "50006" /> 
+    <cache key = "ID_LeaveSceneReq" Number = "50005" /> 
+    <cache key = "ID_QuitSceneAck" Number = "50008" /> 
+    <cache key = "ID_QuitSceneReq" Number = "50007" /> 
+    <cache key = "ID_RefreshSpaceNotice" Number = "50010" /> 
+    <cache key = "ID_RemoveEntityNotice" Number = "50012" /> 
+    <cache key = "ID_SceneInfoAck" Number = "50001" /> 
+    <cache key = "ID_SceneInfoNotice" Number = "50004" /> 
+    <cache key = "ID_SceneInfoReq" Number = "50000" /> 
+    <cache key = "ID_TryEnterSceneAck" Number = "50003" /> 
+    <cache key = "ID_TryEnterSceneReq" Number = "50002" /> 
+</cacheNumber>

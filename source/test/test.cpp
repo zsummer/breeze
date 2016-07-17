@@ -35,15 +35,15 @@ int checkRandom();
 #define TestUtls(func) do \
 { \
     LOGA("begin " << #func); \
-    double now = getFloatTick(); \
+    double now = getFloatNowTime(); \
     int ret = func(); \
     if (ret == 0) \
     { \
-        LOGA("end " << #func << ", used second=" <<getFloatTick() - now); \
+        LOGA("end " << #func << ", used second=" <<getFloatNowTime() - now); \
     } \
     else \
     { \
-        LOGE("end " << #func << ", used second=" <<getFloatTick() - now << ", ret=" << ret); \
+        LOGE("end " << #func << ", used second=" <<getFloatNowTime() - now << ", ret=" << ret); \
         return ret; \
     } \
 } while (false)
@@ -69,7 +69,10 @@ int main(int argc, char* argv[])
     srand(time(NULL));
 
     ILog4zManager::getPtr()->start();
+    SessionManager::getRef().start();
 
+    auto ret =getHostByName("github.com", 3389);
+    LOGA("getHostByName=" << ret);
     std::tuple<int, double> kv1 = splitTupleString<int, double>("1:1.0", ":", "");
 
     std::tuple<double, int, std::string> kvv = splitTupleString<double, int, std::string>("1.0:2:aha", ":", "");
@@ -130,13 +133,13 @@ int checkString()
             return 6;
         }
 
-         auto now = getFloatTick();
+         auto now = getFloatNowTime();
          for (int i=0; i<10000; i++)
          {
              auto v = splitDictString<int, short, float, std::string>("1|2|3|a,|||,2|2|3|a,|||,3|2|3|a,|||,4|2|3|a,|||,5|2|3|a,|||,6|2|3|a,|||,7|2|3|a,|||,8|2|3|a,|||,8|2|3|a,|||,", ",", "|", " ");
              std::get<0>(v.begin()->second) = 0;
          }
-         LOGA("splitDictString used time=" << getFloatTick() - now);
+         LOGA("splitDictString used time=" << getFloatNowTime() - now);
 
     }
 
@@ -203,7 +206,7 @@ int checkString()
     }
     if (true)
     {
-        double now = getFloatTick();
+        double now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
             if (fromString<unsigned long long>("18446744073709551615", 0) != 18446744073709551615U)
@@ -215,22 +218,22 @@ int checkString()
                 return 16;
             }
         }
-        LOGD("fromString used time=" << (getFloatTick() - now));
+        LOGD("fromString used time=" << (getFloatNowTime() - now));
         for (int i = 0; i < 10 * 10000; i++)
         {
 
         }
-        LOGD("toString used time=" << (getFloatTick() - now));
+        LOGD("toString used time=" << (getFloatNowTime() - now));
 
     }
     if (true)
     {
-        double now = getFloatTick();
+        double now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
             compareStringWildcard("a---bc-e-bc-----------e", "a*bc***e*e");
         }
-        LOGD("compareStringWildcard used time=" << (getFloatTick() - now));
+        LOGD("compareStringWildcard used time=" << (getFloatNowTime() - now));
     }
 
     if (subStringFront("aa/bb/cc", "/") != "aa")
@@ -344,16 +347,16 @@ int checkFile()
 
 int checkTime()
 {
-    double now = getFloatTick();
-    double snow = getFloatSteadyTick();
-    long long nowt = getIntegerTick();
-    long long nowst = getIntegerSteadyTick();
+    double now = getFloatNowTime();
+    double snow = getFloatSteadyNowTime();
+    long long nowt = getNowTick();
+    long long nowst = getNowSteadyTick();
     time_t nowts = getNowTime();
     sleepMillisecond(3000);
-    now = getFloatTick() - now - 3.0;
-    snow = getFloatSteadyTick() - snow - 3.0;
-    nowt = getIntegerTick() - nowt - 3000;
-    nowst = getIntegerSteadyTick() - nowst - 3000;
+    now = getFloatNowTime() - now - 3.0;
+    snow = getFloatSteadyNowTime() - snow - 3.0;
+    nowt = getNowTick() - nowt - 3000;
+    nowst = getNowSteadyTick() - nowst - 3000;
     nowts = getNowTime() - nowts -3;
     if (now > 1 || snow > 1 || nowt >1000 || nowst >1000 || nowts > 1)
     {
@@ -576,14 +579,14 @@ int checkFloat()
     }
     if (true)
     {
-        double now = getFloatTick();
+        double now = getFloatNowTime();
         volatile double f = 0.0;
         for (int i = 0; i < 100 * 10000; i++)
         {
             f = isEqual(1e55, 1e55);
         }
         f = 0.0;
-        LOGD("isEqual used time=" << (getFloatTick() - now) << f);
+        LOGD("isEqual used time=" << (getFloatNowTime() - now) << f);
     }
     if (true)
     {

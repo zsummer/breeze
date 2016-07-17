@@ -116,10 +116,16 @@ using namespace zsummer::mysql;
 
 //分区
 typedef ui32 AreaID;
+const AreaID InvalidAreaID = 0;
 
 //节点索引ID
 typedef ui32 DockerID;
 const DockerID InvalidDockerID = 0;
+
+typedef ui32 SpaceID;
+const SpaceID InvalidSpaceID = 0;
+typedef ui32 EntityID;
+const EntityID InvalidEntityID = 0;
 
 //每个service拥有两个唯一的基础属性ServiceID, ServiceName
 typedef ui64 ServiceID;
@@ -141,43 +147,76 @@ const ServiceType STUserMgr = (ServiceType)3;
 const ServiceType STWebAgent = (ServiceType)4;
 const ServiceType STOfflineMgr = (ServiceType)5;
 const ServiceType STMinitorMgr = (ServiceType)6;
+const ServiceType STWorldMgr = (ServiceType)7;
+
 
 const ServiceType STUser = (ServiceType)11;
 const ServiceType STClient = (ServiceType)20;
 
+
+enum ServiceTrait
+{
+    //非法服务 
+    Strait_None,   
+
+
+    //多例模式的Service . 
+    //docker启动时 不会自动装载该类型Service, 所以需要对应的单例来触发装载和卸载 ,例如用户Service需要用户管理Service, 公会Service需要公会管理Service, 
+    //      如果服务器不介意该类型的Service所占用的服务器资源, 也可以在管理器装载时候一次性手动装载全部 
+    //docker关闭时, 会自动调用所有该类型的服务的卸载, 并且这个卸载调用是不检查依赖的.  
+    //因此 设计原则上 这些服务不允许被任何其他服务依赖, 并且需要对应的单例服务来手动管理. 
+    //对于'依赖'该服务的模块, 以模块的形式使用, 即ServiceMgr管理Service, Service管理Module. 
+    STrait_Multi, 
+
+
+    //单例模式的Service .
+    //docker启动时 会根据依赖关系进行逐一装载 
+    //docker关闭时 会根据被依赖关系逐一卸载 
+    //单例模式的ServiceID使用装载该服务的dockerID, 默认在查找/使用时不传该参数或者传InvalidServiceID即可正确获得本组服务器的该服务. 
+    STrait_Single,
+
+
+    //异构系统的Service. 该状态服务不装载, 本地永远是一个shell .Heterogenous
+    //docker启动时 如果有该service的配置,则进行网络连接操作, 并按照依赖关系装载本地单例. 
+    //          如果没有该配置,则不进行网络连接操作,并设置该服务状态为未装载状态.  
+    //docker关闭时 会忽略该服务的存在. 
+    STrait_Heterogenous,
+};
+
 //std::tuple<isSingleton, serviceKey, serviceDepends>
 struct  ServiceDependInfo
 {
-    ServiceDependInfo(bool single, const char *const name, const std::set<ServiceType>& dps)
-        :isSingleton(single),
+    ServiceDependInfo(ServiceTrait trait, const char *const name, const std::set<ServiceType>& dps)
+        :serviceTrait(trait),
         serviceName(name),
         depends(dps) {}
-    ServiceDependInfo(bool single, const char *const name)
-        :isSingleton(single),
+    ServiceDependInfo(ServiceTrait trait, const char *const name)
+        :serviceTrait(trait),
         serviceName(name) { }
-    bool isSingleton;
+    ServiceTrait serviceTrait;
     ServiceName serviceName;
     std::set<ServiceType > depends;
 };
 
-//{服务类型, {是否单例(如果是单例起服装载), 对应的字符串名称, {依赖的service列表(装载和卸载会根据这个依赖关系组织顺序)} }
+//{服务类型, {ServiceTrait, 对应的字符串名称, {依赖的service列表(装载和卸载会根据这个依赖关系组织顺序)} }
 const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
 {
-    { STInfoDBMgr, { true, "STInfoDBMgr" } },
-    { STLogDBMgr,  { true, "STLogDBMgr" } },
+    { STInfoDBMgr, { STrait_Single, "STInfoDBMgr" } },
+    { STLogDBMgr,  { STrait_Single, "STLogDBMgr" } },
 
-    { STWebAgent,{ true, "STWebAgent",{ STInfoDBMgr , STLogDBMgr } } },
-    { STOfflineMgr,{ true, "STOfflineMgr",{ STInfoDBMgr , STLogDBMgr } } },
-    { STMinitorMgr,{ true, "STMinitorMgr",{ STInfoDBMgr , STLogDBMgr } } },
+    { STWebAgent,{ STrait_Single, "STWebAgent",{ STInfoDBMgr , STLogDBMgr } } },
+    { STOfflineMgr,{ STrait_Single, "STOfflineMgr",{ STInfoDBMgr , STLogDBMgr } } },
+    { STMinitorMgr,{ STrait_Single, "STMinitorMgr",{ STInfoDBMgr , STLogDBMgr } } },
 
-    { STUserMgr, { true, "STUserMgr", { STInfoDBMgr , STLogDBMgr,STWebAgent, STOfflineMgr,STMinitorMgr } } },
+    { STUserMgr,{ STrait_Single, "STUserMgr",{ STInfoDBMgr , STLogDBMgr,STWebAgent, STOfflineMgr,STMinitorMgr } } },
 
-    { STUser,{ false, "STUser",{ STUserMgr } } },
+    { STWorldMgr,{ STrait_Heterogenous, "STWorldMgr"} },
 
-    { STClient,{ false, "STClient" } }
+    { STUser,{ STrait_Multi, "STUser",{ STUserMgr } } },
+    { STClient,{ STrait_Multi, "STClient" } },
 };
 
-inline bool isSingletonService(ServiceType serviceType);
+inline ServiceTrait getServiceTrait(ServiceType serviceType);
 inline ServiceType getServiceTypeByKey(const ServiceName & serviceName);
 inline const ServiceName& getServiceName(ServiceType serviceType);
 
@@ -194,14 +233,14 @@ inline std::set<ServiceType> getServiceSubsidiary(ServiceType serviceType);
 
 struct DockerConfig
 {
-    std::string _serviceBindIP;
-    std::string _serviceIP;
-    unsigned short _servicePort = 0;
-    std::string _wideIP;
-    unsigned short _widePort = 0;
-    std::string _webIP;
-    unsigned short _webPort = 0;
-    std::vector<std::string> _whiteList;
+    std::string _dockerListenHost;
+    std::string _dockerPubHost;
+    unsigned short _dockerListenPort = 0;
+    std::string _clientPubHost;
+    unsigned short _clientPubPort = 0;
+    std::string _webPubHost;
+    unsigned short _webPubPort = 0;
+    std::vector<std::string> _dockerWhite;
     std::vector<ServiceType> _services;
     DockerID _dockerID = InvalidDockerID;
 };
@@ -220,25 +259,65 @@ struct DBConfig
 
 
 
+struct WorldConfig 
+{
+    std::string _dockerListenHost;
+    unsigned short _dockerListenPort = 0;
+    std::string _spaceListenHost;
+    std::string _spacePubHost;
+    unsigned short _spaceListenPort = 0;
+};
+
+struct SpaceConfig
+{
+    std::string _clientListenHost;
+    std::string _clientPubHost;
+    unsigned short _clientListenPort = 0;
+    SpaceID _spaceID = InvalidSpaceID;
+};
+
+using ProtoID = zsummer::proto4z::ProtoInteger;
+const ProtoID InvalidProtoID = -1;
+
+enum ServiceStatus
+{
+    SS_NONE,
+    SS_CREATED,
+    SS_INITING,
+    SS_WORKING,
+    SS_UNLOADING,
+    SS_DESTROY,
+};
+
+
+
+
 const int MAX_ACCOUNT_USERS = 5;
+
+
 
 enum SessionStatus : ui16
 {
     SSTATUS_UNKNOW = 0,
     SSTATUS_TRUST, //受信任的服务器内部session, docker 互通session  
-    SSTATUS_AUTHING,
+    SSTATUS_AUTHING, //user
     SSTATUS_AUTHED,
     SSTATUS_ATTACHED,
 };
 
 enum SessionUserData
 {
-    UPARAM_SESSION_STATUS,
-    UPARAM_LAST_ACTIVE_TIME,
-    UPARAM_REMOTE_DOCKERID,
+    UPARAM_SESSION_STATUS, //通用 
+    UPARAM_LAST_ACTIVE_TIME, //通用 
+
+    UPARAM_REMOTE_DOCKERID, //docker集群 
     UPARAM_ACCOUNT,
-    UPARAM_SERVICE_ID,
+    UPARAM_USER_ID,
     UPARAM_LOGIN_TIME,
+
+    UPARAM_AREA_ID, //world集群
+    UPARAM_SPACE_ID,
+
 };
 
 
@@ -267,9 +346,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const DockerConfig & config)
 {
-    os << "[_serviceBindIP=" << config._serviceBindIP << ", _serviceIP=" << config._serviceIP
-        << ", _servicePort=" << config._servicePort << ", _wideIP=" << config._wideIP
-        << ", _widePort=" << config._widePort << ", _whiteList=" << config._whiteList
+    os << "[_dockerListenHost=" << config._dockerListenHost << ", _dockerPubHost=" << config._dockerPubHost
+        << ", _dockerListenPort=" << config._dockerListenPort << ", _clientPubHost=" << config._clientPubHost
+        << ", _clientPubPort=" << config._clientPubPort << ", _dockerWhite=" << config._dockerWhite
         << ", _services=" << config._services << ", _dockerID=" << config._dockerID
         << "]";
     return os;
@@ -283,15 +362,18 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &o
     return os;
 }
 
-inline bool isSingletonService(ServiceType serviceType)
+inline ServiceTrait getServiceTrait(ServiceType serviceType)
 {
     auto founder = ServiceDepends.find(serviceType);
     if (founder == ServiceDepends.end())
     {
-        return false;
+        return Strait_None;
     }
-    return founder->second.isSingleton;
+    return founder->second.serviceTrait;
 }
+
+
+
 inline const ServiceName& getServiceName(ServiceType serviceType)
 {
     auto founder = ServiceDepends.find(serviceType);

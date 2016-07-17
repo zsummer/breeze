@@ -22,10 +22,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "docker", "docker\docker.vcx
 		{3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0} = {3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "world", "world\world.vcxproj", "{6E73F67A-5E0B-430C-BBEE-8195555FE667}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0} = {3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makedb", "makedb\makedb.vcxproj", "{69F62674-405E-461C-9D88-2A266D55E51A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AE557081-EA4D-49A7-A629-49EA151806DF} = {AE557081-EA4D-49A7-A629-49EA151806DF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "space", "space\space.vcxproj", "{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
@@ -47,6 +56,18 @@ Global
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Debug|x64.Build.0 = Debug|x64
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Release|x64.ActiveCfg = Release|x64
 		{73328CCC-F36D-40C2-BE36-E03797191DE9}.Release|x64.Build.0 = Release|x64
+		{6E73F67A-5E0B-430C-BBEE-8195555FE667}.Debug|x64.ActiveCfg = Debug|x64
+		{6E73F67A-5E0B-430C-BBEE-8195555FE667}.Debug|x64.Build.0 = Debug|x64
+		{6E73F67A-5E0B-430C-BBEE-8195555FE667}.Release|x64.ActiveCfg = Release|x64
+		{6E73F67A-5E0B-430C-BBEE-8195555FE667}.Release|x64.Build.0 = Release|x64
+		{69F62674-405E-461C-9D88-2A266D55E51A}.Debug|x64.ActiveCfg = Debug|x64
+		{69F62674-405E-461C-9D88-2A266D55E51A}.Debug|x64.Build.0 = Debug|x64
+		{69F62674-405E-461C-9D88-2A266D55E51A}.Release|x64.ActiveCfg = Release|x64
+		{69F62674-405E-461C-9D88-2A266D55E51A}.Release|x64.Build.0 = Release|x64
+		{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}.Debug|x64.ActiveCfg = Debug|x64
+		{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}.Debug|x64.Build.0 = Debug|x64
+		{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}.Release|x64.ActiveCfg = Release|x64
+		{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

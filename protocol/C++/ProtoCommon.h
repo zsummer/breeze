@@ -22,19 +22,19 @@ enum  : unsigned short
     EC_FRIEND_NOT_EXIST = 103, //好友不存在  
 }; 
  
-struct Tracing //docker间追踪数据  
+struct Routing //docker to docker 路由信息  
 { 
-    static const unsigned short getProtoID() { return 1000;} 
-    static const std::string getProtoName() { return "Tracing";} 
-    unsigned int toDockerID; //forward转发时候先尝试通过DockerID进行转发 然后再尝试ServiceID   
-    unsigned short toServiceType;  
-    unsigned long long toServiceID;  
-    unsigned int fromDockerID;  
-    unsigned short fromServiceType;  
-    unsigned long long fromServiceID;  
-    unsigned int traceID; //本地cbID    
-    unsigned int traceBackID; //把远程cbID透传回去   
-    Tracing() 
+    static const unsigned short getProtoID() { return 1005;} 
+    static const std::string getProtoName() { return "Routing";} 
+    unsigned int toDockerID; //Docker ID为第一优先级路由数据, service ID为第二优先级路由数据  
+    unsigned short toServiceType; //目标service类型  
+    unsigned long long toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
+    unsigned int fromDockerID; //来源  
+    unsigned short fromServiceType; //来源  
+    unsigned long long fromServiceID; //来源  
+    unsigned int traceID; //本地产生的回调ID  
+    unsigned int traceBackID; //远端产生的回调ID  
+    Routing() 
     { 
         toDockerID = 0; 
         toServiceType = 0; 
@@ -45,7 +45,7 @@ struct Tracing //docker间追踪数据
         traceID = 0; 
         traceBackID = 0; 
     } 
-    Tracing(const unsigned int & toDockerID, const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned int & fromDockerID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID) 
+    Routing(const unsigned int & toDockerID, const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned int & fromDockerID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID) 
     { 
         this->toDockerID = toDockerID; 
         this->toServiceType = toServiceType; 
@@ -57,7 +57,7 @@ struct Tracing //docker间追踪数据
         this->traceBackID = traceBackID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Routing & data) 
 { 
     ws << data.toDockerID;  
     ws << data.toServiceType;  
@@ -69,7 +69,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.traceBackID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Routing & data) 
 { 
     rs >> data.toDockerID;  
     rs >> data.toServiceType;  
@@ -81,7 +81,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.traceBackID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Tracing & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Routing & info) 
 { 
     stm << "[\n"; 
     stm << "toDockerID=" << info.toDockerID << "\n"; 
@@ -96,6 +96,77 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct OutOfBand //带外信息  
+{ 
+    static const unsigned short getProtoID() { return 1006;} 
+    static const std::string getProtoName() { return "OutOfBand";} 
+    unsigned long long userID; //该数据由docker获得来自客户端的消息时自动填充.  
+    OutOfBand() 
+    { 
+        userID = 0; 
+    } 
+    OutOfBand(const unsigned long long & userID) 
+    { 
+        this->userID = userID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const OutOfBand & data) 
+{ 
+    ws << data.userID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, OutOfBand & data) 
+{ 
+    rs >> data.userID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const OutOfBand & info) 
+{ 
+    stm << "[\n"; 
+    stm << "userID=" << info.userID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct Tracing //docker间追踪数据  
+{ 
+    static const unsigned short getProtoID() { return 1000;} 
+    static const std::string getProtoName() { return "Tracing";} 
+    Routing routing; //路由信息  
+    OutOfBand oob; //带外信息  
+    Tracing() 
+    { 
+    } 
+    Tracing(const Routing & routing, const OutOfBand & oob) 
+    { 
+        this->routing = routing; 
+        this->oob = oob; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Tracing & data) 
+{ 
+    ws << data.routing;  
+    ws << data.oob;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Tracing & data) 
+{ 
+    rs >> data.routing;  
+    rs >> data.oob;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Tracing & info) 
+{ 
+    stm << "[\n"; 
+    stm << "routing=" << info.routing << "\n"; 
+    stm << "oob=" << info.oob << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<unsigned long long> UserIDArray;  
+ 
 struct UserPreview //用户预览信息  
 { 
     static const unsigned short getProtoID() { return 1001;} 
@@ -107,21 +178,21 @@ struct UserPreview //用户预览信息
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long serviceID; //用户唯一ID  
-    std::string serviceName; //昵称  
+    unsigned long long userID; //用户唯一ID, 对应UserService的ServiceID  
+    std::string userName; //用户唯一昵称, 对应UserService的ServiceName  
     std::string account; //帐号  
     short iconID; //头像  
     int level; //等级  
     UserPreview() 
     { 
-        serviceID = 0; 
+        userID = 0; 
         iconID = 0; 
         level = 0; 
     } 
-    UserPreview(const unsigned long long & serviceID, const std::string & serviceName, const std::string & account, const short & iconID, const int & level) 
+    UserPreview(const unsigned long long & userID, const std::string & userName, const std::string & account, const short & iconID, const int & level) 
     { 
-        this->serviceID = serviceID; 
-        this->serviceName = serviceName; 
+        this->userID = userID; 
+        this->userName = userName; 
         this->account = account; 
         this->iconID = iconID; 
         this->level = level; 
@@ -131,11 +202,11 @@ struct UserPreview //用户预览信息
 const std::vector<std::string>  UserPreview::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserPreview` (        `serviceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `serviceName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`serviceID`),        UNIQUE KEY `serviceName` (`serviceName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_UserPreview` add `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` change `serviceID`  `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` add `serviceName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserPreview` change `serviceName`  `serviceName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserPreview` (        `userID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`userID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_UserPreview` add `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserPreview` change `userID`  `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserPreview` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserPreview` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserPreview` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserPreview` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserPreview` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
@@ -147,20 +218,20 @@ const std::vector<std::string>  UserPreview::getDBBuild()
 std::string  UserPreview::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `serviceID`,`serviceName`,`account`,`iconID`,`level` from `tb_UserPreview` where `serviceID` = ? "); 
-    q << this->serviceID; 
+    q.init("select `userID`,`userName`,`account`,`iconID`,`level` from `tb_UserPreview` where `userID` = ? "); 
+    q << this->userID; 
     return q.pickSQL(); 
 } 
 std::string  UserPreview::getDBSelectPure() 
 { 
-    return "select `serviceID`,`serviceName`,`account`,`iconID`,`level` from `tb_UserPreview` "; 
+    return "select `userID`,`userName`,`account`,`iconID`,`level` from `tb_UserPreview` "; 
 } 
 std::string  UserPreview::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserPreview`(`serviceID`,`serviceName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
-    q << this->serviceID; 
-    q << this->serviceName; 
+    q.init("insert into `tb_UserPreview`(`userID`,`userName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
+    q << this->userID; 
+    q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
@@ -169,16 +240,16 @@ std::string  UserPreview::getDBInsert()
 std::string  UserPreview::getDBDelete() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_UserPreview` where `serviceID` = ? "); 
-    q << this->serviceID; 
+    q.init("delete from `tb_UserPreview` where `userID` = ? "); 
+    q << this->userID; 
     return q.pickSQL(); 
 } 
 std::string  UserPreview::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserPreview`(serviceID) values(? ) on duplicate key update `serviceName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
-    q << this->serviceID; 
-    q << this->serviceName; 
+    q.init("insert into `tb_UserPreview`(userID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
+    q << this->userID; 
+    q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
@@ -195,8 +266,8 @@ bool UserPreview::fetchFromDBResult(zsummer::mysql::DBResult &result)
     { 
         if (result.haveRow()) 
         { 
-            result >> this->serviceID; 
-            result >> this->serviceName; 
+            result >> this->userID; 
+            result >> this->userName; 
             result >> this->account; 
             result >> this->iconID; 
             result >> this->level; 
@@ -212,8 +283,8 @@ bool UserPreview::fetchFromDBResult(zsummer::mysql::DBResult &result)
 } 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserPreview & data) 
 { 
-    ws << data.serviceID;  
-    ws << data.serviceName;  
+    ws << data.userID;  
+    ws << data.userName;  
     ws << data.account;  
     ws << data.iconID;  
     ws << data.level;  
@@ -221,8 +292,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPreview & data) 
 { 
-    rs >> data.serviceID;  
-    rs >> data.serviceName;  
+    rs >> data.userID;  
+    rs >> data.userName;  
     rs >> data.account;  
     rs >> data.iconID;  
     rs >> data.level;  
@@ -231,8 +302,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserPreview & info) 
 { 
     stm << "[\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "serviceName=" << info.serviceName << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
+    stm << "userName=" << info.userName << "\n"; 
     stm << "account=" << info.account << "\n"; 
     stm << "iconID=" << info.iconID << "\n"; 
     stm << "level=" << info.level << "\n"; 
@@ -242,9 +313,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
  
 typedef std::vector<UserPreview> UserPreviewArray;  
- 
- 
-typedef std::vector<unsigned long long> ServiceIDArray;  
  
 struct UserBaseInfo //用户基础数据  
 { 
@@ -257,81 +325,144 @@ struct UserBaseInfo //用户基础数据
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long serviceID; //用户唯一ID  
-    std::string serviceName; //昵称  
+    unsigned long long userID; //用户唯一ID, 对应UserService的ServiceID  
+    std::string userName; //用户唯一昵称, 对应UserService的ServiceName  
     std::string account; //帐号  
     short iconID; //头像  
     int level; //等级  
+    double hp; //血量值  
+    double hpRegen; //每秒血量值恢复  
+    double attack; //伤害  
+    double defense; //防御  
+    double crit; //暴击  
+    double toughness; //韧性  
+    double moveSpeed; //移动速度  
+    double attackSpeed; //攻击速度  
+    double vampirk; //吸血  
     UserBaseInfo() 
     { 
-        serviceID = 0; 
+        userID = 0; 
         iconID = 0; 
         level = 0; 
+        hp = 0.0; 
+        hpRegen = 0.0; 
+        attack = 0.0; 
+        defense = 0.0; 
+        crit = 0.0; 
+        toughness = 0.0; 
+        moveSpeed = 0.0; 
+        attackSpeed = 0.0; 
+        vampirk = 0.0; 
     } 
-    UserBaseInfo(const unsigned long long & serviceID, const std::string & serviceName, const std::string & account, const short & iconID, const int & level) 
+    UserBaseInfo(const unsigned long long & userID, const std::string & userName, const std::string & account, const short & iconID, const int & level, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
     { 
-        this->serviceID = serviceID; 
-        this->serviceName = serviceName; 
+        this->userID = userID; 
+        this->userName = userName; 
         this->account = account; 
         this->iconID = iconID; 
         this->level = level; 
+        this->hp = hp; 
+        this->hpRegen = hpRegen; 
+        this->attack = attack; 
+        this->defense = defense; 
+        this->crit = crit; 
+        this->toughness = toughness; 
+        this->moveSpeed = moveSpeed; 
+        this->attackSpeed = attackSpeed; 
+        this->vampirk = vampirk; 
     } 
 }; 
  
 const std::vector<std::string>  UserBaseInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `serviceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `serviceName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`serviceID`),        UNIQUE KEY `serviceName` (`serviceName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `serviceID`  `serviceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `serviceName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `serviceName`  `serviceName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `userID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`userID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `userID`  `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_UserBaseInfo` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` add `vampirk`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_UserBaseInfo` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
     return std::move(ret); 
 } 
 std::string  UserBaseInfo::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `serviceID`,`serviceName`,`account`,`iconID`,`level` from `tb_UserBaseInfo` where `serviceID` = ? "); 
-    q << this->serviceID; 
+    q.init("select `userID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_UserBaseInfo` where `userID` = ? "); 
+    q << this->userID; 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBSelectPure() 
 { 
-    return "select `serviceID`,`serviceName`,`account`,`iconID`,`level` from `tb_UserBaseInfo` "; 
+    return "select `userID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_UserBaseInfo` "; 
 } 
 std::string  UserBaseInfo::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(`serviceID`,`serviceName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
-    q << this->serviceID; 
-    q << this->serviceName; 
+    q.init("insert into `tb_UserBaseInfo`(`userID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
+    q << this->userID; 
+    q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
+    q << this->hp; 
+    q << this->hpRegen; 
+    q << this->attack; 
+    q << this->defense; 
+    q << this->crit; 
+    q << this->toughness; 
+    q << this->moveSpeed; 
+    q << this->attackSpeed; 
+    q << this->vampirk; 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBDelete() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_UserBaseInfo` where `serviceID` = ? "); 
-    q << this->serviceID; 
+    q.init("delete from `tb_UserBaseInfo` where `userID` = ? "); 
+    q << this->userID; 
     return q.pickSQL(); 
 } 
 std::string  UserBaseInfo::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(serviceID) values(? ) on duplicate key update `serviceName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
-    q << this->serviceID; 
-    q << this->serviceName; 
+    q.init("insert into `tb_UserBaseInfo`(userID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`level` = ?,`hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ? "); 
+    q << this->userID; 
+    q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
+    q << this->hp; 
+    q << this->hpRegen; 
+    q << this->attack; 
+    q << this->defense; 
+    q << this->crit; 
+    q << this->toughness; 
+    q << this->moveSpeed; 
+    q << this->attackSpeed; 
+    q << this->vampirk; 
     return q.pickSQL(); 
 } 
 bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result) 
@@ -345,11 +476,20 @@ bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result)
     { 
         if (result.haveRow()) 
         { 
-            result >> this->serviceID; 
-            result >> this->serviceName; 
+            result >> this->userID; 
+            result >> this->userName; 
             result >> this->account; 
             result >> this->iconID; 
             result >> this->level; 
+            result >> this->hp; 
+            result >> this->hpRegen; 
+            result >> this->attack; 
+            result >> this->defense; 
+            result >> this->crit; 
+            result >> this->toughness; 
+            result >> this->moveSpeed; 
+            result >> this->attackSpeed; 
+            result >> this->vampirk; 
             return true;  
         } 
     } 
@@ -362,36 +502,1010 @@ bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result)
 } 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserBaseInfo & data) 
 { 
-    ws << data.serviceID;  
-    ws << data.serviceName;  
+    ws << data.userID;  
+    ws << data.userName;  
     ws << data.account;  
     ws << data.iconID;  
     ws << data.level;  
+    ws << data.hp;  
+    ws << data.hpRegen;  
+    ws << data.attack;  
+    ws << data.defense;  
+    ws << data.crit;  
+    ws << data.toughness;  
+    ws << data.moveSpeed;  
+    ws << data.attackSpeed;  
+    ws << data.vampirk;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserBaseInfo & data) 
 { 
-    rs >> data.serviceID;  
-    rs >> data.serviceName;  
+    rs >> data.userID;  
+    rs >> data.userName;  
     rs >> data.account;  
     rs >> data.iconID;  
     rs >> data.level;  
+    rs >> data.hp;  
+    rs >> data.hpRegen;  
+    rs >> data.attack;  
+    rs >> data.defense;  
+    rs >> data.crit;  
+    rs >> data.toughness;  
+    rs >> data.moveSpeed;  
+    rs >> data.attackSpeed;  
+    rs >> data.vampirk;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserBaseInfo & info) 
 { 
     stm << "[\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "serviceName=" << info.serviceName << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
+    stm << "userName=" << info.userName << "\n"; 
     stm << "account=" << info.account << "\n"; 
     stm << "iconID=" << info.iconID << "\n"; 
     stm << "level=" << info.level << "\n"; 
+    stm << "hp=" << info.hp << "\n"; 
+    stm << "hpRegen=" << info.hpRegen << "\n"; 
+    stm << "attack=" << info.attack << "\n"; 
+    stm << "defense=" << info.defense << "\n"; 
+    stm << "crit=" << info.crit << "\n"; 
+    stm << "toughness=" << info.toughness << "\n"; 
+    stm << "moveSpeed=" << info.moveSpeed << "\n"; 
+    stm << "attackSpeed=" << info.attackSpeed << "\n"; 
+    stm << "vampirk=" << info.vampirk << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
  
 typedef std::vector<UserBaseInfo> UserBaseInfoArray;  
+ 
+struct DictGlobal //全局配置  
+{ 
+    static const unsigned short getProtoID() { return 1007;} 
+    static const std::string getProtoName() { return "DictGlobal";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned int id;  
+    unsigned long long val; //整数  
+    double valFloat; //浮点数  
+    std::string combo; //字符串  
+    std::string desc;  
+    DictGlobal() 
+    { 
+        id = 0; 
+        val = 0; 
+        valFloat = 0.0; 
+    } 
+    DictGlobal(const unsigned int & id, const unsigned long long & val, const double & valFloat, const std::string & combo, const std::string & desc) 
+    { 
+        this->id = id; 
+        this->val = val; 
+        this->valFloat = valFloat; 
+        this->combo = combo; 
+        this->desc = desc; 
+    } 
+}; 
+ 
+const std::vector<std::string>  DictGlobal::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictGlobal` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_DictGlobal` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictGlobal` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictGlobal` add `val`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictGlobal` change `val`  `val`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictGlobal` add `valFloat`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictGlobal` change `valFloat`  `valFloat`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictGlobal` add `combo`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictGlobal` change `combo`  `combo`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictGlobal` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictGlobal` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
+    return std::move(ret); 
+} 
+std::string  DictGlobal::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `id`,`val`,`valFloat`,`combo`,`desc` from `tb_DictGlobal` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictGlobal::getDBSelectPure() 
+{ 
+    return "select `id`,`val`,`valFloat`,`combo`,`desc` from `tb_DictGlobal` "; 
+} 
+std::string  DictGlobal::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictGlobal`(`id`,`val`,`valFloat`,`combo`,`desc`) values(?,?,?,?,?)"); 
+    q << this->id; 
+    q << this->val; 
+    q << this->valFloat; 
+    q << this->combo; 
+    q << this->desc; 
+    return q.pickSQL(); 
+} 
+std::string  DictGlobal::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_DictGlobal` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictGlobal::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictGlobal`(id) values(? ) on duplicate key update `val` = ?,`valFloat` = ?,`combo` = ?,`desc` = ? "); 
+    q << this->id; 
+    q << this->val; 
+    q << this->valFloat; 
+    q << this->combo; 
+    q << this->desc; 
+    return q.pickSQL(); 
+} 
+bool DictGlobal::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch DictGlobal from table `tb_DictGlobal` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->id; 
+            result >> this->val; 
+            result >> this->valFloat; 
+            result >> this->combo; 
+            result >> this->desc; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch DictGlobal from table `tb_DictGlobal` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictGlobal & data) 
+{ 
+    ws << data.id;  
+    ws << data.val;  
+    ws << data.valFloat;  
+    ws << data.combo;  
+    ws << data.desc;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictGlobal & data) 
+{ 
+    rs >> data.id;  
+    rs >> data.val;  
+    rs >> data.valFloat;  
+    rs >> data.combo;  
+    rs >> data.desc;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictGlobal & info) 
+{ 
+    stm << "[\n"; 
+    stm << "id=" << info.id << "\n"; 
+    stm << "val=" << info.val << "\n"; 
+    stm << "valFloat=" << info.valFloat << "\n"; 
+    stm << "combo=" << info.combo << "\n"; 
+    stm << "desc=" << info.desc << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct DictRaffleAward //奖池中的奖品  
+{ 
+    static const unsigned short getProtoID() { return 1008;} 
+    static const std::string getProtoName() { return "DictRaffleAward";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned int id; //奖品ID  
+    unsigned int weight; //本奖品在奖池中的权重, 总权重在[10000~30000]之间的随机效果最好  
+    double probability; //[0~1]独立随机的概率,0为永远无法随机到 1是100%随机到  
+    DictRaffleAward() 
+    { 
+        id = 0; 
+        weight = 0; 
+        probability = 0.0; 
+    } 
+    DictRaffleAward(const unsigned int & id, const unsigned int & weight, const double & probability) 
+    { 
+        this->id = id; 
+        this->weight = weight; 
+        this->probability = probability; 
+    } 
+}; 
+ 
+const std::vector<std::string>  DictRaffleAward::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictRaffleAward` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_DictRaffleAward` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRaffleAward` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRaffleAward` add `weight`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRaffleAward` change `weight`  `weight`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRaffleAward` add `probability`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRaffleAward` change `probability`  `probability`  double NOT NULL DEFAULT '0' "); 
+    return std::move(ret); 
+} 
+std::string  DictRaffleAward::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `id`,`weight`,`probability` from `tb_DictRaffleAward` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictRaffleAward::getDBSelectPure() 
+{ 
+    return "select `id`,`weight`,`probability` from `tb_DictRaffleAward` "; 
+} 
+std::string  DictRaffleAward::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictRaffleAward`(`id`,`weight`,`probability`) values(?,?,?)"); 
+    q << this->id; 
+    q << this->weight; 
+    q << this->probability; 
+    return q.pickSQL(); 
+} 
+std::string  DictRaffleAward::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_DictRaffleAward` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictRaffleAward::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictRaffleAward`(id) values(? ) on duplicate key update `weight` = ?,`probability` = ? "); 
+    q << this->id; 
+    q << this->weight; 
+    q << this->probability; 
+    return q.pickSQL(); 
+} 
+bool DictRaffleAward::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch DictRaffleAward from table `tb_DictRaffleAward` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->id; 
+            result >> this->weight; 
+            result >> this->probability; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch DictRaffleAward from table `tb_DictRaffleAward` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictRaffleAward & data) 
+{ 
+    ws << data.id;  
+    ws << data.weight;  
+    ws << data.probability;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictRaffleAward & data) 
+{ 
+    rs >> data.id;  
+    rs >> data.weight;  
+    rs >> data.probability;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictRaffleAward & info) 
+{ 
+    stm << "[\n"; 
+    stm << "id=" << info.id << "\n"; 
+    stm << "weight=" << info.weight << "\n"; 
+    stm << "probability=" << info.probability << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<DictRaffleAward> DictRaffleAwardArray;  
+ 
+struct DictRafflePool //道具抽奖,道具掉落  
+{ 
+    static const unsigned short getProtoID() { return 1009;} 
+    static const std::string getProtoName() { return "DictRafflePool";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned int id;  
+    int raffleCount; //批量抽取次数  
+    DictRaffleAwardArray pool; //奖池  
+    std::string poolString; //奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式  
+    DictRafflePool() 
+    { 
+        id = 0; 
+        raffleCount = 0; 
+    } 
+    DictRafflePool(const unsigned int & id, const int & raffleCount, const DictRaffleAwardArray & pool, const std::string & poolString) 
+    { 
+        this->id = id; 
+        this->raffleCount = raffleCount; 
+        this->pool = pool; 
+        this->poolString = poolString; 
+    } 
+}; 
+ 
+const std::vector<std::string>  DictRafflePool::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictRafflePool` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_DictRafflePool` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRafflePool` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRafflePool` add `raffleCount`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRafflePool` change `raffleCount`  `raffleCount`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRafflePool` add `pool`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_DictRafflePool` change `pool`  `pool`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_DictRafflePool` add `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictRafflePool` change `poolString`  `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
+    return std::move(ret); 
+} 
+std::string  DictRafflePool::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `id`,`raffleCount`,`pool`,`poolString` from `tb_DictRafflePool` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictRafflePool::getDBSelectPure() 
+{ 
+    return "select `id`,`raffleCount`,`pool`,`poolString` from `tb_DictRafflePool` "; 
+} 
+std::string  DictRafflePool::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictRafflePool`(`id`,`raffleCount`,`pool`,`poolString`) values(?,?,?,?)"); 
+    q << this->id; 
+    q << this->raffleCount; 
+    try 
+    { 
+        zsummer::proto4z::WriteStream ws(0); 
+        ws <<  this->pool; 
+        q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGW("catch one except error when insert DictRafflePool.pool error=" << e.what()); 
+    } 
+    q << this->poolString; 
+    return q.pickSQL(); 
+} 
+std::string  DictRafflePool::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_DictRafflePool` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictRafflePool::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictRafflePool`(id) values(? ) on duplicate key update `raffleCount` = ?,`pool` = ?,`poolString` = ? "); 
+    q << this->id; 
+    q << this->raffleCount; 
+    try 
+    { 
+        zsummer::proto4z::WriteStream ws(0); 
+        ws <<  this->pool; 
+        q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGW("catch one except error when update DictRafflePool.pool error=" << e.what()); 
+    } 
+    q << this->poolString; 
+    return q.pickSQL(); 
+} 
+bool DictRafflePool::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch DictRafflePool from table `tb_DictRafflePool` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->id; 
+            result >> this->raffleCount; 
+            try 
+            { 
+                std::string blob; 
+                result >> blob; 
+                if(!blob.empty()) 
+                { 
+                    zsummer::proto4z::ReadStream rs(blob.c_str(), (zsummer::proto4z::Integer)blob.length(), false); 
+                    rs >> this->pool; 
+                } 
+            } 
+            catch(const std::exception & e) 
+            { 
+                LOGW("catch one except error when fetch DictRafflePool.pool  from table `tb_DictRafflePool` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+            } 
+            result >> this->poolString; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch DictRafflePool from table `tb_DictRafflePool` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictRafflePool & data) 
+{ 
+    ws << data.id;  
+    ws << data.raffleCount;  
+    ws << data.pool;  
+    ws << data.poolString;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictRafflePool & data) 
+{ 
+    rs >> data.id;  
+    rs >> data.raffleCount;  
+    rs >> data.pool;  
+    rs >> data.poolString;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictRafflePool & info) 
+{ 
+    stm << "[\n"; 
+    stm << "id=" << info.id << "\n"; 
+    stm << "raffleCount=" << info.raffleCount << "\n"; 
+    stm << "pool=" << info.pool << "\n"; 
+    stm << "poolString=" << info.poolString << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct DictBaseProps //战斗属性效果,用于装备,属性类增减益buff  
+{ 
+    static const unsigned short getProtoID() { return 1010;} 
+    static const std::string getProtoName() { return "DictBaseProps";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned int id;  
+    double hp; //血量值  
+    double hpRegen; //每秒血量值恢复  
+    double attack; //伤害  
+    double defense; //防御  
+    double crit; //暴击  
+    double toughness; //韧性  
+    double moveSpeed; //移动速度  
+    double attackSpeed; //攻击速度  
+    double vampirk; //吸血  
+    DictBaseProps() 
+    { 
+        id = 0; 
+        hp = 0.0; 
+        hpRegen = 0.0; 
+        attack = 0.0; 
+        defense = 0.0; 
+        crit = 0.0; 
+        toughness = 0.0; 
+        moveSpeed = 0.0; 
+        attackSpeed = 0.0; 
+        vampirk = 0.0; 
+    } 
+    DictBaseProps(const unsigned int & id, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
+    { 
+        this->id = id; 
+        this->hp = hp; 
+        this->hpRegen = hpRegen; 
+        this->attack = attack; 
+        this->defense = defense; 
+        this->crit = crit; 
+        this->toughness = toughness; 
+        this->moveSpeed = moveSpeed; 
+        this->attackSpeed = attackSpeed; 
+        this->vampirk = vampirk; 
+    } 
+}; 
+ 
+const std::vector<std::string>  DictBaseProps::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictBaseProps` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_DictBaseProps` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` add `vampirk`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBaseProps` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
+    return std::move(ret); 
+} 
+std::string  DictBaseProps::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_DictBaseProps` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictBaseProps::getDBSelectPure() 
+{ 
+    return "select `id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_DictBaseProps` "; 
+} 
+std::string  DictBaseProps::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictBaseProps`(`id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`) values(?,?,?,?,?,?,?,?,?,?)"); 
+    q << this->id; 
+    q << this->hp; 
+    q << this->hpRegen; 
+    q << this->attack; 
+    q << this->defense; 
+    q << this->crit; 
+    q << this->toughness; 
+    q << this->moveSpeed; 
+    q << this->attackSpeed; 
+    q << this->vampirk; 
+    return q.pickSQL(); 
+} 
+std::string  DictBaseProps::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_DictBaseProps` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictBaseProps::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictBaseProps`(id) values(? ) on duplicate key update `hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ? "); 
+    q << this->id; 
+    q << this->hp; 
+    q << this->hpRegen; 
+    q << this->attack; 
+    q << this->defense; 
+    q << this->crit; 
+    q << this->toughness; 
+    q << this->moveSpeed; 
+    q << this->attackSpeed; 
+    q << this->vampirk; 
+    return q.pickSQL(); 
+} 
+bool DictBaseProps::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch DictBaseProps from table `tb_DictBaseProps` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->id; 
+            result >> this->hp; 
+            result >> this->hpRegen; 
+            result >> this->attack; 
+            result >> this->defense; 
+            result >> this->crit; 
+            result >> this->toughness; 
+            result >> this->moveSpeed; 
+            result >> this->attackSpeed; 
+            result >> this->vampirk; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch DictBaseProps from table `tb_DictBaseProps` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictBaseProps & data) 
+{ 
+    ws << data.id;  
+    ws << data.hp;  
+    ws << data.hpRegen;  
+    ws << data.attack;  
+    ws << data.defense;  
+    ws << data.crit;  
+    ws << data.toughness;  
+    ws << data.moveSpeed;  
+    ws << data.attackSpeed;  
+    ws << data.vampirk;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictBaseProps & data) 
+{ 
+    rs >> data.id;  
+    rs >> data.hp;  
+    rs >> data.hpRegen;  
+    rs >> data.attack;  
+    rs >> data.defense;  
+    rs >> data.crit;  
+    rs >> data.toughness;  
+    rs >> data.moveSpeed;  
+    rs >> data.attackSpeed;  
+    rs >> data.vampirk;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictBaseProps & info) 
+{ 
+    stm << "[\n"; 
+    stm << "id=" << info.id << "\n"; 
+    stm << "hp=" << info.hp << "\n"; 
+    stm << "hpRegen=" << info.hpRegen << "\n"; 
+    stm << "attack=" << info.attack << "\n"; 
+    stm << "defense=" << info.defense << "\n"; 
+    stm << "crit=" << info.crit << "\n"; 
+    stm << "toughness=" << info.toughness << "\n"; 
+    stm << "moveSpeed=" << info.moveSpeed << "\n"; 
+    stm << "attackSpeed=" << info.attackSpeed << "\n"; 
+    stm << "vampirk=" << info.vampirk << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct DictItem //道具字典  
+{ 
+    static const unsigned short getProtoID() { return 1011;} 
+    static const std::string getProtoName() { return "DictItem";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned int id;  
+    unsigned short primitiveType; //主类型  
+    unsigned short subType; //子类型  
+    unsigned short visible; //是否可见  
+    unsigned short stacks; //可堆叠个数,0和1都是1次  
+    unsigned int fightEffectID; //战斗属性效果,装备后生效  
+    unsigned short autoUse; //0 不可使用, 1 可使用, 2 获得后自动使用  
+    unsigned int dropID; //DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取  
+    unsigned short vocationLimit; //限制职业类型, 装备类型  
+    int levelLimit; //限制职业最小等级, 装备类型  
+    std::string desc;  
+    DictItem() 
+    { 
+        id = 0; 
+        primitiveType = 0; 
+        subType = 0; 
+        visible = 0; 
+        stacks = 0; 
+        fightEffectID = 0; 
+        autoUse = 0; 
+        dropID = 0; 
+        vocationLimit = 0; 
+        levelLimit = 0; 
+    } 
+    DictItem(const unsigned int & id, const unsigned short & primitiveType, const unsigned short & subType, const unsigned short & visible, const unsigned short & stacks, const unsigned int & fightEffectID, const unsigned short & autoUse, const unsigned int & dropID, const unsigned short & vocationLimit, const int & levelLimit, const std::string & desc) 
+    { 
+        this->id = id; 
+        this->primitiveType = primitiveType; 
+        this->subType = subType; 
+        this->visible = visible; 
+        this->stacks = stacks; 
+        this->fightEffectID = fightEffectID; 
+        this->autoUse = autoUse; 
+        this->dropID = dropID; 
+        this->vocationLimit = vocationLimit; 
+        this->levelLimit = levelLimit; 
+        this->desc = desc; 
+    } 
+}; 
+ 
+const std::vector<std::string>  DictItem::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictItem` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `primitiveType` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `subType` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `primitiveType` (`primitiveType`),        KEY `subType` (`subType`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_DictItem` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `primitiveType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `primitiveType`  `primitiveType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `subType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `subType`  `subType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `visible`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `visible`  `visible`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `stacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `stacks`  `stacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `fightEffectID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `fightEffectID`  `fightEffectID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `autoUse`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `autoUse`  `autoUse`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `dropID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `dropID`  `dropID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `vocationLimit`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `vocationLimit`  `vocationLimit`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `levelLimit`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `levelLimit`  `levelLimit`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictItem` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
+    return std::move(ret); 
+} 
+std::string  DictItem::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `id`,`primitiveType`,`subType`,`visible`,`stacks`,`fightEffectID`,`autoUse`,`dropID`,`vocationLimit`,`levelLimit`,`desc` from `tb_DictItem` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictItem::getDBSelectPure() 
+{ 
+    return "select `id`,`primitiveType`,`subType`,`visible`,`stacks`,`fightEffectID`,`autoUse`,`dropID`,`vocationLimit`,`levelLimit`,`desc` from `tb_DictItem` "; 
+} 
+std::string  DictItem::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictItem`(`id`,`primitiveType`,`subType`,`visible`,`stacks`,`fightEffectID`,`autoUse`,`dropID`,`vocationLimit`,`levelLimit`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?)"); 
+    q << this->id; 
+    q << this->primitiveType; 
+    q << this->subType; 
+    q << this->visible; 
+    q << this->stacks; 
+    q << this->fightEffectID; 
+    q << this->autoUse; 
+    q << this->dropID; 
+    q << this->vocationLimit; 
+    q << this->levelLimit; 
+    q << this->desc; 
+    return q.pickSQL(); 
+} 
+std::string  DictItem::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_DictItem` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  DictItem::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_DictItem`(id) values(? ) on duplicate key update `primitiveType` = ?,`subType` = ?,`visible` = ?,`stacks` = ?,`fightEffectID` = ?,`autoUse` = ?,`dropID` = ?,`vocationLimit` = ?,`levelLimit` = ?,`desc` = ? "); 
+    q << this->id; 
+    q << this->primitiveType; 
+    q << this->subType; 
+    q << this->visible; 
+    q << this->stacks; 
+    q << this->fightEffectID; 
+    q << this->autoUse; 
+    q << this->dropID; 
+    q << this->vocationLimit; 
+    q << this->levelLimit; 
+    q << this->desc; 
+    return q.pickSQL(); 
+} 
+bool DictItem::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch DictItem from table `tb_DictItem` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->id; 
+            result >> this->primitiveType; 
+            result >> this->subType; 
+            result >> this->visible; 
+            result >> this->stacks; 
+            result >> this->fightEffectID; 
+            result >> this->autoUse; 
+            result >> this->dropID; 
+            result >> this->vocationLimit; 
+            result >> this->levelLimit; 
+            result >> this->desc; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch DictItem from table `tb_DictItem` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictItem & data) 
+{ 
+    ws << data.id;  
+    ws << data.primitiveType;  
+    ws << data.subType;  
+    ws << data.visible;  
+    ws << data.stacks;  
+    ws << data.fightEffectID;  
+    ws << data.autoUse;  
+    ws << data.dropID;  
+    ws << data.vocationLimit;  
+    ws << data.levelLimit;  
+    ws << data.desc;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictItem & data) 
+{ 
+    rs >> data.id;  
+    rs >> data.primitiveType;  
+    rs >> data.subType;  
+    rs >> data.visible;  
+    rs >> data.stacks;  
+    rs >> data.fightEffectID;  
+    rs >> data.autoUse;  
+    rs >> data.dropID;  
+    rs >> data.vocationLimit;  
+    rs >> data.levelLimit;  
+    rs >> data.desc;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictItem & info) 
+{ 
+    stm << "[\n"; 
+    stm << "id=" << info.id << "\n"; 
+    stm << "primitiveType=" << info.primitiveType << "\n"; 
+    stm << "subType=" << info.subType << "\n"; 
+    stm << "visible=" << info.visible << "\n"; 
+    stm << "stacks=" << info.stacks << "\n"; 
+    stm << "fightEffectID=" << info.fightEffectID << "\n"; 
+    stm << "autoUse=" << info.autoUse << "\n"; 
+    stm << "dropID=" << info.dropID << "\n"; 
+    stm << "vocationLimit=" << info.vocationLimit << "\n"; 
+    stm << "levelLimit=" << info.levelLimit << "\n"; 
+    stm << "desc=" << info.desc << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct ItemInfo //道具字典  
+{ 
+    static const unsigned short getProtoID() { return 1012;} 
+    static const std::string getProtoName() { return "ItemInfo";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned short stacks; //可堆叠个数,0和1都是1次  
+    ItemInfo() 
+    { 
+        stacks = 0; 
+    } 
+    ItemInfo(const unsigned short & stacks) 
+    { 
+        this->stacks = stacks; 
+    } 
+}; 
+ 
+const std::vector<std::string>  ItemInfo::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_ItemInfo` ( ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_ItemInfo` add `stacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_ItemInfo` change `stacks`  `stacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    return std::move(ret); 
+} 
+std::string  ItemInfo::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `stacks` from `tb_ItemInfo` where "); 
+    return q.pickSQL(); 
+} 
+std::string  ItemInfo::getDBSelectPure() 
+{ 
+    return "select `stacks` from `tb_ItemInfo` "; 
+} 
+std::string  ItemInfo::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_ItemInfo`(`stacks`) values(?)"); 
+    q << this->stacks; 
+    return q.pickSQL(); 
+} 
+std::string  ItemInfo::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_ItemInfo` where  "); 
+    return q.pickSQL(); 
+} 
+std::string  ItemInfo::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_ItemInfo`() values( ) on duplicate key update `stacks` = ? "); 
+    q << this->stacks; 
+    return q.pickSQL(); 
+} 
+bool ItemInfo::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch ItemInfo from table `tb_ItemInfo` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->stacks; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch ItemInfo from table `tb_ItemInfo` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ItemInfo & data) 
+{ 
+    ws << data.stacks;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ItemInfo & data) 
+{ 
+    rs >> data.stacks;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ItemInfo & info) 
+{ 
+    stm << "[\n"; 
+    stm << "stacks=" << info.stacks << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
  
 struct MoneyTree //摇钱树功能模块  
 { 

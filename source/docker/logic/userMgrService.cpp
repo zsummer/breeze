@@ -1,7 +1,6 @@
 ﻿#include "docker.h"
 #include "userMgrService.h"
 #include <ProtoCommon.h>
-#include <ProtoDBService.h>
 #include <ProtoUser.h>
 
 UserMgrService::UserMgrService()
@@ -18,7 +17,7 @@ UserMgrService::~UserMgrService()
     
 }
 
-void UserMgrService::onTick()
+void UserMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
     time_t now = getNowTime();
     if (now - _lastTime > 10)
@@ -33,7 +32,7 @@ void UserMgrService::onTick()
         {
             if (iter->second->_status == SS_WORKING && getNowTime() - iter->second->_lastChangeTime > 30)
             {
-                auto service = Docker::getRef().peekService(STUser, iter->second->_preview.serviceID);
+                auto service = Docker::getRef().peekService(STUser, iter->second->_preview.userID);
                 if (service)
                 {
                     UnloadServiceInDocker unload(service->getServiceType(), service->getServiceID());
@@ -41,7 +40,7 @@ void UserMgrService::onTick()
                 }
                 else
                 {
-                    LOGE("service not unload finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.serviceID);
+                    LOGE("service not unload finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.userID);
                 }
                 iter = _freeList.erase(iter);
                 continue;
@@ -71,7 +70,7 @@ bool UserMgrService::onLoad()
     sql += " `tb_UserBaseInfo` ";
     int curLimit = 0;
     DBQueryReq req(sql + "limit 0, 100");
-    toService(STInfoDBMgr, req,
+    toService(STInfoDBMgr, OutOfBand(InvalidServiceID), req,
         std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit, sql));
     return true;
 }
@@ -113,8 +112,8 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
         UserPreview up;
         up.fetchFromDBResult(result);
 
-        if (_userStatusByID.find(up.serviceID) != _userStatusByID.end()
-            || _userStatusByName.find(up.serviceName) != _userStatusByName.end())
+        if (_userStatusByID.find(up.userID) != _userStatusByID.end()
+            || _userStatusByName.find(up.userName) != _userStatusByName.end())
         {
             LOGA("onLoadUserPreviewsFromDB . errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
                 << ", sql msg=" << resp.result.errMsg
@@ -123,13 +122,13 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
             return;
         }
         updateUserPreview(up);
-        if (_nextUserID < up.serviceID)
+        if (_nextUserID < up.userID)
         {
-            _nextUserID = up.serviceID;
+            _nextUserID = up.userID;
         }
     }
     DBQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
-    toService(STInfoDBMgr, req,
+    toService(STInfoDBMgr, OutOfBand(InvalidServiceID), req,
         std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit+100, sql));
 
 }
@@ -142,26 +141,26 @@ void UserMgrService::updateUserPreview(const UserPreview & pre)
     UserStatusPtr usp;
     if (true)
     {
-        auto founder = _userStatusByID.find(pre.serviceID);
+        auto founder = _userStatusByID.find(pre.userID);
         if (founder == _userStatusByID.end())
         {
             usp = std::make_shared<UserStatus>();
             usp->_status = SS_NONE;
             usp->_preview = pre;
-            _userStatusByID[pre.serviceID] = usp;
-            _userStatusByName[pre.serviceName] = usp;
+            _userStatusByID[pre.userID] = usp;
+            _userStatusByName[pre.userName] = usp;
         }
         else
         {
             usp = founder->second;
             usp->_preview = pre;
         }
-        _userStatusByName[pre.serviceName] = usp;
+        _userStatusByName[pre.userName] = usp;
     }
     if (true)
     {
         auto &acs = _accountStatus[pre.account];
-        acs._users[pre.serviceID] = usp;
+        acs._users[pre.userID] = usp;
     }
 }
 
@@ -214,7 +213,7 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, z
         DBQuery q(sql);
         q << req.account;
         DBQueryReq sqlReq(q.pickSQL());
-        toService(STInfoDBMgr, sqlReq,
+        toService(STInfoDBMgr, OutOfBand(InvalidServiceID), sqlReq,
             std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
     }
 }
@@ -266,7 +265,7 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
         return;
     }
 
-    if (_userStatusByName.find(req.serviceName) != _userStatusByName.end())
+    if (_userStatusByName.find(req.userName) != _userStatusByName.end())
     {
         resp.retCode = EC_ERROR;
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
@@ -275,13 +274,13 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
     founder->second._lastCreateTime = getNowTime();
     UserBaseInfo userBaseInfo;
     userBaseInfo.account = req.account;
-    userBaseInfo.serviceID = ++_nextUserID;
-    userBaseInfo.serviceName = req.serviceName;
+    userBaseInfo.userID = ++_nextUserID;
+    userBaseInfo.userName = req.userName;
     userBaseInfo.level = 1;
     userBaseInfo.iconID = 0;
 
     DBQueryReq sql(userBaseInfo.getDBInsert());
-    toService(STInfoDBMgr, sql,
+    toService(STInfoDBMgr, OutOfBand(InvalidServiceID), sql,
         std::bind(&UserMgrService::onCreateUserFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, userBaseInfo, req));
 }
 
@@ -304,7 +303,7 @@ void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStre
     }
     if (resp.retCode == EC_SUCCESS)
     {
-        UserPreview up(ubi.serviceID, ubi.serviceName, ubi.account, ubi.iconID, ubi.level);
+        UserPreview up(ubi.userID, ubi.userName, ubi.account, ubi.iconID, ubi.level);
         updateUserPreview(up);
         for (const auto & kv : _accountStatus[ubi.account]._users)
         {
@@ -321,11 +320,11 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
     rs >> req;
     AttachUserFromUserMgrResp resp;
     resp.retCode = EC_SUCCESS;
-    resp.serviceID = req.serviceID;
+    resp.userID = req.userID;
     resp.clientDockerID = req.clientDockerID;
     resp.clientSessionID = req.clientSessionID;
 
-    auto founder = _userStatusByID.find(req.serviceID);
+    auto founder = _userStatusByID.find(req.userID);
     if (founder == _userStatusByID.end() || founder->second->_preview.account != req.account)
     {
         resp.retCode = EC_ERROR;
@@ -340,7 +339,7 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         return;
     }
     status._lastChangeTime = getNowTime();
-    _freeList.erase(req.serviceID);
+    _freeList.erase(req.userID);
     if (status._status == SS_NONE || status._status == SS_DESTROY)
     {
         DockerID dockerID = Docker::getRef().getUserBalance().selectAuto();
@@ -353,14 +352,14 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         status._status = SS_INITING;
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
-        LoadServiceInDocker notice(STUser, req.serviceID, status._preview.serviceName, req.clientDockerID, req.clientSessionID);
+        LoadServiceInDocker notice(STUser, req.userID, status._preview.userName, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDocker(dockerID, notice);
     }
     else if(status._status == SS_WORKING)
     {
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
-        SwitchServiceClientNotice change(STUser, req.serviceID, req.clientDockerID, req.clientSessionID);
+        SwitchServiceClientNotice change(STUser, req.userID, req.clientDockerID, req.clientSessionID);
         Docker::getRef().broadcastToDockers(change, true);
         //Docker::getRef().sendToDocker(STUser, req.serviceID, change);
     }

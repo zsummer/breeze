@@ -35,7 +35,7 @@ docker的资源消耗:
 #include <common.h>
 #include "service.h"
 #include <ProtoDocker.h>
-#include <ProtoWebAgent.h>
+
 
 struct DockerSession
 {
@@ -49,7 +49,7 @@ class Docker : public Singleton<Docker>
 {
 public:
     Docker();
-    bool init(const std::string & config, DockerID idx);
+    bool init(const std::string & configName, DockerID configID);
     bool start();
     void stop();
     void forceStop();
@@ -104,7 +104,7 @@ public:
     bool isStopping();
     ServicePtr peekService(ServiceType serviceType, ServiceID serviceID);
     std::unordered_map<ServiceID, ServicePtr > & peekService(ServiceType serviceType);
-
+    SessionID getDockerLinked(DockerID dockerID);
 private:
     //内部接口 
     //打开监听端口,新连接 
@@ -276,10 +276,10 @@ void Docker::packetToSessionWithTracing(SessionID sessionID, const Tracing & tra
 template<class Proto>
 void Docker::sendToDocker(DockerID dockerID, const Proto & proto)
 {
-    auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
+    SessionID  sID = getDockerLinked(dockerID);
+    if (sID != InvalidSessionID)
     {
-        sendToSession(founder->second.sessionID, proto);
+        sendToSession(sID, proto);
     }
     else
     {

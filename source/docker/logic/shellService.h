@@ -38,7 +38,7 @@ public:
     bool onLoad() override final;
     void onClientChange() override final;
     void onUnload() override final;
-    void onTick() override final;
+    void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
 private:
 };
 
