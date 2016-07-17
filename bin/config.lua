@@ -35,7 +35,7 @@ config.docker =
         services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STUser"},
         dockerID = 2,
     },
-
+--[[
     {
         dockerListenHost="0.0.0.0",
         dockerPubHost="127.0.0.1",
@@ -43,7 +43,7 @@ config.docker =
         dockerWhite={"192.168.", "127.0."},
         services={"STWorldMgr"},
         dockerID = 3,
-    }, 
+    }, ]]
 }
 
 

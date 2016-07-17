@@ -9,7 +9,7 @@ cd docker
 start docker.exe 1
 start docker.exe 2
 cd ..
-
+exit 0
 cd world
 start world.exe
 
