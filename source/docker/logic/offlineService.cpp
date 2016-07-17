@@ -28,7 +28,7 @@ void OfflineService::onUnload()
 bool OfflineService::onLoad()
 {
     DBQueryReq req("SELECT max(id) FROM `tb_UserOffline`");
-    toService(STInfoDBMgr, OutOfBand(InvalidServiceID), req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
+    toService(STInfoDBMgr, OutOfBand(), req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
     return true;
 }
 

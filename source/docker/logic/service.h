@@ -102,12 +102,17 @@ public:
     inline void slotting(const Slot & msgfun) { _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
 
     bool canToService(ServiceType serviceType, ServiceID serviceID = InvalidServiceID);
-    void toService(ServiceType serviceType, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     void toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+
+    void toService(ServiceType serviceType, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    void toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+
     template<class Proto>
     void toService(ServiceType serviceType, const OutOfBand &oob, Proto proto, ServiceCallback cb = nullptr);
     template<class Proto>
     void toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, Proto proto, ServiceCallback cb = nullptr);
+    template<class Proto>
+    void toService(ServiceType serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb = nullptr);
 
     void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
@@ -197,6 +202,11 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
     {
         LOGE("Service::toService catch except error. e=" << e.what());
     }
+}
+template<class Proto>
+void Service::toService(ServiceType serviceType, ServiceID serviceID, Proto proto, ServiceCallback cb )
+{
+    toService(serviceType, serviceID, OutOfBand(), proto, cb);
 }
 
 template<class Proto>

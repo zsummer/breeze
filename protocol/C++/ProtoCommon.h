@@ -15,7 +15,9 @@ enum  : unsigned short
     EC_TARGET_NOT_EXIST = 7, //操作目标不存在  
     EC_TOKEN_EXPIRE = 8, //令牌过期  
     EC_USER_NOT_FOUND = 50, //错误的用户信息  
-    EC_USER_OFFLINE = 51, //错误的用户信息  
+    EC_USER_COUNT_LIMITE = 51, //创建用户的数量超出限制  
+    EC_USER_FREQ_LIMITE = 52, //创建用户的频率超出限制  
+    EC_USER_NAME_CONFLICT = 53, //创建用户的昵称冲突  
     EC_FRIEND_DUPLICATE = 100, //请先删除与该好友建立的关系  
     EC_FRIEND_CEILING = 101, //达到好友上限  
     EC_FRIEND_REFUSE = 102, //不能添加对方为好友  
@@ -101,29 +103,35 @@ struct OutOfBand //带外信息
     static const unsigned short getProtoID() { return 1006;} 
     static const std::string getProtoName() { return "OutOfBand";} 
     unsigned long long userID; //该数据由docker获得来自客户端的消息时自动填充.  
+    unsigned long long reserveID;  
     OutOfBand() 
     { 
         userID = 0; 
+        reserveID = 0; 
     } 
-    OutOfBand(const unsigned long long & userID) 
+    OutOfBand(const unsigned long long & userID, const unsigned long long & reserveID) 
     { 
         this->userID = userID; 
+        this->reserveID = reserveID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const OutOfBand & data) 
 { 
     ws << data.userID;  
+    ws << data.reserveID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, OutOfBand & data) 
 { 
     rs >> data.userID;  
+    rs >> data.reserveID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const OutOfBand & info) 
 { 
     stm << "[\n"; 
     stm << "userID=" << info.userID << "\n"; 
+    stm << "reserveID=" << info.reserveID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

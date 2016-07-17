@@ -14,12 +14,12 @@ function Session.new(...)
     return session
 end
 
-function Session:ctor(sID, account, token, serviceName, iconID)
+function Session:ctor(sID, account, token, userName, iconID)
     self.sID=sID
     self.account=account
     self.token=token
-    self.serviceName=serviceName
-    self.serviceID=0
+    self.userName=userName
+    self.userID=0
     self.iconID = iconID
 end
 function Session:whenPulse(sID)
@@ -39,10 +39,10 @@ end
 function Session:onClientAuthResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
         if next(msg.previews) then
-            self.serviceID = msg.previews[1].serviceID
-            send(sID, "AttachUserReq", {serviceID=msg.previews[1].serviceID})
+            self.userID = msg.previews[1].userID
+            send(sID, "AttachUserReq", {userID=msg.previews[1].userID})
         else
-            send(sID, "CreateUserReq", {serviceName=self.serviceName})
+            send(sID, "CreateUserReq", {userName=self.userName})
         end
     else
 	dump(msg, "error Session:onClientAuthResp")
@@ -51,21 +51,21 @@ end
 
 function Session:onCreateUserResp(sID, msg)
     if next(msg.previews) then
-        self.serviceID = msg.previews[1].serviceID
-        send(sID, "AttachUserReq", {serviceID=msg.previews[1].serviceID})
+        self.userID = msg.previews[1].userID
+        send(sID, "AttachUserReq", {userID=msg.previews[1].userID})
     else
-        loge("onCreateUserResp error.")
+        loge("onCreateUserResp error. msg.retCode=" .. msg.retCode)
     end
 end
 
 function Session:onAttachUserResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
-        __global_serviceID_array = __global_serviceID_array or {}
-        if #__global_serviceID_array > 0 then
-            local rdx = math.random(#__global_serviceID_array)
-            send(sID, "UserChatReq", {toServiceID=__global_serviceID_array[rdx], msg="hello"})
+        __global_userID_array = __global_userID_array or {}
+        if #__global_userID_array > 0 then
+            local rdx = math.random(#__global_userID_array)
+            send(sID, "UserChatReq", {touserID=__global_userID_array[rdx], msg="hello"})
         end
-        table.insert(__global_serviceID_array, self.serviceID)
+        table.insert(__global_userID_array, self.userID)
         send(sID, "UserPingPongReq", { msg="hello"})
     end
 end

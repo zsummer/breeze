@@ -70,7 +70,7 @@ bool UserMgrService::onLoad()
     sql += " `tb_UserBaseInfo` ";
     int curLimit = 0;
     DBQueryReq req(sql + "limit 0, 100");
-    toService(STInfoDBMgr, OutOfBand(InvalidServiceID), req,
+    toService(STInfoDBMgr, OutOfBand(), req,
         std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit, sql));
     return true;
 }
@@ -128,7 +128,7 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
         }
     }
     DBQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
-    toService(STInfoDBMgr, OutOfBand(InvalidServiceID), req,
+    toService(STInfoDBMgr, OutOfBand(), req,
         std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit+100, sql));
 
 }
@@ -213,7 +213,7 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, z
         DBQuery q(sql);
         q << req.account;
         DBQueryReq sqlReq(q.pickSQL());
-        toService(STInfoDBMgr, OutOfBand(InvalidServiceID), sqlReq,
+        toService(STInfoDBMgr, OutOfBand(), sqlReq,
             std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
     }
 }
@@ -258,16 +258,28 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
     resp.clientSessionID = req.clientSessionID;
 
     auto founder = _accountStatus.find(req.account);
-    if (founder == _accountStatus.end() || founder->second._users.size() > 4 || getNowTime() - founder->second._lastCreateTime < 60)
+    if (founder == _accountStatus.end())
     {
-        resp.retCode = EC_ERROR;
+        resp.retCode = EC_USER_NOT_FOUND;
+        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        return;
+    }
+    if (founder->second._users.size() > 4 )
+    {
+        resp.retCode = EC_USER_COUNT_LIMITE;
+        Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        return;
+    }
+    if ( getNowTime() - founder->second._lastCreateTime < 60)
+    {
+        resp.retCode = EC_USER_FREQ_LIMITE;
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
         return;
     }
 
     if (_userStatusByName.find(req.userName) != _userStatusByName.end())
     {
-        resp.retCode = EC_ERROR;
+        resp.retCode = EC_USER_NAME_CONFLICT;
         Docker::getRef().sendToDocker(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
         return;
     }
@@ -280,7 +292,7 @@ void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::
     userBaseInfo.iconID = 0;
 
     DBQueryReq sql(userBaseInfo.getDBInsert());
-    toService(STInfoDBMgr, OutOfBand(InvalidServiceID), sql,
+    toService(STInfoDBMgr, OutOfBand(), sql,
         std::bind(&UserMgrService::onCreateUserFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, userBaseInfo, req));
 }
 

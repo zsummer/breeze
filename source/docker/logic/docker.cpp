@@ -944,7 +944,7 @@ void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream
         {
             if (getServiceTrait(sd.first) == STrait_Single)
             {
-                fder->second->toService(sd.first, OutOfBand(InvalidServiceID), refreshNotice, nullptr);
+                fder->second->toService(sd.first, OutOfBand(InvalidServiceID, 0), refreshNotice, nullptr);
             }
         }
     }
@@ -1412,6 +1412,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         auto fder = founder->second.find(toServiceID);
         if (fder == founder->second.end())
         {
+            //LOGW(zsummer::proto4z::proto4z_traceback());
             if (toServiceType == STUser)
             {
                 LOGW("Docker::toService can not found STUser ID. trace =" << trace << ", block len=" << len << ", protoID=" << protoID);

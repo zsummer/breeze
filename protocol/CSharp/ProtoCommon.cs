@@ -14,7 +14,9 @@ namespace Proto4z
         EC_TARGET_NOT_EXIST = 7, //操作目标不存在  
         EC_TOKEN_EXPIRE = 8, //令牌过期  
         EC_USER_NOT_FOUND = 50, //错误的用户信息  
-        EC_USER_OFFLINE = 51, //错误的用户信息  
+        EC_USER_COUNT_LIMITE = 51, //创建用户的数量超出限制  
+        EC_USER_FREQ_LIMITE = 52, //创建用户的频率超出限制  
+        EC_USER_NAME_CONFLICT = 53, //创建用户的昵称冲突  
         EC_FRIEND_DUPLICATE = 100, //请先删除与该好友建立的关系  
         EC_FRIEND_CEILING = 101, //达到好友上限  
         EC_FRIEND_REFUSE = 102, //不能添加对方为好友  
@@ -93,23 +95,28 @@ namespace Proto4z
         static public string getProtoName() { return "OutOfBand"; } 
         //members   
         public ulong userID; //该数据由docker获得来自客户端的消息时自动填充.  
+        public ulong reserveID;  
         public OutOfBand()  
         { 
             userID = 0;  
+            reserveID = 0;  
         } 
-        public OutOfBand(ulong userID) 
+        public OutOfBand(ulong userID, ulong reserveID) 
         { 
             this.userID = userID; 
+            this.reserveID = reserveID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.reserveID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.reserveID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 

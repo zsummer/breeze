@@ -90,7 +90,7 @@ bool Service::finishLoad()
             {
                 if (getServiceTrait(sd.first) == STrait_Single )
                 {
-                    toService(sd.first, OutOfBand(InvalidServiceID),refreshNotice, nullptr);
+                    toService(sd.first, OutOfBand(),refreshNotice, nullptr);
                 }
             }
         }
@@ -124,7 +124,7 @@ bool Service::finishUnload()
             {
                 if (getServiceTrait(sd.first) == STrait_Single)
                 {
-                    toService(sd.first, OutOfBand(InvalidServiceID),  refreshNotice, nullptr);
+                    toService(sd.first, OutOfBand(),  refreshNotice, nullptr);
                 }
             }
         }
@@ -203,7 +203,10 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
     }
     Docker::getRef().toService(trace, block, len, true, true);
 }
-
+void Service::toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb )
+{
+    toService(serviceType, serviceID, OutOfBand(), block, len, cb);
+}
 void Service::toService(ServiceType serviceType, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb)
 {
     toService(serviceType, InvalidServiceID, oob, block, len, cb);

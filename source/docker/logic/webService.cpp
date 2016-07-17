@@ -119,8 +119,8 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
             request.isGet = true;
             request.host = "www.cnblogs.com";
             request.uri = "/";
-            toService(STWebAgent, OutOfBand(InvalidServiceID), request);
-            toService(STWebAgent, OutOfBand(InvalidServiceID), request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
+            toService(STWebAgent, OutOfBand(), request);
+            toService(STWebAgent, OutOfBand(), request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
                 _1, trace.routing.fromDockerID, notice.webClientID));
             
         }
@@ -160,7 +160,7 @@ void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::v
         WriteStream ws(UserChatReq::getProtoID());
         ws << req;
         offline.streamBlob = ws.pickStream();
-        toService(STOfflineMgr, OutOfBand(InvalidServiceID), offline);
+        toService(STOfflineMgr, OutOfBand(), offline);
         responseSuccess(dockerID, clientID, R"({"result":"success"})");
 
     }

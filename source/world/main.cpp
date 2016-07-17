@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
         filename = argv[1];
     }
     bool ret = false;
-    ILog4zManager::getPtr()->config("../log.docker.config");
+    ILog4zManager::getPtr()->config("../log.cfg");
     ret = ILog4zManager::getPtr()->start();
     if (!ret)
     {

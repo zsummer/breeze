@@ -9,7 +9,9 @@ Proto4z.EC_REQUEST_EXPIRE = 6--请求操作已过期
 Proto4z.EC_TARGET_NOT_EXIST = 7--操作目标不存在 
 Proto4z.EC_TOKEN_EXPIRE = 8--令牌过期 
 Proto4z.EC_USER_NOT_FOUND = 50--错误的用户信息 
-Proto4z.EC_USER_OFFLINE = 51--错误的用户信息 
+Proto4z.EC_USER_COUNT_LIMITE = 51--创建用户的数量超出限制 
+Proto4z.EC_USER_FREQ_LIMITE = 52--创建用户的频率超出限制 
+Proto4z.EC_USER_NAME_CONFLICT = 53--创建用户的昵称冲突 
 Proto4z.EC_FRIEND_DUPLICATE = 100--请先删除与该好友建立的关系 
 Proto4z.EC_FRIEND_CEILING = 101--达到好友上限 
 Proto4z.EC_FRIEND_REFUSE = 102--不能添加对方为好友 
@@ -33,6 +35,7 @@ Proto4z.OutOfBand = {} --带外信息
 Proto4z.OutOfBand.__protoID = 1006 
 Proto4z.OutOfBand.__protoName = "OutOfBand" 
 Proto4z.OutOfBand[1] = {name="userID", type="ui64" } --该数据由docker获得来自客户端的消息时自动填充. 
+Proto4z.OutOfBand[2] = {name="reserveID", type="ui64" }  
  
 Proto4z.register(1000,"Tracing") 
 Proto4z.Tracing = {} --docker间追踪数据 
