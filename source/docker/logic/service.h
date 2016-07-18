@@ -82,7 +82,7 @@ public:
     inline DockerID getServiceDockerID() { return _serviceDockerID; }
     inline DockerID getClientDockerID() { return _clientDockerID; }
     inline SessionID getClientSessionID() { return _clientSessionID; }
-
+    inline ServiceInfo getServiceInfo() { return ServiceInfo(_serviceDockerID, _serviceType, _serviceID, _serviceName, _status, _clientDockerID, _clientSessionID); }
     inline ui16 getStatus() { return _status; }
     inline bool isShell() { return _shell; }
 protected:

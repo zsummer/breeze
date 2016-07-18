@@ -115,7 +115,7 @@ private:
 
 public:
     //内部接口 
-    ServicePtr createService(DockerID serviceDockerID, ServiceType serviceType, ServiceID serviceID, ServiceName serviceName, DockerID clientDockerID, SessionID clientSessionID, bool isShell, bool failExit);
+    ServicePtr createService(const ServiceInfo& si, bool isShell, bool failExit);
     void destroyService(ServiceType serviceType, ServiceID serviceID);
 public:
     //内部接口 
@@ -145,7 +145,7 @@ private:
     void event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs);
 
 private:
-    void event_onLoadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onLoadService(TcpSessionPtr session, ReadStream & rs);
     void event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onKickRealClient(TcpSessionPtr session, ReadStream & rs);

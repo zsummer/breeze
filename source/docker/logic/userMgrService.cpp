@@ -364,7 +364,7 @@ void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::
         status._status = SS_INITING;
         status._clientDockerID = req.clientDockerID;
         status._clientSessionID = req.clientSessionID;
-        LoadServiceInDocker notice(STUser, req.userID, status._preview.userName, req.clientDockerID, req.clientSessionID);
+        LoadService notice(STUser, req.userID, status._preview.userName, req.clientDockerID, req.clientSessionID);
         Docker::getRef().sendToDocker(dockerID, notice);
     }
     else if(status._status == SS_WORKING)

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>e134f59281ec6e99c11aadb623dde06a</cppmd5> 
-<luamd5>20db7b509f785dbe45096225a880de16</luamd5> 
-<csharpmd5>a1eb68b4fe5296c258d67ef83a20e4d8</csharpmd5> 
-<xmlmd5>1d28ee2ab5e2d90c35e9446f8f99eb35</xmlmd5> 
+<cppmd5>6c919b96b5ee3dfe064dcb1387072e0a</cppmd5> 
+<luamd5>d8071ac362590441db3a67cf0b86e4e8</luamd5> 
+<csharpmd5>897b7ea0db0846918089155d0e641a52</csharpmd5> 
+<xmlmd5>3e69951f2592287d2bc7f63556041144</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_ClientPulse" Number = "2024" /> 
     <cache key = "ID_DBDataResult" Number = "2015" /> 
@@ -15,11 +15,13 @@
     <cache key = "ID_ForwardToRealClient" Number = "2012" /> 
     <cache key = "ID_ForwardToService" Number = "2011" /> 
     <cache key = "ID_KickRealClient" Number = "2006" /> 
+    <cache key = "ID_LoadService" Number = "2025" /> 
     <cache key = "ID_LoadServiceInDocker" Number = "2002" /> 
     <cache key = "ID_LoadServiceNotice" Number = "2003" /> 
     <cache key = "ID_RealClientClosedNotice" Number = "2007" /> 
     <cache key = "ID_RefreshServiceToMgrNotice" Number = "2004" /> 
     <cache key = "ID_SelfBeingPulse" Number = "2014" /> 
+    <cache key = "ID_ServiceInfo" Number = "2026" /> 
     <cache key = "ID_SessionPulse" Number = "2001" /> 
     <cache key = "ID_ShellServiceInfo" Number = "2013" /> 
     <cache key = "ID_ShutdownClusterServer" Number = "2010" /> 

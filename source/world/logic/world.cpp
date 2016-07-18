@@ -166,15 +166,17 @@ void World::event_onDockerLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
     LoadServiceNotice notice;
-    ShellServiceInfo info;
+    ServiceInfo info;
     info.serviceDockerID = InvalidDockerID;
     info.serviceType = STWorldMgr;
     info.serviceID = InvalidServiceID;
     info.serviceName = "STWorldMgr";
     info.clientDockerID = InvalidDockerID;
     info.clientSessionID = InvalidSessionID;
-    info.status = SS_WORKING;
+    info.status = SS_CREATED;
     notice.shellServiceInfos.push_back(info);
+    sendToSession(session->getSessionID(), notice);
+    notice.shellServiceInfos.at(0).status = SS_WORKING;
     sendToSession(session->getSessionID(), notice);
     LOGI("event_onDockerLinked cID=" << session->getSessionID() );
 }

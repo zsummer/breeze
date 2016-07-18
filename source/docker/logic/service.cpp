@@ -63,7 +63,7 @@ bool Service::finishLoad()
        if (true)
        {
            LoadServiceNotice notice;
-           notice.shellServiceInfos.push_back(ShellServiceInfo(
+           notice.shellServiceInfos.push_back(ServiceInfo(
                getServiceDockerID(),
                getServiceType(),
                getServiceID(),
@@ -77,7 +77,7 @@ bool Service::finishLoad()
         if (getServiceTrait(getServiceType()) == STrait_Multi)
         {
             RefreshServiceToMgrNotice refreshNotice;
-            refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
+            refreshNotice.shellServiceInfos.push_back(ServiceInfo(
                 getServiceDockerID(),
                 getServiceType(),
                 getServiceID(),
@@ -112,7 +112,7 @@ bool Service::finishUnload()
         if (getServiceTrait(getServiceType()) == STrait_Multi)
         {
             RefreshServiceToMgrNotice refreshNotice;
-            refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
+            refreshNotice.shellServiceInfos.push_back(ServiceInfo(
                 getServiceDockerID(),
                 getServiceType(),
                 getServiceID(),
