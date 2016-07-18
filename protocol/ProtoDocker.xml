@@ -142,8 +142,6 @@
     <map name="WebAgentHead" key="string" value="string" desc="" />
 
     <packet name="WebAgentClientRequestAPI" desc="">
-        <member name="webDockerID" type="ui32"  desc=""/>
-        <member name="webClientID" type="ui32"  desc=""/>
         <member name="method" type="string"  desc=""/>
         <member name="methodLine" type="string"  desc=""/>
         <member name="heads" type="WebAgentHead"  desc=""/>

@@ -783,25 +783,19 @@ namespace Proto4z
         static public ushort getProtoID() { return 2020; } 
         static public string getProtoName() { return "WebAgentClientRequestAPI"; } 
         //members   
-        public uint webDockerID;  
-        public uint webClientID;  
         public string method;  
         public string methodLine;  
         public WebAgentHead heads;  
         public string body;  
         public WebAgentClientRequestAPI()  
         { 
-            webDockerID = 0;  
-            webClientID = 0;  
             method = "";  
             methodLine = "";  
             heads = new WebAgentHead();  
             body = "";  
         } 
-        public WebAgentClientRequestAPI(uint webDockerID, uint webClientID, string method, string methodLine, WebAgentHead heads, string body) 
+        public WebAgentClientRequestAPI(string method, string methodLine, WebAgentHead heads, string body) 
         { 
-            this.webDockerID = webDockerID; 
-            this.webClientID = webClientID; 
             this.method = method; 
             this.methodLine = methodLine; 
             this.heads = heads; 
@@ -810,8 +804,6 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.webDockerID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.webClientID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.method)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.methodLine)); 
             if (this.heads == null) this.heads = new WebAgentHead(); 
@@ -821,8 +813,6 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.webDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.webClientID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.method = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.methodLine = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.heads = new WebAgentHead(); 

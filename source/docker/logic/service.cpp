@@ -90,7 +90,7 @@ bool Service::finishLoad()
             {
                 if (getServiceTrait(sd.first) == STrait_Single )
                 {
-                    toService(sd.first, OutOfBand(),refreshNotice, nullptr);
+                    toService(sd.first, refreshNotice, nullptr);
                 }
             }
         }

@@ -84,29 +84,34 @@ namespace Proto4z
         static public ushort getProtoID() { return 1006; } 
         static public string getProtoName() { return "OutOfBand"; } 
         //members   
-        public ulong userID; //该数据由docker获得来自客户端的消息时自动填充.  
-        public ulong reserveID;  
+        public uint clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
+        public uint clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
+        public ulong clientUserID; //该数据由docker获得来自客户端的消息时自动填充.  
         public OutOfBand()  
         { 
-            userID = 0;  
-            reserveID = 0;  
+            clientDockerID = 0;  
+            clientSessionID = 0;  
+            clientUserID = 0;  
         } 
-        public OutOfBand(ulong userID, ulong reserveID) 
+        public OutOfBand(uint clientDockerID, uint clientSessionID, ulong clientUserID) 
         { 
-            this.userID = userID; 
-            this.reserveID = reserveID; 
+            this.clientDockerID = clientDockerID; 
+            this.clientSessionID = clientSessionID; 
+            this.clientUserID = clientUserID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.reserveID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.clientUserID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.reserveID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.clientUserID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 

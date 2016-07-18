@@ -90,36 +90,42 @@ struct OutOfBand //带外信息
 { 
     static const unsigned short getProtoID() { return 1006;} 
     static const std::string getProtoName() { return "OutOfBand";} 
-    unsigned long long userID; //该数据由docker获得来自客户端的消息时自动填充.  
-    unsigned long long reserveID;  
+    unsigned int clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
+    unsigned int clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
+    unsigned long long clientUserID; //该数据由docker获得来自客户端的消息时自动填充.  
     OutOfBand() 
     { 
-        userID = 0; 
-        reserveID = 0; 
+        clientDockerID = 0; 
+        clientSessionID = 0; 
+        clientUserID = 0; 
     } 
-    OutOfBand(const unsigned long long & userID, const unsigned long long & reserveID) 
+    OutOfBand(const unsigned int & clientDockerID, const unsigned int & clientSessionID, const unsigned long long & clientUserID) 
     { 
-        this->userID = userID; 
-        this->reserveID = reserveID; 
+        this->clientDockerID = clientDockerID; 
+        this->clientSessionID = clientSessionID; 
+        this->clientUserID = clientUserID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const OutOfBand & data) 
 { 
-    ws << data.userID;  
-    ws << data.reserveID;  
+    ws << data.clientDockerID;  
+    ws << data.clientSessionID;  
+    ws << data.clientUserID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, OutOfBand & data) 
 { 
-    rs >> data.userID;  
-    rs >> data.reserveID;  
+    rs >> data.clientDockerID;  
+    rs >> data.clientSessionID;  
+    rs >> data.clientUserID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const OutOfBand & info) 
 { 
     stm << "[\n"; 
-    stm << "userID=" << info.userID << "\n"; 
-    stm << "reserveID=" << info.reserveID << "\n"; 
+    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
+    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
+    stm << "clientUserID=" << info.clientUserID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

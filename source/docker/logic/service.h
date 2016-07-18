@@ -213,7 +213,7 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, Proto prot
     toService(serviceType, serviceID, OutOfBand(), proto, cb);
 }
 template<class Proto>
-void toService(ServiceType serviceType, Proto proto, ServiceCallback cb)
+void Service::toService(ServiceType serviceType, Proto proto, ServiceCallback cb)
 {
     toService(serviceType, InvalidServiceID, OutOfBand(), proto, cb);
 }
