@@ -105,11 +105,11 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
 
         if (uri == "/getonline")
         {
-            getonline(trace.routing.fromDockerID, notice.webClientID, params);
+            getonline(notice.webDockerID, notice.webClientID, params);
         }
         else if (uri == "/offlinechat")
         {
-            offlinechat(trace.routing.fromDockerID, notice.webClientID, params);
+            offlinechat(notice.webDockerID, notice.webClientID, params);
         }
         else if (uri == "/test")
         {
@@ -121,12 +121,12 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
             request.uri = "/";
             toService(STWebAgent, OutOfBand(), request);
             toService(STWebAgent, OutOfBand(), request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
-                _1, trace.routing.fromDockerID, notice.webClientID));
+                _1, notice.webDockerID, notice.webClientID));
             
         }
         else
         {
-            responseError(trace.routing.fromDockerID, notice.webClientID);
+            responseError(notice.webDockerID, notice.webClientID);
         }
     }
 

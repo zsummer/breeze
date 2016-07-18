@@ -36,11 +36,9 @@
 
     <!------------- Docker间路由追踪数据头 ---------------------->
     <packet name="Routing"  desc="docker to docker 路由信息">
-        <member name="toDockerID" type="ui32" desc="Docker ID为第一优先级路由数据, service ID为第二优先级路由数据"/>
         <member name="toServiceType" type="ui16" desc="目标service类型"/>
         <member name="toServiceID" type="ui64" desc="目标serviceID, 如果是单例 ID为InvalidServiceID. "/>
 
-        <member name="fromDockerID" type="ui32" desc="来源"/>
         <member name="fromServiceType" type="ui16" desc="来源"/>
         <member name="fromServiceID" type="ui64" desc="来源"/>
 

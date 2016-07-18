@@ -1071,7 +1071,6 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
             Tracing trace;
             trace.routing.fromServiceType = STClient;
             trace.routing.fromServiceID = session->getUserParamNumber(UPARAM_USER_ID);
-            trace.routing.fromDockerID = ServerConfig::getRef().getDockerID();
 
             trace.routing.toServiceType = STUserMgr;
             trace.routing.toServiceID = InvalidServiceID;
@@ -1114,7 +1113,6 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         Tracing trace;
         trace.routing.fromServiceType = STClient;
         trace.routing.fromServiceID = InvalidServiceID;
-        trace.routing.fromDockerID = ServerConfig::getRef().getDockerID();
         trace.routing.toServiceType = STUserMgr;
         trace.routing.toServiceID = InvalidServiceID;
 
@@ -1181,7 +1179,6 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         Tracing trace;
         trace.routing.fromServiceType = STClient;
         trace.routing.fromServiceID = session->getUserParamNumber(UPARAM_USER_ID);
-        trace.routing.fromDockerID = ServerConfig::getRef().getDockerID();
         trace.routing.toServiceType = STUser;
         trace.routing.toServiceID = session->getUserParamNumber(UPARAM_USER_ID);
         trace.oob.userID = trace.routing.toServiceID;
@@ -1203,17 +1200,16 @@ void Docker::event_onWebClientRequestAPI(TcpSessionPtr session, const std::strin
     LOGD("onWebMessage sessionID=" << session->getSessionID() << ", method=" << method << ", methodLine=" << methodLine);
     WebAgentClientRequestAPI notice;
     notice.webClientID = session->getSessionID();
+    notice.webDockerID = ServerConfig::getRef().getDockerID();
     notice.method = method;
     notice.methodLine = methodLine;
     notice.heads = head;
     notice.body = body;
 
     Tracing trace;
-    trace.routing.fromDockerID = ServerConfig::getRef().getDockerID();
     trace.routing.fromServiceType = InvalidServiceType;
     trace.routing.fromServiceID = InvalidServiceID;
 
-    trace.routing.toDockerID = InvalidDockerID;
     trace.routing.toServiceType = STWebAgent;
     trace.routing.toServiceID = InvalidServiceID;
     toService(trace, notice, true, false);
@@ -1375,19 +1371,6 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
 
         LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
 
-        if (trace.routing.toDockerID != InvalidDockerID) //Specified DockerID is high priority.
-        {
-            if (trace.routing.toDockerID != ServerConfig::getRef().getDockerID())
-            {
-                packetToDockerWithTracing(trace.routing.toDockerID, trace, block, len);
-                return;
-            }
-            else
-            {
-                
-                //return;
-            }
-        }
         ui16 toServiceType = trace.routing.toServiceType;
         ServiceID toServiceID = trace.routing.toServiceID;
         if (trace.routing.toServiceType == STClient)

@@ -191,7 +191,6 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
     Tracing trace;
     trace.routing.fromServiceType = getServiceType();
     trace.routing.fromServiceID = getServiceID();
-    trace.routing.fromDockerID = getServiceDockerID();
     trace.routing.traceBackID = 0;
     trace.routing.traceID = 0;
     trace.routing.toServiceType = serviceType;
@@ -229,14 +228,12 @@ bool Service::canToService(ServiceType serviceType, ServiceID serviceID)
 void Service::backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trc;
-    trc.routing.fromDockerID = getServiceDockerID();
     trc.routing.fromServiceType = getServiceType();
     trc.routing.fromServiceID = getServiceID();
     trc.routing.traceID = 0;
     trc.routing.traceBackID = trace.routing.traceID;
     trc.routing.toServiceType = trace.routing.fromServiceType;
     trc.routing.toServiceID = trace.routing.fromServiceID;
-    trc.routing.toDockerID = trace.routing.fromDockerID;
     trc.oob = trace.oob;
     if (cb)
     {

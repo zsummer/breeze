@@ -712,6 +712,7 @@ struct WebAgentClientRequestAPI
 { 
     static const unsigned short getProtoID() { return 2020;} 
     static const std::string getProtoName() { return "WebAgentClientRequestAPI";} 
+    unsigned int webDockerID;  
     unsigned int webClientID;  
     std::string method;  
     std::string methodLine;  
@@ -719,10 +720,12 @@ struct WebAgentClientRequestAPI
     std::string body;  
     WebAgentClientRequestAPI() 
     { 
+        webDockerID = 0; 
         webClientID = 0; 
     } 
-    WebAgentClientRequestAPI(const unsigned int & webClientID, const std::string & method, const std::string & methodLine, const WebAgentHead & heads, const std::string & body) 
+    WebAgentClientRequestAPI(const unsigned int & webDockerID, const unsigned int & webClientID, const std::string & method, const std::string & methodLine, const WebAgentHead & heads, const std::string & body) 
     { 
+        this->webDockerID = webDockerID; 
         this->webClientID = webClientID; 
         this->method = method; 
         this->methodLine = methodLine; 
@@ -732,6 +735,7 @@ struct WebAgentClientRequestAPI
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const WebAgentClientRequestAPI & data) 
 { 
+    ws << data.webDockerID;  
     ws << data.webClientID;  
     ws << data.method;  
     ws << data.methodLine;  
@@ -741,6 +745,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, WebAgentClientRequestAPI & data) 
 { 
+    rs >> data.webDockerID;  
     rs >> data.webClientID;  
     rs >> data.method;  
     rs >> data.methodLine;  
@@ -751,6 +756,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WebAgentClientRequestAPI & info) 
 { 
     stm << "[\n"; 
+    stm << "webDockerID=" << info.webDockerID << "\n"; 
     stm << "webClientID=" << info.webClientID << "\n"; 
     stm << "method=" << info.method << "\n"; 
     stm << "methodLine=" << info.methodLine << "\n"; 

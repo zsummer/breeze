@@ -158,11 +158,12 @@ Proto4z.register(2020,"WebAgentClientRequestAPI")
 Proto4z.WebAgentClientRequestAPI = {}  
 Proto4z.WebAgentClientRequestAPI.__protoID = 2020 
 Proto4z.WebAgentClientRequestAPI.__protoName = "WebAgentClientRequestAPI" 
-Proto4z.WebAgentClientRequestAPI[1] = {name="webClientID", type="ui32" }  
-Proto4z.WebAgentClientRequestAPI[2] = {name="method", type="string" }  
-Proto4z.WebAgentClientRequestAPI[3] = {name="methodLine", type="string" }  
-Proto4z.WebAgentClientRequestAPI[4] = {name="heads", type="WebAgentHead" }  
-Proto4z.WebAgentClientRequestAPI[5] = {name="body", type="string" }  
+Proto4z.WebAgentClientRequestAPI[1] = {name="webDockerID", type="ui32" }  
+Proto4z.WebAgentClientRequestAPI[2] = {name="webClientID", type="ui32" }  
+Proto4z.WebAgentClientRequestAPI[3] = {name="method", type="string" }  
+Proto4z.WebAgentClientRequestAPI[4] = {name="methodLine", type="string" }  
+Proto4z.WebAgentClientRequestAPI[5] = {name="heads", type="WebAgentHead" }  
+Proto4z.WebAgentClientRequestAPI[6] = {name="body", type="string" }  
  
 Proto4z.register(2021,"WebServerRequest") 
 Proto4z.WebServerRequest = {}  

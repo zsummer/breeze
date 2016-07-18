@@ -28,31 +28,25 @@ struct Routing //docker to docker 路由信息
 { 
     static const unsigned short getProtoID() { return 1005;} 
     static const std::string getProtoName() { return "Routing";} 
-    unsigned int toDockerID; //Docker ID为第一优先级路由数据, service ID为第二优先级路由数据  
     unsigned short toServiceType; //目标service类型  
     unsigned long long toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
-    unsigned int fromDockerID; //来源  
     unsigned short fromServiceType; //来源  
     unsigned long long fromServiceID; //来源  
     unsigned int traceID; //本地产生的回调ID  
     unsigned int traceBackID; //远端产生的回调ID  
     Routing() 
     { 
-        toDockerID = 0; 
         toServiceType = 0; 
         toServiceID = 0; 
-        fromDockerID = 0; 
         fromServiceType = 0; 
         fromServiceID = 0; 
         traceID = 0; 
         traceBackID = 0; 
     } 
-    Routing(const unsigned int & toDockerID, const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned int & fromDockerID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID) 
+    Routing(const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID) 
     { 
-        this->toDockerID = toDockerID; 
         this->toServiceType = toServiceType; 
         this->toServiceID = toServiceID; 
-        this->fromDockerID = fromDockerID; 
         this->fromServiceType = fromServiceType; 
         this->fromServiceID = fromServiceID; 
         this->traceID = traceID; 
@@ -61,10 +55,8 @@ struct Routing //docker to docker 路由信息
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const Routing & data) 
 { 
-    ws << data.toDockerID;  
     ws << data.toServiceType;  
     ws << data.toServiceID;  
-    ws << data.fromDockerID;  
     ws << data.fromServiceType;  
     ws << data.fromServiceID;  
     ws << data.traceID;  
@@ -73,10 +65,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, Routing & data) 
 { 
-    rs >> data.toDockerID;  
     rs >> data.toServiceType;  
     rs >> data.toServiceID;  
-    rs >> data.fromDockerID;  
     rs >> data.fromServiceType;  
     rs >> data.fromServiceID;  
     rs >> data.traceID;  
@@ -86,10 +76,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Routing & info) 
 { 
     stm << "[\n"; 
-    stm << "toDockerID=" << info.toDockerID << "\n"; 
     stm << "toServiceType=" << info.toServiceType << "\n"; 
     stm << "toServiceID=" << info.toServiceID << "\n"; 
-    stm << "fromDockerID=" << info.fromDockerID << "\n"; 
     stm << "fromServiceType=" << info.fromServiceType << "\n"; 
     stm << "fromServiceID=" << info.fromServiceID << "\n"; 
     stm << "traceID=" << info.traceID << "\n"; 

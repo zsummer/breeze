@@ -30,31 +30,25 @@ namespace Proto4z
         static public ushort getProtoID() { return 1005; } 
         static public string getProtoName() { return "Routing"; } 
         //members   
-        public uint toDockerID; //Docker ID为第一优先级路由数据, service ID为第二优先级路由数据  
         public ushort toServiceType; //目标service类型  
         public ulong toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
-        public uint fromDockerID; //来源  
         public ushort fromServiceType; //来源  
         public ulong fromServiceID; //来源  
         public uint traceID; //本地产生的回调ID  
         public uint traceBackID; //远端产生的回调ID  
         public Routing()  
         { 
-            toDockerID = 0;  
             toServiceType = 0;  
             toServiceID = 0;  
-            fromDockerID = 0;  
             fromServiceType = 0;  
             fromServiceID = 0;  
             traceID = 0;  
             traceBackID = 0;  
         } 
-        public Routing(uint toDockerID, ushort toServiceType, ulong toServiceID, uint fromDockerID, ushort fromServiceType, ulong fromServiceID, uint traceID, uint traceBackID) 
+        public Routing(ushort toServiceType, ulong toServiceID, ushort fromServiceType, ulong fromServiceID, uint traceID, uint traceBackID) 
         { 
-            this.toDockerID = toDockerID; 
             this.toServiceType = toServiceType; 
             this.toServiceID = toServiceID; 
-            this.fromDockerID = fromDockerID; 
             this.fromServiceType = fromServiceType; 
             this.fromServiceID = fromServiceID; 
             this.traceID = traceID; 
@@ -63,10 +57,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.toDockerID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.toServiceType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.toServiceID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.fromDockerID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.fromServiceType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromServiceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.traceID)); 
@@ -75,10 +67,8 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.toDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.toServiceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.toServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.fromDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.fromServiceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.fromServiceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.traceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
