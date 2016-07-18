@@ -53,7 +53,7 @@
 
     <packet name="Tracing"  desc="docker间追踪数据">
         <member name="routing" type="Routing" desc="路由信息"/>
-        <member name="oob" type="OutOfBand" desc="带外信息"/>
+        <member name="oob" type="OutOfBand" desc="来自客户端的带外信息"/>
     </packet>
 
 

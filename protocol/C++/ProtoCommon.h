@@ -135,7 +135,7 @@ struct Tracing //docker间追踪数据
     static const unsigned short getProtoID() { return 1000;} 
     static const std::string getProtoName() { return "Tracing";} 
     Routing routing; //路由信息  
-    OutOfBand oob; //带外信息  
+    OutOfBand oob; //来自客户端的带外信息  
     Tracing() 
     { 
     } 

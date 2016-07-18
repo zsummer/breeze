@@ -124,7 +124,7 @@ namespace Proto4z
         static public string getProtoName() { return "Tracing"; } 
         //members   
         public Routing routing; //路由信息  
-        public OutOfBand oob; //带外信息  
+        public OutOfBand oob; //来自客户端的带外信息  
         public Tracing()  
         { 
             routing = new Routing();  

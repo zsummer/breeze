@@ -41,7 +41,7 @@ Proto4z.Tracing = {} --docker间追踪数据
 Proto4z.Tracing.__protoID = 1000 
 Proto4z.Tracing.__protoName = "Tracing" 
 Proto4z.Tracing[1] = {name="routing", type="Routing" } --路由信息 
-Proto4z.Tracing[2] = {name="oob", type="OutOfBand" } --带外信息 
+Proto4z.Tracing[2] = {name="oob", type="OutOfBand" } --来自客户端的带外信息 
  
 Proto4z.UserIDArray = {}  
 Proto4z.UserIDArray.__protoName = "UserIDArray" 
