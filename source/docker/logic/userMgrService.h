@@ -69,7 +69,7 @@ private:
 private:
     void onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onClientAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onClientAuthReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req);
+    void onClientAuthReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const ClientAuthReq & req);
     void onCreateUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req);
     void onAttachUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &);

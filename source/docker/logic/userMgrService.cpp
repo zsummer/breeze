@@ -192,32 +192,30 @@ void UserMgrService::onClientAuthReq(const Tracing & trace, zsummer::proto4z::Re
 {
     ClientAuthReq req;
     rs >> req;
-
+    ClientAuthResp resp;
     if (req.account.empty() || req.token != req.token)
     {
-        SelectUserPreviewsFromUserMgrResp resp;
         resp.account = req.account;
         resp.token = req.token;
         resp.previews.clear();
-        resp.clientDockerID = req.clientDockerID;
-        resp.clientSessionID = req.clientSessionID;
         resp.retCode = EC_PERMISSION_DENIED;
-        Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        backToService(trace, resp);
+        return;
     }
-    else
-    {
-        std::string sql = trim(UserPreview().getDBSelectPure(), " ");
-        sql = subStringWithoutBack(sql, " ");
-        sql += " `tb_UserBaseInfo` where account=?;";
- 
-        DBQuery q(sql);
-        q << req.account;
-        DBQueryReq sqlReq(q.pickSQL());
-        toService(STInfoDBMgr, sqlReq,
-            std::bind(&UserMgrService::onClientAuthReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
-    }
+
+    std::string sql = trim(UserPreview().getDBSelectPure(), " ");
+    sql = subStringWithoutBack(sql, " ");
+    sql += " `tb_UserBaseInfo` where account=?;";
+
+    DBQuery q(sql);
+    q << req.account;
+    DBQueryReq sqlReq(q.pickSQL());
+    toService(STInfoDBMgr, sqlReq,
+        std::bind(&UserMgrService::onClientAuthReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
 }
-void UserMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
+
+
+void UserMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const ClientAuthReq & req)
 {
     LOGD("UserMgrService::onClientAuthReqFromDB");
     DBResult dbResult;
@@ -226,12 +224,10 @@ void UserMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, co
     dbResult.buildResult((QueryErrorCode)sqlResp.result.qc, sqlResp.result.errMsg, sqlResp.result.sql, sqlResp.result.affected, sqlResp.result.fields);
 
 
-    SelectUserPreviewsFromUserMgrResp resp;
+    ClientAuthResp resp;
     resp.account = req.account;
     resp.token = req.token;
     resp.previews.clear();
-    resp.clientDockerID = req.clientDockerID;
-    resp.clientSessionID = req.clientSessionID;
     resp.retCode = sqlResp.retCode != EC_SUCCESS ? sqlResp.retCode : (dbResult.getErrorCode() != QEC_SUCCESS ? EC_DB_ERROR : EC_SUCCESS);
     if (sqlResp.retCode == EC_SUCCESS && dbResult.getErrorCode() == QEC_SUCCESS )
     {
@@ -244,18 +240,17 @@ void UserMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, co
             updateUserPreview(pre);
         }
     }
-    Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+    toDocker(trace.oob.clientDockerID, trace.oob, resp);
 }
 
 void UserMgrService::onCreateUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    CreateUserFromUserMgrReq req;
+    CreateUserReq req;
     rs >> req;
-    CreateUserFromUserMgrResp resp;
+    CreateUserResp resp;
     resp.retCode = EC_SUCCESS;
     resp.previews.clear();
-    resp.clientDockerID = req.clientDockerID;
-    resp.clientSessionID = req.clientSessionID;
+
 
     auto founder = _accountStatus.find(req.account);
     if (founder == _accountStatus.end())

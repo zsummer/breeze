@@ -58,26 +58,31 @@ public:
 
     
 public:
-    //该分块下为网络通讯用接口,通过目标参数把数据通过网络发送出去  
+    //直接发送数据到session, 不进行任何包装和转换
     void sendViaSessionID(SessionID sessionID, const char * block, unsigned int len);
     template<class Proto>
     void sendViaSessionID(SessionID sessionID, const Proto & proto);
-
+    //直接发送数据到session, SessionID通过DockerID获得, 不进行任何包装和转换.
     void sendViaDockerID(DockerID dockerID, const char * block, unsigned int len);
     template<class Proto>
     void sendViaDockerID(DockerID dockerID, const Proto & proto);
-
+    //直接发送数据到session, SessionID通过ServiceType和ServiceID获得, 不进行任何包装和转换.
     void sendViaServiceID(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len);
     template<class Proto>
     void sendViaServiceID(ServiceType serviceType, ServiceID serviceID, const Proto & proto);
 
-    //如果目标是客户端, 会进行优化.
-    void sendViaTracing(const Tracing & trace, const char * block, unsigned int len);
+    //转发给目标服务(包括单例服务,多例服务,异构服务,客户端).
+    //不检测是否目标服务在本地, 即使本地服务 调用该接口仍然会走一遍网络.(这种需求应该调用toService)
+    //如果是STClient(客户端), 如果在本地会直接传输给客户端, 否则forward到该客户端实际挂靠的docker中再进行客户端通讯. 
+    void forwardToRemoteService(Tracing trace, const char * block, unsigned int len);
     template<class Proto>
-    void sendViaTracing(const Tracing & trace, const Proto & proto);
+    void forwardToRemoteService(const Tracing & trace, const Proto & proto);
 
+    //广播数据至所有docker, 不进行任何包装和转换
     template<class Proto>
     void broadcastToDockers(const Proto & proto, bool withme);
+
+    //广播数据至所有docker, 通过ForwardToService进行包装. 
     template<class Proto>
     void broadcastToDockers(const Proto & proto, const Tracing & trace, bool withme);
 
@@ -237,31 +242,17 @@ void Docker::broadcastToDockers(const Proto & proto, const Tracing & trace, bool
 template<class Proto>
 void Docker::sendViaSessionID(SessionID sessionID, const Proto & proto)
 {
-    try
-    {
-        WriteStream ws(Proto::getProtoID());
-        ws << proto;
-        SessionManager::getRef().sendSessionData(sessionID, ws.getStream(), ws.getStreamLen());
-    }
-    catch (const std::exception & e)
-    {
-        LOGE("Docker::sendViaSessionID catch except error. e=" << e.what());
-    }
+    WriteStream ws(Proto::getProtoID());
+    ws << proto;
+    SessionManager::getRef().sendSessionData(sessionID, ws.getStream(), ws.getStreamLen());
 }
 
 template<class Proto>
-void Docker::sendViaTracing(const Tracing & trace, const Proto & proto)
+void Docker::forwardToRemoteService(const Tracing & trace, const Proto & proto)
 {
-    try
-    {
-        WriteStream ws(Proto::getProtoID());
-        ws << proto;
-        sendViaTracing(trace, ws.getStream(), ws.getStreamLen());
-    }
-    catch (const std::exception & e)
-    {
-        LOGE("Docker::sendViaTracing catch except error. e=" << e.what());
-    }
+    WriteStream ws(Proto::getProtoID());
+    ws << proto;
+    forwardToRemoteService(trace, ws.getStream(), ws.getStreamLen());
 }
 
 
@@ -291,16 +282,9 @@ void Docker::sendViaServiceID(ServiceType serviceType, ServiceID serviceID, cons
 template<class Proto>
 void Docker::toService(Tracing trace, Proto proto, bool syncCall)
 {
-    try
-    {
-        WriteStream ws(Proto::getProtoID());
-        ws << proto;
-        toService(trace, ws.getStream(), ws.getStreamLen(), syncCall);
-    }
-    catch (const std::exception & e)
-    {
-        LOGE("Docker::toService catch except error. e=" << e.what());
-    }
+    WriteStream ws(Proto::getProtoID());
+    ws << proto;
+    toService(trace, ws.getStream(), ws.getStreamLen(), syncCall);
 }
 
 

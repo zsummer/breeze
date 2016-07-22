@@ -189,12 +189,16 @@ void Service::cleanCallback()
 
 bool Service::canToService(ServiceType serviceType, ServiceID serviceID)
 {
-    auto s = Docker::getRef().peekService(serviceType, serviceID);
+    auto s = Docker::getRef().peekService(serviceType == STClient ? STUser : serviceType, serviceID);
     if (!s)
     {
         return false;
     }
     if (Docker::getRef().getDockerLinked(s->getServiceDockerID()) == InvalidSessionID)
+    {
+        return false;
+    }
+    if (serviceType == STClient && s->getClientSessionID() == InvalidSessionID)
     {
         return false;
     }
@@ -256,8 +260,13 @@ void Service::backToService(const Tracing & trace, const char * block, unsigned 
     Docker::getRef().toService(trc, block, len, false);
 }
 
-void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessionID, const char * block, unsigned int len, ServiceCallback cb)
+void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessionID, const char * block, unsigned int len)
 {
+    if (clientDockerID == ServerConfig::getRef().getDockerID())
+    {
+        Docker::getRef().sendViaSessionID(clientSessionID, block, len);
+        return;
+    }
     Tracing trc;
     trc.routing.fromServiceType = getServiceType();
     trc.routing.fromServiceID = getServiceID();
@@ -267,12 +276,33 @@ void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessio
     trc.routing.toServiceID = InvalidServiceID;
     trc.oob.clientDockerID = clientDockerID;
     trc.oob.clientSessionID = clientSessionID;
-    if (cb)
-    {
-        trc.routing.traceID = makeCallback(cb);
-    }
-    Docker::getRef().sendViaTracing(trc, block, len);
+    trc.oob.clientUserID = InvalidServiceID;
+    Docker::getRef().forwardToRemoteService(trc, block, len);
 }
+
+void Service::toDocker(DockerID dockerID, const OutOfBand & oob, const char * block, unsigned int len)
+{
+    Tracing trc;
+    trc.routing.fromServiceType = getServiceType();
+    trc.routing.fromServiceID = getServiceID();
+    trc.routing.traceID = 0;
+    trc.routing.traceBackID = 0;
+    trc.routing.toServiceType = STClient;
+    trc.routing.toServiceID = InvalidServiceID;
+    trc.oob = oob;
+    WriteStream ws(ForwardToDocker::getProtoID());
+    ws << trc;
+    ws.appendOriginalData(block, len);
+    Docker::getRef().sendViaDockerID(dockerID, ws.getStream(), ws.getStreamLen());
+}
+void Service::toDocker(DockerID dockerID, const char * block, unsigned int len)
+{
+    toDocker(dockerID, OutOfBand(), block, len);
+}
+
+
+
+
 
 void Service::process4bind(const Tracing & trace, const std::string & block)
 {
@@ -321,8 +351,6 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
         LOGE("Service::process call process catch except error. e=" << e.what() << ", trace=" << trace);
     }
 }
-
-
 
 
 

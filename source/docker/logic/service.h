@@ -101,6 +101,7 @@ public:
     template<class Proto>
     inline void slotting(const Slot & msgfun) { _slots[Proto::getProtoID()] = msgfun; _slotsName[Proto::getProtoID()] = Proto::getProtoName(); }
 
+public: //与其他service进行交互,支持单例服务,多例服务,异构服务,客户端 
     bool canToService(ServiceType serviceType, ServiceID serviceID = InvalidServiceID);
 
     void toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb = nullptr);
@@ -117,14 +118,25 @@ public:
     template<class Proto>
     void toService(ServiceType serviceType, Proto proto, ServiceCallback cb = nullptr);
 
-
+    //根据trace信息直接把数据丢给来源service. 
     void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
     void backToService(const Tracing & trace, Proto proto, ServiceCallback cb = nullptr);
 
-    void directToRealClient(DockerID clientDockerID, SessionID clientSessionID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    //直接发送给客户端 
+    void directToRealClient(DockerID clientDockerID, SessionID clientSessionID, const char * block, unsigned int len);
     template<class Proto>
-    void directToRealClient(DockerID clientDockerID, SessionID clientSessionID, Proto proto, ServiceCallback cb = nullptr);
+    void directToRealClient(DockerID clientDockerID, SessionID clientSessionID, Proto proto);
+
+    //发送给docker
+    void toDocker(DockerID dockerID, const char * block, unsigned int len);
+    void toDocker(DockerID dockerID, const OutOfBand & oob, const char * block, unsigned int len);
+    template<class Proto>
+    void toDocker(DockerID dockerID, Proto proto);
+    template<class Proto>
+    void toDocker(DockerID dockerID, const OutOfBand & oob, Proto proto);
+
+
 public:
     //该定时器并不需要维护定时器ID 除非有需要cancel的情况. 
     //对于repeat类型的定时器, 在service完成卸载后 会由该父类进行全部取消与清除操作, 无需担心定时器造成的引用计数问题. 
@@ -194,7 +206,7 @@ void Service::toService(ServiceType serviceType, const OutOfBand &oob, Proto pro
     }
     catch (const std::exception & e)
     {
-        LOGE("Service::toService catch except error. e=" << e.what());
+        LOGE("Service::toDocker catch except error. service=" << getServiceInfo() << ", protoID=" << Proto::getProtoID() << ", e=" << e.what());
     }
 }
 template<class Proto>
@@ -208,7 +220,7 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
     }
     catch (const std::exception & e)
     {
-        LOGE("Service::toService catch except error. e=" << e.what());
+        LOGE("Service::toDocker catch except error. service=" << getServiceInfo() << ", protoID=" << Proto::getProtoID() << ", e=" << e.what());
     }
 }
 template<class Proto>
@@ -232,26 +244,53 @@ void Service::backToService(const Tracing & trace, Proto proto, ServiceCallback 
     }
     catch (const std::exception & e)
     {
-        LOGE("Service::backToService catch except error. e=" << e.what());
+        LOGE("Service::toDocker catch except error. service=" << getServiceInfo() << ", protoID=" << Proto::getProtoID() << ", e=" << e.what());
     }
 }
 
 template<class Proto>
-void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessionID, Proto proto, ServiceCallback cb)
+void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessionID, Proto proto)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        directToRealClient(clientDockerID, clientSessionID, ws.getStream(), ws.getStreamLen(), cb);
+        directToRealClient(clientDockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
     }
     catch (const std::exception & e)
     {
-        LOGE("Service::directToRealClient catch except error. e=" << e.what());
+        LOGE("Service::toDocker catch except error. service=" << getServiceInfo() << ", protoID=" << Proto::getProtoID() << ", e=" << e.what());
     }
 }
 
-
+template<class Proto>
+void Service::toDocker(DockerID dockerID, Proto proto)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        toDocker(dockerID, ws.getStream(), ws.getStreamLen());
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Service::toDocker catch except error. service=" << getServiceInfo() << ", protoID=" << Proto::getProtoID() << ", e=" << e.what());
+    }
+}
+template<class Proto>
+void Service::toDocker(DockerID dockerID, const OutOfBand & oob, Proto proto)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        toDocker(dockerID, oob, ws.getStream(), ws.getStreamLen());
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Service::toDocker catch except error. service=" << getServiceInfo() << ", protoID=" << Proto::getProtoID() << ", e=" << e.what());
+    }
+}
 
 
 

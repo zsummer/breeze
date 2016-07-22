@@ -1309,118 +1309,97 @@ void Docker::sendViaServiceID(ServiceType serviceType, ServiceID serviceID, cons
 }
 
 
-void Docker::sendViaTracing(Tracing  trace, const char * block, unsigned int len)
+void Docker::forwardToRemoteService(Tracing  trace, const char * block, unsigned int len)
 {
-    try
+    if (trace.routing.toServiceType == STClient)
     {
-        if (trace.routing.toServiceType == STClient)
+        if (trace.oob.clientDockerID == InvalidDockerID)
         {
-            if (trace.oob.clientDockerID == InvalidDockerID)
+            ServicePtr svc = peekService(STUser, trace.routing.toServiceID);
+            if (!svc)
             {
-                ServicePtr svc = peekService(STUser, trace.routing.toServiceID);
-                if (!svc)
-                {
-                    LOGW("sendViaTracing error. not found service. trace=" << trace
-                         << ", protoID=" << ReadStream(block, len).getProtoID());
-                    return;
-                }
-                trace.oob.clientDockerID = svc->getClientDockerID();
-                trace.oob.clientSessionID = svc->getClientSessionID();
-            }
-            if (trace.oob.clientDockerID == InvalidDockerID)
-            {
-                LOGW("sendViaTracing error. client not attach. trace=" << trace
-                    << ", protoID=" << ReadStream(block, len).getProtoID());
+                LOGW("forwardToRemoteService error. not found service. trace=" << trace
+                        << ", protoID=" << ReadStream(block, len).getProtoID());
                 return;
             }
-            if (trace.oob.clientDockerID == ServerConfig::getRef().getDockerID())
-            {
-                sendViaSessionID(trace.oob.clientSessionID, block, len);
-                return;
-            }
-            WriteStream ws(ForwardToRealClient::getProtoID());
-            ws << trace;
-            ws.appendOriginalData(block, len);
-            sendViaDockerID(trace.oob.clientDockerID, ws.getStream(), ws.getStreamLen());
+            trace.oob.clientDockerID = svc->getClientDockerID();
+            trace.oob.clientSessionID = svc->getClientSessionID();
         }
-        else
+        if (trace.oob.clientDockerID == InvalidDockerID)
         {
-            WriteStream ws(ForwardToService::getProtoID());
-            ws << trace;
-            ws.appendOriginalData(block, len);
-            sendViaServiceID(trace.routing.toServiceType, trace.routing.toServiceID, ws.getStream(), ws.getStreamLen());
+            LOGW("forwardToRemoteService error. client not attach. trace=" << trace
+                << ", protoID=" << ReadStream(block, len).getProtoID());
+            return;
         }
+        if (trace.oob.clientDockerID == ServerConfig::getRef().getDockerID())
+        {
+            sendViaSessionID(trace.oob.clientSessionID, block, len);
+            return;
+        }
+        WriteStream ws(ForwardToRealClient::getProtoID());
+        ws << trace;
+        ws.appendOriginalData(block, len);
+        sendViaDockerID(trace.oob.clientDockerID, ws.getStream(), ws.getStreamLen());
     }
-    catch (const std::exception & e)
+    else
     {
-        LOGE("Docker::sendViaTracing catch except error. e=" << e.what());
+        WriteStream ws(ForwardToService::getProtoID());
+        ws << trace;
+        ws.appendOriginalData(block, len);
+        sendViaServiceID(trace.routing.toServiceType, trace.routing.toServiceID, ws.getStream(), ws.getStreamLen());
     }
 }
 
 
 
-
-
-
 void Docker::toService(Tracing trace, const char * block, unsigned int len, bool syncCall)
 {
-    try
-    {
-        ProtoID protoID = ReadStream(block, len).getProtoID();
-        LOGT("Docker::toService " << trace << ", len=" << len << ", syncCall=" << syncCall);
+    ProtoID protoID = ReadStream(block, len).getProtoID();
+    LOGT("Docker::toService " << trace << ", len=" << len << ", syncCall=" << syncCall);
         
-        if (trace.routing.toServiceType == STClient)
-        {
-            sendViaTracing(trace, block, len);
-            return;
-        }
+    if (trace.routing.toServiceType == STClient)
+    {
+        forwardToRemoteService(trace, block, len);
+        return;
+    }
 
-        ui16 toServiceType = trace.routing.toServiceType;
-        ServiceID toServiceID = trace.routing.toServiceID;
-        auto svc = peekService(toServiceType, toServiceID);
+    ui16 toServiceType = trace.routing.toServiceType;
+    ServiceID toServiceID = trace.routing.toServiceID;
+    auto svc = peekService(toServiceType, toServiceID);
        
-        if (!svc)
+    if (!svc)
+    {
+        if (getServiceTrait(toServiceType) != STrait_Single)
         {
-            if (getServiceTrait(toServiceType) != STrait_Single)
-            {
-                LOGW("Docker::toService can not found toService  trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
-            }
-            else
-            {
-                LOGF("Docker::toService can not found toService  trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
-            }
-            return;
+            LOGW("Docker::toService can not found toService  trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
         }
+        else
+        {
+            LOGF("Docker::toService can not found toService  trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
+        }
+        return;
+    }
         
-        if (svc->isShell()) //forward 
+    if (svc->isShell()) //forward 
+    {
+        forwardToRemoteService(trace, block, len);
+    }
+    else //direct process
+    {
+        if (!syncCall)
         {
-            sendViaTracing(trace, block, len);
+            LOGT("Docker::toService local post process4bind " << trace << ", len=" << len 
+                << ", syncCall=" << syncCall << ", protoID=" << protoID);
+            std::string bk;
+            bk.assign(block, len);
+            SessionManager::getRef().post(std::bind(&Service::process4bind, svc, trace, std::move(bk)));
         }
-        else //direct process
+        else
         {
-            if (!syncCall)
-            {
-                LOGT("Docker::toService local post process4bind " << trace << ", len=" << len 
+            LOGT("Docker::toService  local process " << trace << ", len=" << len 
                     << ", syncCall=" << syncCall << ", protoID=" << protoID);
-                std::string bk;
-                bk.assign(block, len);
-                SessionManager::getRef().post(std::bind(&Service::process4bind, svc, trace, std::move(bk)));
-            }
-            else
-            {
-                LOGT("Docker::toService  local process " << trace << ", len=" << len 
-                     << ", syncCall=" << syncCall << ", protoID=" << protoID);
-                svc->process(trace, block, len);
-            }
+            svc->process(trace, block, len);
         }
-    }
-    catch (const std::exception& e)
-    {
-        LOGE("Docker::toService catch one exception. trace=" << trace << ", block len=" << len << ", e=" << e.what() );
-    }
-    catch (...)
-    {
-        LOGE("Docker::toService catch one exception. trace=" << trace << ", block len=" << len );
     }
 }
 
