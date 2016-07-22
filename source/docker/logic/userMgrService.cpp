@@ -326,7 +326,7 @@ void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::Re
     resp.userID = req.userID;
     resp.retCode = EC_SUCCESS;
 
-    auto founder = _userStatusByID.find(trace.oob.clientUserID);
+    auto founder = _userStatusByID.find(req.userID);
     if (founder == _userStatusByID.end() || founder->second->_preview.account != trace.oob.clientAccount)
     {
         resp.retCode = EC_ERROR;

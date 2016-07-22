@@ -297,7 +297,11 @@ void Service::toDocker(DockerID dockerID, const OutOfBand & oob, const char * bl
 }
 void Service::toDocker(DockerID dockerID, const char * block, unsigned int len)
 {
-    toDocker(dockerID, OutOfBand(), block, len);
+    OutOfBand oob;
+    oob.clientDockerID = getClientDockerID();
+    oob.clientSessionID = getClientSessionID();
+    oob.clientUserID = getServiceID();
+    toDocker(dockerID, oob, block, len);
 }
 
 
