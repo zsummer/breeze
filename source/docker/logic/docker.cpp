@@ -883,7 +883,7 @@ void Docker::event_onForwardToService(TcpSessionPtr session, ReadStream & rs)
     Tracing trace;
     rs >> trace;
     LOGT("event_onForwardToService " << trace << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
-    toService(trace, rs.getStreamUnread(), rs.getStreamUnreadLen(), false, false);
+    toService(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
 }
 
 void Docker::event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs)
@@ -1082,7 +1082,7 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
             notice.serviceID = session->getUserParamNumber(UPARAM_USER_ID);
             notice.clientDockerID = ServerConfig::getRef().getDockerID();
             notice.clientSessionID = session->getSessionID();
-            toService(trace, notice, true, true);
+            toService(trace, notice);
         }
     }
 }
@@ -1128,7 +1128,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         serviceReq.token = clientReq.token;
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq, true, true);
+        toService(trace, serviceReq);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
         return;
     }
@@ -1150,7 +1150,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         serviceReq.userName = clientReq.userName;
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq, true, true);
+        toService(trace, serviceReq);
         return;
     }
     else if (rs.getProtoID() == AttachUserReq::getProtoID())
@@ -1172,7 +1172,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         serviceReq.account = session->getUserParamString(UPARAM_ACCOUNT);
         serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
         serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq, true, true);
+        toService(trace, serviceReq);
         return;
     }
     else if (rs.getProtoID() >= 40000 && sessionStatus == SSTATUS_ATTACHED )
@@ -1180,7 +1180,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         LOGD("client other proto to user service. sID=" << session->getSessionID() << ", block len=" << len);
         trace.routing.toServiceType = STUser;
         trace.routing.toServiceID = trace.routing.fromServiceID;
-        toService(trace, rs.getStream(), rs.getStreamLen(), true, true);
+        toService(trace, rs.getStream(), rs.getStreamLen());
         return;
     }
 
@@ -1209,7 +1209,7 @@ void Docker::event_onWebClientRequestAPI(TcpSessionPtr session, const std::strin
     trace.oob.clientSessionID = session->getSessionID();
     trace.routing.toServiceType = STWebAgent;
     trace.routing.toServiceID = InvalidServiceID;
-    toService(trace, notice, true, false);
+    toService(trace, notice);
 }
 
 void Docker::event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs)
@@ -1268,7 +1268,7 @@ void Docker::event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs)
         trace.routing.toServiceType = req.fromServiceType;
         trace.routing.toServiceID = req.fromServiceID;
         trace.routing.traceBackID = req.traceID;
-        toService(trace, resp, true, false);
+        toService(trace, resp);
     };
     option._onHTTPBlockDispatch = std::bind(onResponse, _1, _2, _3, _4, _5, req);
     SessionManager::getRef().openConnecter(cID);
@@ -1368,12 +1368,12 @@ void Docker::sendViaTracing(const Tracing & trace, const char * block, unsigned 
 
 
 
-void Docker::toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost)
+void Docker::toService(Tracing trace, const char * block, unsigned int len, bool syncCall)
 {
     try
     {
         ProtoID protoID = ReadStream(block, len).getProtoID();
-        LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+        LOGT("Docker::toService " << trace << ", len=" << len << ", syncCall=" << syncCall);
         
         if (trace.routing.toServiceType == STClient)
         {
@@ -1398,21 +1398,16 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
             return;
         }
         
-        if (svc->isShell() && !canForwardToOtherService)
-        {
-            LOGE("local service is shell but the call from other docker. trace =" << trace << ", block len=" << len << ", protoID=" << protoID);
-            return;
-        }
         if (svc->isShell()) //forward 
         {
             sendViaTracing(trace, block, len);
         }
         else //direct process
         {
-            if (needPost)
+            if (!syncCall)
             {
                 LOGT("Docker::toService local post process4bind " << trace << ", len=" << len 
-                    << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
+                    << ", syncCall=" << syncCall << ", protoID=" << protoID);
                 std::string bk;
                 bk.assign(block, len);
                 SessionManager::getRef().post(std::bind(&Service::process4bind, svc, trace, std::move(bk)));
@@ -1420,7 +1415,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
             else
             {
                 LOGT("Docker::toService  local process " << trace << ", len=" << len 
-                    << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
+                     << ", syncCall=" << syncCall << ", protoID=" << protoID);
                 svc->process(trace, block, len);
             }
         }

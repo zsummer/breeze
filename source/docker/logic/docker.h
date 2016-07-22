@@ -88,9 +88,9 @@ public:
     // 如果是客户端 则游戏通过oob其次通过routing数据找到对应的docker 然后通过该docker转发给客户端 
     // canForwardToOtherService 是属于错误止损用参数, 如果是来自其他docker的转发 但service并不在本地,在这种特殊情况下 可能会造成docker内部pingpong.   
     // needPost 是属于优化用参数, 填写true则不优化,但总是正确的. 
-    void toService(Tracing trace, const char * block, unsigned int len, bool canForwardToOtherService, bool needPost);
+    void toService(Tracing trace, const char * block, unsigned int len, bool syncCall = true);
     template<class Proto>
-    void toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost);
+    void toService(Tracing trace, Proto proto, bool syncCall = true);
 
 public:
     bool isStopping();
@@ -288,13 +288,13 @@ void Docker::sendViaServiceID(ServiceType serviceType, ServiceID serviceID, cons
 }
 
 template<class Proto>
-void Docker::toService(Tracing trace, Proto proto, bool canForwardToOtherService, bool needPost)
+void Docker::toService(Tracing trace, Proto proto, bool syncCall)
 {
     try
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        toService(trace, ws.getStream(), ws.getStreamLen(), canForwardToOtherService, needPost);
+        toService(trace, ws.getStream(), ws.getStreamLen(), syncCall);
     }
     catch (const std::exception & e)
     {
