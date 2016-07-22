@@ -593,6 +593,11 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onForwardToRealClient(session, rsShell);
         return;
     }
+    else if (rsShell.getProtoID() == ForwardToDocker::getProtoID())
+    {
+        event_onForwardToDocker(session, rsShell);
+        return;
+    }
     else if (rsShell.getProtoID() == WebServerRequest::getProtoID())
     {
         event_onWebServerRequest(session, rsShell);
@@ -888,10 +893,17 @@ void Docker::event_onForwardToService(TcpSessionPtr session, ReadStream & rs)
 
 void Docker::event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs)
 {
-    SessionID sID;
-    rs >> sID;
-    LOGT("event_onForwardToRealClient sessionID=" << sID << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
-    SessionManager::getRef().sendSessionData(sID, rs.getStreamUnread(), rs.getStreamUnreadLen());
+    Tracing trace;
+    rs >> trace;
+    LOGT("event_onForwardToRealClient trace=" << trace << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
+    SessionManager::getRef().sendSessionData(trace.oob.clientSessionID, rs.getStreamUnread(), rs.getStreamUnreadLen());
+}
+
+void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs)
+{
+    Tracing trace;
+    rs >> trace;
+    LOGT("event_onForwardToDocker trace=" << trace << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
 }
 
 void Docker::event_onLoadService(TcpSessionPtr session, ReadStream & rs)
@@ -1123,12 +1135,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         trace.routing.toServiceType = STUserMgr;
         trace.routing.toServiceID = InvalidServiceID;
 
-        SelectUserPreviewsFromUserMgrReq serviceReq;
-        serviceReq.account = clientReq.account;
-        serviceReq.token = clientReq.token;
-        serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
-        serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq);
+        toService(trace, clientReq);
         session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
         return;
     }
@@ -1144,13 +1151,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         rs >> clientReq;
         trace.routing.toServiceType = STUserMgr;
         trace.routing.toServiceID = InvalidServiceID;
-
-        CreateUserFromUserMgrReq serviceReq;
-        serviceReq.account = session->getUserParamString(UPARAM_ACCOUNT);
-        serviceReq.userName = clientReq.userName;
-        serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
-        serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq);
+        toService(trace, clientReq);
         return;
     }
     else if (rs.getProtoID() == AttachUserReq::getProtoID())
@@ -1167,12 +1168,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         trace.routing.toServiceType = STUserMgr;
         trace.routing.toServiceID = InvalidServiceID;
 
-        AttachUserFromUserMgrReq serviceReq;
-        serviceReq.userID = clientReq.userID;
-        serviceReq.account = session->getUserParamString(UPARAM_ACCOUNT);
-        serviceReq.clientDockerID = ServerConfig::getRef().getDockerID();
-        serviceReq.clientSessionID = session->getSessionID();
-        toService(trace, serviceReq);
+        toService(trace, clientReq);
         return;
     }
     else if (rs.getProtoID() >= 40000 && sessionStatus == SSTATUS_ATTACHED )
@@ -1313,15 +1309,13 @@ void Docker::sendViaServiceID(ServiceType serviceType, ServiceID serviceID, cons
 }
 
 
-void Docker::sendViaTracing(const Tracing & trace, const char * block, unsigned int len)
+void Docker::sendViaTracing(Tracing  trace, const char * block, unsigned int len)
 {
     try
     {
         if (trace.routing.toServiceType == STClient)
         {
-            DockerID clientDockerID = trace.oob.clientDockerID;
-            SessionID clientSessionID = trace.oob.clientSessionID;
-            if (clientDockerID == InvalidDockerID)
+            if (trace.oob.clientDockerID == InvalidDockerID)
             {
                 ServicePtr svc = peekService(STUser, trace.routing.toServiceID);
                 if (!svc)
@@ -1330,24 +1324,24 @@ void Docker::sendViaTracing(const Tracing & trace, const char * block, unsigned 
                          << ", protoID=" << ReadStream(block, len).getProtoID());
                     return;
                 }
-                clientDockerID = svc->getClientDockerID();
-                clientSessionID = svc->getClientSessionID();
+                trace.oob.clientDockerID = svc->getClientDockerID();
+                trace.oob.clientSessionID = svc->getClientSessionID();
             }
-            if (clientDockerID == InvalidDockerID)
+            if (trace.oob.clientDockerID == InvalidDockerID)
             {
                 LOGW("sendViaTracing error. client not attach. trace=" << trace
                     << ", protoID=" << ReadStream(block, len).getProtoID());
                 return;
             }
-            if (clientDockerID == ServerConfig::getRef().getDockerID())
+            if (trace.oob.clientDockerID == ServerConfig::getRef().getDockerID())
             {
-                sendViaSessionID(clientSessionID, block, len);
+                sendViaSessionID(trace.oob.clientSessionID, block, len);
                 return;
             }
             WriteStream ws(ForwardToRealClient::getProtoID());
             ws << trace;
             ws.appendOriginalData(block, len);
-            sendViaDockerID(clientDockerID, ws.getStream(), ws.getStreamLen());
+            sendViaDockerID(trace.oob.clientDockerID, ws.getStream(), ws.getStreamLen());
         }
         else
         {

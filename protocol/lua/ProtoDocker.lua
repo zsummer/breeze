@@ -102,6 +102,11 @@ Proto4z.ForwardToRealClient = {} --转发给真正的client
 Proto4z.ForwardToRealClient.__protoID = 2012 
 Proto4z.ForwardToRealClient.__protoName = "ForwardToRealClient" 
  
+Proto4z.register(2027,"ForwardToDocker") 
+Proto4z.ForwardToDocker = {} --转发给Docker 
+Proto4z.ForwardToDocker.__protoID = 2027 
+Proto4z.ForwardToDocker.__protoName = "ForwardToDocker" 
+ 
 Proto4z.DBStringArray = {}  
 Proto4z.DBStringArray.__protoName = "DBStringArray" 
 Proto4z.DBStringArray.__protoDesc = "array" 

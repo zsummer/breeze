@@ -7,9 +7,9 @@ UserMgrService::UserMgrService()
 {
     slotting<RefreshServiceToMgrNotice>(std::bind(&UserMgrService::onRefreshServiceToMgrNotice, this, _1, _2));
     slotting<RealClientClosedNotice>(std::bind(&UserMgrService::onRealClientClosedNotice, this, _1, _2));
-    slotting<SelectUserPreviewsFromUserMgrReq>(std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReq, this, _1, _2));
-    slotting<CreateUserFromUserMgrReq>(std::bind(&UserMgrService::onCreateUserFromUserMgrReq, this, _1, _2));
-    slotting<AttachUserFromUserMgrReq>(std::bind(&UserMgrService::onAttachUserFromUserMgrReq, this, _1, _2));
+    slotting<ClientAuthReq>(std::bind(&UserMgrService::onClientAuthReq, this, _1, _2));
+    slotting<CreateUserReq>(std::bind(&UserMgrService::onCreateUserReq, this, _1, _2));
+    slotting<AttachUserReq>(std::bind(&UserMgrService::onAttachUserReq, this, _1, _2));
 }
 
 UserMgrService::~UserMgrService()
@@ -188,9 +188,9 @@ void UserMgrService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
 
 
 
-void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onClientAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    SelectUserPreviewsFromUserMgrReq req;
+    ClientAuthReq req;
     rs >> req;
 
     if (req.account.empty() || req.token != req.token)
@@ -214,12 +214,12 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReq(const Tracing & trace, z
         q << req.account;
         DBQueryReq sqlReq(q.pickSQL());
         toService(STInfoDBMgr, sqlReq,
-            std::bind(&UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
+            std::bind(&UserMgrService::onClientAuthReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
     }
 }
-void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
+void UserMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const SelectUserPreviewsFromUserMgrReq & req)
 {
-    LOGD("UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB");
+    LOGD("UserMgrService::onClientAuthReqFromDB");
     DBResult dbResult;
     DBQueryResp sqlResp;
     rs >> sqlResp;
@@ -247,7 +247,7 @@ void UserMgrService::onSelectUserPreviewsFromUserMgrReqFromDB(zsummer::proto4z::
     Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
 }
 
-void UserMgrService::onCreateUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onCreateUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     CreateUserFromUserMgrReq req;
     rs >> req;
@@ -326,15 +326,12 @@ void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStre
     Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
 }
 
-void UserMgrService::onAttachUserFromUserMgrReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    AttachUserFromUserMgrReq req;
+    AttachUserReq req;
     rs >> req;
-    AttachUserFromUserMgrResp resp;
+    AttachUserResp resp;
     resp.retCode = EC_SUCCESS;
-    resp.userID = req.userID;
-    resp.clientDockerID = req.clientDockerID;
-    resp.clientSessionID = req.clientSessionID;
 
     auto founder = _userStatusByID.find(req.userID);
     if (founder == _userStatusByID.end() || founder->second->_preview.account != req.account)

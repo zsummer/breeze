@@ -146,6 +146,7 @@ private:
 
     void event_onForwardToService(TcpSessionPtr session, ReadStream & rs);
     void event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs);
+    void event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs);
 
 public://负载均衡 
     inline Balance & getUserBalance(){return _userBalance;}

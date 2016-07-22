@@ -501,6 +501,27 @@ namespace Proto4z
         } 
     } 
  
+    public class ForwardToDocker: Proto4z.IProtoObject //转发给Docker  
+    {     
+        //proto id   
+        public const ushort protoID = 2027;  
+        static public ushort getProtoID() { return 2027; } 
+        static public string getProtoName() { return "ForwardToDocker"; } 
+        //members   
+        public ForwardToDocker()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
  
     public class DBStringArray : System.Collections.Generic.List<string>, Proto4z.IProtoObject  
     { 

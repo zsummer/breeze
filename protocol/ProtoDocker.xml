@@ -92,14 +92,19 @@
     </packet>
 
     <packet name="ForwardToRealClient" desc= "转发给真正的client">
-        <header name="sessionID" type="SessionID" desc="header field" />
+        <header name="trace" type="tracing" desc="header field" />
         <body>
             <attachment name="proto" type="any" desc="full proto serialize" />
         </body>
     </packet>
 
 
-
+    <packet name="ForwardToDocker" desc= "转发给Docker">
+        <header name="trace" type="tracing" desc="header field" />
+        <body>
+            <attachment name="proto" type="any" desc="full proto serialize" />
+        </body>
+    </packet>
 
 
     <!-------------------------------------------------------------------------------------------->

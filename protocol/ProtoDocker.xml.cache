@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>2bb641b024dc0393f22d8d760c2221a1</cppmd5> 
-<luamd5>f4d8d76bd79fbde85ef844e57ad66147</luamd5> 
-<csharpmd5>36b163df51bc35626b57110ead180b57</csharpmd5> 
-<xmlmd5>121ae658d1bf91dcff9a44c8b3244c24</xmlmd5> 
+<cppmd5>75e67833b113c536fe80c9f960278a06</cppmd5> 
+<luamd5>fadf0d650732652b24e521716d078049</luamd5> 
+<csharpmd5>ae4f5b5c6b0473a0a2f1cbdfe24a1006</csharpmd5> 
+<xmlmd5>4b11b5708dd65cb835e9176baa509a98</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_ClientPulse" Number = "2024" /> 
     <cache key = "ID_DBDataResult" Number = "2015" /> 
@@ -12,6 +12,7 @@
     <cache key = "ID_DBQueryReq" Number = "2016" /> 
     <cache key = "ID_DBQueryResp" Number = "2017" /> 
     <cache key = "ID_DockerPulse" Number = "2000" /> 
+    <cache key = "ID_ForwardToDocker" Number = "2027" /> 
     <cache key = "ID_ForwardToRealClient" Number = "2012" /> 
     <cache key = "ID_ForwardToService" Number = "2011" /> 
     <cache key = "ID_KickRealClient" Number = "2006" /> 
