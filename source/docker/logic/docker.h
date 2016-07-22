@@ -263,20 +263,6 @@ void Docker::sendViaTracing(const Tracing & trace, const Proto & proto)
     }
 }
 
-template<class Proto>
-void Docker::packetToSessionWithTracing(SessionID sessionID, const Tracing & trace, const Proto & proto)
-{
-    try
-    {
-        WriteStream ws(Proto::getProtoID());
-        ws << proto;
-        packetToSessionWithTracing(sessionID, trace, ws.getStream(), ws.getStreamLen());
-    }
-    catch (const std::exception & e)
-    {
-        LOGE("Docker::packetToSessionWithTracing catch except error. e=" << e.what());
-    }
-}
 
 template<class Proto>
 void Docker::sendViaDockerID(DockerID dockerID, const Proto & proto)
@@ -292,27 +278,6 @@ void Docker::sendViaDockerID(DockerID dockerID, const Proto & proto)
     }
 }
 
-template<class Proto>
-void Docker::packetToDockerWithTracing(DockerID dockerID, const Tracing & trace, const Proto & proto)
-{
-    auto founder = _dockerSession.find(dockerID);
-    if (founder != _dockerSession.end() && founder->second.sessionID != InvalidSessionID && founder->second.status != 0)
-    {
-        packetToSessionWithTracing(founder->second.sessionID, trace, proto);
-    }
-    else
-    {
-        LOGE("Docker::packetToDockerWithTracing not found docker. dockerID=" << dockerID);
-    }
-}
-
-template<class Proto>
-void Docker::packetToClientViaDocker(DockerID dockerID, SessionID clientSessionID, const Proto & proto)
-{
-    WriteStream ws(Proto::getProtoID());
-    ws << proto;
-    packetToClientViaDocker(dockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
-}
 
 template<class Proto>
 void Docker::sendViaServiceID(ServiceType serviceType, ServiceID serviceID, const Proto & proto)

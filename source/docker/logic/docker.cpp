@@ -1354,7 +1354,7 @@ void Docker::sendViaTracing(const Tracing & trace, const char * block, unsigned 
             WriteStream ws(ForwardToService::getProtoID());
             ws << trace;
             ws.appendOriginalData(block, len);
-            sendViaDockerID(trace.routing.toServiceType, ws.getStream(), ws.getStreamLen());
+            sendViaServiceID(trace.routing.toServiceType, trace.routing.toServiceID, ws.getStream(), ws.getStreamLen());
         }
     }
     catch (const std::exception & e)
