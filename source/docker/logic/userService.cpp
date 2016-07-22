@@ -27,7 +27,7 @@ void UserService::onClientChange()
     if (getClientDockerID() != InvalidDockerID && getClientSessionID() != InvalidSessionID)
     {
         AttachUserFromUserMgrResp resp(EC_SUCCESS, getClientDockerID(), getClientSessionID(), getServiceID());
-        Docker::getRef().sendToDocker(getClientDockerID(), resp);
+        Docker::getRef().sendViaDockerID(getClientDockerID(), resp);
     }
 }
 
@@ -61,7 +61,7 @@ void UserService::onModuleLoad(bool success, const std::string & moduleName)
     {
         finishLoad();
         AttachUserFromUserMgrResp resp(EC_SUCCESS, getClientDockerID(), getClientSessionID(), getServiceID());
-        Docker::getRef().sendToDocker(getClientDockerID(), resp);
+        Docker::getRef().sendViaDockerID(getClientDockerID(), resp);
     }
     return ;
 }

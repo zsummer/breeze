@@ -256,6 +256,24 @@ void Service::backToService(const Tracing & trace, const char * block, unsigned 
     Docker::getRef().toService(trc, block, len, true, true);
 }
 
+void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessionID, const char * block, unsigned int len, ServiceCallback cb)
+{
+    Tracing trc;
+    trc.routing.fromServiceType = getServiceType();
+    trc.routing.fromServiceID = getServiceID();
+    trc.routing.traceID = 0;
+    trc.routing.traceBackID = 0;
+    trc.routing.toServiceType = STClient;
+    trc.routing.toServiceID = InvalidServiceID;
+    trc.oob.clientDockerID = clientDockerID;
+    trc.oob.clientSessionID = clientSessionID;
+    if (cb)
+    {
+        trc.routing.traceID = makeCallback(cb);
+    }
+    Docker::getRef().sendViaTracing(trc, block, len);
+}
+
 void Service::process4bind(const Tracing & trace, const std::string & block)
 {
     process(trace, block.c_str(), (unsigned int)block.length());

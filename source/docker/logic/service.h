@@ -121,6 +121,10 @@ public:
     void backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb = nullptr);
     template<class Proto>
     void backToService(const Tracing & trace, Proto proto, ServiceCallback cb = nullptr);
+
+    void directToRealClient(DockerID clientDockerID, SessionID clientSessionID, const char * block, unsigned int len, ServiceCallback cb = nullptr);
+    template<class Proto>
+    void directToRealClient(DockerID clientDockerID, SessionID clientSessionID, Proto proto, ServiceCallback cb = nullptr);
 public:
     //该定时器并不需要维护定时器ID 除非有需要cancel的情况. 
     //对于repeat类型的定时器, 在service完成卸载后 会由该父类进行全部取消与清除操作, 无需担心定时器造成的引用计数问题. 
@@ -232,7 +236,20 @@ void Service::backToService(const Tracing & trace, Proto proto, ServiceCallback 
     }
 }
 
-
+template<class Proto>
+void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessionID, Proto proto, ServiceCallback cb)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        directToRealClient(clientDockerID, clientSessionID, ws.getStream(), ws.getStreamLen(), cb);
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Service::directToRealClient catch except error. e=" << e.what());
+    }
+}
 
 
 

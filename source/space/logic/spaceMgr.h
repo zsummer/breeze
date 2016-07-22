@@ -46,9 +46,9 @@ public:
 public:
     bool isStopping();
 public:
-    void sendToSession(SessionID sessionID, const char * block, unsigned int len);
+    void sendViaSessionID(SessionID sessionID, const char * block, unsigned int len);
     template<class Proto>
-    void sendToSession(SessionID sessionID, const Proto & proto);
+    void sendViaSessionID(SessionID sessionID, const Proto & proto);
 
     template<class Proto>
     void sendToWorld(const Proto & proto);
@@ -88,7 +88,7 @@ private:
 
 
 template<class Proto>
-void SpaceMgr::sendToSession(SessionID sessionID, const Proto & proto)
+void SpaceMgr::sendViaSessionID(SessionID sessionID, const Proto & proto)
 {
     try
     {
@@ -98,7 +98,7 @@ void SpaceMgr::sendToSession(SessionID sessionID, const Proto & proto)
     }
     catch (const std::exception & e)
     {
-        LOGE("Docker::sendToSession catch except error. e=" << e.what());
+        LOGE("Docker::sendViaSessionID catch except error. e=" << e.what());
     }
 }
 template<class Proto>
@@ -106,7 +106,7 @@ void SpaceMgr::sendToWorld(const Proto & proto)
 {
     if (_worldSessionID != InvalidSessionID)
     {
-        sendToSession(_worldSessionID, proto);
+        sendViaSessionID(_worldSessionID, proto);
     }
 }
 

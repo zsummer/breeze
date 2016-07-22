@@ -452,7 +452,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
     if (true)
     {
         SelfBeingPulse pulse(ServerConfig::getRef().getAreaID(), ServerConfig::getRef().getDockerID());
-        sendToSession(session->getSessionID(), pulse);
+        sendViaSessionID(session->getSessionID(), pulse);
     }
 
     LoadServiceNotice notice;
@@ -478,7 +478,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
             }
         }
     }
-    sendToSession(session->getSessionID(), notice);
+    sendViaSessionID(session->getSessionID(), notice);
     buildCluster();
 }
 
@@ -622,7 +622,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         clientResp.retCode = resp.retCode;
         clientResp.token = resp.token;
         clientResp.previews = std::move(resp.previews);
-        sendToSession(resp.clientSessionID, clientResp);
+        sendViaSessionID(resp.clientSessionID, clientResp);
         return;
     }
     else if (rsShell.getProtoID() == CreateUserFromUserMgrResp::getProtoID())
@@ -633,7 +633,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         clientResp.retCode = resp.retCode;
         clientResp.userID = resp.userID;
         clientResp.previews = std::move(resp.previews);
-        sendToSession(resp.clientSessionID, clientResp);
+        sendViaSessionID(resp.clientSessionID, clientResp);
         return;
     }
     else if (rsShell.getProtoID() == AttachUserFromUserMgrResp::getProtoID())
@@ -654,7 +654,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         }
         AttachUserResp clientResp;
         clientResp.retCode = resp.retCode;
-        sendToSession(resp.clientSessionID, clientResp);
+        sendViaSessionID(resp.clientSessionID, clientResp);
         return;
     }
 }
@@ -957,7 +957,7 @@ void Docker::event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream
     if (svc->getClientSessionID() != InvalidSessionID && !svc->isShell())
     {
         KickRealClient kick(svc->getClientSessionID());
-        Docker::getRef().sendToDocker(svc->getClientDockerID(), kick);
+        Docker::getRef().sendViaDockerID(svc->getClientDockerID(), kick);
     }
     svc->setClientSessionID(change.clientSessionID);
     svc->setClientDockerID(change.clientDockerID);
@@ -1275,79 +1275,92 @@ void Docker::event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs)
 }
 
 
-void Docker::sendToSession(SessionID sessionID, const char * block, unsigned int len)
+void Docker::sendViaSessionID(SessionID sessionID, const char * block, unsigned int len)
 {
     SessionManager::getRef().sendSessionData(sessionID, block, len);
 }
 
 
-void Docker::packetToSessionWithTracing(SessionID sessionID, const Tracing & trace, const char * block, unsigned int len)
-{
-    try
-    {
-        WriteStream ws(ForwardToService::getProtoID());
-        ws << trace;
-        ws.appendOriginalData(block, len);
-        sendToSession(sessionID, ws.getStream(), ws.getStreamLen());
-    }
-    catch (const std::exception & e)
-    {
-        LOGE("Docker::packetToSessionWithTracing catch except error. e=" << e.what());
-    }
-}
-
-
-void Docker::sendToDocker(DockerID dockerID, const char * block, unsigned int len)
+void Docker::sendViaDockerID(DockerID dockerID, const char * block, unsigned int len)
 {
     SessionID sID = getDockerLinked(dockerID);
     if (sID == InvalidSessionID)
     {
-        LOGF("Docker::sendToDocker fatal error. dockerID not linked. dockerID=" << dockerID);
+        LOGF("Docker::sendViaDockerID fatal error. dockerID not linked. dockerID=" << dockerID);
         return;
     }
-    sendToSession(sID, block, len);
+    sendViaSessionID(sID, block, len);
 }
 
-
-void Docker::packetToDockerWithTracing(DockerID dockerID, const Tracing & trace, const char * block, unsigned int len)
+void Docker::sendViaServiceID(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len)
 {
-    auto sID = getDockerLinked(dockerID);
-    if (sID != InvalidSessionID)
-    {
-        packetToSessionWithTracing(sID, trace, block, len);
-    }
-    else
-    {
-        LOGE("Docker::packetToDockerWithTracing not found docker. dockerID=" << dockerID);
-    }
-}
-
-void Docker::packetToClientViaDocker(DockerID dockerID, SessionID clientSessionID, const char * block, unsigned int len)
-{
-    auto sID = getDockerLinked(dockerID);
-    if (sID != InvalidSessionID)
-    {
-        WriteStream ws(ForwardToRealClient::getProtoID());
-        ws << clientSessionID;
-        ws.appendOriginalData(block, len);
-        sendToSession(sID, ws.getStream(), ws.getStreamLen());
-    }
-    else
-    {
-        LOGE("Docker::packetToClientViaDocker not found docker. dockerID=" << dockerID);
-    }
-}
-
-void Docker::sendToDocker(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len)
-{
-    LOGT("Docker::sendToDocker serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
-    auto svc = peekService(serviceType, serviceID);
+    LOGT("Docker::sendViaServiceID serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+    ServicePtr svc = peekService((serviceType == STClient ? STUser : serviceType) , serviceID);
     if (!svc)
     {
-        LOGE("Docker::sendToDocker error. type not found. serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+        LOGE("sendViaServiceID error. not found service. serviceType=" << serviceType
+            << ", serviceID=" << serviceID << ", protoID=" << ReadStream(block, len).getProtoID());
         return;
     }
-    sendToDocker(svc->getServiceDockerID(), block, len);
+    if (serviceType != STClient)
+    {
+        sendViaDockerID(svc->getServiceDockerID(), block, len);
+    }
+    else
+    {
+        sendViaDockerID(svc->getClientDockerID(), block, len);
+    }
+}
+
+
+void Docker::sendViaTracing(const Tracing & trace, const char * block, unsigned int len)
+{
+    try
+    {
+        if (trace.routing.toServiceType == STClient)
+        {
+            DockerID clientDockerID = trace.oob.clientDockerID;
+            SessionID clientSessionID = trace.oob.clientSessionID;
+            if (clientDockerID == InvalidDockerID)
+            {
+                ServicePtr svc = peekService(STUser, trace.routing.toServiceID);
+                if (!svc)
+                {
+                    LOGW("sendViaTracing error. not found service. trace=" << trace
+                         << ", protoID=" << ReadStream(block, len).getProtoID());
+                    return;
+                }
+                clientDockerID = svc->getClientDockerID();
+                clientSessionID = svc->getClientSessionID();
+            }
+            if (clientDockerID == InvalidDockerID)
+            {
+                LOGW("sendViaTracing error. client not attach. trace=" << trace
+                    << ", protoID=" << ReadStream(block, len).getProtoID());
+                return;
+            }
+            if (clientDockerID == ServerConfig::getRef().getDockerID())
+            {
+                sendViaSessionID(clientSessionID, block, len);
+                return;
+            }
+            WriteStream ws(ForwardToRealClient::getProtoID());
+            ws << trace;
+            ws.appendOriginalData(block, len);
+            sendViaDockerID(clientDockerID, ws.getStream(), ws.getStreamLen());
+        }
+        else
+        {
+            WriteStream ws(ForwardToService::getProtoID());
+            ws << trace;
+            ws.appendOriginalData(block, len);
+            sendViaDockerID(trace.routing.toServiceType, ws.getStream(), ws.getStreamLen());
+        }
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Docker::sendViaTracing catch except error. e=" << e.what());
+    }
 }
 
 
@@ -1359,22 +1372,17 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
 {
     try
     {
-        ProtoID protoID = InvalidProtoID;
-        if (true)
-        {
-            ReadStream rs(block, len);
-            protoID = rs.getProtoID();
-        }
-
+        ProtoID protoID = ReadStream(block, len).getProtoID();
         LOGT("Docker::toService " << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost);
+        
+        if (trace.routing.toServiceType == STClient)
+        {
+            sendViaTracing(trace, block, len);
+            return;
+        }
 
         ui16 toServiceType = trace.routing.toServiceType;
         ServiceID toServiceID = trace.routing.toServiceID;
-        if (trace.routing.toServiceType == STClient)
-        {
-            toServiceType = STUser;
-        }
-
         auto svc = peekService(toServiceType, toServiceID);
        
         if (!svc)
@@ -1397,37 +1405,11 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         }
         if (svc->isShell()) //forward 
         {
-            DockerID dockerID = svc->getServiceDockerID();
-            packetToDockerWithTracing(dockerID, trace, block, len);
+            sendViaTracing(trace, block, len);
         }
         else //direct process
         {
-            if (trace.routing.toServiceType == STClient)
-            {
-                if (svc->getClientDockerID() == InvalidDockerID || svc->getClientSessionID() == InvalidSessionID)
-                {
-                    LOGW("Docker::toService  STClient sendToSession (client) warning. client dockerID or sessionID is Invalid "
-                        <<", clientDockerID=" << svc->getClientDockerID() << ", clientSessionID=" << svc->getClientSessionID()
-                        << trace << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
-                }
-                else if (svc->getClientDockerID() == ServerConfig::getRef().getDockerID())
-                {
-
-                    LOGT("Docker::toService  STClient sendToSession (client) " << trace 
-                        << ", clientDockerID=" << svc->getClientDockerID() << ", clientSessionID=" << svc->getClientSessionID()
-                        << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
-                    sendToSession(svc->getClientSessionID(), block, len);
-                }
-                else
-                {
-                    LOGT("Docker::toService  STClient ForwardToRealClient " << trace
-                        << ", clientDockerID=" << svc->getClientDockerID() << ", clientSessionID=" << svc->getClientSessionID()
-                        << ", len=" << len << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
-                    packetToClientViaDocker(svc->getClientDockerID(), svc->getClientSessionID(), block, len);
-                }
-
-            }
-            else if (needPost)
+            if (needPost)
             {
                 LOGT("Docker::toService local post process4bind " << trace << ", len=" << len 
                     << ", canForwardToOtherService=" << canForwardToOtherService << ", needPost=" << needPost << ", protoID=" << protoID);
