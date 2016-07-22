@@ -45,6 +45,7 @@ Proto4z.AttachUserResp = {} --选角色请求返回
 Proto4z.AttachUserResp.__protoID = 40006 
 Proto4z.AttachUserResp.__protoName = "AttachUserResp" 
 Proto4z.AttachUserResp[1] = {name="retCode", type="ui16" }  
+Proto4z.AttachUserResp[2] = {name="userID", type="ui64" }  
  
 Proto4z.register(40007,"UserChatReq") 
 Proto4z.UserChatReq = {}  

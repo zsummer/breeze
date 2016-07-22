@@ -217,29 +217,35 @@ struct AttachUserResp //选角色请求返回
     static const unsigned short getProtoID() { return 40006;} 
     static const std::string getProtoName() { return "AttachUserResp";} 
     unsigned short retCode;  
+    unsigned long long userID;  
     AttachUserResp() 
     { 
         retCode = 0; 
+        userID = 0; 
     } 
-    AttachUserResp(const unsigned short & retCode) 
+    AttachUserResp(const unsigned short & retCode, const unsigned long long & userID) 
     { 
         this->retCode = retCode; 
+        this->userID = userID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachUserResp & data) 
 { 
     ws << data.retCode;  
+    ws << data.userID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachUserResp & data) 
 { 
     rs >> data.retCode;  
+    rs >> data.userID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachUserResp & info) 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

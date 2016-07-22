@@ -210,23 +210,28 @@ namespace Proto4z
         static public string getProtoName() { return "AttachUserResp"; } 
         //members   
         public ushort retCode;  
+        public ulong userID;  
         public AttachUserResp()  
         { 
             retCode = 0;  
+            userID = 0;  
         } 
-        public AttachUserResp(ushort retCode) 
+        public AttachUserResp(ushort retCode, ulong userID) 
         { 
             this.retCode = retCode; 
+            this.userID = userID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 

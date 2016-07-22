@@ -252,35 +252,35 @@ void UserMgrService::onCreateUserReq(const Tracing & trace, zsummer::proto4z::Re
     resp.previews.clear();
 
 
-    auto founder = _accountStatus.find(req.account);
+    auto founder = _accountStatus.find(trace.oob.clientAccount);
     if (founder == _accountStatus.end())
     {
         resp.retCode = EC_USER_NOT_FOUND;
-        Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     if (founder->second._users.size() > 4 )
     {
         resp.retCode = EC_USER_COUNT_LIMITE;
-        Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     if ( getNowTime() - founder->second._lastCreateTime < 60)
     {
         resp.retCode = EC_USER_FREQ_LIMITE;
-        Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
 
     if (_userStatusByName.find(req.userName) != _userStatusByName.end())
     {
         resp.retCode = EC_USER_NAME_CONFLICT;
-        Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     founder->second._lastCreateTime = getNowTime();
     UserBaseInfo userBaseInfo;
-    userBaseInfo.account = req.account;
+    userBaseInfo.account = trace.oob.clientAccount;
     userBaseInfo.userID = ++_nextUserID;
     userBaseInfo.userName = req.userName;
     userBaseInfo.level = 1;
@@ -288,20 +288,18 @@ void UserMgrService::onCreateUserReq(const Tracing & trace, zsummer::proto4z::Re
 
     DBQueryReq sql(userBaseInfo.getDBInsert());
     toService(STInfoDBMgr, sql,
-        std::bind(&UserMgrService::onCreateUserFromUserMgrReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, userBaseInfo, req));
+        std::bind(&UserMgrService::onCreateUserReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, userBaseInfo, trace, req));
 }
 
-void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream & rs, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req)
+void UserMgrService::onCreateUserReqFromDB(zsummer::proto4z::ReadStream & rs, const UserBaseInfo & ubi, const Tracing & trace, const CreateUserReq & req)
 {
     LOGD("UserMgrService::onCreateUserFromUserMgrReqFromDB");
     DBQueryResp sqlResp;
     rs >> sqlResp;
 
-    CreateUserFromUserMgrResp resp;
+    CreateUserResp resp;
     resp.retCode = EC_SUCCESS;
     resp.previews.clear();
-    resp.clientDockerID = req.clientDockerID;
-    resp.clientSessionID = req.clientSessionID;
     resp.retCode = sqlResp.retCode;
     
     if (sqlResp.result.qc != QEC_SUCCESS || sqlResp.result.affected == 0)
@@ -317,8 +315,7 @@ void UserMgrService::onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStre
             resp.previews.push_back(kv.second->_preview);
         }
     }
-
-    Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+    directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
 }
 
 void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
@@ -326,20 +323,21 @@ void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::Re
     AttachUserReq req;
     rs >> req;
     AttachUserResp resp;
+    resp.userID = req.userID;
     resp.retCode = EC_SUCCESS;
 
-    auto founder = _userStatusByID.find(req.userID);
-    if (founder == _userStatusByID.end() || founder->second->_preview.account != req.account)
+    auto founder = _userStatusByID.find(trace.oob.clientUserID);
+    if (founder == _userStatusByID.end() || founder->second->_preview.account != trace.oob.clientAccount)
     {
         resp.retCode = EC_ERROR;
-        Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     auto & status = *founder->second;
     if (status._status == SS_UNLOADING || status._status == SS_INITING )
     {
         resp.retCode = EC_ERROR;
-        Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     status._lastChangeTime = getNowTime();
@@ -350,27 +348,26 @@ void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::Re
         if (dockerID == InvalidDockerID)
         {
             resp.retCode = EC_ERROR;
-            Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+            directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
             return;
         }
         status._status = SS_INITING;
-        status._clientDockerID = req.clientDockerID;
-        status._clientSessionID = req.clientSessionID;
-        LoadService notice(STUser, req.userID, status._preview.userName, req.clientDockerID, req.clientSessionID);
+        status._clientDockerID = trace.oob.clientDockerID;
+        status._clientSessionID = trace.oob.clientSessionID;
+        LoadService notice(STUser, req.userID, status._preview.userName, status._clientDockerID, status._clientSessionID);
         Docker::getRef().sendViaDockerID(dockerID, notice);
     }
     else if(status._status == SS_WORKING)
     {
-        status._clientDockerID = req.clientDockerID;
-        status._clientSessionID = req.clientSessionID;
-        SwitchServiceClientNotice change(STUser, req.userID, req.clientDockerID, req.clientSessionID);
+        status._clientDockerID = trace.oob.clientDockerID;
+        status._clientSessionID = trace.oob.clientSessionID;
+        SwitchServiceClientNotice change(STUser, req.userID, status._clientDockerID, status._clientSessionID);
         Docker::getRef().broadcastToDockers(change, true);
-        //Docker::getRef().sendViaDockerID(STUser, req.serviceID, change);
     }
     else
     {
         resp.retCode = EC_ERROR; 
-        Docker::getRef().sendViaDockerID(req.clientDockerID, resp); //这个是认证协议, 对应的UserService并不存在 所以不能通过toService和backToService等接口发出去.
+        directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
 }

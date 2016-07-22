@@ -86,17 +86,20 @@ namespace Proto4z
         //members   
         public uint clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
         public uint clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
+        public string clientAccount; //该数据由docker获得来自客户端的消息时自动填充.  
         public ulong clientUserID; //该数据由docker获得来自客户端的消息时自动填充.  
         public OutOfBand()  
         { 
             clientDockerID = 0;  
             clientSessionID = 0;  
+            clientAccount = "";  
             clientUserID = 0;  
         } 
-        public OutOfBand(uint clientDockerID, uint clientSessionID, ulong clientUserID) 
+        public OutOfBand(uint clientDockerID, uint clientSessionID, string clientAccount, ulong clientUserID) 
         { 
             this.clientDockerID = clientDockerID; 
             this.clientSessionID = clientSessionID; 
+            this.clientAccount = clientAccount; 
             this.clientUserID = clientUserID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -104,6 +107,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.clientAccount)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.clientUserID)); 
             return data; 
         } 
@@ -111,6 +115,7 @@ namespace Proto4z
         { 
             this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.clientAccount = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.clientUserID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 

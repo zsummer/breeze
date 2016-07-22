@@ -34,7 +34,8 @@ Proto4z.OutOfBand.__protoID = 1006
 Proto4z.OutOfBand.__protoName = "OutOfBand" 
 Proto4z.OutOfBand[1] = {name="clientDockerID", type="ui32" } --该数据由docker获得来自客户端的消息时自动填充. 
 Proto4z.OutOfBand[2] = {name="clientSessionID", type="ui32" } --该数据由docker获得来自客户端的消息时自动填充. 
-Proto4z.OutOfBand[3] = {name="clientUserID", type="ui64" } --该数据由docker获得来自客户端的消息时自动填充. 
+Proto4z.OutOfBand[3] = {name="clientAccount", type="string" } --该数据由docker获得来自客户端的消息时自动填充. 
+Proto4z.OutOfBand[4] = {name="clientUserID", type="ui64" } --该数据由docker获得来自客户端的消息时自动填充. 
  
 Proto4z.register(1000,"Tracing") 
 Proto4z.Tracing = {} --docker间追踪数据 

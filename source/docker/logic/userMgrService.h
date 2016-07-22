@@ -71,7 +71,7 @@ private:
     void onClientAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onClientAuthReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const ClientAuthReq & req);
     void onCreateUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onCreateUserFromUserMgrReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const CreateUserFromUserMgrReq &req);
+    void onCreateUserReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const Tracing & trace, const CreateUserReq & req);
     void onAttachUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 

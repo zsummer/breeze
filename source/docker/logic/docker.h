@@ -149,9 +149,9 @@ private:
     void event_onUnloadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & rs);
 
-    void event_onForwardToService(TcpSessionPtr session, ReadStream & rs);
-    void event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs);
-    void event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs);
+    void event_onForwardToService(TcpSessionPtr session, ReadStream & rsShell);
+    void event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rsShell);
+    void event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell);
 
 public://负载均衡 
     inline Balance & getUserBalance(){return _userBalance;}

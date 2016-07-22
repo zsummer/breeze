@@ -603,65 +603,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onWebServerRequest(session, rsShell);
     }
 
-    else if (rsShell.getProtoID() == SelectUserPreviewsFromUserMgrResp::getProtoID())
-    {
-        SelectUserPreviewsFromUserMgrResp resp;
-        rsShell >> resp;
-        auto clientSession = SessionManager::getRef().getTcpSession(resp.clientSessionID);
-        if (!clientSession)
-        {
-            LOGE("can not found client session. sessionID=" << resp.clientSessionID);
-            return;
-        }
-        if (resp.retCode == EC_SUCCESS)
-        {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
-            clientSession->setUserParam(UPARAM_ACCOUNT, resp.account);
-        }
-        else
-        {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
-        }
-        ClientAuthResp clientResp;
-        clientResp.account = resp.account;
-        clientResp.retCode = resp.retCode;
-        clientResp.token = resp.token;
-        clientResp.previews = std::move(resp.previews);
-        sendViaSessionID(resp.clientSessionID, clientResp);
-        return;
-    }
-    else if (rsShell.getProtoID() == CreateUserFromUserMgrResp::getProtoID())
-    {
-        CreateUserFromUserMgrResp resp;
-        rsShell >> resp;
-        CreateUserResp clientResp;
-        clientResp.retCode = resp.retCode;
-        clientResp.userID = resp.userID;
-        clientResp.previews = std::move(resp.previews);
-        sendViaSessionID(resp.clientSessionID, clientResp);
-        return;
-    }
-    else if (rsShell.getProtoID() == AttachUserFromUserMgrResp::getProtoID())
-    {
-        AttachUserFromUserMgrResp resp;
-        rsShell >> resp;
-        auto clientSession = SessionManager::getRef().getTcpSession(resp.clientSessionID);
-        if (!clientSession)
-        {
-            LOGE("can not found client session. sessionID=" << resp.clientSessionID);
-            return;
-        }
-        if (resp.retCode == EC_SUCCESS)
-        {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
-            clientSession->setUserParam(UPARAM_USER_ID, resp.userID);
-            clientSession->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
-        }
-        AttachUserResp clientResp;
-        clientResp.retCode = resp.retCode;
-        sendViaSessionID(resp.clientSessionID, clientResp);
-        return;
-    }
+    
 }
 
 
@@ -883,27 +825,72 @@ void Docker::buildCluster()
     }
    
 }
-void Docker::event_onForwardToService(TcpSessionPtr session, ReadStream & rs)
+void Docker::event_onForwardToService(TcpSessionPtr session, ReadStream & rsShell)
 {
     Tracing trace;
-    rs >> trace;
-    LOGT("event_onForwardToService " << trace << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
-    toService(trace, rs.getStreamUnread(), rs.getStreamUnreadLen());
+    rsShell >> trace;
+    LOGT("event_onForwardToService " << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
+    toService(trace, rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
 }
 
-void Docker::event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rs)
+void Docker::event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rsShell)
 {
     Tracing trace;
-    rs >> trace;
-    LOGT("event_onForwardToRealClient trace=" << trace << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
-    SessionManager::getRef().sendSessionData(trace.oob.clientSessionID, rs.getStreamUnread(), rs.getStreamUnreadLen());
+    rsShell >> trace;
+    LOGT("event_onForwardToRealClient trace=" << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
+    SessionManager::getRef().sendSessionData(trace.oob.clientSessionID, rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
 }
 
-void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rs)
+void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell)
 {
     Tracing trace;
-    rs >> trace;
-    LOGT("event_onForwardToDocker trace=" << trace << ", ReadStream len = " << rs.getStreamLen() << ", unread len=" << rs.getStreamUnreadLen());
+    rsShell >> trace;
+    LOGT("event_onForwardToDocker trace=" << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
+    ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
+
+    if (rs.getProtoID() == ClientAuthResp::getProtoID())
+    {
+        ClientAuthResp resp;
+        rs >> resp;
+        auto clientSession = SessionManager::getRef().getTcpSession(trace.oob.clientSessionID);
+        if (!clientSession)
+        {
+            LOGE("can not found client session. sessionID=" << trace.oob.clientSessionID);
+            return;
+        }
+        if (resp.retCode == EC_SUCCESS)
+        {
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
+            clientSession->setUserParam(UPARAM_ACCOUNT, resp.account);
+        }
+        else
+        {
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+        }
+        sendViaSessionID(trace.oob.clientSessionID, rs.getStream(), rs.getStreamLen());
+        return;
+    }
+    else if (rs.getProtoID() == AttachUserResp::getProtoID())
+    {
+        AttachUserResp resp;
+        rs >> resp;
+        auto clientSession = SessionManager::getRef().getTcpSession(trace.oob.clientSessionID);
+        if (!clientSession)
+        {
+            LOGE("can not found client session. sessionID=" << trace.oob.clientSessionID);
+            return;
+        }
+        if (resp.retCode == EC_SUCCESS)
+        {
+            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
+            clientSession->setUserParam(UPARAM_USER_ID, resp.userID);
+            clientSession->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
+        }
+        sendViaSessionID(trace.oob.clientSessionID, rs.getStream(), rs.getStreamLen());
+        return;
+    }
+
+
 }
 
 void Docker::event_onLoadService(TcpSessionPtr session, ReadStream & rs)
@@ -1122,6 +1109,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     trace.oob.clientDockerID = ServerConfig::getRef().getDockerID();
     trace.oob.clientSessionID = session->getSessionID();
     trace.oob.clientUserID = trace.routing.fromServiceID;
+    trace.oob.clientAccount = session->getUserParamString(UPARAM_ACCOUNT);
     if (rs.getProtoID() == ClientAuthReq::getProtoID())
     {
         LOGD("ClientAuthReq sID=" << session->getSessionID() << ", block len=" << len);
