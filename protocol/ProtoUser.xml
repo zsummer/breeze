@@ -37,6 +37,7 @@
     </packet>
      <packet name="AttachUserResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
+        <member name="userID" type="ui64"   desc=""/>
     </packet>
 
 

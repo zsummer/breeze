@@ -63,7 +63,7 @@ bool Service::finishLoad()
        if (true)
        {
            LoadServiceNotice notice;
-           notice.shellServiceInfos.push_back(ShellServiceInfo(
+           notice.shellServiceInfos.push_back(ServiceInfo(
                getServiceDockerID(),
                getServiceType(),
                getServiceID(),
@@ -77,7 +77,7 @@ bool Service::finishLoad()
         if (getServiceTrait(getServiceType()) == STrait_Multi)
         {
             RefreshServiceToMgrNotice refreshNotice;
-            refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
+            refreshNotice.shellServiceInfos.push_back(ServiceInfo(
                 getServiceDockerID(),
                 getServiceType(),
                 getServiceID(),
@@ -90,7 +90,7 @@ bool Service::finishLoad()
             {
                 if (getServiceTrait(sd.first) == STrait_Single )
                 {
-                    toService(sd.first, OutOfBand(),refreshNotice, nullptr);
+                    toService(sd.first, refreshNotice, nullptr);
                 }
             }
         }
@@ -112,7 +112,7 @@ bool Service::finishUnload()
         if (getServiceTrait(getServiceType()) == STrait_Multi)
         {
             RefreshServiceToMgrNotice refreshNotice;
-            refreshNotice.shellServiceInfos.push_back(ShellServiceInfo(
+            refreshNotice.shellServiceInfos.push_back(ServiceInfo(
                 getServiceDockerID(),
                 getServiceType(),
                 getServiceID(),
@@ -124,7 +124,7 @@ bool Service::finishUnload()
             {
                 if (getServiceTrait(sd.first) == STrait_Single)
                 {
-                    toService(sd.first, OutOfBand(),  refreshNotice, nullptr);
+                    toService(sd.first, refreshNotice, nullptr);
                 }
             }
         }
@@ -186,12 +186,31 @@ void Service::cleanCallback()
     }
 }
 
+
+bool Service::canToService(ServiceType serviceType, ServiceID serviceID)
+{
+    auto s = Docker::getRef().peekService(serviceType == STClient ? STUser : serviceType, serviceID);
+    if (!s)
+    {
+        return false;
+    }
+    if (Docker::getRef().getDockerLinked(s->getServiceDockerID()) == InvalidSessionID)
+    {
+        return false;
+    }
+    if (serviceType == STClient && s->getClientSessionID() == InvalidSessionID)
+    {
+        return false;
+    }
+    return true;
+}
+
+
 void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutOfBand &oob,  const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trace;
     trace.routing.fromServiceType = getServiceType();
     trace.routing.fromServiceID = getServiceID();
-    trace.routing.fromDockerID = getServiceDockerID();
     trace.routing.traceBackID = 0;
     trace.routing.traceID = 0;
     trace.routing.toServiceType = serviceType;
@@ -201,49 +220,93 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
     {
         trace.routing.traceID = makeCallback(cb);
     }
-    Docker::getRef().toService(trace, block, len, true, true);
+    Docker::getRef().toService(trace, block, len, false);
 }
-void Service::toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb )
+
+
+
+void Service::toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb)
 {
     toService(serviceType, serviceID, OutOfBand(), block, len, cb);
 }
+
+
 void Service::toService(ServiceType serviceType, const OutOfBand &oob, const char * block, unsigned int len, ServiceCallback cb)
 {
     toService(serviceType, InvalidServiceID, oob, block, len, cb);
 }
-bool Service::canToService(ServiceType serviceType, ServiceID serviceID)
+
+void Service::toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb)
 {
-    auto s = Docker::getRef().peekService(serviceType, serviceID);
-    if (!s)
-    {
-        return false;
-    }
-    if (Docker::getRef().getDockerLinked(s->getServiceDockerID()) == InvalidSessionID)
-    {
-        return false;
-    }
-    return true;
+    toService(serviceType, InvalidServiceID, OutOfBand(), block, len, cb);
 }
+
 
 
 void Service::backToService(const Tracing & trace, const char * block, unsigned int len, ServiceCallback cb)
 {
     Tracing trc;
-    trc.routing.fromDockerID = getServiceDockerID();
     trc.routing.fromServiceType = getServiceType();
     trc.routing.fromServiceID = getServiceID();
     trc.routing.traceID = 0;
     trc.routing.traceBackID = trace.routing.traceID;
     trc.routing.toServiceType = trace.routing.fromServiceType;
     trc.routing.toServiceID = trace.routing.fromServiceID;
-    trc.routing.toDockerID = trace.routing.fromDockerID;
     trc.oob = trace.oob;
     if (cb)
     {
         trc.routing.traceID = makeCallback(cb);
     }
-    Docker::getRef().toService(trc, block, len, true, true);
+    Docker::getRef().toService(trc, block, len, false);
 }
+
+void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessionID, const char * block, unsigned int len)
+{
+    if (clientDockerID == ServerConfig::getRef().getDockerID())
+    {
+        Docker::getRef().sendViaSessionID(clientSessionID, block, len);
+        return;
+    }
+    Tracing trc;
+    trc.routing.fromServiceType = getServiceType();
+    trc.routing.fromServiceID = getServiceID();
+    trc.routing.traceID = 0;
+    trc.routing.traceBackID = 0;
+    trc.routing.toServiceType = STClient;
+    trc.routing.toServiceID = InvalidServiceID;
+    trc.oob.clientDockerID = clientDockerID;
+    trc.oob.clientSessionID = clientSessionID;
+    trc.oob.clientUserID = InvalidServiceID;
+    Docker::getRef().forwardToRemoteService(trc, block, len);
+}
+
+void Service::toDocker(DockerID dockerID, const OutOfBand & oob, const char * block, unsigned int len)
+{
+    Tracing trc;
+    trc.routing.fromServiceType = getServiceType();
+    trc.routing.fromServiceID = getServiceID();
+    trc.routing.traceID = 0;
+    trc.routing.traceBackID = 0;
+    trc.routing.toServiceType = STClient;
+    trc.routing.toServiceID = InvalidServiceID;
+    trc.oob = oob;
+    WriteStream ws(ForwardToDocker::getProtoID());
+    ws << trc;
+    ws.appendOriginalData(block, len);
+    Docker::getRef().sendViaDockerID(dockerID, ws.getStream(), ws.getStreamLen());
+}
+void Service::toDocker(DockerID dockerID, const char * block, unsigned int len)
+{
+    OutOfBand oob;
+    oob.clientDockerID = getClientDockerID();
+    oob.clientSessionID = getClientSessionID();
+    oob.clientUserID = getServiceID();
+    toDocker(dockerID, oob, block, len);
+}
+
+
+
+
 
 void Service::process4bind(const Tracing & trace, const std::string & block)
 {
@@ -292,8 +355,6 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
         LOGE("Service::process call process catch except error. e=" << e.what() << ", trace=" << trace);
     }
 }
-
-
 
 
 

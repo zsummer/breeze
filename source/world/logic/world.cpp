@@ -152,7 +152,7 @@ bool World::startSpaceListen()
     return true;
 }
 
-void World::sendToSession(SessionID sessionID, const char * block, unsigned int len)
+void World::sendViaSessionID(SessionID sessionID, const char * block, unsigned int len)
 {
     SessionManager::getRef().sendSessionData(sessionID, block, len);
 }
@@ -166,16 +166,18 @@ void World::event_onDockerLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
     LoadServiceNotice notice;
-    ShellServiceInfo info;
+    ServiceInfo info;
     info.serviceDockerID = InvalidDockerID;
     info.serviceType = STWorldMgr;
     info.serviceID = InvalidServiceID;
     info.serviceName = "STWorldMgr";
     info.clientDockerID = InvalidDockerID;
     info.clientSessionID = InvalidSessionID;
-    info.status = SS_WORKING;
+    info.status = SS_CREATED;
     notice.shellServiceInfos.push_back(info);
-    sendToSession(session->getSessionID(), notice);
+    sendViaSessionID(session->getSessionID(), notice);
+    notice.shellServiceInfos.at(0).status = SS_WORKING;
+    sendViaSessionID(session->getSessionID(), notice);
     LOGI("event_onDockerLinked cID=" << session->getSessionID() );
 }
 

@@ -66,9 +66,9 @@ private:
 
 
 public:
-    void sendToSession(SessionID sessionID, const char * block, unsigned int len);
+    void sendViaSessionID(SessionID sessionID, const char * block, unsigned int len);
     template<class Proto>
-    void sendToSession(SessionID sessionID, const Proto & proto);
+    void sendViaSessionID(SessionID sessionID, const Proto & proto);
     
 
 private:
@@ -100,7 +100,7 @@ private:
 
 
 template<class Proto>
-void World::sendToSession(SessionID sessionID, const Proto & proto)
+void World::sendViaSessionID(SessionID sessionID, const Proto & proto)
 {
     try
     {
@@ -110,7 +110,7 @@ void World::sendToSession(SessionID sessionID, const Proto & proto)
     }
     catch (const std::exception & e)
     {
-        LOGE("Docker::sendToSession catch except error. e=" << e.what());
+        LOGE("Docker::sendViaSessionID catch except error. e=" << e.what());
     }
 }
 

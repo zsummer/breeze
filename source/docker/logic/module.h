@@ -113,7 +113,7 @@ bool ModuleData<DBData>::loadFromDB(ServicePtr service, const DBData & defaultDa
     _weakPtr = service;
     _data = defaultData;
     DBQueryReq req(_data.getDBSelect());
-    service->toService(STInfoDBMgr, OutOfBand(), req, std::bind(&ModuleData<DBData>::onSelectFromDB, this, _1, service, cb));
+    service->toService(STInfoDBMgr, req, std::bind(&ModuleData<DBData>::onSelectFromDB, this, _1, service, cb));
     return true;
 }
 
@@ -126,7 +126,7 @@ void ModuleData<DBData>::writeToDB(std::function<void(bool, const std::string&)>
         return;
     }
     DBQueryReq req(_data.getDBUpdate());
-    guard->toService(STInfoDBMgr,OutOfBand(), req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, guard, cb));
+    guard->toService(STInfoDBMgr, req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, guard, cb));
 }
 
 template<class DBData>
@@ -166,7 +166,7 @@ void ModuleData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service, std
     else
     {
         DBQueryReq req(_data.getDBInsert());
-        service->toService(STInfoDBMgr, OutOfBand(), req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, service, cb));
+        service->toService(STInfoDBMgr, req, std::bind(&ModuleData<DBData>::onAffectFromDB, this, _1, service, cb));
     }
 }
 
@@ -208,7 +208,7 @@ bool ModuleMultiData<DBData>::loadFromDB(ServicePtr service, const std::string &
 {
     _weakPtr = service;
     DBQueryReq req(sql + " limit 0, 100");
-    service->toService(STInfoDBMgr, OutOfBand(), req, std::bind(&ModuleMultiData<DBData>::onSelectFromDB, this, _1, service, cb, sql, 0));
+    service->toService(STInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onSelectFromDB, this, _1, service, cb, sql, 0));
     return true;
 }
 
@@ -253,7 +253,7 @@ void ModuleMultiData<DBData>::onSelectFromDB(ReadStream & rs, ServicePtr service
         _data.push_back(data);
     }
     DBQueryReq req(sql + " limit " + toString(curLimit+100) +", 100");
-    service->toService(STInfoDBMgr, OutOfBand(), req, std::bind(&ModuleMultiData<DBData>::onSelectFromDB, this, _1, service, cb, sql, curLimit+100));
+    service->toService(STInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onSelectFromDB, this, _1, service, cb, sql, curLimit+100));
 }
 
 template<class DBData>
@@ -266,7 +266,7 @@ void ModuleMultiData<DBData>::updateToDB(const DBData & data, std::function<void
     }
     DBData tmp = data;
     DBQueryReq req(tmp.getDBUpdate());
-    guard->toService(STInfoDBMgr, OutOfBand(), req, std::bind(&ModuleMultiData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
+    guard->toService(STInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
 }
 
 template<class DBData>
@@ -279,7 +279,7 @@ void ModuleMultiData<DBData>::insertToDB(const DBData & data, std::function<void
     }
     DBData tmp = data;
     DBQueryReq req(tmp.getDBInsert());
-    guard->toService(STInfoDBMgr, OutOfBand(), req, std::bind(&ModuleMultiData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
+    guard->toService(STInfoDBMgr, req, std::bind(&ModuleMultiData<DBData>::onAffectFromDB, this, _1, guard, data, cb));
 }
 
 

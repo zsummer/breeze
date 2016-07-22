@@ -11,44 +11,44 @@ Proto4z.DockerPulse = {} --集群脉冲
 Proto4z.DockerPulse.__protoID = 2000 
 Proto4z.DockerPulse.__protoName = "DockerPulse" 
  
-Proto4z.register(2002,"LoadServiceInDocker") 
-Proto4z.LoadServiceInDocker = {} --在Docker中装载一个Service 
-Proto4z.LoadServiceInDocker.__protoID = 2002 
-Proto4z.LoadServiceInDocker.__protoName = "LoadServiceInDocker" 
-Proto4z.LoadServiceInDocker[1] = {name="serviceType", type="ui16" }  
-Proto4z.LoadServiceInDocker[2] = {name="serviceID", type="ui64" }  
-Proto4z.LoadServiceInDocker[3] = {name="serviceName", type="string" }  
-Proto4z.LoadServiceInDocker[4] = {name="clientDockerID", type="ui32" }  
-Proto4z.LoadServiceInDocker[5] = {name="clientSessionID", type="ui32" }  
+Proto4z.register(2025,"LoadService") 
+Proto4z.LoadService = {} --在Docker中装载一个Service 
+Proto4z.LoadService.__protoID = 2025 
+Proto4z.LoadService.__protoName = "LoadService" 
+Proto4z.LoadService[1] = {name="serviceType", type="ui16" }  
+Proto4z.LoadService[2] = {name="serviceID", type="ui64" }  
+Proto4z.LoadService[3] = {name="serviceName", type="string" }  
+Proto4z.LoadService[4] = {name="clientDockerID", type="ui32" }  
+Proto4z.LoadService[5] = {name="clientSessionID", type="ui32" }  
  
-Proto4z.register(2013,"ShellServiceInfo") 
-Proto4z.ShellServiceInfo = {} --Service被装载或者属性更改,需要通知给其他Docker的信息 
-Proto4z.ShellServiceInfo.__protoID = 2013 
-Proto4z.ShellServiceInfo.__protoName = "ShellServiceInfo" 
-Proto4z.ShellServiceInfo[1] = {name="serviceDockerID", type="ui32" }  
-Proto4z.ShellServiceInfo[2] = {name="serviceType", type="ui16" }  
-Proto4z.ShellServiceInfo[3] = {name="serviceID", type="ui64" }  
-Proto4z.ShellServiceInfo[4] = {name="serviceName", type="string" }  
-Proto4z.ShellServiceInfo[5] = {name="status", type="ui16" }  
-Proto4z.ShellServiceInfo[6] = {name="clientDockerID", type="ui32" }  
-Proto4z.ShellServiceInfo[7] = {name="clientSessionID", type="ui32" }  
+Proto4z.register(2026,"ServiceInfo") 
+Proto4z.ServiceInfo = {} --Service被装载或者属性更改,需要通知给其他Docker的信息 
+Proto4z.ServiceInfo.__protoID = 2026 
+Proto4z.ServiceInfo.__protoName = "ServiceInfo" 
+Proto4z.ServiceInfo[1] = {name="serviceDockerID", type="ui32" }  
+Proto4z.ServiceInfo[2] = {name="serviceType", type="ui16" }  
+Proto4z.ServiceInfo[3] = {name="serviceID", type="ui64" }  
+Proto4z.ServiceInfo[4] = {name="serviceName", type="string" }  
+Proto4z.ServiceInfo[5] = {name="status", type="ui16" }  
+Proto4z.ServiceInfo[6] = {name="clientDockerID", type="ui32" }  
+Proto4z.ServiceInfo[7] = {name="clientSessionID", type="ui32" }  
  
-Proto4z.ShellServiceInfoArray = {}  
-Proto4z.ShellServiceInfoArray.__protoName = "ShellServiceInfoArray" 
-Proto4z.ShellServiceInfoArray.__protoDesc = "array" 
-Proto4z.ShellServiceInfoArray.__protoTypeV = "ShellServiceInfo" 
+Proto4z.ServiceInfoArray = {}  
+Proto4z.ServiceInfoArray.__protoName = "ServiceInfoArray" 
+Proto4z.ServiceInfoArray.__protoDesc = "array" 
+Proto4z.ServiceInfoArray.__protoTypeV = "ServiceInfo" 
  
 Proto4z.register(2003,"LoadServiceNotice") 
 Proto4z.LoadServiceNotice = {} --通知其他Docker有Service已装载 
 Proto4z.LoadServiceNotice.__protoID = 2003 
 Proto4z.LoadServiceNotice.__protoName = "LoadServiceNotice" 
-Proto4z.LoadServiceNotice[1] = {name="shellServiceInfos", type="ShellServiceInfoArray" }  
+Proto4z.LoadServiceNotice[1] = {name="shellServiceInfos", type="ServiceInfoArray" }  
  
 Proto4z.register(2004,"RefreshServiceToMgrNotice") 
 Proto4z.RefreshServiceToMgrNotice = {} --Multi-Servie发生状态变化时候通知给管理器 
 Proto4z.RefreshServiceToMgrNotice.__protoID = 2004 
 Proto4z.RefreshServiceToMgrNotice.__protoName = "RefreshServiceToMgrNotice" 
-Proto4z.RefreshServiceToMgrNotice[1] = {name="shellServiceInfos", type="ShellServiceInfoArray" }  
+Proto4z.RefreshServiceToMgrNotice[1] = {name="shellServiceInfos", type="ServiceInfoArray" }  
  
 Proto4z.register(2005,"SwitchServiceClientNotice") 
 Proto4z.SwitchServiceClientNotice = {} --更改clientID 
@@ -101,6 +101,11 @@ Proto4z.register(2012,"ForwardToRealClient")
 Proto4z.ForwardToRealClient = {} --转发给真正的client 
 Proto4z.ForwardToRealClient.__protoID = 2012 
 Proto4z.ForwardToRealClient.__protoName = "ForwardToRealClient" 
+ 
+Proto4z.register(2027,"ForwardToDocker") 
+Proto4z.ForwardToDocker = {} --转发给Docker 
+Proto4z.ForwardToDocker.__protoID = 2027 
+Proto4z.ForwardToDocker.__protoName = "ForwardToDocker" 
  
 Proto4z.DBStringArray = {}  
 Proto4z.DBStringArray.__protoName = "DBStringArray" 
@@ -158,11 +163,10 @@ Proto4z.register(2020,"WebAgentClientRequestAPI")
 Proto4z.WebAgentClientRequestAPI = {}  
 Proto4z.WebAgentClientRequestAPI.__protoID = 2020 
 Proto4z.WebAgentClientRequestAPI.__protoName = "WebAgentClientRequestAPI" 
-Proto4z.WebAgentClientRequestAPI[1] = {name="webClientID", type="ui32" }  
-Proto4z.WebAgentClientRequestAPI[2] = {name="method", type="string" }  
-Proto4z.WebAgentClientRequestAPI[3] = {name="methodLine", type="string" }  
-Proto4z.WebAgentClientRequestAPI[4] = {name="heads", type="WebAgentHead" }  
-Proto4z.WebAgentClientRequestAPI[5] = {name="body", type="string" }  
+Proto4z.WebAgentClientRequestAPI[1] = {name="method", type="string" }  
+Proto4z.WebAgentClientRequestAPI[2] = {name="methodLine", type="string" }  
+Proto4z.WebAgentClientRequestAPI[3] = {name="heads", type="WebAgentHead" }  
+Proto4z.WebAgentClientRequestAPI[4] = {name="body", type="string" }  
  
 Proto4z.register(2021,"WebServerRequest") 
 Proto4z.WebServerRequest = {}  

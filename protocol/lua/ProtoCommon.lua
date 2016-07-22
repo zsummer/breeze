@@ -21,28 +21,28 @@ Proto4z.register(1005,"Routing")
 Proto4z.Routing = {} --docker to docker 路由信息 
 Proto4z.Routing.__protoID = 1005 
 Proto4z.Routing.__protoName = "Routing" 
-Proto4z.Routing[1] = {name="toDockerID", type="ui32" } --Docker ID为第一优先级路由数据, service ID为第二优先级路由数据 
-Proto4z.Routing[2] = {name="toServiceType", type="ui16" } --目标service类型 
-Proto4z.Routing[3] = {name="toServiceID", type="ui64" } --目标serviceID, 如果是单例 ID为InvalidServiceID.  
-Proto4z.Routing[4] = {name="fromDockerID", type="ui32" } --来源 
-Proto4z.Routing[5] = {name="fromServiceType", type="ui16" } --来源 
-Proto4z.Routing[6] = {name="fromServiceID", type="ui64" } --来源 
-Proto4z.Routing[7] = {name="traceID", type="ui32" } --本地产生的回调ID 
-Proto4z.Routing[8] = {name="traceBackID", type="ui32" } --远端产生的回调ID 
+Proto4z.Routing[1] = {name="toServiceType", type="ui16" } --目标service类型 
+Proto4z.Routing[2] = {name="toServiceID", type="ui64" } --目标serviceID, 如果是单例 ID为InvalidServiceID.  
+Proto4z.Routing[3] = {name="fromServiceType", type="ui16" } --来源 
+Proto4z.Routing[4] = {name="fromServiceID", type="ui64" } --来源 
+Proto4z.Routing[5] = {name="traceID", type="ui32" } --本地产生的回调ID 
+Proto4z.Routing[6] = {name="traceBackID", type="ui32" } --远端产生的回调ID 
  
 Proto4z.register(1006,"OutOfBand") 
 Proto4z.OutOfBand = {} --带外信息 
 Proto4z.OutOfBand.__protoID = 1006 
 Proto4z.OutOfBand.__protoName = "OutOfBand" 
-Proto4z.OutOfBand[1] = {name="userID", type="ui64" } --该数据由docker获得来自客户端的消息时自动填充. 
-Proto4z.OutOfBand[2] = {name="reserveID", type="ui64" }  
+Proto4z.OutOfBand[1] = {name="clientDockerID", type="ui32" } --该数据由docker获得来自客户端的消息时自动填充. 
+Proto4z.OutOfBand[2] = {name="clientSessionID", type="ui32" } --该数据由docker获得来自客户端的消息时自动填充. 
+Proto4z.OutOfBand[3] = {name="clientAccount", type="string" } --该数据由docker获得来自客户端的消息时自动填充. 
+Proto4z.OutOfBand[4] = {name="clientUserID", type="ui64" } --该数据由docker获得来自客户端的消息时自动填充. 
  
 Proto4z.register(1000,"Tracing") 
 Proto4z.Tracing = {} --docker间追踪数据 
 Proto4z.Tracing.__protoID = 1000 
 Proto4z.Tracing.__protoName = "Tracing" 
 Proto4z.Tracing[1] = {name="routing", type="Routing" } --路由信息 
-Proto4z.Tracing[2] = {name="oob", type="OutOfBand" } --带外信息 
+Proto4z.Tracing[2] = {name="oob", type="OutOfBand" } --来自客户端的带外信息 
  
 Proto4z.UserIDArray = {}  
 Proto4z.UserIDArray.__protoName = "UserIDArray" 

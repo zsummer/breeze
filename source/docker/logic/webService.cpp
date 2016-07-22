@@ -50,7 +50,7 @@ void WebService::responseError(DockerID dockerID, SessionID clientID)
     WriteHTTP wh;
     wh.addHead("Content-type", "application/json");
     wh.response("404", R"(   {"result":"error", "support apis":"/getonline, /offlinechat?serviceID=2222&msg=2222"}      )");
-    Docker::getRef().packetToClientViaDocker(dockerID, clientID, wh.getStream(), wh.getStreamLen());
+    directToRealClient(dockerID, clientID, wh.getStream(), wh.getStreamLen());
 }
 
 void WebService::responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body)
@@ -58,7 +58,7 @@ void WebService::responseSuccess(DockerID dockerID, SessionID clientID, const st
     WriteHTTP wh;
     wh.addHead("Content-type", "application/json");
     wh.response("200", body);
-    Docker::getRef().packetToClientViaDocker(dockerID, clientID, wh.getStream(), wh.getStreamLen());
+    directToRealClient(dockerID, clientID, wh.getStream(), wh.getStreamLen());
 }
 void WebService::responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body, const std::map<std::string, std::string> & heads)
 {
@@ -68,7 +68,7 @@ void WebService::responseSuccess(DockerID dockerID, SessionID clientID, const st
         wh.addHead(head.first, head.second);
     }
     wh.response("200", body);
-    Docker::getRef().packetToClientViaDocker(dockerID, clientID, wh.getStream(), wh.getStreamLen());
+    directToRealClient(dockerID, clientID, wh.getStream(), wh.getStreamLen());
 }
 
 void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
@@ -105,11 +105,11 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
 
         if (uri == "/getonline")
         {
-            getonline(trace.routing.fromDockerID, notice.webClientID, params);
+            getonline(trace.oob.clientDockerID, trace.oob.clientSessionID, params);
         }
         else if (uri == "/offlinechat")
         {
-            offlinechat(trace.routing.fromDockerID, notice.webClientID, params);
+            offlinechat(trace.oob.clientDockerID, trace.oob.clientSessionID, params);
         }
         else if (uri == "/test")
         {
@@ -119,14 +119,14 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
             request.isGet = true;
             request.host = "www.cnblogs.com";
             request.uri = "/";
-            toService(STWebAgent, OutOfBand(), request);
-            toService(STWebAgent, OutOfBand(), request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
-                _1, trace.routing.fromDockerID, notice.webClientID));
+            toService(STWebAgent,request);
+            toService(STWebAgent, request, std::bind(&WebService::onWebServerResponseTestCallback, std::static_pointer_cast<WebService>(shared_from_this()),
+                _1, trace.oob.clientDockerID, trace.oob.clientSessionID));
             
         }
         else
         {
-            responseError(trace.routing.fromDockerID, notice.webClientID);
+            responseError(trace.oob.clientDockerID, trace.oob.clientSessionID);
         }
     }
 
@@ -160,7 +160,7 @@ void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::v
         WriteStream ws(UserChatReq::getProtoID());
         ws << req;
         offline.streamBlob = ws.pickStream();
-        toService(STOfflineMgr, OutOfBand(), offline);
+        toService(STOfflineMgr, offline);
         responseSuccess(dockerID, clientID, R"({"result":"success"})");
 
     }
@@ -177,7 +177,7 @@ void WebService::onWebServerRequest(Tracing trace, ReadStream &rs)
     request.traceID = trace.routing.traceID;
     request.fromServiceType = trace.routing.fromServiceType;
     request.fromServiceID = trace.routing.fromServiceID;
-    Docker::getRef().sendToDocker(Docker::getRef().getWebBalance().selectAuto(), request);
+    Docker::getRef().sendViaDockerID(Docker::getRef().getWebBalance().selectAuto(), request);
 }
 
 void WebService::onWebServerResponseTest(Tracing trace, ReadStream &rs)

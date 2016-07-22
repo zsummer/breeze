@@ -219,7 +219,7 @@ bool SpaceMgr::startWorldConnect()
 
 
 
-void SpaceMgr::sendToSession(SessionID sessionID, const char * block, unsigned int len)
+void SpaceMgr::sendViaSessionID(SessionID sessionID, const char * block, unsigned int len)
 {
     SessionManager::getRef().sendSessionData(sessionID, block, len);
 }
@@ -246,7 +246,7 @@ void SpaceMgr::event_onWorldLinked(TcpSessionPtr session)
         si.spaceID = kv.second->getSpaceID();
         notice.spaceInfos.push_back(si);
     }
-    sendToSession(session->getSessionID(), notice);
+    sendViaSessionID(session->getSessionID(), notice);
     LOGI("event_onWorldLinked cID=" << session->getSessionID() );
 }
 
