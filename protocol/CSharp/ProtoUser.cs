@@ -110,23 +110,28 @@ namespace Proto4z
         static public ushort getProtoID() { return 40003; } 
         static public string getProtoName() { return "CreateUserReq"; } 
         //members   
+        public string accountName; //这个字段会被服务器填充.客户端可以不填写  
         public string userName;  
         public CreateUserReq()  
         { 
+            accountName = "";  
             userName = "";  
         } 
-        public CreateUserReq(string userName) 
+        public CreateUserReq(string accountName, string userName) 
         { 
+            this.accountName = accountName; 
             this.userName = userName; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.accountName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
+            this.accountName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
@@ -180,23 +185,28 @@ namespace Proto4z
         static public ushort getProtoID() { return 40005; } 
         static public string getProtoName() { return "AttachUserReq"; } 
         //members   
+        public string accountName; //这个字段会被服务器填充.客户端可以不填写  
         public ulong userID;  
         public AttachUserReq()  
         { 
+            accountName = "";  
             userID = 0;  
         } 
-        public AttachUserReq(ulong userID) 
+        public AttachUserReq(string accountName, ulong userID) 
         { 
+            this.accountName = accountName; 
             this.userID = userID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.accountName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
+            this.accountName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 

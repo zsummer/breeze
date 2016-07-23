@@ -92,7 +92,6 @@ struct OutOfBand //带外信息
     static const std::string getProtoName() { return "OutOfBand";} 
     unsigned int clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
     unsigned int clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
-    std::string clientAccount; //该数据由docker获得来自客户端的消息时自动填充.  
     unsigned long long clientUserID; //该数据由docker获得来自客户端的消息时自动填充.  
     OutOfBand() 
     { 
@@ -100,11 +99,10 @@ struct OutOfBand //带外信息
         clientSessionID = 0; 
         clientUserID = 0; 
     } 
-    OutOfBand(const unsigned int & clientDockerID, const unsigned int & clientSessionID, const std::string & clientAccount, const unsigned long long & clientUserID) 
+    OutOfBand(const unsigned int & clientDockerID, const unsigned int & clientSessionID, const unsigned long long & clientUserID) 
     { 
         this->clientDockerID = clientDockerID; 
         this->clientSessionID = clientSessionID; 
-        this->clientAccount = clientAccount; 
         this->clientUserID = clientUserID; 
     } 
 }; 
@@ -112,7 +110,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.clientDockerID;  
     ws << data.clientSessionID;  
-    ws << data.clientAccount;  
     ws << data.clientUserID;  
     return ws; 
 } 
@@ -120,7 +117,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.clientDockerID;  
     rs >> data.clientSessionID;  
-    rs >> data.clientAccount;  
     rs >> data.clientUserID;  
     return rs; 
 } 
@@ -129,7 +125,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "clientDockerID=" << info.clientDockerID << "\n"; 
     stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "clientAccount=" << info.clientAccount << "\n"; 
     stm << "clientUserID=" << info.clientUserID << "\n"; 
     stm << "]\n"; 
     return stm; 

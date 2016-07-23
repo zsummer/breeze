@@ -110,28 +110,33 @@ struct CreateUserReq //创角色请求
 { 
     static const unsigned short getProtoID() { return 40003;} 
     static const std::string getProtoName() { return "CreateUserReq";} 
+    std::string accountName; //这个字段会被服务器填充.客户端可以不填写  
     std::string userName;  
     CreateUserReq() 
     { 
     } 
-    CreateUserReq(const std::string & userName) 
+    CreateUserReq(const std::string & accountName, const std::string & userName) 
     { 
+        this->accountName = accountName; 
         this->userName = userName; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateUserReq & data) 
 { 
+    ws << data.accountName;  
     ws << data.userName;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateUserReq & data) 
 { 
+    rs >> data.accountName;  
     rs >> data.userName;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateUserReq & info) 
 { 
     stm << "[\n"; 
+    stm << "accountName=" << info.accountName << "\n"; 
     stm << "userName=" << info.userName << "\n"; 
     stm << "]\n"; 
     return stm; 
@@ -184,29 +189,34 @@ struct AttachUserReq //选角色请求
 { 
     static const unsigned short getProtoID() { return 40005;} 
     static const std::string getProtoName() { return "AttachUserReq";} 
+    std::string accountName; //这个字段会被服务器填充.客户端可以不填写  
     unsigned long long userID;  
     AttachUserReq() 
     { 
         userID = 0; 
     } 
-    AttachUserReq(const unsigned long long & userID) 
+    AttachUserReq(const std::string & accountName, const unsigned long long & userID) 
     { 
+        this->accountName = accountName; 
         this->userID = userID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachUserReq & data) 
 { 
+    ws << data.accountName;  
     ws << data.userID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachUserReq & data) 
 { 
+    rs >> data.accountName;  
     rs >> data.userID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachUserReq & info) 
 { 
     stm << "[\n"; 
+    stm << "accountName=" << info.accountName << "\n"; 
     stm << "userID=" << info.userID << "\n"; 
     stm << "]\n"; 
     return stm; 
