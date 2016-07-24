@@ -24,7 +24,8 @@ Proto4z.register(40003,"CreateUserReq")
 Proto4z.CreateUserReq = {} --创角色请求 
 Proto4z.CreateUserReq.__protoID = 40003 
 Proto4z.CreateUserReq.__protoName = "CreateUserReq" 
-Proto4z.CreateUserReq[1] = {name="userName", type="string" }  
+Proto4z.CreateUserReq[1] = {name="accountName", type="string" } --这个字段会被服务器填充.客户端可以不填写 
+Proto4z.CreateUserReq[2] = {name="userName", type="string" }  
  
 Proto4z.register(40004,"CreateUserResp") 
 Proto4z.CreateUserResp = {} --创角色请求返回 
@@ -38,7 +39,8 @@ Proto4z.register(40005,"AttachUserReq")
 Proto4z.AttachUserReq = {} --选角色请求 
 Proto4z.AttachUserReq.__protoID = 40005 
 Proto4z.AttachUserReq.__protoName = "AttachUserReq" 
-Proto4z.AttachUserReq[1] = {name="userID", type="ui64" }  
+Proto4z.AttachUserReq[1] = {name="accountName", type="string" } --这个字段会被服务器填充.客户端可以不填写 
+Proto4z.AttachUserReq[2] = {name="userID", type="ui64" }  
  
 Proto4z.register(40006,"AttachUserResp") 
 Proto4z.AttachUserResp = {} --选角色请求返回 

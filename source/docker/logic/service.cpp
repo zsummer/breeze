@@ -227,7 +227,14 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
 
 void Service::toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb)
 {
-    toService(serviceType, serviceID, OutOfBand(), block, len, cb);
+    OutOfBand oob;
+    if (getServiceType() == STUser)
+    {
+        oob.clientDockerID = getClientDockerID();
+        oob.clientSessionID = getClientSessionID();
+        oob.clientUserID = getServiceID();
+    }
+    toService(serviceType, serviceID, oob, block, len, cb);
 }
 
 
@@ -238,7 +245,14 @@ void Service::toService(ServiceType serviceType, const OutOfBand &oob, const cha
 
 void Service::toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb)
 {
-    toService(serviceType, InvalidServiceID, OutOfBand(), block, len, cb);
+    OutOfBand oob;
+    if (getServiceType() == STUser)
+    {
+        oob.clientDockerID = getClientDockerID();
+        oob.clientSessionID = getClientSessionID();
+        oob.clientUserID = getServiceID();
+    }
+    toService(serviceType, InvalidServiceID, oob, block, len, cb);
 }
 
 
@@ -298,9 +312,12 @@ void Service::toDocker(DockerID dockerID, const OutOfBand & oob, const char * bl
 void Service::toDocker(DockerID dockerID, const char * block, unsigned int len)
 {
     OutOfBand oob;
-    oob.clientDockerID = getClientDockerID();
-    oob.clientSessionID = getClientSessionID();
-    oob.clientUserID = getServiceID();
+    if (getServiceType() == STUser)
+    {
+        oob.clientDockerID = getClientDockerID();
+        oob.clientSessionID = getClientSessionID();
+        oob.clientUserID = getServiceID();
+    }
     toDocker(dockerID, oob, block, len);
 }
 

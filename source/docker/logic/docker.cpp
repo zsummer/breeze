@@ -1109,7 +1109,6 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     trace.oob.clientDockerID = ServerConfig::getRef().getDockerID();
     trace.oob.clientSessionID = session->getSessionID();
     trace.oob.clientUserID = trace.routing.fromServiceID;
-    trace.oob.clientAccount = session->getUserParamString(UPARAM_ACCOUNT);
     if (rs.getProtoID() == ClientAuthReq::getProtoID())
     {
         LOGD("ClientAuthReq sID=" << session->getSessionID() << ", block len=" << len);
@@ -1137,6 +1136,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         }
         CreateUserReq clientReq;
         rs >> clientReq;
+        clientReq.accountName = session->getUserParamString(UPARAM_ACCOUNT); //填充该字段. 
         trace.routing.toServiceType = STUserMgr;
         trace.routing.toServiceID = InvalidServiceID;
         toService(trace, clientReq);
@@ -1152,7 +1152,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         }
         AttachUserReq clientReq;
         rs >> clientReq;
-
+        clientReq.accountName = session->getUserParamString(UPARAM_ACCOUNT); //填充该字段. 
         trace.routing.toServiceType = STUserMgr;
         trace.routing.toServiceID = InvalidServiceID;
 

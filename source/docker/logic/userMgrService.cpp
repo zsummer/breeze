@@ -252,7 +252,7 @@ void UserMgrService::onCreateUserReq(const Tracing & trace, zsummer::proto4z::Re
     resp.previews.clear();
 
 
-    auto founder = _accountStatus.find(trace.oob.clientAccount);
+    auto founder = _accountStatus.find(req.accountName);
     if (founder == _accountStatus.end())
     {
         resp.retCode = EC_USER_NOT_FOUND;
@@ -280,7 +280,7 @@ void UserMgrService::onCreateUserReq(const Tracing & trace, zsummer::proto4z::Re
     }
     founder->second._lastCreateTime = getNowTime();
     UserBaseInfo userBaseInfo;
-    userBaseInfo.account = trace.oob.clientAccount;
+    userBaseInfo.account = req.accountName;
     userBaseInfo.userID = ++_nextUserID;
     userBaseInfo.userName = req.userName;
     userBaseInfo.level = 1;
@@ -327,7 +327,7 @@ void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::Re
     resp.retCode = EC_SUCCESS;
 
     auto founder = _userStatusByID.find(req.userID);
-    if (founder == _userStatusByID.end() || founder->second->_preview.account != trace.oob.clientAccount)
+    if (founder == _userStatusByID.end() || founder->second->_preview.account != req.accountName)
     {
         resp.retCode = EC_ERROR;
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);

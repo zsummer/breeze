@@ -24,6 +24,7 @@
     </packet>
 
     <packet name="CreateUserReq" desc= "创角色请求">
+        <member name="accountName" type="string"   desc="这个字段会被服务器填充.客户端可以不填写"/>
         <member name="userName" type="string"   desc=""/>
     </packet>
      <packet name="CreateUserResp" desc= "创角色请求返回">
@@ -33,6 +34,7 @@
     </packet>
 
     <packet name="AttachUserReq" desc= "选角色请求">
+        <member name="accountName" type="string"   desc="这个字段会被服务器填充.客户端可以不填写"/>
         <member name="userID" type="ui64"   desc=""/>
     </packet>
      <packet name="AttachUserResp" desc= "选角色请求返回">
