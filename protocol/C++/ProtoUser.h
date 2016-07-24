@@ -260,6 +260,232 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct GetSpaceInfoReq 
+{ 
+    static const unsigned short getProtoID() { return 40022;} 
+    static const std::string getProtoName() { return "GetSpaceInfoReq";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSpaceInfoReq & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetSpaceInfoReq & data) 
+{ 
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetSpaceInfoReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct GetSpaceInfoResp 
+{ 
+    static const unsigned short getProtoID() { return 40023;} 
+    static const std::string getProtoName() { return "GetSpaceInfoResp";} 
+    SpaceTokenInfo spaceInfo;  
+    GetSpaceInfoResp() 
+    { 
+    } 
+    GetSpaceInfoResp(const SpaceTokenInfo & spaceInfo) 
+    { 
+        this->spaceInfo = spaceInfo; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSpaceInfoResp & data) 
+{ 
+    ws << data.spaceInfo;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetSpaceInfoResp & data) 
+{ 
+    rs >> data.spaceInfo;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetSpaceInfoResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "spaceInfo=" << info.spaceInfo << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct JoinSpaceReq 
+{ 
+    static const unsigned short getProtoID() { return 40020;} 
+    static const std::string getProtoName() { return "JoinSpaceReq";} 
+    unsigned short spaceType;  
+    unsigned int mapID;  
+    JoinSpaceReq() 
+    { 
+        spaceType = 0; 
+        mapID = 0; 
+    } 
+    JoinSpaceReq(const unsigned short & spaceType, const unsigned int & mapID) 
+    { 
+        this->spaceType = spaceType; 
+        this->mapID = mapID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinSpaceReq & data) 
+{ 
+    ws << data.spaceType;  
+    ws << data.mapID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, JoinSpaceReq & data) 
+{ 
+    rs >> data.spaceType;  
+    rs >> data.mapID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const JoinSpaceReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "spaceType=" << info.spaceType << "\n"; 
+    stm << "mapID=" << info.mapID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct JoinSpaceResp 
+{ 
+    static const unsigned short getProtoID() { return 40021;} 
+    static const std::string getProtoName() { return "JoinSpaceResp";} 
+    unsigned short retCode;  
+    SpaceTokenInfo spaceInfo;  
+    JoinSpaceResp() 
+    { 
+        retCode = 0; 
+    } 
+    JoinSpaceResp(const unsigned short & retCode, const SpaceTokenInfo & spaceInfo) 
+    { 
+        this->retCode = retCode; 
+        this->spaceInfo = spaceInfo; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinSpaceResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.spaceInfo;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, JoinSpaceResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.spaceInfo;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const JoinSpaceResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "spaceInfo=" << info.spaceInfo << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct JoinSpaceNotice 
+{ 
+    static const unsigned short getProtoID() { return 40024;} 
+    static const std::string getProtoName() { return "JoinSpaceNotice";} 
+    SpaceTokenInfo spaceInfo;  
+    JoinSpaceNotice() 
+    { 
+    } 
+    JoinSpaceNotice(const SpaceTokenInfo & spaceInfo) 
+    { 
+        this->spaceInfo = spaceInfo; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const JoinSpaceNotice & data) 
+{ 
+    ws << data.spaceInfo;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, JoinSpaceNotice & data) 
+{ 
+    rs >> data.spaceInfo;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const JoinSpaceNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "spaceInfo=" << info.spaceInfo << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct LeaveSpaceReq 
+{ 
+    static const unsigned short getProtoID() { return 40025;} 
+    static const std::string getProtoName() { return "LeaveSpaceReq";} 
+    unsigned int spaceID;  
+    LeaveSpaceReq() 
+    { 
+        spaceID = 0; 
+    } 
+    LeaveSpaceReq(const unsigned int & spaceID) 
+    { 
+        this->spaceID = spaceID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LeaveSpaceReq & data) 
+{ 
+    ws << data.spaceID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LeaveSpaceReq & data) 
+{ 
+    rs >> data.spaceID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LeaveSpaceReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "spaceID=" << info.spaceID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct LeaveSpaceResp 
+{ 
+    static const unsigned short getProtoID() { return 40026;} 
+    static const std::string getProtoName() { return "LeaveSpaceResp";} 
+    unsigned short retCode;  
+    SpaceTokenInfo spaceInfo;  
+    LeaveSpaceResp() 
+    { 
+        retCode = 0; 
+    } 
+    LeaveSpaceResp(const unsigned short & retCode, const SpaceTokenInfo & spaceInfo) 
+    { 
+        this->retCode = retCode; 
+        this->spaceInfo = spaceInfo; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LeaveSpaceResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.spaceInfo;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LeaveSpaceResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.spaceInfo;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LeaveSpaceResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "spaceInfo=" << info.spaceInfo << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct UserChatReq 
 { 
     static const unsigned short getProtoID() { return 40007;} 

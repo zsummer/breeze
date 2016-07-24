@@ -283,7 +283,7 @@ void SpaceMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         }
         if (space->getSpaceStatus() == SPACE_STATUS_NONE)
         {
-            if (!space->loadSpace((SCENE_TYPE)fn.sceneType))
+            if (!space->loadSpace((SPACE_TYPE)fn.sceneType))
             {
                 LOGE("");
                 return;

@@ -45,6 +45,35 @@
 
  
 
+<!------------------------------------ battle --------------------------------------------->
+   <packet name="GetSpaceInfoReq" desc= "">
+    </packet>
+    <packet name="GetSpaceInfoResp" desc= "">
+        <member name="spaceInfo" type="SpaceTokenInfo"   desc=""/>
+    </packet>
+
+   <packet name="JoinSpaceReq" desc= "">
+        <member name="spaceType" type="ui16"   desc=""/>
+        <member name="mapID" type="ui32"   desc=""/>
+    </packet>
+    <packet name="JoinSpaceResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="spaceInfo" type="SpaceTokenInfo"   desc=""/>
+
+    </packet>
+    <packet name="JoinSpaceNotice" desc= "">
+        <member name="spaceInfo" type="SpaceTokenInfo"   desc=""/>
+    </packet>
+
+   <packet name="LeaveSpaceReq" desc= "">
+        <member name="spaceID" type="ui32"   desc=""/>
+    </packet>
+    <packet name="LeaveSpaceResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="spaceInfo" type="SpaceTokenInfo"   desc=""/>
+    </packet>
+
+
 <!------------------------------------ other --------------------------------------------->
 
    <packet name="UserChatReq" desc= "">

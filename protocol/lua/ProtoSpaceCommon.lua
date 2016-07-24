@@ -1,4 +1,35 @@
  
+Proto4z.SPACE_TYPE_NONE = 0--无效 
+Proto4z.SPACE_TYPE_HOME = 1--主城 
+Proto4z.SPACE_TYPE_SOME_INSTANCING = 2--一些副本 
+Proto4z.SPACE_TYPE_ARENA = 3--竞技场 
+Proto4z.SPACE_TYPE_GUILD = 4--公会 
+ 
+Proto4z.SPACE_STATUS_NONE = 0--不存在 
+Proto4z.SPACE_STATUS_MATCHING = 1--匹配中 
+Proto4z.SPACE_STATUS_CHOISE = 2--选择英雄 
+Proto4z.SPACE_STATUS_WAIT = 3--等待玩家加入战场 
+Proto4z.SPACE_STATUS_ACTIVE = 4--战斗中 
+Proto4z.SPACE_STATUS_LINGER = 5--战斗结束,数据驻留阶段 
+ 
+Proto4z.register(10019,"SpaceTokenInfo") 
+Proto4z.SpaceTokenInfo = {} --Token 
+Proto4z.SpaceTokenInfo.__protoID = 10019 
+Proto4z.SpaceTokenInfo.__protoName = "SpaceTokenInfo" 
+Proto4z.SpaceTokenInfo[1] = {name="spaceType", type="ui16" } --类型 
+Proto4z.SpaceTokenInfo[2] = {name="mapID", type="ui32" }  
+Proto4z.SpaceTokenInfo[3] = {name="spaceID", type="ui32" } --空间(场景,房间,战场,INSTANCING ID)的实例ID 
+Proto4z.SpaceTokenInfo[4] = {name="spaceStatus", type="ui16" } --状态 
+Proto4z.SpaceTokenInfo[5] = {name="host", type="string" } --服务器host 
+Proto4z.SpaceTokenInfo[6] = {name="port", type="ui16" } --服务器port 
+Proto4z.SpaceTokenInfo[7] = {name="token", type="string" } --令牌 
+Proto4z.SpaceTokenInfo[8] = {name="involeds", type="UserBaseInfoArray" } --匹配列表中的玩家 
+ 
+Proto4z.SpaceTokenInfoArray = {}  
+Proto4z.SpaceTokenInfoArray.__protoName = "SpaceTokenInfoArray" 
+Proto4z.SpaceTokenInfoArray.__protoDesc = "array" 
+Proto4z.SpaceTokenInfoArray.__protoTypeV = "SpaceTokenInfo" 
+ 
 Proto4z.EntityIDArray = {}  
 Proto4z.EntityIDArray.__protoName = "EntityIDArray" 
 Proto4z.EntityIDArray.__protoDesc = "array" 
@@ -25,55 +56,6 @@ Proto4z.BuffIDArray = {} --buff ID 数组
 Proto4z.BuffIDArray.__protoName = "BuffIDArray" 
 Proto4z.BuffIDArray.__protoDesc = "array" 
 Proto4z.BuffIDArray.__protoTypeV = "ui32" 
- 
-Proto4z.SCENE_TYPE_NONE = 0--无效 
-Proto4z.SCENE_TYPE_HOME = 1--主城 
-Proto4z.SCENE_TYPE_SOME_INSTANCING = 2--一些副本 
-Proto4z.SCENE_TYPE_ARENA = 3--竞技场 
-Proto4z.SCENE_TYPE_GUILD = 4--公会 
- 
-Proto4z.SCENE_STATUS_NONE = 0--不存在 
-Proto4z.SCENE_STATUS_MATCHING = 1--正在匹配 
-Proto4z.SCENE_STATUS_CHOISE = 2--匹配成功,选择英雄 
-Proto4z.SCENE_STATUS_WAITING = 3--匹配成功,等待玩家进入 
-Proto4z.SCENE_STATUS_INSTANCING = 4--场景中 
- 
-Proto4z.register(10000,"SceneInfo") 
-Proto4z.SceneInfo = {} --场景信息 
-Proto4z.SceneInfo.__protoID = 10000 
-Proto4z.SceneInfo.__protoName = "SceneInfo" 
-Proto4z.SceneInfo[1] = {name="sceneType", type="ui16" } --类型 
-Proto4z.SceneInfo[2] = {name="spaceStatus", type="ui16" } --状态 
-Proto4z.SceneInfo[3] = {name="host", type="string" } --服务器host 
-Proto4z.SceneInfo[4] = {name="port", type="ui16" } --服务器port 
-Proto4z.SceneInfo[5] = {name="spaceID", type="ui32" } --空间(场景,房间,战场,INSTANCING ID)的实例ID 
-Proto4z.SceneInfo[6] = {name="token", type="string" } --令牌 
-Proto4z.SceneInfo[7] = {name="isActive", type="ui8" } --当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况 
-Proto4z.SceneInfo[8] = {name="involeds", type="UserBaseInfoArray" } --匹配列表中的玩家 
- 
-Proto4z.SceneInfoArray = {}  
-Proto4z.SceneInfoArray.__protoName = "SceneInfoArray" 
-Proto4z.SceneInfoArray.__protoDesc = "array" 
-Proto4z.SceneInfoArray.__protoTypeV = "SceneInfo" 
- 
-Proto4z.SPACE_STATUS_NONE = 0--不存在 
-Proto4z.SPACE_STATUS_WAIT = 1--等待 
-Proto4z.SCENE_STATUS_ACTIVE = 2--活跃 
-Proto4z.SCENE_STATUS_LINGER = 3--驻留 
- 
-Proto4z.register(10017,"SpaceInfo") 
-Proto4z.SpaceInfo = {} --空间信息 
-Proto4z.SpaceInfo.__protoID = 10017 
-Proto4z.SpaceInfo.__protoName = "SpaceInfo" 
-Proto4z.SpaceInfo[1] = {name="spaceID", type="ui32" }  
-Proto4z.SpaceInfo[2] = {name="sceneType", type="ui16" } --类型 
-Proto4z.SpaceInfo[3] = {name="spaceStatus", type="ui16" } --状态 
-Proto4z.SpaceInfo[4] = {name="users", type="ui32" } --目前负载 
- 
-Proto4z.SpaceInfoArray = {}  
-Proto4z.SpaceInfoArray.__protoName = "SpaceInfoArray" 
-Proto4z.SpaceInfoArray.__protoDesc = "array" 
-Proto4z.SpaceInfoArray.__protoTypeV = "SpaceInfo" 
  
 Proto4z.ESTATE_NONE = 0--无效 
 Proto4z.ESTATE_FREEZING = 1--冻结, 不可被攻击,不可主动移动,攻击等 

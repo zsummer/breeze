@@ -246,6 +246,224 @@ namespace Proto4z
         } 
     } 
  
+    public class GetSpaceInfoReq: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40022;  
+        static public ushort getProtoID() { return 40022; } 
+        static public string getProtoName() { return "GetSpaceInfoReq"; } 
+        //members   
+        public GetSpaceInfoReq()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class GetSpaceInfoResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40023;  
+        static public ushort getProtoID() { return 40023; } 
+        static public string getProtoName() { return "GetSpaceInfoResp"; } 
+        //members   
+        public SpaceTokenInfo spaceInfo;  
+        public GetSpaceInfoResp()  
+        { 
+            spaceInfo = new SpaceTokenInfo();  
+        } 
+        public GetSpaceInfoResp(SpaceTokenInfo spaceInfo) 
+        { 
+            this.spaceInfo = spaceInfo; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            if (this.spaceInfo == null) this.spaceInfo = new SpaceTokenInfo(); 
+            data.AddRange(this.spaceInfo.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.spaceInfo = new SpaceTokenInfo(); 
+            this.spaceInfo.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class JoinSpaceReq: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40020;  
+        static public ushort getProtoID() { return 40020; } 
+        static public string getProtoName() { return "JoinSpaceReq"; } 
+        //members   
+        public ushort spaceType;  
+        public uint mapID;  
+        public JoinSpaceReq()  
+        { 
+            spaceType = 0;  
+            mapID = 0;  
+        } 
+        public JoinSpaceReq(ushort spaceType, uint mapID) 
+        { 
+            this.spaceType = spaceType; 
+            this.mapID = mapID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.spaceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.mapID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.spaceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.mapID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class JoinSpaceResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40021;  
+        static public ushort getProtoID() { return 40021; } 
+        static public string getProtoName() { return "JoinSpaceResp"; } 
+        //members   
+        public ushort retCode;  
+        public SpaceTokenInfo spaceInfo;  
+        public JoinSpaceResp()  
+        { 
+            retCode = 0;  
+            spaceInfo = new SpaceTokenInfo();  
+        } 
+        public JoinSpaceResp(ushort retCode, SpaceTokenInfo spaceInfo) 
+        { 
+            this.retCode = retCode; 
+            this.spaceInfo = spaceInfo; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.spaceInfo == null) this.spaceInfo = new SpaceTokenInfo(); 
+            data.AddRange(this.spaceInfo.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.spaceInfo = new SpaceTokenInfo(); 
+            this.spaceInfo.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class JoinSpaceNotice: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40024;  
+        static public ushort getProtoID() { return 40024; } 
+        static public string getProtoName() { return "JoinSpaceNotice"; } 
+        //members   
+        public SpaceTokenInfo spaceInfo;  
+        public JoinSpaceNotice()  
+        { 
+            spaceInfo = new SpaceTokenInfo();  
+        } 
+        public JoinSpaceNotice(SpaceTokenInfo spaceInfo) 
+        { 
+            this.spaceInfo = spaceInfo; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            if (this.spaceInfo == null) this.spaceInfo = new SpaceTokenInfo(); 
+            data.AddRange(this.spaceInfo.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.spaceInfo = new SpaceTokenInfo(); 
+            this.spaceInfo.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class LeaveSpaceReq: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40025;  
+        static public ushort getProtoID() { return 40025; } 
+        static public string getProtoName() { return "LeaveSpaceReq"; } 
+        //members   
+        public uint spaceID;  
+        public LeaveSpaceReq()  
+        { 
+            spaceID = 0;  
+        } 
+        public LeaveSpaceReq(uint spaceID) 
+        { 
+            this.spaceID = spaceID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class LeaveSpaceResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40026;  
+        static public ushort getProtoID() { return 40026; } 
+        static public string getProtoName() { return "LeaveSpaceResp"; } 
+        //members   
+        public ushort retCode;  
+        public SpaceTokenInfo spaceInfo;  
+        public LeaveSpaceResp()  
+        { 
+            retCode = 0;  
+            spaceInfo = new SpaceTokenInfo();  
+        } 
+        public LeaveSpaceResp(ushort retCode, SpaceTokenInfo spaceInfo) 
+        { 
+            this.retCode = retCode; 
+            this.spaceInfo = spaceInfo; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            if (this.spaceInfo == null) this.spaceInfo = new SpaceTokenInfo(); 
+            data.AddRange(this.spaceInfo.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.spaceInfo = new SpaceTokenInfo(); 
+            this.spaceInfo.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class UserChatReq: Proto4z.IProtoObject 
     {     
         //proto id   

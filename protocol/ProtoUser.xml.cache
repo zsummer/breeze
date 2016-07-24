@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>62281c2e55c0c3f812954ca9c930c198</cppmd5> 
-<luamd5>04d3aa1d3653234d46b57d43107caf23</luamd5> 
-<csharpmd5>8f97730eff578b8775b133d9738c5790</csharpmd5> 
-<xmlmd5>812ba4f025a4374d724288590680096d</xmlmd5> 
+<cppmd5>ee75fa0dced90ad8f078b3e21a06c4ce</cppmd5> 
+<luamd5>76ed74b02727c6044762fb4ee39cf7e3</luamd5> 
+<csharpmd5>0e76988d9386f77fb1493376744ab046</csharpmd5> 
+<xmlmd5>eae5493b0f16d1bc816447748424ec0b</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_AttachUserReq" Number = "40005" /> 
     <cache key = "ID_AttachUserResp" Number = "40006" /> 
@@ -12,8 +12,15 @@
     <cache key = "ID_ClientPulse" Number = "40000" /> 
     <cache key = "ID_CreateUserReq" Number = "40003" /> 
     <cache key = "ID_CreateUserResp" Number = "40004" /> 
+    <cache key = "ID_GetSpaceInfoReq" Number = "40022" /> 
+    <cache key = "ID_GetSpaceInfoResp" Number = "40023" /> 
+    <cache key = "ID_JoinSpaceNotice" Number = "40024" /> 
+    <cache key = "ID_JoinSpaceReq" Number = "40020" /> 
+    <cache key = "ID_JoinSpaceResp" Number = "40021" /> 
     <cache key = "ID_LeaveSceneAck" Number = "40017" /> 
     <cache key = "ID_LeaveSceneReq" Number = "40016" /> 
+    <cache key = "ID_LeaveSpaceReq" Number = "40025" /> 
+    <cache key = "ID_LeaveSpaceResp" Number = "40026" /> 
     <cache key = "ID_QuitSceneAck" Number = "40019" /> 
     <cache key = "ID_QuitSceneReq" Number = "40018" /> 
     <cache key = "ID_SceneInfoAck" Number = "40012" /> 

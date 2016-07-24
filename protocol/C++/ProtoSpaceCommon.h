@@ -3,6 +3,99 @@
 #define _PROTOSPACECOMMON_H_ 
  
  
+enum SPACE_TYPE : unsigned short 
+{ 
+    SPACE_TYPE_NONE = 0, //无效  
+    SPACE_TYPE_HOME = 1, //主城  
+    SPACE_TYPE_SOME_INSTANCING = 2, //一些副本  
+    SPACE_TYPE_ARENA = 3, //竞技场  
+    SPACE_TYPE_GUILD = 4, //公会  
+}; 
+ 
+enum SPACE_STATUS : unsigned short 
+{ 
+    SPACE_STATUS_NONE = 0, //不存在  
+    SPACE_STATUS_MATCHING = 1, //匹配中  
+    SPACE_STATUS_CHOISE = 2, //选择英雄  
+    SPACE_STATUS_WAIT = 3, //等待玩家加入战场  
+    SPACE_STATUS_ACTIVE = 4, //战斗中  
+    SPACE_STATUS_LINGER = 5, //战斗结束,数据驻留阶段  
+}; 
+ 
+struct SpaceTokenInfo //Token  
+{ 
+    static const unsigned short getProtoID() { return 10019;} 
+    static const std::string getProtoName() { return "SpaceTokenInfo";} 
+    unsigned short spaceType; //类型  
+    unsigned int mapID;  
+    unsigned int spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
+    unsigned short spaceStatus; //状态  
+    std::string host; //服务器host  
+    unsigned short port; //服务器port  
+    std::string token; //令牌  
+    UserBaseInfoArray involeds; //匹配列表中的玩家  
+    SpaceTokenInfo() 
+    { 
+        spaceType = 0; 
+        mapID = 0; 
+        spaceID = 0; 
+        spaceStatus = 0; 
+        port = 0; 
+    } 
+    SpaceTokenInfo(const unsigned short & spaceType, const unsigned int & mapID, const unsigned int & spaceID, const unsigned short & spaceStatus, const std::string & host, const unsigned short & port, const std::string & token, const UserBaseInfoArray & involeds) 
+    { 
+        this->spaceType = spaceType; 
+        this->mapID = mapID; 
+        this->spaceID = spaceID; 
+        this->spaceStatus = spaceStatus; 
+        this->host = host; 
+        this->port = port; 
+        this->token = token; 
+        this->involeds = involeds; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SpaceTokenInfo & data) 
+{ 
+    ws << data.spaceType;  
+    ws << data.mapID;  
+    ws << data.spaceID;  
+    ws << data.spaceStatus;  
+    ws << data.host;  
+    ws << data.port;  
+    ws << data.token;  
+    ws << data.involeds;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SpaceTokenInfo & data) 
+{ 
+    rs >> data.spaceType;  
+    rs >> data.mapID;  
+    rs >> data.spaceID;  
+    rs >> data.spaceStatus;  
+    rs >> data.host;  
+    rs >> data.port;  
+    rs >> data.token;  
+    rs >> data.involeds;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SpaceTokenInfo & info) 
+{ 
+    stm << "[\n"; 
+    stm << "spaceType=" << info.spaceType << "\n"; 
+    stm << "mapID=" << info.mapID << "\n"; 
+    stm << "spaceID=" << info.spaceID << "\n"; 
+    stm << "spaceStatus=" << info.spaceStatus << "\n"; 
+    stm << "host=" << info.host << "\n"; 
+    stm << "port=" << info.port << "\n"; 
+    stm << "token=" << info.token << "\n"; 
+    stm << "involeds=" << info.involeds << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<SpaceTokenInfo> SpaceTokenInfoArray;  
+ 
  
 typedef std::vector<unsigned int> EntityIDArray;  
  
@@ -52,159 +145,6 @@ typedef std::vector<unsigned int> SkillIDArray; //技能ID数组
  
  
 typedef std::vector<unsigned int> BuffIDArray; //buff ID 数组  
- 
-enum SCENE_TYPE : unsigned short 
-{ 
-    SCENE_TYPE_NONE = 0, //无效  
-    SCENE_TYPE_HOME = 1, //主城  
-    SCENE_TYPE_SOME_INSTANCING = 2, //一些副本  
-    SCENE_TYPE_ARENA = 3, //竞技场  
-    SCENE_TYPE_GUILD = 4, //公会  
-}; 
- 
-enum SCENE_STATUS : unsigned short 
-{ 
-    SCENE_STATUS_NONE = 0, //不存在  
-    SCENE_STATUS_MATCHING = 1, //正在匹配  
-    SCENE_STATUS_CHOISE = 2, //匹配成功,选择英雄  
-    SCENE_STATUS_WAITING = 3, //匹配成功,等待玩家进入  
-    SCENE_STATUS_INSTANCING = 4, //场景中  
-}; 
- 
-struct SceneInfo //场景信息  
-{ 
-    static const unsigned short getProtoID() { return 10000;} 
-    static const std::string getProtoName() { return "SceneInfo";} 
-    unsigned short sceneType; //类型  
-    unsigned short spaceStatus; //状态  
-    std::string host; //服务器host  
-    unsigned short port; //服务器port  
-    unsigned int spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
-    std::string token; //令牌  
-    unsigned char isActive; //当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况  
-    UserBaseInfoArray involeds; //匹配列表中的玩家  
-    SceneInfo() 
-    { 
-        sceneType = 0; 
-        spaceStatus = 0; 
-        port = 0; 
-        spaceID = 0; 
-        isActive = 0; 
-    } 
-    SceneInfo(const unsigned short & sceneType, const unsigned short & spaceStatus, const std::string & host, const unsigned short & port, const unsigned int & spaceID, const std::string & token, const unsigned char & isActive, const UserBaseInfoArray & involeds) 
-    { 
-        this->sceneType = sceneType; 
-        this->spaceStatus = spaceStatus; 
-        this->host = host; 
-        this->port = port; 
-        this->spaceID = spaceID; 
-        this->token = token; 
-        this->isActive = isActive; 
-        this->involeds = involeds; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneInfo & data) 
-{ 
-    ws << data.sceneType;  
-    ws << data.spaceStatus;  
-    ws << data.host;  
-    ws << data.port;  
-    ws << data.spaceID;  
-    ws << data.token;  
-    ws << data.isActive;  
-    ws << data.involeds;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneInfo & data) 
-{ 
-    rs >> data.sceneType;  
-    rs >> data.spaceStatus;  
-    rs >> data.host;  
-    rs >> data.port;  
-    rs >> data.spaceID;  
-    rs >> data.token;  
-    rs >> data.isActive;  
-    rs >> data.involeds;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneInfo & info) 
-{ 
-    stm << "[\n"; 
-    stm << "sceneType=" << info.sceneType << "\n"; 
-    stm << "spaceStatus=" << info.spaceStatus << "\n"; 
-    stm << "host=" << info.host << "\n"; 
-    stm << "port=" << info.port << "\n"; 
-    stm << "spaceID=" << info.spaceID << "\n"; 
-    stm << "token=" << info.token << "\n"; 
-    stm << "isActive=" << info.isActive << "\n"; 
-    stm << "involeds=" << info.involeds << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<SceneInfo> SceneInfoArray;  
- 
-enum SPACE_STATUS : unsigned short 
-{ 
-    SPACE_STATUS_NONE = 0, //不存在  
-    SPACE_STATUS_WAIT = 1, //等待  
-    SCENE_STATUS_ACTIVE = 2, //活跃  
-    SCENE_STATUS_LINGER = 3, //驻留  
-}; 
- 
-struct SpaceInfo //空间信息  
-{ 
-    static const unsigned short getProtoID() { return 10017;} 
-    static const std::string getProtoName() { return "SpaceInfo";} 
-    unsigned int spaceID;  
-    unsigned short sceneType; //类型  
-    unsigned short spaceStatus; //状态  
-    unsigned int users; //目前负载  
-    SpaceInfo() 
-    { 
-        spaceID = 0; 
-        sceneType = 0; 
-        spaceStatus = 0; 
-        users = 0; 
-    } 
-    SpaceInfo(const unsigned int & spaceID, const unsigned short & sceneType, const unsigned short & spaceStatus, const unsigned int & users) 
-    { 
-        this->spaceID = spaceID; 
-        this->sceneType = sceneType; 
-        this->spaceStatus = spaceStatus; 
-        this->users = users; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SpaceInfo & data) 
-{ 
-    ws << data.spaceID;  
-    ws << data.sceneType;  
-    ws << data.spaceStatus;  
-    ws << data.users;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SpaceInfo & data) 
-{ 
-    rs >> data.spaceID;  
-    rs >> data.sceneType;  
-    rs >> data.spaceStatus;  
-    rs >> data.users;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SpaceInfo & info) 
-{ 
-    stm << "[\n"; 
-    stm << "spaceID=" << info.spaceID << "\n"; 
-    stm << "sceneType=" << info.sceneType << "\n"; 
-    stm << "spaceStatus=" << info.spaceStatus << "\n"; 
-    stm << "users=" << info.users << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<SpaceInfo> SpaceInfoArray;  
  
 enum ENTITY_STATE : unsigned short 
 { 

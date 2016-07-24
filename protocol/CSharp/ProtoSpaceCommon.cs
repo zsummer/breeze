@@ -2,6 +2,122 @@
 namespace Proto4z  
 { 
  
+    public enum SPACE_TYPE : ushort 
+    { 
+        SPACE_TYPE_NONE = 0, //无效  
+        SPACE_TYPE_HOME = 1, //主城  
+        SPACE_TYPE_SOME_INSTANCING = 2, //一些副本  
+        SPACE_TYPE_ARENA = 3, //竞技场  
+        SPACE_TYPE_GUILD = 4, //公会  
+    }; 
+ 
+    public enum SPACE_STATUS : ushort 
+    { 
+        SPACE_STATUS_NONE = 0, //不存在  
+        SPACE_STATUS_MATCHING = 1, //匹配中  
+        SPACE_STATUS_CHOISE = 2, //选择英雄  
+        SPACE_STATUS_WAIT = 3, //等待玩家加入战场  
+        SPACE_STATUS_ACTIVE = 4, //战斗中  
+        SPACE_STATUS_LINGER = 5, //战斗结束,数据驻留阶段  
+    }; 
+ 
+    public class SpaceTokenInfo: Proto4z.IProtoObject //Token  
+    {     
+        //proto id   
+        public const ushort protoID = 10019;  
+        static public ushort getProtoID() { return 10019; } 
+        static public string getProtoName() { return "SpaceTokenInfo"; } 
+        //members   
+        public ushort spaceType; //类型  
+        public uint mapID;  
+        public uint spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
+        public ushort spaceStatus; //状态  
+        public string host; //服务器host  
+        public ushort port; //服务器port  
+        public string token; //令牌  
+        public UserBaseInfoArray involeds; //匹配列表中的玩家  
+        public SpaceTokenInfo()  
+        { 
+            spaceType = 0;  
+            mapID = 0;  
+            spaceID = 0;  
+            spaceStatus = 0;  
+            host = "";  
+            port = 0;  
+            token = "";  
+            involeds = new UserBaseInfoArray();  
+        } 
+        public SpaceTokenInfo(ushort spaceType, uint mapID, uint spaceID, ushort spaceStatus, string host, ushort port, string token, UserBaseInfoArray involeds) 
+        { 
+            this.spaceType = spaceType; 
+            this.mapID = mapID; 
+            this.spaceID = spaceID; 
+            this.spaceStatus = spaceStatus; 
+            this.host = host; 
+            this.port = port; 
+            this.token = token; 
+            this.involeds = involeds; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.spaceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.mapID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.spaceStatus)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
+            if (this.involeds == null) this.involeds = new UserBaseInfoArray(); 
+            data.AddRange(this.involeds.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.spaceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.mapID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.spaceStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.involeds = new UserBaseInfoArray(); 
+            this.involeds.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class SpaceTokenInfoArray : System.Collections.Generic.List<SpaceTokenInfo>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new SpaceTokenInfo(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
  
     public class EntityIDArray : System.Collections.Generic.List<uint>, Proto4z.IProtoObject  
     { 
@@ -148,204 +264,6 @@ namespace Proto4z
                 for (int i=0; i<len; i++) 
                 { 
                     this.Add(Proto4z.BaseProtoObject.decodeUI32(binData, ref pos)); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
-    public enum SCENE_TYPE : ushort 
-    { 
-        SCENE_TYPE_NONE = 0, //无效  
-        SCENE_TYPE_HOME = 1, //主城  
-        SCENE_TYPE_SOME_INSTANCING = 2, //一些副本  
-        SCENE_TYPE_ARENA = 3, //竞技场  
-        SCENE_TYPE_GUILD = 4, //公会  
-    }; 
- 
-    public enum SCENE_STATUS : ushort 
-    { 
-        SCENE_STATUS_NONE = 0, //不存在  
-        SCENE_STATUS_MATCHING = 1, //正在匹配  
-        SCENE_STATUS_CHOISE = 2, //匹配成功,选择英雄  
-        SCENE_STATUS_WAITING = 3, //匹配成功,等待玩家进入  
-        SCENE_STATUS_INSTANCING = 4, //场景中  
-    }; 
- 
-    public class SceneInfo: Proto4z.IProtoObject //场景信息  
-    {     
-        //proto id   
-        public const ushort protoID = 10000;  
-        static public ushort getProtoID() { return 10000; } 
-        static public string getProtoName() { return "SceneInfo"; } 
-        //members   
-        public ushort sceneType; //类型  
-        public ushort spaceStatus; //状态  
-        public string host; //服务器host  
-        public ushort port; //服务器port  
-        public uint spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
-        public string token; //令牌  
-        public byte isActive; //当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况  
-        public UserBaseInfoArray involeds; //匹配列表中的玩家  
-        public SceneInfo()  
-        { 
-            sceneType = 0;  
-            spaceStatus = 0;  
-            host = "";  
-            port = 0;  
-            spaceID = 0;  
-            token = "";  
-            isActive = 0;  
-            involeds = new UserBaseInfoArray();  
-        } 
-        public SceneInfo(ushort sceneType, ushort spaceStatus, string host, ushort port, uint spaceID, string token, byte isActive, UserBaseInfoArray involeds) 
-        { 
-            this.sceneType = sceneType; 
-            this.spaceStatus = spaceStatus; 
-            this.host = host; 
-            this.port = port; 
-            this.spaceID = spaceID; 
-            this.token = token; 
-            this.isActive = isActive; 
-            this.involeds = involeds; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.spaceStatus)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI8(this.isActive)); 
-            if (this.involeds == null) this.involeds = new UserBaseInfoArray(); 
-            data.AddRange(this.involeds.__encode()); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.spaceStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.isActive = Proto4z.BaseProtoObject.decodeUI8(binData, ref pos); 
-            this.involeds = new UserBaseInfoArray(); 
-            this.involeds.__decode(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class SceneInfoArray : System.Collections.Generic.List<SceneInfo>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            for (int i = 0; i < this.Count; i++ ) 
-            { 
-                ret.AddRange(this[i].__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var data = new SceneInfo(); 
-                    data.__decode(binData, ref pos); 
-                    this.Add(data); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
-    public enum SPACE_STATUS : ushort 
-    { 
-        SPACE_STATUS_NONE = 0, //不存在  
-        SPACE_STATUS_WAIT = 1, //等待  
-        SCENE_STATUS_ACTIVE = 2, //活跃  
-        SCENE_STATUS_LINGER = 3, //驻留  
-    }; 
- 
-    public class SpaceInfo: Proto4z.IProtoObject //空间信息  
-    {     
-        //proto id   
-        public const ushort protoID = 10017;  
-        static public ushort getProtoID() { return 10017; } 
-        static public string getProtoName() { return "SpaceInfo"; } 
-        //members   
-        public uint spaceID;  
-        public ushort sceneType; //类型  
-        public ushort spaceStatus; //状态  
-        public uint users; //目前负载  
-        public SpaceInfo()  
-        { 
-            spaceID = 0;  
-            sceneType = 0;  
-            spaceStatus = 0;  
-            users = 0;  
-        } 
-        public SpaceInfo(uint spaceID, ushort sceneType, ushort spaceStatus, uint users) 
-        { 
-            this.spaceID = spaceID; 
-            this.sceneType = sceneType; 
-            this.spaceStatus = spaceStatus; 
-            this.users = users; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.spaceStatus)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.users)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.spaceStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.users = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class SpaceInfoArray : System.Collections.Generic.List<SpaceInfo>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            for (int i = 0; i < this.Count; i++ ) 
-            { 
-                ret.AddRange(this[i].__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var data = new SpaceInfo(); 
-                    data.__decode(binData, ref pos); 
-                    this.Add(data); 
                 } 
             } 
             return pos; 

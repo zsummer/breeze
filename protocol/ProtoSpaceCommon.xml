@@ -12,7 +12,45 @@
     <!-- 概述  所有数据除非必要, 一律使用双精度浮点.  概率用浮点表达为[0.0-1.0], 时间用浮点表达单位为秒,精确到毫秒 -->
 
 
-    <!--  -->
+   
+     <!-- space类型 -->
+    <enum type="ui16" name="SPACE_TYPE" desc="space类型" >
+        <member name="SPACE_TYPE_NONE" value="0"   desc="无效"/>
+        <member name="SPACE_TYPE_HOME"   desc="主城"/>
+        <member name="SPACE_TYPE_SOME_INSTANCING"  desc="一些副本"/>
+        <member name="SPACE_TYPE_ARENA" desc="竞技场"/>
+        <member name="SPACE_TYPE_GUILD" desc="公会"/>
+    </enum>
+
+    <!-- space状态 -->
+    <enum type="ui16" name="SPACE_STATUS" desc="space状态">
+        <member name="SPACE_STATUS_NONE" value="0" desc="不存在" />
+        <member name="SPACE_STATUS_MATCHING"  desc="匹配中" />
+        <member name="SPACE_STATUS_CHOISE" desc="选择英雄" />
+        <member name="SPACE_STATUS_WAIT"  desc="等待玩家加入战场" />
+        <member name="SPACE_STATUS_ACTIVE" desc="战斗中" />
+        <member name="SPACE_STATUS_LINGER" desc="战斗结束,数据驻留阶段" />
+    </enum>
+
+
+
+    <!-- Token-->
+    <struct name="SpaceTokenInfo" desc="Token">
+        <member name="spaceType" type="ui16"  desc="类型"/>
+        <member name="mapID" type="ui32"  desc=""/>
+        <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场,INSTANCING ID)的实例ID"/>
+        <member name="spaceStatus" type="ui16"  desc="状态"/>
+        <member name="host" type="string"  desc="服务器host"/>
+        <member name="port" type="ui16"  desc="服务器port"/>
+        <member name="token" type="string"  desc="令牌"/>
+        <member name="involeds" type="UserBaseInfoArray"  desc="匹配列表中的玩家"/>
+    </struct>
+    <array name="SpaceTokenInfoArray" type="SpaceTokenInfo" desc="" />
+
+
+
+    <!------------------------------------------  实体 ------------------------------------------------------------------>
+    <!-- 基础ID  -->
     <array name="EntityIDArray" type="ui32" desc="" />
     <struct name="EPoint" desc="" >
         <member name="x" type="double" />
@@ -24,57 +62,6 @@
     <array name="BuffIDArray" type="ui32" desc="buff ID 数组" />
 
 
-     <!-- 场景类型 -->
-    <enum type="ui16" name="SCENE_TYPE" desc="场景类型, 每个space都绑定一个场景类型" >
-        <member name="SCENE_TYPE_NONE" value="0"   desc="无效"/>
-        <member name="SCENE_TYPE_HOME"   desc="主城"/>
-        <member name="SCENE_TYPE_SOME_INSTANCING"  desc="一些副本"/>
-        <member name="SCENE_TYPE_ARENA" desc="竞技场"/>
-        <member name="SCENE_TYPE_GUILD" desc="公会"/>
-    </enum>
-
-
-    <!-- 场景状态枚举-->
-    <enum type="ui16" name="SCENE_STATUS" desc="场景状态, 是否在某个场景中">
-        <member name="SCENE_STATUS_NONE" value="0" desc="不存在" />
-        <member name="SCENE_STATUS_MATCHING" desc="正在匹配" />
-        <member name="SCENE_STATUS_CHOISE" desc="匹配成功,选择英雄" />
-        <member name="SCENE_STATUS_WAITING" desc="匹配成功,等待玩家进入" />
-        <member name="SCENE_STATUS_INSTANCING" desc="场景中" />
-    </enum>
-
-    <!-- 场景信息-->
-    <struct name="SceneInfo" desc="场景信息">
-        <member name="sceneType" type="ui16"  desc="类型"/>
-        <member name="spaceStatus" type="ui16"  desc="状态"/>
-        <member name="host" type="string"  desc="服务器host"/>
-        <member name="port" type="ui16"  desc="服务器port"/>
-        <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场,INSTANCING ID)的实例ID"/>
-        <member name="token" type="string"  desc="令牌"/>
-        <member name="isActive" type="ui8"  desc="当前活跃场景, 用于场景切换过渡,或者同时多个场景存在的情况"/>
-        <member name="involeds" type="UserBaseInfoArray"  desc="匹配列表中的玩家"/>
-    </struct>
-    <array name="SceneInfoArray" type="SceneInfo" desc="" />
-
-
-    <!-- space状态 -->
-    <enum type="ui16" name="SPACE_STATUS" desc="场景状态, 是否在某个场景中">
-        <member name="SPACE_STATUS_NONE" value="0" desc="不存在" />
-        <member name="SPACE_STATUS_WAIT"  desc="等待" />
-        <member name="SCENE_STATUS_ACTIVE" desc="活跃" />
-        <member name="SCENE_STATUS_LINGER" desc="驻留" />
-    </enum>
-
-    <!-- space信息-->
-    <struct name="SpaceInfo" desc="空间信息">
-        <member name="spaceID" type="ui32"  desc=""/>
-        <member name="sceneType" type="ui16"  desc="类型"/>
-        <member name="spaceStatus" type="ui16"  desc="状态"/>
-        <member name="users" type="ui32"  desc="目前负载"/>
-    </struct>
-    <array name="SpaceInfoArray" type="SpaceInfo" desc="" />
-
-    <!------------------------------------------  实体 ------------------------------------------------------------------>
     <!-- 实体状态-->
     <enum type="ui16" name="ENTITY_STATE" desc="">
         <member name="ESTATE_NONE" desc="无效" />

@@ -25,7 +25,7 @@ class Space
 {
     //space数据
 private:
-    SCENE_TYPE _sceneType;
+    SPACE_TYPE _sceneType;
     SPACE_STATUS _spaceStatus;
     double _lastStatusChangeTime;
     double _startTime;
@@ -37,14 +37,14 @@ private:
     std::map<ServiceID, EntityPtr> _users;
 public:
     inline SpaceID getSpaceID() { return _spaceID; }
-    inline SCENE_TYPE getSceneType() { return _sceneType; }
+    inline SPACE_TYPE getSceneType() { return _sceneType; }
     inline SPACE_STATUS getSpaceStatus() { return _spaceStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
     inline size_t getUsersCount() { return _users.size(); }
 public:
     Space(SpaceID id);
     bool cleanSpace();
-    bool loadSpace(SCENE_TYPE sceneType);
+    bool loadSpace(SPACE_TYPE sceneType);
     bool onUpdate();
 
     void fillUserProp(const FillUserToSpaceReq& req);

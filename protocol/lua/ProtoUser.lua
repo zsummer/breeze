@@ -49,6 +49,50 @@ Proto4z.AttachUserResp.__protoName = "AttachUserResp"
 Proto4z.AttachUserResp[1] = {name="retCode", type="ui16" }  
 Proto4z.AttachUserResp[2] = {name="userID", type="ui64" }  
  
+Proto4z.register(40022,"GetSpaceInfoReq") 
+Proto4z.GetSpaceInfoReq = {}  
+Proto4z.GetSpaceInfoReq.__protoID = 40022 
+Proto4z.GetSpaceInfoReq.__protoName = "GetSpaceInfoReq" 
+ 
+Proto4z.register(40023,"GetSpaceInfoResp") 
+Proto4z.GetSpaceInfoResp = {}  
+Proto4z.GetSpaceInfoResp.__protoID = 40023 
+Proto4z.GetSpaceInfoResp.__protoName = "GetSpaceInfoResp" 
+Proto4z.GetSpaceInfoResp[1] = {name="spaceInfo", type="SpaceTokenInfo" }  
+ 
+Proto4z.register(40020,"JoinSpaceReq") 
+Proto4z.JoinSpaceReq = {}  
+Proto4z.JoinSpaceReq.__protoID = 40020 
+Proto4z.JoinSpaceReq.__protoName = "JoinSpaceReq" 
+Proto4z.JoinSpaceReq[1] = {name="spaceType", type="ui16" }  
+Proto4z.JoinSpaceReq[2] = {name="mapID", type="ui32" }  
+ 
+Proto4z.register(40021,"JoinSpaceResp") 
+Proto4z.JoinSpaceResp = {}  
+Proto4z.JoinSpaceResp.__protoID = 40021 
+Proto4z.JoinSpaceResp.__protoName = "JoinSpaceResp" 
+Proto4z.JoinSpaceResp[1] = {name="retCode", type="ui16" }  
+Proto4z.JoinSpaceResp[2] = {name="spaceInfo", type="SpaceTokenInfo" }  
+ 
+Proto4z.register(40024,"JoinSpaceNotice") 
+Proto4z.JoinSpaceNotice = {}  
+Proto4z.JoinSpaceNotice.__protoID = 40024 
+Proto4z.JoinSpaceNotice.__protoName = "JoinSpaceNotice" 
+Proto4z.JoinSpaceNotice[1] = {name="spaceInfo", type="SpaceTokenInfo" }  
+ 
+Proto4z.register(40025,"LeaveSpaceReq") 
+Proto4z.LeaveSpaceReq = {}  
+Proto4z.LeaveSpaceReq.__protoID = 40025 
+Proto4z.LeaveSpaceReq.__protoName = "LeaveSpaceReq" 
+Proto4z.LeaveSpaceReq[1] = {name="spaceID", type="ui32" }  
+ 
+Proto4z.register(40026,"LeaveSpaceResp") 
+Proto4z.LeaveSpaceResp = {}  
+Proto4z.LeaveSpaceResp.__protoID = 40026 
+Proto4z.LeaveSpaceResp.__protoName = "LeaveSpaceResp" 
+Proto4z.LeaveSpaceResp[1] = {name="retCode", type="ui16" }  
+Proto4z.LeaveSpaceResp[2] = {name="spaceInfo", type="SpaceTokenInfo" }  
+ 
 Proto4z.register(40007,"UserChatReq") 
 Proto4z.UserChatReq = {}  
 Proto4z.UserChatReq.__protoID = 40007 

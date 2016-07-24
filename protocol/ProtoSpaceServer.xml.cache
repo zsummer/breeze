@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>8ca3ba29f0048d28e1ef07e35c436026</cppmd5> 
-<luamd5>8f11e61043b0d931de81ce6fefe4933e</luamd5> 
-<csharpmd5>1718f489661eb8566f80e3a8caa73cd0</csharpmd5> 
-<xmlmd5>6cd673354c1a3f7eafce1c2251a68a89</xmlmd5> 
+<cppmd5>635b4c77203025469970fdf11e26e61c</cppmd5> 
+<luamd5>27a78d296e9daee672236b29064d7864</luamd5> 
+<csharpmd5>8e40f2cb365d8192842807e66ee5eefb</csharpmd5> 
+<xmlmd5>a11d01d05d6227a5b22427870482a499</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_AllocateSpaceReq" Number = "39015" /> 
+    <cache key = "ID_AllocateSpaceResp" Number = "39016" /> 
     <cache key = "ID_FillUserToSpaceNotice" Number = "39012" /> 
     <cache key = "ID_FillUserToSpaceReq" Number = "39013" /> 
     <cache key = "ID_FillUserToSpaceResp" Number = "39014" /> 
