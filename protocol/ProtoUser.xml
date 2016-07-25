@@ -46,10 +46,10 @@
  
 
 <!------------------------------------ battle --------------------------------------------->
-   <packet name="GetSpaceInfoReq" desc= "">
+    <packet name="GetSpaceTokenInfoReq" desc= "">
     </packet>
-    <packet name="GetSpaceInfoResp" desc= "">
-        <member name="spaceInfo" type="SpaceTokenInfo"   desc=""/>
+    <packet name="GetSpaceTokenInfoResp" desc= "">
+        <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
     </packet>
 
    <packet name="JoinSpaceReq" desc= "">

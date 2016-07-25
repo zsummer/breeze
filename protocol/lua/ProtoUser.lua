@@ -49,16 +49,16 @@ Proto4z.AttachUserResp.__protoName = "AttachUserResp"
 Proto4z.AttachUserResp[1] = {name="retCode", type="ui16" }  
 Proto4z.AttachUserResp[2] = {name="userID", type="ui64" }  
  
-Proto4z.register(40022,"GetSpaceInfoReq") 
-Proto4z.GetSpaceInfoReq = {}  
-Proto4z.GetSpaceInfoReq.__protoID = 40022 
-Proto4z.GetSpaceInfoReq.__protoName = "GetSpaceInfoReq" 
+Proto4z.register(40027,"GetSpaceTokenInfoReq") 
+Proto4z.GetSpaceTokenInfoReq = {}  
+Proto4z.GetSpaceTokenInfoReq.__protoID = 40027 
+Proto4z.GetSpaceTokenInfoReq.__protoName = "GetSpaceTokenInfoReq" 
  
-Proto4z.register(40023,"GetSpaceInfoResp") 
-Proto4z.GetSpaceInfoResp = {}  
-Proto4z.GetSpaceInfoResp.__protoID = 40023 
-Proto4z.GetSpaceInfoResp.__protoName = "GetSpaceInfoResp" 
-Proto4z.GetSpaceInfoResp[1] = {name="spaceInfo", type="SpaceTokenInfo" }  
+Proto4z.register(40028,"GetSpaceTokenInfoResp") 
+Proto4z.GetSpaceTokenInfoResp = {}  
+Proto4z.GetSpaceTokenInfoResp.__protoID = 40028 
+Proto4z.GetSpaceTokenInfoResp.__protoName = "GetSpaceTokenInfoResp" 
+Proto4z.GetSpaceTokenInfoResp[1] = {name="tokenInfo", type="SpaceTokenInfo" }  
  
 Proto4z.register(40020,"JoinSpaceReq") 
 Proto4z.JoinSpaceReq = {}  

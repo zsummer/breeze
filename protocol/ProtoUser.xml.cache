@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>ee75fa0dced90ad8f078b3e21a06c4ce</cppmd5> 
-<luamd5>76ed74b02727c6044762fb4ee39cf7e3</luamd5> 
-<csharpmd5>0e76988d9386f77fb1493376744ab046</csharpmd5> 
-<xmlmd5>eae5493b0f16d1bc816447748424ec0b</xmlmd5> 
+<cppmd5>70753871b9081fc23f931fc4c67ae4ea</cppmd5> 
+<luamd5>1c906eb40548586467d8c7a56a2fe923</luamd5> 
+<csharpmd5>80e93e7db9885dd9a6f055e8f27a47cc</csharpmd5> 
+<xmlmd5>21925003e608e521e77808ed89697e6f</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_AttachUserReq" Number = "40005" /> 
     <cache key = "ID_AttachUserResp" Number = "40006" /> 
@@ -14,6 +14,8 @@
     <cache key = "ID_CreateUserResp" Number = "40004" /> 
     <cache key = "ID_GetSpaceInfoReq" Number = "40022" /> 
     <cache key = "ID_GetSpaceInfoResp" Number = "40023" /> 
+    <cache key = "ID_GetSpaceTokenInfoReq" Number = "40027" /> 
+    <cache key = "ID_GetSpaceTokenInfoResp" Number = "40028" /> 
     <cache key = "ID_JoinSpaceNotice" Number = "40024" /> 
     <cache key = "ID_JoinSpaceReq" Number = "40020" /> 
     <cache key = "ID_JoinSpaceResp" Number = "40021" /> 

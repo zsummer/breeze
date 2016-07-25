@@ -13,42 +13,21 @@
 
 <!------------------------------------ space --------------------------------------------->
 
-    <proto name="SceneInfoReq" desc= "获取场景信息">
-    </proto>
-    <proto name="SceneInfoAck" desc= "获取场景信息">
-        <member name="retCode"  type="ui16" desc="错误码"/> 
-        <member name="scenes" type="SceneInfoArray"  desc=""/>
-    </proto>
 
-    <proto name="TryEnterSceneReq" desc= "进入场景">
-        <member name="type" type="ui16"  desc="类型, 如果是不同类型,该请求会触发场景切换动作"/>
-    </proto>
-    <proto name="TryEnterSceneAck" desc= "进入场景">
-        <member name="retCode"  type="ui16" desc="错误码"/> 
-        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
-    </proto>
 
-    <proto name="SceneInfoNotice" desc= "场景信息刷新,如果是匹配模式, 需要扩展当前匹配信息到该协议中">
-        <member name="retCode"  type="ui16" desc="错误码"/> 
-        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
-    </proto>
 
-    <proto name="LeaveSceneReq" desc= "离开场景">
-        <member name="type" type="ui16"  desc="类型"/>
-    </proto>
-    <proto name="LeaveSceneAck" desc= "离开场景">
-        <member name="retCode"  type="ui16" desc="错误码"/> 
-        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
-    </proto>
 
-    <proto name="QuitSceneReq" desc= "退出场景">
-        <member name="type" type="ui16"  desc="类型"/>
-    </proto>
-    <proto name="QuitSceneAck" desc= "退出场景">
-        <member name="retCode"  type="ui16" desc="错误码"/> 
-        <member name="scenes" type="SceneInfoArray"  desc="要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中"/>
-    </proto>
 
+    <proto name="AttachSpaceReq" desc= "">
+        <member name="userID" type="ui64"  desc=""/>
+        <member name="spaceID" type="ui32"  desc=""/>
+        <member name="token" type="string"  desc="令牌"/>
+    </proto>
+    <proto name="AttachSpaceResp" desc= "">
+        <member name="retCode"  type="ui16" desc="错误码"/> 
+        <member name="userID" type="ui64"  desc=""/>
+        <member name="spaceID" type="ui32"  desc=""/>    
+    </proto>
     
 
 
@@ -61,12 +40,15 @@
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
     </proto>
 
-    <proto name="RefreshSpaceNotice" desc= "增量更新场景中的实体数据, 服务器定时100ms广播">
+    <proto name="RefreshSpaceEntitysNotice" desc= "">
         <member name="entitys"  type="EntityInfoArray" desc=""/>
-        <member name="reports"  type="EntityReportArray" desc=""/>
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
     </proto>
 
+    <proto name="RefreshSpaceReportsNotice" desc= "">
+        <member name="reports"  type="EntityReportArray" desc=""/>
+        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+    </proto>
 
      <proto name="AddEntityNotice" desc= "一批实体加入场景时, 把这些实体的数据广播给其他玩家">
         <member name="entitys"  type="EntityFullInfoArray" desc=""/>

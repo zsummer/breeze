@@ -246,14 +246,14 @@ namespace Proto4z
         } 
     } 
  
-    public class GetSpaceInfoReq: Proto4z.IProtoObject 
+    public class GetSpaceTokenInfoReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40022;  
-        static public ushort getProtoID() { return 40022; } 
-        static public string getProtoName() { return "GetSpaceInfoReq"; } 
+        public const ushort protoID = 40027;  
+        static public ushort getProtoID() { return 40027; } 
+        static public string getProtoName() { return "GetSpaceTokenInfoReq"; } 
         //members   
-        public GetSpaceInfoReq()  
+        public GetSpaceTokenInfoReq()  
         { 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -267,33 +267,33 @@ namespace Proto4z
         } 
     } 
  
-    public class GetSpaceInfoResp: Proto4z.IProtoObject 
+    public class GetSpaceTokenInfoResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40023;  
-        static public ushort getProtoID() { return 40023; } 
-        static public string getProtoName() { return "GetSpaceInfoResp"; } 
+        public const ushort protoID = 40028;  
+        static public ushort getProtoID() { return 40028; } 
+        static public string getProtoName() { return "GetSpaceTokenInfoResp"; } 
         //members   
-        public SpaceTokenInfo spaceInfo;  
-        public GetSpaceInfoResp()  
+        public SpaceTokenInfo tokenInfo;  
+        public GetSpaceTokenInfoResp()  
         { 
-            spaceInfo = new SpaceTokenInfo();  
+            tokenInfo = new SpaceTokenInfo();  
         } 
-        public GetSpaceInfoResp(SpaceTokenInfo spaceInfo) 
+        public GetSpaceTokenInfoResp(SpaceTokenInfo tokenInfo) 
         { 
-            this.spaceInfo = spaceInfo; 
+            this.tokenInfo = tokenInfo; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.spaceInfo == null) this.spaceInfo = new SpaceTokenInfo(); 
-            data.AddRange(this.spaceInfo.__encode()); 
+            if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
+            data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.spaceInfo = new SpaceTokenInfo(); 
-            this.spaceInfo.__decode(binData, ref pos); 
+            this.tokenInfo = new SpaceTokenInfo(); 
+            this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

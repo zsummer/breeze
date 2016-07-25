@@ -260,53 +260,53 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct GetSpaceInfoReq 
+struct GetSpaceTokenInfoReq 
 { 
-    static const unsigned short getProtoID() { return 40022;} 
-    static const std::string getProtoName() { return "GetSpaceInfoReq";} 
+    static const unsigned short getProtoID() { return 40027;} 
+    static const std::string getProtoName() { return "GetSpaceTokenInfoReq";} 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSpaceInfoReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSpaceTokenInfoReq & data) 
 { 
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetSpaceInfoReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetSpaceTokenInfoReq & data) 
 { 
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetSpaceInfoReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetSpaceTokenInfoReq & info) 
 { 
     stm << "[\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct GetSpaceInfoResp 
+struct GetSpaceTokenInfoResp 
 { 
-    static const unsigned short getProtoID() { return 40023;} 
-    static const std::string getProtoName() { return "GetSpaceInfoResp";} 
-    SpaceTokenInfo spaceInfo;  
-    GetSpaceInfoResp() 
+    static const unsigned short getProtoID() { return 40028;} 
+    static const std::string getProtoName() { return "GetSpaceTokenInfoResp";} 
+    SpaceTokenInfo tokenInfo;  
+    GetSpaceTokenInfoResp() 
     { 
     } 
-    GetSpaceInfoResp(const SpaceTokenInfo & spaceInfo) 
+    GetSpaceTokenInfoResp(const SpaceTokenInfo & tokenInfo) 
     { 
-        this->spaceInfo = spaceInfo; 
+        this->tokenInfo = tokenInfo; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSpaceInfoResp & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSpaceTokenInfoResp & data) 
 { 
-    ws << data.spaceInfo;  
+    ws << data.tokenInfo;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetSpaceInfoResp & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, GetSpaceTokenInfoResp & data) 
 { 
-    rs >> data.spaceInfo;  
+    rs >> data.tokenInfo;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetSpaceInfoResp & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const GetSpaceTokenInfoResp & info) 
 { 
     stm << "[\n"; 
-    stm << "spaceInfo=" << info.spaceInfo << "\n"; 
+    stm << "tokenInfo=" << info.tokenInfo << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

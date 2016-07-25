@@ -3,303 +3,89 @@
 #define _PROTOSPACECLIENT_H_ 
  
  
-struct SceneInfoReq //获取场景信息  
+struct AttachSpaceReq 
 { 
-    static const unsigned short getProtoID() { return 50000;} 
-    static const std::string getProtoName() { return "SceneInfoReq";} 
+    static const unsigned short getProtoID() { return 50013;} 
+    static const std::string getProtoName() { return "AttachSpaceReq";} 
+    unsigned long long userID;  
+    unsigned int spaceID;  
+    std::string token; //令牌  
+    AttachSpaceReq() 
+    { 
+        userID = 0; 
+        spaceID = 0; 
+    } 
+    AttachSpaceReq(const unsigned long long & userID, const unsigned int & spaceID, const std::string & token) 
+    { 
+        this->userID = userID; 
+        this->spaceID = spaceID; 
+        this->token = token; 
+    } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneInfoReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachSpaceReq & data) 
 { 
+    ws << data.userID;  
+    ws << data.spaceID;  
+    ws << data.token;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneInfoReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachSpaceReq & data) 
 { 
+    rs >> data.userID;  
+    rs >> data.spaceID;  
+    rs >> data.token;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneInfoReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachSpaceReq & info) 
 { 
     stm << "[\n"; 
+    stm << "userID=" << info.userID << "\n"; 
+    stm << "spaceID=" << info.spaceID << "\n"; 
+    stm << "token=" << info.token << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct SceneInfoAck //获取场景信息  
+struct AttachSpaceResp 
 { 
-    static const unsigned short getProtoID() { return 50001;} 
-    static const std::string getProtoName() { return "SceneInfoAck";} 
+    static const unsigned short getProtoID() { return 50014;} 
+    static const std::string getProtoName() { return "AttachSpaceResp";} 
     unsigned short retCode; //错误码  
-    SceneInfoArray scenes;  
-    SceneInfoAck() 
+    unsigned long long userID;  
+    unsigned int spaceID;  
+    AttachSpaceResp() 
     { 
         retCode = 0; 
+        userID = 0; 
+        spaceID = 0; 
     } 
-    SceneInfoAck(const unsigned short & retCode, const SceneInfoArray & scenes) 
+    AttachSpaceResp(const unsigned short & retCode, const unsigned long long & userID, const unsigned int & spaceID) 
     { 
         this->retCode = retCode; 
-        this->scenes = scenes; 
+        this->userID = userID; 
+        this->spaceID = spaceID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneInfoAck & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachSpaceResp & data) 
 { 
     ws << data.retCode;  
-    ws << data.scenes;  
+    ws << data.userID;  
+    ws << data.spaceID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneInfoAck & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachSpaceResp & data) 
 { 
     rs >> data.retCode;  
-    rs >> data.scenes;  
+    rs >> data.userID;  
+    rs >> data.spaceID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneInfoAck & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachSpaceResp & info) 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct TryEnterSceneReq //进入场景  
-{ 
-    static const unsigned short getProtoID() { return 50002;} 
-    static const std::string getProtoName() { return "TryEnterSceneReq";} 
-    unsigned short type; //类型, 如果是不同类型,该请求会触发场景切换动作  
-    TryEnterSceneReq() 
-    { 
-        type = 0; 
-    } 
-    TryEnterSceneReq(const unsigned short & type) 
-    { 
-        this->type = type; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const TryEnterSceneReq & data) 
-{ 
-    ws << data.type;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, TryEnterSceneReq & data) 
-{ 
-    rs >> data.type;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const TryEnterSceneReq & info) 
-{ 
-    stm << "[\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct TryEnterSceneAck //进入场景  
-{ 
-    static const unsigned short getProtoID() { return 50003;} 
-    static const std::string getProtoName() { return "TryEnterSceneAck";} 
-    unsigned short retCode; //错误码  
-    SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
-    TryEnterSceneAck() 
-    { 
-        retCode = 0; 
-    } 
-    TryEnterSceneAck(const unsigned short & retCode, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const TryEnterSceneAck & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, TryEnterSceneAck & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const TryEnterSceneAck & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct SceneInfoNotice //场景信息刷新,如果是匹配模式, 需要扩展当前匹配信息到该协议中  
-{ 
-    static const unsigned short getProtoID() { return 50004;} 
-    static const std::string getProtoName() { return "SceneInfoNotice";} 
-    unsigned short retCode; //错误码  
-    SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
-    SceneInfoNotice() 
-    { 
-        retCode = 0; 
-    } 
-    SceneInfoNotice(const unsigned short & retCode, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneInfoNotice & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneInfoNotice & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneInfoNotice & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct LeaveSceneReq //离开场景  
-{ 
-    static const unsigned short getProtoID() { return 50005;} 
-    static const std::string getProtoName() { return "LeaveSceneReq";} 
-    unsigned short type; //类型  
-    LeaveSceneReq() 
-    { 
-        type = 0; 
-    } 
-    LeaveSceneReq(const unsigned short & type) 
-    { 
-        this->type = type; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LeaveSceneReq & data) 
-{ 
-    ws << data.type;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LeaveSceneReq & data) 
-{ 
-    rs >> data.type;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LeaveSceneReq & info) 
-{ 
-    stm << "[\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct LeaveSceneAck //离开场景  
-{ 
-    static const unsigned short getProtoID() { return 50006;} 
-    static const std::string getProtoName() { return "LeaveSceneAck";} 
-    unsigned short retCode; //错误码  
-    SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
-    LeaveSceneAck() 
-    { 
-        retCode = 0; 
-    } 
-    LeaveSceneAck(const unsigned short & retCode, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LeaveSceneAck & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LeaveSceneAck & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LeaveSceneAck & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct QuitSceneReq //退出场景  
-{ 
-    static const unsigned short getProtoID() { return 50007;} 
-    static const std::string getProtoName() { return "QuitSceneReq";} 
-    unsigned short type; //类型  
-    QuitSceneReq() 
-    { 
-        type = 0; 
-    } 
-    QuitSceneReq(const unsigned short & type) 
-    { 
-        this->type = type; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const QuitSceneReq & data) 
-{ 
-    ws << data.type;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, QuitSceneReq & data) 
-{ 
-    rs >> data.type;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const QuitSceneReq & info) 
-{ 
-    stm << "[\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "]\n"; 
-    return stm; 
-} 
- 
-struct QuitSceneAck //退出场景  
-{ 
-    static const unsigned short getProtoID() { return 50008;} 
-    static const std::string getProtoName() { return "QuitSceneAck";} 
-    unsigned short retCode; //错误码  
-    SceneInfoArray scenes; //要检查状态, 如果是主城则状态会置换为INSTACING, 如果是需要匹配的 状态为匹配中  
-    QuitSceneAck() 
-    { 
-        retCode = 0; 
-    } 
-    QuitSceneAck(const unsigned short & retCode, const SceneInfoArray & scenes) 
-    { 
-        this->retCode = retCode; 
-        this->scenes = scenes; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const QuitSceneAck & data) 
-{ 
-    ws << data.retCode;  
-    ws << data.scenes;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, QuitSceneAck & data) 
-{ 
-    rs >> data.retCode;  
-    rs >> data.scenes;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const QuitSceneAck & info) 
-{ 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "scenes=" << info.scenes << "\n"; 
+    stm << "userID=" << info.userID << "\n"; 
+    stm << "spaceID=" << info.spaceID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -353,42 +139,74 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct RefreshSpaceNotice //增量更新场景中的实体数据, 服务器定时100ms广播  
+struct RefreshSpaceEntitysNotice 
 { 
-    static const unsigned short getProtoID() { return 50010;} 
-    static const std::string getProtoName() { return "RefreshSpaceNotice";} 
+    static const unsigned short getProtoID() { return 50015;} 
+    static const std::string getProtoName() { return "RefreshSpaceEntitysNotice";} 
     EntityInfoArray entitys;  
-    EntityReportArray reports;  
     double serverTime; //服务器当前时间  
-    RefreshSpaceNotice() 
+    RefreshSpaceEntitysNotice() 
     { 
         serverTime = 0.0; 
     } 
-    RefreshSpaceNotice(const EntityInfoArray & entitys, const EntityReportArray & reports, const double & serverTime) 
+    RefreshSpaceEntitysNotice(const EntityInfoArray & entitys, const double & serverTime) 
     { 
         this->entitys = entitys; 
+        this->serverTime = serverTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshSpaceEntitysNotice & data) 
+{ 
+    ws << data.entitys;  
+    ws << data.serverTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshSpaceEntitysNotice & data) 
+{ 
+    rs >> data.entitys;  
+    rs >> data.serverTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshSpaceEntitysNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "entitys=" << info.entitys << "\n"; 
+    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct RefreshSpaceReportsNotice 
+{ 
+    static const unsigned short getProtoID() { return 50016;} 
+    static const std::string getProtoName() { return "RefreshSpaceReportsNotice";} 
+    EntityReportArray reports;  
+    double serverTime; //服务器当前时间  
+    RefreshSpaceReportsNotice() 
+    { 
+        serverTime = 0.0; 
+    } 
+    RefreshSpaceReportsNotice(const EntityReportArray & reports, const double & serverTime) 
+    { 
         this->reports = reports; 
         this->serverTime = serverTime; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshSpaceNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshSpaceReportsNotice & data) 
 { 
-    ws << data.entitys;  
     ws << data.reports;  
     ws << data.serverTime;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshSpaceNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshSpaceReportsNotice & data) 
 { 
-    rs >> data.entitys;  
     rs >> data.reports;  
     rs >> data.serverTime;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshSpaceNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshSpaceReportsNotice & info) 
 { 
     stm << "[\n"; 
-    stm << "entitys=" << info.entitys << "\n"; 
     stm << "reports=" << info.reports << "\n"; 
     stm << "serverTime=" << info.serverTime << "\n"; 
     stm << "]\n"; 
