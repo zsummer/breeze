@@ -90,7 +90,7 @@ void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream 
 {
     UserChatReq req;
     rs >> req;
-    LOGI("onChatReq" << req << ", self serviceID=" << getServiceID());
+    LOGI("onChatReq" << req << ",  " << *this << "self serviceID=" << getServiceID());
     _baseInfo._data.level++;
     _baseInfo.writeToDB();
 
@@ -111,7 +111,7 @@ void UserService::onUserPingPongReq(const Tracing & trace, zsummer::proto4z::Rea
     testCount++;
     if (testCount %10000 == 0)
     {
-        LOGA("onUserPingPongReq count=" << testCount);
+        LOGA("onUserPingPongReq " << *this << " count=" << testCount);
     }
 }
 

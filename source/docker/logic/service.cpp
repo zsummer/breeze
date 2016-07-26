@@ -32,7 +32,7 @@ void Service::onTimer(const ReapeatTimerInfoPtr & rt)
     auto founder = _repeatTimers.find(rt->counts.timerID);
     if (founder == _repeatTimers.end())
     {
-        LOGE("Service::onTimer can't found repeat timerID");
+        LOGE("Service::onTimer " << *this << " can't found repeat timerID");
         return;
     }
 
@@ -41,7 +41,7 @@ void Service::onTimer(const ReapeatTimerInfoPtr & rt)
     founder = _repeatTimers.find(rt->counts.timerID);
     if (founder == _repeatTimers.end())
     {
-        LOGW("Service::onTimer can't found repeat timerID. maybe it's cancel. timerID=" << rt->counts.timerID);
+        LOGE("Service::onTimer " << *this << " can't found repeat timerID. maybe it's cancel. timerID=" << rt->counts.timerID);
         return;
     }
     _repeatTimers.erase(founder);
@@ -95,11 +95,11 @@ bool Service::finishLoad()
             }
         }
 
-        LOGI("local service finish load. service=" << getServiceName() << ", id=" << getServiceID());
+        LOGI(*this << "local service finish load. service=" << getServiceName() << ", id=" << getServiceID());
     }
     else
     {
-        LOGI("remote service finish load. service=" << getServiceName() << ", id=" << getServiceID());
+        LOGI(*this << "remote service finish load. service=" << getServiceName() << ", id=" << getServiceID());
     }
     
     return true;
@@ -131,11 +131,11 @@ bool Service::finishUnload()
 
         UnloadedServiceNotice notice(getServiceType(), getServiceID());
         Docker::getRef().broadcastToDockers(notice, true);
-        LOGI("local service finish unload. service=" << getServiceName() << ", id=" << getServiceID());
+        LOGI(*this << "local service finish unload. service=" << getServiceName() << ", id=" << getServiceID());
     }
     else
     {
-        LOGI("remote service finish unload. service=" << getServiceName() << ", id=" << getServiceID());
+        LOGI(*this << "remote service finish unload. service=" << getServiceName() << ", id=" << getServiceID());
     }
     for (auto tID : _repeatTimers)
     {
@@ -175,7 +175,7 @@ void Service::cleanCallback()
         {
             if (now - iter->second.first > 600)
             {
-                LOGW("Service::cleanCallback waiting callback timeout. cbid=" << iter->first << ", call time=" << iter->second.first);
+                LOGW("Service::cleanCallback  " << *this << " waiting callback timeout. cbid=" << iter->first << ", call time=" << iter->second.first);
                 iter = _cbs.erase(iter);
             }
             else
@@ -337,7 +337,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
         auto cb = checkoutCallback(trace.routing.traceBackID);
         if (!cb)
         {
-            LOGE("Service::process callback timeout. cbid=" << trace.routing.traceBackID);
+            LOGE("Service::process  " << *this << " callback timeout. cbid=" << trace.routing.traceBackID);
             return;
         }
         try
@@ -348,7 +348,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
         }
         catch (const std::exception & e)
         {
-            LOGE("Service::process catch except error. e=" << e.what() << ", trace=" << trace);
+            LOGE("Service::process  " << *this << " catch except error. e=" << e.what() << ", trace=" << trace);
             return;
         }
         return;
@@ -364,12 +364,12 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
         }
         else
         {
-            LOGW("Service::process call process warnning. not found maping function. pID=" << rs.getProtoID() << ", trace=" << trace);
+            LOGW("Service::process  " << *this << " call process warnning. not found maping function. pID=" << rs.getProtoID() << ", trace=" << trace);
         }
     }
     catch (const std::exception & e)
     {
-        LOGE("Service::process call process catch except error. e=" << e.what() << ", trace=" << trace);
+        LOGE("Service::process  " << *this << " call process catch except error. e=" << e.what() << ", trace=" << trace);
     }
 }
 

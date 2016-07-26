@@ -293,7 +293,14 @@ void Service::toDocker(DockerID dockerID, const OutOfBand & oob, Proto proto)
 }
 
 
-
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & os, Service & svc)
+{
+    os << " --[ " << svc.getServiceDockerID() << ":" << svc.getServiceName() << ":" << svc.getServiceID()
+        << ":" << svc.getStatus()
+        << " client=" << svc.getClientDockerID() << ":"
+        << svc.getClientSessionID() << " ]--  ";
+    return os;
+}
 
 
 
