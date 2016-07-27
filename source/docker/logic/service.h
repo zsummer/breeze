@@ -200,6 +200,7 @@ void Service::toService(ServiceType serviceType, const OutOfBand &oob, Proto pro
 {
     try
     {
+        LOGT("Service::toService" << *this << ", dstType=" << ::getServiceName(serviceType) << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         toService(serviceType, oob, ws.getStream(), ws.getStreamLen(), cb);
@@ -214,6 +215,8 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
 {
     try
     {
+        LOGT("Service::toService" << *this << ", dstType=" << ::getServiceName(serviceType) <<", dstID=" << serviceID
+            << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         toService(serviceType, serviceID, oob, ws.getStream(), ws.getStreamLen(), cb);
@@ -238,6 +241,8 @@ void Service::backToService(const Tracing & trace, Proto proto, ServiceCallback 
 {
     try
     {
+        LOGT("Service::backToService" << *this << ", dstType=" << ::getServiceName(trace.routing.fromServiceType) 
+            << ", dstID=" << trace.routing.fromServiceID << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         backToService(trace, ws.getStream(), ws.getStreamLen(), cb);
@@ -253,6 +258,8 @@ void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessio
 {
     try
     {
+        LOGT("Service::directToRealClient" << *this << ", dstDockerID=" << clientDockerID
+            << ", dstSessionID=" << clientSessionID << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         directToRealClient(clientDockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
@@ -268,6 +275,7 @@ void Service::toDocker(DockerID dockerID, Proto proto)
 {
     try
     {
+        LOGT("Service::toDocker" << *this << ", dstDockerID=" << dockerID << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         toDocker(dockerID, ws.getStream(), ws.getStreamLen());
@@ -282,6 +290,7 @@ void Service::toDocker(DockerID dockerID, const OutOfBand & oob, Proto proto)
 {
     try
     {
+        LOGT("Service::toDocker" << *this << ", dstDockerID=" << dockerID << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         toDocker(dockerID, oob, ws.getStream(), ws.getStreamLen());

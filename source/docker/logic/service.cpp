@@ -343,6 +343,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
         try
         {
             ReadStream rs(block, len);
+            LOGT("Service::process callback. " << *this << ", protoID=" << rs.getProtoID());
             cb(rs);
             return;
         }
@@ -360,6 +361,7 @@ void Service::process(const Tracing & trace, const char * block, unsigned int le
         auto fder = _slots.find(rs.getProtoID());
         if (fder != _slots.end())
         {
+            LOGT("Service::process sloting. " << *this << ", protoID=" << rs.getProtoID());
             fder->second(trace, rs);
         }
         else

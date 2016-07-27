@@ -829,7 +829,7 @@ void Docker::event_onForwardToService(TcpSessionPtr session, ReadStream & rsShel
 {
     Tracing trace;
     rsShell >> trace;
-    LOGT("event_onForwardToService " << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
+//    LOGT("event_onForwardToService " << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
     toService(trace, rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
 }
 
@@ -837,7 +837,7 @@ void Docker::event_onForwardToRealClient(TcpSessionPtr session, ReadStream & rsS
 {
     Tracing trace;
     rsShell >> trace;
-    LOGT("event_onForwardToRealClient trace=" << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
+//    LOGT("event_onForwardToRealClient trace=" << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
     SessionManager::getRef().sendSessionData(trace.oob.clientSessionID, rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
 }
 
@@ -845,7 +845,7 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
 {
     Tracing trace;
     rsShell >> trace;
-    LOGT("event_onForwardToDocker trace=" << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
+//    LOGT("event_onForwardToDocker trace=" << trace << ", ReadStream len = " << rsShell.getStreamLen() << ", unread len=" << rsShell.getStreamUnreadLen());
     ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
 
     if (rs.getProtoID() == ClientAuthResp::getProtoID())
@@ -1278,7 +1278,7 @@ void Docker::sendViaDockerID(DockerID dockerID, const char * block, unsigned int
 
 void Docker::sendViaServiceID(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len)
 {
-    LOGT("Docker::sendViaServiceID serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
+//    LOGT("Docker::sendViaServiceID serviceType=" << serviceType << ", serviceID=" << serviceID << ", block len=" << len);
     ServicePtr svc = peekService((serviceType == STClient ? STUser : serviceType) , serviceID);
     if (!svc)
     {
@@ -1343,7 +1343,7 @@ void Docker::forwardToRemoteService(Tracing  trace, const char * block, unsigned
 void Docker::toService(Tracing trace, const char * block, unsigned int len, bool syncCall)
 {
     ProtoID protoID = ReadStream(block, len).getProtoID();
-    LOGT("Docker::toService " << trace << ", len=" << len << ", syncCall=" << syncCall);
+//    LOGT("Docker::toService " << trace << ", len=" << len << ", syncCall=" << syncCall);
         
     if (trace.routing.toServiceType == STClient)
     {
@@ -1376,16 +1376,16 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     {
         if (!syncCall)
         {
-            LOGT("Docker::toService local post process4bind " << trace << ", len=" << len 
-                << ", syncCall=" << syncCall << ", protoID=" << protoID);
+//             LOGT("Docker::toService local post process4bind " << trace << ", len=" << len 
+//                 << ", syncCall=" << syncCall << ", protoID=" << protoID);
             std::string bk;
             bk.assign(block, len);
             SessionManager::getRef().post(std::bind(&Service::process4bind, svc, trace, std::move(bk)));
         }
         else
         {
-            LOGT("Docker::toService  local process " << trace << ", len=" << len 
-                    << ", syncCall=" << syncCall << ", protoID=" << protoID);
+//             LOGT("Docker::toService  local process " << trace << ", len=" << len 
+//                     << ", syncCall=" << syncCall << ", protoID=" << protoID);
             svc->process(trace, block, len);
         }
     }
