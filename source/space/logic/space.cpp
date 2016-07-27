@@ -78,19 +78,19 @@ EntityPtr Space::makeNewEntity(const UserBaseInfo & base)
     return entity;
 }
 
-void Space::fillUserProp(const FillUserToSpaceReq& req)
-{
-    auto entity = getUserEntity(req.baseInfo.userID);
-    if (entity)
-    {
-        LOGE("already had");
-        return;
-    }
-    entity = makeNewEntity(req.baseInfo);
-    entity->_token = req.token;
-    entity->_info.state = ESTATE_FREEZING;
-    entity->_isClientDirty = true;
-}
+// void Space::fillUserProp(const FillUserToSpaceReq& req)
+// {
+//     auto entity = getUserEntity(req.baseInfo.userID);
+//     if (entity)
+//     {
+//         LOGE("already had");
+//         return;
+//     }
+//     entity = makeNewEntity(req.baseInfo);
+//     entity->_token = req.token;
+//     entity->_info.state = ESTATE_FREEZING;
+//     entity->_isClientDirty = true;
+// }
 
 bool Space::addEntity(EntityPtr entity)
 {

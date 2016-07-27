@@ -62,25 +62,25 @@ SpacePtr SpaceMgr::getSpace(SpaceID spaceID)
 
 void SpaceMgr::refreshSpaceStatusToWorld(SpaceID spaceID)
 {
-    auto spacePtr = getSpace(spaceID);
-    if (!spacePtr)
-    {
-        LOGE("");
-        return;
-    }
-    SpaceInfoToWorldNotice notice;
-    notice.host = ServerConfig::getRef().getSpaceConfig()._clientPubHost;
-    notice.port = ServerConfig::getRef().getSpaceConfig()._clientListenPort;
-    if(true)
-    {
-        SpaceInfo si;
-        si.sceneType = spacePtr->getSceneType();
-        si.spaceStatus = spacePtr->getSpaceStatus();
-        si.users = spacePtr->getUsersCount();
-        si.spaceID = spacePtr->getSpaceID();
-        notice.spaceInfos.push_back(si);
-    }
-    sendToWorld(notice);
+//     auto spacePtr = getSpace(spaceID);
+//     if (!spacePtr)
+//     {
+//         LOGE("");
+//         return;
+//     }
+//     SpaceInfoToWorldNotice notice;
+//     notice.host = ServerConfig::getRef().getSpaceConfig()._clientPubHost;
+//     notice.port = ServerConfig::getRef().getSpaceConfig()._clientListenPort;
+//     if(true)
+//     {
+//         SpaceInfo si;
+//         si.sceneType = spacePtr->getSceneType();
+//         si.spaceStatus = spacePtr->getSpaceStatus();
+//         si.users = spacePtr->getUsersCount();
+//         si.spaceID = spacePtr->getSpaceID();
+//         notice.spaceInfos.push_back(si);
+//     }
+//     sendToWorld(notice);
 }
 
 void SpaceMgr::onTimer()
@@ -234,20 +234,20 @@ void SpaceMgr::event_onWorldLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
 
-    SpaceInfoToWorldNotice notice;
-    notice.host = ServerConfig::getRef().getSpaceConfig()._clientPubHost;
-    notice.port = ServerConfig::getRef().getSpaceConfig()._clientListenPort;
-    for (auto kv : _spaces)
-    {
-        SpaceInfo si;
-        si.sceneType = kv.second->getSceneType();
-        si.spaceStatus = kv.second->getSpaceStatus();
-        si.users = kv.second->getUsersCount();
-        si.spaceID = kv.second->getSpaceID();
-        notice.spaceInfos.push_back(si);
-    }
-    sendViaSessionID(session->getSessionID(), notice);
-    LOGI("event_onWorldLinked cID=" << session->getSessionID() );
+//     SpaceInfoToWorldNotice notice;
+//     notice.host = ServerConfig::getRef().getSpaceConfig()._clientPubHost;
+//     notice.port = ServerConfig::getRef().getSpaceConfig()._clientListenPort;
+//     for (auto kv : _spaces)
+//     {
+//         SpaceInfo si;
+//         si.sceneType = kv.second->getSceneType();
+//         si.spaceStatus = kv.second->getSpaceStatus();
+//         si.users = kv.second->getUsersCount();
+//         si.spaceID = kv.second->getSpaceID();
+//         notice.spaceInfos.push_back(si);
+//     }
+//     sendViaSessionID(session->getSessionID(), notice);
+//     LOGI("event_onWorldLinked cID=" << session->getSessionID() );
 }
 
 
@@ -271,32 +271,32 @@ void SpaceMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
         return;
     }
-    else if (rsShell.getProtoID() == FillUserToSpaceReq::getProtoID())
-    {
-        FillUserToSpaceReq fn;
-        rsShell >> fn;
-        auto space = getSpace(fn.spaceID);
-        if (!space)
-        {
-            LOGE(", spaceID=" << fn.spaceID);
-            return;
-        }
-        if (space->getSpaceStatus() == SPACE_STATUS_NONE)
-        {
-            if (!space->loadSpace((SPACE_TYPE)fn.sceneType))
-            {
-                LOGE("");
-                return;
-            }
-        }
-        else if (space->getSpaceStatus() == SCENE_STATUS_LINGER)
-        {
-            LOGE("");
-            return;
-        }
-        space->fillUserProp(fn);
-        return;
-    }
+//     else if (rsShell.getProtoID() == FillUserToSpaceReq::getProtoID())
+//     {
+//         FillUserToSpaceReq fn;
+//         rsShell >> fn;
+//         auto space = getSpace(fn.spaceID);
+//         if (!space)
+//         {
+//             LOGE(", spaceID=" << fn.spaceID);
+//             return;
+//         }
+//         if (space->getSpaceStatus() == SPACE_STATUS_NONE)
+//         {
+//             if (!space->loadSpace((SPACE_TYPE)fn.sceneType))
+//             {
+//                 LOGE("");
+//                 return;
+//             }
+//         }
+//         else if (space->getSpaceStatus() == SCENE_STATUS_LINGER)
+//         {
+//             LOGE("");
+//             return;
+//         }
+//         space->fillUserProp(fn);
+//         return;
+//     }
 
 }
 
@@ -346,12 +346,12 @@ void SpaceMgr::event_onClientClosed(TcpSessionPtr session)
 void SpaceMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    if (rs.getProtoID() == SpaceInfoToWorldNotice::getProtoID())
-    {
-        SpaceInfoToWorldNotice notice;
-        rs >> notice;
-
-    }
+//     if (rs.getProtoID() == SpaceInfoToWorldNotice::getProtoID())
+//     {
+//         SpaceInfoToWorldNotice notice;
+//         rs >> notice;
+//
+//    }
     SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
  
     {
