@@ -1,6 +1,6 @@
  
-#ifndef _PROTOUSER_H_ 
-#define _PROTOUSER_H_ 
+#ifndef _PROTOCLIENT_H_ 
+#define _PROTOCLIENT_H_ 
  
  
 struct ClientPulse //客户端脉冲请求  
@@ -108,7 +108,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct CreateAvatarReq //创角色请求  
 { 
-    static const unsigned short getProtoID() { return 40029;} 
+    static const unsigned short getProtoID() { return 40003;} 
     static const std::string getProtoName() { return "CreateAvatarReq";} 
     std::string accountName; //这个字段会被服务器填充.客户端可以不填写  
     std::string userName;  
@@ -144,7 +144,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct CreateAvatarResp //创角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 40030;} 
+    static const unsigned short getProtoID() { return 40004;} 
     static const std::string getProtoName() { return "CreateAvatarResp";} 
     unsigned short retCode;  
     unsigned long long avatarID;  
@@ -187,7 +187,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AttachAvatarReq //选角色请求  
 { 
-    static const unsigned short getProtoID() { return 40031;} 
+    static const unsigned short getProtoID() { return 40005;} 
     static const std::string getProtoName() { return "AttachAvatarReq";} 
     std::string accountName; //这个字段会被服务器填充.客户端可以不填写  
     unsigned long long avatarID;  
@@ -224,7 +224,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AttachAvatarResp //选角色请求返回  
 { 
-    static const unsigned short getProtoID() { return 40032;} 
+    static const unsigned short getProtoID() { return 40006;} 
     static const std::string getProtoName() { return "AttachAvatarResp";} 
     unsigned short retCode;  
     unsigned long long avatarID;  
@@ -262,7 +262,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct GetSpaceTokenInfoReq 
 { 
-    static const unsigned short getProtoID() { return 40027;} 
+    static const unsigned short getProtoID() { return 40007;} 
     static const std::string getProtoName() { return "GetSpaceTokenInfoReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSpaceTokenInfoReq & data) 
@@ -282,7 +282,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct GetSpaceTokenInfoResp 
 { 
-    static const unsigned short getProtoID() { return 40028;} 
+    static const unsigned short getProtoID() { return 40008;} 
     static const std::string getProtoName() { return "GetSpaceTokenInfoResp";} 
     SpaceTokenInfo tokenInfo;  
     GetSpaceTokenInfoResp() 
@@ -313,7 +313,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct JoinSpaceReq 
 { 
-    static const unsigned short getProtoID() { return 40020;} 
+    static const unsigned short getProtoID() { return 40009;} 
     static const std::string getProtoName() { return "JoinSpaceReq";} 
     unsigned short spaceType;  
     unsigned int mapID;  
@@ -351,7 +351,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct JoinSpaceResp 
 { 
-    static const unsigned short getProtoID() { return 40021;} 
+    static const unsigned short getProtoID() { return 40010;} 
     static const std::string getProtoName() { return "JoinSpaceResp";} 
     unsigned short retCode;  
     SpaceTokenInfo spaceInfo;  
@@ -388,7 +388,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct JoinSpaceNotice 
 { 
-    static const unsigned short getProtoID() { return 40024;} 
+    static const unsigned short getProtoID() { return 40011;} 
     static const std::string getProtoName() { return "JoinSpaceNotice";} 
     SpaceTokenInfo spaceInfo;  
     JoinSpaceNotice() 
@@ -419,7 +419,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct LeaveSpaceReq 
 { 
-    static const unsigned short getProtoID() { return 40025;} 
+    static const unsigned short getProtoID() { return 40012;} 
     static const std::string getProtoName() { return "LeaveSpaceReq";} 
     unsigned int spaceID;  
     LeaveSpaceReq() 
@@ -451,7 +451,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct LeaveSpaceResp 
 { 
-    static const unsigned short getProtoID() { return 40026;} 
+    static const unsigned short getProtoID() { return 40013;} 
     static const std::string getProtoName() { return "LeaveSpaceResp";} 
     unsigned short retCode;  
     SpaceTokenInfo spaceInfo;  
@@ -488,7 +488,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ChatReq 
 { 
-    static const unsigned short getProtoID() { return 40033;} 
+    static const unsigned short getProtoID() { return 40014;} 
     static const std::string getProtoName() { return "ChatReq";} 
     unsigned long long avatarID;  
     std::string msg;  
@@ -525,7 +525,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ChatResp 
 { 
-    static const unsigned short getProtoID() { return 40034;} 
+    static const unsigned short getProtoID() { return 40015;} 
     static const std::string getProtoName() { return "ChatResp";} 
     unsigned long long fromAvatarID;  
     std::string msg;  
@@ -562,7 +562,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct PingPongReq 
 { 
-    static const unsigned short getProtoID() { return 40035;} 
+    static const unsigned short getProtoID() { return 40016;} 
     static const std::string getProtoName() { return "PingPongReq";} 
     std::string msg;  
     PingPongReq() 
@@ -593,7 +593,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct PingPongResp 
 { 
-    static const unsigned short getProtoID() { return 40036;} 
+    static const unsigned short getProtoID() { return 40017;} 
     static const std::string getProtoName() { return "PingPongResp";} 
     std::string msg;  
     PingPongResp() 

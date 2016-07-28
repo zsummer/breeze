@@ -1,7 +1,0 @@
- 
-namespace Proto4z  
-{ 
- 
-} 
- 
- 

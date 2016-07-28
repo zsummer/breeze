@@ -106,8 +106,8 @@ namespace Proto4z
     public class CreateAvatarReq: Proto4z.IProtoObject //创角色请求  
     {     
         //proto id   
-        public const ushort protoID = 40029;  
-        static public ushort getProtoID() { return 40029; } 
+        public const ushort protoID = 40003;  
+        static public ushort getProtoID() { return 40003; } 
         static public string getProtoName() { return "CreateAvatarReq"; } 
         //members   
         public string accountName; //这个字段会被服务器填充.客户端可以不填写  
@@ -140,8 +140,8 @@ namespace Proto4z
     public class CreateAvatarResp: Proto4z.IProtoObject //创角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 40030;  
-        static public ushort getProtoID() { return 40030; } 
+        public const ushort protoID = 40004;  
+        static public ushort getProtoID() { return 40004; } 
         static public string getProtoName() { return "CreateAvatarResp"; } 
         //members   
         public ushort retCode;  
@@ -181,8 +181,8 @@ namespace Proto4z
     public class AttachAvatarReq: Proto4z.IProtoObject //选角色请求  
     {     
         //proto id   
-        public const ushort protoID = 40031;  
-        static public ushort getProtoID() { return 40031; } 
+        public const ushort protoID = 40005;  
+        static public ushort getProtoID() { return 40005; } 
         static public string getProtoName() { return "AttachAvatarReq"; } 
         //members   
         public string accountName; //这个字段会被服务器填充.客户端可以不填写  
@@ -215,8 +215,8 @@ namespace Proto4z
     public class AttachAvatarResp: Proto4z.IProtoObject //选角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 40032;  
-        static public ushort getProtoID() { return 40032; } 
+        public const ushort protoID = 40006;  
+        static public ushort getProtoID() { return 40006; } 
         static public string getProtoName() { return "AttachAvatarResp"; } 
         //members   
         public ushort retCode;  
@@ -249,8 +249,8 @@ namespace Proto4z
     public class GetSpaceTokenInfoReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40027;  
-        static public ushort getProtoID() { return 40027; } 
+        public const ushort protoID = 40007;  
+        static public ushort getProtoID() { return 40007; } 
         static public string getProtoName() { return "GetSpaceTokenInfoReq"; } 
         //members   
         public GetSpaceTokenInfoReq()  
@@ -270,8 +270,8 @@ namespace Proto4z
     public class GetSpaceTokenInfoResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40028;  
-        static public ushort getProtoID() { return 40028; } 
+        public const ushort protoID = 40008;  
+        static public ushort getProtoID() { return 40008; } 
         static public string getProtoName() { return "GetSpaceTokenInfoResp"; } 
         //members   
         public SpaceTokenInfo tokenInfo;  
@@ -301,8 +301,8 @@ namespace Proto4z
     public class JoinSpaceReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40020;  
-        static public ushort getProtoID() { return 40020; } 
+        public const ushort protoID = 40009;  
+        static public ushort getProtoID() { return 40009; } 
         static public string getProtoName() { return "JoinSpaceReq"; } 
         //members   
         public ushort spaceType;  
@@ -335,8 +335,8 @@ namespace Proto4z
     public class JoinSpaceResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40021;  
-        static public ushort getProtoID() { return 40021; } 
+        public const ushort protoID = 40010;  
+        static public ushort getProtoID() { return 40010; } 
         static public string getProtoName() { return "JoinSpaceResp"; } 
         //members   
         public ushort retCode;  
@@ -371,8 +371,8 @@ namespace Proto4z
     public class JoinSpaceNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40024;  
-        static public ushort getProtoID() { return 40024; } 
+        public const ushort protoID = 40011;  
+        static public ushort getProtoID() { return 40011; } 
         static public string getProtoName() { return "JoinSpaceNotice"; } 
         //members   
         public SpaceTokenInfo spaceInfo;  
@@ -402,8 +402,8 @@ namespace Proto4z
     public class LeaveSpaceReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40025;  
-        static public ushort getProtoID() { return 40025; } 
+        public const ushort protoID = 40012;  
+        static public ushort getProtoID() { return 40012; } 
         static public string getProtoName() { return "LeaveSpaceReq"; } 
         //members   
         public uint spaceID;  
@@ -431,8 +431,8 @@ namespace Proto4z
     public class LeaveSpaceResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40026;  
-        static public ushort getProtoID() { return 40026; } 
+        public const ushort protoID = 40013;  
+        static public ushort getProtoID() { return 40013; } 
         static public string getProtoName() { return "LeaveSpaceResp"; } 
         //members   
         public ushort retCode;  
@@ -467,8 +467,8 @@ namespace Proto4z
     public class ChatReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40033;  
-        static public ushort getProtoID() { return 40033; } 
+        public const ushort protoID = 40014;  
+        static public ushort getProtoID() { return 40014; } 
         static public string getProtoName() { return "ChatReq"; } 
         //members   
         public ulong avatarID;  
@@ -501,8 +501,8 @@ namespace Proto4z
     public class ChatResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40034;  
-        static public ushort getProtoID() { return 40034; } 
+        public const ushort protoID = 40015;  
+        static public ushort getProtoID() { return 40015; } 
         static public string getProtoName() { return "ChatResp"; } 
         //members   
         public ulong fromAvatarID;  
@@ -535,8 +535,8 @@ namespace Proto4z
     public class PingPongReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40035;  
-        static public ushort getProtoID() { return 40035; } 
+        public const ushort protoID = 40016;  
+        static public ushort getProtoID() { return 40016; } 
         static public string getProtoName() { return "PingPongReq"; } 
         //members   
         public string msg;  
@@ -564,8 +564,8 @@ namespace Proto4z
     public class PingPongResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40036;  
-        static public ushort getProtoID() { return 40036; } 
+        public const ushort protoID = 40017;  
+        static public ushort getProtoID() { return 40017; } 
         static public string getProtoName() { return "PingPongResp"; } 
         //members   
         public string msg;  

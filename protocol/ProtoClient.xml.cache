@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>9f6371ced09841efbdeb866e2bbc58c1</cppmd5> 
+<luamd5>932850bd457213eade22363f4ffaa568</luamd5> 
+<csharpmd5>296e804e74569ffe26030ceb5a299659</csharpmd5> 
+<xmlmd5>e753c9614613fa1599374fd779769f90</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_AttachAvatarReq" Number = "40005" /> 
+    <cache key = "ID_AttachAvatarResp" Number = "40006" /> 
+    <cache key = "ID_ChatReq" Number = "40014" /> 
+    <cache key = "ID_ChatResp" Number = "40015" /> 
+    <cache key = "ID_ClientAuthReq" Number = "40001" /> 
+    <cache key = "ID_ClientAuthResp" Number = "40002" /> 
+    <cache key = "ID_ClientPulse" Number = "40000" /> 
+    <cache key = "ID_CreateAvatarReq" Number = "40003" /> 
+    <cache key = "ID_CreateAvatarResp" Number = "40004" /> 
+    <cache key = "ID_GetSpaceTokenInfoReq" Number = "40007" /> 
+    <cache key = "ID_GetSpaceTokenInfoResp" Number = "40008" /> 
+    <cache key = "ID_JoinSpaceNotice" Number = "40011" /> 
+    <cache key = "ID_JoinSpaceReq" Number = "40009" /> 
+    <cache key = "ID_JoinSpaceResp" Number = "40010" /> 
+    <cache key = "ID_LeaveSpaceReq" Number = "40012" /> 
+    <cache key = "ID_LeaveSpaceResp" Number = "40013" /> 
+    <cache key = "ID_PingPongReq" Number = "40016" /> 
+    <cache key = "ID_PingPongResp" Number = "40017" /> 
+</cacheNumber>
