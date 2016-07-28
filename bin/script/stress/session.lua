@@ -63,7 +63,7 @@ function Session:onAttachAvatarResp(sID, msg)
         __global_avatarID_array = __global_avatarID_array or {}
         if #__global_avatarID_array > 0 then
             local rdx = math.random(#__global_avatarID_array)
-            send(sID, "ChatReq", {toavatarID=__global_avatarID_array[rdx], msg="hello"})
+            send(sID, "ChatReq", {avatarID=__global_avatarID_array[rdx], msg="hello"})
         end
         table.insert(__global_avatarID_array, self.avatarID)
         send(sID, "PingPongReq", { msg="hello"})

@@ -256,18 +256,21 @@ void AvatarMgrService::onCreateAvatarReq(const Tracing & trace, zsummer::proto4z
     if (founder == _accountStatus.end())
     {
         resp.retCode = EC_AVATAR_NOT_FOUND;
+        LOGE("onCreateAvatarReq error. EC_AVATAR_NOT_FOUND trace =" << trace << ", req=" << req);
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     if (founder->second._players.size() > 4 )
     {
         resp.retCode = EC_AVATAR_COUNT_LIMITE;
+        LOGE("onCreateAvatarReq error. EC_AVATAR_COUNT_LIMITE trace =" << trace << ", req=" << req);
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     if ( getNowTime() - founder->second._lastCreateTime < 60)
     {
         resp.retCode = EC_AVATAR_FREQ_LIMITE;
+        LOGE("onCreateAvatarReq error. EC_AVATAR_FREQ_LIMITE trace =" << trace << ", req=" << req);
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
@@ -275,6 +278,7 @@ void AvatarMgrService::onCreateAvatarReq(const Tracing & trace, zsummer::proto4z
     if (_userStatusByName.find(req.userName) != _userStatusByName.end())
     {
         resp.retCode = EC_AVATAR_NAME_CONFLICT;
+        LOGE("onCreateAvatarReq error. EC_AVATAR_NAME_CONFLICT trace =" << trace << ", req=" << req);
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
@@ -304,6 +308,7 @@ void AvatarMgrService::onCreateAvatarReqFromDB(zsummer::proto4z::ReadStream & rs
     
     if (sqlResp.result.qc != QEC_SUCCESS || sqlResp.result.affected == 0)
     {
+        LOGE("onCreateAvatarReqFromDB error. trace =" << trace << ", req=" << req);
         resp.retCode = EC_DB_ERROR;
     }
     if (resp.retCode == EC_SUCCESS)
@@ -330,6 +335,7 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
     if (founder == _userStatusByID.end() || founder->second->_preview.account != req.accountName)
     {
         resp.retCode = EC_ERROR;
+        LOGE("attach avatar error. trace =" << trace << ", req=" << req);
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
@@ -337,6 +343,7 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
     if (status._status == SS_UNLOADING || status._status == SS_INITING )
     {
         resp.retCode = EC_ERROR;
+        LOGE("attach avatar status error. trace =" << trace << ", req=" << req << ", status=" << status._status);
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
@@ -348,6 +355,7 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
         if (dockerID == InvalidDockerID)
         {
             resp.retCode = EC_ERROR;
+            LOGE("attach avatar error. no valid docker load avatar. trace =" << trace << ", req=" << req << ", status=" << status._status);
             directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
             return;
         }
@@ -367,6 +375,7 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
     else
     {
         resp.retCode = EC_ERROR; 
+        LOGE("attach avatar unknown error. trace =" << trace << ", req=" << req << ", status=" << status._status);
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }

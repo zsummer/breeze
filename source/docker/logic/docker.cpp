@@ -1343,7 +1343,19 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
 {
     ProtoID protoID = ReadStream(block, len).getProtoID();
 //    LOGT("Docker::toService " << trace << ", len=" << len << ", syncCall=" << syncCall);
-        
+    if (getServiceTrait(trace.routing.toServiceType) == STrait_Single && trace.routing.toServiceID != InvalidServiceID)
+    {
+        LOGE("toService dst Type is Single[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID);
+        return;
+    }
+    if (getServiceTrait(trace.routing.toServiceType) == STrait_Multi && trace.routing.toServiceID == InvalidServiceID)
+    {
+        if (trace.routing.toServiceType != STClient || trace.oob.clientSessionID == InvalidSessionID)
+        {
+            LOGE("toService dst Type is Multi[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID);
+            return;
+        }
+    }
     if (trace.routing.toServiceType == STClient)
     {
         forwardToRemoteService(trace, block, len);
