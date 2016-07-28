@@ -1,6 +1,5 @@
 ﻿#include "avatarService.h"
-#include <ProtoUserMgr.h>
-#include <ProtoUser.h>
+#include <ProtoClient.h>
 
 
 AvatarService::AvatarService()

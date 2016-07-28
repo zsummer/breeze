@@ -1,8 +1,7 @@
 ﻿
 #include "world.h"
 
-#include <ProtoUser.h>
-#include <ProtoUserMgr.h>
+#include <ProtoClient.h>
 #include <ProtoDocker.h>
 #include <ProtoSpaceCommon.h>
 #include <ProtoSpaceServer.h>

@@ -21,7 +21,7 @@
 #include <common.h>
 #include <utls.h>
 #include <ProtoCommon.h>
-#include <ProtoUser.h>
+#include <ProtoClient.h>
 #include <ProtoSpaceCommon.h>
 #include <ProtoSpaceServer.h>
 #include <ProtoSpaceClient.h>

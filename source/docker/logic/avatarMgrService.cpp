@@ -1,7 +1,7 @@
 ﻿#include "docker.h"
 #include "avatarMgrService.h"
 #include <ProtoCommon.h>
-#include <ProtoUser.h>
+#include <ProtoClient.h>
 
 AvatarMgrService::AvatarMgrService()
 {

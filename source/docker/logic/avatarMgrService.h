@@ -25,7 +25,7 @@
 #define _AVATAR_MGR_SERVICE_H_
 #include <common.h>
 #include "service.h"
-#include <ProtoUserMgr.h>
+
 
 
 

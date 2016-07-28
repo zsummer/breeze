@@ -7,8 +7,7 @@
 #include "webService.h"
 #include "monitorService.h"
 #include "offlineService.h"
-#include <ProtoUser.h>
-#include <ProtoUserMgr.h>
+#include <ProtoClient.h>
 #include <ProtoDocker.h>
 
 
