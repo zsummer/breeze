@@ -1,6 +1,6 @@
 ﻿require("proto4z")
 require("ProtoCommon")
-require("ProtoUser")
+require("ProtoClient")
 
 
 Session = {}
@@ -19,7 +19,7 @@ function Session:ctor(sID, account, token, userName, iconID)
     self.account=account
     self.token=token
     self.userName=userName
-    self.userID=0
+    self.avatarID=0
     self.iconID = iconID
 end
 function Session:whenPulse(sID)
@@ -39,42 +39,42 @@ end
 function Session:onClientAuthResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
         if next(msg.previews) then
-            self.userID = msg.previews[1].userID
-            send(sID, "AttachUserReq", {userID=msg.previews[1].userID})
+            self.avatarID = msg.previews[1].avatarID
+            send(sID, "AttachAvatarReq", {avatarID=msg.previews[1].avatarID})
         else
-            send(sID, "CreateUserReq", {userName=self.userName})
+            send(sID, "CreateAvatarReq", {userName=self.userName})
         end
     else
 	dump(msg, "error Session:onClientAuthResp")
     end
 end
 
-function Session:onCreateUserResp(sID, msg)
+function Session:onCreateAvatarResp(sID, msg)
     if next(msg.previews) then
-        self.userID = msg.previews[1].userID
-        send(sID, "AttachUserReq", {userID=msg.previews[1].userID})
+        self.avatarID = msg.previews[1].avatarID
+        send(sID, "AttachAvatarReq", {avatarID=msg.previews[1].avatarID})
     else
-        loge("onCreateUserResp error. msg.retCode=" .. msg.retCode)
+        loge("onCreateAvatarResp error. msg.retCode=" .. msg.retCode)
     end
 end
 
-function Session:onAttachUserResp(sID, msg)
+function Session:onAttachAvatarResp(sID, msg)
     if msg.retCode == Proto4z.EC_SUCCESS then
-        __global_userID_array = __global_userID_array or {}
-        if #__global_userID_array > 0 then
-            local rdx = math.random(#__global_userID_array)
-            send(sID, "UserChatReq", {touserID=__global_userID_array[rdx], msg="hello"})
+        __global_avatarID_array = __global_avatarID_array or {}
+        if #__global_avatarID_array > 0 then
+            local rdx = math.random(#__global_avatarID_array)
+            send(sID, "ChatReq", {toavatarID=__global_avatarID_array[rdx], msg="hello"})
         end
-        table.insert(__global_userID_array, self.userID)
-        send(sID, "UserPingPongReq", { msg="hello"})
+        table.insert(__global_avatarID_array, self.avatarID)
+        send(sID, "PingPongReq", { msg="hello"})
     end
 end
 
 -- 登录游戏
-function Session:onUserChatResp(sID, msg)
+function Session:onChatResp(sID, msg)
     dump(msg)
 end
 -- 登录游戏
-function Session:onUserPingPongResp(sID, msg)
-    send(sID, "UserPingPongReq", { msg="hello"})
+function Session:onPingPongResp(sID, msg)
+    send(sID, "PingPongReq", { msg="hello"})
 end
