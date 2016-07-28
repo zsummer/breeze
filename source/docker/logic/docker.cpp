@@ -1,8 +1,8 @@
 ﻿
 #include "docker.h"
 #include "dbService.h"
-#include "userMgrService.h"
-#include "userService.h"
+#include "avatarMgrService.h"
+#include "avatarService.h"
 #include "shellService.h"
 #include "webService.h"
 #include "monitorService.h"

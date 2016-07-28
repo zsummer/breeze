@@ -27,12 +27,6 @@
     <ClCompile Include="logic\shellService.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="logic\userMgrService.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\userService.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="logic\docker.cpp">
       <Filter>logic</Filter>
     </ClCompile>
@@ -48,6 +42,12 @@
     <ClCompile Include="logic\webService.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\avatarMgrService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\avatarService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logic\dbService.h">
@@ -57,12 +57,6 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\shellService.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\userMgrService.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\userService.h">
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\docker.h">
@@ -78,6 +72,12 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\webService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\avatarMgrService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\avatarService.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>
