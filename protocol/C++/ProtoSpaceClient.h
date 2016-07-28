@@ -7,31 +7,31 @@ struct AttachSpaceReq
 { 
     static const unsigned short getProtoID() { return 50013;} 
     static const std::string getProtoName() { return "AttachSpaceReq";} 
-    unsigned long long userID;  
+    unsigned long long avatarID;  
     unsigned int spaceID;  
     std::string token; //令牌  
     AttachSpaceReq() 
     { 
-        userID = 0; 
+        avatarID = 0; 
         spaceID = 0; 
     } 
-    AttachSpaceReq(const unsigned long long & userID, const unsigned int & spaceID, const std::string & token) 
+    AttachSpaceReq(const unsigned long long & avatarID, const unsigned int & spaceID, const std::string & token) 
     { 
-        this->userID = userID; 
+        this->avatarID = avatarID; 
         this->spaceID = spaceID; 
         this->token = token; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachSpaceReq & data) 
 { 
-    ws << data.userID;  
+    ws << data.avatarID;  
     ws << data.spaceID;  
     ws << data.token;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachSpaceReq & data) 
 { 
-    rs >> data.userID;  
+    rs >> data.avatarID;  
     rs >> data.spaceID;  
     rs >> data.token;  
     return rs; 
@@ -39,7 +39,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachSpaceReq & info) 
 { 
     stm << "[\n"; 
-    stm << "userID=" << info.userID << "\n"; 
+    stm << "avatarID=" << info.avatarID << "\n"; 
     stm << "spaceID=" << info.spaceID << "\n"; 
     stm << "token=" << info.token << "\n"; 
     stm << "]\n"; 
@@ -51,32 +51,32 @@ struct AttachSpaceResp
     static const unsigned short getProtoID() { return 50014;} 
     static const std::string getProtoName() { return "AttachSpaceResp";} 
     unsigned short retCode; //错误码  
-    unsigned long long userID;  
+    unsigned long long avatarID;  
     unsigned int spaceID;  
     AttachSpaceResp() 
     { 
         retCode = 0; 
-        userID = 0; 
+        avatarID = 0; 
         spaceID = 0; 
     } 
-    AttachSpaceResp(const unsigned short & retCode, const unsigned long long & userID, const unsigned int & spaceID) 
+    AttachSpaceResp(const unsigned short & retCode, const unsigned long long & avatarID, const unsigned int & spaceID) 
     { 
         this->retCode = retCode; 
-        this->userID = userID; 
+        this->avatarID = avatarID; 
         this->spaceID = spaceID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachSpaceResp & data) 
 { 
     ws << data.retCode;  
-    ws << data.userID;  
+    ws << data.avatarID;  
     ws << data.spaceID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachSpaceResp & data) 
 { 
     rs >> data.retCode;  
-    rs >> data.userID;  
+    rs >> data.avatarID;  
     rs >> data.spaceID;  
     return rs; 
 } 
@@ -84,7 +84,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 
-    stm << "userID=" << info.userID << "\n"; 
+    stm << "avatarID=" << info.avatarID << "\n"; 
     stm << "spaceID=" << info.spaceID << "\n"; 
     stm << "]\n"; 
     return stm; 

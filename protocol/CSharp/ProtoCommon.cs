@@ -13,10 +13,10 @@ namespace Proto4z
         EC_REQUEST_EXPIRE = 6, //请求操作已过期  
         EC_TARGET_NOT_EXIST = 7, //操作目标不存在  
         EC_TOKEN_EXPIRE = 8, //令牌过期  
-        EC_USER_NOT_FOUND = 50, //错误的用户信息  
-        EC_USER_COUNT_LIMITE = 51, //创建用户的数量超出限制  
-        EC_USER_FREQ_LIMITE = 52, //创建用户的频率超出限制  
-        EC_USER_NAME_CONFLICT = 53, //创建用户的昵称冲突  
+        EC_AVATAR_NOT_FOUND = 50, //错误的用户信息  
+        EC_AVATAR_COUNT_LIMITE = 51, //创建用户的数量超出限制  
+        EC_AVATAR_FREQ_LIMITE = 52, //创建用户的频率超出限制  
+        EC_AVATAR_NAME_CONFLICT = 53, //创建用户的昵称冲突  
         EC_FRIEND_DUPLICATE = 100, //请先删除与该好友建立的关系  
         EC_FRIEND_CEILING = 101, //达到好友上限  
         EC_FRIEND_REFUSE = 102, //不能添加对方为好友  
@@ -86,32 +86,32 @@ namespace Proto4z
         //members   
         public uint clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
         public uint clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
-        public ulong clientUserID; //该数据由docker获得来自客户端的消息时自动填充.  
+        public ulong clientAvatarID; //该数据由docker获得来自客户端的消息时自动填充.  
         public OutOfBand()  
         { 
             clientDockerID = 0;  
             clientSessionID = 0;  
-            clientUserID = 0;  
+            clientAvatarID = 0;  
         } 
-        public OutOfBand(uint clientDockerID, uint clientSessionID, ulong clientUserID) 
+        public OutOfBand(uint clientDockerID, uint clientSessionID, ulong clientAvatarID) 
         { 
             this.clientDockerID = clientDockerID; 
             this.clientSessionID = clientSessionID; 
-            this.clientUserID = clientUserID; 
+            this.clientAvatarID = clientAvatarID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientDockerID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.clientUserID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.clientAvatarID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.clientDockerID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.clientUserID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.clientAvatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -155,7 +155,7 @@ namespace Proto4z
     } 
  
  
-    public class UserIDArray : System.Collections.Generic.List<ulong>, Proto4z.IProtoObject  
+    public class AvatarIDArray : System.Collections.Generic.List<ulong>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -183,29 +183,29 @@ namespace Proto4z
         } 
     } 
  
-    public class UserPreview: Proto4z.IProtoObject //用户预览信息  
+    public class AvatarPreview: Proto4z.IProtoObject //用户预览信息  
     {     
         //proto id   
-        public const ushort protoID = 1001;  
-        static public ushort getProtoID() { return 1001; } 
-        static public string getProtoName() { return "UserPreview"; } 
+        public const ushort protoID = 1014;  
+        static public ushort getProtoID() { return 1014; } 
+        static public string getProtoName() { return "AvatarPreview"; } 
         //members   
-        public ulong userID; //用户唯一ID, 对应UserService的ServiceID  
-        public string userName; //用户唯一昵称, 对应UserService的ServiceName  
+        public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
+        public string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
         public string account; //帐号  
         public short iconID; //头像  
         public int level; //等级  
-        public UserPreview()  
+        public AvatarPreview()  
         { 
-            userID = 0;  
+            avatarID = 0;  
             userName = "";  
             account = "";  
             iconID = 0;  
             level = 0;  
         } 
-        public UserPreview(ulong userID, string userName, string account, short iconID, int level) 
+        public AvatarPreview(ulong avatarID, string userName, string account, short iconID, int level) 
         { 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
             this.userName = userName; 
             this.account = account; 
             this.iconID = iconID; 
@@ -214,7 +214,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
@@ -223,7 +223,7 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
@@ -233,7 +233,7 @@ namespace Proto4z
     } 
  
  
-    public class UserPreviewArray : System.Collections.Generic.List<UserPreview>, Proto4z.IProtoObject  
+    public class AvatarPreviewArray : System.Collections.Generic.List<AvatarPreview>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -254,7 +254,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new UserPreview(); 
+                    var data = new AvatarPreview(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
@@ -263,15 +263,15 @@ namespace Proto4z
         } 
     } 
  
-    public class UserBaseInfo: Proto4z.IProtoObject //用户基础数据  
+    public class AvatarBaseInfo: Proto4z.IProtoObject //用户基础数据  
     {     
         //proto id   
-        public const ushort protoID = 1002;  
-        static public ushort getProtoID() { return 1002; } 
-        static public string getProtoName() { return "UserBaseInfo"; } 
+        public const ushort protoID = 1013;  
+        static public ushort getProtoID() { return 1013; } 
+        static public string getProtoName() { return "AvatarBaseInfo"; } 
         //members   
-        public ulong userID; //用户唯一ID, 对应UserService的ServiceID  
-        public string userName; //用户唯一昵称, 对应UserService的ServiceName  
+        public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
+        public string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
         public string account; //帐号  
         public short iconID; //头像  
         public int level; //等级  
@@ -284,9 +284,9 @@ namespace Proto4z
         public double moveSpeed; //移动速度  
         public double attackSpeed; //攻击速度  
         public double vampirk; //吸血  
-        public UserBaseInfo()  
+        public AvatarBaseInfo()  
         { 
-            userID = 0;  
+            avatarID = 0;  
             userName = "";  
             account = "";  
             iconID = 0;  
@@ -301,9 +301,9 @@ namespace Proto4z
             attackSpeed = 0.0;  
             vampirk = 0.0;  
         } 
-        public UserBaseInfo(ulong userID, string userName, string account, short iconID, int level, double hp, double hpRegen, double attack, double defense, double crit, double toughness, double moveSpeed, double attackSpeed, double vampirk) 
+        public AvatarBaseInfo(ulong avatarID, string userName, string account, short iconID, int level, double hp, double hpRegen, double attack, double defense, double crit, double toughness, double moveSpeed, double attackSpeed, double vampirk) 
         { 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
             this.userName = userName; 
             this.account = account; 
             this.iconID = iconID; 
@@ -321,7 +321,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
@@ -339,7 +339,7 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
@@ -358,7 +358,7 @@ namespace Proto4z
     } 
  
  
-    public class UserBaseInfoArray : System.Collections.Generic.List<UserBaseInfo>, Proto4z.IProtoObject  
+    public class AvatarBaseInfoArray : System.Collections.Generic.List<AvatarBaseInfo>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -379,7 +379,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new UserBaseInfo(); 
+                    var data = new AvatarBaseInfo(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 

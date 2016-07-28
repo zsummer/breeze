@@ -5,7 +5,7 @@
 
 OfflineService::OfflineService()
 {
-    slotting<UserOffline>(std::bind(&OfflineService::onUserOffline, this, _1, _2));
+    slotting<AvatarOffline>(std::bind(&OfflineService::onAvatarOffline, this, _1, _2));
     slotting<RefreshServiceToMgrNotice>(std::bind(&OfflineService::onRefreshServiceToMgrNotice, this, _1, _2));
 }
 
@@ -27,7 +27,7 @@ void OfflineService::onUnload()
 
 bool OfflineService::onLoad()
 {
-    DBQueryReq req("SELECT max(id) FROM `tb_UserOffline`");
+    DBQueryReq req("SELECT max(id) FROM `tb_AvatarOffline`");
     toService(STInfoDBMgr, req, std::bind(&OfflineService::onLoadMaxOfflineID, this, _1));
     return true;
 }
@@ -53,7 +53,7 @@ void OfflineService::onLoadMaxOfflineID(zsummer::proto4z::ReadStream &rs)
     {
         _offlineNextID = ServerConfig::getRef().getMinServiceID() + 1;
     }
-    auto sql = UserOffline().getDBSelectPure() + " where status=0 ";
+    auto sql = AvatarOffline().getDBSelectPure() + " where status=0 ";
     _offlines.loadFromDB(shared_from_this(), sql, std::bind(&OfflineService::onModuleLoad,
         std::static_pointer_cast<OfflineService>(shared_from_this()), _1, _2));
 }
@@ -73,9 +73,9 @@ void OfflineService::onClientChange()
 {
     return ;
 }
-void OfflineService::onUserOffline(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void OfflineService::onAvatarOffline(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    UserOffline offline;
+    AvatarOffline offline;
     rs >> offline;
     offline.timestamp = getNowTime();
     offline.status = 0;
@@ -84,7 +84,7 @@ void OfflineService::onUserOffline(const Tracing & trace, zsummer::proto4z::Read
         std::static_pointer_cast<OfflineService>(shared_from_this()), _1, _2));
 }
 
-void OfflineService::onInsert(bool success, const UserOffline & offline)
+void OfflineService::onInsert(bool success, const AvatarOffline & offline)
 {
     if (success)
     {
@@ -106,9 +106,9 @@ void OfflineService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
             for (auto iter = _offlines._data.begin(); iter != _offlines._data.end();)
             {
                 auto offline = *iter;
-                if (offline.userID == si.serviceID && offline.status == 0)
+                if (offline.avatarID == si.serviceID && offline.status == 0)
                 {
-                    toService(STUser, offline.userID, offline.streamBlob.c_str(), (unsigned int)offline.streamBlob.length());
+                    toService(STAvatar, offline.avatarID, offline.streamBlob.c_str(), (unsigned int)offline.streamBlob.length());
                     offline.status = 1;
                     _offlines.updateToDB(offline);
                     iter = _offlines._data.erase(iter);

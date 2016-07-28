@@ -43,7 +43,7 @@
         <member name="host" type="string"  desc="服务器host"/>
         <member name="port" type="ui16"  desc="服务器port"/>
         <member name="token" type="string"  desc="令牌"/>
-        <member name="involeds" type="UserBaseInfoArray"  desc="匹配列表中的玩家"/>
+        <member name="involeds" type="AvatarBaseInfoArray"  desc="匹配列表中的玩家"/>
     </struct>
     <array name="SpaceTokenInfoArray" type="SpaceTokenInfo" desc="" />
 
@@ -301,7 +301,7 @@
 
     <!-- 一个实体的完整数据, 包括属性,状态 位置等. -->
     <struct name="EntityFullInfo" desc="EntityFullInfo">
-        <member name="userInfo" type="UserBaseInfo"  desc=""/>
+        <member name="userInfo" type="AvatarBaseInfo"  desc=""/>
         <member name="info" type="EntityInfo"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>

@@ -67,15 +67,15 @@ namespace Proto4z
         public ushort retCode;  
         public string account;  
         public string token;  
-        public UserPreviewArray previews;  
+        public AvatarPreviewArray previews;  
         public ClientAuthResp()  
         { 
             retCode = 0;  
             account = "";  
             token = "";  
-            previews = new UserPreviewArray();  
+            previews = new AvatarPreviewArray();  
         } 
-        public ClientAuthResp(ushort retCode, string account, string token, UserPreviewArray previews) 
+        public ClientAuthResp(ushort retCode, string account, string token, AvatarPreviewArray previews) 
         { 
             this.retCode = retCode; 
             this.account = account; 
@@ -88,7 +88,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
-            if (this.previews == null) this.previews = new UserPreviewArray(); 
+            if (this.previews == null) this.previews = new AvatarPreviewArray(); 
             data.AddRange(this.previews.__encode()); 
             return data; 
         } 
@@ -97,27 +97,27 @@ namespace Proto4z
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.previews = new UserPreviewArray(); 
+            this.previews = new AvatarPreviewArray(); 
             this.previews.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class CreateUserReq: Proto4z.IProtoObject //创角色请求  
+    public class CreateAvatarReq: Proto4z.IProtoObject //创角色请求  
     {     
         //proto id   
-        public const ushort protoID = 40003;  
-        static public ushort getProtoID() { return 40003; } 
-        static public string getProtoName() { return "CreateUserReq"; } 
+        public const ushort protoID = 40029;  
+        static public ushort getProtoID() { return 40029; } 
+        static public string getProtoName() { return "CreateAvatarReq"; } 
         //members   
         public string accountName; //这个字段会被服务器填充.客户端可以不填写  
         public string userName;  
-        public CreateUserReq()  
+        public CreateAvatarReq()  
         { 
             accountName = "";  
             userName = "";  
         } 
-        public CreateUserReq(string accountName, string userName) 
+        public CreateAvatarReq(string accountName, string userName) 
         { 
             this.accountName = accountName; 
             this.userName = userName; 
@@ -137,111 +137,111 @@ namespace Proto4z
         } 
     } 
  
-    public class CreateUserResp: Proto4z.IProtoObject //创角色请求返回  
+    public class CreateAvatarResp: Proto4z.IProtoObject //创角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 40004;  
-        static public ushort getProtoID() { return 40004; } 
-        static public string getProtoName() { return "CreateUserResp"; } 
+        public const ushort protoID = 40030;  
+        static public ushort getProtoID() { return 40030; } 
+        static public string getProtoName() { return "CreateAvatarResp"; } 
         //members   
         public ushort retCode;  
-        public ulong userID;  
-        public UserPreviewArray previews;  
-        public CreateUserResp()  
+        public ulong avatarID;  
+        public AvatarPreviewArray previews;  
+        public CreateAvatarResp()  
         { 
             retCode = 0;  
-            userID = 0;  
-            previews = new UserPreviewArray();  
+            avatarID = 0;  
+            previews = new AvatarPreviewArray();  
         } 
-        public CreateUserResp(ushort retCode, ulong userID, UserPreviewArray previews) 
+        public CreateAvatarResp(ushort retCode, ulong avatarID, AvatarPreviewArray previews) 
         { 
             this.retCode = retCode; 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
             this.previews = previews; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
-            if (this.previews == null) this.previews = new UserPreviewArray(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            if (this.previews == null) this.previews = new AvatarPreviewArray(); 
             data.AddRange(this.previews.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.previews = new UserPreviewArray(); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.previews = new AvatarPreviewArray(); 
             this.previews.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class AttachUserReq: Proto4z.IProtoObject //选角色请求  
+    public class AttachAvatarReq: Proto4z.IProtoObject //选角色请求  
     {     
         //proto id   
-        public const ushort protoID = 40005;  
-        static public ushort getProtoID() { return 40005; } 
-        static public string getProtoName() { return "AttachUserReq"; } 
+        public const ushort protoID = 40031;  
+        static public ushort getProtoID() { return 40031; } 
+        static public string getProtoName() { return "AttachAvatarReq"; } 
         //members   
         public string accountName; //这个字段会被服务器填充.客户端可以不填写  
-        public ulong userID;  
-        public AttachUserReq()  
+        public ulong avatarID;  
+        public AttachAvatarReq()  
         { 
             accountName = "";  
-            userID = 0;  
+            avatarID = 0;  
         } 
-        public AttachUserReq(string accountName, ulong userID) 
+        public AttachAvatarReq(string accountName, ulong avatarID) 
         { 
             this.accountName = accountName; 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.accountName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.accountName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class AttachUserResp: Proto4z.IProtoObject //选角色请求返回  
+    public class AttachAvatarResp: Proto4z.IProtoObject //选角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 40006;  
-        static public ushort getProtoID() { return 40006; } 
-        static public string getProtoName() { return "AttachUserResp"; } 
+        public const ushort protoID = 40032;  
+        static public ushort getProtoID() { return 40032; } 
+        static public string getProtoName() { return "AttachAvatarResp"; } 
         //members   
         public ushort retCode;  
-        public ulong userID;  
-        public AttachUserResp()  
+        public ulong avatarID;  
+        public AttachAvatarResp()  
         { 
             retCode = 0;  
-            userID = 0;  
+            avatarID = 0;  
         } 
-        public AttachUserResp(ushort retCode, ulong userID) 
+        public AttachAvatarResp(ushort retCode, ulong avatarID) 
         { 
             this.retCode = retCode; 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -464,87 +464,87 @@ namespace Proto4z
         } 
     } 
  
-    public class UserChatReq: Proto4z.IProtoObject 
+    public class ChatReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40007;  
-        static public ushort getProtoID() { return 40007; } 
-        static public string getProtoName() { return "UserChatReq"; } 
+        public const ushort protoID = 40033;  
+        static public ushort getProtoID() { return 40033; } 
+        static public string getProtoName() { return "ChatReq"; } 
         //members   
-        public ulong userID;  
+        public ulong avatarID;  
         public string msg;  
-        public UserChatReq()  
+        public ChatReq()  
         { 
-            userID = 0;  
+            avatarID = 0;  
             msg = "";  
         } 
-        public UserChatReq(ulong userID, string msg) 
+        public ChatReq(ulong avatarID, string msg) 
         { 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
             this.msg = msg; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class UserChatResp: Proto4z.IProtoObject 
+    public class ChatResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40008;  
-        static public ushort getProtoID() { return 40008; } 
-        static public string getProtoName() { return "UserChatResp"; } 
+        public const ushort protoID = 40034;  
+        static public ushort getProtoID() { return 40034; } 
+        static public string getProtoName() { return "ChatResp"; } 
         //members   
-        public ulong fromUserID;  
+        public ulong fromAvatarID;  
         public string msg;  
-        public UserChatResp()  
+        public ChatResp()  
         { 
-            fromUserID = 0;  
+            fromAvatarID = 0;  
             msg = "";  
         } 
-        public UserChatResp(ulong fromUserID, string msg) 
+        public ChatResp(ulong fromAvatarID, string msg) 
         { 
-            this.fromUserID = fromUserID; 
+            this.fromAvatarID = fromAvatarID; 
             this.msg = msg; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromUserID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromAvatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.fromUserID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.fromAvatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class UserPingPongReq: Proto4z.IProtoObject 
+    public class PingPongReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40009;  
-        static public ushort getProtoID() { return 40009; } 
-        static public string getProtoName() { return "UserPingPongReq"; } 
+        public const ushort protoID = 40035;  
+        static public ushort getProtoID() { return 40035; } 
+        static public string getProtoName() { return "PingPongReq"; } 
         //members   
         public string msg;  
-        public UserPingPongReq()  
+        public PingPongReq()  
         { 
             msg = "";  
         } 
-        public UserPingPongReq(string msg) 
+        public PingPongReq(string msg) 
         { 
             this.msg = msg; 
         } 
@@ -561,19 +561,19 @@ namespace Proto4z
         } 
     } 
  
-    public class UserPingPongResp: Proto4z.IProtoObject 
+    public class PingPongResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40010;  
-        static public ushort getProtoID() { return 40010; } 
-        static public string getProtoName() { return "UserPingPongResp"; } 
+        public const ushort protoID = 40036;  
+        static public ushort getProtoID() { return 40036; } 
+        static public string getProtoName() { return "PingPongResp"; } 
         //members   
         public string msg;  
-        public UserPingPongResp()  
+        public PingPongResp()  
         { 
             msg = "";  
         } 
-        public UserPingPongResp(string msg) 
+        public PingPongResp(string msg) 
         { 
             this.msg = msg; 
         } 

@@ -21,8 +21,8 @@
 
 
 
-#ifndef _USER_MGR_SERVICE_H_
-#define _USER_MGR_SERVICE_H_
+#ifndef _AVATAR_MGR_SERVICE_H_
+#define _AVATAR_MGR_SERVICE_H_
 #include <common.h>
 #include "service.h"
 #include <ProtoUserMgr.h>
@@ -31,57 +31,57 @@
 
 
 /*
-UserMgrService
+AvatarMgrService
     userService管理器服务. 
 */
 
-struct UserStatus
+struct AvatarStatus
 {
     ui16 _status = SS_NONE;
     DockerID _clientDockerID = InvalidDockerID;
     SessionID _clientSessionID = InvalidSessionID;
     time_t _lastChangeTime = 0;
-    UserPreview _preview;
+    AvatarPreview _preview;
 };
-using UserStatusPtr = std::shared_ptr<UserStatus>;
+using AvatarStatusPtr = std::shared_ptr<AvatarStatus>;
 
 struct AccountStatus
 {
     ui64 _lastCreateTime = 0;
-    std::map<ui64, UserStatusPtr> _users;
+    std::map<ui64, AvatarStatusPtr> _players;
 };
 
 
 
-class UserMgrService : public Service
+class AvatarMgrService : public Service
 {
 public:
-    UserMgrService();
-    ~UserMgrService();
+    AvatarMgrService();
+    ~AvatarMgrService();
     bool onLoad() override final;
-    void onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql);
+    void onLoadAvatarPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql);
     void onClientChange() override final;
     void onUnload() override final;
     void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
 
 private:
-    void updateUserPreview(const UserPreview & pre);
+    void updateAvatarPreview(const AvatarPreview & pre);
 private:
     void onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onClientAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onClientAuthReqFromDB(zsummer::proto4z::ReadStream &, const Tracing & trace, const ClientAuthReq & req);
-    void onCreateUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onCreateUserReqFromDB(zsummer::proto4z::ReadStream &, const UserBaseInfo & ubi, const Tracing & trace, const CreateUserReq & req);
-    void onAttachUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onCreateAvatarReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onCreateAvatarReqFromDB(zsummer::proto4z::ReadStream &, const AvatarBaseInfo & ubi, const Tracing & trace, const CreateAvatarReq & req);
+    void onAttachAvatarReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
     time_t _lastTime = 0;
-    std::map<ui64, UserStatusPtr> _freeList;
-    std::map<ui64, UserStatusPtr> _userStatusByID;
-    std::map<std::string, UserStatusPtr> _userStatusByName;
+    std::map<ui64, AvatarStatusPtr> _freeList;
+    std::map<ui64, AvatarStatusPtr> _userStatusByID;
+    std::map<std::string, AvatarStatusPtr> _userStatusByName;
     std::map<std::string, AccountStatus> _accountStatus;
-    ui64 _nextUserID = 0;
+    ui64 _nextAvatarID = 0;
 };
 
 

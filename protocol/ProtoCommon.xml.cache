@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>71c072a2e6fe24ef63070ea05dd60be2</cppmd5> 
-<luamd5>e54ec2d62052bfb0c16644859caa749d</luamd5> 
-<csharpmd5>9a694b87ffea439205bb679bb9d7a2ed</csharpmd5> 
-<xmlmd5>44f9b68447fb36afb84f705be17ed47b</xmlmd5> 
+<cppmd5>a0bf106a3dd09d3999c30693e4c2426f</cppmd5> 
+<luamd5>e3b9e391ec7ef3fea3dc557198a07769</luamd5> 
+<csharpmd5>aa9cbf46da06c1c90729a9089816c6be</csharpmd5> 
+<xmlmd5>622a3ecb3efbae68d1f5bbbbeabb362c</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_AvatarBaseInfo" Number = "1013" /> 
+    <cache key = "ID_AvatarPreview" Number = "1014" /> 
     <cache key = "ID_DictBaseProps" Number = "1010" /> 
     <cache key = "ID_DictGlobal" Number = "1007" /> 
     <cache key = "ID_DictItem" Number = "1011" /> 

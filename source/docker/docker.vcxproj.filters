@@ -103,6 +103,15 @@
     <Xml Include="..\..\protocol\ProtoWebAgent.xml">
       <Filter>protocol</Filter>
     </Xml>
+    <Xml Include="..\..\protocol\ProtoSpaceClient.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoSpaceCommon.xml">
+      <Filter>protocol</Filter>
+    </Xml>
+    <Xml Include="..\..\protocol\ProtoSpaceServer.xml">
+      <Filter>protocol</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\config.lua">

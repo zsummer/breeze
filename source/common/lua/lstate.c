@@ -208,7 +208,7 @@ static void f_luaopen (lua_State *L, void *ud) {
   luaC_fix(L, obj2gco(g->memerrmsg));  /* it should never be collected */
   g->gcrunning = 1;  /* allow gc */
   g->version = lua_version(NULL);
-  luai_userstateopen(L);
+  luai_playerstateopen(L);
 }
 
 
@@ -241,7 +241,7 @@ static void close_state (lua_State *L) {
   luaF_close(L, L->stack);  /* close all upvalues for this thread */
   luaC_freeallobjects(L);  /* collect all objects */
   if (g->version)  /* closing a fully built state? */
-    luai_userstateclose(L);
+    luai_playerstateclose(L);
   luaM_freearray(L, G(L)->strt.hash, G(L)->strt.size);
   luaZ_freebuffer(L, &g->buff);
   freestack(L);
@@ -273,7 +273,7 @@ LUA_API lua_State *lua_newthread (lua_State *L) {
   /* initialize L1 extra space */
   memcpy(lua_getextraspace(L1), lua_getextraspace(g->mainthread),
          LUA_EXTRASPACE);
-  luai_userstatethread(L, L1);
+  luai_playerstatethread(L, L1);
   stack_init(L1, L);  /* init stack */
   lua_unlock(L);
   return L1;
@@ -284,7 +284,7 @@ void luaE_freethread (lua_State *L, lua_State *L1) {
   LX *l = fromstate(L1);
   luaF_close(L1, L1->stack);  /* close all upvalues for this thread */
   lua_assert(L1->openupval == NULL);
-  luai_userstatefree(L, L1);
+  luai_playerstatefree(L, L1);
   freestack(L1);
   luaM_free(L, l);
 }

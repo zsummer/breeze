@@ -35,7 +35,7 @@ namespace Proto4z
         public string host; //服务器host  
         public ushort port; //服务器port  
         public string token; //令牌  
-        public UserBaseInfoArray involeds; //匹配列表中的玩家  
+        public AvatarBaseInfoArray involeds; //匹配列表中的玩家  
         public SpaceTokenInfo()  
         { 
             spaceType = 0;  
@@ -45,9 +45,9 @@ namespace Proto4z
             host = "";  
             port = 0;  
             token = "";  
-            involeds = new UserBaseInfoArray();  
+            involeds = new AvatarBaseInfoArray();  
         } 
-        public SpaceTokenInfo(ushort spaceType, uint mapID, uint spaceID, ushort spaceStatus, string host, ushort port, string token, UserBaseInfoArray involeds) 
+        public SpaceTokenInfo(ushort spaceType, uint mapID, uint spaceID, ushort spaceStatus, string host, ushort port, string token, AvatarBaseInfoArray involeds) 
         { 
             this.spaceType = spaceType; 
             this.mapID = mapID; 
@@ -68,7 +68,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
-            if (this.involeds == null) this.involeds = new UserBaseInfoArray(); 
+            if (this.involeds == null) this.involeds = new AvatarBaseInfoArray(); 
             data.AddRange(this.involeds.__encode()); 
             return data; 
         } 
@@ -81,7 +81,7 @@ namespace Proto4z
             this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.involeds = new UserBaseInfoArray(); 
+            this.involeds = new AvatarBaseInfoArray(); 
             this.involeds.__decode(binData, ref pos); 
             return pos; 
         } 
@@ -1209,16 +1209,16 @@ namespace Proto4z
         static public ushort getProtoID() { return 10014; } 
         static public string getProtoName() { return "EntityFullInfo"; } 
         //members   
-        public UserBaseInfo userInfo;  
+        public AvatarBaseInfo userInfo;  
         public EntityInfo info;  
         public EntityReport report;  
         public EntityFullInfo()  
         { 
-            userInfo = new UserBaseInfo();  
+            userInfo = new AvatarBaseInfo();  
             info = new EntityInfo();  
             report = new EntityReport();  
         } 
-        public EntityFullInfo(UserBaseInfo userInfo, EntityInfo info, EntityReport report) 
+        public EntityFullInfo(AvatarBaseInfo userInfo, EntityInfo info, EntityReport report) 
         { 
             this.userInfo = userInfo; 
             this.info = info; 
@@ -1227,7 +1227,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.userInfo == null) this.userInfo = new UserBaseInfo(); 
+            if (this.userInfo == null) this.userInfo = new AvatarBaseInfo(); 
             data.AddRange(this.userInfo.__encode()); 
             if (this.info == null) this.info = new EntityInfo(); 
             data.AddRange(this.info.__encode()); 
@@ -1237,7 +1237,7 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.userInfo = new UserBaseInfo(); 
+            this.userInfo = new AvatarBaseInfo(); 
             this.userInfo.__decode(binData, ref pos); 
             this.info = new EntityInfo(); 
             this.info.__decode(binData, ref pos); 

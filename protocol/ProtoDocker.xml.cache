@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>75e67833b113c536fe80c9f960278a06</cppmd5> 
-<luamd5>fadf0d650732652b24e521716d078049</luamd5> 
-<csharpmd5>ae4f5b5c6b0473a0a2f1cbdfe24a1006</csharpmd5> 
-<xmlmd5>4b11b5708dd65cb835e9176baa509a98</xmlmd5> 
+<cppmd5>e23590258365c5bc41fbefaea0302b84</cppmd5> 
+<luamd5>6d03ae853454575dc59c4087893ae1d6</luamd5> 
+<csharpmd5>34a32bb880795521eac6b9081752ce92</csharpmd5> 
+<xmlmd5>5651af653d40573d6cef4e919ed893fe</xmlmd5> 
 <cacheNumber>
+    <cache key = "ID_AvatarOffline" Number = "2028" /> 
     <cache key = "ID_ClientPulse" Number = "2024" /> 
     <cache key = "ID_DBDataResult" Number = "2015" /> 
     <cache key = "ID_DBQueryArrayReq" Number = "2018" /> 

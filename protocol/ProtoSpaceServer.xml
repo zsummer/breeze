@@ -19,7 +19,7 @@
     <proto name="AllocateSpaceReq" desc= "分配新战场">
         <member name="spaceType" type="ui16"  desc="类型"/>
         <member name="mapID" type="ui32"  desc=""/>
-        <member name="involeds" type="UserBaseInfoArray"  desc="匹配列表中的玩家"/>
+        <member name="involeds" type="AvatarBaseInfoArray"  desc="匹配列表中的玩家"/>
     </proto>
     <proto name="AllocateSpaceResp" desc= "分配新战场">
         <member name="retCode" type="ui16"   desc=""/>

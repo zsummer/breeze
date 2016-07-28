@@ -196,28 +196,28 @@ typedef unsigned long Instruction;
 ** LUAI_EXTRASPACE and need to do something extra when a thread is
 ** created/deleted/resumed/yielded.
 */
-#if !defined(luai_userstateopen)
-#define luai_userstateopen(L)		((void)L)
+#if !defined(luai_playerstateopen)
+#define luai_playerstateopen(L)		((void)L)
 #endif
 
-#if !defined(luai_userstateclose)
-#define luai_userstateclose(L)		((void)L)
+#if !defined(luai_playerstateclose)
+#define luai_playerstateclose(L)		((void)L)
 #endif
 
-#if !defined(luai_userstatethread)
-#define luai_userstatethread(L,L1)	((void)L)
+#if !defined(luai_playerstatethread)
+#define luai_playerstatethread(L,L1)	((void)L)
 #endif
 
-#if !defined(luai_userstatefree)
-#define luai_userstatefree(L,L1)	((void)L)
+#if !defined(luai_playerstatefree)
+#define luai_playerstatefree(L,L1)	((void)L)
 #endif
 
-#if !defined(luai_userstateresume)
-#define luai_userstateresume(L,n)	((void)L)
+#if !defined(luai_playerstateresume)
+#define luai_playerstateresume(L,n)	((void)L)
 #endif
 
-#if !defined(luai_userstateyield)
-#define luai_userstateyield(L,n)	((void)L)
+#if !defined(luai_playerstateyield)
+#define luai_playerstateyield(L,n)	((void)L)
 #endif
 
 

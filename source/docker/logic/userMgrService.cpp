@@ -3,21 +3,21 @@
 #include <ProtoCommon.h>
 #include <ProtoUser.h>
 
-UserMgrService::UserMgrService()
+AvatarMgrService::AvatarMgrService()
 {
-    slotting<RefreshServiceToMgrNotice>(std::bind(&UserMgrService::onRefreshServiceToMgrNotice, this, _1, _2));
-    slotting<RealClientClosedNotice>(std::bind(&UserMgrService::onRealClientClosedNotice, this, _1, _2));
-    slotting<ClientAuthReq>(std::bind(&UserMgrService::onClientAuthReq, this, _1, _2));
-    slotting<CreateUserReq>(std::bind(&UserMgrService::onCreateUserReq, this, _1, _2));
-    slotting<AttachUserReq>(std::bind(&UserMgrService::onAttachUserReq, this, _1, _2));
+    slotting<RefreshServiceToMgrNotice>(std::bind(&AvatarMgrService::onRefreshServiceToMgrNotice, this, _1, _2));
+    slotting<RealClientClosedNotice>(std::bind(&AvatarMgrService::onRealClientClosedNotice, this, _1, _2));
+    slotting<ClientAuthReq>(std::bind(&AvatarMgrService::onClientAuthReq, this, _1, _2));
+    slotting<CreateAvatarReq>(std::bind(&AvatarMgrService::onCreateAvatarReq, this, _1, _2));
+    slotting<AttachAvatarReq>(std::bind(&AvatarMgrService::onAttachAvatarReq, this, _1, _2));
 }
 
-UserMgrService::~UserMgrService()
+AvatarMgrService::~AvatarMgrService()
 {
     
 }
 
-void UserMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
+void AvatarMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
     time_t now = getNowTime();
     if (now - _lastTime > 10)
@@ -25,14 +25,14 @@ void UserMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
         _lastTime = now;
 
 
-        LOGI("UserMgrService::onTick balance=" << Docker::getRef().getUserBalance().getBalanceStatus());
+        LOGI("AvatarMgrService::onTick balance=" << Docker::getRef().getAvatarBalance().getBalanceStatus());
 
 
         for (auto iter = _freeList.begin(); iter != _freeList.end();)
         {
             if (iter->second->_status == SS_WORKING && getNowTime() - iter->second->_lastChangeTime > 30)
             {
-                auto service = Docker::getRef().peekService(STUser, iter->second->_preview.userID);
+                auto service = Docker::getRef().peekService(STAvatar, iter->second->_preview.avatarID);
                 if (service)
                 {
                     UnloadServiceInDocker unload(service->getServiceType(), service->getServiceID());
@@ -40,7 +40,7 @@ void UserMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
                 }
                 else
                 {
-                    LOGE("service not unload finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.userID);
+                    LOGE("service not unload finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.avatarID);
                 }
                 iter = _freeList.erase(iter);
                 continue;
@@ -50,45 +50,45 @@ void UserMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
     }
 }
 
-void UserMgrService::onUnload()
+void AvatarMgrService::onUnload()
 {
     finishUnload();
 }
 
-void UserMgrService::onClientChange()
+void AvatarMgrService::onClientChange()
 {
     return ;
 }
 
 
-bool UserMgrService::onLoad()
+bool AvatarMgrService::onLoad()
 {
-    _nextUserID = ServerConfig::getRef().getMinServiceID()+1;
+    _nextAvatarID = ServerConfig::getRef().getMinServiceID()+1;
 
-    std::string sql = trim(UserPreview().getDBSelectPure(), " ");
+    std::string sql = trim(AvatarPreview().getDBSelectPure(), " ");
     sql = subStringWithoutBack(sql, " ");
-    sql += " `tb_UserBaseInfo` ";
+    sql += " `tb_AvatarBaseInfo` ";
     int curLimit = 0;
     DBQueryReq req(sql + "limit 0, 100");
     toService(STInfoDBMgr, req,
-        std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit, sql));
+        std::bind(&AvatarMgrService::onLoadAvatarPreviewsFromDB, std::static_pointer_cast<AvatarMgrService>(shared_from_this()), _1, curLimit, sql));
     return true;
 }
 
-void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql)
+void AvatarMgrService::onLoadAvatarPreviewsFromDB(zsummer::proto4z::ReadStream & rs, int curLimit, const std::string &sql)
 {
     DBQueryResp resp;
     rs >> resp;
     if (resp.retCode != EC_SUCCESS)
     {
-        LOGE("onLoadUserPreviewsFromDB error. errCode=" << resp.retCode 
+        LOGE("onLoadAvatarPreviewsFromDB error. errCode=" << resp.retCode 
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() <<  ", sql=" << sql);
         Docker::getRef().forceStop();
         return;
     }
     if (resp.result.qc != QEC_SUCCESS )
     {
-        LOGE("onLoadUserPreviewsFromDB error. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+        LOGE("onLoadAvatarPreviewsFromDB error. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
             << ", sql msg=" << resp.result.errMsg
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
         Docker::getRef().forceStop();
@@ -96,11 +96,11 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
     }
     if (resp.result.fields.empty())
     {
-        LOGA("onLoadUserPreviewsFromDB success. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+        LOGA("onLoadAvatarPreviewsFromDB success. errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
             << ", sql msg=" << resp.result.errMsg
             << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
 
-        LOGD("onLoadLastUIDFromDB _nextUserID=" << _nextUserID << ", areaID=" << ServerConfig::getRef().getAreaID()
+        LOGD("onLoadLastUIDFromDB _nextAvatarID=" << _nextAvatarID << ", areaID=" << ServerConfig::getRef().getAreaID()
             << ", area begin uid=" << ServerConfig::getRef().getMinServiceID());
         finishLoad();
         return;
@@ -109,45 +109,45 @@ void UserMgrService::onLoadUserPreviewsFromDB(zsummer::proto4z::ReadStream & rs,
     result.buildResult((QueryErrorCode)resp.result.qc, resp.result.errMsg, resp.result.sql, resp.result.affected, resp.result.fields);
     while (result.haveRow())
     {
-        UserPreview up;
+        AvatarPreview up;
         up.fetchFromDBResult(result);
 
-        if (_userStatusByID.find(up.userID) != _userStatusByID.end()
+        if (_userStatusByID.find(up.avatarID) != _userStatusByID.end()
             || _userStatusByName.find(up.userName) != _userStatusByName.end())
         {
-            LOGA("onLoadUserPreviewsFromDB . errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
+            LOGA("onLoadAvatarPreviewsFromDB . errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
                 << ", sql msg=" << resp.result.errMsg
                 << ", curLimit=" << curLimit << ",  inited user=" << _userStatusByID.size() << ", sql=" << sql);
             LOGE("User ID or Name conflict. " << up);
             return;
         }
-        updateUserPreview(up);
-        if (_nextUserID < up.userID)
+        updateAvatarPreview(up);
+        if (_nextAvatarID < up.avatarID)
         {
-            _nextUserID = up.userID;
+            _nextAvatarID = up.avatarID;
         }
     }
     DBQueryReq req(sql + "limit " + toString(curLimit+100) + ", 100");
     toService(STInfoDBMgr, req,
-        std::bind(&UserMgrService::onLoadUserPreviewsFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, curLimit+100, sql));
+        std::bind(&AvatarMgrService::onLoadAvatarPreviewsFromDB, std::static_pointer_cast<AvatarMgrService>(shared_from_this()), _1, curLimit+100, sql));
 
 }
 
 
 
 
-void UserMgrService::updateUserPreview(const UserPreview & pre)
+void AvatarMgrService::updateAvatarPreview(const AvatarPreview & pre)
 {
-    UserStatusPtr usp;
+    AvatarStatusPtr usp;
     if (true)
     {
-        auto founder = _userStatusByID.find(pre.userID);
+        auto founder = _userStatusByID.find(pre.avatarID);
         if (founder == _userStatusByID.end())
         {
-            usp = std::make_shared<UserStatus>();
+            usp = std::make_shared<AvatarStatus>();
             usp->_status = SS_NONE;
             usp->_preview = pre;
-            _userStatusByID[pre.userID] = usp;
+            _userStatusByID[pre.avatarID] = usp;
             _userStatusByName[pre.userName] = usp;
         }
         else
@@ -160,17 +160,17 @@ void UserMgrService::updateUserPreview(const UserPreview & pre)
     if (true)
     {
         auto &acs = _accountStatus[pre.account];
-        acs._users[pre.userID] = usp;
+        acs._players[pre.avatarID] = usp;
     }
 }
 
-void UserMgrService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void AvatarMgrService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     LoadServiceNotice notice;
     rs >> notice;
     for (const auto & si : notice.shellServiceInfos)
     {
-        if (si.serviceType == STUser)
+        if (si.serviceType == STAvatar)
         {
             auto founder = _userStatusByID.find(si.serviceID);
             if (founder == _userStatusByID.end())
@@ -188,7 +188,7 @@ void UserMgrService::onRefreshServiceToMgrNotice(const Tracing & trace, zsummer:
 
 
 
-void UserMgrService::onClientAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void AvatarMgrService::onClientAuthReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     ClientAuthReq req;
     rs >> req;
@@ -203,21 +203,21 @@ void UserMgrService::onClientAuthReq(const Tracing & trace, zsummer::proto4z::Re
         return;
     }
 
-    std::string sql = trim(UserPreview().getDBSelectPure(), " ");
+    std::string sql = trim(AvatarPreview().getDBSelectPure(), " ");
     sql = subStringWithoutBack(sql, " ");
-    sql += " `tb_UserBaseInfo` where account=?;";
+    sql += " `tb_AvatarBaseInfo` where account=?;";
 
     DBQuery q(sql);
     q << req.account;
     DBQueryReq sqlReq(q.pickSQL());
     toService(STInfoDBMgr, sqlReq,
-        std::bind(&UserMgrService::onClientAuthReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, trace, req));
+        std::bind(&AvatarMgrService::onClientAuthReqFromDB, std::static_pointer_cast<AvatarMgrService>(shared_from_this()), _1, trace, req));
 }
 
 
-void UserMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const ClientAuthReq & req)
+void AvatarMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, const Tracing & trace, const ClientAuthReq & req)
 {
-    LOGD("UserMgrService::onClientAuthReqFromDB");
+    LOGD("AvatarMgrService::onClientAuthReqFromDB");
     DBResult dbResult;
     DBQueryResp sqlResp;
     rs >> sqlResp;
@@ -234,20 +234,20 @@ void UserMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, co
         _accountStatus[resp.account];
         while (dbResult.haveRow())
         {
-            UserPreview pre;
+            AvatarPreview pre;
             pre.fetchFromDBResult(dbResult);
             resp.previews.push_back(pre);
-            updateUserPreview(pre);
+            updateAvatarPreview(pre);
         }
     }
     toDocker(trace.oob.clientDockerID, trace.oob, resp);
 }
 
-void UserMgrService::onCreateUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void AvatarMgrService::onCreateAvatarReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    CreateUserReq req;
+    CreateAvatarReq req;
     rs >> req;
-    CreateUserResp resp;
+    CreateAvatarResp resp;
     resp.retCode = EC_SUCCESS;
     resp.previews.clear();
 
@@ -255,49 +255,49 @@ void UserMgrService::onCreateUserReq(const Tracing & trace, zsummer::proto4z::Re
     auto founder = _accountStatus.find(req.accountName);
     if (founder == _accountStatus.end())
     {
-        resp.retCode = EC_USER_NOT_FOUND;
+        resp.retCode = EC_AVATAR_NOT_FOUND;
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
-    if (founder->second._users.size() > 4 )
+    if (founder->second._players.size() > 4 )
     {
-        resp.retCode = EC_USER_COUNT_LIMITE;
+        resp.retCode = EC_AVATAR_COUNT_LIMITE;
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     if ( getNowTime() - founder->second._lastCreateTime < 60)
     {
-        resp.retCode = EC_USER_FREQ_LIMITE;
+        resp.retCode = EC_AVATAR_FREQ_LIMITE;
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
 
     if (_userStatusByName.find(req.userName) != _userStatusByName.end())
     {
-        resp.retCode = EC_USER_NAME_CONFLICT;
+        resp.retCode = EC_AVATAR_NAME_CONFLICT;
         directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
         return;
     }
     founder->second._lastCreateTime = getNowTime();
-    UserBaseInfo userBaseInfo;
+    AvatarBaseInfo userBaseInfo;
     userBaseInfo.account = req.accountName;
-    userBaseInfo.userID = ++_nextUserID;
+    userBaseInfo.avatarID = ++_nextAvatarID;
     userBaseInfo.userName = req.userName;
     userBaseInfo.level = 1;
     userBaseInfo.iconID = 0;
 
     DBQueryReq sql(userBaseInfo.getDBInsert());
     toService(STInfoDBMgr, sql,
-        std::bind(&UserMgrService::onCreateUserReqFromDB, std::static_pointer_cast<UserMgrService>(shared_from_this()), _1, userBaseInfo, trace, req));
+        std::bind(&AvatarMgrService::onCreateAvatarReqFromDB, std::static_pointer_cast<AvatarMgrService>(shared_from_this()), _1, userBaseInfo, trace, req));
 }
 
-void UserMgrService::onCreateUserReqFromDB(zsummer::proto4z::ReadStream & rs, const UserBaseInfo & ubi, const Tracing & trace, const CreateUserReq & req)
+void AvatarMgrService::onCreateAvatarReqFromDB(zsummer::proto4z::ReadStream & rs, const AvatarBaseInfo & ubi, const Tracing & trace, const CreateAvatarReq & req)
 {
-    LOGD("UserMgrService::onCreateUserFromUserMgrReqFromDB");
+    LOGD("AvatarMgrService::onCreateUserFromUserMgrReqFromDB");
     DBQueryResp sqlResp;
     rs >> sqlResp;
 
-    CreateUserResp resp;
+    CreateAvatarResp resp;
     resp.retCode = EC_SUCCESS;
     resp.previews.clear();
     resp.retCode = sqlResp.retCode;
@@ -308,9 +308,9 @@ void UserMgrService::onCreateUserReqFromDB(zsummer::proto4z::ReadStream & rs, co
     }
     if (resp.retCode == EC_SUCCESS)
     {
-        UserPreview up(ubi.userID, ubi.userName, ubi.account, ubi.iconID, ubi.level);
-        updateUserPreview(up);
-        for (const auto & kv : _accountStatus[ubi.account]._users)
+        AvatarPreview up(ubi.avatarID, ubi.userName, ubi.account, ubi.iconID, ubi.level);
+        updateAvatarPreview(up);
+        for (const auto & kv : _accountStatus[ubi.account]._players)
         {
             resp.previews.push_back(kv.second->_preview);
         }
@@ -318,15 +318,15 @@ void UserMgrService::onCreateUserReqFromDB(zsummer::proto4z::ReadStream & rs, co
     directToRealClient(trace.oob.clientDockerID, trace.oob.clientSessionID, resp);
 }
 
-void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    AttachUserReq req;
+    AttachAvatarReq req;
     rs >> req;
-    AttachUserResp resp;
-    resp.userID = req.userID;
+    AttachAvatarResp resp;
+    resp.avatarID = req.avatarID;
     resp.retCode = EC_SUCCESS;
 
-    auto founder = _userStatusByID.find(req.userID);
+    auto founder = _userStatusByID.find(req.avatarID);
     if (founder == _userStatusByID.end() || founder->second->_preview.account != req.accountName)
     {
         resp.retCode = EC_ERROR;
@@ -341,10 +341,10 @@ void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::Re
         return;
     }
     status._lastChangeTime = getNowTime();
-    _freeList.erase(req.userID);
+    _freeList.erase(req.avatarID);
     if (status._status == SS_NONE || status._status == SS_DESTROY)
     {
-        DockerID dockerID = Docker::getRef().getUserBalance().selectAuto();
+        DockerID dockerID = Docker::getRef().getAvatarBalance().selectAuto();
         if (dockerID == InvalidDockerID)
         {
             resp.retCode = EC_ERROR;
@@ -354,14 +354,14 @@ void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::Re
         status._status = SS_INITING;
         status._clientDockerID = trace.oob.clientDockerID;
         status._clientSessionID = trace.oob.clientSessionID;
-        LoadService notice(STUser, req.userID, status._preview.userName, status._clientDockerID, status._clientSessionID);
+        LoadService notice(STAvatar, req.avatarID, status._preview.userName, status._clientDockerID, status._clientSessionID);
         Docker::getRef().sendViaDockerID(dockerID, notice);
     }
     else if(status._status == SS_WORKING)
     {
         status._clientDockerID = trace.oob.clientDockerID;
         status._clientSessionID = trace.oob.clientSessionID;
-        SwitchServiceClientNotice change(STUser, req.userID, status._clientDockerID, status._clientSessionID);
+        SwitchServiceClientNotice change(STAvatar, req.avatarID, status._clientDockerID, status._clientSessionID);
         Docker::getRef().broadcastToDockers(change, true);
     }
     else
@@ -373,7 +373,7 @@ void UserMgrService::onAttachUserReq(const Tracing & trace, zsummer::proto4z::Re
 }
 
 
-void UserMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+void AvatarMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     RealClientClosedNotice notice;
     rs >> notice;
@@ -387,8 +387,8 @@ void UserMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::pr
         && founder->second->_clientSessionID == notice.clientSessionID
         && founder->second->_status == SS_WORKING)
     {
-        SwitchServiceClientNotice change(STUser, notice.serviceID, InvalidDockerID, InvalidSessionID);
-        Docker::getRef().sendViaServiceID(STUser, notice.serviceID, change);
+        SwitchServiceClientNotice change(STAvatar, notice.serviceID, InvalidDockerID, InvalidSessionID);
+        Docker::getRef().sendViaServiceID(STAvatar, notice.serviceID, change);
         founder->second->_lastChangeTime = getNowTime();
         _freeList[notice.serviceID] = founder->second;
     }

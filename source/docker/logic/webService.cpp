@@ -134,30 +134,30 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
 }
 void WebService::getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
 {
-    responseSuccess(dockerID, clientID, R"({"result":"success","online":)" + toString(Docker::getRef().peekService(STUser).size()) + "}");
+    responseSuccess(dockerID, clientID, R"({"result":"success","online":)" + toString(Docker::getRef().peekService(STAvatar).size()) + "}");
 }
 
 void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
 {
-    UserChatReq req;
+    ChatReq req;
     for (auto & pm : params)
     {
         if (pm.first == "serviceID")
         {
-            req.userID = fromString<ui64>(pm.second, InvalidServiceID);
+            req.avatarID = fromString<ui64>(pm.second, InvalidServiceID);
         }
         if (pm.first == "msg")
         {
             req.msg = pm.second;
         }
     }
-    if (req.userID != InvalidServiceID)
+    if (req.avatarID != InvalidServiceID)
     {
-        UserOffline offline;
-        offline.userID = req.userID;
+        AvatarOffline offline;
+        offline.avatarID = req.avatarID;
         offline.status = 0;
         offline.timestamp = getNowTime();
-        WriteStream ws(UserChatReq::getProtoID());
+        WriteStream ws(ChatReq::getProtoID());
         ws << req;
         offline.streamBlob = ws.pickStream();
         toService(STOfflineMgr, offline);

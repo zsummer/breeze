@@ -9,13 +9,13 @@ struct AllocateSpaceReq //分配新战场
     static const std::string getProtoName() { return "AllocateSpaceReq";} 
     unsigned short spaceType; //类型  
     unsigned int mapID;  
-    UserBaseInfoArray involeds; //匹配列表中的玩家  
+    AvatarBaseInfoArray involeds; //匹配列表中的玩家  
     AllocateSpaceReq() 
     { 
         spaceType = 0; 
         mapID = 0; 
     } 
-    AllocateSpaceReq(const unsigned short & spaceType, const unsigned int & mapID, const UserBaseInfoArray & involeds) 
+    AllocateSpaceReq(const unsigned short & spaceType, const unsigned int & mapID, const AvatarBaseInfoArray & involeds) 
     { 
         this->spaceType = spaceType; 
         this->mapID = mapID; 

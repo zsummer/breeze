@@ -3,7 +3,7 @@ Proto4z.register(50013,"AttachSpaceReq")
 Proto4z.AttachSpaceReq = {}  
 Proto4z.AttachSpaceReq.__protoID = 50013 
 Proto4z.AttachSpaceReq.__protoName = "AttachSpaceReq" 
-Proto4z.AttachSpaceReq[1] = {name="userID", type="ui64" }  
+Proto4z.AttachSpaceReq[1] = {name="avatarID", type="ui64" }  
 Proto4z.AttachSpaceReq[2] = {name="spaceID", type="ui32" }  
 Proto4z.AttachSpaceReq[3] = {name="token", type="string" } --令牌 
  
@@ -12,7 +12,7 @@ Proto4z.AttachSpaceResp = {}
 Proto4z.AttachSpaceResp.__protoID = 50014 
 Proto4z.AttachSpaceResp.__protoName = "AttachSpaceResp" 
 Proto4z.AttachSpaceResp[1] = {name="retCode", type="ui16" } --错误码 
-Proto4z.AttachSpaceResp[2] = {name="userID", type="ui64" }  
+Proto4z.AttachSpaceResp[2] = {name="avatarID", type="ui64" }  
 Proto4z.AttachSpaceResp[3] = {name="spaceID", type="ui32" }  
  
 Proto4z.register(50009,"FillSpaceNotice") 

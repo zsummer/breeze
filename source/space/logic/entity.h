@@ -37,7 +37,7 @@ public:
     double getSuckBlood();
     double getAttack();
     void pickProto(EntityFullInfo & info);
-    UserBaseInfo _base;
+    AvatarBaseInfo _base;
     EntityInfo  _info;
     EntityControl _control;
     EntityReport _report;

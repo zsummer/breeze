@@ -22,10 +22,10 @@
         <member name="EC_TOKEN_EXPIRE"   desc="令牌过期"/>
 
 
-        <member name="EC_USER_NOT_FOUND"  value="50"  desc="错误的用户信息"/>
-        <member name="EC_USER_COUNT_LIMITE"  desc="创建用户的数量超出限制"/>
-        <member name="EC_USER_FREQ_LIMITE"  desc="创建用户的频率超出限制"/>
-        <member name="EC_USER_NAME_CONFLICT"  desc="创建用户的昵称冲突"/>
+        <member name="EC_AVATAR_NOT_FOUND"  value="50"  desc="错误的用户信息"/>
+        <member name="EC_AVATAR_COUNT_LIMITE"  desc="创建用户的数量超出限制"/>
+        <member name="EC_AVATAR_FREQ_LIMITE"  desc="创建用户的频率超出限制"/>
+        <member name="EC_AVATAR_NAME_CONFLICT"  desc="创建用户的昵称冲突"/>
         
         <member name="EC_FRIEND_DUPLICATE"   value="100" desc="请先删除与该好友建立的关系"/>
         <member name="EC_FRIEND_CEILING"   desc="达到好友上限"/>
@@ -48,7 +48,7 @@
     <packet name="OutOfBand"  desc="带外信息">
         <member name="clientDockerID" type="ui32"   desc="该数据由docker获得来自客户端的消息时自动填充."/>
         <member name="clientSessionID" type="ui32"   desc="该数据由docker获得来自客户端的消息时自动填充."/>
-        <member name="clientUserID" type="ui64" desc="该数据由docker获得来自客户端的消息时自动填充."/>
+        <member name="clientAvatarID" type="ui64" desc="该数据由docker获得来自客户端的消息时自动填充."/>
     </packet>
 
     <packet name="Tracing"  desc="docker间追踪数据">
@@ -58,25 +58,25 @@
 
 
     <!------------- 用户ID数组 ---------------------->
-    <array name="UserIDArray" type="ui64" desc="" />
+    <array name="AvatarIDArray" type="ui64" desc="" />
 
 
     <!------------- 用户预览信息 ---------------------->
-    <packet name="UserPreview" store="MyISAM" desc="用户预览信息">
-        <member name="userID" type="ui64"  tag="key" desc="用户唯一ID, 对应UserService的ServiceID"/>
-        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应UserService的ServiceName"/>
+    <packet name="AvatarPreview" store="MyISAM" desc="用户预览信息">
+        <member name="avatarID" type="ui64"  tag="key" desc="用户唯一ID, 对应AvatarService的ServiceID"/>
+        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i16" desc="头像"/>
         <member name="level"  type="i32" desc="等级"/>
     </packet>
-    <array name="UserPreviewArray" type="UserPreview" desc="" />
+    <array name="AvatarPreviewArray" type="AvatarPreview" desc="" />
     
 
 
     <!------------- 用户基础信息 ---------------------->
-    <packet name="UserBaseInfo" store="MyISAM" desc="用户基础数据">
-        <member name="userID" type="ui64"  tag="key" desc="用户唯一ID, 对应UserService的ServiceID"/>
-        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应UserService的ServiceName"/>
+    <packet name="AvatarBaseInfo" store="MyISAM" desc="用户基础数据">
+        <member name="avatarID" type="ui64"  tag="key" desc="用户唯一ID, 对应AvatarService的ServiceID"/>
+        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i16" desc="头像"/>
         <member name="level"  type="i32" desc="等级"/>
@@ -90,7 +90,7 @@
         <member name="attackSpeed" type="double"   desc="攻击速度"/>
         <member name="vampirk " type="double"   desc="吸血"/>
     </packet>
-    <array name="UserBaseInfoArray" type="UserBaseInfo" desc="" />
+    <array name="AvatarBaseInfoArray" type="AvatarBaseInfo" desc="" />
 
 
     <!------------- 全局配置 ---------------------->

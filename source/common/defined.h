@@ -143,14 +143,14 @@ typedef ui16 ServiceType;
 const ServiceType InvalidServiceType = (ServiceType)0;
 const ServiceType STInfoDBMgr = (ServiceType)1;
 const ServiceType STLogDBMgr = (ServiceType)2;
-const ServiceType STUserMgr = (ServiceType)3;
+const ServiceType STAvatarMgr = (ServiceType)3;
 const ServiceType STWebAgent = (ServiceType)4;
 const ServiceType STOfflineMgr = (ServiceType)5;
 const ServiceType STMinitorMgr = (ServiceType)6;
 const ServiceType STWorldMgr = (ServiceType)7;
 
 
-const ServiceType STUser = (ServiceType)11;
+const ServiceType STAvatar = (ServiceType)11;
 const ServiceType STClient = (ServiceType)20;
 
 
@@ -208,11 +208,11 @@ const std::map<ServiceType, ServiceDependInfo> ServiceDepends =
     { STOfflineMgr,{ STrait_Single, "STOfflineMgr",{ STInfoDBMgr , STLogDBMgr } } },
     { STMinitorMgr,{ STrait_Single, "STMinitorMgr",{ STInfoDBMgr , STLogDBMgr } } },
 
-    { STUserMgr,{ STrait_Single, "STUserMgr",{ STInfoDBMgr , STLogDBMgr,STWebAgent, STOfflineMgr,STMinitorMgr } } },
+    { STAvatarMgr,{ STrait_Single, "STAvatarMgr",{ STInfoDBMgr , STLogDBMgr,STWebAgent, STOfflineMgr,STMinitorMgr } } },
 
     { STWorldMgr,{ STrait_Heterogenous, "STWorldMgr"} },
 
-    { STUser,{ STrait_Multi, "STUser",{ STUserMgr } } },
+    { STAvatar,{ STrait_Multi, "STAvatar",{ STAvatarMgr } } },
     { STClient,{ STrait_Multi, "STClient" } },
 };
 
@@ -292,7 +292,7 @@ enum ServiceStatus
 
 
 
-const int MAX_ACCOUNT_USERS = 5;
+const int MAX_ACCOUNT_AVATARS = 5;
 
 
 
@@ -305,14 +305,14 @@ enum SessionStatus : ui16
     SSTATUS_ATTACHED,
 };
 
-enum SessionUserData
+enum ClientSessionData
 {
     UPARAM_SESSION_STATUS, //通用 
     UPARAM_LAST_ACTIVE_TIME, //通用 
 
     UPARAM_REMOTE_DOCKERID, //docker集群 
     UPARAM_ACCOUNT,
-    UPARAM_USER_ID,
+    UPARAM_AVATAR_ID,
     UPARAM_LOGIN_TIME,
 
     UPARAM_AREA_ID, //world集群

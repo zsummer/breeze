@@ -45,14 +45,14 @@ public:
     void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
 private:
     void onLoadMaxOfflineID(zsummer::proto4z::ReadStream &);
-    void onUserOffline(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onInsert(bool success, const UserOffline & offline);
+    void onAvatarOffline(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onInsert(bool success, const AvatarOffline & offline);
     void onRefreshServiceToMgrNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 private:
     ui64 _offlineNextID = 0;
-    ModuleMultiData<UserOffline> _offlines;
+    ModuleMultiData<AvatarOffline> _offlines;
 };
 
 

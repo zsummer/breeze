@@ -23,7 +23,7 @@ Proto4z.SpaceTokenInfo[4] = {name="spaceStatus", type="ui16" } --状态
 Proto4z.SpaceTokenInfo[5] = {name="host", type="string" } --服务器host 
 Proto4z.SpaceTokenInfo[6] = {name="port", type="ui16" } --服务器port 
 Proto4z.SpaceTokenInfo[7] = {name="token", type="string" } --令牌 
-Proto4z.SpaceTokenInfo[8] = {name="involeds", type="UserBaseInfoArray" } --匹配列表中的玩家 
+Proto4z.SpaceTokenInfo[8] = {name="involeds", type="AvatarBaseInfoArray" } --匹配列表中的玩家 
  
 Proto4z.SpaceTokenInfoArray = {}  
 Proto4z.SpaceTokenInfoArray.__protoName = "SpaceTokenInfoArray" 
@@ -291,7 +291,7 @@ Proto4z.register(10014,"EntityFullInfo")
 Proto4z.EntityFullInfo = {} --EntityFullInfo 
 Proto4z.EntityFullInfo.__protoID = 10014 
 Proto4z.EntityFullInfo.__protoName = "EntityFullInfo" 
-Proto4z.EntityFullInfo[1] = {name="userInfo", type="UserBaseInfo" }  
+Proto4z.EntityFullInfo[1] = {name="userInfo", type="AvatarBaseInfo" }  
 Proto4z.EntityFullInfo[2] = {name="info", type="EntityInfo" }  
 Proto4z.EntityFullInfo[3] = {name="report", type="EntityReport" }  
  

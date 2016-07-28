@@ -11,14 +11,14 @@ namespace Proto4z
         //members   
         public ushort spaceType; //类型  
         public uint mapID;  
-        public UserBaseInfoArray involeds; //匹配列表中的玩家  
+        public AvatarBaseInfoArray involeds; //匹配列表中的玩家  
         public AllocateSpaceReq()  
         { 
             spaceType = 0;  
             mapID = 0;  
-            involeds = new UserBaseInfoArray();  
+            involeds = new AvatarBaseInfoArray();  
         } 
-        public AllocateSpaceReq(ushort spaceType, uint mapID, UserBaseInfoArray involeds) 
+        public AllocateSpaceReq(ushort spaceType, uint mapID, AvatarBaseInfoArray involeds) 
         { 
             this.spaceType = spaceType; 
             this.mapID = mapID; 
@@ -29,7 +29,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.spaceType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.mapID)); 
-            if (this.involeds == null) this.involeds = new UserBaseInfoArray(); 
+            if (this.involeds == null) this.involeds = new AvatarBaseInfoArray(); 
             data.AddRange(this.involeds.__encode()); 
             return data; 
         } 
@@ -37,7 +37,7 @@ namespace Proto4z
         { 
             this.spaceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.mapID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.involeds = new UserBaseInfoArray(); 
+            this.involeds = new AvatarBaseInfoArray(); 
             this.involeds.__decode(binData, ref pos); 
             return pos; 
         } 

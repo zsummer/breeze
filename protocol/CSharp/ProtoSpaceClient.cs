@@ -9,32 +9,32 @@ namespace Proto4z
         static public ushort getProtoID() { return 50013; } 
         static public string getProtoName() { return "AttachSpaceReq"; } 
         //members   
-        public ulong userID;  
+        public ulong avatarID;  
         public uint spaceID;  
         public string token; //令牌  
         public AttachSpaceReq()  
         { 
-            userID = 0;  
+            avatarID = 0;  
             spaceID = 0;  
             token = "";  
         } 
-        public AttachSpaceReq(ulong userID, uint spaceID, string token) 
+        public AttachSpaceReq(ulong avatarID, uint spaceID, string token) 
         { 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
             this.spaceID = spaceID; 
             this.token = token; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
@@ -49,32 +49,32 @@ namespace Proto4z
         static public string getProtoName() { return "AttachSpaceResp"; } 
         //members   
         public ushort retCode; //错误码  
-        public ulong userID;  
+        public ulong avatarID;  
         public uint spaceID;  
         public AttachSpaceResp()  
         { 
             retCode = 0;  
-            userID = 0;  
+            avatarID = 0;  
             spaceID = 0;  
         } 
-        public AttachSpaceResp(ushort retCode, ulong userID, uint spaceID) 
+        public AttachSpaceResp(ushort retCode, ulong avatarID, uint spaceID) 
         { 
             this.retCode = retCode; 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
             this.spaceID = spaceID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 

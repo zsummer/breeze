@@ -179,8 +179,8 @@ private:
     ServiceID _serviceID = InvalidServiceID;
     ServiceName _serviceName = InvalidServiceName;
     DockerID _serviceDockerID = InvalidDockerID; //实际所在的docker
-    SessionID _clientSessionID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限UserService使用
-    DockerID _clientDockerID = InvalidDockerID; //如果存在关联的客户端,则该ID代表在_clientSessionID所在dockerID. 目前仅限UserService使用
+    SessionID _clientSessionID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限AvatarService使用
+    DockerID _clientDockerID = InvalidDockerID; //如果存在关联的客户端,则该ID代表在_clientSessionID所在dockerID. 目前仅限AvatarService使用
 
     ui16 _status = SS_CREATED;
     bool _shell = false;

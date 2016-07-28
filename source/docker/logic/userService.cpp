@@ -3,50 +3,50 @@
 #include <ProtoUser.h>
 
 
-UserService::UserService()
+AvatarService::AvatarService()
 {
-    slotting<UserChatReq>(std::bind(&UserService::onChatReq, this, _1, _2));
-    slotting<UserPingPongReq>(std::bind(&UserService::onUserPingPongReq, this, _1, _2));
+    slotting<ChatReq>(std::bind(&AvatarService::onChatReq, this, _1, _2));
+    slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
 }
 
-UserService::~UserService() 
+AvatarService::~AvatarService() 
 {
-}
-
-
-void UserService::onTick(TimerID tID, ui32 count, ui32 repeat)
-{
-    LOGI("UserService::onTick");
 }
 
 
+void AvatarService::onTick(TimerID tID, ui32 count, ui32 repeat)
+{
+    LOGI("AvatarService::onTick");
+}
 
 
-void UserService::onClientChange()
+
+
+void AvatarService::onClientChange()
 {
     if (getClientDockerID() != InvalidDockerID && getClientSessionID() != InvalidSessionID)
     {
-        AttachUserResp resp(EC_SUCCESS, getServiceID());
+        AttachAvatarResp resp(EC_SUCCESS, getServiceID());
         toDocker(getClientDockerID(), resp);
     }
 }
 
-bool UserService::onLoad()
+bool AvatarService::onLoad()
 {
-    UserBaseInfo ubi;
-    ubi.userID = getServiceID();
+    AvatarBaseInfo ubi;
+    ubi.avatarID = getServiceID();
     ubi.userName = getServiceName();
-    _baseInfo.loadFromDB(shared_from_this(), ubi, std::bind(&UserService::onModuleLoad, std::static_pointer_cast<UserService>(shared_from_this()), _1, _2));
+    _baseInfo.loadFromDB(shared_from_this(), ubi, std::bind(&AvatarService::onModuleLoad, std::static_pointer_cast<AvatarService>(shared_from_this()), _1, _2));
     return true;
 }
 
-void UserService::onUnload()
+void AvatarService::onUnload()
 {
-    _baseInfo.writeToDB(std::bind(&UserService::onModuleUnload, std::static_pointer_cast<UserService>(shared_from_this()), _1, _2));
+    _baseInfo.writeToDB(std::bind(&AvatarService::onModuleUnload, std::static_pointer_cast<AvatarService>(shared_from_this()), _1, _2));
 }
 
 
-void UserService::onModuleLoad(bool success, const std::string & moduleName)
+void AvatarService::onModuleLoad(bool success, const std::string & moduleName)
 {
     if (success)
     {
@@ -54,20 +54,20 @@ void UserService::onModuleLoad(bool success, const std::string & moduleName)
     }
     else 
     { 
-        LOGE(" UserService::onModuleLoad false");
+        LOGE(" AvatarService::onModuleLoad false");
         return ; 
     }
     if (_curLoadModuleCount == _totalModuleCount)
     {
         finishLoad();
-        AttachUserResp resp(EC_SUCCESS, getServiceID());
+        AttachAvatarResp resp(EC_SUCCESS, getServiceID());
         toDocker(getClientDockerID(), resp);
     }
     return ;
 }
 
 
-void UserService::onModuleUnload(bool success, const std::string & moduleName)
+void AvatarService::onModuleUnload(bool success, const std::string & moduleName)
 {
     if (success)
     {
@@ -75,7 +75,7 @@ void UserService::onModuleUnload(bool success, const std::string & moduleName)
     }
     else
     {
-        LOGE(" UserService::onModuleUnload false");
+        LOGE(" AvatarService::onModuleUnload false");
         return;
     }
     if (_curLoadModuleCount == _totalModuleCount)
@@ -86,32 +86,32 @@ void UserService::onModuleUnload(bool success, const std::string & moduleName)
 }
 
 
-void UserService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    UserChatReq req;
+    ChatReq req;
     rs >> req;
     LOGI("onChatReq" << req );
     _baseInfo._data.level++;
     _baseInfo.writeToDB();
 
-    UserChatResp resp;
-    resp.fromUserID = getServiceID();
+    ChatResp resp;
+    resp.fromAvatarID = getServiceID();
     resp.msg = req.msg;
-    toService(STClient, req.userID, resp);
+    toService(STClient, req.avatarID, resp);
 }
 
-void UserService::onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void AvatarService::onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-    UserPingPongReq req;
+    PingPongReq req;
     rs >> req;
-    UserPingPongResp resp;
+    PingPongResp resp;
     resp.msg = req.msg;
     toService(STClient, getServiceID(), resp);
     static int testCount = 0;
     testCount++;
     if (testCount %10000 == 0)
     {
-        LOGA("onUserPingPongReq " << *this << " count=" << testCount);
+        LOGA("onPingPongReq " << *this << " count=" << testCount);
     }
 }
 

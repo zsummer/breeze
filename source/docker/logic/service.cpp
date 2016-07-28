@@ -189,7 +189,7 @@ void Service::cleanCallback()
 
 bool Service::canToService(ServiceType serviceType, ServiceID serviceID)
 {
-    auto s = Docker::getRef().peekService(serviceType == STClient ? STUser : serviceType, serviceID);
+    auto s = Docker::getRef().peekService(serviceType == STClient ? STAvatar : serviceType, serviceID);
     if (!s)
     {
         return false;
@@ -228,11 +228,11 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
 void Service::toService(ServiceType serviceType, ServiceID serviceID, const char * block, unsigned int len, ServiceCallback cb)
 {
     OutOfBand oob;
-    if (getServiceType() == STUser)
+    if (getServiceType() == STAvatar)
     {
         oob.clientDockerID = getClientDockerID();
         oob.clientSessionID = getClientSessionID();
-        oob.clientUserID = getServiceID();
+        oob.clientAvatarID = getServiceID();
     }
     toService(serviceType, serviceID, oob, block, len, cb);
 }
@@ -246,11 +246,11 @@ void Service::toService(ServiceType serviceType, const OutOfBand &oob, const cha
 void Service::toService(ServiceType serviceType, const char * block, unsigned int len, ServiceCallback cb)
 {
     OutOfBand oob;
-    if (getServiceType() == STUser)
+    if (getServiceType() == STAvatar)
     {
         oob.clientDockerID = getClientDockerID();
         oob.clientSessionID = getClientSessionID();
-        oob.clientUserID = getServiceID();
+        oob.clientAvatarID = getServiceID();
     }
     toService(serviceType, InvalidServiceID, oob, block, len, cb);
 }
@@ -290,7 +290,7 @@ void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessio
     trc.routing.toServiceID = InvalidServiceID;
     trc.oob.clientDockerID = clientDockerID;
     trc.oob.clientSessionID = clientSessionID;
-    trc.oob.clientUserID = InvalidServiceID;
+    trc.oob.clientAvatarID = InvalidServiceID;
     Docker::getRef().forwardToRemoteService(trc, block, len);
 }
 
@@ -312,11 +312,11 @@ void Service::toDocker(DockerID dockerID, const OutOfBand & oob, const char * bl
 void Service::toDocker(DockerID dockerID, const char * block, unsigned int len)
 {
     OutOfBand oob;
-    if (getServiceType() == STUser)
+    if (getServiceType() == STAvatar)
     {
         oob.clientDockerID = getClientDockerID();
         oob.clientSessionID = getClientSessionID();
-        oob.clientUserID = getServiceID();
+        oob.clientAvatarID = getServiceID();
     }
     toDocker(dockerID, oob, block, len);
 }

@@ -20,8 +20,8 @@
 
 
 
-#ifndef _USER_SERVICE_H_
-#define _USER_SERVICE_H_
+#ifndef _AVATAR_SERVICE_H_
+#define _AVATAR_SERVICE_H_
 #include <common.h>
 #include "service.h"
 #include "module.h"
@@ -30,11 +30,11 @@
 
 
 
-class UserService : public Service
+class AvatarService : public Service
 {
 public:
-    UserService();
-    ~UserService();
+    AvatarService();
+    ~AvatarService();
 public:
     bool onLoad() override final;
     void onUnload() override final;
@@ -45,13 +45,13 @@ private:
     void onModuleUnload(bool success, const std::string & moduleName);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onUserPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
     int _curLoadModuleCount = 0;
     int _curUnloadModuleCount = 0;
     int _totalModuleCount = 1;
-    ModuleData<UserBaseInfo> _baseInfo;
+    ModuleData<AvatarBaseInfo> _baseInfo;
 };
 
 

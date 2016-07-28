@@ -20,7 +20,7 @@ config.docker =
         dockerWhite={"192.168.", "127.0."},
         clientPubHost="127.0.0.1",
         clientPubPort=26000,
-        services={"STLogDBMgr", "STUserMgr", "STUser", "STInfoDBMgr"},
+        services={"STLogDBMgr", "STAvatarMgr", "STAvatar", "STInfoDBMgr"},
         dockerID = 1,
     },
     {
@@ -32,7 +32,7 @@ config.docker =
         clientPubPort=26001,
         webPubHost="127.0.0.1",
         webPort=26080,
-        services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STUser"},
+        services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STAvatar"},
         dockerID = 2,
     },
 --[[

@@ -9,7 +9,7 @@ bool Space::cleanSpace()
 {
     _lastEID = ServerConfig::getRef().getSpaceConfig()._spaceID * 1000 + 1000;
     _entitys.clear();
-    _users.clear();
+    _players.clear();
     _sceneType = SPACE_TYPE_NONE;
     _spaceStatus = SPACE_STATUS_NONE;
     _lastStatusChangeTime = getFloatNowTime();
@@ -51,17 +51,17 @@ EntityPtr Space::getEntity(EntityID eID)
     }
     return founder->second;
 }
-EntityPtr Space::getUserEntity(ServiceID userID)
+EntityPtr Space::getUserEntity(ServiceID avatarID)
 {
-    auto founder = _users.find(userID);
-    if (founder == _users.end())
+    auto founder = _players.find(avatarID);
+    if (founder == _players.end())
     {
         return nullptr;
     }
     return founder->second;
 }
 
-EntityPtr Space::makeNewEntity(const UserBaseInfo & base)
+EntityPtr Space::makeNewEntity(const AvatarBaseInfo & base)
 {
     EntityPtr entity = std::make_shared<Entity>();
     entity->_base = base;
@@ -80,7 +80,7 @@ EntityPtr Space::makeNewEntity(const UserBaseInfo & base)
 
 // void Space::fillUserProp(const FillUserToSpaceReq& req)
 // {
-//     auto entity = getUserEntity(req.baseInfo.userID);
+//     auto entity = getUserEntity(req.baseInfo.avatarID);
 //     if (entity)
 //     {
 //         LOGE("already had");
@@ -100,7 +100,7 @@ bool Space::addEntity(EntityPtr entity)
     entity->pickProto(full);
     notice.entitys.push_back(full);
     notice.serverTime = getFloatNowTime();
-    broadcast(notice, entity->_base.userID);
+    broadcast(notice, entity->_base.avatarID);
     return true;
 }
 bool Space::removeEntity(EntityID eid)
@@ -112,9 +112,9 @@ bool Space::removeEntity(EntityID eid)
     broadcast(notice);
     return true;
 }
-bool Space::enterSpace(ServiceID userID, const std::string & token, SessionID sID)
+bool Space::enterSpace(ServiceID avatarID, const std::string & token, SessionID sID)
 {
-    EntityPtr entity = getUserEntity(userID);
+    EntityPtr entity = getUserEntity(avatarID);
     if (!entity)
     {
         return false;
@@ -138,15 +138,15 @@ bool Space::enterSpace(ServiceID userID, const std::string & token, SessionID sI
     notice.serverTime = getFloatNowTime();
     notice.spaceStartTime = _startTime;
     notice.spaceEndTime = _endTime;
-    sendToClient(userID, notice);
+    sendToClient(avatarID, notice);
     return true;
 }
 
 
 
-bool Space::leaveSpace(ServiceID userID, SessionID sID)
+bool Space::leaveSpace(ServiceID avatarID, SessionID sID)
 {
-    auto entity = getUserEntity(userID);
+    auto entity = getUserEntity(avatarID);
     if (entity && entity->_clientSessionID == sID)
     {
         entity->_clientSessionID = InvalidSessionID;

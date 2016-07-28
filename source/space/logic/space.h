@@ -34,13 +34,13 @@ private:
     SpaceID _spaceID;
     EntityID _lastEID;
     std::map<EntityID, EntityPtr> _entitys;
-    std::map<ServiceID, EntityPtr> _users;
+    std::map<ServiceID, EntityPtr> _players;
 public:
     inline SpaceID getSpaceID() { return _spaceID; }
     inline SPACE_TYPE getSceneType() { return _sceneType; }
     inline SPACE_STATUS getSpaceStatus() { return _spaceStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
-    inline size_t getUsersCount() { return _users.size(); }
+    inline size_t getUsersCount() { return _players.size(); }
 public:
     Space(SpaceID id);
     bool cleanSpace();
@@ -48,14 +48,14 @@ public:
     bool onUpdate();
 
 //    void fillUserProp(const FillUserToSpaceReq& req);
-    EntityPtr makeNewEntity(const UserBaseInfo & base);
+    EntityPtr makeNewEntity(const AvatarBaseInfo & base);
     EntityPtr getEntity(EntityID eID);
-    EntityPtr getUserEntity(ServiceID userID);
+    EntityPtr getUserEntity(ServiceID avatarID);
 
     bool addEntity(EntityPtr entity); 
     bool removeEntity(EntityID eid); 
-    bool enterSpace(ServiceID userID, const std::string & token, SessionID sID);
-    bool leaveSpace(ServiceID userID, SessionID sID);
+    bool enterSpace(ServiceID avatarID, const std::string & token, SessionID sID);
+    bool leaveSpace(ServiceID avatarID, SessionID sID);
 
 public:
 
@@ -68,7 +68,7 @@ public:
     template <typename MSG>
     void broadcast(const MSG & msg, ServiceID without = InvalidServiceID);
     template<typename MSG>
-    void sendToClient(ServiceID userID, const MSG &msg);
+    void sendToClient(ServiceID avatarID, const MSG &msg);
 };
 
 using SpacePtr = std::shared_ptr<Space>;
@@ -76,10 +76,10 @@ using SpacePtr = std::shared_ptr<Space>;
 
 
 template<typename MSG>
-void Space::sendToClient(ServiceID userID, const MSG &msg)
+void Space::sendToClient(ServiceID avatarID, const MSG &msg)
 {
-    auto founder = _users.find(userID);
-    if (founder == _users.end() || founder->second->_clientSessionID == InvalidSessionID)
+    auto founder = _players.find(avatarID);
+    if (founder == _players.end() || founder->second->_clientSessionID == InvalidSessionID)
     {
         return;
     }
@@ -92,7 +92,7 @@ void Space::sendToClient(ServiceID userID, const MSG &msg)
     }
     catch (...)
     {
-        LOGE("Space::sendToClient ServiceID=" << userID << ",  protoid=" << MSG::getProtoID());
+        LOGE("Space::sendToClient ServiceID=" << avatarID << ",  protoid=" << MSG::getProtoID());
         return;
     }
 }
@@ -106,7 +106,7 @@ void Space::broadcast(const MSG &msg, ServiceID without)
         WriteStream ws(MSG::getProtoID());
         ws << msg;
 
-        for (auto user : _users)
+        for (auto user : _players)
         {
             if (user.first == without || user.second->_clientSessionID == InvalidSessionID)
             {

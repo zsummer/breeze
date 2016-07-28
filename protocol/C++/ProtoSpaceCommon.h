@@ -33,7 +33,7 @@ struct SpaceTokenInfo //Token
     std::string host; //服务器host  
     unsigned short port; //服务器port  
     std::string token; //令牌  
-    UserBaseInfoArray involeds; //匹配列表中的玩家  
+    AvatarBaseInfoArray involeds; //匹配列表中的玩家  
     SpaceTokenInfo() 
     { 
         spaceType = 0; 
@@ -42,7 +42,7 @@ struct SpaceTokenInfo //Token
         spaceStatus = 0; 
         port = 0; 
     } 
-    SpaceTokenInfo(const unsigned short & spaceType, const unsigned int & mapID, const unsigned int & spaceID, const unsigned short & spaceStatus, const std::string & host, const unsigned short & port, const std::string & token, const UserBaseInfoArray & involeds) 
+    SpaceTokenInfo(const unsigned short & spaceType, const unsigned int & mapID, const unsigned int & spaceID, const unsigned short & spaceStatus, const std::string & host, const unsigned short & port, const std::string & token, const AvatarBaseInfoArray & involeds) 
     { 
         this->spaceType = spaceType; 
         this->mapID = mapID; 
@@ -932,13 +932,13 @@ struct EntityFullInfo //EntityFullInfo
 { 
     static const unsigned short getProtoID() { return 10014;} 
     static const std::string getProtoName() { return "EntityFullInfo";} 
-    UserBaseInfo userInfo;  
+    AvatarBaseInfo userInfo;  
     EntityInfo info;  
     EntityReport report;  
     EntityFullInfo() 
     { 
     } 
-    EntityFullInfo(const UserBaseInfo & userInfo, const EntityInfo & info, const EntityReport & report) 
+    EntityFullInfo(const AvatarBaseInfo & userInfo, const EntityInfo & info, const EntityReport & report) 
     { 
         this->userInfo = userInfo; 
         this->info = info; 

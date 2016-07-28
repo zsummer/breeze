@@ -901,10 +901,10 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct UserOffline 
+struct AvatarOffline 
 { 
-    static const unsigned short getProtoID() { return 2023;} 
-    static const std::string getProtoName() { return "UserOffline";} 
+    static const unsigned short getProtoID() { return 2028;} 
+    static const std::string getProtoName() { return "AvatarOffline";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
@@ -913,88 +913,88 @@ struct UserOffline
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long id;  
-    unsigned long long userID;  
+    unsigned long long avatarID;  
     std::string streamBlob;  
     unsigned short status;  
     unsigned long long timestamp;  
-    UserOffline() 
+    AvatarOffline() 
     { 
         id = 0; 
-        userID = 0; 
+        avatarID = 0; 
         status = 0; 
         timestamp = 0; 
     } 
-    UserOffline(const unsigned long long & id, const unsigned long long & userID, const std::string & streamBlob, const unsigned short & status, const unsigned long long & timestamp) 
+    AvatarOffline(const unsigned long long & id, const unsigned long long & avatarID, const std::string & streamBlob, const unsigned short & status, const unsigned long long & timestamp) 
     { 
         this->id = id; 
-        this->userID = userID; 
+        this->avatarID = avatarID; 
         this->streamBlob = streamBlob; 
         this->status = status; 
         this->timestamp = timestamp; 
     } 
 }; 
  
-const std::vector<std::string>  UserOffline::getDBBuild() 
+const std::vector<std::string>  AvatarOffline::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserOffline` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `streamBlob` longblob NOT NULL ,        `status` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `timestamp` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `userID` (`userID`),        KEY `status` (`status`),        KEY `timestamp` (`timestamp`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_UserOffline` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` add `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` change `userID`  `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` add `streamBlob`  longblob NOT NULL "); 
-    ret.push_back("alter table `tb_UserOffline` change `streamBlob`  `streamBlob`  longblob NOT NULL "); 
-    ret.push_back("alter table `tb_UserOffline` add `status`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` change `status`  `status`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` add `timestamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserOffline` change `timestamp`  `timestamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarOffline` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `streamBlob` longblob NOT NULL ,        `status` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `timestamp` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `avatarID` (`avatarID`),        KEY `status` (`status`),        KEY `timestamp` (`timestamp`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_AvatarOffline` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarOffline` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarOffline` add `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarOffline` change `avatarID`  `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarOffline` add `streamBlob`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_AvatarOffline` change `streamBlob`  `streamBlob`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_AvatarOffline` add `status`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarOffline` change `status`  `status`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarOffline` add `timestamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarOffline` change `timestamp`  `timestamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     return std::move(ret); 
 } 
-std::string  UserOffline::getDBSelect() 
+std::string  AvatarOffline::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`userID`,`streamBlob`,`status`,`timestamp` from `tb_UserOffline` where `id` = ? "); 
+    q.init("select `id`,`avatarID`,`streamBlob`,`status`,`timestamp` from `tb_AvatarOffline` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
-std::string  UserOffline::getDBSelectPure() 
+std::string  AvatarOffline::getDBSelectPure() 
 { 
-    return "select `id`,`userID`,`streamBlob`,`status`,`timestamp` from `tb_UserOffline` "; 
+    return "select `id`,`avatarID`,`streamBlob`,`status`,`timestamp` from `tb_AvatarOffline` "; 
 } 
-std::string  UserOffline::getDBInsert() 
+std::string  AvatarOffline::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserOffline`(`id`,`userID`,`streamBlob`,`status`,`timestamp`) values(?,?,?,?,?)"); 
+    q.init("insert into `tb_AvatarOffline`(`id`,`avatarID`,`streamBlob`,`status`,`timestamp`) values(?,?,?,?,?)"); 
     q << this->id; 
-    q << this->userID; 
+    q << this->avatarID; 
     q << this->streamBlob; 
     q << this->status; 
     q << this->timestamp; 
     return q.pickSQL(); 
 } 
-std::string  UserOffline::getDBDelete() 
+std::string  AvatarOffline::getDBDelete() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_UserOffline` where `id` = ? "); 
+    q.init("delete from `tb_AvatarOffline` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
-std::string  UserOffline::getDBUpdate() 
+std::string  AvatarOffline::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserOffline`(id) values(? ) on duplicate key update `userID` = ?,`streamBlob` = ?,`status` = ?,`timestamp` = ? "); 
+    q.init("insert into `tb_AvatarOffline`(id) values(? ) on duplicate key update `avatarID` = ?,`streamBlob` = ?,`status` = ?,`timestamp` = ? "); 
     q << this->id; 
-    q << this->userID; 
+    q << this->avatarID; 
     q << this->streamBlob; 
     q << this->status; 
     q << this->timestamp; 
     return q.pickSQL(); 
 } 
-bool UserOffline::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+bool AvatarOffline::fetchFromDBResult(zsummer::mysql::DBResult &result) 
 { 
     if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
     { 
-        LOGE("error fetch UserOffline from table `tb_UserOffline` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        LOGE("error fetch AvatarOffline from table `tb_AvatarOffline` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
         return false; 
     } 
     try 
@@ -1002,7 +1002,7 @@ bool UserOffline::fetchFromDBResult(zsummer::mysql::DBResult &result)
         if (result.haveRow()) 
         { 
             result >> this->id; 
-            result >> this->userID; 
+            result >> this->avatarID; 
             result >> this->streamBlob; 
             result >> this->status; 
             result >> this->timestamp; 
@@ -1011,34 +1011,34 @@ bool UserOffline::fetchFromDBResult(zsummer::mysql::DBResult &result)
     } 
     catch(const std::exception & e) 
     { 
-        LOGE("catch one except error when fetch UserOffline from table `tb_UserOffline` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        LOGE("catch one except error when fetch AvatarOffline from table `tb_AvatarOffline` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
         return false; 
     } 
     return false; 
 } 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserOffline & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarOffline & data) 
 { 
     ws << data.id;  
-    ws << data.userID;  
+    ws << data.avatarID;  
     ws << data.streamBlob;  
     ws << data.status;  
     ws << data.timestamp;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserOffline & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarOffline & data) 
 { 
     rs >> data.id;  
-    rs >> data.userID;  
+    rs >> data.avatarID;  
     rs >> data.streamBlob;  
     rs >> data.status;  
     rs >> data.timestamp;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserOffline & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarOffline & info) 
 { 
     stm << "[\n"; 
     stm << "id=" << info.id << "\n"; 
-    stm << "userID=" << info.userID << "\n"; 
+    stm << "avatarID=" << info.avatarID << "\n"; 
     stm << "streamBlob=" << info.streamBlob << "\n"; 
     stm << "status=" << info.status << "\n"; 
     stm << "timestamp=" << info.timestamp << "\n"; 

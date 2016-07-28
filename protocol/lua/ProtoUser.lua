@@ -18,36 +18,36 @@ Proto4z.ClientAuthResp.__protoName = "ClientAuthResp"
 Proto4z.ClientAuthResp[1] = {name="retCode", type="ui16" }  
 Proto4z.ClientAuthResp[2] = {name="account", type="string" }  
 Proto4z.ClientAuthResp[3] = {name="token", type="string" }  
-Proto4z.ClientAuthResp[4] = {name="previews", type="UserPreviewArray" }  
+Proto4z.ClientAuthResp[4] = {name="previews", type="AvatarPreviewArray" }  
  
-Proto4z.register(40003,"CreateUserReq") 
-Proto4z.CreateUserReq = {} --创角色请求 
-Proto4z.CreateUserReq.__protoID = 40003 
-Proto4z.CreateUserReq.__protoName = "CreateUserReq" 
-Proto4z.CreateUserReq[1] = {name="accountName", type="string" } --这个字段会被服务器填充.客户端可以不填写 
-Proto4z.CreateUserReq[2] = {name="userName", type="string" }  
+Proto4z.register(40029,"CreateAvatarReq") 
+Proto4z.CreateAvatarReq = {} --创角色请求 
+Proto4z.CreateAvatarReq.__protoID = 40029 
+Proto4z.CreateAvatarReq.__protoName = "CreateAvatarReq" 
+Proto4z.CreateAvatarReq[1] = {name="accountName", type="string" } --这个字段会被服务器填充.客户端可以不填写 
+Proto4z.CreateAvatarReq[2] = {name="userName", type="string" }  
  
-Proto4z.register(40004,"CreateUserResp") 
-Proto4z.CreateUserResp = {} --创角色请求返回 
-Proto4z.CreateUserResp.__protoID = 40004 
-Proto4z.CreateUserResp.__protoName = "CreateUserResp" 
-Proto4z.CreateUserResp[1] = {name="retCode", type="ui16" }  
-Proto4z.CreateUserResp[2] = {name="userID", type="ui64" }  
-Proto4z.CreateUserResp[3] = {name="previews", type="UserPreviewArray" }  
+Proto4z.register(40030,"CreateAvatarResp") 
+Proto4z.CreateAvatarResp = {} --创角色请求返回 
+Proto4z.CreateAvatarResp.__protoID = 40030 
+Proto4z.CreateAvatarResp.__protoName = "CreateAvatarResp" 
+Proto4z.CreateAvatarResp[1] = {name="retCode", type="ui16" }  
+Proto4z.CreateAvatarResp[2] = {name="avatarID", type="ui64" }  
+Proto4z.CreateAvatarResp[3] = {name="previews", type="AvatarPreviewArray" }  
  
-Proto4z.register(40005,"AttachUserReq") 
-Proto4z.AttachUserReq = {} --选角色请求 
-Proto4z.AttachUserReq.__protoID = 40005 
-Proto4z.AttachUserReq.__protoName = "AttachUserReq" 
-Proto4z.AttachUserReq[1] = {name="accountName", type="string" } --这个字段会被服务器填充.客户端可以不填写 
-Proto4z.AttachUserReq[2] = {name="userID", type="ui64" }  
+Proto4z.register(40031,"AttachAvatarReq") 
+Proto4z.AttachAvatarReq = {} --选角色请求 
+Proto4z.AttachAvatarReq.__protoID = 40031 
+Proto4z.AttachAvatarReq.__protoName = "AttachAvatarReq" 
+Proto4z.AttachAvatarReq[1] = {name="accountName", type="string" } --这个字段会被服务器填充.客户端可以不填写 
+Proto4z.AttachAvatarReq[2] = {name="avatarID", type="ui64" }  
  
-Proto4z.register(40006,"AttachUserResp") 
-Proto4z.AttachUserResp = {} --选角色请求返回 
-Proto4z.AttachUserResp.__protoID = 40006 
-Proto4z.AttachUserResp.__protoName = "AttachUserResp" 
-Proto4z.AttachUserResp[1] = {name="retCode", type="ui16" }  
-Proto4z.AttachUserResp[2] = {name="userID", type="ui64" }  
+Proto4z.register(40032,"AttachAvatarResp") 
+Proto4z.AttachAvatarResp = {} --选角色请求返回 
+Proto4z.AttachAvatarResp.__protoID = 40032 
+Proto4z.AttachAvatarResp.__protoName = "AttachAvatarResp" 
+Proto4z.AttachAvatarResp[1] = {name="retCode", type="ui16" }  
+Proto4z.AttachAvatarResp[2] = {name="avatarID", type="ui64" }  
  
 Proto4z.register(40027,"GetSpaceTokenInfoReq") 
 Proto4z.GetSpaceTokenInfoReq = {}  
@@ -93,28 +93,28 @@ Proto4z.LeaveSpaceResp.__protoName = "LeaveSpaceResp"
 Proto4z.LeaveSpaceResp[1] = {name="retCode", type="ui16" }  
 Proto4z.LeaveSpaceResp[2] = {name="spaceInfo", type="SpaceTokenInfo" }  
  
-Proto4z.register(40007,"UserChatReq") 
-Proto4z.UserChatReq = {}  
-Proto4z.UserChatReq.__protoID = 40007 
-Proto4z.UserChatReq.__protoName = "UserChatReq" 
-Proto4z.UserChatReq[1] = {name="userID", type="ui64" }  
-Proto4z.UserChatReq[2] = {name="msg", type="string" }  
+Proto4z.register(40033,"ChatReq") 
+Proto4z.ChatReq = {}  
+Proto4z.ChatReq.__protoID = 40033 
+Proto4z.ChatReq.__protoName = "ChatReq" 
+Proto4z.ChatReq[1] = {name="avatarID", type="ui64" }  
+Proto4z.ChatReq[2] = {name="msg", type="string" }  
  
-Proto4z.register(40008,"UserChatResp") 
-Proto4z.UserChatResp = {}  
-Proto4z.UserChatResp.__protoID = 40008 
-Proto4z.UserChatResp.__protoName = "UserChatResp" 
-Proto4z.UserChatResp[1] = {name="fromUserID", type="ui64" }  
-Proto4z.UserChatResp[2] = {name="msg", type="string" }  
+Proto4z.register(40034,"ChatResp") 
+Proto4z.ChatResp = {}  
+Proto4z.ChatResp.__protoID = 40034 
+Proto4z.ChatResp.__protoName = "ChatResp" 
+Proto4z.ChatResp[1] = {name="fromAvatarID", type="ui64" }  
+Proto4z.ChatResp[2] = {name="msg", type="string" }  
  
-Proto4z.register(40009,"UserPingPongReq") 
-Proto4z.UserPingPongReq = {}  
-Proto4z.UserPingPongReq.__protoID = 40009 
-Proto4z.UserPingPongReq.__protoName = "UserPingPongReq" 
-Proto4z.UserPingPongReq[1] = {name="msg", type="string" }  
+Proto4z.register(40035,"PingPongReq") 
+Proto4z.PingPongReq = {}  
+Proto4z.PingPongReq.__protoID = 40035 
+Proto4z.PingPongReq.__protoName = "PingPongReq" 
+Proto4z.PingPongReq[1] = {name="msg", type="string" }  
  
-Proto4z.register(40010,"UserPingPongResp") 
-Proto4z.UserPingPongResp = {}  
-Proto4z.UserPingPongResp.__protoID = 40010 
-Proto4z.UserPingPongResp.__protoName = "UserPingPongResp" 
-Proto4z.UserPingPongResp[1] = {name="msg", type="string" }  
+Proto4z.register(40036,"PingPongResp") 
+Proto4z.PingPongResp = {}  
+Proto4z.PingPongResp.__protoID = 40036 
+Proto4z.PingPongResp.__protoName = "PingPongResp" 
+Proto4z.PingPongResp[1] = {name="msg", type="string" }  
