@@ -32,6 +32,10 @@
         <member name="EC_FRIEND_REFUSE"   desc="不能添加对方为好友"/>
         <member name="EC_FRIEND_NOT_EXIST"   desc="好友不存在"/>
 
+
+        <member name="EC_SERVICE_NOT_OPEN"   desc="服务未开放"/>
+
+
     </enum>
 
     <!------------- Docker间路由追踪数据头 ---------------------->

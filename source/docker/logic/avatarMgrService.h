@@ -76,6 +76,16 @@ private:
     void onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
+    void onGetSpaceTokenInfoResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onJoinSpaceResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onJoinSpaceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onLeaveSpaceResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+
+
+
+
+
+private:
     time_t _lastTime = 0;
     std::map<ui64, AvatarStatusPtr> _freeList;
     std::map<ui64, AvatarStatusPtr> _userStatusByID;

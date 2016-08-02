@@ -21,6 +21,7 @@ namespace Proto4z
         EC_FRIEND_CEILING = 101, //达到好友上限  
         EC_FRIEND_REFUSE = 102, //不能添加对方为好友  
         EC_FRIEND_NOT_EXIST = 103, //好友不存在  
+        EC_SERVICE_NOT_OPEN = 104, //服务未开放  
     }; 
  
     public class Routing: Proto4z.IProtoObject //docker to docker 路由信息  

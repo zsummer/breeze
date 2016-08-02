@@ -274,24 +274,29 @@ namespace Proto4z
         static public ushort getProtoID() { return 40008; } 
         static public string getProtoName() { return "GetSpaceTokenInfoResp"; } 
         //members   
+        public ushort retCode;  
         public SpaceTokenInfo tokenInfo;  
         public GetSpaceTokenInfoResp()  
         { 
+            retCode = 0;  
             tokenInfo = new SpaceTokenInfo();  
         } 
-        public GetSpaceTokenInfoResp(SpaceTokenInfo tokenInfo) 
+        public GetSpaceTokenInfoResp(ushort retCode, SpaceTokenInfo tokenInfo) 
         { 
+            this.retCode = retCode; 
             this.tokenInfo = tokenInfo; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
             if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
             data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.tokenInfo = new SpaceTokenInfo(); 
             this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
@@ -340,30 +345,30 @@ namespace Proto4z
         static public string getProtoName() { return "JoinSpaceResp"; } 
         //members   
         public ushort retCode;  
-        public SpaceTokenInfo spaceInfo;  
+        public SpaceTokenInfo tokenInfo;  
         public JoinSpaceResp()  
         { 
             retCode = 0;  
-            spaceInfo = new SpaceTokenInfo();  
+            tokenInfo = new SpaceTokenInfo();  
         } 
-        public JoinSpaceResp(ushort retCode, SpaceTokenInfo spaceInfo) 
+        public JoinSpaceResp(ushort retCode, SpaceTokenInfo tokenInfo) 
         { 
             this.retCode = retCode; 
-            this.spaceInfo = spaceInfo; 
+            this.tokenInfo = tokenInfo; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            if (this.spaceInfo == null) this.spaceInfo = new SpaceTokenInfo(); 
-            data.AddRange(this.spaceInfo.__encode()); 
+            if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
+            data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.spaceInfo = new SpaceTokenInfo(); 
-            this.spaceInfo.__decode(binData, ref pos); 
+            this.tokenInfo = new SpaceTokenInfo(); 
+            this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -375,26 +380,26 @@ namespace Proto4z
         static public ushort getProtoID() { return 40011; } 
         static public string getProtoName() { return "JoinSpaceNotice"; } 
         //members   
-        public SpaceTokenInfo spaceInfo;  
+        public SpaceTokenInfo tokenInfo;  
         public JoinSpaceNotice()  
         { 
-            spaceInfo = new SpaceTokenInfo();  
+            tokenInfo = new SpaceTokenInfo();  
         } 
-        public JoinSpaceNotice(SpaceTokenInfo spaceInfo) 
+        public JoinSpaceNotice(SpaceTokenInfo tokenInfo) 
         { 
-            this.spaceInfo = spaceInfo; 
+            this.tokenInfo = tokenInfo; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.spaceInfo == null) this.spaceInfo = new SpaceTokenInfo(); 
-            data.AddRange(this.spaceInfo.__encode()); 
+            if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
+            data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.spaceInfo = new SpaceTokenInfo(); 
-            this.spaceInfo.__decode(binData, ref pos); 
+            this.tokenInfo = new SpaceTokenInfo(); 
+            this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -436,30 +441,30 @@ namespace Proto4z
         static public string getProtoName() { return "LeaveSpaceResp"; } 
         //members   
         public ushort retCode;  
-        public SpaceTokenInfo spaceInfo;  
+        public SpaceTokenInfo tokenInfo;  
         public LeaveSpaceResp()  
         { 
             retCode = 0;  
-            spaceInfo = new SpaceTokenInfo();  
+            tokenInfo = new SpaceTokenInfo();  
         } 
-        public LeaveSpaceResp(ushort retCode, SpaceTokenInfo spaceInfo) 
+        public LeaveSpaceResp(ushort retCode, SpaceTokenInfo tokenInfo) 
         { 
             this.retCode = retCode; 
-            this.spaceInfo = spaceInfo; 
+            this.tokenInfo = tokenInfo; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            if (this.spaceInfo == null) this.spaceInfo = new SpaceTokenInfo(); 
-            data.AddRange(this.spaceInfo.__encode()); 
+            if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
+            data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.spaceInfo = new SpaceTokenInfo(); 
-            this.spaceInfo.__decode(binData, ref pos); 
+            this.tokenInfo = new SpaceTokenInfo(); 
+            this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

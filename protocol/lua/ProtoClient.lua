@@ -58,7 +58,8 @@ Proto4z.register(40008,"GetSpaceTokenInfoResp")
 Proto4z.GetSpaceTokenInfoResp = {}  
 Proto4z.GetSpaceTokenInfoResp.__protoID = 40008 
 Proto4z.GetSpaceTokenInfoResp.__protoName = "GetSpaceTokenInfoResp" 
-Proto4z.GetSpaceTokenInfoResp[1] = {name="tokenInfo", type="SpaceTokenInfo" }  
+Proto4z.GetSpaceTokenInfoResp[1] = {name="retCode", type="ui16" }  
+Proto4z.GetSpaceTokenInfoResp[2] = {name="tokenInfo", type="SpaceTokenInfo" }  
  
 Proto4z.register(40009,"JoinSpaceReq") 
 Proto4z.JoinSpaceReq = {}  
@@ -72,13 +73,13 @@ Proto4z.JoinSpaceResp = {}
 Proto4z.JoinSpaceResp.__protoID = 40010 
 Proto4z.JoinSpaceResp.__protoName = "JoinSpaceResp" 
 Proto4z.JoinSpaceResp[1] = {name="retCode", type="ui16" }  
-Proto4z.JoinSpaceResp[2] = {name="spaceInfo", type="SpaceTokenInfo" }  
+Proto4z.JoinSpaceResp[2] = {name="tokenInfo", type="SpaceTokenInfo" }  
  
 Proto4z.register(40011,"JoinSpaceNotice") 
 Proto4z.JoinSpaceNotice = {}  
 Proto4z.JoinSpaceNotice.__protoID = 40011 
 Proto4z.JoinSpaceNotice.__protoName = "JoinSpaceNotice" 
-Proto4z.JoinSpaceNotice[1] = {name="spaceInfo", type="SpaceTokenInfo" }  
+Proto4z.JoinSpaceNotice[1] = {name="tokenInfo", type="SpaceTokenInfo" }  
  
 Proto4z.register(40012,"LeaveSpaceReq") 
 Proto4z.LeaveSpaceReq = {}  
@@ -91,7 +92,7 @@ Proto4z.LeaveSpaceResp = {}
 Proto4z.LeaveSpaceResp.__protoID = 40013 
 Proto4z.LeaveSpaceResp.__protoName = "LeaveSpaceResp" 
 Proto4z.LeaveSpaceResp[1] = {name="retCode", type="ui16" }  
-Proto4z.LeaveSpaceResp[2] = {name="spaceInfo", type="SpaceTokenInfo" }  
+Proto4z.LeaveSpaceResp[2] = {name="tokenInfo", type="SpaceTokenInfo" }  
  
 Proto4z.register(40014,"ChatReq") 
 Proto4z.ChatReq = {}  

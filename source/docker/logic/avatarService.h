@@ -47,6 +47,13 @@ private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
+    void onGetSpaceTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onJoinSpaceReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onLeaveSpaceReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+
+
+
+
 private:
     int _curLoadModuleCount = 0;
     int _curUnloadModuleCount = 0;

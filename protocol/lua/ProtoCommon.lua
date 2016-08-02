@@ -16,6 +16,7 @@ Proto4z.EC_FRIEND_DUPLICATE = 100--请先删除与该好友建立的关系
 Proto4z.EC_FRIEND_CEILING = 101--达到好友上限 
 Proto4z.EC_FRIEND_REFUSE = 102--不能添加对方为好友 
 Proto4z.EC_FRIEND_NOT_EXIST = 103--好友不存在 
+Proto4z.EC_SERVICE_NOT_OPEN = 104--服务未开放 
  
 Proto4z.register(1005,"Routing") 
 Proto4z.Routing = {} --docker to docker 路由信息 

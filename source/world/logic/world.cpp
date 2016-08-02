@@ -255,7 +255,10 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
 
 void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs)
 {
+    if (rs.getProtoID() == GetSpaceTokenInfoReq::getProtoID())
+    {
 
+    }
 }
 
 

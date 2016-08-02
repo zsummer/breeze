@@ -49,6 +49,7 @@
     <packet name="GetSpaceTokenInfoReq" desc= "">
     </packet>
     <packet name="GetSpaceTokenInfoResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
         <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
     </packet>
 
@@ -58,11 +59,11 @@
     </packet>
     <packet name="JoinSpaceResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="spaceInfo" type="SpaceTokenInfo"   desc=""/>
+        <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
 
     </packet>
     <packet name="JoinSpaceNotice" desc= "">
-        <member name="spaceInfo" type="SpaceTokenInfo"   desc=""/>
+        <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
     </packet>
 
    <packet name="LeaveSpaceReq" desc= "">
@@ -70,7 +71,7 @@
     </packet>
     <packet name="LeaveSpaceResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="spaceInfo" type="SpaceTokenInfo"   desc=""/>
+        <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
     </packet>
 
 

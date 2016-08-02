@@ -10,6 +10,11 @@ AvatarMgrService::AvatarMgrService()
     slotting<ClientAuthReq>(std::bind(&AvatarMgrService::onClientAuthReq, this, _1, _2));
     slotting<CreateAvatarReq>(std::bind(&AvatarMgrService::onCreateAvatarReq, this, _1, _2));
     slotting<AttachAvatarReq>(std::bind(&AvatarMgrService::onAttachAvatarReq, this, _1, _2));
+
+    slotting<GetSpaceTokenInfoResp>(std::bind(&AvatarMgrService::onGetSpaceTokenInfoResp, this, _1, _2));
+    slotting<JoinSpaceResp>(std::bind(&AvatarMgrService::onJoinSpaceResp, this, _1, _2));
+    slotting<JoinSpaceNotice>(std::bind(&AvatarMgrService::onJoinSpaceNotice, this, _1, _2));
+    slotting<LeaveSpaceResp>(std::bind(&AvatarMgrService::onLeaveSpaceResp, this, _1, _2));
 }
 
 AvatarMgrService::~AvatarMgrService()
@@ -406,3 +411,19 @@ void AvatarMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::
 
 
 
+void AvatarMgrService::onGetSpaceTokenInfoResp(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+{
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+void AvatarMgrService::onJoinSpaceResp(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+{
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+void AvatarMgrService::onJoinSpaceNotice(const Tracing & trace, zsummer::proto4z::ReadStream  & rs)
+{
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+void AvatarMgrService::onLeaveSpaceResp(const Tracing & trace, zsummer::proto4z::ReadStream  & rs)
+{
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
+}

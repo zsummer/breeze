@@ -6,10 +6,16 @@ AvatarService::AvatarService()
 {
     slotting<ChatReq>(std::bind(&AvatarService::onChatReq, this, _1, _2));
     slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
+
+    slotting<GetSpaceTokenInfoReq>(std::bind(&AvatarService::onGetSpaceTokenInfoReq, this, _1, _2));
+    slotting<JoinSpaceReq>(std::bind(&AvatarService::onJoinSpaceReq, this, _1, _2));
+    slotting<LeaveSpaceReq>(std::bind(&AvatarService::onLeaveSpaceReq, this, _1, _2));
+
 }
 
 AvatarService::~AvatarService() 
 {
+
 }
 
 
@@ -113,4 +119,53 @@ void AvatarService::onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadS
         LOGA("onPingPongReq " << *this << " count=" << testCount);
     }
 }
+
+
+
+
+void AvatarService::onGetSpaceTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+{
+    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
+    {
+        LOGW("STWorldMgr service not open. " << trace);
+        toService(STClient, trace.oob, GetSpaceTokenInfoResp(EC_SERVICE_NOT_OPEN, SpaceTokenInfo()));
+        return;
+    }
+    toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+
+void AvatarService::onJoinSpaceReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
+    {
+        LOGW("STWorldMgr service not open. " << trace);
+        toService(STClient, trace.oob, JoinSpaceResp(EC_SERVICE_NOT_OPEN, SpaceTokenInfo()));
+        return;
+    }
+    toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+void AvatarService::onLeaveSpaceReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
+    {
+        LOGW("STWorldMgr service not open. " << trace);
+        toService(STClient, trace.oob, LeaveSpaceResp(EC_SERVICE_NOT_OPEN, SpaceTokenInfo()));
+        return;
+    }
+    toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
