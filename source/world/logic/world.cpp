@@ -1,11 +1,10 @@
 ﻿
 #include "world.h"
 
-#include <ProtoUser.h>
-#include <ProtoUserMgr.h>
+#include <ProtoClient.h>
 #include <ProtoDocker.h>
-#include <ProtoSpaceCommon.h>
-#include <ProtoSpaceServer.h>
+#include <ProtoSceneCommon.h>
+#include <ProtoSceneServer.h>
 
 
 World::World()
@@ -74,10 +73,10 @@ void World::onShutdown()
         SessionManager::getRef().stopAccept(_dockerListen);
         SessionManager::getRef().kickClientSession(_dockerListen);
     }
-    if (_spaceListen != InvalidAccepterID)
+    if (_sceneListen != InvalidAccepterID)
     {
-        SessionManager::getRef().stopAccept(_spaceListen);
-        SessionManager::getRef().kickClientSession(_spaceListen);
+        SessionManager::getRef().stopAccept(_sceneListen);
+        SessionManager::getRef().kickClientSession(_sceneListen);
     }
     SessionManager::getRef().stop();
     return ;
@@ -119,17 +118,17 @@ bool World::startDockerListen()
 
 
 
-bool World::startSpaceListen()
+bool World::startSceneListen()
 {
     auto wc = ServerConfig::getRef().getWorldConfig();
 
-    _spaceListen = SessionManager::getRef().addAccepter(wc._spaceListenHost, wc._spaceListenPort);
-    if (_spaceListen == InvalidAccepterID)
+    _sceneListen = SessionManager::getRef().addAccepter(wc._sceneListenHost, wc._sceneListenPort);
+    if (_sceneListen == InvalidAccepterID)
     {
-        LOGE("World::startSpaceListen addAccepter error. bind ip=" << wc._spaceListenHost << ", bind port=" << wc._spaceListenPort);
+        LOGE("World::startSceneListen addAccepter error. bind ip=" << wc._sceneListenHost << ", bind port=" << wc._sceneListenPort);
         return false;
     }
-    auto &options = SessionManager::getRef().getAccepterOptions(_spaceListen);
+    auto &options = SessionManager::getRef().getAccepterOptions(_sceneListen);
     options._maxSessions = 1000;
     options._sessionOptions._sessionPulseInterval = 5000;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
@@ -139,16 +138,16 @@ bool World::startSpaceListen()
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
     };
-    options._sessionOptions._onSessionLinked = std::bind(&World::event_onSpaceLinked, this, _1);
-    options._sessionOptions._onSessionClosed = std::bind(&World::event_onSpaceClosed, this, _1);
-    options._sessionOptions._onBlockDispatch = std::bind(&World::event_onSpaceMessage, this, _1, _2, _3);
-    if (!SessionManager::getRef().openAccepter(_spaceListen))
+    options._sessionOptions._onSessionLinked = std::bind(&World::event_onSceneLinked, this, _1);
+    options._sessionOptions._onSessionClosed = std::bind(&World::event_onSceneClosed, this, _1);
+    options._sessionOptions._onBlockDispatch = std::bind(&World::event_onSceneMessage, this, _1, _2, _3);
+    if (!SessionManager::getRef().openAccepter(_sceneListen))
     {
-        LOGE("World::startSpaceListen openAccepter error. bind ip=" << wc._spaceListenHost << ", bind port=" << wc._spaceListenPort);
+        LOGE("World::startSceneListen openAccepter error. bind ip=" << wc._sceneListenHost << ", bind port=" << wc._sceneListenPort);
         return false;
     }
-    LOGA("World::startSpaceListen openAccepter success. bind ip=" << wc._spaceListenHost 
-        << ", bind port=" << wc._spaceListenPort <<", _spaceListen=" << _spaceListen);
+    LOGA("World::startSceneListen openAccepter success. bind ip=" << wc._sceneListenHost 
+        << ", bind port=" << wc._sceneListenPort <<", _sceneListen=" << _sceneListen);
     return true;
 }
 
@@ -159,7 +158,7 @@ void World::sendViaSessionID(SessionID sessionID, const char * block, unsigned i
 
 bool World::start()
 {
-    return startDockerListen() && startSpaceListen();
+    return startDockerListen() && startSceneListen();
 }
 
 void World::event_onDockerLinked(TcpSessionPtr session)
@@ -256,7 +255,10 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
 
 void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs)
 {
+    if (rs.getProtoID() == GetSceneTokenInfoReq::getProtoID())
+    {
 
+    }
 }
 
 
@@ -267,12 +269,12 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 
 
 
-void World::event_onSpaceLinked(TcpSessionPtr session)
+void World::event_onSceneLinked(TcpSessionPtr session)
 {
-    LOGD("World::event_onSpaceLinked. SessionID=" << session->getSessionID() 
+    LOGD("World::event_onSceneLinked. SessionID=" << session->getSessionID() 
         << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
 }
-void World::event_onSpacePulse(TcpSessionPtr session)
+void World::event_onScenePulse(TcpSessionPtr session)
 {
     auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
     if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
@@ -282,9 +284,9 @@ void World::event_onSpacePulse(TcpSessionPtr session)
         return;
     }
 }
-void World::event_onSpaceClosed(TcpSessionPtr session)
+void World::event_onSceneClosed(TcpSessionPtr session)
 {
-    LOGD("World::event_onSpaceClosed. SessionID=" << session->getSessionID() 
+    LOGD("World::event_onSceneClosed. SessionID=" << session->getSessionID() 
         << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
     if (isConnectID(session->getSessionID()))
     {
@@ -301,13 +303,11 @@ void World::event_onSpaceClosed(TcpSessionPtr session)
 
 
 
-void World::event_onSpaceMessage(TcpSessionPtr session, const char * begin, unsigned int len)
+void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    if (rs.getProtoID() == SpaceInfoToWorldNotice::getProtoID())
+    if (rs.getProtoID() == AllocateSceneResp::getProtoID())
     {
-        SpaceInfoToWorldNotice notice;
-        rs >> notice;
 
     }
     SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);

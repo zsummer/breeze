@@ -154,10 +154,10 @@ private:
     void event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell);
 
 public://负载均衡 
-    inline Balance & getUserBalance(){return _userBalance;}
+    inline Balance & getAvatarBalance(){return _avatarBalance;}
     inline Balance & getWebBalance(){return _webBalance;}
 private:
-    Balance _userBalance;
+    Balance _avatarBalance;
     Balance _webBalance;
 
 private:

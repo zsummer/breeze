@@ -20,7 +20,7 @@ config.docker =
         dockerWhite={"192.168.", "127.0."},
         clientPubHost="127.0.0.1",
         clientPubPort=26000,
-        services={"STLogDBMgr", "STUserMgr", "STUser", "STInfoDBMgr"},
+        services={"STLogDBMgr", "STAvatarMgr", "STAvatar", "STInfoDBMgr"},
         dockerID = 1,
     },
     {
@@ -32,7 +32,7 @@ config.docker =
         clientPubPort=26001,
         webPubHost="127.0.0.1",
         webPort=26080,
-        services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STUser"},
+        services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STAvatar"},
         dockerID = 2,
     },
 --[[
@@ -53,33 +53,33 @@ config.world =
 {
     dockerListenHost="0.0.0.0",
     dockerListenPort=17001,
-    spaceListenHost="0.0.0.0",
-    spacePubHost="127.0.0.1",
-    spaceListenPort=17002,
+    sceneListenHost="0.0.0.0",
+    scenePubHost="127.0.0.1",
+    sceneListenPort=17002,
 }
 
 
 
 
-config.spaces = 
+config.scenes = 
 {
     {
         clientListenHost="0.0.0.0",
         clientPubHost="127.0.0.1",
         clientListenPort=17102,
-        spaceID = 1,
+        sceneID = 1,
     },
     {
         clientListenHost="0.0.0.0",
         clientPubHost="127.0.0.1",
         clientListenPort=17102,
-        spaceID = 2,
+        sceneID = 2,
     },
     {
         clientListenHost="0.0.0.0",
         clientPubHost="127.0.0.1",
         clientListenPort=17102,
-        spaceID = 3,
+        sceneID = 3,
     },
 
 }

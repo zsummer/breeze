@@ -8,14 +8,15 @@ Proto4z.EC_PERMISSION_DENIED = 5--权限错误
 Proto4z.EC_REQUEST_EXPIRE = 6--请求操作已过期 
 Proto4z.EC_TARGET_NOT_EXIST = 7--操作目标不存在 
 Proto4z.EC_TOKEN_EXPIRE = 8--令牌过期 
-Proto4z.EC_USER_NOT_FOUND = 50--错误的用户信息 
-Proto4z.EC_USER_COUNT_LIMITE = 51--创建用户的数量超出限制 
-Proto4z.EC_USER_FREQ_LIMITE = 52--创建用户的频率超出限制 
-Proto4z.EC_USER_NAME_CONFLICT = 53--创建用户的昵称冲突 
+Proto4z.EC_AVATAR_NOT_FOUND = 50--错误的用户信息 
+Proto4z.EC_AVATAR_COUNT_LIMITE = 51--创建用户的数量超出限制 
+Proto4z.EC_AVATAR_FREQ_LIMITE = 52--创建用户的频率超出限制 
+Proto4z.EC_AVATAR_NAME_CONFLICT = 53--创建用户的昵称冲突 
 Proto4z.EC_FRIEND_DUPLICATE = 100--请先删除与该好友建立的关系 
 Proto4z.EC_FRIEND_CEILING = 101--达到好友上限 
 Proto4z.EC_FRIEND_REFUSE = 102--不能添加对方为好友 
 Proto4z.EC_FRIEND_NOT_EXIST = 103--好友不存在 
+Proto4z.EC_SERVICE_NOT_OPEN = 104--服务未开放 
  
 Proto4z.register(1005,"Routing") 
 Proto4z.Routing = {} --docker to docker 路由信息 
@@ -34,7 +35,7 @@ Proto4z.OutOfBand.__protoID = 1006
 Proto4z.OutOfBand.__protoName = "OutOfBand" 
 Proto4z.OutOfBand[1] = {name="clientDockerID", type="ui32" } --该数据由docker获得来自客户端的消息时自动填充. 
 Proto4z.OutOfBand[2] = {name="clientSessionID", type="ui32" } --该数据由docker获得来自客户端的消息时自动填充. 
-Proto4z.OutOfBand[3] = {name="clientUserID", type="ui64" } --该数据由docker获得来自客户端的消息时自动填充. 
+Proto4z.OutOfBand[3] = {name="clientAvatarID", type="ui64" } --该数据由docker获得来自客户端的消息时自动填充. 
  
 Proto4z.register(1000,"Tracing") 
 Proto4z.Tracing = {} --docker间追踪数据 
@@ -43,49 +44,49 @@ Proto4z.Tracing.__protoName = "Tracing"
 Proto4z.Tracing[1] = {name="routing", type="Routing" } --路由信息 
 Proto4z.Tracing[2] = {name="oob", type="OutOfBand" } --来自客户端的带外信息 
  
-Proto4z.UserIDArray = {}  
-Proto4z.UserIDArray.__protoName = "UserIDArray" 
-Proto4z.UserIDArray.__protoDesc = "array" 
-Proto4z.UserIDArray.__protoTypeV = "ui64" 
+Proto4z.AvatarIDArray = {}  
+Proto4z.AvatarIDArray.__protoName = "AvatarIDArray" 
+Proto4z.AvatarIDArray.__protoDesc = "array" 
+Proto4z.AvatarIDArray.__protoTypeV = "ui64" 
  
-Proto4z.register(1001,"UserPreview") 
-Proto4z.UserPreview = {} --用户预览信息 
-Proto4z.UserPreview.__protoID = 1001 
-Proto4z.UserPreview.__protoName = "UserPreview" 
-Proto4z.UserPreview[1] = {name="userID", type="ui64" } --用户唯一ID, 对应UserService的ServiceID 
-Proto4z.UserPreview[2] = {name="userName", type="string" } --用户唯一昵称, 对应UserService的ServiceName 
-Proto4z.UserPreview[3] = {name="account", type="string" } --帐号 
-Proto4z.UserPreview[4] = {name="iconID", type="i16" } --头像 
-Proto4z.UserPreview[5] = {name="level", type="i32" } --等级 
+Proto4z.register(1014,"AvatarPreview") 
+Proto4z.AvatarPreview = {} --用户预览信息 
+Proto4z.AvatarPreview.__protoID = 1014 
+Proto4z.AvatarPreview.__protoName = "AvatarPreview" 
+Proto4z.AvatarPreview[1] = {name="avatarID", type="ui64" } --用户唯一ID, 对应AvatarService的ServiceID 
+Proto4z.AvatarPreview[2] = {name="userName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
+Proto4z.AvatarPreview[3] = {name="account", type="string" } --帐号 
+Proto4z.AvatarPreview[4] = {name="iconID", type="i16" } --头像 
+Proto4z.AvatarPreview[5] = {name="level", type="i32" } --等级 
  
-Proto4z.UserPreviewArray = {}  
-Proto4z.UserPreviewArray.__protoName = "UserPreviewArray" 
-Proto4z.UserPreviewArray.__protoDesc = "array" 
-Proto4z.UserPreviewArray.__protoTypeV = "UserPreview" 
+Proto4z.AvatarPreviewArray = {}  
+Proto4z.AvatarPreviewArray.__protoName = "AvatarPreviewArray" 
+Proto4z.AvatarPreviewArray.__protoDesc = "array" 
+Proto4z.AvatarPreviewArray.__protoTypeV = "AvatarPreview" 
  
-Proto4z.register(1002,"UserBaseInfo") 
-Proto4z.UserBaseInfo = {} --用户基础数据 
-Proto4z.UserBaseInfo.__protoID = 1002 
-Proto4z.UserBaseInfo.__protoName = "UserBaseInfo" 
-Proto4z.UserBaseInfo[1] = {name="userID", type="ui64" } --用户唯一ID, 对应UserService的ServiceID 
-Proto4z.UserBaseInfo[2] = {name="userName", type="string" } --用户唯一昵称, 对应UserService的ServiceName 
-Proto4z.UserBaseInfo[3] = {name="account", type="string" } --帐号 
-Proto4z.UserBaseInfo[4] = {name="iconID", type="i16" } --头像 
-Proto4z.UserBaseInfo[5] = {name="level", type="i32" } --等级 
-Proto4z.UserBaseInfo[6] = {name="hp", type="double" } --血量值 
-Proto4z.UserBaseInfo[7] = {name="hpRegen", type="double" } --每秒血量值恢复 
-Proto4z.UserBaseInfo[8] = {name="attack", type="double" } --伤害 
-Proto4z.UserBaseInfo[9] = {name="defense", type="double" } --防御 
-Proto4z.UserBaseInfo[10] = {name="crit", type="double" } --暴击 
-Proto4z.UserBaseInfo[11] = {name="toughness", type="double" } --韧性 
-Proto4z.UserBaseInfo[12] = {name="moveSpeed", type="double" } --移动速度 
-Proto4z.UserBaseInfo[13] = {name="attackSpeed", type="double" } --攻击速度 
-Proto4z.UserBaseInfo[14] = {name="vampirk", type="double" } --吸血 
+Proto4z.register(1013,"AvatarBaseInfo") 
+Proto4z.AvatarBaseInfo = {} --用户基础数据 
+Proto4z.AvatarBaseInfo.__protoID = 1013 
+Proto4z.AvatarBaseInfo.__protoName = "AvatarBaseInfo" 
+Proto4z.AvatarBaseInfo[1] = {name="avatarID", type="ui64" } --用户唯一ID, 对应AvatarService的ServiceID 
+Proto4z.AvatarBaseInfo[2] = {name="userName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
+Proto4z.AvatarBaseInfo[3] = {name="account", type="string" } --帐号 
+Proto4z.AvatarBaseInfo[4] = {name="iconID", type="i16" } --头像 
+Proto4z.AvatarBaseInfo[5] = {name="level", type="i32" } --等级 
+Proto4z.AvatarBaseInfo[6] = {name="hp", type="double" } --血量值 
+Proto4z.AvatarBaseInfo[7] = {name="hpRegen", type="double" } --每秒血量值恢复 
+Proto4z.AvatarBaseInfo[8] = {name="attack", type="double" } --伤害 
+Proto4z.AvatarBaseInfo[9] = {name="defense", type="double" } --防御 
+Proto4z.AvatarBaseInfo[10] = {name="crit", type="double" } --暴击 
+Proto4z.AvatarBaseInfo[11] = {name="toughness", type="double" } --韧性 
+Proto4z.AvatarBaseInfo[12] = {name="moveSpeed", type="double" } --移动速度 
+Proto4z.AvatarBaseInfo[13] = {name="attackSpeed", type="double" } --攻击速度 
+Proto4z.AvatarBaseInfo[14] = {name="vampirk", type="double" } --吸血 
  
-Proto4z.UserBaseInfoArray = {}  
-Proto4z.UserBaseInfoArray.__protoName = "UserBaseInfoArray" 
-Proto4z.UserBaseInfoArray.__protoDesc = "array" 
-Proto4z.UserBaseInfoArray.__protoTypeV = "UserBaseInfo" 
+Proto4z.AvatarBaseInfoArray = {}  
+Proto4z.AvatarBaseInfoArray.__protoName = "AvatarBaseInfoArray" 
+Proto4z.AvatarBaseInfoArray.__protoDesc = "array" 
+Proto4z.AvatarBaseInfoArray.__protoTypeV = "AvatarBaseInfo" 
  
 Proto4z.register(1007,"DictGlobal") 
 Proto4z.DictGlobal = {} --全局配置 

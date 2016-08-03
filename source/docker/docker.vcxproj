@@ -96,6 +96,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="logic\avatarMgrService.cpp" />
+    <ClCompile Include="logic\avatarService.cpp" />
     <ClCompile Include="logic\dbService.cpp" />
     <ClCompile Include="logic\docker.cpp" />
     <ClCompile Include="logic\module.cpp" />
@@ -103,12 +105,12 @@
     <ClCompile Include="logic\offlineService.cpp" />
     <ClCompile Include="logic\service.cpp" />
     <ClCompile Include="logic\shellService.cpp" />
-    <ClCompile Include="logic\userMgrService.cpp" />
-    <ClCompile Include="logic\userService.cpp" />
     <ClCompile Include="logic\webService.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="logic\avatarMgrService.h" />
+    <ClInclude Include="logic\avatarService.h" />
     <ClInclude Include="logic\dbService.h" />
     <ClInclude Include="logic\docker.h" />
     <ClInclude Include="logic\module.h" />
@@ -116,8 +118,6 @@
     <ClInclude Include="logic\offlineService.h" />
     <ClInclude Include="logic\service.h" />
     <ClInclude Include="logic\shellService.h" />
-    <ClInclude Include="logic\userMgrService.h" />
-    <ClInclude Include="logic\userService.h" />
     <ClInclude Include="logic\webService.h" />
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +125,9 @@
     <Xml Include="..\..\protocol\ProtoDBService.xml" />
     <Xml Include="..\..\protocol\ProtoDocker.xml" />
     <Xml Include="..\..\protocol\ProtoOffline.xml" />
+    <Xml Include="..\..\protocol\ProtoSpaceClient.xml" />
+    <Xml Include="..\..\protocol\ProtoSpaceCommon.xml" />
+    <Xml Include="..\..\protocol\ProtoSpaceServer.xml" />
     <Xml Include="..\..\protocol\ProtoUser.xml" />
     <Xml Include="..\..\protocol\ProtoUserMgr.xml" />
     <Xml Include="..\..\protocol\ProtoWebAgent.xml" />

@@ -192,12 +192,12 @@ Proto4z.WebServerResponse[2] = {name="methodLine", type="string" }
 Proto4z.WebServerResponse[3] = {name="heads", type="WebAgentHead" }  
 Proto4z.WebServerResponse[4] = {name="body", type="string" }  
  
-Proto4z.register(2023,"UserOffline") 
-Proto4z.UserOffline = {}  
-Proto4z.UserOffline.__protoID = 2023 
-Proto4z.UserOffline.__protoName = "UserOffline" 
-Proto4z.UserOffline[1] = {name="id", type="ui64" }  
-Proto4z.UserOffline[2] = {name="userID", type="ui64" }  
-Proto4z.UserOffline[3] = {name="streamBlob", type="string" }  
-Proto4z.UserOffline[4] = {name="status", type="ui16" }  
-Proto4z.UserOffline[5] = {name="timestamp", type="ui64" }  
+Proto4z.register(2028,"AvatarOffline") 
+Proto4z.AvatarOffline = {}  
+Proto4z.AvatarOffline.__protoID = 2028 
+Proto4z.AvatarOffline.__protoName = "AvatarOffline" 
+Proto4z.AvatarOffline[1] = {name="id", type="ui64" }  
+Proto4z.AvatarOffline[2] = {name="avatarID", type="ui64" }  
+Proto4z.AvatarOffline[3] = {name="streamBlob", type="string" }  
+Proto4z.AvatarOffline[4] = {name="status", type="ui16" }  
+Proto4z.AvatarOffline[5] = {name="timestamp", type="ui64" }  

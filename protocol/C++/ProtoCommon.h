@@ -14,14 +14,15 @@ enum ERROR_CODE : unsigned short
     EC_REQUEST_EXPIRE = 6, //请求操作已过期  
     EC_TARGET_NOT_EXIST = 7, //操作目标不存在  
     EC_TOKEN_EXPIRE = 8, //令牌过期  
-    EC_USER_NOT_FOUND = 50, //错误的用户信息  
-    EC_USER_COUNT_LIMITE = 51, //创建用户的数量超出限制  
-    EC_USER_FREQ_LIMITE = 52, //创建用户的频率超出限制  
-    EC_USER_NAME_CONFLICT = 53, //创建用户的昵称冲突  
+    EC_AVATAR_NOT_FOUND = 50, //错误的用户信息  
+    EC_AVATAR_COUNT_LIMITE = 51, //创建用户的数量超出限制  
+    EC_AVATAR_FREQ_LIMITE = 52, //创建用户的频率超出限制  
+    EC_AVATAR_NAME_CONFLICT = 53, //创建用户的昵称冲突  
     EC_FRIEND_DUPLICATE = 100, //请先删除与该好友建立的关系  
     EC_FRIEND_CEILING = 101, //达到好友上限  
     EC_FRIEND_REFUSE = 102, //不能添加对方为好友  
     EC_FRIEND_NOT_EXIST = 103, //好友不存在  
+    EC_SERVICE_NOT_OPEN = 104, //服务未开放  
 }; 
  
 struct Routing //docker to docker 路由信息  
@@ -92,32 +93,32 @@ struct OutOfBand //带外信息
     static const std::string getProtoName() { return "OutOfBand";} 
     unsigned int clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
     unsigned int clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
-    unsigned long long clientUserID; //该数据由docker获得来自客户端的消息时自动填充.  
+    unsigned long long clientAvatarID; //该数据由docker获得来自客户端的消息时自动填充.  
     OutOfBand() 
     { 
         clientDockerID = 0; 
         clientSessionID = 0; 
-        clientUserID = 0; 
+        clientAvatarID = 0; 
     } 
-    OutOfBand(const unsigned int & clientDockerID, const unsigned int & clientSessionID, const unsigned long long & clientUserID) 
+    OutOfBand(const unsigned int & clientDockerID, const unsigned int & clientSessionID, const unsigned long long & clientAvatarID) 
     { 
         this->clientDockerID = clientDockerID; 
         this->clientSessionID = clientSessionID; 
-        this->clientUserID = clientUserID; 
+        this->clientAvatarID = clientAvatarID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const OutOfBand & data) 
 { 
     ws << data.clientDockerID;  
     ws << data.clientSessionID;  
-    ws << data.clientUserID;  
+    ws << data.clientAvatarID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, OutOfBand & data) 
 { 
     rs >> data.clientDockerID;  
     rs >> data.clientSessionID;  
-    rs >> data.clientUserID;  
+    rs >> data.clientAvatarID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const OutOfBand & info) 
@@ -125,7 +126,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "clientDockerID=" << info.clientDockerID << "\n"; 
     stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "clientUserID=" << info.clientUserID << "\n"; 
+    stm << "clientAvatarID=" << info.clientAvatarID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -167,12 +168,12 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 } 
  
  
-typedef std::vector<unsigned long long> UserIDArray;  
+typedef std::vector<unsigned long long> AvatarIDArray;  
  
-struct UserPreview //用户预览信息  
+struct AvatarPreview //用户预览信息  
 { 
-    static const unsigned short getProtoID() { return 1001;} 
-    static const std::string getProtoName() { return "UserPreview";} 
+    static const unsigned short getProtoID() { return 1014;} 
+    static const std::string getProtoName() { return "AvatarPreview";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
@@ -180,20 +181,20 @@ struct UserPreview //用户预览信息
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long userID; //用户唯一ID, 对应UserService的ServiceID  
-    std::string userName; //用户唯一昵称, 对应UserService的ServiceName  
+    unsigned long long avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
+    std::string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
     std::string account; //帐号  
     short iconID; //头像  
     int level; //等级  
-    UserPreview() 
+    AvatarPreview() 
     { 
-        userID = 0; 
+        avatarID = 0; 
         iconID = 0; 
         level = 0; 
     } 
-    UserPreview(const unsigned long long & userID, const std::string & userName, const std::string & account, const short & iconID, const int & level) 
+    AvatarPreview(const unsigned long long & avatarID, const std::string & userName, const std::string & account, const short & iconID, const int & level) 
     { 
-        this->userID = userID; 
+        this->avatarID = avatarID; 
         this->userName = userName; 
         this->account = account; 
         this->iconID = iconID; 
@@ -201,74 +202,74 @@ struct UserPreview //用户预览信息
     } 
 }; 
  
-const std::vector<std::string>  UserPreview::getDBBuild() 
+const std::vector<std::string>  AvatarPreview::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserPreview` (        `userID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`userID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_UserPreview` add `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` change `userID`  `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserPreview` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserPreview` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserPreview` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserPreview` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserPreview` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarPreview` (        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`avatarID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_AvatarPreview` add `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `avatarID`  `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarPreview` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarPreview` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
     return std::move(ret); 
 } 
-std::string  UserPreview::getDBSelect() 
+std::string  AvatarPreview::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `userID`,`userName`,`account`,`iconID`,`level` from `tb_UserPreview` where `userID` = ? "); 
-    q << this->userID; 
+    q.init("select `avatarID`,`userName`,`account`,`iconID`,`level` from `tb_AvatarPreview` where `avatarID` = ? "); 
+    q << this->avatarID; 
     return q.pickSQL(); 
 } 
-std::string  UserPreview::getDBSelectPure() 
+std::string  AvatarPreview::getDBSelectPure() 
 { 
-    return "select `userID`,`userName`,`account`,`iconID`,`level` from `tb_UserPreview` "; 
+    return "select `avatarID`,`userName`,`account`,`iconID`,`level` from `tb_AvatarPreview` "; 
 } 
-std::string  UserPreview::getDBInsert() 
+std::string  AvatarPreview::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserPreview`(`userID`,`userName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
-    q << this->userID; 
+    q.init("insert into `tb_AvatarPreview`(`avatarID`,`userName`,`account`,`iconID`,`level`) values(?,?,?,?,?)"); 
+    q << this->avatarID; 
     q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
     return q.pickSQL(); 
 } 
-std::string  UserPreview::getDBDelete() 
+std::string  AvatarPreview::getDBDelete() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_UserPreview` where `userID` = ? "); 
-    q << this->userID; 
+    q.init("delete from `tb_AvatarPreview` where `avatarID` = ? "); 
+    q << this->avatarID; 
     return q.pickSQL(); 
 } 
-std::string  UserPreview::getDBUpdate() 
+std::string  AvatarPreview::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserPreview`(userID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
-    q << this->userID; 
+    q.init("insert into `tb_AvatarPreview`(avatarID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`level` = ? "); 
+    q << this->avatarID; 
     q << this->userName; 
     q << this->account; 
     q << this->iconID; 
     q << this->level; 
     return q.pickSQL(); 
 } 
-bool UserPreview::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+bool AvatarPreview::fetchFromDBResult(zsummer::mysql::DBResult &result) 
 { 
     if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
     { 
-        LOGE("error fetch UserPreview from table `tb_UserPreview` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        LOGE("error fetch AvatarPreview from table `tb_AvatarPreview` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
         return false; 
     } 
     try 
     { 
         if (result.haveRow()) 
         { 
-            result >> this->userID; 
+            result >> this->avatarID; 
             result >> this->userName; 
             result >> this->account; 
             result >> this->iconID; 
@@ -278,33 +279,33 @@ bool UserPreview::fetchFromDBResult(zsummer::mysql::DBResult &result)
     } 
     catch(const std::exception & e) 
     { 
-        LOGE("catch one except error when fetch UserPreview from table `tb_UserPreview` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        LOGE("catch one except error when fetch AvatarPreview from table `tb_AvatarPreview` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
         return false; 
     } 
     return false; 
 } 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserPreview & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarPreview & data) 
 { 
-    ws << data.userID;  
+    ws << data.avatarID;  
     ws << data.userName;  
     ws << data.account;  
     ws << data.iconID;  
     ws << data.level;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserPreview & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarPreview & data) 
 { 
-    rs >> data.userID;  
+    rs >> data.avatarID;  
     rs >> data.userName;  
     rs >> data.account;  
     rs >> data.iconID;  
     rs >> data.level;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserPreview & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarPreview & info) 
 { 
     stm << "[\n"; 
-    stm << "userID=" << info.userID << "\n"; 
+    stm << "avatarID=" << info.avatarID << "\n"; 
     stm << "userName=" << info.userName << "\n"; 
     stm << "account=" << info.account << "\n"; 
     stm << "iconID=" << info.iconID << "\n"; 
@@ -314,12 +315,12 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 } 
  
  
-typedef std::vector<UserPreview> UserPreviewArray;  
+typedef std::vector<AvatarPreview> AvatarPreviewArray;  
  
-struct UserBaseInfo //用户基础数据  
+struct AvatarBaseInfo //用户基础数据  
 { 
-    static const unsigned short getProtoID() { return 1002;} 
-    static const std::string getProtoName() { return "UserBaseInfo";} 
+    static const unsigned short getProtoID() { return 1013;} 
+    static const std::string getProtoName() { return "AvatarBaseInfo";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
@@ -327,8 +328,8 @@ struct UserBaseInfo //用户基础数据
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long userID; //用户唯一ID, 对应UserService的ServiceID  
-    std::string userName; //用户唯一昵称, 对应UserService的ServiceName  
+    unsigned long long avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
+    std::string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
     std::string account; //帐号  
     short iconID; //头像  
     int level; //等级  
@@ -341,9 +342,9 @@ struct UserBaseInfo //用户基础数据
     double moveSpeed; //移动速度  
     double attackSpeed; //攻击速度  
     double vampirk; //吸血  
-    UserBaseInfo() 
+    AvatarBaseInfo() 
     { 
-        userID = 0; 
+        avatarID = 0; 
         iconID = 0; 
         level = 0; 
         hp = 0.0; 
@@ -356,9 +357,9 @@ struct UserBaseInfo //用户基础数据
         attackSpeed = 0.0; 
         vampirk = 0.0; 
     } 
-    UserBaseInfo(const unsigned long long & userID, const std::string & userName, const std::string & account, const short & iconID, const int & level, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
+    AvatarBaseInfo(const unsigned long long & avatarID, const std::string & userName, const std::string & account, const short & iconID, const int & level, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
     { 
-        this->userID = userID; 
+        this->avatarID = avatarID; 
         this->userName = userName; 
         this->account = account; 
         this->iconID = iconID; 
@@ -375,56 +376,56 @@ struct UserBaseInfo //用户基础数据
     } 
 }; 
  
-const std::vector<std::string>  UserBaseInfo::getDBBuild() 
+const std::vector<std::string>  AvatarBaseInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_UserBaseInfo` (        `userID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`userID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `userID`  `userID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `hp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `attack`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `defense`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `crit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `toughness`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` add `vampirk`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_UserBaseInfo` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarBaseInfo` (        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`avatarID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `avatarID`  `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `vampirk`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
     return std::move(ret); 
 } 
-std::string  UserBaseInfo::getDBSelect() 
+std::string  AvatarBaseInfo::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `userID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_UserBaseInfo` where `userID` = ? "); 
-    q << this->userID; 
+    q.init("select `avatarID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_AvatarBaseInfo` where `avatarID` = ? "); 
+    q << this->avatarID; 
     return q.pickSQL(); 
 } 
-std::string  UserBaseInfo::getDBSelectPure() 
+std::string  AvatarBaseInfo::getDBSelectPure() 
 { 
-    return "select `userID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_UserBaseInfo` "; 
+    return "select `avatarID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_AvatarBaseInfo` "; 
 } 
-std::string  UserBaseInfo::getDBInsert() 
+std::string  AvatarBaseInfo::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(`userID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
-    q << this->userID; 
+    q.init("insert into `tb_AvatarBaseInfo`(`avatarID`,`userName`,`account`,`iconID`,`level`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
+    q << this->avatarID; 
     q << this->userName; 
     q << this->account; 
     q << this->iconID; 
@@ -440,18 +441,18 @@ std::string  UserBaseInfo::getDBInsert()
     q << this->vampirk; 
     return q.pickSQL(); 
 } 
-std::string  UserBaseInfo::getDBDelete() 
+std::string  AvatarBaseInfo::getDBDelete() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_UserBaseInfo` where `userID` = ? "); 
-    q << this->userID; 
+    q.init("delete from `tb_AvatarBaseInfo` where `avatarID` = ? "); 
+    q << this->avatarID; 
     return q.pickSQL(); 
 } 
-std::string  UserBaseInfo::getDBUpdate() 
+std::string  AvatarBaseInfo::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_UserBaseInfo`(userID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`level` = ?,`hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ? "); 
-    q << this->userID; 
+    q.init("insert into `tb_AvatarBaseInfo`(avatarID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`level` = ?,`hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ? "); 
+    q << this->avatarID; 
     q << this->userName; 
     q << this->account; 
     q << this->iconID; 
@@ -467,18 +468,18 @@ std::string  UserBaseInfo::getDBUpdate()
     q << this->vampirk; 
     return q.pickSQL(); 
 } 
-bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+bool AvatarBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result) 
 { 
     if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
     { 
-        LOGE("error fetch UserBaseInfo from table `tb_UserBaseInfo` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        LOGE("error fetch AvatarBaseInfo from table `tb_AvatarBaseInfo` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
         return false; 
     } 
     try 
     { 
         if (result.haveRow()) 
         { 
-            result >> this->userID; 
+            result >> this->avatarID; 
             result >> this->userName; 
             result >> this->account; 
             result >> this->iconID; 
@@ -497,14 +498,14 @@ bool UserBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result)
     } 
     catch(const std::exception & e) 
     { 
-        LOGE("catch one except error when fetch UserBaseInfo from table `tb_UserBaseInfo` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        LOGE("catch one except error when fetch AvatarBaseInfo from table `tb_AvatarBaseInfo` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
         return false; 
     } 
     return false; 
 } 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserBaseInfo & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarBaseInfo & data) 
 { 
-    ws << data.userID;  
+    ws << data.avatarID;  
     ws << data.userName;  
     ws << data.account;  
     ws << data.iconID;  
@@ -520,9 +521,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.vampirk;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserBaseInfo & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarBaseInfo & data) 
 { 
-    rs >> data.userID;  
+    rs >> data.avatarID;  
     rs >> data.userName;  
     rs >> data.account;  
     rs >> data.iconID;  
@@ -538,10 +539,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.vampirk;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserBaseInfo & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarBaseInfo & info) 
 { 
     stm << "[\n"; 
-    stm << "userID=" << info.userID << "\n"; 
+    stm << "avatarID=" << info.avatarID << "\n"; 
     stm << "userName=" << info.userName << "\n"; 
     stm << "account=" << info.account << "\n"; 
     stm << "iconID=" << info.iconID << "\n"; 
@@ -560,7 +561,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 } 
  
  
-typedef std::vector<UserBaseInfo> UserBaseInfoArray;  
+typedef std::vector<AvatarBaseInfo> AvatarBaseInfoArray;  
  
 struct DictGlobal //全局配置  
 { 

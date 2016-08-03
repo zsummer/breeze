@@ -28,7 +28,7 @@ void DBService::onTick(TimerID tID, ui32 count, ui32 repeat)
 
 void DBService::_checkSafeDestroy()
 {
-    auto service = Docker::getRef().peekService(STUserMgr, InvalidServiceID);
+    auto service = Docker::getRef().peekService(STAvatarMgr, InvalidServiceID);
     if (!service)
     {
         _dbAsync->stop();
@@ -97,11 +97,11 @@ bool DBService::onBuildDB()
 {
     if (getServiceType() == STInfoDBMgr)
     {
-        if (!buildDB<UserBaseInfo>())
+        if (!buildDB<AvatarBaseInfo>())
         {
             return false;
         }
-        if (!buildDB<UserOffline>())
+        if (!buildDB<AvatarOffline>())
         {
             return false;
         }

@@ -179,8 +179,8 @@ private:
     ServiceID _serviceID = InvalidServiceID;
     ServiceName _serviceName = InvalidServiceName;
     DockerID _serviceDockerID = InvalidDockerID; //实际所在的docker
-    SessionID _clientSessionID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限UserService使用
-    DockerID _clientDockerID = InvalidDockerID; //如果存在关联的客户端,则该ID代表在_clientSessionID所在dockerID. 目前仅限UserService使用
+    SessionID _clientSessionID = InvalidSessionID; //如果存在关联的客户端,则该ID代表在实际所在docker中的sessionID. 目前仅限AvatarService使用
+    DockerID _clientDockerID = InvalidDockerID; //如果存在关联的客户端,则该ID代表在_clientSessionID所在dockerID. 目前仅限AvatarService使用
 
     ui16 _status = SS_CREATED;
     bool _shell = false;
@@ -195,11 +195,21 @@ private:
 using ServicePtr = std::shared_ptr<Service>;
 using ServiceWeakPtr = std::shared_ptr<Service>;
 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & os, Service & svc)
+{
+    os << " --[ " << svc.getServiceDockerID() << ":" << svc.getServiceName() << ":" << svc.getServiceID()
+        << ":" << svc.getStatus()
+        << " client=" << svc.getClientDockerID() << ":"
+        << svc.getClientSessionID() << " ]--  ";
+    return os;
+}
+
 template<class Proto>
 void Service::toService(ServiceType serviceType, const OutOfBand &oob, Proto proto, ServiceCallback cb)
 {
     try
     {
+        LOGT("Service::toService" << *this << ", dstType=" << ::getServiceName(serviceType) << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         toService(serviceType, oob, ws.getStream(), ws.getStreamLen(), cb);
@@ -214,6 +224,8 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
 {
     try
     {
+        LOGT("Service::toService" << *this << ", dstType=" << ::getServiceName(serviceType) <<", dstID=" << serviceID
+            << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         toService(serviceType, serviceID, oob, ws.getStream(), ws.getStreamLen(), cb);
@@ -238,6 +250,8 @@ void Service::backToService(const Tracing & trace, Proto proto, ServiceCallback 
 {
     try
     {
+        LOGT("Service::backToService" << *this << ", dstType=" << ::getServiceName(trace.routing.fromServiceType) 
+            << ", dstID=" << trace.routing.fromServiceID << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         backToService(trace, ws.getStream(), ws.getStreamLen(), cb);
@@ -253,6 +267,8 @@ void Service::directToRealClient(DockerID clientDockerID, SessionID clientSessio
 {
     try
     {
+        LOGT("Service::directToRealClient" << *this << ", dstDockerID=" << clientDockerID
+            << ", dstSessionID=" << clientSessionID << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         directToRealClient(clientDockerID, clientSessionID, ws.getStream(), ws.getStreamLen());
@@ -268,6 +284,7 @@ void Service::toDocker(DockerID dockerID, Proto proto)
 {
     try
     {
+        LOGT("Service::toDocker" << *this << ", dstDockerID=" << dockerID << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         toDocker(dockerID, ws.getStream(), ws.getStreamLen());
@@ -282,6 +299,7 @@ void Service::toDocker(DockerID dockerID, const OutOfBand & oob, Proto proto)
 {
     try
     {
+        LOGT("Service::toDocker" << *this << ", dstDockerID=" << dockerID << ", protoName=" << Proto::getProtoName());
         WriteStream ws(Proto::getProtoID());
         ws << proto;
         toDocker(dockerID, oob, ws.getStream(), ws.getStreamLen());

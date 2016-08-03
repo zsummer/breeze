@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>40000</MinNo>
+  <MaxNo>50000</MaxNo>
+  <UseLog4z>true</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+    <packet name="ClientPulse" desc= "客户端脉冲请求">
+    </packet>
+
+    <packet name="ClientAuthReq" desc= "认证请求">
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+    </packet>
+     <packet name="ClientAuthResp" desc= "认证返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="account" type="string"   desc=""/>
+        <member name="token" type="string"   desc=""/>
+        <member name="previews" type="AvatarPreviewArray"   desc=""/>
+    </packet>
+
+    <packet name="CreateAvatarReq" desc= "创角色请求">
+        <member name="accountName" type="string"   desc="这个字段会被服务器填充.客户端可以不填写"/>
+        <member name="userName" type="string"   desc=""/>
+    </packet>
+     <packet name="CreateAvatarResp" desc= "创角色请求返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="avatarID" type="ui64"   desc=""/>
+        <member name="previews" type="AvatarPreviewArray"   desc=""/>
+    </packet>
+
+    <packet name="AttachAvatarReq" desc= "选角色请求">
+        <member name="accountName" type="string"   desc="这个字段会被服务器填充.客户端可以不填写"/>
+        <member name="avatarID" type="ui64"   desc=""/>
+    </packet>
+     <packet name="AttachAvatarResp" desc= "选角色请求返回">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="avatarID" type="ui64"   desc=""/>
+    </packet>
+
+
+ 
+
+<!------------------------------------ battle --------------------------------------------->
+    <packet name="GetSceneTokenInfoReq" desc= "">
+    </packet>
+    <packet name="GetSceneTokenInfoResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
+    </packet>
+
+   <packet name="JoinSceneReq" desc= "">
+        <member name="spaceType" type="ui16"   desc=""/>
+        <member name="mapID" type="ui32"   desc=""/>
+    </packet>
+    <packet name="JoinSceneResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
+
+    </packet>
+    <packet name="JoinSceneNotice" desc= "">
+        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
+    </packet>
+
+   <packet name="LeaveSceneReq" desc= "">
+        <member name="spaceID" type="ui32"   desc=""/>
+    </packet>
+    <packet name="LeaveSceneResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
+    </packet>
+
+
+<!------------------------------------ other --------------------------------------------->
+
+   <packet name="ChatReq" desc= "">
+        <member name="avatarID" type="ui64"   desc=""/>
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+     <packet name="ChatResp" desc= "">
+        <member name="fromAvatarID" type="ui64"   desc=""/>
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+
+    <packet name="PingPongReq" desc= "">
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+     <packet name="PingPongResp" desc= "">
+        <member name="msg" type="string"   desc=""/>
+    </packet>
+
+
+
+
+</Proto>
+

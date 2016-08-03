@@ -965,30 +965,30 @@ namespace Proto4z
         } 
     } 
  
-    public class UserOffline: Proto4z.IProtoObject 
+    public class AvatarOffline: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 2023;  
-        static public ushort getProtoID() { return 2023; } 
-        static public string getProtoName() { return "UserOffline"; } 
+        public const ushort protoID = 2028;  
+        static public ushort getProtoID() { return 2028; } 
+        static public string getProtoName() { return "AvatarOffline"; } 
         //members   
         public ulong id;  
-        public ulong userID;  
+        public ulong avatarID;  
         public string streamBlob;  
         public ushort status;  
         public ulong timestamp;  
-        public UserOffline()  
+        public AvatarOffline()  
         { 
             id = 0;  
-            userID = 0;  
+            avatarID = 0;  
             streamBlob = "";  
             status = 0;  
             timestamp = 0;  
         } 
-        public UserOffline(ulong id, ulong userID, string streamBlob, ushort status, ulong timestamp) 
+        public AvatarOffline(ulong id, ulong avatarID, string streamBlob, ushort status, ulong timestamp) 
         { 
             this.id = id; 
-            this.userID = userID; 
+            this.avatarID = avatarID; 
             this.streamBlob = streamBlob; 
             this.status = status; 
             this.timestamp = timestamp; 
@@ -997,7 +997,7 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.userID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.streamBlob)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.timestamp)); 
@@ -1006,7 +1006,7 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.userID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.streamBlob = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.timestamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 

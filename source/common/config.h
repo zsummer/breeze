@@ -67,12 +67,12 @@ public:
 private:
     WorldConfig _worldConfig;
 
-    //异构的世界同步服务器的space配置
+    //异构的世界同步服务器的scene配置
 public:
-    bool parseSpaces(std::string configName, ui32 serverID);
-    inline const SpaceConfig & getSpaceConfig() { return _space; }
+    bool parseScenes(std::string configName, ui32 serverID);
+    inline const SceneConfig & getSceneConfig() { return _scene; }
 private:
-    SpaceConfig _space;
+    SceneConfig _scene;
 };
 
 

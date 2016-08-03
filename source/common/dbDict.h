@@ -28,7 +28,8 @@
 #include "dbAsync.h"
 #include "utls.h"
 #include <ProtoCommon.h>
-#include <ProtoUser.h>
+#include <ProtoSceneCommon.h>
+#include <ProtoClient.h>
 #include <ProtoDocker.h>
 
 
@@ -101,8 +102,8 @@ public:
     {
         auto helper = buildHelper("STInfoDBMgr");
         if (!helper) return false;
-        buildTable<UserBaseInfo>(helper);
-        buildTable<UserOffline>(helper);
+        buildTable<AvatarBaseInfo>(helper);
+        buildTable<AvatarOffline>(helper);
         return true;
     }
     inline bool buildLogTable()
