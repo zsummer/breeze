@@ -24,8 +24,8 @@
 #include <common.h>
 #include <ProtoCommon.h>
 #include <ProtoDocker.h>
-#include <ProtoSpaceCommon.h>
-#include <ProtoSpaceClient.h>
+#include <ProtoSceneCommon.h>
+#include <ProtoSceneClient.h>
 #include <rvo2/RVO.h>
 
 struct WorldServiceSession
@@ -61,7 +61,7 @@ private:
     //内部接口 
     //打开监听端口,新连接 
     bool startDockerListen();
-    bool startSpaceListen();
+    bool startSceneListen();
 
 
 
@@ -80,19 +80,19 @@ private:
 
 private:
     //客户端通讯处理 
-    void event_onSpaceLinked(TcpSessionPtr session);
-    void event_onSpacePulse(TcpSessionPtr session);
-    void event_onSpaceClosed(TcpSessionPtr session);
-    void event_onSpaceMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+    void event_onSceneLinked(TcpSessionPtr session);
+    void event_onScenePulse(TcpSessionPtr session);
+    void event_onSceneClosed(TcpSessionPtr session);
+    void event_onSceneMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
 
 
 private:
-    Balance _spaceBalance;
+    Balance _sceneBalance;
 private:
     std::map<AreaID, std::map<ServiceType, WorldServiceSession> > _services;
     AccepterID _dockerListen = InvalidAccepterID;
-    AccepterID _spaceListen = InvalidAccepterID;
+    AccepterID _sceneListen = InvalidAccepterID;
 };
 
 

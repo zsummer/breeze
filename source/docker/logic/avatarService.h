@@ -47,9 +47,9 @@ private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
-    void onGetSpaceTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSpaceReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onLeaveSpaceReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onGetSceneTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onJoinSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onLeaveSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 

@@ -46,5 +46,5 @@ add_subdirectory(docker)
 add_subdirectory(stress)
 add_subdirectory(test)
 add_subdirectory(world)
-add_subdirectory(space)
+add_subdirectory(scene)
 

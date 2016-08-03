@@ -1,90 +1,90 @@
  
-#ifndef _PROTOSPACECOMMON_H_ 
-#define _PROTOSPACECOMMON_H_ 
+#ifndef _PROTOSCENECOMMON_H_ 
+#define _PROTOSCENECOMMON_H_ 
  
  
-enum SPACE_TYPE : unsigned short 
+enum SCENE_TYPE : unsigned short 
 { 
-    SPACE_TYPE_NONE = 0, //无效  
-    SPACE_TYPE_HOME = 1, //主城  
-    SPACE_TYPE_SOME_INSTANCING = 2, //一些副本  
-    SPACE_TYPE_ARENA = 3, //竞技场  
-    SPACE_TYPE_GUILD = 4, //公会  
+    SCENE_TYPE_NONE = 0, //无效  
+    SCENE_TYPE_HOME = 1, //主城  
+    SCENE_TYPE_SOME_INSTANCING = 2, //一些副本  
+    SCENE_TYPE_ARENA = 3, //竞技场  
+    SCENE_TYPE_GUILD = 4, //公会  
 }; 
  
-enum SPACE_STATUS : unsigned short 
+enum SCENE_STATUS : unsigned short 
 { 
-    SPACE_STATUS_NONE = 0, //不存在  
-    SPACE_STATUS_MATCHING = 1, //匹配中  
-    SPACE_STATUS_CHOISE = 2, //选择英雄  
-    SPACE_STATUS_WAIT = 3, //等待玩家加入战场  
-    SPACE_STATUS_ACTIVE = 4, //战斗中  
-    SPACE_STATUS_LINGER = 5, //战斗结束,数据驻留阶段  
+    SCENE_STATUS_NONE = 0, //不存在  
+    SCENE_STATUS_MATCHING = 1, //匹配中  
+    SCENE_STATUS_CHOISE = 2, //选择英雄  
+    SCENE_STATUS_WAIT = 3, //等待玩家加入战场  
+    SCENE_STATUS_ACTIVE = 4, //战斗中  
+    SCENE_STATUS_LINGER = 5, //战斗结束,数据驻留阶段  
 }; 
  
-struct SpaceTokenInfo //Token  
+struct SceneTokenInfo //Token  
 { 
-    static const unsigned short getProtoID() { return 10019;} 
-    static const std::string getProtoName() { return "SpaceTokenInfo";} 
-    unsigned short spaceType; //类型  
+    static const unsigned short getProtoID() { return 10000;} 
+    static const std::string getProtoName() { return "SceneTokenInfo";} 
+    unsigned short sceneType; //类型  
     unsigned int mapID;  
-    unsigned int spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
-    unsigned short spaceStatus; //状态  
+    unsigned int sceneID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
+    unsigned short sceneStatus; //状态  
     std::string host; //服务器host  
     unsigned short port; //服务器port  
     std::string token; //令牌  
     AvatarBaseInfoArray involeds; //匹配列表中的玩家  
-    SpaceTokenInfo() 
+    SceneTokenInfo() 
     { 
-        spaceType = 0; 
+        sceneType = 0; 
         mapID = 0; 
-        spaceID = 0; 
-        spaceStatus = 0; 
+        sceneID = 0; 
+        sceneStatus = 0; 
         port = 0; 
     } 
-    SpaceTokenInfo(const unsigned short & spaceType, const unsigned int & mapID, const unsigned int & spaceID, const unsigned short & spaceStatus, const std::string & host, const unsigned short & port, const std::string & token, const AvatarBaseInfoArray & involeds) 
+    SceneTokenInfo(const unsigned short & sceneType, const unsigned int & mapID, const unsigned int & sceneID, const unsigned short & sceneStatus, const std::string & host, const unsigned short & port, const std::string & token, const AvatarBaseInfoArray & involeds) 
     { 
-        this->spaceType = spaceType; 
+        this->sceneType = sceneType; 
         this->mapID = mapID; 
-        this->spaceID = spaceID; 
-        this->spaceStatus = spaceStatus; 
+        this->sceneID = sceneID; 
+        this->sceneStatus = sceneStatus; 
         this->host = host; 
         this->port = port; 
         this->token = token; 
         this->involeds = involeds; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SpaceTokenInfo & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneTokenInfo & data) 
 { 
-    ws << data.spaceType;  
+    ws << data.sceneType;  
     ws << data.mapID;  
-    ws << data.spaceID;  
-    ws << data.spaceStatus;  
+    ws << data.sceneID;  
+    ws << data.sceneStatus;  
     ws << data.host;  
     ws << data.port;  
     ws << data.token;  
     ws << data.involeds;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SpaceTokenInfo & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneTokenInfo & data) 
 { 
-    rs >> data.spaceType;  
+    rs >> data.sceneType;  
     rs >> data.mapID;  
-    rs >> data.spaceID;  
-    rs >> data.spaceStatus;  
+    rs >> data.sceneID;  
+    rs >> data.sceneStatus;  
     rs >> data.host;  
     rs >> data.port;  
     rs >> data.token;  
     rs >> data.involeds;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SpaceTokenInfo & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneTokenInfo & info) 
 { 
     stm << "[\n"; 
-    stm << "spaceType=" << info.spaceType << "\n"; 
+    stm << "sceneType=" << info.sceneType << "\n"; 
     stm << "mapID=" << info.mapID << "\n"; 
-    stm << "spaceID=" << info.spaceID << "\n"; 
-    stm << "spaceStatus=" << info.spaceStatus << "\n"; 
+    stm << "sceneID=" << info.sceneID << "\n"; 
+    stm << "sceneStatus=" << info.sceneStatus << "\n"; 
     stm << "host=" << info.host << "\n"; 
     stm << "port=" << info.port << "\n"; 
     stm << "token=" << info.token << "\n"; 
@@ -94,14 +94,14 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 } 
  
  
-typedef std::vector<SpaceTokenInfo> SpaceTokenInfoArray;  
+typedef std::vector<SceneTokenInfo> SceneTokenInfoArray;  
  
  
 typedef std::vector<unsigned int> EntityIDArray;  
  
 struct EPoint 
 { 
-    static const unsigned short getProtoID() { return 10018;} 
+    static const unsigned short getProtoID() { return 10001;} 
     static const std::string getProtoName() { return "EPoint";} 
     double x;  
     double y;  
@@ -247,7 +247,7 @@ enum BUFF_TYPE : unsigned long long
  
 struct SearchInfo 
 { 
-    static const unsigned short getProtoID() { return 10015;} 
+    static const unsigned short getProtoID() { return 10002;} 
     static const std::string getProtoName() { return "SearchInfo";} 
     unsigned short searchMethod;  
     unsigned long long searchTarget;  
@@ -321,7 +321,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SkillBehaviour //技能触发行为  
 { 
-    static const unsigned short getProtoID() { return 10016;} 
+    static const unsigned short getProtoID() { return 10003;} 
     static const std::string getProtoName() { return "SkillBehaviour";} 
     unsigned long long behaviour;  
     double delay;  
@@ -676,7 +676,7 @@ typedef std::vector<BuffInfo> BuffInfoArray;
  
 struct EntityInfo //EntityInfo  
 { 
-    static const unsigned short getProtoID() { return 10011;} 
+    static const unsigned short getProtoID() { return 10009;} 
     static const std::string getProtoName() { return "EntityInfo";} 
     unsigned int eid; //eid  
     unsigned short color; //阵营  
@@ -763,7 +763,7 @@ typedef std::vector<EntityInfo> EntityInfoArray;
  
 struct EntityControl //EntityControl  
 { 
-    static const unsigned short getProtoID() { return 10012;} 
+    static const unsigned short getProtoID() { return 10010;} 
     static const std::string getProtoName() { return "EntityControl";} 
     unsigned int eid; //eid  
     double stateChageTick; //状态改变时间  
@@ -865,7 +865,7 @@ typedef std::vector<EntityControl> EntityControlArray;
  
 struct EntityReport //EntityReport  
 { 
-    static const unsigned short getProtoID() { return 10013;} 
+    static const unsigned short getProtoID() { return 10011;} 
     static const std::string getProtoName() { return "EntityReport";} 
     unsigned int eid; //eid  
     unsigned int killOtherCount; //杀死其他玩家次数  
@@ -930,7 +930,7 @@ typedef std::vector<EntityReport> EntityReportArray;
  
 struct EntityFullInfo //EntityFullInfo  
 { 
-    static const unsigned short getProtoID() { return 10014;} 
+    static const unsigned short getProtoID() { return 10012;} 
     static const std::string getProtoName() { return "EntityFullInfo";} 
     AvatarBaseInfo userInfo;  
     EntityInfo info;  

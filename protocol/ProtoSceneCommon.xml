@@ -13,39 +13,39 @@
 
 
    
-     <!-- space类型 -->
-    <enum type="ui16" name="SPACE_TYPE" desc="space类型" >
-        <member name="SPACE_TYPE_NONE" value="0"   desc="无效"/>
-        <member name="SPACE_TYPE_HOME"   desc="主城"/>
-        <member name="SPACE_TYPE_SOME_INSTANCING"  desc="一些副本"/>
-        <member name="SPACE_TYPE_ARENA" desc="竞技场"/>
-        <member name="SPACE_TYPE_GUILD" desc="公会"/>
+     <!-- scene类型 -->
+    <enum type="ui16" name="SCENE_TYPE" desc="scene类型" >
+        <member name="SCENE_TYPE_NONE" value="0"   desc="无效"/>
+        <member name="SCENE_TYPE_HOME"   desc="主城"/>
+        <member name="SCENE_TYPE_SOME_INSTANCING"  desc="一些副本"/>
+        <member name="SCENE_TYPE_ARENA" desc="竞技场"/>
+        <member name="SCENE_TYPE_GUILD" desc="公会"/>
     </enum>
 
-    <!-- space状态 -->
-    <enum type="ui16" name="SPACE_STATUS" desc="space状态">
-        <member name="SPACE_STATUS_NONE" value="0" desc="不存在" />
-        <member name="SPACE_STATUS_MATCHING"  desc="匹配中" />
-        <member name="SPACE_STATUS_CHOISE" desc="选择英雄" />
-        <member name="SPACE_STATUS_WAIT"  desc="等待玩家加入战场" />
-        <member name="SPACE_STATUS_ACTIVE" desc="战斗中" />
-        <member name="SPACE_STATUS_LINGER" desc="战斗结束,数据驻留阶段" />
+    <!-- scene状态 -->
+    <enum type="ui16" name="SCENE_STATUS" desc="scene状态">
+        <member name="SCENE_STATUS_NONE" value="0" desc="不存在" />
+        <member name="SCENE_STATUS_MATCHING"  desc="匹配中" />
+        <member name="SCENE_STATUS_CHOISE" desc="选择英雄" />
+        <member name="SCENE_STATUS_WAIT"  desc="等待玩家加入战场" />
+        <member name="SCENE_STATUS_ACTIVE" desc="战斗中" />
+        <member name="SCENE_STATUS_LINGER" desc="战斗结束,数据驻留阶段" />
     </enum>
 
 
 
     <!-- Token-->
-    <struct name="SpaceTokenInfo" desc="Token">
-        <member name="spaceType" type="ui16"  desc="类型"/>
+    <struct name="SceneTokenInfo" desc="Token">
+        <member name="sceneType" type="ui16"  desc="类型"/>
         <member name="mapID" type="ui32"  desc=""/>
-        <member name="spaceID" type="ui32"  desc="空间(场景,房间,战场,INSTANCING ID)的实例ID"/>
-        <member name="spaceStatus" type="ui16"  desc="状态"/>
+        <member name="sceneID" type="ui32"  desc="空间(场景,房间,战场,INSTANCING ID)的实例ID"/>
+        <member name="sceneStatus" type="ui16"  desc="状态"/>
         <member name="host" type="string"  desc="服务器host"/>
         <member name="port" type="ui16"  desc="服务器port"/>
         <member name="token" type="string"  desc="令牌"/>
         <member name="involeds" type="AvatarBaseInfoArray"  desc="匹配列表中的玩家"/>
     </struct>
-    <array name="SpaceTokenInfoArray" type="SpaceTokenInfo" desc="" />
+    <array name="SceneTokenInfoArray" type="SceneTokenInfo" desc="" />
 
 
 

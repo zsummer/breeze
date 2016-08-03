@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>ef57fea75a1abf80a5a7ac2361c235ec</cppmd5> 
-<luamd5>6aae7d4fa7077bf913b17abe92b40923</luamd5> 
-<csharpmd5>76006c29dd979cfa9547c5bd7a3215de</csharpmd5> 
-<xmlmd5>959b6edd17da78d83474dd5b41c666cd</xmlmd5> 
+<cppmd5>aa62ce5d26bf0615e09cecd0ce7aaf68</cppmd5> 
+<luamd5>b39cf4064a50042994b625de5b2171bf</luamd5> 
+<csharpmd5>68eaf275194e38dcaabd867e9f64547c</csharpmd5> 
+<xmlmd5>9dd704be54d55362d04370355c9d40ae</xmlmd5> 
 <cacheNumber>
     <cache key = "ID_AttachAvatarReq" Number = "40005" /> 
     <cache key = "ID_AttachAvatarResp" Number = "40006" /> 
@@ -14,11 +14,18 @@
     <cache key = "ID_ClientPulse" Number = "40000" /> 
     <cache key = "ID_CreateAvatarReq" Number = "40003" /> 
     <cache key = "ID_CreateAvatarResp" Number = "40004" /> 
+    <cache key = "ID_GetSceneTokenInfoReq" Number = "40018" /> 
+    <cache key = "ID_GetSceneTokenInfoResp" Number = "40019" /> 
     <cache key = "ID_GetSpaceTokenInfoReq" Number = "40007" /> 
     <cache key = "ID_GetSpaceTokenInfoResp" Number = "40008" /> 
+    <cache key = "ID_JoinSceneNotice" Number = "40022" /> 
+    <cache key = "ID_JoinSceneReq" Number = "40020" /> 
+    <cache key = "ID_JoinSceneResp" Number = "40021" /> 
     <cache key = "ID_JoinSpaceNotice" Number = "40011" /> 
     <cache key = "ID_JoinSpaceReq" Number = "40009" /> 
     <cache key = "ID_JoinSpaceResp" Number = "40010" /> 
+    <cache key = "ID_LeaveSceneReq" Number = "40023" /> 
+    <cache key = "ID_LeaveSceneResp" Number = "40024" /> 
     <cache key = "ID_LeaveSpaceReq" Number = "40012" /> 
     <cache key = "ID_LeaveSpaceResp" Number = "40013" /> 
     <cache key = "ID_PingPongReq" Number = "40016" /> 

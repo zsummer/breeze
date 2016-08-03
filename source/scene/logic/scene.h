@@ -15,47 +15,47 @@
 * limitations under the License.
 */
 
-#ifndef _SPACE_H_
-#define _SPACE_H_
+#ifndef _SCENE_H_
+#define _SCENE_H_
 #include "entity.h"
 
 
 
-class Space
+class Scene
 {
-    //space数据
+    //scene数据
 private:
-    SPACE_TYPE _sceneType;
-    SPACE_STATUS _spaceStatus;
+    SCENE_TYPE _sceneType;
+    SCENE_STATUS _sceneStatus;
     double _lastStatusChangeTime;
     double _startTime;
     double _endTime;
 
-    SpaceID _spaceID;
+    SceneID _sceneID;
     EntityID _lastEID;
     std::map<EntityID, EntityPtr> _entitys;
     std::map<ServiceID, EntityPtr> _players;
 public:
-    inline SpaceID getSpaceID() { return _spaceID; }
-    inline SPACE_TYPE getSceneType() { return _sceneType; }
-    inline SPACE_STATUS getSpaceStatus() { return _spaceStatus; }
+    inline SceneID getSceneID() { return _sceneID; }
+    inline SCENE_TYPE getSceneType() { return _sceneType; }
+    inline SCENE_STATUS getSceneStatus() { return _sceneStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
     inline size_t getUsersCount() { return _players.size(); }
 public:
-    Space(SpaceID id);
-    bool cleanSpace();
-    bool loadSpace(SPACE_TYPE sceneType);
+    Scene(SceneID id);
+    bool cleanScene();
+    bool loadScene(SCENE_TYPE sceneType);
     bool onUpdate();
 
-//    void fillUserProp(const FillUserToSpaceReq& req);
+//    void fillUserProp(const FillUserToSceneReq& req);
     EntityPtr makeNewEntity(const AvatarBaseInfo & base);
     EntityPtr getEntity(EntityID eID);
     EntityPtr getUserEntity(ServiceID avatarID);
 
     bool addEntity(EntityPtr entity); 
     bool removeEntity(EntityID eid); 
-    bool enterSpace(ServiceID avatarID, const std::string & token, SessionID sID);
-    bool leaveSpace(ServiceID avatarID, SessionID sID);
+    bool enterScene(ServiceID avatarID, const std::string & token, SessionID sID);
+    bool leaveScene(ServiceID avatarID, SessionID sID);
 
 public:
 
@@ -71,12 +71,12 @@ public:
     void sendToClient(ServiceID avatarID, const MSG &msg);
 };
 
-using SpacePtr = std::shared_ptr<Space>;
+using ScenePtr = std::shared_ptr<Scene>;
 
 
 
 template<typename MSG>
-void Space::sendToClient(ServiceID avatarID, const MSG &msg)
+void Scene::sendToClient(ServiceID avatarID, const MSG &msg)
 {
     auto founder = _players.find(avatarID);
     if (founder == _players.end() || founder->second->_clientSessionID == InvalidSessionID)
@@ -92,14 +92,14 @@ void Space::sendToClient(ServiceID avatarID, const MSG &msg)
     }
     catch (...)
     {
-        LOGE("Space::sendToClient ServiceID=" << avatarID << ",  protoid=" << MSG::getProtoID());
+        LOGE("Scene::sendToClient ServiceID=" << avatarID << ",  protoid=" << MSG::getProtoID());
         return;
     }
 }
 
 
 template<typename MSG>
-void Space::broadcast(const MSG &msg, ServiceID without)
+void Scene::broadcast(const MSG &msg, ServiceID without)
 {
     try
     {
@@ -118,7 +118,7 @@ void Space::broadcast(const MSG &msg, ServiceID without)
     }
     catch (...)
     {
-        LOGE("Space::broadcast protoid=" << MSG::getProtoID());
+        LOGE("Scene::broadcast protoid=" << MSG::getProtoID());
         return;
     }
 }

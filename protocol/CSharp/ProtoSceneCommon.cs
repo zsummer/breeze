@@ -2,57 +2,57 @@
 namespace Proto4z  
 { 
  
-    public enum SPACE_TYPE : ushort 
+    public enum SCENE_TYPE : ushort 
     { 
-        SPACE_TYPE_NONE = 0, //无效  
-        SPACE_TYPE_HOME = 1, //主城  
-        SPACE_TYPE_SOME_INSTANCING = 2, //一些副本  
-        SPACE_TYPE_ARENA = 3, //竞技场  
-        SPACE_TYPE_GUILD = 4, //公会  
+        SCENE_TYPE_NONE = 0, //无效  
+        SCENE_TYPE_HOME = 1, //主城  
+        SCENE_TYPE_SOME_INSTANCING = 2, //一些副本  
+        SCENE_TYPE_ARENA = 3, //竞技场  
+        SCENE_TYPE_GUILD = 4, //公会  
     }; 
  
-    public enum SPACE_STATUS : ushort 
+    public enum SCENE_STATUS : ushort 
     { 
-        SPACE_STATUS_NONE = 0, //不存在  
-        SPACE_STATUS_MATCHING = 1, //匹配中  
-        SPACE_STATUS_CHOISE = 2, //选择英雄  
-        SPACE_STATUS_WAIT = 3, //等待玩家加入战场  
-        SPACE_STATUS_ACTIVE = 4, //战斗中  
-        SPACE_STATUS_LINGER = 5, //战斗结束,数据驻留阶段  
+        SCENE_STATUS_NONE = 0, //不存在  
+        SCENE_STATUS_MATCHING = 1, //匹配中  
+        SCENE_STATUS_CHOISE = 2, //选择英雄  
+        SCENE_STATUS_WAIT = 3, //等待玩家加入战场  
+        SCENE_STATUS_ACTIVE = 4, //战斗中  
+        SCENE_STATUS_LINGER = 5, //战斗结束,数据驻留阶段  
     }; 
  
-    public class SpaceTokenInfo: Proto4z.IProtoObject //Token  
+    public class SceneTokenInfo: Proto4z.IProtoObject //Token  
     {     
         //proto id   
-        public const ushort protoID = 10019;  
-        static public ushort getProtoID() { return 10019; } 
-        static public string getProtoName() { return "SpaceTokenInfo"; } 
+        public const ushort protoID = 10000;  
+        static public ushort getProtoID() { return 10000; } 
+        static public string getProtoName() { return "SceneTokenInfo"; } 
         //members   
-        public ushort spaceType; //类型  
+        public ushort sceneType; //类型  
         public uint mapID;  
-        public uint spaceID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
-        public ushort spaceStatus; //状态  
+        public uint sceneID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
+        public ushort sceneStatus; //状态  
         public string host; //服务器host  
         public ushort port; //服务器port  
         public string token; //令牌  
         public AvatarBaseInfoArray involeds; //匹配列表中的玩家  
-        public SpaceTokenInfo()  
+        public SceneTokenInfo()  
         { 
-            spaceType = 0;  
+            sceneType = 0;  
             mapID = 0;  
-            spaceID = 0;  
-            spaceStatus = 0;  
+            sceneID = 0;  
+            sceneStatus = 0;  
             host = "";  
             port = 0;  
             token = "";  
             involeds = new AvatarBaseInfoArray();  
         } 
-        public SpaceTokenInfo(ushort spaceType, uint mapID, uint spaceID, ushort spaceStatus, string host, ushort port, string token, AvatarBaseInfoArray involeds) 
+        public SceneTokenInfo(ushort sceneType, uint mapID, uint sceneID, ushort sceneStatus, string host, ushort port, string token, AvatarBaseInfoArray involeds) 
         { 
-            this.spaceType = spaceType; 
+            this.sceneType = sceneType; 
             this.mapID = mapID; 
-            this.spaceID = spaceID; 
-            this.spaceStatus = spaceStatus; 
+            this.sceneID = sceneID; 
+            this.sceneStatus = sceneStatus; 
             this.host = host; 
             this.port = port; 
             this.token = token; 
@@ -61,10 +61,10 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.spaceType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.mapID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.spaceID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.spaceStatus)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.sceneID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneStatus)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
@@ -74,10 +74,10 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.spaceType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.mapID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.spaceID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.spaceStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sceneID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.sceneStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
@@ -88,7 +88,7 @@ namespace Proto4z
     } 
  
  
-    public class SpaceTokenInfoArray : System.Collections.Generic.List<SpaceTokenInfo>, Proto4z.IProtoObject  
+    public class SceneTokenInfoArray : System.Collections.Generic.List<SceneTokenInfo>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -109,7 +109,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new SpaceTokenInfo(); 
+                    var data = new SceneTokenInfo(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
@@ -150,8 +150,8 @@ namespace Proto4z
     public class EPoint: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 10018;  
-        static public ushort getProtoID() { return 10018; } 
+        public const ushort protoID = 10001;  
+        static public ushort getProtoID() { return 10001; } 
         static public string getProtoName() { return "EPoint"; } 
         //members   
         public double x;  
@@ -372,8 +372,8 @@ namespace Proto4z
     public class SearchInfo: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 10015;  
-        static public ushort getProtoID() { return 10015; } 
+        public const ushort protoID = 10002;  
+        static public ushort getProtoID() { return 10002; } 
         static public string getProtoName() { return "SearchInfo"; } 
         //members   
         public ushort searchMethod;  
@@ -436,8 +436,8 @@ namespace Proto4z
     public class SkillBehaviour: Proto4z.IProtoObject //技能触发行为  
     {     
         //proto id   
-        public const ushort protoID = 10016;  
-        static public ushort getProtoID() { return 10016; } 
+        public const ushort protoID = 10003;  
+        static public ushort getProtoID() { return 10003; } 
         static public string getProtoName() { return "SkillBehaviour"; } 
         //members   
         public ulong behaviour;  
@@ -881,8 +881,8 @@ namespace Proto4z
     public class EntityInfo: Proto4z.IProtoObject //EntityInfo  
     {     
         //proto id   
-        public const ushort protoID = 10011;  
-        static public ushort getProtoID() { return 10011; } 
+        public const ushort protoID = 10009;  
+        static public ushort getProtoID() { return 10009; } 
         static public string getProtoName() { return "EntityInfo"; } 
         //members   
         public uint eid; //eid  
@@ -990,8 +990,8 @@ namespace Proto4z
     public class EntityControl: Proto4z.IProtoObject //EntityControl  
     {     
         //proto id   
-        public const ushort protoID = 10012;  
-        static public ushort getProtoID() { return 10012; } 
+        public const ushort protoID = 10010;  
+        static public ushort getProtoID() { return 10010; } 
         static public string getProtoName() { return "EntityControl"; } 
         //members   
         public uint eid; //eid  
@@ -1120,8 +1120,8 @@ namespace Proto4z
     public class EntityReport: Proto4z.IProtoObject //EntityReport  
     {     
         //proto id   
-        public const ushort protoID = 10013;  
-        static public ushort getProtoID() { return 10013; } 
+        public const ushort protoID = 10011;  
+        static public ushort getProtoID() { return 10011; } 
         static public string getProtoName() { return "EntityReport"; } 
         //members   
         public uint eid; //eid  
@@ -1205,8 +1205,8 @@ namespace Proto4z
     public class EntityFullInfo: Proto4z.IProtoObject //EntityFullInfo  
     {     
         //proto id   
-        public const ushort protoID = 10014;  
-        static public ushort getProtoID() { return 10014; } 
+        public const ushort protoID = 10012;  
+        static public ushort getProtoID() { return 10012; } 
         static public string getProtoName() { return "EntityFullInfo"; } 
         //members   
         public AvatarBaseInfo userInfo;  

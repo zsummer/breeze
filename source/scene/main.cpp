@@ -16,7 +16,7 @@
 * limitations under the License.
 */
 
-#include "logic/spaceMgr.h"
+#include "logic/sceneMgr.h"
 using namespace zsummer::log4z;
 
 
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     LOGA("version released by " << __DATE__ << " " << __TIME__);
     LOGA("config file=" << filename);
     LOGD("filecontent=" << readFileContent(filename));
-    LOGA("begin start SpaceMgr ...");
+    LOGA("begin start SceneMgr ...");
     try
     {
         if (!SessionManager::getRef().start())
@@ -77,27 +77,27 @@ int main(int argc, char* argv[])
             return 1;
         }
         
-        if (!SpaceMgr::getRef().init(filename, serverID))
+        if (!SceneMgr::getRef().init(filename, serverID))
         {
-            LOGE("SpaceMgr init false.");
+            LOGE("SceneMgr init false.");
             return 2;
         }
-        if (!SpaceMgr::getRef().start())
+        if (!SceneMgr::getRef().start())
         {
-            LOGE("SpaceMgr start false.");
+            LOGE("SceneMgr start false.");
             return 3;
         }
-        SpaceMgr::getRef().run();
+        SceneMgr::getRef().run();
     }
     catch (const std::exception & e)
     {
-        LOGE("SpaceMgr::init have runtime error. what=" << e.what());
+        LOGE("SceneMgr::init have runtime error. what=" << e.what());
         return -1;
     }
 
     
 
-    LOGI("SpaceMgr exit.");
+    LOGI("SceneMgr exit.");
 
     return 0;
 }

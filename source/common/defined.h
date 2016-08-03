@@ -122,8 +122,8 @@ const AreaID InvalidAreaID = 0;
 typedef ui32 DockerID;
 const DockerID InvalidDockerID = 0;
 
-typedef ui32 SpaceID;
-const SpaceID InvalidSpaceID = 0;
+typedef ui32 SceneID;
+const SceneID InvalidSceneID = 0;
 typedef ui32 EntityID;
 const EntityID InvalidEntityID = 0;
 
@@ -263,17 +263,17 @@ struct WorldConfig
 {
     std::string _dockerListenHost;
     unsigned short _dockerListenPort = 0;
-    std::string _spaceListenHost;
-    std::string _spacePubHost;
-    unsigned short _spaceListenPort = 0;
+    std::string _sceneListenHost;
+    std::string _scenePubHost;
+    unsigned short _sceneListenPort = 0;
 };
 
-struct SpaceConfig
+struct SceneConfig
 {
     std::string _clientListenHost;
     std::string _clientPubHost;
     unsigned short _clientListenPort = 0;
-    SpaceID _spaceID = InvalidSpaceID;
+    SceneID _sceneID = InvalidSceneID;
 };
 
 using ProtoID = zsummer::proto4z::ProtoInteger;
@@ -316,7 +316,7 @@ enum ClientSessionData
     UPARAM_LOGIN_TIME,
 
     UPARAM_AREA_ID, //world集群
-    UPARAM_SPACE_ID,
+    UPARAM_SCENE_ID,
 
 };
 

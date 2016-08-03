@@ -288,26 +288,26 @@ bool ServerConfig::parseWorld(std::string configName)
     _worldConfig._dockerListenPort = (unsigned short)luaL_checkinteger(L, -1);
     lua_pop(L, 1);
 
-    lua_getfield(L, -1, "spaceListenHost");
-    _worldConfig._spaceListenHost = luaL_checkstring(L, -1);
+    lua_getfield(L, -1, "sceneListenHost");
+    _worldConfig._sceneListenHost = luaL_checkstring(L, -1);
     lua_pop(L, 1);
 
-    lua_getfield(L, -1, "spacePubHost");
-    _worldConfig._spacePubHost = luaL_checkstring(L, -1);
+    lua_getfield(L, -1, "scenePubHost");
+    _worldConfig._scenePubHost = luaL_checkstring(L, -1);
     lua_pop(L, 1);
 
-    lua_getfield(L, -1, "spaceListenPort");
-    _worldConfig._spaceListenPort = (unsigned short)luaL_checkinteger(L, -1);
+    lua_getfield(L, -1, "sceneListenPort");
+    _worldConfig._sceneListenPort = (unsigned short)luaL_checkinteger(L, -1);
     lua_pop(L, 1);
     lua_close(L);
     return true;
 }
 
 
-bool ServerConfig::parseSpaces(std::string configName, ui32 serverID)
+bool ServerConfig::parseScenes(std::string configName, ui32 serverID)
 {
     srand((unsigned int)time(NULL));
-    _space._spaceID = serverID;
+    _scene._sceneID = serverID;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {
@@ -326,17 +326,17 @@ bool ServerConfig::parseSpaces(std::string configName, ui32 serverID)
 
 
 
-    lua_getfield(L, -1, "spaces");
+    lua_getfield(L, -1, "scenes");
     lua_pushnil(L);
     while (lua_next(L, -2))
     {
         if (!lua_istable(L, -1))
         {
-            LOGE("config parse spaces false. value is not table type");
+            LOGE("config parse scenes false. value is not table type");
             return false;
         }
 
-        SpaceConfig sconfig;
+        SceneConfig sconfig;
         lua_getfield(L, -1, "clientListenHost");
         sconfig._clientListenHost = luaL_optstring(L, -1, "0.0.0.0");
         lua_pop(L, 1);
@@ -350,13 +350,13 @@ bool ServerConfig::parseSpaces(std::string configName, ui32 serverID)
         lua_pop(L, 1);
 
 
-        lua_getfield(L, -1, "spaceID");
-        sconfig._spaceID = (unsigned int)luaL_optinteger(L, -1, 0);
+        lua_getfield(L, -1, "sceneID");
+        sconfig._sceneID = (unsigned int)luaL_optinteger(L, -1, 0);
         lua_pop(L, 1);
 
-        if (_space._spaceID == sconfig._spaceID)
+        if (_scene._sceneID == sconfig._sceneID)
         {
-            _space = sconfig;
+            _scene = sconfig;
         }
 
         lua_pop(L, 1);
@@ -366,7 +366,7 @@ bool ServerConfig::parseSpaces(std::string configName, ui32 serverID)
 
     lua_close(L);
 
-    if (_space._clientListenPort == 0)
+    if (_scene._clientListenPort == 0)
     {
         return false;
     }

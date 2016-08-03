@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>abf58778910eb5d93ad8590cc5adafcb</cppmd5> 
+<luamd5>5dc3f6ae4d889358532ca7da57953659</luamd5> 
+<csharpmd5>86529fd834535ae786ed85991f9c8189</csharpmd5> 
+<xmlmd5>ae5c25666c6e3d2be52690eb66ce9aa6</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_BuffData" Number = "10005" /> 
+    <cache key = "ID_BuffInfo" Number = "10008" /> 
+    <cache key = "ID_EPoint" Number = "10001" /> 
+    <cache key = "ID_EntityControl" Number = "10010" /> 
+    <cache key = "ID_EntityFullInfo" Number = "10012" /> 
+    <cache key = "ID_EntityInfo" Number = "10009" /> 
+    <cache key = "ID_EntityReport" Number = "10011" /> 
+    <cache key = "ID_HarmData" Number = "10006" /> 
+    <cache key = "ID_SceneTokenInfo" Number = "10000" /> 
+    <cache key = "ID_SearchInfo" Number = "10002" /> 
+    <cache key = "ID_SkillBehaviour" Number = "10003" /> 
+    <cache key = "ID_SkillData" Number = "10004" /> 
+    <cache key = "ID_SkillInfo" Number = "10007" /> 
+</cacheNumber>

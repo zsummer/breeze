@@ -15,13 +15,13 @@
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="logic\spaceMgr.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\space.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
     <ClCompile Include="logic\entity.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\scene.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\sceneMgr.cpp">
       <Filter>logic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -31,13 +31,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="logic\spaceMgr.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\space.h">
-      <Filter>logic</Filter>
-    </ClInclude>
     <ClInclude Include="logic\entity.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\scene.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\sceneMgr.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,41 +11,41 @@
 
 
 
-<!------------------------------------ space --------------------------------------------->
+<!------------------------------------ scene --------------------------------------------->
 
 
 
 
 
 
-    <proto name="AttachSpaceReq" desc= "">
+    <proto name="AttachSceneReq" desc= "">
         <member name="avatarID" type="ui64"  desc=""/>
-        <member name="spaceID" type="ui32"  desc=""/>
+        <member name="sceneID" type="ui32"  desc=""/>
         <member name="token" type="string"  desc="令牌"/>
     </proto>
-    <proto name="AttachSpaceResp" desc= "">
+    <proto name="AttachSceneResp" desc= "">
         <member name="retCode"  type="ui16" desc="错误码"/> 
         <member name="avatarID" type="ui64"  desc=""/>
-        <member name="spaceID" type="ui32"  desc=""/>    
+        <member name="sceneID" type="ui32"  desc=""/>    
     </proto>
     
 
 
 
 
-    <proto name="FillSpaceNotice" desc= "填充场景数据">
+    <proto name="FillSceneNotice" desc= "填充场景数据">
         <member name="entitys"  type="EntityFullInfoArray" desc="这里包含有所有当前场景下的实体属性和状态数据"/>
-        <member name="spaceStartTime"  type="double" desc="服务器战场开始时间"/>
-        <member name="spaceEndTime"  type="double" desc="服务器战场结束时间"/>
+        <member name="sceneStartTime"  type="double" desc="服务器战场开始时间"/>
+        <member name="sceneEndTime"  type="double" desc="服务器战场结束时间"/>
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
     </proto>
 
-    <proto name="RefreshSpaceEntitysNotice" desc= "">
+    <proto name="RefreshSceneEntitysNotice" desc= "">
         <member name="entitys"  type="EntityInfoArray" desc=""/>
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
     </proto>
 
-    <proto name="RefreshSpaceReportsNotice" desc= "">
+    <proto name="RefreshSceneReportsNotice" desc= "">
         <member name="reports"  type="EntityReportArray" desc=""/>
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
     </proto>

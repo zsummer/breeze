@@ -1,48 +1,48 @@
-﻿#include "space.h"
-#include "spaceMgr.h"
-Space::Space(SpaceID id)
+﻿#include "scene.h"
+#include "sceneMgr.h"
+Scene::Scene(SceneID id)
 {
-    _spaceID = id;
-    cleanSpace();
+    _sceneID = id;
+    cleanScene();
 }
-bool Space::cleanSpace()
+bool Scene::cleanScene()
 {
-    _lastEID = ServerConfig::getRef().getSpaceConfig()._spaceID * 1000 + 1000;
+    _lastEID = ServerConfig::getRef().getSceneConfig()._sceneID * 1000 + 1000;
     _entitys.clear();
     _players.clear();
-    _sceneType = SPACE_TYPE_NONE;
-    _spaceStatus = SPACE_STATUS_NONE;
+    _sceneType = SCENE_TYPE_NONE;
+    _sceneStatus = SCENE_STATUS_NONE;
     _lastStatusChangeTime = getFloatNowTime();
-    SpaceMgr::getRef().refreshSpaceStatusToWorld(getSpaceID());
+    SceneMgr::getRef().refreshSceneStatusToWorld(getSceneID());
     return true;
 }
 
-bool Space::loadSpace(SPACE_TYPE sceneType)
+bool Scene::loadScene(SCENE_TYPE sceneType)
 {
-    if (_spaceStatus != SPACE_STATUS_NONE)
+    if (_sceneStatus != SCENE_STATUS_NONE)
     {
-        LOGE("Space::loadSpace  space status error");
+        LOGE("Scene::loadScene  scene status error");
         return false;
     }
     _sceneType = sceneType;
-    _spaceStatus = SPACE_STATUS_WAIT;
+    _sceneStatus = SCENE_STATUS_WAIT;
     _lastStatusChangeTime = getFloatNowTime();
     _startTime = getFloatNowTime();
     _endTime = getFloatNowTime() + 3600;
     
     //load map
     //load entitys
-    SpaceMgr::getRef().refreshSpaceStatusToWorld(getSpaceID());
+    SceneMgr::getRef().refreshSceneStatusToWorld(getSceneID());
     return true;
 }
 
 
-bool Space::onUpdate()
+bool Scene::onUpdate()
 {
     return true;
 }
 
-EntityPtr Space::getEntity(EntityID eID)
+EntityPtr Scene::getEntity(EntityID eID)
 {
     auto founder = _entitys.find(eID);
     if (founder == _entitys.end())
@@ -51,7 +51,7 @@ EntityPtr Space::getEntity(EntityID eID)
     }
     return founder->second;
 }
-EntityPtr Space::getUserEntity(ServiceID avatarID)
+EntityPtr Scene::getUserEntity(ServiceID avatarID)
 {
     auto founder = _players.find(avatarID);
     if (founder == _players.end())
@@ -61,7 +61,7 @@ EntityPtr Space::getUserEntity(ServiceID avatarID)
     return founder->second;
 }
 
-EntityPtr Space::makeNewEntity(const AvatarBaseInfo & base)
+EntityPtr Scene::makeNewEntity(const AvatarBaseInfo & base)
 {
     EntityPtr entity = std::make_shared<Entity>();
     entity->_base = base;
@@ -78,7 +78,7 @@ EntityPtr Space::makeNewEntity(const AvatarBaseInfo & base)
     return entity;
 }
 
-// void Space::fillUserProp(const FillUserToSpaceReq& req)
+// void Scene::fillUserProp(const FillUserToSceneReq& req)
 // {
 //     auto entity = getUserEntity(req.baseInfo.avatarID);
 //     if (entity)
@@ -92,7 +92,7 @@ EntityPtr Space::makeNewEntity(const AvatarBaseInfo & base)
 //     entity->_isClientDirty = true;
 // }
 
-bool Space::addEntity(EntityPtr entity)
+bool Scene::addEntity(EntityPtr entity)
 {
     _entitys.insert(std::make_pair(entity->_info.eid, entity));
     AddEntityNotice notice;
@@ -103,7 +103,7 @@ bool Space::addEntity(EntityPtr entity)
     broadcast(notice, entity->_base.avatarID);
     return true;
 }
-bool Space::removeEntity(EntityID eid)
+bool Scene::removeEntity(EntityID eid)
 {
     RemoveEntityNotice notice;
     notice.eids.push_back(eid);
@@ -112,7 +112,7 @@ bool Space::removeEntity(EntityID eid)
     broadcast(notice);
     return true;
 }
-bool Space::enterSpace(ServiceID avatarID, const std::string & token, SessionID sID)
+bool Scene::enterScene(ServiceID avatarID, const std::string & token, SessionID sID)
 {
     EntityPtr entity = getUserEntity(avatarID);
     if (!entity)
@@ -128,7 +128,7 @@ bool Space::enterSpace(ServiceID avatarID, const std::string & token, SessionID 
     {
         addEntity(entity);
     }
-    FillSpaceNotice notice;
+    FillSceneNotice notice;
     EntityFullInfo info;
     for (auto kv : _entitys)
     {
@@ -136,15 +136,15 @@ bool Space::enterSpace(ServiceID avatarID, const std::string & token, SessionID 
         notice.entitys.push_back(info);
     }
     notice.serverTime = getFloatNowTime();
-    notice.spaceStartTime = _startTime;
-    notice.spaceEndTime = _endTime;
+    notice.sceneStartTime = _startTime;
+    notice.sceneEndTime = _endTime;
     sendToClient(avatarID, notice);
     return true;
 }
 
 
 
-bool Space::leaveSpace(ServiceID avatarID, SessionID sID)
+bool Scene::leaveScene(ServiceID avatarID, SessionID sID)
 {
     auto entity = getUserEntity(avatarID);
     if (entity && entity->_clientSessionID == sID)

@@ -43,7 +43,7 @@
 #include "balance.h"
 #include "config.h"
 #include <ProtoCommon.h>
-#include <ProtoSpaceCommon.h>
+#include <ProtoSceneCommon.h>
 #include "dbDict.h"
 
 

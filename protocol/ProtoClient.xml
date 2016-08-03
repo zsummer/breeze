@@ -46,32 +46,32 @@
  
 
 <!------------------------------------ battle --------------------------------------------->
-    <packet name="GetSpaceTokenInfoReq" desc= "">
+    <packet name="GetSceneTokenInfoReq" desc= "">
     </packet>
-    <packet name="GetSpaceTokenInfoResp" desc= "">
+    <packet name="GetSceneTokenInfoResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
+        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
     </packet>
 
-   <packet name="JoinSpaceReq" desc= "">
+   <packet name="JoinSceneReq" desc= "">
         <member name="spaceType" type="ui16"   desc=""/>
         <member name="mapID" type="ui32"   desc=""/>
     </packet>
-    <packet name="JoinSpaceResp" desc= "">
+    <packet name="JoinSceneResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
+        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
 
     </packet>
-    <packet name="JoinSpaceNotice" desc= "">
-        <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
+    <packet name="JoinSceneNotice" desc= "">
+        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
     </packet>
 
-   <packet name="LeaveSpaceReq" desc= "">
+   <packet name="LeaveSceneReq" desc= "">
         <member name="spaceID" type="ui32"   desc=""/>
     </packet>
-    <packet name="LeaveSpaceResp" desc= "">
+    <packet name="LeaveSceneResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SpaceTokenInfo"   desc=""/>
+        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
     </packet>
 
 

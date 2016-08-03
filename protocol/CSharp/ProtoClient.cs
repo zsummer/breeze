@@ -246,14 +246,14 @@ namespace Proto4z
         } 
     } 
  
-    public class GetSpaceTokenInfoReq: Proto4z.IProtoObject 
+    public class GetSceneTokenInfoReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40007;  
-        static public ushort getProtoID() { return 40007; } 
-        static public string getProtoName() { return "GetSpaceTokenInfoReq"; } 
+        public const ushort protoID = 40018;  
+        static public ushort getProtoID() { return 40018; } 
+        static public string getProtoName() { return "GetSceneTokenInfoReq"; } 
         //members   
-        public GetSpaceTokenInfoReq()  
+        public GetSceneTokenInfoReq()  
         { 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -267,21 +267,21 @@ namespace Proto4z
         } 
     } 
  
-    public class GetSpaceTokenInfoResp: Proto4z.IProtoObject 
+    public class GetSceneTokenInfoResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40008;  
-        static public ushort getProtoID() { return 40008; } 
-        static public string getProtoName() { return "GetSpaceTokenInfoResp"; } 
+        public const ushort protoID = 40019;  
+        static public ushort getProtoID() { return 40019; } 
+        static public string getProtoName() { return "GetSceneTokenInfoResp"; } 
         //members   
         public ushort retCode;  
-        public SpaceTokenInfo tokenInfo;  
-        public GetSpaceTokenInfoResp()  
+        public SceneTokenInfo tokenInfo;  
+        public GetSceneTokenInfoResp()  
         { 
             retCode = 0;  
-            tokenInfo = new SpaceTokenInfo();  
+            tokenInfo = new SceneTokenInfo();  
         } 
-        public GetSpaceTokenInfoResp(ushort retCode, SpaceTokenInfo tokenInfo) 
+        public GetSceneTokenInfoResp(ushort retCode, SceneTokenInfo tokenInfo) 
         { 
             this.retCode = retCode; 
             this.tokenInfo = tokenInfo; 
@@ -290,34 +290,34 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
+            if (this.tokenInfo == null) this.tokenInfo = new SceneTokenInfo(); 
             data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.tokenInfo = new SpaceTokenInfo(); 
+            this.tokenInfo = new SceneTokenInfo(); 
             this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class JoinSpaceReq: Proto4z.IProtoObject 
+    public class JoinSceneReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40009;  
-        static public ushort getProtoID() { return 40009; } 
-        static public string getProtoName() { return "JoinSpaceReq"; } 
+        public const ushort protoID = 40020;  
+        static public ushort getProtoID() { return 40020; } 
+        static public string getProtoName() { return "JoinSceneReq"; } 
         //members   
         public ushort spaceType;  
         public uint mapID;  
-        public JoinSpaceReq()  
+        public JoinSceneReq()  
         { 
             spaceType = 0;  
             mapID = 0;  
         } 
-        public JoinSpaceReq(ushort spaceType, uint mapID) 
+        public JoinSceneReq(ushort spaceType, uint mapID) 
         { 
             this.spaceType = spaceType; 
             this.mapID = mapID; 
@@ -337,21 +337,21 @@ namespace Proto4z
         } 
     } 
  
-    public class JoinSpaceResp: Proto4z.IProtoObject 
+    public class JoinSceneResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40010;  
-        static public ushort getProtoID() { return 40010; } 
-        static public string getProtoName() { return "JoinSpaceResp"; } 
+        public const ushort protoID = 40021;  
+        static public ushort getProtoID() { return 40021; } 
+        static public string getProtoName() { return "JoinSceneResp"; } 
         //members   
         public ushort retCode;  
-        public SpaceTokenInfo tokenInfo;  
-        public JoinSpaceResp()  
+        public SceneTokenInfo tokenInfo;  
+        public JoinSceneResp()  
         { 
             retCode = 0;  
-            tokenInfo = new SpaceTokenInfo();  
+            tokenInfo = new SceneTokenInfo();  
         } 
-        public JoinSpaceResp(ushort retCode, SpaceTokenInfo tokenInfo) 
+        public JoinSceneResp(ushort retCode, SceneTokenInfo tokenInfo) 
         { 
             this.retCode = retCode; 
             this.tokenInfo = tokenInfo; 
@@ -360,63 +360,63 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
+            if (this.tokenInfo == null) this.tokenInfo = new SceneTokenInfo(); 
             data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.tokenInfo = new SpaceTokenInfo(); 
+            this.tokenInfo = new SceneTokenInfo(); 
             this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class JoinSpaceNotice: Proto4z.IProtoObject 
+    public class JoinSceneNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40011;  
-        static public ushort getProtoID() { return 40011; } 
-        static public string getProtoName() { return "JoinSpaceNotice"; } 
+        public const ushort protoID = 40022;  
+        static public ushort getProtoID() { return 40022; } 
+        static public string getProtoName() { return "JoinSceneNotice"; } 
         //members   
-        public SpaceTokenInfo tokenInfo;  
-        public JoinSpaceNotice()  
+        public SceneTokenInfo tokenInfo;  
+        public JoinSceneNotice()  
         { 
-            tokenInfo = new SpaceTokenInfo();  
+            tokenInfo = new SceneTokenInfo();  
         } 
-        public JoinSpaceNotice(SpaceTokenInfo tokenInfo) 
+        public JoinSceneNotice(SceneTokenInfo tokenInfo) 
         { 
             this.tokenInfo = tokenInfo; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
+            if (this.tokenInfo == null) this.tokenInfo = new SceneTokenInfo(); 
             data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.tokenInfo = new SpaceTokenInfo(); 
+            this.tokenInfo = new SceneTokenInfo(); 
             this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class LeaveSpaceReq: Proto4z.IProtoObject 
+    public class LeaveSceneReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40012;  
-        static public ushort getProtoID() { return 40012; } 
-        static public string getProtoName() { return "LeaveSpaceReq"; } 
+        public const ushort protoID = 40023;  
+        static public ushort getProtoID() { return 40023; } 
+        static public string getProtoName() { return "LeaveSceneReq"; } 
         //members   
         public uint spaceID;  
-        public LeaveSpaceReq()  
+        public LeaveSceneReq()  
         { 
             spaceID = 0;  
         } 
-        public LeaveSpaceReq(uint spaceID) 
+        public LeaveSceneReq(uint spaceID) 
         { 
             this.spaceID = spaceID; 
         } 
@@ -433,21 +433,21 @@ namespace Proto4z
         } 
     } 
  
-    public class LeaveSpaceResp: Proto4z.IProtoObject 
+    public class LeaveSceneResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40013;  
-        static public ushort getProtoID() { return 40013; } 
-        static public string getProtoName() { return "LeaveSpaceResp"; } 
+        public const ushort protoID = 40024;  
+        static public ushort getProtoID() { return 40024; } 
+        static public string getProtoName() { return "LeaveSceneResp"; } 
         //members   
         public ushort retCode;  
-        public SpaceTokenInfo tokenInfo;  
-        public LeaveSpaceResp()  
+        public SceneTokenInfo tokenInfo;  
+        public LeaveSceneResp()  
         { 
             retCode = 0;  
-            tokenInfo = new SpaceTokenInfo();  
+            tokenInfo = new SceneTokenInfo();  
         } 
-        public LeaveSpaceResp(ushort retCode, SpaceTokenInfo tokenInfo) 
+        public LeaveSceneResp(ushort retCode, SceneTokenInfo tokenInfo) 
         { 
             this.retCode = retCode; 
             this.tokenInfo = tokenInfo; 
@@ -456,14 +456,14 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            if (this.tokenInfo == null) this.tokenInfo = new SpaceTokenInfo(); 
+            if (this.tokenInfo == null) this.tokenInfo = new SceneTokenInfo(); 
             data.AddRange(this.tokenInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.tokenInfo = new SpaceTokenInfo(); 
+            this.tokenInfo = new SceneTokenInfo(); 
             this.tokenInfo.__decode(binData, ref pos); 
             return pos; 
         } 

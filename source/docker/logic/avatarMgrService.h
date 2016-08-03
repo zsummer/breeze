@@ -76,10 +76,10 @@ private:
     void onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
-    void onGetSpaceTokenInfoResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSpaceResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSpaceNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onLeaveSpaceResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onGetSceneTokenInfoResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onJoinSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onJoinSceneNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onLeaveSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>ea470db15d84258cd00e9d722572d7e7</cppmd5> 
+<luamd5>dc41924a9fead24bd86dac997dfe18fb</luamd5> 
+<csharpmd5>abe66193ece5e402e1c45e903d3d43c5</csharpmd5> 
+<xmlmd5>fe93ad9a697b23b9dcfb38a5a8fd654c</xmlmd5> 
+<cacheNumber>
+    <cache key = "ID_AddEntityNotice" Number = "50005" /> 
+    <cache key = "ID_AttachSceneReq" Number = "50000" /> 
+    <cache key = "ID_AttachSceneResp" Number = "50001" /> 
+    <cache key = "ID_FillSceneNotice" Number = "50002" /> 
+    <cache key = "ID_RefreshSceneEntitysNotice" Number = "50003" /> 
+    <cache key = "ID_RefreshSceneReportsNotice" Number = "50004" /> 
+    <cache key = "ID_RemoveEntityNotice" Number = "50006" /> 
+</cacheNumber>

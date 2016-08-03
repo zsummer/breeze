@@ -19,22 +19,22 @@
 
 
 
-#ifndef _SpaceMgr_H_
-#define _SpaceMgr_H_
+#ifndef _SceneMgr_H_
+#define _SceneMgr_H_
 #include <common.h>
 #include <ProtoCommon.h>
 #include <ProtoDocker.h>
-#include <ProtoSpaceCommon.h>
-#include <ProtoSpaceClient.h>
+#include <ProtoSceneCommon.h>
+#include <ProtoSceneClient.h>
 #include <rvo2/RVO.h>
-#include "space.h"
+#include "scene.h"
 
 
 
-class SpaceMgr : public Singleton<SpaceMgr>
+class SceneMgr : public Singleton<SceneMgr>
 {
 public:
-    SpaceMgr();
+    SceneMgr();
     bool init(const std::string & configName, ui32 serverID);
     bool start();
     void stop();
@@ -57,11 +57,11 @@ private:
     //打开监听端口,新连接 
     bool startClientListen();
     bool startWorldConnect();
-    bool loadSpaces();
+    bool loadScenes();
     void onTimer();
 public:
-    SpacePtr getSpace(SpaceID);
-    void refreshSpaceStatusToWorld(SpaceID spaceID);
+    ScenePtr getScene(SceneID);
+    void refreshSceneStatusToWorld(SceneID sceneID);
 private:
     //docker间通讯处理 
     void event_onWorldLinked(TcpSessionPtr session);
@@ -76,9 +76,9 @@ private:
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
 private:
-    std::map<SpaceID, SpacePtr> _spaces;
-    std::map<SpaceID, SpacePtr> _actives;
-    std::map<SpaceID, SpacePtr> _frees;
+    std::map<SceneID, ScenePtr> _scenes;
+    std::map<SceneID, ScenePtr> _actives;
+    std::map<SceneID, ScenePtr> _frees;
 
     SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;
@@ -88,7 +88,7 @@ private:
 
 
 template<class Proto>
-void SpaceMgr::sendViaSessionID(SessionID sessionID, const Proto & proto)
+void SceneMgr::sendViaSessionID(SessionID sessionID, const Proto & proto)
 {
     try
     {
@@ -102,7 +102,7 @@ void SpaceMgr::sendViaSessionID(SessionID sessionID, const Proto & proto)
     }
 }
 template<class Proto>
-void SpaceMgr::sendToWorld(const Proto & proto)
+void SceneMgr::sendToWorld(const Proto & proto)
 {
     if (_worldSessionID != InvalidSessionID)
     {

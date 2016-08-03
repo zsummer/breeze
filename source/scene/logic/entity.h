@@ -22,9 +22,9 @@
 #include <utls.h>
 #include <ProtoCommon.h>
 #include <ProtoClient.h>
-#include <ProtoSpaceCommon.h>
-#include <ProtoSpaceServer.h>
-#include <ProtoSpaceClient.h>
+#include <ProtoSceneCommon.h>
+#include <ProtoSceneServer.h>
+#include <ProtoSceneClient.h>
 #include <rvo2/RVO.h>
 
 class Entity

@@ -28,7 +28,7 @@
 #include "dbAsync.h"
 #include "utls.h"
 #include <ProtoCommon.h>
-#include <ProtoSpaceCommon.h>
+#include <ProtoSceneCommon.h>
 #include <ProtoClient.h>
 #include <ProtoDocker.h>
 
