@@ -317,10 +317,10 @@ bool Docker::startDockerWideListen()
     const DockerConfig & docker = *founder;
     if (!docker._clientPubHost.empty() && docker._clientPubPort != 0)
     {
-        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._clientPubPort);
+        AccepterID aID = SessionManager::getRef().addAccepter("::", docker._clientPubPort);
         if (aID == InvalidAccepterID)
         {
-            LOGE("Docker::startDockerWideListen addAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
+            LOGE("Docker::startDockerWideListen addAccepter error. bind ip=::, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
             return false;
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
@@ -333,10 +333,10 @@ bool Docker::startDockerWideListen()
         options._sessionOptions._onBlockDispatch = std::bind(&Docker::event_onClientMessage, this, _1, _2, _3);
         if (!SessionManager::getRef().openAccepter(aID))
         {
-            LOGE("Docker::startDockerWideListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
+            LOGE("Docker::startDockerWideListen openAccepter error. bind ip=::, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
             return false;
         }
-        LOGA("Docker::startDockerWideListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort << ", listen aID=" << aID);
+        LOGA("Docker::startDockerWideListen openAccepter success. bind ip=::, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort << ", listen aID=" << aID);
         _widelisten = aID;
     }
     return true;
@@ -354,10 +354,10 @@ bool Docker::startDockerWebListen()
     const DockerConfig & docker = *founder;
     if (!docker._webPubHost.empty() && docker._webPubPort != 0)
     {
-        AccepterID aID = SessionManager::getRef().addAccepter("0.0.0.0", docker._webPubPort);
+        AccepterID aID = SessionManager::getRef().addAccepter("::", docker._webPubPort);
         if (aID == InvalidAccepterID)
         {
-            LOGE("Docker::startDockerWebListen addAccepter error. bind ip=0.0.0.0, show web ip=" << docker._webPubHost << ", bind port=" << docker._webPubPort);
+            LOGE("Docker::startDockerWebListen addAccepter error. bind ip=::, show web ip=" << docker._webPubHost << ", bind port=" << docker._webPubPort);
             return false;
         }
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
@@ -388,10 +388,10 @@ bool Docker::startDockerWebListen()
         options._sessionOptions._onHTTPBlockDispatch = std::bind(&Docker::event_onWebClientRequestAPI, this, _1, _2, _3, _4, _5);
         if (!SessionManager::getRef().openAccepter(aID))
         {
-            LOGE("Docker::startDockerWebListen openAccepter error. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
+            LOGE("Docker::startDockerWebListen openAccepter error. bind ip=::, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort);
             return false;
         }
-        LOGA("Docker::startDockerWebListen openAccepter success. bind ip=0.0.0.0, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort << ", listen aID=" << aID);
+        LOGA("Docker::startDockerWebListen openAccepter success. bind ip=::, show wide ip=" << docker._clientPubHost << ", bind port=" << docker._clientPubPort << ", listen aID=" << aID);
         _weblisten = aID;
     }
 

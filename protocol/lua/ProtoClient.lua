@@ -49,47 +49,47 @@ Proto4z.AttachAvatarResp.__protoName = "AttachAvatarResp"
 Proto4z.AttachAvatarResp[1] = {name="retCode", type="ui16" }  
 Proto4z.AttachAvatarResp[2] = {name="avatarID", type="ui64" }  
  
-Proto4z.register(40018,"GetSceneTokenInfoReq") 
+Proto4z.register(40007,"GetSceneTokenInfoReq") 
 Proto4z.GetSceneTokenInfoReq = {}  
-Proto4z.GetSceneTokenInfoReq.__protoID = 40018 
+Proto4z.GetSceneTokenInfoReq.__protoID = 40007 
 Proto4z.GetSceneTokenInfoReq.__protoName = "GetSceneTokenInfoReq" 
  
-Proto4z.register(40019,"GetSceneTokenInfoResp") 
+Proto4z.register(40008,"GetSceneTokenInfoResp") 
 Proto4z.GetSceneTokenInfoResp = {}  
-Proto4z.GetSceneTokenInfoResp.__protoID = 40019 
+Proto4z.GetSceneTokenInfoResp.__protoID = 40008 
 Proto4z.GetSceneTokenInfoResp.__protoName = "GetSceneTokenInfoResp" 
 Proto4z.GetSceneTokenInfoResp[1] = {name="retCode", type="ui16" }  
 Proto4z.GetSceneTokenInfoResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
  
-Proto4z.register(40020,"JoinSceneReq") 
+Proto4z.register(40009,"JoinSceneReq") 
 Proto4z.JoinSceneReq = {}  
-Proto4z.JoinSceneReq.__protoID = 40020 
+Proto4z.JoinSceneReq.__protoID = 40009 
 Proto4z.JoinSceneReq.__protoName = "JoinSceneReq" 
 Proto4z.JoinSceneReq[1] = {name="spaceType", type="ui16" }  
 Proto4z.JoinSceneReq[2] = {name="mapID", type="ui32" }  
  
-Proto4z.register(40021,"JoinSceneResp") 
+Proto4z.register(40010,"JoinSceneResp") 
 Proto4z.JoinSceneResp = {}  
-Proto4z.JoinSceneResp.__protoID = 40021 
+Proto4z.JoinSceneResp.__protoID = 40010 
 Proto4z.JoinSceneResp.__protoName = "JoinSceneResp" 
 Proto4z.JoinSceneResp[1] = {name="retCode", type="ui16" }  
 Proto4z.JoinSceneResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
  
-Proto4z.register(40022,"JoinSceneNotice") 
+Proto4z.register(40011,"JoinSceneNotice") 
 Proto4z.JoinSceneNotice = {}  
-Proto4z.JoinSceneNotice.__protoID = 40022 
+Proto4z.JoinSceneNotice.__protoID = 40011 
 Proto4z.JoinSceneNotice.__protoName = "JoinSceneNotice" 
 Proto4z.JoinSceneNotice[1] = {name="tokenInfo", type="SceneTokenInfo" }  
  
-Proto4z.register(40023,"LeaveSceneReq") 
+Proto4z.register(40012,"LeaveSceneReq") 
 Proto4z.LeaveSceneReq = {}  
-Proto4z.LeaveSceneReq.__protoID = 40023 
+Proto4z.LeaveSceneReq.__protoID = 40012 
 Proto4z.LeaveSceneReq.__protoName = "LeaveSceneReq" 
 Proto4z.LeaveSceneReq[1] = {name="spaceID", type="ui32" }  
  
-Proto4z.register(40024,"LeaveSceneResp") 
+Proto4z.register(40013,"LeaveSceneResp") 
 Proto4z.LeaveSceneResp = {}  
-Proto4z.LeaveSceneResp.__protoID = 40024 
+Proto4z.LeaveSceneResp.__protoID = 40013 
 Proto4z.LeaveSceneResp.__protoName = "LeaveSceneResp" 
 Proto4z.LeaveSceneResp[1] = {name="retCode", type="ui16" }  
 Proto4z.LeaveSceneResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  

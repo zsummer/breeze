@@ -5,6 +5,6 @@
 <csharpmd5>8fe17954cfb7a84f71a961750a1e0300</csharpmd5> 
 <xmlmd5>87e21c8adaae8e28bca66788845dfb58</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_AllocateSceneReq" Number = "39000" /> 
-    <cache key = "ID_AllocateSceneResp" Number = "39001" /> 
+    <cache key = "AllocateSceneReq" Number = "39000" /> 
+    <cache key = "AllocateSceneResp" Number = "39001" /> 
 </cacheNumber>

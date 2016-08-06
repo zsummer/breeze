@@ -72,7 +72,7 @@ bool ServerConfig::parseDocker(std::string configName, DockerID dockerID)
 
         DockerConfig lconfig;
         lua_getfield(L, -1, "dockerListenHost");
-        lconfig._dockerListenHost = luaL_optstring(L, -1, "0.0.0.0");
+        lconfig._dockerListenHost = luaL_optstring(L, -1, "::");
         lua_pop(L, 1);
 
         lua_getfield(L, -1, "dockerPubHost");
@@ -338,7 +338,7 @@ bool ServerConfig::parseScenes(std::string configName, ui32 serverID)
 
         SceneConfig sconfig;
         lua_getfield(L, -1, "clientListenHost");
-        sconfig._clientListenHost = luaL_optstring(L, -1, "0.0.0.0");
+        sconfig._clientListenHost = luaL_optstring(L, -1, "::");
         lua_pop(L, 1);
 
         lua_getfield(L, -1, "clientPubHost");

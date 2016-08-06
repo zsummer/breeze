@@ -249,8 +249,8 @@ namespace Proto4z
     public class GetSceneTokenInfoReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40018;  
-        static public ushort getProtoID() { return 40018; } 
+        public const ushort protoID = 40007;  
+        static public ushort getProtoID() { return 40007; } 
         static public string getProtoName() { return "GetSceneTokenInfoReq"; } 
         //members   
         public GetSceneTokenInfoReq()  
@@ -270,8 +270,8 @@ namespace Proto4z
     public class GetSceneTokenInfoResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40019;  
-        static public ushort getProtoID() { return 40019; } 
+        public const ushort protoID = 40008;  
+        static public ushort getProtoID() { return 40008; } 
         static public string getProtoName() { return "GetSceneTokenInfoResp"; } 
         //members   
         public ushort retCode;  
@@ -306,8 +306,8 @@ namespace Proto4z
     public class JoinSceneReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40020;  
-        static public ushort getProtoID() { return 40020; } 
+        public const ushort protoID = 40009;  
+        static public ushort getProtoID() { return 40009; } 
         static public string getProtoName() { return "JoinSceneReq"; } 
         //members   
         public ushort spaceType;  
@@ -340,8 +340,8 @@ namespace Proto4z
     public class JoinSceneResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40021;  
-        static public ushort getProtoID() { return 40021; } 
+        public const ushort protoID = 40010;  
+        static public ushort getProtoID() { return 40010; } 
         static public string getProtoName() { return "JoinSceneResp"; } 
         //members   
         public ushort retCode;  
@@ -376,8 +376,8 @@ namespace Proto4z
     public class JoinSceneNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40022;  
-        static public ushort getProtoID() { return 40022; } 
+        public const ushort protoID = 40011;  
+        static public ushort getProtoID() { return 40011; } 
         static public string getProtoName() { return "JoinSceneNotice"; } 
         //members   
         public SceneTokenInfo tokenInfo;  
@@ -407,8 +407,8 @@ namespace Proto4z
     public class LeaveSceneReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40023;  
-        static public ushort getProtoID() { return 40023; } 
+        public const ushort protoID = 40012;  
+        static public ushort getProtoID() { return 40012; } 
         static public string getProtoName() { return "LeaveSceneReq"; } 
         //members   
         public uint spaceID;  
@@ -436,8 +436,8 @@ namespace Proto4z
     public class LeaveSceneResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40024;  
-        static public ushort getProtoID() { return 40024; } 
+        public const ushort protoID = 40013;  
+        static public ushort getProtoID() { return 40013; } 
         static public string getProtoName() { return "LeaveSceneResp"; } 
         //members   
         public ushort retCode;  

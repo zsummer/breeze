@@ -262,7 +262,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct GetSceneTokenInfoReq 
 { 
-    static const unsigned short getProtoID() { return 40018;} 
+    static const unsigned short getProtoID() { return 40007;} 
     static const std::string getProtoName() { return "GetSceneTokenInfoReq";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const GetSceneTokenInfoReq & data) 
@@ -282,7 +282,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct GetSceneTokenInfoResp 
 { 
-    static const unsigned short getProtoID() { return 40019;} 
+    static const unsigned short getProtoID() { return 40008;} 
     static const std::string getProtoName() { return "GetSceneTokenInfoResp";} 
     unsigned short retCode;  
     SceneTokenInfo tokenInfo;  
@@ -319,7 +319,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct JoinSceneReq 
 { 
-    static const unsigned short getProtoID() { return 40020;} 
+    static const unsigned short getProtoID() { return 40009;} 
     static const std::string getProtoName() { return "JoinSceneReq";} 
     unsigned short spaceType;  
     unsigned int mapID;  
@@ -357,7 +357,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct JoinSceneResp 
 { 
-    static const unsigned short getProtoID() { return 40021;} 
+    static const unsigned short getProtoID() { return 40010;} 
     static const std::string getProtoName() { return "JoinSceneResp";} 
     unsigned short retCode;  
     SceneTokenInfo tokenInfo;  
@@ -394,7 +394,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct JoinSceneNotice 
 { 
-    static const unsigned short getProtoID() { return 40022;} 
+    static const unsigned short getProtoID() { return 40011;} 
     static const std::string getProtoName() { return "JoinSceneNotice";} 
     SceneTokenInfo tokenInfo;  
     JoinSceneNotice() 
@@ -425,7 +425,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct LeaveSceneReq 
 { 
-    static const unsigned short getProtoID() { return 40023;} 
+    static const unsigned short getProtoID() { return 40012;} 
     static const std::string getProtoName() { return "LeaveSceneReq";} 
     unsigned int spaceID;  
     LeaveSceneReq() 
@@ -457,7 +457,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct LeaveSceneResp 
 { 
-    static const unsigned short getProtoID() { return 40024;} 
+    static const unsigned short getProtoID() { return 40013;} 
     static const std::string getProtoName() { return "LeaveSceneResp";} 
     unsigned short retCode;  
     SceneTokenInfo tokenInfo;  

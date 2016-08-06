@@ -5,11 +5,11 @@
 <csharpmd5>abe66193ece5e402e1c45e903d3d43c5</csharpmd5> 
 <xmlmd5>fe93ad9a697b23b9dcfb38a5a8fd654c</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_AddEntityNotice" Number = "50005" /> 
-    <cache key = "ID_AttachSceneReq" Number = "50000" /> 
-    <cache key = "ID_AttachSceneResp" Number = "50001" /> 
-    <cache key = "ID_FillSceneNotice" Number = "50002" /> 
-    <cache key = "ID_RefreshSceneEntitysNotice" Number = "50003" /> 
-    <cache key = "ID_RefreshSceneReportsNotice" Number = "50004" /> 
-    <cache key = "ID_RemoveEntityNotice" Number = "50006" /> 
+    <cache key = "AddEntityNotice" Number = "50005" /> 
+    <cache key = "AttachSceneReq" Number = "50000" /> 
+    <cache key = "AttachSceneResp" Number = "50001" /> 
+    <cache key = "FillSceneNotice" Number = "50002" /> 
+    <cache key = "RefreshSceneEntitysNotice" Number = "50003" /> 
+    <cache key = "RefreshSceneReportsNotice" Number = "50004" /> 
+    <cache key = "RemoveEntityNotice" Number = "50006" /> 
 </cacheNumber>
