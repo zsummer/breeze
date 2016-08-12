@@ -1101,7 +1101,11 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
         return;
     }
-
+    if (!_dockerServiceWorking || (!peekService(STAvatarMgr, InvalidServiceID)) || peekService(STAvatarMgr, InvalidServiceID)->getStatus() != SS_WORKING)
+    {
+        session->close();
+        return;
+    }
     Tracing trace;
     trace.routing.fromServiceType = STClient;
     trace.routing.fromServiceID = session->getUserParamNumber(UPARAM_AVATAR_ID);
