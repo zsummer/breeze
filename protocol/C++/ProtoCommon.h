@@ -27,7 +27,7 @@ enum ERROR_CODE : unsigned short
  
 struct Routing //docker to docker 路由信息  
 { 
-    static const unsigned short getProtoID() { return 1005;} 
+    static const unsigned short getProtoID() { return 1000;} 
     static const std::string getProtoName() { return "Routing";} 
     unsigned short toServiceType; //目标service类型  
     unsigned long long toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
@@ -89,7 +89,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct OutOfBand //带外信息  
 { 
-    static const unsigned short getProtoID() { return 1006;} 
+    static const unsigned short getProtoID() { return 1001;} 
     static const std::string getProtoName() { return "OutOfBand";} 
     unsigned int clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
     unsigned int clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
@@ -133,7 +133,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct Tracing //docker间追踪数据  
 { 
-    static const unsigned short getProtoID() { return 1000;} 
+    static const unsigned short getProtoID() { return 1002;} 
     static const std::string getProtoName() { return "Tracing";} 
     Routing routing; //路由信息  
     OutOfBand oob; //来自客户端的带外信息  
@@ -172,7 +172,7 @@ typedef std::vector<unsigned long long> AvatarIDArray;
  
 struct AvatarPreview //用户预览信息  
 { 
-    static const unsigned short getProtoID() { return 1014;} 
+    static const unsigned short getProtoID() { return 1003;} 
     static const std::string getProtoName() { return "AvatarPreview";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -319,7 +319,7 @@ typedef std::vector<AvatarPreview> AvatarPreviewArray;
  
 struct AvatarBaseInfo //用户基础数据  
 { 
-    static const unsigned short getProtoID() { return 1013;} 
+    static const unsigned short getProtoID() { return 1004;} 
     static const std::string getProtoName() { return "AvatarBaseInfo";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -565,7 +565,7 @@ typedef std::vector<AvatarBaseInfo> AvatarBaseInfoArray;
  
 struct DictGlobal //全局配置  
 { 
-    static const unsigned short getProtoID() { return 1007;} 
+    static const unsigned short getProtoID() { return 1005;} 
     static const std::string getProtoName() { return "DictGlobal";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -709,7 +709,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DictRaffleAward //奖池中的奖品  
 { 
-    static const unsigned short getProtoID() { return 1008;} 
+    static const unsigned short getProtoID() { return 1006;} 
     static const std::string getProtoName() { return "DictRaffleAward";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -836,7 +836,7 @@ typedef std::vector<DictRaffleAward> DictRaffleAwardArray;
  
 struct DictRafflePool //道具抽奖,道具掉落  
 { 
-    static const unsigned short getProtoID() { return 1009;} 
+    static const unsigned short getProtoID() { return 1007;} 
     static const std::string getProtoName() { return "DictRafflePool";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -1000,7 +1000,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DictBaseProps //战斗属性效果,用于装备,属性类增减益buff  
 { 
-    static const unsigned short getProtoID() { return 1010;} 
+    static const unsigned short getProtoID() { return 1008;} 
     static const std::string getProtoName() { return "DictBaseProps";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -1201,7 +1201,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DictItem //道具字典  
 { 
-    static const unsigned short getProtoID() { return 1011;} 
+    static const unsigned short getProtoID() { return 1009;} 
     static const std::string getProtoName() { return "DictItem";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -1412,7 +1412,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ItemInfo //道具字典  
 { 
-    static const unsigned short getProtoID() { return 1012;} 
+    static const unsigned short getProtoID() { return 1010;} 
     static const std::string getProtoName() { return "ItemInfo";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -1512,7 +1512,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct MoneyTree //摇钱树功能模块  
 { 
-    static const unsigned short getProtoID() { return 1003;} 
+    static const unsigned short getProtoID() { return 1011;} 
     static const std::string getProtoName() { return "MoneyTree";} 
     unsigned int lastTime; //最后一次执行时间  
     unsigned int freeCount; //今日剩余免费次数  
@@ -1568,7 +1568,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SimplePack //简单示例  
 { 
-    static const unsigned short getProtoID() { return 1004;} 
+    static const unsigned short getProtoID() { return 1012;} 
     static const std::string getProtoName() { return "SimplePack";} 
     inline const std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 

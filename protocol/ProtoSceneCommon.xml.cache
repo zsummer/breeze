@@ -5,17 +5,17 @@
 <csharpmd5>86529fd834535ae786ed85991f9c8189</csharpmd5> 
 <xmlmd5>ae5c25666c6e3d2be52690eb66ce9aa6</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_BuffData" Number = "10005" /> 
-    <cache key = "ID_BuffInfo" Number = "10008" /> 
-    <cache key = "ID_EPoint" Number = "10001" /> 
-    <cache key = "ID_EntityControl" Number = "10010" /> 
-    <cache key = "ID_EntityFullInfo" Number = "10012" /> 
-    <cache key = "ID_EntityInfo" Number = "10009" /> 
-    <cache key = "ID_EntityReport" Number = "10011" /> 
-    <cache key = "ID_HarmData" Number = "10006" /> 
-    <cache key = "ID_SceneTokenInfo" Number = "10000" /> 
-    <cache key = "ID_SearchInfo" Number = "10002" /> 
-    <cache key = "ID_SkillBehaviour" Number = "10003" /> 
-    <cache key = "ID_SkillData" Number = "10004" /> 
-    <cache key = "ID_SkillInfo" Number = "10007" /> 
+    <cache key = "BuffData" Number = "10005" /> 
+    <cache key = "BuffInfo" Number = "10008" /> 
+    <cache key = "EPoint" Number = "10001" /> 
+    <cache key = "EntityControl" Number = "10010" /> 
+    <cache key = "EntityFullInfo" Number = "10012" /> 
+    <cache key = "EntityInfo" Number = "10009" /> 
+    <cache key = "EntityReport" Number = "10011" /> 
+    <cache key = "HarmData" Number = "10006" /> 
+    <cache key = "SceneTokenInfo" Number = "10000" /> 
+    <cache key = "SearchInfo" Number = "10002" /> 
+    <cache key = "SkillBehaviour" Number = "10003" /> 
+    <cache key = "SkillData" Number = "10004" /> 
+    <cache key = "SkillInfo" Number = "10007" /> 
 </cacheNumber>

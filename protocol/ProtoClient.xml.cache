@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>aa62ce5d26bf0615e09cecd0ce7aaf68</cppmd5> 
-<luamd5>b39cf4064a50042994b625de5b2171bf</luamd5> 
-<csharpmd5>68eaf275194e38dcaabd867e9f64547c</csharpmd5> 
+<cppmd5>725c3d4921441aea89d161a0a52e4e93</cppmd5> 
+<luamd5>9eb4cb73a52ebdca422640fa7fc3aa1b</luamd5> 
+<csharpmd5>2880df18243bab9ba286d2c1292cf1db</csharpmd5> 
 <xmlmd5>9dd704be54d55362d04370355c9d40ae</xmlmd5> 
 <cacheNumber>
-    <cache key = "ID_AttachAvatarReq" Number = "40005" /> 
-    <cache key = "ID_AttachAvatarResp" Number = "40006" /> 
-    <cache key = "ID_ChatReq" Number = "40014" /> 
-    <cache key = "ID_ChatResp" Number = "40015" /> 
-    <cache key = "ID_ClientAuthReq" Number = "40001" /> 
-    <cache key = "ID_ClientAuthResp" Number = "40002" /> 
-    <cache key = "ID_ClientPulse" Number = "40000" /> 
-    <cache key = "ID_CreateAvatarReq" Number = "40003" /> 
-    <cache key = "ID_CreateAvatarResp" Number = "40004" /> 
-    <cache key = "ID_GetSceneTokenInfoReq" Number = "40018" /> 
-    <cache key = "ID_GetSceneTokenInfoResp" Number = "40019" /> 
-    <cache key = "ID_GetSpaceTokenInfoReq" Number = "40007" /> 
-    <cache key = "ID_GetSpaceTokenInfoResp" Number = "40008" /> 
-    <cache key = "ID_JoinSceneNotice" Number = "40022" /> 
-    <cache key = "ID_JoinSceneReq" Number = "40020" /> 
-    <cache key = "ID_JoinSceneResp" Number = "40021" /> 
-    <cache key = "ID_JoinSpaceNotice" Number = "40011" /> 
-    <cache key = "ID_JoinSpaceReq" Number = "40009" /> 
-    <cache key = "ID_JoinSpaceResp" Number = "40010" /> 
-    <cache key = "ID_LeaveSceneReq" Number = "40023" /> 
-    <cache key = "ID_LeaveSceneResp" Number = "40024" /> 
-    <cache key = "ID_LeaveSpaceReq" Number = "40012" /> 
-    <cache key = "ID_LeaveSpaceResp" Number = "40013" /> 
-    <cache key = "ID_PingPongReq" Number = "40016" /> 
-    <cache key = "ID_PingPongResp" Number = "40017" /> 
+    <cache key = "AttachAvatarReq" Number = "40005" /> 
+    <cache key = "AttachAvatarResp" Number = "40006" /> 
+    <cache key = "ChatReq" Number = "40014" /> 
+    <cache key = "ChatResp" Number = "40015" /> 
+    <cache key = "ClientAuthReq" Number = "40001" /> 
+    <cache key = "ClientAuthResp" Number = "40002" /> 
+    <cache key = "ClientPulse" Number = "40000" /> 
+    <cache key = "CreateAvatarReq" Number = "40003" /> 
+    <cache key = "CreateAvatarResp" Number = "40004" /> 
+    <cache key = "GetSceneTokenInfoReq" Number = "40007" /> 
+    <cache key = "GetSceneTokenInfoResp" Number = "40008" /> 
+    <cache key = "JoinSceneNotice" Number = "40011" /> 
+    <cache key = "JoinSceneReq" Number = "40009" /> 
+    <cache key = "JoinSceneResp" Number = "40010" /> 
+    <cache key = "LeaveSceneReq" Number = "40012" /> 
+    <cache key = "LeaveSceneResp" Number = "40013" /> 
+    <cache key = "PingPongReq" Number = "40016" /> 
+    <cache key = "PingPongResp" Number = "40017" /> 
 </cacheNumber>
