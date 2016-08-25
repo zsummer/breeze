@@ -785,7 +785,7 @@ struct WebServerRequest
     unsigned short port;  
     std::string host;  
     std::string uri;  
-    std::string params;  
+    std::string webparams;  
     WebAgentHead heads;  
     unsigned char isGet; //get or post  
     WebServerRequest() 
@@ -796,7 +796,7 @@ struct WebServerRequest
         port = 0; 
         isGet = 0; 
     } 
-    WebServerRequest(const unsigned int & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const std::string & ip, const unsigned short & port, const std::string & host, const std::string & uri, const std::string & params, const WebAgentHead & heads, const unsigned char & isGet) 
+    WebServerRequest(const unsigned int & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const std::string & ip, const unsigned short & port, const std::string & host, const std::string & uri, const std::string & webparams, const WebAgentHead & heads, const unsigned char & isGet) 
     { 
         this->fromServiceType = fromServiceType; 
         this->fromServiceID = fromServiceID; 
@@ -805,7 +805,7 @@ struct WebServerRequest
         this->port = port; 
         this->host = host; 
         this->uri = uri; 
-        this->params = params; 
+        this->webparams = webparams; 
         this->heads = heads; 
         this->isGet = isGet; 
     } 
@@ -819,7 +819,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.port;  
     ws << data.host;  
     ws << data.uri;  
-    ws << data.params;  
+    ws << data.webparams;  
     ws << data.heads;  
     ws << data.isGet;  
     return ws; 
@@ -833,7 +833,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.port;  
     rs >> data.host;  
     rs >> data.uri;  
-    rs >> data.params;  
+    rs >> data.webparams;  
     rs >> data.heads;  
     rs >> data.isGet;  
     return rs; 
@@ -848,7 +848,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "port=" << info.port << "\n"; 
     stm << "host=" << info.host << "\n"; 
     stm << "uri=" << info.uri << "\n"; 
-    stm << "params=" << info.params << "\n"; 
+    stm << "webparams=" << info.webparams << "\n"; 
     stm << "heads=" << info.heads << "\n"; 
     stm << "isGet=" << info.isGet << "\n"; 
     stm << "]\n"; 

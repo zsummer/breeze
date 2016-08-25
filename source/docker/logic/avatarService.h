@@ -59,6 +59,8 @@ private:
     int _curUnloadModuleCount = 0;
     int _totalModuleCount = 1;
     ModuleData<AvatarBaseInfo> _baseInfo;
+private:
+    double _lastChatTime = getFloatNowTime();
 };
 
 

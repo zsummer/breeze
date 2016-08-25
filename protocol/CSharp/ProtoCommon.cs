@@ -736,6 +736,77 @@ namespace Proto4z
         } 
     } 
  
+    public enum ChatChannelEnum : ushort 
+    { 
+        CC_WORLD = 0,  
+        CC_PRIVATE = 1,  
+        CC_SYSTEM = 2,  
+    }; 
+ 
+    public class LogChat: Proto4z.IProtoObject //聊天日志  
+    {     
+        //proto id   
+        public const ushort protoID = 1013;  
+        static public ushort getProtoID() { return 1013; } 
+        static public string getProtoName() { return "LogChat"; } 
+        //members   
+        public uint id;  
+        public ushort channelID;  
+        public ulong sourceID;  
+        public string sourceName;  
+        public ulong targetID;  
+        public string targetName;  
+        public string msg;  
+        public ulong chatTime;  
+        public LogChat()  
+        { 
+            id = 0;  
+            channelID = 0;  
+            sourceID = 0;  
+            sourceName = "";  
+            targetID = 0;  
+            targetName = "";  
+            msg = "";  
+            chatTime = 0;  
+        } 
+        public LogChat(uint id, ushort channelID, ulong sourceID, string sourceName, ulong targetID, string targetName, string msg, ulong chatTime) 
+        { 
+            this.id = id; 
+            this.channelID = channelID; 
+            this.sourceID = sourceID; 
+            this.sourceName = sourceName; 
+            this.targetID = targetID; 
+            this.targetName = targetName; 
+            this.msg = msg; 
+            this.chatTime = chatTime; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.id)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.channelID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sourceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.sourceName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.targetID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.targetName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.chatTime)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.id = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.channelID = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sourceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sourceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.targetID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.targetName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.chatTime = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class MoneyTree: Proto4z.IProtoObject //摇钱树功能模块  
     {     
         //proto id   

@@ -24,34 +24,99 @@ AvatarMgrService::~AvatarMgrService()
 
 void AvatarMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
 {
-    time_t now = getNowTime();
-    if (now - _lastTime > 10)
+    checkFreeList();
+    systemAutoChat();
+}
+
+void AvatarMgrService::systemAutoChat()
+{
+    if (getFloatNowTime() - _lastSystemChat < 30.0)
     {
-        _lastTime = now;
+        return;
+    }
+    _lastSystemChat = getFloatNowTime();
 
-
-        LOGI("AvatarMgrService::onTick balance=" << Docker::getRef().getAvatarBalance().getBalanceStatus());
-
-
-        for (auto iter = _freeList.begin(); iter != _freeList.end();)
+    auto avatars = Docker::getRef().peekService(STAvatar);
+    ChatResp resp;
+    resp.channelID = CC_SYSTEM;
+    for (auto kv : avatars)
+    {
+        resp.msg.clear();
+        switch (rand()%6)
         {
-            if (iter->second->_status == SS_WORKING && getNowTime() - iter->second->_lastChangeTime > 30)
-            {
-                auto service = Docker::getRef().peekService(STAvatar, iter->second->_preview.avatarID);
-                if (service)
-                {
-                    UnloadServiceInDocker unload(service->getServiceType(), service->getServiceID());
-                    Docker::getRef().sendViaDockerID(service->getServiceDockerID(), unload);
-                }
-                else
-                {
-                    LOGE("service not unload finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.avatarID);
-                }
-                iter = _freeList.erase(iter);
-                continue;
-            }
-            iter++;
+        case 0:
+        {
+            resp.msg = "Why don't you tell me a story ?";
         }
+        break;
+        case 1:
+        {
+            resp.msg = "Is anybody in here?  I'm so lonely. ";
+        }
+        break;
+        case 2:
+        {
+            resp.msg = "Welcome to the wild star,  " + toString(kv.second->getServiceName() + ".");
+        }
+        break;
+        case 3:
+        {
+            resp.msg = "Ladies And Gentlemen We Are Floating In Space.";
+        }
+        break;
+        case 4:
+        {
+            resp.msg = "How long, How long until I see you ? ";
+        }
+        break;
+        case 5:
+        {
+            resp.msg = "For summer being done, Can spring be far behind ? ";
+        }
+        break;
+
+        default:
+            break;
+        }
+
+        if (resp.msg.empty())
+        {
+            continue;
+        }
+        toService(STClient,kv.second->getServiceID(), resp);
+    }
+}
+void AvatarMgrService::checkFreeList()
+{
+    
+    if (getFloatNowTime() - _lastCheckFreeList < 10.0)
+    {
+        return;
+    }
+    _lastCheckFreeList = getFloatNowTime();
+
+
+    LOGI("AvatarMgrService::onTick balance=" << Docker::getRef().getAvatarBalance().getBalanceStatus());
+
+
+    for (auto iter = _freeList.begin(); iter != _freeList.end();)
+    {
+        if (iter->second->_status == SS_WORKING && getNowTime() - iter->second->_lastChangeTime > 30)
+        {
+            auto service = Docker::getRef().peekService(STAvatar, iter->second->_preview.avatarID);
+            if (service)
+            {
+                UnloadServiceInDocker unload(service->getServiceType(), service->getServiceID());
+                Docker::getRef().sendViaDockerID(service->getServiceDockerID(), unload);
+            }
+            else
+            {
+                LOGE("service not unload finish. used time = " << getNowTime() - iter->second->_lastChangeTime << ", serviceID=" << iter->second->_preview.avatarID);
+            }
+            iter = _freeList.erase(iter);
+            continue;
+        }
+        iter++;
     }
 }
 

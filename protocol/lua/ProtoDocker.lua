@@ -179,7 +179,7 @@ Proto4z.WebServerRequest[4] = {name="ip", type="string" }
 Proto4z.WebServerRequest[5] = {name="port", type="ui16" }  
 Proto4z.WebServerRequest[6] = {name="host", type="string" }  
 Proto4z.WebServerRequest[7] = {name="uri", type="string" }  
-Proto4z.WebServerRequest[8] = {name="params", type="string" }  
+Proto4z.WebServerRequest[8] = {name="webparams", type="string" }  
 Proto4z.WebServerRequest[9] = {name="heads", type="WebAgentHead" }  
 Proto4z.WebServerRequest[10] = {name="isGet", type="ui8" } --get or post 
  

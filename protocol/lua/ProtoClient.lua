@@ -94,10 +94,6 @@ Proto4z.LeaveSceneResp.__protoName = "LeaveSceneResp"
 Proto4z.LeaveSceneResp[1] = {name="retCode", type="ui16" }  
 Proto4z.LeaveSceneResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
  
-Proto4z.CC_WORLD = 0 
-Proto4z.CC_PRIVATE = 1 
-Proto4z.CC_SYSTEM = 2 
- 
 Proto4z.register(40014,"ChatReq") 
 Proto4z.ChatReq = {}  
 Proto4z.ChatReq.__protoID = 40014 
@@ -116,6 +112,7 @@ Proto4z.ChatResp[3] = {name="sourceName", type="string" }
 Proto4z.ChatResp[4] = {name="targetID", type="ui64" }  
 Proto4z.ChatResp[5] = {name="targetName", type="string" }  
 Proto4z.ChatResp[6] = {name="msg", type="string" }  
+Proto4z.ChatResp[7] = {name="chatTime", type="ui64" }  
  
 Proto4z.register(40016,"PingPongReq") 
 Proto4z.PingPongReq = {}  

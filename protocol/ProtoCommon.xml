@@ -138,6 +138,7 @@
     </packet>
 
 
+    <!------------- 道具 ---------------------->
 
     <packet name="DictItem" store="MyISAM"  desc= "道具字典">
         <member name="id" type="ui32" tag="key"  desc=""/>
@@ -161,6 +162,25 @@
     <packet name="ItemInfo" store="MyISAM"  desc= "道具字典">
         <member name="stacks" type="ui16"   desc="可堆叠个数,0和1都是1次"/>
     </packet>
+
+
+    <!------------- 聊天 ---------------------->
+    <enum name="ChatChannelEnum" type="ui16">
+        <member name="CC_WORLD" desc=""/>
+        <member name="CC_PRIVATE" desc=""/>
+        <member name="CC_SYSTEM" desc=""/>
+    </enum>
+    <packet    name="LogChat" store="true" desc= "聊天日志">
+        <member name="id" type="ui32" tag="auto,key" desc=""/>
+        <member name="channelID" type="ui16"   desc=""/>
+        <member name="sourceID" type="ui64"  tag="idx" desc=""/>
+        <member name="sourceName" type="string"   desc=""/>
+        <member name="targetID" type="ui64" tag="idx"  desc=""/>
+        <member name="targetName" type="string"   desc=""/>
+        <member name="msg" type="string"   desc=""/>
+        <member name="chatTime" type="ui64" tag="idx"  desc=""/>
+    </packet>
+
 
 
 

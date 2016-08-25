@@ -492,13 +492,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-enum ChatChannelEnum : unsigned short 
-{ 
-    CC_WORLD = 0,  
-    CC_PRIVATE = 1,  
-    CC_SYSTEM = 2,  
-}; 
- 
 struct ChatReq 
 { 
     static const unsigned short getProtoID() { return 40014;} 
@@ -552,13 +545,15 @@ struct ChatResp
     unsigned long long targetID;  
     std::string targetName;  
     std::string msg;  
+    unsigned long long chatTime;  
     ChatResp() 
     { 
         channelID = 0; 
         sourceID = 0; 
         targetID = 0; 
+        chatTime = 0; 
     } 
-    ChatResp(const unsigned short & channelID, const unsigned long long & sourceID, const std::string & sourceName, const unsigned long long & targetID, const std::string & targetName, const std::string & msg) 
+    ChatResp(const unsigned short & channelID, const unsigned long long & sourceID, const std::string & sourceName, const unsigned long long & targetID, const std::string & targetName, const std::string & msg, const unsigned long long & chatTime) 
     { 
         this->channelID = channelID; 
         this->sourceID = sourceID; 
@@ -566,6 +561,7 @@ struct ChatResp
         this->targetID = targetID; 
         this->targetName = targetName; 
         this->msg = msg; 
+        this->chatTime = chatTime; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatResp & data) 
@@ -576,6 +572,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.targetID;  
     ws << data.targetName;  
     ws << data.msg;  
+    ws << data.chatTime;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChatResp & data) 
@@ -586,6 +583,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.targetID;  
     rs >> data.targetName;  
     rs >> data.msg;  
+    rs >> data.chatTime;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChatResp & info) 
@@ -597,6 +595,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "targetID=" << info.targetID << "\n"; 
     stm << "targetName=" << info.targetName << "\n"; 
     stm << "msg=" << info.msg << "\n"; 
+    stm << "chatTime=" << info.chatTime << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

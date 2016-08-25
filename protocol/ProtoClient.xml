@@ -76,11 +76,7 @@
 
 
 <!------------------------------------ other --------------------------------------------->
-    <enum name="ChatChannelEnum" type="ui16">
-        <member name="CC_WORLD" desc=""/>
-        <member name="CC_PRIVATE" desc=""/>
-        <member name="CC_SYSTEM" desc=""/>
-    </enum>
+
 
    <packet name="ChatReq" desc= "">
         <member name="channelID" type="ui16"   desc=""/>
@@ -94,6 +90,7 @@
         <member name="targetID" type="ui64"   desc=""/>
         <member name="targetName" type="string"   desc=""/>
         <member name="msg" type="string"   desc=""/>
+        <member name="chatTime" type="ui64" tag="idx"  desc=""/>
     </packet>
 
     <packet name="PingPongReq" desc= "">

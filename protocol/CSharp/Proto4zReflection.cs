@@ -135,6 +135,8 @@ namespace Proto4z
             _idToName.Add(2002, "LoadService");
             _nameToID.Add("LoadServiceNotice", 2004);
             _idToName.Add(2004, "LoadServiceNotice");
+            _nameToID.Add("LogChat", 1013);
+            _idToName.Add(1013, "LogChat");
             _nameToID.Add("MoneyTree", 1011);
             _idToName.Add(1011, "MoneyTree");
             _nameToID.Add("OutOfBand", 1001);

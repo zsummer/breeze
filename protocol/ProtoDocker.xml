@@ -161,7 +161,7 @@
         <member name="port" type="ui16"  desc=""/>
         <member name="host" type="string"  desc=""/>
         <member name="uri" type="string"  desc=""/>
-        <member name="params" type="string"  desc=""/>
+        <member name="webparams" type="string"  desc=""/>
         <member name="heads" type="WebAgentHead"  desc=""/>
         <member name="isGet" type="ui8"  desc="get or post"/>
     </packet>

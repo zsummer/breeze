@@ -1229,11 +1229,11 @@ void Docker::event_onWebServerRequest(TcpSessionPtr session, ReadStream & rs)
         wh.addHead("Host", req.host);
         if (req.isGet)
         {
-            wh.get(req.uri + "?" + urlEncode(req.params));
+            wh.get(req.uri + "?" + urlEncode(req.webparams));
         }
         else
         {
-            wh.post(req.uri, req.params);
+            wh.post(req.uri, req.webparams);
         }
         SessionManager::getRef().sendSessionData(session->getSessionID(), wh.getStream(), wh.getStreamLen());
     };

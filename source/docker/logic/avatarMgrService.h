@@ -63,6 +63,8 @@ public:
     void onClientChange() override final;
     void onUnload() override final;
     void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
+    void checkFreeList();
+    void systemAutoChat();
 
 private:
     void updateAvatarPreview(const AvatarPreview & pre);
@@ -86,7 +88,8 @@ private:
 
 
 private:
-    time_t _lastTime = 0;
+    double _lastCheckFreeList = getFloatNowTime();
+    double _lastSystemChat = getFloatNowTime();
     std::map<ui64, AvatarStatusPtr> _freeList;
     std::map<ui64, AvatarStatusPtr> _userStatusByID;
     std::map<std::string, AvatarStatusPtr> _userStatusByName;

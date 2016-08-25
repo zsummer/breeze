@@ -110,6 +110,7 @@ public:
     {
         auto helper = buildHelper("STLogDBMgr");
         if (!helper) return false;
+        buildTable<LogChat>(helper);
         return true;
     }
 

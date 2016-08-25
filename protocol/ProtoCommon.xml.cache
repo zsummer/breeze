@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>11295f9abc5c6dcbfa76741aa0619f72</cppmd5> 
-<luamd5>715de16fc9bd0ce0d7d85dcccdfcac42</luamd5> 
-<csharpmd5>db5a7796644f1a6de98cbd13d45bca65</csharpmd5> 
-<xmlmd5>c43c9103edb842c2fd88ed476d607f5b</xmlmd5> 
+<cppmd5>33fbac091a72069d1a7c1e3933563aba</cppmd5> 
+<luamd5>15205fb8f6901b77e60aa902cf2cd70e</luamd5> 
+<csharpmd5>486576fc5bc5de74bc791e197edf10cc</csharpmd5> 
+<xmlmd5>1572689a8a70df0793998bd5020d06a2</xmlmd5> 
 <cacheNumber>
     <cache key = "AvatarBaseInfo" Number = "1004" /> 
     <cache key = "AvatarPreview" Number = "1003" /> 
@@ -13,6 +13,7 @@
     <cache key = "DictRaffleAward" Number = "1006" /> 
     <cache key = "DictRafflePool" Number = "1007" /> 
     <cache key = "ItemInfo" Number = "1010" /> 
+    <cache key = "LogChat" Number = "1013" /> 
     <cache key = "MoneyTree" Number = "1011" /> 
     <cache key = "OutOfBand" Number = "1001" /> 
     <cache key = "Routing" Number = "1000" /> 

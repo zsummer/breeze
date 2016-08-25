@@ -105,6 +105,28 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     resp.targetID = req.targetID;
     resp.msg = req.msg;
     resp.channelID = req.channelID;
+    resp.chatTime = getNowTime();
+
+    double now = getFloatNowTime();
+    double limit = 0.0;
+    if (req.channelID == CC_PRIVATE) limit = 1.0;
+    else if (req.channelID == CC_WORLD) limit = 5.0;
+
+    if (now - _lastChatTime < limit)
+    {
+        resp.msg = "<color=yellow>chat speed limit " + toString((int)(limit - (now - _lastChatTime))) + " s</color>";
+        resp.targetID = getServiceID();
+        resp.targetName = getServiceName();
+        resp.channelID = CC_SYSTEM;
+        resp.sourceID = 0;
+        resp.sourceName = "system";
+        toService(STClient, getServiceID(), resp);
+        return;
+    }
+
+
+
+    _lastChatTime = now;
     if (req.channelID == CC_PRIVATE)
     {
         auto tgr = Docker::getRef().peekService(STAvatar, req.targetID);
@@ -116,27 +138,27 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     }
     else if (req.channelID == CC_WORLD)
     {
-        static time_t lastWorldChatTime = time(NULL) -6;
-        time_t now = time(NULL);
-        if (now - lastWorldChatTime < 5)
-        {
-            resp.msg = "<color=yellow>chat speed limit " + toString( 5 - (now - lastWorldChatTime)) + " s</color>";
-            resp.targetID = getServiceID();
-            resp.targetName = getServiceName();
-            resp.channelID = CC_SYSTEM;
-            resp.sourceID = 0;
-            resp.sourceName = "system";
-            toService(STClient,getServiceID(), resp);
-            return;
-        }
-        lastWorldChatTime = now;
-
         auto onlines = Docker::getRef().peekService(STAvatar);
         for (auto kv : onlines)
         {
             toService(STClient, kv.second->getServiceID(), resp);
         }
     }
+    if (true)
+    {
+        LogChat log;
+        log.id = 0;
+        log.channelID = resp.channelID;
+        log.chatTime = resp.chatTime;
+        log.sourceID = resp.sourceID;
+        log.sourceName = resp.sourceName;
+        log.targetID = resp.targetID;
+        log.targetName = resp.targetName;
+        log.msg = resp.msg;
+        DBQueryReq logReq(log.getDBInsert());
+        toService(STLogDBMgr, logReq);
+    }
+    
 }
 
 void AvatarService::onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)

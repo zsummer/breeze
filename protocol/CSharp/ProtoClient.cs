@@ -469,13 +469,6 @@ namespace Proto4z
         } 
     } 
  
-    public enum ChatChannelEnum : ushort 
-    { 
-        CC_WORLD = 0,  
-        CC_PRIVATE = 1,  
-        CC_SYSTEM = 2,  
-    }; 
- 
     public class ChatReq: Proto4z.IProtoObject 
     {     
         //proto id   
@@ -528,6 +521,7 @@ namespace Proto4z
         public ulong targetID;  
         public string targetName;  
         public string msg;  
+        public ulong chatTime;  
         public ChatResp()  
         { 
             channelID = 0;  
@@ -536,8 +530,9 @@ namespace Proto4z
             targetID = 0;  
             targetName = "";  
             msg = "";  
+            chatTime = 0;  
         } 
-        public ChatResp(ushort channelID, ulong sourceID, string sourceName, ulong targetID, string targetName, string msg) 
+        public ChatResp(ushort channelID, ulong sourceID, string sourceName, ulong targetID, string targetName, string msg, ulong chatTime) 
         { 
             this.channelID = channelID; 
             this.sourceID = sourceID; 
@@ -545,6 +540,7 @@ namespace Proto4z
             this.targetID = targetID; 
             this.targetName = targetName; 
             this.msg = msg; 
+            this.chatTime = chatTime; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -555,6 +551,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.targetID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.targetName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.chatTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -565,6 +562,7 @@ namespace Proto4z
             this.targetID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.targetName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.chatTime = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 

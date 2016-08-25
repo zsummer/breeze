@@ -157,6 +157,23 @@ Proto4z.ItemInfo.__protoID = 1010
 Proto4z.ItemInfo.__protoName = "ItemInfo" 
 Proto4z.ItemInfo[1] = {name="stacks", type="ui16" } --可堆叠个数,0和1都是1次 
  
+Proto4z.CC_WORLD = 0 
+Proto4z.CC_PRIVATE = 1 
+Proto4z.CC_SYSTEM = 2 
+ 
+Proto4z.register(1013,"LogChat") 
+Proto4z.LogChat = {} --聊天日志 
+Proto4z.LogChat.__protoID = 1013 
+Proto4z.LogChat.__protoName = "LogChat" 
+Proto4z.LogChat[1] = {name="id", type="ui32" }  
+Proto4z.LogChat[2] = {name="channelID", type="ui16" }  
+Proto4z.LogChat[3] = {name="sourceID", type="ui64" }  
+Proto4z.LogChat[4] = {name="sourceName", type="string" }  
+Proto4z.LogChat[5] = {name="targetID", type="ui64" }  
+Proto4z.LogChat[6] = {name="targetName", type="string" }  
+Proto4z.LogChat[7] = {name="msg", type="string" }  
+Proto4z.LogChat[8] = {name="chatTime", type="ui64" }  
+ 
 Proto4z.register(1011,"MoneyTree") 
 Proto4z.MoneyTree = {} --摇钱树功能模块 
 Proto4z.MoneyTree.__protoID = 1011 

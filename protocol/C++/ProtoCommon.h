@@ -1510,6 +1510,188 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+enum ChatChannelEnum : unsigned short 
+{ 
+    CC_WORLD = 0,  
+    CC_PRIVATE = 1,  
+    CC_SYSTEM = 2,  
+}; 
+ 
+struct LogChat //聊天日志  
+{ 
+    static const unsigned short getProtoID() { return 1013;} 
+    static const std::string getProtoName() { return "LogChat";} 
+    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned int id;  
+    unsigned short channelID;  
+    unsigned long long sourceID;  
+    std::string sourceName;  
+    unsigned long long targetID;  
+    std::string targetName;  
+    std::string msg;  
+    unsigned long long chatTime;  
+    LogChat() 
+    { 
+        id = 0; 
+        channelID = 0; 
+        sourceID = 0; 
+        targetID = 0; 
+        chatTime = 0; 
+    } 
+    LogChat(const unsigned int & id, const unsigned short & channelID, const unsigned long long & sourceID, const std::string & sourceName, const unsigned long long & targetID, const std::string & targetName, const std::string & msg, const unsigned long long & chatTime) 
+    { 
+        this->id = id; 
+        this->channelID = channelID; 
+        this->sourceID = sourceID; 
+        this->sourceName = sourceName; 
+        this->targetID = targetID; 
+        this->targetName = targetName; 
+        this->msg = msg; 
+        this->chatTime = chatTime; 
+    } 
+}; 
+ 
+const std::vector<std::string>  LogChat::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_LogChat` (        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,        `sourceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `targetID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `chatTime` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `sourceID` (`sourceID`),        KEY `targetID` (`targetID`),        KEY `chatTime` (`chatTime`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_LogChat` add `id`  bigint(20) unsigned NOT NULL AUTO_INCREMENT "); 
+    ret.push_back("alter table `tb_LogChat` change `id`  `id`  bigint(20) unsigned NOT NULL AUTO_INCREMENT "); 
+    ret.push_back("alter table `tb_LogChat` add `channelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_LogChat` change `channelID`  `channelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_LogChat` add `sourceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_LogChat` change `sourceID`  `sourceID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_LogChat` add `sourceName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_LogChat` change `sourceName`  `sourceName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_LogChat` add `targetID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_LogChat` change `targetID`  `targetID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_LogChat` add `targetName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_LogChat` change `targetName`  `targetName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_LogChat` add `msg`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_LogChat` change `msg`  `msg`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_LogChat` add `chatTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_LogChat` change `chatTime`  `chatTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    return std::move(ret); 
+} 
+std::string  LogChat::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `id`,`channelID`,`sourceID`,`sourceName`,`targetID`,`targetName`,`msg`,`chatTime` from `tb_LogChat` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  LogChat::getDBSelectPure() 
+{ 
+    return "select `id`,`channelID`,`sourceID`,`sourceName`,`targetID`,`targetName`,`msg`,`chatTime` from `tb_LogChat` "; 
+} 
+std::string  LogChat::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_LogChat`(`channelID`,`sourceID`,`sourceName`,`targetID`,`targetName`,`msg`,`chatTime`) values(?,?,?,?,?,?,?)"); 
+    q << this->channelID; 
+    q << this->sourceID; 
+    q << this->sourceName; 
+    q << this->targetID; 
+    q << this->targetName; 
+    q << this->msg; 
+    q << this->chatTime; 
+    return q.pickSQL(); 
+} 
+std::string  LogChat::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_LogChat` where `id` = ? "); 
+    q << this->id; 
+    return q.pickSQL(); 
+} 
+std::string  LogChat::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_LogChat`(id) values(? ) on duplicate key update `channelID` = ?,`sourceID` = ?,`sourceName` = ?,`targetID` = ?,`targetName` = ?,`msg` = ?,`chatTime` = ? "); 
+    q << this->id; 
+    q << this->channelID; 
+    q << this->sourceID; 
+    q << this->sourceName; 
+    q << this->targetID; 
+    q << this->targetName; 
+    q << this->msg; 
+    q << this->chatTime; 
+    return q.pickSQL(); 
+} 
+bool LogChat::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch LogChat from table `tb_LogChat` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->id; 
+            result >> this->channelID; 
+            result >> this->sourceID; 
+            result >> this->sourceName; 
+            result >> this->targetID; 
+            result >> this->targetName; 
+            result >> this->msg; 
+            result >> this->chatTime; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch LogChat from table `tb_LogChat` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const LogChat & data) 
+{ 
+    ws << data.id;  
+    ws << data.channelID;  
+    ws << data.sourceID;  
+    ws << data.sourceName;  
+    ws << data.targetID;  
+    ws << data.targetName;  
+    ws << data.msg;  
+    ws << data.chatTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, LogChat & data) 
+{ 
+    rs >> data.id;  
+    rs >> data.channelID;  
+    rs >> data.sourceID;  
+    rs >> data.sourceName;  
+    rs >> data.targetID;  
+    rs >> data.targetName;  
+    rs >> data.msg;  
+    rs >> data.chatTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LogChat & info) 
+{ 
+    stm << "[\n"; 
+    stm << "id=" << info.id << "\n"; 
+    stm << "channelID=" << info.channelID << "\n"; 
+    stm << "sourceID=" << info.sourceID << "\n"; 
+    stm << "sourceName=" << info.sourceName << "\n"; 
+    stm << "targetID=" << info.targetID << "\n"; 
+    stm << "targetName=" << info.targetName << "\n"; 
+    stm << "msg=" << info.msg << "\n"; 
+    stm << "chatTime=" << info.chatTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct MoneyTree //摇钱树功能模块  
 { 
     static const unsigned short getProtoID() { return 1011;} 
