@@ -886,6 +886,31 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
             clientSession->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
         }
         sendViaSessionID(trace.oob.clientSessionID, rs.getStream(), rs.getStreamLen());
+        do
+        {
+            auto onlineAvatar = peekService(STAvatar, resp.avatarID);
+            if (!onlineAvatar)
+            {
+                break;
+            }
+            Tracing trace;
+            trace.routing.fromServiceType = InvalidServiceType;
+            trace.routing.fromServiceID = InvalidServiceID;
+            trace.routing.traceBackID = 0;
+            trace.routing.traceID = 0;
+            trace.routing.toServiceType = STClient;
+            
+
+            ChatResp resp;
+            resp.channelID = CC_SYSTEM;
+            resp.msg = "player <color=blue>[" + toString(onlineAvatar->getServiceName()) + "]</color> is online.";
+            for (auto kv : peekService(STAvatar))
+            {
+                trace.routing.toServiceID = kv.second->getServiceID();
+                toService(trace, resp);
+            }
+        } while (false);
+
         return;
     }
 
@@ -1069,6 +1094,34 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
     {
         if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
         {
+            do
+            {
+                auto onlineAvatar = peekService(STAvatar, session->getUserParamNumber(UPARAM_AVATAR_ID));
+                if (!onlineAvatar)
+                {
+                    break;
+                }
+                Tracing trace;
+                trace.routing.fromServiceType = InvalidServiceType;
+                trace.routing.fromServiceID = InvalidServiceID;
+                trace.routing.traceBackID = 0;
+                trace.routing.traceID = 0;
+                trace.routing.toServiceType = STClient;
+
+
+                ChatResp resp;
+                resp.channelID = CC_SYSTEM;
+                resp.msg = "player <color=blue>[" + toString(onlineAvatar->getServiceName()) + "]</color> is offline.";
+                for (auto kv : peekService(STAvatar))
+                {
+                    trace.routing.toServiceID = kv.second->getServiceID();
+                    toService(trace, resp);
+                }
+            } while (false);
+        }
+
+        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
+        {
             Tracing trace;
             trace.routing.fromServiceType = STClient;
             trace.routing.fromServiceID = session->getUserParamNumber(UPARAM_AVATAR_ID);
@@ -1082,6 +1135,7 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
             notice.clientSessionID = session->getSessionID();
             toService(trace, notice);
         }
+
     }
 }
 
