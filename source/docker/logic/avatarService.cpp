@@ -100,9 +100,43 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     _baseInfo.writeToDB();
 
     ChatResp resp;
-    resp.fromAvatarID = getServiceID();
+    resp.sourceID = getServiceID();
+    resp.sourceName = getServiceName();
+    resp.targetID = req.targetID;
     resp.msg = req.msg;
-    toService(STClient, req.avatarID, resp);
+    resp.channelID = req.channelID;
+    if (req.channelID == CC_PRIVATE)
+    {
+        auto tgr = Docker::getRef().peekService(STAvatar, req.targetID);
+        if (tgr)
+        {
+            resp.targetName = tgr->getServiceName();
+        }
+        toService(STClient, req.targetID, resp);
+    }
+    else if (req.channelID == CC_WORLD)
+    {
+        static time_t lastWorldChatTime = time(NULL) -6;
+        time_t now = time(NULL);
+        if (now - lastWorldChatTime < 5)
+        {
+            resp.msg = "<color=yellow>chat speed limit " + toString( 5 - (now - lastWorldChatTime)) + " s</color>";
+            resp.targetID = getServiceID();
+            resp.targetName = getServiceName();
+            resp.channelID = CC_SYSTEM;
+            resp.sourceID = 0;
+            resp.sourceName = "system";
+            toService(STClient,getServiceID(), resp);
+            return;
+        }
+        lastWorldChatTime = now;
+
+        auto onlines = Docker::getRef().peekService(STAvatar);
+        for (auto kv : onlines)
+        {
+            toService(STClient, kv.second->getServiceID(), resp);
+        }
+    }
 }
 
 void AvatarService::onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)

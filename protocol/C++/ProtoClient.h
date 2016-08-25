@@ -492,38 +492,51 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+enum ChatChannelEnum : unsigned short 
+{ 
+    CC_WORLD = 0,  
+    CC_PRIVATE = 1,  
+    CC_SYSTEM = 2,  
+}; 
+ 
 struct ChatReq 
 { 
     static const unsigned short getProtoID() { return 40014;} 
     static const std::string getProtoName() { return "ChatReq";} 
-    unsigned long long avatarID;  
+    unsigned short channelID;  
+    unsigned long long targetID;  
     std::string msg;  
     ChatReq() 
     { 
-        avatarID = 0; 
+        channelID = 0; 
+        targetID = 0; 
     } 
-    ChatReq(const unsigned long long & avatarID, const std::string & msg) 
+    ChatReq(const unsigned short & channelID, const unsigned long long & targetID, const std::string & msg) 
     { 
-        this->avatarID = avatarID; 
+        this->channelID = channelID; 
+        this->targetID = targetID; 
         this->msg = msg; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatReq & data) 
 { 
-    ws << data.avatarID;  
+    ws << data.channelID;  
+    ws << data.targetID;  
     ws << data.msg;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChatReq & data) 
 { 
-    rs >> data.avatarID;  
+    rs >> data.channelID;  
+    rs >> data.targetID;  
     rs >> data.msg;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChatReq & info) 
 { 
     stm << "[\n"; 
-    stm << "avatarID=" << info.avatarID << "\n"; 
+    stm << "channelID=" << info.channelID << "\n"; 
+    stm << "targetID=" << info.targetID << "\n"; 
     stm << "msg=" << info.msg << "\n"; 
     stm << "]\n"; 
     return stm; 
@@ -533,34 +546,56 @@ struct ChatResp
 { 
     static const unsigned short getProtoID() { return 40015;} 
     static const std::string getProtoName() { return "ChatResp";} 
-    unsigned long long fromAvatarID;  
+    unsigned short channelID;  
+    unsigned long long sourceID;  
+    std::string sourceName;  
+    unsigned long long targetID;  
+    std::string targetName;  
     std::string msg;  
     ChatResp() 
     { 
-        fromAvatarID = 0; 
+        channelID = 0; 
+        sourceID = 0; 
+        targetID = 0; 
     } 
-    ChatResp(const unsigned long long & fromAvatarID, const std::string & msg) 
+    ChatResp(const unsigned short & channelID, const unsigned long long & sourceID, const std::string & sourceName, const unsigned long long & targetID, const std::string & targetName, const std::string & msg) 
     { 
-        this->fromAvatarID = fromAvatarID; 
+        this->channelID = channelID; 
+        this->sourceID = sourceID; 
+        this->sourceName = sourceName; 
+        this->targetID = targetID; 
+        this->targetName = targetName; 
         this->msg = msg; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChatResp & data) 
 { 
-    ws << data.fromAvatarID;  
+    ws << data.channelID;  
+    ws << data.sourceID;  
+    ws << data.sourceName;  
+    ws << data.targetID;  
+    ws << data.targetName;  
     ws << data.msg;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChatResp & data) 
 { 
-    rs >> data.fromAvatarID;  
+    rs >> data.channelID;  
+    rs >> data.sourceID;  
+    rs >> data.sourceName;  
+    rs >> data.targetID;  
+    rs >> data.targetName;  
     rs >> data.msg;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChatResp & info) 
 { 
     stm << "[\n"; 
-    stm << "fromAvatarID=" << info.fromAvatarID << "\n"; 
+    stm << "channelID=" << info.channelID << "\n"; 
+    stm << "sourceID=" << info.sourceID << "\n"; 
+    stm << "sourceName=" << info.sourceName << "\n"; 
+    stm << "targetID=" << info.targetID << "\n"; 
+    stm << "targetName=" << info.targetName << "\n"; 
     stm << "msg=" << info.msg << "\n"; 
     stm << "]\n"; 
     return stm; 

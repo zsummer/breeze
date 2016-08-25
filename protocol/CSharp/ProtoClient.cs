@@ -469,6 +469,13 @@ namespace Proto4z
         } 
     } 
  
+    public enum ChatChannelEnum : ushort 
+    { 
+        CC_WORLD = 0,  
+        CC_PRIVATE = 1,  
+        CC_SYSTEM = 2,  
+    }; 
+ 
     public class ChatReq: Proto4z.IProtoObject 
     {     
         //proto id   
@@ -476,28 +483,33 @@ namespace Proto4z
         static public ushort getProtoID() { return 40014; } 
         static public string getProtoName() { return "ChatReq"; } 
         //members   
-        public ulong avatarID;  
+        public ushort channelID;  
+        public ulong targetID;  
         public string msg;  
         public ChatReq()  
         { 
-            avatarID = 0;  
+            channelID = 0;  
+            targetID = 0;  
             msg = "";  
         } 
-        public ChatReq(ulong avatarID, string msg) 
+        public ChatReq(ushort channelID, ulong targetID, string msg) 
         { 
-            this.avatarID = avatarID; 
+            this.channelID = channelID; 
+            this.targetID = targetID; 
             this.msg = msg; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.channelID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.targetID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.channelID = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.targetID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
@@ -510,28 +522,48 @@ namespace Proto4z
         static public ushort getProtoID() { return 40015; } 
         static public string getProtoName() { return "ChatResp"; } 
         //members   
-        public ulong fromAvatarID;  
+        public ushort channelID;  
+        public ulong sourceID;  
+        public string sourceName;  
+        public ulong targetID;  
+        public string targetName;  
         public string msg;  
         public ChatResp()  
         { 
-            fromAvatarID = 0;  
+            channelID = 0;  
+            sourceID = 0;  
+            sourceName = "";  
+            targetID = 0;  
+            targetName = "";  
             msg = "";  
         } 
-        public ChatResp(ulong fromAvatarID, string msg) 
+        public ChatResp(ushort channelID, ulong sourceID, string sourceName, ulong targetID, string targetName, string msg) 
         { 
-            this.fromAvatarID = fromAvatarID; 
+            this.channelID = channelID; 
+            this.sourceID = sourceID; 
+            this.sourceName = sourceName; 
+            this.targetID = targetID; 
+            this.targetName = targetName; 
             this.msg = msg; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.fromAvatarID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.channelID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sourceID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.sourceName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.targetID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.targetName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.msg)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.fromAvatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.channelID = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sourceID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sourceName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.targetID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.targetName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.msg = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 

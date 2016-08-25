@@ -140,21 +140,22 @@ void WebService::getonline(DockerID dockerID, SessionID clientID, const std::vec
 void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
 {
     ChatReq req;
+    req.channelID = CC_PRIVATE;
     for (auto & pm : params)
     {
         if (pm.first == "serviceID")
         {
-            req.avatarID = fromString<ui64>(pm.second, InvalidServiceID);
+            req.targetID = fromString<ui64>(pm.second, InvalidServiceID);
         }
         if (pm.first == "msg")
         {
             req.msg = pm.second;
         }
     }
-    if (req.avatarID != InvalidServiceID)
+    if (req.targetID != InvalidServiceID)
     {
         AvatarOffline offline;
-        offline.avatarID = req.avatarID;
+        offline.avatarID = req.targetID;
         offline.status = 0;
         offline.timestamp = getNowTime();
         WriteStream ws(ChatReq::getProtoID());
