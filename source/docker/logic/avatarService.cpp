@@ -34,6 +34,20 @@ void AvatarService::onClientChange()
         AttachAvatarResp resp(EC_SUCCESS, getServiceID());
         toDocker(getClientDockerID(), resp);
     }
+    if (getClientSessionID() == InvalidSessionID)
+    {
+        do
+        {
+            ChatResp resp;
+            resp.channelID = CC_SYSTEM;
+            resp.msg = "player <color=blue>[" + toString(getServiceName()) + "]</color> is offline. now online client["
+                + toString(Docker::getRef().peekService(STAvatar).size()) + "].";
+            for (auto kv : Docker::getRef().peekService(STAvatar))
+            {
+                toService(STClient, kv.second->getServiceID(), resp);
+            }
+        } while (false);
+    }
 }
 
 bool AvatarService::onLoad()

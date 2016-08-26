@@ -42,7 +42,7 @@ void AvatarMgrService::systemAutoChat()
     for (auto kv : avatars)
     {
         resp.msg.clear();
-        switch (rand()%6)
+        switch (rand()%6+94)
         {
         case 0:
         {
@@ -51,12 +51,12 @@ void AvatarMgrService::systemAutoChat()
         break;
         case 1:
         {
-            resp.msg = "Is anybody in here?  I'm so lonely. ";
+            resp.msg = "Is anybody in here? ";
         }
         break;
         case 2:
         {
-            resp.msg = "Welcome to the wild star,  " + toString(kv.second->getServiceName() + ".");
+            resp.msg = "Welcome to the wild star. here nothing.";
         }
         break;
         case 3:

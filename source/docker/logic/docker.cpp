@@ -903,7 +903,8 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
 
             ChatResp resp;
             resp.channelID = CC_SYSTEM;
-            resp.msg = "player <color=blue>[" + toString(onlineAvatar->getServiceName()) + "]</color> is online.";
+            resp.msg = "player <color=blue>[" + toString(onlineAvatar->getServiceName()) + "]</color> is online.  online client["
+                + toString(Docker::getRef().peekService(STAvatar).size()) + "].";
             for (auto kv : peekService(STAvatar))
             {
                 trace.routing.toServiceID = kv.second->getServiceID();
@@ -1092,34 +1093,6 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
     }
     else
     {
-        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
-        {
-            do
-            {
-                auto onlineAvatar = peekService(STAvatar, session->getUserParamNumber(UPARAM_AVATAR_ID));
-                if (!onlineAvatar)
-                {
-                    break;
-                }
-                Tracing trace;
-                trace.routing.fromServiceType = InvalidServiceType;
-                trace.routing.fromServiceID = InvalidServiceID;
-                trace.routing.traceBackID = 0;
-                trace.routing.traceID = 0;
-                trace.routing.toServiceType = STClient;
-
-
-                ChatResp resp;
-                resp.channelID = CC_SYSTEM;
-                resp.msg = "player <color=blue>[" + toString(onlineAvatar->getServiceName()) + "]</color> is offline.";
-                for (auto kv : peekService(STAvatar))
-                {
-                    trace.routing.toServiceID = kv.second->getServiceID();
-                    toService(trace, resp);
-                }
-            } while (false);
-        }
-
         if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
         {
             Tracing trace;
