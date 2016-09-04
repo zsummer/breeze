@@ -39,7 +39,8 @@
     </packet>
      <packet name="AttachAvatarResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="avatarID" type="ui64"   desc=""/>
+        <member name="baseInfo" type="AvatarBaseInfo"   desc=""/>
+        <member name="props" type="AvatarPropMap"   desc=""/>
     </packet>
 
 
@@ -100,8 +101,20 @@
         <member name="msg" type="string"   desc=""/>
     </packet>
 
-
-
+    <packet name="ChangeIconIDReq" desc= "">
+        <member name="iconID" type="i16"   desc=""/>
+    </packet>
+     <packet name="ChangeIconIDResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="iconID" type="i16"   desc=""/>
+    </packet>
+    <packet name="ChangeModeIDReq" desc= "">
+        <member name="modeID" type="i16"   desc=""/>
+    </packet>
+     <packet name="ChangeModeIDResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+        <member name="modeID" type="i16"   desc=""/>
+    </packet>
 
 </Proto>
 

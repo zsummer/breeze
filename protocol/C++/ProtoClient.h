@@ -227,35 +227,39 @@ struct AttachAvatarResp //选角色请求返回
     static const unsigned short getProtoID() { return 40006;} 
     static const std::string getProtoName() { return "AttachAvatarResp";} 
     unsigned short retCode;  
-    unsigned long long avatarID;  
+    AvatarBaseInfo baseInfo;  
+    AvatarPropMap props;  
     AttachAvatarResp() 
     { 
         retCode = 0; 
-        avatarID = 0; 
     } 
-    AttachAvatarResp(const unsigned short & retCode, const unsigned long long & avatarID) 
+    AttachAvatarResp(const unsigned short & retCode, const AvatarBaseInfo & baseInfo, const AvatarPropMap & props) 
     { 
         this->retCode = retCode; 
-        this->avatarID = avatarID; 
+        this->baseInfo = baseInfo; 
+        this->props = props; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachAvatarResp & data) 
 { 
     ws << data.retCode;  
-    ws << data.avatarID;  
+    ws << data.baseInfo;  
+    ws << data.props;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachAvatarResp & data) 
 { 
     rs >> data.retCode;  
-    rs >> data.avatarID;  
+    rs >> data.baseInfo;  
+    rs >> data.props;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachAvatarResp & info) 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 
-    stm << "avatarID=" << info.avatarID << "\n"; 
+    stm << "baseInfo=" << info.baseInfo << "\n"; 
+    stm << "props=" << info.props << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -658,6 +662,146 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "msg=" << info.msg << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct ChangeIconIDReq 
+{ 
+    static const unsigned short getProtoID() { return 40018;} 
+    static const std::string getProtoName() { return "ChangeIconIDReq";} 
+    short iconID;  
+    ChangeIconIDReq() 
+    { 
+        iconID = 0; 
+    } 
+    ChangeIconIDReq(const short & iconID) 
+    { 
+        this->iconID = iconID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChangeIconIDReq & data) 
+{ 
+    ws << data.iconID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChangeIconIDReq & data) 
+{ 
+    rs >> data.iconID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChangeIconIDReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "iconID=" << info.iconID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct ChangeIconIDResp 
+{ 
+    static const unsigned short getProtoID() { return 40019;} 
+    static const std::string getProtoName() { return "ChangeIconIDResp";} 
+    unsigned short retCode;  
+    short iconID;  
+    ChangeIconIDResp() 
+    { 
+        retCode = 0; 
+        iconID = 0; 
+    } 
+    ChangeIconIDResp(const unsigned short & retCode, const short & iconID) 
+    { 
+        this->retCode = retCode; 
+        this->iconID = iconID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChangeIconIDResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.iconID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChangeIconIDResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.iconID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChangeIconIDResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "iconID=" << info.iconID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct ChangeModeIDReq 
+{ 
+    static const unsigned short getProtoID() { return 40020;} 
+    static const std::string getProtoName() { return "ChangeModeIDReq";} 
+    short modeID;  
+    ChangeModeIDReq() 
+    { 
+        modeID = 0; 
+    } 
+    ChangeModeIDReq(const short & modeID) 
+    { 
+        this->modeID = modeID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChangeModeIDReq & data) 
+{ 
+    ws << data.modeID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChangeModeIDReq & data) 
+{ 
+    rs >> data.modeID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChangeModeIDReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "modeID=" << info.modeID << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct ChangeModeIDResp 
+{ 
+    static const unsigned short getProtoID() { return 40021;} 
+    static const std::string getProtoName() { return "ChangeModeIDResp";} 
+    unsigned short retCode;  
+    short modeID;  
+    ChangeModeIDResp() 
+    { 
+        retCode = 0; 
+        modeID = 0; 
+    } 
+    ChangeModeIDResp(const unsigned short & retCode, const short & modeID) 
+    { 
+        this->retCode = retCode; 
+        this->modeID = modeID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ChangeModeIDResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.modeID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ChangeModeIDResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.modeID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ChangeModeIDResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "modeID=" << info.modeID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

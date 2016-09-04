@@ -70,7 +70,8 @@
         <member name="avatarID" type="ui64"  tag="key" desc="用户唯一ID, 对应AvatarService的ServiceID"/>
         <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
-        <member name="iconID"  type="i16" desc="头像"/>
+        <member name="iconID"  type="i32" desc="头像"/>
+        <member name="modeID"  type="i32" desc="模型"/>
         <member name="level"  type="i32" desc="等级"/>
     </packet>
     <array name="AvatarPreviewArray" type="AvatarPreview" desc="" />
@@ -82,8 +83,18 @@
         <member name="avatarID" type="ui64"  tag="key" desc="用户唯一ID, 对应AvatarService的ServiceID"/>
         <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
-        <member name="iconID"  type="i16" desc="头像"/>
+        <member name="iconID"  type="i32" desc="头像"/>
+        <member name="modeID"  type="i32" desc="模型"/>
         <member name="level"  type="i32" desc="等级"/>
+        <member name="exp"  type="double" desc="经验"/>
+        <member name="gold"  type="double" desc="金币"/>
+        <member name="diamond"  type="double" desc="钻石"/>
+        <member name="createTime"  type="ui64" desc="角色创建时间"/>
+    </packet>
+    <array name="AvatarBaseInfoArray" type="AvatarBaseInfo" desc="" />
+
+    <!------------- 用户数值属性信息 ---------------------->
+<!--        <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="hp" type="double"   desc="血量值"/>
         <member name="hpRegen" type="double"   desc="每秒血量值恢复"/>
         <member name="attack" type="double"   desc="伤害"/>
@@ -92,9 +103,12 @@
         <member name="toughness" type="double"   desc="韧性"/>
         <member name="moveSpeed" type="double"   desc="移动速度"/>
         <member name="attackSpeed" type="double"   desc="攻击速度"/>
-        <member name="vampirk " type="double"   desc="吸血"/>
-    </packet>
-    <array name="AvatarBaseInfoArray" type="AvatarBaseInfo" desc="" />
+        <member name="vampirk " type="double"   desc="吸血"/> -->
+
+    <map name="AvatarPropMap" key="string" value="double" desc="" />
+
+
+
 
 
     <!------------- 全局配置 ---------------------->

@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>e6a610d04bfb6737585dc0d668a7adb8</cppmd5> 
-<luamd5>fe6983d4df501c57bb20b5e7c1695086</luamd5> 
-<csharpmd5>308d0c5c7d0c6f1120c6e84c48ca3758</csharpmd5> 
-<xmlmd5>fa052585dd4bad8eed41427fb4ce94af</xmlmd5> 
+<cppmd5>3f1cd4d4745210cc758e749326679ccf</cppmd5> 
+<luamd5>68b285f61bac6ccd9d5bc80c83b795b9</luamd5> 
+<csharpmd5>de399c44ec3666434f4227c5eef10569</csharpmd5> 
+<xmlmd5>c2244fec8173308cddd77861255bf849</xmlmd5> 
 <cacheNumber>
     <cache key = "AttachAvatarReq" Number = "40005" /> 
     <cache key = "AttachAvatarResp" Number = "40006" /> 
+    <cache key = "ChangeIconIDReq" Number = "40018" /> 
+    <cache key = "ChangeIconIDResp" Number = "40019" /> 
+    <cache key = "ChangeModeIDReq" Number = "40020" /> 
+    <cache key = "ChangeModeIDResp" Number = "40021" /> 
     <cache key = "ChatReq" Number = "40014" /> 
     <cache key = "ChatResp" Number = "40015" /> 
     <cache key = "ClientAuthReq" Number = "40001" /> 

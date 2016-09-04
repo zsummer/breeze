@@ -71,7 +71,7 @@ EntityPtr Scene::makeNewEntity(const AvatarBaseInfo & base)
     entity->_report.eid = entity->_info.eid;
     entity->_control.stateChageTick = getFloatNowTime();
     entity->_info.color = ECOLOR_NONE;
-    entity->_info.curHP = entity->_base.hp;
+    entity->_info.curHP = 100;
     entity->_info.moveAction = MACTION_IDLE;
     entity->_info.pos = entity->_control.spawnpoint;
     entity->_info.state = ESTATE_NONE;
