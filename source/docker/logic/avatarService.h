@@ -40,12 +40,21 @@ public:
     void onUnload() override final;
     void onClientChange() override final;
     void onTick(TimerID tID, ui32 count, ui32 repeat) override final; //只有client在线时候才会被调用, 间隔为session pulse的间隔. 精度为分钟.  
+
+
+public:
+	void refreshProp(const std::string &prop, double val, bool overwrite = true);
+	double getProp(const std::string &prop);
+	inline const AvatarPropMap& getProps() { return _props; };
+
 private:
     void onModuleLoad(bool success, const std::string & moduleName);
     void onModuleUnload(bool success, const std::string & moduleName);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+	void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+	void onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+	void onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
     void onGetSceneTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onJoinSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
@@ -59,6 +68,7 @@ private:
     int _curUnloadModuleCount = 0;
     int _totalModuleCount = 1;
     ModuleData<AvatarBaseInfo> _baseInfo;
+	AvatarPropMap _props;
 private:
     double _lastChatTime = getFloatNowTime();
 };

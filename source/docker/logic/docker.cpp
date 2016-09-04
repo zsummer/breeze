@@ -882,13 +882,13 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
         if (resp.retCode == EC_SUCCESS)
         {
             clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
-            clientSession->setUserParam(UPARAM_AVATAR_ID, resp.avatarID);
+            clientSession->setUserParam(UPARAM_AVATAR_ID, resp.baseInfo.avatarID);
             clientSession->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
         }
         sendViaSessionID(trace.oob.clientSessionID, rs.getStream(), rs.getStreamLen());
         do
         {
-            auto onlineAvatar = peekService(STAvatar, resp.avatarID);
+            auto onlineAvatar = peekService(STAvatar, resp.baseInfo.avatarID);
             if (!onlineAvatar)
             {
                 break;

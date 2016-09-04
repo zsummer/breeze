@@ -56,8 +56,9 @@ Proto4z.AvatarPreview.__protoName = "AvatarPreview"
 Proto4z.AvatarPreview[1] = {name="avatarID", type="ui64" } --用户唯一ID, 对应AvatarService的ServiceID 
 Proto4z.AvatarPreview[2] = {name="userName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
 Proto4z.AvatarPreview[3] = {name="account", type="string" } --帐号 
-Proto4z.AvatarPreview[4] = {name="iconID", type="i16" } --头像 
-Proto4z.AvatarPreview[5] = {name="level", type="i32" } --等级 
+Proto4z.AvatarPreview[4] = {name="iconID", type="i32" } --头像 
+Proto4z.AvatarPreview[5] = {name="modeID", type="i32" } --模型 
+Proto4z.AvatarPreview[6] = {name="level", type="i32" } --等级 
  
 Proto4z.AvatarPreviewArray = {}  
 Proto4z.AvatarPreviewArray.__protoName = "AvatarPreviewArray" 
@@ -71,22 +72,24 @@ Proto4z.AvatarBaseInfo.__protoName = "AvatarBaseInfo"
 Proto4z.AvatarBaseInfo[1] = {name="avatarID", type="ui64" } --用户唯一ID, 对应AvatarService的ServiceID 
 Proto4z.AvatarBaseInfo[2] = {name="userName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
 Proto4z.AvatarBaseInfo[3] = {name="account", type="string" } --帐号 
-Proto4z.AvatarBaseInfo[4] = {name="iconID", type="i16" } --头像 
-Proto4z.AvatarBaseInfo[5] = {name="level", type="i32" } --等级 
-Proto4z.AvatarBaseInfo[6] = {name="hp", type="double" } --血量值 
-Proto4z.AvatarBaseInfo[7] = {name="hpRegen", type="double" } --每秒血量值恢复 
-Proto4z.AvatarBaseInfo[8] = {name="attack", type="double" } --伤害 
-Proto4z.AvatarBaseInfo[9] = {name="defense", type="double" } --防御 
-Proto4z.AvatarBaseInfo[10] = {name="crit", type="double" } --暴击 
-Proto4z.AvatarBaseInfo[11] = {name="toughness", type="double" } --韧性 
-Proto4z.AvatarBaseInfo[12] = {name="moveSpeed", type="double" } --移动速度 
-Proto4z.AvatarBaseInfo[13] = {name="attackSpeed", type="double" } --攻击速度 
-Proto4z.AvatarBaseInfo[14] = {name="vampirk", type="double" } --吸血 
+Proto4z.AvatarBaseInfo[4] = {name="iconID", type="i32" } --头像 
+Proto4z.AvatarBaseInfo[5] = {name="modeID", type="i32" } --模型 
+Proto4z.AvatarBaseInfo[6] = {name="level", type="i32" } --等级 
+Proto4z.AvatarBaseInfo[7] = {name="exp", type="double" } --经验 
+Proto4z.AvatarBaseInfo[8] = {name="gold", type="double" } --金币 
+Proto4z.AvatarBaseInfo[9] = {name="diamond", type="double" } --钻石 
+Proto4z.AvatarBaseInfo[10] = {name="createTime", type="ui64" } --角色创建时间 
  
 Proto4z.AvatarBaseInfoArray = {}  
 Proto4z.AvatarBaseInfoArray.__protoName = "AvatarBaseInfoArray" 
 Proto4z.AvatarBaseInfoArray.__protoDesc = "array" 
 Proto4z.AvatarBaseInfoArray.__protoTypeV = "AvatarBaseInfo" 
+ 
+Proto4z.AvatarPropMap = {}  
+Proto4z.AvatarPropMap.__protoName = "AvatarPropMap" 
+Proto4z.AvatarPropMap.__protoDesc = "map" 
+Proto4z.AvatarPropMap.__protoTypeK = "string" 
+Proto4z.AvatarPropMap.__protoTypeV = "double" 
  
 Proto4z.register(1005,"DictGlobal") 
 Proto4z.DictGlobal = {} --全局配置 

@@ -194,7 +194,8 @@ namespace Proto4z
         public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
         public string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
         public string account; //帐号  
-        public short iconID; //头像  
+        public int iconID; //头像  
+        public int modeID; //模型  
         public int level; //等级  
         public AvatarPreview()  
         { 
@@ -202,14 +203,16 @@ namespace Proto4z
             userName = "";  
             account = "";  
             iconID = 0;  
+            modeID = 0;  
             level = 0;  
         } 
-        public AvatarPreview(ulong avatarID, string userName, string account, short iconID, int level) 
+        public AvatarPreview(ulong avatarID, string userName, string account, int iconID, int modeID, int level) 
         { 
             this.avatarID = avatarID; 
             this.userName = userName; 
             this.account = account; 
             this.iconID = iconID; 
+            this.modeID = modeID; 
             this.level = level; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -218,7 +221,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.modeID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
             return data; 
         } 
@@ -227,7 +231,8 @@ namespace Proto4z
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            this.modeID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             return pos; 
         } 
@@ -274,50 +279,38 @@ namespace Proto4z
         public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
         public string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
         public string account; //帐号  
-        public short iconID; //头像  
+        public int iconID; //头像  
+        public int modeID; //模型  
         public int level; //等级  
-        public double hp; //血量值  
-        public double hpRegen; //每秒血量值恢复  
-        public double attack; //伤害  
-        public double defense; //防御  
-        public double crit; //暴击  
-        public double toughness; //韧性  
-        public double moveSpeed; //移动速度  
-        public double attackSpeed; //攻击速度  
-        public double vampirk; //吸血  
+        public double exp; //经验  
+        public double gold; //金币  
+        public double diamond; //钻石  
+        public ulong createTime; //角色创建时间  
         public AvatarBaseInfo()  
         { 
             avatarID = 0;  
             userName = "";  
             account = "";  
             iconID = 0;  
+            modeID = 0;  
             level = 0;  
-            hp = 0.0;  
-            hpRegen = 0.0;  
-            attack = 0.0;  
-            defense = 0.0;  
-            crit = 0.0;  
-            toughness = 0.0;  
-            moveSpeed = 0.0;  
-            attackSpeed = 0.0;  
-            vampirk = 0.0;  
+            exp = 0.0;  
+            gold = 0.0;  
+            diamond = 0.0;  
+            createTime = 0;  
         } 
-        public AvatarBaseInfo(ulong avatarID, string userName, string account, short iconID, int level, double hp, double hpRegen, double attack, double defense, double crit, double toughness, double moveSpeed, double attackSpeed, double vampirk) 
+        public AvatarBaseInfo(ulong avatarID, string userName, string account, int iconID, int modeID, int level, double exp, double gold, double diamond, ulong createTime) 
         { 
             this.avatarID = avatarID; 
             this.userName = userName; 
             this.account = account; 
             this.iconID = iconID; 
+            this.modeID = modeID; 
             this.level = level; 
-            this.hp = hp; 
-            this.hpRegen = hpRegen; 
-            this.attack = attack; 
-            this.defense = defense; 
-            this.crit = crit; 
-            this.toughness = toughness; 
-            this.moveSpeed = moveSpeed; 
-            this.attackSpeed = attackSpeed; 
-            this.vampirk = vampirk; 
+            this.exp = exp; 
+            this.gold = gold; 
+            this.diamond = diamond; 
+            this.createTime = createTime; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -325,17 +318,13 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.modeID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hpRegen)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.attack)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.defense)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.crit)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.toughness)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.moveSpeed)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.attackSpeed)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.vampirk)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.exp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.gold)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.diamond)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.createTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -343,17 +332,13 @@ namespace Proto4z
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            this.modeID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.hp = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.hpRegen = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.attack = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.defense = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.crit = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.toughness = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.moveSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.attackSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.vampirk = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.exp = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.gold = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.diamond = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.createTime = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -383,6 +368,38 @@ namespace Proto4z
                     var data = new AvatarBaseInfo(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class AvatarPropMap : System.Collections.Generic.Dictionary<string, double>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            foreach(var kv in this) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeString(kv.Key)); 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeDouble(kv.Value)); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var key = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+                    var val = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+                    this.Add(key, val); 
                 } 
             } 
             return pos; 

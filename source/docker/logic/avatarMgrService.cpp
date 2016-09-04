@@ -383,7 +383,7 @@ void AvatarMgrService::onCreateAvatarReqFromDB(zsummer::proto4z::ReadStream & rs
     }
     if (resp.retCode == EC_SUCCESS)
     {
-        AvatarPreview up(ubi.avatarID, ubi.userName, ubi.account, ubi.iconID, ubi.level);
+        AvatarPreview up(ubi.avatarID, ubi.userName, ubi.account, ubi.iconID, ubi.modeID, ubi.level);
         updateAvatarPreview(up);
         for (const auto & kv : _accountStatus[ubi.account]._players)
         {
@@ -398,7 +398,6 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
     AttachAvatarReq req;
     rs >> req;
     AttachAvatarResp resp;
-    resp.avatarID = req.avatarID;
     resp.retCode = EC_SUCCESS;
 
     auto founder = _userStatusByID.find(req.avatarID);

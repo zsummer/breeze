@@ -5,7 +5,9 @@
 AvatarService::AvatarService()
 {
     slotting<ChatReq>(std::bind(&AvatarService::onChatReq, this, _1, _2));
-    slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
+	slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
+	slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
+	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
 
     slotting<GetSceneTokenInfoReq>(std::bind(&AvatarService::onGetSceneTokenInfoReq, this, _1, _2));
     slotting<JoinSceneReq>(std::bind(&AvatarService::onJoinSceneReq, this, _1, _2));
@@ -31,7 +33,7 @@ void AvatarService::onClientChange()
 {
     if (getClientDockerID() != InvalidDockerID && getClientSessionID() != InvalidSessionID)
     {
-        AttachAvatarResp resp(EC_SUCCESS, getServiceID());
+        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _props);
         toDocker(getClientDockerID(), resp);
     }
     if (getClientSessionID() == InvalidSessionID)
@@ -78,8 +80,21 @@ void AvatarService::onModuleLoad(bool success, const std::string & moduleName)
     }
     if (_curLoadModuleCount == _totalModuleCount)
     {
+		//process prop
+		if (_baseInfo._data.level > 0)
+		{
+			refreshProp("hp", 1000);
+			refreshProp("hpRegen", 1);
+			refreshProp("attack", 100);
+			refreshProp("defense", 0.2);
+			refreshProp("crit", 0.1);
+			refreshProp("toughness", 0.1);
+			refreshProp("moveSpeed", 7);
+			refreshProp("attackSpeed", 1);
+			refreshProp("vampirk", 0.2);
+		}
         finishLoad();
-        AttachAvatarResp resp(EC_SUCCESS, getServiceID());
+        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _props);
         toDocker(getClientDockerID(), resp);
     }
     return ;
@@ -110,8 +125,6 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     ChatReq req;
     rs >> req;
     LOGI("onChatReq" << req );
-    _baseInfo._data.level++;
-    _baseInfo.writeToDB();
 
     ChatResp resp;
     resp.sourceID = getServiceID();
@@ -189,7 +202,24 @@ void AvatarService::onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadS
         LOGA("onPingPongReq " << *this << " count=" << testCount);
     }
 }
-
+void AvatarService::onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+	ChangeIconIDReq req;
+	rs >> req;
+	_baseInfo._data.iconID = req.iconID;
+	_baseInfo.writeToDB();
+	ChangeIconIDResp resp(EC_SUCCESS, req.iconID);
+	toService(STClient, getServiceID(), resp);
+}
+void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+	ChangeModeIDReq req;
+	rs >> req;
+	_baseInfo._data.modeID = req.modeID;
+	_baseInfo.writeToDB();
+	ChangeModeIDResp resp(EC_SUCCESS, req.modeID);
+	toService(STClient, getServiceID(), resp);
+}
 
 
 
@@ -224,6 +254,35 @@ void AvatarService::onLeaveSceneReq(const Tracing & trace, zsummer::proto4z::Rea
     }
     toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
 }
+
+
+
+void AvatarService::refreshProp(const std::string &prop, double val, bool overwrite)
+{
+	auto fouder = _props.find(prop);
+	if (fouder == _props.end())
+	{
+		_props.insert(std::make_pair(prop, val));
+		return;
+	}
+	if (overwrite)
+	{
+		fouder->second = val;
+		return;
+	}
+	fouder->second += val;
+}
+double AvatarService::getProp(const std::string &prop)
+{
+	auto fouder = _props.find(prop);
+	if (fouder == _props.end())
+	{
+		return 0.0;
+	}
+	return fouder->second;
+}
+
+
 
 
 

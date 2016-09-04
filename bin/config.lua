@@ -14,20 +14,18 @@ config.db =
 config.docker = 
 {
     {
-        dockerListenHost="0.0.0.0",
+        dockerListenHost="::",
         dockerPubHost="127.0.0.1",
         dockerListenPort=16000,
-        dockerWhite={"192.168.", "127.0."},
         clientPubHost="127.0.0.1",
         clientPubPort=26000,
         services={"STLogDBMgr", "STAvatarMgr", "STAvatar", "STInfoDBMgr"},
         dockerID = 1,
     },
     {
-        dockerListenHost="0.0.0.0",
+        dockerListenHost="::",
         dockerPubHost="127.0.0.1",
         dockerListenPort=16001,
-        dockerWhite={"192.168.", "127.0."},
         clientPubHost="127.0.0.1",
         clientPubPort=26001,
         webPubHost="127.0.0.1",
@@ -37,7 +35,7 @@ config.docker =
     },
 --[[
     {
-        dockerListenHost="0.0.0.0",
+        dockerListenHost="::",
         dockerPubHost="127.0.0.1",
         dockerListenPort=17001,
         dockerWhite={"192.168.", "127.0."},
@@ -51,9 +49,9 @@ config.docker =
 
 config.world = 
 {
-    dockerListenHost="0.0.0.0",
+    dockerListenHost="::",
     dockerListenPort=17001,
-    sceneListenHost="0.0.0.0",
+    sceneListenHost="::",
     scenePubHost="127.0.0.1",
     sceneListenPort=17002,
 }
@@ -64,19 +62,19 @@ config.world =
 config.scenes = 
 {
     {
-        clientListenHost="0.0.0.0",
+        clientListenHost="::",
         clientPubHost="127.0.0.1",
         clientListenPort=17102,
         sceneID = 1,
     },
     {
-        clientListenHost="0.0.0.0",
+        clientListenHost="::",
         clientPubHost="127.0.0.1",
         clientListenPort=17102,
         sceneID = 2,
     },
     {
-        clientListenHost="0.0.0.0",
+        clientListenHost="::",
         clientPubHost="127.0.0.1",
         clientListenPort=17102,
         sceneID = 3,

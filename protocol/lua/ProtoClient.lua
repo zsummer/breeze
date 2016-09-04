@@ -47,7 +47,8 @@ Proto4z.AttachAvatarResp = {} --选角色请求返回
 Proto4z.AttachAvatarResp.__protoID = 40006 
 Proto4z.AttachAvatarResp.__protoName = "AttachAvatarResp" 
 Proto4z.AttachAvatarResp[1] = {name="retCode", type="ui16" }  
-Proto4z.AttachAvatarResp[2] = {name="avatarID", type="ui64" }  
+Proto4z.AttachAvatarResp[2] = {name="baseInfo", type="AvatarBaseInfo" }  
+Proto4z.AttachAvatarResp[3] = {name="props", type="AvatarPropMap" }  
  
 Proto4z.register(40007,"GetSceneTokenInfoReq") 
 Proto4z.GetSceneTokenInfoReq = {}  
@@ -125,3 +126,29 @@ Proto4z.PingPongResp = {}
 Proto4z.PingPongResp.__protoID = 40017 
 Proto4z.PingPongResp.__protoName = "PingPongResp" 
 Proto4z.PingPongResp[1] = {name="msg", type="string" }  
+ 
+Proto4z.register(40018,"ChangeIconIDReq") 
+Proto4z.ChangeIconIDReq = {}  
+Proto4z.ChangeIconIDReq.__protoID = 40018 
+Proto4z.ChangeIconIDReq.__protoName = "ChangeIconIDReq" 
+Proto4z.ChangeIconIDReq[1] = {name="iconID", type="i16" }  
+ 
+Proto4z.register(40019,"ChangeIconIDResp") 
+Proto4z.ChangeIconIDResp = {}  
+Proto4z.ChangeIconIDResp.__protoID = 40019 
+Proto4z.ChangeIconIDResp.__protoName = "ChangeIconIDResp" 
+Proto4z.ChangeIconIDResp[1] = {name="retCode", type="ui16" }  
+Proto4z.ChangeIconIDResp[2] = {name="iconID", type="i16" }  
+ 
+Proto4z.register(40020,"ChangeModeIDReq") 
+Proto4z.ChangeModeIDReq = {}  
+Proto4z.ChangeModeIDReq.__protoID = 40020 
+Proto4z.ChangeModeIDReq.__protoName = "ChangeModeIDReq" 
+Proto4z.ChangeModeIDReq[1] = {name="modeID", type="i16" }  
+ 
+Proto4z.register(40021,"ChangeModeIDResp") 
+Proto4z.ChangeModeIDResp = {}  
+Proto4z.ChangeModeIDResp.__protoID = 40021 
+Proto4z.ChangeModeIDResp.__protoName = "ChangeModeIDResp" 
+Proto4z.ChangeModeIDResp[1] = {name="retCode", type="ui16" }  
+Proto4z.ChangeModeIDResp[2] = {name="modeID", type="i16" }  
