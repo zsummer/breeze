@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>3f1cd4d4745210cc758e749326679ccf</cppmd5> 
-<luamd5>68b285f61bac6ccd9d5bc80c83b795b9</luamd5> 
-<csharpmd5>de399c44ec3666434f4227c5eef10569</csharpmd5> 
-<xmlmd5>c2244fec8173308cddd77861255bf849</xmlmd5> 
+<cppmd5>aa7e8bcab1f4c725fced63b67b3184c8</cppmd5> 
+<luamd5>80c98e434cfc7f8eaa08675f4171e1a6</luamd5> 
+<csharpmd5>f0e1e8e8dd9e0552dcc68b039a54c8a2</csharpmd5> 
+<xmlmd5>765aa092293875cde3e67bcc380a7808</xmlmd5> 
 <cacheNumber>
     <cache key = "AttachAvatarReq" Number = "40005" /> 
     <cache key = "AttachAvatarResp" Number = "40006" /> 
+    <cache key = "AvatarBaseInfoNotice" Number = "40022" /> 
+    <cache key = "AvatarPropMapNotice" Number = "40023" /> 
     <cache key = "ChangeIconIDReq" Number = "40018" /> 
     <cache key = "ChangeIconIDResp" Number = "40019" /> 
     <cache key = "ChangeModeIDReq" Number = "40020" /> 

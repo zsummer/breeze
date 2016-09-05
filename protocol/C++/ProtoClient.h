@@ -264,6 +264,74 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct AvatarBaseInfoNotice 
+{ 
+    static const unsigned short getProtoID() { return 40022;} 
+    static const std::string getProtoName() { return "AvatarBaseInfoNotice";} 
+    AvatarBaseInfo baseInfo;  
+    AvatarBaseInfoNotice() 
+    { 
+    } 
+    AvatarBaseInfoNotice(const AvatarBaseInfo & baseInfo) 
+    { 
+        this->baseInfo = baseInfo; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarBaseInfoNotice & data) 
+{ 
+    ws << data.baseInfo;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarBaseInfoNotice & data) 
+{ 
+    rs >> data.baseInfo;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarBaseInfoNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "baseInfo=" << info.baseInfo << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct AvatarPropMapNotice 
+{ 
+    static const unsigned short getProtoID() { return 40023;} 
+    static const std::string getProtoName() { return "AvatarPropMapNotice";} 
+    unsigned long long avatarID;  
+    AvatarPropMap props;  
+    AvatarPropMapNotice() 
+    { 
+        avatarID = 0; 
+    } 
+    AvatarPropMapNotice(const unsigned long long & avatarID, const AvatarPropMap & props) 
+    { 
+        this->avatarID = avatarID; 
+        this->props = props; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarPropMapNotice & data) 
+{ 
+    ws << data.avatarID;  
+    ws << data.props;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarPropMapNotice & data) 
+{ 
+    rs >> data.avatarID;  
+    rs >> data.props;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarPropMapNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "avatarID=" << info.avatarID << "\n"; 
+    stm << "props=" << info.props << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct GetSceneTokenInfoReq 
 { 
     static const unsigned short getProtoID() { return 40007;} 
@@ -670,12 +738,12 @@ struct ChangeIconIDReq
 { 
     static const unsigned short getProtoID() { return 40018;} 
     static const std::string getProtoName() { return "ChangeIconIDReq";} 
-    short iconID;  
+    int iconID;  
     ChangeIconIDReq() 
     { 
         iconID = 0; 
     } 
-    ChangeIconIDReq(const short & iconID) 
+    ChangeIconIDReq(const int & iconID) 
     { 
         this->iconID = iconID; 
     } 
@@ -703,13 +771,13 @@ struct ChangeIconIDResp
     static const unsigned short getProtoID() { return 40019;} 
     static const std::string getProtoName() { return "ChangeIconIDResp";} 
     unsigned short retCode;  
-    short iconID;  
+    int iconID;  
     ChangeIconIDResp() 
     { 
         retCode = 0; 
         iconID = 0; 
     } 
-    ChangeIconIDResp(const unsigned short & retCode, const short & iconID) 
+    ChangeIconIDResp(const unsigned short & retCode, const int & iconID) 
     { 
         this->retCode = retCode; 
         this->iconID = iconID; 
@@ -740,12 +808,12 @@ struct ChangeModeIDReq
 { 
     static const unsigned short getProtoID() { return 40020;} 
     static const std::string getProtoName() { return "ChangeModeIDReq";} 
-    short modeID;  
+    int modeID;  
     ChangeModeIDReq() 
     { 
         modeID = 0; 
     } 
-    ChangeModeIDReq(const short & modeID) 
+    ChangeModeIDReq(const int & modeID) 
     { 
         this->modeID = modeID; 
     } 
@@ -773,13 +841,13 @@ struct ChangeModeIDResp
     static const unsigned short getProtoID() { return 40021;} 
     static const std::string getProtoName() { return "ChangeModeIDResp";} 
     unsigned short retCode;  
-    short modeID;  
+    int modeID;  
     ChangeModeIDResp() 
     { 
         retCode = 0; 
         modeID = 0; 
     } 
-    ChangeModeIDResp(const unsigned short & retCode, const short & modeID) 
+    ChangeModeIDResp(const unsigned short & retCode, const int & modeID) 
     { 
         this->retCode = retCode; 
         this->modeID = modeID; 

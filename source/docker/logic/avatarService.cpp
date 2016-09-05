@@ -208,8 +208,8 @@ void AvatarService::onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::R
 	rs >> req;
 	_baseInfo._data.iconID = req.iconID;
 	_baseInfo.writeToDB();
-	ChangeIconIDResp resp(EC_SUCCESS, req.iconID);
-	toService(STClient, getServiceID(), resp);
+    toService(STClient, getServiceID(), AvatarBaseInfoNotice(_baseInfo._data));
+	toService(STClient, getServiceID(), ChangeIconIDResp(EC_SUCCESS, req.iconID));
 }
 void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
@@ -217,8 +217,8 @@ void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::R
 	rs >> req;
 	_baseInfo._data.modeID = req.modeID;
 	_baseInfo.writeToDB();
-	ChangeModeIDResp resp(EC_SUCCESS, req.modeID);
-	toService(STClient, getServiceID(), resp);
+    toService(STClient, getServiceID(), AvatarBaseInfoNotice(_baseInfo._data));
+	toService(STClient, getServiceID(), ChangeModeIDResp(EC_SUCCESS, req.modeID));
 }
 
 

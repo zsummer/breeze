@@ -49,12 +49,16 @@ namespace Proto4z
             _idToName.Add(50001, "AttachSceneResp");
             _nameToID.Add("AvatarBaseInfo", 1004);
             _idToName.Add(1004, "AvatarBaseInfo");
+            _nameToID.Add("AvatarBaseInfoNotice", 40022);
+            _idToName.Add(40022, "AvatarBaseInfoNotice");
             _nameToID.Add("AvatarOffline", 2023);
             _idToName.Add(2023, "AvatarOffline");
             _nameToID.Add("AvatarPreview", 1003);
             _idToName.Add(1003, "AvatarPreview");
             _nameToID.Add("AvatarPropInfo", 1014);
             _idToName.Add(1014, "AvatarPropInfo");
+            _nameToID.Add("AvatarPropMapNotice", 40023);
+            _idToName.Add(40023, "AvatarPropMapNotice");
             _nameToID.Add("BuffData", 10005);
             _idToName.Add(10005, "BuffData");
             _nameToID.Add("BuffInfo", 10008);

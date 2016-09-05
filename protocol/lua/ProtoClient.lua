@@ -50,6 +50,19 @@ Proto4z.AttachAvatarResp[1] = {name="retCode", type="ui16" }
 Proto4z.AttachAvatarResp[2] = {name="baseInfo", type="AvatarBaseInfo" }  
 Proto4z.AttachAvatarResp[3] = {name="props", type="AvatarPropMap" }  
  
+Proto4z.register(40022,"AvatarBaseInfoNotice") 
+Proto4z.AvatarBaseInfoNotice = {}  
+Proto4z.AvatarBaseInfoNotice.__protoID = 40022 
+Proto4z.AvatarBaseInfoNotice.__protoName = "AvatarBaseInfoNotice" 
+Proto4z.AvatarBaseInfoNotice[1] = {name="baseInfo", type="AvatarBaseInfo" }  
+ 
+Proto4z.register(40023,"AvatarPropMapNotice") 
+Proto4z.AvatarPropMapNotice = {}  
+Proto4z.AvatarPropMapNotice.__protoID = 40023 
+Proto4z.AvatarPropMapNotice.__protoName = "AvatarPropMapNotice" 
+Proto4z.AvatarPropMapNotice[1] = {name="avatarID", type="ui64" }  
+Proto4z.AvatarPropMapNotice[2] = {name="props", type="AvatarPropMap" }  
+ 
 Proto4z.register(40007,"GetSceneTokenInfoReq") 
 Proto4z.GetSceneTokenInfoReq = {}  
 Proto4z.GetSceneTokenInfoReq.__protoID = 40007 
@@ -131,24 +144,24 @@ Proto4z.register(40018,"ChangeIconIDReq")
 Proto4z.ChangeIconIDReq = {}  
 Proto4z.ChangeIconIDReq.__protoID = 40018 
 Proto4z.ChangeIconIDReq.__protoName = "ChangeIconIDReq" 
-Proto4z.ChangeIconIDReq[1] = {name="iconID", type="i16" }  
+Proto4z.ChangeIconIDReq[1] = {name="iconID", type="i32" }  
  
 Proto4z.register(40019,"ChangeIconIDResp") 
 Proto4z.ChangeIconIDResp = {}  
 Proto4z.ChangeIconIDResp.__protoID = 40019 
 Proto4z.ChangeIconIDResp.__protoName = "ChangeIconIDResp" 
 Proto4z.ChangeIconIDResp[1] = {name="retCode", type="ui16" }  
-Proto4z.ChangeIconIDResp[2] = {name="iconID", type="i16" }  
+Proto4z.ChangeIconIDResp[2] = {name="iconID", type="i32" }  
  
 Proto4z.register(40020,"ChangeModeIDReq") 
 Proto4z.ChangeModeIDReq = {}  
 Proto4z.ChangeModeIDReq.__protoID = 40020 
 Proto4z.ChangeModeIDReq.__protoName = "ChangeModeIDReq" 
-Proto4z.ChangeModeIDReq[1] = {name="modeID", type="i16" }  
+Proto4z.ChangeModeIDReq[1] = {name="modeID", type="i32" }  
  
 Proto4z.register(40021,"ChangeModeIDResp") 
 Proto4z.ChangeModeIDResp = {}  
 Proto4z.ChangeModeIDResp.__protoID = 40021 
 Proto4z.ChangeModeIDResp.__protoName = "ChangeModeIDResp" 
 Proto4z.ChangeModeIDResp[1] = {name="retCode", type="ui16" }  
-Proto4z.ChangeModeIDResp[2] = {name="modeID", type="i16" }  
+Proto4z.ChangeModeIDResp[2] = {name="modeID", type="i32" }  

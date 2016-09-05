@@ -43,7 +43,13 @@
         <member name="props" type="AvatarPropMap"   desc=""/>
     </packet>
 
-
+     <packet name="AvatarBaseInfoNotice" desc= "">
+        <member name="baseInfo" type="AvatarBaseInfo"   desc=""/>
+    </packet>
+     <packet name="AvatarPropMapNotice" desc= "">
+        <member name="avatarID" type="ui64"  desc=""/>
+        <member name="props" type="AvatarPropMap"   desc=""/>
+    </packet>
  
 
 <!------------------------------------ battle --------------------------------------------->
@@ -102,18 +108,18 @@
     </packet>
 
     <packet name="ChangeIconIDReq" desc= "">
-        <member name="iconID" type="i16"   desc=""/>
+        <member name="iconID" type="i32"   desc=""/>
     </packet>
      <packet name="ChangeIconIDResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="iconID" type="i16"   desc=""/>
+        <member name="iconID" type="i32"   desc=""/>
     </packet>
     <packet name="ChangeModeIDReq" desc= "">
-        <member name="modeID" type="i16"   desc=""/>
+        <member name="modeID" type="i32"   desc=""/>
     </packet>
      <packet name="ChangeModeIDResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="modeID" type="i16"   desc=""/>
+        <member name="modeID" type="i32"   desc=""/>
     </packet>
 
 </Proto>

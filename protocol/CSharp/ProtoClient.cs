@@ -255,6 +255,73 @@ namespace Proto4z
         } 
     } 
  
+    public class AvatarBaseInfoNotice: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40022;  
+        static public ushort getProtoID() { return 40022; } 
+        static public string getProtoName() { return "AvatarBaseInfoNotice"; } 
+        //members   
+        public AvatarBaseInfo baseInfo;  
+        public AvatarBaseInfoNotice()  
+        { 
+            baseInfo = new AvatarBaseInfo();  
+        } 
+        public AvatarBaseInfoNotice(AvatarBaseInfo baseInfo) 
+        { 
+            this.baseInfo = baseInfo; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
+            data.AddRange(this.baseInfo.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.baseInfo = new AvatarBaseInfo(); 
+            this.baseInfo.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class AvatarPropMapNotice: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40023;  
+        static public ushort getProtoID() { return 40023; } 
+        static public string getProtoName() { return "AvatarPropMapNotice"; } 
+        //members   
+        public ulong avatarID;  
+        public AvatarPropMap props;  
+        public AvatarPropMapNotice()  
+        { 
+            avatarID = 0;  
+            props = new AvatarPropMap();  
+        } 
+        public AvatarPropMapNotice(ulong avatarID, AvatarPropMap props) 
+        { 
+            this.avatarID = avatarID; 
+            this.props = props; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            if (this.props == null) this.props = new AvatarPropMap(); 
+            data.AddRange(this.props.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.props = new AvatarPropMap(); 
+            this.props.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class GetSceneTokenInfoReq: Proto4z.IProtoObject 
     {     
         //proto id   
@@ -641,24 +708,24 @@ namespace Proto4z
         static public ushort getProtoID() { return 40018; } 
         static public string getProtoName() { return "ChangeIconIDReq"; } 
         //members   
-        public short iconID;  
+        public int iconID;  
         public ChangeIconIDReq()  
         { 
             iconID = 0;  
         } 
-        public ChangeIconIDReq(short iconID) 
+        public ChangeIconIDReq(int iconID) 
         { 
             this.iconID = iconID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -671,13 +738,13 @@ namespace Proto4z
         static public string getProtoName() { return "ChangeIconIDResp"; } 
         //members   
         public ushort retCode;  
-        public short iconID;  
+        public int iconID;  
         public ChangeIconIDResp()  
         { 
             retCode = 0;  
             iconID = 0;  
         } 
-        public ChangeIconIDResp(ushort retCode, short iconID) 
+        public ChangeIconIDResp(ushort retCode, int iconID) 
         { 
             this.retCode = retCode; 
             this.iconID = iconID; 
@@ -686,13 +753,13 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.iconID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -704,24 +771,24 @@ namespace Proto4z
         static public ushort getProtoID() { return 40020; } 
         static public string getProtoName() { return "ChangeModeIDReq"; } 
         //members   
-        public short modeID;  
+        public int modeID;  
         public ChangeModeIDReq()  
         { 
             modeID = 0;  
         } 
-        public ChangeModeIDReq(short modeID) 
+        public ChangeModeIDReq(int modeID) 
         { 
             this.modeID = modeID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.modeID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.modeID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.modeID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
+            this.modeID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -734,13 +801,13 @@ namespace Proto4z
         static public string getProtoName() { return "ChangeModeIDResp"; } 
         //members   
         public ushort retCode;  
-        public short modeID;  
+        public int modeID;  
         public ChangeModeIDResp()  
         { 
             retCode = 0;  
             modeID = 0;  
         } 
-        public ChangeModeIDResp(ushort retCode, short modeID) 
+        public ChangeModeIDResp(ushort retCode, int modeID) 
         { 
             this.retCode = retCode; 
             this.modeID = modeID; 
@@ -749,13 +816,13 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI16(this.modeID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.modeID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.modeID = Proto4z.BaseProtoObject.decodeI16(binData, ref pos); 
+            this.modeID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             return pos; 
         } 
     } 
