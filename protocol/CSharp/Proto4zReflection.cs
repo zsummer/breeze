@@ -105,6 +105,10 @@ namespace Proto4z
             _idToName.Add(1006, "DictRaffleAward");
             _nameToID.Add("DictRafflePool", 1007);
             _idToName.Add(1007, "DictRafflePool");
+            _nameToID.Add("DockerBeing", 2024);
+            _idToName.Add(2024, "DockerBeing");
+            _nameToID.Add("DockerKnock", 2025);
+            _idToName.Add(2025, "DockerKnock");
             _nameToID.Add("DockerPulse", 2001);
             _idToName.Add(2001, "DockerPulse");
             _nameToID.Add("EPoint", 10001);
@@ -171,6 +175,16 @@ namespace Proto4z
             _idToName.Add(50006, "RemoveEntityNotice");
             _nameToID.Add("Routing", 1000);
             _idToName.Add(1000, "Routing");
+            _nameToID.Add("SceneBeing", 39003);
+            _idToName.Add(39003, "SceneBeing");
+            _nameToID.Add("SceneClientPulse", 50007);
+            _idToName.Add(50007, "SceneClientPulse");
+            _nameToID.Add("SceneKnock", 39004);
+            _idToName.Add(39004, "SceneKnock");
+            _nameToID.Add("ScenePulse", 39005);
+            _idToName.Add(39005, "ScenePulse");
+            _nameToID.Add("SceneServerReg", 39002);
+            _idToName.Add(39002, "SceneServerReg");
             _nameToID.Add("SceneTokenInfo", 10000);
             _idToName.Add(10000, "SceneTokenInfo");
             _nameToID.Add("SearchInfo", 10002);

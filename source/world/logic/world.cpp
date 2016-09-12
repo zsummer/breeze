@@ -9,7 +9,7 @@
 
 World::World()
 {
-
+	_sceneBalances = new Balance<SceneID>[SCENE_TYPE_MAX];
 }
 
 bool World::init(const std::string & configName)
@@ -95,7 +95,7 @@ bool World::startDockerListen()
     auto &options = SessionManager::getRef().getAccepterOptions(_dockerListen);
 //    options._whitelistIP = wc._dockerListenHost;
     options._maxSessions = 1000;
-    options._sessionOptions._sessionPulseInterval = 5000;
+    options._sessionOptions._sessionPulseInterval = ServerPulseInterval;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
         DockerPulse pulse;
@@ -130,10 +130,16 @@ bool World::startSceneListen()
     }
     auto &options = SessionManager::getRef().getAccepterOptions(_sceneListen);
     options._maxSessions = 1000;
-    options._sessionOptions._sessionPulseInterval = 5000;
+    options._sessionOptions._sessionPulseInterval = ServerPulseInterval;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
-        DockerPulse pulse;
+		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0 / 1000.0)
+		{
+			LOGE("World check session last active timeout. diff=" << getFloatNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
+			session->close();
+			return;
+		}
+        ScenePulse pulse;
         WriteStream ws(pulse.getProtoID());
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
@@ -172,11 +178,10 @@ void World::event_onDockerLinked(TcpSessionPtr session)
     info.serviceName = "STWorldMgr";
     info.clientDockerID = InvalidDockerID;
     info.clientSessionID = InvalidSessionID;
-    info.status = SS_CREATED;
+    info.status = SS_WORKING;
     notice.shellServiceInfos.push_back(info);
     sendViaSessionID(session->getSessionID(), notice);
-    notice.shellServiceInfos.at(0).status = SS_WORKING;
-    sendViaSessionID(session->getSessionID(), notice);
+
     LOGI("event_onDockerLinked cID=" << session->getSessionID() );
 }
 
@@ -206,22 +211,22 @@ void World::event_onDockerClosed(TcpSessionPtr session)
 void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
     ReadStream rsShell(begin, len);
-    if (DockerPulse::getProtoID() != rsShell.getProtoID())
+    if (ScenePulse::getProtoID() != rsShell.getProtoID())
     {
         LOGT("event_onDockerMessage protoID=" << rsShell.getProtoID() << ", len=" << len);
     }
 
-    if (rsShell.getProtoID() == DockerPulse::getProtoID())
+    if (rsShell.getProtoID() == ScenePulse::getProtoID())
     {
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
-    else if (rsShell.getProtoID() == SelfBeingPulse::getProtoID())
+    else if (rsShell.getProtoID() == DockerKnock::getProtoID())
     {
-        SelfBeingPulse pulse;
-        rsShell >> pulse;
-        LOGA("SelfBeingPulse sessionID=" << session->getSessionID() << ", areaID=" << pulse.areaID << ",dockerID=" << pulse.dockerID);
-        session->setUserParam(UPARAM_AREA_ID, pulse.areaID);
+        DockerKnock knock;
+        rsShell >> knock;
+        LOGA("DockerKnock sessionID=" << session->getSessionID() << ", areaID=" << knock.areaID << ",dockerID=" << knock.dockerID);
+        session->setUserParam(UPARAM_AREA_ID, knock.areaID);
     }
     else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
     {
@@ -276,10 +281,10 @@ void World::event_onSceneLinked(TcpSessionPtr session)
 }
 void World::event_onScenePulse(TcpSessionPtr session)
 {
-    auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-    if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
+    auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+    if (getFloatSteadyNowTime() - last > session->getOptions()._sessionPulseInterval * 3)
     {
-        LOGW("client timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
+        LOGW("client timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
         session->close();
         return;
     }
@@ -294,10 +299,25 @@ void World::event_onSceneClosed(TcpSessionPtr session)
     }
     else
     {
-        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
-        {
+		while (session->getUserParamNumber(UPARAM_SCENE_ID) != InvalidSceneID)
+		{
+			auto founder = _scenes.find(session->getUserParamNumber(UPARAM_SCENE_ID));
+			if (founder == _scenes.end())
+			{
+				break;
+			}
+			auto knock = founder->second;
+			for (size_t i = SCENE_TYPE_NONE + 1; i < SCENE_TYPE_MAX; i++)
+			{
+				if (knock.supportSceneTypes.empty() ||
+					std::find_if(knock.supportSceneTypes.begin(), knock.supportSceneTypes.end(), [i](ui16 t) {return t == i; }) != knock.supportSceneTypes.end())
+				{
+					_sceneBalances[i].disableNode(knock.sceneID);
+				}
+			}
+			break;
+		}
 
-        }
     }
 }
 
@@ -310,11 +330,24 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
     {
 
     }
-    SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
- 
-    {
-        LOGE("client unknow proto or wrong status. protoID=" << rs.getProtoID() << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
-    }
+	else if (rs.getProtoID() == SceneKnock::getProtoID())
+	{
+		SceneKnock knock;
+		rs >> knock;
+		session->setUserParam(UPARAM_SCENE_ID, knock.sceneID);
+		_scenes[knock.sceneID] = knock;
+		for (size_t i = SCENE_TYPE_NONE + 1; i < SCENE_TYPE_MAX; i++)
+		{
+			if (knock.supportSceneTypes.empty() ||
+				std::find_if(knock.supportSceneTypes.begin(), knock.supportSceneTypes.end(), [i](ui16 t) {return t == i; }) != knock.supportSceneTypes.end())
+			{
+				_sceneBalances[i].enableNode(knock.sceneID);
+				_sceneBalances[i].cleanNode(knock.sceneID);
+			}
+		}
+		
+	}
+
 }
 
 

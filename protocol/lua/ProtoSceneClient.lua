@@ -1,4 +1,9 @@
  
+Proto4z.register(50007,"SceneClientPulse") 
+Proto4z.SceneClientPulse = {} --客户端脉冲请求 
+Proto4z.SceneClientPulse.__protoID = 50007 
+Proto4z.SceneClientPulse.__protoName = "SceneClientPulse" 
+ 
 Proto4z.register(50000,"AttachSceneReq") 
 Proto4z.AttachSceneReq = {}  
 Proto4z.AttachSceneReq.__protoID = 50000 

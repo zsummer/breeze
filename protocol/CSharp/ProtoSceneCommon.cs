@@ -6,9 +6,11 @@ namespace Proto4z
     { 
         SCENE_TYPE_NONE = 0, //无效  
         SCENE_TYPE_HOME = 1, //主城  
-        SCENE_TYPE_SOME_INSTANCING = 2, //一些副本  
-        SCENE_TYPE_ARENA = 3, //竞技场  
-        SCENE_TYPE_GUILD = 4, //公会  
+        SCENE_TYPE_ARENA = 2, //竞技场  
+        SCENE_TYPE_GUILD = 3, //公会  
+        SCENE_TYPE_MASTER_INSTANCING = 4, //主线副本  
+        SCENE_TYPE_BRANCH_INSTANCING = 5, //支线副本  
+        SCENE_TYPE_MAX = 6, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
     }; 
  
     public enum SCENE_STATUS : ushort 
@@ -28,9 +30,9 @@ namespace Proto4z
         static public ushort getProtoID() { return 10000; } 
         static public string getProtoName() { return "SceneTokenInfo"; } 
         //members   
-        public ushort sceneType; //类型  
+        public ushort sceneType; //场景类型  
         public uint mapID;  
-        public uint sceneID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
+        public uint sceneID; //场景实例ID  
         public ushort sceneStatus; //状态  
         public string host; //服务器host  
         public ushort port; //服务器port  

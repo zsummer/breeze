@@ -26,6 +26,7 @@
 #include <ProtoDocker.h>
 #include <ProtoSceneCommon.h>
 #include <ProtoSceneClient.h>
+#include <ProtoSceneServer.h>
 #include <rvo2/RVO.h>
 
 struct WorldServiceSession
@@ -38,59 +39,62 @@ struct WorldServiceSession
 class World : public Singleton<World>
 {
 public:
-    World();
-    bool init(const std::string & configName);
-    bool start();
-    void stop();
-    void forceStop();
-    void onShutdown();
-    bool run();
-
-    
-public:
-    bool isStopping();
-private:
-    SessionID getDockerLinked(AreaID areaID, ServiceType serviceType);
-    template <class Proto>
-    void directToService(SessionID sessionID, ServiceType serviceType, const Proto & proto);
-
-    template <class Proto>
-    void toService(AreaID areaID, ServiceType serviceType, const Proto & proto);
-
-private:
-    //内部接口 
-    //打开监听端口,新连接 
-    bool startDockerListen();
-    bool startSceneListen();
-
+	World();
+	bool init(const std::string & configName);
+	bool start();
+	void stop();
+	void forceStop();
+	void onShutdown();
+	bool run();
 
 
 public:
-    void sendViaSessionID(SessionID sessionID, const char * block, unsigned int len);
-    template<class Proto>
-    void sendViaSessionID(SessionID sessionID, const Proto & proto);
-    
+	bool isStopping();
+private:
+	SessionID getDockerLinked(AreaID areaID, ServiceType serviceType);
+	template <class Proto>
+	void directToService(SessionID sessionID, ServiceType serviceType, const Proto & proto);
+
+	template <class Proto>
+	void toService(AreaID areaID, ServiceType serviceType, const Proto & proto);
 
 private:
-    //docker间通讯处理 
-    void event_onDockerLinked(TcpSessionPtr session);
-    void event_onDockerClosed(TcpSessionPtr session);
-    void event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    void event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs);
+	//内部接口 
+	//打开监听端口,新连接 
+	bool startDockerListen();
+	bool startSceneListen();
 
-private:
-    //客户端通讯处理 
-    void event_onSceneLinked(TcpSessionPtr session);
-    void event_onScenePulse(TcpSessionPtr session);
-    void event_onSceneClosed(TcpSessionPtr session);
-    void event_onSceneMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
+
+public:
+	void sendViaSessionID(SessionID sessionID, const char * block, unsigned int len);
+	template<class Proto>
+	void sendViaSessionID(SessionID sessionID, const Proto & proto);
 
 
 private:
-    Balance _sceneBalance;
+	//docker间通讯处理 
+	void event_onDockerLinked(TcpSessionPtr session);
+	void event_onDockerClosed(TcpSessionPtr session);
+	void event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+	void event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs);
+
+private:
+	//客户端通讯处理 
+	void event_onSceneLinked(TcpSessionPtr session);
+	void event_onScenePulse(TcpSessionPtr session);
+	void event_onSceneClosed(TcpSessionPtr session);
+	void event_onSceneMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
+
+
+
+private:
+	Balance<SceneID> * _sceneBalances = nullptr;
+
+
 private:
     std::map<AreaID, std::map<ServiceType, WorldServiceSession> > _services;
+	std::map<SceneID, SceneKnock> _scenes;
     AccepterID _dockerListen = InvalidAccepterID;
     AccepterID _sceneListen = InvalidAccepterID;
 };

@@ -16,7 +16,7 @@ config.docker =
     {
         dockerListenHost="::",
         dockerPubHost="127.0.0.1",
-        dockerListenPort=16000,
+        dockerListenPort=16001,
         clientPubHost="127.0.0.1",
         clientPubPort=26000,
         services={"STLogDBMgr", "STAvatarMgr", "STAvatar", "STInfoDBMgr"},
@@ -25,7 +25,7 @@ config.docker =
     {
         dockerListenHost="::",
         dockerPubHost="127.0.0.1",
-        dockerListenPort=16001,
+        dockerListenPort=16002,
         clientPubHost="127.0.0.1",
         clientPubPort=26001,
         webPubHost="127.0.0.1",
@@ -33,15 +33,16 @@ config.docker =
         services={"STWebAgent", "STOfflineMgr", "STMinitorMgr", "STAvatar"},
         dockerID = 2,
     },
---[[
+
     {
+        desc="异构服务器, 注释掉该配置则起服忽略该服务的存在.",
         dockerListenHost="::",
         dockerPubHost="127.0.0.1",
-        dockerListenPort=17001,
+        dockerListenPort=16099,
         dockerWhite={"192.168.", "127.0."},
         services={"STWorldMgr"},
         dockerID = 3,
-    }, ]]
+    }, 
 }
 
 
@@ -50,10 +51,10 @@ config.docker =
 config.world = 
 {
     dockerListenHost="::",
-    dockerListenPort=17001,
+    dockerListenPort=16099,
     sceneListenHost="::",
     scenePubHost="127.0.0.1",
-    sceneListenPort=17002,
+    sceneListenPort=16088,
 }
 
 
@@ -62,22 +63,32 @@ config.world =
 config.scenes = 
 {
     {
-        clientListenHost="::",
-        clientPubHost="127.0.0.1",
-        clientListenPort=17102,
         sceneID = 1,
-    },
-    {
+        supportSceneTypes = {1}, --该项不存在则代表支持主城以外的所有场景类型, 如果有该类型 则仅仅支持枚举到的场景类型. 1是主城  
         clientListenHost="::",
         clientPubHost="127.0.0.1",
-        clientListenPort=17102,
+        clientListenPort=17101,
+    },
+    {
         sceneID = 2,
-    },
-    {
+        supportSceneTypes = {1},
         clientListenHost="::",
         clientPubHost="127.0.0.1",
         clientListenPort=17102,
+    },
+    {
         sceneID = 3,
+        --supportSceneTypes = {1}, 
+        clientListenHost="::",
+        clientPubHost="127.0.0.1",
+        clientListenPort=17103,
+    },
+    {
+        sceneID = 4,
+        --supportSceneTypes = {1},
+        clientListenHost="::",
+        clientPubHost="127.0.0.1",
+        clientListenPort=17104,
     },
 
 }

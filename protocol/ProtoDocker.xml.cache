@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>bb9550b8612f35d4ce4a0b78b736588c</cppmd5> 
-<luamd5>4d818345921181ce115e8e45af79683e</luamd5> 
-<csharpmd5>65236c71696f7775d8655230737ffe58</csharpmd5> 
-<xmlmd5>6cd49bef329138cca978a57a9de16529</xmlmd5> 
+<cppmd5>38f343d19a787d136d9770deb8f6629b</cppmd5> 
+<luamd5>4331c68079f729bdace5fae01eb37104</luamd5> 
+<csharpmd5>785c93df2a34181bf4b93d61116d0261</csharpmd5> 
+<xmlmd5>c2610aac25198bce7c7fe7a09c41d5ef</xmlmd5> 
 <cacheNumber>
     <cache key = "AvatarOffline" Number = "2023" /> 
     <cache key = "DBDataResult" Number = "2015" /> 
@@ -11,6 +11,8 @@
     <cache key = "DBQueryArrayResp" Number = "2019" /> 
     <cache key = "DBQueryReq" Number = "2016" /> 
     <cache key = "DBQueryResp" Number = "2017" /> 
+    <cache key = "DockerBeing" Number = "2024" /> 
+    <cache key = "DockerKnock" Number = "2025" /> 
     <cache key = "DockerPulse" Number = "2001" /> 
     <cache key = "ForwardToDocker" Number = "2014" /> 
     <cache key = "ForwardToRealClient" Number = "2013" /> 

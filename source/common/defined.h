@@ -134,7 +134,9 @@ const ServiceID InvalidServiceID = (ServiceID)0;
 typedef std::string ServiceName;
 const ServiceName InvalidServiceName = "";
 
-
+const ui32 ServerPulseInterval = 10000;
+const ui32 ClientPulseInterval = 30000;
+const ui32 WebPulseTimeout = 10000;
 
 
 //以下位置定义服务类型和依赖关系
@@ -273,6 +275,7 @@ struct SceneConfig
     std::string _clientListenHost;
     std::string _clientPubHost;
     unsigned short _clientListenPort = 0;
+	std::vector<ui16> _supportSceneTypes;
     SceneID _sceneID = InvalidSceneID;
 };
 

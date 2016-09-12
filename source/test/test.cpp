@@ -609,7 +609,7 @@ int checkFloat()
 
 int checkBalance()
 {
-    Balance balance;
+    Balance<ui32> balance;
     balance.enableNode(1);
     balance.enableNode(2);
     balance.enableNode(3);

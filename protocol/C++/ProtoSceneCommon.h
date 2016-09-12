@@ -7,9 +7,11 @@ enum SCENE_TYPE : unsigned short
 { 
     SCENE_TYPE_NONE = 0, //无效  
     SCENE_TYPE_HOME = 1, //主城  
-    SCENE_TYPE_SOME_INSTANCING = 2, //一些副本  
-    SCENE_TYPE_ARENA = 3, //竞技场  
-    SCENE_TYPE_GUILD = 4, //公会  
+    SCENE_TYPE_ARENA = 2, //竞技场  
+    SCENE_TYPE_GUILD = 3, //公会  
+    SCENE_TYPE_MASTER_INSTANCING = 4, //主线副本  
+    SCENE_TYPE_BRANCH_INSTANCING = 5, //支线副本  
+    SCENE_TYPE_MAX = 6, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
 }; 
  
 enum SCENE_STATUS : unsigned short 
@@ -26,9 +28,9 @@ struct SceneTokenInfo //Token
 { 
     static const unsigned short getProtoID() { return 10000;} 
     static const std::string getProtoName() { return "SceneTokenInfo";} 
-    unsigned short sceneType; //类型  
+    unsigned short sceneType; //场景类型  
     unsigned int mapID;  
-    unsigned int sceneID; //空间(场景,房间,战场,INSTANCING ID)的实例ID  
+    unsigned int sceneID; //场景实例ID  
     unsigned short sceneStatus; //状态  
     std::string host; //服务器host  
     unsigned short port; //服务器port  

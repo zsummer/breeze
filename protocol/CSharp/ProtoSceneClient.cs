@@ -2,6 +2,27 @@
 namespace Proto4z  
 { 
  
+    public class SceneClientPulse: Proto4z.IProtoObject //客户端脉冲请求  
+    {     
+        //proto id   
+        public const ushort protoID = 50007;  
+        static public ushort getProtoID() { return 50007; } 
+        static public string getProtoName() { return "SceneClientPulse"; } 
+        //members   
+        public SceneClientPulse()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
     public class AttachSceneReq: Proto4z.IProtoObject 
     {     
         //proto id   

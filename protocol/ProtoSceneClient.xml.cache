@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>ea470db15d84258cd00e9d722572d7e7</cppmd5> 
-<luamd5>dc41924a9fead24bd86dac997dfe18fb</luamd5> 
-<csharpmd5>abe66193ece5e402e1c45e903d3d43c5</csharpmd5> 
-<xmlmd5>fe93ad9a697b23b9dcfb38a5a8fd654c</xmlmd5> 
+<cppmd5>6686fb2cd3152fa8c4060c4445289457</cppmd5> 
+<luamd5>e70ef472c7ee91ff7331295fe4e01420</luamd5> 
+<csharpmd5>90850774af80d3956fb2cf18d36ff321</csharpmd5> 
+<xmlmd5>485e2ce383138be691edd4fb8579e4ba</xmlmd5> 
 <cacheNumber>
     <cache key = "AddEntityNotice" Number = "50005" /> 
     <cache key = "AttachSceneReq" Number = "50000" /> 
@@ -12,4 +12,5 @@
     <cache key = "RefreshSceneEntitysNotice" Number = "50003" /> 
     <cache key = "RefreshSceneReportsNotice" Number = "50004" /> 
     <cache key = "RemoveEntityNotice" Number = "50006" /> 
+    <cache key = "SceneClientPulse" Number = "50007" /> 
 </cacheNumber>

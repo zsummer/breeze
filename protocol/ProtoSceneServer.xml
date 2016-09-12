@@ -15,13 +15,23 @@
 
 
     <!------------------------------------ world <==> scene --------------------------------------------->
+    <array name="SceneTypeArray" type="ui16" desc="" />
 
-    <proto name="AllocateSceneReq" desc= "分配新战场">
+    <proto name="SceneKnock" desc= "战场服务器挂载">
+        <member name="sceneID" type="ui32"  desc="断线检测"/>
+        <member name="supportSceneTypes" type="SceneTypeArray"  desc="支持类型"/>
+        <member name="pubHost" type="string"  desc=""/>
+        <member name="pubPort" type="ui16"  desc=""/>
+    </proto>
+    <packet name="ScenePulse" desc= "集群脉冲">
+    </packet>
+
+    <proto name="AllocateSceneReq" desc= "分配战场">
         <member name="sceneType" type="ui16"  desc="类型"/>
         <member name="mapID" type="ui32"  desc=""/>
         <member name="involeds" type="AvatarBaseInfoArray"  desc="匹配列表中的玩家"/>
     </proto>
-    <proto name="AllocateSceneResp" desc= "分配新战场">
+    <proto name="AllocateSceneResp" desc= "分配战场">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="tokens" type="SceneTokenInfoArray"  desc="匹配列表中的玩家"/>
     </proto>

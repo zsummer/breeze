@@ -2,7 +2,103 @@
 namespace Proto4z  
 { 
  
-    public class AllocateSceneReq: Proto4z.IProtoObject //分配新战场  
+ 
+    public class SceneTypeArray : System.Collections.Generic.List<ushort>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeUI16(this[i]));  
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    this.Add(Proto4z.BaseProtoObject.decodeUI16(binData, ref pos)); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneKnock: Proto4z.IProtoObject //战场服务器挂载  
+    {     
+        //proto id   
+        public const ushort protoID = 39004;  
+        static public ushort getProtoID() { return 39004; } 
+        static public string getProtoName() { return "SceneKnock"; } 
+        //members   
+        public uint sceneID; //断线检测  
+        public SceneTypeArray supportSceneTypes; //支持类型  
+        public string pubHost;  
+        public ushort pubPort;  
+        public SceneKnock()  
+        { 
+            sceneID = 0;  
+            supportSceneTypes = new SceneTypeArray();  
+            pubHost = "";  
+            pubPort = 0;  
+        } 
+        public SceneKnock(uint sceneID, SceneTypeArray supportSceneTypes, string pubHost, ushort pubPort) 
+        { 
+            this.sceneID = sceneID; 
+            this.supportSceneTypes = supportSceneTypes; 
+            this.pubHost = pubHost; 
+            this.pubPort = pubPort; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.sceneID)); 
+            if (this.supportSceneTypes == null) this.supportSceneTypes = new SceneTypeArray(); 
+            data.AddRange(this.supportSceneTypes.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.pubHost)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.pubPort)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.sceneID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.supportSceneTypes = new SceneTypeArray(); 
+            this.supportSceneTypes.__decode(binData, ref pos); 
+            this.pubHost = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.pubPort = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class ScenePulse: Proto4z.IProtoObject //集群脉冲  
+    {     
+        //proto id   
+        public const ushort protoID = 39005;  
+        static public ushort getProtoID() { return 39005; } 
+        static public string getProtoName() { return "ScenePulse"; } 
+        //members   
+        public ScenePulse()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class AllocateSceneReq: Proto4z.IProtoObject //分配战场  
     {     
         //proto id   
         public const ushort protoID = 39000;  
@@ -43,7 +139,7 @@ namespace Proto4z
         } 
     } 
  
-    public class AllocateSceneResp: Proto4z.IProtoObject //分配新战场  
+    public class AllocateSceneResp: Proto4z.IProtoObject //分配战场  
     {     
         //proto id   
         public const ushort protoID = 39001;  

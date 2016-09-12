@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>78f07d079f1dc65f53385567409448ea</cppmd5> 
-<luamd5>c8ae6f675b1eaeabd8e84966d0063f34</luamd5> 
-<csharpmd5>8fe17954cfb7a84f71a961750a1e0300</csharpmd5> 
-<xmlmd5>87e21c8adaae8e28bca66788845dfb58</xmlmd5> 
+<cppmd5>fe0c875456e57456e0a381f4d7ab19a9</cppmd5> 
+<luamd5>56e09c2883d64ff040660ad181c597d5</luamd5> 
+<csharpmd5>f65e5d82b9bbf483bffe9e8d4637aaef</csharpmd5> 
+<xmlmd5>a010e7f65f998778f8854f148befe2b7</xmlmd5> 
 <cacheNumber>
     <cache key = "AllocateSceneReq" Number = "39000" /> 
     <cache key = "AllocateSceneResp" Number = "39001" /> 
+    <cache key = "SceneBeing" Number = "39003" /> 
+    <cache key = "SceneKnock" Number = "39004" /> 
+    <cache key = "ScenePulse" Number = "39005" /> 
+    <cache key = "SceneServerReg" Number = "39002" /> 
 </cacheNumber>

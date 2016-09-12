@@ -1,9 +1,11 @@
  
 Proto4z.SCENE_TYPE_NONE = 0--无效 
 Proto4z.SCENE_TYPE_HOME = 1--主城 
-Proto4z.SCENE_TYPE_SOME_INSTANCING = 2--一些副本 
-Proto4z.SCENE_TYPE_ARENA = 3--竞技场 
-Proto4z.SCENE_TYPE_GUILD = 4--公会 
+Proto4z.SCENE_TYPE_ARENA = 2--竞技场 
+Proto4z.SCENE_TYPE_GUILD = 3--公会 
+Proto4z.SCENE_TYPE_MASTER_INSTANCING = 4--主线副本 
+Proto4z.SCENE_TYPE_BRANCH_INSTANCING = 5--支线副本 
+Proto4z.SCENE_TYPE_MAX = 6--最大类型数值. 扩展类型在该枚举之前插入新类型. 
  
 Proto4z.SCENE_STATUS_NONE = 0--不存在 
 Proto4z.SCENE_STATUS_MATCHING = 1--匹配中 
@@ -16,9 +18,9 @@ Proto4z.register(10000,"SceneTokenInfo")
 Proto4z.SceneTokenInfo = {} --Token 
 Proto4z.SceneTokenInfo.__protoID = 10000 
 Proto4z.SceneTokenInfo.__protoName = "SceneTokenInfo" 
-Proto4z.SceneTokenInfo[1] = {name="sceneType", type="ui16" } --类型 
+Proto4z.SceneTokenInfo[1] = {name="sceneType", type="ui16" } --场景类型 
 Proto4z.SceneTokenInfo[2] = {name="mapID", type="ui32" }  
-Proto4z.SceneTokenInfo[3] = {name="sceneID", type="ui32" } --空间(场景,房间,战场,INSTANCING ID)的实例ID 
+Proto4z.SceneTokenInfo[3] = {name="sceneID", type="ui32" } --场景实例ID 
 Proto4z.SceneTokenInfo[4] = {name="sceneStatus", type="ui16" } --状态 
 Proto4z.SceneTokenInfo[5] = {name="host", type="string" } --服务器host 
 Proto4z.SceneTokenInfo[6] = {name="port", type="ui16" } --服务器port 

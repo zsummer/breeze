@@ -31,7 +31,7 @@ int luaopen_cjson(lua_State *l);
 static int panichHandler(lua_State * L)
 {
     std::string errMsg = lua_tostring(L, -1);
-    LOGE(errMsg);
+    LOGE("panichHandler:" << errMsg);
     return 0;
 }
 
@@ -196,6 +196,8 @@ bool ServerConfig::parseDocker(std::string configName, DockerID dockerID)
 
 
 
+
+
 bool ServerConfig::parseDB(std::string configName)
 {
     srand((unsigned int)time(NULL));
@@ -206,9 +208,14 @@ bool ServerConfig::parseDB(std::string configName)
     }
     luaL_openlibs(L);  /* open libraries */
     lua_atpanic(L, panichHandler);
-    if (luaL_dofile(L, configName.c_str()))
+	if (luaL_loadfile(L, configName.c_str()))
+	{
+		LOGE("can't open the config file. configName=" << configName);
+		return false;
+	}
+    if (lua_pcall(L, 0, LUA_MULTRET, 0))
     {
-        LOGE("can't found the config file. configName=" << configName);
+        LOGE("can't lua_pcall the config file. configName=" << configName);
         return false;
     }
 

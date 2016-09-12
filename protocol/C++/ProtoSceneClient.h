@@ -3,6 +3,26 @@
 #define _PROTOSCENECLIENT_H_ 
  
  
+struct SceneClientPulse //客户端脉冲请求  
+{ 
+    static const unsigned short getProtoID() { return 50007;} 
+    static const std::string getProtoName() { return "SceneClientPulse";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneClientPulse & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneClientPulse & data) 
+{ 
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneClientPulse & info) 
+{ 
+    stm << "[\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
 struct AttachSceneReq 
 { 
     static const unsigned short getProtoID() { return 50000;} 

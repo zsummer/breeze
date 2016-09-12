@@ -195,10 +195,16 @@ bool SceneMgr::startWorldConnect()
         return false;
     }
     auto &options = SessionManager::getRef().getConnecterOptions(_worldSessionID);
-    options._sessionPulseInterval = 5000;
+    options._sessionPulseInterval = ServerPulseInterval;
     options._onSessionPulse = [](TcpSessionPtr session)
     {
-        DockerPulse pulse;
+		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0 / 1000.0 )
+		{
+			LOGE("SceneMgr check session last active timeout. diff=" << getFloatNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
+			session->close();
+			return;
+		}
+		ScenePulse pulse;
         WriteStream ws(pulse.getProtoID());
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
@@ -233,20 +239,12 @@ void SceneMgr::event_onWorldLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
 
-//     SceneInfoToWorldNotice notice;
-//     notice.host = ServerConfig::getRef().getSceneConfig()._clientPubHost;
-//     notice.port = ServerConfig::getRef().getSceneConfig()._clientListenPort;
-//     for (auto kv : _scenes)
-//     {
-//         SceneInfo si;
-//         si.sceneType = kv.second->getSceneType();
-//         si.sceneStatus = kv.second->getSceneStatus();
-//         si.users = kv.second->getUsersCount();
-//         si.sceneID = kv.second->getSceneID();
-//         notice.sceneInfos.push_back(si);
-//     }
-//     sendViaSessionID(session->getSessionID(), notice);
-//     LOGI("event_onWorldLinked cID=" << session->getSessionID() );
+	SceneKnock notice;
+	notice.pubHost = ServerConfig::getRef().getSceneConfig()._clientPubHost;
+	notice.pubPort = ServerConfig::getRef().getSceneConfig()._clientListenPort;
+	notice.supportSceneTypes = ServerConfig::getRef().getSceneConfig()._supportSceneTypes;
+	sendViaSessionID(session->getSessionID(), notice);
+	LOGI("event_onWorldLinked cID=" << session->getSessionID() );
 }
 
 
@@ -260,14 +258,14 @@ void SceneMgr::event_onWorldClosed(TcpSessionPtr session)
 void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
     ReadStream rsShell(begin, len);
-    if (DockerPulse::getProtoID() != rsShell.getProtoID())
+    if (ScenePulse::getProtoID() != rsShell.getProtoID())
     {
         LOGT("event_onWorldMessage protoID=" << rsShell.getProtoID() << ", len=" << len);
     }
 
-    if (rsShell.getProtoID() == DockerPulse::getProtoID())
+    if (rsShell.getProtoID() == ScenePulse::getProtoID())
     {
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
 //     else if (rsShell.getProtoID() == FillUserToSceneReq::getProtoID())
@@ -315,10 +313,10 @@ void SceneMgr::event_onClientLinked(TcpSessionPtr session)
 
 void SceneMgr::event_onClientPulse(TcpSessionPtr session)
 {
-    auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-    if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
+    auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+    if (getFloatSteadyNowTime() - last > session->getOptions()._sessionPulseInterval * 3)
     {
-        LOGW("client timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
+        LOGW("client timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
         session->close();
         return;
     }

@@ -3,7 +3,78 @@
 #define _PROTOSCENESERVER_H_ 
  
  
-struct AllocateSceneReq //分配新战场  
+ 
+typedef std::vector<unsigned short> SceneTypeArray;  
+ 
+struct SceneKnock //战场服务器挂载  
+{ 
+    static const unsigned short getProtoID() { return 39004;} 
+    static const std::string getProtoName() { return "SceneKnock";} 
+    unsigned int sceneID; //断线检测  
+    SceneTypeArray supportSceneTypes; //支持类型  
+    std::string pubHost;  
+    unsigned short pubPort;  
+    SceneKnock() 
+    { 
+        sceneID = 0; 
+        pubPort = 0; 
+    } 
+    SceneKnock(const unsigned int & sceneID, const SceneTypeArray & supportSceneTypes, const std::string & pubHost, const unsigned short & pubPort) 
+    { 
+        this->sceneID = sceneID; 
+        this->supportSceneTypes = supportSceneTypes; 
+        this->pubHost = pubHost; 
+        this->pubPort = pubPort; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneKnock & data) 
+{ 
+    ws << data.sceneID;  
+    ws << data.supportSceneTypes;  
+    ws << data.pubHost;  
+    ws << data.pubPort;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneKnock & data) 
+{ 
+    rs >> data.sceneID;  
+    rs >> data.supportSceneTypes;  
+    rs >> data.pubHost;  
+    rs >> data.pubPort;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneKnock & info) 
+{ 
+    stm << "[\n"; 
+    stm << "sceneID=" << info.sceneID << "\n"; 
+    stm << "supportSceneTypes=" << info.supportSceneTypes << "\n"; 
+    stm << "pubHost=" << info.pubHost << "\n"; 
+    stm << "pubPort=" << info.pubPort << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct ScenePulse //集群脉冲  
+{ 
+    static const unsigned short getProtoID() { return 39005;} 
+    static const std::string getProtoName() { return "ScenePulse";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ScenePulse & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ScenePulse & data) 
+{ 
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ScenePulse & info) 
+{ 
+    stm << "[\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct AllocateSceneReq //分配战场  
 { 
     static const unsigned short getProtoID() { return 39000;} 
     static const std::string getProtoName() { return "AllocateSceneReq";} 
@@ -46,7 +117,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct AllocateSceneResp //分配新战场  
+struct AllocateSceneResp //分配战场  
 { 
     static const unsigned short getProtoID() { return 39001;} 
     static const std::string getProtoName() { return "AllocateSceneResp";} 

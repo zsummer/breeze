@@ -3,36 +3,36 @@
 #define _PROTODOCKER_H_ 
  
  
-struct SelfBeingPulse 
+struct DockerKnock 
 { 
-    static const unsigned short getProtoID() { return 2000;} 
-    static const std::string getProtoName() { return "SelfBeingPulse";} 
+    static const unsigned short getProtoID() { return 2025;} 
+    static const std::string getProtoName() { return "DockerKnock";} 
     unsigned long long areaID;  
     unsigned long long dockerID;  
-    SelfBeingPulse() 
+    DockerKnock() 
     { 
         areaID = 0; 
         dockerID = 0; 
     } 
-    SelfBeingPulse(const unsigned long long & areaID, const unsigned long long & dockerID) 
+    DockerKnock(const unsigned long long & areaID, const unsigned long long & dockerID) 
     { 
         this->areaID = areaID; 
         this->dockerID = dockerID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SelfBeingPulse & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DockerKnock & data) 
 { 
     ws << data.areaID;  
     ws << data.dockerID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SelfBeingPulse & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DockerKnock & data) 
 { 
     rs >> data.areaID;  
     rs >> data.dockerID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SelfBeingPulse & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DockerKnock & info) 
 { 
     stm << "[\n"; 
     stm << "areaID=" << info.areaID << "\n"; 

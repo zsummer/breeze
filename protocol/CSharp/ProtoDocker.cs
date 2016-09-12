@@ -2,21 +2,21 @@
 namespace Proto4z  
 { 
  
-    public class SelfBeingPulse: Proto4z.IProtoObject 
+    public class DockerKnock: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 2000;  
-        static public ushort getProtoID() { return 2000; } 
-        static public string getProtoName() { return "SelfBeingPulse"; } 
+        public const ushort protoID = 2025;  
+        static public ushort getProtoID() { return 2025; } 
+        static public string getProtoName() { return "DockerKnock"; } 
         //members   
         public ulong areaID;  
         public ulong dockerID;  
-        public SelfBeingPulse()  
+        public DockerKnock()  
         { 
             areaID = 0;  
             dockerID = 0;  
         } 
-        public SelfBeingPulse(ulong areaID, ulong dockerID) 
+        public DockerKnock(ulong areaID, ulong dockerID) 
         { 
             this.areaID = areaID; 
             this.dockerID = dockerID; 

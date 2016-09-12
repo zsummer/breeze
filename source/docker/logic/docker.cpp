@@ -216,7 +216,7 @@ bool Docker::startDockerListen()
     auto &options = SessionManager::getRef().getAccepterOptions(aID);
     options._whitelistIP = docker._dockerWhite;
     options._maxSessions = 1000;
-    options._sessionOptions._sessionPulseInterval = 5000;
+    options._sessionOptions._sessionPulseInterval = ServerPulseInterval;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
         DockerPulse pulse;
@@ -255,14 +255,14 @@ bool Docker::startDockerConnect()
         options._onSessionClosed = std::bind(&Docker::event_onServiceClosed, this, _1);
         options._onBlockDispatch = std::bind(&Docker::event_onServiceMessage, this, _1, _2, _3);
         options._reconnects = 50;
-        options._connectPulseInterval = 5000;
+        options._connectPulseInterval = ServerPulseInterval;
         options._reconnectClean = false;
         options._onSessionPulse = [](TcpSessionPtr session)
         {
-            auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-            if (last != 0 && getNowTime() - (time_t)last > session->getOptions()._connectPulseInterval * 3)
+            auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+            if (getFloatSteadyNowTime() - last > session->getOptions()._connectPulseInterval * 3.0 / 1000.0)
             {
-                LOGE("docker timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
+                LOGE("docker timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
                 session->close();
             }
         };
@@ -326,7 +326,7 @@ bool Docker::startDockerWideListen()
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
         //options._whitelistIP;// = docker._dockerWhite;
         options._maxSessions = 5000;
-        options._sessionOptions._sessionPulseInterval = 40000;
+        options._sessionOptions._sessionPulseInterval = ClientPulseInterval;
         options._sessionOptions._onSessionPulse = std::bind(&Docker::event_onClientPulse, this, _1);
         options._sessionOptions._onSessionLinked = std::bind(&Docker::event_onClientLinked, this, _1);
         options._sessionOptions._onSessionClosed = std::bind(&Docker::event_onClientClosed, this, _1);
@@ -364,13 +364,13 @@ bool Docker::startDockerWebListen()
         options._sessionOptions._protoType = PT_HTTP;
         //options._whitelistIP;// = docker._dockerWhite;
         options._maxSessions = 200;
-        options._sessionOptions._sessionPulseInterval = 10000; 
+        options._sessionOptions._sessionPulseInterval = WebPulseTimeout;
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
         {
-            auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-            if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
+            auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+            if (getFloatSteadyNowTime() - last > session->getOptions()._sessionPulseInterval * 3.0 / 1000.0)
             {
-                LOGW("web client timeout diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
+                LOGW("web client timeout diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
                 session->close();
             }
         };
@@ -450,8 +450,8 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
     }
     if (true)
     {
-        SelfBeingPulse pulse(ServerConfig::getRef().getAreaID(), ServerConfig::getRef().getDockerID());
-        sendViaSessionID(session->getSessionID(), pulse);
+        DockerKnock knock(ServerConfig::getRef().getAreaID(), ServerConfig::getRef().getDockerID());
+        sendViaSessionID(session->getSessionID(), knock);
     }
 
     LoadServiceNotice notice;
@@ -531,17 +531,17 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
 {
     ReadStream rsShell(begin, len);
 
-    if (rsShell.getProtoID() == SelfBeingPulse::getProtoID())
+    if (rsShell.getProtoID() == DockerKnock::getProtoID())
     {
-        SelfBeingPulse pulse;
-        rsShell >> pulse;
+        DockerKnock knock;
+        rsShell >> knock;
         LOGA("event_onServiceMessage sessionID=" << session->getSessionID()
-            << ", areaID=" << pulse.areaID << ", dockerID=" << pulse.dockerID);
-        session->setUserParam(UPARAM_AREA_ID, pulse.areaID);
+            << ", areaID=" << knock.areaID << ", dockerID=" << knock.dockerID);
+        session->setUserParam(UPARAM_AREA_ID, knock.areaID);
     }
     else if (rsShell.getProtoID() == DockerPulse::getProtoID())
     {
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
     else if (rsShell.getProtoID() == ShutdownClusterServer::getProtoID())
@@ -604,10 +604,6 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
 
     
 }
-
-
-
-
 
 
 void Docker::destroyService(ServiceType serviceType, ServiceID serviceID)
@@ -1055,7 +1051,7 @@ void Docker::event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & r
 void Docker::event_onClientLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
-    session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
+    session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     session->setUserParam(UPARAM_ACCOUNT, "");
     session->setUserParam(UPARAM_AVATAR_ID, InvalidServiceID);
     LOGD("Docker::event_onClientLinked. SessionID=" << session->getSessionID()
@@ -1063,10 +1059,10 @@ void Docker::event_onClientLinked(TcpSessionPtr session)
 }
 void Docker::event_onClientPulse(TcpSessionPtr session)
 {
-    auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
-    if (getNowTime() - (time_t)last > session->getOptions()._sessionPulseInterval * 3)
+    auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+    if (getFloatSteadyNowTime() - last > session->getOptions()._sessionPulseInterval * 3.0 / 1000.0)
     {
-        LOGW("client timeout . diff time=" << getNowTime() - (time_t)last << ", sessionID=" << session->getSessionID());
+        LOGW("client timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
         session->close();
         return;
     }
@@ -1125,7 +1121,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
     if (rs.getProtoID() == ClientPulse::getProtoID())
     {
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getNowTime());
+        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
     if (!_dockerServiceWorking || (!peekService(STAvatarMgr, InvalidServiceID)) || peekService(STAvatarMgr, InvalidServiceID)->getStatus() != SS_WORKING)
