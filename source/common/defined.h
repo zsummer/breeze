@@ -318,7 +318,8 @@ enum ClientSessionData
     UPARAM_AVATAR_ID,
     UPARAM_LOGIN_TIME,
 
-    UPARAM_AREA_ID, //world集群
+    UPARAM_AREA_ID, //world集群用
+	UPARAM_DOCKER_ID,
     UPARAM_SCENE_ID,
 
 };

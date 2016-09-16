@@ -29,12 +29,11 @@
 #include <ProtoSceneServer.h>
 #include <rvo2/RVO.h>
 
-struct DockerSessionStatus
+struct ServiceSessionStatus
 {
-    bool online = false;
+	SessionID sessionID = InvalidSessionID;
     unsigned long long areaID = InvalidAreaID;
     ServiceType serviceType = InvalidServiceID; //all is singleton
-    SessionID sessionID = InvalidSessionID;
 };
 
 struct SceneSessionStatus
@@ -42,6 +41,13 @@ struct SceneSessionStatus
     SessionID sessionID = InvalidSessionID;
     SceneKnock knock;
 };
+
+struct AvatarSceneTokenStatus
+{
+	double lastSwitchTime = 0.0;
+	SceneTokenInfo token;
+};
+
 
 class World : public Singleton<World>
 {
@@ -57,13 +63,7 @@ public:
 
 public:
 	bool isStopping();
-private:
-	SessionID getDockerLinked(AreaID areaID, ServiceType serviceType);
-	template <class Proto>
-	void directToService(SessionID sessionID, ServiceType serviceType, const Proto & proto);
 
-	template <class Proto>
-	void toService(AreaID areaID, ServiceType serviceType, const Proto & proto);
 
 private:
 	//内部接口 
@@ -77,6 +77,17 @@ public:
 	void sendViaSessionID(SessionID sessionID, const char * block, unsigned int len);
 	template<class Proto>
 	void sendViaSessionID(SessionID sessionID, const Proto & proto);
+
+	void toService(SessionID sessionID, const Tracing &trace, const char * block, unsigned int len);
+	template<class Proto>
+	void toService(SessionID sessionID, const Tracing &trace, const Proto & proto);
+
+	template <class Proto>
+	void toService(AreaID areaID, ServiceType indexServiceType, ServiceType dstServiceType, ServiceID dstServiceID, const Proto & proto); 
+
+
+	template<class Proto>
+	void backToService(SessionID sessionID, const Tracing &backTrace, const Proto & proto);
 
 
 private:
@@ -97,13 +108,18 @@ private:
 
 private:
 	Balance<SceneID> * _sceneBalances = nullptr;
-    void enableSceneNode(SceneKnock sk);
-    void disableSceneNode(SceneKnock sk);
+    void enableSceneNode(const SceneKnock& sk);
+    void disableSceneNode(const SceneKnock& sk);
 private:
-    std::map<AreaID, std::map<ServiceType, DockerSessionStatus> > _services;
+    std::map<AreaID, std::map<ServiceType, ServiceSessionStatus> > _services; //只记录singleton的service   
 	std::map<SceneID, SceneSessionStatus> _scenes;
     AccepterID _dockerListen = InvalidAccepterID;
     AccepterID _sceneListen = InvalidAccepterID;
+
+public:
+	std::shared_ptr<AvatarSceneTokenStatus> getAvatarToken(AreaID areaID, ServiceID serviceID);
+private:
+	std::map<AreaID, std::map<ServiceID, std::shared_ptr<AvatarSceneTokenStatus>>> _avatarToken;
 };
 
 
@@ -117,7 +133,7 @@ void World::sendViaSessionID(SessionID sessionID, const Proto & proto)
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        SessionManager::getRef().sendSessionData(sessionID, ws.getStream(), ws.getStreamLen());
+		sendViaSessionID(sessionID, ws.getStream(), ws.getStreamLen());
     }
     catch (const std::exception & e)
     {
@@ -125,35 +141,76 @@ void World::sendViaSessionID(SessionID sessionID, const Proto & proto)
     }
 }
 
-template <class Proto>
-void World::directToService(SessionID sessionID, ServiceType serviceType, const Proto & proto)
+template<class Proto>
+void World::toService(SessionID sessionID, const Tracing &trace, const Proto & proto)
 {
-    Tracing trace;
-    trace.routing.toServiceType = serviceType;
-    trace.routing.toServiceID = InvalidServiceID;
-    trace.routing.fromServiceType = STWorldMgr;
-    trace.routing.fromServiceID = InvalidServiceID;
+	try
+	{
+		WriteStream ws(Proto::getProtoID());
+		ws << proto;
+		toService(sessionID, trace, ws.getStream(), ws.getStreamLen());
+	}
+	catch (const std::exception & e)
+	{
+		LOGE("Docker::forwardViaSessionID catch except error. e=" << e.what());
+	}
+}
 
-    WriteStream fd(ForwardToService::getProtoID());
-    WriteStream ws(Proto::getProtoID());
-    ws << proto;
-    fd << trace;
-    fd.appendOriginalData(ws.getStream(), ws.getStreamLen());
-    SessionManager::getRef().sendSessionData(sessionID, fd.getStream(), fd.getStreamLen());
+template<class Proto>
+void World::backToService(SessionID sessionID, const Tracing &backTrace, const Proto & proto)
+{
+	try
+	{
+		WriteStream ws(Proto::getProtoID());
+		ws << proto;
+
+		Tracing trace;
+		trace.oob = backTrace.oob;
+		trace.routing.toServiceType = backTrace.routing.fromServiceType;
+		trace.routing.toServiceID = backTrace.routing.fromServiceID;
+		trace.routing.fromServiceType = STWorldMgr;
+		trace.routing.fromServiceID = InvalidServiceID;
+		trace.routing.traceBackID = backTrace.routing.traceID;
+		trace.routing.traceID = 0;
+		toService(sessionID, trace, ws.getStream(), ws.getStreamLen());
+	}
+	catch (const std::exception & e)
+	{
+		LOGE("Docker::forwardViaSessionID catch except error. e=" << e.what());
+	}
 }
 
 template <class Proto>
-void World::toService(AreaID areaID, ServiceType serviceType, const Proto & proto)
+void World::toService(AreaID areaID, ServiceType indexServiceType, ServiceType dstServiceType, ServiceID dstServiceID, const Proto & proto)
 {
+	auto areaMapIter = _services.find(areaID);
+	if (areaMapIter == _services.end())
+	{
+		LOGE("not have areaID when to Service. areaID=" << areaID);
+		return; 
+	}
+	auto founder = areaMapIter->second.find(indexServiceType);
+	if (founder == areaMapIter->second.end())
+	{
+		LOGE("not have indexServiceType when to Service. areaID=" << areaID << ", indexServiceType=" << indexServiceType);
+		return;
+	}
+	if (founder->second.sessionID == InvalidSessionID)
+	{
+		LOGW("the docker not linked when to Service. areaID=" << areaID << ", serviceType=" << serviceType);
+		return;
+	}
+	Tracing trace;
+	if (dstServiceType == STAvatar || dstServiceType == STClient)
+	{
+		trace.oob.clientAvatarID = dstServiceID;
+	}
+	trace.routing.fromServiceType = STWorldMgr;
+	trace.routing.fromServiceID = InvalidServiceID;
+	trace.routing.toServiceType = dstServiceType;
+	trace.routing.toServiceID = dstServiceID;
 
-    SessionID sID = getDockerLinked(areaID, serviceType);
-    if (sID == InvalidSessionID)
-    {
-        LOGE("docker not linked.  areaID=" << areaID << ", serviceType=" << getServiceName(serviceType) 
-            << ", protoID=" << Proto::getProtoID());
-        return;
-    }
-    directToService(sID, serviceType, proto);
+	toService(founder->second.sessionID, trace, proto);
 }
 
 

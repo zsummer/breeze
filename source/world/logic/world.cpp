@@ -161,6 +161,13 @@ void World::sendViaSessionID(SessionID sessionID, const char * block, unsigned i
 {
     SessionManager::getRef().sendSessionData(sessionID, block, len);
 }
+void World::toService(SessionID sessionID, const Tracing &trace, const char * block, unsigned int len)
+{
+	WriteStream fd(ForwardToService::getProtoID());
+	fd << trace;
+	fd.appendOriginalData(block, len);
+	sendViaSessionID(sessionID, fd.getStream(), fd.getStreamLen());
+}
 
 bool World::start()
 {
@@ -170,6 +177,7 @@ bool World::start()
 void World::event_onDockerLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
+	session->setUserParam(UPARAM_DOCKER_ID, InvalidDockerID);
     LoadServiceNotice notice;
     ServiceInfo info;
     info.serviceDockerID = InvalidDockerID;
@@ -226,7 +234,8 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
         DockerKnock knock;
         rsShell >> knock;
         LOGA("DockerKnock sessionID=" << session->getSessionID() << ", areaID=" << knock.areaID << ",dockerID=" << knock.dockerID);
-        session->setUserParam(UPARAM_AREA_ID, knock.areaID);
+		session->setUserParam(UPARAM_AREA_ID, knock.areaID);
+		session->setUserParam(UPARAM_DOCKER_ID, knock.dockerID);
 
     }
     else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
@@ -258,13 +267,79 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
 
 
 
+std::shared_ptr<AvatarSceneTokenStatus> World::getAvatarToken(AreaID areaID, ServiceID serviceID)
+{
+	auto founder = _avatarToken.find(areaID);
+	if (founder == _avatarToken.end())
+	{
+		return nullptr;
+	}
+	auto fder = founder->second.find(serviceID);
+	if (fder == founder->second.end())
+	{
+		return nullptr;
+	}
+	return fder->second;
+}
+
+
 
 void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs)
 {
+	AreaID areaID = session->getUserParamNumber(UPARAM_AREA_ID);
+	if (areaID == InvalidAreaID)
+	{
+		LOGE("event_onServiceForwardMessage: docker session not knock world. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
+		return;
+	}
+	if (trace.oob.clientAvatarID == InvalidServiceID)
+	{
+		LOGE("event_onServiceForwardMessage: trace have not oob. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
+		return;
+	}
     if (rs.getProtoID() == GetSceneTokenInfoReq::getProtoID())
     {
-
+		GetSceneTokenInfoReq req;
+		rs >> req;
+		GetSceneTokenInfoResp resp;
+		resp.retCode = EC_SUCCESS;
+		resp.tokenInfo.sceneType = SCENE_TYPE_NONE;
+		resp.tokenInfo.sceneStatus = SCENE_STATUS_NONE;
+		auto token = getAvatarToken(areaID, trace.oob.clientAvatarID);
+		if (token)
+		{
+			resp.tokenInfo = token->token;
+		}
+		backToService(session->getSessionID(), trace, resp);
+		return;
     }
+	else if (rs.getProtoID() == JoinSceneReq::getProtoID())
+	{
+		JoinSceneReq req;
+		rs >> req;
+		JoinSceneResp resp;
+		auto token = getAvatarToken(areaID, trace.oob.clientAvatarID);
+		if (!token)
+		{
+			token = std::make_shared<AvatarSceneTokenStatus>();
+			token->token.sceneType = SCENE_TYPE_NONE;
+			token->token.sceneStatus = SCENE_STATUS_NONE;
+			_avatarToken[areaID][trace.oob.clientAvatarID] = token;
+		}
+		double now = getFloatSteadyNowTime();
+		if (now - token->lastSwitchTime < 5.0)
+		{
+			resp.retCode = EC_ERROR;
+			backToService(session->getSessionID(), trace, resp);
+			return;
+		}
+		if (true)
+		{
+
+		}
+
+		return;
+	}
 }
 
 
@@ -315,7 +390,7 @@ void World::event_onSceneClosed(TcpSessionPtr session)
     }
 }
 
-void World::enableSceneNode(SceneKnock sk)
+void World::enableSceneNode(const SceneKnock& sk)
 {
     std::set<size_t> nodes;
     //SCENE_TYPE_HOME 主城的负载均衡比较特殊 只有配置中显式指定才会有效
@@ -339,7 +414,7 @@ void World::enableSceneNode(SceneKnock sk)
         LOGI("EnableSceneNode Success. begin scene id=" << sk.sceneID << ", valid scene types=" << nodes.size());
     }
 }
-void World::disableSceneNode(SceneKnock sk)
+void World::disableSceneNode(const SceneKnock& sk)
 {
     std::set<size_t> nodes;
     //SCENE_TYPE_HOME 主城的负载均衡比较特殊 只有配置中显式指定才会有效
@@ -381,28 +456,5 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
 
 
 
-
-
-SessionID World::getDockerLinked(AreaID areaID, ServiceType serviceType)
-{
-    auto founder = _services.find(areaID);
-    if (founder == _services.end())
-    {
-        return InvalidSessionID;
-    }
-    auto fder = founder->second.find(serviceType);
-    if (fder != founder->second.end() && fder->second.sessionID != InvalidSessionID)
-    {
-        return fder->second.sessionID;
-    }
-    for (auto &wss : founder->second)
-    {
-        if (wss.second.sessionID != InvalidSessionID)
-        {
-            return wss.second.sessionID;
-        }
-    }
-    return InvalidSessionID;
-}
 
 
