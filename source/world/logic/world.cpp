@@ -227,6 +227,7 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
         rsShell >> knock;
         LOGA("DockerKnock sessionID=" << session->getSessionID() << ", areaID=" << knock.areaID << ",dockerID=" << knock.dockerID);
         session->setUserParam(UPARAM_AREA_ID, knock.areaID);
+
     }
     else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
     {
@@ -306,21 +307,55 @@ void World::event_onSceneClosed(TcpSessionPtr session)
 			{
 				break;
 			}
-			auto knock = founder->second;
-			for (size_t i = SCENE_TYPE_NONE + 1; i < SCENE_TYPE_MAX; i++)
-			{
-				if (knock.supportSceneTypes.empty() ||
-					std::find_if(knock.supportSceneTypes.begin(), knock.supportSceneTypes.end(), [i](ui16 t) {return t == i; }) != knock.supportSceneTypes.end())
-				{
-					_sceneBalances[i].disableNode(knock.sceneID);
-				}
-			}
+            founder->second.sessionID = InvalidSessionID;
+            disableSceneNode(founder->second.knock);
 			break;
 		}
 
     }
 }
 
+void World::enableSceneNode(SceneKnock sk)
+{
+    std::set<size_t> nodes;
+    //SCENE_TYPE_HOME 主城的负载均衡比较特殊 只有配置中显式指定才会有效
+    for (size_t i = SCENE_TYPE_NONE + 1; i < SCENE_TYPE_MAX; i++)
+    {
+        if ((sk.supportSceneTypes.empty() && i != SCENE_TYPE_HOME)
+            || std::find_if(sk.supportSceneTypes.begin(), sk.supportSceneTypes.end(),
+                         [i](ui16 t) {return t == i; }) != sk.supportSceneTypes.end())
+        {
+            _sceneBalances[i].enableNode(sk.sceneID);
+            _sceneBalances[i].cleanNode(sk.sceneID);
+            nodes.insert(i);
+        }
+    }
+    if (nodes.empty())
+    {
+        LOGE("EnableSceneNode error. not match any Scene type. begin scene id=" << sk.sceneID);
+    }
+    else
+    {
+        LOGI("EnableSceneNode Success. begin scene id=" << sk.sceneID << ", valid scene types=" << nodes.size());
+    }
+}
+void World::disableSceneNode(SceneKnock sk)
+{
+    std::set<size_t> nodes;
+    //SCENE_TYPE_HOME 主城的负载均衡比较特殊 只有配置中显式指定才会有效
+    for (size_t i = SCENE_TYPE_NONE + 1; i < SCENE_TYPE_MAX; i++)
+    {
+        if ((sk.supportSceneTypes.empty() && i != SCENE_TYPE_HOME)
+            || std::find_if(sk.supportSceneTypes.begin(), sk.supportSceneTypes.end(),
+                            [i](ui16 t) {return t == i; }) != sk.supportSceneTypes.end())
+        {
+            _sceneBalances[i].disableNode(sk.sceneID);
+            LOGW("DisableSceneNode. balance=" << _sceneBalances[i].getBalanceStatus());
+            nodes.insert(i);
+        }
+    }
+    LOGI("DisableSceneNode Success. begin scene id=" << sk.sceneID << ", valid scene types=" << nodes.size());
+}
 
 
 void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsigned int len)
@@ -335,17 +370,11 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
 		SceneKnock knock;
 		rs >> knock;
 		session->setUserParam(UPARAM_SCENE_ID, knock.sceneID);
-		_scenes[knock.sceneID] = knock;
-		for (size_t i = SCENE_TYPE_NONE + 1; i < SCENE_TYPE_MAX; i++)
-		{
-			if (knock.supportSceneTypes.empty() ||
-				std::find_if(knock.supportSceneTypes.begin(), knock.supportSceneTypes.end(), [i](ui16 t) {return t == i; }) != knock.supportSceneTypes.end())
-			{
-				_sceneBalances[i].enableNode(knock.sceneID);
-				_sceneBalances[i].cleanNode(knock.sceneID);
-			}
-		}
-		
+        SceneSessionStatus status;
+        status.sessionID = session->getSessionID();
+        status.knock = knock;
+		_scenes[knock.sceneID] = status;
+        enableSceneNode(knock);
 	}
 
 }

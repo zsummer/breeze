@@ -29,11 +29,18 @@
 #include <ProtoSceneServer.h>
 #include <rvo2/RVO.h>
 
-struct WorldServiceSession
+struct DockerSessionStatus
 {
-    AreaID areaID = InvalidAreaID;
-    ServiceType serviceType = InvalidServiceID; //all is singleton 
+    bool online = false;
+    unsigned long long areaID = InvalidAreaID;
+    ServiceType serviceType = InvalidServiceID; //all is singleton
     SessionID sessionID = InvalidSessionID;
+};
+
+struct SceneSessionStatus
+{
+    SessionID sessionID = InvalidSessionID;
+    SceneKnock knock;
 };
 
 class World : public Singleton<World>
@@ -90,11 +97,11 @@ private:
 
 private:
 	Balance<SceneID> * _sceneBalances = nullptr;
-
-
+    void enableSceneNode(SceneKnock sk);
+    void disableSceneNode(SceneKnock sk);
 private:
-    std::map<AreaID, std::map<ServiceType, WorldServiceSession> > _services;
-	std::map<SceneID, SceneKnock> _scenes;
+    std::map<AreaID, std::map<ServiceType, DockerSessionStatus> > _services;
+	std::map<SceneID, SceneSessionStatus> _scenes;
     AccepterID _dockerListen = InvalidAccepterID;
     AccepterID _sceneListen = InvalidAccepterID;
 };
