@@ -8,7 +8,7 @@ Proto4z.register(39004,"SceneKnock")
 Proto4z.SceneKnock = {} --战场服务器挂载 
 Proto4z.SceneKnock.__protoID = 39004 
 Proto4z.SceneKnock.__protoName = "SceneKnock" 
-Proto4z.SceneKnock[1] = {name="sceneID", type="ui32" } --断线检测 
+Proto4z.SceneKnock[1] = {name="lineID", type="ui32" } --分线ID 
 Proto4z.SceneKnock[2] = {name="pubHost", type="string" }  
 Proto4z.SceneKnock[3] = {name="pubPort", type="ui16" }  
  

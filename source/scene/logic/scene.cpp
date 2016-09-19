@@ -7,7 +7,7 @@ Scene::Scene(SceneID id)
 }
 bool Scene::cleanScene()
 {
-    _lastEID = ServerConfig::getRef().getSceneConfig()._sceneID * 1000 + 1000;
+    _lastEID = ServerConfig::getRef().getSceneConfig()._lineID * 1000 + 1000;
     _entitys.clear();
     _players.clear();
     _sceneType = SCENE_TYPE_NONE;

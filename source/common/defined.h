@@ -118,12 +118,18 @@ using namespace zsummer::mysql;
 typedef ui32 AreaID;
 const AreaID InvalidAreaID = 0;
 
-//节点索引ID
+//集装箱ID
 typedef ui32 DockerID;
 const DockerID InvalidDockerID = 0;
 
+//场景服务器ID, 分线ID  
+typedef ui32 LineID;
+const LineID InvalidLineID = 0;
+
+//场景ID  
 typedef ui32 SceneID;
 const SceneID InvalidSceneID = 0;
+//实体ID 
 typedef ui32 EntityID;
 const EntityID InvalidEntityID = 0;
 
@@ -270,13 +276,12 @@ struct WorldConfig
     unsigned short _sceneListenPort = 0;
 };
 
-struct SceneConfig
+struct LineConfig
 {
     std::string _clientListenHost;
     std::string _clientPubHost;
     unsigned short _clientListenPort = 0;
-	std::vector<ui16> _supportSceneTypes;
-    SceneID _sceneID = InvalidSceneID;
+    LineID _lineID = InvalidLineID;
 };
 
 using ProtoID = zsummer::proto4z::ProtoInteger;

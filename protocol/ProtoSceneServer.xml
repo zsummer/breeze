@@ -18,7 +18,7 @@
     <array name="SceneTypeArray" type="ui16" desc="" />
 
     <proto name="SceneKnock" desc= "战场服务器挂载">
-        <member name="sceneID" type="ui32"  desc="断线检测"/>
+        <member name="lineID" type="ui32"  desc="分线ID"/>
         <member name="pubHost" type="string"  desc=""/>
         <member name="pubPort" type="ui16"  desc=""/>
     </proto>

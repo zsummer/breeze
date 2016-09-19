@@ -38,7 +38,7 @@ bool SceneMgr::init(const std::string & configName, ui32 serverID)
 bool SceneMgr::loadScenes()
 {
     _scenes.clear();
-    SceneID lastID = ServerConfig::getRef().getSceneConfig()._sceneID;
+    LineID lastID = ServerConfig::getRef().getSceneConfig()._lineID;
     lastID *= 1000;
     for (int i=0; i<1000; i++)
     {

@@ -107,11 +107,11 @@ private:
 
 
 private:
-    Balance<SceneID> _homeBalance;
-    Balance<SceneID> _otherBalance;
+    Balance<LineID> _homeBalance;
+    Balance<LineID> _otherBalance;
 private:
     std::map<AreaID, std::map<ServiceType, ServiceSessionStatus> > _services; //只记录singleton的service   
-	std::map<SceneID, SceneSessionStatus> _scenes;
+	std::map<LineID, SceneSessionStatus> _lines;
     AccepterID _dockerListen = InvalidAccepterID;
     AccepterID _sceneListen = InvalidAccepterID;
 

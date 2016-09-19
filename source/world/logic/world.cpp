@@ -375,14 +375,14 @@ void World::event_onSceneClosed(TcpSessionPtr session)
     {
 		while (session->getUserParamNumber(UPARAM_SCENE_ID) != InvalidSceneID)
 		{
-			auto founder = _scenes.find((SceneID)session->getUserParamNumber(UPARAM_SCENE_ID));
-			if (founder == _scenes.end())
+			auto founder = _lines.find((SceneID)session->getUserParamNumber(UPARAM_SCENE_ID));
+			if (founder == _lines.end())
 			{
 				break;
 			}
             founder->second.sessionID = InvalidSessionID;
-            _homeBalance.disableNode(founder->second.knock.sceneID);
-            _otherBalance.disableNode(founder->second.knock.sceneID);
+            _homeBalance.disableNode(founder->second.knock.lineID);
+            _otherBalance.disableNode(founder->second.knock.lineID);
 			break;
 		}
 
@@ -401,13 +401,13 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
 	{
 		SceneKnock knock;
 		rs >> knock;
-		session->setUserParam(UPARAM_SCENE_ID, knock.sceneID);
+		session->setUserParam(UPARAM_SCENE_ID, knock.lineID);
         SceneSessionStatus status;
         status.sessionID = session->getSessionID();
         status.knock = knock;
-		_scenes[knock.sceneID] = status;
-        _homeBalance.enableNode(knock.sceneID);
-        _otherBalance.enableNode(knock.sceneID);
+        _lines[knock.lineID] = status;
+        _homeBalance.enableNode(knock.lineID);
+        _otherBalance.enableNode(knock.lineID);
 	}
 
 }

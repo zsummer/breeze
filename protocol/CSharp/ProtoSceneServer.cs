@@ -38,32 +38,32 @@ namespace Proto4z
         static public ushort getProtoID() { return 39004; } 
         static public string getProtoName() { return "SceneKnock"; } 
         //members   
-        public uint sceneID; //断线检测  
+        public uint lineID; //分线ID  
         public string pubHost;  
         public ushort pubPort;  
         public SceneKnock()  
         { 
-            sceneID = 0;  
+            lineID = 0;  
             pubHost = "";  
             pubPort = 0;  
         } 
-        public SceneKnock(uint sceneID, string pubHost, ushort pubPort) 
+        public SceneKnock(uint lineID, string pubHost, ushort pubPort) 
         { 
-            this.sceneID = sceneID; 
+            this.lineID = lineID; 
             this.pubHost = pubHost; 
             this.pubPort = pubPort; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.sceneID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.lineID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.pubHost)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.pubPort)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.sceneID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.lineID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.pubHost = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.pubPort = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 

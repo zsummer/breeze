@@ -10,31 +10,31 @@ struct SceneKnock //战场服务器挂载
 { 
     static const unsigned short getProtoID() { return 39004;} 
     static const std::string getProtoName() { return "SceneKnock";} 
-    unsigned int sceneID; //断线检测  
+    unsigned int lineID; //分线ID  
     std::string pubHost;  
     unsigned short pubPort;  
     SceneKnock() 
     { 
-        sceneID = 0; 
+        lineID = 0; 
         pubPort = 0; 
     } 
-    SceneKnock(const unsigned int & sceneID, const std::string & pubHost, const unsigned short & pubPort) 
+    SceneKnock(const unsigned int & lineID, const std::string & pubHost, const unsigned short & pubPort) 
     { 
-        this->sceneID = sceneID; 
+        this->lineID = lineID; 
         this->pubHost = pubHost; 
         this->pubPort = pubPort; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneKnock & data) 
 { 
-    ws << data.sceneID;  
+    ws << data.lineID;  
     ws << data.pubHost;  
     ws << data.pubPort;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneKnock & data) 
 { 
-    rs >> data.sceneID;  
+    rs >> data.lineID;  
     rs >> data.pubHost;  
     rs >> data.pubPort;  
     return rs; 
@@ -42,7 +42,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneKnock & info) 
 { 
     stm << "[\n"; 
-    stm << "sceneID=" << info.sceneID << "\n"; 
+    stm << "lineID=" << info.lineID << "\n"; 
     stm << "pubHost=" << info.pubHost << "\n"; 
     stm << "pubPort=" << info.pubPort << "\n"; 
     stm << "]\n"; 

@@ -70,9 +70,9 @@ private:
     //异构的世界同步服务器的scene配置
 public:
     bool parseScenes(std::string configName, ui32 serverID);
-    inline const SceneConfig & getSceneConfig() { return _scene; }
+    inline const LineConfig & getSceneConfig() { return _scene; }
 private:
-    SceneConfig _scene;
+    LineConfig _scene;
 };
 
 

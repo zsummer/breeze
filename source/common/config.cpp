@@ -314,7 +314,7 @@ bool ServerConfig::parseWorld(std::string configName)
 bool ServerConfig::parseScenes(std::string configName, ui32 serverID)
 {
     srand((unsigned int)time(NULL));
-    _scene._sceneID = serverID;
+    _scene._lineID = serverID;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {
@@ -343,7 +343,7 @@ bool ServerConfig::parseScenes(std::string configName, ui32 serverID)
             return false;
         }
 
-        SceneConfig sconfig;
+        LineConfig sconfig;
         lua_getfield(L, -1, "clientListenHost");
         sconfig._clientListenHost = luaL_optstring(L, -1, "::");
         lua_pop(L, 1);
@@ -357,11 +357,11 @@ bool ServerConfig::parseScenes(std::string configName, ui32 serverID)
         lua_pop(L, 1);
 
 
-        lua_getfield(L, -1, "sceneID");
-        sconfig._sceneID = (unsigned int)luaL_optinteger(L, -1, 0);
+        lua_getfield(L, -1, "lineID");
+        sconfig._lineID = (unsigned int)luaL_optinteger(L, -1, 0);
         lua_pop(L, 1);
 
-        if (_scene._sceneID == sconfig._sceneID)
+        if (_scene._lineID == sconfig._lineID)
         {
             _scene = sconfig;
         }
