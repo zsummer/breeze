@@ -242,7 +242,6 @@ void SceneMgr::event_onWorldLinked(TcpSessionPtr session)
 	SceneKnock notice;
 	notice.pubHost = ServerConfig::getRef().getSceneConfig()._clientPubHost;
 	notice.pubPort = ServerConfig::getRef().getSceneConfig()._clientListenPort;
-	notice.supportSceneTypes = ServerConfig::getRef().getSceneConfig()._supportSceneTypes;
 	sendViaSessionID(session->getSessionID(), notice);
 	LOGI("event_onWorldLinked cID=" << session->getSessionID() );
 }
@@ -265,7 +264,7 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
 
     if (rsShell.getProtoID() == ScenePulse::getProtoID())
     {
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+        session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
 //     else if (rsShell.getProtoID() == FillUserToSceneReq::getProtoID())

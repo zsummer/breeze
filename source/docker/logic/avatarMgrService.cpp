@@ -420,7 +420,7 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
     _freeList.erase(req.avatarID);
     if (status._status == SS_NONE || status._status == SS_DESTROY)
     {
-        DockerID dockerID = Docker::getRef().getAvatarBalance().selectAuto();
+        DockerID dockerID = Docker::getRef().getAvatarBalance().pickNode(1,1);
         if (dockerID == InvalidDockerID)
         {
             resp.retCode = EC_ERROR;

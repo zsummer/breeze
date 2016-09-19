@@ -11,7 +11,6 @@ struct SceneKnock //战场服务器挂载
     static const unsigned short getProtoID() { return 39004;} 
     static const std::string getProtoName() { return "SceneKnock";} 
     unsigned int sceneID; //断线检测  
-    SceneTypeArray supportSceneTypes; //支持类型  
     std::string pubHost;  
     unsigned short pubPort;  
     SceneKnock() 
@@ -19,10 +18,9 @@ struct SceneKnock //战场服务器挂载
         sceneID = 0; 
         pubPort = 0; 
     } 
-    SceneKnock(const unsigned int & sceneID, const SceneTypeArray & supportSceneTypes, const std::string & pubHost, const unsigned short & pubPort) 
+    SceneKnock(const unsigned int & sceneID, const std::string & pubHost, const unsigned short & pubPort) 
     { 
         this->sceneID = sceneID; 
-        this->supportSceneTypes = supportSceneTypes; 
         this->pubHost = pubHost; 
         this->pubPort = pubPort; 
     } 
@@ -30,7 +28,6 @@ struct SceneKnock //战场服务器挂载
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneKnock & data) 
 { 
     ws << data.sceneID;  
-    ws << data.supportSceneTypes;  
     ws << data.pubHost;  
     ws << data.pubPort;  
     return ws; 
@@ -38,7 +35,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneKnock & data) 
 { 
     rs >> data.sceneID;  
-    rs >> data.supportSceneTypes;  
     rs >> data.pubHost;  
     rs >> data.pubPort;  
     return rs; 
@@ -47,7 +43,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "sceneID=" << info.sceneID << "\n"; 
-    stm << "supportSceneTypes=" << info.supportSceneTypes << "\n"; 
     stm << "pubHost=" << info.pubHost << "\n"; 
     stm << "pubPort=" << info.pubPort << "\n"; 
     stm << "]\n"; 

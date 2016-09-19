@@ -541,7 +541,7 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     }
     else if (rsShell.getProtoID() == DockerPulse::getProtoID())
     {
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+        session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
     else if (rsShell.getProtoID() == ShutdownClusterServer::getProtoID())
@@ -1051,7 +1051,7 @@ void Docker::event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & r
 void Docker::event_onClientLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
-    session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+    session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     session->setUserParam(UPARAM_ACCOUNT, "");
     session->setUserParam(UPARAM_AVATAR_ID, InvalidServiceID);
     LOGD("Docker::event_onClientLinked. SessionID=" << session->getSessionID()
@@ -1121,7 +1121,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
     if (rs.getProtoID() == ClientPulse::getProtoID())
     {
-        session->setUserParam(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+        session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
     if (!_dockerServiceWorking || (!peekService(STAvatarMgr, InvalidServiceID)) || peekService(STAvatarMgr, InvalidServiceID)->getStatus() != SS_WORKING)

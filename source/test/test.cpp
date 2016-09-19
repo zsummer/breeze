@@ -71,6 +71,7 @@ int main(int argc, char* argv[])
     ILog4zManager::getPtr()->start();
     SessionManager::getRef().start();
 
+    checkBalance();
     auto ret =getHostByName("github.com", 3389);
     LOGA("getHostByName=" << ret);
     std::tuple<int, double> kv1 = splitTupleString<int, double>("1:1.0", ":", "");
@@ -613,51 +614,43 @@ int checkBalance()
     balance.enableNode(1);
     balance.enableNode(2);
     balance.enableNode(3);
-    for (unsigned i = 0; i <6 ; ++i)
+    for (unsigned i = 0; i < 12 ; ++i)
     {
-        if(balance.selectAuto() != i%3+1)
-        {
-            return 1;
-        }
+        balance.pickNode(1, 1);
     }
-    for (unsigned i = 0; i<6; ++i)
+    if (balance.getBalanceDeviation() > 1+1)
     {
-        if(balance.selectManual() != i%3+1)
-        {
-            return 2; //select light when lost weight
-        }
-        balance.changeWeight(i%3+1, 5);
+        return 1;
+    }
+    for (unsigned i = 0; i < 20000; ++i)
+    {
+        balance.pickNode(50, 1);
+    }
+    if (balance.getBalanceDeviation() > 50 + 1)
+    {
+        return 2;
     }
     balance.disableNode(3);
-    for (unsigned i = 0; i < 6; ++i)
-    {
-        if(balance.selectAuto() != i%2+1)
-        {
-            return 3;
-        }
-    }
-    for (unsigned i = 0; i < 6; ++i)
-    {
-        if(balance.selectManual() != i%2+1)
-        {
-            return 4;
-        }
-        balance.changeWeight(i%2+1, 5);
-    }
     balance.enableNode(4);
-    for (unsigned i = 0; i < 3; ++i)
+    for (unsigned i = 0; i < 20000; ++i)
     {
-        if(balance.selectAuto() != 4)
-        {
-            return 5;
-        }
-        if(balance.selectManual() != 4)
-        {
-            return 6;
-        }
-        balance.changeWeight(4, 1);
+        balance.pickNode(50, 1);
     }
-    LOGD("rate=" << balance.getBalanceRate() << ", status=" << balance.getBalanceStatus());
+    if (balance.getBalanceDeviation() > 50 + 1)
+    {
+        return 3;
+    }
+
+    for (unsigned i = 0; i < 20000; ++i)
+    {
+        balance.pickNode(1, 1);
+    }
+    if (balance.getBalanceDeviation() > 1 + 1)
+    {
+        return 4;
+    }
+   
+    LOGD( balance.getBalanceStatus());
     return 0;
 }
 

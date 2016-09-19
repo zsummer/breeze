@@ -39,20 +39,17 @@ namespace Proto4z
         static public string getProtoName() { return "SceneKnock"; } 
         //members   
         public uint sceneID; //断线检测  
-        public SceneTypeArray supportSceneTypes; //支持类型  
         public string pubHost;  
         public ushort pubPort;  
         public SceneKnock()  
         { 
             sceneID = 0;  
-            supportSceneTypes = new SceneTypeArray();  
             pubHost = "";  
             pubPort = 0;  
         } 
-        public SceneKnock(uint sceneID, SceneTypeArray supportSceneTypes, string pubHost, ushort pubPort) 
+        public SceneKnock(uint sceneID, string pubHost, ushort pubPort) 
         { 
             this.sceneID = sceneID; 
-            this.supportSceneTypes = supportSceneTypes; 
             this.pubHost = pubHost; 
             this.pubPort = pubPort; 
         } 
@@ -60,8 +57,6 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.sceneID)); 
-            if (this.supportSceneTypes == null) this.supportSceneTypes = new SceneTypeArray(); 
-            data.AddRange(this.supportSceneTypes.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.pubHost)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.pubPort)); 
             return data; 
@@ -69,8 +64,6 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.sceneID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.supportSceneTypes = new SceneTypeArray(); 
-            this.supportSceneTypes.__decode(binData, ref pos); 
             this.pubHost = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.pubPort = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 

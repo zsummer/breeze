@@ -107,9 +107,8 @@ private:
 
 
 private:
-	Balance<SceneID> * _sceneBalances = nullptr;
-    void enableSceneNode(const SceneKnock& sk);
-    void disableSceneNode(const SceneKnock& sk);
+    Balance<SceneID> _homeBalance;
+    Balance<SceneID> _otherBalance;
 private:
     std::map<AreaID, std::map<ServiceType, ServiceSessionStatus> > _services; //只记录singleton的service   
 	std::map<SceneID, SceneSessionStatus> _scenes;
@@ -197,7 +196,7 @@ void World::toService(AreaID areaID, ServiceType indexServiceType, ServiceType d
 	}
 	if (founder->second.sessionID == InvalidSessionID)
 	{
-		LOGW("the docker not linked when to Service. areaID=" << areaID << ", serviceType=" << serviceType);
+		LOGW("the docker not linked when to Service. areaID=" << areaID << ", indexServiceType=" << indexServiceType);
 		return;
 	}
 	Tracing trace;
