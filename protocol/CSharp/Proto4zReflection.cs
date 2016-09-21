@@ -203,6 +203,12 @@ namespace Proto4z
             _idToName.Add(10004, "SkillData");
             _nameToID.Add("SkillInfo", 10007);
             _idToName.Add(10007, "SkillInfo");
+            _nameToID.Add("SwitchSceneNotice", 40026);
+            _idToName.Add(40026, "SwitchSceneNotice");
+            _nameToID.Add("SwitchSceneReq", 40024);
+            _idToName.Add(40024, "SwitchSceneReq");
+            _nameToID.Add("SwitchSceneResp", 40025);
+            _idToName.Add(40025, "SwitchSceneResp");
             _nameToID.Add("SwitchServiceClientNotice", 2006);
             _idToName.Add(2006, "SwitchServiceClientNotice");
             _nameToID.Add("Tracing", 1002);

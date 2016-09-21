@@ -51,6 +51,8 @@ public:
     inline bool enableNode(BalanceID node);
     inline bool cleanNode(BalanceID node);
     inline bool disableNode(BalanceID node);
+    inline size_t activeNodes();
+
     inline bool addWeight(BalanceID node, double weight);
 
     inline BalanceID pickNode(double step, double weight);
@@ -104,7 +106,19 @@ inline bool Balance<BalanceID>::disableNode(BalanceID node)
     founder->active = false;
     return true;
 }
-
+template<class BalanceID>
+inline size_t Balance<BalanceID>::activeNodes()
+{
+    size_t ret = 0;
+    for (auto & node : _balance)
+    {
+        if (node.active)
+        {
+            ret++;
+        }
+    }
+    return ret;
+}
 template<class BalanceID>
 inline bool Balance<BalanceID>::addWeight(BalanceID node, double weight)
 {

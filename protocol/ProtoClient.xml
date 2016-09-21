@@ -60,26 +60,20 @@
         <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
     </packet>
 
-   <packet name="JoinSceneReq" desc= "">
-        <member name="spaceType" type="ui16"   desc=""/>
+   <packet name="SwitchSceneReq" desc= "">
+        <member name="spaceType" type="ui16"   desc="NONE相当于重置/离开所有场景"/>
         <member name="mapID" type="ui32"   desc=""/>
     </packet>
-    <packet name="JoinSceneResp" desc= "">
+    <packet name="SwitchSceneResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
 
     </packet>
-    <packet name="JoinSceneNotice" desc= "">
+    <packet name="SwitchSceneNotice" desc= "">
         <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
     </packet>
 
-   <packet name="LeaveSceneReq" desc= "">
-        <member name="spaceID" type="ui32"   desc=""/>
-    </packet>
-    <packet name="LeaveSceneResp" desc= "">
-        <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
-    </packet>
+
 
 
 <!------------------------------------ other --------------------------------------------->

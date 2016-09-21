@@ -32,6 +32,7 @@ namespace Proto4z
         //members   
         public ushort sceneType; //场景类型  
         public uint mapID;  
+        public uint lineID; //分线ID  
         public uint sceneID; //场景实例ID  
         public ushort sceneStatus; //状态  
         public string host; //服务器host  
@@ -42,6 +43,7 @@ namespace Proto4z
         { 
             sceneType = 0;  
             mapID = 0;  
+            lineID = 0;  
             sceneID = 0;  
             sceneStatus = 0;  
             host = "";  
@@ -49,10 +51,11 @@ namespace Proto4z
             token = "";  
             involeds = new AvatarBaseInfoArray();  
         } 
-        public SceneTokenInfo(ushort sceneType, uint mapID, uint sceneID, ushort sceneStatus, string host, ushort port, string token, AvatarBaseInfoArray involeds) 
+        public SceneTokenInfo(ushort sceneType, uint mapID, uint lineID, uint sceneID, ushort sceneStatus, string host, ushort port, string token, AvatarBaseInfoArray involeds) 
         { 
             this.sceneType = sceneType; 
             this.mapID = mapID; 
+            this.lineID = lineID; 
             this.sceneID = sceneID; 
             this.sceneStatus = sceneStatus; 
             this.host = host; 
@@ -65,6 +68,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.mapID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.lineID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.sceneID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneStatus)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
@@ -78,6 +82,7 @@ namespace Proto4z
         { 
             this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.mapID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.lineID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.sceneID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.sceneStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 

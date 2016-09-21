@@ -75,38 +75,25 @@ Proto4z.GetSceneTokenInfoResp.__protoName = "GetSceneTokenInfoResp"
 Proto4z.GetSceneTokenInfoResp[1] = {name="retCode", type="ui16" }  
 Proto4z.GetSceneTokenInfoResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
  
-Proto4z.register(40009,"JoinSceneReq") 
-Proto4z.JoinSceneReq = {}  
-Proto4z.JoinSceneReq.__protoID = 40009 
-Proto4z.JoinSceneReq.__protoName = "JoinSceneReq" 
-Proto4z.JoinSceneReq[1] = {name="spaceType", type="ui16" }  
-Proto4z.JoinSceneReq[2] = {name="mapID", type="ui32" }  
+Proto4z.register(40024,"SwitchSceneReq") 
+Proto4z.SwitchSceneReq = {}  
+Proto4z.SwitchSceneReq.__protoID = 40024 
+Proto4z.SwitchSceneReq.__protoName = "SwitchSceneReq" 
+Proto4z.SwitchSceneReq[1] = {name="spaceType", type="ui16" } --NONE相当于重置/离开所有场景 
+Proto4z.SwitchSceneReq[2] = {name="mapID", type="ui32" }  
  
-Proto4z.register(40010,"JoinSceneResp") 
-Proto4z.JoinSceneResp = {}  
-Proto4z.JoinSceneResp.__protoID = 40010 
-Proto4z.JoinSceneResp.__protoName = "JoinSceneResp" 
-Proto4z.JoinSceneResp[1] = {name="retCode", type="ui16" }  
-Proto4z.JoinSceneResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
+Proto4z.register(40025,"SwitchSceneResp") 
+Proto4z.SwitchSceneResp = {}  
+Proto4z.SwitchSceneResp.__protoID = 40025 
+Proto4z.SwitchSceneResp.__protoName = "SwitchSceneResp" 
+Proto4z.SwitchSceneResp[1] = {name="retCode", type="ui16" }  
+Proto4z.SwitchSceneResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
  
-Proto4z.register(40011,"JoinSceneNotice") 
-Proto4z.JoinSceneNotice = {}  
-Proto4z.JoinSceneNotice.__protoID = 40011 
-Proto4z.JoinSceneNotice.__protoName = "JoinSceneNotice" 
-Proto4z.JoinSceneNotice[1] = {name="tokenInfo", type="SceneTokenInfo" }  
- 
-Proto4z.register(40012,"LeaveSceneReq") 
-Proto4z.LeaveSceneReq = {}  
-Proto4z.LeaveSceneReq.__protoID = 40012 
-Proto4z.LeaveSceneReq.__protoName = "LeaveSceneReq" 
-Proto4z.LeaveSceneReq[1] = {name="spaceID", type="ui32" }  
- 
-Proto4z.register(40013,"LeaveSceneResp") 
-Proto4z.LeaveSceneResp = {}  
-Proto4z.LeaveSceneResp.__protoID = 40013 
-Proto4z.LeaveSceneResp.__protoName = "LeaveSceneResp" 
-Proto4z.LeaveSceneResp[1] = {name="retCode", type="ui16" }  
-Proto4z.LeaveSceneResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
+Proto4z.register(40026,"SwitchSceneNotice") 
+Proto4z.SwitchSceneNotice = {}  
+Proto4z.SwitchSceneNotice.__protoID = 40026 
+Proto4z.SwitchSceneNotice.__protoName = "SwitchSceneNotice" 
+Proto4z.SwitchSceneNotice[1] = {name="tokenInfo", type="SceneTokenInfo" }  
  
 Proto4z.register(40014,"ChatReq") 
 Proto4z.ChatReq = {}  

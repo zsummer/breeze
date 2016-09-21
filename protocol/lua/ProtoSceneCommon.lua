@@ -20,12 +20,13 @@ Proto4z.SceneTokenInfo.__protoID = 10000
 Proto4z.SceneTokenInfo.__protoName = "SceneTokenInfo" 
 Proto4z.SceneTokenInfo[1] = {name="sceneType", type="ui16" } --场景类型 
 Proto4z.SceneTokenInfo[2] = {name="mapID", type="ui32" }  
-Proto4z.SceneTokenInfo[3] = {name="sceneID", type="ui32" } --场景实例ID 
-Proto4z.SceneTokenInfo[4] = {name="sceneStatus", type="ui16" } --状态 
-Proto4z.SceneTokenInfo[5] = {name="host", type="string" } --服务器host 
-Proto4z.SceneTokenInfo[6] = {name="port", type="ui16" } --服务器port 
-Proto4z.SceneTokenInfo[7] = {name="token", type="string" } --令牌 
-Proto4z.SceneTokenInfo[8] = {name="involeds", type="AvatarBaseInfoArray" } --匹配列表中的玩家 
+Proto4z.SceneTokenInfo[3] = {name="lineID", type="ui32" } --分线ID 
+Proto4z.SceneTokenInfo[4] = {name="sceneID", type="ui32" } --场景实例ID 
+Proto4z.SceneTokenInfo[5] = {name="sceneStatus", type="ui16" } --状态 
+Proto4z.SceneTokenInfo[6] = {name="host", type="string" } --服务器host 
+Proto4z.SceneTokenInfo[7] = {name="port", type="ui16" } --服务器port 
+Proto4z.SceneTokenInfo[8] = {name="token", type="string" } --令牌 
+Proto4z.SceneTokenInfo[9] = {name="involeds", type="AvatarBaseInfoArray" } --匹配列表中的玩家 
  
 Proto4z.SceneTokenInfoArray = {}  
 Proto4z.SceneTokenInfoArray.__protoName = "SceneTokenInfoArray" 

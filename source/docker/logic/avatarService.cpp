@@ -10,8 +10,7 @@ AvatarService::AvatarService()
 	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
 
     slotting<GetSceneTokenInfoReq>(std::bind(&AvatarService::onGetSceneTokenInfoReq, this, _1, _2));
-    slotting<JoinSceneReq>(std::bind(&AvatarService::onJoinSceneReq, this, _1, _2));
-    slotting<LeaveSceneReq>(std::bind(&AvatarService::onLeaveSceneReq, this, _1, _2));
+    slotting<SwitchSceneReq>(std::bind(&AvatarService::onSwitchSceneReq, this, _1, _2));
 
 }
 
@@ -234,26 +233,17 @@ void AvatarService::onGetSceneTokenInfoReq(const Tracing & trace, zsummer::proto
     toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
 }
 
-void AvatarService::onJoinSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void AvatarService::onSwitchSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, JoinSceneResp(EC_SERVICE_NOT_OPEN, SceneTokenInfo()));
+        toService(STClient, trace.oob, SwitchSceneResp(EC_SERVICE_NOT_OPEN, SceneTokenInfo()));
         return;
     }
     toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
 }
-void AvatarService::onLeaveSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
-{
-    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
-    {
-        LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, LeaveSceneResp(EC_SERVICE_NOT_OPEN, SceneTokenInfo()));
-        return;
-    }
-    toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
-}
+
 
 
 

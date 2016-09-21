@@ -40,6 +40,7 @@
     <struct name="SceneTokenInfo" desc="Token">
         <member name="sceneType" type="ui16"  desc="场景类型"/>
         <member name="mapID" type="ui32"  desc=""/>
+        <member name="lineID" type="ui32"  desc="分线ID"/>
         <member name="sceneID" type="ui32"  desc="场景实例ID"/>
         <member name="sceneStatus" type="ui16"  desc="状态"/>
         <member name="host" type="string"  desc="服务器host"/>

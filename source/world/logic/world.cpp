@@ -9,6 +9,7 @@
 
 World::World()
 {
+    _matchPool.resize(SCENE_TYPE_MAX);
 }
 
 bool World::init(const std::string & configName)
@@ -30,7 +31,7 @@ bool World::init(const std::string & configName)
         LOGE("World::init error. DBDict load error. ");
         return false;
     }
-
+    _matchTimerID = SessionManager::getRef().createTimer(1000, std::bind(&World::onMatchTimer, this));
     return true;
 }
 
@@ -312,11 +313,11 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 		backToService(session->getSessionID(), trace, resp);
 		return;
     }
-	else if (rs.getProtoID() == JoinSceneReq::getProtoID())
+	else if (rs.getProtoID() == SwitchSceneReq::getProtoID())
 	{
-		JoinSceneReq req;
+        SwitchSceneReq req;
 		rs >> req;
-		JoinSceneResp resp;
+        SwitchSceneResp resp;
 		auto token = getAvatarToken(areaID, trace.oob.clientAvatarID);
 		if (!token)
 		{
@@ -326,16 +327,38 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 			_avatarToken[areaID][trace.oob.clientAvatarID] = token;
 		}
 		double now = getFloatSteadyNowTime();
-		if (now - token->lastSwitchTime < 5.0)
+		if (now - token->lastSwitchTime < 10.0 
+            || req.spaceType == SCENE_TYPE_NONE
+            || req.spaceType >= SCENE_TYPE_MAX
+            || (req.spaceType == SCENE_TYPE_HOME && _homeBalance.activeNodes() == 0)
+            || (req.spaceType != SCENE_TYPE_HOME && _otherBalance.activeNodes() == 0))
 		{
 			resp.retCode = EC_ERROR;
 			backToService(session->getSessionID(), trace, resp);
 			return;
 		}
-		if (token->token.sceneType != SCENE_TYPE_NONE)
+        //disaster recovery 
+		if (token->token.sceneType != SCENE_TYPE_NONE )
 		{
-
+            auto scs = _lines.find(token->token.lineID);
+            if (scs != _lines.end() && scs->second.sessionID != InvalidSessionID)
+            {
+                toService(scs->second.sessionID, trace, SwitchSceneReq(SCENE_TYPE_NONE, 0));
+            }
+            token->token.sceneType = SCENE_TYPE_NONE;
+            token->token.sceneStatus = SCENE_STATUS_NONE;
 		}
+
+        LineID line = 0;
+        if (req.spaceType == SCENE_TYPE_HOME)
+        {
+            line = _homeBalance.pickNode(30, 1);
+        }
+        else
+        {
+            line = _otherBalance.pickNode(1, 1);
+        }
+
 		return;
 	}
 }
@@ -413,6 +436,13 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
 }
 
 
+void World::onMatchTimer()
+{
+    if (_matchTimerID != InvalidTimerID)
+    {
+        _matchTimerID = SessionManager::getRef().createTimer(1000, std::bind(&World::onMatchTimer, this));
+    }
 
+}
 
 

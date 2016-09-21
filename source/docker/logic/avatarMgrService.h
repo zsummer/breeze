@@ -79,9 +79,8 @@ private:
 
 private:
     void onGetSceneTokenInfoResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSceneNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onLeaveSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onSwitchSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onSwitchSceneNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 

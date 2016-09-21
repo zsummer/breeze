@@ -30,6 +30,7 @@ struct SceneTokenInfo //Token
     static const std::string getProtoName() { return "SceneTokenInfo";} 
     unsigned short sceneType; //场景类型  
     unsigned int mapID;  
+    unsigned int lineID; //分线ID  
     unsigned int sceneID; //场景实例ID  
     unsigned short sceneStatus; //状态  
     std::string host; //服务器host  
@@ -40,14 +41,16 @@ struct SceneTokenInfo //Token
     { 
         sceneType = 0; 
         mapID = 0; 
+        lineID = 0; 
         sceneID = 0; 
         sceneStatus = 0; 
         port = 0; 
     } 
-    SceneTokenInfo(const unsigned short & sceneType, const unsigned int & mapID, const unsigned int & sceneID, const unsigned short & sceneStatus, const std::string & host, const unsigned short & port, const std::string & token, const AvatarBaseInfoArray & involeds) 
+    SceneTokenInfo(const unsigned short & sceneType, const unsigned int & mapID, const unsigned int & lineID, const unsigned int & sceneID, const unsigned short & sceneStatus, const std::string & host, const unsigned short & port, const std::string & token, const AvatarBaseInfoArray & involeds) 
     { 
         this->sceneType = sceneType; 
         this->mapID = mapID; 
+        this->lineID = lineID; 
         this->sceneID = sceneID; 
         this->sceneStatus = sceneStatus; 
         this->host = host; 
@@ -60,6 +63,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.sceneType;  
     ws << data.mapID;  
+    ws << data.lineID;  
     ws << data.sceneID;  
     ws << data.sceneStatus;  
     ws << data.host;  
@@ -72,6 +76,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.sceneType;  
     rs >> data.mapID;  
+    rs >> data.lineID;  
     rs >> data.sceneID;  
     rs >> data.sceneStatus;  
     rs >> data.host;  
@@ -85,6 +90,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "sceneType=" << info.sceneType << "\n"; 
     stm << "mapID=" << info.mapID << "\n"; 
+    stm << "lineID=" << info.lineID << "\n"; 
     stm << "sceneID=" << info.sceneID << "\n"; 
     stm << "sceneStatus=" << info.sceneStatus << "\n"; 
     stm << "host=" << info.host << "\n"; 

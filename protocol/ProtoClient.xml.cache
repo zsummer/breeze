@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>aa7e8bcab1f4c725fced63b67b3184c8</cppmd5> 
-<luamd5>80c98e434cfc7f8eaa08675f4171e1a6</luamd5> 
-<csharpmd5>f0e1e8e8dd9e0552dcc68b039a54c8a2</csharpmd5> 
-<xmlmd5>765aa092293875cde3e67bcc380a7808</xmlmd5> 
+<cppmd5>1334a4f86ec1a92a6d0d465c17aa865c</cppmd5> 
+<luamd5>dbe4947c46eb9e0d241262d3566145dc</luamd5> 
+<csharpmd5>65e561189a646549261159fbca52c647</csharpmd5> 
+<xmlmd5>ff0796ed80fe86294df65984e411dc04</xmlmd5> 
 <cacheNumber>
     <cache key = "AttachAvatarReq" Number = "40005" /> 
     <cache key = "AttachAvatarResp" Number = "40006" /> 
@@ -29,4 +29,7 @@
     <cache key = "LeaveSceneResp" Number = "40013" /> 
     <cache key = "PingPongReq" Number = "40016" /> 
     <cache key = "PingPongResp" Number = "40017" /> 
+    <cache key = "SwitchSceneNotice" Number = "40026" /> 
+    <cache key = "SwitchSceneReq" Number = "40024" /> 
+    <cache key = "SwitchSceneResp" Number = "40025" /> 
 </cacheNumber>

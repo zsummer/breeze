@@ -57,8 +57,7 @@ private:
 	void onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
     void onGetSceneTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onLeaveSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onSwitchSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 

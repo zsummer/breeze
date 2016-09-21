@@ -119,6 +119,12 @@ public:
 	std::shared_ptr<AvatarSceneTokenStatus> getAvatarToken(AreaID areaID, ServiceID serviceID);
 private:
 	std::map<AreaID, std::map<ServiceID, std::shared_ptr<AvatarSceneTokenStatus>>> _avatarToken;
+
+
+public:
+    std::vector<std::list<std::shared_ptr<AvatarSceneTokenStatus>>> _matchPool;
+    TimerID _matchTimerID = InvalidTimerID;
+    void onMatchTimer();
 };
 
 
