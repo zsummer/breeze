@@ -14,24 +14,26 @@ Proto4z.SCENE_STATUS_WAIT = 3--等待玩家加入战场
 Proto4z.SCENE_STATUS_ACTIVE = 4--战斗中 
 Proto4z.SCENE_STATUS_LINGER = 5--战斗结束,数据驻留阶段 
  
-Proto4z.register(10000,"SceneTokenInfo") 
-Proto4z.SceneTokenInfo = {} --Token 
-Proto4z.SceneTokenInfo.__protoID = 10000 
-Proto4z.SceneTokenInfo.__protoName = "SceneTokenInfo" 
-Proto4z.SceneTokenInfo[1] = {name="sceneType", type="ui16" } --场景类型 
-Proto4z.SceneTokenInfo[2] = {name="mapID", type="ui32" }  
-Proto4z.SceneTokenInfo[3] = {name="lineID", type="ui32" } --分线ID 
-Proto4z.SceneTokenInfo[4] = {name="sceneID", type="ui32" } --场景实例ID 
-Proto4z.SceneTokenInfo[5] = {name="sceneStatus", type="ui16" } --状态 
-Proto4z.SceneTokenInfo[6] = {name="host", type="string" } --服务器host 
-Proto4z.SceneTokenInfo[7] = {name="port", type="ui16" } --服务器port 
-Proto4z.SceneTokenInfo[8] = {name="token", type="string" } --令牌 
-Proto4z.SceneTokenInfo[9] = {name="involeds", type="AvatarBaseInfoArray" } --匹配列表中的玩家 
+Proto4z.register(10013,"SceneAvatarStatus") 
+Proto4z.SceneAvatarStatus = {} --AvatarStatus 
+Proto4z.SceneAvatarStatus.__protoID = 10013 
+Proto4z.SceneAvatarStatus.__protoName = "SceneAvatarStatus" 
+Proto4z.SceneAvatarStatus[1] = {name="areaID", type="ui32" }  
+Proto4z.SceneAvatarStatus[2] = {name="baseInfo", type="AvatarBaseInfo" }  
+Proto4z.SceneAvatarStatus[3] = {name="sceneType", type="ui16" } --场景类型 
+Proto4z.SceneAvatarStatus[4] = {name="mapID", type="ui32" }  
+Proto4z.SceneAvatarStatus[5] = {name="sceneStatus", type="ui16" } --状态 
+Proto4z.SceneAvatarStatus[6] = {name="lineID", type="ui32" } --分线ID 
+Proto4z.SceneAvatarStatus[7] = {name="sceneID", type="ui32" } --场景实例ID 
+Proto4z.SceneAvatarStatus[8] = {name="host", type="string" } --服务器host 
+Proto4z.SceneAvatarStatus[9] = {name="port", type="ui16" } --服务器port 
+Proto4z.SceneAvatarStatus[10] = {name="token", type="string" } --令牌 
+Proto4z.SceneAvatarStatus[11] = {name="lastSwitchTime", type="double" } --最后一次切换场景的时间 
  
-Proto4z.SceneTokenInfoArray = {}  
-Proto4z.SceneTokenInfoArray.__protoName = "SceneTokenInfoArray" 
-Proto4z.SceneTokenInfoArray.__protoDesc = "array" 
-Proto4z.SceneTokenInfoArray.__protoTypeV = "SceneTokenInfo" 
+Proto4z.SceneAvatarStatusArray = {}  
+Proto4z.SceneAvatarStatusArray.__protoName = "SceneAvatarStatusArray" 
+Proto4z.SceneAvatarStatusArray.__protoDesc = "array" 
+Proto4z.SceneAvatarStatusArray.__protoTypeV = "SceneAvatarStatus" 
  
 Proto4z.EntityIDArray = {}  
 Proto4z.EntityIDArray.__protoName = "EntityIDArray" 

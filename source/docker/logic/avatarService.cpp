@@ -1,6 +1,6 @@
 ﻿#include "avatarService.h"
 #include <ProtoClient.h>
-
+#include <ProtoSceneServer.h>
 
 AvatarService::AvatarService()
 {
@@ -9,8 +9,9 @@ AvatarService::AvatarService()
 	slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
 	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
 
-    slotting<GetSceneTokenInfoReq>(std::bind(&AvatarService::onGetSceneTokenInfoReq, this, _1, _2));
-    slotting<SwitchSceneReq>(std::bind(&AvatarService::onSwitchSceneReq, this, _1, _2));
+    slotting<GetSceneAvatarStatusReq>(std::bind(&AvatarService::onGetSceneAvatarStatusReq, this, _1, _2));
+    slotting<ApplyForSceneReq>(std::bind(&AvatarService::onApplyForSceneReq, this, _1, _2));
+    slotting<CancelSceneReq>(std::bind(&AvatarService::onCancelSceneReq, this, _1, _2));
 
 }
 
@@ -222,29 +223,61 @@ void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::R
 
 
 
-void AvatarService::onGetSceneTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+void AvatarService::onGetSceneAvatarStatusReq(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, GetSceneTokenInfoResp(EC_SERVICE_NOT_OPEN, SceneTokenInfo()));
+        toService(STClient, trace.oob, GetSceneAvatarStatusResp(EC_SERVICE_NOT_OPEN));
         return;
     }
     toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
 }
 
-void AvatarService::onSwitchSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void AvatarService::onApplyForSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, SwitchSceneResp(EC_SERVICE_NOT_OPEN, SceneTokenInfo()));
+        toService(STClient, trace.oob, ApplyForSceneResp(EC_SERVICE_NOT_OPEN));
+        return;
+    }
+    ApplyForSceneReq req;
+    rs >> req;
+    if (!req.friends.empty())
+    {
+        for (auto id : req.friends)
+        {
+            auto ap = Docker::getRef().peekService(STAvatar, id);
+            if (!ap)
+            {
+                LOGE("onApplyForSceneReq error. can't found friends. friend avatar ID=" << id << ", self=" << getStatus());
+                toService(STClient, trace.oob,  ApplyForSceneResp(EC_ERROR));
+                return;
+            }
+        }
+    }
+    else
+    {
+        ApplyForSceneServerReq fd;
+        fd.avatars.push_back(_baseInfo._data);
+        fd.mapID = req.mapID;
+        fd.sceneType = req.sceneType;
+        toService(STWorldMgr, trace.oob, fd);
+    }
+   
+}
+
+void AvatarService::onCancelSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
+    {
+        LOGW("STWorldMgr service not open. " << trace);
+        toService(STClient, trace.oob, CancelSceneResp(EC_SERVICE_NOT_OPEN));
         return;
     }
     toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
 }
-
-
 
 
 void AvatarService::refreshProp(const std::string &prop, double val, bool overwrite)

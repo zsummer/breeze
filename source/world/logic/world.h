@@ -35,18 +35,21 @@ struct ServiceSessionStatus
     unsigned long long areaID = InvalidAreaID;
     ServiceType serviceType = InvalidServiceID; //all is singleton
 };
+using ServiceSessionStatusPtr = std::shared_ptr<ServiceSessionStatus>;
+
 
 struct SceneSessionStatus
 {
     SessionID sessionID = InvalidSessionID;
     SceneKnock knock;
 };
+using SceneSessionStatusPtr = std::shared_ptr<SceneSessionStatus>;
 
-struct AvatarSceneTokenStatus
-{
-	double lastSwitchTime = 0.0;
-	SceneTokenInfo token;
-};
+
+
+using SceneAvatarStatusPtr = std::shared_ptr<SceneAvatarStatus>;
+using SceneAvatarStatusTeam = std::vector<SceneAvatarStatusPtr>;
+using SceneAvatarStatusPool = std::list<SceneAvatarStatusTeam>;
 
 
 class World : public Singleton<World>
@@ -116,13 +119,15 @@ private:
     AccepterID _sceneListen = InvalidAccepterID;
 
 public:
-	std::shared_ptr<AvatarSceneTokenStatus> getAvatarToken(AreaID areaID, ServiceID serviceID);
+    SceneAvatarStatusPtr getAvatarStatus(ServiceID serviceID);
 private:
-	std::map<AreaID, std::map<ServiceID, std::shared_ptr<AvatarSceneTokenStatus>>> _avatarToken;
+	std::map<ServiceID, SceneAvatarStatusPtr> _avatarStatus;
 
 
-public:
-    std::vector<std::list<std::shared_ptr<AvatarSceneTokenStatus>>> _matchPool;
+private:
+    bool CancelMatching();
+    void AddMatching();
+    std::vector<SceneAvatarStatusPool> _matchPools;
     TimerID _matchTimerID = InvalidTimerID;
     void onMatchTimer();
 };

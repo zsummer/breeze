@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>aad4b1b1d3e4eae0fa2029949be6bbdf</cppmd5> 
-<luamd5>0487d7aa64296d261ac8cf6d5865d3a3</luamd5> 
-<csharpmd5>e83e7128bb1f24d87ea528a49dd087b6</csharpmd5> 
-<xmlmd5>148cdcaf477ebc5e9c928ce14b1cfb57</xmlmd5> 
+<cppmd5>f9a7f5469dbf7e71fd1bea3cf9a4ce33</cppmd5> 
+<luamd5>063462a09f16028a552c567a6e2bddc4</luamd5> 
+<csharpmd5>56491a8b1a0c87f136c348b068694a46</csharpmd5> 
+<xmlmd5>b01993f4c98c7c0b1ecec0d71a01f78b</xmlmd5> 
 <cacheNumber>
     <cache key = "AllocateSceneReq" Number = "39000" /> 
     <cache key = "AllocateSceneResp" Number = "39001" /> 
+    <cache key = "ApplyForSceneServerReq" Number = "39007" /> 
+    <cache key = "FeedbackAvatarStatusNotice" Number = "39006" /> 
     <cache key = "SceneBeing" Number = "39003" /> 
     <cache key = "SceneKnock" Number = "39004" /> 
     <cache key = "ScenePulse" Number = "39005" /> 

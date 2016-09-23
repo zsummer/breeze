@@ -23,79 +23,89 @@ namespace Proto4z
         SCENE_STATUS_LINGER = 5, //战斗结束,数据驻留阶段  
     }; 
  
-    public class SceneTokenInfo: Proto4z.IProtoObject //Token  
+    public class SceneAvatarStatus: Proto4z.IProtoObject //AvatarStatus  
     {     
         //proto id   
-        public const ushort protoID = 10000;  
-        static public ushort getProtoID() { return 10000; } 
-        static public string getProtoName() { return "SceneTokenInfo"; } 
+        public const ushort protoID = 10013;  
+        static public ushort getProtoID() { return 10013; } 
+        static public string getProtoName() { return "SceneAvatarStatus"; } 
         //members   
+        public uint areaID;  
+        public AvatarBaseInfo baseInfo;  
         public ushort sceneType; //场景类型  
         public uint mapID;  
+        public ushort sceneStatus; //状态  
         public uint lineID; //分线ID  
         public uint sceneID; //场景实例ID  
-        public ushort sceneStatus; //状态  
         public string host; //服务器host  
         public ushort port; //服务器port  
         public string token; //令牌  
-        public AvatarBaseInfoArray involeds; //匹配列表中的玩家  
-        public SceneTokenInfo()  
+        public double lastSwitchTime; //最后一次切换场景的时间  
+        public SceneAvatarStatus()  
         { 
+            areaID = 0;  
+            baseInfo = new AvatarBaseInfo();  
             sceneType = 0;  
             mapID = 0;  
+            sceneStatus = 0;  
             lineID = 0;  
             sceneID = 0;  
-            sceneStatus = 0;  
             host = "";  
             port = 0;  
             token = "";  
-            involeds = new AvatarBaseInfoArray();  
+            lastSwitchTime = 0.0;  
         } 
-        public SceneTokenInfo(ushort sceneType, uint mapID, uint lineID, uint sceneID, ushort sceneStatus, string host, ushort port, string token, AvatarBaseInfoArray involeds) 
+        public SceneAvatarStatus(uint areaID, AvatarBaseInfo baseInfo, ushort sceneType, uint mapID, ushort sceneStatus, uint lineID, uint sceneID, string host, ushort port, string token, double lastSwitchTime) 
         { 
+            this.areaID = areaID; 
+            this.baseInfo = baseInfo; 
             this.sceneType = sceneType; 
             this.mapID = mapID; 
+            this.sceneStatus = sceneStatus; 
             this.lineID = lineID; 
             this.sceneID = sceneID; 
-            this.sceneStatus = sceneStatus; 
             this.host = host; 
             this.port = port; 
             this.token = token; 
-            this.involeds = involeds; 
+            this.lastSwitchTime = lastSwitchTime; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.areaID)); 
+            if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
+            data.AddRange(this.baseInfo.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.mapID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneStatus)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.lineID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.sceneID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneStatus)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
-            if (this.involeds == null) this.involeds = new AvatarBaseInfoArray(); 
-            data.AddRange(this.involeds.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastSwitchTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
+            this.areaID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.baseInfo = new AvatarBaseInfo(); 
+            this.baseInfo.__decode(binData, ref pos); 
             this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.mapID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.sceneStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.lineID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.sceneID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.sceneStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.involeds = new AvatarBaseInfoArray(); 
-            this.involeds.__decode(binData, ref pos); 
+            this.lastSwitchTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 
  
  
-    public class SceneTokenInfoArray : System.Collections.Generic.List<SceneTokenInfo>, Proto4z.IProtoObject  
+    public class SceneAvatarStatusArray : System.Collections.Generic.List<SceneAvatarStatus>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -116,7 +126,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new SceneTokenInfo(); 
+                    var data = new SceneAvatarStatus(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 

@@ -9,7 +9,7 @@
 
 World::World()
 {
-    _matchPool.resize(SCENE_TYPE_MAX);
+    _matchPools.resize(SCENE_TYPE_MAX);
 }
 
 bool World::init(const std::string & configName)
@@ -267,19 +267,14 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
 
 
 
-std::shared_ptr<AvatarSceneTokenStatus> World::getAvatarToken(AreaID areaID, ServiceID serviceID)
+SceneAvatarStatusPtr World::getAvatarStatus(ServiceID serviceID)
 {
-	auto founder = _avatarToken.find(areaID);
-	if (founder == _avatarToken.end())
-	{
-		return nullptr;
-	}
-	auto fder = founder->second.find(serviceID);
-	if (fder == founder->second.end())
-	{
-		return nullptr;
-	}
-	return fder->second;
+    auto founder = _avatarStatus.find(serviceID);
+    if (founder == _avatarStatus.end())
+    {
+        return nullptr;
+    }
+    return founder->second;
 }
 
 
@@ -297,60 +292,68 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 		LOGE("event_onServiceForwardMessage: trace have not oob. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
 		return;
 	}
-    if (rs.getProtoID() == GetSceneTokenInfoReq::getProtoID())
+    if (rs.getProtoID() == GetSceneAvatarStatusReq::getProtoID())
     {
-		GetSceneTokenInfoReq req;
+		GetSceneAvatarStatusReq req;
 		rs >> req;
-		GetSceneTokenInfoResp resp;
+		GetSceneAvatarStatusResp resp;
+        SceneAvatarStatusNotice notice;
 		resp.retCode = EC_SUCCESS;
-		resp.tokenInfo.sceneType = SCENE_TYPE_NONE;
-		resp.tokenInfo.sceneStatus = SCENE_STATUS_NONE;
-		auto token = getAvatarToken(areaID, trace.oob.clientAvatarID);
+        notice.status.sceneType = SCENE_TYPE_NONE;
+        notice.status.sceneStatus = SCENE_STATUS_NONE;
+		auto token = getAvatarStatus(trace.oob.clientAvatarID);
 		if (token)
 		{
-			resp.tokenInfo = token->token;
+            notice.status = *token;
 		}
-		backToService(session->getSessionID(), trace, resp);
-		return;
+        backToService(session->getSessionID(), trace, resp);
+        backToService(session->getSessionID(), trace, notice);
+        return;
     }
-	else if (rs.getProtoID() == SwitchSceneReq::getProtoID())
+	else if (rs.getProtoID() == ApplyForSceneReq::getProtoID())
 	{
-        SwitchSceneReq req;
+        ApplyForSceneServerReq req;
 		rs >> req;
-        SwitchSceneResp resp;
-		auto token = getAvatarToken(areaID, trace.oob.clientAvatarID);
+        ApplyForSceneResp resp;
+		auto token = getAvatarStatus(trace.oob.clientAvatarID);
 		if (!token)
 		{
-			token = std::make_shared<AvatarSceneTokenStatus>();
-			token->token.sceneType = SCENE_TYPE_NONE;
-			token->token.sceneStatus = SCENE_STATUS_NONE;
-			_avatarToken[areaID][trace.oob.clientAvatarID] = token;
+			token = std::make_shared<SceneAvatarStatus>();
+			token->sceneType = SCENE_TYPE_NONE;
+			token->sceneStatus = SCENE_STATUS_NONE;
+			_avatarStatus[trace.oob.clientAvatarID] = token;
 		}
 		double now = getFloatSteadyNowTime();
 		if (now - token->lastSwitchTime < 10.0 
-            || req.spaceType == SCENE_TYPE_NONE
-            || req.spaceType >= SCENE_TYPE_MAX
-            || (req.spaceType == SCENE_TYPE_HOME && _homeBalance.activeNodes() == 0)
-            || (req.spaceType != SCENE_TYPE_HOME && _otherBalance.activeNodes() == 0))
+            || req.sceneType < SCENE_TYPE_NONE
+            || req.sceneType >= SCENE_TYPE_MAX
+            || (req.sceneType == SCENE_TYPE_HOME && _homeBalance.activeNodes() == 0)
+            || (req.sceneType != SCENE_TYPE_HOME && _otherBalance.activeNodes() == 0))
 		{
 			resp.retCode = EC_ERROR;
 			backToService(session->getSessionID(), trace, resp);
 			return;
 		}
+
         //disaster recovery 
-		if (token->token.sceneType != SCENE_TYPE_NONE )
+		if (token->sceneType != SCENE_TYPE_NONE )
 		{
-            auto scs = _lines.find(token->token.lineID);
+            //先取消匹配
+            if (token->sceneStatus == SCENE_STATUS_MATCHING)
+            {
+
+            }
+            auto scs = _lines.find(token->lineID);
             if (scs != _lines.end() && scs->second.sessionID != InvalidSessionID)
             {
-                toService(scs->second.sessionID, trace, SwitchSceneReq(SCENE_TYPE_NONE, 0));
+                toService(scs->second.sessionID, trace, CancelSceneReq());
             }
-            token->token.sceneType = SCENE_TYPE_NONE;
-            token->token.sceneStatus = SCENE_STATUS_NONE;
+            token->sceneType = SCENE_TYPE_NONE;
+            token->sceneStatus = SCENE_STATUS_NONE;
 		}
 
         LineID line = 0;
-        if (req.spaceType == SCENE_TYPE_HOME)
+        if (req.sceneType == SCENE_TYPE_HOME)
         {
             line = _homeBalance.pickNode(30, 1);
         }
@@ -442,7 +445,18 @@ void World::onMatchTimer()
     {
         _matchTimerID = SessionManager::getRef().createTimer(1000, std::bind(&World::onMatchTimer, this));
     }
+    do
+    {
+        auto pool = _matchPools[SCENE_TYPE_HOME];
+        if (pool.empty())
+        {
+            break;
+        }
 
+
+
+    } while (false);
+    
 }
 
 

@@ -11,7 +11,7 @@ AvatarMgrService::AvatarMgrService()
     slotting<CreateAvatarReq>(std::bind(&AvatarMgrService::onCreateAvatarReq, this, _1, _2));
     slotting<AttachAvatarReq>(std::bind(&AvatarMgrService::onAttachAvatarReq, this, _1, _2));
 
-    slotting<GetSceneTokenInfoResp>(std::bind(&AvatarMgrService::onGetSceneTokenInfoResp, this, _1, _2));
+    slotting<GetSceneAvatarStatusResp>(std::bind(&AvatarMgrService::onGetSceneAvatarStatusResp, this, _1, _2));
     slotting<SwitchSceneResp>(std::bind(&AvatarMgrService::onSwitchSceneResp, this, _1, _2));
     slotting<SwitchSceneNotice>(std::bind(&AvatarMgrService::onSwitchSceneNotice, this, _1, _2));
 }
@@ -474,7 +474,7 @@ void AvatarMgrService::onRealClientClosedNotice(const Tracing & trace, zsummer::
 
 
 
-void AvatarMgrService::onGetSceneTokenInfoResp(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+void AvatarMgrService::onGetSceneAvatarStatusResp(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
 }

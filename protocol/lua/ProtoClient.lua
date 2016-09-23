@@ -63,37 +63,47 @@ Proto4z.AvatarPropMapNotice.__protoName = "AvatarPropMapNotice"
 Proto4z.AvatarPropMapNotice[1] = {name="avatarID", type="ui64" }  
 Proto4z.AvatarPropMapNotice[2] = {name="props", type="AvatarPropMap" }  
  
-Proto4z.register(40007,"GetSceneTokenInfoReq") 
-Proto4z.GetSceneTokenInfoReq = {}  
-Proto4z.GetSceneTokenInfoReq.__protoID = 40007 
-Proto4z.GetSceneTokenInfoReq.__protoName = "GetSceneTokenInfoReq" 
+Proto4z.register(40027,"GetSceneAvatarStatusReq") 
+Proto4z.GetSceneAvatarStatusReq = {}  
+Proto4z.GetSceneAvatarStatusReq.__protoID = 40027 
+Proto4z.GetSceneAvatarStatusReq.__protoName = "GetSceneAvatarStatusReq" 
  
-Proto4z.register(40008,"GetSceneTokenInfoResp") 
-Proto4z.GetSceneTokenInfoResp = {}  
-Proto4z.GetSceneTokenInfoResp.__protoID = 40008 
-Proto4z.GetSceneTokenInfoResp.__protoName = "GetSceneTokenInfoResp" 
-Proto4z.GetSceneTokenInfoResp[1] = {name="retCode", type="ui16" }  
-Proto4z.GetSceneTokenInfoResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
+Proto4z.register(40028,"GetSceneAvatarStatusResp") 
+Proto4z.GetSceneAvatarStatusResp = {}  
+Proto4z.GetSceneAvatarStatusResp.__protoID = 40028 
+Proto4z.GetSceneAvatarStatusResp.__protoName = "GetSceneAvatarStatusResp" 
+Proto4z.GetSceneAvatarStatusResp[1] = {name="retCode", type="ui16" }  
  
-Proto4z.register(40024,"SwitchSceneReq") 
-Proto4z.SwitchSceneReq = {}  
-Proto4z.SwitchSceneReq.__protoID = 40024 
-Proto4z.SwitchSceneReq.__protoName = "SwitchSceneReq" 
-Proto4z.SwitchSceneReq[1] = {name="spaceType", type="ui16" } --NONE相当于重置/离开所有场景 
-Proto4z.SwitchSceneReq[2] = {name="mapID", type="ui32" }  
+Proto4z.register(40029,"ApplyForSceneReq") 
+Proto4z.ApplyForSceneReq = {}  
+Proto4z.ApplyForSceneReq.__protoID = 40029 
+Proto4z.ApplyForSceneReq.__protoName = "ApplyForSceneReq" 
+Proto4z.ApplyForSceneReq[1] = {name="sceneType", type="ui16" } --NONE相当于重置/离开所有场景 
+Proto4z.ApplyForSceneReq[2] = {name="mapID", type="ui32" }  
+Proto4z.ApplyForSceneReq[3] = {name="friends", type="AvatarIDArray" } --组队情况 
  
-Proto4z.register(40025,"SwitchSceneResp") 
-Proto4z.SwitchSceneResp = {}  
-Proto4z.SwitchSceneResp.__protoID = 40025 
-Proto4z.SwitchSceneResp.__protoName = "SwitchSceneResp" 
-Proto4z.SwitchSceneResp[1] = {name="retCode", type="ui16" }  
-Proto4z.SwitchSceneResp[2] = {name="tokenInfo", type="SceneTokenInfo" }  
+Proto4z.register(40030,"ApplyForSceneResp") 
+Proto4z.ApplyForSceneResp = {}  
+Proto4z.ApplyForSceneResp.__protoID = 40030 
+Proto4z.ApplyForSceneResp.__protoName = "ApplyForSceneResp" 
+Proto4z.ApplyForSceneResp[1] = {name="retCode", type="ui16" }  
  
-Proto4z.register(40026,"SwitchSceneNotice") 
-Proto4z.SwitchSceneNotice = {}  
-Proto4z.SwitchSceneNotice.__protoID = 40026 
-Proto4z.SwitchSceneNotice.__protoName = "SwitchSceneNotice" 
-Proto4z.SwitchSceneNotice[1] = {name="tokenInfo", type="SceneTokenInfo" }  
+Proto4z.register(40031,"CancelSceneReq") 
+Proto4z.CancelSceneReq = {}  
+Proto4z.CancelSceneReq.__protoID = 40031 
+Proto4z.CancelSceneReq.__protoName = "CancelSceneReq" 
+ 
+Proto4z.register(40032,"CancelSceneResp") 
+Proto4z.CancelSceneResp = {}  
+Proto4z.CancelSceneResp.__protoID = 40032 
+Proto4z.CancelSceneResp.__protoName = "CancelSceneResp" 
+Proto4z.CancelSceneResp[1] = {name="retCode", type="ui16" }  
+ 
+Proto4z.register(40033,"SceneAvatarStatusNotice") 
+Proto4z.SceneAvatarStatusNotice = {}  
+Proto4z.SceneAvatarStatusNotice.__protoID = 40033 
+Proto4z.SceneAvatarStatusNotice.__protoName = "SceneAvatarStatusNotice" 
+Proto4z.SceneAvatarStatusNotice[1] = {name="status", type="SceneAvatarStatus" }  
  
 Proto4z.register(40014,"ChatReq") 
 Proto4z.ChatReq = {}  

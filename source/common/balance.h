@@ -153,7 +153,7 @@ inline BalanceID Balance<BalanceID>::pickNode(double step, double autoAdd)
         }
         if (_idx < 0 || _idx >= _balance.size() || !_balance[_idx].active || _balance[_idx].weight - step > _balance[i].weight)
         {
-            _idx = i;
+            _idx = (int)i;
         }
     }
     if (_idx < 0 || _idx >= _balance.size() || !_balance[_idx].active)

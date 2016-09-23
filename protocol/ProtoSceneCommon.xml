@@ -36,19 +36,22 @@
 
 
 
-    <!-- Token-->
-    <struct name="SceneTokenInfo" desc="Token">
+    <!-- AvatarStatus-->
+    <struct name="SceneAvatarStatus" desc="AvatarStatus">
+        <member name="areaID" type="ui32"  desc=""/>
+        <member name="baseInfo" type="AvatarBaseInfo"  desc=""/>
         <member name="sceneType" type="ui16"  desc="场景类型"/>
         <member name="mapID" type="ui32"  desc=""/>
+        <member name="sceneStatus" type="ui16"  desc="状态"/>
         <member name="lineID" type="ui32"  desc="分线ID"/>
         <member name="sceneID" type="ui32"  desc="场景实例ID"/>
-        <member name="sceneStatus" type="ui16"  desc="状态"/>
         <member name="host" type="string"  desc="服务器host"/>
         <member name="port" type="ui16"  desc="服务器port"/>
         <member name="token" type="string"  desc="令牌"/>
-        <member name="involeds" type="AvatarBaseInfoArray"  desc="匹配列表中的玩家"/>
+        <member name="lastSwitchTime" type="double"  desc="最后一次切换场景的时间"/>
     </struct>
-    <array name="SceneTokenInfoArray" type="SceneTokenInfo" desc="" />
+    <array name="SceneAvatarStatusArray" type="SceneAvatarStatus" desc="" />
+
 
 
 

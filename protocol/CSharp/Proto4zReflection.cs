@@ -39,6 +39,12 @@ namespace Proto4z
             _idToName.Add(39000, "AllocateSceneReq");
             _nameToID.Add("AllocateSceneResp", 39001);
             _idToName.Add(39001, "AllocateSceneResp");
+            _nameToID.Add("ApplyForSceneReq", 40029);
+            _idToName.Add(40029, "ApplyForSceneReq");
+            _nameToID.Add("ApplyForSceneResp", 40030);
+            _idToName.Add(40030, "ApplyForSceneResp");
+            _nameToID.Add("ApplyForSceneServerReq", 39007);
+            _idToName.Add(39007, "ApplyForSceneServerReq");
             _nameToID.Add("AttachAvatarReq", 40005);
             _idToName.Add(40005, "AttachAvatarReq");
             _nameToID.Add("AttachAvatarResp", 40006);
@@ -63,6 +69,10 @@ namespace Proto4z
             _idToName.Add(10005, "BuffData");
             _nameToID.Add("BuffInfo", 10008);
             _idToName.Add(10008, "BuffInfo");
+            _nameToID.Add("CancelSceneReq", 40031);
+            _idToName.Add(40031, "CancelSceneReq");
+            _nameToID.Add("CancelSceneResp", 40032);
+            _idToName.Add(40032, "CancelSceneResp");
             _nameToID.Add("ChangeIconIDReq", 40018);
             _idToName.Add(40018, "ChangeIconIDReq");
             _nameToID.Add("ChangeIconIDResp", 40019);
@@ -121,6 +131,8 @@ namespace Proto4z
             _idToName.Add(10009, "EntityInfo");
             _nameToID.Add("EntityReport", 10011);
             _idToName.Add(10011, "EntityReport");
+            _nameToID.Add("FeedbackAvatarStatusNotice", 39006);
+            _idToName.Add(39006, "FeedbackAvatarStatusNotice");
             _nameToID.Add("FillSceneNotice", 50002);
             _idToName.Add(50002, "FillSceneNotice");
             _nameToID.Add("ForwardToDocker", 2014);
@@ -129,6 +141,10 @@ namespace Proto4z
             _idToName.Add(2013, "ForwardToRealClient");
             _nameToID.Add("ForwardToService", 2012);
             _idToName.Add(2012, "ForwardToService");
+            _nameToID.Add("GetSceneAvatarStatusReq", 40027);
+            _idToName.Add(40027, "GetSceneAvatarStatusReq");
+            _nameToID.Add("GetSceneAvatarStatusResp", 40028);
+            _idToName.Add(40028, "GetSceneAvatarStatusResp");
             _nameToID.Add("GetSceneTokenInfoReq", 40007);
             _idToName.Add(40007, "GetSceneTokenInfoReq");
             _nameToID.Add("GetSceneTokenInfoResp", 40008);
@@ -175,6 +191,10 @@ namespace Proto4z
             _idToName.Add(50006, "RemoveEntityNotice");
             _nameToID.Add("Routing", 1000);
             _idToName.Add(1000, "Routing");
+            _nameToID.Add("SceneAvatarStatus", 10013);
+            _idToName.Add(10013, "SceneAvatarStatus");
+            _nameToID.Add("SceneAvatarStatusNotice", 40033);
+            _idToName.Add(40033, "SceneAvatarStatusNotice");
             _nameToID.Add("SceneBeing", 39003);
             _idToName.Add(39003, "SceneBeing");
             _nameToID.Add("SceneClientPulse", 50007);

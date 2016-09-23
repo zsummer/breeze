@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>1334a4f86ec1a92a6d0d465c17aa865c</cppmd5> 
-<luamd5>dbe4947c46eb9e0d241262d3566145dc</luamd5> 
-<csharpmd5>65e561189a646549261159fbca52c647</csharpmd5> 
-<xmlmd5>ff0796ed80fe86294df65984e411dc04</xmlmd5> 
+<cppmd5>938b1100afa14e57cd84fd5d31db9640</cppmd5> 
+<luamd5>099497df9f8eeca3b600a1bf898beb10</luamd5> 
+<csharpmd5>419680d07a288e8139d22c59293051c0</csharpmd5> 
+<xmlmd5>09aa1efdcaed4b178ff3f1eb7247e09f</xmlmd5> 
 <cacheNumber>
+    <cache key = "ApplyForSceneReq" Number = "40029" /> 
+    <cache key = "ApplyForSceneResp" Number = "40030" /> 
     <cache key = "AttachAvatarReq" Number = "40005" /> 
     <cache key = "AttachAvatarResp" Number = "40006" /> 
     <cache key = "AvatarBaseInfoNotice" Number = "40022" /> 
     <cache key = "AvatarPropMapNotice" Number = "40023" /> 
+    <cache key = "CancelSceneReq" Number = "40031" /> 
+    <cache key = "CancelSceneResp" Number = "40032" /> 
     <cache key = "ChangeIconIDReq" Number = "40018" /> 
     <cache key = "ChangeIconIDResp" Number = "40019" /> 
     <cache key = "ChangeModeIDReq" Number = "40020" /> 
@@ -20,6 +24,8 @@
     <cache key = "ClientPulse" Number = "40000" /> 
     <cache key = "CreateAvatarReq" Number = "40003" /> 
     <cache key = "CreateAvatarResp" Number = "40004" /> 
+    <cache key = "GetSceneAvatarStatusReq" Number = "40027" /> 
+    <cache key = "GetSceneAvatarStatusResp" Number = "40028" /> 
     <cache key = "GetSceneTokenInfoReq" Number = "40007" /> 
     <cache key = "GetSceneTokenInfoResp" Number = "40008" /> 
     <cache key = "JoinSceneNotice" Number = "40011" /> 
@@ -29,6 +35,7 @@
     <cache key = "LeaveSceneResp" Number = "40013" /> 
     <cache key = "PingPongReq" Number = "40016" /> 
     <cache key = "PingPongResp" Number = "40017" /> 
+    <cache key = "SceneAvatarStatusNotice" Number = "40033" /> 
     <cache key = "SwitchSceneNotice" Number = "40026" /> 
     <cache key = "SwitchSceneReq" Number = "40024" /> 
     <cache key = "SwitchSceneResp" Number = "40025" /> 

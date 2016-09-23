@@ -69,82 +69,88 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct AllocateSceneReq //分配战场  
+struct ApplyForSceneServerReq //请求战场  
 { 
-    static const unsigned short getProtoID() { return 39000;} 
-    static const std::string getProtoName() { return "AllocateSceneReq";} 
+    static const unsigned short getProtoID() { return 39007;} 
+    static const std::string getProtoName() { return "ApplyForSceneServerReq";} 
     unsigned short sceneType; //类型  
     unsigned int mapID;  
-    AvatarBaseInfoArray involeds; //匹配列表中的玩家  
-    AllocateSceneReq() 
+    AvatarBaseInfoArray avatars; //匹配列表中的玩家  
+    ApplyForSceneServerReq() 
     { 
         sceneType = 0; 
         mapID = 0; 
     } 
-    AllocateSceneReq(const unsigned short & sceneType, const unsigned int & mapID, const AvatarBaseInfoArray & involeds) 
+    ApplyForSceneServerReq(const unsigned short & sceneType, const unsigned int & mapID, const AvatarBaseInfoArray & avatars) 
     { 
         this->sceneType = sceneType; 
         this->mapID = mapID; 
-        this->involeds = involeds; 
+        this->avatars = avatars; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AllocateSceneReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ApplyForSceneServerReq & data) 
 { 
     ws << data.sceneType;  
     ws << data.mapID;  
-    ws << data.involeds;  
+    ws << data.avatars;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AllocateSceneReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ApplyForSceneServerReq & data) 
 { 
     rs >> data.sceneType;  
     rs >> data.mapID;  
-    rs >> data.involeds;  
+    rs >> data.avatars;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AllocateSceneReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ApplyForSceneServerReq & info) 
 { 
     stm << "[\n"; 
     stm << "sceneType=" << info.sceneType << "\n"; 
     stm << "mapID=" << info.mapID << "\n"; 
-    stm << "involeds=" << info.involeds << "\n"; 
+    stm << "avatars=" << info.avatars << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct AllocateSceneResp //分配战场  
+struct FeedbackAvatarStatusNotice //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 39001;} 
-    static const std::string getProtoName() { return "AllocateSceneResp";} 
-    unsigned short retCode;  
-    SceneTokenInfoArray tokens; //匹配列表中的玩家  
-    AllocateSceneResp() 
+    static const unsigned short getProtoID() { return 39006;} 
+    static const std::string getProtoName() { return "FeedbackAvatarStatusNotice";} 
+    unsigned long long avatarID;  
+    unsigned short status;  
+    std::string token;  
+    FeedbackAvatarStatusNotice() 
     { 
-        retCode = 0; 
+        avatarID = 0; 
+        status = 0; 
     } 
-    AllocateSceneResp(const unsigned short & retCode, const SceneTokenInfoArray & tokens) 
+    FeedbackAvatarStatusNotice(const unsigned long long & avatarID, const unsigned short & status, const std::string & token) 
     { 
-        this->retCode = retCode; 
-        this->tokens = tokens; 
+        this->avatarID = avatarID; 
+        this->status = status; 
+        this->token = token; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AllocateSceneResp & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FeedbackAvatarStatusNotice & data) 
 { 
-    ws << data.retCode;  
-    ws << data.tokens;  
+    ws << data.avatarID;  
+    ws << data.status;  
+    ws << data.token;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AllocateSceneResp & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FeedbackAvatarStatusNotice & data) 
 { 
-    rs >> data.retCode;  
-    rs >> data.tokens;  
+    rs >> data.avatarID;  
+    rs >> data.status;  
+    rs >> data.token;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AllocateSceneResp & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FeedbackAvatarStatusNotice & info) 
 { 
     stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "tokens=" << info.tokens << "\n"; 
+    stm << "avatarID=" << info.avatarID << "\n"; 
+    stm << "status=" << info.status << "\n"; 
+    stm << "token=" << info.token << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

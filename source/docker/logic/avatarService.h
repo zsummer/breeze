@@ -56,9 +56,9 @@ private:
 	void onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 	void onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
-    void onGetSceneTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onSwitchSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-
+    void onGetSceneAvatarStatusReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onApplyForSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onCancelSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 

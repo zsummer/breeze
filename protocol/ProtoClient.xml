@@ -53,26 +53,31 @@
  
 
 <!------------------------------------ battle --------------------------------------------->
-    <packet name="GetSceneTokenInfoReq" desc= "">
+    <packet name="GetSceneAvatarStatusReq" desc= "">
     </packet>
-    <packet name="GetSceneTokenInfoResp" desc= "">
+    <packet name="GetSceneAvatarStatusResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
     </packet>
 
-   <packet name="SwitchSceneReq" desc= "">
-        <member name="spaceType" type="ui16"   desc="NONE相当于重置/离开所有场景"/>
+   <packet name="ApplyForSceneReq" desc= "">
+        <member name="sceneType" type="ui16"   desc="NONE相当于重置/离开所有场景"/>
         <member name="mapID" type="ui32"   desc=""/>
+        <member name="friends" type="AvatarIDArray"   desc="组队情况"/>
     </packet>
-    <packet name="SwitchSceneResp" desc= "">
+
+    <packet name="ApplyForSceneResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
-
-    </packet>
-    <packet name="SwitchSceneNotice" desc= "">
-        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
     </packet>
 
+   <packet name="CancelSceneReq" desc= "">
+    </packet>
+    <packet name="CancelSceneResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
+    <packet name="SceneAvatarStatusNotice" desc= "">
+        <member name="status" type="SceneAvatarStatus"   desc=""/>
+    </packet>
 
 
 

@@ -24,85 +24,97 @@ enum SCENE_STATUS : unsigned short
     SCENE_STATUS_LINGER = 5, //战斗结束,数据驻留阶段  
 }; 
  
-struct SceneTokenInfo //Token  
+struct SceneAvatarStatus //AvatarStatus  
 { 
-    static const unsigned short getProtoID() { return 10000;} 
-    static const std::string getProtoName() { return "SceneTokenInfo";} 
+    static const unsigned short getProtoID() { return 10013;} 
+    static const std::string getProtoName() { return "SceneAvatarStatus";} 
+    unsigned int areaID;  
+    AvatarBaseInfo baseInfo;  
     unsigned short sceneType; //场景类型  
     unsigned int mapID;  
+    unsigned short sceneStatus; //状态  
     unsigned int lineID; //分线ID  
     unsigned int sceneID; //场景实例ID  
-    unsigned short sceneStatus; //状态  
     std::string host; //服务器host  
     unsigned short port; //服务器port  
     std::string token; //令牌  
-    AvatarBaseInfoArray involeds; //匹配列表中的玩家  
-    SceneTokenInfo() 
+    double lastSwitchTime; //最后一次切换场景的时间  
+    SceneAvatarStatus() 
     { 
+        areaID = 0; 
         sceneType = 0; 
         mapID = 0; 
+        sceneStatus = 0; 
         lineID = 0; 
         sceneID = 0; 
-        sceneStatus = 0; 
         port = 0; 
+        lastSwitchTime = 0.0; 
     } 
-    SceneTokenInfo(const unsigned short & sceneType, const unsigned int & mapID, const unsigned int & lineID, const unsigned int & sceneID, const unsigned short & sceneStatus, const std::string & host, const unsigned short & port, const std::string & token, const AvatarBaseInfoArray & involeds) 
+    SceneAvatarStatus(const unsigned int & areaID, const AvatarBaseInfo & baseInfo, const unsigned short & sceneType, const unsigned int & mapID, const unsigned short & sceneStatus, const unsigned int & lineID, const unsigned int & sceneID, const std::string & host, const unsigned short & port, const std::string & token, const double & lastSwitchTime) 
     { 
+        this->areaID = areaID; 
+        this->baseInfo = baseInfo; 
         this->sceneType = sceneType; 
         this->mapID = mapID; 
+        this->sceneStatus = sceneStatus; 
         this->lineID = lineID; 
         this->sceneID = sceneID; 
-        this->sceneStatus = sceneStatus; 
         this->host = host; 
         this->port = port; 
         this->token = token; 
-        this->involeds = involeds; 
+        this->lastSwitchTime = lastSwitchTime; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneTokenInfo & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneAvatarStatus & data) 
 { 
+    ws << data.areaID;  
+    ws << data.baseInfo;  
     ws << data.sceneType;  
     ws << data.mapID;  
+    ws << data.sceneStatus;  
     ws << data.lineID;  
     ws << data.sceneID;  
-    ws << data.sceneStatus;  
     ws << data.host;  
     ws << data.port;  
     ws << data.token;  
-    ws << data.involeds;  
+    ws << data.lastSwitchTime;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneTokenInfo & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneAvatarStatus & data) 
 { 
+    rs >> data.areaID;  
+    rs >> data.baseInfo;  
     rs >> data.sceneType;  
     rs >> data.mapID;  
+    rs >> data.sceneStatus;  
     rs >> data.lineID;  
     rs >> data.sceneID;  
-    rs >> data.sceneStatus;  
     rs >> data.host;  
     rs >> data.port;  
     rs >> data.token;  
-    rs >> data.involeds;  
+    rs >> data.lastSwitchTime;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneTokenInfo & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneAvatarStatus & info) 
 { 
     stm << "[\n"; 
+    stm << "areaID=" << info.areaID << "\n"; 
+    stm << "baseInfo=" << info.baseInfo << "\n"; 
     stm << "sceneType=" << info.sceneType << "\n"; 
     stm << "mapID=" << info.mapID << "\n"; 
+    stm << "sceneStatus=" << info.sceneStatus << "\n"; 
     stm << "lineID=" << info.lineID << "\n"; 
     stm << "sceneID=" << info.sceneID << "\n"; 
-    stm << "sceneStatus=" << info.sceneStatus << "\n"; 
     stm << "host=" << info.host << "\n"; 
     stm << "port=" << info.port << "\n"; 
     stm << "token=" << info.token << "\n"; 
-    stm << "involeds=" << info.involeds << "\n"; 
+    stm << "lastSwitchTime=" << info.lastSwitchTime << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
  
-typedef std::vector<SceneTokenInfo> SceneTokenInfoArray;  
+typedef std::vector<SceneAvatarStatus> SceneAvatarStatusArray;  
  
  
 typedef std::vector<unsigned int> EntityIDArray;  

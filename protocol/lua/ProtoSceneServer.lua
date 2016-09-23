@@ -17,17 +17,18 @@ Proto4z.ScenePulse = {} --集群脉冲
 Proto4z.ScenePulse.__protoID = 39005 
 Proto4z.ScenePulse.__protoName = "ScenePulse" 
  
-Proto4z.register(39000,"AllocateSceneReq") 
-Proto4z.AllocateSceneReq = {} --分配战场 
-Proto4z.AllocateSceneReq.__protoID = 39000 
-Proto4z.AllocateSceneReq.__protoName = "AllocateSceneReq" 
-Proto4z.AllocateSceneReq[1] = {name="sceneType", type="ui16" } --类型 
-Proto4z.AllocateSceneReq[2] = {name="mapID", type="ui32" }  
-Proto4z.AllocateSceneReq[3] = {name="involeds", type="AvatarBaseInfoArray" } --匹配列表中的玩家 
+Proto4z.register(39007,"ApplyForSceneServerReq") 
+Proto4z.ApplyForSceneServerReq = {} --请求战场 
+Proto4z.ApplyForSceneServerReq.__protoID = 39007 
+Proto4z.ApplyForSceneServerReq.__protoName = "ApplyForSceneServerReq" 
+Proto4z.ApplyForSceneServerReq[1] = {name="sceneType", type="ui16" } --类型 
+Proto4z.ApplyForSceneServerReq[2] = {name="mapID", type="ui32" }  
+Proto4z.ApplyForSceneServerReq[3] = {name="avatars", type="AvatarBaseInfoArray" } --匹配列表中的玩家 
  
-Proto4z.register(39001,"AllocateSceneResp") 
-Proto4z.AllocateSceneResp = {} --分配战场 
-Proto4z.AllocateSceneResp.__protoID = 39001 
-Proto4z.AllocateSceneResp.__protoName = "AllocateSceneResp" 
-Proto4z.AllocateSceneResp[1] = {name="retCode", type="ui16" }  
-Proto4z.AllocateSceneResp[2] = {name="tokens", type="SceneTokenInfoArray" } --匹配列表中的玩家 
+Proto4z.register(39006,"FeedbackAvatarStatusNotice") 
+Proto4z.FeedbackAvatarStatusNotice = {} --scene ==> world 
+Proto4z.FeedbackAvatarStatusNotice.__protoID = 39006 
+Proto4z.FeedbackAvatarStatusNotice.__protoName = "FeedbackAvatarStatusNotice" 
+Proto4z.FeedbackAvatarStatusNotice[1] = {name="avatarID", type="ui64" }  
+Proto4z.FeedbackAvatarStatusNotice[2] = {name="status", type="ui16" }  
+Proto4z.FeedbackAvatarStatusNotice[3] = {name="token", type="string" }  
