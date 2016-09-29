@@ -100,6 +100,10 @@ private:
 	void event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 	void event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs);
 
+    void event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneServerReq & rs);
+    void event_onCancelSceneReq(AreaID areaID, ServiceID avatarID);
+
+
 private:
 	//客户端通讯处理 
 	void event_onSceneLinked(TcpSessionPtr session);
@@ -125,8 +129,6 @@ private:
 
 
 private:
-    bool CancelMatching();
-    void AddMatching();
     std::vector<SceneAvatarStatusPool> _matchPools;
     TimerID _matchTimerID = InvalidTimerID;
     void onMatchTimer();

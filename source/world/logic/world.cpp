@@ -301,10 +301,10 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 		resp.retCode = EC_SUCCESS;
         notice.status.sceneType = SCENE_TYPE_NONE;
         notice.status.sceneStatus = SCENE_STATUS_NONE;
-		auto token = getAvatarStatus(trace.oob.clientAvatarID);
-		if (token)
+		auto status = getAvatarStatus(trace.oob.clientAvatarID);
+		if (status)
 		{
-            notice.status = *token;
+            notice.status = *status;
 		}
         backToService(session->getSessionID(), trace, resp);
         backToService(session->getSessionID(), trace, notice);
@@ -314,63 +314,166 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 	{
         ApplyForSceneServerReq req;
 		rs >> req;
-        ApplyForSceneResp resp;
-		auto token = getAvatarStatus(trace.oob.clientAvatarID);
-		if (!token)
-		{
-			token = std::make_shared<SceneAvatarStatus>();
-			token->sceneType = SCENE_TYPE_NONE;
-			token->sceneStatus = SCENE_STATUS_NONE;
-			_avatarStatus[trace.oob.clientAvatarID] = token;
-		}
-		double now = getFloatSteadyNowTime();
-		if (now - token->lastSwitchTime < 10.0 
-            || req.sceneType < SCENE_TYPE_NONE
-            || req.sceneType >= SCENE_TYPE_MAX
-            || (req.sceneType == SCENE_TYPE_HOME && _homeBalance.activeNodes() == 0)
-            || (req.sceneType != SCENE_TYPE_HOME && _otherBalance.activeNodes() == 0))
-		{
-			resp.retCode = EC_ERROR;
-			backToService(session->getSessionID(), trace, resp);
-			return;
-		}
-
-        //disaster recovery 
-		if (token->sceneType != SCENE_TYPE_NONE )
-		{
-            //先取消匹配
-            if (token->sceneStatus == SCENE_STATUS_MATCHING)
-            {
-
-            }
-            auto scs = _lines.find(token->lineID);
-            if (scs != _lines.end() && scs->second.sessionID != InvalidSessionID)
-            {
-                toService(scs->second.sessionID, trace, CancelSceneReq());
-            }
-            token->sceneType = SCENE_TYPE_NONE;
-            token->sceneStatus = SCENE_STATUS_NONE;
-		}
-
-        LineID line = 0;
-        if (req.sceneType == SCENE_TYPE_HOME)
-        {
-            line = _homeBalance.pickNode(30, 1);
-        }
-        else
-        {
-            line = _otherBalance.pickNode(1, 1);
-        }
-
+        event_onApplyForSceneServerReq(areaID, req);
 		return;
 	}
+    else if (rs.getProtoID() == CancelSceneReq::getProtoID())
+    {
+        CancelSceneReq req;
+        rs >> req;
+        event_onCancelSceneReq(areaID, trace.oob.clientAvatarID);
+        return;
+    }
 }
 
 
+void World::event_onCancelSceneReq(AreaID areaID, ServiceID avatarID)
+{
+    auto status = getAvatarStatus(avatarID);
+    if (!status)
+    {
+        return;
+    }
+    if (status->sceneStatus == SCENE_STATUS_MATCHING && status->sceneType != SCENE_TYPE_NONE)
+    {
+        auto & pool = _matchPools[status->sceneType];
+        bool found = false;
+        for (auto teamIter = pool.begin(); teamIter != pool.end(); teamIter++)
+        {
+            for (auto avatarIter = teamIter->begin(); avatarIter != teamIter->end(); avatarIter++)
+            {
+                if ((**avatarIter).baseInfo.avatarID == avatarID)
+                {
 
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+            {
+                for (auto avatarIter = teamIter->begin(); avatarIter != teamIter->end(); avatarIter++)
+                {
 
+                    auto &avatar = *avatarIter;
+                    avatar->sceneType = SCENE_TYPE_NONE;
+                    avatar->sceneStatus = SCENE_STATUS_NONE;
+                    avatar->sceneID = InvalidSceneID;
 
+                    if (avatar->baseInfo.avatarID == avatarID)
+                    {
+                        CancelSceneResp resp;
+                        resp.retCode = EC_SUCCESS;
+                        toService(avatar->areaID, STAvatarMgr, STAvatar, avatar->baseInfo.avatarID, resp);
+                    }
 
+                    SceneAvatarStatusNotice notice;
+                    notice.status = *avatar;
+                    toService(notice.status.areaID, STAvatarMgr, STAvatar, notice.status.baseInfo.avatarID, notice);
+
+                }
+                pool.erase(teamIter);
+                return;
+            }
+        }
+    }
+
+    //如果不是scene节点崩溃等异常造成, 必须等待结束
+    if (status->sceneStatus == SCENE_STATUS_WAIT || status->sceneStatus == SCENE_STATUS_ACTIVE || status->sceneStatus == SCENE_STATUS_CHOISE)
+    {
+        auto founder = _lines.find(status->lineID);
+        if (founder != _lines.end() && founder->second.sessionID != InvalidSessionID)
+        {
+            CancelSceneResp resp(EC_ERROR);
+            toService(areaID, STAvatarMgr, STAvatar, avatarID, resp);
+            return;
+        }
+    }
+
+    //清理状态
+    if (true)
+    {
+        status->sceneType = SCENE_TYPE_NONE;
+        status->sceneStatus = SCENE_STATUS_NONE;
+        CancelSceneResp resp;
+        resp.retCode = EC_SUCCESS;
+        toService(areaID, STAvatarMgr, STAvatar, avatarID, resp);
+
+        SceneAvatarStatusNotice notice;
+        notice.status = *status;
+        toService(areaID, STAvatarMgr, STAvatar, avatarID, notice);
+    }
+
+}
+
+void World::event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneServerReq & req)
+{
+
+    double now = getFloatSteadyNowTime();
+    for (auto & baseInfo : req.avatars)
+    {
+        auto status = getAvatarStatus(baseInfo.avatarID);
+        if (status)
+        {
+
+            if (now - status->lastSwitchTime < 10.0
+                || req.sceneType < SCENE_TYPE_NONE
+                || req.sceneType >= SCENE_TYPE_MAX
+                || (req.sceneType == SCENE_TYPE_HOME && _homeBalance.activeNodes() == 0)
+                || (req.sceneType != SCENE_TYPE_HOME && _otherBalance.activeNodes() == 0))
+            {
+                for (auto & baseInfo : req.avatars)
+                {
+                    toService(areaID, STAvatarMgr, STAvatar, baseInfo.avatarID, ApplyForSceneResp(EC_ERROR));
+                }
+                return;
+            }
+        }
+    }
+
+    for (auto & baseInfo : req.avatars)
+    {
+        auto status = getAvatarStatus(baseInfo.avatarID);
+        if (!status)
+        {
+            status = std::make_shared<SceneAvatarStatus>();
+            _avatarStatus[baseInfo.avatarID] = status;
+        }
+        status->areaID = areaID;
+        status->baseInfo = baseInfo;
+        status->lastSwitchTime = now;
+        status->mapID = req.mapID;
+        status->sceneType = SCENE_TYPE_NONE;
+        status->sceneStatus = SCENE_STATUS_NONE;
+        status->host = "";
+        status->port = 0;
+        status->lineID = 0;
+        status->sceneID = 0;
+        status->token = "";
+    }
+
+    SceneAvatarStatusTeam team;
+    for (auto & baseInfo : req.avatars)
+    {
+        ApplyForSceneResp resp(EC_SUCCESS);
+        toService(areaID, STAvatarMgr, STAvatar, baseInfo.avatarID, resp);
+        auto status = getAvatarStatus(baseInfo.avatarID);
+        if (!status)
+        {
+            LOGE("");
+            return;
+        }
+        status->sceneType = req.sceneType;
+        status->sceneStatus = SCENE_STATUS_MATCHING;
+        team.push_back(status);
+
+        SceneAvatarStatusNotice notice(*status);
+        toService(areaID, STAvatarMgr, STAvatar, baseInfo.avatarID, notice);
+    }
+
+    _matchPools[req.sceneType].push_back(team);
+    return;
+
+}
 
 
 
@@ -419,7 +522,7 @@ void World::event_onSceneClosed(TcpSessionPtr session)
 void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    if (rs.getProtoID() == AllocateSceneResp::getProtoID())
+    if (rs.getProtoID() == FeedbackAvatarStatusNotice::getProtoID())
     {
 
     }
@@ -448,15 +551,58 @@ void World::onMatchTimer()
     do
     {
         auto pool = _matchPools[SCENE_TYPE_HOME];
-        if (pool.empty())
+        for (auto iter = pool.begin(); iter != pool.end();)
         {
-            break;
+            LineID lineID = _homeBalance.pickNode(30, 1);
+            SceneSessionStatus lineStatus;
+            if (lineID != 0)
+            {
+                auto founder = _lines.find(lineID);
+                if (founder != _lines.end())
+                {
+                    lineStatus = founder->second;
+                }
+                else
+                {
+                    lineID = 0;
+                }
+            }
+            ApplyForSceneServerReq req;
+
+            for (auto status : *iter)
+            {
+                if (lineID == 0)
+                {
+                    status->sceneType = SCENE_TYPE_NONE;
+                    status->sceneStatus = SCENE_STATUS_NONE;
+                    LOGE("");
+                    SceneAvatarStatusNotice notice(*status);
+                    toService(status->areaID, STAvatarMgr, STAvatar, status->baseInfo.avatarID, notice);
+                }
+                else
+                {
+                    status->sceneStatus = SCENE_STATUS_CHOISE;
+                    status->lineID = lineID;
+                    status->host = lineStatus.knock.pubHost;
+                    status->port = lineStatus.knock.pubPort;
+                    req.avatars.push_back(status->baseInfo);
+                    req.mapID = status->mapID;
+                    req.sceneType = status->sceneType;
+                    SceneAvatarStatusNotice notice(*status);
+                    toService(status->areaID, STAvatarMgr, STAvatar, status->baseInfo.avatarID, notice);
+                }
+            }
+            if (lineID != 0)
+            {
+                sendViaSessionID(lineStatus.sessionID, req);
+            }
+            
+            iter = pool.erase(iter);
         }
 
-
-
     } while (false);
-    
+
+
 }
 
 

@@ -13,6 +13,11 @@ AvatarService::AvatarService()
     slotting<ApplyForSceneReq>(std::bind(&AvatarService::onApplyForSceneReq, this, _1, _2));
     slotting<CancelSceneReq>(std::bind(&AvatarService::onCancelSceneReq, this, _1, _2));
 
+    slotting<GetSceneAvatarStatusResp>(std::bind(&AvatarService::onGetSceneAvatarStatusResp, this, _1, _2));
+    slotting<ApplyForSceneResp>(std::bind(&AvatarService::onApplyForSceneResp, this, _1, _2));
+    slotting<CancelSceneResp>(std::bind(&AvatarService::onCancelSceneResp, this, _1, _2));
+    slotting<SceneAvatarStatusNotice>(std::bind(&AvatarService::onSceneAvatarStatusNotice, this, _1, _2));
+
 }
 
 AvatarService::~AvatarService() 
@@ -223,6 +228,32 @@ void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::R
 
 
 
+void AvatarService::refreshProp(const std::string &prop, double val, bool overwrite)
+{
+    auto fouder = _props.find(prop);
+    if (fouder == _props.end())
+    {
+        _props.insert(std::make_pair(prop, val));
+        return;
+    }
+    if (overwrite)
+    {
+        fouder->second = val;
+        return;
+    }
+    fouder->second += val;
+}
+double AvatarService::getProp(const std::string &prop)
+{
+    auto fouder = _props.find(prop);
+    if (fouder == _props.end())
+    {
+        return 0.0;
+    }
+    return fouder->second;
+}
+
+
 void AvatarService::onGetSceneAvatarStatusReq(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
@@ -280,30 +311,27 @@ void AvatarService::onCancelSceneReq(const Tracing & trace, zsummer::proto4z::Re
 }
 
 
-void AvatarService::refreshProp(const std::string &prop, double val, bool overwrite)
+void AvatarService::onGetSceneAvatarStatusResp(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
-	auto fouder = _props.find(prop);
-	if (fouder == _props.end())
-	{
-		_props.insert(std::make_pair(prop, val));
-		return;
-	}
-	if (overwrite)
-	{
-		fouder->second = val;
-		return;
-	}
-	fouder->second += val;
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
 }
-double AvatarService::getProp(const std::string &prop)
+void AvatarService::onApplyForSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
-	auto fouder = _props.find(prop);
-	if (fouder == _props.end())
-	{
-		return 0.0;
-	}
-	return fouder->second;
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
 }
+void AvatarService::onCancelSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+{
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+
+
+void AvatarService::onSceneAvatarStatusNotice(const Tracing & trace, zsummer::proto4z::ReadStream  & rs)
+{
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+
+
+
 
 
 

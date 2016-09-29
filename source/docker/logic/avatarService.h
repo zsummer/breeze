@@ -60,6 +60,11 @@ private:
     void onApplyForSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onCancelSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
+    void onGetSceneAvatarStatusResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onApplyForSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onCancelSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onSceneAvatarStatusNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
+
 
 
 private:

@@ -78,9 +78,6 @@ private:
     void onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
-    void onGetSceneAvatarStatusResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onSwitchSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onSwitchSceneNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 
