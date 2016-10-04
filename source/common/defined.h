@@ -114,38 +114,48 @@ using namespace zsummer::proto4z;
 using namespace std::placeholders;
 using namespace zsummer::mysql;
 
-//分区
+//分区ID  跨服交互时需要该ID表名分区ID  
 typedef ui32 AreaID;
 const AreaID InvalidAreaID = 0;
 
-//集装箱ID
+//DockerID(集装箱ID) 集装箱可视为一个进程, 所有Service(服务)都装载于Docker中   
 typedef ui32 DockerID;
 const DockerID InvalidDockerID = 0;
 
-//场景服务器ID, 分线ID  
-typedef ui32 LineID;
-const LineID InvalidLineID = 0;
-
-//场景ID  
-typedef ui32 SceneID;
-const SceneID InvalidSceneID = 0;
-//实体ID 
-typedef ui32 EntityID;
-const EntityID InvalidEntityID = 0;
-
-//每个service拥有两个唯一的基础属性ServiceID, ServiceName
+//服务ID  服务==>可满足某种业务需求的,可独立部署到分布式节点中的服务, 例如游戏角色,公会,  以及对应的管理器服务等   
 typedef ui64 ServiceID;
 const ServiceID InvalidServiceID = (ServiceID)0;
 
+//服务名字 
 typedef std::string ServiceName;
 const ServiceName InvalidServiceName = "";
 
+//组队ID
+typedef ui64 GroupID;
+const GroupID InvalidGroupID = 0;
+
+//场景服务器的分线ID  标识具体的场景服务器  
+typedef ui32 LineID;
+const LineID InvalidLineID = 0;
+
+//场景ID  标识具体的场景实例 例如主城 副本 竞技场等  
+typedef ui32 SceneID;
+const SceneID InvalidSceneID = 0;
+
+//实体ID 标识场景中的实体对象 例如怪物 玩家 飞行道具  
+typedef ui32 EntityID;
+const EntityID InvalidEntityID = 0;
+
+
+//服务器心跳超时检测间隔 
 const ui32 ServerPulseInterval = 10000;
-const ui32 ClientPulseInterval = 30000;
+//客户端心跳超时检测间隔 
+const ui32 ClientPulseInterval = 30000; 
+//web服务器响应超时时间 
 const ui32 WebPulseTimeout = 10000;
 
 
-//以下位置定义服务类型和依赖关系
+//服务类型和依赖关系
 
 typedef ui16 ServiceType;
 const ServiceType InvalidServiceType = (ServiceType)0;
