@@ -299,48 +299,77 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 		LOGE("event_onServiceForwardMessage: trace have not oob. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
 		return;
 	}
-    if (rs.getProtoID() == SceneGroupGetStatusReq::getProtoID())
+    if (rs.getProtoID() == SceneServerJoinGroupIns::getProtoID())
     {
-		SceneGroupGetStatusReq req;
-		rs >> req;
-		SceneGroupGetStatusResp resp;
-        SceneGroupInfoNotice notice;
-		resp.retCode = EC_SUCCESS;
-        notice.groupInfo.groupID = InvalidGroupID;
-        notice.groupInfo.sceneType = SCENE_TYPE_NONE;
-        notice.groupInfo.sceneStatus = SCENE_STATUS_NONE;
-		auto groupInfoPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
-		if (groupInfoPtr)
-		{
-            notice.groupInfo = *groupInfoPtr;
-		}
-        backToService(session->getSessionID(), trace, resp);
-        backToService(session->getSessionID(), trace, notice);
+        SceneServerJoinGroupIns ins;
+        rs >> ins;
+        onSceneServerJoinGroupIns(session, trace, ins);
         return;
     }
-	else if (rs.getProtoID() == SceneGroupEnterSceneReq::getProtoID())
-	{
+    else if (rs.getProtoID() == ChatReq::getProtoID())
+    {
+        ChatReq req;
+        rs >> req;
+        onChatReq(session, trace, req);
+        return;
+    }
+    else if (rs.getProtoID() == SceneGroupGetStatusReq::getProtoID())
+    {
+        SceneGroupGetStatusReq req;
+        rs >> req;
+        onSceneGroupGetStatusReq(session, trace, req);
+        return;
+    }
+    else if (rs.getProtoID() == SceneGroupEnterSceneReq::getProtoID())
+    {
         SceneGroupEnterSceneReq req;
-		rs >> req;
-//        event_onApplyForSceneServerReq(areaID, req);
-		return;
-	}
+        rs >> req;
+        onSceneGroupEnterSceneReq(session, trace, req);
+        return;
+    }
     else if (rs.getProtoID() == SceneGroupCancelEnterReq::getProtoID())
     {
         SceneGroupCancelEnterReq req;
         rs >> req;
-//        event_onCancelSceneReq(trace.oob.clientAvatarID);
+        onSceneGroupCancelEnterReq(session, trace, req);
         return;
     }
-    else if (rs.getProtoID() == SceneServerJoinGroupIns::getProtoID())
+    else if (rs.getProtoID() == SceneGroupCreateReq::getProtoID())
     {
-        SceneServerJoinGroupIns ins;
-        rs >> ins;
-
-        SceneGroupAvatarInfo info;
-        info.token = "213123123" + toString(rand() % 1000);
+        SceneGroupCreateReq req;
+        rs >> req;
+        onSceneGroupCreateReq(session, trace, req);
         return;
     }
+    else if (rs.getProtoID() == SceneGroupJoinReq::getProtoID())
+    {
+        SceneGroupJoinReq req;
+        rs >> req;
+        onSceneGroupJoinReq(session, trace, req);
+        return;
+    }
+    else if (rs.getProtoID() == SceneGroupInviteReq::getProtoID())
+    {
+        SceneGroupInviteReq req;
+        rs >> req;
+        onSceneGroupInviteReq(session, trace, req);
+        return;
+    }
+    else if (rs.getProtoID() == SceneGroupRejectReq::getProtoID())
+    {
+        SceneGroupRejectReq req;
+        rs >> req;
+        onSceneGroupRejectReq(session, trace, req);
+        return;
+    }
+    else if (rs.getProtoID() == SceneGroupLeaveReq::getProtoID())
+    {
+        SceneGroupLeaveReq req;
+        rs >> req;
+        onSceneGroupLeaveReq(session, trace, req);
+        return;
+    }
+    
 }
 
 /*
@@ -603,5 +632,71 @@ void World::onMatchTimer()
 
 
 }
+void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & trace, SceneServerJoinGroupIns & req)
+{
+    SceneGroupAvatarInfo info;
+    info.token = "213123123" + toString(rand() % 1000);
+}
+
+void World::onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & req)
+{
+
+}
+
+void World::onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trace, SceneGroupGetStatusReq & req)
+{
+    SceneGroupGetStatusResp resp;
+    SceneGroupInfoNotice notice;
+    resp.retCode = EC_SUCCESS;
+    notice.groupInfo.groupID = InvalidGroupID;
+    notice.groupInfo.sceneType = SCENE_TYPE_NONE;
+    notice.groupInfo.sceneStatus = SCENE_STATUS_NONE;
+    auto groupInfoPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
+    if (groupInfoPtr)
+    {
+        notice.groupInfo = *groupInfoPtr;
+    }
+    backToService(session->getSessionID(), trace, resp);
+    backToService(session->getSessionID(), trace, notice);
+    return;
+}
+
+void World::onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & trace, SceneGroupEnterSceneReq & req)
+{
+
+}
+
+void World::onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCancelEnterReq & req)
+{
+
+}
+
+
+void World::onSceneGroupCreateReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCreateReq & req)
+{
+
+}
+
+void World::onSceneGroupJoinReq(TcpSessionPtr session, const Tracing & trace, SceneGroupJoinReq & req)
+{
+
+}
+
+void World::onSceneGroupInviteReq(TcpSessionPtr session, const Tracing & trace, SceneGroupInviteReq & req)
+{
+
+}
+
+void World::onSceneGroupRejectReq(TcpSessionPtr session, const Tracing & trace, SceneGroupRejectReq & req)
+{
+
+}
+
+void World::onSceneGroupLeaveReq(TcpSessionPtr session, const Tracing & trace, SceneGroupLeaveReq & req)
+{
+
+}
+
+
 
 

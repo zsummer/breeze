@@ -97,6 +97,21 @@ private:
 	void event_onDockerClosed(TcpSessionPtr session);
 	void event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 	void event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs);
+
+    void onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & trace, SceneServerJoinGroupIns & req);
+    void onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & req);
+    void onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trace, SceneGroupGetStatusReq & req);
+    void onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & trace, SceneGroupEnterSceneReq & req);
+    void onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCancelEnterReq & req);
+
+    void onSceneGroupCreateReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCreateReq & req);
+    void onSceneGroupJoinReq(TcpSessionPtr session, const Tracing & trace, SceneGroupJoinReq & req);
+    void onSceneGroupInviteReq(TcpSessionPtr session, const Tracing & trace, SceneGroupInviteReq & req);
+    void onSceneGroupRejectReq(TcpSessionPtr session, const Tracing & trace, SceneGroupRejectReq & req);
+    void onSceneGroupLeaveReq(TcpSessionPtr session, const Tracing & trace, SceneGroupLeaveReq & req);
+
+
+
     /*
     void event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneServerReq & rs);
     void event_onCancelSceneReq(ServiceID avatarID);*/
