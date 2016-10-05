@@ -26,7 +26,7 @@
 #include "service.h"
 #include "module.h"
 #include "docker.h"
-
+#include "avatarModules/sceneModule.h"
 
 
 
@@ -55,7 +55,7 @@ private:
 	void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 	void onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 	void onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-
+    /*
     void onGetSceneAvatarStatusReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onApplyForSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onCancelSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
@@ -64,7 +64,7 @@ private:
     void onApplyForSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onCancelSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onSceneAvatarStatusNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
-
+    */
 
 
 private:
@@ -75,6 +75,8 @@ private:
 	AvatarPropMap _props;
 private:
     double _lastChatTime = getFloatNowTime();
+private:
+    SceneModule _scene;
 };
 
 

@@ -240,7 +240,7 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
     }
     else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
     {
-        AreaID areaID = (ui32)session->getUserParamNumber(UPARAM_AREA_ID);
+        AreaID areaID = session->getUserParamNumber(UPARAM_AREA_ID);
         if (areaID == InvalidAreaID)
         {
             LOGE("not found area id. sessionID=" << session->getSessionID());
@@ -265,18 +265,25 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
     }
 }
 
-
-
-SceneAvatarStatusPtr World::getAvatarStatus(ServiceID serviceID)
+SceneGroupInfoPtr World::getGroupInfoByAvatarID(ServiceID serviceID)
 {
-    auto founder = _avatarStatus.find(serviceID);
-    if (founder == _avatarStatus.end())
+    auto founder = _avatars.find(serviceID);
+    if (founder == _avatars.end())
+    {
+        return nullptr;
+    }
+    return getGroupInfo(founder->second);
+}
+
+SceneGroupInfoPtr World::getGroupInfo(GroupID groupID)
+{
+    auto founder = _groups.find(groupID);
+    if (founder == _groups.end())
     {
         return nullptr;
     }
     return founder->second;
 }
-
 
 
 void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs)
@@ -292,42 +299,43 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 		LOGE("event_onServiceForwardMessage: trace have not oob. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
 		return;
 	}
-    if (rs.getProtoID() == GetSceneAvatarStatusReq::getProtoID())
+    if (rs.getProtoID() == SceneGroupGetStatusReq::getProtoID())
     {
-		GetSceneAvatarStatusReq req;
+		SceneGroupGetStatusReq req;
 		rs >> req;
-		GetSceneAvatarStatusResp resp;
-        SceneAvatarStatusNotice notice;
+		SceneGroupGetStatusResp resp;
+        SceneGroupInfoNotice notice;
 		resp.retCode = EC_SUCCESS;
-        notice.status.sceneType = SCENE_TYPE_NONE;
-        notice.status.sceneStatus = SCENE_STATUS_NONE;
-		auto status = getAvatarStatus(trace.oob.clientAvatarID);
-		if (status)
+        notice.groupInfo.groupID = InvalidGroupID;
+        notice.groupInfo.sceneType = SCENE_TYPE_NONE;
+        notice.groupInfo.sceneStatus = SCENE_STATUS_NONE;
+		auto groupInfoPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
+		if (groupInfoPtr)
 		{
-            notice.status = *status;
+            notice.groupInfo = *groupInfoPtr;
 		}
         backToService(session->getSessionID(), trace, resp);
         backToService(session->getSessionID(), trace, notice);
         return;
     }
-	else if (rs.getProtoID() == ApplyForSceneReq::getProtoID())
+	else if (rs.getProtoID() == SceneGroupEnterSceneReq::getProtoID())
 	{
         ApplyForSceneServerReq req;
 		rs >> req;
-        event_onApplyForSceneServerReq(areaID, req);
+//        event_onApplyForSceneServerReq(areaID, req);
 		return;
 	}
-    else if (rs.getProtoID() == CancelSceneReq::getProtoID())
+    else if (rs.getProtoID() == SceneGroupCancelEnterReq::getProtoID())
     {
-        CancelSceneReq req;
+        SceneGroupCancelEnterReq req;
         rs >> req;
-        event_onCancelSceneReq(areaID, trace.oob.clientAvatarID);
+//        event_onCancelSceneReq(trace.oob.clientAvatarID);
         return;
     }
 }
 
-
-void World::event_onCancelSceneReq(AreaID areaID, ServiceID avatarID)
+/*
+void World::event_onCancelSceneReq(ServiceID avatarID)
 {
     auto status = getAvatarStatus(avatarID);
     if (!status)
@@ -361,12 +369,12 @@ void World::event_onCancelSceneReq(AreaID areaID, ServiceID avatarID)
 
                     if (avatar->baseInfo.avatarID == avatarID)
                     {
-                        CancelSceneResp resp;
+                        SceneGroupCancelEnterResp resp;
                         resp.retCode = EC_SUCCESS;
                         toService(avatar->areaID, STAvatarMgr, STAvatar, avatar->baseInfo.avatarID, resp);
                     }
 
-                    SceneAvatarStatusNotice notice;
+                    SceneGroupInfoNotice notice;
                     notice.status = *avatar;
                     toService(notice.status.areaID, STAvatarMgr, STAvatar, notice.status.baseInfo.avatarID, notice);
 
@@ -383,7 +391,7 @@ void World::event_onCancelSceneReq(AreaID areaID, ServiceID avatarID)
         auto founder = _lines.find(status->lineID);
         if (founder != _lines.end() && founder->second.sessionID != InvalidSessionID)
         {
-            CancelSceneResp resp(EC_ERROR);
+            SceneGroupCancelEnterResp resp(EC_ERROR);
             toService(areaID, STAvatarMgr, STAvatar, avatarID, resp);
             return;
         }
@@ -394,11 +402,11 @@ void World::event_onCancelSceneReq(AreaID areaID, ServiceID avatarID)
     {
         status->sceneType = SCENE_TYPE_NONE;
         status->sceneStatus = SCENE_STATUS_NONE;
-        CancelSceneResp resp;
+        SceneGroupCancelEnterResp resp;
         resp.retCode = EC_SUCCESS;
         toService(areaID, STAvatarMgr, STAvatar, avatarID, resp);
 
-        SceneAvatarStatusNotice notice;
+        SceneGroupInfoNotice notice;
         notice.status = *status;
         toService(areaID, STAvatarMgr, STAvatar, avatarID, notice);
     }
@@ -423,7 +431,7 @@ void World::event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneSer
             {
                 for (auto & baseInfo : req.avatars)
                 {
-                    toService(areaID, STAvatarMgr, STAvatar, baseInfo.avatarID, ApplyForSceneResp(EC_ERROR));
+                    toService(areaID, STAvatarMgr, STAvatar, baseInfo.avatarID, SceneGroupEnterSceneResp(EC_ERROR));
                 }
                 return;
             }
@@ -454,7 +462,7 @@ void World::event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneSer
     SceneAvatarStatusGroup team;
     for (auto & baseInfo : req.avatars)
     {
-        ApplyForSceneResp resp(EC_SUCCESS);
+        SceneGroupEnterSceneResp resp(EC_SUCCESS);
         toService(areaID, STAvatarMgr, STAvatar, baseInfo.avatarID, resp);
         auto status = getAvatarStatus(baseInfo.avatarID);
         if (!status)
@@ -466,7 +474,7 @@ void World::event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneSer
         status->sceneStatus = SCENE_STATUS_MATCHING;
         team.push_back(status);
 
-        SceneAvatarStatusNotice notice(*status);
+        SceneGroupInfoNotice notice(*status);
         toService(areaID, STAvatarMgr, STAvatar, baseInfo.avatarID, notice);
     }
 
@@ -475,7 +483,7 @@ void World::event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneSer
 
 }
 
-
+*/
 
 void World::event_onSceneLinked(TcpSessionPtr session)
 {
@@ -567,34 +575,16 @@ void World::onMatchTimer()
                     lineID = 0;
                 }
             }
-            ApplyForSceneServerReq req;
 
-            for (auto status : *iter)
+            auto & groupInfo = *(*iter);
+
+            for (auto &avatarInfo : groupInfo.members)
             {
-                if (lineID == 0)
-                {
-                    status->sceneType = SCENE_TYPE_NONE;
-                    status->sceneStatus = SCENE_STATUS_NONE;
-                    LOGE("");
-                    SceneAvatarStatusNotice notice(*status);
-                    toService(status->areaID, STAvatarMgr, STAvatar, status->baseInfo.avatarID, notice);
-                }
-                else
-                {
-                    status->sceneStatus = SCENE_STATUS_CHOISE;
-                    status->lineID = lineID;
-                    status->host = lineStatus.knock.pubHost;
-                    status->port = lineStatus.knock.pubPort;
-                    req.avatars.push_back(status->baseInfo);
-                    req.mapID = status->mapID;
-                    req.sceneType = status->sceneType;
-                    SceneAvatarStatusNotice notice(*status);
-                    toService(status->areaID, STAvatarMgr, STAvatar, status->baseInfo.avatarID, notice);
-                }
+                SceneGroupInfoNotice notice(groupInfo);
             }
             if (lineID != 0)
             {
-                sendViaSessionID(lineStatus.sessionID, req);
+                //sendViaSessionID(lineStatus.sessionID, req);
             }
             
             iter = pool.erase(iter);

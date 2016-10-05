@@ -60,7 +60,7 @@ public:
     inline std::string getBalanceStatus();
 private:
     std::vector<BalanceInfo> _balance;
-    int _idx = -1;
+    size_t _idx = -1;
 };
 
 template<class BalanceID>
@@ -151,12 +151,12 @@ inline BalanceID Balance<BalanceID>::pickNode(double step, double autoAdd)
         {
             continue;
         }
-        if (_idx < 0 || _idx >= _balance.size() || !_balance[_idx].active || _balance[_idx].weight - step > _balance[i].weight)
+        if (_idx >= _balance.size() || !_balance[_idx].active || _balance[_idx].weight - step > _balance[i].weight)
         {
             _idx = (int)i;
         }
     }
-    if (_idx < 0 || _idx >= _balance.size() || !_balance[_idx].active)
+    if (_idx >= _balance.size() || !_balance[_idx].active)
     {
         return 0;
     }

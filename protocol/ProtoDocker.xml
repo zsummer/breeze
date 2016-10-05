@@ -33,7 +33,7 @@
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="serviceName" type="string"   desc=""/>
         <member name="clientDockerID" type="ui64"   desc=""/>
-        <member name="clientSessionID" type="ui64"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
     
     <packet name="ServiceInfo" desc= "Service被装载或者属性更改,需要通知给其他Docker的信息">
@@ -43,7 +43,7 @@
         <member name="serviceName" type="string"   desc=""/>
         <member name="status" type="ui16"   desc=""/>
         <member name="clientDockerID" type="ui64"   desc=""/>
-        <member name="clientSessionID" type="ui64"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
     <array name="ServiceInfoArray" type="ServiceInfo" desc="" />
 
@@ -59,17 +59,17 @@
         <member name="serviceType" type="ui16"   desc=""/>
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="clientDockerID" type="ui64"   desc=""/>
-        <member name="clientSessionID" type="ui64"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
 
     <packet name="KickRealClient" desc= "踢掉一个客户端">
-        <member name="clientSessionID" type="ui64"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
 
     <packet name="RealClientClosedNotice" desc= "客户端离线通知">
         <member name="serviceID" type="ui64"   desc=""/>
         <member name="clientDockerID" type="ui64"   desc=""/>
-        <member name="clientSessionID" type="ui64"   desc=""/>
+        <member name="clientSessionID" type="ui32"   desc=""/>
     </packet>
 
     <packet name="UnloadServiceInDocker" desc= "卸载一个Service">
@@ -154,7 +154,7 @@
     </packet>
 
     <packet name="WebServerRequest" desc="">
-        <member name="fromServiceType" type="ui64"  desc=""/>
+        <member name="fromServiceType" type="ui16"  desc=""/>
         <member name="fromServiceID" type="ui64"  desc=""/>
         <member name="traceID" type="ui64"  desc=""/>
         <member name="ip" type="string"  desc=""/>

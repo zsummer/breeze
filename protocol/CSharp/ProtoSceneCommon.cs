@@ -24,6 +24,185 @@ namespace Proto4z
         SCENE_STATUS_LINGER = 6, //战斗结束,数据驻留阶段  
     }; 
  
+    public class SceneGroupAvatarInfo: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 10000;  
+        static public ushort getProtoID() { return 10000; } 
+        static public string getProtoName() { return "SceneGroupAvatarInfo"; } 
+        //members   
+        public ulong areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
+        public AvatarBaseInfo baseInfo; //玩家基础数据, 非moba游戏可以在添加baseInfo数据时附加战斗属性数据  
+        public ushort powerType; //组队权限: 0普通,1leader,2master  
+        public string token; //scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开.  
+        public SceneGroupAvatarInfo()  
+        { 
+            areaID = 0;  
+            baseInfo = new AvatarBaseInfo();  
+            powerType = 0;  
+            token = "";  
+        } 
+        public SceneGroupAvatarInfo(ulong areaID, AvatarBaseInfo baseInfo, ushort powerType, string token) 
+        { 
+            this.areaID = areaID; 
+            this.baseInfo = baseInfo; 
+            this.powerType = powerType; 
+            this.token = token; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.areaID)); 
+            if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
+            data.AddRange(this.baseInfo.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.powerType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.areaID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.baseInfo = new AvatarBaseInfo(); 
+            this.baseInfo.__decode(binData, ref pos); 
+            this.powerType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class SceneGroupAvatarInfoArray : System.Collections.Generic.List<SceneGroupAvatarInfo>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new SceneGroupAvatarInfo(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupInfo: Proto4z.IProtoObject //编队数据  
+    {     
+        //proto id   
+        public const ushort protoID = 10001;  
+        static public ushort getProtoID() { return 10001; } 
+        static public string getProtoName() { return "SceneGroupInfo"; } 
+        //members   
+        public ulong groupID;  
+        public ushort sceneType; //场景类型  
+        public ushort sceneStatus; //状态  
+        public ulong mapID;  
+        public ulong lineID; //分线ID  
+        public ulong sceneID; //场景实例ID  
+        public string host; //服务器host  
+        public ushort port; //服务器port  
+        public SceneGroupAvatarInfoArray members; //队友数据  
+        public SceneGroupInfo()  
+        { 
+            groupID = 0;  
+            sceneType = 0;  
+            sceneStatus = 0;  
+            mapID = 0;  
+            lineID = 0;  
+            sceneID = 0;  
+            host = "";  
+            port = 0;  
+            members = new SceneGroupAvatarInfoArray();  
+        } 
+        public SceneGroupInfo(ulong groupID, ushort sceneType, ushort sceneStatus, ulong mapID, ulong lineID, ulong sceneID, string host, ushort port, SceneGroupAvatarInfoArray members) 
+        { 
+            this.groupID = groupID; 
+            this.sceneType = sceneType; 
+            this.sceneStatus = sceneStatus; 
+            this.mapID = mapID; 
+            this.lineID = lineID; 
+            this.sceneID = sceneID; 
+            this.host = host; 
+            this.port = port; 
+            this.members = members; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneStatus)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.mapID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.lineID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
+            if (this.members == null) this.members = new SceneGroupAvatarInfoArray(); 
+            data.AddRange(this.members.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sceneStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.mapID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.lineID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.members = new SceneGroupAvatarInfoArray(); 
+            this.members.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class SceneGroupInfoArray : System.Collections.Generic.List<SceneGroupInfo>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new SceneGroupInfo(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
  
     public class EntityIDArray : System.Collections.Generic.List<ulong>, Proto4z.IProtoObject  
     { 
@@ -56,8 +235,8 @@ namespace Proto4z
     public class EPoint: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 10014;  
-        static public ushort getProtoID() { return 10014; } 
+        public const ushort protoID = 10002;  
+        static public ushort getProtoID() { return 10002; } 
         static public string getProtoName() { return "EPoint"; } 
         //members   
         public double x;  
@@ -278,8 +457,8 @@ namespace Proto4z
     public class SearchInfo: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 10015;  
-        static public ushort getProtoID() { return 10015; } 
+        public const ushort protoID = 10003;  
+        static public ushort getProtoID() { return 10003; } 
         static public string getProtoName() { return "SearchInfo"; } 
         //members   
         public ushort searchMethod;  
@@ -342,8 +521,8 @@ namespace Proto4z
     public class SkillBehaviour: Proto4z.IProtoObject //技能触发行为  
     {     
         //proto id   
-        public const ushort protoID = 10016;  
-        static public ushort getProtoID() { return 10016; } 
+        public const ushort protoID = 10004;  
+        static public ushort getProtoID() { return 10004; } 
         static public string getProtoName() { return "SkillBehaviour"; } 
         //members   
         public ulong behaviour;  
@@ -428,8 +607,8 @@ namespace Proto4z
     public class SkillData: Proto4z.IProtoObject //技能  
     {     
         //proto id   
-        public const ushort protoID = 10017;  
-        static public ushort getProtoID() { return 10017; } 
+        public const ushort protoID = 10005;  
+        static public ushort getProtoID() { return 10005; } 
         static public string getProtoName() { return "SkillData"; } 
         //members   
         public ulong skillID; //skillID  
@@ -474,8 +653,8 @@ namespace Proto4z
     public class BuffData: Proto4z.IProtoObject //buff  
     {     
         //proto id   
-        public const ushort protoID = 10018;  
-        static public ushort getProtoID() { return 10018; } 
+        public const ushort protoID = 10006;  
+        static public ushort getProtoID() { return 10006; } 
         static public string getProtoName() { return "BuffData"; } 
         //members   
         public ulong buffID;  
@@ -536,8 +715,8 @@ namespace Proto4z
     public class HarmData: Proto4z.IProtoObject //伤害数据  
     {     
         //proto id   
-        public const ushort protoID = 10019;  
-        static public ushort getProtoID() { return 10019; } 
+        public const ushort protoID = 10007;  
+        static public ushort getProtoID() { return 10007; } 
         static public string getProtoName() { return "HarmData"; } 
         //members   
         public ulong eid; //目标eid  
@@ -606,8 +785,8 @@ namespace Proto4z
     public class SkillInfo: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 10020;  
-        static public ushort getProtoID() { return 10020; } 
+        public const ushort protoID = 10008;  
+        static public ushort getProtoID() { return 10008; } 
         static public string getProtoName() { return "SkillInfo"; } 
         //members   
         public ulong skillID;  
@@ -700,8 +879,8 @@ namespace Proto4z
     public class BuffInfo: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 10021;  
-        static public ushort getProtoID() { return 10021; } 
+        public const ushort protoID = 10009;  
+        static public ushort getProtoID() { return 10009; } 
         static public string getProtoName() { return "BuffInfo"; } 
         //members   
         public ulong eid; //施放该buff的entity id  
@@ -787,8 +966,8 @@ namespace Proto4z
     public class EntityInfo: Proto4z.IProtoObject //EntityInfo  
     {     
         //proto id   
-        public const ushort protoID = 10022;  
-        static public ushort getProtoID() { return 10022; } 
+        public const ushort protoID = 10010;  
+        static public ushort getProtoID() { return 10010; } 
         static public string getProtoName() { return "EntityInfo"; } 
         //members   
         public ulong eid; //eid  
@@ -896,8 +1075,8 @@ namespace Proto4z
     public class EntityControl: Proto4z.IProtoObject //EntityControl  
     {     
         //proto id   
-        public const ushort protoID = 10023;  
-        static public ushort getProtoID() { return 10023; } 
+        public const ushort protoID = 10011;  
+        static public ushort getProtoID() { return 10011; } 
         static public string getProtoName() { return "EntityControl"; } 
         //members   
         public ulong eid; //eid  
@@ -1026,8 +1205,8 @@ namespace Proto4z
     public class EntityReport: Proto4z.IProtoObject //EntityReport  
     {     
         //proto id   
-        public const ushort protoID = 10024;  
-        static public ushort getProtoID() { return 10024; } 
+        public const ushort protoID = 10012;  
+        static public ushort getProtoID() { return 10012; } 
         static public string getProtoName() { return "EntityReport"; } 
         //members   
         public ulong eid; //eid  
@@ -1111,8 +1290,8 @@ namespace Proto4z
     public class EntityFullInfo: Proto4z.IProtoObject //EntityFullInfo  
     {     
         //proto id   
-        public const ushort protoID = 10025;  
-        static public ushort getProtoID() { return 10025; } 
+        public const ushort protoID = 10013;  
+        static public ushort getProtoID() { return 10013; } 
         static public string getProtoName() { return "EntityFullInfo"; } 
         //members   
         public AvatarBaseInfo userInfo;  

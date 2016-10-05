@@ -1,37 +1,22 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>0f8b67f5a29a6a92e2ff0bbfb6de533a</cppmd5> 
-<luamd5>a0ce583418f617b667838b6484ba1953</luamd5> 
-<csharpmd5>82d236dc65fd97d0921f21999f72d2a0</csharpmd5> 
-<xmlmd5>0d91788d257d639a5ac5578e2d965266</xmlmd5> 
+<cppmd5>fcde31b27acb8b79ab88b7e65d257fb6</cppmd5> 
+<luamd5>8c51406b262c52825ddb08dd95655ff2</luamd5> 
+<csharpmd5>dc62a7b41e7c50550419f6804aabfea4</csharpmd5> 
+<xmlmd5>e60c4be12ead85ab3ed748d590436b1b</xmlmd5> 
 <cacheNumber>
     <cache key = "AvatarBaseInfo" Number = "1004" /> 
     <cache key = "AvatarPreview" Number = "1003" /> 
-    <cache key = "AvatarPropInfo" Number = "1014" /> 
     <cache key = "DictBaseProps" Number = "1008" /> 
     <cache key = "DictGlobal" Number = "1005" /> 
     <cache key = "DictItem" Number = "1009" /> 
     <cache key = "DictRaffleAward" Number = "1006" /> 
     <cache key = "DictRafflePool" Number = "1007" /> 
-    <cache key = "ID_AvatarBaseInfo" Number = "1019" /> 
-    <cache key = "ID_AvatarPreview" Number = "1018" /> 
-    <cache key = "ID_DictBaseProps" Number = "1023" /> 
-    <cache key = "ID_DictGlobal" Number = "1020" /> 
-    <cache key = "ID_DictItem" Number = "1024" /> 
-    <cache key = "ID_DictRaffleAward" Number = "1021" /> 
-    <cache key = "ID_DictRafflePool" Number = "1022" /> 
-    <cache key = "ID_ItemInfo" Number = "1025" /> 
-    <cache key = "ID_LogChat" Number = "1026" /> 
-    <cache key = "ID_MoneyTree" Number = "1027" /> 
-    <cache key = "ID_OutOfBand" Number = "1016" /> 
-    <cache key = "ID_Routing" Number = "1015" /> 
-    <cache key = "ID_SimplePack" Number = "1028" /> 
-    <cache key = "ID_Tracing" Number = "1017" /> 
     <cache key = "ItemInfo" Number = "1010" /> 
-    <cache key = "LogChat" Number = "1013" /> 
-    <cache key = "MoneyTree" Number = "1011" /> 
+    <cache key = "LogChat" Number = "1011" /> 
+    <cache key = "MoneyTree" Number = "1012" /> 
     <cache key = "OutOfBand" Number = "1001" /> 
     <cache key = "Routing" Number = "1000" /> 
-    <cache key = "SimplePack" Number = "1012" /> 
+    <cache key = "SimplePack" Number = "1013" /> 
     <cache key = "Tracing" Number = "1002" /> 
 </cacheNumber>

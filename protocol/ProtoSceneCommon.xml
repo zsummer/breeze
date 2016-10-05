@@ -38,7 +38,26 @@
 
 
 
+    <struct name="SceneGroupAvatarInfo" desc="">
+        <member name="areaID" type="ui64"  desc="考虑混服情况,必须指定该玩家来自哪个当前区"/>
+        <member name="baseInfo" type="AvatarBaseInfo"  desc="玩家基础数据, 非moba游戏可以在添加baseInfo数据时附加战斗属性数据"/>
+        <member name="powerType" type="ui16"  desc="组队权限: 0普通,1leader,2master"/>
+        <member name="token" type="string"  desc="scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开."/>
+    </struct>
+    <array name="SceneGroupAvatarInfoArray" type="SceneGroupAvatarInfo" desc="" />
 
+    <packet name="SceneGroupInfo" desc= "编队数据">
+        <member name="groupID" type="ui64"  desc=""/>
+        <member name="sceneType" type="ui16"  desc="场景类型"/>
+        <member name="sceneStatus" type="ui16"  desc="状态"/>
+        <member name="mapID" type="ui64"  desc=""/>
+        <member name="lineID" type="ui64"  desc="分线ID"/>
+        <member name="sceneID" type="ui64"  desc="场景实例ID"/>
+        <member name="host" type="string"  desc="服务器host"/>
+        <member name="port" type="ui16"  desc="服务器port"/>
+        <member name="members" type="SceneGroupAvatarInfoArray"  desc="队友数据"/>
+    </packet>
+    <array name="SceneGroupInfoArray" type="SceneGroupInfo" desc="" />
 
 
 

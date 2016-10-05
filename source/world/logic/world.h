@@ -45,23 +45,9 @@ struct SceneSessionStatus
 };
 using SceneSessionStatusPtr = std::shared_ptr<SceneSessionStatus>;
 
-struct SceneAvatarStatus //AvatarStatus
-{
-	AreaID areaID;
-	AvatarBaseInfo baseInfo;
-	GroupID groupID;
-	SCENE_TYPE sceneType; //场景类型
-	MapID mapID;
-	SCENE_STATUS sceneStatus; //状态
-	LineID lineID; //分线ID
-	SceneID sceneID; //场景实例ID
-	std::string token; //令牌
-	double lastSwitchTime; //最后一次切换场景的时间
-};
 
-using SceneAvatarStatusPtr = std::shared_ptr<SceneAvatarStatus>;
-using SceneAvatarStatusGroup = std::vector<SceneAvatarStatusPtr>;
-using SceneAvatarStatusPool = std::list<SceneAvatarStatusGroup>;
+using SceneGroupInfoPtr = std::shared_ptr<SceneGroupInfo>;
+using SceneGroupInfoPool = std::list<SceneGroupInfoPtr>;
 
 
 class World : public Singleton<World>
@@ -111,9 +97,9 @@ private:
 	void event_onDockerClosed(TcpSessionPtr session);
 	void event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 	void event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs);
-
+    /*
     void event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneServerReq & rs);
-    void event_onCancelSceneReq(AreaID areaID, ServiceID avatarID);
+    void event_onCancelSceneReq(ServiceID avatarID);*/
 
 
 private:
@@ -135,13 +121,14 @@ private:
     AccepterID _sceneListen = InvalidAccepterID;
 
 public:
-    SceneAvatarStatusPtr getAvatarStatus(ServiceID serviceID);
+    SceneGroupInfoPtr getGroupInfoByAvatarID(ServiceID serviceID);
+    SceneGroupInfoPtr getGroupInfo(GroupID groupID);
 private:
-	std::map<ServiceID, SceneAvatarStatusPtr> _avatarStatus;
-
+	std::map<ServiceID, GroupID> _avatars;
+    std::map<GroupID, SceneGroupInfoPtr> _groups;
 
 private:
-    std::vector<SceneAvatarStatusPool> _matchPools;
+    std::vector<SceneGroupInfoPool> _matchPools;
     TimerID _matchTimerID = InvalidTimerID;
     void onMatchTimer();
 };

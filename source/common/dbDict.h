@@ -129,10 +129,10 @@ public:
         return true;
     }
     
-    MAKE_ONE_KEY_DICT(DictGlobal, ui32, id);
-    MAKE_ONE_KEY_DICT(DictRafflePool, ui32, id);
-    MAKE_ONE_KEY_DICT(DictBaseProps, ui32, id);
-    MAKE_ONE_KEY_DICT(DictItem, ui32, id);
+    MAKE_ONE_KEY_DICT(DictGlobal, ui64, id);
+    MAKE_ONE_KEY_DICT(DictRafflePool, ui64, id);
+    MAKE_ONE_KEY_DICT(DictBaseProps, ui64, id);
+    MAKE_ONE_KEY_DICT(DictItem, ui64, id);
 
 private:
     DBHelperPtr _dictHelper;

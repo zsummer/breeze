@@ -8,15 +8,15 @@ AvatarService::AvatarService()
 	slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
 	slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
 	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
+    
+    slotting<SceneGroupGetStatusReq>(std::bind(&SceneModule::onSceneGroupGetStatusReq, _scene, std::ref(*this), _1, _2));
+    /*slotting<SceneGroupEnterSceneReq>(std::bind(&AvatarService::onApplyForSceneReq, this, _1, _2));
+    slotting<SceneGroupCancelEnterReq>(std::bind(&AvatarService::onCancelSceneReq, this, _1, _2));
 
-    slotting<GetSceneAvatarStatusReq>(std::bind(&AvatarService::onGetSceneAvatarStatusReq, this, _1, _2));
-    slotting<ApplyForSceneReq>(std::bind(&AvatarService::onApplyForSceneReq, this, _1, _2));
-    slotting<CancelSceneReq>(std::bind(&AvatarService::onCancelSceneReq, this, _1, _2));
-
-    slotting<GetSceneAvatarStatusResp>(std::bind(&AvatarService::onGetSceneAvatarStatusResp, this, _1, _2));
-    slotting<ApplyForSceneResp>(std::bind(&AvatarService::onApplyForSceneResp, this, _1, _2));
-    slotting<CancelSceneResp>(std::bind(&AvatarService::onCancelSceneResp, this, _1, _2));
-    slotting<SceneAvatarStatusNotice>(std::bind(&AvatarService::onSceneAvatarStatusNotice, this, _1, _2));
+    slotting<SceneGroupGetStatusResp>(std::bind(&AvatarService::onGetSceneAvatarStatusResp, this, _1, _2));
+    slotting<SceneGroupEnterSceneResp>(std::bind(&AvatarService::onApplyForSceneResp, this, _1, _2));
+    slotting<SceneGroupCancelEnterResp>(std::bind(&AvatarService::onCancelSceneResp, this, _1, _2));
+    slotting<SceneGroupInfoNotice>(std::bind(&AvatarService::onSceneAvatarStatusNotice, this, _1, _2));*/
 
 }
 
@@ -253,13 +253,13 @@ double AvatarService::getProp(const std::string &prop)
     return fouder->second;
 }
 
-
+/*
 void AvatarService::onGetSceneAvatarStatusReq(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, GetSceneAvatarStatusResp(EC_SERVICE_NOT_OPEN));
+        toService(STClient, trace.oob, SceneGroupGetStatusResp(EC_SERVICE_NOT_OPEN));
         return;
     }
     toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
@@ -270,10 +270,10 @@ void AvatarService::onApplyForSceneReq(const Tracing & trace, zsummer::proto4z::
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, ApplyForSceneResp(EC_SERVICE_NOT_OPEN));
+        toService(STClient, trace.oob, SceneGroupEnterSceneResp(EC_SERVICE_NOT_OPEN));
         return;
     }
-    ApplyForSceneReq req;
+    SceneGroupEnterSceneReq req;
     rs >> req;
     if (!req.friends.empty())
     {
@@ -283,7 +283,7 @@ void AvatarService::onApplyForSceneReq(const Tracing & trace, zsummer::proto4z::
             if (!ap)
             {
                 LOGE("onApplyForSceneReq error. can't found friends. friend avatar ID=" << id << ", self=" << getStatus());
-                toService(STClient, trace.oob,  ApplyForSceneResp(EC_ERROR));
+                toService(STClient, trace.oob,  SceneGroupEnterSceneResp(EC_ERROR));
                 return;
             }
         }
@@ -304,7 +304,7 @@ void AvatarService::onCancelSceneReq(const Tracing & trace, zsummer::proto4z::Re
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, CancelSceneResp(EC_SERVICE_NOT_OPEN));
+        toService(STClient, trace.oob, SceneGroupCancelEnterResp(EC_SERVICE_NOT_OPEN));
         return;
     }
     toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
@@ -330,6 +330,9 @@ void AvatarService::onSceneAvatarStatusNotice(const Tracing & trace, zsummer::pr
     toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
 }
 
+
+
+*/
 
 
 

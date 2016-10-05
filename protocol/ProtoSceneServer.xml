@@ -15,7 +15,6 @@
 
 
     <!------------------------------------ world <==> scene --------------------------------------------->
-    <array name="SceneTypeArray" type="ui16" desc="" />
 
     <proto name="SceneKnock" desc= "战场服务器挂载">
         <member name="lineID" type="ui64"  desc="分线ID"/>
@@ -26,6 +25,10 @@
     </packet>
 
 
+    <proto name="SceneServerJoinGroupIns" desc= "创建/加入编队, 来自docker的指令">
+        <member name="groupID" type="ui64"  desc="编队ID, 0为创建"/>
+        <member name="baseInfo" type="AvatarBaseInfo"  desc="角色数据"/>
+    </proto>
 
     <proto name="ApplyForSceneServerReq" desc= "请求战场">
         <member name="sceneType" type="ui16"  desc="类型"/>

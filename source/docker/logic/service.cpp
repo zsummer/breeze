@@ -146,13 +146,13 @@ bool Service::finishUnload()
 }
 
 
-ui32 Service::makeCallback(const ServiceCallback &cb)
+ui64 Service::makeCallback(const ServiceCallback &cb)
 {
-    ui32 cbid = ++_callbackSeq;
+    ui64 cbid = ++_callbackSeq;
     _cbs.insert(std::make_pair(cbid, std::make_pair(getNowTime(), cb)));
     return cbid;
 }
-ServiceCallback Service::checkoutCallback(ui32 cbid)
+ServiceCallback Service::checkoutCallback(ui64 cbid)
 {
     cleanCallback();
     auto founder = _cbs.find(cbid);

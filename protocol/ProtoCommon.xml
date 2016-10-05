@@ -56,7 +56,7 @@
     </packet>
     <packet name="OutOfBand"  desc="带外信息">
         <member name="clientDockerID" type="ui64"   desc="该数据由docker获得来自客户端的消息时自动填充."/>
-        <member name="clientSessionID" type="ui64"   desc="该数据由docker获得来自客户端的消息时自动填充."/>
+        <member name="clientSessionID" type="ui32"   desc="该数据由docker获得来自客户端的消息时自动填充."/>
         <member name="clientAvatarID" type="ui64" desc="该数据由docker获得来自客户端的消息时自动填充."/>
     </packet>
 

@@ -5,8 +5,8 @@ namespace Proto4z
     public class SceneClientPulse: Proto4z.IProtoObject //客户端脉冲请求  
     {     
         //proto id   
-        public const ushort protoID = 50008;  
-        static public ushort getProtoID() { return 50008; } 
+        public const ushort protoID = 50000;  
+        static public ushort getProtoID() { return 50000; } 
         static public string getProtoName() { return "SceneClientPulse"; } 
         //members   
         public SceneClientPulse()  
@@ -26,8 +26,8 @@ namespace Proto4z
     public class AttachSceneReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50009;  
-        static public ushort getProtoID() { return 50009; } 
+        public const ushort protoID = 50001;  
+        static public ushort getProtoID() { return 50001; } 
         static public string getProtoName() { return "AttachSceneReq"; } 
         //members   
         public ulong avatarID;  
@@ -65,8 +65,8 @@ namespace Proto4z
     public class AttachSceneResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50010;  
-        static public ushort getProtoID() { return 50010; } 
+        public const ushort protoID = 50002;  
+        static public ushort getProtoID() { return 50002; } 
         static public string getProtoName() { return "AttachSceneResp"; } 
         //members   
         public ushort retCode; //错误码  
@@ -104,8 +104,8 @@ namespace Proto4z
     public class FillSceneNotice: Proto4z.IProtoObject //填充场景数据  
     {     
         //proto id   
-        public const ushort protoID = 50011;  
-        static public ushort getProtoID() { return 50011; } 
+        public const ushort protoID = 50003;  
+        static public ushort getProtoID() { return 50003; } 
         static public string getProtoName() { return "FillSceneNotice"; } 
         //members   
         public EntityFullInfoArray entitys; //这里包含有所有当前场景下的实体属性和状态数据  
@@ -150,8 +150,8 @@ namespace Proto4z
     public class RefreshSceneEntitysNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50012;  
-        static public ushort getProtoID() { return 50012; } 
+        public const ushort protoID = 50004;  
+        static public ushort getProtoID() { return 50004; } 
         static public string getProtoName() { return "RefreshSceneEntitysNotice"; } 
         //members   
         public EntityInfoArray entitys;  
@@ -186,8 +186,8 @@ namespace Proto4z
     public class RefreshSceneReportsNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50013;  
-        static public ushort getProtoID() { return 50013; } 
+        public const ushort protoID = 50005;  
+        static public ushort getProtoID() { return 50005; } 
         static public string getProtoName() { return "RefreshSceneReportsNotice"; } 
         //members   
         public EntityReportArray reports;  
@@ -222,8 +222,8 @@ namespace Proto4z
     public class AddEntityNotice: Proto4z.IProtoObject //一批实体加入场景时, 把这些实体的数据广播给其他玩家  
     {     
         //proto id   
-        public const ushort protoID = 50014;  
-        static public ushort getProtoID() { return 50014; } 
+        public const ushort protoID = 50006;  
+        static public ushort getProtoID() { return 50006; } 
         static public string getProtoName() { return "AddEntityNotice"; } 
         //members   
         public EntityFullInfoArray entitys;  
@@ -258,8 +258,8 @@ namespace Proto4z
     public class RemoveEntityNotice: Proto4z.IProtoObject //实体离开场景时, 把该实体的数据广播给其他玩家  
     {     
         //proto id   
-        public const ushort protoID = 50015;  
-        static public ushort getProtoID() { return 50015; } 
+        public const ushort protoID = 50007;  
+        static public ushort getProtoID() { return 50007; } 
         static public string getProtoName() { return "RemoveEntityNotice"; } 
         //members   
         public EntityIDArray eids;  

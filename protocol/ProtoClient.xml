@@ -58,25 +58,10 @@
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
 
-  
-    <struct name="SceneGroupAvatarInfo" desc="">
-        <member name="baseInfo" type="AvatarBaseInfo"  desc=""/>
-        <member name="powerType" type="ui16"  desc="0普通,1leader,2master"/>
-    </struct>
-    <array name="SceneGroupAvatarInfoArray" type="SceneGroupAvatarInfo" desc="" />
-
     <packet name="SceneGroupInfoNotice" desc= "编队数据通知">
-        <member name="sceneType" type="ui16"  desc="场景类型"/>
-        <member name="mapID" type="ui64"  desc=""/>
-        <member name="groupID" type="ui64"  desc=""/>
-        <member name="sceneStatus" type="ui16"  desc="状态"/>
-        <member name="lineID" type="ui64"  desc="分线ID"/>
-        <member name="sceneID" type="ui64"  desc="场景实例ID"/>
-        <member name="host" type="string"  desc="服务器host"/>
-        <member name="port" type="ui16"  desc="服务器port"/>
-        <member name="token" type="string"  desc="自己的令牌"/>
-        <member name="members" type="SceneGroupAvatarInfoArray"  desc="队友数据"/>
+        <member name="groupInfo" type="SceneGroupInfo"  desc=""/>
     </packet>
+
 
    <packet name="SceneGroupCreateReq" desc= "发起组队请求">
     </packet>
@@ -104,6 +89,7 @@
     <packet name="SceneGroupRejectResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
+
     <packet name="SceneGroupLeaveReq" desc= "离开编队">
     </packet>
     <packet name="SceneGroupLeaveResp" desc= "">
@@ -114,7 +100,6 @@
         <member name="sceneType" type="ui16"   desc=""/>
         <member name="mapID" type="ui64"   desc=""/>
     </packet>
-
     <packet name="SceneGroupEnterSceneResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>

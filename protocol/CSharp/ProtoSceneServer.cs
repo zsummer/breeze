@@ -2,40 +2,11 @@
 namespace Proto4z  
 { 
  
- 
-    public class SceneTypeArray : System.Collections.Generic.List<ushort>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            for (int i = 0; i < this.Count; i++ ) 
-            { 
-                ret.AddRange(Proto4z.BaseProtoObject.encodeUI16(this[i]));  
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    this.Add(Proto4z.BaseProtoObject.decodeUI16(binData, ref pos)); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
     public class SceneKnock: Proto4z.IProtoObject //战场服务器挂载  
     {     
         //proto id   
-        public const ushort protoID = 39008;  
-        static public ushort getProtoID() { return 39008; } 
+        public const ushort protoID = 39000;  
+        static public ushort getProtoID() { return 39000; } 
         static public string getProtoName() { return "SceneKnock"; } 
         //members   
         public ulong lineID; //分线ID  
@@ -73,8 +44,8 @@ namespace Proto4z
     public class ScenePulse: Proto4z.IProtoObject //集群脉冲  
     {     
         //proto id   
-        public const ushort protoID = 39009;  
-        static public ushort getProtoID() { return 39009; } 
+        public const ushort protoID = 39001;  
+        static public ushort getProtoID() { return 39001; } 
         static public string getProtoName() { return "ScenePulse"; } 
         //members   
         public ScenePulse()  
@@ -91,11 +62,47 @@ namespace Proto4z
         } 
     } 
  
+    public class SceneServerJoinGroupIns: Proto4z.IProtoObject //创建/加入编队, 来自docker的指令  
+    {     
+        //proto id   
+        public const ushort protoID = 39002;  
+        static public ushort getProtoID() { return 39002; } 
+        static public string getProtoName() { return "SceneServerJoinGroupIns"; } 
+        //members   
+        public ulong groupID; //编队ID, 0为创建  
+        public AvatarBaseInfo baseInfo; //角色数据  
+        public SceneServerJoinGroupIns()  
+        { 
+            groupID = 0;  
+            baseInfo = new AvatarBaseInfo();  
+        } 
+        public SceneServerJoinGroupIns(ulong groupID, AvatarBaseInfo baseInfo) 
+        { 
+            this.groupID = groupID; 
+            this.baseInfo = baseInfo; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
+            if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
+            data.AddRange(this.baseInfo.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.baseInfo = new AvatarBaseInfo(); 
+            this.baseInfo.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class ApplyForSceneServerReq: Proto4z.IProtoObject //请求战场  
     {     
         //proto id   
-        public const ushort protoID = 39010;  
-        static public ushort getProtoID() { return 39010; } 
+        public const ushort protoID = 39003;  
+        static public ushort getProtoID() { return 39003; } 
         static public string getProtoName() { return "ApplyForSceneServerReq"; } 
         //members   
         public ushort sceneType; //类型  
@@ -135,8 +142,8 @@ namespace Proto4z
     public class FeedbackAvatarStatusNotice: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39011;  
-        static public ushort getProtoID() { return 39011; } 
+        public const ushort protoID = 39004;  
+        static public ushort getProtoID() { return 39004; } 
         static public string getProtoName() { return "FeedbackAvatarStatusNotice"; } 
         //members   
         public ulong avatarID;  

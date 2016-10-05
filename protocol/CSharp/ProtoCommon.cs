@@ -27,8 +27,8 @@ namespace Proto4z
     public class Routing: Proto4z.IProtoObject //docker to docker 路由信息  
     {     
         //proto id   
-        public const ushort protoID = 1015;  
-        static public ushort getProtoID() { return 1015; } 
+        public const ushort protoID = 1000;  
+        static public ushort getProtoID() { return 1000; } 
         static public string getProtoName() { return "Routing"; } 
         //members   
         public ushort toServiceType; //目标service类型  
@@ -81,12 +81,12 @@ namespace Proto4z
     public class OutOfBand: Proto4z.IProtoObject //带外信息  
     {     
         //proto id   
-        public const ushort protoID = 1016;  
-        static public ushort getProtoID() { return 1016; } 
+        public const ushort protoID = 1001;  
+        static public ushort getProtoID() { return 1001; } 
         static public string getProtoName() { return "OutOfBand"; } 
         //members   
         public ulong clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
-        public ulong clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
+        public uint clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
         public ulong clientAvatarID; //该数据由docker获得来自客户端的消息时自动填充.  
         public OutOfBand()  
         { 
@@ -94,7 +94,7 @@ namespace Proto4z
             clientSessionID = 0;  
             clientAvatarID = 0;  
         } 
-        public OutOfBand(ulong clientDockerID, ulong clientSessionID, ulong clientAvatarID) 
+        public OutOfBand(ulong clientDockerID, uint clientSessionID, ulong clientAvatarID) 
         { 
             this.clientDockerID = clientDockerID; 
             this.clientSessionID = clientSessionID; 
@@ -104,14 +104,14 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.clientDockerID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.clientSessionID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.clientSessionID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.clientAvatarID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.clientDockerID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.clientSessionID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             this.clientAvatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
@@ -120,8 +120,8 @@ namespace Proto4z
     public class Tracing: Proto4z.IProtoObject //docker间追踪数据  
     {     
         //proto id   
-        public const ushort protoID = 1017;  
-        static public ushort getProtoID() { return 1017; } 
+        public const ushort protoID = 1002;  
+        static public ushort getProtoID() { return 1002; } 
         static public string getProtoName() { return "Tracing"; } 
         //members   
         public Routing routing; //路由信息  
@@ -187,8 +187,8 @@ namespace Proto4z
     public class AvatarPreview: Proto4z.IProtoObject //用户预览信息  
     {     
         //proto id   
-        public const ushort protoID = 1018;  
-        static public ushort getProtoID() { return 1018; } 
+        public const ushort protoID = 1003;  
+        static public ushort getProtoID() { return 1003; } 
         static public string getProtoName() { return "AvatarPreview"; } 
         //members   
         public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
@@ -272,8 +272,8 @@ namespace Proto4z
     public class AvatarBaseInfo: Proto4z.IProtoObject //用户基础数据  
     {     
         //proto id   
-        public const ushort protoID = 1019;  
-        static public ushort getProtoID() { return 1019; } 
+        public const ushort protoID = 1004;  
+        static public ushort getProtoID() { return 1004; } 
         static public string getProtoName() { return "AvatarBaseInfo"; } 
         //members   
         public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
@@ -409,8 +409,8 @@ namespace Proto4z
     public class DictGlobal: Proto4z.IProtoObject //全局配置  
     {     
         //proto id   
-        public const ushort protoID = 1020;  
-        static public ushort getProtoID() { return 1020; } 
+        public const ushort protoID = 1005;  
+        static public ushort getProtoID() { return 1005; } 
         static public string getProtoName() { return "DictGlobal"; } 
         //members   
         public ulong id;  
@@ -458,8 +458,8 @@ namespace Proto4z
     public class DictRaffleAward: Proto4z.IProtoObject //奖池中的奖品  
     {     
         //proto id   
-        public const ushort protoID = 1021;  
-        static public ushort getProtoID() { return 1021; } 
+        public const ushort protoID = 1006;  
+        static public ushort getProtoID() { return 1006; } 
         static public string getProtoName() { return "DictRaffleAward"; } 
         //members   
         public ulong id; //奖品ID  
@@ -528,8 +528,8 @@ namespace Proto4z
     public class DictRafflePool: Proto4z.IProtoObject //道具抽奖,道具掉落  
     {     
         //proto id   
-        public const ushort protoID = 1022;  
-        static public ushort getProtoID() { return 1022; } 
+        public const ushort protoID = 1007;  
+        static public ushort getProtoID() { return 1007; } 
         static public string getProtoName() { return "DictRafflePool"; } 
         //members   
         public ulong id;  
@@ -574,8 +574,8 @@ namespace Proto4z
     public class DictBaseProps: Proto4z.IProtoObject //战斗属性效果,用于装备,属性类增减益buff  
     {     
         //proto id   
-        public const ushort protoID = 1023;  
-        static public ushort getProtoID() { return 1023; } 
+        public const ushort protoID = 1008;  
+        static public ushort getProtoID() { return 1008; } 
         static public string getProtoName() { return "DictBaseProps"; } 
         //members   
         public ulong id;  
@@ -648,8 +648,8 @@ namespace Proto4z
     public class DictItem: Proto4z.IProtoObject //道具字典  
     {     
         //proto id   
-        public const ushort protoID = 1024;  
-        static public ushort getProtoID() { return 1024; } 
+        public const ushort protoID = 1009;  
+        static public ushort getProtoID() { return 1009; } 
         static public string getProtoName() { return "DictItem"; } 
         //members   
         public ulong id;  
@@ -727,8 +727,8 @@ namespace Proto4z
     public class ItemInfo: Proto4z.IProtoObject //道具字典  
     {     
         //proto id   
-        public const ushort protoID = 1025;  
-        static public ushort getProtoID() { return 1025; } 
+        public const ushort protoID = 1010;  
+        static public ushort getProtoID() { return 1010; } 
         static public string getProtoName() { return "ItemInfo"; } 
         //members   
         public ushort stacks; //可堆叠个数,0和1都是1次  
@@ -763,8 +763,8 @@ namespace Proto4z
     public class LogChat: Proto4z.IProtoObject //聊天日志  
     {     
         //proto id   
-        public const ushort protoID = 1026;  
-        static public ushort getProtoID() { return 1026; } 
+        public const ushort protoID = 1011;  
+        static public ushort getProtoID() { return 1011; } 
         static public string getProtoName() { return "LogChat"; } 
         //members   
         public ulong id;  
@@ -827,8 +827,8 @@ namespace Proto4z
     public class MoneyTree: Proto4z.IProtoObject //摇钱树功能模块  
     {     
         //proto id   
-        public const ushort protoID = 1027;  
-        static public ushort getProtoID() { return 1027; } 
+        public const ushort protoID = 1012;  
+        static public ushort getProtoID() { return 1012; } 
         static public string getProtoName() { return "MoneyTree"; } 
         //members   
         public ulong lastTime; //最后一次执行时间  
@@ -876,8 +876,8 @@ namespace Proto4z
     public class SimplePack: Proto4z.IProtoObject //简单示例  
     {     
         //proto id   
-        public const ushort protoID = 1028;  
-        static public ushort getProtoID() { return 1028; } 
+        public const ushort protoID = 1013;  
+        static public ushort getProtoID() { return 1013; } 
         static public string getProtoName() { return "SimplePack"; } 
         //members   
         public ulong id; //id, 对应数据库的结构为自增ID,key  
