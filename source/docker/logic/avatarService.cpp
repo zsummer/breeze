@@ -5,6 +5,7 @@
 AvatarService::AvatarService()
 {
     slotting<ChatReq>(std::bind(&AvatarService::onChatReq, this, _1, _2));
+    slotting<ChatResp>(std::bind(&AvatarService::onChatResp, this, _1, _2));
 	slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
 	slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
 	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
@@ -153,9 +154,7 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     resp.chatTime = getNowTime();
 
     double now = getFloatNowTime();
-    double limit = 0.0;
-    if (req.channelID == CC_PRIVATE) limit = 1.0;
-    else if (req.channelID == CC_WORLD) limit = 5.0;
+    double limit = req.channelID == CC_WORLD ? 5.0 : 1.0;
 
     if (now - _lastChatTime < limit)
     {
@@ -168,9 +167,6 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
         toService(STClient, getServiceID(), resp);
         return;
     }
-
-
-
     _lastChatTime = now;
     if (req.channelID == CC_PRIVATE)
     {
@@ -189,6 +185,17 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
             toService(STClient, kv.second->getServiceID(), resp);
         }
     }
+    else if (req.channelID == CC_GROUP || req.channelID == CC_CAMP || req.channelID == CC_SCENE)
+    {
+        if (Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
+        {
+            toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
+        }
+        else
+        {
+            LOGW("STWorldMgr service not open. " << trace);
+        }
+    }
     if (true)
     {
         LogChat log;
@@ -205,6 +212,12 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     }
     
 }
+
+void AvatarService::onChatResp(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+
 
 void AvatarService::onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {

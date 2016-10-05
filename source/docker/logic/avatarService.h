@@ -52,19 +52,11 @@ private:
     void onModuleUnload(bool success, const std::string & moduleName);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-	void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onChatResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 	void onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 	void onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    /*
-    void onGetSceneAvatarStatusReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onApplyForSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onCancelSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
-    void onGetSceneAvatarStatusResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onApplyForSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onCancelSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onSceneAvatarStatusNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    */
 
 public:
     ModuleData<AvatarBaseInfo> _baseInfo;
