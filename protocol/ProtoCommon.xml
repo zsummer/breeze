@@ -185,9 +185,12 @@
 
     <!------------- 聊天 ---------------------->
     <enum name="ChatChannelEnum" type="ui16">
-        <member name="CC_WORLD" desc=""/>
-        <member name="CC_PRIVATE" desc=""/>
-        <member name="CC_SYSTEM" desc=""/>
+        <member name="CC_WORLD" desc="世界频道"/>
+        <member name="CC_PRIVATE" desc="私人频道"/>
+        <member name="CC_SYSTEM" desc="系统频道"/>
+        <member name="CC_GROUP" desc="同编队频道"/>
+        <member name="CC_CAMP" desc="同阵营频道"/>
+        <member name="CC_SCENE" desc="同场景频道"/>
     </enum>
     <packet    name="LogChat" store="true" desc= "聊天日志">
         <member name="id" type="ui64" tag="auto,key" desc=""/>

@@ -20,9 +20,10 @@ Proto4z.SceneGroupAvatarInfo = {}
 Proto4z.SceneGroupAvatarInfo.__protoID = 10000 
 Proto4z.SceneGroupAvatarInfo.__protoName = "SceneGroupAvatarInfo" 
 Proto4z.SceneGroupAvatarInfo[1] = {name="areaID", type="ui64" } --考虑混服情况,必须指定该玩家来自哪个当前区 
-Proto4z.SceneGroupAvatarInfo[2] = {name="baseInfo", type="AvatarBaseInfo" } --玩家基础数据, 非moba游戏可以在添加baseInfo数据时附加战斗属性数据 
-Proto4z.SceneGroupAvatarInfo[3] = {name="powerType", type="ui16" } --组队权限: 0普通,1leader,2master 
-Proto4z.SceneGroupAvatarInfo[4] = {name="token", type="string" } --scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开. 
+Proto4z.SceneGroupAvatarInfo[2] = {name="baseInfo", type="AvatarBaseInfo" } --玩家基础数据 
+Proto4z.SceneGroupAvatarInfo[3] = {name="props", type="AvatarPropMap" } --角色属性数据 
+Proto4z.SceneGroupAvatarInfo[4] = {name="powerType", type="ui16" } --组队权限: 0普通,1leader,2master 
+Proto4z.SceneGroupAvatarInfo[5] = {name="token", type="string" } --scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开. 
  
 Proto4z.SceneGroupAvatarInfoArray = {}  
 Proto4z.SceneGroupAvatarInfoArray.__protoName = "SceneGroupAvatarInfoArray" 
@@ -42,6 +43,7 @@ Proto4z.SceneGroupInfo[6] = {name="sceneID", type="ui64" } --场景实例ID
 Proto4z.SceneGroupInfo[7] = {name="host", type="string" } --服务器host 
 Proto4z.SceneGroupInfo[8] = {name="port", type="ui16" } --服务器port 
 Proto4z.SceneGroupInfo[9] = {name="members", type="SceneGroupAvatarInfoArray" } --队友数据 
+Proto4z.SceneGroupInfo[10] = {name="invitees", type="AvatarIDArray" } --邀请列表, 如果需要丰富该功能可扩展类型信息 
  
 Proto4z.SceneGroupInfoArray = {}  
 Proto4z.SceneGroupInfoArray.__protoName = "SceneGroupInfoArray" 

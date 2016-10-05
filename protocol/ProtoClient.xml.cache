@@ -1,42 +1,43 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>64ff1a3e37cd9c5b4b4f6f7272094af5</cppmd5> 
-<luamd5>4a20c9f8d3d4cbe53abfa1c7e297366d</luamd5> 
-<csharpmd5>c51b443d78f5feb93a144d1fa9a8fd74</csharpmd5> 
-<xmlmd5>1bd229f453307c6b556b965b3c84000c</xmlmd5> 
+<cppmd5>811446125b10303ffae83069872de61e</cppmd5> 
+<luamd5>5e4e7a090ac941bf4d4b9431125ee8ac</luamd5> 
+<csharpmd5>8d4936d5e1b4ceccee24fe551221cf60</csharpmd5> 
+<xmlmd5>8647c9c2e2e7f82536237aa00ecaea7e</xmlmd5> 
 <cacheNumber>
     <cache key = "AttachAvatarReq" Number = "40005" /> 
     <cache key = "AttachAvatarResp" Number = "40006" /> 
     <cache key = "AvatarBaseInfoNotice" Number = "40007" /> 
     <cache key = "AvatarPropMapNotice" Number = "40008" /> 
-    <cache key = "ChangeIconIDReq" Number = "40030" /> 
-    <cache key = "ChangeIconIDResp" Number = "40031" /> 
-    <cache key = "ChangeModeIDReq" Number = "40032" /> 
-    <cache key = "ChangeModeIDResp" Number = "40033" /> 
-    <cache key = "ChatReq" Number = "40026" /> 
-    <cache key = "ChatResp" Number = "40027" /> 
+    <cache key = "ChangeIconIDReq" Number = "40031" /> 
+    <cache key = "ChangeIconIDResp" Number = "40032" /> 
+    <cache key = "ChangeModeIDReq" Number = "40033" /> 
+    <cache key = "ChangeModeIDResp" Number = "40034" /> 
+    <cache key = "ChatReq" Number = "40027" /> 
+    <cache key = "ChatResp" Number = "40028" /> 
     <cache key = "ClientAuthReq" Number = "40001" /> 
     <cache key = "ClientAuthResp" Number = "40002" /> 
     <cache key = "ClientPulse" Number = "40000" /> 
     <cache key = "CreateAvatarReq" Number = "40003" /> 
     <cache key = "CreateAvatarResp" Number = "40004" /> 
-    <cache key = "PingPongReq" Number = "40028" /> 
-    <cache key = "PingPongResp" Number = "40029" /> 
-    <cache key = "SceneGroupCancelEnterReq" Number = "40024" /> 
-    <cache key = "SceneGroupCancelEnterResp" Number = "40025" /> 
-    <cache key = "SceneGroupCreateReq" Number = "40012" /> 
-    <cache key = "SceneGroupCreateResp" Number = "40013" /> 
-    <cache key = "SceneGroupEnterSceneReq" Number = "40022" /> 
-    <cache key = "SceneGroupEnterSceneResp" Number = "40023" /> 
-    <cache key = "SceneGroupGetStatusReq" Number = "40009" /> 
-    <cache key = "SceneGroupGetStatusResp" Number = "40010" /> 
-    <cache key = "SceneGroupInfoNotice" Number = "40011" /> 
-    <cache key = "SceneGroupInviteReq" Number = "40016" /> 
-    <cache key = "SceneGroupInviteResp" Number = "40017" /> 
-    <cache key = "SceneGroupJoinReq" Number = "40014" /> 
-    <cache key = "SceneGroupJoinResp" Number = "40015" /> 
-    <cache key = "SceneGroupLeaveReq" Number = "40020" /> 
-    <cache key = "SceneGroupLeaveResp" Number = "40021" /> 
-    <cache key = "SceneGroupRejectReq" Number = "40018" /> 
-    <cache key = "SceneGroupRejectResp" Number = "40019" /> 
+    <cache key = "PingPongReq" Number = "40029" /> 
+    <cache key = "PingPongResp" Number = "40030" /> 
+    <cache key = "SceneGroupCancelEnterReq" Number = "40014" /> 
+    <cache key = "SceneGroupCancelEnterResp" Number = "40015" /> 
+    <cache key = "SceneGroupCreateReq" Number = "40016" /> 
+    <cache key = "SceneGroupCreateResp" Number = "40017" /> 
+    <cache key = "SceneGroupEnterSceneReq" Number = "40012" /> 
+    <cache key = "SceneGroupEnterSceneResp" Number = "40013" /> 
+    <cache key = "SceneGroupGetStatusReq" Number = "40010" /> 
+    <cache key = "SceneGroupGetStatusResp" Number = "40011" /> 
+    <cache key = "SceneGroupInfoNotice" Number = "40009" /> 
+    <cache key = "SceneGroupInviteNotice" Number = "40022" /> 
+    <cache key = "SceneGroupInviteReq" Number = "40020" /> 
+    <cache key = "SceneGroupInviteResp" Number = "40021" /> 
+    <cache key = "SceneGroupJoinReq" Number = "40018" /> 
+    <cache key = "SceneGroupJoinResp" Number = "40019" /> 
+    <cache key = "SceneGroupLeaveReq" Number = "40025" /> 
+    <cache key = "SceneGroupLeaveResp" Number = "40026" /> 
+    <cache key = "SceneGroupRejectReq" Number = "40023" /> 
+    <cache key = "SceneGroupRejectResp" Number = "40024" /> 
 </cacheNumber>

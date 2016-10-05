@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>d2d4a49b18caf258939d3fc08de9cf32</cppmd5> 
-<luamd5>8d280eb0ac46ea3a7259a272bdfab7f9</luamd5> 
-<csharpmd5>325f8a0cfba2306cc3061f173e7e0feb</csharpmd5> 
-<xmlmd5>d3e5264f5e9cee1f7fd524f3dcfbb65e</xmlmd5> 
+<cppmd5>0d13e9a68123678f3ad844466142a373</cppmd5> 
+<luamd5>3a451b2366442b921f710c4d1f58d00e</luamd5> 
+<csharpmd5>164d31481f5ff19c426b0d5347e932c7</csharpmd5> 
+<xmlmd5>4ee32f1a77dc329480e109cfef1e9c68</xmlmd5> 
 <cacheNumber>
-    <cache key = "ApplyForSceneServerReq" Number = "39003" /> 
-    <cache key = "FeedbackAvatarStatusNotice" Number = "39004" /> 
+    <cache key = "ApplyForSceneServerReq" Number = "39004" /> 
+    <cache key = "FeedbackAvatarStatusNotice" Number = "39005" /> 
     <cache key = "SceneKnock" Number = "39000" /> 
     <cache key = "ScenePulse" Number = "39001" /> 
+    <cache key = "SceneServerJoinGroupAck" Number = "39003" /> 
     <cache key = "SceneServerJoinGroupIns" Number = "39002" /> 
 </cacheNumber>

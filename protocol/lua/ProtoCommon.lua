@@ -160,9 +160,12 @@ Proto4z.ItemInfo.__protoID = 1010
 Proto4z.ItemInfo.__protoName = "ItemInfo" 
 Proto4z.ItemInfo[1] = {name="stacks", type="ui16" } --可堆叠个数,0和1都是1次 
  
-Proto4z.CC_WORLD = 0 
-Proto4z.CC_PRIVATE = 1 
-Proto4z.CC_SYSTEM = 2 
+Proto4z.CC_WORLD = 0--世界频道 
+Proto4z.CC_PRIVATE = 1--私人频道 
+Proto4z.CC_SYSTEM = 2--系统频道 
+Proto4z.CC_GROUP = 3--同编队频道 
+Proto4z.CC_CAMP = 4--同阵营频道 
+Proto4z.CC_SCENE = 5--同场景频道 
  
 Proto4z.register(1011,"LogChat") 
 Proto4z.LogChat = {} --聊天日志 

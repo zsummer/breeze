@@ -28,7 +28,30 @@ class AvatarService;
 class SceneModule
 {
 public:
+    void onSceneGroupInfoNotice(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+
     void onSceneGroupGetStatusReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupEnterSceneReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupCancelEnterReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+
+    void onSceneGroupCreateReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupJoinReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupInviteReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupRejectReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupLeaveReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+
+    void onSceneGroupGetStatusResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupEnterSceneResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupCancelEnterResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+
+    void onSceneServerJoinGroupAck(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupInviteResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupInviteNotice(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupRejectResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupLeaveResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+
+
+
 };
 
 

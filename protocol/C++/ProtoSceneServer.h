@@ -72,26 +72,30 @@ struct SceneServerJoinGroupIns //创建/加入编队, 来自docker的指令
     static const std::string getProtoName() { return "SceneServerJoinGroupIns";} 
     unsigned long long groupID; //编队ID, 0为创建  
     AvatarBaseInfo baseInfo; //角色数据  
+    AvatarPropMap props; //角色属性数据  
     SceneServerJoinGroupIns() 
     { 
         groupID = 0; 
     } 
-    SceneServerJoinGroupIns(const unsigned long long & groupID, const AvatarBaseInfo & baseInfo) 
+    SceneServerJoinGroupIns(const unsigned long long & groupID, const AvatarBaseInfo & baseInfo, const AvatarPropMap & props) 
     { 
         this->groupID = groupID; 
         this->baseInfo = baseInfo; 
+        this->props = props; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerJoinGroupIns & data) 
 { 
     ws << data.groupID;  
     ws << data.baseInfo;  
+    ws << data.props;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerJoinGroupIns & data) 
 { 
     rs >> data.groupID;  
     rs >> data.baseInfo;  
+    rs >> data.props;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerJoinGroupIns & info) 
@@ -99,13 +103,58 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "groupID=" << info.groupID << "\n"; 
     stm << "baseInfo=" << info.baseInfo << "\n"; 
+    stm << "props=" << info.props << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct SceneServerJoinGroupAck //创建/加入编队响应结果  
+{ 
+    static const unsigned short getProtoID() { return 39003;} 
+    static const std::string getProtoName() { return "SceneServerJoinGroupAck";} 
+    unsigned short retCode;  
+    unsigned long long newGroupID;  
+    unsigned long long oldGroupID;  
+    SceneServerJoinGroupAck() 
+    { 
+        retCode = 0; 
+        newGroupID = 0; 
+        oldGroupID = 0; 
+    } 
+    SceneServerJoinGroupAck(const unsigned short & retCode, const unsigned long long & newGroupID, const unsigned long long & oldGroupID) 
+    { 
+        this->retCode = retCode; 
+        this->newGroupID = newGroupID; 
+        this->oldGroupID = oldGroupID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerJoinGroupAck & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.newGroupID;  
+    ws << data.oldGroupID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerJoinGroupAck & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.newGroupID;  
+    rs >> data.oldGroupID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerJoinGroupAck & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "newGroupID=" << info.newGroupID << "\n"; 
+    stm << "oldGroupID=" << info.oldGroupID << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
 struct ApplyForSceneServerReq //请求战场  
 { 
-    static const unsigned short getProtoID() { return 39003;} 
+    static const unsigned short getProtoID() { return 39004;} 
     static const std::string getProtoName() { return "ApplyForSceneServerReq";} 
     unsigned short sceneType; //类型  
     unsigned long long mapID;  
@@ -148,7 +197,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct FeedbackAvatarStatusNotice //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 39004;} 
+    static const unsigned short getProtoID() { return 39005;} 
     static const std::string getProtoName() { return "FeedbackAvatarStatusNotice";} 
     unsigned long long avatarID;  
     unsigned short status;  

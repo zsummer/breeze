@@ -71,15 +71,18 @@ namespace Proto4z
         //members   
         public ulong groupID; //编队ID, 0为创建  
         public AvatarBaseInfo baseInfo; //角色数据  
+        public AvatarPropMap props; //角色属性数据  
         public SceneServerJoinGroupIns()  
         { 
             groupID = 0;  
             baseInfo = new AvatarBaseInfo();  
+            props = new AvatarPropMap();  
         } 
-        public SceneServerJoinGroupIns(ulong groupID, AvatarBaseInfo baseInfo) 
+        public SceneServerJoinGroupIns(ulong groupID, AvatarBaseInfo baseInfo, AvatarPropMap props) 
         { 
             this.groupID = groupID; 
             this.baseInfo = baseInfo; 
+            this.props = props; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -87,6 +90,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
             data.AddRange(this.baseInfo.__encode()); 
+            if (this.props == null) this.props = new AvatarPropMap(); 
+            data.AddRange(this.props.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -94,6 +99,47 @@ namespace Proto4z
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.baseInfo = new AvatarBaseInfo(); 
             this.baseInfo.__decode(binData, ref pos); 
+            this.props = new AvatarPropMap(); 
+            this.props.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneServerJoinGroupAck: Proto4z.IProtoObject //创建/加入编队响应结果  
+    {     
+        //proto id   
+        public const ushort protoID = 39003;  
+        static public ushort getProtoID() { return 39003; } 
+        static public string getProtoName() { return "SceneServerJoinGroupAck"; } 
+        //members   
+        public ushort retCode;  
+        public ulong newGroupID;  
+        public ulong oldGroupID;  
+        public SceneServerJoinGroupAck()  
+        { 
+            retCode = 0;  
+            newGroupID = 0;  
+            oldGroupID = 0;  
+        } 
+        public SceneServerJoinGroupAck(ushort retCode, ulong newGroupID, ulong oldGroupID) 
+        { 
+            this.retCode = retCode; 
+            this.newGroupID = newGroupID; 
+            this.oldGroupID = oldGroupID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.newGroupID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.oldGroupID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.newGroupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.oldGroupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -101,8 +147,8 @@ namespace Proto4z
     public class ApplyForSceneServerReq: Proto4z.IProtoObject //请求战场  
     {     
         //proto id   
-        public const ushort protoID = 39003;  
-        static public ushort getProtoID() { return 39003; } 
+        public const ushort protoID = 39004;  
+        static public ushort getProtoID() { return 39004; } 
         static public string getProtoName() { return "ApplyForSceneServerReq"; } 
         //members   
         public ushort sceneType; //类型  
@@ -142,8 +188,8 @@ namespace Proto4z
     public class FeedbackAvatarStatusNotice: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39004;  
-        static public ushort getProtoID() { return 39004; } 
+        public const ushort protoID = 39005;  
+        static public ushort getProtoID() { return 39005; } 
         static public string getProtoName() { return "FeedbackAvatarStatusNotice"; } 
         //members   
         public ulong avatarID;  

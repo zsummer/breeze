@@ -66,13 +66,13 @@ private:
     void onSceneAvatarStatusNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
     */
 
-
+public:
+    ModuleData<AvatarBaseInfo> _baseInfo;
+    AvatarPropMap _props;
 private:
     int _curLoadModuleCount = 0;
     int _curUnloadModuleCount = 0;
     int _totalModuleCount = 1;
-    ModuleData<AvatarBaseInfo> _baseInfo;
-	AvatarPropMap _props;
 private:
     double _lastChatTime = getFloatNowTime();
 private:

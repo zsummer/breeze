@@ -32,20 +32,23 @@ namespace Proto4z
         static public string getProtoName() { return "SceneGroupAvatarInfo"; } 
         //members   
         public ulong areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
-        public AvatarBaseInfo baseInfo; //玩家基础数据, 非moba游戏可以在添加baseInfo数据时附加战斗属性数据  
+        public AvatarBaseInfo baseInfo; //玩家基础数据  
+        public AvatarPropMap props; //角色属性数据  
         public ushort powerType; //组队权限: 0普通,1leader,2master  
         public string token; //scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开.  
         public SceneGroupAvatarInfo()  
         { 
             areaID = 0;  
             baseInfo = new AvatarBaseInfo();  
+            props = new AvatarPropMap();  
             powerType = 0;  
             token = "";  
         } 
-        public SceneGroupAvatarInfo(ulong areaID, AvatarBaseInfo baseInfo, ushort powerType, string token) 
+        public SceneGroupAvatarInfo(ulong areaID, AvatarBaseInfo baseInfo, AvatarPropMap props, ushort powerType, string token) 
         { 
             this.areaID = areaID; 
             this.baseInfo = baseInfo; 
+            this.props = props; 
             this.powerType = powerType; 
             this.token = token; 
         } 
@@ -55,6 +58,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.areaID)); 
             if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
             data.AddRange(this.baseInfo.__encode()); 
+            if (this.props == null) this.props = new AvatarPropMap(); 
+            data.AddRange(this.props.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.powerType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             return data; 
@@ -64,6 +69,8 @@ namespace Proto4z
             this.areaID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.baseInfo = new AvatarBaseInfo(); 
             this.baseInfo.__decode(binData, ref pos); 
+            this.props = new AvatarPropMap(); 
+            this.props.__decode(binData, ref pos); 
             this.powerType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
@@ -117,6 +124,7 @@ namespace Proto4z
         public string host; //服务器host  
         public ushort port; //服务器port  
         public SceneGroupAvatarInfoArray members; //队友数据  
+        public AvatarIDArray invitees; //邀请列表, 如果需要丰富该功能可扩展类型信息  
         public SceneGroupInfo()  
         { 
             groupID = 0;  
@@ -128,8 +136,9 @@ namespace Proto4z
             host = "";  
             port = 0;  
             members = new SceneGroupAvatarInfoArray();  
+            invitees = new AvatarIDArray();  
         } 
-        public SceneGroupInfo(ulong groupID, ushort sceneType, ushort sceneStatus, ulong mapID, ulong lineID, ulong sceneID, string host, ushort port, SceneGroupAvatarInfoArray members) 
+        public SceneGroupInfo(ulong groupID, ushort sceneType, ushort sceneStatus, ulong mapID, ulong lineID, ulong sceneID, string host, ushort port, SceneGroupAvatarInfoArray members, AvatarIDArray invitees) 
         { 
             this.groupID = groupID; 
             this.sceneType = sceneType; 
@@ -140,6 +149,7 @@ namespace Proto4z
             this.host = host; 
             this.port = port; 
             this.members = members; 
+            this.invitees = invitees; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -154,6 +164,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
             if (this.members == null) this.members = new SceneGroupAvatarInfoArray(); 
             data.AddRange(this.members.__encode()); 
+            if (this.invitees == null) this.invitees = new AvatarIDArray(); 
+            data.AddRange(this.invitees.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -168,6 +180,8 @@ namespace Proto4z
             this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.members = new SceneGroupAvatarInfoArray(); 
             this.members.__decode(binData, ref pos); 
+            this.invitees = new AvatarIDArray(); 
+            this.invitees.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

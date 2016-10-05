@@ -9,14 +9,27 @@ AvatarService::AvatarService()
 	slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
 	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
     
+    slotting<SceneGroupInfoNotice>(std::bind(&SceneModule::onSceneGroupInfoNotice, _scene, std::ref(*this), _1, _2));
     slotting<SceneGroupGetStatusReq>(std::bind(&SceneModule::onSceneGroupGetStatusReq, _scene, std::ref(*this), _1, _2));
-    /*slotting<SceneGroupEnterSceneReq>(std::bind(&AvatarService::onApplyForSceneReq, this, _1, _2));
-    slotting<SceneGroupCancelEnterReq>(std::bind(&AvatarService::onCancelSceneReq, this, _1, _2));
+    slotting<SceneGroupEnterSceneReq>(std::bind(&SceneModule::onSceneGroupEnterSceneReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupCancelEnterReq>(std::bind(&SceneModule::onSceneGroupCancelEnterReq, _scene, std::ref(*this), _1, _2));
+    
+    slotting<SceneGroupCreateReq>(std::bind(&SceneModule::onSceneGroupCreateReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupJoinReq>(std::bind(&SceneModule::onSceneGroupJoinReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupInviteReq>(std::bind(&SceneModule::onSceneGroupInviteReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupRejectReq>(std::bind(&SceneModule::onSceneGroupRejectReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupLeaveReq, _scene, std::ref(*this), _1, _2));
 
-    slotting<SceneGroupGetStatusResp>(std::bind(&AvatarService::onGetSceneAvatarStatusResp, this, _1, _2));
-    slotting<SceneGroupEnterSceneResp>(std::bind(&AvatarService::onApplyForSceneResp, this, _1, _2));
-    slotting<SceneGroupCancelEnterResp>(std::bind(&AvatarService::onCancelSceneResp, this, _1, _2));
-    slotting<SceneGroupInfoNotice>(std::bind(&AvatarService::onSceneAvatarStatusNotice, this, _1, _2));*/
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupGetStatusResp, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupEnterSceneResp, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupCancelEnterResp, _scene, std::ref(*this), _1, _2));
+    
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneServerJoinGroupAck, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupInviteResp, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupInviteNotice, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupRejectResp, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupLeaveResp, _scene, std::ref(*this), _1, _2));
+
 
 }
 

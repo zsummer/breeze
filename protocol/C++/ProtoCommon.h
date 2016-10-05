@@ -1482,9 +1482,12 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 enum ChatChannelEnum : unsigned short 
 { 
-    CC_WORLD = 0,  
-    CC_PRIVATE = 1,  
-    CC_SYSTEM = 2,  
+    CC_WORLD = 0, //世界频道  
+    CC_PRIVATE = 1, //私人频道  
+    CC_SYSTEM = 2, //系统频道  
+    CC_GROUP = 3, //同编队频道  
+    CC_CAMP = 4, //同阵营频道  
+    CC_SCENE = 5, //同场景频道  
 }; 
  
 struct LogChat //聊天日志  

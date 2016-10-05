@@ -30,7 +30,8 @@ struct SceneGroupAvatarInfo
     static const unsigned short getProtoID() { return 10000;} 
     static const std::string getProtoName() { return "SceneGroupAvatarInfo";} 
     unsigned long long areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
-    AvatarBaseInfo baseInfo; //玩家基础数据, 非moba游戏可以在添加baseInfo数据时附加战斗属性数据  
+    AvatarBaseInfo baseInfo; //玩家基础数据  
+    AvatarPropMap props; //角色属性数据  
     unsigned short powerType; //组队权限: 0普通,1leader,2master  
     std::string token; //scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开.  
     SceneGroupAvatarInfo() 
@@ -38,10 +39,11 @@ struct SceneGroupAvatarInfo
         areaID = 0; 
         powerType = 0; 
     } 
-    SceneGroupAvatarInfo(const unsigned long long & areaID, const AvatarBaseInfo & baseInfo, const unsigned short & powerType, const std::string & token) 
+    SceneGroupAvatarInfo(const unsigned long long & areaID, const AvatarBaseInfo & baseInfo, const AvatarPropMap & props, const unsigned short & powerType, const std::string & token) 
     { 
         this->areaID = areaID; 
         this->baseInfo = baseInfo; 
+        this->props = props; 
         this->powerType = powerType; 
         this->token = token; 
     } 
@@ -50,6 +52,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.areaID;  
     ws << data.baseInfo;  
+    ws << data.props;  
     ws << data.powerType;  
     ws << data.token;  
     return ws; 
@@ -58,6 +61,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.areaID;  
     rs >> data.baseInfo;  
+    rs >> data.props;  
     rs >> data.powerType;  
     rs >> data.token;  
     return rs; 
@@ -67,6 +71,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "areaID=" << info.areaID << "\n"; 
     stm << "baseInfo=" << info.baseInfo << "\n"; 
+    stm << "props=" << info.props << "\n"; 
     stm << "powerType=" << info.powerType << "\n"; 
     stm << "token=" << info.token << "\n"; 
     stm << "]\n"; 
@@ -89,6 +94,7 @@ struct SceneGroupInfo //编队数据
     std::string host; //服务器host  
     unsigned short port; //服务器port  
     SceneGroupAvatarInfoArray members; //队友数据  
+    AvatarIDArray invitees; //邀请列表, 如果需要丰富该功能可扩展类型信息  
     SceneGroupInfo() 
     { 
         groupID = 0; 
@@ -99,7 +105,7 @@ struct SceneGroupInfo //编队数据
         sceneID = 0; 
         port = 0; 
     } 
-    SceneGroupInfo(const unsigned long long & groupID, const unsigned short & sceneType, const unsigned short & sceneStatus, const unsigned long long & mapID, const unsigned long long & lineID, const unsigned long long & sceneID, const std::string & host, const unsigned short & port, const SceneGroupAvatarInfoArray & members) 
+    SceneGroupInfo(const unsigned long long & groupID, const unsigned short & sceneType, const unsigned short & sceneStatus, const unsigned long long & mapID, const unsigned long long & lineID, const unsigned long long & sceneID, const std::string & host, const unsigned short & port, const SceneGroupAvatarInfoArray & members, const AvatarIDArray & invitees) 
     { 
         this->groupID = groupID; 
         this->sceneType = sceneType; 
@@ -110,6 +116,7 @@ struct SceneGroupInfo //编队数据
         this->host = host; 
         this->port = port; 
         this->members = members; 
+        this->invitees = invitees; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupInfo & data) 
@@ -123,6 +130,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.host;  
     ws << data.port;  
     ws << data.members;  
+    ws << data.invitees;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupInfo & data) 
@@ -136,6 +144,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.host;  
     rs >> data.port;  
     rs >> data.members;  
+    rs >> data.invitees;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupInfo & info) 
@@ -150,6 +159,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "host=" << info.host << "\n"; 
     stm << "port=" << info.port << "\n"; 
     stm << "members=" << info.members << "\n"; 
+    stm << "invitees=" << info.invitees << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

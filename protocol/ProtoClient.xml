@@ -51,16 +51,33 @@
     </packet>
  
 
-<!------------------------------------ battle --------------------------------------------->
+<!------------------------------------ scene --------------------------------------------->
+
+    <packet name="SceneGroupInfoNotice" desc= "编队数据通知">
+        <member name="groupInfo" type="SceneGroupInfo"  desc=""/>
+    </packet>
+
+
     <packet name="SceneGroupGetStatusReq" desc= "获取当前角色的场景状态数据">
     </packet>
     <packet name="SceneGroupGetStatusResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
 
-    <packet name="SceneGroupInfoNotice" desc= "编队数据通知">
-        <member name="groupInfo" type="SceneGroupInfo"  desc=""/>
+   <packet name="SceneGroupEnterSceneReq" desc= "申请进入场景">
+        <member name="sceneType" type="ui16"   desc=""/>
+        <member name="mapID" type="ui64"   desc=""/>
     </packet>
+    <packet name="SceneGroupEnterSceneResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
+   <packet name="SceneGroupCancelEnterReq" desc= "取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)">
+    </packet>
+    <packet name="SceneGroupCancelEnterResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
 
 
    <packet name="SceneGroupCreateReq" desc= "发起组队请求">
@@ -82,7 +99,11 @@
     <packet name="SceneGroupInviteResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
-
+    <packet name="SceneGroupInviteNotice" desc= "">
+        <member name="avatarID" type="ui64"   desc=""/>
+        <member name="avatarName" type="string"   desc=""/>
+        <member name="groupID" type="ui64"   desc=""/>
+    </packet>
     <packet name="SceneGroupRejectReq" desc= "拒绝对方邀请">
         <member name="groupID" type="ui64"   desc=""/>
     </packet>
@@ -96,19 +117,7 @@
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
 
-   <packet name="SceneGroupEnterSceneReq" desc= "申请进入场景">
-        <member name="sceneType" type="ui16"   desc=""/>
-        <member name="mapID" type="ui64"   desc=""/>
-    </packet>
-    <packet name="SceneGroupEnterSceneResp" desc= "">
-        <member name="retCode" type="ui16"   desc=""/>
-    </packet>
 
-   <packet name="SceneGroupCancelEnterReq" desc= "取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)">
-    </packet>
-    <packet name="SceneGroupCancelEnterResp" desc= "">
-        <member name="retCode" type="ui16"   desc=""/>
-    </packet>
 
 
 

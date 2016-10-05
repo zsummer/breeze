@@ -322,61 +322,11 @@ namespace Proto4z
         } 
     } 
  
-    public class SceneGroupGetStatusReq: Proto4z.IProtoObject //获取当前角色的场景状态数据  
+    public class SceneGroupInfoNotice: Proto4z.IProtoObject //编队数据通知  
     {     
         //proto id   
         public const ushort protoID = 40009;  
         static public ushort getProtoID() { return 40009; } 
-        static public string getProtoName() { return "SceneGroupGetStatusReq"; } 
-        //members   
-        public SceneGroupGetStatusReq()  
-        { 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupGetStatusResp: Proto4z.IProtoObject 
-    {     
-        //proto id   
-        public const ushort protoID = 40010;  
-        static public ushort getProtoID() { return 40010; } 
-        static public string getProtoName() { return "SceneGroupGetStatusResp"; } 
-        //members   
-        public ushort retCode;  
-        public SceneGroupGetStatusResp()  
-        { 
-            retCode = 0;  
-        } 
-        public SceneGroupGetStatusResp(ushort retCode) 
-        { 
-            this.retCode = retCode; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupInfoNotice: Proto4z.IProtoObject //编队数据通知  
-    {     
-        //proto id   
-        public const ushort protoID = 40011;  
-        static public ushort getProtoID() { return 40011; } 
         static public string getProtoName() { return "SceneGroupInfoNotice"; } 
         //members   
         public SceneGroupInfo groupInfo;  
@@ -403,14 +353,14 @@ namespace Proto4z
         } 
     } 
  
-    public class SceneGroupCreateReq: Proto4z.IProtoObject //发起组队请求  
+    public class SceneGroupGetStatusReq: Proto4z.IProtoObject //获取当前角色的场景状态数据  
     {     
         //proto id   
-        public const ushort protoID = 40012;  
-        static public ushort getProtoID() { return 40012; } 
-        static public string getProtoName() { return "SceneGroupCreateReq"; } 
+        public const ushort protoID = 40010;  
+        static public ushort getProtoID() { return 40010; } 
+        static public string getProtoName() { return "SceneGroupGetStatusReq"; } 
         //members   
-        public SceneGroupCreateReq()  
+        public SceneGroupGetStatusReq()  
         { 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -424,243 +374,19 @@ namespace Proto4z
         } 
     } 
  
-    public class SceneGroupCreateResp: Proto4z.IProtoObject 
+    public class SceneGroupGetStatusResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40013;  
-        static public ushort getProtoID() { return 40013; } 
-        static public string getProtoName() { return "SceneGroupCreateResp"; } 
+        public const ushort protoID = 40011;  
+        static public ushort getProtoID() { return 40011; } 
+        static public string getProtoName() { return "SceneGroupGetStatusResp"; } 
         //members   
         public ushort retCode;  
-        public SceneGroupCreateResp()  
+        public SceneGroupGetStatusResp()  
         { 
             retCode = 0;  
         } 
-        public SceneGroupCreateResp(ushort retCode) 
-        { 
-            this.retCode = retCode; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupJoinReq: Proto4z.IProtoObject //加入组队  
-    {     
-        //proto id   
-        public const ushort protoID = 40014;  
-        static public ushort getProtoID() { return 40014; } 
-        static public string getProtoName() { return "SceneGroupJoinReq"; } 
-        //members   
-        public ulong groupID;  
-        public SceneGroupJoinReq()  
-        { 
-            groupID = 0;  
-        } 
-        public SceneGroupJoinReq(ulong groupID) 
-        { 
-            this.groupID = groupID; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupJoinResp: Proto4z.IProtoObject 
-    {     
-        //proto id   
-        public const ushort protoID = 40015;  
-        static public ushort getProtoID() { return 40015; } 
-        static public string getProtoName() { return "SceneGroupJoinResp"; } 
-        //members   
-        public ushort retCode;  
-        public SceneGroupJoinResp()  
-        { 
-            retCode = 0;  
-        } 
-        public SceneGroupJoinResp(ushort retCode) 
-        { 
-            this.retCode = retCode; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupInviteReq: Proto4z.IProtoObject //邀请对方加入自己的编队  
-    {     
-        //proto id   
-        public const ushort protoID = 40016;  
-        static public ushort getProtoID() { return 40016; } 
-        static public string getProtoName() { return "SceneGroupInviteReq"; } 
-        //members   
-        public ulong avatarID;  
-        public SceneGroupInviteReq()  
-        { 
-            avatarID = 0;  
-        } 
-        public SceneGroupInviteReq(ulong avatarID) 
-        { 
-            this.avatarID = avatarID; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupInviteResp: Proto4z.IProtoObject 
-    {     
-        //proto id   
-        public const ushort protoID = 40017;  
-        static public ushort getProtoID() { return 40017; } 
-        static public string getProtoName() { return "SceneGroupInviteResp"; } 
-        //members   
-        public ushort retCode;  
-        public SceneGroupInviteResp()  
-        { 
-            retCode = 0;  
-        } 
-        public SceneGroupInviteResp(ushort retCode) 
-        { 
-            this.retCode = retCode; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupRejectReq: Proto4z.IProtoObject //拒绝对方邀请  
-    {     
-        //proto id   
-        public const ushort protoID = 40018;  
-        static public ushort getProtoID() { return 40018; } 
-        static public string getProtoName() { return "SceneGroupRejectReq"; } 
-        //members   
-        public ulong groupID;  
-        public SceneGroupRejectReq()  
-        { 
-            groupID = 0;  
-        } 
-        public SceneGroupRejectReq(ulong groupID) 
-        { 
-            this.groupID = groupID; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupRejectResp: Proto4z.IProtoObject 
-    {     
-        //proto id   
-        public const ushort protoID = 40019;  
-        static public ushort getProtoID() { return 40019; } 
-        static public string getProtoName() { return "SceneGroupRejectResp"; } 
-        //members   
-        public ushort retCode;  
-        public SceneGroupRejectResp()  
-        { 
-            retCode = 0;  
-        } 
-        public SceneGroupRejectResp(ushort retCode) 
-        { 
-            this.retCode = retCode; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupLeaveReq: Proto4z.IProtoObject //离开编队  
-    {     
-        //proto id   
-        public const ushort protoID = 40020;  
-        static public ushort getProtoID() { return 40020; } 
-        static public string getProtoName() { return "SceneGroupLeaveReq"; } 
-        //members   
-        public SceneGroupLeaveReq()  
-        { 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            return pos; 
-        } 
-    } 
- 
-    public class SceneGroupLeaveResp: Proto4z.IProtoObject 
-    {     
-        //proto id   
-        public const ushort protoID = 40021;  
-        static public ushort getProtoID() { return 40021; } 
-        static public string getProtoName() { return "SceneGroupLeaveResp"; } 
-        //members   
-        public ushort retCode;  
-        public SceneGroupLeaveResp()  
-        { 
-            retCode = 0;  
-        } 
-        public SceneGroupLeaveResp(ushort retCode) 
+        public SceneGroupGetStatusResp(ushort retCode) 
         { 
             this.retCode = retCode; 
         } 
@@ -680,8 +406,8 @@ namespace Proto4z
     public class SceneGroupEnterSceneReq: Proto4z.IProtoObject //申请进入场景  
     {     
         //proto id   
-        public const ushort protoID = 40022;  
-        static public ushort getProtoID() { return 40022; } 
+        public const ushort protoID = 40012;  
+        static public ushort getProtoID() { return 40012; } 
         static public string getProtoName() { return "SceneGroupEnterSceneReq"; } 
         //members   
         public ushort sceneType;  
@@ -714,8 +440,8 @@ namespace Proto4z
     public class SceneGroupEnterSceneResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40023;  
-        static public ushort getProtoID() { return 40023; } 
+        public const ushort protoID = 40013;  
+        static public ushort getProtoID() { return 40013; } 
         static public string getProtoName() { return "SceneGroupEnterSceneResp"; } 
         //members   
         public ushort retCode;  
@@ -743,8 +469,8 @@ namespace Proto4z
     public class SceneGroupCancelEnterReq: Proto4z.IProtoObject //取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)  
     {     
         //proto id   
-        public const ushort protoID = 40024;  
-        static public ushort getProtoID() { return 40024; } 
+        public const ushort protoID = 40014;  
+        static public ushort getProtoID() { return 40014; } 
         static public string getProtoName() { return "SceneGroupCancelEnterReq"; } 
         //members   
         public SceneGroupCancelEnterReq()  
@@ -764,8 +490,8 @@ namespace Proto4z
     public class SceneGroupCancelEnterResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40025;  
-        static public ushort getProtoID() { return 40025; } 
+        public const ushort protoID = 40015;  
+        static public ushort getProtoID() { return 40015; } 
         static public string getProtoName() { return "SceneGroupCancelEnterResp"; } 
         //members   
         public ushort retCode;  
@@ -790,11 +516,324 @@ namespace Proto4z
         } 
     } 
  
-    public class ChatReq: Proto4z.IProtoObject 
+    public class SceneGroupCreateReq: Proto4z.IProtoObject //发起组队请求  
+    {     
+        //proto id   
+        public const ushort protoID = 40016;  
+        static public ushort getProtoID() { return 40016; } 
+        static public string getProtoName() { return "SceneGroupCreateReq"; } 
+        //members   
+        public SceneGroupCreateReq()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupCreateResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40017;  
+        static public ushort getProtoID() { return 40017; } 
+        static public string getProtoName() { return "SceneGroupCreateResp"; } 
+        //members   
+        public ushort retCode;  
+        public SceneGroupCreateResp()  
+        { 
+            retCode = 0;  
+        } 
+        public SceneGroupCreateResp(ushort retCode) 
+        { 
+            this.retCode = retCode; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupJoinReq: Proto4z.IProtoObject //加入组队  
+    {     
+        //proto id   
+        public const ushort protoID = 40018;  
+        static public ushort getProtoID() { return 40018; } 
+        static public string getProtoName() { return "SceneGroupJoinReq"; } 
+        //members   
+        public ulong groupID;  
+        public SceneGroupJoinReq()  
+        { 
+            groupID = 0;  
+        } 
+        public SceneGroupJoinReq(ulong groupID) 
+        { 
+            this.groupID = groupID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupJoinResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40019;  
+        static public ushort getProtoID() { return 40019; } 
+        static public string getProtoName() { return "SceneGroupJoinResp"; } 
+        //members   
+        public ushort retCode;  
+        public SceneGroupJoinResp()  
+        { 
+            retCode = 0;  
+        } 
+        public SceneGroupJoinResp(ushort retCode) 
+        { 
+            this.retCode = retCode; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupInviteReq: Proto4z.IProtoObject //邀请对方加入自己的编队  
+    {     
+        //proto id   
+        public const ushort protoID = 40020;  
+        static public ushort getProtoID() { return 40020; } 
+        static public string getProtoName() { return "SceneGroupInviteReq"; } 
+        //members   
+        public ulong avatarID;  
+        public SceneGroupInviteReq()  
+        { 
+            avatarID = 0;  
+        } 
+        public SceneGroupInviteReq(ulong avatarID) 
+        { 
+            this.avatarID = avatarID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupInviteResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40021;  
+        static public ushort getProtoID() { return 40021; } 
+        static public string getProtoName() { return "SceneGroupInviteResp"; } 
+        //members   
+        public ushort retCode;  
+        public SceneGroupInviteResp()  
+        { 
+            retCode = 0;  
+        } 
+        public SceneGroupInviteResp(ushort retCode) 
+        { 
+            this.retCode = retCode; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupInviteNotice: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40022;  
+        static public ushort getProtoID() { return 40022; } 
+        static public string getProtoName() { return "SceneGroupInviteNotice"; } 
+        //members   
+        public ulong avatarID;  
+        public string avatarName;  
+        public ulong groupID;  
+        public SceneGroupInviteNotice()  
+        { 
+            avatarID = 0;  
+            avatarName = "";  
+            groupID = 0;  
+        } 
+        public SceneGroupInviteNotice(ulong avatarID, string avatarName, ulong groupID) 
+        { 
+            this.avatarID = avatarID; 
+            this.avatarName = avatarName; 
+            this.groupID = groupID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupRejectReq: Proto4z.IProtoObject //拒绝对方邀请  
+    {     
+        //proto id   
+        public const ushort protoID = 40023;  
+        static public ushort getProtoID() { return 40023; } 
+        static public string getProtoName() { return "SceneGroupRejectReq"; } 
+        //members   
+        public ulong groupID;  
+        public SceneGroupRejectReq()  
+        { 
+            groupID = 0;  
+        } 
+        public SceneGroupRejectReq(ulong groupID) 
+        { 
+            this.groupID = groupID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupRejectResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40024;  
+        static public ushort getProtoID() { return 40024; } 
+        static public string getProtoName() { return "SceneGroupRejectResp"; } 
+        //members   
+        public ushort retCode;  
+        public SceneGroupRejectResp()  
+        { 
+            retCode = 0;  
+        } 
+        public SceneGroupRejectResp(ushort retCode) 
+        { 
+            this.retCode = retCode; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupLeaveReq: Proto4z.IProtoObject //离开编队  
+    {     
+        //proto id   
+        public const ushort protoID = 40025;  
+        static public ushort getProtoID() { return 40025; } 
+        static public string getProtoName() { return "SceneGroupLeaveReq"; } 
+        //members   
+        public SceneGroupLeaveReq()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneGroupLeaveResp: Proto4z.IProtoObject 
     {     
         //proto id   
         public const ushort protoID = 40026;  
         static public ushort getProtoID() { return 40026; } 
+        static public string getProtoName() { return "SceneGroupLeaveResp"; } 
+        //members   
+        public ushort retCode;  
+        public SceneGroupLeaveResp()  
+        { 
+            retCode = 0;  
+        } 
+        public SceneGroupLeaveResp(ushort retCode) 
+        { 
+            this.retCode = retCode; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class ChatReq: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 40027;  
+        static public ushort getProtoID() { return 40027; } 
         static public string getProtoName() { return "ChatReq"; } 
         //members   
         public ushort channelID;  
@@ -832,8 +871,8 @@ namespace Proto4z
     public class ChatResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40027;  
-        static public ushort getProtoID() { return 40027; } 
+        public const ushort protoID = 40028;  
+        static public ushort getProtoID() { return 40028; } 
         static public string getProtoName() { return "ChatResp"; } 
         //members   
         public ushort channelID;  
@@ -891,8 +930,8 @@ namespace Proto4z
     public class PingPongReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40028;  
-        static public ushort getProtoID() { return 40028; } 
+        public const ushort protoID = 40029;  
+        static public ushort getProtoID() { return 40029; } 
         static public string getProtoName() { return "PingPongReq"; } 
         //members   
         public string msg;  
@@ -920,8 +959,8 @@ namespace Proto4z
     public class PingPongResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40029;  
-        static public ushort getProtoID() { return 40029; } 
+        public const ushort protoID = 40030;  
+        static public ushort getProtoID() { return 40030; } 
         static public string getProtoName() { return "PingPongResp"; } 
         //members   
         public string msg;  
@@ -949,8 +988,8 @@ namespace Proto4z
     public class ChangeIconIDReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40030;  
-        static public ushort getProtoID() { return 40030; } 
+        public const ushort protoID = 40031;  
+        static public ushort getProtoID() { return 40031; } 
         static public string getProtoName() { return "ChangeIconIDReq"; } 
         //members   
         public int iconID;  
@@ -978,8 +1017,8 @@ namespace Proto4z
     public class ChangeIconIDResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40031;  
-        static public ushort getProtoID() { return 40031; } 
+        public const ushort protoID = 40032;  
+        static public ushort getProtoID() { return 40032; } 
         static public string getProtoName() { return "ChangeIconIDResp"; } 
         //members   
         public ushort retCode;  
@@ -1012,8 +1051,8 @@ namespace Proto4z
     public class ChangeModeIDReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40032;  
-        static public ushort getProtoID() { return 40032; } 
+        public const ushort protoID = 40033;  
+        static public ushort getProtoID() { return 40033; } 
         static public string getProtoName() { return "ChangeModeIDReq"; } 
         //members   
         public int modeID;  
@@ -1041,8 +1080,8 @@ namespace Proto4z
     public class ChangeModeIDResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40033;  
-        static public ushort getProtoID() { return 40033; } 
+        public const ushort protoID = 40034;  
+        static public ushort getProtoID() { return 40034; } 
         static public string getProtoName() { return "ChangeModeIDResp"; } 
         //members   
         public ushort retCode;  

@@ -18,18 +18,27 @@ Proto4z.SceneServerJoinGroupIns.__protoID = 39002
 Proto4z.SceneServerJoinGroupIns.__protoName = "SceneServerJoinGroupIns" 
 Proto4z.SceneServerJoinGroupIns[1] = {name="groupID", type="ui64" } --编队ID, 0为创建 
 Proto4z.SceneServerJoinGroupIns[2] = {name="baseInfo", type="AvatarBaseInfo" } --角色数据 
+Proto4z.SceneServerJoinGroupIns[3] = {name="props", type="AvatarPropMap" } --角色属性数据 
  
-Proto4z.register(39003,"ApplyForSceneServerReq") 
+Proto4z.register(39003,"SceneServerJoinGroupAck") 
+Proto4z.SceneServerJoinGroupAck = {} --创建/加入编队响应结果 
+Proto4z.SceneServerJoinGroupAck.__protoID = 39003 
+Proto4z.SceneServerJoinGroupAck.__protoName = "SceneServerJoinGroupAck" 
+Proto4z.SceneServerJoinGroupAck[1] = {name="retCode", type="ui16" }  
+Proto4z.SceneServerJoinGroupAck[2] = {name="newGroupID", type="ui64" }  
+Proto4z.SceneServerJoinGroupAck[3] = {name="oldGroupID", type="ui64" }  
+ 
+Proto4z.register(39004,"ApplyForSceneServerReq") 
 Proto4z.ApplyForSceneServerReq = {} --请求战场 
-Proto4z.ApplyForSceneServerReq.__protoID = 39003 
+Proto4z.ApplyForSceneServerReq.__protoID = 39004 
 Proto4z.ApplyForSceneServerReq.__protoName = "ApplyForSceneServerReq" 
 Proto4z.ApplyForSceneServerReq[1] = {name="sceneType", type="ui16" } --类型 
 Proto4z.ApplyForSceneServerReq[2] = {name="mapID", type="ui64" }  
 Proto4z.ApplyForSceneServerReq[3] = {name="avatars", type="AvatarBaseInfoArray" } --匹配列表中的玩家 
  
-Proto4z.register(39004,"FeedbackAvatarStatusNotice") 
+Proto4z.register(39005,"FeedbackAvatarStatusNotice") 
 Proto4z.FeedbackAvatarStatusNotice = {} --scene ==> world 
-Proto4z.FeedbackAvatarStatusNotice.__protoID = 39004 
+Proto4z.FeedbackAvatarStatusNotice.__protoID = 39005 
 Proto4z.FeedbackAvatarStatusNotice.__protoName = "FeedbackAvatarStatusNotice" 
 Proto4z.FeedbackAvatarStatusNotice[1] = {name="avatarID", type="ui64" }  
 Proto4z.FeedbackAvatarStatusNotice[2] = {name="status", type="ui16" }  

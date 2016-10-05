@@ -63,116 +63,124 @@ Proto4z.AvatarPropMapNotice.__protoName = "AvatarPropMapNotice"
 Proto4z.AvatarPropMapNotice[1] = {name="avatarID", type="ui64" }  
 Proto4z.AvatarPropMapNotice[2] = {name="props", type="AvatarPropMap" }  
  
-Proto4z.register(40009,"SceneGroupGetStatusReq") 
-Proto4z.SceneGroupGetStatusReq = {} --获取当前角色的场景状态数据 
-Proto4z.SceneGroupGetStatusReq.__protoID = 40009 
-Proto4z.SceneGroupGetStatusReq.__protoName = "SceneGroupGetStatusReq" 
- 
-Proto4z.register(40010,"SceneGroupGetStatusResp") 
-Proto4z.SceneGroupGetStatusResp = {}  
-Proto4z.SceneGroupGetStatusResp.__protoID = 40010 
-Proto4z.SceneGroupGetStatusResp.__protoName = "SceneGroupGetStatusResp" 
-Proto4z.SceneGroupGetStatusResp[1] = {name="retCode", type="ui16" }  
- 
-Proto4z.register(40011,"SceneGroupInfoNotice") 
+Proto4z.register(40009,"SceneGroupInfoNotice") 
 Proto4z.SceneGroupInfoNotice = {} --编队数据通知 
-Proto4z.SceneGroupInfoNotice.__protoID = 40011 
+Proto4z.SceneGroupInfoNotice.__protoID = 40009 
 Proto4z.SceneGroupInfoNotice.__protoName = "SceneGroupInfoNotice" 
 Proto4z.SceneGroupInfoNotice[1] = {name="groupInfo", type="SceneGroupInfo" }  
  
-Proto4z.register(40012,"SceneGroupCreateReq") 
-Proto4z.SceneGroupCreateReq = {} --发起组队请求 
-Proto4z.SceneGroupCreateReq.__protoID = 40012 
-Proto4z.SceneGroupCreateReq.__protoName = "SceneGroupCreateReq" 
+Proto4z.register(40010,"SceneGroupGetStatusReq") 
+Proto4z.SceneGroupGetStatusReq = {} --获取当前角色的场景状态数据 
+Proto4z.SceneGroupGetStatusReq.__protoID = 40010 
+Proto4z.SceneGroupGetStatusReq.__protoName = "SceneGroupGetStatusReq" 
  
-Proto4z.register(40013,"SceneGroupCreateResp") 
-Proto4z.SceneGroupCreateResp = {}  
-Proto4z.SceneGroupCreateResp.__protoID = 40013 
-Proto4z.SceneGroupCreateResp.__protoName = "SceneGroupCreateResp" 
-Proto4z.SceneGroupCreateResp[1] = {name="retCode", type="ui16" }  
+Proto4z.register(40011,"SceneGroupGetStatusResp") 
+Proto4z.SceneGroupGetStatusResp = {}  
+Proto4z.SceneGroupGetStatusResp.__protoID = 40011 
+Proto4z.SceneGroupGetStatusResp.__protoName = "SceneGroupGetStatusResp" 
+Proto4z.SceneGroupGetStatusResp[1] = {name="retCode", type="ui16" }  
  
-Proto4z.register(40014,"SceneGroupJoinReq") 
-Proto4z.SceneGroupJoinReq = {} --加入组队 
-Proto4z.SceneGroupJoinReq.__protoID = 40014 
-Proto4z.SceneGroupJoinReq.__protoName = "SceneGroupJoinReq" 
-Proto4z.SceneGroupJoinReq[1] = {name="groupID", type="ui64" }  
- 
-Proto4z.register(40015,"SceneGroupJoinResp") 
-Proto4z.SceneGroupJoinResp = {}  
-Proto4z.SceneGroupJoinResp.__protoID = 40015 
-Proto4z.SceneGroupJoinResp.__protoName = "SceneGroupJoinResp" 
-Proto4z.SceneGroupJoinResp[1] = {name="retCode", type="ui16" }  
- 
-Proto4z.register(40016,"SceneGroupInviteReq") 
-Proto4z.SceneGroupInviteReq = {} --邀请对方加入自己的编队 
-Proto4z.SceneGroupInviteReq.__protoID = 40016 
-Proto4z.SceneGroupInviteReq.__protoName = "SceneGroupInviteReq" 
-Proto4z.SceneGroupInviteReq[1] = {name="avatarID", type="ui64" }  
- 
-Proto4z.register(40017,"SceneGroupInviteResp") 
-Proto4z.SceneGroupInviteResp = {}  
-Proto4z.SceneGroupInviteResp.__protoID = 40017 
-Proto4z.SceneGroupInviteResp.__protoName = "SceneGroupInviteResp" 
-Proto4z.SceneGroupInviteResp[1] = {name="retCode", type="ui16" }  
- 
-Proto4z.register(40018,"SceneGroupRejectReq") 
-Proto4z.SceneGroupRejectReq = {} --拒绝对方邀请 
-Proto4z.SceneGroupRejectReq.__protoID = 40018 
-Proto4z.SceneGroupRejectReq.__protoName = "SceneGroupRejectReq" 
-Proto4z.SceneGroupRejectReq[1] = {name="groupID", type="ui64" }  
- 
-Proto4z.register(40019,"SceneGroupRejectResp") 
-Proto4z.SceneGroupRejectResp = {}  
-Proto4z.SceneGroupRejectResp.__protoID = 40019 
-Proto4z.SceneGroupRejectResp.__protoName = "SceneGroupRejectResp" 
-Proto4z.SceneGroupRejectResp[1] = {name="retCode", type="ui16" }  
- 
-Proto4z.register(40020,"SceneGroupLeaveReq") 
-Proto4z.SceneGroupLeaveReq = {} --离开编队 
-Proto4z.SceneGroupLeaveReq.__protoID = 40020 
-Proto4z.SceneGroupLeaveReq.__protoName = "SceneGroupLeaveReq" 
- 
-Proto4z.register(40021,"SceneGroupLeaveResp") 
-Proto4z.SceneGroupLeaveResp = {}  
-Proto4z.SceneGroupLeaveResp.__protoID = 40021 
-Proto4z.SceneGroupLeaveResp.__protoName = "SceneGroupLeaveResp" 
-Proto4z.SceneGroupLeaveResp[1] = {name="retCode", type="ui16" }  
- 
-Proto4z.register(40022,"SceneGroupEnterSceneReq") 
+Proto4z.register(40012,"SceneGroupEnterSceneReq") 
 Proto4z.SceneGroupEnterSceneReq = {} --申请进入场景 
-Proto4z.SceneGroupEnterSceneReq.__protoID = 40022 
+Proto4z.SceneGroupEnterSceneReq.__protoID = 40012 
 Proto4z.SceneGroupEnterSceneReq.__protoName = "SceneGroupEnterSceneReq" 
 Proto4z.SceneGroupEnterSceneReq[1] = {name="sceneType", type="ui16" }  
 Proto4z.SceneGroupEnterSceneReq[2] = {name="mapID", type="ui64" }  
  
-Proto4z.register(40023,"SceneGroupEnterSceneResp") 
+Proto4z.register(40013,"SceneGroupEnterSceneResp") 
 Proto4z.SceneGroupEnterSceneResp = {}  
-Proto4z.SceneGroupEnterSceneResp.__protoID = 40023 
+Proto4z.SceneGroupEnterSceneResp.__protoID = 40013 
 Proto4z.SceneGroupEnterSceneResp.__protoName = "SceneGroupEnterSceneResp" 
 Proto4z.SceneGroupEnterSceneResp[1] = {name="retCode", type="ui16" }  
  
-Proto4z.register(40024,"SceneGroupCancelEnterReq") 
+Proto4z.register(40014,"SceneGroupCancelEnterReq") 
 Proto4z.SceneGroupCancelEnterReq = {} --取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型) 
-Proto4z.SceneGroupCancelEnterReq.__protoID = 40024 
+Proto4z.SceneGroupCancelEnterReq.__protoID = 40014 
 Proto4z.SceneGroupCancelEnterReq.__protoName = "SceneGroupCancelEnterReq" 
  
-Proto4z.register(40025,"SceneGroupCancelEnterResp") 
+Proto4z.register(40015,"SceneGroupCancelEnterResp") 
 Proto4z.SceneGroupCancelEnterResp = {}  
-Proto4z.SceneGroupCancelEnterResp.__protoID = 40025 
+Proto4z.SceneGroupCancelEnterResp.__protoID = 40015 
 Proto4z.SceneGroupCancelEnterResp.__protoName = "SceneGroupCancelEnterResp" 
 Proto4z.SceneGroupCancelEnterResp[1] = {name="retCode", type="ui16" }  
  
-Proto4z.register(40026,"ChatReq") 
+Proto4z.register(40016,"SceneGroupCreateReq") 
+Proto4z.SceneGroupCreateReq = {} --发起组队请求 
+Proto4z.SceneGroupCreateReq.__protoID = 40016 
+Proto4z.SceneGroupCreateReq.__protoName = "SceneGroupCreateReq" 
+ 
+Proto4z.register(40017,"SceneGroupCreateResp") 
+Proto4z.SceneGroupCreateResp = {}  
+Proto4z.SceneGroupCreateResp.__protoID = 40017 
+Proto4z.SceneGroupCreateResp.__protoName = "SceneGroupCreateResp" 
+Proto4z.SceneGroupCreateResp[1] = {name="retCode", type="ui16" }  
+ 
+Proto4z.register(40018,"SceneGroupJoinReq") 
+Proto4z.SceneGroupJoinReq = {} --加入组队 
+Proto4z.SceneGroupJoinReq.__protoID = 40018 
+Proto4z.SceneGroupJoinReq.__protoName = "SceneGroupJoinReq" 
+Proto4z.SceneGroupJoinReq[1] = {name="groupID", type="ui64" }  
+ 
+Proto4z.register(40019,"SceneGroupJoinResp") 
+Proto4z.SceneGroupJoinResp = {}  
+Proto4z.SceneGroupJoinResp.__protoID = 40019 
+Proto4z.SceneGroupJoinResp.__protoName = "SceneGroupJoinResp" 
+Proto4z.SceneGroupJoinResp[1] = {name="retCode", type="ui16" }  
+ 
+Proto4z.register(40020,"SceneGroupInviteReq") 
+Proto4z.SceneGroupInviteReq = {} --邀请对方加入自己的编队 
+Proto4z.SceneGroupInviteReq.__protoID = 40020 
+Proto4z.SceneGroupInviteReq.__protoName = "SceneGroupInviteReq" 
+Proto4z.SceneGroupInviteReq[1] = {name="avatarID", type="ui64" }  
+ 
+Proto4z.register(40021,"SceneGroupInviteResp") 
+Proto4z.SceneGroupInviteResp = {}  
+Proto4z.SceneGroupInviteResp.__protoID = 40021 
+Proto4z.SceneGroupInviteResp.__protoName = "SceneGroupInviteResp" 
+Proto4z.SceneGroupInviteResp[1] = {name="retCode", type="ui16" }  
+ 
+Proto4z.register(40022,"SceneGroupInviteNotice") 
+Proto4z.SceneGroupInviteNotice = {}  
+Proto4z.SceneGroupInviteNotice.__protoID = 40022 
+Proto4z.SceneGroupInviteNotice.__protoName = "SceneGroupInviteNotice" 
+Proto4z.SceneGroupInviteNotice[1] = {name="avatarID", type="ui64" }  
+Proto4z.SceneGroupInviteNotice[2] = {name="avatarName", type="string" }  
+Proto4z.SceneGroupInviteNotice[3] = {name="groupID", type="ui64" }  
+ 
+Proto4z.register(40023,"SceneGroupRejectReq") 
+Proto4z.SceneGroupRejectReq = {} --拒绝对方邀请 
+Proto4z.SceneGroupRejectReq.__protoID = 40023 
+Proto4z.SceneGroupRejectReq.__protoName = "SceneGroupRejectReq" 
+Proto4z.SceneGroupRejectReq[1] = {name="groupID", type="ui64" }  
+ 
+Proto4z.register(40024,"SceneGroupRejectResp") 
+Proto4z.SceneGroupRejectResp = {}  
+Proto4z.SceneGroupRejectResp.__protoID = 40024 
+Proto4z.SceneGroupRejectResp.__protoName = "SceneGroupRejectResp" 
+Proto4z.SceneGroupRejectResp[1] = {name="retCode", type="ui16" }  
+ 
+Proto4z.register(40025,"SceneGroupLeaveReq") 
+Proto4z.SceneGroupLeaveReq = {} --离开编队 
+Proto4z.SceneGroupLeaveReq.__protoID = 40025 
+Proto4z.SceneGroupLeaveReq.__protoName = "SceneGroupLeaveReq" 
+ 
+Proto4z.register(40026,"SceneGroupLeaveResp") 
+Proto4z.SceneGroupLeaveResp = {}  
+Proto4z.SceneGroupLeaveResp.__protoID = 40026 
+Proto4z.SceneGroupLeaveResp.__protoName = "SceneGroupLeaveResp" 
+Proto4z.SceneGroupLeaveResp[1] = {name="retCode", type="ui16" }  
+ 
+Proto4z.register(40027,"ChatReq") 
 Proto4z.ChatReq = {}  
-Proto4z.ChatReq.__protoID = 40026 
+Proto4z.ChatReq.__protoID = 40027 
 Proto4z.ChatReq.__protoName = "ChatReq" 
 Proto4z.ChatReq[1] = {name="channelID", type="ui16" }  
 Proto4z.ChatReq[2] = {name="targetID", type="ui64" }  
 Proto4z.ChatReq[3] = {name="msg", type="string" }  
  
-Proto4z.register(40027,"ChatResp") 
+Proto4z.register(40028,"ChatResp") 
 Proto4z.ChatResp = {}  
-Proto4z.ChatResp.__protoID = 40027 
+Proto4z.ChatResp.__protoID = 40028 
 Proto4z.ChatResp.__protoName = "ChatResp" 
 Proto4z.ChatResp[1] = {name="channelID", type="ui16" }  
 Proto4z.ChatResp[2] = {name="sourceID", type="ui64" }  
@@ -182,40 +190,40 @@ Proto4z.ChatResp[5] = {name="targetName", type="string" }
 Proto4z.ChatResp[6] = {name="msg", type="string" }  
 Proto4z.ChatResp[7] = {name="chatTime", type="ui64" }  
  
-Proto4z.register(40028,"PingPongReq") 
+Proto4z.register(40029,"PingPongReq") 
 Proto4z.PingPongReq = {}  
-Proto4z.PingPongReq.__protoID = 40028 
+Proto4z.PingPongReq.__protoID = 40029 
 Proto4z.PingPongReq.__protoName = "PingPongReq" 
 Proto4z.PingPongReq[1] = {name="msg", type="string" }  
  
-Proto4z.register(40029,"PingPongResp") 
+Proto4z.register(40030,"PingPongResp") 
 Proto4z.PingPongResp = {}  
-Proto4z.PingPongResp.__protoID = 40029 
+Proto4z.PingPongResp.__protoID = 40030 
 Proto4z.PingPongResp.__protoName = "PingPongResp" 
 Proto4z.PingPongResp[1] = {name="msg", type="string" }  
  
-Proto4z.register(40030,"ChangeIconIDReq") 
+Proto4z.register(40031,"ChangeIconIDReq") 
 Proto4z.ChangeIconIDReq = {}  
-Proto4z.ChangeIconIDReq.__protoID = 40030 
+Proto4z.ChangeIconIDReq.__protoID = 40031 
 Proto4z.ChangeIconIDReq.__protoName = "ChangeIconIDReq" 
 Proto4z.ChangeIconIDReq[1] = {name="iconID", type="i32" }  
  
-Proto4z.register(40031,"ChangeIconIDResp") 
+Proto4z.register(40032,"ChangeIconIDResp") 
 Proto4z.ChangeIconIDResp = {}  
-Proto4z.ChangeIconIDResp.__protoID = 40031 
+Proto4z.ChangeIconIDResp.__protoID = 40032 
 Proto4z.ChangeIconIDResp.__protoName = "ChangeIconIDResp" 
 Proto4z.ChangeIconIDResp[1] = {name="retCode", type="ui16" }  
 Proto4z.ChangeIconIDResp[2] = {name="iconID", type="i32" }  
  
-Proto4z.register(40032,"ChangeModeIDReq") 
+Proto4z.register(40033,"ChangeModeIDReq") 
 Proto4z.ChangeModeIDReq = {}  
-Proto4z.ChangeModeIDReq.__protoID = 40032 
+Proto4z.ChangeModeIDReq.__protoID = 40033 
 Proto4z.ChangeModeIDReq.__protoName = "ChangeModeIDReq" 
 Proto4z.ChangeModeIDReq[1] = {name="modeID", type="i32" }  
  
-Proto4z.register(40033,"ChangeModeIDResp") 
+Proto4z.register(40034,"ChangeModeIDResp") 
 Proto4z.ChangeModeIDResp = {}  
-Proto4z.ChangeModeIDResp.__protoID = 40033 
+Proto4z.ChangeModeIDResp.__protoID = 40034 
 Proto4z.ChangeModeIDResp.__protoName = "ChangeModeIDResp" 
 Proto4z.ChangeModeIDResp[1] = {name="retCode", type="ui16" }  
 Proto4z.ChangeModeIDResp[2] = {name="modeID", type="i32" }  
