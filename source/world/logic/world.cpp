@@ -640,7 +640,39 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
 
 void World::onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & req)
 {
-
+    if (req.channelID == CC_GROUP)
+    {
+        ChatResp resp;
+        resp.channelID = req.channelID;
+        resp.chatTime = time(NULL);
+        resp.msg = req.msg;
+        resp.sourceID = trace.oob.clientAvatarID;
+        SceneGroupInfoPtr groupPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
+        if (groupPtr)
+        {
+            for (auto &m : groupPtr->members)
+            {
+                if (m.baseInfo.avatarID == trace.oob.clientAvatarID)
+                {
+                    resp.sourceName = m.baseInfo.userName;
+                    break;
+                }
+            }
+            for (auto &m : groupPtr->members)
+            {
+                if (m.baseInfo.avatarID == trace.oob.clientAvatarID)
+                {
+                    resp.targetID = m.baseInfo.avatarID;
+                    resp.targetName = m.baseInfo.userName;
+                    toService(m.areaID, STAvatarMgr, STAvatar, resp.targetID, resp);
+                }
+            }
+        }
+        else
+        {
+            LOGE("error");
+        }
+    }
 }
 
 void World::onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trace, SceneGroupGetStatusReq & req)
