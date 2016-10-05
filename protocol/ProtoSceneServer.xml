@@ -36,17 +36,16 @@
         <member name="oldGroupID" type="ui64"  desc=""/>
     </proto>
 
-    <proto name="ApplyForSceneServerReq" desc= "请求战场">
+    <proto name="SceneServerEnterSceneIns" desc= "开辟场景">
         <member name="sceneType" type="ui16"  desc="类型"/>
         <member name="mapID" type="ui64"  desc=""/>
-        <member name="avatars" type="AvatarBaseInfoArray"  desc="匹配列表中的玩家"/>
+        <member name="groups" type="SceneGroupInfoArray"  desc="多个编队"/>
     </proto>
 
 
-    <proto name="FeedbackAvatarStatusNotice" desc= "scene ==> world">
-        <member name="avatarID" type="ui64"   desc=""/>
+    <proto name="SceneServerGroupStatusChangeIns" desc= "scene ==> world">
+        <member name="groupID" type="ui64"   desc=""/>
         <member name="status" type="ui16"   desc=""/>
-        <member name="token" type="string"   desc=""/>
     </proto>
 
 

@@ -28,18 +28,17 @@ Proto4z.SceneServerJoinGroupAck[1] = {name="retCode", type="ui16" }
 Proto4z.SceneServerJoinGroupAck[2] = {name="newGroupID", type="ui64" }  
 Proto4z.SceneServerJoinGroupAck[3] = {name="oldGroupID", type="ui64" }  
  
-Proto4z.register(39004,"ApplyForSceneServerReq") 
-Proto4z.ApplyForSceneServerReq = {} --请求战场 
-Proto4z.ApplyForSceneServerReq.__protoID = 39004 
-Proto4z.ApplyForSceneServerReq.__protoName = "ApplyForSceneServerReq" 
-Proto4z.ApplyForSceneServerReq[1] = {name="sceneType", type="ui16" } --类型 
-Proto4z.ApplyForSceneServerReq[2] = {name="mapID", type="ui64" }  
-Proto4z.ApplyForSceneServerReq[3] = {name="avatars", type="AvatarBaseInfoArray" } --匹配列表中的玩家 
+Proto4z.register(39006,"SceneServerEnterSceneIns") 
+Proto4z.SceneServerEnterSceneIns = {} --开辟场景 
+Proto4z.SceneServerEnterSceneIns.__protoID = 39006 
+Proto4z.SceneServerEnterSceneIns.__protoName = "SceneServerEnterSceneIns" 
+Proto4z.SceneServerEnterSceneIns[1] = {name="sceneType", type="ui16" } --类型 
+Proto4z.SceneServerEnterSceneIns[2] = {name="mapID", type="ui64" }  
+Proto4z.SceneServerEnterSceneIns[3] = {name="groups", type="SceneGroupInfoArray" } --多个编队 
  
-Proto4z.register(39005,"FeedbackAvatarStatusNotice") 
-Proto4z.FeedbackAvatarStatusNotice = {} --scene ==> world 
-Proto4z.FeedbackAvatarStatusNotice.__protoID = 39005 
-Proto4z.FeedbackAvatarStatusNotice.__protoName = "FeedbackAvatarStatusNotice" 
-Proto4z.FeedbackAvatarStatusNotice[1] = {name="avatarID", type="ui64" }  
-Proto4z.FeedbackAvatarStatusNotice[2] = {name="status", type="ui16" }  
-Proto4z.FeedbackAvatarStatusNotice[3] = {name="token", type="string" }  
+Proto4z.register(39007,"SceneServerGroupStatusChangeIns") 
+Proto4z.SceneServerGroupStatusChangeIns = {} --scene ==> world 
+Proto4z.SceneServerGroupStatusChangeIns.__protoID = 39007 
+Proto4z.SceneServerGroupStatusChangeIns.__protoName = "SceneServerGroupStatusChangeIns" 
+Proto4z.SceneServerGroupStatusChangeIns[1] = {name="groupID", type="ui64" }  
+Proto4z.SceneServerGroupStatusChangeIns[2] = {name="status", type="ui16" }  

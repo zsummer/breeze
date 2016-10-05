@@ -144,82 +144,77 @@ namespace Proto4z
         } 
     } 
  
-    public class ApplyForSceneServerReq: Proto4z.IProtoObject //请求战场  
+    public class SceneServerEnterSceneIns: Proto4z.IProtoObject //开辟场景  
     {     
         //proto id   
-        public const ushort protoID = 39004;  
-        static public ushort getProtoID() { return 39004; } 
-        static public string getProtoName() { return "ApplyForSceneServerReq"; } 
+        public const ushort protoID = 39006;  
+        static public ushort getProtoID() { return 39006; } 
+        static public string getProtoName() { return "SceneServerEnterSceneIns"; } 
         //members   
         public ushort sceneType; //类型  
         public ulong mapID;  
-        public AvatarBaseInfoArray avatars; //匹配列表中的玩家  
-        public ApplyForSceneServerReq()  
+        public SceneGroupInfoArray groups; //多个编队  
+        public SceneServerEnterSceneIns()  
         { 
             sceneType = 0;  
             mapID = 0;  
-            avatars = new AvatarBaseInfoArray();  
+            groups = new SceneGroupInfoArray();  
         } 
-        public ApplyForSceneServerReq(ushort sceneType, ulong mapID, AvatarBaseInfoArray avatars) 
+        public SceneServerEnterSceneIns(ushort sceneType, ulong mapID, SceneGroupInfoArray groups) 
         { 
             this.sceneType = sceneType; 
             this.mapID = mapID; 
-            this.avatars = avatars; 
+            this.groups = groups; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.mapID)); 
-            if (this.avatars == null) this.avatars = new AvatarBaseInfoArray(); 
-            data.AddRange(this.avatars.__encode()); 
+            if (this.groups == null) this.groups = new SceneGroupInfoArray(); 
+            data.AddRange(this.groups.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.mapID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.avatars = new AvatarBaseInfoArray(); 
-            this.avatars.__decode(binData, ref pos); 
+            this.groups = new SceneGroupInfoArray(); 
+            this.groups.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class FeedbackAvatarStatusNotice: Proto4z.IProtoObject //scene ==> world  
+    public class SceneServerGroupStatusChangeIns: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39005;  
-        static public ushort getProtoID() { return 39005; } 
-        static public string getProtoName() { return "FeedbackAvatarStatusNotice"; } 
+        public const ushort protoID = 39007;  
+        static public ushort getProtoID() { return 39007; } 
+        static public string getProtoName() { return "SceneServerGroupStatusChangeIns"; } 
         //members   
-        public ulong avatarID;  
+        public ulong groupID;  
         public ushort status;  
-        public string token;  
-        public FeedbackAvatarStatusNotice()  
+        public SceneServerGroupStatusChangeIns()  
         { 
-            avatarID = 0;  
+            groupID = 0;  
             status = 0;  
-            token = "";  
         } 
-        public FeedbackAvatarStatusNotice(ulong avatarID, ushort status, string token) 
+        public SceneServerGroupStatusChangeIns(ulong groupID, ushort status) 
         { 
-            this.avatarID = avatarID; 
+            this.groupID = groupID; 
             this.status = status; 
-            this.token = token; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 

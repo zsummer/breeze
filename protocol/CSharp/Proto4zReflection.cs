@@ -203,6 +203,10 @@ namespace Proto4z
             _idToName.Add(39000, "SceneKnock");
             _nameToID.Add("ScenePulse", 39001);
             _idToName.Add(39001, "ScenePulse");
+            _nameToID.Add("SceneServerEnterSceneIns", 39006);
+            _idToName.Add(39006, "SceneServerEnterSceneIns");
+            _nameToID.Add("SceneServerGroupStatusChangeIns", 39007);
+            _idToName.Add(39007, "SceneServerGroupStatusChangeIns");
             _nameToID.Add("SceneServerJoinGroupAck", 39003);
             _idToName.Add(39003, "SceneServerJoinGroupAck");
             _nameToID.Add("SceneServerJoinGroupIns", 39002);

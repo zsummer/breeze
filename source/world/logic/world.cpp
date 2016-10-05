@@ -320,7 +320,7 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
     }
 	else if (rs.getProtoID() == SceneGroupEnterSceneReq::getProtoID())
 	{
-        ApplyForSceneServerReq req;
+        SceneGroupEnterSceneReq req;
 		rs >> req;
 //        event_onApplyForSceneServerReq(areaID, req);
 		return;
@@ -330,6 +330,15 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
         SceneGroupCancelEnterReq req;
         rs >> req;
 //        event_onCancelSceneReq(trace.oob.clientAvatarID);
+        return;
+    }
+    else if (rs.getProtoID() == SceneServerJoinGroupIns::getProtoID())
+    {
+        SceneServerJoinGroupIns ins;
+        rs >> ins;
+
+        SceneGroupAvatarInfo info;
+        info.token = "213123123" + toString(rand() % 1000);
         return;
     }
 }
@@ -530,7 +539,7 @@ void World::event_onSceneClosed(TcpSessionPtr session)
 void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    if (rs.getProtoID() == FeedbackAvatarStatusNotice::getProtoID())
+    if (rs.getProtoID() == SceneServerGroupStatusChangeIns::getProtoID())
     {
 
     }

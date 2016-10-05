@@ -152,88 +152,83 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct ApplyForSceneServerReq //请求战场  
+struct SceneServerEnterSceneIns //开辟场景  
 { 
-    static const unsigned short getProtoID() { return 39004;} 
-    static const std::string getProtoName() { return "ApplyForSceneServerReq";} 
+    static const unsigned short getProtoID() { return 39006;} 
+    static const std::string getProtoName() { return "SceneServerEnterSceneIns";} 
     unsigned short sceneType; //类型  
     unsigned long long mapID;  
-    AvatarBaseInfoArray avatars; //匹配列表中的玩家  
-    ApplyForSceneServerReq() 
+    SceneGroupInfoArray groups; //多个编队  
+    SceneServerEnterSceneIns() 
     { 
         sceneType = 0; 
         mapID = 0; 
     } 
-    ApplyForSceneServerReq(const unsigned short & sceneType, const unsigned long long & mapID, const AvatarBaseInfoArray & avatars) 
+    SceneServerEnterSceneIns(const unsigned short & sceneType, const unsigned long long & mapID, const SceneGroupInfoArray & groups) 
     { 
         this->sceneType = sceneType; 
         this->mapID = mapID; 
-        this->avatars = avatars; 
+        this->groups = groups; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ApplyForSceneServerReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerEnterSceneIns & data) 
 { 
     ws << data.sceneType;  
     ws << data.mapID;  
-    ws << data.avatars;  
+    ws << data.groups;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ApplyForSceneServerReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerEnterSceneIns & data) 
 { 
     rs >> data.sceneType;  
     rs >> data.mapID;  
-    rs >> data.avatars;  
+    rs >> data.groups;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ApplyForSceneServerReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerEnterSceneIns & info) 
 { 
     stm << "[\n"; 
     stm << "sceneType=" << info.sceneType << "\n"; 
     stm << "mapID=" << info.mapID << "\n"; 
-    stm << "avatars=" << info.avatars << "\n"; 
+    stm << "groups=" << info.groups << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct FeedbackAvatarStatusNotice //scene ==> world  
+struct SceneServerGroupStatusChangeIns //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 39005;} 
-    static const std::string getProtoName() { return "FeedbackAvatarStatusNotice";} 
-    unsigned long long avatarID;  
+    static const unsigned short getProtoID() { return 39007;} 
+    static const std::string getProtoName() { return "SceneServerGroupStatusChangeIns";} 
+    unsigned long long groupID;  
     unsigned short status;  
-    std::string token;  
-    FeedbackAvatarStatusNotice() 
+    SceneServerGroupStatusChangeIns() 
     { 
-        avatarID = 0; 
+        groupID = 0; 
         status = 0; 
     } 
-    FeedbackAvatarStatusNotice(const unsigned long long & avatarID, const unsigned short & status, const std::string & token) 
+    SceneServerGroupStatusChangeIns(const unsigned long long & groupID, const unsigned short & status) 
     { 
-        this->avatarID = avatarID; 
+        this->groupID = groupID; 
         this->status = status; 
-        this->token = token; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FeedbackAvatarStatusNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerGroupStatusChangeIns & data) 
 { 
-    ws << data.avatarID;  
+    ws << data.groupID;  
     ws << data.status;  
-    ws << data.token;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FeedbackAvatarStatusNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerGroupStatusChangeIns & data) 
 { 
-    rs >> data.avatarID;  
+    rs >> data.groupID;  
     rs >> data.status;  
-    rs >> data.token;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FeedbackAvatarStatusNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerGroupStatusChangeIns & info) 
 { 
     stm << "[\n"; 
-    stm << "avatarID=" << info.avatarID << "\n"; 
+    stm << "groupID=" << info.groupID << "\n"; 
     stm << "status=" << info.status << "\n"; 
-    stm << "token=" << info.token << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
