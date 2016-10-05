@@ -152,11 +152,11 @@ const EntityID InvalidEntityID = 0;
 
 
 //服务器心跳超时检测间隔 
-const ui32 ServerPulseInterval = 10000;
+const double ServerPulseInterval = 10.0;
 //客户端心跳超时检测间隔 
-const ui32 ClientPulseInterval = 30000; 
+const double ClientPulseInterval = 30.0;
 //web服务器响应超时时间 
-const ui32 WebPulseTimeout = 10000;
+const double WebPulseTimeout = 10.0;
 
 
 //服务类型和依赖关系

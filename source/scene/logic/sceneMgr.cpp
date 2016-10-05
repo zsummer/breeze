@@ -195,10 +195,10 @@ bool SceneMgr::startWorldConnect()
         return false;
     }
     auto &options = SessionManager::getRef().getConnecterOptions(_worldSessionID);
-    options._sessionPulseInterval = ServerPulseInterval;
+    options._sessionPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
     options._onSessionPulse = [](TcpSessionPtr session)
     {
-		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0 / 1000.0 )
+		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0  )
 		{
 			LOGE("SceneMgr check session last active timeout. diff=" << getFloatNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
 			session->close();

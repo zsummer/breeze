@@ -216,7 +216,7 @@ bool Docker::startDockerListen()
     auto &options = SessionManager::getRef().getAccepterOptions(aID);
     options._whitelistIP = docker._dockerWhite;
     options._maxSessions = 1000;
-    options._sessionOptions._sessionPulseInterval = ServerPulseInterval;
+    options._sessionOptions._sessionPulseInterval = (unsigned int)(ServerPulseInterval*1000);
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
         DockerPulse pulse;
@@ -255,7 +255,7 @@ bool Docker::startDockerConnect()
         options._onSessionClosed = std::bind(&Docker::event_onServiceClosed, this, _1);
         options._onBlockDispatch = std::bind(&Docker::event_onServiceMessage, this, _1, _2, _3);
         options._reconnects = 50;
-        options._connectPulseInterval = ServerPulseInterval;
+        options._connectPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
         options._reconnectClean = false;
         options._onSessionPulse = [](TcpSessionPtr session)
         {
@@ -326,7 +326,7 @@ bool Docker::startDockerWideListen()
         auto &options = SessionManager::getRef().getAccepterOptions(aID);
         //options._whitelistIP;// = docker._dockerWhite;
         options._maxSessions = 5000;
-        options._sessionOptions._sessionPulseInterval = ClientPulseInterval;
+        options._sessionOptions._sessionPulseInterval = (unsigned int)(ClientPulseInterval * 1000);
         options._sessionOptions._onSessionPulse = std::bind(&Docker::event_onClientPulse, this, _1);
         options._sessionOptions._onSessionLinked = std::bind(&Docker::event_onClientLinked, this, _1);
         options._sessionOptions._onSessionClosed = std::bind(&Docker::event_onClientClosed, this, _1);
@@ -364,7 +364,7 @@ bool Docker::startDockerWebListen()
         options._sessionOptions._protoType = PT_HTTP;
         //options._whitelistIP;// = docker._dockerWhite;
         options._maxSessions = 200;
-        options._sessionOptions._sessionPulseInterval = WebPulseTimeout;
+        options._sessionOptions._sessionPulseInterval = (unsigned int)(WebPulseTimeout * 1000);
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
         {
             auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);

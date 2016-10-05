@@ -95,7 +95,7 @@ bool World::startDockerListen()
     auto &options = SessionManager::getRef().getAccepterOptions(_dockerListen);
 //    options._whitelistIP = wc._dockerListenHost;
     options._maxSessions = 1000;
-    options._sessionOptions._sessionPulseInterval = ServerPulseInterval;
+    options._sessionOptions._sessionPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
         DockerPulse pulse;
@@ -130,10 +130,10 @@ bool World::startSceneListen()
     }
     auto &options = SessionManager::getRef().getAccepterOptions(_sceneListen);
     options._maxSessions = 1000;
-    options._sessionOptions._sessionPulseInterval = ServerPulseInterval;
+    options._sessionOptions._sessionPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
-		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0 / 1000.0)
+		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0 )
 		{
 			LOGE("World check session last active timeout. diff=" << getFloatNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
 			session->close();
