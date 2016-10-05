@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>38f343d19a787d136d9770deb8f6629b</cppmd5> 
-<luamd5>4331c68079f729bdace5fae01eb37104</luamd5> 
-<csharpmd5>785c93df2a34181bf4b93d61116d0261</csharpmd5> 
-<xmlmd5>c2610aac25198bce7c7fe7a09c41d5ef</xmlmd5> 
+<cppmd5>30aa87080242c2dc33718d7083dc87fe</cppmd5> 
+<luamd5>61d7eec211f667e08d94dfb55b7dcffd</luamd5> 
+<csharpmd5>4b1f29f003a4cbf60c5ba115b3e81ec3</csharpmd5> 
+<xmlmd5>6cfaee0c48175d7356d6a193809a81d7</xmlmd5> 
 <cacheNumber>
     <cache key = "AvatarOffline" Number = "2023" /> 
     <cache key = "DBDataResult" Number = "2015" /> 
@@ -17,6 +17,30 @@
     <cache key = "ForwardToDocker" Number = "2014" /> 
     <cache key = "ForwardToRealClient" Number = "2013" /> 
     <cache key = "ForwardToService" Number = "2012" /> 
+    <cache key = "ID_AvatarOffline" Number = "2049" /> 
+    <cache key = "ID_DBDataResult" Number = "2041" /> 
+    <cache key = "ID_DBQueryArrayReq" Number = "2044" /> 
+    <cache key = "ID_DBQueryArrayResp" Number = "2045" /> 
+    <cache key = "ID_DBQueryReq" Number = "2042" /> 
+    <cache key = "ID_DBQueryResp" Number = "2043" /> 
+    <cache key = "ID_DockerKnock" Number = "2026" /> 
+    <cache key = "ID_DockerPulse" Number = "2027" /> 
+    <cache key = "ID_ForwardToDocker" Number = "2040" /> 
+    <cache key = "ID_ForwardToRealClient" Number = "2039" /> 
+    <cache key = "ID_ForwardToService" Number = "2038" /> 
+    <cache key = "ID_KickRealClient" Number = "2033" /> 
+    <cache key = "ID_LoadService" Number = "2028" /> 
+    <cache key = "ID_LoadServiceNotice" Number = "2030" /> 
+    <cache key = "ID_RealClientClosedNotice" Number = "2034" /> 
+    <cache key = "ID_RefreshServiceToMgrNotice" Number = "2031" /> 
+    <cache key = "ID_ServiceInfo" Number = "2029" /> 
+    <cache key = "ID_ShutdownClusterServer" Number = "2037" /> 
+    <cache key = "ID_SwitchServiceClientNotice" Number = "2032" /> 
+    <cache key = "ID_UnloadServiceInDocker" Number = "2035" /> 
+    <cache key = "ID_UnloadedServiceNotice" Number = "2036" /> 
+    <cache key = "ID_WebAgentClientRequestAPI" Number = "2046" /> 
+    <cache key = "ID_WebServerRequest" Number = "2047" /> 
+    <cache key = "ID_WebServerResponse" Number = "2048" /> 
     <cache key = "KickRealClient" Number = "2007" /> 
     <cache key = "LoadService" Number = "2002" /> 
     <cache key = "LoadServiceNotice" Number = "2004" /> 

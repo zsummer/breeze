@@ -21,13 +21,13 @@
 
     <proto name="AttachSceneReq" desc= "">
         <member name="avatarID" type="ui64"  desc=""/>
-        <member name="sceneID" type="ui32"  desc=""/>
+        <member name="sceneID" type="ui64"  desc=""/>
         <member name="token" type="string"  desc="令牌"/>
     </proto>
     <proto name="AttachSceneResp" desc= "">
         <member name="retCode"  type="ui16" desc="错误码"/> 
         <member name="avatarID" type="ui64"  desc=""/>
-        <member name="sceneID" type="ui32"  desc=""/>    
+        <member name="sceneID" type="ui64"  desc=""/>    
     </proto>
     
 

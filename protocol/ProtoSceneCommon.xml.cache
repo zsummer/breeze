@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>659704866c502b94d4eb758f8ae567be</cppmd5> 
-<luamd5>9d4b72955d9451a3803fd13f7cfbc0c8</luamd5> 
-<csharpmd5>09f807505f1f2373dbadc6fe575b6e31</csharpmd5> 
-<xmlmd5>40150580c80bcc366c4ee961e46b2a82</xmlmd5> 
+<cppmd5>14b8305e53669a2c5898b304d18ef331</cppmd5> 
+<luamd5>28bb1e240b40b437c0e3f99211b3c069</luamd5> 
+<csharpmd5>363f77d42b29ca39b39664b5478d1415</csharpmd5> 
+<xmlmd5>eb8845e32a9a9d6078eab91ffd46c163</xmlmd5> 
 <cacheNumber>
     <cache key = "BuffData" Number = "10005" /> 
     <cache key = "BuffInfo" Number = "10008" /> 
@@ -13,6 +13,18 @@
     <cache key = "EntityInfo" Number = "10009" /> 
     <cache key = "EntityReport" Number = "10011" /> 
     <cache key = "HarmData" Number = "10006" /> 
+    <cache key = "ID_BuffData" Number = "10018" /> 
+    <cache key = "ID_BuffInfo" Number = "10021" /> 
+    <cache key = "ID_EPoint" Number = "10014" /> 
+    <cache key = "ID_EntityControl" Number = "10023" /> 
+    <cache key = "ID_EntityFullInfo" Number = "10025" /> 
+    <cache key = "ID_EntityInfo" Number = "10022" /> 
+    <cache key = "ID_EntityReport" Number = "10024" /> 
+    <cache key = "ID_HarmData" Number = "10019" /> 
+    <cache key = "ID_SearchInfo" Number = "10015" /> 
+    <cache key = "ID_SkillBehaviour" Number = "10016" /> 
+    <cache key = "ID_SkillData" Number = "10017" /> 
+    <cache key = "ID_SkillInfo" Number = "10020" /> 
     <cache key = "SceneAvatarStatus" Number = "10013" /> 
     <cache key = "SceneTokenInfo" Number = "10000" /> 
     <cache key = "SearchInfo" Number = "10002" /> 

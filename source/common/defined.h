@@ -114,15 +114,16 @@ using namespace zsummer::proto4z;
 using namespace std::placeholders;
 using namespace zsummer::mysql;
 
-//分区ID  跨服交互时需要该ID表名分区ID  
-typedef ui32 AreaID;
+//分区ID  跨服交互时需要该ID表名分区ID, 该ID因为要merge到ServiceID的头部, 表达范围不能超过20bit(100万以下)
+typedef ui64 AreaID;
 const AreaID InvalidAreaID = 0;
 
 //DockerID(集装箱ID) 集装箱可视为一个进程, 所有Service(服务)都装载于Docker中   
-typedef ui32 DockerID;
+typedef ui64 DockerID;
 const DockerID InvalidDockerID = 0;
 
-//服务ID  服务==>可满足某种业务需求的,可独立部署到分布式节点中的服务, 例如游戏角色,公会,  以及对应的管理器服务等   
+//服务ID  服务==>可满足某种业务需求的,可独立部署到分布式节点中的服务, 例如游戏角色,公会,  以及对应的管理器服务等
+//表达范围<=52bit, 其中areaid占用20bit, 自增部分占用32bit
 typedef ui64 ServiceID;
 const ServiceID InvalidServiceID = (ServiceID)0;
 
@@ -135,15 +136,18 @@ typedef ui64 GroupID;
 const GroupID InvalidGroupID = 0;
 
 //场景服务器的分线ID  标识具体的场景服务器  
-typedef ui32 LineID;
+typedef ui64 LineID;
 const LineID InvalidLineID = 0;
 
 //场景ID  标识具体的场景实例 例如主城 副本 竞技场等  
-typedef ui32 SceneID;
+typedef ui64 SceneID;
 const SceneID InvalidSceneID = 0;
 
+typedef ui64 MapID;
+const MapID InvalidMapiD = 0;
+
 //实体ID 标识场景中的实体对象 例如怪物 玩家 飞行道具  
-typedef ui32 EntityID;
+typedef ui64 EntityID;
 const EntityID InvalidEntityID = 0;
 
 

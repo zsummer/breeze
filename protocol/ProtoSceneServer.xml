@@ -18,7 +18,7 @@
     <array name="SceneTypeArray" type="ui16" desc="" />
 
     <proto name="SceneKnock" desc= "战场服务器挂载">
-        <member name="lineID" type="ui32"  desc="分线ID"/>
+        <member name="lineID" type="ui64"  desc="分线ID"/>
         <member name="pubHost" type="string"  desc=""/>
         <member name="pubPort" type="ui16"  desc=""/>
     </proto>
@@ -29,7 +29,7 @@
 
     <proto name="ApplyForSceneServerReq" desc= "请求战场">
         <member name="sceneType" type="ui16"  desc="类型"/>
-        <member name="mapID" type="ui32"  desc=""/>
+        <member name="mapID" type="ui64"  desc=""/>
         <member name="avatars" type="AvatarBaseInfoArray"  desc="匹配列表中的玩家"/>
     </proto>
 

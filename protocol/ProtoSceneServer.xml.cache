@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>f9a7f5469dbf7e71fd1bea3cf9a4ce33</cppmd5> 
-<luamd5>063462a09f16028a552c567a6e2bddc4</luamd5> 
-<csharpmd5>56491a8b1a0c87f136c348b068694a46</csharpmd5> 
-<xmlmd5>b01993f4c98c7c0b1ecec0d71a01f78b</xmlmd5> 
+<cppmd5>eb5cc312cd0b356f4e9d7f48007fd3dc</cppmd5> 
+<luamd5>5b9426ae394f2ac473672bf989a88155</luamd5> 
+<csharpmd5>381924f81e2d891c67bfd6a81bde001b</csharpmd5> 
+<xmlmd5>900c098e36d92bc393014dbf665632f4</xmlmd5> 
 <cacheNumber>
     <cache key = "AllocateSceneReq" Number = "39000" /> 
     <cache key = "AllocateSceneResp" Number = "39001" /> 
     <cache key = "ApplyForSceneServerReq" Number = "39007" /> 
     <cache key = "FeedbackAvatarStatusNotice" Number = "39006" /> 
+    <cache key = "ID_ApplyForSceneServerReq" Number = "39010" /> 
+    <cache key = "ID_FeedbackAvatarStatusNotice" Number = "39011" /> 
+    <cache key = "ID_SceneKnock" Number = "39008" /> 
+    <cache key = "ID_ScenePulse" Number = "39009" /> 
     <cache key = "SceneBeing" Number = "39003" /> 
     <cache key = "SceneKnock" Number = "39004" /> 
     <cache key = "ScenePulse" Number = "39005" /> 

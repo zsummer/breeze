@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>aad8c22b116ae8990b506998033a047b</cppmd5> 
-<luamd5>4c67e5e435e1a71beb2d286a773705f7</luamd5> 
-<csharpmd5>b94633216b01111bde083b6950765dfe</csharpmd5> 
-<xmlmd5>bad623f4d63688f820a5f3987a264550</xmlmd5> 
+<cppmd5>0f8b67f5a29a6a92e2ff0bbfb6de533a</cppmd5> 
+<luamd5>a0ce583418f617b667838b6484ba1953</luamd5> 
+<csharpmd5>82d236dc65fd97d0921f21999f72d2a0</csharpmd5> 
+<xmlmd5>0d91788d257d639a5ac5578e2d965266</xmlmd5> 
 <cacheNumber>
     <cache key = "AvatarBaseInfo" Number = "1004" /> 
     <cache key = "AvatarPreview" Number = "1003" /> 
@@ -13,6 +13,20 @@
     <cache key = "DictItem" Number = "1009" /> 
     <cache key = "DictRaffleAward" Number = "1006" /> 
     <cache key = "DictRafflePool" Number = "1007" /> 
+    <cache key = "ID_AvatarBaseInfo" Number = "1019" /> 
+    <cache key = "ID_AvatarPreview" Number = "1018" /> 
+    <cache key = "ID_DictBaseProps" Number = "1023" /> 
+    <cache key = "ID_DictGlobal" Number = "1020" /> 
+    <cache key = "ID_DictItem" Number = "1024" /> 
+    <cache key = "ID_DictRaffleAward" Number = "1021" /> 
+    <cache key = "ID_DictRafflePool" Number = "1022" /> 
+    <cache key = "ID_ItemInfo" Number = "1025" /> 
+    <cache key = "ID_LogChat" Number = "1026" /> 
+    <cache key = "ID_MoneyTree" Number = "1027" /> 
+    <cache key = "ID_OutOfBand" Number = "1016" /> 
+    <cache key = "ID_Routing" Number = "1015" /> 
+    <cache key = "ID_SimplePack" Number = "1028" /> 
+    <cache key = "ID_Tracing" Number = "1017" /> 
     <cache key = "ItemInfo" Number = "1010" /> 
     <cache key = "LogChat" Number = "1013" /> 
     <cache key = "MoneyTree" Number = "1011" /> 

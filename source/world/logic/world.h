@@ -45,11 +45,23 @@ struct SceneSessionStatus
 };
 using SceneSessionStatusPtr = std::shared_ptr<SceneSessionStatus>;
 
-
+struct SceneAvatarStatus //AvatarStatus
+{
+	AreaID areaID;
+	AvatarBaseInfo baseInfo;
+	GroupID groupID;
+	SCENE_TYPE sceneType; //场景类型
+	MapID mapID;
+	SCENE_STATUS sceneStatus; //状态
+	LineID lineID; //分线ID
+	SceneID sceneID; //场景实例ID
+	std::string token; //令牌
+	double lastSwitchTime; //最后一次切换场景的时间
+};
 
 using SceneAvatarStatusPtr = std::shared_ptr<SceneAvatarStatus>;
-using SceneAvatarStatusTeam = std::vector<SceneAvatarStatusPtr>;
-using SceneAvatarStatusPool = std::list<SceneAvatarStatusTeam>;
+using SceneAvatarStatusGroup = std::vector<SceneAvatarStatusPtr>;
+using SceneAvatarStatusPool = std::list<SceneAvatarStatusGroup>;
 
 
 class World : public Singleton<World>

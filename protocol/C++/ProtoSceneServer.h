@@ -8,9 +8,9 @@ typedef std::vector<unsigned short> SceneTypeArray;
  
 struct SceneKnock //战场服务器挂载  
 { 
-    static const unsigned short getProtoID() { return 39004;} 
+    static const unsigned short getProtoID() { return 39008;} 
     static const std::string getProtoName() { return "SceneKnock";} 
-    unsigned int lineID; //分线ID  
+    unsigned long long lineID; //分线ID  
     std::string pubHost;  
     unsigned short pubPort;  
     SceneKnock() 
@@ -18,7 +18,7 @@ struct SceneKnock //战场服务器挂载
         lineID = 0; 
         pubPort = 0; 
     } 
-    SceneKnock(const unsigned int & lineID, const std::string & pubHost, const unsigned short & pubPort) 
+    SceneKnock(const unsigned long long & lineID, const std::string & pubHost, const unsigned short & pubPort) 
     { 
         this->lineID = lineID; 
         this->pubHost = pubHost; 
@@ -51,7 +51,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ScenePulse //集群脉冲  
 { 
-    static const unsigned short getProtoID() { return 39005;} 
+    static const unsigned short getProtoID() { return 39009;} 
     static const std::string getProtoName() { return "ScenePulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ScenePulse & data) 
@@ -71,17 +71,17 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ApplyForSceneServerReq //请求战场  
 { 
-    static const unsigned short getProtoID() { return 39007;} 
+    static const unsigned short getProtoID() { return 39010;} 
     static const std::string getProtoName() { return "ApplyForSceneServerReq";} 
     unsigned short sceneType; //类型  
-    unsigned int mapID;  
+    unsigned long long mapID;  
     AvatarBaseInfoArray avatars; //匹配列表中的玩家  
     ApplyForSceneServerReq() 
     { 
         sceneType = 0; 
         mapID = 0; 
     } 
-    ApplyForSceneServerReq(const unsigned short & sceneType, const unsigned int & mapID, const AvatarBaseInfoArray & avatars) 
+    ApplyForSceneServerReq(const unsigned short & sceneType, const unsigned long long & mapID, const AvatarBaseInfoArray & avatars) 
     { 
         this->sceneType = sceneType; 
         this->mapID = mapID; 
@@ -114,7 +114,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct FeedbackAvatarStatusNotice //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 39006;} 
+    static const unsigned short getProtoID() { return 39011;} 
     static const std::string getProtoName() { return "FeedbackAvatarStatusNotice";} 
     unsigned long long avatarID;  
     unsigned short status;  

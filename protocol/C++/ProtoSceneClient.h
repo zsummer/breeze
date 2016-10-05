@@ -5,7 +5,7 @@
  
 struct SceneClientPulse //客户端脉冲请求  
 { 
-    static const unsigned short getProtoID() { return 50007;} 
+    static const unsigned short getProtoID() { return 50008;} 
     static const std::string getProtoName() { return "SceneClientPulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneClientPulse & data) 
@@ -25,17 +25,17 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AttachSceneReq 
 { 
-    static const unsigned short getProtoID() { return 50000;} 
+    static const unsigned short getProtoID() { return 50009;} 
     static const std::string getProtoName() { return "AttachSceneReq";} 
     unsigned long long avatarID;  
-    unsigned int sceneID;  
+    unsigned long long sceneID;  
     std::string token; //令牌  
     AttachSceneReq() 
     { 
         avatarID = 0; 
         sceneID = 0; 
     } 
-    AttachSceneReq(const unsigned long long & avatarID, const unsigned int & sceneID, const std::string & token) 
+    AttachSceneReq(const unsigned long long & avatarID, const unsigned long long & sceneID, const std::string & token) 
     { 
         this->avatarID = avatarID; 
         this->sceneID = sceneID; 
@@ -68,18 +68,18 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AttachSceneResp 
 { 
-    static const unsigned short getProtoID() { return 50001;} 
+    static const unsigned short getProtoID() { return 50010;} 
     static const std::string getProtoName() { return "AttachSceneResp";} 
     unsigned short retCode; //错误码  
     unsigned long long avatarID;  
-    unsigned int sceneID;  
+    unsigned long long sceneID;  
     AttachSceneResp() 
     { 
         retCode = 0; 
         avatarID = 0; 
         sceneID = 0; 
     } 
-    AttachSceneResp(const unsigned short & retCode, const unsigned long long & avatarID, const unsigned int & sceneID) 
+    AttachSceneResp(const unsigned short & retCode, const unsigned long long & avatarID, const unsigned long long & sceneID) 
     { 
         this->retCode = retCode; 
         this->avatarID = avatarID; 
@@ -112,7 +112,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct FillSceneNotice //填充场景数据  
 { 
-    static const unsigned short getProtoID() { return 50002;} 
+    static const unsigned short getProtoID() { return 50011;} 
     static const std::string getProtoName() { return "FillSceneNotice";} 
     EntityFullInfoArray entitys; //这里包含有所有当前场景下的实体属性和状态数据  
     double sceneStartTime; //服务器战场开始时间  
@@ -161,7 +161,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct RefreshSceneEntitysNotice 
 { 
-    static const unsigned short getProtoID() { return 50003;} 
+    static const unsigned short getProtoID() { return 50012;} 
     static const std::string getProtoName() { return "RefreshSceneEntitysNotice";} 
     EntityInfoArray entitys;  
     double serverTime; //服务器当前时间  
@@ -198,7 +198,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct RefreshSceneReportsNotice 
 { 
-    static const unsigned short getProtoID() { return 50004;} 
+    static const unsigned short getProtoID() { return 50013;} 
     static const std::string getProtoName() { return "RefreshSceneReportsNotice";} 
     EntityReportArray reports;  
     double serverTime; //服务器当前时间  
@@ -235,7 +235,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AddEntityNotice //一批实体加入场景时, 把这些实体的数据广播给其他玩家  
 { 
-    static const unsigned short getProtoID() { return 50005;} 
+    static const unsigned short getProtoID() { return 50014;} 
     static const std::string getProtoName() { return "AddEntityNotice";} 
     EntityFullInfoArray entitys;  
     double serverTime; //服务器当前时间  
@@ -272,7 +272,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct RemoveEntityNotice //实体离开场景时, 把该实体的数据广播给其他玩家  
 { 
-    static const unsigned short getProtoID() { return 50006;} 
+    static const unsigned short getProtoID() { return 50015;} 
     static const std::string getProtoName() { return "RemoveEntityNotice";} 
     EntityIDArray eids;  
     double serverTime; //服务器当前时间  

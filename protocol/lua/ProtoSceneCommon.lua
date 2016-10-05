@@ -10,39 +10,19 @@ Proto4z.SCENE_TYPE_MAX = 6--最大类型数值. 扩展类型在该枚举之前�
 Proto4z.SCENE_STATUS_NONE = 0--不存在 
 Proto4z.SCENE_STATUS_MATCHING = 1--匹配中 
 Proto4z.SCENE_STATUS_CHOISE = 2--选择英雄 
-Proto4z.SCENE_STATUS_WAIT = 3--等待玩家加入战场 
-Proto4z.SCENE_STATUS_ACTIVE = 4--战斗中 
-Proto4z.SCENE_STATUS_LINGER = 5--战斗结束,数据驻留阶段 
- 
-Proto4z.register(10013,"SceneAvatarStatus") 
-Proto4z.SceneAvatarStatus = {} --AvatarStatus 
-Proto4z.SceneAvatarStatus.__protoID = 10013 
-Proto4z.SceneAvatarStatus.__protoName = "SceneAvatarStatus" 
-Proto4z.SceneAvatarStatus[1] = {name="areaID", type="ui32" }  
-Proto4z.SceneAvatarStatus[2] = {name="baseInfo", type="AvatarBaseInfo" }  
-Proto4z.SceneAvatarStatus[3] = {name="sceneType", type="ui16" } --场景类型 
-Proto4z.SceneAvatarStatus[4] = {name="mapID", type="ui32" }  
-Proto4z.SceneAvatarStatus[5] = {name="sceneStatus", type="ui16" } --状态 
-Proto4z.SceneAvatarStatus[6] = {name="lineID", type="ui32" } --分线ID 
-Proto4z.SceneAvatarStatus[7] = {name="sceneID", type="ui32" } --场景实例ID 
-Proto4z.SceneAvatarStatus[8] = {name="host", type="string" } --服务器host 
-Proto4z.SceneAvatarStatus[9] = {name="port", type="ui16" } --服务器port 
-Proto4z.SceneAvatarStatus[10] = {name="token", type="string" } --令牌 
-Proto4z.SceneAvatarStatus[11] = {name="lastSwitchTime", type="double" } --最后一次切换场景的时间 
- 
-Proto4z.SceneAvatarStatusArray = {}  
-Proto4z.SceneAvatarStatusArray.__protoName = "SceneAvatarStatusArray" 
-Proto4z.SceneAvatarStatusArray.__protoDesc = "array" 
-Proto4z.SceneAvatarStatusArray.__protoTypeV = "SceneAvatarStatus" 
+Proto4z.SCENE_STATUS_ALLOCATE = 3--服务器分配场景中 
+Proto4z.SCENE_STATUS_WAIT = 4--等待玩家加入战场 
+Proto4z.SCENE_STATUS_ACTIVE = 5--战斗中 
+Proto4z.SCENE_STATUS_LINGER = 6--战斗结束,数据驻留阶段 
  
 Proto4z.EntityIDArray = {}  
 Proto4z.EntityIDArray.__protoName = "EntityIDArray" 
 Proto4z.EntityIDArray.__protoDesc = "array" 
-Proto4z.EntityIDArray.__protoTypeV = "ui32" 
+Proto4z.EntityIDArray.__protoTypeV = "ui64" 
  
-Proto4z.register(10001,"EPoint") 
+Proto4z.register(10014,"EPoint") 
 Proto4z.EPoint = {}  
-Proto4z.EPoint.__protoID = 10001 
+Proto4z.EPoint.__protoID = 10014 
 Proto4z.EPoint.__protoName = "EPoint" 
 Proto4z.EPoint[1] = {name="x", type="double" }  
 Proto4z.EPoint[2] = {name="y", type="double" }  
@@ -55,12 +35,12 @@ Proto4z.EPoints.__protoTypeV = "EPoint"
 Proto4z.SkillIDArray = {} --技能ID数组 
 Proto4z.SkillIDArray.__protoName = "SkillIDArray" 
 Proto4z.SkillIDArray.__protoDesc = "array" 
-Proto4z.SkillIDArray.__protoTypeV = "ui32" 
+Proto4z.SkillIDArray.__protoTypeV = "ui64" 
  
 Proto4z.BuffIDArray = {} --buff ID 数组 
 Proto4z.BuffIDArray.__protoName = "BuffIDArray" 
 Proto4z.BuffIDArray.__protoDesc = "array" 
-Proto4z.BuffIDArray.__protoTypeV = "ui32" 
+Proto4z.BuffIDArray.__protoTypeV = "ui64" 
  
 Proto4z.ESTATE_NONE = 0--无效 
 Proto4z.ESTATE_FREEZING = 1--冻结, 不可被攻击,不可主动移动,攻击等 
@@ -134,9 +114,9 @@ Proto4z.BUFF_INC_SPEED = 37--属性加成: 速度加成, value1加法, value2乘
 Proto4z.BUFF_INC_SUCK_BLOOD = 38--属性加成: 吸血加成 value1加法 
 Proto4z.BUFF_LIGHT_SKILL = 50--持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现 
  
-Proto4z.register(10002,"SearchInfo") 
+Proto4z.register(10015,"SearchInfo") 
 Proto4z.SearchInfo = {}  
-Proto4z.SearchInfo.__protoID = 10002 
+Proto4z.SearchInfo.__protoID = 10015 
 Proto4z.SearchInfo.__protoName = "SearchInfo" 
 Proto4z.SearchInfo[1] = {name="searchMethod", type="ui16" }  
 Proto4z.SearchInfo[2] = {name="searchTarget", type="ui64" }  
@@ -145,11 +125,11 @@ Proto4z.SearchInfo[4] = {name="distance", type="double" } --伤害距离
 Proto4z.SearchInfo[5] = {name="radian", type="double" } --弧度或者宽度 
 Proto4z.SearchInfo[6] = {name="offsetX", type="double" } --坐标偏移量, 正数为x = x + offset 
 Proto4z.SearchInfo[7] = {name="offsetY", type="double" } --坐标偏移量, 正数为y = y + offset 
-Proto4z.SearchInfo[8] = {name="targetMaxCount", type="ui32" } --最大目标数 
+Proto4z.SearchInfo[8] = {name="targetMaxCount", type="ui64" } --最大目标数 
  
-Proto4z.register(10003,"SkillBehaviour") 
+Proto4z.register(10016,"SkillBehaviour") 
 Proto4z.SkillBehaviour = {} --技能触发行为 
-Proto4z.SkillBehaviour.__protoID = 10003 
+Proto4z.SkillBehaviour.__protoID = 10016 
 Proto4z.SkillBehaviour.__protoName = "SkillBehaviour" 
 Proto4z.SkillBehaviour[1] = {name="behaviour", type="ui64" }  
 Proto4z.SkillBehaviour[2] = {name="delay", type="double" }  
@@ -162,20 +142,20 @@ Proto4z.SkillBehaviourArray.__protoName = "SkillBehaviourArray"
 Proto4z.SkillBehaviourArray.__protoDesc = "array" 
 Proto4z.SkillBehaviourArray.__protoTypeV = "SkillBehaviour" 
  
-Proto4z.register(10004,"SkillData") 
+Proto4z.register(10017,"SkillData") 
 Proto4z.SkillData = {} --技能 
-Proto4z.SkillData.__protoID = 10004 
+Proto4z.SkillData.__protoID = 10017 
 Proto4z.SkillData.__protoName = "SkillData" 
-Proto4z.SkillData[1] = {name="skillID", type="ui32" } --skillID 
+Proto4z.SkillData[1] = {name="skillID", type="ui64" } --skillID 
 Proto4z.SkillData[2] = {name="skillType", type="ui64" } --SKILL_TYPE 
 Proto4z.SkillData[3] = {name="behaviours", type="SkillBehaviourArray" }  
 Proto4z.SkillData[4] = {name="cd", type="double" }  
  
-Proto4z.register(10005,"BuffData") 
+Proto4z.register(10018,"BuffData") 
 Proto4z.BuffData = {} --buff 
-Proto4z.BuffData.__protoID = 10005 
+Proto4z.BuffData.__protoID = 10018 
 Proto4z.BuffData.__protoName = "BuffData" 
-Proto4z.BuffData[1] = {name="buffID", type="ui32" }  
+Proto4z.BuffData[1] = {name="buffID", type="ui64" }  
 Proto4z.BuffData[2] = {name="buffType", type="ui64" } --buff类型 
 Proto4z.BuffData[3] = {name="piletime", type="double" } --最大叠加时间 
 Proto4z.BuffData[4] = {name="keepTime", type="double" } --保持时间 
@@ -187,11 +167,11 @@ Proto4z.HARM_TYPE_MISS = 1--闪避
 Proto4z.HARM_TYPE_CRITICAL = 2--暴击 
 Proto4z.HARM_TYPE_HILL = 3--治疗 
  
-Proto4z.register(10006,"HarmData") 
+Proto4z.register(10019,"HarmData") 
 Proto4z.HarmData = {} --伤害数据 
-Proto4z.HarmData.__protoID = 10006 
+Proto4z.HarmData.__protoID = 10019 
 Proto4z.HarmData.__protoName = "HarmData" 
-Proto4z.HarmData[1] = {name="eid", type="ui32" } --目标eid 
+Proto4z.HarmData[1] = {name="eid", type="ui64" } --目标eid 
 Proto4z.HarmData[2] = {name="type", type="ui16" } --伤害类型HARM_TYPE 
 Proto4z.HarmData[3] = {name="harm", type="double" } --如果为正是伤害, 为负则是回血 
  
@@ -200,16 +180,16 @@ Proto4z.HarmDataArray.__protoName = "HarmDataArray"
 Proto4z.HarmDataArray.__protoDesc = "array" 
 Proto4z.HarmDataArray.__protoTypeV = "HarmData" 
  
-Proto4z.register(10007,"SkillInfo") 
+Proto4z.register(10020,"SkillInfo") 
 Proto4z.SkillInfo = {}  
-Proto4z.SkillInfo.__protoID = 10007 
+Proto4z.SkillInfo.__protoID = 10020 
 Proto4z.SkillInfo.__protoName = "SkillInfo" 
-Proto4z.SkillInfo[1] = {name="skillID", type="ui32" }  
+Proto4z.SkillInfo[1] = {name="skillID", type="ui64" }  
 Proto4z.SkillInfo[2] = {name="startTime", type="double" }  
 Proto4z.SkillInfo[3] = {name="lastHitTime", type="double" }  
-Proto4z.SkillInfo[4] = {name="seq", type="ui32" } --hit seq 
+Proto4z.SkillInfo[4] = {name="seq", type="ui64" } --hit seq 
 Proto4z.SkillInfo[5] = {name="dst", type="EPoint" } --目标位置 
-Proto4z.SkillInfo[6] = {name="foe", type="ui32" } --锁定的目标 
+Proto4z.SkillInfo[6] = {name="foe", type="ui64" } --锁定的目标 
 Proto4z.SkillInfo[7] = {name="data", type="SkillData" } --配置数据 
  
 Proto4z.SkillInfoArray = {}  
@@ -217,13 +197,13 @@ Proto4z.SkillInfoArray.__protoName = "SkillInfoArray"
 Proto4z.SkillInfoArray.__protoDesc = "array" 
 Proto4z.SkillInfoArray.__protoTypeV = "SkillInfo" 
  
-Proto4z.register(10008,"BuffInfo") 
+Proto4z.register(10021,"BuffInfo") 
 Proto4z.BuffInfo = {}  
-Proto4z.BuffInfo.__protoID = 10008 
+Proto4z.BuffInfo.__protoID = 10021 
 Proto4z.BuffInfo.__protoName = "BuffInfo" 
-Proto4z.BuffInfo[1] = {name="eid", type="ui32" } --施放该buff的entity id 
-Proto4z.BuffInfo[2] = {name="skillID", type="ui32" } --如果该buff是被技能触发的 则记录该技能, 被动技能是0 
-Proto4z.BuffInfo[3] = {name="buffID", type="ui32" }  
+Proto4z.BuffInfo[1] = {name="eid", type="ui64" } --施放该buff的entity id 
+Proto4z.BuffInfo[2] = {name="skillID", type="ui64" } --如果该buff是被技能触发的 则记录该技能, 被动技能是0 
+Proto4z.BuffInfo[3] = {name="buffID", type="ui64" }  
 Proto4z.BuffInfo[4] = {name="start", type="double" } --start (server)tick 
 Proto4z.BuffInfo[5] = {name="lastTrigerTick", type="double" } --lastTrigerTick 
 Proto4z.BuffInfo[6] = {name="data", type="BuffData" } --配置数据 
@@ -233,19 +213,19 @@ Proto4z.BuffInfoArray.__protoName = "BuffInfoArray"
 Proto4z.BuffInfoArray.__protoDesc = "array" 
 Proto4z.BuffInfoArray.__protoTypeV = "BuffInfo" 
  
-Proto4z.register(10009,"EntityInfo") 
+Proto4z.register(10022,"EntityInfo") 
 Proto4z.EntityInfo = {} --EntityInfo 
-Proto4z.EntityInfo.__protoID = 10009 
+Proto4z.EntityInfo.__protoID = 10022 
 Proto4z.EntityInfo.__protoName = "EntityInfo" 
-Proto4z.EntityInfo[1] = {name="eid", type="ui32" } --eid 
+Proto4z.EntityInfo[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityInfo[2] = {name="color", type="ui16" } --阵营 
 Proto4z.EntityInfo[3] = {name="state", type="ui16" } --状态 
 Proto4z.EntityInfo[4] = {name="pos", type="EPoint" } --当前坐标 
 Proto4z.EntityInfo[5] = {name="moveAction", type="ui16" } --状态 
 Proto4z.EntityInfo[6] = {name="movePath", type="EPoints" } --当前的移动路径 
-Proto4z.EntityInfo[7] = {name="foe", type="ui32" } --锁定的敌人 
-Proto4z.EntityInfo[8] = {name="leader", type="ui32" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
-Proto4z.EntityInfo[9] = {name="follow", type="ui32" } --移动跟随的实体 
+Proto4z.EntityInfo[7] = {name="foe", type="ui64" } --锁定的敌人 
+Proto4z.EntityInfo[8] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
+Proto4z.EntityInfo[9] = {name="follow", type="ui64" } --移动跟随的实体 
 Proto4z.EntityInfo[10] = {name="curHP", type="double" } --当前的血量 
  
 Proto4z.EntityInfoArray = {}  
@@ -253,11 +233,11 @@ Proto4z.EntityInfoArray.__protoName = "EntityInfoArray"
 Proto4z.EntityInfoArray.__protoDesc = "array" 
 Proto4z.EntityInfoArray.__protoTypeV = "EntityInfo" 
  
-Proto4z.register(10010,"EntityControl") 
+Proto4z.register(10023,"EntityControl") 
 Proto4z.EntityControl = {} --EntityControl 
-Proto4z.EntityControl.__protoID = 10010 
+Proto4z.EntityControl.__protoID = 10023 
 Proto4z.EntityControl.__protoName = "EntityControl" 
-Proto4z.EntityControl[1] = {name="eid", type="ui32" } --eid 
+Proto4z.EntityControl[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityControl[2] = {name="stateChageTick", type="double" } --状态改变时间 
 Proto4z.EntityControl[3] = {name="extSpeed", type="double" } --扩展速度 
 Proto4z.EntityControl[4] = {name="extBeginTime", type="double" } --扩展速度的开始时间 
@@ -276,25 +256,25 @@ Proto4z.EntityControlArray.__protoName = "EntityControlArray"
 Proto4z.EntityControlArray.__protoDesc = "array" 
 Proto4z.EntityControlArray.__protoTypeV = "EntityControl" 
  
-Proto4z.register(10011,"EntityReport") 
+Proto4z.register(10024,"EntityReport") 
 Proto4z.EntityReport = {} --EntityReport 
-Proto4z.EntityReport.__protoID = 10011 
+Proto4z.EntityReport.__protoID = 10024 
 Proto4z.EntityReport.__protoName = "EntityReport" 
-Proto4z.EntityReport[1] = {name="eid", type="ui32" } --eid 
-Proto4z.EntityReport[2] = {name="killOtherCount", type="ui32" } --杀死其他玩家次数 
-Proto4z.EntityReport[3] = {name="killOtherTime", type="ui32" } --杀死其他玩家的时间 
-Proto4z.EntityReport[4] = {name="diedCount", type="ui32" } --死亡次数 
-Proto4z.EntityReport[5] = {name="topMultiKills", type="ui32" } --最高连杀次数 
-Proto4z.EntityReport[6] = {name="curMultiKills", type="ui32" } --当前连杀次数 
+Proto4z.EntityReport[1] = {name="eid", type="ui64" } --eid 
+Proto4z.EntityReport[2] = {name="killOtherCount", type="ui64" } --杀死其他玩家次数 
+Proto4z.EntityReport[3] = {name="killOtherTime", type="ui64" } --杀死其他玩家的时间 
+Proto4z.EntityReport[4] = {name="diedCount", type="ui64" } --死亡次数 
+Proto4z.EntityReport[5] = {name="topMultiKills", type="ui64" } --最高连杀次数 
+Proto4z.EntityReport[6] = {name="curMultiKills", type="ui64" } --当前连杀次数 
  
 Proto4z.EntityReportArray = {}  
 Proto4z.EntityReportArray.__protoName = "EntityReportArray" 
 Proto4z.EntityReportArray.__protoDesc = "array" 
 Proto4z.EntityReportArray.__protoTypeV = "EntityReport" 
  
-Proto4z.register(10012,"EntityFullInfo") 
+Proto4z.register(10025,"EntityFullInfo") 
 Proto4z.EntityFullInfo = {} --EntityFullInfo 
-Proto4z.EntityFullInfo.__protoID = 10012 
+Proto4z.EntityFullInfo.__protoID = 10025 
 Proto4z.EntityFullInfo.__protoName = "EntityFullInfo" 
 Proto4z.EntityFullInfo[1] = {name="userInfo", type="AvatarBaseInfo" }  
 Proto4z.EntityFullInfo[2] = {name="info", type="EntityInfo" }  

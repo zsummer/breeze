@@ -451,7 +451,7 @@ void World::event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneSer
         status->token = "";
     }
 
-    SceneAvatarStatusTeam team;
+    SceneAvatarStatusGroup team;
     for (auto & baseInfo : req.avatars)
     {
         ApplyForSceneResp resp(EC_SUCCESS);

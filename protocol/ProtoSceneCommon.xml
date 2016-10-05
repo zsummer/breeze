@@ -9,8 +9,9 @@
 
 <Proto>
 
-    <!-- 概述  所有数据除非必要, 一律使用双精度浮点.  概率用浮点表达为[0.0-1.0], 时间用浮点表达单位为秒,精确到毫秒 -->
-
+    <!-- 类型使用概述 如无必要 应按照以下规定使用类型 -->
+    <!-- TYPE/枚举使用ui16, 数值使用double, ID使用ui64(ID范围需要小于52位) -->
+    <!-- 数值类 概率用浮点表达为[0.0-1.0], 时间用浮点表达单位为秒 精度为毫秒 -->
 
    
      <!-- scene类型 -->
@@ -29,6 +30,7 @@
         <member name="SCENE_STATUS_NONE" value="0" desc="不存在" />
         <member name="SCENE_STATUS_MATCHING"  desc="匹配中" />
         <member name="SCENE_STATUS_CHOISE" desc="选择英雄" />
+        <member name="SCENE_STATUS_ALLOCATE" desc="服务器分配场景中" />        
         <member name="SCENE_STATUS_WAIT"  desc="等待玩家加入战场" />
         <member name="SCENE_STATUS_ACTIVE" desc="战斗中" />
         <member name="SCENE_STATUS_LINGER" desc="战斗结束,数据驻留阶段" />
@@ -36,36 +38,21 @@
 
 
 
-    <!-- AvatarStatus-->
-    <struct name="SceneAvatarStatus" desc="AvatarStatus">
-        <member name="areaID" type="ui32"  desc=""/>
-        <member name="baseInfo" type="AvatarBaseInfo"  desc=""/>
-        <member name="sceneType" type="ui16"  desc="场景类型"/>
-        <member name="mapID" type="ui32"  desc=""/>
-        <member name="sceneStatus" type="ui16"  desc="状态"/>
-        <member name="lineID" type="ui32"  desc="分线ID"/>
-        <member name="sceneID" type="ui32"  desc="场景实例ID"/>
-        <member name="host" type="string"  desc="服务器host"/>
-        <member name="port" type="ui16"  desc="服务器port"/>
-        <member name="token" type="string"  desc="令牌"/>
-        <member name="lastSwitchTime" type="double"  desc="最后一次切换场景的时间"/>
-    </struct>
-    <array name="SceneAvatarStatusArray" type="SceneAvatarStatus" desc="" />
 
 
 
 
     <!------------------------------------------  实体 ------------------------------------------------------------------>
     <!-- 基础ID  -->
-    <array name="EntityIDArray" type="ui32" desc="" />
+    <array name="EntityIDArray" type="ui64" desc="" />
     <struct name="EPoint" desc="" >
         <member name="x" type="double" />
         <member name="y" type="double" />
     </struct>
     <array name="EPoints" type="EPoint" desc="" />
 
-    <array name="SkillIDArray" type="ui32" desc="技能ID数组" />
-    <array name="BuffIDArray" type="ui32" desc="buff ID 数组" />
+    <array name="SkillIDArray" type="ui64" desc="技能ID数组" />
+    <array name="BuffIDArray" type="ui64" desc="buff ID 数组" />
 
 
     <!-- 实体状态-->
@@ -185,7 +172,7 @@
         <member name="radian" type="double"  desc="弧度或者宽度"/>
         <member name="offsetX" type="double"  desc="坐标偏移量, 正数为x = x + offset"/>
         <member name="offsetY" type="double"  desc="坐标偏移量, 正数为y = y + offset"/>
-        <member name="targetMaxCount" type="ui32"  desc="最大目标数"/>
+        <member name="targetMaxCount" type="ui64"  desc="最大目标数"/>
     </struct>
 
     <struct name="SkillBehaviour" desc="技能触发行为">
@@ -200,14 +187,14 @@
 
 
     <struct name="SkillData" desc="技能">
-        <member name="skillID" type="ui32"  desc="skillID"/>
+        <member name="skillID" type="ui64"  desc="skillID"/>
         <member name="skillType" type="ui64"  desc="SKILL_TYPE"/>
         <member name="behaviours" type="SkillBehaviourArray"  desc=""/>
         <member name="cd" type="double"  desc=""/>
    </struct>
 
     <struct name="BuffData" desc="buff">
-        <member name="buffID" type="ui32"  desc=""/>
+        <member name="buffID" type="ui64"  desc=""/>
         <member name="buffType" type="ui64"  desc="buff类型"/>
         <member name="piletime" type="double"  desc="最大叠加时间"/>
         <member name="keepTime" type="double"  desc="保持时间"/>
@@ -224,7 +211,7 @@
     </enum>
 
     <struct name="HarmData" desc="伤害数据">
-        <member name="eid" type="ui32"  desc="目标eid"/>
+        <member name="eid" type="ui64"  desc="目标eid"/>
         <member name="type" type="ui16"  desc="伤害类型HARM_TYPE"/>
         <member name="harm" type="double"  desc="如果为正是伤害, 为负则是回血"/>
    </struct>
@@ -232,12 +219,12 @@
    
     <!-- SkillInfo -->
     <struct name="SkillInfo" desc="" >
-        <member name="skillID" type="ui32" />
+        <member name="skillID" type="ui64" />
         <member name="startTime" type="double" desc=""/>
         <member name="lastHitTime" type="double" desc=""/>
-        <member name="seq" type="ui32" desc="hit seq"/>
+        <member name="seq" type="ui64" desc="hit seq"/>
         <member name="dst"  type="EPoint" desc="目标位置"/>  
-        <member name="foe"  type="ui32" desc="锁定的目标"/>  
+        <member name="foe"  type="ui64" desc="锁定的目标"/>  
         <member name="data" type="SkillData" desc="配置数据"/>
     </struct>
     <array name="SkillInfoArray" type="SkillInfo" desc="" />
@@ -245,9 +232,9 @@
 
     <!-- BuffInfo -->
     <struct name="BuffInfo" desc="" >
-        <member name="eid" type="ui32" desc="施放该buff的entity id"/>
-        <member name="skillID" type="ui32" desc="如果该buff是被技能触发的 则记录该技能, 被动技能是0"/>
-        <member name="buffID" type="ui32" />
+        <member name="eid" type="ui64" desc="施放该buff的entity id"/>
+        <member name="skillID" type="ui64" desc="如果该buff是被技能触发的 则记录该技能, 被动技能是0"/>
+        <member name="buffID" type="ui64" />
         <member name="start" type="double" desc="start (server)tick"/>
         <member name="lastTrigerTick" type="double" desc="lastTrigerTick"/>
         <member name="data" type="BuffData" desc="配置数据"/>
@@ -262,15 +249,15 @@
 
     <!-- 实体动态属性, 差异广播 -->
     <struct name="EntityInfo" desc="EntityInfo">
-        <member name="eid" type="ui32"  desc="eid"/>
+        <member name="eid" type="ui64"  desc="eid"/>
         <member name="color" type="ui16"  desc="阵营"/>
         <member name="state" type="ui16"  desc="状态"/>
         <member name="pos"  type="EPoint" desc="当前坐标"/>
         <member name="moveAction" type="ui16"  desc="状态"/>
         <member name="movePath"  type="EPoints" desc="当前的移动路径"/>
-        <member name="foe"  type="ui32" desc="锁定的敌人"/>
-        <member name="leader"  type="ui32" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
-        <member name="follow"  type="ui32" desc="移动跟随的实体"/>
+        <member name="foe"  type="ui64" desc="锁定的敌人"/>
+        <member name="leader"  type="ui64" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
+        <member name="follow"  type="ui64" desc="移动跟随的实体"/>
         <member name="curHP"  type="double" desc="当前的血量"/>
 
     </struct>
@@ -278,7 +265,7 @@
 
     <!-- 实体控制属性, 对客户端不可见 -->
     <struct name="EntityControl" desc="EntityControl">
-        <member name="eid" type="ui32"  desc="eid"/>
+        <member name="eid" type="ui64"  desc="eid"/>
         <member name="stateChageTick" type="double"  desc="状态改变时间"/>
         <member name="extSpeed" type="double"  desc="扩展速度"/>
         <member name="extBeginTime" type="double"  desc="扩展速度的开始时间"/>
@@ -296,12 +283,12 @@
 
     <!-- 实体战报 -->
     <struct name="EntityReport" desc="EntityReport">
-        <member name="eid" type="ui32"  desc="eid"/>
-        <member name="killOtherCount" type="ui32"  desc="杀死其他玩家次数"/>
-        <member name="killOtherTime" type="ui32"  desc="杀死其他玩家的时间"/>
-        <member name="diedCount" type="ui32"  desc="死亡次数"/>
-        <member name="topMultiKills" type="ui32"  desc="最高连杀次数"/>
-        <member name="curMultiKills" type="ui32"  desc="当前连杀次数"/>
+        <member name="eid" type="ui64"  desc="eid"/>
+        <member name="killOtherCount" type="ui64"  desc="杀死其他玩家次数"/>
+        <member name="killOtherTime" type="ui64"  desc="杀死其他玩家的时间"/>
+        <member name="diedCount" type="ui64"  desc="死亡次数"/>
+        <member name="topMultiKills" type="ui64"  desc="最高连杀次数"/>
+        <member name="curMultiKills" type="ui64"  desc="当前连杀次数"/>
     </struct>
     <array name="EntityReportArray" type="EntityReport" desc="" />
 

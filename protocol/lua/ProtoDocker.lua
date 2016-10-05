@@ -1,110 +1,110 @@
  
-Proto4z.register(2025,"DockerKnock") 
+Proto4z.register(2026,"DockerKnock") 
 Proto4z.DockerKnock = {}  
-Proto4z.DockerKnock.__protoID = 2025 
+Proto4z.DockerKnock.__protoID = 2026 
 Proto4z.DockerKnock.__protoName = "DockerKnock" 
 Proto4z.DockerKnock[1] = {name="areaID", type="ui64" }  
 Proto4z.DockerKnock[2] = {name="dockerID", type="ui64" }  
  
-Proto4z.register(2001,"DockerPulse") 
+Proto4z.register(2027,"DockerPulse") 
 Proto4z.DockerPulse = {} --集群脉冲 
-Proto4z.DockerPulse.__protoID = 2001 
+Proto4z.DockerPulse.__protoID = 2027 
 Proto4z.DockerPulse.__protoName = "DockerPulse" 
  
-Proto4z.register(2002,"LoadService") 
+Proto4z.register(2028,"LoadService") 
 Proto4z.LoadService = {} --在Docker中装载一个Service 
-Proto4z.LoadService.__protoID = 2002 
+Proto4z.LoadService.__protoID = 2028 
 Proto4z.LoadService.__protoName = "LoadService" 
 Proto4z.LoadService[1] = {name="serviceType", type="ui16" }  
 Proto4z.LoadService[2] = {name="serviceID", type="ui64" }  
 Proto4z.LoadService[3] = {name="serviceName", type="string" }  
-Proto4z.LoadService[4] = {name="clientDockerID", type="ui32" }  
-Proto4z.LoadService[5] = {name="clientSessionID", type="ui32" }  
+Proto4z.LoadService[4] = {name="clientDockerID", type="ui64" }  
+Proto4z.LoadService[5] = {name="clientSessionID", type="ui64" }  
  
-Proto4z.register(2003,"ServiceInfo") 
+Proto4z.register(2029,"ServiceInfo") 
 Proto4z.ServiceInfo = {} --Service被装载或者属性更改,需要通知给其他Docker的信息 
-Proto4z.ServiceInfo.__protoID = 2003 
+Proto4z.ServiceInfo.__protoID = 2029 
 Proto4z.ServiceInfo.__protoName = "ServiceInfo" 
-Proto4z.ServiceInfo[1] = {name="serviceDockerID", type="ui32" }  
+Proto4z.ServiceInfo[1] = {name="serviceDockerID", type="ui64" }  
 Proto4z.ServiceInfo[2] = {name="serviceType", type="ui16" }  
 Proto4z.ServiceInfo[3] = {name="serviceID", type="ui64" }  
 Proto4z.ServiceInfo[4] = {name="serviceName", type="string" }  
 Proto4z.ServiceInfo[5] = {name="status", type="ui16" }  
-Proto4z.ServiceInfo[6] = {name="clientDockerID", type="ui32" }  
-Proto4z.ServiceInfo[7] = {name="clientSessionID", type="ui32" }  
+Proto4z.ServiceInfo[6] = {name="clientDockerID", type="ui64" }  
+Proto4z.ServiceInfo[7] = {name="clientSessionID", type="ui64" }  
  
 Proto4z.ServiceInfoArray = {}  
 Proto4z.ServiceInfoArray.__protoName = "ServiceInfoArray" 
 Proto4z.ServiceInfoArray.__protoDesc = "array" 
 Proto4z.ServiceInfoArray.__protoTypeV = "ServiceInfo" 
  
-Proto4z.register(2004,"LoadServiceNotice") 
+Proto4z.register(2030,"LoadServiceNotice") 
 Proto4z.LoadServiceNotice = {} --通知其他Docker有Service已装载 
-Proto4z.LoadServiceNotice.__protoID = 2004 
+Proto4z.LoadServiceNotice.__protoID = 2030 
 Proto4z.LoadServiceNotice.__protoName = "LoadServiceNotice" 
 Proto4z.LoadServiceNotice[1] = {name="shellServiceInfos", type="ServiceInfoArray" }  
  
-Proto4z.register(2005,"RefreshServiceToMgrNotice") 
+Proto4z.register(2031,"RefreshServiceToMgrNotice") 
 Proto4z.RefreshServiceToMgrNotice = {} --Multi-Servie发生状态变化时候通知给管理器 
-Proto4z.RefreshServiceToMgrNotice.__protoID = 2005 
+Proto4z.RefreshServiceToMgrNotice.__protoID = 2031 
 Proto4z.RefreshServiceToMgrNotice.__protoName = "RefreshServiceToMgrNotice" 
 Proto4z.RefreshServiceToMgrNotice[1] = {name="shellServiceInfos", type="ServiceInfoArray" }  
  
-Proto4z.register(2006,"SwitchServiceClientNotice") 
+Proto4z.register(2032,"SwitchServiceClientNotice") 
 Proto4z.SwitchServiceClientNotice = {} --更改clientID 
-Proto4z.SwitchServiceClientNotice.__protoID = 2006 
+Proto4z.SwitchServiceClientNotice.__protoID = 2032 
 Proto4z.SwitchServiceClientNotice.__protoName = "SwitchServiceClientNotice" 
 Proto4z.SwitchServiceClientNotice[1] = {name="serviceType", type="ui16" }  
 Proto4z.SwitchServiceClientNotice[2] = {name="serviceID", type="ui64" }  
-Proto4z.SwitchServiceClientNotice[3] = {name="clientDockerID", type="ui32" }  
-Proto4z.SwitchServiceClientNotice[4] = {name="clientSessionID", type="ui32" }  
+Proto4z.SwitchServiceClientNotice[3] = {name="clientDockerID", type="ui64" }  
+Proto4z.SwitchServiceClientNotice[4] = {name="clientSessionID", type="ui64" }  
  
-Proto4z.register(2007,"KickRealClient") 
+Proto4z.register(2033,"KickRealClient") 
 Proto4z.KickRealClient = {} --踢掉一个客户端 
-Proto4z.KickRealClient.__protoID = 2007 
+Proto4z.KickRealClient.__protoID = 2033 
 Proto4z.KickRealClient.__protoName = "KickRealClient" 
-Proto4z.KickRealClient[1] = {name="clientSessionID", type="ui32" }  
+Proto4z.KickRealClient[1] = {name="clientSessionID", type="ui64" }  
  
-Proto4z.register(2008,"RealClientClosedNotice") 
+Proto4z.register(2034,"RealClientClosedNotice") 
 Proto4z.RealClientClosedNotice = {} --客户端离线通知 
-Proto4z.RealClientClosedNotice.__protoID = 2008 
+Proto4z.RealClientClosedNotice.__protoID = 2034 
 Proto4z.RealClientClosedNotice.__protoName = "RealClientClosedNotice" 
 Proto4z.RealClientClosedNotice[1] = {name="serviceID", type="ui64" }  
-Proto4z.RealClientClosedNotice[2] = {name="clientDockerID", type="ui32" }  
-Proto4z.RealClientClosedNotice[3] = {name="clientSessionID", type="ui32" }  
+Proto4z.RealClientClosedNotice[2] = {name="clientDockerID", type="ui64" }  
+Proto4z.RealClientClosedNotice[3] = {name="clientSessionID", type="ui64" }  
  
-Proto4z.register(2009,"UnloadServiceInDocker") 
+Proto4z.register(2035,"UnloadServiceInDocker") 
 Proto4z.UnloadServiceInDocker = {} --卸载一个Service 
-Proto4z.UnloadServiceInDocker.__protoID = 2009 
+Proto4z.UnloadServiceInDocker.__protoID = 2035 
 Proto4z.UnloadServiceInDocker.__protoName = "UnloadServiceInDocker" 
 Proto4z.UnloadServiceInDocker[1] = {name="serviceType", type="ui16" }  
 Proto4z.UnloadServiceInDocker[2] = {name="serviceID", type="ui64" }  
  
-Proto4z.register(2010,"UnloadedServiceNotice") 
+Proto4z.register(2036,"UnloadedServiceNotice") 
 Proto4z.UnloadedServiceNotice = {} --已卸载并完成销毁,广播给所有docker 
-Proto4z.UnloadedServiceNotice.__protoID = 2010 
+Proto4z.UnloadedServiceNotice.__protoID = 2036 
 Proto4z.UnloadedServiceNotice.__protoName = "UnloadedServiceNotice" 
 Proto4z.UnloadedServiceNotice[1] = {name="serviceType", type="ui16" }  
 Proto4z.UnloadedServiceNotice[2] = {name="serviceID", type="ui64" }  
  
-Proto4z.register(2011,"ShutdownClusterServer") 
+Proto4z.register(2037,"ShutdownClusterServer") 
 Proto4z.ShutdownClusterServer = {} --关闭服务器集群 
-Proto4z.ShutdownClusterServer.__protoID = 2011 
+Proto4z.ShutdownClusterServer.__protoID = 2037 
 Proto4z.ShutdownClusterServer.__protoName = "ShutdownClusterServer" 
  
-Proto4z.register(2012,"ForwardToService") 
+Proto4z.register(2038,"ForwardToService") 
 Proto4z.ForwardToService = {} --转发到其他docker上的Service 
-Proto4z.ForwardToService.__protoID = 2012 
+Proto4z.ForwardToService.__protoID = 2038 
 Proto4z.ForwardToService.__protoName = "ForwardToService" 
  
-Proto4z.register(2013,"ForwardToRealClient") 
+Proto4z.register(2039,"ForwardToRealClient") 
 Proto4z.ForwardToRealClient = {} --转发给真正的client 
-Proto4z.ForwardToRealClient.__protoID = 2013 
+Proto4z.ForwardToRealClient.__protoID = 2039 
 Proto4z.ForwardToRealClient.__protoName = "ForwardToRealClient" 
  
-Proto4z.register(2014,"ForwardToDocker") 
+Proto4z.register(2040,"ForwardToDocker") 
 Proto4z.ForwardToDocker = {} --转发给Docker 
-Proto4z.ForwardToDocker.__protoID = 2014 
+Proto4z.ForwardToDocker.__protoID = 2040 
 Proto4z.ForwardToDocker.__protoName = "ForwardToDocker" 
  
 Proto4z.DBStringArray = {}  
@@ -112,9 +112,9 @@ Proto4z.DBStringArray.__protoName = "DBStringArray"
 Proto4z.DBStringArray.__protoDesc = "array" 
 Proto4z.DBStringArray.__protoTypeV = "string" 
  
-Proto4z.register(2015,"DBDataResult") 
+Proto4z.register(2041,"DBDataResult") 
 Proto4z.DBDataResult = {}  
-Proto4z.DBDataResult.__protoID = 2015 
+Proto4z.DBDataResult.__protoID = 2041 
 Proto4z.DBDataResult.__protoName = "DBDataResult" 
 Proto4z.DBDataResult[1] = {name="qc", type="ui16" }  
 Proto4z.DBDataResult[2] = {name="errMsg", type="string" }  
@@ -127,28 +127,28 @@ Proto4z.DBDataResultArray.__protoName = "DBDataResultArray"
 Proto4z.DBDataResultArray.__protoDesc = "array" 
 Proto4z.DBDataResultArray.__protoTypeV = "DBDataResult" 
  
-Proto4z.register(2016,"DBQueryReq") 
+Proto4z.register(2042,"DBQueryReq") 
 Proto4z.DBQueryReq = {} --通用SQL语句执行协议 
-Proto4z.DBQueryReq.__protoID = 2016 
+Proto4z.DBQueryReq.__protoID = 2042 
 Proto4z.DBQueryReq.__protoName = "DBQueryReq" 
 Proto4z.DBQueryReq[1] = {name="sql", type="string" }  
  
-Proto4z.register(2017,"DBQueryResp") 
+Proto4z.register(2043,"DBQueryResp") 
 Proto4z.DBQueryResp = {} --通用SQL语句执行协议返回,DBDataResult可以借助dbHepler进行构建DBResult 
-Proto4z.DBQueryResp.__protoID = 2017 
+Proto4z.DBQueryResp.__protoID = 2043 
 Proto4z.DBQueryResp.__protoName = "DBQueryResp" 
 Proto4z.DBQueryResp[1] = {name="retCode", type="ui16" }  
 Proto4z.DBQueryResp[2] = {name="result", type="DBDataResult" }  
  
-Proto4z.register(2018,"DBQueryArrayReq") 
+Proto4z.register(2044,"DBQueryArrayReq") 
 Proto4z.DBQueryArrayReq = {} --通用批量SQL语句执行协议 
-Proto4z.DBQueryArrayReq.__protoID = 2018 
+Proto4z.DBQueryArrayReq.__protoID = 2044 
 Proto4z.DBQueryArrayReq.__protoName = "DBQueryArrayReq" 
 Proto4z.DBQueryArrayReq[1] = {name="sqls", type="DBStringArray" }  
  
-Proto4z.register(2019,"DBQueryArrayResp") 
+Proto4z.register(2045,"DBQueryArrayResp") 
 Proto4z.DBQueryArrayResp = {} --通用批量SQL语句执行协议 
-Proto4z.DBQueryArrayResp.__protoID = 2019 
+Proto4z.DBQueryArrayResp.__protoID = 2045 
 Proto4z.DBQueryArrayResp.__protoName = "DBQueryArrayResp" 
 Proto4z.DBQueryArrayResp[1] = {name="retCode", type="ui16" }  
 Proto4z.DBQueryArrayResp[2] = {name="results", type="DBDataResultArray" } --批量返回,注意不要超出协议包最大长度 
@@ -159,22 +159,22 @@ Proto4z.WebAgentHead.__protoDesc = "map"
 Proto4z.WebAgentHead.__protoTypeK = "string" 
 Proto4z.WebAgentHead.__protoTypeV = "string" 
  
-Proto4z.register(2020,"WebAgentClientRequestAPI") 
+Proto4z.register(2046,"WebAgentClientRequestAPI") 
 Proto4z.WebAgentClientRequestAPI = {}  
-Proto4z.WebAgentClientRequestAPI.__protoID = 2020 
+Proto4z.WebAgentClientRequestAPI.__protoID = 2046 
 Proto4z.WebAgentClientRequestAPI.__protoName = "WebAgentClientRequestAPI" 
 Proto4z.WebAgentClientRequestAPI[1] = {name="method", type="string" }  
 Proto4z.WebAgentClientRequestAPI[2] = {name="methodLine", type="string" }  
 Proto4z.WebAgentClientRequestAPI[3] = {name="heads", type="WebAgentHead" }  
 Proto4z.WebAgentClientRequestAPI[4] = {name="body", type="string" }  
  
-Proto4z.register(2021,"WebServerRequest") 
+Proto4z.register(2047,"WebServerRequest") 
 Proto4z.WebServerRequest = {}  
-Proto4z.WebServerRequest.__protoID = 2021 
+Proto4z.WebServerRequest.__protoID = 2047 
 Proto4z.WebServerRequest.__protoName = "WebServerRequest" 
-Proto4z.WebServerRequest[1] = {name="fromServiceType", type="ui32" }  
+Proto4z.WebServerRequest[1] = {name="fromServiceType", type="ui64" }  
 Proto4z.WebServerRequest[2] = {name="fromServiceID", type="ui64" }  
-Proto4z.WebServerRequest[3] = {name="traceID", type="ui32" }  
+Proto4z.WebServerRequest[3] = {name="traceID", type="ui64" }  
 Proto4z.WebServerRequest[4] = {name="ip", type="string" }  
 Proto4z.WebServerRequest[5] = {name="port", type="ui16" }  
 Proto4z.WebServerRequest[6] = {name="host", type="string" }  
@@ -183,18 +183,18 @@ Proto4z.WebServerRequest[8] = {name="webparams", type="string" }
 Proto4z.WebServerRequest[9] = {name="heads", type="WebAgentHead" }  
 Proto4z.WebServerRequest[10] = {name="isGet", type="ui8" } --get or post 
  
-Proto4z.register(2022,"WebServerResponse") 
+Proto4z.register(2048,"WebServerResponse") 
 Proto4z.WebServerResponse = {}  
-Proto4z.WebServerResponse.__protoID = 2022 
+Proto4z.WebServerResponse.__protoID = 2048 
 Proto4z.WebServerResponse.__protoName = "WebServerResponse" 
 Proto4z.WebServerResponse[1] = {name="method", type="string" }  
 Proto4z.WebServerResponse[2] = {name="methodLine", type="string" }  
 Proto4z.WebServerResponse[3] = {name="heads", type="WebAgentHead" }  
 Proto4z.WebServerResponse[4] = {name="body", type="string" }  
  
-Proto4z.register(2023,"AvatarOffline") 
+Proto4z.register(2049,"AvatarOffline") 
 Proto4z.AvatarOffline = {}  
-Proto4z.AvatarOffline.__protoID = 2023 
+Proto4z.AvatarOffline.__protoID = 2049 
 Proto4z.AvatarOffline.__protoName = "AvatarOffline" 
 Proto4z.AvatarOffline[1] = {name="id", type="ui64" }  
 Proto4z.AvatarOffline[2] = {name="avatarID", type="ui64" }  
