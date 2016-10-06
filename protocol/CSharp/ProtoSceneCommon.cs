@@ -6,11 +6,12 @@ namespace Proto4z
     { 
         SCENE_TYPE_NONE = 0, //无效  
         SCENE_TYPE_HOME = 1, //主城  
-        SCENE_TYPE_ARENA = 2, //竞技场  
-        SCENE_TYPE_GUILD = 3, //公会  
-        SCENE_TYPE_MASTER_INSTANCING = 4, //主线副本  
-        SCENE_TYPE_BRANCH_INSTANCING = 5, //支线副本  
-        SCENE_TYPE_MAX = 6, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
+        SCENE_TYPE_MELEE = 2, //乱斗场  
+        SCENE_TYPE_ARENA = 3, //竞技场  
+        SCENE_TYPE_GUILD = 4, //公会  
+        SCENE_TYPE_MASTER_INSTANCING = 5, //主线副本  
+        SCENE_TYPE_BRANCH_INSTANCING = 6, //支线副本  
+        SCENE_TYPE_MAX = 7, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
     }; 
  
     public enum SCENE_STATUS : ushort 

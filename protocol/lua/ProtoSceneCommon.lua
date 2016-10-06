@@ -1,11 +1,12 @@
  
 Proto4z.SCENE_TYPE_NONE = 0--无效 
 Proto4z.SCENE_TYPE_HOME = 1--主城 
-Proto4z.SCENE_TYPE_ARENA = 2--竞技场 
-Proto4z.SCENE_TYPE_GUILD = 3--公会 
-Proto4z.SCENE_TYPE_MASTER_INSTANCING = 4--主线副本 
-Proto4z.SCENE_TYPE_BRANCH_INSTANCING = 5--支线副本 
-Proto4z.SCENE_TYPE_MAX = 6--最大类型数值. 扩展类型在该枚举之前插入新类型. 
+Proto4z.SCENE_TYPE_MELEE = 2--乱斗场 
+Proto4z.SCENE_TYPE_ARENA = 3--竞技场 
+Proto4z.SCENE_TYPE_GUILD = 4--公会 
+Proto4z.SCENE_TYPE_MASTER_INSTANCING = 5--主线副本 
+Proto4z.SCENE_TYPE_BRANCH_INSTANCING = 6--支线副本 
+Proto4z.SCENE_TYPE_MAX = 7--最大类型数值. 扩展类型在该枚举之前插入新类型. 
  
 Proto4z.SCENE_STATUS_NONE = 0--不存在 
 Proto4z.SCENE_STATUS_MATCHING = 1--匹配中 

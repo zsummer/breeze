@@ -18,6 +18,7 @@
     <enum type="ui16" name="SCENE_TYPE" desc="scene类型" >
         <member name="SCENE_TYPE_NONE" value="0"   desc="无效"/>
         <member name="SCENE_TYPE_HOME"   desc="主城"/>
+        <member name="SCENE_TYPE_MELEE" desc="乱斗场"/>
         <member name="SCENE_TYPE_ARENA" desc="竞技场"/>
         <member name="SCENE_TYPE_GUILD" desc="公会"/>
         <member name="SCENE_TYPE_MASTER_INSTANCING"  desc="主线副本"/>

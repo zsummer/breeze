@@ -45,7 +45,6 @@ struct SceneLineInfo
 };
 using SceneLineInfoPtr = std::shared_ptr<SceneLineInfo>;
 
-
 using SceneGroupInfoPtr = std::shared_ptr<SceneGroupInfo>;
 using SceneGroupInfoPool = std::list<SceneGroupInfoPtr>;
 
@@ -101,11 +100,6 @@ private:
 
 
 
-    /*
-    void event_onApplyForSceneServerReq(AreaID areaID, const ApplyForSceneServerReq & rs);
-    void event_onCancelSceneReq(ServiceID avatarID);*/
-
-
 private:
 	//客户端通讯处理 
 	void event_onSceneLinked(TcpSessionPtr session);
@@ -117,6 +111,9 @@ private:
 
 public:
     SceneLineInfoPtr getLineInfo(LineID lineID);
+    SceneLineInfoPtr pickHomeLineNode(double step, double autoAdd);
+    SceneLineInfoPtr pickOtherLineNode(double step, double autoAdd);
+
 private:
     std::map<AreaID, std::map<ServiceType, SceneDockerInfo> > _services; //只记录singleton的service   
 	std::map<LineID, SceneLineInfoPtr> _lines;
@@ -138,6 +135,9 @@ private:
     std::vector<SceneGroupInfoPool> _matchPools;
     TimerID _matchTimerID = InvalidTimerID;
     void onMatchTimer();
+    void onMatchHomeTimer();
+    void onMatchMeleeTimer();
+    void onMatchArenaTimer();
 };
 
 
