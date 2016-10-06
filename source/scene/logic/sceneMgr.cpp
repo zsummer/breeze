@@ -38,12 +38,12 @@ bool SceneMgr::init(const std::string & configName, ui32 serverID)
 bool SceneMgr::loadScenes()
 {
     _scenes.clear();
-    LineID lastID = ServerConfig::getRef().getSceneConfig()._lineID;
-    lastID *= 1000;
-    for (int i=0; i<1000; i++)
+    SceneID lastID = ServerConfig::getRef().getSceneConfig()._lineID * 1000;
+    for (int i=0; i<50; i++)
     {
         lastID++;
         _scenes.insert(std::make_pair(lastID, std::make_shared<Scene>(lastID)));
+        _frees.insert(std::make_pair(lastID, std::make_shared<Scene>(lastID)));
     }
     onTimer();
     return true;
@@ -266,6 +266,19 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
     {
         session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
+    }
+    else if (rsShell.getProtoID() == SceneServerEnterSceneIns::getProtoID())
+    {
+        if (_frees.empty() || !_frees.begin()->second)
+        {
+            //!error 
+            return;
+        }
+        auto scenePtr = _frees.begin()->second;
+        _frees.erase(_frees.begin());
+
+
+
     }
 //     else if (rsShell.getProtoID() == FillUserToSceneReq::getProtoID())
 //     {
