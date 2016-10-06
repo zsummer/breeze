@@ -13,7 +13,6 @@ Proto4z.SCENE_STATUS_CHOISE = 2--选择英雄
 Proto4z.SCENE_STATUS_ALLOCATE = 3--服务器分配场景中 
 Proto4z.SCENE_STATUS_WAIT = 4--等待玩家加入战场 
 Proto4z.SCENE_STATUS_ACTIVE = 5--战斗中 
-Proto4z.SCENE_STATUS_LINGER = 6--战斗结束,数据驻留阶段 
  
 Proto4z.register(10000,"SceneGroupAvatarInfo") 
 Proto4z.SceneGroupAvatarInfo = {}  
@@ -30,6 +29,12 @@ Proto4z.SceneGroupAvatarInfoArray.__protoName = "SceneGroupAvatarInfoArray"
 Proto4z.SceneGroupAvatarInfoArray.__protoDesc = "array" 
 Proto4z.SceneGroupAvatarInfoArray.__protoTypeV = "SceneGroupAvatarInfo" 
  
+Proto4z.SceneGroupAvatarInfoMap = {}  
+Proto4z.SceneGroupAvatarInfoMap.__protoName = "SceneGroupAvatarInfoMap" 
+Proto4z.SceneGroupAvatarInfoMap.__protoDesc = "map" 
+Proto4z.SceneGroupAvatarInfoMap.__protoTypeK = "ui64" 
+Proto4z.SceneGroupAvatarInfoMap.__protoTypeV = "SceneGroupAvatarInfo" 
+ 
 Proto4z.register(10001,"SceneGroupInfo") 
 Proto4z.SceneGroupInfo = {} --编队数据 
 Proto4z.SceneGroupInfo.__protoID = 10001 
@@ -42,13 +47,19 @@ Proto4z.SceneGroupInfo[5] = {name="lineID", type="ui64" } --分线ID
 Proto4z.SceneGroupInfo[6] = {name="sceneID", type="ui64" } --场景实例ID 
 Proto4z.SceneGroupInfo[7] = {name="host", type="string" } --服务器host 
 Proto4z.SceneGroupInfo[8] = {name="port", type="ui16" } --服务器port 
-Proto4z.SceneGroupInfo[9] = {name="members", type="SceneGroupAvatarInfoArray" } --队友数据 
-Proto4z.SceneGroupInfo[10] = {name="invitees", type="AvatarIDArray" } --邀请列表, 如果需要丰富该功能可扩展类型信息 
+Proto4z.SceneGroupInfo[9] = {name="members", type="SceneGroupAvatarInfoMap" } --队友数据 
+Proto4z.SceneGroupInfo[10] = {name="invitees", type="ServiceIDMap" } --邀请列表, 如果需要丰富该功能可扩展类型信息 
  
 Proto4z.SceneGroupInfoArray = {}  
 Proto4z.SceneGroupInfoArray.__protoName = "SceneGroupInfoArray" 
 Proto4z.SceneGroupInfoArray.__protoDesc = "array" 
 Proto4z.SceneGroupInfoArray.__protoTypeV = "SceneGroupInfo" 
+ 
+Proto4z.SceneGroupInfoMap = {}  
+Proto4z.SceneGroupInfoMap.__protoName = "SceneGroupInfoMap" 
+Proto4z.SceneGroupInfoMap.__protoDesc = "map" 
+Proto4z.SceneGroupInfoMap.__protoTypeK = "ui64" 
+Proto4z.SceneGroupInfoMap.__protoTypeV = "SceneGroupInfo" 
  
 Proto4z.EntityIDArray = {}  
 Proto4z.EntityIDArray.__protoName = "EntityIDArray" 

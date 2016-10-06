@@ -22,7 +22,6 @@ enum SCENE_STATUS : unsigned short
     SCENE_STATUS_ALLOCATE = 3, //服务器分配场景中  
     SCENE_STATUS_WAIT = 4, //等待玩家加入战场  
     SCENE_STATUS_ACTIVE = 5, //战斗中  
-    SCENE_STATUS_LINGER = 6, //战斗结束,数据驻留阶段  
 }; 
  
 struct SceneGroupAvatarInfo 
@@ -81,6 +80,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 typedef std::vector<SceneGroupAvatarInfo> SceneGroupAvatarInfoArray;  
  
+ 
+typedef std::map<unsigned long long, SceneGroupAvatarInfo> SceneGroupAvatarInfoMap;  
+ 
 struct SceneGroupInfo //编队数据  
 { 
     static const unsigned short getProtoID() { return 10001;} 
@@ -93,8 +95,8 @@ struct SceneGroupInfo //编队数据
     unsigned long long sceneID; //场景实例ID  
     std::string host; //服务器host  
     unsigned short port; //服务器port  
-    SceneGroupAvatarInfoArray members; //队友数据  
-    AvatarIDArray invitees; //邀请列表, 如果需要丰富该功能可扩展类型信息  
+    SceneGroupAvatarInfoMap members; //队友数据  
+    ServiceIDMap invitees; //邀请列表, 如果需要丰富该功能可扩展类型信息  
     SceneGroupInfo() 
     { 
         groupID = 0; 
@@ -105,7 +107,7 @@ struct SceneGroupInfo //编队数据
         sceneID = 0; 
         port = 0; 
     } 
-    SceneGroupInfo(const unsigned long long & groupID, const unsigned short & sceneType, const unsigned short & sceneStatus, const unsigned long long & mapID, const unsigned long long & lineID, const unsigned long long & sceneID, const std::string & host, const unsigned short & port, const SceneGroupAvatarInfoArray & members, const AvatarIDArray & invitees) 
+    SceneGroupInfo(const unsigned long long & groupID, const unsigned short & sceneType, const unsigned short & sceneStatus, const unsigned long long & mapID, const unsigned long long & lineID, const unsigned long long & sceneID, const std::string & host, const unsigned short & port, const SceneGroupAvatarInfoMap & members, const ServiceIDMap & invitees) 
     { 
         this->groupID = groupID; 
         this->sceneType = sceneType; 
@@ -166,6 +168,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
  
 typedef std::vector<SceneGroupInfo> SceneGroupInfoArray;  
+ 
+ 
+typedef std::map<unsigned long long, SceneGroupInfo> SceneGroupInfoMap;  
  
  
 typedef std::vector<unsigned long long> EntityIDArray;  

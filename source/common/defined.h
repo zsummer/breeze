@@ -144,7 +144,7 @@ typedef ui64 SceneID;
 const SceneID InvalidSceneID = 0;
 
 typedef ui64 MapID;
-const MapID InvalidMapiD = 0;
+const MapID InvalidMapID = 0;
 
 //实体ID 标识场景中的实体对象 例如怪物 玩家 飞行道具  
 typedef ui64 EntityID;

@@ -33,7 +33,6 @@
         <member name="SCENE_STATUS_ALLOCATE" desc="服务器分配场景中" />        
         <member name="SCENE_STATUS_WAIT"  desc="等待玩家加入战场" />
         <member name="SCENE_STATUS_ACTIVE" desc="战斗中" />
-        <member name="SCENE_STATUS_LINGER" desc="战斗结束,数据驻留阶段" />
     </enum>
 
 
@@ -46,6 +45,7 @@
         <member name="token" type="string"  desc="scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开."/>
     </struct>
     <array name="SceneGroupAvatarInfoArray" type="SceneGroupAvatarInfo" desc="" />
+    <map name="SceneGroupAvatarInfoMap"  key="ui64" value="SceneGroupAvatarInfo" desc="" />
 
     <packet name="SceneGroupInfo" desc= "编队数据">
         <member name="groupID" type="ui64"  desc=""/>
@@ -56,10 +56,11 @@
         <member name="sceneID" type="ui64"  desc="场景实例ID"/>
         <member name="host" type="string"  desc="服务器host"/>
         <member name="port" type="ui16"  desc="服务器port"/>
-        <member name="members" type="SceneGroupAvatarInfoArray"  desc="队友数据"/>
-        <member name="invitees" type="AvatarIDArray" desc="邀请列表, 如果需要丰富该功能可扩展类型信息" />
+        <member name="members" type="SceneGroupAvatarInfoMap"  desc="队友数据"/>
+        <member name="invitees" type="ServiceIDMap" desc="邀请列表, 如果需要丰富该功能可扩展类型信息" />
     </packet>
     <array name="SceneGroupInfoArray" type="SceneGroupInfo" desc="" />
+    <map name="SceneGroupInfoMap" key="ui64" value="SceneGroupInfo" desc="" />
 
 
 

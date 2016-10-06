@@ -21,7 +21,6 @@ namespace Proto4z
         SCENE_STATUS_ALLOCATE = 3, //服务器分配场景中  
         SCENE_STATUS_WAIT = 4, //等待玩家加入战场  
         SCENE_STATUS_ACTIVE = 5, //战斗中  
-        SCENE_STATUS_LINGER = 6, //战斗结束,数据驻留阶段  
     }; 
  
     public class SceneGroupAvatarInfo: Proto4z.IProtoObject 
@@ -108,6 +107,39 @@ namespace Proto4z
         } 
     } 
  
+ 
+    public class SceneGroupAvatarInfoMap : System.Collections.Generic.Dictionary<ulong, SceneGroupAvatarInfo>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            foreach(var kv in this) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
+                ret.AddRange(kv.Value.__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+                    var val = new SceneGroupAvatarInfo(); 
+                    val.__decode(binData, ref pos); 
+                    this.Add(key, val); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
     public class SceneGroupInfo: Proto4z.IProtoObject //编队数据  
     {     
         //proto id   
@@ -123,8 +155,8 @@ namespace Proto4z
         public ulong sceneID; //场景实例ID  
         public string host; //服务器host  
         public ushort port; //服务器port  
-        public SceneGroupAvatarInfoArray members; //队友数据  
-        public AvatarIDArray invitees; //邀请列表, 如果需要丰富该功能可扩展类型信息  
+        public SceneGroupAvatarInfoMap members; //队友数据  
+        public ServiceIDMap invitees; //邀请列表, 如果需要丰富该功能可扩展类型信息  
         public SceneGroupInfo()  
         { 
             groupID = 0;  
@@ -135,10 +167,10 @@ namespace Proto4z
             sceneID = 0;  
             host = "";  
             port = 0;  
-            members = new SceneGroupAvatarInfoArray();  
-            invitees = new AvatarIDArray();  
+            members = new SceneGroupAvatarInfoMap();  
+            invitees = new ServiceIDMap();  
         } 
-        public SceneGroupInfo(ulong groupID, ushort sceneType, ushort sceneStatus, ulong mapID, ulong lineID, ulong sceneID, string host, ushort port, SceneGroupAvatarInfoArray members, AvatarIDArray invitees) 
+        public SceneGroupInfo(ulong groupID, ushort sceneType, ushort sceneStatus, ulong mapID, ulong lineID, ulong sceneID, string host, ushort port, SceneGroupAvatarInfoMap members, ServiceIDMap invitees) 
         { 
             this.groupID = groupID; 
             this.sceneType = sceneType; 
@@ -162,9 +194,9 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.host)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.port)); 
-            if (this.members == null) this.members = new SceneGroupAvatarInfoArray(); 
+            if (this.members == null) this.members = new SceneGroupAvatarInfoMap(); 
             data.AddRange(this.members.__encode()); 
-            if (this.invitees == null) this.invitees = new AvatarIDArray(); 
+            if (this.invitees == null) this.invitees = new ServiceIDMap(); 
             data.AddRange(this.invitees.__encode()); 
             return data; 
         } 
@@ -178,9 +210,9 @@ namespace Proto4z
             this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.host = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.port = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.members = new SceneGroupAvatarInfoArray(); 
+            this.members = new SceneGroupAvatarInfoMap(); 
             this.members.__decode(binData, ref pos); 
-            this.invitees = new AvatarIDArray(); 
+            this.invitees = new ServiceIDMap(); 
             this.invitees.__decode(binData, ref pos); 
             return pos; 
         } 
@@ -211,6 +243,39 @@ namespace Proto4z
                     var data = new SceneGroupInfo(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class SceneGroupInfoMap : System.Collections.Generic.Dictionary<ulong, SceneGroupInfo>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            foreach(var kv in this) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
+                ret.AddRange(kv.Value.__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+                    var val = new SceneGroupInfo(); 
+                    val.__decode(binData, ref pos); 
+                    this.Add(key, val); 
                 } 
             } 
             return pos; 

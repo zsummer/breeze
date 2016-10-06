@@ -67,7 +67,8 @@
 
 
     <!------------- 用户ID数组 ---------------------->
-    <array name="AvatarIDArray" type="ui64" desc="" />
+    <array name="ServiceIDArray" type="ui64" desc="" />
+    <map name="ServiceIDMap" key="ui64" value="ui64" desc="" />
 
 
     <!------------- 用户预览信息 ---------------------->

@@ -168,7 +168,10 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 } 
  
  
-typedef std::vector<unsigned long long> AvatarIDArray;  
+typedef std::vector<unsigned long long> ServiceIDArray;  
+ 
+ 
+typedef std::map<unsigned long long, unsigned long long> ServiceIDMap;  
  
 struct AvatarPreview //用户预览信息  
 { 

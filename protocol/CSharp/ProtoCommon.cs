@@ -156,7 +156,7 @@ namespace Proto4z
     } 
  
  
-    public class AvatarIDArray : System.Collections.Generic.List<ulong>, Proto4z.IProtoObject  
+    public class ServiceIDArray : System.Collections.Generic.List<ulong>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -178,6 +178,38 @@ namespace Proto4z
                 for (int i=0; i<len; i++) 
                 { 
                     this.Add(Proto4z.BaseProtoObject.decodeUI64(binData, ref pos)); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class ServiceIDMap : System.Collections.Generic.Dictionary<ulong, ulong>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            foreach(var kv in this) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Value)); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+                    var val = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+                    this.Add(key, val); 
                 } 
             } 
             return pos; 

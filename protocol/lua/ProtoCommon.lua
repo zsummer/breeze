@@ -44,10 +44,16 @@ Proto4z.Tracing.__protoName = "Tracing"
 Proto4z.Tracing[1] = {name="routing", type="Routing" } --路由信息 
 Proto4z.Tracing[2] = {name="oob", type="OutOfBand" } --来自客户端的带外信息 
  
-Proto4z.AvatarIDArray = {}  
-Proto4z.AvatarIDArray.__protoName = "AvatarIDArray" 
-Proto4z.AvatarIDArray.__protoDesc = "array" 
-Proto4z.AvatarIDArray.__protoTypeV = "ui64" 
+Proto4z.ServiceIDArray = {}  
+Proto4z.ServiceIDArray.__protoName = "ServiceIDArray" 
+Proto4z.ServiceIDArray.__protoDesc = "array" 
+Proto4z.ServiceIDArray.__protoTypeV = "ui64" 
+ 
+Proto4z.ServiceIDMap = {}  
+Proto4z.ServiceIDMap.__protoName = "ServiceIDMap" 
+Proto4z.ServiceIDMap.__protoDesc = "map" 
+Proto4z.ServiceIDMap.__protoTypeK = "ui64" 
+Proto4z.ServiceIDMap.__protoTypeV = "ui64" 
  
 Proto4z.register(1003,"AvatarPreview") 
 Proto4z.AvatarPreview = {} --用户预览信息 

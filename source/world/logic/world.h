@@ -29,21 +29,21 @@
 #include <ProtoSceneServer.h>
 #include <rvo2/RVO.h>
 
-struct ServiceSessionStatus
+struct SceneDockerInfo
 {
 	SessionID sessionID = InvalidSessionID;
     unsigned long long areaID = InvalidAreaID;
     ServiceType serviceType = InvalidServiceID; //all is singleton
 };
-using ServiceSessionStatusPtr = std::shared_ptr<ServiceSessionStatus>;
+using SceneDockerInfoPtr = std::shared_ptr<SceneDockerInfo>;
 
 
-struct SceneSessionStatus
+struct SceneLineInfo
 {
     SessionID sessionID = InvalidSessionID;
     SceneKnock knock;
 };
-using SceneSessionStatusPtr = std::shared_ptr<SceneSessionStatus>;
+using SceneLineInfoPtr = std::shared_ptr<SceneLineInfo>;
 
 
 using SceneGroupInfoPtr = std::shared_ptr<SceneGroupInfo>;
@@ -60,20 +60,11 @@ public:
 	void forceStop();
 	void onShutdown();
 	bool run();
-
-
 public:
 	bool isStopping();
-
-
 private:
-	//内部接口 
-	//打开监听端口,新连接 
 	bool startDockerListen();
 	bool startSceneListen();
-
-
-
 public:
 	void sendViaSessionID(SessionID sessionID, const char * block, unsigned int len);
 	template<class Proto>
@@ -98,14 +89,12 @@ private:
 	void event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 	void event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs);
 
-    void onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & trace, SceneServerJoinGroupIns & req);
     void onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & req);
     void onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trace, SceneGroupGetStatusReq & req);
     void onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & trace, SceneGroupEnterSceneReq & req);
     void onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCancelEnterReq & req);
 
-    void onSceneGroupCreateReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCreateReq & req);
-    void onSceneGroupJoinReq(TcpSessionPtr session, const Tracing & trace, SceneGroupJoinReq & req);
+    void onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & trace, SceneServerJoinGroupIns & req);
     void onSceneGroupInviteReq(TcpSessionPtr session, const Tracing & trace, SceneGroupInviteReq & req);
     void onSceneGroupRejectReq(TcpSessionPtr session, const Tracing & trace, SceneGroupRejectReq & req);
     void onSceneGroupLeaveReq(TcpSessionPtr session, const Tracing & trace, SceneGroupLeaveReq & req);
@@ -126,21 +115,24 @@ private:
 
 
 
+public:
+    SceneLineInfoPtr getLineInfo(LineID lineID);
 private:
+    std::map<AreaID, std::map<ServiceType, SceneDockerInfo> > _services; //只记录singleton的service   
+	std::map<LineID, SceneLineInfoPtr> _lines;
     Balance<LineID> _homeBalance;
     Balance<LineID> _otherBalance;
-private:
-    std::map<AreaID, std::map<ServiceType, ServiceSessionStatus> > _services; //只记录singleton的service   
-	std::map<LineID, SceneSessionStatus> _lines;
     AccepterID _dockerListen = InvalidAccepterID;
     AccepterID _sceneListen = InvalidAccepterID;
 
 public:
     SceneGroupInfoPtr getGroupInfoByAvatarID(ServiceID serviceID);
     SceneGroupInfoPtr getGroupInfo(GroupID groupID);
+    void pushGroupInfoToClient(SceneGroupInfoPtr);
 private:
 	std::map<ServiceID, GroupID> _avatars;
     std::map<GroupID, SceneGroupInfoPtr> _groups;
+    GroupID _lastGroupID = InvalidGroupID;
 
 private:
     std::vector<SceneGroupInfoPool> _matchPools;
