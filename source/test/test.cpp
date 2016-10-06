@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 #else
     //system("chcp 65001");
 #endif
-    srand(time(NULL));
+    srand((ui32)time(NULL));
 
     ILog4zManager::getPtr()->start();
     SessionManager::getRef().start();

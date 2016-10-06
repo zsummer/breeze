@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 //    signal(SIGINT, &sigFun);
 //    signal(SIGTERM, &sigFun);
 
-    srand(time(NULL));
+    srand((ui32)time(NULL));
     ILog4zManager::getPtr()->config("../log.cfg");
     ILog4zManager::getPtr()->start();
     ILog4zManager::getRef().setLoggerFileLine(LOG4Z_MAIN_LOGGER_ID, false);

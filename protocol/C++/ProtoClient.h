@@ -111,33 +111,33 @@ struct CreateAvatarReq //创角色请求
     static const unsigned short getProtoID() { return 40003;} 
     static const std::string getProtoName() { return "CreateAvatarReq";} 
     std::string accountName; //这个字段会被服务器填充.客户端可以不填写  
-    std::string userName;  
+    std::string avatarName;  
     CreateAvatarReq() 
     { 
     } 
-    CreateAvatarReq(const std::string & accountName, const std::string & userName) 
+    CreateAvatarReq(const std::string & accountName, const std::string & avatarName) 
     { 
         this->accountName = accountName; 
-        this->userName = userName; 
+        this->avatarName = avatarName; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const CreateAvatarReq & data) 
 { 
     ws << data.accountName;  
-    ws << data.userName;  
+    ws << data.avatarName;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, CreateAvatarReq & data) 
 { 
     rs >> data.accountName;  
-    rs >> data.userName;  
+    rs >> data.avatarName;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const CreateAvatarReq & info) 
 { 
     stm << "[\n"; 
     stm << "accountName=" << info.accountName << "\n"; 
-    stm << "userName=" << info.userName << "\n"; 
+    stm << "avatarName=" << info.avatarName << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

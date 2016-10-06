@@ -180,7 +180,7 @@ void AvatarMgrService::onLoadAvatarPreviewsFromDB(zsummer::proto4z::ReadStream &
         up.fetchFromDBResult(result);
 
         if (_userStatusByID.find(up.avatarID) != _userStatusByID.end()
-            || _userStatusByName.find(up.userName) != _userStatusByName.end())
+            || _userStatusByName.find(up.avatarName) != _userStatusByName.end())
         {
             LOGA("onLoadAvatarPreviewsFromDB . errCode=" << resp.retCode << ", resp.result.qc=" << resp.result.qc
                 << ", sql msg=" << resp.result.errMsg
@@ -215,14 +215,14 @@ void AvatarMgrService::updateAvatarPreview(const AvatarPreview & pre)
             usp->_status = SS_NONE;
             usp->_preview = pre;
             _userStatusByID[pre.avatarID] = usp;
-            _userStatusByName[pre.userName] = usp;
+            _userStatusByName[pre.avatarName] = usp;
         }
         else
         {
             usp = founder->second;
             usp->_preview = pre;
         }
-        _userStatusByName[pre.userName] = usp;
+        _userStatusByName[pre.avatarName] = usp;
     }
     if (true)
     {
@@ -342,7 +342,7 @@ void AvatarMgrService::onCreateAvatarReq(const Tracing & trace, zsummer::proto4z
         return;
     }
 
-    if (_userStatusByName.find(req.userName) != _userStatusByName.end())
+    if (_userStatusByName.find(req.avatarName) != _userStatusByName.end())
     {
         resp.retCode = EC_AVATAR_NAME_CONFLICT;
         LOGE("onCreateAvatarReq error. EC_AVATAR_NAME_CONFLICT trace =" << trace << ", req=" << req);
@@ -353,7 +353,7 @@ void AvatarMgrService::onCreateAvatarReq(const Tracing & trace, zsummer::proto4z
     AvatarBaseInfo userBaseInfo;
     userBaseInfo.account = req.accountName;
     userBaseInfo.avatarID = ++_nextAvatarID;
-    userBaseInfo.userName = req.userName;
+    userBaseInfo.avatarName = req.avatarName;
     userBaseInfo.level = 1;
     userBaseInfo.iconID = 0;
 
@@ -380,7 +380,7 @@ void AvatarMgrService::onCreateAvatarReqFromDB(zsummer::proto4z::ReadStream & rs
     }
     if (resp.retCode == EC_SUCCESS)
     {
-        AvatarPreview up(ubi.avatarID, ubi.userName, ubi.account, ubi.iconID, ubi.modeID, ubi.level);
+        AvatarPreview up(ubi.avatarID, ubi.avatarName, ubi.account, ubi.iconID, ubi.modeID, ubi.level);
         updateAvatarPreview(up);
         for (const auto & kv : _accountStatus[ubi.account]._players)
         {
@@ -428,7 +428,7 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
         status._status = SS_INITING;
         status._clientDockerID = trace.oob.clientDockerID;
         status._clientSessionID = trace.oob.clientSessionID;
-        LoadService notice(STAvatar, req.avatarID, status._preview.userName, status._clientDockerID, status._clientSessionID);
+        LoadService notice(STAvatar, req.avatarID, status._preview.avatarName, status._clientDockerID, status._clientSessionID);
         Docker::getRef().sendViaDockerID(dockerID, notice);
     }
     else if(status._status == SS_WORKING)

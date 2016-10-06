@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>811446125b10303ffae83069872de61e</cppmd5> 
-<luamd5>5e4e7a090ac941bf4d4b9431125ee8ac</luamd5> 
-<csharpmd5>8d4936d5e1b4ceccee24fe551221cf60</csharpmd5> 
-<xmlmd5>8647c9c2e2e7f82536237aa00ecaea7e</xmlmd5> 
+<cppmd5>5bcc6de21eb687f5f41220c03219ebd1</cppmd5> 
+<luamd5>f021b7e17166cc631a77e8d78b9ffef1</luamd5> 
+<csharpmd5>8dc6f174027aae50f408426b02459052</csharpmd5> 
+<xmlmd5>0f4041e4e92c223e146c1d58ab8758d9</xmlmd5> 
 <cacheNumber>
     <cache key = "AttachAvatarReq" Number = "40005" /> 
     <cache key = "AttachAvatarResp" Number = "40006" /> 

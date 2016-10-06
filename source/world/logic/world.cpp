@@ -510,7 +510,7 @@ void World::onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & re
         {
             if (kv.second.baseInfo.avatarID == trace.oob.clientAvatarID)
             {
-                resp.sourceName = kv.second.baseInfo.userName;
+                resp.sourceName = kv.second.baseInfo.avatarName;
                 break;
             }
         }
@@ -519,7 +519,7 @@ void World::onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & re
             if (kv.second.baseInfo.avatarID == trace.oob.clientAvatarID)
             {
                 resp.targetID = kv.second.baseInfo.avatarID;
-                resp.targetName = kv.second.baseInfo.userName;
+                resp.targetName = kv.second.baseInfo.avatarName;
                 toService(kv.second.areaID, STAvatarMgr, STAvatar, resp.targetID, resp);
             }
         }
@@ -550,7 +550,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     avatar.baseInfo = req.baseInfo;
     avatar.props = req.props;
     avatar.powerType = 1; //leader
-    avatar.token = toMD5(avatar.baseInfo.userName + toString(rand()));
+    avatar.token = toMD5(avatar.baseInfo.avatarName + toString(rand()));
 
     
 
@@ -572,7 +572,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         avatar.baseInfo = req.baseInfo;
         avatar.props = req.props;
         avatar.powerType = 1; //leader
-        avatar.token = toMD5(avatar.baseInfo.userName + toString(rand()));
+        avatar.token = toMD5(avatar.baseInfo.avatarName + toString(rand()));
         group.members.insert(std::make_pair(avatar.baseInfo.avatarID,avatar));
         ack.newGroupID = group.groupID;
         backToService(session->getSessionID(), trace, ack);
@@ -751,7 +751,7 @@ void World::onSceneGroupInviteReq(TcpSessionPtr session, const Tracing & trace, 
         return;
     }
     groupPtr->invitees[req.avatarID] = 0;
-    backToService(session->getSessionID(), trace, SceneGroupInviteNotice(found->second.baseInfo.avatarID, found->second.baseInfo.userName, groupPtr->groupID));
+    backToService(session->getSessionID(), trace, SceneGroupInviteNotice(found->second.baseInfo.avatarID, found->second.baseInfo.avatarName, groupPtr->groupID));
     pushGroupInfoToClient(groupPtr);
 }
 

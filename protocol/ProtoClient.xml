@@ -24,7 +24,7 @@
 
     <packet name="CreateAvatarReq" desc= "创角色请求">
         <member name="accountName" type="string"   desc="这个字段会被服务器填充.客户端可以不填写"/>
-        <member name="userName" type="string"   desc=""/>
+        <member name="avatarName" type="string"   desc=""/>
     </packet>
      <packet name="CreateAvatarResp" desc= "创角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>

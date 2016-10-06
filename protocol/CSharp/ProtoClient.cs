@@ -111,28 +111,28 @@ namespace Proto4z
         static public string getProtoName() { return "CreateAvatarReq"; } 
         //members   
         public string accountName; //这个字段会被服务器填充.客户端可以不填写  
-        public string userName;  
+        public string avatarName;  
         public CreateAvatarReq()  
         { 
             accountName = "";  
-            userName = "";  
+            avatarName = "";  
         } 
-        public CreateAvatarReq(string accountName, string userName) 
+        public CreateAvatarReq(string accountName, string avatarName) 
         { 
             this.accountName = accountName; 
-            this.userName = userName; 
+            this.avatarName = avatarName; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.accountName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.accountName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 

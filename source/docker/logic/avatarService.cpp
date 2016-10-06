@@ -75,7 +75,7 @@ bool AvatarService::onLoad()
 {
     AvatarBaseInfo ubi;
     ubi.avatarID = getServiceID();
-    ubi.userName = getServiceName();
+    ubi.avatarName = getServiceName();
     _baseInfo.loadFromDB(shared_from_this(), ubi, std::bind(&AvatarService::onModuleLoad, std::static_pointer_cast<AvatarService>(shared_from_this()), _1, _2));
     return true;
 }

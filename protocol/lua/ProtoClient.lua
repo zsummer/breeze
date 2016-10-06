@@ -25,7 +25,7 @@ Proto4z.CreateAvatarReq = {} --创角色请求
 Proto4z.CreateAvatarReq.__protoID = 40003 
 Proto4z.CreateAvatarReq.__protoName = "CreateAvatarReq" 
 Proto4z.CreateAvatarReq[1] = {name="accountName", type="string" } --这个字段会被服务器填充.客户端可以不填写 
-Proto4z.CreateAvatarReq[2] = {name="userName", type="string" }  
+Proto4z.CreateAvatarReq[2] = {name="avatarName", type="string" }  
  
 Proto4z.register(40004,"CreateAvatarResp") 
 Proto4z.CreateAvatarResp = {} --创角色请求返回 
