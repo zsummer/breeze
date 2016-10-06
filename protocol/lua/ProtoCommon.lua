@@ -60,7 +60,7 @@ Proto4z.AvatarPreview = {} --用户预览信息
 Proto4z.AvatarPreview.__protoID = 1003 
 Proto4z.AvatarPreview.__protoName = "AvatarPreview" 
 Proto4z.AvatarPreview[1] = {name="avatarID", type="ui64" } --用户唯一ID, 对应AvatarService的ServiceID 
-Proto4z.AvatarPreview[2] = {name="userName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
+Proto4z.AvatarPreview[2] = {name="avatarName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
 Proto4z.AvatarPreview[3] = {name="account", type="string" } --帐号 
 Proto4z.AvatarPreview[4] = {name="iconID", type="i32" } --头像 
 Proto4z.AvatarPreview[5] = {name="modeID", type="i32" } --模型 
@@ -76,7 +76,7 @@ Proto4z.AvatarBaseInfo = {} --用户基础数据
 Proto4z.AvatarBaseInfo.__protoID = 1004 
 Proto4z.AvatarBaseInfo.__protoName = "AvatarBaseInfo" 
 Proto4z.AvatarBaseInfo[1] = {name="avatarID", type="ui64" } --用户唯一ID, 对应AvatarService的ServiceID 
-Proto4z.AvatarBaseInfo[2] = {name="userName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
+Proto4z.AvatarBaseInfo[2] = {name="avatarName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
 Proto4z.AvatarBaseInfo[3] = {name="account", type="string" } --帐号 
 Proto4z.AvatarBaseInfo[4] = {name="iconID", type="i32" } --头像 
 Proto4z.AvatarBaseInfo[5] = {name="modeID", type="i32" } --模型 

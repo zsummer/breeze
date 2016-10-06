@@ -74,7 +74,7 @@
     <!------------- 用户预览信息 ---------------------->
     <packet name="AvatarPreview" store="MyISAM" desc="用户预览信息">
         <member name="avatarID" type="ui64"  tag="key" desc="用户唯一ID, 对应AvatarService的ServiceID"/>
-        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
+        <member name="avatarName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i32" desc="头像"/>
         <member name="modeID"  type="i32" desc="模型"/>
@@ -87,7 +87,7 @@
     <!------------- 用户基础信息 ---------------------->
     <packet name="AvatarBaseInfo" store="MyISAM" desc="用户基础数据">
         <member name="avatarID" type="ui64"  tag="key" desc="用户唯一ID, 对应AvatarService的ServiceID"/>
-        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
+        <member name="avatarName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i32" desc="头像"/>
         <member name="modeID"  type="i32" desc="模型"/>

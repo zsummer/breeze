@@ -224,7 +224,7 @@ namespace Proto4z
         static public string getProtoName() { return "AvatarPreview"; } 
         //members   
         public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
-        public string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
+        public string avatarName; //用户唯一昵称, 对应AvatarService的ServiceName  
         public string account; //帐号  
         public int iconID; //头像  
         public int modeID; //模型  
@@ -232,16 +232,16 @@ namespace Proto4z
         public AvatarPreview()  
         { 
             avatarID = 0;  
-            userName = "";  
+            avatarName = "";  
             account = "";  
             iconID = 0;  
             modeID = 0;  
             level = 0;  
         } 
-        public AvatarPreview(ulong avatarID, string userName, string account, int iconID, int modeID, int level) 
+        public AvatarPreview(ulong avatarID, string avatarName, string account, int iconID, int modeID, int level) 
         { 
             this.avatarID = avatarID; 
-            this.userName = userName; 
+            this.avatarName = avatarName; 
             this.account = account; 
             this.iconID = iconID; 
             this.modeID = modeID; 
@@ -251,7 +251,7 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.modeID)); 
@@ -261,7 +261,7 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             this.modeID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
@@ -309,7 +309,7 @@ namespace Proto4z
         static public string getProtoName() { return "AvatarBaseInfo"; } 
         //members   
         public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
-        public string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
+        public string avatarName; //用户唯一昵称, 对应AvatarService的ServiceName  
         public string account; //帐号  
         public int iconID; //头像  
         public int modeID; //模型  
@@ -321,7 +321,7 @@ namespace Proto4z
         public AvatarBaseInfo()  
         { 
             avatarID = 0;  
-            userName = "";  
+            avatarName = "";  
             account = "";  
             iconID = 0;  
             modeID = 0;  
@@ -331,10 +331,10 @@ namespace Proto4z
             diamond = 0.0;  
             createTime = 0;  
         } 
-        public AvatarBaseInfo(ulong avatarID, string userName, string account, int iconID, int modeID, int level, double exp, double gold, double diamond, ulong createTime) 
+        public AvatarBaseInfo(ulong avatarID, string avatarName, string account, int iconID, int modeID, int level, double exp, double gold, double diamond, ulong createTime) 
         { 
             this.avatarID = avatarID; 
-            this.userName = userName; 
+            this.avatarName = avatarName; 
             this.account = account; 
             this.iconID = iconID; 
             this.modeID = modeID; 
@@ -348,7 +348,7 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.userName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.modeID)); 
@@ -362,7 +362,7 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.userName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
             this.modeID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
