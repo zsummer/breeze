@@ -67,7 +67,7 @@ private:
     void event_onWorldLinked(TcpSessionPtr session);
     void event_onWorldClosed(TcpSessionPtr session);
     void event_onWorldMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-
+    void onSceneServerEnterSceneIns(TcpSessionPtr   session, SceneServerEnterSceneIns & ins);
 private:
     //客户端通讯处理 
     void event_onClientLinked(TcpSessionPtr session);
@@ -76,9 +76,12 @@ private:
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
 private:
-    std::map<SceneID, ScenePtr> _scenes;
     std::map<SceneID, ScenePtr> _actives;
     std::map<SceneID, ScenePtr> _frees;
+
+    std::map<SceneID, ScenePtr> _scenes;
+    std::map<SceneID, ScenePtr> _homes;
+
 
     SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;

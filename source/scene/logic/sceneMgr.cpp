@@ -269,47 +269,31 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
     }
     else if (rsShell.getProtoID() == SceneServerEnterSceneIns::getProtoID())
     {
-        if (_frees.empty() || !_frees.begin()->second)
-        {
-            //!error 
-            return;
-        }
-        auto scenePtr = _frees.begin()->second;
-        _frees.erase(_frees.begin());
-
-
-
+        SceneServerEnterSceneIns ins;
+        rsShell >> ins;
+        onSceneServerEnterSceneIns(session, ins);
+        return;
     }
-//     else if (rsShell.getProtoID() == FillUserToSceneReq::getProtoID())
-//     {
-//         FillUserToSceneReq fn;
-//         rsShell >> fn;
-//         auto scene = getScene(fn.sceneID);
-//         if (!scene)
-//         {
-//             LOGE(", sceneID=" << fn.sceneID);
-//             return;
-//         }
-//         if (scene->getSceneStatus() == SCENE_STATUS_NONE)
-//         {
-//             if (!scene->loadScene((SCENE_TYPE)fn.sceneType))
-//             {
-//                 LOGE("");
-//                 return;
-//             }
-//         }
-//         else if (scene->getSceneStatus() == SCENE_STATUS_LINGER)
-//         {
-//             LOGE("");
-//             return;
-//         }
-//         scene->fillUserProp(fn);
-//         return;
-//     }
 
 }
 
+void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins)
+{
+    if (ins.sceneType == SCENE_TYPE_HOME)
+    {
 
+    }
+    if (_frees.empty() || !_frees.begin()->second)
+    {
+        //!error 
+        return;
+    }
+
+    auto scenePtr = _frees.begin()->second;
+    _frees.erase(_frees.begin());
+
+
+}
 
 
 
