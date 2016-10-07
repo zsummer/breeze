@@ -36,6 +36,7 @@ bool Scene::cleanScene()
     _lastEID = ServerConfig::getRef().getSceneConfig()._lineID * 1000 + 1000;
     _entitys.clear();
     _players.clear();
+    while (!_asyncs.empty()) _asyncs.pop();
     _sceneType = SCENE_TYPE_NONE;
     _sceneStatus = SCENE_STATUS_NONE;
     _lastStatusChangeTime = getFloatNowTime();

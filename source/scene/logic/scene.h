@@ -25,16 +25,16 @@ class Scene
 {
     //scene数据
 private:
+    SceneID _sceneID;
     SCENE_TYPE _sceneType;
     SCENE_STATUS _sceneStatus;
+    EntityID _lastEID;
     double _lastStatusChangeTime;
     double _startTime;
     double _endTime;
-
-    SceneID _sceneID;
-    EntityID _lastEID;
     std::map<EntityID, EntityPtr> _entitys;
     std::map<ServiceID, EntityPtr> _players;
+    std::queue<std::function<void()>> _asyncs;
 public:
     inline SceneID getSceneID() { return _sceneID; }
     inline SCENE_TYPE getSceneType() { return _sceneType; }

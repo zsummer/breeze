@@ -68,7 +68,7 @@ void SceneMgr::onTimer()
     }
     SessionManager::getRef().createTimer(33, std::bind(&SceneMgr::onTimer, this));
 
-    std::set<SceneID> frees;
+    std::list<ScenePtr> frees;
     for (auto kv : _actives)
     {
         try
@@ -76,7 +76,7 @@ void SceneMgr::onTimer()
             bool active = kv.second->onUpdate();
             if (!active)
             {
-                frees.insert(kv.first);
+                frees.push_back(kv.second);
                 //send report to world
                 SceneSectionNotice notice;
                 kv.second->getSceneSection(notice.section);
@@ -108,6 +108,16 @@ void SceneMgr::onTimer()
         {
             LOGE("...");
         }
+    }
+    for (auto scene : frees)
+    {
+        _frees.push(scene);
+        if (scene->getSceneType() == SCENE_TYPE_HOME)
+        {
+            _homes.erase(scene->getSceneID());
+        }
+        _actives.erase(scene->getSceneID());
+        scene->cleanScene();
     }
     return ;
 }
