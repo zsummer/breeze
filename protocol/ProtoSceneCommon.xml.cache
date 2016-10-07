@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>c056905b6ff5ac37a9060bb1d70e9a9a</cppmd5> 
-<luamd5>4c86cc59ed2b20492ad54781e354c1e5</luamd5> 
-<csharpmd5>2d1e40de4fb08b237086e929510dedce</csharpmd5> 
-<xmlmd5>802f3f8e956134ae7245f8be52abeed0</xmlmd5> 
+<cppmd5>907221074bdf809fb8bacefb47fd263f</cppmd5> 
+<luamd5>b073c6cebb37abee41e75020ac7ca36f</luamd5> 
+<csharpmd5>5b2ceb8cf27b9ac3c4d59f90f300384e</csharpmd5> 
+<xmlmd5>15e9d1371f9be7a3adcc84912dd2dd15</xmlmd5> 
 <cacheNumber>
     <cache key = "BuffData" Number = "10006" /> 
     <cache key = "BuffInfo" Number = "10009" /> 
     <cache key = "EPoint" Number = "10002" /> 
     <cache key = "EntityControl" Number = "10011" /> 
+    <cache key = "EntityFullData" Number = "10016" /> 
     <cache key = "EntityFullInfo" Number = "10013" /> 
     <cache key = "EntityInfo" Number = "10010" /> 
+    <cache key = "EntityMoveInfo" Number = "10014" /> 
+    <cache key = "EntityPoint" Number = "10015" /> 
     <cache key = "EntityReport" Number = "10012" /> 
     <cache key = "HarmData" Number = "10007" /> 
     <cache key = "SceneGroupAvatarInfo" Number = "10000" /> 
     <cache key = "SceneGroupInfo" Number = "10001" /> 
+    <cache key = "SceneSection" Number = "10017" /> 
     <cache key = "SearchInfo" Number = "10003" /> 
     <cache key = "SkillBehaviour" Number = "10004" /> 
     <cache key = "SkillData" Number = "10005" /> 

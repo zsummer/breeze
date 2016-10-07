@@ -101,83 +101,75 @@ namespace Proto4z
         } 
     } 
  
-    public class FillSceneNotice: Proto4z.IProtoObject //填充场景数据  
+    public class SceneSectionNotice: Proto4z.IProtoObject //填充场景数据  
     {     
         //proto id   
-        public const ushort protoID = 50003;  
-        static public ushort getProtoID() { return 50003; } 
-        static public string getProtoName() { return "FillSceneNotice"; } 
+        public const ushort protoID = 50010;  
+        static public ushort getProtoID() { return 50010; } 
+        static public string getProtoName() { return "SceneSectionNotice"; } 
         //members   
-        public EntityFullInfoArray entitys; //这里包含有所有当前场景下的实体属性和状态数据  
-        public double sceneStartTime; //服务器战场开始时间  
-        public double sceneEndTime; //服务器战场结束时间  
-        public double serverTime; //服务器当前时间  
-        public FillSceneNotice()  
+        public SceneSection section;  
+        public SceneSectionNotice()  
         { 
-            entitys = new EntityFullInfoArray();  
-            sceneStartTime = 0.0;  
-            sceneEndTime = 0.0;  
-            serverTime = 0.0;  
+            section = new SceneSection();  
         } 
-        public FillSceneNotice(EntityFullInfoArray entitys, double sceneStartTime, double sceneEndTime, double serverTime) 
+        public SceneSectionNotice(SceneSection section) 
         { 
-            this.entitys = entitys; 
-            this.sceneStartTime = sceneStartTime; 
-            this.sceneEndTime = sceneEndTime; 
-            this.serverTime = serverTime; 
+            this.section = section; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.entitys == null) this.entitys = new EntityFullInfoArray(); 
-            data.AddRange(this.entitys.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.sceneStartTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.sceneEndTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.serverTime)); 
+            if (this.section == null) this.section = new SceneSection(); 
+            data.AddRange(this.section.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.entitys = new EntityFullInfoArray(); 
-            this.entitys.__decode(binData, ref pos); 
-            this.sceneStartTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.sceneEndTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.section = new SceneSection(); 
+            this.section.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class RefreshSceneEntitysNotice: Proto4z.IProtoObject 
+    public class RefreshEntityNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50004;  
-        static public ushort getProtoID() { return 50004; } 
-        static public string getProtoName() { return "RefreshSceneEntitysNotice"; } 
+        public const ushort protoID = 50011;  
+        static public ushort getProtoID() { return 50011; } 
+        static public string getProtoName() { return "RefreshEntityNotice"; } 
         //members   
-        public EntityInfoArray entitys;  
+        public EntityInfoArray entityInfos;  
+        public EntityPointArray entityPoints;  
         public double serverTime; //服务器当前时间  
-        public RefreshSceneEntitysNotice()  
+        public RefreshEntityNotice()  
         { 
-            entitys = new EntityInfoArray();  
+            entityInfos = new EntityInfoArray();  
+            entityPoints = new EntityPointArray();  
             serverTime = 0.0;  
         } 
-        public RefreshSceneEntitysNotice(EntityInfoArray entitys, double serverTime) 
+        public RefreshEntityNotice(EntityInfoArray entityInfos, EntityPointArray entityPoints, double serverTime) 
         { 
-            this.entitys = entitys; 
+            this.entityInfos = entityInfos; 
+            this.entityPoints = entityPoints; 
             this.serverTime = serverTime; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.entitys == null) this.entitys = new EntityInfoArray(); 
-            data.AddRange(this.entitys.__encode()); 
+            if (this.entityInfos == null) this.entityInfos = new EntityInfoArray(); 
+            data.AddRange(this.entityInfos.__encode()); 
+            if (this.entityPoints == null) this.entityPoints = new EntityPointArray(); 
+            data.AddRange(this.entityPoints.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.serverTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.entitys = new EntityInfoArray(); 
-            this.entitys.__decode(binData, ref pos); 
+            this.entityInfos = new EntityInfoArray(); 
+            this.entityInfos.__decode(binData, ref pos); 
+            this.entityPoints = new EntityPointArray(); 
+            this.entityPoints.__decode(binData, ref pos); 
             this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
@@ -226,14 +218,14 @@ namespace Proto4z
         static public ushort getProtoID() { return 50006; } 
         static public string getProtoName() { return "AddEntityNotice"; } 
         //members   
-        public EntityFullInfoArray entitys;  
+        public EntityFullDataArray entitys;  
         public double serverTime; //服务器当前时间  
         public AddEntityNotice()  
         { 
-            entitys = new EntityFullInfoArray();  
+            entitys = new EntityFullDataArray();  
             serverTime = 0.0;  
         } 
-        public AddEntityNotice(EntityFullInfoArray entitys, double serverTime) 
+        public AddEntityNotice(EntityFullDataArray entitys, double serverTime) 
         { 
             this.entitys = entitys; 
             this.serverTime = serverTime; 
@@ -241,14 +233,14 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.entitys == null) this.entitys = new EntityFullInfoArray(); 
+            if (this.entitys == null) this.entitys = new EntityFullDataArray(); 
             data.AddRange(this.entitys.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.serverTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.entitys = new EntityFullInfoArray(); 
+            this.entitys = new EntityFullDataArray(); 
             this.entitys.__decode(binData, ref pos); 
             this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
@@ -286,6 +278,74 @@ namespace Proto4z
         { 
             this.eids = new EntityIDArray(); 
             this.eids.__decode(binData, ref pos); 
+            this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class AddBuffNotice: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 50008;  
+        static public ushort getProtoID() { return 50008; } 
+        static public string getProtoName() { return "AddBuffNotice"; } 
+        //members   
+        public ulong eid;  
+        public double serverTime; //服务器当前时间  
+        public AddBuffNotice()  
+        { 
+            eid = 0;  
+            serverTime = 0.0;  
+        } 
+        public AddBuffNotice(ulong eid, double serverTime) 
+        { 
+            this.eid = eid; 
+            this.serverTime = serverTime; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.serverTime)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class RemoveBuffNotice: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 50009;  
+        static public ushort getProtoID() { return 50009; } 
+        static public string getProtoName() { return "RemoveBuffNotice"; } 
+        //members   
+        public ulong eid;  
+        public double serverTime; //服务器当前时间  
+        public RemoveBuffNotice()  
+        { 
+            eid = 0;  
+            serverTime = 0.0;  
+        } 
+        public RemoveBuffNotice(ulong eid, double serverTime) 
+        { 
+            this.eid = eid; 
+            this.serverTime = serverTime; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.serverTime)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 

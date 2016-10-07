@@ -5,7 +5,7 @@
 #include <ProtoDocker.h>
 #include <ProtoSceneCommon.h>
 #include <ProtoSceneServer.h>
-
+#include <ProtoSceneClient.h>
 
 SceneMgr::SceneMgr()
 {
@@ -60,29 +60,6 @@ ScenePtr SceneMgr::getScene(SceneID sceneID)
     return founder->second;
 }
 
-void SceneMgr::refreshSceneStatusToWorld(SceneID sceneID)
-{
-//     auto scenePtr = getScene(sceneID);
-//     if (!scenePtr)
-//     {
-//         LOGE("");
-//         return;
-//     }
-//     SceneInfoToWorldNotice notice;
-//     notice.host = ServerConfig::getRef().getSceneConfig()._clientPubHost;
-//     notice.port = ServerConfig::getRef().getSceneConfig()._clientListenPort;
-//     if(true)
-//     {
-//         SceneInfo si;
-//         si.sceneType = scenePtr->getSceneType();
-//         si.sceneStatus = scenePtr->getSceneStatus();
-//         si.users = scenePtr->getUsersCount();
-//         si.sceneID = scenePtr->getSceneID();
-//         notice.sceneInfos.push_back(si);
-//     }
-//     sendToWorld(notice);
-}
-
 void SceneMgr::onTimer()
 {
     if (isStopping())
@@ -90,11 +67,38 @@ void SceneMgr::onTimer()
         return ;
     }
     SessionManager::getRef().createTimer(33, std::bind(&SceneMgr::onTimer, this));
+
+    std::set<SceneID> frees;
     for (auto kv : _actives)
     {
         try
         {
-            kv.second->onUpdate();
+            bool active = kv.second->onUpdate();
+            if (!active)
+            {
+                frees.insert(kv.first);
+                //send report to world
+                SceneSectionNotice notice;
+                kv.second->getSceneSection(notice.section);
+                //status ins
+                std::set<GroupID> groups;
+                for (auto &entity : notice.section.entitys)
+                {
+                    if (entity.entityInfo.etype == ETYPE_AVATAR)
+                    {
+                        groups.insert(entity.entityInfo.groupID);
+                    }
+                }
+                for (auto key : groups)
+                {
+                    SceneServerGroupStatusChangeIns ret;
+                    ret.groupID = key;
+                    ret.sceneID = notice.section.sceneID;
+                    ret.status = SCENE_STATUS_NONE;
+                    sendToWorld(ret);
+                }
+
+            }
         }
         catch (const std::exception & e)
         {
@@ -386,11 +390,14 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         for (auto & avatar : group.members)
         {
             _tokens[avatar.first] = avatar.second.token;
+            scene->addEntity(avatar.second.baseInfo, avatar.second.baseProps, ECOLOR_BLUE, ETYPE_AVATAR, ESTATE_FREEZING, group.groupID);
         }
         SceneServerGroupStatusChangeIns ret;
         ret.groupID = group.groupID;
         ret.sceneID = scene->getSceneID();
         ret.status = SCENE_STATUS_WAIT;
+        sendToWorld(ret);
+        ret.status = SCENE_STATUS_ACTIVE;
         sendToWorld(ret);
     }
 

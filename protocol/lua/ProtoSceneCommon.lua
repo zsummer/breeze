@@ -21,7 +21,7 @@ Proto4z.SceneGroupAvatarInfo.__protoID = 10000
 Proto4z.SceneGroupAvatarInfo.__protoName = "SceneGroupAvatarInfo" 
 Proto4z.SceneGroupAvatarInfo[1] = {name="areaID", type="ui64" } --考虑混服情况,必须指定该玩家来自哪个当前区 
 Proto4z.SceneGroupAvatarInfo[2] = {name="baseInfo", type="AvatarBaseInfo" } --玩家基础数据 
-Proto4z.SceneGroupAvatarInfo[3] = {name="props", type="AvatarPropMap" } --角色属性数据 
+Proto4z.SceneGroupAvatarInfo[3] = {name="baseProps", type="AvatarPropMap" } --角色属性数据 
 Proto4z.SceneGroupAvatarInfo[4] = {name="powerType", type="ui16" } --组队权限: 0普通,1leader,2master 
 Proto4z.SceneGroupAvatarInfo[5] = {name="token", type="string" } --scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开. 
  
@@ -266,19 +266,32 @@ Proto4z.EntityInfo.__protoID = 10010
 Proto4z.EntityInfo.__protoName = "EntityInfo" 
 Proto4z.EntityInfo[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityInfo[2] = {name="color", type="ui16" } --阵营 
-Proto4z.EntityInfo[3] = {name="state", type="ui16" } --状态 
-Proto4z.EntityInfo[4] = {name="pos", type="EPoint" } --当前坐标 
-Proto4z.EntityInfo[5] = {name="moveAction", type="ui16" } --状态 
-Proto4z.EntityInfo[6] = {name="movePath", type="EPoints" } --当前的移动路径 
-Proto4z.EntityInfo[7] = {name="foe", type="ui64" } --锁定的敌人 
-Proto4z.EntityInfo[8] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
-Proto4z.EntityInfo[9] = {name="follow", type="ui64" } --移动跟随的实体 
-Proto4z.EntityInfo[10] = {name="curHP", type="double" } --当前的血量 
+Proto4z.EntityInfo[3] = {name="groupID", type="ui16" } --组队ID 
+Proto4z.EntityInfo[4] = {name="etype", type="ui16" } --实体类型 
+Proto4z.EntityInfo[5] = {name="state", type="ui16" } --状态 
+Proto4z.EntityInfo[6] = {name="foe", type="ui64" } --锁定的敌人 
+Proto4z.EntityInfo[7] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
+Proto4z.EntityInfo[8] = {name="curHP", type="double" } --当前的血量 
  
 Proto4z.EntityInfoArray = {}  
 Proto4z.EntityInfoArray.__protoName = "EntityInfoArray" 
 Proto4z.EntityInfoArray.__protoDesc = "array" 
 Proto4z.EntityInfoArray.__protoTypeV = "EntityInfo" 
+ 
+Proto4z.register(10015,"EntityPoint") 
+Proto4z.EntityPoint = {} --EntityPoint 
+Proto4z.EntityPoint.__protoID = 10015 
+Proto4z.EntityPoint.__protoName = "EntityPoint" 
+Proto4z.EntityPoint[1] = {name="eid", type="ui64" } --eid 
+Proto4z.EntityPoint[2] = {name="pos", type="EPoint" } --当前坐标 
+Proto4z.EntityPoint[3] = {name="moveAction", type="ui16" } --状态 
+Proto4z.EntityPoint[4] = {name="movePath", type="EPoints" } --当前的移动路径 
+Proto4z.EntityPoint[5] = {name="follow", type="ui64" } --移动跟随的实体 
+ 
+Proto4z.EntityPointArray = {}  
+Proto4z.EntityPointArray.__protoName = "EntityPointArray" 
+Proto4z.EntityPointArray.__protoDesc = "array" 
+Proto4z.EntityPointArray.__protoTypeV = "EntityPoint" 
  
 Proto4z.register(10011,"EntityControl") 
 Proto4z.EntityControl = {} --EntityControl 
@@ -319,15 +332,29 @@ Proto4z.EntityReportArray.__protoName = "EntityReportArray"
 Proto4z.EntityReportArray.__protoDesc = "array" 
 Proto4z.EntityReportArray.__protoTypeV = "EntityReport" 
  
-Proto4z.register(10013,"EntityFullInfo") 
-Proto4z.EntityFullInfo = {} --EntityFullInfo 
-Proto4z.EntityFullInfo.__protoID = 10013 
-Proto4z.EntityFullInfo.__protoName = "EntityFullInfo" 
-Proto4z.EntityFullInfo[1] = {name="userInfo", type="AvatarBaseInfo" }  
-Proto4z.EntityFullInfo[2] = {name="info", type="EntityInfo" }  
-Proto4z.EntityFullInfo[3] = {name="report", type="EntityReport" }  
+Proto4z.register(10016,"EntityFullData") 
+Proto4z.EntityFullData = {} --EntityFullData 
+Proto4z.EntityFullData.__protoID = 10016 
+Proto4z.EntityFullData.__protoName = "EntityFullData" 
+Proto4z.EntityFullData[1] = {name="baseInfo", type="AvatarBaseInfo" }  
+Proto4z.EntityFullData[2] = {name="baseProps", type="AvatarPropMap" }  
+Proto4z.EntityFullData[3] = {name="entityInfo", type="EntityInfo" }  
+Proto4z.EntityFullData[4] = {name="entityPoint", type="EntityPoint" }  
+Proto4z.EntityFullData[5] = {name="report", type="EntityReport" }  
  
-Proto4z.EntityFullInfoArray = {}  
-Proto4z.EntityFullInfoArray.__protoName = "EntityFullInfoArray" 
-Proto4z.EntityFullInfoArray.__protoDesc = "array" 
-Proto4z.EntityFullInfoArray.__protoTypeV = "EntityFullInfo" 
+Proto4z.EntityFullDataArray = {}  
+Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray" 
+Proto4z.EntityFullDataArray.__protoDesc = "array" 
+Proto4z.EntityFullDataArray.__protoTypeV = "EntityFullData" 
+ 
+Proto4z.register(10017,"SceneSection") 
+Proto4z.SceneSection = {} --场景全景切片数据 
+Proto4z.SceneSection.__protoID = 10017 
+Proto4z.SceneSection.__protoName = "SceneSection" 
+Proto4z.SceneSection[1] = {name="sceneID", type="ui64" }  
+Proto4z.SceneSection[2] = {name="sceneType", type="ui16" }  
+Proto4z.SceneSection[3] = {name="sceneStatus", type="ui16" }  
+Proto4z.SceneSection[4] = {name="sceneStartTime", type="double" } --服务器战场开始时间 
+Proto4z.SceneSection[5] = {name="sceneEndTime", type="double" } --服务器战场结束时间 
+Proto4z.SceneSection[6] = {name="serverTime", type="double" } --服务器当前时间 
+Proto4z.SceneSection[7] = {name="entitys", type="EntityFullDataArray" } --这里包含有所有当前场景下的实体属性和状态数据 

@@ -33,22 +33,22 @@ namespace Proto4z
         //members   
         public ulong areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
         public AvatarBaseInfo baseInfo; //玩家基础数据  
-        public AvatarPropMap props; //角色属性数据  
+        public AvatarPropMap baseProps; //角色属性数据  
         public ushort powerType; //组队权限: 0普通,1leader,2master  
         public string token; //scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开.  
         public SceneGroupAvatarInfo()  
         { 
             areaID = 0;  
             baseInfo = new AvatarBaseInfo();  
-            props = new AvatarPropMap();  
+            baseProps = new AvatarPropMap();  
             powerType = 0;  
             token = "";  
         } 
-        public SceneGroupAvatarInfo(ulong areaID, AvatarBaseInfo baseInfo, AvatarPropMap props, ushort powerType, string token) 
+        public SceneGroupAvatarInfo(ulong areaID, AvatarBaseInfo baseInfo, AvatarPropMap baseProps, ushort powerType, string token) 
         { 
             this.areaID = areaID; 
             this.baseInfo = baseInfo; 
-            this.props = props; 
+            this.baseProps = baseProps; 
             this.powerType = powerType; 
             this.token = token; 
         } 
@@ -58,8 +58,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.areaID)); 
             if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
             data.AddRange(this.baseInfo.__encode()); 
-            if (this.props == null) this.props = new AvatarPropMap(); 
-            data.AddRange(this.props.__encode()); 
+            if (this.baseProps == null) this.baseProps = new AvatarPropMap(); 
+            data.AddRange(this.baseProps.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.powerType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             return data; 
@@ -69,8 +69,8 @@ namespace Proto4z
             this.areaID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.baseInfo = new AvatarBaseInfo(); 
             this.baseInfo.__decode(binData, ref pos); 
-            this.props = new AvatarPropMap(); 
-            this.props.__decode(binData, ref pos); 
+            this.baseProps = new AvatarPropMap(); 
+            this.baseProps.__decode(binData, ref pos); 
             this.powerType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
@@ -1052,38 +1052,32 @@ namespace Proto4z
         //members   
         public ulong eid; //eid  
         public ushort color; //阵营  
+        public ushort groupID; //组队ID  
+        public ushort etype; //实体类型  
         public ushort state; //状态  
-        public EPoint pos; //当前坐标  
-        public ushort moveAction; //状态  
-        public EPoints movePath; //当前的移动路径  
         public ulong foe; //锁定的敌人  
         public ulong leader; //实体的老大, 如果是飞行道具 这个指向施放飞行道具的人  
-        public ulong follow; //移动跟随的实体  
         public double curHP; //当前的血量  
         public EntityInfo()  
         { 
             eid = 0;  
             color = 0;  
+            groupID = 0;  
+            etype = 0;  
             state = 0;  
-            pos = new EPoint();  
-            moveAction = 0;  
-            movePath = new EPoints();  
             foe = 0;  
             leader = 0;  
-            follow = 0;  
             curHP = 0.0;  
         } 
-        public EntityInfo(ulong eid, ushort color, ushort state, EPoint pos, ushort moveAction, EPoints movePath, ulong foe, ulong leader, ulong follow, double curHP) 
+        public EntityInfo(ulong eid, ushort color, ushort groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP) 
         { 
             this.eid = eid; 
             this.color = color; 
+            this.groupID = groupID; 
+            this.etype = etype; 
             this.state = state; 
-            this.pos = pos; 
-            this.moveAction = moveAction; 
-            this.movePath = movePath; 
             this.foe = foe; 
             this.leader = leader; 
-            this.follow = follow; 
             this.curHP = curHP; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -1091,15 +1085,11 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.color)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.groupID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
-            if (this.pos == null) this.pos = new EPoint(); 
-            data.AddRange(this.pos.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.moveAction)); 
-            if (this.movePath == null) this.movePath = new EPoints(); 
-            data.AddRange(this.movePath.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.leader)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.follow)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.curHP)); 
             return data; 
         } 
@@ -1107,15 +1097,11 @@ namespace Proto4z
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.color = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.pos = new EPoint(); 
-            this.pos.__decode(binData, ref pos); 
-            this.moveAction = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.movePath = new EPoints(); 
-            this.movePath.__decode(binData, ref pos); 
             this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.leader = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.follow = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.curHP = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
@@ -1144,6 +1130,90 @@ namespace Proto4z
                 for (int i=0; i<len; i++) 
                 { 
                     var data = new EntityInfo(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class EntityPoint: Proto4z.IProtoObject //EntityPoint  
+    {     
+        //proto id   
+        public const ushort protoID = 10015;  
+        static public ushort getProtoID() { return 10015; } 
+        static public string getProtoName() { return "EntityPoint"; } 
+        //members   
+        public ulong eid; //eid  
+        public EPoint pos; //当前坐标  
+        public ushort moveAction; //状态  
+        public EPoints movePath; //当前的移动路径  
+        public ulong follow; //移动跟随的实体  
+        public EntityPoint()  
+        { 
+            eid = 0;  
+            pos = new EPoint();  
+            moveAction = 0;  
+            movePath = new EPoints();  
+            follow = 0;  
+        } 
+        public EntityPoint(ulong eid, EPoint pos, ushort moveAction, EPoints movePath, ulong follow) 
+        { 
+            this.eid = eid; 
+            this.pos = pos; 
+            this.moveAction = moveAction; 
+            this.movePath = movePath; 
+            this.follow = follow; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            if (this.pos == null) this.pos = new EPoint(); 
+            data.AddRange(this.pos.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.moveAction)); 
+            if (this.movePath == null) this.movePath = new EPoints(); 
+            data.AddRange(this.movePath.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.follow)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.pos = new EPoint(); 
+            this.pos.__decode(binData, ref pos); 
+            this.moveAction = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.movePath = new EPoints(); 
+            this.movePath.__decode(binData, ref pos); 
+            this.follow = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class EntityPointArray : System.Collections.Generic.List<EntityPoint>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new EntityPoint(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
@@ -1367,45 +1437,59 @@ namespace Proto4z
         } 
     } 
  
-    public class EntityFullInfo: Proto4z.IProtoObject //EntityFullInfo  
+    public class EntityFullData: Proto4z.IProtoObject //EntityFullData  
     {     
         //proto id   
-        public const ushort protoID = 10013;  
-        static public ushort getProtoID() { return 10013; } 
-        static public string getProtoName() { return "EntityFullInfo"; } 
+        public const ushort protoID = 10016;  
+        static public ushort getProtoID() { return 10016; } 
+        static public string getProtoName() { return "EntityFullData"; } 
         //members   
-        public AvatarBaseInfo userInfo;  
-        public EntityInfo info;  
+        public AvatarBaseInfo baseInfo;  
+        public AvatarPropMap baseProps;  
+        public EntityInfo entityInfo;  
+        public EntityPoint entityPoint;  
         public EntityReport report;  
-        public EntityFullInfo()  
+        public EntityFullData()  
         { 
-            userInfo = new AvatarBaseInfo();  
-            info = new EntityInfo();  
+            baseInfo = new AvatarBaseInfo();  
+            baseProps = new AvatarPropMap();  
+            entityInfo = new EntityInfo();  
+            entityPoint = new EntityPoint();  
             report = new EntityReport();  
         } 
-        public EntityFullInfo(AvatarBaseInfo userInfo, EntityInfo info, EntityReport report) 
+        public EntityFullData(AvatarBaseInfo baseInfo, AvatarPropMap baseProps, EntityInfo entityInfo, EntityPoint entityPoint, EntityReport report) 
         { 
-            this.userInfo = userInfo; 
-            this.info = info; 
+            this.baseInfo = baseInfo; 
+            this.baseProps = baseProps; 
+            this.entityInfo = entityInfo; 
+            this.entityPoint = entityPoint; 
             this.report = report; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.userInfo == null) this.userInfo = new AvatarBaseInfo(); 
-            data.AddRange(this.userInfo.__encode()); 
-            if (this.info == null) this.info = new EntityInfo(); 
-            data.AddRange(this.info.__encode()); 
+            if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
+            data.AddRange(this.baseInfo.__encode()); 
+            if (this.baseProps == null) this.baseProps = new AvatarPropMap(); 
+            data.AddRange(this.baseProps.__encode()); 
+            if (this.entityInfo == null) this.entityInfo = new EntityInfo(); 
+            data.AddRange(this.entityInfo.__encode()); 
+            if (this.entityPoint == null) this.entityPoint = new EntityPoint(); 
+            data.AddRange(this.entityPoint.__encode()); 
             if (this.report == null) this.report = new EntityReport(); 
             data.AddRange(this.report.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.userInfo = new AvatarBaseInfo(); 
-            this.userInfo.__decode(binData, ref pos); 
-            this.info = new EntityInfo(); 
-            this.info.__decode(binData, ref pos); 
+            this.baseInfo = new AvatarBaseInfo(); 
+            this.baseInfo.__decode(binData, ref pos); 
+            this.baseProps = new AvatarPropMap(); 
+            this.baseProps.__decode(binData, ref pos); 
+            this.entityInfo = new EntityInfo(); 
+            this.entityInfo.__decode(binData, ref pos); 
+            this.entityPoint = new EntityPoint(); 
+            this.entityPoint.__decode(binData, ref pos); 
             this.report = new EntityReport(); 
             this.report.__decode(binData, ref pos); 
             return pos; 
@@ -1413,7 +1497,7 @@ namespace Proto4z
     } 
  
  
-    public class EntityFullInfoArray : System.Collections.Generic.List<EntityFullInfo>, Proto4z.IProtoObject  
+    public class EntityFullDataArray : System.Collections.Generic.List<EntityFullData>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -1434,11 +1518,72 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new EntityFullInfo(); 
+                    var data = new EntityFullData(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
             } 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneSection: Proto4z.IProtoObject //场景全景切片数据  
+    {     
+        //proto id   
+        public const ushort protoID = 10017;  
+        static public ushort getProtoID() { return 10017; } 
+        static public string getProtoName() { return "SceneSection"; } 
+        //members   
+        public ulong sceneID;  
+        public ushort sceneType;  
+        public ushort sceneStatus;  
+        public double sceneStartTime; //服务器战场开始时间  
+        public double sceneEndTime; //服务器战场结束时间  
+        public double serverTime; //服务器当前时间  
+        public EntityFullDataArray entitys; //这里包含有所有当前场景下的实体属性和状态数据  
+        public SceneSection()  
+        { 
+            sceneID = 0;  
+            sceneType = 0;  
+            sceneStatus = 0;  
+            sceneStartTime = 0.0;  
+            sceneEndTime = 0.0;  
+            serverTime = 0.0;  
+            entitys = new EntityFullDataArray();  
+        } 
+        public SceneSection(ulong sceneID, ushort sceneType, ushort sceneStatus, double sceneStartTime, double sceneEndTime, double serverTime, EntityFullDataArray entitys) 
+        { 
+            this.sceneID = sceneID; 
+            this.sceneType = sceneType; 
+            this.sceneStatus = sceneStatus; 
+            this.sceneStartTime = sceneStartTime; 
+            this.sceneEndTime = sceneEndTime; 
+            this.serverTime = serverTime; 
+            this.entitys = entitys; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneStatus)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.sceneStartTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.sceneEndTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.serverTime)); 
+            if (this.entitys == null) this.entitys = new EntityFullDataArray(); 
+            data.AddRange(this.entitys.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sceneStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sceneStartTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.sceneEndTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.entitys = new EntityFullDataArray(); 
+            this.entitys.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

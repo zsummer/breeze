@@ -41,7 +41,7 @@
     <struct name="SceneGroupAvatarInfo" desc="">
         <member name="areaID" type="ui64"  desc="考虑混服情况,必须指定该玩家来自哪个当前区"/>
         <member name="baseInfo" type="AvatarBaseInfo"  desc="玩家基础数据"/>
-        <member name="props" type="AvatarPropMap"  desc="角色属性数据"/>
+        <member name="baseProps" type="AvatarPropMap"  desc="角色属性数据"/>
         <member name="powerType" type="ui16"  desc="组队权限: 0普通,1leader,2master"/>
         <member name="token" type="string"  desc="scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开."/>
     </struct>
@@ -274,17 +274,24 @@
     <struct name="EntityInfo" desc="EntityInfo">
         <member name="eid" type="ui64"  desc="eid"/>
         <member name="color" type="ui16"  desc="阵营"/>
+        <member name="groupID" type="ui16"  desc="组队ID"/>
+        <member name="etype" type="ui16"  desc="实体类型"/>
         <member name="state" type="ui16"  desc="状态"/>
+        <member name="foe"  type="ui64" desc="锁定的敌人"/>
+        <member name="leader"  type="ui64" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
+        <member name="curHP"  type="double" desc="当前的血量"/>
+    </struct>
+    <array name="EntityInfoArray" type="EntityInfo" desc="" />
+
+    <!-- 实体动态属性, 差异广播 -->
+    <struct name="EntityPoint" desc="EntityPoint">
+        <member name="eid" type="ui64"  desc="eid"/>
         <member name="pos"  type="EPoint" desc="当前坐标"/>
         <member name="moveAction" type="ui16"  desc="状态"/>
         <member name="movePath"  type="EPoints" desc="当前的移动路径"/>
-        <member name="foe"  type="ui64" desc="锁定的敌人"/>
-        <member name="leader"  type="ui64" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
         <member name="follow"  type="ui64" desc="移动跟随的实体"/>
-        <member name="curHP"  type="double" desc="当前的血量"/>
-
     </struct>
-    <array name="EntityInfoArray" type="EntityInfo" desc="" />
+    <array name="EntityPointArray" type="EntityPoint" desc="" />
 
     <!-- 实体控制属性, 对客户端不可见 -->
     <struct name="EntityControl" desc="EntityControl">
@@ -315,15 +322,25 @@
     </struct>
     <array name="EntityReportArray" type="EntityReport" desc="" />
 
-    <!-- 一个实体的完整数据, 包括属性,状态 位置等. -->
-    <struct name="EntityFullInfo" desc="EntityFullInfo">
-        <member name="userInfo" type="AvatarBaseInfo"  desc=""/>
-        <member name="info" type="EntityInfo"  desc=""/>
+    <!-- 一个实体的完整同步数据 -->
+    <struct name="EntityFullData" desc="EntityFullData">
+        <member name="baseInfo" type="AvatarBaseInfo"  desc=""/>
+        <member name="baseProps" type="AvatarPropMap"  desc=""/>
+        <member name="entityInfo" type="EntityInfo"  desc=""/>
+        <member name="entityPoint" type="EntityPoint"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>
-    <array name="EntityFullInfoArray" type="EntityFullInfo" desc="" />
+    <array name="EntityFullDataArray" type="EntityFullData" desc="" />
 
-
+    <proto name="SceneSection" desc= "场景全景切片数据">
+        <member name="sceneID"  type="ui64" desc=""/>
+        <member name="sceneType"  type="ui16" desc=""/>
+        <member name="sceneStatus"  type="ui16" desc=""/>
+        <member name="sceneStartTime"  type="double" desc="服务器战场开始时间"/>
+        <member name="sceneEndTime"  type="double" desc="服务器战场结束时间"/>
+        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+        <member name="entitys"  type="EntityFullDataArray" desc="这里包含有所有当前场景下的实体属性和状态数据"/>
+    </proto>
 
 </Proto>
 

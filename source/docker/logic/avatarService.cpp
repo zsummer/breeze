@@ -52,7 +52,7 @@ void AvatarService::onClientChange()
 {
     if (getClientDockerID() != InvalidDockerID && getClientSessionID() != InvalidSessionID)
     {
-        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _props);
+        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _baseProps);
         toDocker(getClientDockerID(), resp);
     }
     if (getClientSessionID() == InvalidSessionID)
@@ -113,7 +113,7 @@ void AvatarService::onModuleLoad(bool success, const std::string & moduleName)
 			refreshProp("vampirk", 0.2);
 		}
         finishLoad();
-        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _props);
+        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _baseProps);
         toDocker(getClientDockerID(), resp);
     }
     return ;
@@ -256,10 +256,10 @@ void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::R
 
 void AvatarService::refreshProp(const std::string &prop, double val, bool overwrite)
 {
-    auto fouder = _props.find(prop);
-    if (fouder == _props.end())
+    auto fouder = _baseProps.find(prop);
+    if (fouder == _baseProps.end())
     {
-        _props.insert(std::make_pair(prop, val));
+        _baseProps.insert(std::make_pair(prop, val));
         return;
     }
     if (overwrite)
@@ -271,8 +271,8 @@ void AvatarService::refreshProp(const std::string &prop, double val, bool overwr
 }
 double AvatarService::getProp(const std::string &prop)
 {
-    auto fouder = _props.find(prop);
-    if (fouder == _props.end())
+    auto fouder = _baseProps.find(prop);
+    if (fouder == _baseProps.end())
     {
         return 0.0;
     }

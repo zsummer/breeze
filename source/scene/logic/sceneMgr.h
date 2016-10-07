@@ -65,7 +65,7 @@ private:
     void onTimer();
 public:
     ScenePtr getScene(SceneID);
-    void refreshSceneStatusToWorld(SceneID sceneID);
+
 private:
     //docker间通讯处理 
     void event_onWorldLinked(TcpSessionPtr session);

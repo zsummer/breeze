@@ -33,6 +33,8 @@ namespace Proto4z
         
 
                     
+            _nameToID.Add("AddBuffNotice", 50008);
+            _idToName.Add(50008, "AddBuffNotice");
             _nameToID.Add("AddEntityNotice", 50006);
             _idToName.Add(50006, "AddEntityNotice");
             _nameToID.Add("ApplyForSceneServerReq", 39004);
@@ -109,10 +111,16 @@ namespace Proto4z
             _idToName.Add(10002, "EPoint");
             _nameToID.Add("EntityControl", 10011);
             _idToName.Add(10011, "EntityControl");
+            _nameToID.Add("EntityFullData", 10016);
+            _idToName.Add(10016, "EntityFullData");
             _nameToID.Add("EntityFullInfo", 10013);
             _idToName.Add(10013, "EntityFullInfo");
             _nameToID.Add("EntityInfo", 10010);
             _idToName.Add(10010, "EntityInfo");
+            _nameToID.Add("EntityMoveInfo", 10014);
+            _idToName.Add(10014, "EntityMoveInfo");
+            _nameToID.Add("EntityPoint", 10015);
+            _idToName.Add(10015, "EntityPoint");
             _nameToID.Add("EntityReport", 10012);
             _idToName.Add(10012, "EntityReport");
             _nameToID.Add("FeedbackAvatarStatusNotice", 39005);
@@ -127,6 +135,18 @@ namespace Proto4z
             _idToName.Add(2012, "ForwardToService");
             _nameToID.Add("HarmData", 10007);
             _idToName.Add(10007, "HarmData");
+            _nameToID.Add("ID_SceneKnock", 39008);
+            _idToName.Add(39008, "ID_SceneKnock");
+            _nameToID.Add("ID_ScenePulse", 39009);
+            _idToName.Add(39009, "ID_ScenePulse");
+            _nameToID.Add("ID_SceneServerEnterSceneIns", 39012);
+            _idToName.Add(39012, "ID_SceneServerEnterSceneIns");
+            _nameToID.Add("ID_SceneServerGroupStatusChangeIns", 39013);
+            _idToName.Add(39013, "ID_SceneServerGroupStatusChangeIns");
+            _nameToID.Add("ID_SceneServerJoinGroupAck", 39011);
+            _idToName.Add(39011, "ID_SceneServerJoinGroupAck");
+            _nameToID.Add("ID_SceneServerJoinGroupIns", 39010);
+            _idToName.Add(39010, "ID_SceneServerJoinGroupIns");
             _nameToID.Add("ItemInfo", 1010);
             _idToName.Add(1010, "ItemInfo");
             _nameToID.Add("KickRealClient", 2007);
@@ -147,12 +167,16 @@ namespace Proto4z
             _idToName.Add(40030, "PingPongResp");
             _nameToID.Add("RealClientClosedNotice", 2008);
             _idToName.Add(2008, "RealClientClosedNotice");
+            _nameToID.Add("RefreshEntityNotice", 50011);
+            _idToName.Add(50011, "RefreshEntityNotice");
             _nameToID.Add("RefreshSceneEntitysNotice", 50004);
             _idToName.Add(50004, "RefreshSceneEntitysNotice");
             _nameToID.Add("RefreshSceneReportsNotice", 50005);
             _idToName.Add(50005, "RefreshSceneReportsNotice");
             _nameToID.Add("RefreshServiceToMgrNotice", 2005);
             _idToName.Add(2005, "RefreshServiceToMgrNotice");
+            _nameToID.Add("RemoveBuffNotice", 50009);
+            _idToName.Add(50009, "RemoveBuffNotice");
             _nameToID.Add("RemoveEntityNotice", 50007);
             _idToName.Add(50007, "RemoveEntityNotice");
             _nameToID.Add("Routing", 1000);
@@ -203,6 +227,10 @@ namespace Proto4z
             _idToName.Add(39000, "SceneKnock");
             _nameToID.Add("ScenePulse", 39001);
             _idToName.Add(39001, "ScenePulse");
+            _nameToID.Add("SceneSection", 10017);
+            _idToName.Add(10017, "SceneSection");
+            _nameToID.Add("SceneSectionNotice", 50010);
+            _idToName.Add(50010, "SceneSectionNotice");
             _nameToID.Add("SceneServerEnterSceneIns", 39006);
             _idToName.Add(39006, "SceneServerEnterSceneIns");
             _nameToID.Add("SceneServerGroupStatusChangeIns", 39007);

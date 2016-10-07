@@ -5,6 +5,32 @@ Scene::Scene(SceneID id)
     _sceneID = id;
     cleanScene();
 }
+
+GroupID Scene::getGroupID(ServiceID avatarID)
+{
+    auto entity = getEntityByAvatarID(avatarID);
+    if (entity)
+    {
+        return entity->_info.groupID;
+    }
+    return InvalidGroupID;
+}
+void Scene::getSceneSection(SceneSection & ss)
+{
+    ss.sceneID = _sceneID;
+    ss.sceneType = _sceneType;
+    ss.sceneStatus = _sceneStatus;
+    ss.sceneStartTime = _startTime;
+    ss.sceneEndTime = _endTime;
+    ss.serverTime = getFloatNowTime();
+    for (auto & entity : _entitys)
+    {
+        ss.entitys.push_back(entity.second->getFullData());
+    }
+}
+
+
+
 bool Scene::cleanScene()
 {
     _lastEID = ServerConfig::getRef().getSceneConfig()._lineID * 1000 + 1000;
@@ -13,7 +39,6 @@ bool Scene::cleanScene()
     _sceneType = SCENE_TYPE_NONE;
     _sceneStatus = SCENE_STATUS_NONE;
     _lastStatusChangeTime = getFloatNowTime();
-    SceneMgr::getRef().refreshSceneStatusToWorld(getSceneID());
     return true;
 }
 
@@ -25,20 +50,24 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
         return false;
     }
     _sceneType = sceneType;
-    _sceneStatus = SCENE_STATUS_WAIT;
+    _sceneStatus = SCENE_STATUS_ACTIVE;
     _lastStatusChangeTime = getFloatNowTime();
     _startTime = getFloatNowTime();
-    _endTime = getFloatNowTime() + 3600;
+    _endTime = getFloatNowTime() + 600;
     
     //load map
     //load entitys
-    SceneMgr::getRef().refreshSceneStatusToWorld(getSceneID());
+
     return true;
 }
 
 
 bool Scene::onUpdate()
 {
+    if (getFloatNowTime() > _endTime)
+    {
+        return false;
+    }
     return true;
 }
 
@@ -51,7 +80,7 @@ EntityPtr Scene::getEntity(EntityID eID)
     }
     return founder->second;
 }
-EntityPtr Scene::getUserEntity(ServiceID avatarID)
+EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 {
     auto founder = _players.find(avatarID);
     if (founder == _players.end())
@@ -59,23 +88,6 @@ EntityPtr Scene::getUserEntity(ServiceID avatarID)
         return nullptr;
     }
     return founder->second;
-}
-
-EntityPtr Scene::makeNewEntity(const AvatarBaseInfo & base)
-{
-    EntityPtr entity = std::make_shared<Entity>();
-    entity->_base = base;
-    entity->_control.spawnpoint = { 0.0,0.0 };
-    entity->_info.eid = ++_lastEID;
-    entity->_control.eid = entity->_info.eid;
-    entity->_report.eid = entity->_info.eid;
-    entity->_control.stateChageTick = getFloatNowTime();
-    entity->_info.color = ECOLOR_NONE;
-    entity->_info.curHP = 100;
-    entity->_info.moveAction = MACTION_IDLE;
-    entity->_info.pos = entity->_control.spawnpoint;
-    entity->_info.state = ESTATE_NONE;
-    return entity;
 }
 
 // void Scene::fillUserProp(const FillUserToSceneReq& req)
@@ -92,61 +104,99 @@ EntityPtr Scene::makeNewEntity(const AvatarBaseInfo & base)
 //     entity->_isClientDirty = true;
 // }
 
-bool Scene::addEntity(EntityPtr entity)
+EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
+    const AvatarPropMap & baseProps,
+    ENTITY_COLOR ecolor,
+    ENTITY_TYPE etype,
+    ENTITY_STATE state,
+    GroupID groupID)
 {
+    EntityPtr entity = std::make_shared<Entity>();
+
+    entity->_baseInfo = baseInfo;
+    entity->_baseProps = baseProps;
+
+
+
+    entity->_info.eid = ++_lastEID;
+    entity->_info.color = ecolor;
+    entity->_info.etype = etype;
+    entity->_info.groupID = groupID;
+    entity->_info.state = ESTATE_ACTIVE;
+    entity->_info.leader = InvalidEntityID;
+    entity->_info.foe = InvalidEntityID;
+
+    entity->_info.curHP = 100;
+
+    entity->_control.spawnpoint = { 0.0,0.0 };
+    entity->_control.eid = entity->_info.eid;
+    entity->_control.stateChageTick = getFloatNowTime();
+
+    entity->_point.eid = entity->_info.eid;
+    entity->_point.pos = entity->_control.spawnpoint;
+    entity->_point.follow = InvalidEntityID;
+    entity->_point.movePath.clear();
+    entity->_point.moveAction = MACTION_IDLE;
+
+    entity->_report.eid = entity->_info.eid;
+
+
     _entitys.insert(std::make_pair(entity->_info.eid, entity));
+
+    if (baseInfo.avatarID != InvalidServiceID)
+    {
+        _players[baseInfo.avatarID] = entity;
+    }
+
     AddEntityNotice notice;
-    EntityFullInfo full;
-    entity->pickProto(full);
-    notice.entitys.push_back(full);
+    notice.entitys.push_back(entity->getFullData());
     notice.serverTime = getFloatNowTime();
-    broadcast(notice, entity->_base.avatarID);
-    return true;
+    broadcast(notice, entity->_baseInfo.avatarID);
+
+    return entity;
 }
+
 bool Scene::removeEntity(EntityID eid)
 {
+    auto entity = getEntity(eid);
+    if (!entity)
+    {
+        LOGE("");
+        return false;
+    }
+    if (entity->_info.etype == ETYPE_AVATAR)
+    {
+        _players.erase(entity->_baseInfo.avatarID);
+    }
+    _entitys.erase(eid);
+
     RemoveEntityNotice notice;
     notice.eids.push_back(eid);
     notice.serverTime = getFloatNowTime();
-    _entitys.erase(eid);
     broadcast(notice);
     return true;
 }
-bool Scene::enterScene(ServiceID avatarID, const std::string & token, SessionID sID)
+
+bool Scene::playerAttach(ServiceID avatarID, SessionID sID)
 {
-    EntityPtr entity = getUserEntity(avatarID);
+    EntityPtr entity = getEntityByAvatarID(avatarID);
     if (!entity)
     {
         return false;
     }
-    if (entity->_token != token)
-    {
-        return false;
-    }
     entity->_clientSessionID = sID;
-    if (!getEntity(entity->_info.eid))
-    {
-        addEntity(entity);
-    }
-    FillSceneNotice notice;
-    EntityFullInfo info;
-    for (auto kv : _entitys)
-    {
-        kv.second->pickProto(info);
-        notice.entitys.push_back(info);
-    }
-    notice.serverTime = getFloatNowTime();
-    notice.sceneStartTime = _startTime;
-    notice.sceneEndTime = _endTime;
+
+    SceneSectionNotice notice;
+    getSceneSection(notice.section);
     sendToClient(avatarID, notice);
     return true;
 }
 
 
 
-bool Scene::leaveScene(ServiceID avatarID, SessionID sID)
+bool Scene::playerDettach(ServiceID avatarID, SessionID sID)
 {
-    auto entity = getUserEntity(avatarID);
+    auto entity = getEntityByAvatarID(avatarID);
     if (entity && entity->_clientSessionID == sID)
     {
         entity->_clientSessionID = InvalidSessionID;

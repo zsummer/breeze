@@ -39,7 +39,7 @@
      <packet name="AttachAvatarResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="baseInfo" type="AvatarBaseInfo"   desc=""/>
-        <member name="props" type="AvatarPropMap"   desc=""/>
+        <member name="baseProps" type="AvatarPropMap"   desc=""/>
     </packet>
 
      <packet name="AvatarBaseInfoNotice" desc= "">
@@ -47,7 +47,7 @@
     </packet>
      <packet name="AvatarPropMapNotice" desc= "">
         <member name="avatarID" type="ui64"  desc=""/>
-        <member name="props" type="AvatarPropMap"   desc=""/>
+        <member name="baseProps" type="AvatarPropMap"   desc=""/>
     </packet>
  
 

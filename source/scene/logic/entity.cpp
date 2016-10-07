@@ -20,11 +20,11 @@ double Entity::getElapsed(double now)
 }
 double Entity::getSpeed()
 {
-    if (_info.moveAction == MACTION_IDLE)
+    if (_point.moveAction == MACTION_IDLE)
     {
         return 0.0;
     }
-    if (_info.moveAction != MACTION_PATH && _info.moveAction != MACTION_FOLLOW && _info.moveAction != MACTION_IDLE)
+    if (_point.moveAction != MACTION_PATH && _point.moveAction != MACTION_FOLLOW && _point.moveAction != MACTION_IDLE)
     {
         return _control.extSpeed;
     }
@@ -41,11 +41,9 @@ double Entity::getAttack()
     return 1.0;
 }
 
-void Entity::pickProto(EntityFullInfo & info)
+EntityFullData Entity::getFullData()
 {
-    info.userInfo = _base;
-    info.info = _info;
-    info.report = _report;
+    return EntityFullData(_baseInfo, _baseProps, _info, _point, _report);
 }
 
 

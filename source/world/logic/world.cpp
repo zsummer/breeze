@@ -464,11 +464,6 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
             group->sceneStatus = ins.status;
             pushGroupInfoToClient(group);
         }
-        else if (group->sceneStatus == SCENE_STATUS_WAIT && ins.status == SCENE_STATUS_ACTIVE)
-        {
-            group->sceneStatus = ins.status;
-            pushGroupInfoToClient(group);
-        }
         else if (group->sceneStatus == SCENE_STATUS_ACTIVE && ins.status == SCENE_STATUS_NONE)
         {
             group->sceneStatus = ins.status;
@@ -656,7 +651,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     SceneGroupAvatarInfo avatar;
     avatar.areaID = session->getUserParamNumber(UPARAM_AREA_ID);
     avatar.baseInfo = req.baseInfo;
-    avatar.props = req.props;
+    avatar.baseProps = req.baseProps;
     avatar.powerType = 1; //leader
     avatar.token = toMD5(avatar.baseInfo.avatarName + toString(rand()));
 
@@ -678,7 +673,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         SceneGroupAvatarInfo avatar;
         avatar.areaID = session->getUserParamNumber(UPARAM_AREA_ID);
         avatar.baseInfo = req.baseInfo;
-        avatar.props = req.props;
+        avatar.baseProps = req.baseProps;
         avatar.powerType = 1; //leader
         avatar.token = toMD5(avatar.baseInfo.avatarName + toString(rand()));
         group.members.insert(std::make_pair(avatar.baseInfo.avatarID,avatar));
@@ -730,7 +725,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     {
         founder->second.areaID = avatar.areaID;
         founder->second.baseInfo = avatar.baseInfo;
-        founder->second.props = avatar.props;
+        founder->second.baseProps = avatar.baseProps;
         founder->second.token;
     }
     backToService(session->getSessionID(), trace, ack); 

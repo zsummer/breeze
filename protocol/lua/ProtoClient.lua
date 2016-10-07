@@ -48,7 +48,7 @@ Proto4z.AttachAvatarResp.__protoID = 40006
 Proto4z.AttachAvatarResp.__protoName = "AttachAvatarResp" 
 Proto4z.AttachAvatarResp[1] = {name="retCode", type="ui16" }  
 Proto4z.AttachAvatarResp[2] = {name="baseInfo", type="AvatarBaseInfo" }  
-Proto4z.AttachAvatarResp[3] = {name="props", type="AvatarPropMap" }  
+Proto4z.AttachAvatarResp[3] = {name="baseProps", type="AvatarPropMap" }  
  
 Proto4z.register(40007,"AvatarBaseInfoNotice") 
 Proto4z.AvatarBaseInfoNotice = {}  
@@ -61,7 +61,7 @@ Proto4z.AvatarPropMapNotice = {}
 Proto4z.AvatarPropMapNotice.__protoID = 40008 
 Proto4z.AvatarPropMapNotice.__protoName = "AvatarPropMapNotice" 
 Proto4z.AvatarPropMapNotice[1] = {name="avatarID", type="ui64" }  
-Proto4z.AvatarPropMapNotice[2] = {name="props", type="AvatarPropMap" }  
+Proto4z.AvatarPropMapNotice[2] = {name="baseProps", type="AvatarPropMap" }  
  
 Proto4z.register(40009,"SceneGroupInfoNotice") 
 Proto4z.SceneGroupInfoNotice = {} --编队数据通知 

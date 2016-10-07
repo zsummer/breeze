@@ -110,87 +110,74 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct FillSceneNotice //填充场景数据  
+struct SceneSectionNotice //填充场景数据  
 { 
-    static const unsigned short getProtoID() { return 50003;} 
-    static const std::string getProtoName() { return "FillSceneNotice";} 
-    EntityFullInfoArray entitys; //这里包含有所有当前场景下的实体属性和状态数据  
-    double sceneStartTime; //服务器战场开始时间  
-    double sceneEndTime; //服务器战场结束时间  
-    double serverTime; //服务器当前时间  
-    FillSceneNotice() 
+    static const unsigned short getProtoID() { return 50010;} 
+    static const std::string getProtoName() { return "SceneSectionNotice";} 
+    SceneSection section;  
+    SceneSectionNotice() 
     { 
-        sceneStartTime = 0.0; 
-        sceneEndTime = 0.0; 
-        serverTime = 0.0; 
     } 
-    FillSceneNotice(const EntityFullInfoArray & entitys, const double & sceneStartTime, const double & sceneEndTime, const double & serverTime) 
+    SceneSectionNotice(const SceneSection & section) 
     { 
-        this->entitys = entitys; 
-        this->sceneStartTime = sceneStartTime; 
-        this->sceneEndTime = sceneEndTime; 
-        this->serverTime = serverTime; 
+        this->section = section; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const FillSceneNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneSectionNotice & data) 
 { 
-    ws << data.entitys;  
-    ws << data.sceneStartTime;  
-    ws << data.sceneEndTime;  
-    ws << data.serverTime;  
+    ws << data.section;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, FillSceneNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneSectionNotice & data) 
 { 
-    rs >> data.entitys;  
-    rs >> data.sceneStartTime;  
-    rs >> data.sceneEndTime;  
-    rs >> data.serverTime;  
+    rs >> data.section;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const FillSceneNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneSectionNotice & info) 
 { 
     stm << "[\n"; 
-    stm << "entitys=" << info.entitys << "\n"; 
-    stm << "sceneStartTime=" << info.sceneStartTime << "\n"; 
-    stm << "sceneEndTime=" << info.sceneEndTime << "\n"; 
-    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "section=" << info.section << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct RefreshSceneEntitysNotice 
+struct RefreshEntityNotice 
 { 
-    static const unsigned short getProtoID() { return 50004;} 
-    static const std::string getProtoName() { return "RefreshSceneEntitysNotice";} 
-    EntityInfoArray entitys;  
+    static const unsigned short getProtoID() { return 50011;} 
+    static const std::string getProtoName() { return "RefreshEntityNotice";} 
+    EntityInfoArray entityInfos;  
+    EntityPointArray entityPoints;  
     double serverTime; //服务器当前时间  
-    RefreshSceneEntitysNotice() 
+    RefreshEntityNotice() 
     { 
         serverTime = 0.0; 
     } 
-    RefreshSceneEntitysNotice(const EntityInfoArray & entitys, const double & serverTime) 
+    RefreshEntityNotice(const EntityInfoArray & entityInfos, const EntityPointArray & entityPoints, const double & serverTime) 
     { 
-        this->entitys = entitys; 
+        this->entityInfos = entityInfos; 
+        this->entityPoints = entityPoints; 
         this->serverTime = serverTime; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshSceneEntitysNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshEntityNotice & data) 
 { 
-    ws << data.entitys;  
+    ws << data.entityInfos;  
+    ws << data.entityPoints;  
     ws << data.serverTime;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshSceneEntitysNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshEntityNotice & data) 
 { 
-    rs >> data.entitys;  
+    rs >> data.entityInfos;  
+    rs >> data.entityPoints;  
     rs >> data.serverTime;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshSceneEntitysNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshEntityNotice & info) 
 { 
     stm << "[\n"; 
-    stm << "entitys=" << info.entitys << "\n"; 
+    stm << "entityInfos=" << info.entityInfos << "\n"; 
+    stm << "entityPoints=" << info.entityPoints << "\n"; 
     stm << "serverTime=" << info.serverTime << "\n"; 
     stm << "]\n"; 
     return stm; 
@@ -237,13 +224,13 @@ struct AddEntityNotice //一批实体加入场景时, 把这些实体的数据�
 { 
     static const unsigned short getProtoID() { return 50006;} 
     static const std::string getProtoName() { return "AddEntityNotice";} 
-    EntityFullInfoArray entitys;  
+    EntityFullDataArray entitys;  
     double serverTime; //服务器当前时间  
     AddEntityNotice() 
     { 
         serverTime = 0.0; 
     } 
-    AddEntityNotice(const EntityFullInfoArray & entitys, const double & serverTime) 
+    AddEntityNotice(const EntityFullDataArray & entitys, const double & serverTime) 
     { 
         this->entitys = entitys; 
         this->serverTime = serverTime; 
@@ -302,6 +289,82 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "eids=" << info.eids << "\n"; 
+    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct AddBuffNotice 
+{ 
+    static const unsigned short getProtoID() { return 50008;} 
+    static const std::string getProtoName() { return "AddBuffNotice";} 
+    unsigned long long eid;  
+    double serverTime; //服务器当前时间  
+    AddBuffNotice() 
+    { 
+        eid = 0; 
+        serverTime = 0.0; 
+    } 
+    AddBuffNotice(const unsigned long long & eid, const double & serverTime) 
+    { 
+        this->eid = eid; 
+        this->serverTime = serverTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AddBuffNotice & data) 
+{ 
+    ws << data.eid;  
+    ws << data.serverTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AddBuffNotice & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.serverTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AddBuffNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "eid=" << info.eid << "\n"; 
+    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct RemoveBuffNotice 
+{ 
+    static const unsigned short getProtoID() { return 50009;} 
+    static const std::string getProtoName() { return "RemoveBuffNotice";} 
+    unsigned long long eid;  
+    double serverTime; //服务器当前时间  
+    RemoveBuffNotice() 
+    { 
+        eid = 0; 
+        serverTime = 0.0; 
+    } 
+    RemoveBuffNotice(const unsigned long long & eid, const double & serverTime) 
+    { 
+        this->eid = eid; 
+        this->serverTime = serverTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RemoveBuffNotice & data) 
+{ 
+    ws << data.eid;  
+    ws << data.serverTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RemoveBuffNotice & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.serverTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RemoveBuffNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "eid=" << info.eid << "\n"; 
     stm << "serverTime=" << info.serverTime << "\n"; 
     stm << "]\n"; 
     return stm; 

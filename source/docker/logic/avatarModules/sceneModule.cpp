@@ -49,7 +49,7 @@ void SceneModule::onSceneGroupCreateReq(AvatarService & avatar, const Tracing & 
     }
     SceneServerJoinGroupIns ins;
     ins.baseInfo = avatar._baseInfo._data;
-    ins.props = avatar._props;
+    ins.baseProps = avatar._baseProps;
     ins.groupID = InvalidGroupID;
     avatar.toService(STWorldMgr, trace.oob, ins);
 }
@@ -65,7 +65,7 @@ void SceneModule::onSceneGroupJoinReq(AvatarService & avatar, const Tracing & tr
     rs >> req;
     SceneServerJoinGroupIns ins;
     ins.baseInfo = avatar._baseInfo._data;
-    ins.props = avatar._props;
+    ins.baseProps = avatar._baseProps;
     ins.groupID = req.groupID;
     avatar.toService(STWorldMgr, trace.oob, ins);
 }

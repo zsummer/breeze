@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>85d456cb152639c0cbcb9294136c8e8d</cppmd5> 
-<luamd5>9546d3f60760efd195869bc22169b094</luamd5> 
-<csharpmd5>e6972e5d083ca18ef8d3ccffa48396dc</csharpmd5> 
-<xmlmd5>fa9508e9760b794e6a4556c90b1248a5</xmlmd5> 
+<cppmd5>cdb2e2baf7b6b44d7b074a45660c801a</cppmd5> 
+<luamd5>c4956e2f00a756e162d34b6d8533c8fd</luamd5> 
+<csharpmd5>b87f72749c025877c31488b50cf19a37</csharpmd5> 
+<xmlmd5>ce0ff9b1c68a178b7dae6c44358868bd</xmlmd5> 
 <cacheNumber>
+    <cache key = "AddBuffNotice" Number = "50008" /> 
     <cache key = "AddEntityNotice" Number = "50006" /> 
     <cache key = "AttachSceneReq" Number = "50001" /> 
     <cache key = "AttachSceneResp" Number = "50002" /> 
     <cache key = "FillSceneNotice" Number = "50003" /> 
+    <cache key = "RefreshEntityNotice" Number = "50011" /> 
     <cache key = "RefreshSceneEntitysNotice" Number = "50004" /> 
     <cache key = "RefreshSceneReportsNotice" Number = "50005" /> 
+    <cache key = "RemoveBuffNotice" Number = "50009" /> 
     <cache key = "RemoveEntityNotice" Number = "50007" /> 
     <cache key = "SceneClientPulse" Number = "50000" /> 
+    <cache key = "SceneSectionNotice" Number = "50010" /> 
 </cacheNumber>

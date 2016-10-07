@@ -5,8 +5,8 @@ namespace Proto4z
     public class SceneKnock: Proto4z.IProtoObject //战场服务器挂载  
     {     
         //proto id   
-        public const ushort protoID = 39008;  
-        static public ushort getProtoID() { return 39008; } 
+        public const ushort protoID = 39000;  
+        static public ushort getProtoID() { return 39000; } 
         static public string getProtoName() { return "SceneKnock"; } 
         //members   
         public ulong lineID; //分线ID  
@@ -44,8 +44,8 @@ namespace Proto4z
     public class ScenePulse: Proto4z.IProtoObject //集群脉冲  
     {     
         //proto id   
-        public const ushort protoID = 39009;  
-        static public ushort getProtoID() { return 39009; } 
+        public const ushort protoID = 39001;  
+        static public ushort getProtoID() { return 39001; } 
         static public string getProtoName() { return "ScenePulse"; } 
         //members   
         public ScenePulse()  
@@ -65,24 +65,24 @@ namespace Proto4z
     public class SceneServerJoinGroupIns: Proto4z.IProtoObject //创建/加入编队, 来自docker的指令  
     {     
         //proto id   
-        public const ushort protoID = 39010;  
-        static public ushort getProtoID() { return 39010; } 
+        public const ushort protoID = 39002;  
+        static public ushort getProtoID() { return 39002; } 
         static public string getProtoName() { return "SceneServerJoinGroupIns"; } 
         //members   
         public ulong groupID; //编队ID, 0为创建  
         public AvatarBaseInfo baseInfo; //角色数据  
-        public AvatarPropMap props; //角色属性数据  
+        public AvatarPropMap baseProps; //角色属性数据  
         public SceneServerJoinGroupIns()  
         { 
             groupID = 0;  
             baseInfo = new AvatarBaseInfo();  
-            props = new AvatarPropMap();  
+            baseProps = new AvatarPropMap();  
         } 
-        public SceneServerJoinGroupIns(ulong groupID, AvatarBaseInfo baseInfo, AvatarPropMap props) 
+        public SceneServerJoinGroupIns(ulong groupID, AvatarBaseInfo baseInfo, AvatarPropMap baseProps) 
         { 
             this.groupID = groupID; 
             this.baseInfo = baseInfo; 
-            this.props = props; 
+            this.baseProps = baseProps; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -90,8 +90,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
             data.AddRange(this.baseInfo.__encode()); 
-            if (this.props == null) this.props = new AvatarPropMap(); 
-            data.AddRange(this.props.__encode()); 
+            if (this.baseProps == null) this.baseProps = new AvatarPropMap(); 
+            data.AddRange(this.baseProps.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -99,8 +99,8 @@ namespace Proto4z
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.baseInfo = new AvatarBaseInfo(); 
             this.baseInfo.__decode(binData, ref pos); 
-            this.props = new AvatarPropMap(); 
-            this.props.__decode(binData, ref pos); 
+            this.baseProps = new AvatarPropMap(); 
+            this.baseProps.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -108,8 +108,8 @@ namespace Proto4z
     public class SceneServerJoinGroupAck: Proto4z.IProtoObject //创建/加入编队响应结果  
     {     
         //proto id   
-        public const ushort protoID = 39011;  
-        static public ushort getProtoID() { return 39011; } 
+        public const ushort protoID = 39003;  
+        static public ushort getProtoID() { return 39003; } 
         static public string getProtoName() { return "SceneServerJoinGroupAck"; } 
         //members   
         public ushort retCode;  
@@ -147,8 +147,8 @@ namespace Proto4z
     public class SceneServerEnterSceneIns: Proto4z.IProtoObject //开辟场景  
     {     
         //proto id   
-        public const ushort protoID = 39012;  
-        static public ushort getProtoID() { return 39012; } 
+        public const ushort protoID = 39006;  
+        static public ushort getProtoID() { return 39006; } 
         static public string getProtoName() { return "SceneServerEnterSceneIns"; } 
         //members   
         public ushort sceneType; //类型  
@@ -188,8 +188,8 @@ namespace Proto4z
     public class SceneServerGroupStatusChangeIns: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39013;  
-        static public ushort getProtoID() { return 39013; } 
+        public const ushort protoID = 39007;  
+        static public ushort getProtoID() { return 39007; } 
         static public string getProtoName() { return "SceneServerGroupStatusChangeIns"; } 
         //members   
         public ulong groupID;  

@@ -221,18 +221,18 @@ namespace Proto4z
         //members   
         public ushort retCode;  
         public AvatarBaseInfo baseInfo;  
-        public AvatarPropMap props;  
+        public AvatarPropMap baseProps;  
         public AttachAvatarResp()  
         { 
             retCode = 0;  
             baseInfo = new AvatarBaseInfo();  
-            props = new AvatarPropMap();  
+            baseProps = new AvatarPropMap();  
         } 
-        public AttachAvatarResp(ushort retCode, AvatarBaseInfo baseInfo, AvatarPropMap props) 
+        public AttachAvatarResp(ushort retCode, AvatarBaseInfo baseInfo, AvatarPropMap baseProps) 
         { 
             this.retCode = retCode; 
             this.baseInfo = baseInfo; 
-            this.props = props; 
+            this.baseProps = baseProps; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -240,8 +240,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
             if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
             data.AddRange(this.baseInfo.__encode()); 
-            if (this.props == null) this.props = new AvatarPropMap(); 
-            data.AddRange(this.props.__encode()); 
+            if (this.baseProps == null) this.baseProps = new AvatarPropMap(); 
+            data.AddRange(this.baseProps.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -249,8 +249,8 @@ namespace Proto4z
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.baseInfo = new AvatarBaseInfo(); 
             this.baseInfo.__decode(binData, ref pos); 
-            this.props = new AvatarPropMap(); 
-            this.props.__decode(binData, ref pos); 
+            this.baseProps = new AvatarPropMap(); 
+            this.baseProps.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -294,30 +294,30 @@ namespace Proto4z
         static public string getProtoName() { return "AvatarPropMapNotice"; } 
         //members   
         public ulong avatarID;  
-        public AvatarPropMap props;  
+        public AvatarPropMap baseProps;  
         public AvatarPropMapNotice()  
         { 
             avatarID = 0;  
-            props = new AvatarPropMap();  
+            baseProps = new AvatarPropMap();  
         } 
-        public AvatarPropMapNotice(ulong avatarID, AvatarPropMap props) 
+        public AvatarPropMapNotice(ulong avatarID, AvatarPropMap baseProps) 
         { 
             this.avatarID = avatarID; 
-            this.props = props; 
+            this.baseProps = baseProps; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
-            if (this.props == null) this.props = new AvatarPropMap(); 
-            data.AddRange(this.props.__encode()); 
+            if (this.baseProps == null) this.baseProps = new AvatarPropMap(); 
+            data.AddRange(this.baseProps.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.props = new AvatarPropMap(); 
-            this.props.__decode(binData, ref pos); 
+            this.baseProps = new AvatarPropMap(); 
+            this.baseProps.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

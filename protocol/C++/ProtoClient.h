@@ -228,30 +228,30 @@ struct AttachAvatarResp //选角色请求返回
     static const std::string getProtoName() { return "AttachAvatarResp";} 
     unsigned short retCode;  
     AvatarBaseInfo baseInfo;  
-    AvatarPropMap props;  
+    AvatarPropMap baseProps;  
     AttachAvatarResp() 
     { 
         retCode = 0; 
     } 
-    AttachAvatarResp(const unsigned short & retCode, const AvatarBaseInfo & baseInfo, const AvatarPropMap & props) 
+    AttachAvatarResp(const unsigned short & retCode, const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps) 
     { 
         this->retCode = retCode; 
         this->baseInfo = baseInfo; 
-        this->props = props; 
+        this->baseProps = baseProps; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachAvatarResp & data) 
 { 
     ws << data.retCode;  
     ws << data.baseInfo;  
-    ws << data.props;  
+    ws << data.baseProps;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachAvatarResp & data) 
 { 
     rs >> data.retCode;  
     rs >> data.baseInfo;  
-    rs >> data.props;  
+    rs >> data.baseProps;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachAvatarResp & info) 
@@ -259,7 +259,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 
     stm << "baseInfo=" << info.baseInfo << "\n"; 
-    stm << "props=" << info.props << "\n"; 
+    stm << "baseProps=" << info.baseProps << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -300,34 +300,34 @@ struct AvatarPropMapNotice
     static const unsigned short getProtoID() { return 40008;} 
     static const std::string getProtoName() { return "AvatarPropMapNotice";} 
     unsigned long long avatarID;  
-    AvatarPropMap props;  
+    AvatarPropMap baseProps;  
     AvatarPropMapNotice() 
     { 
         avatarID = 0; 
     } 
-    AvatarPropMapNotice(const unsigned long long & avatarID, const AvatarPropMap & props) 
+    AvatarPropMapNotice(const unsigned long long & avatarID, const AvatarPropMap & baseProps) 
     { 
         this->avatarID = avatarID; 
-        this->props = props; 
+        this->baseProps = baseProps; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarPropMapNotice & data) 
 { 
     ws << data.avatarID;  
-    ws << data.props;  
+    ws << data.baseProps;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarPropMapNotice & data) 
 { 
     rs >> data.avatarID;  
-    rs >> data.props;  
+    rs >> data.baseProps;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarPropMapNotice & info) 
 { 
     stm << "[\n"; 
     stm << "avatarID=" << info.avatarID << "\n"; 
-    stm << "props=" << info.props << "\n"; 
+    stm << "baseProps=" << info.baseProps << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

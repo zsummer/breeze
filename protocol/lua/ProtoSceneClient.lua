@@ -20,21 +20,19 @@ Proto4z.AttachSceneResp[1] = {name="retCode", type="ui16" } --错误码
 Proto4z.AttachSceneResp[2] = {name="avatarID", type="ui64" }  
 Proto4z.AttachSceneResp[3] = {name="sceneID", type="ui64" }  
  
-Proto4z.register(50003,"FillSceneNotice") 
-Proto4z.FillSceneNotice = {} --填充场景数据 
-Proto4z.FillSceneNotice.__protoID = 50003 
-Proto4z.FillSceneNotice.__protoName = "FillSceneNotice" 
-Proto4z.FillSceneNotice[1] = {name="entitys", type="EntityFullInfoArray" } --这里包含有所有当前场景下的实体属性和状态数据 
-Proto4z.FillSceneNotice[2] = {name="sceneStartTime", type="double" } --服务器战场开始时间 
-Proto4z.FillSceneNotice[3] = {name="sceneEndTime", type="double" } --服务器战场结束时间 
-Proto4z.FillSceneNotice[4] = {name="serverTime", type="double" } --服务器当前时间 
+Proto4z.register(50010,"SceneSectionNotice") 
+Proto4z.SceneSectionNotice = {} --填充场景数据 
+Proto4z.SceneSectionNotice.__protoID = 50010 
+Proto4z.SceneSectionNotice.__protoName = "SceneSectionNotice" 
+Proto4z.SceneSectionNotice[1] = {name="section", type="SceneSection" }  
  
-Proto4z.register(50004,"RefreshSceneEntitysNotice") 
-Proto4z.RefreshSceneEntitysNotice = {}  
-Proto4z.RefreshSceneEntitysNotice.__protoID = 50004 
-Proto4z.RefreshSceneEntitysNotice.__protoName = "RefreshSceneEntitysNotice" 
-Proto4z.RefreshSceneEntitysNotice[1] = {name="entitys", type="EntityInfoArray" }  
-Proto4z.RefreshSceneEntitysNotice[2] = {name="serverTime", type="double" } --服务器当前时间 
+Proto4z.register(50011,"RefreshEntityNotice") 
+Proto4z.RefreshEntityNotice = {}  
+Proto4z.RefreshEntityNotice.__protoID = 50011 
+Proto4z.RefreshEntityNotice.__protoName = "RefreshEntityNotice" 
+Proto4z.RefreshEntityNotice[1] = {name="entityInfos", type="EntityInfoArray" }  
+Proto4z.RefreshEntityNotice[2] = {name="entityPoints", type="EntityPointArray" }  
+Proto4z.RefreshEntityNotice[3] = {name="serverTime", type="double" } --服务器当前时间 
  
 Proto4z.register(50005,"RefreshSceneReportsNotice") 
 Proto4z.RefreshSceneReportsNotice = {}  
@@ -47,7 +45,7 @@ Proto4z.register(50006,"AddEntityNotice")
 Proto4z.AddEntityNotice = {} --一批实体加入场景时, 把这些实体的数据广播给其他玩家 
 Proto4z.AddEntityNotice.__protoID = 50006 
 Proto4z.AddEntityNotice.__protoName = "AddEntityNotice" 
-Proto4z.AddEntityNotice[1] = {name="entitys", type="EntityFullInfoArray" }  
+Proto4z.AddEntityNotice[1] = {name="entitys", type="EntityFullDataArray" }  
 Proto4z.AddEntityNotice[2] = {name="serverTime", type="double" } --服务器当前时间 
  
 Proto4z.register(50007,"RemoveEntityNotice") 
@@ -56,3 +54,17 @@ Proto4z.RemoveEntityNotice.__protoID = 50007
 Proto4z.RemoveEntityNotice.__protoName = "RemoveEntityNotice" 
 Proto4z.RemoveEntityNotice[1] = {name="eids", type="EntityIDArray" }  
 Proto4z.RemoveEntityNotice[2] = {name="serverTime", type="double" } --服务器当前时间 
+ 
+Proto4z.register(50008,"AddBuffNotice") 
+Proto4z.AddBuffNotice = {}  
+Proto4z.AddBuffNotice.__protoID = 50008 
+Proto4z.AddBuffNotice.__protoName = "AddBuffNotice" 
+Proto4z.AddBuffNotice[1] = {name="eid", type="ui64" }  
+Proto4z.AddBuffNotice[2] = {name="serverTime", type="double" } --服务器当前时间 
+ 
+Proto4z.register(50009,"RemoveBuffNotice") 
+Proto4z.RemoveBuffNotice = {}  
+Proto4z.RemoveBuffNotice.__protoID = 50009 
+Proto4z.RemoveBuffNotice.__protoName = "RemoveBuffNotice" 
+Proto4z.RemoveBuffNotice[1] = {name="eid", type="ui64" }  
+Proto4z.RemoveBuffNotice[2] = {name="serverTime", type="double" } --服务器当前时间 

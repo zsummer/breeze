@@ -41,21 +41,31 @@ public:
     inline SCENE_STATUS getSceneStatus() { return _sceneStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
     inline size_t getPlayerCount() { return _players.size(); }
+    GroupID getGroupID(ServiceID avatarID);
+    void getSceneSection(SceneSection & ss);
+    
 public:
     Scene(SceneID id);
     bool cleanScene();
     bool initScene(SCENE_TYPE sceneType, MapID mapID);
     bool onUpdate();
 
-//    void fillUserProp(const FillUserToSceneReq& req);
-    EntityPtr makeNewEntity(const AvatarBaseInfo & base);
-    EntityPtr getEntity(EntityID eID);
-    EntityPtr getUserEntity(ServiceID avatarID);
 
-    bool addEntity(EntityPtr entity); 
+//    void fillUserProp(const FillUserToSceneReq& req);
+
+    EntityPtr getEntity(EntityID eID);
+    EntityPtr getEntityByAvatarID(ServiceID avatarID);
+
+    EntityPtr addEntity(const AvatarBaseInfo & baseInfo, 
+            const AvatarPropMap & baseProps, 
+            ENTITY_COLOR ecolor, 
+            ENTITY_TYPE etype,
+            ENTITY_STATE state= ESTATE_ACTIVE, 
+            GroupID = InvalidGroupID);
     bool removeEntity(EntityID eid); 
-    bool enterScene(ServiceID avatarID, const std::string & token, SessionID sID);
-    bool leaveScene(ServiceID avatarID, SessionID sID);
+
+    bool playerAttach(ServiceID avatarID, SessionID sID);
+    bool playerDettach(ServiceID avatarID, SessionID sID);
 
 public:
 

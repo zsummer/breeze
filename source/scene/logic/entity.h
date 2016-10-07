@@ -36,14 +36,16 @@ public:
     double getElapsed(double now);
     double getSuckBlood();
     double getAttack();
-    void pickProto(EntityFullInfo & info);
-    AvatarBaseInfo _base;
+    EntityFullData getFullData();
+    AvatarBaseInfo _baseInfo;
+    AvatarPropMap _baseProps;
     EntityInfo  _info;
+    EntityPoint  _point;
     EntityControl _control;
     EntityReport _report;
     SessionID _clientSessionID = InvalidSessionID;
-    std::string _token;
     bool _isClientDirty = false;
+    bool _isPointDirty = false;
 };
 
 using EntityPtr = std::shared_ptr<Entity>;
