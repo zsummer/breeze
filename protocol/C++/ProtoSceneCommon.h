@@ -757,7 +757,7 @@ struct EntityInfo //EntityInfo
     static const std::string getProtoName() { return "EntityInfo";} 
     unsigned long long eid; //eid  
     unsigned short color; //阵营  
-    unsigned short groupID; //组队ID  
+    unsigned long long groupID; //组队ID  
     unsigned short etype; //实体类型  
     unsigned short state; //状态  
     unsigned long long foe; //锁定的敌人  
@@ -774,7 +774,7 @@ struct EntityInfo //EntityInfo
         leader = 0; 
         curHP = 0.0; 
     } 
-    EntityInfo(const unsigned long long & eid, const unsigned short & color, const unsigned short & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP) 
+    EntityInfo(const unsigned long long & eid, const unsigned short & color, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP) 
     { 
         this->eid = eid; 
         this->color = color; 

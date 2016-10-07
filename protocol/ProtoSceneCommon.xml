@@ -274,7 +274,7 @@
     <struct name="EntityInfo" desc="EntityInfo">
         <member name="eid" type="ui64"  desc="eid"/>
         <member name="color" type="ui16"  desc="阵营"/>
-        <member name="groupID" type="ui16"  desc="组队ID"/>
+        <member name="groupID" type="ui64"  desc="组队ID"/>
         <member name="etype" type="ui16"  desc="实体类型"/>
         <member name="state" type="ui16"  desc="状态"/>
         <member name="foe"  type="ui64" desc="锁定的敌人"/>

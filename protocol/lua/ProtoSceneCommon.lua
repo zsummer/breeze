@@ -266,7 +266,7 @@ Proto4z.EntityInfo.__protoID = 10010
 Proto4z.EntityInfo.__protoName = "EntityInfo" 
 Proto4z.EntityInfo[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityInfo[2] = {name="color", type="ui16" } --阵营 
-Proto4z.EntityInfo[3] = {name="groupID", type="ui16" } --组队ID 
+Proto4z.EntityInfo[3] = {name="groupID", type="ui64" } --组队ID 
 Proto4z.EntityInfo[4] = {name="etype", type="ui16" } --实体类型 
 Proto4z.EntityInfo[5] = {name="state", type="ui16" } --状态 
 Proto4z.EntityInfo[6] = {name="foe", type="ui64" } --锁定的敌人 

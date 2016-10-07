@@ -1052,7 +1052,7 @@ namespace Proto4z
         //members   
         public ulong eid; //eid  
         public ushort color; //阵营  
-        public ushort groupID; //组队ID  
+        public ulong groupID; //组队ID  
         public ushort etype; //实体类型  
         public ushort state; //状态  
         public ulong foe; //锁定的敌人  
@@ -1069,7 +1069,7 @@ namespace Proto4z
             leader = 0;  
             curHP = 0.0;  
         } 
-        public EntityInfo(ulong eid, ushort color, ushort groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP) 
+        public EntityInfo(ulong eid, ushort color, ulong groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP) 
         { 
             this.eid = eid; 
             this.color = color; 
@@ -1085,7 +1085,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.color)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.groupID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
@@ -1097,7 +1097,7 @@ namespace Proto4z
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.color = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.groupID = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
