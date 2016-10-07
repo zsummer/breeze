@@ -17,7 +17,7 @@ bool Scene::cleanScene()
     return true;
 }
 
-bool Scene::loadScene(SCENE_TYPE sceneType)
+bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
 {
     if (_sceneStatus != SCENE_STATUS_NONE)
     {

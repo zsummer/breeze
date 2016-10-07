@@ -450,7 +450,33 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
     ReadStream rs(begin, len);
     if (rs.getProtoID() == SceneServerGroupStatusChangeIns::getProtoID())
     {
-
+        SceneServerGroupStatusChangeIns ins;
+        rs >> ins;
+        auto group = getGroupInfo(ins.groupID);
+        if (group->sceneStatus == SCENE_STATUS_ALLOCATE && ins.status == SCENE_STATUS_WAIT)
+        {
+            group->sceneID = ins.sceneID;
+            group->sceneStatus = ins.status;
+            pushGroupInfoToClient(group);
+        }
+        else if (group->sceneStatus == SCENE_STATUS_WAIT && ins.status == SCENE_STATUS_ACTIVE)
+        {
+            group->sceneStatus = ins.status;
+            pushGroupInfoToClient(group);
+        }
+        else if (group->sceneStatus == SCENE_STATUS_WAIT && ins.status == SCENE_STATUS_ACTIVE)
+        {
+            group->sceneStatus = ins.status;
+            pushGroupInfoToClient(group);
+        }
+        else if (group->sceneStatus == SCENE_STATUS_ACTIVE && ins.status == SCENE_STATUS_NONE)
+        {
+            group->sceneStatus = ins.status;
+            group->sceneType = SCENE_TYPE_NONE;
+            pushGroupInfoToClient(group);
+            //write report to db
+            //push report to client
+        }
     }
 	else if (rs.getProtoID() == SceneKnock::getProtoID())
 	{

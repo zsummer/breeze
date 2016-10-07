@@ -42,8 +42,9 @@ bool SceneMgr::loadScenes()
     for (int i=0; i<50; i++)
     {
         lastID++;
-        _scenes.insert(std::make_pair(lastID, std::make_shared<Scene>(lastID)));
-        _frees.insert(std::make_pair(lastID, std::make_shared<Scene>(lastID)));
+        auto scene = std::make_shared<Scene>(lastID);
+        _scenes.insert(std::make_pair(lastID, scene));
+        _frees.push(scene);
     }
     onTimer();
     return true;
@@ -223,6 +224,20 @@ bool SceneMgr::startWorldConnect()
 }
 
 
+void SceneMgr::sendToWorld(const char * block, unsigned int len)
+{
+    if (_worldSessionID != InvalidSessionID)
+    {
+        sendViaSessionID(_worldSessionID, block, len);
+    }
+}
+void SceneMgr::sendToWorld(const Tracing &trace, const char * block, unsigned int len)
+{
+    WriteStream fd(ForwardToService::getProtoID());
+    fd << trace;
+    fd.appendOriginalData(block, len);
+    sendToWorld(fd.getStream(), fd.getStreamLen());
+}
 
 void SceneMgr::sendViaSessionID(SessionID sessionID, const char * block, unsigned int len)
 {
@@ -274,24 +289,6 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         onSceneServerEnterSceneIns(session, ins);
         return;
     }
-
-}
-
-void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins)
-{
-    if (ins.sceneType == SCENE_TYPE_HOME)
-    {
-
-    }
-    if (_frees.empty() || !_frees.begin()->second)
-    {
-        //!error 
-        return;
-    }
-
-    auto scenePtr = _frees.begin()->second;
-    _frees.erase(_frees.begin());
-
 
 }
 
@@ -351,6 +348,56 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
         LOGE("client unknow proto or wrong status. protoID=" << rs.getProtoID() << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
     }
 }
+
+
+
+
+
+void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins)
+{
+    ScenePtr scene;
+    //如果类型是主城并且存在未满人的主城 直接丢进去
+    if (ins.sceneType == SCENE_TYPE_HOME)
+    {
+        for (auto &kv : _homes)
+        {
+            if( kv.second->getPlayerCount() < 30 )
+            {
+                scene = kv.second;
+                break;
+            }
+        }
+    }
+    if (!scene && (_frees.empty() || !_frees.front()))
+    {
+        //!error
+        LOGE("");
+        return;
+    }
+    if (!scene) //初始化
+    {
+        scene = _frees.front();
+        _frees.pop();
+        scene->cleanScene();
+        scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
+    }
+    for (auto & group : ins.groups)
+    {
+        for (auto & avatar : group.members)
+        {
+            _tokens[avatar.first] = avatar.second.token;
+        }
+        SceneServerGroupStatusChangeIns ret;
+        ret.groupID = group.groupID;
+        ret.sceneID = scene->getSceneID();
+        ret.status = SCENE_STATUS_WAIT;
+        sendToWorld(ret);
+    }
+
+
+
+}
+
 
 
 

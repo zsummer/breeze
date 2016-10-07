@@ -5,8 +5,8 @@ namespace Proto4z
     public class SceneKnock: Proto4z.IProtoObject //战场服务器挂载  
     {     
         //proto id   
-        public const ushort protoID = 39000;  
-        static public ushort getProtoID() { return 39000; } 
+        public const ushort protoID = 39008;  
+        static public ushort getProtoID() { return 39008; } 
         static public string getProtoName() { return "SceneKnock"; } 
         //members   
         public ulong lineID; //分线ID  
@@ -44,8 +44,8 @@ namespace Proto4z
     public class ScenePulse: Proto4z.IProtoObject //集群脉冲  
     {     
         //proto id   
-        public const ushort protoID = 39001;  
-        static public ushort getProtoID() { return 39001; } 
+        public const ushort protoID = 39009;  
+        static public ushort getProtoID() { return 39009; } 
         static public string getProtoName() { return "ScenePulse"; } 
         //members   
         public ScenePulse()  
@@ -65,8 +65,8 @@ namespace Proto4z
     public class SceneServerJoinGroupIns: Proto4z.IProtoObject //创建/加入编队, 来自docker的指令  
     {     
         //proto id   
-        public const ushort protoID = 39002;  
-        static public ushort getProtoID() { return 39002; } 
+        public const ushort protoID = 39010;  
+        static public ushort getProtoID() { return 39010; } 
         static public string getProtoName() { return "SceneServerJoinGroupIns"; } 
         //members   
         public ulong groupID; //编队ID, 0为创建  
@@ -108,8 +108,8 @@ namespace Proto4z
     public class SceneServerJoinGroupAck: Proto4z.IProtoObject //创建/加入编队响应结果  
     {     
         //proto id   
-        public const ushort protoID = 39003;  
-        static public ushort getProtoID() { return 39003; } 
+        public const ushort protoID = 39011;  
+        static public ushort getProtoID() { return 39011; } 
         static public string getProtoName() { return "SceneServerJoinGroupAck"; } 
         //members   
         public ushort retCode;  
@@ -147,8 +147,8 @@ namespace Proto4z
     public class SceneServerEnterSceneIns: Proto4z.IProtoObject //开辟场景  
     {     
         //proto id   
-        public const ushort protoID = 39006;  
-        static public ushort getProtoID() { return 39006; } 
+        public const ushort protoID = 39012;  
+        static public ushort getProtoID() { return 39012; } 
         static public string getProtoName() { return "SceneServerEnterSceneIns"; } 
         //members   
         public ushort sceneType; //类型  
@@ -188,32 +188,37 @@ namespace Proto4z
     public class SceneServerGroupStatusChangeIns: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39007;  
-        static public ushort getProtoID() { return 39007; } 
+        public const ushort protoID = 39013;  
+        static public ushort getProtoID() { return 39013; } 
         static public string getProtoName() { return "SceneServerGroupStatusChangeIns"; } 
         //members   
         public ulong groupID;  
-        public ushort status;  
+        public ulong sceneID;  
+        public ushort status; //如果是NONE 说明离开场景  
         public SceneServerGroupStatusChangeIns()  
         { 
             groupID = 0;  
+            sceneID = 0;  
             status = 0;  
         } 
-        public SceneServerGroupStatusChangeIns(ulong groupID, ushort status) 
+        public SceneServerGroupStatusChangeIns(ulong groupID, ulong sceneID, ushort status) 
         { 
             this.groupID = groupID; 
+            this.sceneID = sceneID; 
             this.status = status; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 
         } 

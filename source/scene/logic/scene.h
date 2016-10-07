@@ -40,11 +40,11 @@ public:
     inline SCENE_TYPE getSceneType() { return _sceneType; }
     inline SCENE_STATUS getSceneStatus() { return _sceneStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
-    inline size_t getUsersCount() { return _players.size(); }
+    inline size_t getPlayerCount() { return _players.size(); }
 public:
     Scene(SceneID id);
     bool cleanScene();
-    bool loadScene(SCENE_TYPE sceneType);
+    bool initScene(SCENE_TYPE sceneType, MapID mapID);
     bool onUpdate();
 
 //    void fillUserProp(const FillUserToSceneReq& req);
