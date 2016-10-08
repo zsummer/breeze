@@ -328,7 +328,7 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
             LOGE("");
             return;
         }
-        auto entity = checkscene->second->getEntityByAvatarID(trace.oob.clientAvatarID);
+        auto entity = checkscene->second->getEntityByAvatarID(resp.sourceID);
         if (!entity)
         {
             LOGE("");
@@ -414,7 +414,7 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
         AttachSceneReq req;
         rs >> req;
         auto founder = _tokens.find(req.avatarID);
-        if (founder != _tokens.end() && founder->second == req.token  && _actives.find(req.sceneID) != _actives.end())
+        if (founder != _tokens.end() && founder->second.first == req.token  && _actives.find(req.sceneID) != _actives.end())
         {
             session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
             session->setUserParam(UPARAM_AVATAR_ID, req.avatarID);
