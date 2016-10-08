@@ -29,7 +29,6 @@ private:
     SCENE_TYPE _sceneType;
     SCENE_STATUS _sceneStatus;
     RVO::RVOSimulator *_sim = nullptr;
-    std::queue<ui64> _freeAgentNo;
     EntityID _lastEID;
     double _lastStatusChangeTime;
     double _startTime;

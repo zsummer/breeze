@@ -250,7 +250,7 @@
  \code
  void setupScenario(RVO::RVOSimulator* sim) {
  // Specify global time step of the simulation.
- sim->setTimeStep(0.25f);
+ sim->setTimeStep(0.25);
 
  // Specify default parameters for agents that are subsequently added.
  sim->setAgentDefaults(15.0, 10, 10.0, 5.0, 2.0, 2.0);

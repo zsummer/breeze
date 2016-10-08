@@ -52,7 +52,6 @@ bool Scene::cleanScene()
         delete _sim;
         _sim = nullptr;
     }
-    while (!_freeAgentNo.empty()) _freeAgentNo.pop();
 
     return true;
 }
@@ -70,15 +69,15 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
     _startTime = getFloatNowTime();
     _endTime = getFloatNowTime() + 600;
     _sim = new RVO::RVOSimulator();
-    _sim->setTimeStep(0.33f);
-    _sim->setAgentDefaults(15.0f, 10, 10.0f, 5.0f, 2.0f, 2.0f);
+    _sim->setTimeStep(0.33);
+    _sim->setAgentDefaults(15.0, 10, 10.0, 5.0, 2.0, 2.0);
     if (true)
     {
         std::vector<RVO::Vector2> vertices;
-        vertices.push_back(RVO::Vector2(-7.0f, -20.0f));
-        vertices.push_back(RVO::Vector2(7.0f, -20.0f));
-        vertices.push_back(RVO::Vector2(7.0f, 20.0f));
-        vertices.push_back(RVO::Vector2(-7.0f, 20.0f));
+        vertices.push_back(RVO::Vector2(-7.0, -20.0));
+        vertices.push_back(RVO::Vector2(7.0, -20.0));
+        vertices.push_back(RVO::Vector2(7.0, 20.0));
+        vertices.push_back(RVO::Vector2(-7.0, 20.0));
         _sim->addObstacle(vertices);
         _sim->processObstacles();
     }
@@ -102,11 +101,11 @@ bool Scene::onUpdate()
         {
              if(true)
              {
-                 _sim->setAgentPrefVelocity(i, RVO::Vector2(0.0f, 0.0f));
+                 _sim->setAgentPrefVelocity(i, RVO::Vector2(0.0, 0.0));
              }
              else
              {
-                 _sim->setAgentPrefVelocity(i, RVO::Vector2(0.0f, 0.0f));
+                 _sim->setAgentPrefVelocity(i, RVO::Vector2(0.0, 0.0));
              }
         }
         _sim->doStep();
@@ -185,18 +184,8 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
 
     entity->_report.eid = entity->_info.eid;
 
-    size_t agentNo = -1;
-    if (_freeAgentNo.empty())
-    {
-        agentNo = _sim->addAgent(RVO::Vector2(entity->_point.pos.x, entity->_point.pos.y));
-    }
-    else
-    {
-        agentNo = _freeAgentNo.front();
-        _freeAgentNo.pop();
-        _sim->setAgentPosition(agentNo, RVO::Vector2(entity->_point.pos.x, entity->_point.pos.y));
-    }
-    entity->_control.agentNo = agentNo;
+    entity->_control.agentNo = _sim->addAgent(RVO::Vector2(entity->_point.pos.x, entity->_point.pos.y));
+
     _entitys.insert(std::make_pair(entity->_info.eid, entity));
 
     if (baseInfo.avatarID != InvalidServiceID)
@@ -220,10 +209,10 @@ bool Scene::removeEntity(EntityID eid)
         LOGE("");
         return false;
     }
-    if(entity->_control.agentNo != -1  && entity->_control.agentNo < _sim->getNumAgents())
+    if(entity->_control.agentNo < _sim->getNumAgents())
     {
-        _freeAgentNo.push(entity->_control.agentNo);
-        _sim->setAgentPosition(entity->_control.agentNo, RVO::Vector2(1E20, 1E20*entity->_control.agentNo));
+        _sim->removeAgent(entity->_control.agentNo);
+        entity->_control.agentNo = -1;
     }
     if (entity->_info.etype == ETYPE_AVATAR)
     {

@@ -219,7 +219,7 @@ namespace RVO {
 			/* Project current velocity on velocity obstacle. */
 
 			/* Check if current velocity is projected on cutoff circles. */
-			const double t = (obstacle1 == obstacle2 ? 0.5f : ((velocity_ - leftCutoff) * cutoffVec) / absSq(cutoffVec));
+			const double t = (obstacle1 == obstacle2 ? 0.5 : ((velocity_ - leftCutoff) * cutoffVec) / absSq(cutoffVec));
 			const double tLeft = ((velocity_ - leftCutoff) * leftLegDirection);
 			const double tRight = ((velocity_ - rightCutoff) * rightLegDirection);
 
@@ -346,7 +346,7 @@ namespace RVO {
 				u = (combinedRadius * invTimeStep - wLength) * unitW;
 			}
 
-			line.point = velocity_ + 0.5f * u;
+			line.point = velocity_ + 0.5 * u;
 			orcaLines_.push_back(line);
 		}
 
@@ -537,7 +537,7 @@ namespace RVO {
 						}
 						else {
 							/* Line i and line j point in opposite direction. */
-							line.point = 0.5f * (lines[i].point + lines[j].point);
+							line.point = 0.5 * (lines[i].point + lines[j].point);
 						}
 					}
 					else {

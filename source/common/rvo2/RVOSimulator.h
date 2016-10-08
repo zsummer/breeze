@@ -148,7 +148,8 @@ namespace RVO {
 		 * \return     The number of the agent, or RVO::RVO_ERROR when the agent
 		 *             defaults have not been set.
 		 */
-		size_t addAgent(const Vector2 &position);
+        size_t addAgent(const Vector2 &position);
+        void removeAgent(size_t agentNo);
 
 		/**
 		 * \brief      Adds a new agent to the simulation.
@@ -582,6 +583,7 @@ namespace RVO {
 
 	private:
 		std::vector<Agent *> agents_;
+        std::vector<size_t> freeAgents_;
 		Agent *defaultAgent_;
 		double globalTime_;
 		KdTree *kdTree_;
