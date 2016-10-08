@@ -28,6 +28,8 @@ private:
     SceneID _sceneID;
     SCENE_TYPE _sceneType;
     SCENE_STATUS _sceneStatus;
+    RVO::RVOSimulator *_sim = nullptr;
+    std::queue<ui64> _freeAgentNo;
     EntityID _lastEID;
     double _lastStatusChangeTime;
     double _startTime;
@@ -46,6 +48,7 @@ public:
     
 public:
     Scene(SceneID id);
+    ~Scene();
     bool cleanScene();
     bool initScene(SCENE_TYPE sceneType, MapID mapID);
     bool onUpdate();

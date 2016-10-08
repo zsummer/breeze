@@ -27,7 +27,7 @@ enum SCENE_STATUS : unsigned short
  
 struct SceneGroupAvatarInfo 
 { 
-    static const unsigned short getProtoID() { return 10000;} 
+    static const unsigned short getProtoID() { return 10018;} 
     static const std::string getProtoName() { return "SceneGroupAvatarInfo";} 
     unsigned long long areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
     AvatarBaseInfo baseInfo; //玩家基础数据  
@@ -86,7 +86,7 @@ typedef std::map<unsigned long long, SceneGroupAvatarInfo> SceneGroupAvatarInfoM
  
 struct SceneGroupInfo //编队数据  
 { 
-    static const unsigned short getProtoID() { return 10001;} 
+    static const unsigned short getProtoID() { return 10019;} 
     static const std::string getProtoName() { return "SceneGroupInfo";} 
     unsigned long long groupID;  
     unsigned short sceneType; //场景类型  
@@ -178,7 +178,7 @@ typedef std::vector<unsigned long long> EntityIDArray;
  
 struct EPoint 
 { 
-    static const unsigned short getProtoID() { return 10002;} 
+    static const unsigned short getProtoID() { return 10020;} 
     static const std::string getProtoName() { return "EPoint";} 
     double x;  
     double y;  
@@ -324,7 +324,7 @@ enum BUFF_TYPE : unsigned long long
  
 struct SearchInfo 
 { 
-    static const unsigned short getProtoID() { return 10003;} 
+    static const unsigned short getProtoID() { return 10021;} 
     static const std::string getProtoName() { return "SearchInfo";} 
     unsigned short searchMethod;  
     unsigned long long searchTarget;  
@@ -398,7 +398,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SkillBehaviour //技能触发行为  
 { 
-    static const unsigned short getProtoID() { return 10004;} 
+    static const unsigned short getProtoID() { return 10022;} 
     static const std::string getProtoName() { return "SkillBehaviour";} 
     unsigned long long behaviour;  
     double delay;  
@@ -454,7 +454,7 @@ typedef std::vector<SkillBehaviour> SkillBehaviourArray;
  
 struct SkillData //技能  
 { 
-    static const unsigned short getProtoID() { return 10005;} 
+    static const unsigned short getProtoID() { return 10023;} 
     static const std::string getProtoName() { return "SkillData";} 
     unsigned long long skillID; //skillID  
     unsigned long long skillType; //SKILL_TYPE  
@@ -503,7 +503,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct BuffData //buff  
 { 
-    static const unsigned short getProtoID() { return 10006;} 
+    static const unsigned short getProtoID() { return 10024;} 
     static const std::string getProtoName() { return "BuffData";} 
     unsigned long long buffID;  
     unsigned long long buffType; //buff类型  
@@ -573,7 +573,7 @@ enum HARM_TYPE : unsigned short
  
 struct HarmData //伤害数据  
 { 
-    static const unsigned short getProtoID() { return 10007;} 
+    static const unsigned short getProtoID() { return 10025;} 
     static const std::string getProtoName() { return "HarmData";} 
     unsigned long long eid; //目标eid  
     unsigned short type; //伤害类型HARM_TYPE  
@@ -620,7 +620,7 @@ typedef std::vector<HarmData> HarmDataArray;
  
 struct SkillInfo 
 { 
-    static const unsigned short getProtoID() { return 10008;} 
+    static const unsigned short getProtoID() { return 10026;} 
     static const std::string getProtoName() { return "SkillInfo";} 
     unsigned long long skillID;  
     double startTime;  
@@ -689,7 +689,7 @@ typedef std::vector<SkillInfo> SkillInfoArray;
  
 struct BuffInfo 
 { 
-    static const unsigned short getProtoID() { return 10009;} 
+    static const unsigned short getProtoID() { return 10027;} 
     static const std::string getProtoName() { return "BuffInfo";} 
     unsigned long long eid; //施放该buff的entity id  
     unsigned long long skillID; //如果该buff是被技能触发的 则记录该技能, 被动技能是0  
@@ -753,7 +753,7 @@ typedef std::vector<BuffInfo> BuffInfoArray;
  
 struct EntityInfo //EntityInfo  
 { 
-    static const unsigned short getProtoID() { return 10010;} 
+    static const unsigned short getProtoID() { return 10028;} 
     static const std::string getProtoName() { return "EntityInfo";} 
     unsigned long long eid; //eid  
     unsigned short color; //阵营  
@@ -830,7 +830,7 @@ typedef std::vector<EntityInfo> EntityInfoArray;
  
 struct EntityPoint //EntityPoint  
 { 
-    static const unsigned short getProtoID() { return 10015;} 
+    static const unsigned short getProtoID() { return 10029;} 
     static const std::string getProtoName() { return "EntityPoint";} 
     unsigned long long eid; //eid  
     EPoint pos; //当前坐标  
@@ -887,9 +887,10 @@ typedef std::vector<EntityPoint> EntityPointArray;
  
 struct EntityControl //EntityControl  
 { 
-    static const unsigned short getProtoID() { return 10011;} 
+    static const unsigned short getProtoID() { return 10030;} 
     static const std::string getProtoName() { return "EntityControl";} 
     unsigned long long eid; //eid  
+    unsigned long long agentNo; //agentNo. -1为无效  
     double stateChageTick; //状态改变时间  
     double extSpeed; //扩展速度  
     double extBeginTime; //扩展速度的开始时间  
@@ -905,6 +906,7 @@ struct EntityControl //EntityControl
     EntityControl() 
     { 
         eid = 0; 
+        agentNo = 0; 
         stateChageTick = 0.0; 
         extSpeed = 0.0; 
         extBeginTime = 0.0; 
@@ -913,9 +915,10 @@ struct EntityControl //EntityControl
         hitTimes = 0; 
         lastMoveTime = 0.0; 
     } 
-    EntityControl(const unsigned long long & eid, const double & stateChageTick, const double & extSpeed, const double & extBeginTime, const double & extKeepTime, const EPoint & spawnpoint, const EPoint & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const double & diedTime, const int & hitTimes, const double & lastMoveTime, const EPoint & lastClientPos) 
+    EntityControl(const unsigned long long & eid, const unsigned long long & agentNo, const double & stateChageTick, const double & extSpeed, const double & extBeginTime, const double & extKeepTime, const EPoint & spawnpoint, const EPoint & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const double & diedTime, const int & hitTimes, const double & lastMoveTime, const EPoint & lastClientPos) 
     { 
         this->eid = eid; 
+        this->agentNo = agentNo; 
         this->stateChageTick = stateChageTick; 
         this->extSpeed = extSpeed; 
         this->extBeginTime = extBeginTime; 
@@ -933,6 +936,7 @@ struct EntityControl //EntityControl
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityControl & data) 
 { 
     ws << data.eid;  
+    ws << data.agentNo;  
     ws << data.stateChageTick;  
     ws << data.extSpeed;  
     ws << data.extBeginTime;  
@@ -950,6 +954,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityControl & data) 
 { 
     rs >> data.eid;  
+    rs >> data.agentNo;  
     rs >> data.stateChageTick;  
     rs >> data.extSpeed;  
     rs >> data.extBeginTime;  
@@ -968,6 +973,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "eid=" << info.eid << "\n"; 
+    stm << "agentNo=" << info.agentNo << "\n"; 
     stm << "stateChageTick=" << info.stateChageTick << "\n"; 
     stm << "extSpeed=" << info.extSpeed << "\n"; 
     stm << "extBeginTime=" << info.extBeginTime << "\n"; 
@@ -989,7 +995,7 @@ typedef std::vector<EntityControl> EntityControlArray;
  
 struct EntityReport //EntityReport  
 { 
-    static const unsigned short getProtoID() { return 10012;} 
+    static const unsigned short getProtoID() { return 10031;} 
     static const std::string getProtoName() { return "EntityReport";} 
     unsigned long long eid; //eid  
     unsigned long long killOtherCount; //杀死其他玩家次数  
@@ -1054,7 +1060,7 @@ typedef std::vector<EntityReport> EntityReportArray;
  
 struct EntityFullData //EntityFullData  
 { 
-    static const unsigned short getProtoID() { return 10016;} 
+    static const unsigned short getProtoID() { return 10032;} 
     static const std::string getProtoName() { return "EntityFullData";} 
     AvatarBaseInfo baseInfo;  
     AvatarPropMap baseProps;  
@@ -1108,7 +1114,7 @@ typedef std::vector<EntityFullData> EntityFullDataArray;
  
 struct SceneSection //场景全景切片数据  
 { 
-    static const unsigned short getProtoID() { return 10017;} 
+    static const unsigned short getProtoID() { return 10033;} 
     static const std::string getProtoName() { return "SceneSection";} 
     unsigned long long sceneID;  
     unsigned short sceneType;  

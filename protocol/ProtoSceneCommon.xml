@@ -296,6 +296,7 @@
     <!-- 实体控制属性, 对客户端不可见 -->
     <struct name="EntityControl" desc="EntityControl">
         <member name="eid" type="ui64"  desc="eid"/>
+        <member name="agentNo" type="ui64"  desc="agentNo. -1为无效"/>
         <member name="stateChageTick" type="double"  desc="状态改变时间"/>
         <member name="extSpeed" type="double"  desc="扩展速度"/>
         <member name="extBeginTime" type="double"  desc="扩展速度的开始时间"/>
