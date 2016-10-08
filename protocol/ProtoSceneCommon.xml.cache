@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>5253929a5fb348f8471b8d2b114266b5</cppmd5> 
-<luamd5>c20a356e2c4a23b9dcf4f832ac7e1f81</luamd5> 
-<csharpmd5>6221b25f9d4d2417952810fd5b9ecdb3</csharpmd5> 
-<xmlmd5>6ab815153895e168b8f95d0640b14b1e</xmlmd5> 
+<cppmd5>89ffd38b0e0ff2b0df77a4581c341099</cppmd5> 
+<luamd5>6902b733c03c8290d7fdeb9fa330a21b</luamd5> 
+<csharpmd5>fc3ef5c756d9c2568d0baee94e0f30fb</csharpmd5> 
+<xmlmd5>f7a81c6388c16c376f10f48f6f323d3d</xmlmd5> 
 <cacheNumber>
     <cache key = "BuffData" Number = "10006" /> 
     <cache key = "BuffInfo" Number = "10009" /> 
@@ -12,6 +12,7 @@
     <cache key = "EntityFullData" Number = "10016" /> 
     <cache key = "EntityFullInfo" Number = "10013" /> 
     <cache key = "EntityInfo" Number = "10010" /> 
+    <cache key = "EntityMove" Number = "10034" /> 
     <cache key = "EntityMoveInfo" Number = "10014" /> 
     <cache key = "EntityPoint" Number = "10015" /> 
     <cache key = "EntityReport" Number = "10012" /> 

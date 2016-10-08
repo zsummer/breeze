@@ -70,8 +70,9 @@ private:
     //docker间通讯处理 
     void event_onWorldLinked(TcpSessionPtr session);
     void event_onWorldClosed(TcpSessionPtr session);
-    void event_onWorldMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-    void onSceneServerEnterSceneIns(TcpSessionPtr   session, SceneServerEnterSceneIns & ins);
+    void event_onWorldMessage(TcpSessionPtr session, const char * begin, unsigned int len);
+    void onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins);
+    void onForwardToService(TcpSessionPtr session, Tracing & trace, ReadStream & rs);
 private:
     //客户端通讯处理 
     void event_onClientLinked(TcpSessionPtr session);
@@ -85,7 +86,7 @@ private:
 
     std::map<SceneID, ScenePtr> _scenes;
     std::map<SceneID, ScenePtr> _homes;
-    std::map<ServiceID, std::string> _tokens;
+    std::map<ServiceID, std::pair<std::string, SceneID>> _tokens;
 
     SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;

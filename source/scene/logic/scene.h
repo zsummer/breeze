@@ -36,15 +36,28 @@ private:
     std::map<EntityID, EntityPtr> _entitys;
     std::map<ServiceID, EntityPtr> _players;
     std::queue<std::function<void()>> _asyncs;
+
+
 public:
     inline SceneID getSceneID() { return _sceneID; }
     inline SCENE_TYPE getSceneType() { return _sceneType; }
     inline SCENE_STATUS getSceneStatus() { return _sceneStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
     inline size_t getPlayerCount() { return _players.size(); }
+    inline std::map<ServiceID, EntityPtr> & getPlayers() { return _players; }
     GroupID getGroupID(ServiceID avatarID);
     void getSceneSection(SceneSection & ss);
-    
+    EntityPtr getEntity(EntityID eID);
+    EntityPtr getEntityByAvatarID(ServiceID avatarID);
+    EntityPtr addEntity(const AvatarBaseInfo & baseInfo,
+        const AvatarPropMap & baseProps,
+        ENTITY_COLOR ecolor,
+        ENTITY_TYPE etype,
+        ENTITY_STATE state = ESTATE_ACTIVE,
+        GroupID = InvalidGroupID);
+    bool removeEntity(EntityID eid);
+
+
 public:
     Scene(SceneID id);
     ~Scene();
@@ -52,22 +65,13 @@ public:
     bool initScene(SCENE_TYPE sceneType, MapID mapID);
     bool onUpdate();
 
+    void doStepRVO();
 
-//    void fillUserProp(const FillUserToSceneReq& req);
-
-    EntityPtr getEntity(EntityID eID);
-    EntityPtr getEntityByAvatarID(ServiceID avatarID);
-
-    EntityPtr addEntity(const AvatarBaseInfo & baseInfo, 
-            const AvatarPropMap & baseProps, 
-            ENTITY_COLOR ecolor, 
-            ENTITY_TYPE etype,
-            ENTITY_STATE state= ESTATE_ACTIVE, 
-            GroupID = InvalidGroupID);
-    bool removeEntity(EntityID eid); 
 
     bool playerAttach(ServiceID avatarID, SessionID sID);
     bool playerDettach(ServiceID avatarID, SessionID sID);
+
+    void onPlayerInstruction(ServiceID avatarID, ReadStream & rs);
 
 public:
 
@@ -84,6 +88,32 @@ public:
 };
 
 using ScenePtr = std::shared_ptr<Scene>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

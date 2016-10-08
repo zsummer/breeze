@@ -40,12 +40,12 @@ public:
     AvatarBaseInfo _baseInfo;
     AvatarPropMap _baseProps;
     EntityInfo  _info;
-    EntityPoint  _point;
+    EntityMove  _move;
     EntityControl _control;
     EntityReport _report;
     SessionID _clientSessionID = InvalidSessionID;
-    bool _isClientDirty = false;
-    bool _isPointDirty = false;
+    bool _isInfoDirty = false;
+    bool _isMoveDirty = false;
 };
 
 using EntityPtr = std::shared_ptr<Entity>;

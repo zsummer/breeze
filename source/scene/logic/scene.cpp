@@ -89,30 +89,6 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
 }
 
 
-bool Scene::onUpdate()
-{
-    if (getFloatNowTime() > _endTime)
-    {
-        return false;
-    }
-    if (_sim)
-    {
-        for (size_t i = 0; i < _sim->getNumAgents() ; ++i)
-        {
-             if(true)
-             {
-                 _sim->setAgentPrefVelocity(i, RVO::Vector2(0.0, 0.0));
-             }
-             else
-             {
-                 _sim->setAgentPrefVelocity(i, RVO::Vector2(0.0, 0.0));
-             }
-        }
-        _sim->doStep();
-    }
-
-    return true;
-}
 
 EntityPtr Scene::getEntity(EntityID eID)
 {
@@ -133,19 +109,7 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
     return founder->second;
 }
 
-// void Scene::fillUserProp(const FillUserToSceneReq& req)
-// {
-//     auto entity = getUserEntity(req.baseInfo.avatarID);
-//     if (entity)
-//     {
-//         LOGE("already had");
-//         return;
-//     }
-//     entity = makeNewEntity(req.baseInfo);
-//     entity->_token = req.token;
-//     entity->_info.state = ESTATE_FREEZING;
-//     entity->_isClientDirty = true;
-// }
+
 
 EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     const AvatarPropMap & baseProps,
@@ -176,15 +140,15 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     entity->_control.agentNo = -1;
     entity->_control.stateChageTick = getFloatNowTime();
 
-    entity->_point.eid = entity->_info.eid;
-    entity->_point.pos = entity->_control.spawnpoint;
-    entity->_point.follow = InvalidEntityID;
-    entity->_point.movePath.clear();
-    entity->_point.moveAction = MACTION_IDLE;
+    entity->_move.eid = entity->_info.eid;
+    entity->_move.pos = entity->_control.spawnpoint;
+    entity->_move.follow = InvalidEntityID;
+    entity->_move.movePath.clear();
+    entity->_move.moveAction = MACTION_IDLE;
 
     entity->_report.eid = entity->_info.eid;
 
-    entity->_control.agentNo = _sim->addAgent(RVO::Vector2(entity->_point.pos.x, entity->_point.pos.y));
+    entity->_control.agentNo = _sim->addAgent(RVO::Vector2(entity->_move.pos.x, entity->_move.pos.y));
 
     _entitys.insert(std::make_pair(entity->_info.eid, entity));
 
@@ -195,7 +159,6 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
 
     AddEntityNotice notice;
     notice.entitys.push_back(entity->getFullData());
-    notice.serverTime = getFloatNowTime();
     broadcast(notice, entity->_baseInfo.avatarID);
 
     return entity;
@@ -222,7 +185,6 @@ bool Scene::removeEntity(EntityID eid)
 
     RemoveEntityNotice notice;
     notice.eids.push_back(eid);
-    notice.serverTime = getFloatNowTime();
     broadcast(notice);
     return true;
 }
@@ -254,6 +216,41 @@ bool Scene::playerDettach(ServiceID avatarID, SessionID sID)
     return true;
 }
 
+
+
+bool Scene::onUpdate()
+{
+    if (getFloatNowTime() > _endTime)
+    {
+        return false;
+    }
+    doStepRVO();
+
+    return true;
+}
+
+void Scene::doStepRVO()
+{
+    if (_sim)
+    {
+        for (size_t i = 0; i < _sim->getNumAgents(); ++i)
+        {
+            if (true)
+            {
+                _sim->setAgentPrefVelocity(i, RVO::Vector2(0.0, 0.0));
+            }
+            else
+            {
+                _sim->setAgentPrefVelocity(i, RVO::Vector2(0.0, 0.0));
+            }
+        }
+        _sim->doStep();
+    }
+}
+void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
+{
+
+}
 
 
 

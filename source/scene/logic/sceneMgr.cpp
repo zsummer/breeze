@@ -303,6 +303,62 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         onSceneServerEnterSceneIns(session, ins);
         return;
     }
+    else if (rsShell.getProtoID() == ForwardToService::getProtoID())
+    {
+        Tracing trace;
+        rsShell >> trace;
+        ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
+        onForwardToService(session, trace, rs);
+        return;
+    }
+    else if (rsShell.getProtoID() == ChatResp::getProtoID())
+    {
+      
+        ChatResp resp;
+        rsShell >> resp;
+        auto checkToken = _tokens.find(resp.sourceID);
+        if (checkToken == _tokens.end())
+        {
+            LOGE("");
+            return;
+        }
+        auto checkscene = _actives.find(checkToken->second.second);
+        if (checkscene == _actives.end())
+        {
+            LOGE("");
+            return;
+        }
+        auto entity = checkscene->second->getEntityByAvatarID(trace.oob.clientAvatarID);
+        if (!entity)
+        {
+            LOGE("");
+            return;
+        }
+        if (resp.channelID == CC_CAMP)
+        {
+            auto & players = checkscene->second->getPlayers();
+            for (auto player : players)
+            {
+                if (player.second->_info.color == entity->_info.color)
+                {
+                    resp.targetID = player.second->_baseInfo.avatarID;
+                    resp.targetName = player.second->_baseInfo.avatarName;
+                    sendToWorld(resp);
+                }
+            }
+        }
+        else if (resp.channelID == CC_SCENE)
+        {
+            auto & players = checkscene->second->getPlayers();
+            for (auto player : players)
+            {
+                resp.targetID = player.second->_baseInfo.avatarID;
+                resp.targetName = player.second->_baseInfo.avatarName;
+                sendToWorld(resp);
+            }
+        }
+        
+    }
 
 }
 
@@ -335,13 +391,12 @@ void SceneMgr::event_onClientClosed(TcpSessionPtr session)
     if (isConnectID(session->getSessionID()))
     {
         LOGF("Unexpected");
+        return;
     }
-    else
-    {
-        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
-        {
 
-        }
+    if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
+    {
+
     }
 }
 
@@ -350,13 +405,39 @@ void SceneMgr::event_onClientClosed(TcpSessionPtr session)
 void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-//     if (rs.getProtoID() == SceneInfoToWorldNotice::getProtoID())
-//     {
-//         SceneInfoToWorldNotice notice;
-//         rs >> notice;
-//
-//    }
-    SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
+    SessionStatus sessionStatus = (SessionStatus)session->getUserParamNumber(UPARAM_SESSION_STATUS);
+    ServiceID avatarID = (ServiceID)session->getUserParamNumber(UPARAM_AVATAR_ID);
+    SceneID sceneID = (SceneID)session->getUserParamNumber(UPARAM_SCENE_ID);
+
+    if (sessionStatus == SSTATUS_UNKNOW && rs.getProtoID() == AttachSceneReq::getProtoID())
+    {
+        AttachSceneReq req;
+        rs >> req;
+        auto founder = _tokens.find(req.avatarID);
+        if (founder != _tokens.end() && founder->second == req.token  && _actives.find(req.sceneID) != _actives.end())
+        {
+            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
+            session->setUserParam(UPARAM_AVATAR_ID, req.avatarID);
+            session->setUserParam(UPARAM_SCENE_ID, req.sceneID);
+            auto scene = _actives.find(req.sceneID)->second;
+            sendViaSessionID(session->getSessionID(), AttachSceneResp(EC_SUCCESS, req.avatarID, req.sceneID));
+            scene->playerAttach(req.avatarID, session->getSessionID());
+        }
+        else
+        {
+            sendViaSessionID(session->getSessionID(), AttachSceneResp(EC_ERROR, req.avatarID, req.sceneID));
+        }
+    }
+    else if (sessionStatus == SSTATUS_ATTACHED)
+    {
+        auto foundScene = _actives.find(sceneID);
+        if (foundScene == _actives.end())
+        {
+            LOGE("");
+            return;
+        }
+        foundScene->second->onPlayerInstruction(avatarID, rs);
+    }
  
     {
         LOGE("client unknow proto or wrong status. protoID=" << rs.getProtoID() << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
@@ -365,7 +446,10 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
 
 
 
+void SceneMgr::onForwardToService(TcpSessionPtr session, Tracing & trace, ReadStream & rs)
+{
 
+}
 
 void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins)
 {
@@ -399,7 +483,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
     {
         for (auto & avatar : group.members)
         {
-            _tokens[avatar.first] = avatar.second.token;
+            _tokens[avatar.first] = std::make_pair(avatar.second.token, scene->getSceneID());
             scene->addEntity(avatar.second.baseInfo, avatar.second.baseProps, ECOLOR_BLUE, ETYPE_AVATAR, ESTATE_FREEZING, group.groupID);
         }
         SceneServerGroupStatusChangeIns ret;

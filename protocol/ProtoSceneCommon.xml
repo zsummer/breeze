@@ -284,14 +284,14 @@
     <array name="EntityInfoArray" type="EntityInfo" desc="" />
 
     <!-- 实体动态属性, 差异广播 -->
-    <struct name="EntityPoint" desc="EntityPoint">
+    <struct name="EntityMove" desc="EntityMove">
         <member name="eid" type="ui64"  desc="eid"/>
         <member name="pos"  type="EPoint" desc="当前坐标"/>
         <member name="moveAction" type="ui16"  desc="状态"/>
         <member name="movePath"  type="EPoints" desc="当前的移动路径"/>
         <member name="follow"  type="ui64" desc="移动跟随的实体"/>
     </struct>
-    <array name="EntityPointArray" type="EntityPoint" desc="" />
+    <array name="EntityMoveArray" type="EntityMove" desc="" />
 
     <!-- 实体控制属性, 对客户端不可见 -->
     <struct name="EntityControl" desc="EntityControl">
@@ -328,7 +328,7 @@
         <member name="baseInfo" type="AvatarBaseInfo"  desc=""/>
         <member name="baseProps" type="AvatarPropMap"  desc=""/>
         <member name="entityInfo" type="EntityInfo"  desc=""/>
-        <member name="entityPoint" type="EntityPoint"  desc=""/>
+        <member name="entityPoint" type="EntityMove"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>
     <array name="EntityFullDataArray" type="EntityFullData" desc="" />

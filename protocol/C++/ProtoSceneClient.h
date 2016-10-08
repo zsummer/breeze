@@ -141,81 +141,69 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct RefreshEntityNotice 
+struct SceneRefreshNotice 
 { 
-    static const unsigned short getProtoID() { return 50011;} 
-    static const std::string getProtoName() { return "RefreshEntityNotice";} 
+    static const unsigned short getProtoID() { return 50012;} 
+    static const std::string getProtoName() { return "SceneRefreshNotice";} 
     EntityInfoArray entityInfos;  
-    EntityPointArray entityPoints;  
-    double serverTime; //服务器当前时间  
-    RefreshEntityNotice() 
+    EntityMoveArray entityMoves;  
+    SceneRefreshNotice() 
     { 
-        serverTime = 0.0; 
     } 
-    RefreshEntityNotice(const EntityInfoArray & entityInfos, const EntityPointArray & entityPoints, const double & serverTime) 
+    SceneRefreshNotice(const EntityInfoArray & entityInfos, const EntityMoveArray & entityMoves) 
     { 
         this->entityInfos = entityInfos; 
-        this->entityPoints = entityPoints; 
-        this->serverTime = serverTime; 
+        this->entityMoves = entityMoves; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshEntityNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneRefreshNotice & data) 
 { 
     ws << data.entityInfos;  
-    ws << data.entityPoints;  
-    ws << data.serverTime;  
+    ws << data.entityMoves;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshEntityNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneRefreshNotice & data) 
 { 
     rs >> data.entityInfos;  
-    rs >> data.entityPoints;  
-    rs >> data.serverTime;  
+    rs >> data.entityMoves;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshEntityNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneRefreshNotice & info) 
 { 
     stm << "[\n"; 
     stm << "entityInfos=" << info.entityInfos << "\n"; 
-    stm << "entityPoints=" << info.entityPoints << "\n"; 
-    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "entityMoves=" << info.entityMoves << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct RefreshSceneReportsNotice 
+struct SceneReportsNotice 
 { 
-    static const unsigned short getProtoID() { return 50005;} 
-    static const std::string getProtoName() { return "RefreshSceneReportsNotice";} 
+    static const unsigned short getProtoID() { return 50013;} 
+    static const std::string getProtoName() { return "SceneReportsNotice";} 
     EntityReportArray reports;  
-    double serverTime; //服务器当前时间  
-    RefreshSceneReportsNotice() 
+    SceneReportsNotice() 
     { 
-        serverTime = 0.0; 
     } 
-    RefreshSceneReportsNotice(const EntityReportArray & reports, const double & serverTime) 
+    SceneReportsNotice(const EntityReportArray & reports) 
     { 
         this->reports = reports; 
-        this->serverTime = serverTime; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RefreshSceneReportsNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneReportsNotice & data) 
 { 
     ws << data.reports;  
-    ws << data.serverTime;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RefreshSceneReportsNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneReportsNotice & data) 
 { 
     rs >> data.reports;  
-    rs >> data.serverTime;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshSceneReportsNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneReportsNotice & info) 
 { 
     stm << "[\n"; 
     stm << "reports=" << info.reports << "\n"; 
-    stm << "serverTime=" << info.serverTime << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -225,34 +213,28 @@ struct AddEntityNotice //一批实体加入场景时, 把这些实体的数据�
     static const unsigned short getProtoID() { return 50006;} 
     static const std::string getProtoName() { return "AddEntityNotice";} 
     EntityFullDataArray entitys;  
-    double serverTime; //服务器当前时间  
     AddEntityNotice() 
     { 
-        serverTime = 0.0; 
     } 
-    AddEntityNotice(const EntityFullDataArray & entitys, const double & serverTime) 
+    AddEntityNotice(const EntityFullDataArray & entitys) 
     { 
         this->entitys = entitys; 
-        this->serverTime = serverTime; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AddEntityNotice & data) 
 { 
     ws << data.entitys;  
-    ws << data.serverTime;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AddEntityNotice & data) 
 { 
     rs >> data.entitys;  
-    rs >> data.serverTime;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AddEntityNotice & info) 
 { 
     stm << "[\n"; 
     stm << "entitys=" << info.entitys << "\n"; 
-    stm << "serverTime=" << info.serverTime << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -262,34 +244,163 @@ struct RemoveEntityNotice //实体离开场景时, 把该实体的数据广播�
     static const unsigned short getProtoID() { return 50007;} 
     static const std::string getProtoName() { return "RemoveEntityNotice";} 
     EntityIDArray eids;  
-    double serverTime; //服务器当前时间  
     RemoveEntityNotice() 
     { 
-        serverTime = 0.0; 
     } 
-    RemoveEntityNotice(const EntityIDArray & eids, const double & serverTime) 
+    RemoveEntityNotice(const EntityIDArray & eids) 
     { 
         this->eids = eids; 
-        this->serverTime = serverTime; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RemoveEntityNotice & data) 
 { 
     ws << data.eids;  
-    ws << data.serverTime;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RemoveEntityNotice & data) 
 { 
     rs >> data.eids;  
-    rs >> data.serverTime;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RemoveEntityNotice & info) 
 { 
     stm << "[\n"; 
     stm << "eids=" << info.eids << "\n"; 
-    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct MoveReq 
+{ 
+    static const unsigned short getProtoID() { return 50014;} 
+    static const std::string getProtoName() { return "MoveReq";} 
+    unsigned long long eid;  
+    unsigned short maction;  
+    EPoint pos;  
+    MoveReq() 
+    { 
+        eid = 0; 
+        maction = 0; 
+    } 
+    MoveReq(const unsigned long long & eid, const unsigned short & maction, const EPoint & pos) 
+    { 
+        this->eid = eid; 
+        this->maction = maction; 
+        this->pos = pos; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const MoveReq & data) 
+{ 
+    ws << data.eid;  
+    ws << data.maction;  
+    ws << data.pos;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, MoveReq & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.maction;  
+    rs >> data.pos;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "eid=" << info.eid << "\n"; 
+    stm << "maction=" << info.maction << "\n"; 
+    stm << "pos=" << info.pos << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct MoveResp 
+{ 
+    static const unsigned short getProtoID() { return 50015;} 
+    static const std::string getProtoName() { return "MoveResp";} 
+    unsigned short retCode;  
+    unsigned long long eid;  
+    unsigned short maction;  
+    EPoint pos;  
+    MoveResp() 
+    { 
+        retCode = 0; 
+        eid = 0; 
+        maction = 0; 
+    } 
+    MoveResp(const unsigned short & retCode, const unsigned long long & eid, const unsigned short & maction, const EPoint & pos) 
+    { 
+        this->retCode = retCode; 
+        this->eid = eid; 
+        this->maction = maction; 
+        this->pos = pos; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const MoveResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.eid;  
+    ws << data.maction;  
+    ws << data.pos;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, MoveResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.eid;  
+    rs >> data.maction;  
+    rs >> data.pos;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "eid=" << info.eid << "\n"; 
+    stm << "maction=" << info.maction << "\n"; 
+    stm << "pos=" << info.pos << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct MoveNotice 
+{ 
+    static const unsigned short getProtoID() { return 50016;} 
+    static const std::string getProtoName() { return "MoveNotice";} 
+    unsigned long long eid;  
+    unsigned short maction;  
+    EPoints path;  
+    MoveNotice() 
+    { 
+        eid = 0; 
+        maction = 0; 
+    } 
+    MoveNotice(const unsigned long long & eid, const unsigned short & maction, const EPoints & path) 
+    { 
+        this->eid = eid; 
+        this->maction = maction; 
+        this->path = path; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const MoveNotice & data) 
+{ 
+    ws << data.eid;  
+    ws << data.maction;  
+    ws << data.path;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, MoveNotice & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.maction;  
+    rs >> data.path;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "eid=" << info.eid << "\n"; 
+    stm << "maction=" << info.maction << "\n"; 
+    stm << "path=" << info.path << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -299,35 +410,29 @@ struct AddBuffNotice
     static const unsigned short getProtoID() { return 50008;} 
     static const std::string getProtoName() { return "AddBuffNotice";} 
     unsigned long long eid;  
-    double serverTime; //服务器当前时间  
     AddBuffNotice() 
     { 
         eid = 0; 
-        serverTime = 0.0; 
     } 
-    AddBuffNotice(const unsigned long long & eid, const double & serverTime) 
+    AddBuffNotice(const unsigned long long & eid) 
     { 
         this->eid = eid; 
-        this->serverTime = serverTime; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AddBuffNotice & data) 
 { 
     ws << data.eid;  
-    ws << data.serverTime;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AddBuffNotice & data) 
 { 
     rs >> data.eid;  
-    rs >> data.serverTime;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AddBuffNotice & info) 
 { 
     stm << "[\n"; 
     stm << "eid=" << info.eid << "\n"; 
-    stm << "serverTime=" << info.serverTime << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -337,35 +442,131 @@ struct RemoveBuffNotice
     static const unsigned short getProtoID() { return 50009;} 
     static const std::string getProtoName() { return "RemoveBuffNotice";} 
     unsigned long long eid;  
-    double serverTime; //服务器当前时间  
     RemoveBuffNotice() 
     { 
         eid = 0; 
-        serverTime = 0.0; 
     } 
-    RemoveBuffNotice(const unsigned long long & eid, const double & serverTime) 
+    RemoveBuffNotice(const unsigned long long & eid) 
     { 
         this->eid = eid; 
-        this->serverTime = serverTime; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const RemoveBuffNotice & data) 
 { 
     ws << data.eid;  
-    ws << data.serverTime;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, RemoveBuffNotice & data) 
 { 
     rs >> data.eid;  
-    rs >> data.serverTime;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RemoveBuffNotice & info) 
 { 
     stm << "[\n"; 
     stm << "eid=" << info.eid << "\n"; 
-    stm << "serverTime=" << info.serverTime << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct UserSkillReq 
+{ 
+    static const unsigned short getProtoID() { return 50017;} 
+    static const std::string getProtoName() { return "UserSkillReq";} 
+    unsigned long long eid;  
+    UserSkillReq() 
+    { 
+        eid = 0; 
+    } 
+    UserSkillReq(const unsigned long long & eid) 
+    { 
+        this->eid = eid; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserSkillReq & data) 
+{ 
+    ws << data.eid;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserSkillReq & data) 
+{ 
+    rs >> data.eid;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserSkillReq & info) 
+{ 
+    stm << "[\n"; 
+    stm << "eid=" << info.eid << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct UserSkillResp 
+{ 
+    static const unsigned short getProtoID() { return 50018;} 
+    static const std::string getProtoName() { return "UserSkillResp";} 
+    unsigned short retCode;  
+    unsigned long long eid;  
+    UserSkillResp() 
+    { 
+        retCode = 0; 
+        eid = 0; 
+    } 
+    UserSkillResp(const unsigned short & retCode, const unsigned long long & eid) 
+    { 
+        this->retCode = retCode; 
+        this->eid = eid; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserSkillResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.eid;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserSkillResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.eid;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserSkillResp & info) 
+{ 
+    stm << "[\n"; 
+    stm << "retCode=" << info.retCode << "\n"; 
+    stm << "eid=" << info.eid << "\n"; 
+    stm << "]\n"; 
+    return stm; 
+} 
+ 
+struct UserSkillNotice 
+{ 
+    static const unsigned short getProtoID() { return 50019;} 
+    static const std::string getProtoName() { return "UserSkillNotice";} 
+    unsigned long long eid;  
+    UserSkillNotice() 
+    { 
+        eid = 0; 
+    } 
+    UserSkillNotice(const unsigned long long & eid) 
+    { 
+        this->eid = eid; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserSkillNotice & data) 
+{ 
+    ws << data.eid;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserSkillNotice & data) 
+{ 
+    rs >> data.eid;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserSkillNotice & info) 
+{ 
+    stm << "[\n"; 
+    stm << "eid=" << info.eid << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 

@@ -485,6 +485,27 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
         _homeBalance.enableNode(knock.lineID);
         _otherBalance.enableNode(knock.lineID);
 	}
+    else if (rs.getProtoID() == ChatResp::getProtoID())
+    {
+        ChatResp resp;
+        rs >> resp;
+
+        auto group = getGroupInfoByAvatarID(resp.targetID);
+        if (group)
+        {
+            for ( auto &mber : group->members)
+            {
+                if (mber.second.baseInfo.avatarID == resp.targetID)
+                {
+                    toService(mber.second.areaID, STAvatarMgr, STAvatar, resp.targetID, resp);
+                    return;
+                }
+            }
+            
+        }
+        return;
+        
+    }
 }
 
 
@@ -602,21 +623,24 @@ void World::onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & re
         return;
     }
 
+    ChatResp resp;
+    resp.channelID = req.channelID;
+    resp.chatTime = time(NULL);
+    resp.msg = req.msg;
+    resp.sourceID = trace.oob.clientAvatarID;
+    for (auto &kv : groupPtr->members)
+    {
+        if (kv.second.baseInfo.avatarID == trace.oob.clientAvatarID)
+        {
+            resp.sourceName = kv.second.baseInfo.avatarName;
+            break;
+        }
+    }
+
+
     if (req.channelID == CC_GROUP)
     {
-        ChatResp resp;
-        resp.channelID = req.channelID;
-        resp.chatTime = time(NULL);
-        resp.msg = req.msg;
-        resp.sourceID = trace.oob.clientAvatarID;
-        for (auto &kv : groupPtr->members)
-        {
-            if (kv.second.baseInfo.avatarID == trace.oob.clientAvatarID)
-            {
-                resp.sourceName = kv.second.baseInfo.avatarName;
-                break;
-            }
-        }
+
         for (auto &kv : groupPtr->members)
         {
             if (kv.second.baseInfo.avatarID == trace.oob.clientAvatarID)
@@ -629,7 +653,11 @@ void World::onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & re
     }
     else 
     {
-        toService(session->getSessionID(), trace, req);  // to scene server
+        auto line = getLineInfo(groupPtr->lineID);
+        if (line)
+        {
+            sendViaSessionID(line->sessionID, resp);  // to scene server
+        }
     }
 }
 

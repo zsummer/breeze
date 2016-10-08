@@ -20,11 +20,11 @@ double Entity::getElapsed(double now)
 }
 double Entity::getSpeed()
 {
-    if (_point.moveAction == MACTION_IDLE)
+    if (_move.moveAction == MACTION_IDLE)
     {
         return 0.0;
     }
-    if (_point.moveAction != MACTION_PATH && _point.moveAction != MACTION_FOLLOW && _point.moveAction != MACTION_IDLE)
+    if (_move.moveAction != MACTION_PATH && _move.moveAction != MACTION_FOLLOW && _move.moveAction != MACTION_IDLE)
     {
         return _control.extSpeed;
     }
@@ -43,7 +43,7 @@ double Entity::getAttack()
 
 EntityFullData Entity::getFullData()
 {
-    return EntityFullData(_baseInfo, _baseProps, _info, _point, _report);
+    return EntityFullData(_baseInfo, _baseProps, _info, _move, _report);
 }
 
 
