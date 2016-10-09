@@ -49,17 +49,22 @@ public:
     void getSceneSection(SceneSection & ss);
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
-    EntityPtr addEntity(const AvatarBaseInfo & baseInfo,
-        const AvatarPropMap & baseProps,
-        ENTITY_COLOR ecolor,
-        ENTITY_TYPE etype,
-        ENTITY_STATE state = ESTATE_ACTIVE,
-        GroupID = InvalidGroupID);
-    bool removeEntity(EntityID eid);
 
     //operator
 public:
-    
+    bool pushAsync(std::function<void()> && func);
+    bool doMove(ui64 eid, MoveAction action, ui64 follow, EPoint dst, bool clean = true);
+    bool doSkill();
+    bool cleanSkill();
+    bool addBuff();
+    bool cleanBuff();
+    EntityPtr addEntity(const AvatarBaseInfo & baseInfo,
+                        const AvatarPropMap & baseProps,
+                        ENTITY_COLOR ecolor,
+                        ENTITY_TYPE etype,
+                        ENTITY_STATE state = ESTATE_ACTIVE,
+                        GroupID = InvalidGroupID);
+    bool removeEntity(EntityID eid);
 public:
     Scene(SceneID id);
     ~Scene();

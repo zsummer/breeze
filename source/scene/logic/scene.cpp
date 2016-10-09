@@ -224,6 +224,12 @@ bool Scene::onUpdate()
     {
         return false;
     }
+    while(!_asyncs.empty())
+    {
+        auto func = _asyncs.front();
+        _asyncs.pop();
+        func();
+    }
     doStepRVO();
 
     return true;
@@ -253,10 +259,38 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
     {
         MoveReq req;
         rs >> req;
-        
+
     }
 }
-
+bool Scene::pushAsync(std::function<void()> && func)
+{
+    _asyncs.push(std::move(func));
+}
+bool Scene::doMove(ui64 eid, MoveAction action, ui64 follow, EPoint dst, bool clean)
+{
+    auto entity = getEntity(eid);
+    if(!entity)
+    {
+        return false;
+    }
+    return true;
+}
+bool Scene::doSkill()
+{
+    return true;
+}
+bool Scene::cleanSkill()
+{
+    return true;
+}
+bool Scene::addBuff()
+{
+    return true;
+}
+bool Scene::cleanBuff()
+{
+    return true;
+}
 
 
 
