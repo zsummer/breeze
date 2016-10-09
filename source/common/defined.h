@@ -126,6 +126,8 @@ const DockerID InvalidDockerID = 0;
 //表达范围<=52bit, 其中areaid占用20bit, 自增部分占用32bit
 typedef ui64 ServiceID;
 const ServiceID InvalidServiceID = (ServiceID)0;
+typedef ServiceID AvatarID;
+const AvatarID InvalidAvatarID = InvalidServiceID;
 
 //服务名字 
 typedef std::string ServiceName;

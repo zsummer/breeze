@@ -59,7 +59,15 @@ ScenePtr SceneMgr::getScene(SceneID sceneID)
     }
     return founder->second;
 }
-
+ScenePtr SceneMgr::getActiveScene(SceneID sceneID)
+{
+    auto founder = _actives.find(sceneID);
+    if (founder != _actives.end())
+    {
+        return founder->second;
+    }
+    return nullptr;
+}
 void SceneMgr::onTimer()
 {
     if (isStopping())
@@ -258,6 +266,9 @@ void SceneMgr::sendViaSessionID(SessionID sessionID, const char * block, unsigne
     SessionManager::getRef().sendSessionData(sessionID, block, len);
 }
 
+
+
+
 bool SceneMgr::start()
 {
     return startClientListen() && startWorldConnect();
@@ -396,7 +407,13 @@ void SceneMgr::event_onClientClosed(TcpSessionPtr session)
 
     if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
     {
-
+        SceneID sceneID = (SceneID)session->getUserParamNumber(UPARAM_SCENE_ID);
+        ServiceID avatarID = (ServiceID)session->getUserParamNumber(UPARAM_AVATAR_ID);
+        auto scene = getActiveScene(sceneID);
+        if (scene)
+        {
+            scene->playerDettach(avatarID, session->getSessionID());
+        }
     }
 }
 
@@ -478,6 +495,11 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         _frees.pop();
         scene->cleanScene();
         scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
+        _actives.insert(std::make_pair(scene->getSceneID(), scene));
+        if (ins.sceneType == SCENE_TYPE_HOME)
+        {
+            _homes.insert(std::make_pair(scene->getSceneID(), scene));
+        }
     }
     for (auto & group : ins.groups)
     {

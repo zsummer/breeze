@@ -57,28 +57,21 @@ public:
         GroupID = InvalidGroupID);
     bool removeEntity(EntityID eid);
 
-
+    //operator
+public:
+    
 public:
     Scene(SceneID id);
     ~Scene();
     bool cleanScene();
     bool initScene(SCENE_TYPE sceneType, MapID mapID);
     bool onUpdate();
-
     void doStepRVO();
-
-
     bool playerAttach(ServiceID avatarID, SessionID sID);
     bool playerDettach(ServiceID avatarID, SessionID sID);
-
     void onPlayerInstruction(ServiceID avatarID, ReadStream & rs);
 
 public:
-
-
-
-
-
     //消息队列 
 public:
     template <typename MSG>

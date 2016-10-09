@@ -249,7 +249,12 @@ void Scene::doStepRVO()
 }
 void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
 {
-
+    if (rs.getProtoID() == MoveReq::getProtoID())
+    {
+        MoveReq req;
+        rs >> req;
+        
+    }
 }
 
 

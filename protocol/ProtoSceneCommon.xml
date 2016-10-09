@@ -109,6 +109,8 @@
         <member name="MACTION_FACE"   desc="朝向"/>
         <member name="MACTION_FOLLOW" desc="跟随" />
         <member name="MACTION_PATH" desc="路径" />
+        <member name="MACTION_PASV_PATH" desc="不可取消" />
+        <member name="MACTION_FORCE_PATH" desc="不可取消&穿越地形" />
     </enum>
 
     <!-- 搜索方法-->

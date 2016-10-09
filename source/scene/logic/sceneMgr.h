@@ -65,7 +65,7 @@ private:
     void onTimer();
 public:
     ScenePtr getScene(SceneID);
-
+    ScenePtr getActiveScene(SceneID sceneID);
 private:
     //docker间通讯处理 
     void event_onWorldLinked(TcpSessionPtr session);
@@ -80,6 +80,7 @@ private:
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
+
 private:
     std::map<SceneID, ScenePtr> _actives;
     std::queue<ScenePtr> _frees; //队列
@@ -91,6 +92,26 @@ private:
     SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
