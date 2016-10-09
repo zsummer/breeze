@@ -463,11 +463,10 @@ namespace Proto4z
     public enum MoveAction : ushort 
     { 
         MOVE_ACTION_IDLE = 0, //空闲  
-        MOVE_ACTION_FACE = 1, //朝向  
-        MOVE_ACTION_FOLLOW = 2, //跟随  
-        MOVE_ACTION_PATH = 3, //路径  
-        MOVE_ACTION_PASV_PATH = 4, //不可取消  
-        MOVE_ACTION_FORCE_PATH = 5, //不可取消&穿越地形  
+        MOVE_ACTION_FOLLOW = 1, //跟随  
+        MOVE_ACTION_PATH = 2, //路径  
+        MOVE_ACTION_PASV_PATH = 3, //不可取消, 直线移动一次.  
+        MOVE_ACTION_FORCE_PATH = 4, //不可取消&穿越地形, 直线移动一次  
     }; 
  
     public enum SearchMethodType : ushort 
@@ -1148,46 +1147,56 @@ namespace Proto4z
         static public string getProtoName() { return "EntityMove"; } 
         //members   
         public ulong eid; //eid  
+        public ushort action; //状态  
         public EPoint pos; //当前坐标  
-        public ushort moveAction; //状态  
-        public EPoints movePath; //当前的移动路径  
-        public ulong follow; //移动跟随的实体  
+        public ulong frames; //移动终止条件之一. 剩余帧数  
+        public double speed; //移动速度 单位秒.   
+        public EPoints waypoints; //移动终止条件之一. 行走路点, 全部走完自动终止移动  
+        public ulong follow; //跟随的EID 始终  
         public EntityMove()  
         { 
             eid = 0;  
+            action = 0;  
             pos = new EPoint();  
-            moveAction = 0;  
-            movePath = new EPoints();  
+            frames = 0;  
+            speed = 0.0;  
+            waypoints = new EPoints();  
             follow = 0;  
         } 
-        public EntityMove(ulong eid, EPoint pos, ushort moveAction, EPoints movePath, ulong follow) 
+        public EntityMove(ulong eid, ushort action, EPoint pos, ulong frames, double speed, EPoints waypoints, ulong follow) 
         { 
             this.eid = eid; 
+            this.action = action; 
             this.pos = pos; 
-            this.moveAction = moveAction; 
-            this.movePath = movePath; 
+            this.frames = frames; 
+            this.speed = speed; 
+            this.waypoints = waypoints; 
             this.follow = follow; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.action)); 
             if (this.pos == null) this.pos = new EPoint(); 
             data.AddRange(this.pos.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.moveAction)); 
-            if (this.movePath == null) this.movePath = new EPoints(); 
-            data.AddRange(this.movePath.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.frames)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.speed)); 
+            if (this.waypoints == null) this.waypoints = new EPoints(); 
+            data.AddRange(this.waypoints.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.follow)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.action = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.pos = new EPoint(); 
             this.pos.__decode(binData, ref pos); 
-            this.moveAction = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.movePath = new EPoints(); 
-            this.movePath.__decode(binData, ref pos); 
+            this.frames = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.speed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.waypoints = new EPoints(); 
+            this.waypoints.__decode(binData, ref pos); 
             this.follow = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
@@ -1234,9 +1243,6 @@ namespace Proto4z
         public ulong eid; //eid  
         public ulong agentNo; //agentNo. -1为无效  
         public double stateChageTick; //状态改变时间  
-        public double extSpeed; //扩展速度  
-        public double extBeginTime; //扩展速度的开始时间  
-        public double extKeepTime; //扩展速度的保持时间  
         public EPoint spawnpoint; //出生点  
         public EPoint lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
         public SkillInfoArray skills; //技能数据  
@@ -1250,9 +1256,6 @@ namespace Proto4z
             eid = 0;  
             agentNo = 0;  
             stateChageTick = 0.0;  
-            extSpeed = 0.0;  
-            extBeginTime = 0.0;  
-            extKeepTime = 0.0;  
             spawnpoint = new EPoint();  
             lastPos = new EPoint();  
             skills = new SkillInfoArray();  
@@ -1262,14 +1265,11 @@ namespace Proto4z
             lastMoveTime = 0.0;  
             lastClientPos = new EPoint();  
         } 
-        public EntityControl(ulong eid, ulong agentNo, double stateChageTick, double extSpeed, double extBeginTime, double extKeepTime, EPoint spawnpoint, EPoint lastPos, SkillInfoArray skills, BuffInfoArray buffs, double diedTime, int hitTimes, double lastMoveTime, EPoint lastClientPos) 
+        public EntityControl(ulong eid, ulong agentNo, double stateChageTick, EPoint spawnpoint, EPoint lastPos, SkillInfoArray skills, BuffInfoArray buffs, double diedTime, int hitTimes, double lastMoveTime, EPoint lastClientPos) 
         { 
             this.eid = eid; 
             this.agentNo = agentNo; 
             this.stateChageTick = stateChageTick; 
-            this.extSpeed = extSpeed; 
-            this.extBeginTime = extBeginTime; 
-            this.extKeepTime = extKeepTime; 
             this.spawnpoint = spawnpoint; 
             this.lastPos = lastPos; 
             this.skills = skills; 
@@ -1285,9 +1285,6 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.agentNo)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.stateChageTick)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.extSpeed)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.extBeginTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.extKeepTime)); 
             if (this.spawnpoint == null) this.spawnpoint = new EPoint(); 
             data.AddRange(this.spawnpoint.__encode()); 
             if (this.lastPos == null) this.lastPos = new EPoint(); 
@@ -1308,9 +1305,6 @@ namespace Proto4z
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.agentNo = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.stateChageTick = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.extSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.extBeginTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.extKeepTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.spawnpoint = new EPoint(); 
             this.spawnpoint.__decode(binData, ref pos); 
             this.lastPos = new EPoint(); 

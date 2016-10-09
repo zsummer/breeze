@@ -51,25 +51,25 @@
         <member name="entitys"  type="EntityFullDataArray" desc=""/>
     </proto>
 
-     <proto name="RemoveEntityNotice" desc= "实体离开场景时, 把该实体的数据广播给其他玩家">
+    <proto name="RemoveEntityNotice" desc= "实体离开场景时, 把该实体的数据广播给其他玩家">
         <member name="eids"  type="EntityIDArray" desc=""/>
     </proto>
 
     <proto name="MoveReq" desc= "">
         <member name="eid"  type="ui64" desc=""/>
-        <member name="maction"  type="ui16" desc=""/>
-        <member name="pos"  type="EPoint" desc=""/>
+        <member name="action"  type="ui16" desc=""/>
+        <member name="clientPos"  type="EPoint" desc=""/>
+        <member name="dstPos"  type="EPoint" desc=""/>
+        <member name="follow"  type="ui64" desc=""/>
     </proto>
-    <proto name="MoveResp" desc= "">
+    <proto name="MoveResp" desc= "只有失败时才会使用该协议">
         <member name="retCode"  type="ui16" desc=""/>
         <member name="eid"  type="ui64" desc=""/>
-        <member name="maction"  type="ui16" desc=""/>
-        <member name="pos"  type="EPoint" desc=""/>
+        <member name="action"  type="ui16" desc=""/>
     </proto>
-    <proto name="MoveNotice" desc= "">
-        <member name="eid"  type="ui64" desc=""/>
-        <member name="maction"  type="ui16" desc=""/>
-        <member name="path"  type="EPoints" desc=""/>
+
+    <proto name="MoveNotice" desc= "移动开始/结束通知">
+        <member name="moveInfo"  type="EntityMove" desc=""/>
     </proto>
 
 
@@ -83,7 +83,7 @@
     <proto name="UserSkillReq" desc= "">
         <member name="eid"  type="ui64" desc=""/>
     </proto>
-    <proto name="UserSkillResp" desc= "">
+    <proto name="UserSkillResp" desc= "只有失败时才会使用该协议">
         <member name="retCode"  type="ui16" desc=""/>
         <member name="eid"  type="ui64" desc=""/>
     </proto>

@@ -106,11 +106,10 @@
     <!-- 移动行为-->
     <enum type="ui16" name="MoveAction" desc="">
         <member name="MOVE_ACTION_IDLE" value="0" desc="空闲" />
-        <member name="MOVE_ACTION_FACE"   desc="朝向"/>
         <member name="MOVE_ACTION_FOLLOW" desc="跟随" />
         <member name="MOVE_ACTION_PATH" desc="路径" />
-        <member name="MOVE_ACTION_PASV_PATH" desc="不可取消" />
-        <member name="MOVE_ACTION_FORCE_PATH" desc="不可取消&穿越地形" />
+        <member name="MOVE_ACTION_PASV_PATH" desc="不可取消, 直线移动一次." />
+        <member name="MOVE_ACTION_FORCE_PATH" desc="不可取消&穿越地形, 直线移动一次" />
     </enum>
 
     <!-- 搜索方法-->
@@ -288,10 +287,12 @@
     <!-- 实体动态属性, 差异广播 -->
     <struct name="EntityMove" desc="EntityMove">
         <member name="eid" type="ui64"  desc="eid"/>
+        <member name="action" type="ui16"  desc="状态"/>
         <member name="pos"  type="EPoint" desc="当前坐标"/>
-        <member name="moveAction" type="ui16"  desc="状态"/>
-        <member name="movePath"  type="EPoints" desc="当前的移动路径"/>
-        <member name="follow"  type="ui64" desc="移动跟随的实体"/>
+        <member name="frames" type="ui64"  desc="移动终止条件之一. 剩余帧数"/>
+        <member name="speed" type="double"  desc="移动速度 单位秒. "/>
+        <member name="waypoints"  type="EPoints" desc="移动终止条件之一. 行走路点, 全部走完自动终止移动"/>
+        <member name="follow"  type="ui64" desc="跟随的EID 始终"/>
     </struct>
     <array name="EntityMoveArray" type="EntityMove" desc="" />
 
@@ -300,9 +301,6 @@
         <member name="eid" type="ui64"  desc="eid"/>
         <member name="agentNo" type="ui64"  desc="agentNo. -1为无效"/>
         <member name="stateChageTick" type="double"  desc="状态改变时间"/>
-        <member name="extSpeed" type="double"  desc="扩展速度"/>
-        <member name="extBeginTime" type="double"  desc="扩展速度的开始时间"/>
-        <member name="extKeepTime" type="double"  desc="扩展速度的保持时间"/>
         <member name="spawnpoint" type="EPoint"   desc="出生点"/>
         <member name="lastPos"  type="EPoint" desc="上一帧实体坐标, 如果是瞬移 则和pos相同"/>
         <member name="skills"  type="SkillInfoArray" desc="技能数据"/>

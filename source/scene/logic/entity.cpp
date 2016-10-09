@@ -12,7 +12,6 @@ Entity::~Entity()
 
 double Entity::getElapsed(double now)
 {
-    if (_control.lastMoveTime < _control.extBeginTime)_control.lastMoveTime = _control.extBeginTime;
     if (_control.lastMoveTime > now) _control.lastMoveTime = now;
     double elapse = now - _control.lastMoveTime;
     _control.lastMoveTime = now;
@@ -20,13 +19,9 @@ double Entity::getElapsed(double now)
 }
 double Entity::getSpeed()
 {
-    if (_move.moveAction == MOVE_ACTION_IDLE)
+    if (_move.action == MOVE_ACTION_IDLE)
     {
         return 0.0;
-    }
-    if (_move.moveAction != MOVE_ACTION_PATH && _move.moveAction != MOVE_ACTION_FOLLOW && _move.moveAction != MOVE_ACTION_IDLE)
-    {
-        return _control.extSpeed;
     }
     return 5.0;
 }

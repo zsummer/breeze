@@ -275,80 +275,87 @@ struct MoveReq
     static const unsigned short getProtoID() { return 50008;} 
     static const std::string getProtoName() { return "MoveReq";} 
     unsigned long long eid;  
-    unsigned short maction;  
-    EPoint pos;  
+    unsigned short action;  
+    EPoint clientPos;  
+    EPoint dstPos;  
+    unsigned long long follow;  
     MoveReq() 
     { 
         eid = 0; 
-        maction = 0; 
+        action = 0; 
+        follow = 0; 
     } 
-    MoveReq(const unsigned long long & eid, const unsigned short & maction, const EPoint & pos) 
+    MoveReq(const unsigned long long & eid, const unsigned short & action, const EPoint & clientPos, const EPoint & dstPos, const unsigned long long & follow) 
     { 
         this->eid = eid; 
-        this->maction = maction; 
-        this->pos = pos; 
+        this->action = action; 
+        this->clientPos = clientPos; 
+        this->dstPos = dstPos; 
+        this->follow = follow; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const MoveReq & data) 
 { 
     ws << data.eid;  
-    ws << data.maction;  
-    ws << data.pos;  
+    ws << data.action;  
+    ws << data.clientPos;  
+    ws << data.dstPos;  
+    ws << data.follow;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, MoveReq & data) 
 { 
     rs >> data.eid;  
-    rs >> data.maction;  
-    rs >> data.pos;  
+    rs >> data.action;  
+    rs >> data.clientPos;  
+    rs >> data.dstPos;  
+    rs >> data.follow;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveReq & info) 
 { 
     stm << "[\n"; 
     stm << "eid=" << info.eid << "\n"; 
-    stm << "maction=" << info.maction << "\n"; 
-    stm << "pos=" << info.pos << "\n"; 
+    stm << "action=" << info.action << "\n"; 
+    stm << "clientPos=" << info.clientPos << "\n"; 
+    stm << "dstPos=" << info.dstPos << "\n"; 
+    stm << "follow=" << info.follow << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct MoveResp 
+struct MoveResp //只有失败时才会使用该协议  
 { 
     static const unsigned short getProtoID() { return 50009;} 
     static const std::string getProtoName() { return "MoveResp";} 
     unsigned short retCode;  
     unsigned long long eid;  
-    unsigned short maction;  
-    EPoint pos;  
+    unsigned short action;  
     MoveResp() 
     { 
         retCode = 0; 
         eid = 0; 
-        maction = 0; 
+        action = 0; 
     } 
-    MoveResp(const unsigned short & retCode, const unsigned long long & eid, const unsigned short & maction, const EPoint & pos) 
+    MoveResp(const unsigned short & retCode, const unsigned long long & eid, const unsigned short & action) 
     { 
         this->retCode = retCode; 
         this->eid = eid; 
-        this->maction = maction; 
-        this->pos = pos; 
+        this->action = action; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const MoveResp & data) 
 { 
     ws << data.retCode;  
     ws << data.eid;  
-    ws << data.maction;  
-    ws << data.pos;  
+    ws << data.action;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, MoveResp & data) 
 { 
     rs >> data.retCode;  
     rs >> data.eid;  
-    rs >> data.maction;  
-    rs >> data.pos;  
+    rs >> data.action;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveResp & info) 
@@ -356,51 +363,38 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 
     stm << "eid=" << info.eid << "\n"; 
-    stm << "maction=" << info.maction << "\n"; 
-    stm << "pos=" << info.pos << "\n"; 
+    stm << "action=" << info.action << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
  
-struct MoveNotice 
+struct MoveNotice //移动开始/结束通知  
 { 
     static const unsigned short getProtoID() { return 50010;} 
     static const std::string getProtoName() { return "MoveNotice";} 
-    unsigned long long eid;  
-    unsigned short maction;  
-    EPoints path;  
+    EntityMove moveInfo;  
     MoveNotice() 
     { 
-        eid = 0; 
-        maction = 0; 
     } 
-    MoveNotice(const unsigned long long & eid, const unsigned short & maction, const EPoints & path) 
+    MoveNotice(const EntityMove & moveInfo) 
     { 
-        this->eid = eid; 
-        this->maction = maction; 
-        this->path = path; 
+        this->moveInfo = moveInfo; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const MoveNotice & data) 
 { 
-    ws << data.eid;  
-    ws << data.maction;  
-    ws << data.path;  
+    ws << data.moveInfo;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, MoveNotice & data) 
 { 
-    rs >> data.eid;  
-    rs >> data.maction;  
-    rs >> data.path;  
+    rs >> data.moveInfo;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveNotice & info) 
 { 
     stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "maction=" << info.maction << "\n"; 
-    stm << "path=" << info.path << "\n"; 
+    stm << "moveInfo=" << info.moveInfo << "\n"; 
     stm << "]\n"; 
     return stm; 
 } 
@@ -501,7 +495,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct UserSkillResp 
+struct UserSkillResp //只有失败时才会使用该协议  
 { 
     static const unsigned short getProtoID() { return 50014;} 
     static const std::string getProtoName() { return "UserSkillResp";} 

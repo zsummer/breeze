@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>35ea713dcb747fd178e74ee4860da1df</cppmd5> 
-<luamd5>de79f31d65421d6efb0897fa5450da28</luamd5> 
-<csharpmd5>616c93e97678fa11388f89d21afcff11</csharpmd5> 
-<xmlmd5>2700718126eb5f0b799442aee49c2324</xmlmd5> 
+<cppmd5>02dac06ae3bdc8ca44ca6a67402cf45d</cppmd5> 
+<luamd5>5933c9d5dab397190074d7df2e925694</luamd5> 
+<csharpmd5>20e10e4d66a1b8c83fc7f36f7d45c02d</csharpmd5> 
+<xmlmd5>e1c2cbbd928de361f3c9cf65534e4ecf</xmlmd5> 
 <cacheNumber>
     <cache key = "AddBuffNotice" Number = "50011" /> 
     <cache key = "AddEntityNotice" Number = "50006" /> 

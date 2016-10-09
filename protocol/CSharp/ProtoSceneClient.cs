@@ -271,40 +271,52 @@ namespace Proto4z
         static public string getProtoName() { return "MoveReq"; } 
         //members   
         public ulong eid;  
-        public ushort maction;  
-        public EPoint pos;  
+        public ushort action;  
+        public EPoint clientPos;  
+        public EPoint dstPos;  
+        public ulong follow;  
         public MoveReq()  
         { 
             eid = 0;  
-            maction = 0;  
-            pos = new EPoint();  
+            action = 0;  
+            clientPos = new EPoint();  
+            dstPos = new EPoint();  
+            follow = 0;  
         } 
-        public MoveReq(ulong eid, ushort maction, EPoint pos) 
+        public MoveReq(ulong eid, ushort action, EPoint clientPos, EPoint dstPos, ulong follow) 
         { 
             this.eid = eid; 
-            this.maction = maction; 
-            this.pos = pos; 
+            this.action = action; 
+            this.clientPos = clientPos; 
+            this.dstPos = dstPos; 
+            this.follow = follow; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.maction)); 
-            if (this.pos == null) this.pos = new EPoint(); 
-            data.AddRange(this.pos.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.action)); 
+            if (this.clientPos == null) this.clientPos = new EPoint(); 
+            data.AddRange(this.clientPos.__encode()); 
+            if (this.dstPos == null) this.dstPos = new EPoint(); 
+            data.AddRange(this.dstPos.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.follow)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.maction = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.pos = new EPoint(); 
-            this.pos.__decode(binData, ref pos); 
+            this.action = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.clientPos = new EPoint(); 
+            this.clientPos.__decode(binData, ref pos); 
+            this.dstPos = new EPoint(); 
+            this.dstPos.__decode(binData, ref pos); 
+            this.follow = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class MoveResp: Proto4z.IProtoObject 
+    public class MoveResp: Proto4z.IProtoObject //只有失败时才会使用该协议  
     {     
         //proto id   
         public const ushort protoID = 50009;  
@@ -313,80 +325,63 @@ namespace Proto4z
         //members   
         public ushort retCode;  
         public ulong eid;  
-        public ushort maction;  
-        public EPoint pos;  
+        public ushort action;  
         public MoveResp()  
         { 
             retCode = 0;  
             eid = 0;  
-            maction = 0;  
-            pos = new EPoint();  
+            action = 0;  
         } 
-        public MoveResp(ushort retCode, ulong eid, ushort maction, EPoint pos) 
+        public MoveResp(ushort retCode, ulong eid, ushort action) 
         { 
             this.retCode = retCode; 
             this.eid = eid; 
-            this.maction = maction; 
-            this.pos = pos; 
+            this.action = action; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.maction)); 
-            if (this.pos == null) this.pos = new EPoint(); 
-            data.AddRange(this.pos.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.action)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.maction = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.pos = new EPoint(); 
-            this.pos.__decode(binData, ref pos); 
+            this.action = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 
         } 
     } 
  
-    public class MoveNotice: Proto4z.IProtoObject 
+    public class MoveNotice: Proto4z.IProtoObject //移动开始/结束通知  
     {     
         //proto id   
         public const ushort protoID = 50010;  
         static public ushort getProtoID() { return 50010; } 
         static public string getProtoName() { return "MoveNotice"; } 
         //members   
-        public ulong eid;  
-        public ushort maction;  
-        public EPoints path;  
+        public EntityMove moveInfo;  
         public MoveNotice()  
         { 
-            eid = 0;  
-            maction = 0;  
-            path = new EPoints();  
+            moveInfo = new EntityMove();  
         } 
-        public MoveNotice(ulong eid, ushort maction, EPoints path) 
+        public MoveNotice(EntityMove moveInfo) 
         { 
-            this.eid = eid; 
-            this.maction = maction; 
-            this.path = path; 
+            this.moveInfo = moveInfo; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.maction)); 
-            if (this.path == null) this.path = new EPoints(); 
-            data.AddRange(this.path.__encode()); 
+            if (this.moveInfo == null) this.moveInfo = new EntityMove(); 
+            data.AddRange(this.moveInfo.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.maction = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.path = new EPoints(); 
-            this.path.__decode(binData, ref pos); 
+            this.moveInfo = new EntityMove(); 
+            this.moveInfo.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -478,7 +473,7 @@ namespace Proto4z
         } 
     } 
  
-    public class UserSkillResp: Proto4z.IProtoObject 
+    public class UserSkillResp: Proto4z.IProtoObject //只有失败时才会使用该协议  
     {     
         //proto id   
         public const ushort protoID = 50014;  

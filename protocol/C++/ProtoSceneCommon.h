@@ -251,11 +251,10 @@ enum EntityCampType : unsigned short
 enum MoveAction : unsigned short 
 { 
     MOVE_ACTION_IDLE = 0, //空闲  
-    MOVE_ACTION_FACE = 1, //朝向  
-    MOVE_ACTION_FOLLOW = 2, //跟随  
-    MOVE_ACTION_PATH = 3, //路径  
-    MOVE_ACTION_PASV_PATH = 4, //不可取消  
-    MOVE_ACTION_FORCE_PATH = 5, //不可取消&穿越地形  
+    MOVE_ACTION_FOLLOW = 1, //跟随  
+    MOVE_ACTION_PATH = 2, //路径  
+    MOVE_ACTION_PASV_PATH = 3, //不可取消, 直线移动一次.  
+    MOVE_ACTION_FORCE_PATH = 4, //不可取消&穿越地形, 直线移动一次  
 }; 
  
 enum SearchMethodType : unsigned short 
@@ -835,40 +834,50 @@ struct EntityMove //EntityMove
     static const unsigned short getProtoID() { return 10011;} 
     static const std::string getProtoName() { return "EntityMove";} 
     unsigned long long eid; //eid  
+    unsigned short action; //状态  
     EPoint pos; //当前坐标  
-    unsigned short moveAction; //状态  
-    EPoints movePath; //当前的移动路径  
-    unsigned long long follow; //移动跟随的实体  
+    unsigned long long frames; //移动终止条件之一. 剩余帧数  
+    double speed; //移动速度 单位秒.   
+    EPoints waypoints; //移动终止条件之一. 行走路点, 全部走完自动终止移动  
+    unsigned long long follow; //跟随的EID 始终  
     EntityMove() 
     { 
         eid = 0; 
-        moveAction = 0; 
+        action = 0; 
+        frames = 0; 
+        speed = 0.0; 
         follow = 0; 
     } 
-    EntityMove(const unsigned long long & eid, const EPoint & pos, const unsigned short & moveAction, const EPoints & movePath, const unsigned long long & follow) 
+    EntityMove(const unsigned long long & eid, const unsigned short & action, const EPoint & pos, const unsigned long long & frames, const double & speed, const EPoints & waypoints, const unsigned long long & follow) 
     { 
         this->eid = eid; 
+        this->action = action; 
         this->pos = pos; 
-        this->moveAction = moveAction; 
-        this->movePath = movePath; 
+        this->frames = frames; 
+        this->speed = speed; 
+        this->waypoints = waypoints; 
         this->follow = follow; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityMove & data) 
 { 
     ws << data.eid;  
+    ws << data.action;  
     ws << data.pos;  
-    ws << data.moveAction;  
-    ws << data.movePath;  
+    ws << data.frames;  
+    ws << data.speed;  
+    ws << data.waypoints;  
     ws << data.follow;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityMove & data) 
 { 
     rs >> data.eid;  
+    rs >> data.action;  
     rs >> data.pos;  
-    rs >> data.moveAction;  
-    rs >> data.movePath;  
+    rs >> data.frames;  
+    rs >> data.speed;  
+    rs >> data.waypoints;  
     rs >> data.follow;  
     return rs; 
 } 
@@ -876,9 +885,11 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "[\n"; 
     stm << "eid=" << info.eid << "\n"; 
+    stm << "action=" << info.action << "\n"; 
     stm << "pos=" << info.pos << "\n"; 
-    stm << "moveAction=" << info.moveAction << "\n"; 
-    stm << "movePath=" << info.movePath << "\n"; 
+    stm << "frames=" << info.frames << "\n"; 
+    stm << "speed=" << info.speed << "\n"; 
+    stm << "waypoints=" << info.waypoints << "\n"; 
     stm << "follow=" << info.follow << "\n"; 
     stm << "]\n"; 
     return stm; 
@@ -894,9 +905,6 @@ struct EntityControl //EntityControl
     unsigned long long eid; //eid  
     unsigned long long agentNo; //agentNo. -1为无效  
     double stateChageTick; //状态改变时间  
-    double extSpeed; //扩展速度  
-    double extBeginTime; //扩展速度的开始时间  
-    double extKeepTime; //扩展速度的保持时间  
     EPoint spawnpoint; //出生点  
     EPoint lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
     SkillInfoArray skills; //技能数据  
@@ -910,21 +918,15 @@ struct EntityControl //EntityControl
         eid = 0; 
         agentNo = 0; 
         stateChageTick = 0.0; 
-        extSpeed = 0.0; 
-        extBeginTime = 0.0; 
-        extKeepTime = 0.0; 
         diedTime = 0.0; 
         hitTimes = 0; 
         lastMoveTime = 0.0; 
     } 
-    EntityControl(const unsigned long long & eid, const unsigned long long & agentNo, const double & stateChageTick, const double & extSpeed, const double & extBeginTime, const double & extKeepTime, const EPoint & spawnpoint, const EPoint & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const double & diedTime, const int & hitTimes, const double & lastMoveTime, const EPoint & lastClientPos) 
+    EntityControl(const unsigned long long & eid, const unsigned long long & agentNo, const double & stateChageTick, const EPoint & spawnpoint, const EPoint & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const double & diedTime, const int & hitTimes, const double & lastMoveTime, const EPoint & lastClientPos) 
     { 
         this->eid = eid; 
         this->agentNo = agentNo; 
         this->stateChageTick = stateChageTick; 
-        this->extSpeed = extSpeed; 
-        this->extBeginTime = extBeginTime; 
-        this->extKeepTime = extKeepTime; 
         this->spawnpoint = spawnpoint; 
         this->lastPos = lastPos; 
         this->skills = skills; 
@@ -940,9 +942,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.eid;  
     ws << data.agentNo;  
     ws << data.stateChageTick;  
-    ws << data.extSpeed;  
-    ws << data.extBeginTime;  
-    ws << data.extKeepTime;  
     ws << data.spawnpoint;  
     ws << data.lastPos;  
     ws << data.skills;  
@@ -958,9 +957,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.eid;  
     rs >> data.agentNo;  
     rs >> data.stateChageTick;  
-    rs >> data.extSpeed;  
-    rs >> data.extBeginTime;  
-    rs >> data.extKeepTime;  
     rs >> data.spawnpoint;  
     rs >> data.lastPos;  
     rs >> data.skills;  
@@ -977,9 +973,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "eid=" << info.eid << "\n"; 
     stm << "agentNo=" << info.agentNo << "\n"; 
     stm << "stateChageTick=" << info.stateChageTick << "\n"; 
-    stm << "extSpeed=" << info.extSpeed << "\n"; 
-    stm << "extBeginTime=" << info.extBeginTime << "\n"; 
-    stm << "extKeepTime=" << info.extKeepTime << "\n"; 
     stm << "spawnpoint=" << info.spawnpoint << "\n"; 
     stm << "lastPos=" << info.lastPos << "\n"; 
     stm << "skills=" << info.skills << "\n"; 

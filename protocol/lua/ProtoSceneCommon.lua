@@ -106,11 +106,10 @@ Proto4z.ENTITY_CAMP_BLUE = 2--蓝方
 Proto4z.ENTITY_CAMP_NEUTRAL = 1000--[0~ENTITY_CAMP_NEUTRAL)阵营相互敌对, [ENTITY_CAMP_NEUTRAL~)中立温和阵营 
  
 Proto4z.MOVE_ACTION_IDLE = 0--空闲 
-Proto4z.MOVE_ACTION_FACE = 1--朝向 
-Proto4z.MOVE_ACTION_FOLLOW = 2--跟随 
-Proto4z.MOVE_ACTION_PATH = 3--路径 
-Proto4z.MOVE_ACTION_PASV_PATH = 4--不可取消 
-Proto4z.MOVE_ACTION_FORCE_PATH = 5--不可取消&穿越地形 
+Proto4z.MOVE_ACTION_FOLLOW = 1--跟随 
+Proto4z.MOVE_ACTION_PATH = 2--路径 
+Proto4z.MOVE_ACTION_PASV_PATH = 3--不可取消, 直线移动一次. 
+Proto4z.MOVE_ACTION_FORCE_PATH = 4--不可取消&穿越地形, 直线移动一次 
  
 Proto4z.SEARCH_METHOD_DISTANCE = 0--org 半径,360度扇形的优化 
 Proto4z.SEARCH_METHOD_SEACTOR = 1--org 扇形 
@@ -285,10 +284,12 @@ Proto4z.EntityMove = {} --EntityMove
 Proto4z.EntityMove.__protoID = 10011 
 Proto4z.EntityMove.__protoName = "EntityMove" 
 Proto4z.EntityMove[1] = {name="eid", type="ui64" } --eid 
-Proto4z.EntityMove[2] = {name="pos", type="EPoint" } --当前坐标 
-Proto4z.EntityMove[3] = {name="moveAction", type="ui16" } --状态 
-Proto4z.EntityMove[4] = {name="movePath", type="EPoints" } --当前的移动路径 
-Proto4z.EntityMove[5] = {name="follow", type="ui64" } --移动跟随的实体 
+Proto4z.EntityMove[2] = {name="action", type="ui16" } --状态 
+Proto4z.EntityMove[3] = {name="pos", type="EPoint" } --当前坐标 
+Proto4z.EntityMove[4] = {name="frames", type="ui64" } --移动终止条件之一. 剩余帧数 
+Proto4z.EntityMove[5] = {name="speed", type="double" } --移动速度 单位秒.  
+Proto4z.EntityMove[6] = {name="waypoints", type="EPoints" } --移动终止条件之一. 行走路点, 全部走完自动终止移动 
+Proto4z.EntityMove[7] = {name="follow", type="ui64" } --跟随的EID 始终 
  
 Proto4z.EntityMoveArray = {}  
 Proto4z.EntityMoveArray.__protoName = "EntityMoveArray" 
@@ -302,17 +303,14 @@ Proto4z.EntityControl.__protoName = "EntityControl"
 Proto4z.EntityControl[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityControl[2] = {name="agentNo", type="ui64" } --agentNo. -1为无效 
 Proto4z.EntityControl[3] = {name="stateChageTick", type="double" } --状态改变时间 
-Proto4z.EntityControl[4] = {name="extSpeed", type="double" } --扩展速度 
-Proto4z.EntityControl[5] = {name="extBeginTime", type="double" } --扩展速度的开始时间 
-Proto4z.EntityControl[6] = {name="extKeepTime", type="double" } --扩展速度的保持时间 
-Proto4z.EntityControl[7] = {name="spawnpoint", type="EPoint" } --出生点 
-Proto4z.EntityControl[8] = {name="lastPos", type="EPoint" } --上一帧实体坐标, 如果是瞬移 则和pos相同 
-Proto4z.EntityControl[9] = {name="skills", type="SkillInfoArray" } --技能数据 
-Proto4z.EntityControl[10] = {name="buffs", type="BuffInfoArray" } --BUFF数据, 小标ID对应bufftype 
-Proto4z.EntityControl[11] = {name="diedTime", type="double" } --实体死亡时间点 -1为永久, 仅飞行道具类有效 
-Proto4z.EntityControl[12] = {name="hitTimes", type="i32" } --实体碰撞 -1为永久, 仅飞行道具类有效 
-Proto4z.EntityControl[13] = {name="lastMoveTime", type="double" } --最后一次移动时间 
-Proto4z.EntityControl[14] = {name="lastClientPos", type="EPoint" } --最后一次客户端提交的坐标 
+Proto4z.EntityControl[4] = {name="spawnpoint", type="EPoint" } --出生点 
+Proto4z.EntityControl[5] = {name="lastPos", type="EPoint" } --上一帧实体坐标, 如果是瞬移 则和pos相同 
+Proto4z.EntityControl[6] = {name="skills", type="SkillInfoArray" } --技能数据 
+Proto4z.EntityControl[7] = {name="buffs", type="BuffInfoArray" } --BUFF数据, 小标ID对应bufftype 
+Proto4z.EntityControl[8] = {name="diedTime", type="double" } --实体死亡时间点 -1为永久, 仅飞行道具类有效 
+Proto4z.EntityControl[9] = {name="hitTimes", type="i32" } --实体碰撞 -1为永久, 仅飞行道具类有效 
+Proto4z.EntityControl[10] = {name="lastMoveTime", type="double" } --最后一次移动时间 
+Proto4z.EntityControl[11] = {name="lastClientPos", type="EPoint" } --最后一次客户端提交的坐标 
  
 Proto4z.EntityControlArray = {}  
 Proto4z.EntityControlArray.__protoName = "EntityControlArray" 

@@ -53,7 +53,7 @@ public:
     //operator
 public:
     void pushAsync(std::function<void()> && func);
-    bool doMove(ui64 eid, MoveAction action, ui64 follow, EPoint dst, bool clean = true);
+    bool doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 follow, EPoint dst, AvatarID avatarID = InvalidAvatarID, bool clean = true);
     bool doSkill();
     bool cleanSkill();
     bool addBuff();

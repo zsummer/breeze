@@ -56,25 +56,24 @@ Proto4z.MoveReq = {}
 Proto4z.MoveReq.__protoID = 50008 
 Proto4z.MoveReq.__protoName = "MoveReq" 
 Proto4z.MoveReq[1] = {name="eid", type="ui64" }  
-Proto4z.MoveReq[2] = {name="maction", type="ui16" }  
-Proto4z.MoveReq[3] = {name="pos", type="EPoint" }  
+Proto4z.MoveReq[2] = {name="action", type="ui16" }  
+Proto4z.MoveReq[3] = {name="clientPos", type="EPoint" }  
+Proto4z.MoveReq[4] = {name="dstPos", type="EPoint" }  
+Proto4z.MoveReq[5] = {name="follow", type="ui64" }  
  
 Proto4z.register(50009,"MoveResp") 
-Proto4z.MoveResp = {}  
+Proto4z.MoveResp = {} --只有失败时才会使用该协议 
 Proto4z.MoveResp.__protoID = 50009 
 Proto4z.MoveResp.__protoName = "MoveResp" 
 Proto4z.MoveResp[1] = {name="retCode", type="ui16" }  
 Proto4z.MoveResp[2] = {name="eid", type="ui64" }  
-Proto4z.MoveResp[3] = {name="maction", type="ui16" }  
-Proto4z.MoveResp[4] = {name="pos", type="EPoint" }  
+Proto4z.MoveResp[3] = {name="action", type="ui16" }  
  
 Proto4z.register(50010,"MoveNotice") 
-Proto4z.MoveNotice = {}  
+Proto4z.MoveNotice = {} --移动开始/结束通知 
 Proto4z.MoveNotice.__protoID = 50010 
 Proto4z.MoveNotice.__protoName = "MoveNotice" 
-Proto4z.MoveNotice[1] = {name="eid", type="ui64" }  
-Proto4z.MoveNotice[2] = {name="maction", type="ui16" }  
-Proto4z.MoveNotice[3] = {name="path", type="EPoints" }  
+Proto4z.MoveNotice[1] = {name="moveInfo", type="EntityMove" }  
  
 Proto4z.register(50011,"AddBuffNotice") 
 Proto4z.AddBuffNotice = {}  
@@ -95,7 +94,7 @@ Proto4z.UserSkillReq.__protoName = "UserSkillReq"
 Proto4z.UserSkillReq[1] = {name="eid", type="ui64" }  
  
 Proto4z.register(50014,"UserSkillResp") 
-Proto4z.UserSkillResp = {}  
+Proto4z.UserSkillResp = {} --只有失败时才会使用该协议 
 Proto4z.UserSkillResp.__protoID = 50014 
 Proto4z.UserSkillResp.__protoName = "UserSkillResp" 
 Proto4z.UserSkillResp[1] = {name="retCode", type="ui16" }  
