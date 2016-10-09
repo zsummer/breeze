@@ -154,7 +154,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerEnterSceneIns //开辟场景  
 { 
-    static const unsigned short getProtoID() { return 39006;} 
+    static const unsigned short getProtoID() { return 39004;} 
     static const std::string getProtoName() { return "SceneServerEnterSceneIns";} 
     unsigned short sceneType; //类型  
     unsigned long long mapID;  
@@ -197,7 +197,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerGroupStatusChangeIns //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 39007;} 
+    static const unsigned short getProtoID() { return 39005;} 
     static const std::string getProtoName() { return "SceneServerGroupStatusChangeIns";} 
     unsigned long long groupID;  
     unsigned long long sceneID;  

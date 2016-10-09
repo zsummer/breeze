@@ -15,25 +15,25 @@
 
    
      <!-- scene类型 -->
-    <enum type="ui16" name="SCENE_TYPE" desc="scene类型" >
-        <member name="SCENE_TYPE_NONE" value="0"   desc="无效"/>
-        <member name="SCENE_TYPE_HOME"   desc="主城"/>
-        <member name="SCENE_TYPE_MELEE" desc="乱斗场"/>
-        <member name="SCENE_TYPE_ARENA" desc="竞技场"/>
-        <member name="SCENE_TYPE_GUILD" desc="公会"/>
-        <member name="SCENE_TYPE_MASTER_INSTANCING"  desc="主线副本"/>
-        <member name="SCENE_TYPE_BRANCH_INSTANCING"  desc="支线副本"/>
-        <member name="SCENE_TYPE_MAX"  desc="最大类型数值. 扩展类型在该枚举之前插入新类型."/>
+    <enum type="ui16" name="SceneType" desc="scene类型" >
+        <member name="SCENE_NONE" value="0"   desc="无效"/>
+        <member name="SCENE_HOME"   desc="主城"/>
+        <member name="SCENE_MELEE" desc="乱斗场"/>
+        <member name="SCENE_ARENA" desc="竞技场"/>
+        <member name="SCENE_GUILD" desc="公会"/>
+        <member name="SCENE_MASTER_INSTANCING"  desc="主线副本"/>
+        <member name="SCENE_BRANCH_INSTANCING"  desc="支线副本"/>
+        <member name="SCENE_MAX"  desc="最大类型数值. 扩展类型在该枚举之前插入新类型."/>
     </enum>
 
     <!-- scene状态 -->
-    <enum type="ui16" name="SCENE_STATUS" desc="scene状态">
-        <member name="SCENE_STATUS_NONE" value="0" desc="不存在" />
-        <member name="SCENE_STATUS_MATCHING"  desc="匹配中" />
-        <member name="SCENE_STATUS_CHOISE" desc="选择英雄" />
-        <member name="SCENE_STATUS_ALLOCATE" desc="服务器分配场景中" />        
-        <member name="SCENE_STATUS_WAIT"  desc="等待玩家加入战场" />
-        <member name="SCENE_STATUS_ACTIVE" desc="战斗中" />
+    <enum type="ui16" name="SceneState" desc="scene状态">
+        <member name="SCENE_STATE_NONE" value="0" desc="不存在" />
+        <member name="SCENE_STATE_MATCHING"  desc="匹配中" />
+        <member name="SCENE_STATE_CHOISE" desc="选择英雄" />
+        <member name="SCENE_STATE_ALLOCATE" desc="服务器分配场景中" />        
+        <member name="SCENE_STATE_WAIT"  desc="等待玩家加入战场" />
+        <member name="SCENE_STATE_ACTIVE" desc="战斗中" />
     </enum>
 
 
@@ -79,49 +79,49 @@
 
 
     <!-- 实体状态-->
-    <enum type="ui16" name="ENTITY_STATE" desc="">
-        <member name="ESTATE_NONE" desc="无效" />
-        <member name="ESTATE_FREEZING" desc="冻结, 不可被攻击,不可主动移动,攻击等" />
-        <member name="ESTATE_ACTIVE" desc="活跃状态" />
-        <member name="ESTATE_LIE" desc="跪, 不计死亡次数" />
-        <member name="ESTATE_DIED" desc="死, 记死亡次数" />
+    <enum type="ui16" name="EntityState" desc="">
+        <member name="ENTITY_STATE_NONE" desc="无效" />
+        <member name="ENTITY_STATE_FREEZING" desc="冻结, 不可被攻击,不可主动移动,攻击等" />
+        <member name="ENTITY_STATE_ACTIVE" desc="活跃状态" />
+        <member name="ENTITY_STATE_LIE" desc="跪, 不计死亡次数" />
+        <member name="ENTITY_STATE_DIED" desc="死, 记死亡次数" />
     </enum>
 
     <!-- 实体对象的类型, 区别玩家, AI, 技能-->
-    <enum type="ui16" name="ENTITY_TYPE" desc="">
-        <member name="ETYPE_NONE" desc="" />
-        <member name="ETYPE_AVATAR" desc="" />
-        <member name="ETYPE_AI" desc="" />
-        <member name="ETYPE_FLIGHT" desc="飞行道具" />
+    <enum type="ui16" name="EntityType" desc="">
+        <member name="ENTITY_NONE" desc="" />
+        <member name="ENTITY_AVATAR" desc="" />
+        <member name="ENTITY_AI" desc="" />
+        <member name="ENTITY_FLIGHT" desc="飞行道具" />
     </enum>
 
     <!-- 实体阵营-->
-    <enum type="ui16" name="ENTITY_COLOR" desc="">
-        <member name="ECOLOR_NONE" desc="" />
-        <member name="ECOLOR_RED" desc="红方" />
-        <member name="ECOLOR_BLUE" desc="蓝方" />
-        <member name="ECOLOR_NEUTRAL" value="1000" desc="[0~ECOLOR_NEUTRAL)阵营相互敌对, [ECOLOR_NEUTRAL~)中立温和阵营" />
+    <enum type="ui16" name="EntityCampType" desc="">
+        <member name="ENTITY_CAMP_NONE" desc="" />
+        <member name="ENTITY_CAMP_RED" desc="红方" />
+        <member name="ENTITY_CAMP_BLUE" desc="蓝方" />
+        <member name="ENTITY_CAMP_NEUTRAL" value="1000" desc="[0~ENTITY_CAMP_NEUTRAL)阵营相互敌对, [ENTITY_CAMP_NEUTRAL~)中立温和阵营" />
     </enum>
 
     <!-- 移动行为-->
     <enum type="ui16" name="MoveAction" desc="">
-        <member name="MACTION_IDLE" value="0" desc="空闲" />
-        <member name="MACTION_FACE"   desc="朝向"/>
-        <member name="MACTION_FOLLOW" desc="跟随" />
-        <member name="MACTION_PATH" desc="路径" />
-        <member name="MACTION_PASV_PATH" desc="不可取消" />
-        <member name="MACTION_FORCE_PATH" desc="不可取消&穿越地形" />
+        <member name="MOVE_ACTION_IDLE" value="0" desc="空闲" />
+        <member name="MOVE_ACTION_FACE"   desc="朝向"/>
+        <member name="MOVE_ACTION_FOLLOW" desc="跟随" />
+        <member name="MOVE_ACTION_PATH" desc="路径" />
+        <member name="MOVE_ACTION_PASV_PATH" desc="不可取消" />
+        <member name="MOVE_ACTION_FORCE_PATH" desc="不可取消&穿越地形" />
     </enum>
 
     <!-- 搜索方法-->
-    <enum type="ui16" name="SEARCH_METHOD" desc="">
+    <enum type="ui16" name="SearchMethodType" desc="">
         <member name="SEARCH_METHOD_DISTANCE" desc="org 半径,360度扇形的优化" />
         <member name="SEARCH_METHOD_SEACTOR" desc="org 扇形" />
         <member name="SEARCH_METHOD_RECT" desc="org 矩形" />
     </enum>
 
     <!-- 搜索目标阵营(组合位结构)-->
-    <enum type="ui64" name="SEARCH_TARGET" desc="">
+    <enum type="ui64" name="SearchTarget" desc="">
         <member name="SEARCH_TARGET_NONE"  desc="无" />
         <member name="SEARCH_TARGET_SELF"  desc="自身, 玩家或者AI" />
         <member name="SEARCH_TARGET_ENEMY"  desc="敌人" />
@@ -131,7 +131,7 @@
 
 
     <!-- SKILL类型 (组合位结构) -->
-    <enum type="ui64" name="SKILL_TYPE" desc="">
+    <enum type="ui64" name="SkillType" desc="">
         <member name="SKILL_NONE"  desc=""/>
         <member name="SKILL_AUTO" desc="普攻"/>
         <member name="SKILL_PASSIVE"    desc="被动技能"/>
@@ -142,7 +142,7 @@
     </enum>
 
     <!-- SKILL行为(组合位结构)  -->
-    <enum type="ui64" name="SKILL_BEHAVIOUR" desc="">
+    <enum type="ui64" name="SkillBehaviourType" desc="">
         <member name="SKILL_BEHAVIOUR_NONE"  desc=""/>
         <member name="SKILL_BEHAVIOUR_HIT"   desc="攻击"/>
         <member name="SKILL_BEHAVIOUR_TELEPORT_TARGET"   desc="瞬移到目标"/>
@@ -156,7 +156,7 @@
 
 
     <!-- BUFF基础类型(组合位结构) 35以下可任意搭配, 如果多个类型组合需要避免value/effect字段的使用冲突-->
-    <enum type="ui64" name="BUFF_TYPE" desc="">
+    <enum type="ui64" name="BuffType" desc="">
         <member name="BUFF_HALO"  value="1"  desc="非表达可检索类型: 光环"/>
         <member name="BUFF_BUFF"  value="2"  desc="非表达可检索类型: 增益buff"/>
         <member name="BUFF_DEBUFF"  value="3"  desc="非表达可检索类型: 减益BUFF"/>
@@ -213,7 +213,7 @@
 
     <struct name="SkillData" desc="技能">
         <member name="skillID" type="ui64"  desc="skillID"/>
-        <member name="skillType" type="ui64"  desc="SKILL_TYPE"/>
+        <member name="skillType" type="ui64"  desc="SkillType"/>
         <member name="behaviours" type="SkillBehaviourArray"  desc=""/>
         <member name="cd" type="double"  desc=""/>
    </struct>
@@ -228,16 +228,16 @@
    </struct>
 
     <!-- 伤害类型-->
-    <enum type="ui16" name="HARM_TYPE" desc="伤害类型">
-        <member name="HARM_TYPE_GENERAL" value="0" desc="普通伤害" />
-        <member name="HARM_TYPE_MISS"  desc="闪避" />
-        <member name="HARM_TYPE_CRITICAL"  desc="暴击" />
-        <member name="HARM_TYPE_HILL" desc="治疗" />
+    <enum type="ui16" name="HarmType" desc="伤害类型">
+        <member name="HARM_GENERAL" value="0" desc="普通伤害" />
+        <member name="HARM_MISS"  desc="闪避" />
+        <member name="HARM_CRITICAL"  desc="暴击" />
+        <member name="HARM_HILL" desc="治疗" />
     </enum>
 
     <struct name="HarmData" desc="伤害数据">
         <member name="eid" type="ui64"  desc="目标eid"/>
-        <member name="type" type="ui16"  desc="伤害类型HARM_TYPE"/>
+        <member name="type" type="ui16"  desc="伤害类型HarmType"/>
         <member name="harm" type="double"  desc="如果为正是伤害, 为负则是回血"/>
    </struct>
    <array name="HarmDataArray" type="HarmData" desc="" />

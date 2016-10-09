@@ -26,8 +26,8 @@ class Scene
     //scene数据
 private:
     SceneID _sceneID;
-    SCENE_TYPE _sceneType;
-    SCENE_STATUS _sceneStatus;
+    SceneType _sceneType;
+    SceneState _sceneStatus;
     RVO::RVOSimulator *_sim = nullptr;
     EntityID _lastEID;
     double _lastStatusChangeTime;
@@ -40,8 +40,8 @@ private:
 
 public:
     inline SceneID getSceneID() { return _sceneID; }
-    inline SCENE_TYPE getSceneType() { return _sceneType; }
-    inline SCENE_STATUS getSceneStatus() { return _sceneStatus; }
+    inline SceneType getSceneType() { return _sceneType; }
+    inline SceneState getSceneState() { return _sceneStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
     inline size_t getPlayerCount() { return _players.size(); }
     inline std::map<ServiceID, EntityPtr> & getPlayers() { return _players; }
@@ -52,7 +52,7 @@ public:
 
     //operator
 public:
-    bool pushAsync(std::function<void()> && func);
+    void pushAsync(std::function<void()> && func);
     bool doMove(ui64 eid, MoveAction action, ui64 follow, EPoint dst, bool clean = true);
     bool doSkill();
     bool cleanSkill();
@@ -60,16 +60,16 @@ public:
     bool cleanBuff();
     EntityPtr addEntity(const AvatarBaseInfo & baseInfo,
                         const AvatarPropMap & baseProps,
-                        ENTITY_COLOR ecolor,
-                        ENTITY_TYPE etype,
-                        ENTITY_STATE state = ESTATE_ACTIVE,
+                        EntityCampType ecolor,
+                        EntityType etype,
+                        EntityState state = ENTITY_STATE_ACTIVE,
                         GroupID = InvalidGroupID);
     bool removeEntity(EntityID eid);
 public:
     Scene(SceneID id);
     ~Scene();
     bool cleanScene();
-    bool initScene(SCENE_TYPE sceneType, MapID mapID);
+    bool initScene(SceneType sceneType, MapID mapID);
     bool onUpdate();
     void doStepRVO();
     bool playerAttach(ServiceID avatarID, SessionID sID);

@@ -112,7 +112,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneSectionNotice //填充场景数据  
 { 
-    static const unsigned short getProtoID() { return 50010;} 
+    static const unsigned short getProtoID() { return 50003;} 
     static const std::string getProtoName() { return "SceneSectionNotice";} 
     SceneSection section;  
     SceneSectionNotice() 
@@ -143,7 +143,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneRefreshNotice 
 { 
-    static const unsigned short getProtoID() { return 50012;} 
+    static const unsigned short getProtoID() { return 50004;} 
     static const std::string getProtoName() { return "SceneRefreshNotice";} 
     EntityInfoArray entityInfos;  
     EntityMoveArray entityMoves;  
@@ -179,7 +179,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneReportsNotice 
 { 
-    static const unsigned short getProtoID() { return 50013;} 
+    static const unsigned short getProtoID() { return 50005;} 
     static const std::string getProtoName() { return "SceneReportsNotice";} 
     EntityReportArray reports;  
     SceneReportsNotice() 
@@ -272,7 +272,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct MoveReq 
 { 
-    static const unsigned short getProtoID() { return 50014;} 
+    static const unsigned short getProtoID() { return 50008;} 
     static const std::string getProtoName() { return "MoveReq";} 
     unsigned long long eid;  
     unsigned short maction;  
@@ -315,7 +315,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct MoveResp 
 { 
-    static const unsigned short getProtoID() { return 50015;} 
+    static const unsigned short getProtoID() { return 50009;} 
     static const std::string getProtoName() { return "MoveResp";} 
     unsigned short retCode;  
     unsigned long long eid;  
@@ -364,7 +364,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct MoveNotice 
 { 
-    static const unsigned short getProtoID() { return 50016;} 
+    static const unsigned short getProtoID() { return 50010;} 
     static const std::string getProtoName() { return "MoveNotice";} 
     unsigned long long eid;  
     unsigned short maction;  
@@ -407,7 +407,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AddBuffNotice 
 { 
-    static const unsigned short getProtoID() { return 50008;} 
+    static const unsigned short getProtoID() { return 50011;} 
     static const std::string getProtoName() { return "AddBuffNotice";} 
     unsigned long long eid;  
     AddBuffNotice() 
@@ -439,7 +439,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct RemoveBuffNotice 
 { 
-    static const unsigned short getProtoID() { return 50009;} 
+    static const unsigned short getProtoID() { return 50012;} 
     static const std::string getProtoName() { return "RemoveBuffNotice";} 
     unsigned long long eid;  
     RemoveBuffNotice() 
@@ -471,7 +471,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UserSkillReq 
 { 
-    static const unsigned short getProtoID() { return 50017;} 
+    static const unsigned short getProtoID() { return 50013;} 
     static const std::string getProtoName() { return "UserSkillReq";} 
     unsigned long long eid;  
     UserSkillReq() 
@@ -503,7 +503,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UserSkillResp 
 { 
-    static const unsigned short getProtoID() { return 50018;} 
+    static const unsigned short getProtoID() { return 50014;} 
     static const std::string getProtoName() { return "UserSkillResp";} 
     unsigned short retCode;  
     unsigned long long eid;  
@@ -541,7 +541,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UserSkillNotice 
 { 
-    static const unsigned short getProtoID() { return 50019;} 
+    static const unsigned short getProtoID() { return 50015;} 
     static const std::string getProtoName() { return "UserSkillNotice";} 
     unsigned long long eid;  
     UserSkillNotice() 

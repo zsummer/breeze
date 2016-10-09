@@ -3,26 +3,26 @@
 #define _PROTOSCENECOMMON_H_ 
  
  
-enum SCENE_TYPE : unsigned short 
+enum SceneType : unsigned short 
 { 
-    SCENE_TYPE_NONE = 0, //无效  
-    SCENE_TYPE_HOME = 1, //主城  
-    SCENE_TYPE_MELEE = 2, //乱斗场  
-    SCENE_TYPE_ARENA = 3, //竞技场  
-    SCENE_TYPE_GUILD = 4, //公会  
-    SCENE_TYPE_MASTER_INSTANCING = 5, //主线副本  
-    SCENE_TYPE_BRANCH_INSTANCING = 6, //支线副本  
-    SCENE_TYPE_MAX = 7, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
+    SCENE_NONE = 0, //无效  
+    SCENE_HOME = 1, //主城  
+    SCENE_MELEE = 2, //乱斗场  
+    SCENE_ARENA = 3, //竞技场  
+    SCENE_GUILD = 4, //公会  
+    SCENE_MASTER_INSTANCING = 5, //主线副本  
+    SCENE_BRANCH_INSTANCING = 6, //支线副本  
+    SCENE_MAX = 7, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
 }; 
  
-enum SCENE_STATUS : unsigned short 
+enum SceneState : unsigned short 
 { 
-    SCENE_STATUS_NONE = 0, //不存在  
-    SCENE_STATUS_MATCHING = 1, //匹配中  
-    SCENE_STATUS_CHOISE = 2, //选择英雄  
-    SCENE_STATUS_ALLOCATE = 3, //服务器分配场景中  
-    SCENE_STATUS_WAIT = 4, //等待玩家加入战场  
-    SCENE_STATUS_ACTIVE = 5, //战斗中  
+    SCENE_STATE_NONE = 0, //不存在  
+    SCENE_STATE_MATCHING = 1, //匹配中  
+    SCENE_STATE_CHOISE = 2, //选择英雄  
+    SCENE_STATE_ALLOCATE = 3, //服务器分配场景中  
+    SCENE_STATE_WAIT = 4, //等待玩家加入战场  
+    SCENE_STATE_ACTIVE = 5, //战斗中  
 }; 
  
 struct SceneGroupAvatarInfo 
@@ -223,47 +223,49 @@ typedef std::vector<unsigned long long> SkillIDArray; //技能ID数组
  
 typedef std::vector<unsigned long long> BuffIDArray; //buff ID 数组  
  
-enum ENTITY_STATE : unsigned short 
+enum EntityState : unsigned short 
 { 
-    ESTATE_NONE = 0, //无效  
-    ESTATE_FREEZING = 1, //冻结, 不可被攻击,不可主动移动,攻击等  
-    ESTATE_ACTIVE = 2, //活跃状态  
-    ESTATE_LIE = 3, //跪, 不计死亡次数  
-    ESTATE_DIED = 4, //死, 记死亡次数  
+    ENTITY_STATE_NONE = 0, //无效  
+    ENTITY_STATE_FREEZING = 1, //冻结, 不可被攻击,不可主动移动,攻击等  
+    ENTITY_STATE_ACTIVE = 2, //活跃状态  
+    ENTITY_STATE_LIE = 3, //跪, 不计死亡次数  
+    ENTITY_STATE_DIED = 4, //死, 记死亡次数  
 }; 
  
-enum ENTITY_TYPE : unsigned short 
+enum EntityType : unsigned short 
 { 
-    ETYPE_NONE = 0,  
-    ETYPE_AVATAR = 1,  
-    ETYPE_AI = 2,  
-    ETYPE_FLIGHT = 3, //飞行道具  
+    ENTITY_NONE = 0,  
+    ENTITY_AVATAR = 1,  
+    ENTITY_AI = 2,  
+    ENTITY_FLIGHT = 3, //飞行道具  
 }; 
  
-enum ENTITY_COLOR : unsigned short 
+enum EntityCampType : unsigned short 
 { 
-    ECOLOR_NONE = 0,  
-    ECOLOR_RED = 1, //红方  
-    ECOLOR_BLUE = 2, //蓝方  
-    ECOLOR_NEUTRAL = 1000, //[0~ECOLOR_NEUTRAL)阵营相互敌对, [ECOLOR_NEUTRAL~)中立温和阵营  
+    ENTITY_CAMP_NONE = 0,  
+    ENTITY_CAMP_RED = 1, //红方  
+    ENTITY_CAMP_BLUE = 2, //蓝方  
+    ENTITY_CAMP_NEUTRAL = 1000, //[0~ENTITY_CAMP_NEUTRAL)阵营相互敌对, [ENTITY_CAMP_NEUTRAL~)中立温和阵营  
 }; 
  
 enum MoveAction : unsigned short 
 { 
-    MACTION_IDLE = 0, //空闲  
-    MACTION_FACE = 1, //朝向  
-    MACTION_FOLLOW = 2, //跟随  
-    MACTION_PATH = 3, //路径  
+    MOVE_ACTION_IDLE = 0, //空闲  
+    MOVE_ACTION_FACE = 1, //朝向  
+    MOVE_ACTION_FOLLOW = 2, //跟随  
+    MOVE_ACTION_PATH = 3, //路径  
+    MOVE_ACTION_PASV_PATH = 4, //不可取消  
+    MOVE_ACTION_FORCE_PATH = 5, //不可取消&穿越地形  
 }; 
  
-enum SEARCH_METHOD : unsigned short 
+enum SearchMethodType : unsigned short 
 { 
     SEARCH_METHOD_DISTANCE = 0, //org 半径,360度扇形的优化  
     SEARCH_METHOD_SEACTOR = 1, //org 扇形  
     SEARCH_METHOD_RECT = 2, //org 矩形  
 }; 
  
-enum SEARCH_TARGET : unsigned long long 
+enum SearchTarget : unsigned long long 
 { 
     SEARCH_TARGET_NONE = 0, //无  
     SEARCH_TARGET_SELF = 1, //自身, 玩家或者AI  
@@ -272,7 +274,7 @@ enum SEARCH_TARGET : unsigned long long
     SEARCH_TARGET_NEUTRAL = 4, //中立  
 }; 
  
-enum SKILL_TYPE : unsigned long long 
+enum SkillType : unsigned long long 
 { 
     SKILL_NONE = 0,  
     SKILL_AUTO = 1, //普攻  
@@ -283,7 +285,7 @@ enum SKILL_TYPE : unsigned long long
     SKILL_MAGIC = 6, //魔法攻击  
 }; 
  
-enum SKILL_BEHAVIOUR : unsigned long long 
+enum SkillBehaviourType : unsigned long long 
 { 
     SKILL_BEHAVIOUR_NONE = 0,  
     SKILL_BEHAVIOUR_HIT = 1, //攻击  
@@ -296,7 +298,7 @@ enum SKILL_BEHAVIOUR : unsigned long long
     SKILL_BEHAVIOUR_TRIGGER_SKILL = 8, //触发技能  
 }; 
  
-enum BUFF_TYPE : unsigned long long 
+enum BuffType : unsigned long long 
 { 
     BUFF_HALO = 1, //非表达可检索类型: 光环  
     BUFF_BUFF = 2, //非表达可检索类型: 增益buff  
@@ -457,7 +459,7 @@ struct SkillData //技能
     static const unsigned short getProtoID() { return 10005;} 
     static const std::string getProtoName() { return "SkillData";} 
     unsigned long long skillID; //skillID  
-    unsigned long long skillType; //SKILL_TYPE  
+    unsigned long long skillType; //SkillType  
     SkillBehaviourArray behaviours;  
     double cd;  
     SkillData() 
@@ -563,12 +565,12 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-enum HARM_TYPE : unsigned short 
+enum HarmType : unsigned short 
 { 
-    HARM_TYPE_GENERAL = 0, //普通伤害  
-    HARM_TYPE_MISS = 1, //闪避  
-    HARM_TYPE_CRITICAL = 2, //暴击  
-    HARM_TYPE_HILL = 3, //治疗  
+    HARM_GENERAL = 0, //普通伤害  
+    HARM_MISS = 1, //闪避  
+    HARM_CRITICAL = 2, //暴击  
+    HARM_HILL = 3, //治疗  
 }; 
  
 struct HarmData //伤害数据  
@@ -576,7 +578,7 @@ struct HarmData //伤害数据
     static const unsigned short getProtoID() { return 10007;} 
     static const std::string getProtoName() { return "HarmData";} 
     unsigned long long eid; //目标eid  
-    unsigned short type; //伤害类型HARM_TYPE  
+    unsigned short type; //伤害类型HarmType  
     double harm; //如果为正是伤害, 为负则是回血  
     HarmData() 
     { 
@@ -830,7 +832,7 @@ typedef std::vector<EntityInfo> EntityInfoArray;
  
 struct EntityMove //EntityMove  
 { 
-    static const unsigned short getProtoID() { return 10034;} 
+    static const unsigned short getProtoID() { return 10011;} 
     static const std::string getProtoName() { return "EntityMove";} 
     unsigned long long eid; //eid  
     EPoint pos; //当前坐标  
@@ -887,7 +889,7 @@ typedef std::vector<EntityMove> EntityMoveArray;
  
 struct EntityControl //EntityControl  
 { 
-    static const unsigned short getProtoID() { return 10011;} 
+    static const unsigned short getProtoID() { return 10012;} 
     static const std::string getProtoName() { return "EntityControl";} 
     unsigned long long eid; //eid  
     unsigned long long agentNo; //agentNo. -1为无效  
@@ -995,7 +997,7 @@ typedef std::vector<EntityControl> EntityControlArray;
  
 struct EntityReport //EntityReport  
 { 
-    static const unsigned short getProtoID() { return 10012;} 
+    static const unsigned short getProtoID() { return 10013;} 
     static const std::string getProtoName() { return "EntityReport";} 
     unsigned long long eid; //eid  
     unsigned long long killOtherCount; //杀死其他玩家次数  
@@ -1060,7 +1062,7 @@ typedef std::vector<EntityReport> EntityReportArray;
  
 struct EntityFullData //EntityFullData  
 { 
-    static const unsigned short getProtoID() { return 10016;} 
+    static const unsigned short getProtoID() { return 10014;} 
     static const std::string getProtoName() { return "EntityFullData";} 
     AvatarBaseInfo baseInfo;  
     AvatarPropMap baseProps;  
@@ -1114,7 +1116,7 @@ typedef std::vector<EntityFullData> EntityFullDataArray;
  
 struct SceneSection //场景全景切片数据  
 { 
-    static const unsigned short getProtoID() { return 10017;} 
+    static const unsigned short getProtoID() { return 10015;} 
     static const std::string getProtoName() { return "SceneSection";} 
     unsigned long long sceneID;  
     unsigned short sceneType;  

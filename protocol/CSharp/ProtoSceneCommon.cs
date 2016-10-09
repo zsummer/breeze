@@ -2,26 +2,26 @@
 namespace Proto4z  
 { 
  
-    public enum SCENE_TYPE : ushort 
+    public enum SceneType : ushort 
     { 
-        SCENE_TYPE_NONE = 0, //无效  
-        SCENE_TYPE_HOME = 1, //主城  
-        SCENE_TYPE_MELEE = 2, //乱斗场  
-        SCENE_TYPE_ARENA = 3, //竞技场  
-        SCENE_TYPE_GUILD = 4, //公会  
-        SCENE_TYPE_MASTER_INSTANCING = 5, //主线副本  
-        SCENE_TYPE_BRANCH_INSTANCING = 6, //支线副本  
-        SCENE_TYPE_MAX = 7, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
+        SCENE_NONE = 0, //无效  
+        SCENE_HOME = 1, //主城  
+        SCENE_MELEE = 2, //乱斗场  
+        SCENE_ARENA = 3, //竞技场  
+        SCENE_GUILD = 4, //公会  
+        SCENE_MASTER_INSTANCING = 5, //主线副本  
+        SCENE_BRANCH_INSTANCING = 6, //支线副本  
+        SCENE_MAX = 7, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
     }; 
  
-    public enum SCENE_STATUS : ushort 
+    public enum SceneState : ushort 
     { 
-        SCENE_STATUS_NONE = 0, //不存在  
-        SCENE_STATUS_MATCHING = 1, //匹配中  
-        SCENE_STATUS_CHOISE = 2, //选择英雄  
-        SCENE_STATUS_ALLOCATE = 3, //服务器分配场景中  
-        SCENE_STATUS_WAIT = 4, //等待玩家加入战场  
-        SCENE_STATUS_ACTIVE = 5, //战斗中  
+        SCENE_STATE_NONE = 0, //不存在  
+        SCENE_STATE_MATCHING = 1, //匹配中  
+        SCENE_STATE_CHOISE = 2, //选择英雄  
+        SCENE_STATE_ALLOCATE = 3, //服务器分配场景中  
+        SCENE_STATE_WAIT = 4, //等待玩家加入战场  
+        SCENE_STATE_ACTIVE = 5, //战斗中  
     }; 
  
     public class SceneGroupAvatarInfo: Proto4z.IProtoObject 
@@ -435,47 +435,49 @@ namespace Proto4z
         } 
     } 
  
-    public enum ENTITY_STATE : ushort 
+    public enum EntityState : ushort 
     { 
-        ESTATE_NONE = 0, //无效  
-        ESTATE_FREEZING = 1, //冻结, 不可被攻击,不可主动移动,攻击等  
-        ESTATE_ACTIVE = 2, //活跃状态  
-        ESTATE_LIE = 3, //跪, 不计死亡次数  
-        ESTATE_DIED = 4, //死, 记死亡次数  
+        ENTITY_STATE_NONE = 0, //无效  
+        ENTITY_STATE_FREEZING = 1, //冻结, 不可被攻击,不可主动移动,攻击等  
+        ENTITY_STATE_ACTIVE = 2, //活跃状态  
+        ENTITY_STATE_LIE = 3, //跪, 不计死亡次数  
+        ENTITY_STATE_DIED = 4, //死, 记死亡次数  
     }; 
  
-    public enum ENTITY_TYPE : ushort 
+    public enum EntityType : ushort 
     { 
-        ETYPE_NONE = 0,  
-        ETYPE_AVATAR = 1,  
-        ETYPE_AI = 2,  
-        ETYPE_FLIGHT = 3, //飞行道具  
+        ENTITY_NONE = 0,  
+        ENTITY_AVATAR = 1,  
+        ENTITY_AI = 2,  
+        ENTITY_FLIGHT = 3, //飞行道具  
     }; 
  
-    public enum ENTITY_COLOR : ushort 
+    public enum EntityCampType : ushort 
     { 
-        ECOLOR_NONE = 0,  
-        ECOLOR_RED = 1, //红方  
-        ECOLOR_BLUE = 2, //蓝方  
-        ECOLOR_NEUTRAL = 1000, //[0~ECOLOR_NEUTRAL)阵营相互敌对, [ECOLOR_NEUTRAL~)中立温和阵营  
+        ENTITY_CAMP_NONE = 0,  
+        ENTITY_CAMP_RED = 1, //红方  
+        ENTITY_CAMP_BLUE = 2, //蓝方  
+        ENTITY_CAMP_NEUTRAL = 1000, //[0~ENTITY_CAMP_NEUTRAL)阵营相互敌对, [ENTITY_CAMP_NEUTRAL~)中立温和阵营  
     }; 
  
     public enum MoveAction : ushort 
     { 
-        MACTION_IDLE = 0, //空闲  
-        MACTION_FACE = 1, //朝向  
-        MACTION_FOLLOW = 2, //跟随  
-        MACTION_PATH = 3, //路径  
+        MOVE_ACTION_IDLE = 0, //空闲  
+        MOVE_ACTION_FACE = 1, //朝向  
+        MOVE_ACTION_FOLLOW = 2, //跟随  
+        MOVE_ACTION_PATH = 3, //路径  
+        MOVE_ACTION_PASV_PATH = 4, //不可取消  
+        MOVE_ACTION_FORCE_PATH = 5, //不可取消&穿越地形  
     }; 
  
-    public enum SEARCH_METHOD : ushort 
+    public enum SearchMethodType : ushort 
     { 
         SEARCH_METHOD_DISTANCE = 0, //org 半径,360度扇形的优化  
         SEARCH_METHOD_SEACTOR = 1, //org 扇形  
         SEARCH_METHOD_RECT = 2, //org 矩形  
     }; 
  
-    public enum SEARCH_TARGET : ulong 
+    public enum SearchTarget : ulong 
     { 
         SEARCH_TARGET_NONE = 0, //无  
         SEARCH_TARGET_SELF = 1, //自身, 玩家或者AI  
@@ -484,7 +486,7 @@ namespace Proto4z
         SEARCH_TARGET_NEUTRAL = 4, //中立  
     }; 
  
-    public enum SKILL_TYPE : ulong 
+    public enum SkillType : ulong 
     { 
         SKILL_NONE = 0,  
         SKILL_AUTO = 1, //普攻  
@@ -495,7 +497,7 @@ namespace Proto4z
         SKILL_MAGIC = 6, //魔法攻击  
     }; 
  
-    public enum SKILL_BEHAVIOUR : ulong 
+    public enum SkillBehaviourType : ulong 
     { 
         SKILL_BEHAVIOUR_NONE = 0,  
         SKILL_BEHAVIOUR_HIT = 1, //攻击  
@@ -508,7 +510,7 @@ namespace Proto4z
         SKILL_BEHAVIOUR_TRIGGER_SKILL = 8, //触发技能  
     }; 
  
-    public enum BUFF_TYPE : ulong 
+    public enum BuffType : ulong 
     { 
         BUFF_HALO = 1, //非表达可检索类型: 光环  
         BUFF_BUFF = 2, //非表达可检索类型: 增益buff  
@@ -692,7 +694,7 @@ namespace Proto4z
         static public string getProtoName() { return "SkillData"; } 
         //members   
         public ulong skillID; //skillID  
-        public ulong skillType; //SKILL_TYPE  
+        public ulong skillType; //SkillType  
         public SkillBehaviourArray behaviours;  
         public double cd;  
         public SkillData()  
@@ -784,12 +786,12 @@ namespace Proto4z
         } 
     } 
  
-    public enum HARM_TYPE : ushort 
+    public enum HarmType : ushort 
     { 
-        HARM_TYPE_GENERAL = 0, //普通伤害  
-        HARM_TYPE_MISS = 1, //闪避  
-        HARM_TYPE_CRITICAL = 2, //暴击  
-        HARM_TYPE_HILL = 3, //治疗  
+        HARM_GENERAL = 0, //普通伤害  
+        HARM_MISS = 1, //闪避  
+        HARM_CRITICAL = 2, //暴击  
+        HARM_HILL = 3, //治疗  
     }; 
  
     public class HarmData: Proto4z.IProtoObject //伤害数据  
@@ -800,7 +802,7 @@ namespace Proto4z
         static public string getProtoName() { return "HarmData"; } 
         //members   
         public ulong eid; //目标eid  
-        public ushort type; //伤害类型HARM_TYPE  
+        public ushort type; //伤害类型HarmType  
         public double harm; //如果为正是伤害, 为负则是回血  
         public HarmData()  
         { 
@@ -1141,8 +1143,8 @@ namespace Proto4z
     public class EntityMove: Proto4z.IProtoObject //EntityMove  
     {     
         //proto id   
-        public const ushort protoID = 10034;  
-        static public ushort getProtoID() { return 10034; } 
+        public const ushort protoID = 10011;  
+        static public ushort getProtoID() { return 10011; } 
         static public string getProtoName() { return "EntityMove"; } 
         //members   
         public ulong eid; //eid  
@@ -1225,8 +1227,8 @@ namespace Proto4z
     public class EntityControl: Proto4z.IProtoObject //EntityControl  
     {     
         //proto id   
-        public const ushort protoID = 10011;  
-        static public ushort getProtoID() { return 10011; } 
+        public const ushort protoID = 10012;  
+        static public ushort getProtoID() { return 10012; } 
         static public string getProtoName() { return "EntityControl"; } 
         //members   
         public ulong eid; //eid  
@@ -1360,8 +1362,8 @@ namespace Proto4z
     public class EntityReport: Proto4z.IProtoObject //EntityReport  
     {     
         //proto id   
-        public const ushort protoID = 10012;  
-        static public ushort getProtoID() { return 10012; } 
+        public const ushort protoID = 10013;  
+        static public ushort getProtoID() { return 10013; } 
         static public string getProtoName() { return "EntityReport"; } 
         //members   
         public ulong eid; //eid  
@@ -1445,8 +1447,8 @@ namespace Proto4z
     public class EntityFullData: Proto4z.IProtoObject //EntityFullData  
     {     
         //proto id   
-        public const ushort protoID = 10016;  
-        static public ushort getProtoID() { return 10016; } 
+        public const ushort protoID = 10014;  
+        static public ushort getProtoID() { return 10014; } 
         static public string getProtoName() { return "EntityFullData"; } 
         //members   
         public AvatarBaseInfo baseInfo;  
@@ -1535,8 +1537,8 @@ namespace Proto4z
     public class SceneSection: Proto4z.IProtoObject //场景全景切片数据  
     {     
         //proto id   
-        public const ushort protoID = 10017;  
-        static public ushort getProtoID() { return 10017; } 
+        public const ushort protoID = 10015;  
+        static public ushort getProtoID() { return 10015; } 
         static public string getProtoName() { return "SceneSection"; } 
         //members   
         public ulong sceneID;  

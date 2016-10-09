@@ -92,7 +92,7 @@ void SceneMgr::onTimer()
                 std::set<GroupID> groups;
                 for (auto &entity : notice.section.entitys)
                 {
-                    if (entity.entityInfo.etype == ETYPE_AVATAR)
+                    if (entity.entityInfo.etype == ENTITY_AVATAR)
                     {
                         groups.insert(entity.entityInfo.groupID);
                     }
@@ -102,7 +102,7 @@ void SceneMgr::onTimer()
                     SceneServerGroupStatusChangeIns ret;
                     ret.groupID = key;
                     ret.sceneID = notice.section.sceneID;
-                    ret.status = SCENE_STATUS_NONE;
+                    ret.status = SCENE_STATE_NONE;
                     sendToWorld(ret);
                 }
 
@@ -120,7 +120,7 @@ void SceneMgr::onTimer()
     for (auto scene : frees)
     {
         _frees.push(scene);
-        if (scene->getSceneType() == SCENE_TYPE_HOME)
+        if (scene->getSceneType() == SCENE_HOME)
         {
             _homes.erase(scene->getSceneID());
         }
@@ -472,7 +472,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
 {
     ScenePtr scene;
     //如果类型是主城并且存在未满人的主城 直接丢进去
-    if (ins.sceneType == SCENE_TYPE_HOME)
+    if (ins.sceneType == SCENE_HOME)
     {
         for (auto &kv : _homes)
         {
@@ -494,9 +494,9 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         scene = _frees.front();
         _frees.pop();
         scene->cleanScene();
-        scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
+        scene->initScene((SceneType)ins.sceneType, ins.mapID);
         _actives.insert(std::make_pair(scene->getSceneID(), scene));
-        if (ins.sceneType == SCENE_TYPE_HOME)
+        if (ins.sceneType == SCENE_HOME)
         {
             _homes.insert(std::make_pair(scene->getSceneID(), scene));
         }
@@ -506,14 +506,14 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         for (auto & avatar : group.members)
         {
             _tokens[avatar.first] = std::make_pair(avatar.second.token, scene->getSceneID());
-            scene->addEntity(avatar.second.baseInfo, avatar.second.baseProps, ECOLOR_BLUE, ETYPE_AVATAR, ESTATE_FREEZING, group.groupID);
+            scene->addEntity(avatar.second.baseInfo, avatar.second.baseProps, ENTITY_CAMP_BLUE, ENTITY_AVATAR, ENTITY_STATE_FREEZING, group.groupID);
         }
         SceneServerGroupStatusChangeIns ret;
         ret.groupID = group.groupID;
         ret.sceneID = scene->getSceneID();
-        ret.status = SCENE_STATUS_WAIT;
+        ret.status = SCENE_STATE_WAIT;
         sendToWorld(ret);
-        ret.status = SCENE_STATUS_ACTIVE;
+        ret.status = SCENE_STATE_ACTIVE;
         sendToWorld(ret);
     }
 

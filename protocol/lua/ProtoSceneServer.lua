@@ -28,17 +28,17 @@ Proto4z.SceneServerJoinGroupAck[1] = {name="retCode", type="ui16" }
 Proto4z.SceneServerJoinGroupAck[2] = {name="newGroupID", type="ui64" }  
 Proto4z.SceneServerJoinGroupAck[3] = {name="oldGroupID", type="ui64" }  
  
-Proto4z.register(39006,"SceneServerEnterSceneIns") 
+Proto4z.register(39004,"SceneServerEnterSceneIns") 
 Proto4z.SceneServerEnterSceneIns = {} --开辟场景 
-Proto4z.SceneServerEnterSceneIns.__protoID = 39006 
+Proto4z.SceneServerEnterSceneIns.__protoID = 39004 
 Proto4z.SceneServerEnterSceneIns.__protoName = "SceneServerEnterSceneIns" 
 Proto4z.SceneServerEnterSceneIns[1] = {name="sceneType", type="ui16" } --类型 
 Proto4z.SceneServerEnterSceneIns[2] = {name="mapID", type="ui64" }  
 Proto4z.SceneServerEnterSceneIns[3] = {name="groups", type="SceneGroupInfoArray" } --多个编队 
  
-Proto4z.register(39007,"SceneServerGroupStatusChangeIns") 
+Proto4z.register(39005,"SceneServerGroupStatusChangeIns") 
 Proto4z.SceneServerGroupStatusChangeIns = {} --scene ==> world 
-Proto4z.SceneServerGroupStatusChangeIns.__protoID = 39007 
+Proto4z.SceneServerGroupStatusChangeIns.__protoID = 39005 
 Proto4z.SceneServerGroupStatusChangeIns.__protoName = "SceneServerGroupStatusChangeIns" 
 Proto4z.SceneServerGroupStatusChangeIns[1] = {name="groupID", type="ui64" }  
 Proto4z.SceneServerGroupStatusChangeIns[2] = {name="sceneID", type="ui64" }  

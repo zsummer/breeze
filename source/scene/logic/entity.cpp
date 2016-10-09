@@ -20,11 +20,11 @@ double Entity::getElapsed(double now)
 }
 double Entity::getSpeed()
 {
-    if (_move.moveAction == MACTION_IDLE)
+    if (_move.moveAction == MOVE_ACTION_IDLE)
     {
         return 0.0;
     }
-    if (_move.moveAction != MACTION_PATH && _move.moveAction != MACTION_FOLLOW && _move.moveAction != MACTION_IDLE)
+    if (_move.moveAction != MOVE_ACTION_PATH && _move.moveAction != MOVE_ACTION_FOLLOW && _move.moveAction != MOVE_ACTION_IDLE)
     {
         return _control.extSpeed;
     }

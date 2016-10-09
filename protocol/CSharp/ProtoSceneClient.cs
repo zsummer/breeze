@@ -104,8 +104,8 @@ namespace Proto4z
     public class SceneSectionNotice: Proto4z.IProtoObject //填充场景数据  
     {     
         //proto id   
-        public const ushort protoID = 50010;  
-        static public ushort getProtoID() { return 50010; } 
+        public const ushort protoID = 50003;  
+        static public ushort getProtoID() { return 50003; } 
         static public string getProtoName() { return "SceneSectionNotice"; } 
         //members   
         public SceneSection section;  
@@ -135,8 +135,8 @@ namespace Proto4z
     public class SceneRefreshNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50012;  
-        static public ushort getProtoID() { return 50012; } 
+        public const ushort protoID = 50004;  
+        static public ushort getProtoID() { return 50004; } 
         static public string getProtoName() { return "SceneRefreshNotice"; } 
         //members   
         public EntityInfoArray entityInfos;  
@@ -173,8 +173,8 @@ namespace Proto4z
     public class SceneReportsNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50013;  
-        static public ushort getProtoID() { return 50013; } 
+        public const ushort protoID = 50005;  
+        static public ushort getProtoID() { return 50005; } 
         static public string getProtoName() { return "SceneReportsNotice"; } 
         //members   
         public EntityReportArray reports;  
@@ -266,8 +266,8 @@ namespace Proto4z
     public class MoveReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50014;  
-        static public ushort getProtoID() { return 50014; } 
+        public const ushort protoID = 50008;  
+        static public ushort getProtoID() { return 50008; } 
         static public string getProtoName() { return "MoveReq"; } 
         //members   
         public ulong eid;  
@@ -307,8 +307,8 @@ namespace Proto4z
     public class MoveResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50015;  
-        static public ushort getProtoID() { return 50015; } 
+        public const ushort protoID = 50009;  
+        static public ushort getProtoID() { return 50009; } 
         static public string getProtoName() { return "MoveResp"; } 
         //members   
         public ushort retCode;  
@@ -353,8 +353,8 @@ namespace Proto4z
     public class MoveNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50016;  
-        static public ushort getProtoID() { return 50016; } 
+        public const ushort protoID = 50010;  
+        static public ushort getProtoID() { return 50010; } 
         static public string getProtoName() { return "MoveNotice"; } 
         //members   
         public ulong eid;  
@@ -394,8 +394,8 @@ namespace Proto4z
     public class AddBuffNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50008;  
-        static public ushort getProtoID() { return 50008; } 
+        public const ushort protoID = 50011;  
+        static public ushort getProtoID() { return 50011; } 
         static public string getProtoName() { return "AddBuffNotice"; } 
         //members   
         public ulong eid;  
@@ -423,8 +423,8 @@ namespace Proto4z
     public class RemoveBuffNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50009;  
-        static public ushort getProtoID() { return 50009; } 
+        public const ushort protoID = 50012;  
+        static public ushort getProtoID() { return 50012; } 
         static public string getProtoName() { return "RemoveBuffNotice"; } 
         //members   
         public ulong eid;  
@@ -452,8 +452,8 @@ namespace Proto4z
     public class UserSkillReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50017;  
-        static public ushort getProtoID() { return 50017; } 
+        public const ushort protoID = 50013;  
+        static public ushort getProtoID() { return 50013; } 
         static public string getProtoName() { return "UserSkillReq"; } 
         //members   
         public ulong eid;  
@@ -481,8 +481,8 @@ namespace Proto4z
     public class UserSkillResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50018;  
-        static public ushort getProtoID() { return 50018; } 
+        public const ushort protoID = 50014;  
+        static public ushort getProtoID() { return 50014; } 
         static public string getProtoName() { return "UserSkillResp"; } 
         //members   
         public ushort retCode;  
@@ -515,8 +515,8 @@ namespace Proto4z
     public class UserSkillNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50019;  
-        static public ushort getProtoID() { return 50019; } 
+        public const ushort protoID = 50015;  
+        static public ushort getProtoID() { return 50015; } 
         static public string getProtoName() { return "UserSkillNotice"; } 
         //members   
         public ulong eid;  

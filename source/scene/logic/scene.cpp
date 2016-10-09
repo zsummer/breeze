@@ -44,8 +44,8 @@ bool Scene::cleanScene()
     _entitys.clear();
     _players.clear();
     while (!_asyncs.empty()) _asyncs.pop();
-    _sceneType = SCENE_TYPE_NONE;
-    _sceneStatus = SCENE_STATUS_NONE;
+    _sceneType = SCENE_NONE;
+    _sceneStatus = SCENE_STATE_NONE;
     _lastStatusChangeTime = getFloatNowTime();
     if (_sim)
     {
@@ -56,15 +56,15 @@ bool Scene::cleanScene()
     return true;
 }
 
-bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
+bool Scene::initScene(SceneType sceneType, MapID mapID)
 {
-    if (_sceneStatus != SCENE_STATUS_NONE || _sim)
+    if (_sceneStatus != SCENE_STATE_NONE || _sim)
     {
         LOGE("Scene::loadScene  scene status error");
         return false;
     }
     _sceneType = sceneType;
-    _sceneStatus = SCENE_STATUS_ACTIVE;
+    _sceneStatus = SCENE_STATE_ACTIVE;
     _lastStatusChangeTime = getFloatNowTime();
     _startTime = getFloatNowTime();
     _endTime = getFloatNowTime() + 600;
@@ -113,9 +113,9 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 
 EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     const AvatarPropMap & baseProps,
-    ENTITY_COLOR ecolor,
-    ENTITY_TYPE etype,
-    ENTITY_STATE state,
+    EntityCampType ecolor,
+    EntityType etype,
+    EntityState state,
     GroupID groupID)
 {
     EntityPtr entity = std::make_shared<Entity>();
@@ -129,7 +129,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     entity->_info.color = ecolor;
     entity->_info.etype = etype;
     entity->_info.groupID = groupID;
-    entity->_info.state = ESTATE_ACTIVE;
+    entity->_info.state = ENTITY_STATE_ACTIVE;
     entity->_info.leader = InvalidEntityID;
     entity->_info.foe = InvalidEntityID;
 
@@ -144,7 +144,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     entity->_move.pos = entity->_control.spawnpoint;
     entity->_move.follow = InvalidEntityID;
     entity->_move.movePath.clear();
-    entity->_move.moveAction = MACTION_IDLE;
+    entity->_move.moveAction = MOVE_ACTION_IDLE;
 
     entity->_report.eid = entity->_info.eid;
 
@@ -177,7 +177,7 @@ bool Scene::removeEntity(EntityID eid)
         _sim->removeAgent(entity->_control.agentNo);
         entity->_control.agentNo = -1;
     }
-    if (entity->_info.etype == ETYPE_AVATAR)
+    if (entity->_info.etype == ENTITY_AVATAR)
     {
         _players.erase(entity->_baseInfo.avatarID);
     }
@@ -262,7 +262,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
 
     }
 }
-bool Scene::pushAsync(std::function<void()> && func)
+void Scene::pushAsync(std::function<void()> && func)
 {
     _asyncs.push(std::move(func));
 }

@@ -147,8 +147,8 @@ namespace Proto4z
     public class SceneServerEnterSceneIns: Proto4z.IProtoObject //开辟场景  
     {     
         //proto id   
-        public const ushort protoID = 39006;  
-        static public ushort getProtoID() { return 39006; } 
+        public const ushort protoID = 39004;  
+        static public ushort getProtoID() { return 39004; } 
         static public string getProtoName() { return "SceneServerEnterSceneIns"; } 
         //members   
         public ushort sceneType; //类型  
@@ -188,8 +188,8 @@ namespace Proto4z
     public class SceneServerGroupStatusChangeIns: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39007;  
-        static public ushort getProtoID() { return 39007; } 
+        public const ushort protoID = 39005;  
+        static public ushort getProtoID() { return 39005; } 
         static public string getProtoName() { return "SceneServerGroupStatusChangeIns"; } 
         //members   
         public ulong groupID;  

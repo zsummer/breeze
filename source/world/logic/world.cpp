@@ -9,7 +9,7 @@
 
 World::World()
 {
-    _matchPools.resize(SCENE_TYPE_MAX);
+    _matchPools.resize(SCENE_MAX);
 }
 
 bool World::init(const std::string & configName)
@@ -453,21 +453,21 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
         SceneServerGroupStatusChangeIns ins;
         rs >> ins;
         auto group = getGroupInfo(ins.groupID);
-        if (group->sceneStatus == SCENE_STATUS_ALLOCATE && ins.status == SCENE_STATUS_WAIT)
+        if (group->sceneStatus == SCENE_STATE_ALLOCATE && ins.status == SCENE_STATE_WAIT)
         {
             group->sceneID = ins.sceneID;
             group->sceneStatus = ins.status;
             pushGroupInfoToClient(group);
         }
-        else if (group->sceneStatus == SCENE_STATUS_WAIT && ins.status == SCENE_STATUS_ACTIVE)
+        else if (group->sceneStatus == SCENE_STATE_WAIT && ins.status == SCENE_STATE_ACTIVE)
         {
             group->sceneStatus = ins.status;
             pushGroupInfoToClient(group);
         }
-        else if (group->sceneStatus == SCENE_STATUS_ACTIVE && ins.status == SCENE_STATUS_NONE)
+        else if (group->sceneStatus == SCENE_STATE_ACTIVE && ins.status == SCENE_STATE_NONE)
         {
             group->sceneStatus = ins.status;
-            group->sceneType = SCENE_TYPE_NONE;
+            group->sceneType = SCENE_NONE;
             pushGroupInfoToClient(group);
             //write report to db
             //push report to client
@@ -522,7 +522,7 @@ void World::onMatchTimer()
 
 void World::onMatchHomeTimer()
 {
-    auto pool = _matchPools[SCENE_TYPE_HOME];
+    auto pool = _matchPools[SCENE_HOME];
     const size_t MatchCount = 1;
     while (pool.size() >= MatchCount)
     {
@@ -533,13 +533,13 @@ void World::onMatchHomeTimer()
         }
         SceneServerEnterSceneIns ins;
         ins.mapID = InvalidMapID;
-        ins.sceneType = SCENE_TYPE_HOME;
+        ins.sceneType = SCENE_HOME;
         for (size_t i = 0; i < MatchCount; i++)
         {
             auto groupPtr = pool.front();
             pool.pop_front();
-            groupPtr->sceneStatus = SCENE_STATUS_CHOISE;
-            groupPtr->sceneStatus = SCENE_STATUS_ALLOCATE;
+            groupPtr->sceneStatus = SCENE_STATE_CHOISE;
+            groupPtr->sceneStatus = SCENE_STATE_ALLOCATE;
             groupPtr->lineID = linePtr->knock.lineID;
             groupPtr->host = linePtr->knock.pubHost;
             groupPtr->port = linePtr->knock.pubPort;
@@ -553,7 +553,7 @@ void World::onMatchHomeTimer()
 
 void World::onMatchMeleeTimer()
 {
-    auto pool = _matchPools[SCENE_TYPE_MELEE];
+    auto pool = _matchPools[SCENE_MELEE];
     const size_t MatchCount = 6;
     while (pool.size() >= MatchCount)
     {
@@ -564,13 +564,13 @@ void World::onMatchMeleeTimer()
         }
         SceneServerEnterSceneIns ins;
         ins.mapID = InvalidMapID;
-        ins.sceneType = SCENE_TYPE_MELEE;
+        ins.sceneType = SCENE_MELEE;
         for (size_t i = 0; i < MatchCount; i++)
         {
             auto groupPtr = pool.front();
             pool.pop_front();
-            groupPtr->sceneStatus = SCENE_STATUS_CHOISE;
-            groupPtr->sceneStatus = SCENE_STATUS_ALLOCATE;
+            groupPtr->sceneStatus = SCENE_STATE_CHOISE;
+            groupPtr->sceneStatus = SCENE_STATE_ALLOCATE;
             groupPtr->lineID = linePtr->knock.lineID;
             groupPtr->host = linePtr->knock.pubHost;
             groupPtr->port = linePtr->knock.pubPort;
@@ -584,7 +584,7 @@ void World::onMatchMeleeTimer()
 
 void World::onMatchArenaTimer()
 {
-    auto pool = _matchPools[SCENE_TYPE_ARENA];
+    auto pool = _matchPools[SCENE_ARENA];
     const size_t MatchCount = 2;
     while (pool.size() >= MatchCount)
     {
@@ -595,13 +595,13 @@ void World::onMatchArenaTimer()
         }
         SceneServerEnterSceneIns ins;
         ins.mapID = InvalidMapID;
-        ins.sceneType = SCENE_TYPE_ARENA;
+        ins.sceneType = SCENE_ARENA;
         for (size_t i = 0; i < MatchCount; i++)
         {
             auto groupPtr = pool.front();
             pool.pop_front();
-            groupPtr->sceneStatus = SCENE_STATUS_CHOISE;
-            groupPtr->sceneStatus = SCENE_STATUS_ALLOCATE;
+            groupPtr->sceneStatus = SCENE_STATE_CHOISE;
+            groupPtr->sceneStatus = SCENE_STATE_ALLOCATE;
             groupPtr->lineID = linePtr->knock.lineID;
             groupPtr->host = linePtr->knock.pubHost;
             groupPtr->port = linePtr->knock.pubPort;
@@ -690,8 +690,8 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         groupPtr = std::make_shared<SceneGroupInfo>();
         auto &group = *groupPtr;
         group.groupID = ++_lastGroupID;
-        group.sceneType = SCENE_TYPE_NONE;
-        group.sceneStatus = SCENE_STATUS_NONE;
+        group.sceneType = SCENE_NONE;
+        group.sceneStatus = SCENE_STATE_NONE;
         group.sceneID = InvalidSceneID;
         group.lineID = InvalidLineID;
         group.mapID = InvalidMapID;
@@ -726,7 +726,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         backToService(session->getSessionID(), trace, ack);
         return;
     }
-    if (groupPtr->sceneStatus != SCENE_STATUS_NONE)
+    if (groupPtr->sceneStatus != SCENE_STATE_NONE)
     {
         LOGE("World::onSceneServerJoinGroupIns the dst group status busy. avatar=" << trace.oob.clientAvatarID << ", groupID=" << req.groupID);
         ack.retCode = EC_ERROR;
@@ -768,8 +768,8 @@ void World::onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trac
     SceneGroupInfoNotice notice;
     resp.retCode = EC_SUCCESS;
     notice.groupInfo.groupID = InvalidGroupID;
-    notice.groupInfo.sceneType = SCENE_TYPE_NONE;
-    notice.groupInfo.sceneStatus = SCENE_STATUS_NONE;
+    notice.groupInfo.sceneType = SCENE_NONE;
+    notice.groupInfo.sceneStatus = SCENE_STATE_NONE;
     auto groupInfoPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
     if (groupInfoPtr)
     {
@@ -789,13 +789,13 @@ void World::onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & tra
         backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
         return;
     }
-    if (req.sceneType >= SCENE_TYPE_MAX || req.sceneType == SCENE_TYPE_NONE)
+    if (req.sceneType >= SCENE_MAX || req.sceneType == SCENE_NONE)
     {
         LOGE("World::onSceneGroupEnterSceneReq the scene type error. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
         return;
     }
-    if (groupPtr->sceneStatus != SCENE_STATUS_NONE)
+    if (groupPtr->sceneStatus != SCENE_STATE_NONE)
     {
         LOGE("World::onSceneGroupEnterSceneReq the group is busy. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
@@ -814,13 +814,13 @@ void World::onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & tra
         backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
         return;
     }
-    if (req.sceneType == SCENE_TYPE_MELEE && groupPtr->members.size() > 1)
+    if (req.sceneType == SCENE_MELEE && groupPtr->members.size() > 1)
     {
         LOGE("World::onSceneGroupEnterSceneReq the goup had too many member. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
         return;
     }
-    if (req.sceneType == SCENE_TYPE_ARENA && groupPtr->members.size() != 3)
+    if (req.sceneType == SCENE_ARENA && groupPtr->members.size() != 3)
     {
         LOGE("World::onSceneGroupEnterSceneReq the goup had too many member. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
@@ -829,7 +829,7 @@ void World::onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & tra
 
 
     groupPtr->sceneType = req.sceneType;
-    groupPtr->sceneStatus = SCENE_STATUS_MATCHING;
+    groupPtr->sceneStatus = SCENE_STATE_MATCHING;
     groupPtr->mapID = req.mapID;
     _matchPools[req.sceneType].push_back(groupPtr);
     backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_SUCCESS));
@@ -845,13 +845,13 @@ void World::onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & tr
         backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_ERROR));
         return;
     }
-    if (groupPtr->sceneStatus != SCENE_STATUS_MATCHING && groupPtr->sceneStatus != SCENE_STATUS_NONE)
+    if (groupPtr->sceneStatus != SCENE_STATE_MATCHING && groupPtr->sceneStatus != SCENE_STATE_NONE)
     {
         LOGE("World::onSceneGroupCancelEnterReq the scene sceneStatus error. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_ERROR));
         return;
     }
-    if (groupPtr->sceneType == SCENE_TYPE_NONE || groupPtr->sceneType >= SCENE_TYPE_MAX)
+    if (groupPtr->sceneType == SCENE_NONE || groupPtr->sceneType >= SCENE_MAX)
     {
         LOGE("World::onSceneGroupCancelEnterReq the scene sceneStatus error. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_ERROR));
@@ -863,8 +863,8 @@ void World::onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & tr
     {
         _matchPools[groupPtr->sceneType].erase(founder);
     }
-    groupPtr->sceneType = SCENE_TYPE_NONE;
-    groupPtr->sceneStatus = SCENE_STATUS_NONE;
+    groupPtr->sceneType = SCENE_NONE;
+    groupPtr->sceneStatus = SCENE_STATE_NONE;
     groupPtr->mapID = InvalidMapID;
     backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_SUCCESS));
     pushGroupInfoToClient(groupPtr);
@@ -927,7 +927,7 @@ void World::onSceneGroupLeaveReq(TcpSessionPtr session, const Tracing & trace, S
         LOGE("World::onSceneGroupInviteReq not found the avatar's group info. avatar=" << trace.oob.clientAvatarID);
         return;
     }
-    if (groupPtr->sceneStatus != SCENE_STATUS_NONE)
+    if (groupPtr->sceneStatus != SCENE_STATE_NONE)
     {
         LOGE("World::onSceneGroupLeaveReq the dst group status busy. avatar=" << trace.oob.clientAvatarID << ", groupID=" << groupPtr->groupID);
         backToService(session->getSessionID(), trace, SceneGroupLeaveResp(EC_ERROR));
