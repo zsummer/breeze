@@ -179,6 +179,7 @@ void World::event_onDockerLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
 	session->setUserParam(UPARAM_DOCKER_ID, InvalidDockerID);
+    session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     LoadServiceNotice notice;
     ServiceInfo info;
     info.serviceDockerID = InvalidDockerID;
@@ -405,6 +406,7 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
 
 void World::event_onSceneLinked(TcpSessionPtr session)
 {
+    session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     LOGD("World::event_onSceneLinked. SessionID=" << session->getSessionID() 
         << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
 }

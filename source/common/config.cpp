@@ -210,12 +210,12 @@ bool ServerConfig::parseDB(std::string configName)
     lua_atpanic(L, panichHandler);
 	if (luaL_loadfile(L, configName.c_str()))
 	{
-		LOGE("can't open the config file. configName=" << configName);
+		LOGE("ServerConfig can't load  file [" << configName << "]");
 		return false;
 	}
     if (lua_pcall(L, 0, LUA_MULTRET, 0))
     {
-        LOGE("can't lua_pcall the config file. configName=" << configName);
+        LOGE("ServerConfig can't pcall  file [" << configName << "]");
         return false;
     }
 
@@ -225,12 +225,12 @@ bool ServerConfig::parseDB(std::string configName)
     {
         if (!lua_isstring(L, -2))
         {
-            LOGE("config parse db false. key is not string type");
+            LOGE("ServerConfig  parse db config failed. key is not string type");
             return false;
         }
         if (!lua_istable(L, -1))
         {
-            LOGE("config parse db false. value is not table type");
+            LOGE("ServerConfig parse db config failed. value is not table type");
             return false;
         }
 

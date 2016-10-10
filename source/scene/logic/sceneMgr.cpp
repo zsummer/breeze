@@ -211,10 +211,10 @@ bool SceneMgr::startWorldConnect()
 {
     auto wc = ServerConfig::getRef().getWorldConfig();
     
-    _worldSessionID = SessionManager::getRef().addConnecter(wc._sceneListenHost, wc._sceneListenPort);
+    _worldSessionID = SessionManager::getRef().addConnecter(wc._scenePubHost, wc._sceneListenPort);
     if (_worldSessionID == InvalidSessionID)
     {
-        LOGE("SceneMgr::startWorldConnect openConnecter error. bind ip=" << wc._sceneListenHost << ", bind port=" << wc._sceneListenPort);
+        LOGE("SceneMgr::startWorldConnect openConnecter error. remote ip=" << wc._scenePubHost << ", remote port=" << wc._sceneListenPort);
         return false;
     }
     auto &options = SessionManager::getRef().getConnecterOptions(_worldSessionID);
@@ -237,11 +237,11 @@ bool SceneMgr::startWorldConnect()
     options._onBlockDispatch = std::bind(&SceneMgr::event_onWorldMessage, this, _1, _2, _3);
     if (!SessionManager::getRef().openConnecter(_worldSessionID))
     {
-        LOGE("SceneMgr::startWorldConnect openConnecter error. bind ip=" << wc._sceneListenHost << ", bind port=" << wc._sceneListenPort);
+        LOGE("SceneMgr::startWorldConnect openConnecter error. remote ip=" << wc._scenePubHost << ", remote port=" << wc._sceneListenPort);
         return false;
     }
-    LOGA("SceneMgr::startWorldConnect openAccepter success. bind ip=" << wc._sceneListenHost 
-        << ", bind port=" << wc._sceneListenPort <<", openConnecter=" << _worldSessionID);
+    LOGA("SceneMgr::startWorldConnect openAccepter success. remote ip=" << wc._scenePubHost
+        << ", remote port=" << wc._sceneListenPort <<", openConnecter=" << _worldSessionID);
     return true;
 }
 
@@ -277,6 +277,7 @@ bool SceneMgr::start()
 
 void SceneMgr::event_onWorldLinked(TcpSessionPtr session)
 {
+    session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
 
 	SceneKnock notice;

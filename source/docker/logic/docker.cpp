@@ -410,6 +410,7 @@ bool Docker::start()
 
 void Docker::event_onServiceLinked(TcpSessionPtr session)
 {
+    session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
     auto founder = _dockerSession.find(ci);
     if (founder == _dockerSession.end())
