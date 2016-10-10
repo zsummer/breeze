@@ -221,17 +221,7 @@ void World::event_onDockerClosed(TcpSessionPtr session)
 void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, unsigned int len)
 {
     ReadStream rsShell(begin, len);
-    if (ScenePulse::getProtoID() != rsShell.getProtoID())
-    {
-        LOGT("event_onDockerMessage protoID=" << rsShell.getProtoID() << ", len=" << len);
-    }
-
-    if (rsShell.getProtoID() == ScenePulse::getProtoID())
-    {
-        session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
-        return;
-    }
-    else if (rsShell.getProtoID() == DockerKnock::getProtoID())
+    if (rsShell.getProtoID() == DockerKnock::getProtoID())
     {
         DockerKnock knock;
         rsShell >> knock;
@@ -487,6 +477,10 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
         _homeBalance.enableNode(knock.lineID);
         _otherBalance.enableNode(knock.lineID);
 	}
+    else if (rs.getProtoID() == ScenePulse::getProtoID())
+    {
+        session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+    }
     else if (rs.getProtoID() == ChatResp::getProtoID())
     {
         ChatResp resp;
