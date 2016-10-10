@@ -232,6 +232,19 @@ bool Scene::onUpdate()
     }
     doStepRVO();
 
+    SceneRefreshNotice notice;
+    for (auto &kv : _entitys)
+    {
+        if (kv.second->_isInfoDirty)
+        {
+            notice.entityInfos.push_back(kv.second->_info);
+        }
+        if (kv.second->_isMoveDirty)
+        {
+            notice.entityMoves.push_back(kv.second->_move);
+        }
+    }
+    broadcast(notice);
     return true;
 }
 
@@ -385,9 +398,14 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
             sendToClient(avatarID, MoveResp(EC_ERROR, req.eid, req.action));
         }
     }
-    else if (rs.getProtoID() == UserSkillReq::getProtoID())
+    else if (rs.getProtoID() == UseSkillReq::getProtoID())
     {
-
+        UseSkillReq req;
+        rs >> req;
+        if (!doSkill())
+        {
+            sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid));
+        }
     }
 }
 

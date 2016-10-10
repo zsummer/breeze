@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>02dac06ae3bdc8ca44ca6a67402cf45d</cppmd5> 
-<luamd5>5933c9d5dab397190074d7df2e925694</luamd5> 
-<csharpmd5>20e10e4d66a1b8c83fc7f36f7d45c02d</csharpmd5> 
-<xmlmd5>e1c2cbbd928de361f3c9cf65534e4ecf</xmlmd5> 
+<cppmd5>44015b9370aa3b1af24392459db1f3a1</cppmd5> 
+<luamd5>d6770c64ee51847410dae5552e64e26a</luamd5> 
+<csharpmd5>401be36b85dcfc21062547292c831193</csharpmd5> 
+<xmlmd5>ff77f9a5be2f5e63cf2b2ce7b5750d88</xmlmd5> 
 <cacheNumber>
     <cache key = "AddBuffNotice" Number = "50011" /> 
     <cache key = "AddEntityNotice" Number = "50006" /> 
@@ -18,6 +18,9 @@
     <cache key = "SceneRefreshNotice" Number = "50004" /> 
     <cache key = "SceneReportsNotice" Number = "50005" /> 
     <cache key = "SceneSectionNotice" Number = "50003" /> 
+    <cache key = "UseSkillNotice" Number = "50018" /> 
+    <cache key = "UseSkillReq" Number = "50016" /> 
+    <cache key = "UseSkillResp" Number = "50017" /> 
     <cache key = "UserSkillNotice" Number = "50015" /> 
     <cache key = "UserSkillReq" Number = "50013" /> 
     <cache key = "UserSkillResp" Number = "50014" /> 

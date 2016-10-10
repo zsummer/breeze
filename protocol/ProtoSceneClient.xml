@@ -80,14 +80,14 @@
         <member name="eid"  type="ui64" desc=""/>
     </proto>
 
-    <proto name="UserSkillReq" desc= "">
+    <proto name="UseSkillReq" desc= "">
         <member name="eid"  type="ui64" desc=""/>
     </proto>
-    <proto name="UserSkillResp" desc= "只有失败时才会使用该协议">
+    <proto name="UseSkillResp" desc= "只有失败时才会使用该协议">
         <member name="retCode"  type="ui16" desc=""/>
         <member name="eid"  type="ui64" desc=""/>
     </proto>
-    <proto name="UserSkillNotice" desc= "">
+    <proto name="UseSkillNotice" desc= "">
         <member name="eid"  type="ui64" desc=""/>
     </proto>
 

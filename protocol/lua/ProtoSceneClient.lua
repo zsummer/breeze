@@ -87,21 +87,21 @@ Proto4z.RemoveBuffNotice.__protoID = 50012
 Proto4z.RemoveBuffNotice.__protoName = "RemoveBuffNotice" 
 Proto4z.RemoveBuffNotice[1] = {name="eid", type="ui64" }  
  
-Proto4z.register(50013,"UserSkillReq") 
-Proto4z.UserSkillReq = {}  
-Proto4z.UserSkillReq.__protoID = 50013 
-Proto4z.UserSkillReq.__protoName = "UserSkillReq" 
-Proto4z.UserSkillReq[1] = {name="eid", type="ui64" }  
+Proto4z.register(50016,"UseSkillReq") 
+Proto4z.UseSkillReq = {}  
+Proto4z.UseSkillReq.__protoID = 50016 
+Proto4z.UseSkillReq.__protoName = "UseSkillReq" 
+Proto4z.UseSkillReq[1] = {name="eid", type="ui64" }  
  
-Proto4z.register(50014,"UserSkillResp") 
-Proto4z.UserSkillResp = {} --只有失败时才会使用该协议 
-Proto4z.UserSkillResp.__protoID = 50014 
-Proto4z.UserSkillResp.__protoName = "UserSkillResp" 
-Proto4z.UserSkillResp[1] = {name="retCode", type="ui16" }  
-Proto4z.UserSkillResp[2] = {name="eid", type="ui64" }  
+Proto4z.register(50017,"UseSkillResp") 
+Proto4z.UseSkillResp = {} --只有失败时才会使用该协议 
+Proto4z.UseSkillResp.__protoID = 50017 
+Proto4z.UseSkillResp.__protoName = "UseSkillResp" 
+Proto4z.UseSkillResp[1] = {name="retCode", type="ui16" }  
+Proto4z.UseSkillResp[2] = {name="eid", type="ui64" }  
  
-Proto4z.register(50015,"UserSkillNotice") 
-Proto4z.UserSkillNotice = {}  
-Proto4z.UserSkillNotice.__protoID = 50015 
-Proto4z.UserSkillNotice.__protoName = "UserSkillNotice" 
-Proto4z.UserSkillNotice[1] = {name="eid", type="ui64" }  
+Proto4z.register(50018,"UseSkillNotice") 
+Proto4z.UseSkillNotice = {}  
+Proto4z.UseSkillNotice.__protoID = 50018 
+Proto4z.UseSkillNotice.__protoName = "UseSkillNotice" 
+Proto4z.UseSkillNotice[1] = {name="eid", type="ui64" }  

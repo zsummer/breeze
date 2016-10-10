@@ -243,6 +243,12 @@ namespace Proto4z
             _idToName.Add(2009, "UnloadServiceInDocker");
             _nameToID.Add("UnloadedServiceNotice", 2010);
             _idToName.Add(2010, "UnloadedServiceNotice");
+            _nameToID.Add("UseSkillNotice", 50018);
+            _idToName.Add(50018, "UseSkillNotice");
+            _nameToID.Add("UseSkillReq", 50016);
+            _idToName.Add(50016, "UseSkillReq");
+            _nameToID.Add("UseSkillResp", 50017);
+            _idToName.Add(50017, "UseSkillResp");
             _nameToID.Add("UserSkillNotice", 50015);
             _idToName.Add(50015, "UserSkillNotice");
             _nameToID.Add("UserSkillReq", 50013);

@@ -463,31 +463,31 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct UserSkillReq 
+struct UseSkillReq 
 { 
-    static const unsigned short getProtoID() { return 50013;} 
-    static const std::string getProtoName() { return "UserSkillReq";} 
+    static const unsigned short getProtoID() { return 50016;} 
+    static const std::string getProtoName() { return "UseSkillReq";} 
     unsigned long long eid;  
-    UserSkillReq() 
+    UseSkillReq() 
     { 
         eid = 0; 
     } 
-    UserSkillReq(const unsigned long long & eid) 
+    UseSkillReq(const unsigned long long & eid) 
     { 
         this->eid = eid; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserSkillReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UseSkillReq & data) 
 { 
     ws << data.eid;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserSkillReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UseSkillReq & data) 
 { 
     rs >> data.eid;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserSkillReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UseSkillReq & info) 
 { 
     stm << "[\n"; 
     stm << "eid=" << info.eid << "\n"; 
@@ -495,36 +495,36 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct UserSkillResp //只有失败时才会使用该协议  
+struct UseSkillResp //只有失败时才会使用该协议  
 { 
-    static const unsigned short getProtoID() { return 50014;} 
-    static const std::string getProtoName() { return "UserSkillResp";} 
+    static const unsigned short getProtoID() { return 50017;} 
+    static const std::string getProtoName() { return "UseSkillResp";} 
     unsigned short retCode;  
     unsigned long long eid;  
-    UserSkillResp() 
+    UseSkillResp() 
     { 
         retCode = 0; 
         eid = 0; 
     } 
-    UserSkillResp(const unsigned short & retCode, const unsigned long long & eid) 
+    UseSkillResp(const unsigned short & retCode, const unsigned long long & eid) 
     { 
         this->retCode = retCode; 
         this->eid = eid; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserSkillResp & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UseSkillResp & data) 
 { 
     ws << data.retCode;  
     ws << data.eid;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserSkillResp & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UseSkillResp & data) 
 { 
     rs >> data.retCode;  
     rs >> data.eid;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserSkillResp & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UseSkillResp & info) 
 { 
     stm << "[\n"; 
     stm << "retCode=" << info.retCode << "\n"; 
@@ -533,31 +533,31 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct UserSkillNotice 
+struct UseSkillNotice 
 { 
-    static const unsigned short getProtoID() { return 50015;} 
-    static const std::string getProtoName() { return "UserSkillNotice";} 
+    static const unsigned short getProtoID() { return 50018;} 
+    static const std::string getProtoName() { return "UseSkillNotice";} 
     unsigned long long eid;  
-    UserSkillNotice() 
+    UseSkillNotice() 
     { 
         eid = 0; 
     } 
-    UserSkillNotice(const unsigned long long & eid) 
+    UseSkillNotice(const unsigned long long & eid) 
     { 
         this->eid = eid; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UserSkillNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UseSkillNotice & data) 
 { 
     ws << data.eid;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UserSkillNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UseSkillNotice & data) 
 { 
     rs >> data.eid;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UserSkillNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UseSkillNotice & info) 
 { 
     stm << "[\n"; 
     stm << "eid=" << info.eid << "\n"; 

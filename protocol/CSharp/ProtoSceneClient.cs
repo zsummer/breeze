@@ -444,19 +444,19 @@ namespace Proto4z
         } 
     } 
  
-    public class UserSkillReq: Proto4z.IProtoObject 
+    public class UseSkillReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50013;  
-        static public ushort getProtoID() { return 50013; } 
-        static public string getProtoName() { return "UserSkillReq"; } 
+        public const ushort protoID = 50016;  
+        static public ushort getProtoID() { return 50016; } 
+        static public string getProtoName() { return "UseSkillReq"; } 
         //members   
         public ulong eid;  
-        public UserSkillReq()  
+        public UseSkillReq()  
         { 
             eid = 0;  
         } 
-        public UserSkillReq(ulong eid) 
+        public UseSkillReq(ulong eid) 
         { 
             this.eid = eid; 
         } 
@@ -473,21 +473,21 @@ namespace Proto4z
         } 
     } 
  
-    public class UserSkillResp: Proto4z.IProtoObject //只有失败时才会使用该协议  
+    public class UseSkillResp: Proto4z.IProtoObject //只有失败时才会使用该协议  
     {     
         //proto id   
-        public const ushort protoID = 50014;  
-        static public ushort getProtoID() { return 50014; } 
-        static public string getProtoName() { return "UserSkillResp"; } 
+        public const ushort protoID = 50017;  
+        static public ushort getProtoID() { return 50017; } 
+        static public string getProtoName() { return "UseSkillResp"; } 
         //members   
         public ushort retCode;  
         public ulong eid;  
-        public UserSkillResp()  
+        public UseSkillResp()  
         { 
             retCode = 0;  
             eid = 0;  
         } 
-        public UserSkillResp(ushort retCode, ulong eid) 
+        public UseSkillResp(ushort retCode, ulong eid) 
         { 
             this.retCode = retCode; 
             this.eid = eid; 
@@ -507,19 +507,19 @@ namespace Proto4z
         } 
     } 
  
-    public class UserSkillNotice: Proto4z.IProtoObject 
+    public class UseSkillNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50015;  
-        static public ushort getProtoID() { return 50015; } 
-        static public string getProtoName() { return "UserSkillNotice"; } 
+        public const ushort protoID = 50018;  
+        static public ushort getProtoID() { return 50018; } 
+        static public string getProtoName() { return "UseSkillNotice"; } 
         //members   
         public ulong eid;  
-        public UserSkillNotice()  
+        public UseSkillNotice()  
         { 
             eid = 0;  
         } 
-        public UserSkillNotice(ulong eid) 
+        public UseSkillNotice(ulong eid) 
         { 
             this.eid = eid; 
         } 
