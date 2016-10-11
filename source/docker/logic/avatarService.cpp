@@ -153,7 +153,7 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     resp.channelID = req.channelID;
     resp.chatTime = getNowTime();
 
-    double now = getFloatNowTime();
+    double now = getFloatSteadyNowTime();
     double limit = req.channelID == CC_WORLD ? 5.0 : 1.0;
 
     if (now - _lastChatTime < limit)

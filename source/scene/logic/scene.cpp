@@ -29,7 +29,7 @@ void Scene::getSceneSection(SceneSection & ss)
     ss.sceneStatus = _sceneStatus;
     ss.sceneStartTime = _startTime;
     ss.sceneEndTime = _endTime;
-    ss.serverTime = getFloatNowTime();
+    ss.serverTime = getFloatSteadyNowTime();
     for (auto & entity : _entitys)
     {
         ss.entitys.push_back(entity.second->getFullData());
@@ -46,7 +46,7 @@ bool Scene::cleanScene()
     while (!_asyncs.empty()) _asyncs.pop();
     _sceneType = SCENE_NONE;
     _sceneStatus = SCENE_STATE_NONE;
-    _lastStatusChangeTime = getFloatNowTime();
+    _lastStatusChangeTime = getFloatSteadyNowTime();
     if (_sim)
     {
         delete _sim;
@@ -65,9 +65,9 @@ bool Scene::initScene(SceneType sceneType, MapID mapID)
     }
     _sceneType = sceneType;
     _sceneStatus = SCENE_STATE_ACTIVE;
-    _lastStatusChangeTime = getFloatNowTime();
-    _startTime = getFloatNowTime();
-    _endTime = getFloatNowTime() + 600;
+    _lastStatusChangeTime = getFloatSteadyNowTime();
+    _startTime = getFloatSteadyNowTime();
+    _endTime = getFloatSteadyNowTime() + 600;
     _sim = new RVO::RVOSimulator();
     _sim->setTimeStep(0.33);
     _sim->setAgentDefaults(15.0, 10, 10.0, 5.0, 2.0, 2.0);
@@ -138,7 +138,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     entity->_control.spawnpoint = { 0.0,0.0 };
     entity->_control.eid = entity->_info.eid;
     entity->_control.agentNo = -1;
-    entity->_control.stateChageTick = getFloatNowTime();
+    entity->_control.stateChageTick = getFloatSteadyNowTime();
 
     entity->_move.eid = entity->_info.eid;
     entity->_move.pos = entity->_control.spawnpoint;
@@ -197,10 +197,27 @@ bool Scene::playerAttach(ServiceID avatarID, SessionID sID)
         return false;
     }
     entity->_clientSessionID = sID;
+    EntityFullDataArray entitys;
+    SceneSectionNotice section;
+    getSceneSection(section.section);
+    entitys.swap(section.section.entitys);
+    sendToClient(avatarID, section);
 
-    SceneSectionNotice notice;
-    getSceneSection(notice.section);
-    sendToClient(avatarID, notice);
+    AddEntityNotice notice;
+    while (!entitys.empty())
+    {
+        notice.entitys.push_back(entitys.back());
+        entitys.pop_back();
+        if (notice.entitys.size() >= 10)
+        {
+            sendToClient(avatarID, notice);
+            notice.entitys.clear();
+        }
+    }
+    if (!notice.entitys.empty())
+    {
+        sendToClient(avatarID, notice);
+    }
     return true;
 }
 
@@ -220,7 +237,7 @@ bool Scene::playerDettach(ServiceID avatarID, SessionID sID)
 
 bool Scene::onUpdate()
 {
-    if (getFloatNowTime() > _endTime)
+    if (getFloatSteadyNowTime() > _endTime)
     {
         return false;
     }

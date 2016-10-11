@@ -66,7 +66,7 @@ private:
     int _curUnloadModuleCount = 0;
     int _totalModuleCount = 1;
 private:
-    double _lastChatTime = getFloatNowTime();
+    double _lastChatTime = getFloatSteadyNowTime();
 private:
     SceneModule _scene;
 };

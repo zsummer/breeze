@@ -1330,7 +1330,7 @@ void Docker::forwardToRemoteService(Tracing  trace, const char * block, unsigned
     {
         if (trace.oob.clientDockerID == InvalidDockerID)
         {
-            ServicePtr svc = peekService(STAvatar, trace.routing.toServiceID != InvalidServiceID? trace.routing.toServiceID : trace.oob.clientAvatarID);
+            ServicePtr svc = peekService(STAvatar, trace.routing.toServiceID );
             if (!svc)
             {
                 LOGW("forwardToRemoteService error. not found service. trace=" << trace
@@ -1376,13 +1376,10 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
         LOGE("toService dst Type is Single[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID);
         return;
     }
-    if (getServiceTrait(trace.routing.toServiceType) == STrait_Multi && trace.routing.toServiceID == InvalidServiceID)
+    if (getServiceTrait(trace.routing.toServiceType) == STrait_Multi && trace.routing.toServiceType != STClient && trace.routing.toServiceID == InvalidServiceID)
     {
-        if (trace.routing.toServiceType != STClient || (trace.oob.clientSessionID == InvalidSessionID && trace.oob.clientAvatarID == InvalidAvatarID))
-        {
-            LOGE("toService dst Type is Multi[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID);
-            return;
-        }
+        LOGE("toService dst Type is Multi[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID);
+        return;
     }
     if (trace.routing.toServiceType == STClient)
     {

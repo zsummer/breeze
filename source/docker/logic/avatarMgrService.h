@@ -84,8 +84,8 @@ private:
 
 
 private:
-    double _lastCheckFreeList = getFloatNowTime();
-    double _lastSystemChat = getFloatNowTime();
+    double _lastCheckFreeList = getFloatSteadyNowTime();
+    double _lastSystemChat = getFloatSteadyNowTime();
     std::map<ui64, AvatarStatusPtr> _freeList;
     std::map<ui64, AvatarStatusPtr> _userStatusByID;
     std::map<std::string, AvatarStatusPtr> _userStatusByName;

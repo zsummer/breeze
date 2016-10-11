@@ -223,7 +223,7 @@ bool SceneMgr::startWorldConnect()
     {
 		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0  )
 		{
-			LOGE("SceneMgr check session last active timeout. diff=" << getFloatNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
+			LOGE("SceneMgr check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
 			session->close();
 			return;
 		}
@@ -390,7 +390,7 @@ void SceneMgr::event_onClientLinked(TcpSessionPtr session)
 void SceneMgr::event_onClientPulse(TcpSessionPtr session)
 {
     auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
-    if (getFloatSteadyNowTime() - last > session->getOptions()._sessionPulseInterval * 3)
+    if (getFloatSteadyNowTime() - last > ClientPulseInterval * 3)
     {
         LOGW("client timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
         session->close();
@@ -449,6 +449,11 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
     }
     else if (sessionStatus == SSTATUS_ATTACHED)
     {
+        if (rs.getProtoID() == SceneClientPulse::getProtoID())
+        {
+            session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+            return;
+        }
         auto foundScene = _actives.find(sceneID);
         if (foundScene == _actives.end())
         {
@@ -457,7 +462,7 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
         }
         foundScene->second->onPlayerInstruction(avatarID, rs);
     }
- 
+    else
     {
         LOGE("client unknow proto or wrong status. protoID=" << rs.getProtoID() << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
     }

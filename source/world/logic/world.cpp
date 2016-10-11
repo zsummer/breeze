@@ -135,7 +135,7 @@ bool World::startSceneListen()
     {
 		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0 )
 		{
-			LOGE("World check session last active timeout. diff=" << getFloatNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
+			LOGE("World check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
 			session->close();
 			return;
 		}
@@ -518,7 +518,7 @@ void World::onMatchTimer()
 
 void World::onMatchHomeTimer()
 {
-    auto pool = _matchPools[SCENE_HOME];
+    auto &pool = _matchPools[SCENE_HOME];
     const size_t MatchCount = 1;
     while (pool.size() >= MatchCount)
     {
@@ -549,7 +549,7 @@ void World::onMatchHomeTimer()
 
 void World::onMatchMeleeTimer()
 {
-    auto pool = _matchPools[SCENE_MELEE];
+    auto &pool = _matchPools[SCENE_MELEE];
     const size_t MatchCount = 6;
     while (pool.size() >= MatchCount)
     {
@@ -580,7 +580,7 @@ void World::onMatchMeleeTimer()
 
 void World::onMatchArenaTimer()
 {
-    auto pool = _matchPools[SCENE_ARENA];
+    auto &pool = _matchPools[SCENE_ARENA];
     const size_t MatchCount = 2;
     while (pool.size() >= MatchCount)
     {

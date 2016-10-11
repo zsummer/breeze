@@ -220,6 +220,33 @@ void Service::toService(ServiceType serviceType, ServiceID serviceID, const OutO
     {
         trace.routing.traceID = makeCallback(cb);
     }
+    if (trace.routing.toServiceType == STClient && trace.routing.toServiceID == InvalidServiceID)
+    {
+        if ((trace.oob.clientDockerID == InvalidDockerID && trace.oob.clientSessionID != InvalidSessionID) 
+            || (trace.oob.clientDockerID != InvalidDockerID && trace.oob.clientSessionID == InvalidSessionID))
+        {
+            LOGE("toService STClient via session ID but param had some wrong. the condition is clientDockerID and clientSessionID need all valid. trace=" << trace);
+            return;
+        }
+        if (trace.oob.clientDockerID == InvalidDockerID && trace.oob.clientAvatarID == InvalidAvatarID && getServiceType() != STAvatar)
+        {
+            LOGE("toService STClient but can not get the avatar ID. trace=" << trace << ", this service=" << getServiceType());
+            return;
+        }
+        if (trace.oob.clientDockerID == InvalidDockerID && trace.oob.clientAvatarID == InvalidAvatarID && getServiceType() == STAvatar)
+        {
+            trace.routing.toServiceID = getServiceID();
+        }
+        if (trace.oob.clientDockerID == InvalidDockerID && trace.oob.clientAvatarID != InvalidAvatarID)
+        {
+            trace.routing.toServiceID = trace.oob.clientAvatarID;
+        }
+    }
+    else if (::getServiceTrait(trace.routing.toServiceType) == STrait_Multi && trace.routing.toServiceID == InvalidServiceID)
+    {
+        LOGE("toService STrait_Multi but can not get the toServiceID. trace=" << trace << ", this service=" << getServiceType());
+        return;
+    }
     Docker::getRef().toService(trace, block, len, false);
 }
 

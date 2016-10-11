@@ -27,11 +27,11 @@ void AvatarMgrService::onTick(TimerID tID, ui32 count, ui32 repeat)
 
 void AvatarMgrService::systemAutoChat()
 {
-    if (getFloatNowTime() - _lastSystemChat < 30.0)
+    if (getFloatSteadyNowTime() - _lastSystemChat < 30.0)
     {
         return;
     }
-    _lastSystemChat = getFloatNowTime();
+    _lastSystemChat = getFloatSteadyNowTime();
 
     auto avatars = Docker::getRef().peekService(STAvatar);
     ChatResp resp;
@@ -86,11 +86,11 @@ void AvatarMgrService::systemAutoChat()
 void AvatarMgrService::checkFreeList()
 {
     
-    if (getFloatNowTime() - _lastCheckFreeList < 10.0)
+    if (getFloatSteadyNowTime() - _lastCheckFreeList < 10.0)
     {
         return;
     }
-    _lastCheckFreeList = getFloatNowTime();
+    _lastCheckFreeList = getFloatSteadyNowTime();
 
 
     LOGI("AvatarMgrService::onTick balance=" << Docker::getRef().getAvatarBalance().getBalanceStatus());
