@@ -7,13 +7,17 @@ if [ $? -ne 0 ]; then
 fi
 cd ..
 
+cd world
+./world  &
+cd ..
+cd scene
+./scene 1 &
+./scene 2 &
+cd ..
+
 cd docker
 ./docker 1   &
 ./docker 2   &
-cd ..
-
-cd world
-./world &
 cd ..
 
 #valgrind --tool=massif --trace-children=yes --time-unit=B --max-snapshots=100 --pages-as-heap=yes --detailed-freq=1000 --massif-out-file=docker1.massif.out.%p ./docker 1 &
