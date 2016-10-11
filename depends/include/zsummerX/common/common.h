@@ -61,6 +61,7 @@
 #include <assert.h>
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <set>
 #include <list>
@@ -138,79 +139,18 @@ namespace zsummer
 
         extern ZSummerEnvironment g_appEnvironment;
 
-        inline std::string getHostByName(const std::string & name)
-        {
-            if (std::find_if(name.begin(), name.end(), [](char ch) {return !isdigit(ch) && ch != '.'; }) == name.end())
-            {
-                return name; //ipv4 
-            }
-            if (std::find_if(name.begin(), name.end(), [](char ch) {return !isxdigit(ch) && ch != ':'; }) == name.end())
-            {
-                return name; //ipv6 
-            }
-            struct addrinfo *res = nullptr;
-            struct addrinfo hints;
-            memset(&hints, 0, sizeof(hints));
-            hints.ai_family = AF_UNSPEC;
-            hints.ai_socktype = SOCK_STREAM;
-            hints.ai_flags = AI_PASSIVE;
-            if (getaddrinfo(name.c_str(), "3306", &hints, &res) == 0)
-            {
-                char buf[100] = { 0 };
-                if (res->ai_family == AF_INET)
-                {
-                    inet_ntop(res->ai_family, &(((sockaddr_in*)res->ai_addr)->sin_addr), buf, 100);
-                }
-                else if (res->ai_family == AF_INET6)
-                {
-                    inet_ntop(res->ai_family, &(((sockaddr_in6*)res->ai_addr)->sin6_addr), buf, 100);
-                }
-                return buf;
-            }
-
-            return "";
-        }
+        std::string getHostByName(const std::string & name);
+        std::string getPureHostName(const std::string & host);
 #ifndef WIN32
-        inline bool setNonBlock(int fd) 
-        {
-            return fcntl((fd), F_SETFL, fcntl(fd, F_GETFL)|O_NONBLOCK) == 0;
-        }
-        inline bool setNoDelay(int fd)
-        {
-            int bTrue = true?1:0;
-            return setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) == 0;
-        }
-        inline bool setReuse(int fd)
-        {
-            int bReuse = 1;
-            return setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &bReuse, sizeof(bReuse)) == 0;
-        }
-        inline bool setIPV6Only(int fd, bool only)
-        {
-            int ipv6only = only ? 1 : 0;
-            return setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &ipv6only, sizeof(ipv6only)) == 0;
-        }
+        inline bool setNonBlock(int fd) {return fcntl((fd), F_SETFL, fcntl(fd, F_GETFL)|O_NONBLOCK) == 0;}
+        inline bool setNoDelay(int fd){int bTrue = true?1:0; return setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) == 0;}
+        inline bool setReuse(int fd){int bReuse = 1;return setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &bReuse, sizeof(bReuse)) == 0;}
+        inline bool setIPV6Only(int fd, bool only){int ipv6only = only ? 1 : 0;return setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, &ipv6only, sizeof(ipv6only)) == 0;}
 #else
-        inline bool setNonBlock(SOCKET s) 
-        {        
-            unsigned long val = 1;
-            return ioctlsocket(s, FIONBIO, &val) == NO_ERROR;
-        }
-        inline bool setNoDelay(SOCKET s)
-        {
-            BOOL bTrue = TRUE;
-            return setsockopt(s, IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) == 0;
-        }
-        inline bool setReuse(SOCKET s)
-        {
-            BOOL bReUseAddr = TRUE;
-            return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char*)&bReUseAddr, sizeof(BOOL)) == 0;
-        }
-        inline bool setIPV6Only(SOCKET s, bool only)
-        {
-            DWORD ipv6only = only ? 1: 0;
-            return setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&ipv6only, sizeof(ipv6only)) == 0;
-        }
+        inline bool setNonBlock(SOCKET s) {unsigned long val = 1;return ioctlsocket(s, FIONBIO, &val) == NO_ERROR;}
+        inline bool setNoDelay(SOCKET s){BOOL bTrue = TRUE;return setsockopt(s, IPPROTO_TCP, TCP_NODELAY, (char*)&bTrue, sizeof(bTrue)) == 0;}
+        inline bool setReuse(SOCKET s){BOOL bReUseAddr = TRUE;return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char*)&bReUseAddr, sizeof(BOOL)) == 0;}
+        inline bool setIPV6Only(SOCKET s, bool only){DWORD ipv6only = only ? 1: 0;return setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&ipv6only, sizeof(ipv6only)) == 0;}
 #endif
     }
 }
@@ -223,7 +163,6 @@ namespace zsummer
 #define LCE( log ) LOG_ERROR( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
 #define LCA( log ) LOG_ALARM( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
 #define LCF( log ) LOG_FATAL( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
-
 
 
 

@@ -94,7 +94,7 @@ private:
 };
 
 
-inline const std::string & toMD5(const std::string & org)
+inline std::string  toMD5(const std::string & org)
 {
     MD5Data md5;
     md5.append(org);

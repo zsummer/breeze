@@ -183,7 +183,6 @@
 #define _ZSUMMER_LOG4Z_H_
 
 #include <string>
-#include <sstream>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -245,6 +244,8 @@ const int LOG4Z_LOGGER_MAX = 20;
 const int LOG4Z_LOG_BUF_SIZE = 1024 * 8;
 //! the max stl container depth.
 const int LOG4Z_LOG_CONTAINER_DEPTH = 5;
+//! the log queue length limit size.
+const int LOG4Z_LOG_QUEUE_LIMIT_SIZE = 10000;
 
 //! all logger synchronous output or not
 const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = false;
@@ -267,6 +268,9 @@ const int LOG4Z_DEFAULT_LIMITSIZE = 100;
 const bool LOG4Z_DEFAULT_SHOWSUFFIX = true;
 //! support ANSI->OEM console conversion on Windows
 #undef LOG4Z_OEM_CONSOLE
+//! default logger force reserve log file count.
+const size_t LOG4Z_FORCE_RESERVE_FILE_COUNT = 7;
+
 ///////////////////////////////////////////////////////////////////////////
 //! -----------------------------------------------------------------------
 //////////////////////////////////////////////////////////////////////////
@@ -339,8 +343,9 @@ public:
     virtual bool setLoggerDisplay(LoggerId id, bool enable) = 0;
     virtual bool setLoggerOutFile(LoggerId id, bool enable) = 0;
     virtual bool setLoggerLimitsize(LoggerId id, unsigned int limitsize) = 0;
-    virtual bool setLoggerMonthdir(LoggerId id, bool enable) = 0;
-    
+	virtual bool setLoggerMonthdir(LoggerId id, bool enable) = 0;
+	virtual bool setLoggerReserveTime(LoggerId id, time_t sec) = 0;
+
 
     //! Update logger's attribute from config file, thread safe.
     virtual bool setAutoUpdate(int interval/*per second, 0 is disable auto update*/) = 0;
@@ -350,7 +355,8 @@ public:
     virtual bool isLoggerEnable(LoggerId id) = 0;
     virtual unsigned long long getStatusTotalWriteCount() = 0;
     virtual unsigned long long getStatusTotalWriteBytes() = 0;
-    virtual unsigned long long getStatusWaitingCount() = 0;
+    virtual unsigned long long getStatusTotalPushQueue() = 0;
+    virtual unsigned long long getStatusTotalPopQueue() = 0;
     virtual unsigned int getStatusActiveLoggers() = 0;
 
     virtual LogData * makeLogData(LoggerId id, int level) = 0;

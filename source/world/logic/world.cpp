@@ -522,7 +522,7 @@ void World::onMatchHomeTimer()
     const size_t MatchCount = 1;
     while (pool.size() >= MatchCount)
     {
-        auto linePtr = pickOtherLineNode(30, 1);
+        auto linePtr = pickHomeLineNode(30, 1);
         if (!linePtr)
         {
             break;
@@ -665,7 +665,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     ack.retCode = EC_SUCCESS;
 
     SceneGroupInfoPtr groupPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
-    if (groupPtr)
+    if ((groupPtr && req.groupID == InvalidGroupID) || (groupPtr&& req.groupID != InvalidGroupID && groupPtr->sceneStatus != SCENE_STATE_NONE))
     {
         LOGE("World::onSceneServerJoinGroupIns the avatar already had group. avatar=" << trace.oob.clientAvatarID);
         ack.retCode = EC_ERROR;
@@ -693,20 +693,23 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         group.mapID = InvalidMapID;
         group.host;
         group.port = 0;
-        
-        SceneGroupAvatarInfo avatar;
-        avatar.areaID = session->getUserParamNumber(UPARAM_AREA_ID);
-        avatar.baseInfo = req.baseInfo;
-        avatar.baseProps = req.baseProps;
-        avatar.powerType = 1; //leader
-        avatar.token = toMD5(avatar.baseInfo.avatarName + toString(rand()));
         group.members.insert(std::make_pair(avatar.baseInfo.avatarID,avatar));
+        
+        _avatars[avatar.baseInfo.avatarID] = group.groupID;
+        _groups[group.groupID] = groupPtr;
+        
         ack.newGroupID = group.groupID;
         backToService(session->getSessionID(), trace, ack);
         pushGroupInfoToClient(groupPtr);
+
         return;
     }
 
+    if (groupPtr)
+    {
+        _avatars.erase(req.baseInfo.avatarID);
+        _groups.erase(groupPtr->groupID);
+    }
     groupPtr = getGroupInfo(req.groupID);
     if (!groupPtr )
     {
@@ -752,6 +755,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         founder->second.baseProps = avatar.baseProps;
         founder->second.token;
     }
+    _avatars[req.baseInfo.avatarID] = groupPtr->groupID;
     backToService(session->getSessionID(), trace, ack); 
     pushGroupInfoToClient(groupPtr);
 }
@@ -779,9 +783,9 @@ void World::onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trac
 void World::onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & trace, SceneGroupEnterSceneReq & req)
 {
     SceneGroupInfoPtr groupPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
-    if (groupPtr)
+    if (!groupPtr)
     {
-        LOGE("World::onSceneGroupEnterSceneReq the avatar already had group. avatar=" << trace.oob.clientAvatarID);
+        LOGE("World::onSceneGroupEnterSceneReq not found the avatar  group. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
         return;
     }
@@ -835,9 +839,9 @@ void World::onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & tra
 void World::onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCancelEnterReq & req)
 {
     SceneGroupInfoPtr groupPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
-    if (groupPtr)
+    if (!groupPtr)
     {
-        LOGE("World::onSceneGroupCancelEnterReq the avatar already had group. avatar=" << trace.oob.clientAvatarID);
+        LOGE("World::onSceneGroupCancelEnterReq not found the avatar  group. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_ERROR));
         return;
     }

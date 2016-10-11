@@ -260,7 +260,7 @@ bool Docker::startDockerConnect()
         options._onSessionPulse = [](TcpSessionPtr session)
         {
             auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
-            if (getFloatSteadyNowTime() - last > session->getOptions()._connectPulseInterval * 3.0 / 1000.0)
+            if(getFloatSteadyNowTime() - last >ServerPulseInterval *3.0)
             {
                 LOGE("docker timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
                 session->close();
@@ -368,7 +368,7 @@ bool Docker::startDockerWebListen()
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
         {
             auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
-            if (getFloatSteadyNowTime() - last > session->getOptions()._sessionPulseInterval * 3.0 / 1000.0)
+            if (getFloatSteadyNowTime() - last > ServerPulseInterval *3.0)
             {
                 LOGW("web client timeout diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
                 session->close();
@@ -1061,7 +1061,7 @@ void Docker::event_onClientLinked(TcpSessionPtr session)
 void Docker::event_onClientPulse(TcpSessionPtr session)
 {
     auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
-    if (getFloatSteadyNowTime() - last > session->getOptions()._sessionPulseInterval * 3.0 / 1000.0)
+    if (getFloatSteadyNowTime() - last > ServerPulseInterval *3.0)
     {
         LOGW("client timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
         session->close();
@@ -1330,7 +1330,7 @@ void Docker::forwardToRemoteService(Tracing  trace, const char * block, unsigned
     {
         if (trace.oob.clientDockerID == InvalidDockerID)
         {
-            ServicePtr svc = peekService(STAvatar, trace.routing.toServiceID);
+            ServicePtr svc = peekService(STAvatar, trace.routing.toServiceID != InvalidServiceID? trace.routing.toServiceID : trace.oob.clientAvatarID);
             if (!svc)
             {
                 LOGW("forwardToRemoteService error. not found service. trace=" << trace
@@ -1378,7 +1378,7 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
     }
     if (getServiceTrait(trace.routing.toServiceType) == STrait_Multi && trace.routing.toServiceID == InvalidServiceID)
     {
-        if (trace.routing.toServiceType != STClient || trace.oob.clientSessionID == InvalidSessionID)
+        if (trace.routing.toServiceType != STClient || (trace.oob.clientSessionID == InvalidSessionID && trace.oob.clientAvatarID == InvalidAvatarID))
         {
             LOGE("toService dst Type is Multi[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID);
             return;

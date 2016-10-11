@@ -281,6 +281,7 @@ void SceneMgr::event_onWorldLinked(TcpSessionPtr session)
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
 
 	SceneKnock notice;
+    notice.lineID = ServerConfig::getRef().getSceneConfig()._lineID;
 	notice.pubHost = ServerConfig::getRef().getSceneConfig()._clientPubHost;
 	notice.pubPort = ServerConfig::getRef().getSceneConfig()._clientListenPort;
 	sendViaSessionID(session->getSessionID(), notice);
