@@ -291,11 +291,3 @@ double AvatarService::getProp(const std::string &prop)
 
 
 
-
-
-
-
-
-
-
-

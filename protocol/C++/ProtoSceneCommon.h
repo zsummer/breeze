@@ -68,13 +68,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupAvatarInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "areaID=" << info.areaID << "\n"; 
-    stm << "baseInfo=" << info.baseInfo << "\n"; 
-    stm << "baseProps=" << info.baseProps << "\n"; 
-    stm << "powerType=" << info.powerType << "\n"; 
-    stm << "token=" << info.token << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "areaID=" << info.areaID << ","; 
+    stm << "baseInfo=" << info.baseInfo << ","; 
+    stm << "baseProps=" << info.baseProps << ","; 
+    stm << "powerType=" << info.powerType << ","; 
+    stm << "token=" << info.token << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -152,18 +152,18 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "groupID=" << info.groupID << "\n"; 
-    stm << "sceneType=" << info.sceneType << "\n"; 
-    stm << "sceneStatus=" << info.sceneStatus << "\n"; 
-    stm << "mapID=" << info.mapID << "\n"; 
-    stm << "lineID=" << info.lineID << "\n"; 
-    stm << "sceneID=" << info.sceneID << "\n"; 
-    stm << "host=" << info.host << "\n"; 
-    stm << "port=" << info.port << "\n"; 
-    stm << "members=" << info.members << "\n"; 
-    stm << "invitees=" << info.invitees << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "groupID=" << info.groupID << ","; 
+    stm << "sceneType=" << info.sceneType << ","; 
+    stm << "sceneStatus=" << info.sceneStatus << ","; 
+    stm << "mapID=" << info.mapID << ","; 
+    stm << "lineID=" << info.lineID << ","; 
+    stm << "sceneID=" << info.sceneID << ","; 
+    stm << "host=" << info.host << ","; 
+    stm << "port=" << info.port << ","; 
+    stm << "members=" << info.members << ","; 
+    stm << "invitees=" << info.invitees << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -207,10 +207,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EPoint & info) 
 { 
-    stm << "[\n"; 
-    stm << "x=" << info.x << "\n"; 
-    stm << "y=" << info.y << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "x=" << info.x << ","; 
+    stm << "y=" << info.y << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -384,16 +384,16 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SearchInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "searchMethod=" << info.searchMethod << "\n"; 
-    stm << "searchTarget=" << info.searchTarget << "\n"; 
-    stm << "rate=" << info.rate << "\n"; 
-    stm << "distance=" << info.distance << "\n"; 
-    stm << "radian=" << info.radian << "\n"; 
-    stm << "offsetX=" << info.offsetX << "\n"; 
-    stm << "offsetY=" << info.offsetY << "\n"; 
-    stm << "targetMaxCount=" << info.targetMaxCount << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "searchMethod=" << info.searchMethod << ","; 
+    stm << "searchTarget=" << info.searchTarget << ","; 
+    stm << "rate=" << info.rate << ","; 
+    stm << "distance=" << info.distance << ","; 
+    stm << "radian=" << info.radian << ","; 
+    stm << "offsetX=" << info.offsetX << ","; 
+    stm << "offsetY=" << info.offsetY << ","; 
+    stm << "targetMaxCount=" << info.targetMaxCount << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -440,13 +440,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillBehaviour & info) 
 { 
-    stm << "[\n"; 
-    stm << "behaviour=" << info.behaviour << "\n"; 
-    stm << "delay=" << info.delay << "\n"; 
-    stm << "search=" << info.search << "\n"; 
-    stm << "skills=" << info.skills << "\n"; 
-    stm << "buffs=" << info.buffs << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "behaviour=" << info.behaviour << ","; 
+    stm << "delay=" << info.delay << ","; 
+    stm << "search=" << info.search << ","; 
+    stm << "skills=" << info.skills << ","; 
+    stm << "buffs=" << info.buffs << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -493,12 +493,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillData & info) 
 { 
-    stm << "[\n"; 
-    stm << "skillID=" << info.skillID << "\n"; 
-    stm << "skillType=" << info.skillType << "\n"; 
-    stm << "behaviours=" << info.behaviours << "\n"; 
-    stm << "cd=" << info.cd << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "skillID=" << info.skillID << ","; 
+    stm << "skillType=" << info.skillType << ","; 
+    stm << "behaviours=" << info.behaviours << ","; 
+    stm << "cd=" << info.cd << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -553,14 +553,14 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const BuffData & info) 
 { 
-    stm << "[\n"; 
-    stm << "buffID=" << info.buffID << "\n"; 
-    stm << "buffType=" << info.buffType << "\n"; 
-    stm << "piletime=" << info.piletime << "\n"; 
-    stm << "keepTime=" << info.keepTime << "\n"; 
-    stm << "value1=" << info.value1 << "\n"; 
-    stm << "value2=" << info.value2 << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "buffID=" << info.buffID << ","; 
+    stm << "buffType=" << info.buffType << ","; 
+    stm << "piletime=" << info.piletime << ","; 
+    stm << "keepTime=" << info.keepTime << ","; 
+    stm << "value1=" << info.value1 << ","; 
+    stm << "value2=" << info.value2 << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -608,11 +608,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const HarmData & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "type=" << info.type << "\n"; 
-    stm << "harm=" << info.harm << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "type=" << info.type << ","; 
+    stm << "harm=" << info.harm << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -673,15 +673,15 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "skillID=" << info.skillID << "\n"; 
-    stm << "startTime=" << info.startTime << "\n"; 
-    stm << "lastHitTime=" << info.lastHitTime << "\n"; 
-    stm << "seq=" << info.seq << "\n"; 
-    stm << "dst=" << info.dst << "\n"; 
-    stm << "foe=" << info.foe << "\n"; 
-    stm << "data=" << info.data << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "skillID=" << info.skillID << ","; 
+    stm << "startTime=" << info.startTime << ","; 
+    stm << "lastHitTime=" << info.lastHitTime << ","; 
+    stm << "seq=" << info.seq << ","; 
+    stm << "dst=" << info.dst << ","; 
+    stm << "foe=" << info.foe << ","; 
+    stm << "data=" << info.data << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -738,14 +738,14 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const BuffInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "skillID=" << info.skillID << "\n"; 
-    stm << "buffID=" << info.buffID << "\n"; 
-    stm << "start=" << info.start << "\n"; 
-    stm << "lastTrigerTick=" << info.lastTrigerTick << "\n"; 
-    stm << "data=" << info.data << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "skillID=" << info.skillID << ","; 
+    stm << "buffID=" << info.buffID << ","; 
+    stm << "start=" << info.start << ","; 
+    stm << "lastTrigerTick=" << info.lastTrigerTick << ","; 
+    stm << "data=" << info.data << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -813,16 +813,16 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "color=" << info.color << "\n"; 
-    stm << "groupID=" << info.groupID << "\n"; 
-    stm << "etype=" << info.etype << "\n"; 
-    stm << "state=" << info.state << "\n"; 
-    stm << "foe=" << info.foe << "\n"; 
-    stm << "leader=" << info.leader << "\n"; 
-    stm << "curHP=" << info.curHP << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "color=" << info.color << ","; 
+    stm << "groupID=" << info.groupID << ","; 
+    stm << "etype=" << info.etype << ","; 
+    stm << "state=" << info.state << ","; 
+    stm << "foe=" << info.foe << ","; 
+    stm << "leader=" << info.leader << ","; 
+    stm << "curHP=" << info.curHP << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -883,15 +883,15 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityMove & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "action=" << info.action << "\n"; 
-    stm << "pos=" << info.pos << "\n"; 
-    stm << "frames=" << info.frames << "\n"; 
-    stm << "speed=" << info.speed << "\n"; 
-    stm << "waypoints=" << info.waypoints << "\n"; 
-    stm << "follow=" << info.follow << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "action=" << info.action << ","; 
+    stm << "pos=" << info.pos << ","; 
+    stm << "frames=" << info.frames << ","; 
+    stm << "speed=" << info.speed << ","; 
+    stm << "waypoints=" << info.waypoints << ","; 
+    stm << "follow=" << info.follow << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -969,19 +969,19 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityControl & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "agentNo=" << info.agentNo << "\n"; 
-    stm << "stateChageTick=" << info.stateChageTick << "\n"; 
-    stm << "spawnpoint=" << info.spawnpoint << "\n"; 
-    stm << "lastPos=" << info.lastPos << "\n"; 
-    stm << "skills=" << info.skills << "\n"; 
-    stm << "buffs=" << info.buffs << "\n"; 
-    stm << "diedTime=" << info.diedTime << "\n"; 
-    stm << "hitTimes=" << info.hitTimes << "\n"; 
-    stm << "lastMoveTime=" << info.lastMoveTime << "\n"; 
-    stm << "lastClientPos=" << info.lastClientPos << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "agentNo=" << info.agentNo << ","; 
+    stm << "stateChageTick=" << info.stateChageTick << ","; 
+    stm << "spawnpoint=" << info.spawnpoint << ","; 
+    stm << "lastPos=" << info.lastPos << ","; 
+    stm << "skills=" << info.skills << ","; 
+    stm << "buffs=" << info.buffs << ","; 
+    stm << "diedTime=" << info.diedTime << ","; 
+    stm << "hitTimes=" << info.hitTimes << ","; 
+    stm << "lastMoveTime=" << info.lastMoveTime << ","; 
+    stm << "lastClientPos=" << info.lastClientPos << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -1039,14 +1039,14 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityReport & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "killOtherCount=" << info.killOtherCount << "\n"; 
-    stm << "killOtherTime=" << info.killOtherTime << "\n"; 
-    stm << "diedCount=" << info.diedCount << "\n"; 
-    stm << "topMultiKills=" << info.topMultiKills << "\n"; 
-    stm << "curMultiKills=" << info.curMultiKills << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "killOtherCount=" << info.killOtherCount << ","; 
+    stm << "killOtherTime=" << info.killOtherTime << ","; 
+    stm << "diedCount=" << info.diedCount << ","; 
+    stm << "topMultiKills=" << info.topMultiKills << ","; 
+    stm << "curMultiKills=" << info.curMultiKills << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -1094,13 +1094,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityFullData & info) 
 { 
-    stm << "[\n"; 
-    stm << "baseInfo=" << info.baseInfo << "\n"; 
-    stm << "baseProps=" << info.baseProps << "\n"; 
-    stm << "entityInfo=" << info.entityInfo << "\n"; 
-    stm << "entityPoint=" << info.entityPoint << "\n"; 
-    stm << "report=" << info.report << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "baseInfo=" << info.baseInfo << ","; 
+    stm << "baseProps=" << info.baseProps << ","; 
+    stm << "entityInfo=" << info.entityInfo << ","; 
+    stm << "entityPoint=" << info.entityPoint << ","; 
+    stm << "report=" << info.report << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -1162,15 +1162,15 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneSection & info) 
 { 
-    stm << "[\n"; 
-    stm << "sceneID=" << info.sceneID << "\n"; 
-    stm << "sceneType=" << info.sceneType << "\n"; 
-    stm << "sceneStatus=" << info.sceneStatus << "\n"; 
-    stm << "sceneStartTime=" << info.sceneStartTime << "\n"; 
-    stm << "sceneEndTime=" << info.sceneEndTime << "\n"; 
-    stm << "serverTime=" << info.serverTime << "\n"; 
-    stm << "entitys=" << info.entitys << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "sceneID=" << info.sceneID << ","; 
+    stm << "sceneType=" << info.sceneType << ","; 
+    stm << "sceneStatus=" << info.sceneStatus << ","; 
+    stm << "sceneStartTime=" << info.sceneStartTime << ","; 
+    stm << "sceneEndTime=" << info.sceneEndTime << ","; 
+    stm << "serverTime=" << info.serverTime << ","; 
+    stm << "entitys=" << info.entitys << ","; 
+    stm << "]"; 
     return stm; 
 } 
  

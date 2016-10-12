@@ -23,11 +23,22 @@ namespace Proto4z
             catch (System.Exception)
             {
             }
-            return "unknown";
+            return "UnknownProtoID_" + protoID;
         }
-
+        public static string getErrorDesc(ushort errCode)
+        {
+            try
+            {
+                return _errCodes[errCode];
+            }
+            catch (System.Exception)
+            {
+            }
+            return "UnknownErrorCode_" + errCode;
+        }
         static System.Collections.Generic.Dictionary<string, ushort> _nameToID = new System.Collections.Generic.Dictionary<string, ushort>();
         static System.Collections.Generic.Dictionary<ushort, string> _idToName = new System.Collections.Generic.Dictionary<ushort, string>();
+        static System.Collections.Generic.Dictionary<ushort, string> _errCodes = new System.Collections.Generic.Dictionary<ushort, string>();
         static Reflection()
         {
         
@@ -261,6 +272,24 @@ namespace Proto4z
             _idToName.Add(2021, "WebServerRequest");
             _nameToID.Add("WebServerResponse", 2022);
             _idToName.Add(2022, "WebServerResponse");
+            _errCodes.Add(0, "成功");
+            _errCodes.Add(1, "错误");
+            _errCodes.Add(100, "请先删除与该好友建立的关系");
+            _errCodes.Add(101, "达到好友上限");
+            _errCodes.Add(102, "不能添加对方为好友");
+            _errCodes.Add(103, "好友不存在");
+            _errCodes.Add(104, "服务未开放");
+            _errCodes.Add(2, "内部错误");
+            _errCodes.Add(3, "数据库错误");
+            _errCodes.Add(4, "非法参数");
+            _errCodes.Add(5, "权限错误");
+            _errCodes.Add(50, "错误的用户信息");
+            _errCodes.Add(51, "创建用户的数量超出限制");
+            _errCodes.Add(52, "创建用户的频率超出限制");
+            _errCodes.Add(53, "创建用户的昵称冲突");
+            _errCodes.Add(6, "请求操作已过期");
+            _errCodes.Add(7, "操作目标不存在");
+            _errCodes.Add(8, "令牌过期");
 
         }
     }

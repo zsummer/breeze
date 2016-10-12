@@ -18,8 +18,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneClientPulse & info) 
 { 
-    stm << "[\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -58,11 +58,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachSceneReq & info) 
 { 
-    stm << "[\n"; 
-    stm << "avatarID=" << info.avatarID << "\n"; 
-    stm << "sceneID=" << info.sceneID << "\n"; 
-    stm << "token=" << info.token << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "sceneID=" << info.sceneID << ","; 
+    stm << "token=" << info.token << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -102,11 +102,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachSceneResp & info) 
 { 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "avatarID=" << info.avatarID << "\n"; 
-    stm << "sceneID=" << info.sceneID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "retCode=" << info.retCode << ","; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "sceneID=" << info.sceneID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -135,9 +135,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneSectionNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "section=" << info.section << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "section=" << info.section << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -170,10 +170,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneRefreshNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "entityInfos=" << info.entityInfos << "\n"; 
-    stm << "entityMoves=" << info.entityMoves << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "entityInfos=" << info.entityInfos << ","; 
+    stm << "entityMoves=" << info.entityMoves << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -202,9 +202,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneReportsNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "reports=" << info.reports << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "reports=" << info.reports << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -233,9 +233,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AddEntityNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "entitys=" << info.entitys << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "entitys=" << info.entitys << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -264,9 +264,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RemoveEntityNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "eids=" << info.eids << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eids=" << info.eids << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -314,13 +314,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveReq & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "action=" << info.action << "\n"; 
-    stm << "clientPos=" << info.clientPos << "\n"; 
-    stm << "dstPos=" << info.dstPos << "\n"; 
-    stm << "follow=" << info.follow << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "action=" << info.action << ","; 
+    stm << "clientPos=" << info.clientPos << ","; 
+    stm << "dstPos=" << info.dstPos << ","; 
+    stm << "follow=" << info.follow << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -360,11 +360,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveResp & info) 
 { 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "action=" << info.action << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "retCode=" << info.retCode << ","; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "action=" << info.action << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -393,9 +393,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoveNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "moveInfo=" << info.moveInfo << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "moveInfo=" << info.moveInfo << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -425,9 +425,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AddBuffNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -457,9 +457,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RemoveBuffNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -489,9 +489,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UseSkillReq & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -526,10 +526,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UseSkillResp & info) 
 { 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "retCode=" << info.retCode << ","; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -559,9 +559,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UseSkillNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "eid=" << info.eid << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "]"; 
     return stm; 
 } 
  

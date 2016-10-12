@@ -1188,7 +1188,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     }
     else if (rs.getProtoID() >= 40000 && sessionStatus == SSTATUS_ATTACHED )
     {
-        LOGD("client other proto to user service. sID=" << session->getSessionID() << ", block len=" << len);
+        LOGD("recvfrom client: avatarID=" << trace.oob.clientAvatarID << ", proto[" << rs.getProtoID() << "]= " << ProtoReflection::getProtoName(rs.getProtoID()));
         trace.routing.toServiceType = STAvatar;
         trace.routing.toServiceID = trace.routing.fromServiceID;
         toService(trace, rs.getStream(), rs.getStreamLen());
@@ -1197,7 +1197,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
 
     else
     {
-        LOGE("client unknow proto or wrong status. protoID=" << rs.getProtoID() << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
+        LOGE("client unknow proto or wrong status. proto[" << rs.getProtoID() << "]= " << ProtoReflection::getProtoName(rs.getProtoID()) << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
     }
 }
 
@@ -1346,6 +1346,8 @@ void Docker::forwardToRemoteService(Tracing  trace, const char * block, unsigned
                 << ", protoID=" << ReadStream(block, len).getProtoID());
             return;
         }
+        ReadStream rs(block, len);
+        LOGD("sendto client: avatarID=" << trace.routing.toServiceID << ", proto[" << rs.getProtoID() << "]= " << ProtoReflection::getProtoName(rs.getProtoID()));
         if (trace.oob.clientDockerID == ServerConfig::getRef().getDockerID())
         {
             sendViaSessionID(trace.oob.clientSessionID, block, len);
@@ -1355,6 +1357,7 @@ void Docker::forwardToRemoteService(Tracing  trace, const char * block, unsigned
         ws << trace;
         ws.appendOriginalData(block, len);
         sendViaDockerID(trace.oob.clientDockerID, ws.getStream(), ws.getStreamLen());
+        
     }
     else
     {

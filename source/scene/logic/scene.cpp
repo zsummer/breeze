@@ -255,13 +255,18 @@ bool Scene::onUpdate()
         if (kv.second->_isInfoDirty)
         {
             notice.entityInfos.push_back(kv.second->_info);
+            kv.second->_isInfoDirty = false;
         }
         if (kv.second->_isMoveDirty)
         {
             notice.entityMoves.push_back(kv.second->_move);
+            kv.second->_isMoveDirty = false;
         }
     }
-    broadcast(notice);
+    if (!notice.entityInfos.empty() || !notice.entityMoves.empty())
+    {
+        broadcast(notice);
+    }
     return true;
 }
 

@@ -34,10 +34,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DockerKnock & info) 
 { 
-    stm << "[\n"; 
-    stm << "areaID=" << info.areaID << "\n"; 
-    stm << "dockerID=" << info.dockerID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "areaID=" << info.areaID << ","; 
+    stm << "dockerID=" << info.dockerID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -56,8 +56,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DockerPulse & info) 
 { 
-    stm << "[\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -106,13 +106,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LoadService & info) 
 { 
-    stm << "[\n"; 
-    stm << "serviceType=" << info.serviceType << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "serviceName=" << info.serviceName << "\n"; 
-    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
-    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "serviceType=" << info.serviceType << ","; 
+    stm << "serviceID=" << info.serviceID << ","; 
+    stm << "serviceName=" << info.serviceName << ","; 
+    stm << "clientDockerID=" << info.clientDockerID << ","; 
+    stm << "clientSessionID=" << info.clientSessionID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -171,15 +171,15 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ServiceInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "serviceDockerID=" << info.serviceDockerID << "\n"; 
-    stm << "serviceType=" << info.serviceType << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "serviceName=" << info.serviceName << "\n"; 
-    stm << "status=" << info.status << "\n"; 
-    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
-    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "serviceDockerID=" << info.serviceDockerID << ","; 
+    stm << "serviceType=" << info.serviceType << ","; 
+    stm << "serviceID=" << info.serviceID << ","; 
+    stm << "serviceName=" << info.serviceName << ","; 
+    stm << "status=" << info.status << ","; 
+    stm << "clientDockerID=" << info.clientDockerID << ","; 
+    stm << "clientSessionID=" << info.clientSessionID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -211,9 +211,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LoadServiceNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "shellServiceInfos=" << info.shellServiceInfos << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "shellServiceInfos=" << info.shellServiceInfos << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -242,9 +242,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RefreshServiceToMgrNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "shellServiceInfos=" << info.shellServiceInfos << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "shellServiceInfos=" << info.shellServiceInfos << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -289,12 +289,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SwitchServiceClientNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "serviceType=" << info.serviceType << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
-    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "serviceType=" << info.serviceType << ","; 
+    stm << "serviceID=" << info.serviceID << ","; 
+    stm << "clientDockerID=" << info.clientDockerID << ","; 
+    stm << "clientSessionID=" << info.clientSessionID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -324,9 +324,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const KickRealClient & info) 
 { 
-    stm << "[\n"; 
-    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "clientSessionID=" << info.clientSessionID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -366,11 +366,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RealClientClosedNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
-    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "serviceID=" << info.serviceID << ","; 
+    stm << "clientDockerID=" << info.clientDockerID << ","; 
+    stm << "clientSessionID=" << info.clientSessionID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -405,10 +405,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UnloadServiceInDocker & info) 
 { 
-    stm << "[\n"; 
-    stm << "serviceType=" << info.serviceType << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "serviceType=" << info.serviceType << ","; 
+    stm << "serviceID=" << info.serviceID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -443,10 +443,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UnloadedServiceNotice & info) 
 { 
-    stm << "[\n"; 
-    stm << "serviceType=" << info.serviceType << "\n"; 
-    stm << "serviceID=" << info.serviceID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "serviceType=" << info.serviceType << ","; 
+    stm << "serviceID=" << info.serviceID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -465,8 +465,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ShutdownClusterServer & info) 
 { 
-    stm << "[\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -485,8 +485,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ForwardToService & info) 
 { 
-    stm << "[\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -505,8 +505,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ForwardToRealClient & info) 
 { 
-    stm << "[\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -525,8 +525,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ForwardToDocker & info) 
 { 
-    stm << "[\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -576,13 +576,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DBDataResult & info) 
 { 
-    stm << "[\n"; 
-    stm << "qc=" << info.qc << "\n"; 
-    stm << "errMsg=" << info.errMsg << "\n"; 
-    stm << "sql=" << info.sql << "\n"; 
-    stm << "affected=" << info.affected << "\n"; 
-    stm << "fields=" << info.fields << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "qc=" << info.qc << ","; 
+    stm << "errMsg=" << info.errMsg << ","; 
+    stm << "sql=" << info.sql << ","; 
+    stm << "affected=" << info.affected << ","; 
+    stm << "fields=" << info.fields << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -614,9 +614,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DBQueryReq & info) 
 { 
-    stm << "[\n"; 
-    stm << "sql=" << info.sql << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "sql=" << info.sql << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -650,10 +650,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DBQueryResp & info) 
 { 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "result=" << info.result << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "retCode=" << info.retCode << ","; 
+    stm << "result=" << info.result << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -682,9 +682,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DBQueryArrayReq & info) 
 { 
-    stm << "[\n"; 
-    stm << "sqls=" << info.sqls << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "sqls=" << info.sqls << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -718,10 +718,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DBQueryArrayResp & info) 
 { 
-    stm << "[\n"; 
-    stm << "retCode=" << info.retCode << "\n"; 
-    stm << "results=" << info.results << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "retCode=" << info.retCode << ","; 
+    stm << "results=" << info.results << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -765,12 +765,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WebAgentClientRequestAPI & info) 
 { 
-    stm << "[\n"; 
-    stm << "method=" << info.method << "\n"; 
-    stm << "methodLine=" << info.methodLine << "\n"; 
-    stm << "heads=" << info.heads << "\n"; 
-    stm << "body=" << info.body << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "method=" << info.method << ","; 
+    stm << "methodLine=" << info.methodLine << ","; 
+    stm << "heads=" << info.heads << ","; 
+    stm << "body=" << info.body << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -840,18 +840,18 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WebServerRequest & info) 
 { 
-    stm << "[\n"; 
-    stm << "fromServiceType=" << info.fromServiceType << "\n"; 
-    stm << "fromServiceID=" << info.fromServiceID << "\n"; 
-    stm << "traceID=" << info.traceID << "\n"; 
-    stm << "ip=" << info.ip << "\n"; 
-    stm << "port=" << info.port << "\n"; 
-    stm << "host=" << info.host << "\n"; 
-    stm << "uri=" << info.uri << "\n"; 
-    stm << "webparams=" << info.webparams << "\n"; 
-    stm << "heads=" << info.heads << "\n"; 
-    stm << "isGet=" << info.isGet << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "fromServiceType=" << info.fromServiceType << ","; 
+    stm << "fromServiceID=" << info.fromServiceID << ","; 
+    stm << "traceID=" << info.traceID << ","; 
+    stm << "ip=" << info.ip << ","; 
+    stm << "port=" << info.port << ","; 
+    stm << "host=" << info.host << ","; 
+    stm << "uri=" << info.uri << ","; 
+    stm << "webparams=" << info.webparams << ","; 
+    stm << "heads=" << info.heads << ","; 
+    stm << "isGet=" << info.isGet << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -892,12 +892,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const WebServerResponse & info) 
 { 
-    stm << "[\n"; 
-    stm << "method=" << info.method << "\n"; 
-    stm << "methodLine=" << info.methodLine << "\n"; 
-    stm << "heads=" << info.heads << "\n"; 
-    stm << "body=" << info.body << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "method=" << info.method << ","; 
+    stm << "methodLine=" << info.methodLine << ","; 
+    stm << "heads=" << info.heads << ","; 
+    stm << "body=" << info.body << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -1036,13 +1036,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarOffline & info) 
 { 
-    stm << "[\n"; 
-    stm << "id=" << info.id << "\n"; 
-    stm << "avatarID=" << info.avatarID << "\n"; 
-    stm << "streamBlob=" << info.streamBlob << "\n"; 
-    stm << "status=" << info.status << "\n"; 
-    stm << "timestamp=" << info.timestamp << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "streamBlob=" << info.streamBlob << ","; 
+    stm << "status=" << info.status << ","; 
+    stm << "timestamp=" << info.timestamp << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
