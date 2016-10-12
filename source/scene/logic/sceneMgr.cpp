@@ -99,10 +99,10 @@ void SceneMgr::onTimer()
                 }
                 for (auto key : groups)
                 {
-                    SceneServerGroupStatusChangeIns ret;
+                    SceneServerGroupStateChangeIns ret;
                     ret.groupID = key;
                     ret.sceneID = notice.section.sceneID;
-                    ret.status = SCENE_STATE_NONE;
+                    ret.state = SCENE_STATE_NONE;
                     sendToWorld(ret);
                 }
 
@@ -515,12 +515,12 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
             _tokens[avatar.first] = std::make_pair(avatar.second.token, scene->getSceneID());
             scene->addEntity(avatar.second.baseInfo, avatar.second.baseProps, ENTITY_CAMP_BLUE, ENTITY_AVATAR, ENTITY_STATE_FREEZING, group.groupID);
         }
-        SceneServerGroupStatusChangeIns ret;
+        SceneServerGroupStateChangeIns ret;
         ret.groupID = group.groupID;
         ret.sceneID = scene->getSceneID();
-        ret.status = SCENE_STATE_WAIT;
+        ret.state = SCENE_STATE_WAIT;
         sendToWorld(ret);
-        ret.status = SCENE_STATE_ACTIVE;
+        ret.state = SCENE_STATE_ACTIVE;
         sendToWorld(ret);
     }
 

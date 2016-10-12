@@ -7,33 +7,33 @@ void SceneModule::onSceneGroupInfoNotice(AvatarService & avatar, const Tracing &
     avatar.toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
 }
 
-void SceneModule::onSceneGroupGetStatusReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+void SceneModule::onSceneGroupGetReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        avatar.toService(STClient, trace.oob, SceneGroupGetStatusResp(EC_SERVICE_NOT_OPEN));
+        avatar.toService(STClient, trace.oob, SceneGroupGetResp(EC_SERVICE_NOT_OPEN));
         return;
     }
     avatar.toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
 }
 
-void SceneModule::onSceneGroupEnterSceneReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+void SceneModule::onSceneGroupEnterReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        avatar.toService(STClient, trace.oob, SceneGroupEnterSceneResp(EC_SERVICE_NOT_OPEN));
+        avatar.toService(STClient, trace.oob, SceneGroupEnterResp(EC_SERVICE_NOT_OPEN));
         return;
     }
     avatar.toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
 }
-void SceneModule::onSceneGroupCancelEnterReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+void SceneModule::onSceneGroupCancelReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        avatar.toService(STClient, trace.oob, SceneGroupCancelEnterResp(EC_SERVICE_NOT_OPEN));
+        avatar.toService(STClient, trace.oob, SceneGroupCancelResp(EC_SERVICE_NOT_OPEN));
         return;
     }
     avatar.toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
@@ -94,7 +94,7 @@ void SceneModule::onSceneGroupLeaveReq(AvatarService & avatar, const Tracing & t
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
     {
         LOGW("STWorldMgr service not open. " << trace);
-        avatar.toService(STClient, trace.oob, SceneGroupGetStatusResp(EC_SERVICE_NOT_OPEN));
+        avatar.toService(STClient, trace.oob, SceneGroupGetResp(EC_SERVICE_NOT_OPEN));
         return;
     }
     avatar.toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
@@ -105,12 +105,12 @@ void SceneModule::onSceneGroupGetStatusResp(AvatarService & avatar, const Tracin
     avatar.toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
 }
 
-void SceneModule::onSceneGroupEnterSceneResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+void SceneModule::onSceneGroupEnterResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     avatar.toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
 }
 
-void SceneModule::onSceneGroupCancelEnterResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
+void SceneModule::onSceneGroupCancelResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     avatar.toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
 }

@@ -36,10 +36,10 @@ Proto4z.SceneServerEnterSceneIns[1] = {name="sceneType", type="ui16" } --类型
 Proto4z.SceneServerEnterSceneIns[2] = {name="mapID", type="ui64" }  
 Proto4z.SceneServerEnterSceneIns[3] = {name="groups", type="SceneGroupInfoArray" } --多个编队 
  
-Proto4z.register(39005,"SceneServerGroupStatusChangeIns") 
-Proto4z.SceneServerGroupStatusChangeIns = {} --scene ==> world 
-Proto4z.SceneServerGroupStatusChangeIns.__protoID = 39005 
-Proto4z.SceneServerGroupStatusChangeIns.__protoName = "SceneServerGroupStatusChangeIns" 
-Proto4z.SceneServerGroupStatusChangeIns[1] = {name="groupID", type="ui64" }  
-Proto4z.SceneServerGroupStatusChangeIns[2] = {name="sceneID", type="ui64" }  
-Proto4z.SceneServerGroupStatusChangeIns[3] = {name="status", type="ui16" } --如果是NONE 说明离开场景 
+Proto4z.register(39006,"SceneServerGroupStateChangeIns") 
+Proto4z.SceneServerGroupStateChangeIns = {} --scene ==> world 
+Proto4z.SceneServerGroupStateChangeIns.__protoID = 39006 
+Proto4z.SceneServerGroupStateChangeIns.__protoName = "SceneServerGroupStateChangeIns" 
+Proto4z.SceneServerGroupStateChangeIns[1] = {name="groupID", type="ui64" }  
+Proto4z.SceneServerGroupStateChangeIns[2] = {name="sceneID", type="ui64" }  
+Proto4z.SceneServerGroupStateChangeIns[3] = {name="state", type="ui16" } --如果是NONE 说明离开场景 

@@ -51,7 +51,7 @@
     <packet name="SceneGroupInfo" desc= "编队数据">
         <member name="groupID" type="ui64"  desc=""/>
         <member name="sceneType" type="ui16"  desc="场景类型"/>
-        <member name="sceneStatus" type="ui16"  desc="状态"/>
+        <member name="sceneState" type="ui16"  desc="状态"/>
         <member name="mapID" type="ui64"  desc=""/>
         <member name="lineID" type="ui64"  desc="分线ID"/>
         <member name="sceneID" type="ui64"  desc="场景实例ID"/>
@@ -336,7 +336,7 @@
     <proto name="SceneSection" desc= "场景全景切片数据">
         <member name="sceneID"  type="ui64" desc=""/>
         <member name="sceneType"  type="ui16" desc=""/>
-        <member name="sceneStatus"  type="ui16" desc=""/>
+        <member name="sceneState"  type="ui16" desc=""/>
         <member name="sceneStartTime"  type="double" desc="服务器战场开始时间"/>
         <member name="sceneEndTime"  type="double" desc="服务器战场结束时间"/>
         <member name="serverTime"  type="double" desc="服务器当前时间"/>

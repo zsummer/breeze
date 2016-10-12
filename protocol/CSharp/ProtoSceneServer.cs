@@ -185,41 +185,41 @@ namespace Proto4z
         } 
     } 
  
-    public class SceneServerGroupStatusChangeIns: Proto4z.IProtoObject //scene ==> world  
+    public class SceneServerGroupStateChangeIns: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39005;  
-        static public ushort getProtoID() { return 39005; } 
-        static public string getProtoName() { return "SceneServerGroupStatusChangeIns"; } 
+        public const ushort protoID = 39006;  
+        static public ushort getProtoID() { return 39006; } 
+        static public string getProtoName() { return "SceneServerGroupStateChangeIns"; } 
         //members   
         public ulong groupID;  
         public ulong sceneID;  
-        public ushort status; //如果是NONE 说明离开场景  
-        public SceneServerGroupStatusChangeIns()  
+        public ushort state; //如果是NONE 说明离开场景  
+        public SceneServerGroupStateChangeIns()  
         { 
             groupID = 0;  
             sceneID = 0;  
-            status = 0;  
+            state = 0;  
         } 
-        public SceneServerGroupStatusChangeIns(ulong groupID, ulong sceneID, ushort status) 
+        public SceneServerGroupStateChangeIns(ulong groupID, ulong sceneID, ushort state) 
         { 
             this.groupID = groupID; 
             this.sceneID = sceneID; 
-            this.status = status; 
+            this.state = state; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.status)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.status = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 
         } 
     } 

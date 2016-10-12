@@ -195,46 +195,46 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SceneServerGroupStatusChangeIns //scene ==> world  
+struct SceneServerGroupStateChangeIns //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 39005;} 
-    static const std::string getProtoName() { return "SceneServerGroupStatusChangeIns";} 
+    static const unsigned short getProtoID() { return 39006;} 
+    static const std::string getProtoName() { return "SceneServerGroupStateChangeIns";} 
     unsigned long long groupID;  
     unsigned long long sceneID;  
-    unsigned short status; //如果是NONE 说明离开场景  
-    SceneServerGroupStatusChangeIns() 
+    unsigned short state; //如果是NONE 说明离开场景  
+    SceneServerGroupStateChangeIns() 
     { 
         groupID = 0; 
         sceneID = 0; 
-        status = 0; 
+        state = 0; 
     } 
-    SceneServerGroupStatusChangeIns(const unsigned long long & groupID, const unsigned long long & sceneID, const unsigned short & status) 
+    SceneServerGroupStateChangeIns(const unsigned long long & groupID, const unsigned long long & sceneID, const unsigned short & state) 
     { 
         this->groupID = groupID; 
         this->sceneID = sceneID; 
-        this->status = status; 
+        this->state = state; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerGroupStatusChangeIns & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerGroupStateChangeIns & data) 
 { 
     ws << data.groupID;  
     ws << data.sceneID;  
-    ws << data.status;  
+    ws << data.state;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerGroupStatusChangeIns & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerGroupStateChangeIns & data) 
 { 
     rs >> data.groupID;  
     rs >> data.sceneID;  
-    rs >> data.status;  
+    rs >> data.state;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerGroupStatusChangeIns & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerGroupStateChangeIns & info) 
 { 
     stm << "["; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "sceneID=" << info.sceneID << ","; 
-    stm << "status=" << info.status << ","; 
+    stm << "state=" << info.state << ","; 
     stm << "]"; 
     return stm; 
 } 

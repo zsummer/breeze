@@ -43,10 +43,10 @@
     </proto>
 
 
-    <proto name="SceneServerGroupStatusChangeIns" desc= "scene ==> world">
+    <proto name="SceneServerGroupStateChangeIns" desc= "scene ==> world">
         <member name="groupID" type="ui64"   desc=""/>
         <member name="sceneID" type="ui64"   desc=""/>
-        <member name="status" type="ui16"   desc="如果是NONE 说明离开场景"/>
+        <member name="state" type="ui16"   desc="如果是NONE 说明离开场景"/>
     </proto>
 
 

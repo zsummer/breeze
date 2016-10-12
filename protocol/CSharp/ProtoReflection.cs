@@ -164,6 +164,8 @@ namespace Proto4z
             _idToName.Add(39004, "SceneServerEnterSceneIns");
             _nameToID.Add("SceneServerGroupStatusChangeIns", 39005);
             _idToName.Add(39005, "SceneServerGroupStatusChangeIns");
+            _nameToID.Add("SceneServerGroupStateChangeIns", 39006);
+            _idToName.Add(39006, "SceneServerGroupStateChangeIns");
             _nameToID.Add("ClientPulse", 40000);
             _idToName.Add(40000, "ClientPulse");
             _nameToID.Add("ClientAuthReq", 40001);
@@ -234,6 +236,18 @@ namespace Proto4z
             _idToName.Add(40033, "ChangeModeIDReq");
             _nameToID.Add("ChangeModeIDResp", 40034);
             _idToName.Add(40034, "ChangeModeIDResp");
+            _nameToID.Add("SceneGroupGetReq", 40035);
+            _idToName.Add(40035, "SceneGroupGetReq");
+            _nameToID.Add("SceneGroupGetResp", 40036);
+            _idToName.Add(40036, "SceneGroupGetResp");
+            _nameToID.Add("SceneGroupEnterReq", 40037);
+            _idToName.Add(40037, "SceneGroupEnterReq");
+            _nameToID.Add("SceneGroupEnterResp", 40038);
+            _idToName.Add(40038, "SceneGroupEnterResp");
+            _nameToID.Add("SceneGroupCancelReq", 40039);
+            _idToName.Add(40039, "SceneGroupCancelReq");
+            _nameToID.Add("SceneGroupCancelResp", 40040);
+            _idToName.Add(40040, "SceneGroupCancelResp");
             _nameToID.Add("SceneClientPulse", 50000);
             _idToName.Add(50000, "SceneClientPulse");
             _nameToID.Add("AttachSceneReq", 50001);

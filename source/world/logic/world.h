@@ -89,9 +89,9 @@ private:
 	void event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs);
 
     void onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & req);
-    void onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trace, SceneGroupGetStatusReq & req);
-    void onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & trace, SceneGroupEnterSceneReq & req);
-    void onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCancelEnterReq & req);
+    void onSceneGroupGetReq(TcpSessionPtr session, const Tracing & trace, SceneGroupGetReq & req);
+    void onSceneGroupEnterReq(TcpSessionPtr session, const Tracing & trace, SceneGroupEnterReq & req);
+    void onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCancelReq & req);
 
     void onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & trace, SceneServerJoinGroupIns & req);
     void onSceneGroupInviteReq(TcpSessionPtr session, const Tracing & trace, SceneGroupInviteReq & req);

@@ -348,25 +348,25 @@ void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing
         onChatReq(session, trace, req);
         return;
     }
-    else if (rs.getProtoID() == SceneGroupGetStatusReq::getProtoID())
+    else if (rs.getProtoID() == SceneGroupGetReq::getProtoID())
     {
-        SceneGroupGetStatusReq req;
+        SceneGroupGetReq req;
         rs >> req;
-        onSceneGroupGetStatusReq(session, trace, req);
+        onSceneGroupGetReq(session, trace, req);
         return;
     }
-    else if (rs.getProtoID() == SceneGroupEnterSceneReq::getProtoID())
+    else if (rs.getProtoID() == SceneGroupEnterReq::getProtoID())
     {
-        SceneGroupEnterSceneReq req;
+        SceneGroupEnterReq req;
         rs >> req;
-        onSceneGroupEnterSceneReq(session, trace, req);
+        onSceneGroupEnterReq(session, trace, req);
         return;
     }
-    else if (rs.getProtoID() == SceneGroupCancelEnterReq::getProtoID())
+    else if (rs.getProtoID() == SceneGroupCancelReq::getProtoID())
     {
-        SceneGroupCancelEnterReq req;
+        SceneGroupCancelReq req;
         rs >> req;
-        onSceneGroupCancelEnterReq(session, trace, req);
+        onSceneGroupCancelReq(session, trace, req);
         return;
     }
     else if (rs.getProtoID() == SceneGroupInviteReq::getProtoID())
@@ -440,25 +440,25 @@ void World::event_onSceneClosed(TcpSessionPtr session)
 void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    if (rs.getProtoID() == SceneServerGroupStatusChangeIns::getProtoID())
+    if (rs.getProtoID() == SceneServerGroupStateChangeIns::getProtoID())
     {
-        SceneServerGroupStatusChangeIns ins;
+        SceneServerGroupStateChangeIns ins;
         rs >> ins;
         auto group = getGroupInfo(ins.groupID);
-        if (group->sceneStatus == SCENE_STATE_ALLOCATE && ins.status == SCENE_STATE_WAIT)
+        if (group->sceneState == SCENE_STATE_ALLOCATE && ins.state == SCENE_STATE_WAIT)
         {
             group->sceneID = ins.sceneID;
-            group->sceneStatus = ins.status;
+            group->sceneState = ins.state;
             pushGroupInfoToClient(group);
         }
-        else if (group->sceneStatus == SCENE_STATE_WAIT && ins.status == SCENE_STATE_ACTIVE)
+        else if (group->sceneState == SCENE_STATE_WAIT && ins.state == SCENE_STATE_ACTIVE)
         {
-            group->sceneStatus = ins.status;
+            group->sceneState = ins.state;
             pushGroupInfoToClient(group);
         }
-        else if (group->sceneStatus == SCENE_STATE_ACTIVE && ins.status == SCENE_STATE_NONE)
+        else if (group->sceneState == SCENE_STATE_ACTIVE && ins.state == SCENE_STATE_NONE)
         {
-            group->sceneStatus = ins.status;
+            group->sceneState = ins.state;
             group->sceneType = SCENE_NONE;
             pushGroupInfoToClient(group);
             //write report to db
@@ -534,8 +534,8 @@ void World::onMatchHomeTimer()
         {
             auto groupPtr = pool.front();
             pool.pop_front();
-            groupPtr->sceneStatus = SCENE_STATE_CHOISE;
-            groupPtr->sceneStatus = SCENE_STATE_ALLOCATE;
+            groupPtr->sceneState = SCENE_STATE_CHOISE;
+            groupPtr->sceneState = SCENE_STATE_ALLOCATE;
             groupPtr->lineID = linePtr->knock.lineID;
             groupPtr->host = linePtr->knock.pubHost;
             groupPtr->port = linePtr->knock.pubPort;
@@ -565,8 +565,8 @@ void World::onMatchMeleeTimer()
         {
             auto groupPtr = pool.front();
             pool.pop_front();
-            groupPtr->sceneStatus = SCENE_STATE_CHOISE;
-            groupPtr->sceneStatus = SCENE_STATE_ALLOCATE;
+            groupPtr->sceneState = SCENE_STATE_CHOISE;
+            groupPtr->sceneState = SCENE_STATE_ALLOCATE;
             groupPtr->lineID = linePtr->knock.lineID;
             groupPtr->host = linePtr->knock.pubHost;
             groupPtr->port = linePtr->knock.pubPort;
@@ -596,8 +596,8 @@ void World::onMatchArenaTimer()
         {
             auto groupPtr = pool.front();
             pool.pop_front();
-            groupPtr->sceneStatus = SCENE_STATE_CHOISE;
-            groupPtr->sceneStatus = SCENE_STATE_ALLOCATE;
+            groupPtr->sceneState = SCENE_STATE_CHOISE;
+            groupPtr->sceneState = SCENE_STATE_ALLOCATE;
             groupPtr->lineID = linePtr->knock.lineID;
             groupPtr->host = linePtr->knock.pubHost;
             groupPtr->port = linePtr->knock.pubPort;
@@ -665,7 +665,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     ack.retCode = EC_SUCCESS;
 
     SceneGroupInfoPtr groupPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
-    if ((groupPtr && req.groupID == InvalidGroupID) || (groupPtr&& req.groupID != InvalidGroupID && groupPtr->sceneStatus != SCENE_STATE_NONE))
+    if ((groupPtr && req.groupID == InvalidGroupID) || (groupPtr&& req.groupID != InvalidGroupID && groupPtr->sceneState != SCENE_STATE_NONE))
     {
         LOGE("World::onSceneServerJoinGroupIns the avatar already had group. avatar=" << trace.oob.clientAvatarID);
         ack.retCode = EC_ERROR;
@@ -687,7 +687,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         auto &group = *groupPtr;
         group.groupID = ++_lastGroupID;
         group.sceneType = SCENE_NONE;
-        group.sceneStatus = SCENE_STATE_NONE;
+        group.sceneState = SCENE_STATE_NONE;
         group.sceneID = InvalidSceneID;
         group.lineID = InvalidLineID;
         group.mapID = InvalidMapID;
@@ -725,7 +725,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         backToService(session->getSessionID(), trace, ack);
         return;
     }
-    if (groupPtr->sceneStatus != SCENE_STATE_NONE)
+    if (groupPtr->sceneState != SCENE_STATE_NONE)
     {
         LOGE("World::onSceneServerJoinGroupIns the dst group status busy. avatar=" << trace.oob.clientAvatarID << ", groupID=" << req.groupID);
         ack.retCode = EC_ERROR;
@@ -762,14 +762,14 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
 
 
 
-void World::onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trace, SceneGroupGetStatusReq & req)
+void World::onSceneGroupGetReq(TcpSessionPtr session, const Tracing & trace, SceneGroupGetReq & req)
 {
-    SceneGroupGetStatusResp resp;
+    SceneGroupGetResp resp;
     SceneGroupInfoNotice notice;
     resp.retCode = EC_SUCCESS;
     notice.groupInfo.groupID = InvalidGroupID;
     notice.groupInfo.sceneType = SCENE_NONE;
-    notice.groupInfo.sceneStatus = SCENE_STATE_NONE;
+    notice.groupInfo.sceneState = SCENE_STATE_NONE;
     auto groupInfoPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
     if (groupInfoPtr)
     {
@@ -780,81 +780,81 @@ void World::onSceneGroupGetStatusReq(TcpSessionPtr session, const Tracing & trac
     return;
 }
 
-void World::onSceneGroupEnterSceneReq(TcpSessionPtr session, const Tracing & trace, SceneGroupEnterSceneReq & req)
+void World::onSceneGroupEnterReq(TcpSessionPtr session, const Tracing & trace, SceneGroupEnterReq & req)
 {
     SceneGroupInfoPtr groupPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
     if (!groupPtr)
     {
-        LOGE("World::onSceneGroupEnterSceneReq not found the avatar  group. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
+        LOGE("World::onSceneGroupEnterReq not found the avatar  group. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_ERROR));
         return;
     }
     if (req.sceneType >= SCENE_MAX || req.sceneType == SCENE_NONE)
     {
-        LOGE("World::onSceneGroupEnterSceneReq the scene type error. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
+        LOGE("World::onSceneGroupEnterReq the scene type error. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_ERROR));
         return;
     }
-    if (groupPtr->sceneStatus != SCENE_STATE_NONE)
+    if (groupPtr->sceneState != SCENE_STATE_NONE)
     {
-        LOGE("World::onSceneGroupEnterSceneReq the group is busy. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
+        LOGE("World::onSceneGroupEnterReq the group is busy. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_ERROR));
         return;
     }
     auto found = groupPtr->members.find(trace.oob.clientAvatarID);
     if (found == groupPtr->members.end())
     {
-        LOGE("World::onSceneGroupEnterSceneReq the group is busy. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
+        LOGE("World::onSceneGroupEnterReq the group is busy. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_ERROR));
         return;
     }
     if (found->second.powerType != 1)
     {
-        LOGE("World::onSceneGroupEnterSceneReq the avatar no power. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
+        LOGE("World::onSceneGroupEnterReq the avatar no power. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_ERROR));
         return;
     }
     if (req.sceneType == SCENE_MELEE && groupPtr->members.size() > 1)
     {
-        LOGE("World::onSceneGroupEnterSceneReq the goup had too many member. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
+        LOGE("World::onSceneGroupEnterReq the goup had too many member. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_ERROR));
         return;
     }
     if (req.sceneType == SCENE_ARENA && groupPtr->members.size() != 3)
     {
-        LOGE("World::onSceneGroupEnterSceneReq the goup had too many member. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_ERROR));
+        LOGE("World::onSceneGroupEnterReq the goup had too many member. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_ERROR));
         return;
     }
 
 
     groupPtr->sceneType = req.sceneType;
-    groupPtr->sceneStatus = SCENE_STATE_MATCHING;
+    groupPtr->sceneState = SCENE_STATE_MATCHING;
     groupPtr->mapID = req.mapID;
     _matchPools[req.sceneType].push_back(groupPtr);
-    backToService(session->getSessionID(), trace, SceneGroupEnterSceneResp(EC_SUCCESS));
+    backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_SUCCESS));
     pushGroupInfoToClient(groupPtr);
 }
 
-void World::onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCancelEnterReq & req)
+void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, SceneGroupCancelReq & req)
 {
     SceneGroupInfoPtr groupPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
     if (!groupPtr)
     {
-        LOGE("World::onSceneGroupCancelEnterReq not found the avatar  group. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_ERROR));
+        LOGE("World::onSceneGroupCancelReq not found the avatar  group. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
         return;
     }
-    if (groupPtr->sceneStatus != SCENE_STATE_MATCHING && groupPtr->sceneStatus != SCENE_STATE_NONE)
+    if (groupPtr->sceneState != SCENE_STATE_MATCHING && groupPtr->sceneState != SCENE_STATE_NONE)
     {
-        LOGE("World::onSceneGroupCancelEnterReq the scene sceneStatus error. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_ERROR));
+        LOGE("World::onSceneGroupCancelReq the scene sceneState error. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
         return;
     }
     if (groupPtr->sceneType == SCENE_NONE || groupPtr->sceneType >= SCENE_MAX)
     {
-        LOGE("World::onSceneGroupCancelEnterReq the scene sceneStatus error. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_ERROR));
+        LOGE("World::onSceneGroupCancelReq the scene sceneState error. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
         return;
     }
     auto founder = std::find_if(_matchPools[groupPtr->sceneType].begin(), _matchPools[groupPtr->sceneType].end(),
@@ -864,9 +864,9 @@ void World::onSceneGroupCancelEnterReq(TcpSessionPtr session, const Tracing & tr
         _matchPools[groupPtr->sceneType].erase(founder);
     }
     groupPtr->sceneType = SCENE_NONE;
-    groupPtr->sceneStatus = SCENE_STATE_NONE;
+    groupPtr->sceneState = SCENE_STATE_NONE;
     groupPtr->mapID = InvalidMapID;
-    backToService(session->getSessionID(), trace, SceneGroupCancelEnterResp(EC_SUCCESS));
+    backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_SUCCESS));
     pushGroupInfoToClient(groupPtr);
 
 }
@@ -927,7 +927,7 @@ void World::onSceneGroupLeaveReq(TcpSessionPtr session, const Tracing & trace, S
         LOGE("World::onSceneGroupInviteReq not found the avatar's group info. avatar=" << trace.oob.clientAvatarID);
         return;
     }
-    if (groupPtr->sceneStatus != SCENE_STATE_NONE)
+    if (groupPtr->sceneState != SCENE_STATE_NONE)
     {
         LOGE("World::onSceneGroupLeaveReq the dst group status busy. avatar=" << trace.oob.clientAvatarID << ", groupID=" << groupPtr->groupID);
         backToService(session->getSessionID(), trace, SceneGroupLeaveResp(EC_ERROR));

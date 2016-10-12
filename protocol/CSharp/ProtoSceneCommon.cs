@@ -150,7 +150,7 @@ namespace Proto4z
         //members   
         public ulong groupID;  
         public ushort sceneType; //场景类型  
-        public ushort sceneStatus; //状态  
+        public ushort sceneState; //状态  
         public ulong mapID;  
         public ulong lineID; //分线ID  
         public ulong sceneID; //场景实例ID  
@@ -162,7 +162,7 @@ namespace Proto4z
         { 
             groupID = 0;  
             sceneType = 0;  
-            sceneStatus = 0;  
+            sceneState = 0;  
             mapID = 0;  
             lineID = 0;  
             sceneID = 0;  
@@ -171,11 +171,11 @@ namespace Proto4z
             members = new SceneGroupAvatarInfoMap();  
             invitees = new ServiceIDMap();  
         } 
-        public SceneGroupInfo(ulong groupID, ushort sceneType, ushort sceneStatus, ulong mapID, ulong lineID, ulong sceneID, string host, ushort port, SceneGroupAvatarInfoMap members, ServiceIDMap invitees) 
+        public SceneGroupInfo(ulong groupID, ushort sceneType, ushort sceneState, ulong mapID, ulong lineID, ulong sceneID, string host, ushort port, SceneGroupAvatarInfoMap members, ServiceIDMap invitees) 
         { 
             this.groupID = groupID; 
             this.sceneType = sceneType; 
-            this.sceneStatus = sceneStatus; 
+            this.sceneState = sceneState; 
             this.mapID = mapID; 
             this.lineID = lineID; 
             this.sceneID = sceneID; 
@@ -189,7 +189,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneStatus)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneState)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.mapID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.lineID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
@@ -205,7 +205,7 @@ namespace Proto4z
         { 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.sceneStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sceneState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.mapID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.lineID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
@@ -1537,7 +1537,7 @@ namespace Proto4z
         //members   
         public ulong sceneID;  
         public ushort sceneType;  
-        public ushort sceneStatus;  
+        public ushort sceneState;  
         public double sceneStartTime; //服务器战场开始时间  
         public double sceneEndTime; //服务器战场结束时间  
         public double serverTime; //服务器当前时间  
@@ -1546,17 +1546,17 @@ namespace Proto4z
         { 
             sceneID = 0;  
             sceneType = 0;  
-            sceneStatus = 0;  
+            sceneState = 0;  
             sceneStartTime = 0.0;  
             sceneEndTime = 0.0;  
             serverTime = 0.0;  
             entitys = new EntityFullDataArray();  
         } 
-        public SceneSection(ulong sceneID, ushort sceneType, ushort sceneStatus, double sceneStartTime, double sceneEndTime, double serverTime, EntityFullDataArray entitys) 
+        public SceneSection(ulong sceneID, ushort sceneType, ushort sceneState, double sceneStartTime, double sceneEndTime, double serverTime, EntityFullDataArray entitys) 
         { 
             this.sceneID = sceneID; 
             this.sceneType = sceneType; 
-            this.sceneStatus = sceneStatus; 
+            this.sceneState = sceneState; 
             this.sceneStartTime = sceneStartTime; 
             this.sceneEndTime = sceneEndTime; 
             this.serverTime = serverTime; 
@@ -1567,7 +1567,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneStatus)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneState)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.sceneStartTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.sceneEndTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.serverTime)); 
@@ -1579,7 +1579,7 @@ namespace Proto4z
         { 
             this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.sceneStatus = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.sceneState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.sceneStartTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.sceneEndTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 

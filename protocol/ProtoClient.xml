@@ -58,23 +58,23 @@
     </packet>
 
 
-    <packet name="SceneGroupGetStatusReq" desc= "获取当前角色的场景状态数据">
+    <packet name="SceneGroupGetReq" desc= "获取当前角色的场景状态数据">
     </packet>
-    <packet name="SceneGroupGetStatusResp" desc= "">
+    <packet name="SceneGroupGetResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
 
-   <packet name="SceneGroupEnterSceneReq" desc= "申请进入场景">
+   <packet name="SceneGroupEnterReq" desc= "申请进入场景">
         <member name="sceneType" type="ui16"   desc=""/>
         <member name="mapID" type="ui64"   desc=""/>
     </packet>
-    <packet name="SceneGroupEnterSceneResp" desc= "">
+    <packet name="SceneGroupEnterResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
 
-   <packet name="SceneGroupCancelEnterReq" desc= "取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)">
+   <packet name="SceneGroupCancelReq" desc= "取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)">
     </packet>
-    <packet name="SceneGroupCancelEnterResp" desc= "">
+    <packet name="SceneGroupCancelResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
     </packet>
 

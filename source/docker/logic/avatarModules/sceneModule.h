@@ -30,9 +30,9 @@ class SceneModule
 public:
     void onSceneGroupInfoNotice(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
 
-    void onSceneGroupGetStatusReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
-    void onSceneGroupEnterSceneReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
-    void onSceneGroupCancelEnterReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupGetReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupEnterReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupCancelReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
 
     void onSceneGroupCreateReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
     void onSceneGroupJoinReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
@@ -41,8 +41,8 @@ public:
     void onSceneGroupLeaveReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
 
     void onSceneGroupGetStatusResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
-    void onSceneGroupEnterSceneResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
-    void onSceneGroupCancelEnterResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupEnterResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
+    void onSceneGroupCancelResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
 
     void onSceneServerJoinGroupAck(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
     void onSceneGroupInviteResp(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);

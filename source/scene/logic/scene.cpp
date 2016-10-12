@@ -26,7 +26,7 @@ void Scene::getSceneSection(SceneSection & ss)
 {
     ss.sceneID = _sceneID;
     ss.sceneType = _sceneType;
-    ss.sceneStatus = _sceneStatus;
+    ss.sceneState = _sceneStatus;
     ss.sceneStartTime = _startTime;
     ss.sceneEndTime = _endTime;
     ss.serverTime = getFloatSteadyNowTime();

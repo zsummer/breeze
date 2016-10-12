@@ -363,51 +363,51 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SceneGroupGetStatusReq //获取当前角色的场景状态数据  
+struct SceneGroupGetReq //获取当前角色的场景状态数据  
 { 
-    static const unsigned short getProtoID() { return 40010;} 
-    static const std::string getProtoName() { return "SceneGroupGetStatusReq";} 
+    static const unsigned short getProtoID() { return 40035;} 
+    static const std::string getProtoName() { return "SceneGroupGetReq";} 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupGetStatusReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupGetReq & data) 
 { 
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupGetStatusReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupGetReq & data) 
 { 
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupGetStatusReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupGetReq & info) 
 { 
     stm << "["; 
     stm << "]"; 
     return stm; 
 } 
  
-struct SceneGroupGetStatusResp 
+struct SceneGroupGetResp 
 { 
-    static const unsigned short getProtoID() { return 40011;} 
-    static const std::string getProtoName() { return "SceneGroupGetStatusResp";} 
+    static const unsigned short getProtoID() { return 40036;} 
+    static const std::string getProtoName() { return "SceneGroupGetResp";} 
     unsigned short retCode;  
-    SceneGroupGetStatusResp() 
+    SceneGroupGetResp() 
     { 
         retCode = 0; 
     } 
-    SceneGroupGetStatusResp(const unsigned short & retCode) 
+    SceneGroupGetResp(const unsigned short & retCode) 
     { 
         this->retCode = retCode; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupGetStatusResp & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupGetResp & data) 
 { 
     ws << data.retCode;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupGetStatusResp & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupGetResp & data) 
 { 
     rs >> data.retCode;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupGetStatusResp & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupGetResp & info) 
 { 
     stm << "["; 
     stm << "retCode=" << info.retCode << ","; 
@@ -415,36 +415,36 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SceneGroupEnterSceneReq //申请进入场景  
+struct SceneGroupEnterReq //申请进入场景  
 { 
-    static const unsigned short getProtoID() { return 40012;} 
-    static const std::string getProtoName() { return "SceneGroupEnterSceneReq";} 
+    static const unsigned short getProtoID() { return 40037;} 
+    static const std::string getProtoName() { return "SceneGroupEnterReq";} 
     unsigned short sceneType;  
     unsigned long long mapID;  
-    SceneGroupEnterSceneReq() 
+    SceneGroupEnterReq() 
     { 
         sceneType = 0; 
         mapID = 0; 
     } 
-    SceneGroupEnterSceneReq(const unsigned short & sceneType, const unsigned long long & mapID) 
+    SceneGroupEnterReq(const unsigned short & sceneType, const unsigned long long & mapID) 
     { 
         this->sceneType = sceneType; 
         this->mapID = mapID; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupEnterSceneReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupEnterReq & data) 
 { 
     ws << data.sceneType;  
     ws << data.mapID;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupEnterSceneReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupEnterReq & data) 
 { 
     rs >> data.sceneType;  
     rs >> data.mapID;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupEnterSceneReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupEnterReq & info) 
 { 
     stm << "["; 
     stm << "sceneType=" << info.sceneType << ","; 
@@ -453,31 +453,31 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SceneGroupEnterSceneResp 
+struct SceneGroupEnterResp 
 { 
-    static const unsigned short getProtoID() { return 40013;} 
-    static const std::string getProtoName() { return "SceneGroupEnterSceneResp";} 
+    static const unsigned short getProtoID() { return 40038;} 
+    static const std::string getProtoName() { return "SceneGroupEnterResp";} 
     unsigned short retCode;  
-    SceneGroupEnterSceneResp() 
+    SceneGroupEnterResp() 
     { 
         retCode = 0; 
     } 
-    SceneGroupEnterSceneResp(const unsigned short & retCode) 
+    SceneGroupEnterResp(const unsigned short & retCode) 
     { 
         this->retCode = retCode; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupEnterSceneResp & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupEnterResp & data) 
 { 
     ws << data.retCode;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupEnterSceneResp & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupEnterResp & data) 
 { 
     rs >> data.retCode;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupEnterSceneResp & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupEnterResp & info) 
 { 
     stm << "["; 
     stm << "retCode=" << info.retCode << ","; 
@@ -485,51 +485,51 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SceneGroupCancelEnterReq //取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)  
+struct SceneGroupCancelReq //取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)  
 { 
-    static const unsigned short getProtoID() { return 40014;} 
-    static const std::string getProtoName() { return "SceneGroupCancelEnterReq";} 
+    static const unsigned short getProtoID() { return 40039;} 
+    static const std::string getProtoName() { return "SceneGroupCancelReq";} 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupCancelEnterReq & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupCancelReq & data) 
 { 
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupCancelEnterReq & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupCancelReq & data) 
 { 
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupCancelEnterReq & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupCancelReq & info) 
 { 
     stm << "["; 
     stm << "]"; 
     return stm; 
 } 
  
-struct SceneGroupCancelEnterResp 
+struct SceneGroupCancelResp 
 { 
-    static const unsigned short getProtoID() { return 40015;} 
-    static const std::string getProtoName() { return "SceneGroupCancelEnterResp";} 
+    static const unsigned short getProtoID() { return 40040;} 
+    static const std::string getProtoName() { return "SceneGroupCancelResp";} 
     unsigned short retCode;  
-    SceneGroupCancelEnterResp() 
+    SceneGroupCancelResp() 
     { 
         retCode = 0; 
     } 
-    SceneGroupCancelEnterResp(const unsigned short & retCode) 
+    SceneGroupCancelResp(const unsigned short & retCode) 
     { 
         this->retCode = retCode; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupCancelEnterResp & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupCancelResp & data) 
 { 
     ws << data.retCode;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupCancelEnterResp & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupCancelResp & data) 
 { 
     rs >> data.retCode;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupCancelEnterResp & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneGroupCancelResp & info) 
 { 
     stm << "["; 
     stm << "retCode=" << info.retCode << ","; 

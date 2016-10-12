@@ -313,6 +313,11 @@ public:
                    return "SceneServerGroupStatusChangeIns";
             }
             break;
+            case 39006:
+            {
+                   return "SceneServerGroupStateChangeIns";
+            }
+            break;
             case 40000:
             {
                    return "ClientPulse";
@@ -486,6 +491,36 @@ public:
             case 40034:
             {
                    return "ChangeModeIDResp";
+            }
+            break;
+            case 40035:
+            {
+                   return "SceneGroupGetReq";
+            }
+            break;
+            case 40036:
+            {
+                   return "SceneGroupGetResp";
+            }
+            break;
+            case 40037:
+            {
+                   return "SceneGroupEnterReq";
+            }
+            break;
+            case 40038:
+            {
+                   return "SceneGroupEnterResp";
+            }
+            break;
+            case 40039:
+            {
+                   return "SceneGroupCancelReq";
+            }
+            break;
+            case 40040:
+            {
+                   return "SceneGroupCancelResp";
             }
             break;
             case 50000:

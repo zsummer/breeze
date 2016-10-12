@@ -90,7 +90,7 @@ struct SceneGroupInfo //编队数据
     static const std::string getProtoName() { return "SceneGroupInfo";} 
     unsigned long long groupID;  
     unsigned short sceneType; //场景类型  
-    unsigned short sceneStatus; //状态  
+    unsigned short sceneState; //状态  
     unsigned long long mapID;  
     unsigned long long lineID; //分线ID  
     unsigned long long sceneID; //场景实例ID  
@@ -102,17 +102,17 @@ struct SceneGroupInfo //编队数据
     { 
         groupID = 0; 
         sceneType = 0; 
-        sceneStatus = 0; 
+        sceneState = 0; 
         mapID = 0; 
         lineID = 0; 
         sceneID = 0; 
         port = 0; 
     } 
-    SceneGroupInfo(const unsigned long long & groupID, const unsigned short & sceneType, const unsigned short & sceneStatus, const unsigned long long & mapID, const unsigned long long & lineID, const unsigned long long & sceneID, const std::string & host, const unsigned short & port, const SceneGroupAvatarInfoMap & members, const ServiceIDMap & invitees) 
+    SceneGroupInfo(const unsigned long long & groupID, const unsigned short & sceneType, const unsigned short & sceneState, const unsigned long long & mapID, const unsigned long long & lineID, const unsigned long long & sceneID, const std::string & host, const unsigned short & port, const SceneGroupAvatarInfoMap & members, const ServiceIDMap & invitees) 
     { 
         this->groupID = groupID; 
         this->sceneType = sceneType; 
-        this->sceneStatus = sceneStatus; 
+        this->sceneState = sceneState; 
         this->mapID = mapID; 
         this->lineID = lineID; 
         this->sceneID = sceneID; 
@@ -126,7 +126,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.groupID;  
     ws << data.sceneType;  
-    ws << data.sceneStatus;  
+    ws << data.sceneState;  
     ws << data.mapID;  
     ws << data.lineID;  
     ws << data.sceneID;  
@@ -140,7 +140,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.groupID;  
     rs >> data.sceneType;  
-    rs >> data.sceneStatus;  
+    rs >> data.sceneState;  
     rs >> data.mapID;  
     rs >> data.lineID;  
     rs >> data.sceneID;  
@@ -155,7 +155,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "sceneType=" << info.sceneType << ","; 
-    stm << "sceneStatus=" << info.sceneStatus << ","; 
+    stm << "sceneState=" << info.sceneState << ","; 
     stm << "mapID=" << info.mapID << ","; 
     stm << "lineID=" << info.lineID << ","; 
     stm << "sceneID=" << info.sceneID << ","; 
@@ -1113,7 +1113,7 @@ struct SceneSection //场景全景切片数据
     static const std::string getProtoName() { return "SceneSection";} 
     unsigned long long sceneID;  
     unsigned short sceneType;  
-    unsigned short sceneStatus;  
+    unsigned short sceneState;  
     double sceneStartTime; //服务器战场开始时间  
     double sceneEndTime; //服务器战场结束时间  
     double serverTime; //服务器当前时间  
@@ -1122,16 +1122,16 @@ struct SceneSection //场景全景切片数据
     { 
         sceneID = 0; 
         sceneType = 0; 
-        sceneStatus = 0; 
+        sceneState = 0; 
         sceneStartTime = 0.0; 
         sceneEndTime = 0.0; 
         serverTime = 0.0; 
     } 
-    SceneSection(const unsigned long long & sceneID, const unsigned short & sceneType, const unsigned short & sceneStatus, const double & sceneStartTime, const double & sceneEndTime, const double & serverTime, const EntityFullDataArray & entitys) 
+    SceneSection(const unsigned long long & sceneID, const unsigned short & sceneType, const unsigned short & sceneState, const double & sceneStartTime, const double & sceneEndTime, const double & serverTime, const EntityFullDataArray & entitys) 
     { 
         this->sceneID = sceneID; 
         this->sceneType = sceneType; 
-        this->sceneStatus = sceneStatus; 
+        this->sceneState = sceneState; 
         this->sceneStartTime = sceneStartTime; 
         this->sceneEndTime = sceneEndTime; 
         this->serverTime = serverTime; 
@@ -1142,7 +1142,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.sceneID;  
     ws << data.sceneType;  
-    ws << data.sceneStatus;  
+    ws << data.sceneState;  
     ws << data.sceneStartTime;  
     ws << data.sceneEndTime;  
     ws << data.serverTime;  
@@ -1153,7 +1153,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.sceneID;  
     rs >> data.sceneType;  
-    rs >> data.sceneStatus;  
+    rs >> data.sceneState;  
     rs >> data.sceneStartTime;  
     rs >> data.sceneEndTime;  
     rs >> data.serverTime;  
@@ -1165,7 +1165,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "sceneID=" << info.sceneID << ","; 
     stm << "sceneType=" << info.sceneType << ","; 
-    stm << "sceneStatus=" << info.sceneStatus << ","; 
+    stm << "sceneState=" << info.sceneState << ","; 
     stm << "sceneStartTime=" << info.sceneStartTime << ","; 
     stm << "sceneEndTime=" << info.sceneEndTime << ","; 
     stm << "serverTime=" << info.serverTime << ","; 

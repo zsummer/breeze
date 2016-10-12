@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>3b7df0d5ccad35b5175f21a200bd7bc8</cppmd5> 
-<luamd5>ec7b29847291c6641d81aec9c0ed8275</luamd5> 
-<csharpmd5>320240f77773706365fe4202b6ffa187</csharpmd5> 
-<xmlmd5>2533c2fa19703da6f3b763d8b3b253dd</xmlmd5> 
+<cppmd5>6b318dfc52916f141feb8ecd9ada371e</cppmd5> 
+<luamd5>ae3977bfac951e562b356df91d79e3a1</luamd5> 
+<csharpmd5>350169007bb1ba1aba675df9f351b3fd</csharpmd5> 
+<xmlmd5>4992cb23a1280ac371ce17df23fff6b0</xmlmd5> 
 <cacheNumber>
     <cache key = "AttachAvatarReq" Number = "40005" /> 
     <cache key = "AttachAvatarResp" Number = "40006" /> 
@@ -24,10 +24,16 @@
     <cache key = "PingPongResp" Number = "40030" /> 
     <cache key = "SceneGroupCancelEnterReq" Number = "40014" /> 
     <cache key = "SceneGroupCancelEnterResp" Number = "40015" /> 
+    <cache key = "SceneGroupCancelReq" Number = "40039" /> 
+    <cache key = "SceneGroupCancelResp" Number = "40040" /> 
     <cache key = "SceneGroupCreateReq" Number = "40016" /> 
     <cache key = "SceneGroupCreateResp" Number = "40017" /> 
+    <cache key = "SceneGroupEnterReq" Number = "40037" /> 
+    <cache key = "SceneGroupEnterResp" Number = "40038" /> 
     <cache key = "SceneGroupEnterSceneReq" Number = "40012" /> 
     <cache key = "SceneGroupEnterSceneResp" Number = "40013" /> 
+    <cache key = "SceneGroupGetReq" Number = "40035" /> 
+    <cache key = "SceneGroupGetResp" Number = "40036" /> 
     <cache key = "SceneGroupGetStatusReq" Number = "40010" /> 
     <cache key = "SceneGroupGetStatusResp" Number = "40011" /> 
     <cache key = "SceneGroupInfoNotice" Number = "40009" /> 

@@ -42,7 +42,7 @@ Proto4z.SceneGroupInfo.__protoID = 10001
 Proto4z.SceneGroupInfo.__protoName = "SceneGroupInfo" 
 Proto4z.SceneGroupInfo[1] = {name="groupID", type="ui64" }  
 Proto4z.SceneGroupInfo[2] = {name="sceneType", type="ui16" } --场景类型 
-Proto4z.SceneGroupInfo[3] = {name="sceneStatus", type="ui16" } --状态 
+Proto4z.SceneGroupInfo[3] = {name="sceneState", type="ui16" } --状态 
 Proto4z.SceneGroupInfo[4] = {name="mapID", type="ui64" }  
 Proto4z.SceneGroupInfo[5] = {name="lineID", type="ui64" } --分线ID 
 Proto4z.SceneGroupInfo[6] = {name="sceneID", type="ui64" } --场景实例ID 
@@ -354,7 +354,7 @@ Proto4z.SceneSection.__protoID = 10015
 Proto4z.SceneSection.__protoName = "SceneSection" 
 Proto4z.SceneSection[1] = {name="sceneID", type="ui64" }  
 Proto4z.SceneSection[2] = {name="sceneType", type="ui16" }  
-Proto4z.SceneSection[3] = {name="sceneStatus", type="ui16" }  
+Proto4z.SceneSection[3] = {name="sceneState", type="ui16" }  
 Proto4z.SceneSection[4] = {name="sceneStartTime", type="double" } --服务器战场开始时间 
 Proto4z.SceneSection[5] = {name="sceneEndTime", type="double" } --服务器战场结束时间 
 Proto4z.SceneSection[6] = {name="serverTime", type="double" } --服务器当前时间 
