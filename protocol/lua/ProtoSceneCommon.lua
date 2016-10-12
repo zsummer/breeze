@@ -340,7 +340,7 @@ Proto4z.EntityFullData.__protoName = "EntityFullData"
 Proto4z.EntityFullData[1] = {name="baseInfo", type="AvatarBaseInfo" }  
 Proto4z.EntityFullData[2] = {name="baseProps", type="AvatarPropMap" }  
 Proto4z.EntityFullData[3] = {name="entityInfo", type="EntityInfo" }  
-Proto4z.EntityFullData[4] = {name="entityPoint", type="EntityMove" }  
+Proto4z.EntityFullData[4] = {name="entityMove", type="EntityMove" }  
 Proto4z.EntityFullData[5] = {name="report", type="EntityReport" }  
  
 Proto4z.EntityFullDataArray = {}  

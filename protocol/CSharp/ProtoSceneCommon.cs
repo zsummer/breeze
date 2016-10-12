@@ -1448,22 +1448,22 @@ namespace Proto4z
         public AvatarBaseInfo baseInfo;  
         public AvatarPropMap baseProps;  
         public EntityInfo entityInfo;  
-        public EntityMove entityPoint;  
+        public EntityMove entityMove;  
         public EntityReport report;  
         public EntityFullData()  
         { 
             baseInfo = new AvatarBaseInfo();  
             baseProps = new AvatarPropMap();  
             entityInfo = new EntityInfo();  
-            entityPoint = new EntityMove();  
+            entityMove = new EntityMove();  
             report = new EntityReport();  
         } 
-        public EntityFullData(AvatarBaseInfo baseInfo, AvatarPropMap baseProps, EntityInfo entityInfo, EntityMove entityPoint, EntityReport report) 
+        public EntityFullData(AvatarBaseInfo baseInfo, AvatarPropMap baseProps, EntityInfo entityInfo, EntityMove entityMove, EntityReport report) 
         { 
             this.baseInfo = baseInfo; 
             this.baseProps = baseProps; 
             this.entityInfo = entityInfo; 
-            this.entityPoint = entityPoint; 
+            this.entityMove = entityMove; 
             this.report = report; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -1475,8 +1475,8 @@ namespace Proto4z
             data.AddRange(this.baseProps.__encode()); 
             if (this.entityInfo == null) this.entityInfo = new EntityInfo(); 
             data.AddRange(this.entityInfo.__encode()); 
-            if (this.entityPoint == null) this.entityPoint = new EntityMove(); 
-            data.AddRange(this.entityPoint.__encode()); 
+            if (this.entityMove == null) this.entityMove = new EntityMove(); 
+            data.AddRange(this.entityMove.__encode()); 
             if (this.report == null) this.report = new EntityReport(); 
             data.AddRange(this.report.__encode()); 
             return data; 
@@ -1489,8 +1489,8 @@ namespace Proto4z
             this.baseProps.__decode(binData, ref pos); 
             this.entityInfo = new EntityInfo(); 
             this.entityInfo.__decode(binData, ref pos); 
-            this.entityPoint = new EntityMove(); 
-            this.entityPoint.__decode(binData, ref pos); 
+            this.entityMove = new EntityMove(); 
+            this.entityMove.__decode(binData, ref pos); 
             this.report = new EntityReport(); 
             this.report.__decode(binData, ref pos); 
             return pos; 

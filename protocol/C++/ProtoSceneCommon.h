@@ -1060,17 +1060,17 @@ struct EntityFullData //EntityFullData
     AvatarBaseInfo baseInfo;  
     AvatarPropMap baseProps;  
     EntityInfo entityInfo;  
-    EntityMove entityPoint;  
+    EntityMove entityMove;  
     EntityReport report;  
     EntityFullData() 
     { 
     } 
-    EntityFullData(const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps, const EntityInfo & entityInfo, const EntityMove & entityPoint, const EntityReport & report) 
+    EntityFullData(const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps, const EntityInfo & entityInfo, const EntityMove & entityMove, const EntityReport & report) 
     { 
         this->baseInfo = baseInfo; 
         this->baseProps = baseProps; 
         this->entityInfo = entityInfo; 
-        this->entityPoint = entityPoint; 
+        this->entityMove = entityMove; 
         this->report = report; 
     } 
 }; 
@@ -1079,7 +1079,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.baseInfo;  
     ws << data.baseProps;  
     ws << data.entityInfo;  
-    ws << data.entityPoint;  
+    ws << data.entityMove;  
     ws << data.report;  
     return ws; 
 } 
@@ -1088,7 +1088,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.baseInfo;  
     rs >> data.baseProps;  
     rs >> data.entityInfo;  
-    rs >> data.entityPoint;  
+    rs >> data.entityMove;  
     rs >> data.report;  
     return rs; 
 } 
@@ -1098,7 +1098,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "baseInfo=" << info.baseInfo << ","; 
     stm << "baseProps=" << info.baseProps << ","; 
     stm << "entityInfo=" << info.entityInfo << ","; 
-    stm << "entityPoint=" << info.entityPoint << ","; 
+    stm << "entityMove=" << info.entityMove << ","; 
     stm << "report=" << info.report << ","; 
     stm << "]"; 
     return stm; 

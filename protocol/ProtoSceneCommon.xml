@@ -328,7 +328,7 @@
         <member name="baseInfo" type="AvatarBaseInfo"  desc=""/>
         <member name="baseProps" type="AvatarPropMap"  desc=""/>
         <member name="entityInfo" type="EntityInfo"  desc=""/>
-        <member name="entityPoint" type="EntityMove"  desc=""/>
+        <member name="entityMove" type="EntityMove"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>
     <array name="EntityFullDataArray" type="EntityFullData" desc="" />
