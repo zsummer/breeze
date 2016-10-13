@@ -27,6 +27,24 @@
 #include <ProtoSceneClient.h>
 #include <rvo2/RVO.h>
 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v)
+{
+    stm << "[" << v.x() << "," << v.y() << "]";
+    return stm;
+}
+inline RVO::Vector2 toRVOVector2(const EPoint & pos)
+{
+    return RVO::Vector2(pos.x, pos.y);
+}
+inline EPoint toEPoint(const RVO::Vector2 & pos)
+{
+    return EPoint(pos.x(), pos.y());
+}
+inline double getDistance(const EPoint& pos1, const EPoint & pos2)
+{
+    return getDistance(pos1.x, pos1.y, pos2.x, pos2.y);
+}
+
 class Entity
 {
 public:

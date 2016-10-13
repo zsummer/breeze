@@ -69,9 +69,9 @@ bool Scene::initScene(SceneType sceneType, MapID mapID)
     _startTime = getFloatSteadyNowTime();
     _endTime = getFloatSteadyNowTime() + 600;
     _sim = new RVO::RVOSimulator();
-    _sim->setTimeStep(0.33);
-    _sim->setAgentDefaults(15.0, 10, 10.0, 5.0, 2.0, 2.0);
-    if (true)
+    _sim->setTimeStep(SceneFrameInterval);
+    _sim->setAgentDefaults(5.0, 2, 3.0, 1.0, 2.0, 7.0);
+    if (false)
     {
         std::vector<RVO::Vector2> vertices;
         vertices.push_back(RVO::Vector2(-7.0, -20.0));
@@ -148,7 +148,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
 
     entity->_report.eid = entity->_info.eid;
 
-    entity->_control.agentNo = _sim->addAgent(RVO::Vector2(entity->_move.pos.x, entity->_move.pos.y));
+    entity->_control.agentNo = _sim->addAgent(toRVOVector2(entity->_move.pos));
 
     _entitys.insert(std::make_pair(entity->_info.eid, entity));
 
@@ -191,12 +191,15 @@ bool Scene::removeEntity(EntityID eid)
 
 bool Scene::playerAttach(ServiceID avatarID, SessionID sID)
 {
+
     EntityPtr entity = getEntityByAvatarID(avatarID);
     if (!entity)
     {
         return false;
     }
     entity->_clientSessionID = sID;
+
+    LOGI("Scene::playerAttach avatarName=" << entity->_baseInfo.avatarName << " sessionID=" << sID << ", entityID=" << entity->_info.eid);
     EntityFullDataArray entitys;
     SceneSectionNotice section;
     getSceneSection(section.section);
@@ -228,6 +231,7 @@ bool Scene::playerDettach(ServiceID avatarID, SessionID sID)
     auto entity = getEntityByAvatarID(avatarID);
     if (entity && entity->_clientSessionID == sID)
     {
+        LOGI("Scene::playerDettach avatarName=" << entity->_baseInfo.avatarName << " sessionID=" << sID << ", entityID=" << entity->_info.eid);
         entity->_clientSessionID = InvalidSessionID;
     }
     return true;
@@ -261,6 +265,7 @@ bool Scene::onUpdate()
         {
             notice.entityMoves.push_back(kv.second->_move);
             kv.second->_isMoveDirty = false;
+            LOGD("Scene::onUpdate avatarName=" << kv.second->_baseInfo.avatarName <<  ", EntityMove=" << kv.second->_move);
         }
     }
     if (!notice.entityInfos.empty() || !notice.entityMoves.empty())
@@ -287,44 +292,38 @@ void Scene::doStepRVO()
             }
             do
             {
-                EPoint dst;
-                if (entity._move.action == MOVE_ACTION_FOLLOW)
+                while (!entity._move.waypoints.empty() 
+                    && getDistance(entity._move.pos, entity._move.waypoints.front()) < 1.0 )
                 {
-                    auto follow = getEntity(entity._move.follow);
-                    if (!follow)
-                    {
-                        entity._move.action = MOVE_ACTION_IDLE;
-                        entity._move.waypoints.clear();
-                        break;
-                    }
-                    dst = follow->_move.pos;
+                    entity._move.waypoints.erase(entity._move.waypoints.begin());
                 }
-                else if (entity._move.waypoints.empty())
+                if (entity._move.waypoints.empty())
                 {
                     entity._move.action = MOVE_ACTION_IDLE;
                     break;
                 }
-                else
-                {
-                    dst = entity._move.waypoints.front();
-                }
-
-                if (entity._move.action == MOVE_ACTION_FORCE_PATH)
-                {
-                   // _sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0.0, 0.0));
-                }
-                else
-                {
-                    
-                }
                 _sim->setAgentMaxSpeed(entity._control.agentNo, entity._move.speed);
-                _sim->setAgentPrefVelocity(entity._control.agentNo, RVO::normalize(RVO::Vector2(dst.x, dst.y) - RVO::Vector2(entity._move.pos.x, entity._move.pos.y)));
+                double dist = getDistance(entity._move.pos, entity._move.waypoints.front());
+                double needTime = dist / entity._move.speed;
+                RVO::Vector2 dir = RVO::normalize(toRVOVector2(entity._move.waypoints.front()) - toRVOVector2(entity._move.pos));
+                if (needTime > SceneFrameInterval)
+                {
+                    dir *= entity._move.speed;
+                }
+                else
+                {
+                    dir *= needTime / SceneFrameInterval;
+                }
+                _sim->setAgentPrefVelocity(entity._control.agentNo, dir);
+                LOGD("RVO PRE MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.pos << ", dst=" << entity._move.waypoints.front() << ", dir=" << dir);
             } while (false);
 
             if (entity._move.action == MOVE_ACTION_IDLE)
             {
+                entity._move.waypoints.clear();
+                _sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0, 0));
                 broadcast(MoveNotice(entity._move));
-                _sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0.0, 0.0));
+                LOGD("RVO FIN MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.pos);
             }
             entity._isMoveDirty = true;
         }
@@ -337,64 +336,14 @@ void Scene::doStepRVO()
             {
                 continue;
             }
-            if (entity._move.action == MOVE_ACTION_IDLE)
+            if (!entity._isMoveDirty)
             {
                 continue;
             }
             auto cur = _sim->getAgentPosition(entity._control.agentNo);
             entity._move.pos.x = cur.x();
             entity._move.pos.y = cur.y();
-            do
-            {
-                EPoint dst;
-                if (entity._move.action == MOVE_ACTION_FOLLOW)
-                {
-                    auto follow = getEntity(entity._move.follow);
-                    if (!follow)
-                    {
-                        entity._move.action = MOVE_ACTION_IDLE;
-                        entity._move.waypoints.clear();
-                        break;
-                    }
-                    dst = follow->_move.pos;
-                }
-                else if (entity._move.waypoints.empty())
-                {
-                    entity._move.action = MOVE_ACTION_IDLE;
-                    break;
-                }
-                else
-                {
-                    dst = entity._move.waypoints.front();
-                }
-
-
-                if (getDistance(entity._move.pos.x, entity._move.pos.y, dst.x, dst.y) < 1.0)
-                {
-                    if (entity._move.action == MOVE_ACTION_FOLLOW)
-                    {
-                        break;
-                    }
-                    else if (entity._move.waypoints.size() > 1)
-                    {
-                        entity._move.waypoints.erase(entity._move.waypoints.begin());
-                        break;
-                    }
-                    else
-                    {
-                        entity._move.action = MOVE_ACTION_IDLE;
-                        entity._move.waypoints.clear();
-                        break;
-                    }
-                }
-            } while (false);
-
-            if (entity._move.action == MOVE_ACTION_IDLE)
-            {
-                broadcast(MoveNotice(entity._move));
-                _sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0.0, 0.0));
-            }
-            entity._isMoveDirty = true;
+            LOGD("RVO AFT MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.pos);
         }
         
     }
@@ -415,7 +364,8 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
     {
         MoveReq req;
         rs >> req;
-        if (!doMove(req.eid, (MoveAction)req.action, 0.0, -1, InvalidEntityID, req.dstPos, avatarID))
+        LOGD("MoveReq avatarID[" << avatarID << "] req=" << req);
+        if (!doMove(req.eid, (MoveAction)req.action, 0.0, -1, InvalidEntityID, req.clientPos, req.dstPos, avatarID))
         {
             sendToClient(avatarID, MoveResp(EC_ERROR, req.eid, req.action));
         }
@@ -431,7 +381,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
     }
 }
 
-bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 follow, EPoint dst, AvatarID avatarID, bool clean)
+bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 follow, EPoint clt, EPoint dst, AvatarID avatarID, bool clean)
 {
     auto entity = getEntity(eid);
     if(!entity)
@@ -448,8 +398,11 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 
     {
         return false;
     }
-
-    moveInfo.action = action;
+    
+    if (action != MOVE_ACTION_IDLE)
+    {
+        moveInfo.action = action; //客户端取消移动在这里只做清除路点操作. 停止始终由移动逻辑处理. 
+    }
     moveInfo.speed = avatarID == InvalidAvatarID ? speed : entity->getSpeed();
     moveInfo.frames = frames;
     moveInfo.follow = follow;
@@ -462,11 +415,6 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 
     {
         moveInfo.waypoints.insert(moveInfo.waypoints.begin(), dst);
     }
-    if (moveInfo.action == MOVE_ACTION_IDLE && entity->_control.agentNo < _sim->getNumAgents())
-    {
-        _sim->setAgentVelocity(entity->_control.agentNo, RVO::Vector2(0.0, 0.0));
-    }
-
     entity->_isMoveDirty = true;
     broadcast(MoveNotice(moveInfo));
     return true;

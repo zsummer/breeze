@@ -74,7 +74,7 @@ void SceneMgr::onTimer()
     {
         return ;
     }
-    SessionManager::getRef().createTimer(33, std::bind(&SceneMgr::onTimer, this));
+    SessionManager::getRef().createTimer((ui32)(SceneFrameInterval * 1000), std::bind(&SceneMgr::onTimer, this));
 
     std::list<ScenePtr> frees;
     for (auto kv : _actives)

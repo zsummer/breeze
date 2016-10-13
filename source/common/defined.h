@@ -163,7 +163,8 @@ const double ServerPulseInterval = 10.0;
 const double ClientPulseInterval = 30.0;
 //web服务器响应超时时间 
 const double WebPulseTimeout = 10.0;
-
+//SCENE服务帧DELAY
+const double SceneFrameInterval = 0.1;
 
 //服务类型和依赖关系
 
