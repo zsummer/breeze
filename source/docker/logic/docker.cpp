@@ -1061,7 +1061,7 @@ void Docker::event_onClientLinked(TcpSessionPtr session)
 void Docker::event_onClientPulse(TcpSessionPtr session)
 {
     auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
-    if (getFloatSteadyNowTime() - last > ServerPulseInterval *3.0)
+    if (getFloatSteadyNowTime() - last > ClientPulseInterval *3.0)
     {
         LOGW("client timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
         session->close();
@@ -1077,8 +1077,8 @@ void Docker::event_onClientPulse(TcpSessionPtr session)
         {
             LOGE("SSTATUS_ATTACHED session not found service ID. service id=" << serviceID << ", session id=" << session->getSessionID());
         }
-
     }
+    sendViaSessionID(session->getSessionID(), ClientPulse());
 }
 void Docker::event_onClientClosed(TcpSessionPtr session)
 {

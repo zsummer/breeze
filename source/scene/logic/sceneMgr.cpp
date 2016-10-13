@@ -187,7 +187,7 @@ bool SceneMgr::startClientListen()
     options._maxSessions = 1000;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
-        ClientPulse pulse;
+        SceneClientPulse pulse;
         WriteStream ws(pulse.getProtoID());
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());

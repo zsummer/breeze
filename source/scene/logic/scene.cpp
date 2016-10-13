@@ -275,7 +275,7 @@ bool Scene::onUpdate()
     return true;
 }
 
-void Scene::doStepRVO()
+void Scene::preStepRVO()
 {
     if (_sim)
     {
@@ -327,8 +327,14 @@ void Scene::doStepRVO()
             }
             entity._isMoveDirty = true;
         }
+    }
+}
+void Scene::doStepRVO()
+{
+    preStepRVO();
+    if (_sim)
+    {
         _sim->doStep();
-
         for (auto &kv : _entitys)
         {
             auto &entity = *kv.second;
@@ -345,8 +351,8 @@ void Scene::doStepRVO()
             entity._move.pos.y = cur.y();
             LOGD("RVO AFT MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.pos);
         }
-        
     }
+    preStepRVO();
 }
 
 void Scene::pushAsync(std::function<void()> && func)
@@ -399,10 +405,7 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 
         return false;
     }
     
-    if (action != MOVE_ACTION_IDLE)
-    {
-        moveInfo.action = action; //客户端取消移动在这里只做清除路点操作. 停止始终由移动逻辑处理. 
-    }
+    moveInfo.action = action;
     moveInfo.speed = avatarID == InvalidAvatarID ? speed : entity->getSpeed();
     moveInfo.frames = frames;
     moveInfo.follow = follow;
@@ -410,6 +413,10 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 
     if (clean || action == MOVE_ACTION_IDLE)
     {
         moveInfo.waypoints.clear();
+    }
+    if (action == MOVE_ACTION_IDLE && entity->_control.agentNo < _sim->getNumAgents())
+    {
+        _sim->setAgentPrefVelocity(entity->_control.agentNo, RVO::Vector2(0, 0));
     }
     if (action != MOVE_ACTION_IDLE)
     {
