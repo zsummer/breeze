@@ -193,30 +193,28 @@ namespace Proto4z
         static public string getProtoName() { return "SceneServerCancelSceneIns"; } 
         //members   
         public ulong sceneID; //sceneID  
-        public SceneGroupInfoArray groups; //多个编队  
+        public ulong groupID; //groupID  
         public SceneServerCancelSceneIns()  
         { 
             sceneID = 0;  
-            groups = new SceneGroupInfoArray();  
+            groupID = 0;  
         } 
-        public SceneServerCancelSceneIns(ulong sceneID, SceneGroupInfoArray groups) 
+        public SceneServerCancelSceneIns(ulong sceneID, ulong groupID) 
         { 
             this.sceneID = sceneID; 
-            this.groups = groups; 
+            this.groupID = groupID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
-            if (this.groups == null) this.groups = new SceneGroupInfoArray(); 
-            data.AddRange(this.groups.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.groups = new SceneGroupInfoArray(); 
-            this.groups.__decode(binData, ref pos); 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -228,33 +226,33 @@ namespace Proto4z
         static public ushort getProtoID() { return 39006; } 
         static public string getProtoName() { return "SceneServerGroupStateChangeIns"; } 
         //members   
-        public ulong groupID;  
         public ulong sceneID;  
+        public ulong groupID;  
         public ushort state; //如果是NONE 说明离开场景  
         public SceneServerGroupStateChangeIns()  
         { 
-            groupID = 0;  
             sceneID = 0;  
+            groupID = 0;  
             state = 0;  
         } 
-        public SceneServerGroupStateChangeIns(ulong groupID, ulong sceneID, ushort state) 
+        public SceneServerGroupStateChangeIns(ulong sceneID, ulong groupID, ushort state) 
         { 
-            this.groupID = groupID; 
             this.sceneID = sceneID; 
+            this.groupID = groupID; 
             this.state = state; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 
         } 

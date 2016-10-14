@@ -845,25 +845,32 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
         backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
         return;
     }
-    if (groupPtr->sceneState != SCENE_STATE_MATCHING && groupPtr->sceneState != SCENE_STATE_NONE)
-    {
-        LOGE("World::onSceneGroupCancelReq the scene sceneState error. avatar=" << trace.oob.clientAvatarID);
-        backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
-        return;
-    }
     if (groupPtr->sceneType == SCENE_NONE || groupPtr->sceneType >= SCENE_MAX)
     {
         LOGE("World::onSceneGroupCancelReq the scene sceneState error. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
         return;
     }
-    if (groupPtr->sceneState == SCENE_STATE_MATCHING )
+
+    if (groupPtr->sceneState != SCENE_STATE_MATCHING && groupPtr->sceneType != SCENE_HOME)
+    {
+        LOGE("World::onSceneGroupCancelReq the scene sceneState error. avatar=" << trace.oob.clientAvatarID);
+        backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
+        return;
+    }
+
+    if (groupPtr->sceneState == SCENE_STATE_MATCHING)
     {
         auto founder = std::find_if(_matchPools[groupPtr->sceneType].begin(), _matchPools[groupPtr->sceneType].end(),
                                     [groupPtr](SceneGroupInfoPtr gp) {return groupPtr->groupID == gp->groupID; });
         if (founder != _matchPools[groupPtr->sceneType].end())
         {
             _matchPools[groupPtr->sceneType].erase(founder);
+            groupPtr->sceneType = SCENE_NONE;
+            groupPtr->sceneState = SCENE_STATE_NONE;
+            groupPtr->mapID = InvalidMapID;
+            backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_SUCCESS));
+            pushGroupInfoToClient(groupPtr);
         }
         else
         {
@@ -871,15 +878,16 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
             return;
         }
     }
-    else
+    else if (groupPtr->sceneState == SCENE_STATE_ACTIVE && groupPtr->sceneType == SCENE_HOME)
     {
-
+        auto line = getLineInfo(groupPtr->lineID);
+        if (line)
+        {
+            sendViaSessionID(line->sessionID, SceneServerCancelSceneIns(groupPtr->sceneID, groupPtr->groupID));  // to scene server
+        }
     }
-    groupPtr->sceneType = SCENE_NONE;
-    groupPtr->sceneState = SCENE_STATE_NONE;
-    groupPtr->mapID = InvalidMapID;
-    backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_SUCCESS));
-    pushGroupInfoToClient(groupPtr);
+
+
 
 
 

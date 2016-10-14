@@ -72,6 +72,7 @@ private:
     void event_onWorldClosed(TcpSessionPtr session);
     void event_onWorldMessage(TcpSessionPtr session, const char * begin, unsigned int len);
     void onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins);
+    void onSceneServerCancelSceneIns(TcpSessionPtr session, SceneServerCancelSceneIns & ins);
     void onForwardToService(TcpSessionPtr session, Tracing & trace, ReadStream & rs);
 private:
     //客户端通讯处理 

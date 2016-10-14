@@ -66,6 +66,8 @@ public:
                         EntityState state = ENTITY_STATE_ACTIVE,
                         GroupID = InvalidGroupID);
     bool removeEntity(EntityID eid);
+    bool removePlayer(AvatarID avatarID);
+    bool removePlayerByGroupID(GroupID groupID);
 public:
     Scene(SceneID id);
     ~Scene();

@@ -41,12 +41,12 @@ Proto4z.SceneServerCancelSceneIns = {} --退出场景
 Proto4z.SceneServerCancelSceneIns.__protoID = 39007 
 Proto4z.SceneServerCancelSceneIns.__protoName = "SceneServerCancelSceneIns" 
 Proto4z.SceneServerCancelSceneIns[1] = {name="sceneID", type="ui64" } --sceneID 
-Proto4z.SceneServerCancelSceneIns[2] = {name="groups", type="SceneGroupInfoArray" } --多个编队 
+Proto4z.SceneServerCancelSceneIns[2] = {name="groupID", type="ui64" } --groupID 
  
 Proto4z.register(39006,"SceneServerGroupStateChangeIns") 
 Proto4z.SceneServerGroupStateChangeIns = {} --scene ==> world 
 Proto4z.SceneServerGroupStateChangeIns.__protoID = 39006 
 Proto4z.SceneServerGroupStateChangeIns.__protoName = "SceneServerGroupStateChangeIns" 
-Proto4z.SceneServerGroupStateChangeIns[1] = {name="groupID", type="ui64" }  
-Proto4z.SceneServerGroupStateChangeIns[2] = {name="sceneID", type="ui64" }  
+Proto4z.SceneServerGroupStateChangeIns[1] = {name="sceneID", type="ui64" }  
+Proto4z.SceneServerGroupStateChangeIns[2] = {name="groupID", type="ui64" }  
 Proto4z.SceneServerGroupStateChangeIns[3] = {name="state", type="ui16" } --如果是NONE 说明离开场景 

@@ -317,6 +317,13 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         onSceneServerEnterSceneIns(session, ins);
         return;
     }
+    else if (rsShell.getProtoID() == SceneServerCancelSceneIns::getProtoID())
+    {
+        SceneServerCancelSceneIns ins;
+        rsShell >> ins;
+        onSceneServerCancelSceneIns(session, ins);
+        return;
+    }
     else if (rsShell.getProtoID() == ForwardToService::getProtoID())
     {
         Tracing trace;
@@ -475,7 +482,16 @@ void SceneMgr::onForwardToService(TcpSessionPtr session, Tracing & trace, ReadSt
 {
 
 }
-
+void SceneMgr::onSceneServerCancelSceneIns(TcpSessionPtr session, SceneServerCancelSceneIns & ins)
+{
+    auto scene = getActiveScene(ins.sceneID);
+    if (!scene)
+    {
+        //
+        return;
+    }
+    scene->removePlayerByGroupID(ins.groupID);
+}
 void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins)
 {
     ScenePtr scene;

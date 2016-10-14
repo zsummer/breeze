@@ -163,6 +163,32 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
 
     return entity;
 }
+bool Scene::removePlayer(AvatarID avatarID)
+{
+    auto entity = getEntityByAvatarID(avatarID);
+    if (entity)
+    {
+        return removeEntity(entity->_info.eid);
+    }
+    return false;
+}
+bool Scene::removePlayerByGroupID(GroupID groupID)
+{
+    std::set<EntityID> removes;
+    for (auto entity : _entitys)
+    {
+        if (entity.second->_info.etype == ENTITY_AVATAR && entity.second->_info.groupID == groupID)
+        {
+            removes.insert(entity.second->_info.eid);
+        }
+    }
+    for (auto eid : removes)
+    {
+        removeEntity(eid);
+    }
+    return true;
+}
+
 
 bool Scene::removeEntity(EntityID eid)
 {
@@ -180,6 +206,7 @@ bool Scene::removeEntity(EntityID eid)
     if (entity->_info.etype == ENTITY_AVATAR)
     {
         _players.erase(entity->_baseInfo.avatarID);
+        SceneMgr::getRef().sendToWorld(SceneServerGroupStateChangeIns(getSceneID(), entity->_info.groupID, SCENE_NONE));
     }
     _entitys.erase(eid);
 

@@ -200,34 +200,35 @@ struct SceneServerCancelSceneIns //退出场景
     static const unsigned short getProtoID() { return 39007;} 
     static const std::string getProtoName() { return "SceneServerCancelSceneIns";} 
     unsigned long long sceneID; //sceneID  
-    SceneGroupInfoArray groups; //多个编队  
+    unsigned long long groupID; //groupID  
     SceneServerCancelSceneIns() 
     { 
         sceneID = 0; 
+        groupID = 0; 
     } 
-    SceneServerCancelSceneIns(const unsigned long long & sceneID, const SceneGroupInfoArray & groups) 
+    SceneServerCancelSceneIns(const unsigned long long & sceneID, const unsigned long long & groupID) 
     { 
         this->sceneID = sceneID; 
-        this->groups = groups; 
+        this->groupID = groupID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerCancelSceneIns & data) 
 { 
     ws << data.sceneID;  
-    ws << data.groups;  
+    ws << data.groupID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerCancelSceneIns & data) 
 { 
     rs >> data.sceneID;  
-    rs >> data.groups;  
+    rs >> data.groupID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerCancelSceneIns & info) 
 { 
     stm << "["; 
     stm << "sceneID=" << info.sceneID << ","; 
-    stm << "groups=" << info.groups << ","; 
+    stm << "groupID=" << info.groupID << ","; 
     stm << "]"; 
     return stm; 
 } 
@@ -236,41 +237,41 @@ struct SceneServerGroupStateChangeIns //scene ==> world
 { 
     static const unsigned short getProtoID() { return 39006;} 
     static const std::string getProtoName() { return "SceneServerGroupStateChangeIns";} 
-    unsigned long long groupID;  
     unsigned long long sceneID;  
+    unsigned long long groupID;  
     unsigned short state; //如果是NONE 说明离开场景  
     SceneServerGroupStateChangeIns() 
     { 
-        groupID = 0; 
         sceneID = 0; 
+        groupID = 0; 
         state = 0; 
     } 
-    SceneServerGroupStateChangeIns(const unsigned long long & groupID, const unsigned long long & sceneID, const unsigned short & state) 
+    SceneServerGroupStateChangeIns(const unsigned long long & sceneID, const unsigned long long & groupID, const unsigned short & state) 
     { 
-        this->groupID = groupID; 
         this->sceneID = sceneID; 
+        this->groupID = groupID; 
         this->state = state; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerGroupStateChangeIns & data) 
 { 
-    ws << data.groupID;  
     ws << data.sceneID;  
+    ws << data.groupID;  
     ws << data.state;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerGroupStateChangeIns & data) 
 { 
-    rs >> data.groupID;  
     rs >> data.sceneID;  
+    rs >> data.groupID;  
     rs >> data.state;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerGroupStateChangeIns & info) 
 { 
     stm << "["; 
-    stm << "groupID=" << info.groupID << ","; 
     stm << "sceneID=" << info.sceneID << ","; 
+    stm << "groupID=" << info.groupID << ","; 
     stm << "state=" << info.state << ","; 
     stm << "]"; 
     return stm; 
