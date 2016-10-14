@@ -91,5 +91,37 @@
         <member name="eid"  type="ui64" desc=""/>
     </proto>
 
+    <proto name="ClientCustomReq" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="customID" type="ui64" desc=""/>
+        <member name="fValue" type="double" desc=""/>
+        <member name="uValue" type="ui64" desc="" />
+        <member name="sValue" type="string" desc="" />
+    </proto>
+    <proto name="ClientCustomResp" desc= "只有失败时才会使用该协议">
+        <member name="retCode"  type="ui16" desc=""/>
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="customID" type="ui64" desc=""/>
+    </proto>
+    <proto name="ClientCustomNotice" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="customID" type="ui64" desc=""/>
+        <member name="fValue" type="double" desc=""/>
+        <member name="uValue" type="ui64" desc="" />
+        <member name="sValue" type="string" desc="" />
+    </proto>
+
+    <proto name="ClientPingTestReq" desc= "">
+        <member name="seqID" type="ui64" desc=""/>
+        <member name="clientTime" type="double" desc=""/>
+    </proto>
+    <proto name="ClientPingTestResp" desc= "">
+        <member name="retCode"  type="ui16" desc=""/>
+        <member name="seqID" type="ui64" desc=""/>
+        <member name="clientTime" type="double" desc=""/>
+    </proto>
+
+
+
 </Proto>
 

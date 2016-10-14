@@ -195,6 +195,43 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct SceneServerCancelSceneIns //退出场景  
+{ 
+    static const unsigned short getProtoID() { return 39007;} 
+    static const std::string getProtoName() { return "SceneServerCancelSceneIns";} 
+    unsigned long long sceneID; //sceneID  
+    SceneGroupInfoArray groups; //多个编队  
+    SceneServerCancelSceneIns() 
+    { 
+        sceneID = 0; 
+    } 
+    SceneServerCancelSceneIns(const unsigned long long & sceneID, const SceneGroupInfoArray & groups) 
+    { 
+        this->sceneID = sceneID; 
+        this->groups = groups; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerCancelSceneIns & data) 
+{ 
+    ws << data.sceneID;  
+    ws << data.groups;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerCancelSceneIns & data) 
+{ 
+    rs >> data.sceneID;  
+    rs >> data.groups;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerCancelSceneIns & info) 
+{ 
+    stm << "["; 
+    stm << "sceneID=" << info.sceneID << ","; 
+    stm << "groups=" << info.groups << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
 struct SceneServerGroupStateChangeIns //scene ==> world  
 { 
     static const unsigned short getProtoID() { return 39006;} 

@@ -41,7 +41,11 @@
         <member name="mapID" type="ui64"  desc=""/>
         <member name="groups" type="SceneGroupInfoArray"  desc="多个编队"/>
     </proto>
-
+    
+    <proto name="SceneServerCancelSceneIns" desc= "退出场景">
+        <member name="sceneID" type="ui64"  desc="sceneID"/>
+        <member name="groups" type="SceneGroupInfoArray"  desc="多个编队"/>
+    </proto>
 
     <proto name="SceneServerGroupStateChangeIns" desc= "scene ==> world">
         <member name="groupID" type="ui64"   desc=""/>

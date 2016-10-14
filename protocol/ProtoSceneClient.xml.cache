@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>0af739de7bfd5527b0a95e38d0e520e3</cppmd5> 
-<luamd5>d6770c64ee51847410dae5552e64e26a</luamd5> 
-<csharpmd5>401be36b85dcfc21062547292c831193</csharpmd5> 
-<xmlmd5>ff77f9a5be2f5e63cf2b2ce7b5750d88</xmlmd5> 
+<cppmd5>e818d986a599199c1c824105fc5cd144</cppmd5> 
+<luamd5>1831b7299c71dc451d4a0260fe73bff1</luamd5> 
+<csharpmd5>90916f75d446fbdbb56783dd0579d663</csharpmd5> 
+<xmlmd5>fdd2f84edf883debdf239778b887ccca</xmlmd5> 
 <cacheNumber>
     <cache key = "AddBuffNotice" Number = "50011" /> 
     <cache key = "AddEntityNotice" Number = "50006" /> 
     <cache key = "AttachSceneReq" Number = "50001" /> 
     <cache key = "AttachSceneResp" Number = "50002" /> 
+    <cache key = "ClientCustomNotice" Number = "50021" /> 
+    <cache key = "ClientCustomReq" Number = "50019" /> 
+    <cache key = "ClientCustomResp" Number = "50020" /> 
+    <cache key = "ClientPingTestReq" Number = "50022" /> 
+    <cache key = "ClientPingTestResp" Number = "50023" /> 
     <cache key = "MoveNotice" Number = "50010" /> 
     <cache key = "MoveReq" Number = "50008" /> 
     <cache key = "MoveResp" Number = "50009" /> 

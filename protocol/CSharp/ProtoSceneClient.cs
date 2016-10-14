@@ -536,6 +536,216 @@ namespace Proto4z
         } 
     } 
  
+    public class ClientCustomReq: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 50019;  
+        static public ushort getProtoID() { return 50019; } 
+        static public string getProtoName() { return "ClientCustomReq"; } 
+        //members   
+        public ulong eid;  
+        public ulong customID;  
+        public double fValue;  
+        public ulong uValue;  
+        public string sValue;  
+        public ClientCustomReq()  
+        { 
+            eid = 0;  
+            customID = 0;  
+            fValue = 0.0;  
+            uValue = 0;  
+            sValue = "";  
+        } 
+        public ClientCustomReq(ulong eid, ulong customID, double fValue, ulong uValue, string sValue) 
+        { 
+            this.eid = eid; 
+            this.customID = customID; 
+            this.fValue = fValue; 
+            this.uValue = uValue; 
+            this.sValue = sValue; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.customID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.fValue)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uValue)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.sValue)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.customID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.fValue = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.uValue = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sValue = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class ClientCustomResp: Proto4z.IProtoObject //只有失败时才会使用该协议  
+    {     
+        //proto id   
+        public const ushort protoID = 50020;  
+        static public ushort getProtoID() { return 50020; } 
+        static public string getProtoName() { return "ClientCustomResp"; } 
+        //members   
+        public ushort retCode;  
+        public ulong eid;  
+        public ulong customID;  
+        public ClientCustomResp()  
+        { 
+            retCode = 0;  
+            eid = 0;  
+            customID = 0;  
+        } 
+        public ClientCustomResp(ushort retCode, ulong eid, ulong customID) 
+        { 
+            this.retCode = retCode; 
+            this.eid = eid; 
+            this.customID = customID; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.customID)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.customID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class ClientCustomNotice: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 50021;  
+        static public ushort getProtoID() { return 50021; } 
+        static public string getProtoName() { return "ClientCustomNotice"; } 
+        //members   
+        public ulong eid;  
+        public ulong customID;  
+        public double fValue;  
+        public ulong uValue;  
+        public string sValue;  
+        public ClientCustomNotice()  
+        { 
+            eid = 0;  
+            customID = 0;  
+            fValue = 0.0;  
+            uValue = 0;  
+            sValue = "";  
+        } 
+        public ClientCustomNotice(ulong eid, ulong customID, double fValue, ulong uValue, string sValue) 
+        { 
+            this.eid = eid; 
+            this.customID = customID; 
+            this.fValue = fValue; 
+            this.uValue = uValue; 
+            this.sValue = sValue; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.customID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.fValue)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.uValue)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.sValue)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.customID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.fValue = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.uValue = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sValue = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class ClientPingTestReq: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 50022;  
+        static public ushort getProtoID() { return 50022; } 
+        static public string getProtoName() { return "ClientPingTestReq"; } 
+        //members   
+        public ulong seqID;  
+        public double clientTime;  
+        public ClientPingTestReq()  
+        { 
+            seqID = 0;  
+            clientTime = 0.0;  
+        } 
+        public ClientPingTestReq(ulong seqID, double clientTime) 
+        { 
+            this.seqID = seqID; 
+            this.clientTime = clientTime; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.seqID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.clientTime)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.seqID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.clientTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class ClientPingTestResp: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 50023;  
+        static public ushort getProtoID() { return 50023; } 
+        static public string getProtoName() { return "ClientPingTestResp"; } 
+        //members   
+        public ushort retCode;  
+        public ulong seqID;  
+        public double clientTime;  
+        public ClientPingTestResp()  
+        { 
+            retCode = 0;  
+            seqID = 0;  
+            clientTime = 0.0;  
+        } 
+        public ClientPingTestResp(ushort retCode, ulong seqID, double clientTime) 
+        { 
+            this.retCode = retCode; 
+            this.seqID = seqID; 
+            this.clientTime = clientTime; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.seqID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.clientTime)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.seqID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.clientTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
 } 
  
  

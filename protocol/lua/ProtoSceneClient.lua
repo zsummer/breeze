@@ -105,3 +105,46 @@ Proto4z.UseSkillNotice = {}
 Proto4z.UseSkillNotice.__protoID = 50018 
 Proto4z.UseSkillNotice.__protoName = "UseSkillNotice" 
 Proto4z.UseSkillNotice[1] = {name="eid", type="ui64" }  
+ 
+Proto4z.register(50019,"ClientCustomReq") 
+Proto4z.ClientCustomReq = {}  
+Proto4z.ClientCustomReq.__protoID = 50019 
+Proto4z.ClientCustomReq.__protoName = "ClientCustomReq" 
+Proto4z.ClientCustomReq[1] = {name="eid", type="ui64" }  
+Proto4z.ClientCustomReq[2] = {name="customID", type="ui64" }  
+Proto4z.ClientCustomReq[3] = {name="fValue", type="double" }  
+Proto4z.ClientCustomReq[4] = {name="uValue", type="ui64" }  
+Proto4z.ClientCustomReq[5] = {name="sValue", type="string" }  
+ 
+Proto4z.register(50020,"ClientCustomResp") 
+Proto4z.ClientCustomResp = {} --只有失败时才会使用该协议 
+Proto4z.ClientCustomResp.__protoID = 50020 
+Proto4z.ClientCustomResp.__protoName = "ClientCustomResp" 
+Proto4z.ClientCustomResp[1] = {name="retCode", type="ui16" }  
+Proto4z.ClientCustomResp[2] = {name="eid", type="ui64" }  
+Proto4z.ClientCustomResp[3] = {name="customID", type="ui64" }  
+ 
+Proto4z.register(50021,"ClientCustomNotice") 
+Proto4z.ClientCustomNotice = {}  
+Proto4z.ClientCustomNotice.__protoID = 50021 
+Proto4z.ClientCustomNotice.__protoName = "ClientCustomNotice" 
+Proto4z.ClientCustomNotice[1] = {name="eid", type="ui64" }  
+Proto4z.ClientCustomNotice[2] = {name="customID", type="ui64" }  
+Proto4z.ClientCustomNotice[3] = {name="fValue", type="double" }  
+Proto4z.ClientCustomNotice[4] = {name="uValue", type="ui64" }  
+Proto4z.ClientCustomNotice[5] = {name="sValue", type="string" }  
+ 
+Proto4z.register(50022,"ClientPingTestReq") 
+Proto4z.ClientPingTestReq = {}  
+Proto4z.ClientPingTestReq.__protoID = 50022 
+Proto4z.ClientPingTestReq.__protoName = "ClientPingTestReq" 
+Proto4z.ClientPingTestReq[1] = {name="seqID", type="ui64" }  
+Proto4z.ClientPingTestReq[2] = {name="clientTime", type="double" }  
+ 
+Proto4z.register(50023,"ClientPingTestResp") 
+Proto4z.ClientPingTestResp = {}  
+Proto4z.ClientPingTestResp.__protoID = 50023 
+Proto4z.ClientPingTestResp.__protoName = "ClientPingTestResp" 
+Proto4z.ClientPingTestResp[1] = {name="retCode", type="ui16" }  
+Proto4z.ClientPingTestResp[2] = {name="seqID", type="ui64" }  
+Proto4z.ClientPingTestResp[3] = {name="clientTime", type="double" }  

@@ -166,6 +166,8 @@ namespace Proto4z
             _idToName.Add(39005, "SceneServerGroupStatusChangeIns");
             _nameToID.Add("SceneServerGroupStateChangeIns", 39006);
             _idToName.Add(39006, "SceneServerGroupStateChangeIns");
+            _nameToID.Add("SceneServerCancelSceneIns", 39007);
+            _idToName.Add(39007, "SceneServerCancelSceneIns");
             _nameToID.Add("ClientPulse", 40000);
             _idToName.Add(40000, "ClientPulse");
             _nameToID.Add("ClientAuthReq", 40001);
@@ -286,6 +288,16 @@ namespace Proto4z
             _idToName.Add(50017, "UseSkillResp");
             _nameToID.Add("UseSkillNotice", 50018);
             _idToName.Add(50018, "UseSkillNotice");
+            _nameToID.Add("ClientCustomReq", 50019);
+            _idToName.Add(50019, "ClientCustomReq");
+            _nameToID.Add("ClientCustomResp", 50020);
+            _idToName.Add(50020, "ClientCustomResp");
+            _nameToID.Add("ClientCustomNotice", 50021);
+            _idToName.Add(50021, "ClientCustomNotice");
+            _nameToID.Add("ClientPingTestReq", 50022);
+            _idToName.Add(50022, "ClientPingTestReq");
+            _nameToID.Add("ClientPingTestResp", 50023);
+            _idToName.Add(50023, "ClientPingTestResp");
             _errCodes.Add(0, "成功");
             _errCodes.Add(1, "错误");
             _errCodes.Add(2, "内部错误");

@@ -72,7 +72,7 @@ public:
     bool cleanScene();
     bool initScene(SceneType sceneType, MapID mapID);
     bool onUpdate();
-    void preStepRVO();
+    void preStepRVO(bool onlyCheck);
     void doStepRVO();
     bool playerAttach(ServiceID avatarID, SessionID sID);
     bool playerDettach(ServiceID avatarID, SessionID sID);

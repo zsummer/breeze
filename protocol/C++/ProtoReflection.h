@@ -318,6 +318,11 @@ public:
                    return "SceneServerGroupStateChangeIns";
             }
             break;
+            case 39007:
+            {
+                   return "SceneServerCancelSceneIns";
+            }
+            break;
             case 40000:
             {
                    return "ClientPulse";
@@ -616,6 +621,31 @@ public:
             case 50018:
             {
                    return "UseSkillNotice";
+            }
+            break;
+            case 50019:
+            {
+                   return "ClientCustomReq";
+            }
+            break;
+            case 50020:
+            {
+                   return "ClientCustomResp";
+            }
+            break;
+            case 50021:
+            {
+                   return "ClientCustomNotice";
+            }
+            break;
+            case 50022:
+            {
+                   return "ClientPingTestReq";
+            }
+            break;
+            case 50023:
+            {
+                   return "ClientPingTestResp";
             }
             break;
 

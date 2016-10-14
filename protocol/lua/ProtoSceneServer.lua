@@ -36,6 +36,13 @@ Proto4z.SceneServerEnterSceneIns[1] = {name="sceneType", type="ui16" } --类型
 Proto4z.SceneServerEnterSceneIns[2] = {name="mapID", type="ui64" }  
 Proto4z.SceneServerEnterSceneIns[3] = {name="groups", type="SceneGroupInfoArray" } --多个编队 
  
+Proto4z.register(39007,"SceneServerCancelSceneIns") 
+Proto4z.SceneServerCancelSceneIns = {} --退出场景 
+Proto4z.SceneServerCancelSceneIns.__protoID = 39007 
+Proto4z.SceneServerCancelSceneIns.__protoName = "SceneServerCancelSceneIns" 
+Proto4z.SceneServerCancelSceneIns[1] = {name="sceneID", type="ui64" } --sceneID 
+Proto4z.SceneServerCancelSceneIns[2] = {name="groups", type="SceneGroupInfoArray" } --多个编队 
+ 
 Proto4z.register(39006,"SceneServerGroupStateChangeIns") 
 Proto4z.SceneServerGroupStateChangeIns = {} --scene ==> world 
 Proto4z.SceneServerGroupStateChangeIns.__protoID = 39006 

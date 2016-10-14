@@ -857,17 +857,31 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
         backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
         return;
     }
-    auto founder = std::find_if(_matchPools[groupPtr->sceneType].begin(), _matchPools[groupPtr->sceneType].end(),
-        [groupPtr](SceneGroupInfoPtr gp) {return groupPtr->groupID == gp->groupID; });
-    if (founder != _matchPools[groupPtr->sceneType].end())
+    if (groupPtr->sceneState == SCENE_STATE_MATCHING )
     {
-        _matchPools[groupPtr->sceneType].erase(founder);
+        auto founder = std::find_if(_matchPools[groupPtr->sceneType].begin(), _matchPools[groupPtr->sceneType].end(),
+                                    [groupPtr](SceneGroupInfoPtr gp) {return groupPtr->groupID == gp->groupID; });
+        if (founder != _matchPools[groupPtr->sceneType].end())
+        {
+            _matchPools[groupPtr->sceneType].erase(founder);
+        }
+        else
+        {
+            backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
+            return;
+        }
+    }
+    else
+    {
+
     }
     groupPtr->sceneType = SCENE_NONE;
     groupPtr->sceneState = SCENE_STATE_NONE;
     groupPtr->mapID = InvalidMapID;
     backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_SUCCESS));
     pushGroupInfoToClient(groupPtr);
+
+
 
 }
 

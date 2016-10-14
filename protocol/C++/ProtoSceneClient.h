@@ -565,4 +565,240 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct ClientCustomReq 
+{ 
+    static const unsigned short getProtoID() { return 50019;} 
+    static const std::string getProtoName() { return "ClientCustomReq";} 
+    unsigned long long eid;  
+    unsigned long long customID;  
+    double fValue;  
+    unsigned long long uValue;  
+    std::string sValue;  
+    ClientCustomReq() 
+    { 
+        eid = 0; 
+        customID = 0; 
+        fValue = 0.0; 
+        uValue = 0; 
+    } 
+    ClientCustomReq(const unsigned long long & eid, const unsigned long long & customID, const double & fValue, const unsigned long long & uValue, const std::string & sValue) 
+    { 
+        this->eid = eid; 
+        this->customID = customID; 
+        this->fValue = fValue; 
+        this->uValue = uValue; 
+        this->sValue = sValue; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClientCustomReq & data) 
+{ 
+    ws << data.eid;  
+    ws << data.customID;  
+    ws << data.fValue;  
+    ws << data.uValue;  
+    ws << data.sValue;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClientCustomReq & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.customID;  
+    rs >> data.fValue;  
+    rs >> data.uValue;  
+    rs >> data.sValue;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClientCustomReq & info) 
+{ 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "customID=" << info.customID << ","; 
+    stm << "fValue=" << info.fValue << ","; 
+    stm << "uValue=" << info.uValue << ","; 
+    stm << "sValue=" << info.sValue << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct ClientCustomResp //只有失败时才会使用该协议  
+{ 
+    static const unsigned short getProtoID() { return 50020;} 
+    static const std::string getProtoName() { return "ClientCustomResp";} 
+    unsigned short retCode;  
+    unsigned long long eid;  
+    unsigned long long customID;  
+    ClientCustomResp() 
+    { 
+        retCode = 0; 
+        eid = 0; 
+        customID = 0; 
+    } 
+    ClientCustomResp(const unsigned short & retCode, const unsigned long long & eid, const unsigned long long & customID) 
+    { 
+        this->retCode = retCode; 
+        this->eid = eid; 
+        this->customID = customID; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClientCustomResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.eid;  
+    ws << data.customID;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClientCustomResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.eid;  
+    rs >> data.customID;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClientCustomResp & info) 
+{ 
+    stm << "["; 
+    stm << "retCode=" << info.retCode << ","; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "customID=" << info.customID << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct ClientCustomNotice 
+{ 
+    static const unsigned short getProtoID() { return 50021;} 
+    static const std::string getProtoName() { return "ClientCustomNotice";} 
+    unsigned long long eid;  
+    unsigned long long customID;  
+    double fValue;  
+    unsigned long long uValue;  
+    std::string sValue;  
+    ClientCustomNotice() 
+    { 
+        eid = 0; 
+        customID = 0; 
+        fValue = 0.0; 
+        uValue = 0; 
+    } 
+    ClientCustomNotice(const unsigned long long & eid, const unsigned long long & customID, const double & fValue, const unsigned long long & uValue, const std::string & sValue) 
+    { 
+        this->eid = eid; 
+        this->customID = customID; 
+        this->fValue = fValue; 
+        this->uValue = uValue; 
+        this->sValue = sValue; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClientCustomNotice & data) 
+{ 
+    ws << data.eid;  
+    ws << data.customID;  
+    ws << data.fValue;  
+    ws << data.uValue;  
+    ws << data.sValue;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClientCustomNotice & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.customID;  
+    rs >> data.fValue;  
+    rs >> data.uValue;  
+    rs >> data.sValue;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClientCustomNotice & info) 
+{ 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "customID=" << info.customID << ","; 
+    stm << "fValue=" << info.fValue << ","; 
+    stm << "uValue=" << info.uValue << ","; 
+    stm << "sValue=" << info.sValue << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct ClientPingTestReq 
+{ 
+    static const unsigned short getProtoID() { return 50022;} 
+    static const std::string getProtoName() { return "ClientPingTestReq";} 
+    unsigned long long seqID;  
+    double clientTime;  
+    ClientPingTestReq() 
+    { 
+        seqID = 0; 
+        clientTime = 0.0; 
+    } 
+    ClientPingTestReq(const unsigned long long & seqID, const double & clientTime) 
+    { 
+        this->seqID = seqID; 
+        this->clientTime = clientTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClientPingTestReq & data) 
+{ 
+    ws << data.seqID;  
+    ws << data.clientTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClientPingTestReq & data) 
+{ 
+    rs >> data.seqID;  
+    rs >> data.clientTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClientPingTestReq & info) 
+{ 
+    stm << "["; 
+    stm << "seqID=" << info.seqID << ","; 
+    stm << "clientTime=" << info.clientTime << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct ClientPingTestResp 
+{ 
+    static const unsigned short getProtoID() { return 50023;} 
+    static const std::string getProtoName() { return "ClientPingTestResp";} 
+    unsigned short retCode;  
+    unsigned long long seqID;  
+    double clientTime;  
+    ClientPingTestResp() 
+    { 
+        retCode = 0; 
+        seqID = 0; 
+        clientTime = 0.0; 
+    } 
+    ClientPingTestResp(const unsigned short & retCode, const unsigned long long & seqID, const double & clientTime) 
+    { 
+        this->retCode = retCode; 
+        this->seqID = seqID; 
+        this->clientTime = clientTime; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ClientPingTestResp & data) 
+{ 
+    ws << data.retCode;  
+    ws << data.seqID;  
+    ws << data.clientTime;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ClientPingTestResp & data) 
+{ 
+    rs >> data.retCode;  
+    rs >> data.seqID;  
+    rs >> data.clientTime;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ClientPingTestResp & info) 
+{ 
+    stm << "["; 
+    stm << "retCode=" << info.retCode << ","; 
+    stm << "seqID=" << info.seqID << ","; 
+    stm << "clientTime=" << info.clientTime << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
 #endif 

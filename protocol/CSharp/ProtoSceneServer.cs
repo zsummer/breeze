@@ -185,6 +185,42 @@ namespace Proto4z
         } 
     } 
  
+    public class SceneServerCancelSceneIns: Proto4z.IProtoObject //退出场景  
+    {     
+        //proto id   
+        public const ushort protoID = 39007;  
+        static public ushort getProtoID() { return 39007; } 
+        static public string getProtoName() { return "SceneServerCancelSceneIns"; } 
+        //members   
+        public ulong sceneID; //sceneID  
+        public SceneGroupInfoArray groups; //多个编队  
+        public SceneServerCancelSceneIns()  
+        { 
+            sceneID = 0;  
+            groups = new SceneGroupInfoArray();  
+        } 
+        public SceneServerCancelSceneIns(ulong sceneID, SceneGroupInfoArray groups) 
+        { 
+            this.sceneID = sceneID; 
+            this.groups = groups; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.sceneID)); 
+            if (this.groups == null) this.groups = new SceneGroupInfoArray(); 
+            data.AddRange(this.groups.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.groups = new SceneGroupInfoArray(); 
+            this.groups.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
     public class SceneServerGroupStateChangeIns: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   

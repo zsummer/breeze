@@ -275,7 +275,7 @@ bool Scene::onUpdate()
     return true;
 }
 
-void Scene::preStepRVO()
+void Scene::preStepRVO(bool onlyCheck)
 {
     if (_sim)
     {
@@ -300,6 +300,10 @@ void Scene::preStepRVO()
                 if (entity._move.waypoints.empty())
                 {
                     entity._move.action = MOVE_ACTION_IDLE;
+                    break;
+                }
+                if (onlyCheck)
+                {
                     break;
                 }
                 _sim->setAgentMaxSpeed(entity._control.agentNo, entity._move.speed);
@@ -331,7 +335,7 @@ void Scene::preStepRVO()
 }
 void Scene::doStepRVO()
 {
-    preStepRVO();
+    preStepRVO(false);
     if (_sim)
     {
         _sim->doStep();
@@ -352,7 +356,7 @@ void Scene::doStepRVO()
             LOGD("RVO AFT MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.pos);
         }
     }
-    preStepRVO();
+    preStepRVO(true);
 }
 
 void Scene::pushAsync(std::function<void()> && func)
@@ -384,6 +388,26 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid));
         }
+    }
+    else if (rs.getProtoID() == ClientCustomReq::getProtoID())
+    {
+        ClientCustomReq req;
+        rs >> req;
+        auto entity = getEntity(req.eid);
+        if (entity && entity->_baseInfo.avatarID == avatarID)
+        {
+            broadcast(ClientCustomNotice(req.eid, req.customID, req.fValue,req.uValue, req.sValue));
+        }
+        else
+        {
+            sendToClient(avatarID, ClientCustomResp(EC_ERROR, req.eid, req.customID));
+        }
+    }
+    else if (rs.getProtoID() == ClientPingTestReq::getProtoID())
+    {
+        ClientPingTestReq req;
+        rs >> req;
+        sendToClient(avatarID, ClientPingTestResp(EC_ERROR, req.seqID, req.clientTime));
     }
 }
 
