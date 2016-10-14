@@ -232,6 +232,7 @@ bool SceneMgr::startWorldConnect()
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
     };
+    options._reconnects = 500;
     options._onSessionLinked = std::bind(&SceneMgr::event_onWorldLinked, this, _1);
     options._onSessionClosed = std::bind(&SceneMgr::event_onWorldClosed, this, _1);
     options._onBlockDispatch = std::bind(&SceneMgr::event_onWorldMessage, this, _1, _2, _3);
@@ -279,7 +280,7 @@ void SceneMgr::event_onWorldLinked(TcpSessionPtr session)
 {
     session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
-
+    session->getOptions()._reconnects = 0;
 	SceneKnock notice;
     notice.lineID = ServerConfig::getRef().getSceneConfig()._lineID;
 	notice.pubHost = ServerConfig::getRef().getSceneConfig()._clientPubHost;
