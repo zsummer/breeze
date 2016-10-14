@@ -254,7 +254,7 @@ bool Docker::startDockerConnect()
         options._onSessionLinked = std::bind(&Docker::event_onServiceLinked, this, _1);
         options._onSessionClosed = std::bind(&Docker::event_onServiceClosed, this, _1);
         options._onBlockDispatch = std::bind(&Docker::event_onServiceMessage, this, _1, _2, _3);
-        options._reconnects = 50;
+        options._reconnects = 90000;
         options._connectPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
         options._reconnectClean = false;
         options._onSessionPulse = [](TcpSessionPtr session)
