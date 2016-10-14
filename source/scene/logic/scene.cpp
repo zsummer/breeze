@@ -43,6 +43,7 @@ bool Scene::cleanScene()
     _lastEID = ServerConfig::getRef().getSceneConfig()._lineID * 1000 + 1000;
     _entitys.clear();
     _players.clear();
+    _monsters.clear();
     while (!_asyncs.empty()) _asyncs.pop();
     _sceneType = SCENE_NONE;
     _sceneStatus = SCENE_STATE_NONE;
@@ -113,7 +114,7 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 
 EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     const AvatarPropMap & baseProps,
-    EntityCampType ecolor,
+    EntityCampType camp,
     EntityType etype,
     EntityState state,
     GroupID groupID)
@@ -126,7 +127,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
 
 
     entity->_info.eid = ++_lastEID;
-    entity->_info.color = ecolor;
+    entity->_info.color = camp;
     entity->_info.etype = etype;
     entity->_info.groupID = groupID;
     entity->_info.state = ENTITY_STATE_ACTIVE;
@@ -135,7 +136,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
 
     entity->_info.curHP = 100;
 
-    entity->_control.spawnpoint = { 0.0,0.0 };
+    entity->_control.spawnpoint = { 0.0 - 30 +  realRandF()*30 ,60 -30 + realRandF()*30 };
     entity->_control.eid = entity->_info.eid;
     entity->_control.agentNo = -1;
     entity->_control.stateChageTick = getFloatSteadyNowTime();
@@ -152,7 +153,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
 
     _entitys.insert(std::make_pair(entity->_info.eid, entity));
 
-    if (baseInfo.avatarID != InvalidServiceID)
+    if (baseInfo.avatarID != InvalidServiceID && etype == ENTITY_AVATAR)
     {
         _players[baseInfo.avatarID] = entity;
     }
@@ -272,12 +273,20 @@ bool Scene::onUpdate()
     {
         return false;
     }
+
     while(!_asyncs.empty())
     {
         auto func = _asyncs.front();
         _asyncs.pop();
         func();
     }
+    if (getFloatSteadyNowTime() - _lastCheckMonstr > 0.5)
+    {
+        _lastCheckMonstr = getFloatSteadyNowTime();
+        doMonster();
+        doFollow();
+    }
+
     doStepRVO();
 
     SceneRefreshNotice notice;
@@ -320,7 +329,7 @@ void Scene::preStepRVO(bool onlyCheck)
             do
             {
                 while (!entity._move.waypoints.empty() 
-                    && getDistance(entity._move.pos, entity._move.waypoints.front()) < 1.0 )
+                    && (getDistance(entity._move.pos, entity._move.waypoints.front()) < 1.0 || (getDistance(entity._move.pos, entity._move.waypoints.front()) < 5.0 && entity._move.action == MOVE_ACTION_FOLLOW)) )
                 {
                     entity._move.waypoints.erase(entity._move.waypoints.begin());
                 }
@@ -384,6 +393,54 @@ void Scene::doStepRVO()
         }
     }
     preStepRVO(true);
+}
+
+
+void Scene::doMonster()
+{
+    while (_monsters.size() < _players.size() * 3 )
+    {
+        AvatarBaseInfo base;
+        base.avatarID = 1000 + _monsters.size();
+        base.avatarName = "MyLittleBeetle_";
+        base.avatarName += toString(_monsters.size());
+        base.modeID = 20;
+        AvatarPropMap prop;
+        auto monster = addEntity(base, prop, ENTITY_CAMP_BLUE, ENTITY_AI);
+        _monsters[monster->_info.eid] = monster;
+    }
+    for (auto monster: _monsters)
+    {
+        auto ret = searchPlayer(monster.second->_move.pos);
+        if (ret.size() > 0)
+        {
+            monster.second->_move.follow = ret.front()->_info.eid;
+        }
+    }
+}
+
+void Scene::doFollow()
+{
+    for (auto kv: _entitys)
+    {
+        if (kv.second->_move.follow == InvalidEntityID)
+        {
+            continue;
+        }
+        auto entity = kv.second;
+        auto follow = getEntity(kv.second->_move.follow);
+        if (!follow)
+        {
+            kv.second->_move.follow = InvalidEntityID;
+            continue;
+        }
+        auto dist = getDistance(entity->_move.pos, follow->_move.pos);
+        if (dist > 6.0)
+        {
+            //auto dst = getFarOffset(entity->_move.pos.x, entity->_move.pos.y, follow->_move.pos.x, follow->_move.pos.y, dist - 5);
+            doMove(entity->_info.eid, MOVE_ACTION_FOLLOW, 0, -1, follow->_info.eid, entity->_move.pos, follow->_move.pos);
+        }
+    }
 }
 
 void Scene::pushAsync(std::function<void()> && func)
@@ -457,7 +514,7 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 
     }
     
     moveInfo.action = action;
-    moveInfo.speed = avatarID == InvalidAvatarID ? speed : entity->getSpeed();
+    moveInfo.speed = entity->getSpeed();
     moveInfo.frames = frames;
     moveInfo.follow = follow;
     
@@ -494,7 +551,21 @@ bool Scene::cleanBuff()
     return true;
 }
 
-
+std::vector<EntityPtr> Scene::searchPlayer(const EPoint &org)
+{
+    std::vector<EntityPtr> ret;
+    if (_players.empty())
+    {
+        return ret;
+    }
+    for (auto entity : _players)
+    {
+        ret.push_back(entity.second);
+    }
+    std::sort(ret.begin(), ret.end(), [org](const EntityPtr & entity1, const EntityPtr & entity2)
+    {return getDistance(entity1->_move.pos, org) < getDistance(entity2->_move.pos, org); });
+    return std::move(ret);
+}
 
 
 

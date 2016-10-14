@@ -37,8 +37,9 @@ private:
     std::map<EntityID, EntityPtr> _entitys;
     std::map<ServiceID, EntityPtr> _players;
     std::queue<std::function<void()>> _asyncs;
+    std::map<EntityID, EntityPtr> _monsters;
 
-
+    double _lastCheckMonstr = 0.0;
 public:
     inline SceneID getSceneID() { return _sceneID; }
     inline SceneType getSceneType() { return _sceneType; }
@@ -50,7 +51,15 @@ public:
     void getSceneSection(SceneSection & ss);
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
-
+    EntityPtr addEntity(const AvatarBaseInfo & baseInfo,
+        const AvatarPropMap & baseProps,
+        EntityCampType camp,
+        EntityType etype,
+        EntityState state = ENTITY_STATE_ACTIVE,
+        GroupID = InvalidGroupID);
+    bool removeEntity(EntityID eid);
+    bool removePlayer(AvatarID avatarID);
+    bool removePlayerByGroupID(GroupID groupID);
     //operator
 public:
     void pushAsync(std::function<void()> && func);
@@ -59,15 +68,7 @@ public:
     bool cleanSkill();
     bool addBuff();
     bool cleanBuff();
-    EntityPtr addEntity(const AvatarBaseInfo & baseInfo,
-                        const AvatarPropMap & baseProps,
-                        EntityCampType ecolor,
-                        EntityType etype,
-                        EntityState state = ENTITY_STATE_ACTIVE,
-                        GroupID = InvalidGroupID);
-    bool removeEntity(EntityID eid);
-    bool removePlayer(AvatarID avatarID);
-    bool removePlayerByGroupID(GroupID groupID);
+    std::vector<EntityPtr> searchPlayer(const EPoint &org);
 public:
     Scene(SceneID id);
     ~Scene();
@@ -76,6 +77,8 @@ public:
     bool onUpdate();
     void preStepRVO(bool onlyCheck);
     void doStepRVO();
+    void doMonster();
+    void doFollow();
     bool playerAttach(ServiceID avatarID, SessionID sID);
     bool playerDettach(ServiceID avatarID, SessionID sID);
     void onPlayerInstruction(ServiceID avatarID, ReadStream & rs);

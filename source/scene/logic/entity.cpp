@@ -23,7 +23,23 @@ double Entity::getSpeed()
     {
         return 0.0;
     }
-    return 15.0;
+    if (_info.etype == ENTITY_AVATAR)
+    {
+        return 12.0;
+    }
+    else if (_info.etype == ENTITY_AI)
+    {
+        return 8.0;
+    }
+    else if (_info.etype == ENTITY_FLIGHT)
+    {
+        return 20.0;
+    }
+    else
+    {
+        return 10.0;
+    }
+    
 }
 
 double Entity::getSuckBlood()
