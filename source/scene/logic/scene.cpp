@@ -339,13 +339,16 @@ void Scene::checkStepRVO(bool preCheck)
                 }
                 if (entity._entityMove.waypoints.empty())
                 {
+                    LOGD("END MOVE[" << entity._baseInfo.avatarName << "]: all waypoints is gone");
                     entity._entityMove.action = MOVE_ACTION_IDLE;
                     break;
                 }
                 if (entity._control.blockMoveCount > 1.0/SceneFrameInterval)
                 {
+                    LOGW("BREAK MOVE[" << entity._baseInfo.avatarName << "][" << entity._entityInfo.eid << "]: block long time. count = " << entity._control.blockMoveCount);
                     entity._entityMove.waypoints.clear();
                     entity._entityMove.action = MOVE_ACTION_IDLE;
+                    entity._control.blockMoveCount = 0;
                     break;
                 }
                 if (!preCheck)
@@ -397,9 +400,10 @@ void Scene::doStepRVO()
             {
                 auto realMove = toRVOVector2(rvoPos) - toRVOVector2(entity._entityMove.pos);
                 auto expectMove = _sim->getAgentVelocity(entity._control.agentNo);
-                if (RVO::abs(realMove) / RVO::abs(expectMove) < 0.1)
+                if (RVO::abs(realMove) / (RVO::abs(expectMove)/ServerPulseInterval) < 0.1)
                 {
                     entity._control.blockMoveCount++;
+                    LOGW("EXPECT MOVE DIST WRONG[" << entity._entityInfo.eid << "]: DIFF=" << RVO::abs(realMove) / RVO::abs(expectMove) << ", now blocks=" << entity._control.blockMoveCount);
                 }
                 else
                 {
@@ -562,6 +566,10 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 
     if (action != MOVE_ACTION_IDLE)
     {
         moveInfo.waypoints.insert(moveInfo.waypoints.begin(), dst);
+    }
+    else
+    {
+        LOGD("CLIENT CANCEL MOVE[" << entity->_baseInfo.avatarName << "]: ");
     }
     entity->_isMoveDirty = true;
     broadcast(MoveNotice(moveInfo));
