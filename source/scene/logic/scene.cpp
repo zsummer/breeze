@@ -159,7 +159,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     }
     else
     {
-        _sim->setAgentRadius(entity->_control.agentNo, 1.1f);
+        _sim->setAgentRadius(entity->_control.agentNo, 1.0f);
     }
 
     AddEntityNotice notice;
@@ -332,10 +332,15 @@ void Scene::checkStepRVO(bool preCheck)
             }
             do
             {
-                while (!entity._entityMove.waypoints.empty() 
-                    && (getDistance(entity._entityMove.pos, entity._entityMove.waypoints.front()) < 1.0 || (getDistance(entity._entityMove.pos, entity._entityMove.waypoints.front()) < 5.0 && entity._entityMove.action == MOVE_ACTION_FOLLOW)) )
+                while (!entity._entityMove.waypoints.empty())
                 {
-                    entity._entityMove.waypoints.erase(entity._entityMove.waypoints.begin());
+                    double dist = getDistance(entity._entityMove.pos, entity._entityMove.waypoints.front());
+                    if (dist < 1.0 || (dist < 6.0&&entity._entityMove.action == MOVE_ACTION_FOLLOW))
+                    {
+                        entity._entityMove.waypoints.erase(entity._entityMove.waypoints.begin());
+                        continue;
+                    }
+                    break;
                 }
                 if (entity._entityMove.waypoints.empty())
                 {
@@ -471,11 +476,11 @@ void Scene::doFollow()
             kv.second->_entityMove.follow = InvalidEntityID;
             continue;
         }
+        double redius = _sim->getAgentRadius(follow->_control.agentNo) + _sim->getAgentRadius(entity->_control.agentNo);
         auto dist = getDistance(entity->_entityMove.pos, follow->_entityMove.pos);
-        if (dist > 6.0)
+        if (dist >  12) 
         {
-            //auto dst = getFarOffset(entity->_entityMove.pos.x, entity->_entityMove.pos.y, follow->_entityMove.pos.x, follow->_entityMove.pos.y, dist - 5);
-            doMove(entity->_entityInfo.eid, MOVE_ACTION_FOLLOW, 0, -1, follow->_entityInfo.eid, entity->_entityMove.pos, follow->_entityMove.pos);
+            doMove(entity->_entityInfo.eid, MOVE_ACTION_FOLLOW, 0, -1, follow->_entityInfo.eid, entity->_entityMove.pos, follow->_entityMove.pos - normalize(follow->_entityMove.pos - entity->_entityMove.pos) * 4);
         }
     }
 }
@@ -569,7 +574,7 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 
     }
     else
     {
-        LOGD("CLIENT CANCEL MOVE[" << entity->_baseInfo.avatarName << "]: ");
+        LOGD("CLIENT CANCEL MOVE[" << entity->_baseInfo.avatarName << "]" << entity->_entityInfo.eid << "]: ");
     }
     entity->_isMoveDirty = true;
     broadcast(MoveNotice(moveInfo));

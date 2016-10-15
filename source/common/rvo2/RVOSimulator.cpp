@@ -372,6 +372,10 @@ namespace RVO {
 	{
 		agents_[agentNo]->prefVelocity_ = prefVelocity;
 	}
+    double RVOSimulator::getAgentRadius(size_t agentNo)
+    {
+        return agents_[agentNo]->radius_;
+    }
 
 	void RVOSimulator::setAgentRadius(size_t agentNo, double radius)
 	{

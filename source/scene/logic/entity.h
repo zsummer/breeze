@@ -32,6 +32,51 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "[" << v.x() << "," << v.y() << "]";
     return stm;
 }
+
+
+inline EPoint operator + (const EPoint & dst, const EPoint & org)
+{
+    return EPoint(dst.x + org.x, dst.y + org.y);
+}
+inline EPoint operator - (const EPoint & dst, const EPoint & org)
+{
+    return EPoint(dst.x - org.x, dst.y - org.y);
+}
+inline EPoint operator * (const EPoint & dst, const EPoint & org)
+{
+    return EPoint(dst.x * org.x, dst.y * org.y);
+}
+inline EPoint operator / (const EPoint & dst, const EPoint & org)
+{
+    return EPoint(dst.x / org.x, dst.y * org.y);
+}
+inline EPoint operator + (const EPoint & dst, double val)
+{
+    return EPoint(dst.x + val, dst.y + val);
+}
+inline EPoint operator - (const EPoint & dst, double val)
+{
+    return EPoint(dst.x - val, dst.y - val);
+}
+inline EPoint operator * (const EPoint & dst, double val)
+{
+    return EPoint(dst.x * val, dst.y * val);
+}
+inline EPoint operator / (const EPoint & dst, double val)
+{
+    return EPoint(dst.x / val, dst.y * val);
+}
+inline EPoint normalize(const EPoint & dst)
+{
+    if (std::abs(dst.x) > std::abs(dst.y))
+    {
+        return EPoint(dst.x / dst.x, dst.y / dst.x);
+    }
+    return EPoint(dst.x / dst.y, dst.y / dst.y);
+}
+
+
+
 inline RVO::Vector2 toRVOVector2(const EPoint & pos)
 {
     return RVO::Vector2(pos.x, pos.y);

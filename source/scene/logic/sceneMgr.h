@@ -92,6 +92,8 @@ private:
 
     SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;
+
+    SceneID _lastSceneID = InvalidSceneID;
 };
 
 

@@ -31,8 +31,9 @@ bool SceneMgr::init(const std::string & configName, ui32 serverID)
         LOGE("SceneMgr::init error. DBDict load error. ");
         return false;
     }
-    
-    return loadScenes();
+    _lastSceneID = ServerConfig::getRef().getSceneConfig()._lineID * 10000;
+    onTimer();
+    return true;
 }
 
 bool SceneMgr::loadScenes()
@@ -507,14 +508,14 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
             }
         }
     }
-    if (!scene && (_frees.empty() || !_frees.front()))
+    if (!scene )
     {
-        //!error
-        LOGE("");
-        return;
-    }
-    if (!scene) //初始化
-    {
+        if (_frees.empty())
+        {
+            auto scene = std::make_shared<Scene>(++_lastSceneID);
+            _scenes.insert(std::make_pair(scene->getSceneID(), scene));
+            _frees.push(scene);
+        }
         scene = _frees.front();
         _frees.pop();
         scene->cleanScene();

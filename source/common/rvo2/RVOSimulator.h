@@ -542,7 +542,7 @@ namespace RVO {
 		 *                             Must be non-negative.
 		 */
 		void setAgentRadius(size_t agentNo, double radius);
-
+        double getAgentRadius(size_t agentNo);
 		/**
 		 * \brief      Sets the time horizon of a specified agent with respect
 		 *             to other agents.
