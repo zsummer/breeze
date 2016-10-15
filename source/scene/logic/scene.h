@@ -75,7 +75,7 @@ public:
     bool cleanScene();
     bool initScene(SceneType sceneType, MapID mapID);
     bool onUpdate();
-    void preStepRVO(bool onlyCheck);
+    void checkStepRVO(bool preCheck);
     void doStepRVO();
     void doMonster();
     void doFollow();

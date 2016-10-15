@@ -69,17 +69,20 @@ namespace Proto4z
         static public ushort getProtoID() { return 39002; } 
         static public string getProtoName() { return "SceneServerJoinGroupIns"; } 
         //members   
+        public ulong refresh; //0为客户端请求操作, 1为仅仅刷新数据  
         public ulong groupID; //编队ID, 0为创建  
         public AvatarBaseInfo baseInfo; //角色数据  
         public AvatarPropMap baseProps; //角色属性数据  
         public SceneServerJoinGroupIns()  
         { 
+            refresh = 0;  
             groupID = 0;  
             baseInfo = new AvatarBaseInfo();  
             baseProps = new AvatarPropMap();  
         } 
-        public SceneServerJoinGroupIns(ulong groupID, AvatarBaseInfo baseInfo, AvatarPropMap baseProps) 
+        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, AvatarBaseInfo baseInfo, AvatarPropMap baseProps) 
         { 
+            this.refresh = refresh; 
             this.groupID = groupID; 
             this.baseInfo = baseInfo; 
             this.baseProps = baseProps; 
@@ -87,6 +90,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.refresh)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
             data.AddRange(this.baseInfo.__encode()); 
@@ -96,6 +100,7 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
+            this.refresh = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.baseInfo = new AvatarBaseInfo(); 
             this.baseInfo.__decode(binData, ref pos); 

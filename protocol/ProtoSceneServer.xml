@@ -26,6 +26,7 @@
 
 
     <proto name="SceneServerJoinGroupIns" desc= "创建/加入编队, 来自docker的指令">
+        <member name="refresh" type="ui64"  desc="0为客户端请求操作, 1为仅仅刷新数据"/>
         <member name="groupID" type="ui64"  desc="编队ID, 0为创建"/>
         <member name="baseInfo" type="AvatarBaseInfo"  desc="角色数据"/>
         <member name="baseProps" type="AvatarPropMap"  desc="角色属性数据"/>

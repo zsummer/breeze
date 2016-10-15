@@ -665,6 +665,21 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     ack.retCode = EC_SUCCESS;
 
     SceneGroupInfoPtr groupPtr = getGroupInfoByAvatarID(trace.oob.clientAvatarID);
+    if (req.refresh != 0)
+    {
+        if (!groupPtr)
+        {
+            return;
+        }
+        auto founder = groupPtr->members.find(req.baseInfo.avatarID);
+        if (founder == groupPtr->members.end())
+        {
+            return;
+        }
+        founder->second.baseInfo = req.baseInfo;
+        founder->second.baseProps = req.baseProps;
+        return;
+    }
     if ((groupPtr && req.groupID == InvalidGroupID) || (groupPtr&& req.groupID != InvalidGroupID && groupPtr->sceneState != SCENE_STATE_NONE))
     {
         LOGE("World::onSceneServerJoinGroupIns the avatar already had group. avatar=" << trace.oob.clientAvatarID);

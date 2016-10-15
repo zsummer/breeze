@@ -248,6 +248,7 @@ void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::R
 	rs >> req;
 	_baseInfo._data.modeID = req.modeID;
 	_baseInfo.writeToDB();
+    _scene.refreshGroupInfo(*this);
     toService(STClient, getServiceID(), AvatarBaseInfoNotice(_baseInfo._data));
 	toService(STClient, getServiceID(), ChangeModeIDResp(EC_SUCCESS, req.modeID));
 }

@@ -1052,7 +1052,7 @@ namespace Proto4z
         static public string getProtoName() { return "EntityInfo"; } 
         //members   
         public ulong eid; //eid  
-        public ushort color; //阵营  
+        public ushort camp; //阵营  
         public ulong groupID; //组队ID  
         public ushort etype; //实体类型  
         public ushort state; //状态  
@@ -1062,7 +1062,7 @@ namespace Proto4z
         public EntityInfo()  
         { 
             eid = 0;  
-            color = 0;  
+            camp = 0;  
             groupID = 0;  
             etype = 0;  
             state = 0;  
@@ -1070,10 +1070,10 @@ namespace Proto4z
             leader = 0;  
             curHP = 0.0;  
         } 
-        public EntityInfo(ulong eid, ushort color, ulong groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP) 
+        public EntityInfo(ulong eid, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP) 
         { 
             this.eid = eid; 
-            this.color = color; 
+            this.camp = camp; 
             this.groupID = groupID; 
             this.etype = etype; 
             this.state = state; 
@@ -1085,7 +1085,7 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.color)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.camp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
@@ -1097,7 +1097,7 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.color = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.camp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
@@ -1225,126 +1225,6 @@ namespace Proto4z
                 for (int i=0; i<len; i++) 
                 { 
                     var data = new EntityMove(); 
-                    data.__decode(binData, ref pos); 
-                    this.Add(data); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
-    public class EntityControl: Proto4z.IProtoObject //EntityControl  
-    {     
-        //proto id   
-        public const ushort protoID = 10012;  
-        static public ushort getProtoID() { return 10012; } 
-        static public string getProtoName() { return "EntityControl"; } 
-        //members   
-        public ulong eid; //eid  
-        public ulong agentNo; //agentNo. -1为无效  
-        public double stateChageTick; //状态改变时间  
-        public EPoint spawnpoint; //出生点  
-        public EPoint lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
-        public SkillInfoArray skills; //技能数据  
-        public BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
-        public double diedTime; //实体死亡时间点 -1为永久, 仅飞行道具类有效  
-        public int hitTimes; //实体碰撞 -1为永久, 仅飞行道具类有效  
-        public double lastMoveTime; //最后一次移动时间  
-        public EPoint lastClientPos; //最后一次客户端提交的坐标  
-        public EntityControl()  
-        { 
-            eid = 0;  
-            agentNo = 0;  
-            stateChageTick = 0.0;  
-            spawnpoint = new EPoint();  
-            lastPos = new EPoint();  
-            skills = new SkillInfoArray();  
-            buffs = new BuffInfoArray();  
-            diedTime = 0.0;  
-            hitTimes = 0;  
-            lastMoveTime = 0.0;  
-            lastClientPos = new EPoint();  
-        } 
-        public EntityControl(ulong eid, ulong agentNo, double stateChageTick, EPoint spawnpoint, EPoint lastPos, SkillInfoArray skills, BuffInfoArray buffs, double diedTime, int hitTimes, double lastMoveTime, EPoint lastClientPos) 
-        { 
-            this.eid = eid; 
-            this.agentNo = agentNo; 
-            this.stateChageTick = stateChageTick; 
-            this.spawnpoint = spawnpoint; 
-            this.lastPos = lastPos; 
-            this.skills = skills; 
-            this.buffs = buffs; 
-            this.diedTime = diedTime; 
-            this.hitTimes = hitTimes; 
-            this.lastMoveTime = lastMoveTime; 
-            this.lastClientPos = lastClientPos; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.agentNo)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.stateChageTick)); 
-            if (this.spawnpoint == null) this.spawnpoint = new EPoint(); 
-            data.AddRange(this.spawnpoint.__encode()); 
-            if (this.lastPos == null) this.lastPos = new EPoint(); 
-            data.AddRange(this.lastPos.__encode()); 
-            if (this.skills == null) this.skills = new SkillInfoArray(); 
-            data.AddRange(this.skills.__encode()); 
-            if (this.buffs == null) this.buffs = new BuffInfoArray(); 
-            data.AddRange(this.buffs.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.diedTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.hitTimes)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastMoveTime)); 
-            if (this.lastClientPos == null) this.lastClientPos = new EPoint(); 
-            data.AddRange(this.lastClientPos.__encode()); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.agentNo = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.stateChageTick = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.spawnpoint = new EPoint(); 
-            this.spawnpoint.__decode(binData, ref pos); 
-            this.lastPos = new EPoint(); 
-            this.lastPos.__decode(binData, ref pos); 
-            this.skills = new SkillInfoArray(); 
-            this.skills.__decode(binData, ref pos); 
-            this.buffs = new BuffInfoArray(); 
-            this.buffs.__decode(binData, ref pos); 
-            this.diedTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.hitTimes = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.lastMoveTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.lastClientPos = new EPoint(); 
-            this.lastClientPos.__decode(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class EntityControlArray : System.Collections.Generic.List<EntityControl>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            for (int i = 0; i < this.Count; i++ ) 
-            { 
-                ret.AddRange(this[i].__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var data = new EntityControl(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 

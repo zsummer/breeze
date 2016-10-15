@@ -39,6 +39,21 @@ void SceneModule::onSceneGroupCancelReq(AvatarService & avatar, const Tracing & 
     avatar.toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
 }
 
+void SceneModule::refreshGroupInfo(AvatarService & avatar)
+{
+    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
+    {
+        return;
+    }
+    SceneServerJoinGroupIns ins;
+    ins.baseInfo = avatar._baseInfo._data;
+    ins.baseProps = avatar._baseProps;
+    ins.groupID = InvalidGroupID;
+    ins.refresh = 1;
+    OutOfBand oob;
+    oob.clientAvatarID = avatar.getServiceID();
+    avatar.toService(STWorldMgr, oob, ins);
+}
 void SceneModule::onSceneGroupCreateReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
@@ -51,8 +66,10 @@ void SceneModule::onSceneGroupCreateReq(AvatarService & avatar, const Tracing & 
     ins.baseInfo = avatar._baseInfo._data;
     ins.baseProps = avatar._baseProps;
     ins.groupID = InvalidGroupID;
+    ins.refresh = 0;
     avatar.toService(STWorldMgr, trace.oob, ins);
 }
+
 void SceneModule::onSceneGroupJoinReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)
 {
     if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
@@ -67,6 +84,7 @@ void SceneModule::onSceneGroupJoinReq(AvatarService & avatar, const Tracing & tr
     ins.baseInfo = avatar._baseInfo._data;
     ins.baseProps = avatar._baseProps;
     ins.groupID = req.groupID;
+    ins.refresh = 0;
     avatar.toService(STWorldMgr, trace.oob, ins);
 }
 void SceneModule::onSceneGroupInviteReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs)

@@ -44,6 +44,19 @@ inline double getDistance(const EPoint& pos1, const EPoint & pos2)
 {
     return getDistance(pos1.x, pos1.y, pos2.x, pos2.y);
 }
+struct EntityControl //EntityControl  
+{
+    unsigned long long eid = InvalidEntityID;
+    unsigned long long agentNo = -1; //agentNo. -1为无效  
+    double stateChageTick = 0.0;
+    EPoint spawnpoint; //出生点  
+    SkillInfoArray skills; //技能数据  
+    BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
+    double diedTime = 1E128; //实体死亡时间点 仅飞行道具类有效  
+    ui64 hitTimes = -1; //实体碰撞, 仅飞行道具类有效  
+    double blockMoveCount = 0; //移动被阻次数 
+    EPoint lastClientPos; //最后一次客户端提交的坐标  
+};
 
 class Entity
 {
@@ -51,14 +64,13 @@ public:
     Entity();
     ~Entity();
     double getSpeed();
-    double getElapsed(double now);
     double getSuckBlood();
     double getAttack();
     EntityFullData getFullData();
     AvatarBaseInfo _baseInfo;
     AvatarPropMap _baseProps;
-    EntityInfo  _info;
-    EntityMove  _move;
+    EntityInfo  _entityInfo;
+    EntityMove  _entityMove;
     EntityControl _control;
     EntityReport _report;
     SessionID _clientSessionID = InvalidSessionID;

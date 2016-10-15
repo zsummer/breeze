@@ -274,7 +274,7 @@
     <!-- 实体动态属性, 差异广播 -->
     <struct name="EntityInfo" desc="EntityInfo">
         <member name="eid" type="ui64"  desc="eid"/>
-        <member name="color" type="ui16"  desc="阵营"/>
+        <member name="camp" type="ui16"  desc="阵营"/>
         <member name="groupID" type="ui64"  desc="组队ID"/>
         <member name="etype" type="ui16"  desc="实体类型"/>
         <member name="state" type="ui16"  desc="状态"/>
@@ -296,21 +296,6 @@
     </struct>
     <array name="EntityMoveArray" type="EntityMove" desc="" />
 
-    <!-- 实体控制属性, 对客户端不可见 -->
-    <struct name="EntityControl" desc="EntityControl">
-        <member name="eid" type="ui64"  desc="eid"/>
-        <member name="agentNo" type="ui64"  desc="agentNo. -1为无效"/>
-        <member name="stateChageTick" type="double"  desc="状态改变时间"/>
-        <member name="spawnpoint" type="EPoint"   desc="出生点"/>
-        <member name="lastPos"  type="EPoint" desc="上一帧实体坐标, 如果是瞬移 则和pos相同"/>
-        <member name="skills"  type="SkillInfoArray" desc="技能数据"/>
-        <member name="buffs"  type="BuffInfoArray" desc="BUFF数据, 小标ID对应bufftype"/>
-        <member name="diedTime"  type="double" desc="实体死亡时间点 -1为永久, 仅飞行道具类有效"/>
-        <member name="hitTimes"  type="i32" desc="实体碰撞 -1为永久, 仅飞行道具类有效"/>
-        <member name="lastMoveTime"  type="double" desc="最后一次移动时间"/>
-        <member name="lastClientPos"  type="EPoint" desc="最后一次客户端提交的坐标"/>
-    </struct>
-    <array name="EntityControlArray" type="EntityControl" desc="" />
 
     <!-- 实体战报 -->
     <struct name="EntityReport" desc="EntityReport">

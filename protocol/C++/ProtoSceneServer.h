@@ -70,15 +70,18 @@ struct SceneServerJoinGroupIns //创建/加入编队, 来自docker的指令
 { 
     static const unsigned short getProtoID() { return 39002;} 
     static const std::string getProtoName() { return "SceneServerJoinGroupIns";} 
+    unsigned long long refresh; //0为客户端请求操作, 1为仅仅刷新数据  
     unsigned long long groupID; //编队ID, 0为创建  
     AvatarBaseInfo baseInfo; //角色数据  
     AvatarPropMap baseProps; //角色属性数据  
     SceneServerJoinGroupIns() 
     { 
+        refresh = 0; 
         groupID = 0; 
     } 
-    SceneServerJoinGroupIns(const unsigned long long & groupID, const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps) 
+    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps) 
     { 
+        this->refresh = refresh; 
         this->groupID = groupID; 
         this->baseInfo = baseInfo; 
         this->baseProps = baseProps; 
@@ -86,6 +89,7 @@ struct SceneServerJoinGroupIns //创建/加入编队, 来自docker的指令
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerJoinGroupIns & data) 
 { 
+    ws << data.refresh;  
     ws << data.groupID;  
     ws << data.baseInfo;  
     ws << data.baseProps;  
@@ -93,6 +97,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerJoinGroupIns & data) 
 { 
+    rs >> data.refresh;  
     rs >> data.groupID;  
     rs >> data.baseInfo;  
     rs >> data.baseProps;  
@@ -101,6 +106,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerJoinGroupIns & info) 
 { 
     stm << "["; 
+    stm << "refresh=" << info.refresh << ","; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "baseInfo=" << info.baseInfo << ","; 
     stm << "baseProps=" << info.baseProps << ","; 

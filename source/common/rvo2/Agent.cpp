@@ -108,7 +108,7 @@ namespace RVO {
 
 				continue;
 			}
-			else if (s > 1.0 && distSq2 <= radiusSq) {
+			else if (s > 0.01 && distSq2 <= radiusSq) {
 				/* Collision with right vertex. Ignore if non-convex
 				 * or if it will be taken care of by neighoring obstace */
 				if (obstacle2->isConvex_ && det(relativePosition2, obstacle2->unitDir_) >= 0.0) {
@@ -119,7 +119,7 @@ namespace RVO {
 
 				continue;
 			}
-			else if (s >= 0.0 && s < 1.0 && distSqLine <= radiusSq) {
+			else if (s >= 0.0 && s < 0.01 && distSqLine <= radiusSq) {
 				/* Collision with obstacle segment. */
 				line.point = Vector2(0.0, 0.0);
 				line.direction = -obstacle1->unitDir_;
@@ -151,7 +151,7 @@ namespace RVO {
 				leftLegDirection = Vector2(relativePosition1.x() * leg1 - relativePosition1.y() * radius_, relativePosition1.x() * radius_ + relativePosition1.y() * leg1) / distSq1;
 				rightLegDirection = Vector2(relativePosition1.x() * leg1 + relativePosition1.y() * radius_, -relativePosition1.x() * radius_ + relativePosition1.y() * leg1) / distSq1;
 			}
-			else if (s > 1.0 && distSqLine <= radiusSq) {
+			else if (s > 0.01 && distSqLine <= radiusSq) {
 				/*
 				 * Obstacle viewed obliquely so that
 				 * right vertex defines velocity obstacle.
@@ -232,7 +232,7 @@ namespace RVO {
 				orcaLines_.push_back(line);
 				continue;
 			}
-			else if (t > 1.0 && tRight < 0.0) {
+			else if (t > 0.01 && tRight < 0.0) {
 				/* Project on right cut-off circle. */
 				const Vector2 unitW = normalize(velocity_ - rightCutoff);
 
@@ -246,7 +246,7 @@ namespace RVO {
 			 * Project on left leg, right leg, or cut-off line, whichever is closest
 			 * to velocity.
 			 */
-			const double distSqCutoff = ((t < 0.0 || t > 1.0 || obstacle1 == obstacle2) ? std::numeric_limits<double>::infinity() : absSq(velocity_ - (leftCutoff + t * cutoffVec)));
+			const double distSqCutoff = ((t < 0.0 || t > 0.01 || obstacle1 == obstacle2) ? std::numeric_limits<double>::infinity() : absSq(velocity_ - (leftCutoff + t * cutoffVec)));
 			const double distSqLeft = ((tLeft < 0.0) ? std::numeric_limits<double>::infinity() : absSq(velocity_ - (leftCutoff + tLeft * leftLegDirection)));
 			const double distSqRight = ((tRight < 0.0) ? std::numeric_limits<double>::infinity() : absSq(velocity_ - (rightCutoff + tRight * rightLegDirection)));
 

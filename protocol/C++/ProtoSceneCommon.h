@@ -757,7 +757,7 @@ struct EntityInfo //EntityInfo
     static const unsigned short getProtoID() { return 10010;} 
     static const std::string getProtoName() { return "EntityInfo";} 
     unsigned long long eid; //eid  
-    unsigned short color; //阵营  
+    unsigned short camp; //阵营  
     unsigned long long groupID; //组队ID  
     unsigned short etype; //实体类型  
     unsigned short state; //状态  
@@ -767,7 +767,7 @@ struct EntityInfo //EntityInfo
     EntityInfo() 
     { 
         eid = 0; 
-        color = 0; 
+        camp = 0; 
         groupID = 0; 
         etype = 0; 
         state = 0; 
@@ -775,10 +775,10 @@ struct EntityInfo //EntityInfo
         leader = 0; 
         curHP = 0.0; 
     } 
-    EntityInfo(const unsigned long long & eid, const unsigned short & color, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP) 
+    EntityInfo(const unsigned long long & eid, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP) 
     { 
         this->eid = eid; 
-        this->color = color; 
+        this->camp = camp; 
         this->groupID = groupID; 
         this->etype = etype; 
         this->state = state; 
@@ -790,7 +790,7 @@ struct EntityInfo //EntityInfo
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityInfo & data) 
 { 
     ws << data.eid;  
-    ws << data.color;  
+    ws << data.camp;  
     ws << data.groupID;  
     ws << data.etype;  
     ws << data.state;  
@@ -802,7 +802,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityInfo & data) 
 { 
     rs >> data.eid;  
-    rs >> data.color;  
+    rs >> data.camp;  
     rs >> data.groupID;  
     rs >> data.etype;  
     rs >> data.state;  
@@ -815,7 +815,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "["; 
     stm << "eid=" << info.eid << ","; 
-    stm << "color=" << info.color << ","; 
+    stm << "camp=" << info.camp << ","; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "etype=" << info.etype << ","; 
     stm << "state=" << info.state << ","; 
@@ -897,96 +897,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
  
 typedef std::vector<EntityMove> EntityMoveArray;  
- 
-struct EntityControl //EntityControl  
-{ 
-    static const unsigned short getProtoID() { return 10012;} 
-    static const std::string getProtoName() { return "EntityControl";} 
-    unsigned long long eid; //eid  
-    unsigned long long agentNo; //agentNo. -1为无效  
-    double stateChageTick; //状态改变时间  
-    EPoint spawnpoint; //出生点  
-    EPoint lastPos; //上一帧实体坐标, 如果是瞬移 则和pos相同  
-    SkillInfoArray skills; //技能数据  
-    BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
-    double diedTime; //实体死亡时间点 -1为永久, 仅飞行道具类有效  
-    int hitTimes; //实体碰撞 -1为永久, 仅飞行道具类有效  
-    double lastMoveTime; //最后一次移动时间  
-    EPoint lastClientPos; //最后一次客户端提交的坐标  
-    EntityControl() 
-    { 
-        eid = 0; 
-        agentNo = 0; 
-        stateChageTick = 0.0; 
-        diedTime = 0.0; 
-        hitTimes = 0; 
-        lastMoveTime = 0.0; 
-    } 
-    EntityControl(const unsigned long long & eid, const unsigned long long & agentNo, const double & stateChageTick, const EPoint & spawnpoint, const EPoint & lastPos, const SkillInfoArray & skills, const BuffInfoArray & buffs, const double & diedTime, const int & hitTimes, const double & lastMoveTime, const EPoint & lastClientPos) 
-    { 
-        this->eid = eid; 
-        this->agentNo = agentNo; 
-        this->stateChageTick = stateChageTick; 
-        this->spawnpoint = spawnpoint; 
-        this->lastPos = lastPos; 
-        this->skills = skills; 
-        this->buffs = buffs; 
-        this->diedTime = diedTime; 
-        this->hitTimes = hitTimes; 
-        this->lastMoveTime = lastMoveTime; 
-        this->lastClientPos = lastClientPos; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityControl & data) 
-{ 
-    ws << data.eid;  
-    ws << data.agentNo;  
-    ws << data.stateChageTick;  
-    ws << data.spawnpoint;  
-    ws << data.lastPos;  
-    ws << data.skills;  
-    ws << data.buffs;  
-    ws << data.diedTime;  
-    ws << data.hitTimes;  
-    ws << data.lastMoveTime;  
-    ws << data.lastClientPos;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityControl & data) 
-{ 
-    rs >> data.eid;  
-    rs >> data.agentNo;  
-    rs >> data.stateChageTick;  
-    rs >> data.spawnpoint;  
-    rs >> data.lastPos;  
-    rs >> data.skills;  
-    rs >> data.buffs;  
-    rs >> data.diedTime;  
-    rs >> data.hitTimes;  
-    rs >> data.lastMoveTime;  
-    rs >> data.lastClientPos;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityControl & info) 
-{ 
-    stm << "["; 
-    stm << "eid=" << info.eid << ","; 
-    stm << "agentNo=" << info.agentNo << ","; 
-    stm << "stateChageTick=" << info.stateChageTick << ","; 
-    stm << "spawnpoint=" << info.spawnpoint << ","; 
-    stm << "lastPos=" << info.lastPos << ","; 
-    stm << "skills=" << info.skills << ","; 
-    stm << "buffs=" << info.buffs << ","; 
-    stm << "diedTime=" << info.diedTime << ","; 
-    stm << "hitTimes=" << info.hitTimes << ","; 
-    stm << "lastMoveTime=" << info.lastMoveTime << ","; 
-    stm << "lastClientPos=" << info.lastClientPos << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<EntityControl> EntityControlArray;  
  
 struct EntityReport //EntityReport  
 { 

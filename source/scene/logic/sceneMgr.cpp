@@ -360,7 +360,7 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
             auto & players = checkscene->second->getPlayers();
             for (auto player : players)
             {
-                if (player.second->_info.color == entity->_info.color)
+                if (player.second->_entityInfo.camp == entity->_entityInfo.camp)
                 {
                     resp.targetID = player.second->_baseInfo.avatarID;
                     resp.targetName = player.second->_baseInfo.avatarName;

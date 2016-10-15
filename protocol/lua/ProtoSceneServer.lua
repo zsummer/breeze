@@ -16,9 +16,10 @@ Proto4z.register(39002,"SceneServerJoinGroupIns")
 Proto4z.SceneServerJoinGroupIns = {} --创建/加入编队, 来自docker的指令 
 Proto4z.SceneServerJoinGroupIns.__protoID = 39002 
 Proto4z.SceneServerJoinGroupIns.__protoName = "SceneServerJoinGroupIns" 
-Proto4z.SceneServerJoinGroupIns[1] = {name="groupID", type="ui64" } --编队ID, 0为创建 
-Proto4z.SceneServerJoinGroupIns[2] = {name="baseInfo", type="AvatarBaseInfo" } --角色数据 
-Proto4z.SceneServerJoinGroupIns[3] = {name="baseProps", type="AvatarPropMap" } --角色属性数据 
+Proto4z.SceneServerJoinGroupIns[1] = {name="refresh", type="ui64" } --0为客户端请求操作, 1为仅仅刷新数据 
+Proto4z.SceneServerJoinGroupIns[2] = {name="groupID", type="ui64" } --编队ID, 0为创建 
+Proto4z.SceneServerJoinGroupIns[3] = {name="baseInfo", type="AvatarBaseInfo" } --角色数据 
+Proto4z.SceneServerJoinGroupIns[4] = {name="baseProps", type="AvatarPropMap" } --角色属性数据 
  
 Proto4z.register(39003,"SceneServerJoinGroupAck") 
 Proto4z.SceneServerJoinGroupAck = {} --创建/加入编队响应结果 

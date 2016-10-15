@@ -266,7 +266,7 @@ Proto4z.EntityInfo = {} --EntityInfo
 Proto4z.EntityInfo.__protoID = 10010 
 Proto4z.EntityInfo.__protoName = "EntityInfo" 
 Proto4z.EntityInfo[1] = {name="eid", type="ui64" } --eid 
-Proto4z.EntityInfo[2] = {name="color", type="ui16" } --阵营 
+Proto4z.EntityInfo[2] = {name="camp", type="ui16" } --阵营 
 Proto4z.EntityInfo[3] = {name="groupID", type="ui64" } --组队ID 
 Proto4z.EntityInfo[4] = {name="etype", type="ui16" } --实体类型 
 Proto4z.EntityInfo[5] = {name="state", type="ui16" } --状态 
@@ -295,27 +295,6 @@ Proto4z.EntityMoveArray = {}
 Proto4z.EntityMoveArray.__protoName = "EntityMoveArray" 
 Proto4z.EntityMoveArray.__protoDesc = "array" 
 Proto4z.EntityMoveArray.__protoTypeV = "EntityMove" 
- 
-Proto4z.register(10012,"EntityControl") 
-Proto4z.EntityControl = {} --EntityControl 
-Proto4z.EntityControl.__protoID = 10012 
-Proto4z.EntityControl.__protoName = "EntityControl" 
-Proto4z.EntityControl[1] = {name="eid", type="ui64" } --eid 
-Proto4z.EntityControl[2] = {name="agentNo", type="ui64" } --agentNo. -1为无效 
-Proto4z.EntityControl[3] = {name="stateChageTick", type="double" } --状态改变时间 
-Proto4z.EntityControl[4] = {name="spawnpoint", type="EPoint" } --出生点 
-Proto4z.EntityControl[5] = {name="lastPos", type="EPoint" } --上一帧实体坐标, 如果是瞬移 则和pos相同 
-Proto4z.EntityControl[6] = {name="skills", type="SkillInfoArray" } --技能数据 
-Proto4z.EntityControl[7] = {name="buffs", type="BuffInfoArray" } --BUFF数据, 小标ID对应bufftype 
-Proto4z.EntityControl[8] = {name="diedTime", type="double" } --实体死亡时间点 -1为永久, 仅飞行道具类有效 
-Proto4z.EntityControl[9] = {name="hitTimes", type="i32" } --实体碰撞 -1为永久, 仅飞行道具类有效 
-Proto4z.EntityControl[10] = {name="lastMoveTime", type="double" } --最后一次移动时间 
-Proto4z.EntityControl[11] = {name="lastClientPos", type="EPoint" } --最后一次客户端提交的坐标 
- 
-Proto4z.EntityControlArray = {}  
-Proto4z.EntityControlArray.__protoName = "EntityControlArray" 
-Proto4z.EntityControlArray.__protoDesc = "array" 
-Proto4z.EntityControlArray.__protoTypeV = "EntityControl" 
  
 Proto4z.register(10013,"EntityReport") 
 Proto4z.EntityReport = {} --EntityReport 
