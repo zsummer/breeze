@@ -71,7 +71,7 @@ bool Scene::initScene(SceneType sceneType, MapID mapID)
     _endTime = getFloatSteadyNowTime() + 600;
     _sim = new RVO::RVOSimulator();
     _sim->setTimeStep(SceneFrameInterval);
-    _sim->setAgentDefaults(15.0, 1000, 10000.0, 10000.0, 2.0, 7.0);
+    _sim->setAgentDefaults(15.0, 1000, 70.0, 70.0, 2.0, 7.0);
     if (false)
     {
         std::vector<RVO::Vector2> vertices;
