@@ -1,5 +1,5 @@
 #!/bin/bash
 set -v on
-killall docker -w
+killall -9 docker 
 set -v off
 

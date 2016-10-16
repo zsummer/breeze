@@ -510,7 +510,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
     {
         UseSkillReq req;
         rs >> req;
-        if (!doSkill())
+        if (!doSkill(req.eid))
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid));
         }
@@ -580,8 +580,9 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 
     broadcast(MoveNotice(moveInfo));
     return true;
 }
-bool Scene::doSkill()
+bool Scene::doSkill(EntityID eid)
 {
+    broadcast(UseSkillNotice(eid));
     return true;
 }
 bool Scene::cleanSkill()

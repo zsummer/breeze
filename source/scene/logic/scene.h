@@ -64,7 +64,7 @@ public:
 public:
     void pushAsync(std::function<void()> && func);
     bool doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 follow, EPoint clt, EPoint dst, AvatarID avatarID = InvalidAvatarID, bool clean = true);
-    bool doSkill();
+    bool doSkill(EntityID eid);
     bool cleanSkill();
     bool addBuff();
     bool cleanBuff();
