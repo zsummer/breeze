@@ -571,6 +571,7 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosi
         moveInfo.expectSpeed; //don't reset here
         moveInfo.follow; //don't reset here
         moveInfo.waypoints.clear();
+        _sim->setAgentPrefVelocity(entity->_control.agentNo, RVO::Vector2(0, 0));
     }
     //begin move
     else if (moveInfo.action == MOVE_ACTION_IDLE)

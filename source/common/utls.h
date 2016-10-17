@@ -126,7 +126,7 @@ template<class To>
 typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t, To def);
 
 //both 1 left, 2right, 3 both
-std::string trim(const std::string &str, const std::string& ign, int both = 3);
+std::string trim(const std::string &str, const std::string& ign = " ", int both = 3);
 std::string trim(std::string &&str, const std::string & ign, int both);
 
 template<class First, class Second>

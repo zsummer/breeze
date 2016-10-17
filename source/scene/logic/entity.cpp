@@ -13,10 +13,6 @@ Entity::~Entity()
 
 double Entity::getSpeed()
 {
-    if (_entityMove.action == MOVE_ACTION_IDLE)
-    {
-        return 0.0;
-    }
     if (_entityInfo.etype == ENTITY_AVATAR)
     {
         return 12.0;
