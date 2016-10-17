@@ -193,7 +193,7 @@ namespace  zsummer
                     ret += ch;
                 }
             }
-            return std::move(ret);
+            return ret;
         }
 
         inline bool DBQuery::add(double data)
@@ -498,7 +498,7 @@ namespace  zsummer
         }
         inline DBResult & operator >>(DBResult &result, char & t)
         {
-            char tt;
+            long long tt;
             result >> tt;
             t = (char)tt;
             return result;

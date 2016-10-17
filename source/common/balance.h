@@ -202,7 +202,7 @@ inline std::string Balance<BalanceID>::getBalanceStatus()
         ss << _balance[i].count;
         ss << "],";
     }
-    return std::move(ss.str());
+    return ss.str();
 }
 
 

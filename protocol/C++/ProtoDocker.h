@@ -905,7 +905,7 @@ struct AvatarOffline
 { 
     static const unsigned short getProtoID() { return 2023;} 
     static const std::string getProtoName() { return "AvatarOffline";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -934,7 +934,7 @@ struct AvatarOffline
     } 
 }; 
  
-const std::vector<std::string>  AvatarOffline::getDBBuild() 
+std::vector<std::string>  AvatarOffline::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarOffline` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `streamBlob` longblob NOT NULL ,        `status` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `timestamp` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `avatarID` (`avatarID`),        KEY `status` (`status`),        KEY `timestamp` (`timestamp`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -948,7 +948,7 @@ const std::vector<std::string>  AvatarOffline::getDBBuild()
     ret.push_back("alter table `tb_AvatarOffline` change `status`  `status`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarOffline` add `timestamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarOffline` change `timestamp`  `timestamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  AvatarOffline::getDBSelect() 
 { 

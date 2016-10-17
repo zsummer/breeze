@@ -193,8 +193,8 @@ namespace Proto4z
     public class SceneServerCancelSceneIns: Proto4z.IProtoObject //退出场景  
     {     
         //proto id   
-        public const ushort protoID = 39007;  
-        static public ushort getProtoID() { return 39007; } 
+        public const ushort protoID = 39005;  
+        static public ushort getProtoID() { return 39005; } 
         static public string getProtoName() { return "SceneServerCancelSceneIns"; } 
         //members   
         public ulong sceneID; //sceneID  

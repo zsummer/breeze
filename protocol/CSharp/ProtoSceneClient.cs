@@ -272,23 +272,23 @@ namespace Proto4z
         //members   
         public ulong eid;  
         public ushort action;  
-        public EPoint clientPos;  
-        public EPoint dstPos;  
+        public EPosition clientPos;  
+        public EPositionArray waypoints;  
         public ulong follow;  
         public MoveReq()  
         { 
             eid = 0;  
             action = 0;  
-            clientPos = new EPoint();  
-            dstPos = new EPoint();  
+            clientPos = new EPosition();  
+            waypoints = new EPositionArray();  
             follow = 0;  
         } 
-        public MoveReq(ulong eid, ushort action, EPoint clientPos, EPoint dstPos, ulong follow) 
+        public MoveReq(ulong eid, ushort action, EPosition clientPos, EPositionArray waypoints, ulong follow) 
         { 
             this.eid = eid; 
             this.action = action; 
             this.clientPos = clientPos; 
-            this.dstPos = dstPos; 
+            this.waypoints = waypoints; 
             this.follow = follow; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -296,10 +296,10 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.action)); 
-            if (this.clientPos == null) this.clientPos = new EPoint(); 
+            if (this.clientPos == null) this.clientPos = new EPosition(); 
             data.AddRange(this.clientPos.__encode()); 
-            if (this.dstPos == null) this.dstPos = new EPoint(); 
-            data.AddRange(this.dstPos.__encode()); 
+            if (this.waypoints == null) this.waypoints = new EPositionArray(); 
+            data.AddRange(this.waypoints.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.follow)); 
             return data; 
         } 
@@ -307,10 +307,10 @@ namespace Proto4z
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.action = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.clientPos = new EPoint(); 
+            this.clientPos = new EPosition(); 
             this.clientPos.__decode(binData, ref pos); 
-            this.dstPos = new EPoint(); 
-            this.dstPos.__decode(binData, ref pos); 
+            this.waypoints = new EPositionArray(); 
+            this.waypoints.__decode(binData, ref pos); 
             this.follow = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
@@ -447,8 +447,8 @@ namespace Proto4z
     public class UseSkillReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50016;  
-        static public ushort getProtoID() { return 50016; } 
+        public const ushort protoID = 50013;  
+        static public ushort getProtoID() { return 50013; } 
         static public string getProtoName() { return "UseSkillReq"; } 
         //members   
         public ulong eid;  
@@ -476,8 +476,8 @@ namespace Proto4z
     public class UseSkillResp: Proto4z.IProtoObject //只有失败时才会使用该协议  
     {     
         //proto id   
-        public const ushort protoID = 50017;  
-        static public ushort getProtoID() { return 50017; } 
+        public const ushort protoID = 50014;  
+        static public ushort getProtoID() { return 50014; } 
         static public string getProtoName() { return "UseSkillResp"; } 
         //members   
         public ushort retCode;  
@@ -510,8 +510,8 @@ namespace Proto4z
     public class UseSkillNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50018;  
-        static public ushort getProtoID() { return 50018; } 
+        public const ushort protoID = 50015;  
+        static public ushort getProtoID() { return 50015; } 
         static public string getProtoName() { return "UseSkillNotice"; } 
         //members   
         public ulong eid;  
@@ -539,8 +539,8 @@ namespace Proto4z
     public class ClientCustomReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50019;  
-        static public ushort getProtoID() { return 50019; } 
+        public const ushort protoID = 50016;  
+        static public ushort getProtoID() { return 50016; } 
         static public string getProtoName() { return "ClientCustomReq"; } 
         //members   
         public ulong eid;  
@@ -588,8 +588,8 @@ namespace Proto4z
     public class ClientCustomResp: Proto4z.IProtoObject //只有失败时才会使用该协议  
     {     
         //proto id   
-        public const ushort protoID = 50020;  
-        static public ushort getProtoID() { return 50020; } 
+        public const ushort protoID = 50017;  
+        static public ushort getProtoID() { return 50017; } 
         static public string getProtoName() { return "ClientCustomResp"; } 
         //members   
         public ushort retCode;  
@@ -627,8 +627,8 @@ namespace Proto4z
     public class ClientCustomNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50021;  
-        static public ushort getProtoID() { return 50021; } 
+        public const ushort protoID = 50018;  
+        static public ushort getProtoID() { return 50018; } 
         static public string getProtoName() { return "ClientCustomNotice"; } 
         //members   
         public ulong eid;  
@@ -676,8 +676,8 @@ namespace Proto4z
     public class ClientPingTestReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50022;  
-        static public ushort getProtoID() { return 50022; } 
+        public const ushort protoID = 50019;  
+        static public ushort getProtoID() { return 50019; } 
         static public string getProtoName() { return "ClientPingTestReq"; } 
         //members   
         public ulong seqID;  
@@ -710,8 +710,8 @@ namespace Proto4z
     public class ClientPingTestResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 50023;  
-        static public ushort getProtoID() { return 50023; } 
+        public const ushort protoID = 50020;  
+        static public ushort getProtoID() { return 50020; } 
         static public string getProtoName() { return "ClientPingTestResp"; } 
         //members   
         public ushort retCode;  

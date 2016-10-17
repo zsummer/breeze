@@ -67,17 +67,17 @@ Proto4z.EntityIDArray.__protoName = "EntityIDArray"
 Proto4z.EntityIDArray.__protoDesc = "array" 
 Proto4z.EntityIDArray.__protoTypeV = "ui64" 
  
-Proto4z.register(10002,"EPoint") 
-Proto4z.EPoint = {}  
-Proto4z.EPoint.__protoID = 10002 
-Proto4z.EPoint.__protoName = "EPoint" 
-Proto4z.EPoint[1] = {name="x", type="double" }  
-Proto4z.EPoint[2] = {name="y", type="double" }  
+Proto4z.register(10002,"EPosition") 
+Proto4z.EPosition = {}  
+Proto4z.EPosition.__protoID = 10002 
+Proto4z.EPosition.__protoName = "EPosition" 
+Proto4z.EPosition[1] = {name="x", type="double" }  
+Proto4z.EPosition[2] = {name="y", type="double" }  
  
-Proto4z.EPoints = {}  
-Proto4z.EPoints.__protoName = "EPoints" 
-Proto4z.EPoints.__protoDesc = "array" 
-Proto4z.EPoints.__protoTypeV = "EPoint" 
+Proto4z.EPositionArray = {}  
+Proto4z.EPositionArray.__protoName = "EPositionArray" 
+Proto4z.EPositionArray.__protoDesc = "array" 
+Proto4z.EPositionArray.__protoTypeV = "EPosition" 
  
 Proto4z.SkillIDArray = {} --技能ID数组 
 Proto4z.SkillIDArray.__protoName = "SkillIDArray" 
@@ -236,7 +236,7 @@ Proto4z.SkillInfo[1] = {name="skillID", type="ui64" }
 Proto4z.SkillInfo[2] = {name="startTime", type="double" }  
 Proto4z.SkillInfo[3] = {name="lastHitTime", type="double" }  
 Proto4z.SkillInfo[4] = {name="seq", type="ui64" } --hit seq 
-Proto4z.SkillInfo[5] = {name="dst", type="EPoint" } --目标位置 
+Proto4z.SkillInfo[5] = {name="dst", type="EPosition" } --目标位置 
 Proto4z.SkillInfo[6] = {name="foe", type="ui64" } --锁定的目标 
 Proto4z.SkillInfo[7] = {name="data", type="SkillData" } --配置数据 
  
@@ -284,21 +284,21 @@ Proto4z.EntityMove = {} --EntityMove
 Proto4z.EntityMove.__protoID = 10011 
 Proto4z.EntityMove.__protoName = "EntityMove" 
 Proto4z.EntityMove[1] = {name="eid", type="ui64" } --eid 
-Proto4z.EntityMove[2] = {name="action", type="ui16" } --状态 
-Proto4z.EntityMove[3] = {name="pos", type="EPoint" } --当前坐标 
-Proto4z.EntityMove[4] = {name="frames", type="ui64" } --移动终止条件之一. 剩余帧数 
-Proto4z.EntityMove[5] = {name="speed", type="double" } --移动速度 单位秒.  
-Proto4z.EntityMove[6] = {name="waypoints", type="EPoints" } --移动终止条件之一. 行走路点, 全部走完自动终止移动 
-Proto4z.EntityMove[7] = {name="follow", type="ui64" } --跟随的EID 始终 
+Proto4z.EntityMove[2] = {name="position", type="EPosition" } --当前坐标 
+Proto4z.EntityMove[3] = {name="action", type="ui16" } --移动状态 
+Proto4z.EntityMove[4] = {name="realSpeed", type="double" } --实时速度 
+Proto4z.EntityMove[5] = {name="expectSpeed", type="double" } --期望速度 
+Proto4z.EntityMove[6] = {name="waypoints", type="EPositionArray" } --移动路点 
+Proto4z.EntityMove[7] = {name="follow", type="ui64" } --eid 
  
 Proto4z.EntityMoveArray = {}  
 Proto4z.EntityMoveArray.__protoName = "EntityMoveArray" 
 Proto4z.EntityMoveArray.__protoDesc = "array" 
 Proto4z.EntityMoveArray.__protoTypeV = "EntityMove" 
  
-Proto4z.register(10013,"EntityReport") 
+Proto4z.register(10012,"EntityReport") 
 Proto4z.EntityReport = {} --EntityReport 
-Proto4z.EntityReport.__protoID = 10013 
+Proto4z.EntityReport.__protoID = 10012 
 Proto4z.EntityReport.__protoName = "EntityReport" 
 Proto4z.EntityReport[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityReport[2] = {name="killOtherCount", type="ui64" } --杀死其他玩家次数 
@@ -312,9 +312,9 @@ Proto4z.EntityReportArray.__protoName = "EntityReportArray"
 Proto4z.EntityReportArray.__protoDesc = "array" 
 Proto4z.EntityReportArray.__protoTypeV = "EntityReport" 
  
-Proto4z.register(10014,"EntityFullData") 
+Proto4z.register(10013,"EntityFullData") 
 Proto4z.EntityFullData = {} --EntityFullData 
-Proto4z.EntityFullData.__protoID = 10014 
+Proto4z.EntityFullData.__protoID = 10013 
 Proto4z.EntityFullData.__protoName = "EntityFullData" 
 Proto4z.EntityFullData[1] = {name="baseInfo", type="AvatarBaseInfo" }  
 Proto4z.EntityFullData[2] = {name="baseProps", type="AvatarPropMap" }  
@@ -327,9 +327,9 @@ Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray"
 Proto4z.EntityFullDataArray.__protoDesc = "array" 
 Proto4z.EntityFullDataArray.__protoTypeV = "EntityFullData" 
  
-Proto4z.register(10015,"SceneSection") 
+Proto4z.register(10014,"SceneSection") 
 Proto4z.SceneSection = {} --场景全景切片数据 
-Proto4z.SceneSection.__protoID = 10015 
+Proto4z.SceneSection.__protoID = 10014 
 Proto4z.SceneSection.__protoName = "SceneSection" 
 Proto4z.SceneSection[1] = {name="sceneID", type="ui64" }  
 Proto4z.SceneSection[2] = {name="sceneType", type="ui16" }  

@@ -134,7 +134,7 @@ namespace  zsummer
         }
         free(stackSymbol);
 #endif
-        return std::move(ss.str());
+        return ss.str();
     }
 }
 

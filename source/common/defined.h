@@ -457,7 +457,7 @@ inline std::set<ServiceType> getServiceSubsidiary(ServiceType serviceType)
             }
         }
     }
-    return std::move(ret);
+    return ret;
 }
 
 #endif

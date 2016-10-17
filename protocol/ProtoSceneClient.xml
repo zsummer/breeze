@@ -58,8 +58,8 @@
     <proto name="MoveReq" desc= "">
         <member name="eid"  type="ui64" desc=""/>
         <member name="action"  type="ui16" desc=""/>
-        <member name="clientPos"  type="EPoint" desc=""/>
-        <member name="dstPos"  type="EPoint" desc=""/>
+        <member name="clientPos"  type="EPosition" desc=""/>
+        <member name="waypoints"  type="EPositionArray" desc=""/>
         <member name="follow"  type="ui64" desc=""/>
     </proto>
     <proto name="MoveResp" desc= "只有失败时才会使用该协议">

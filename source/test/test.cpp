@@ -74,7 +74,6 @@ int main(int argc, char* argv[])
     checkBalance();
     auto ret =getHostByName("github.com", 3389);
     LOGA("getHostByName=" << ret);
-    std::tuple<int, double> kv1 = splitTupleString<int, double>("1:1.0", ":", "");
 
     std::tuple<double, int, std::string> kvv = splitTupleString<double, int, std::string>("1.0:2:aha", ":", "");
 

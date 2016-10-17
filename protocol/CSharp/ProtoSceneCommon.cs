@@ -312,21 +312,21 @@ namespace Proto4z
         } 
     } 
  
-    public class EPoint: Proto4z.IProtoObject 
+    public class EPosition: Proto4z.IProtoObject 
     {     
         //proto id   
         public const ushort protoID = 10002;  
         static public ushort getProtoID() { return 10002; } 
-        static public string getProtoName() { return "EPoint"; } 
+        static public string getProtoName() { return "EPosition"; } 
         //members   
         public double x;  
         public double y;  
-        public EPoint()  
+        public EPosition()  
         { 
             x = 0.0;  
             y = 0.0;  
         } 
-        public EPoint(double x, double y) 
+        public EPosition(double x, double y) 
         { 
             this.x = x; 
             this.y = y; 
@@ -347,7 +347,7 @@ namespace Proto4z
     } 
  
  
-    public class EPoints : System.Collections.Generic.List<EPoint>, Proto4z.IProtoObject  
+    public class EPositionArray : System.Collections.Generic.List<EPosition>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -368,7 +368,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new EPoint(); 
+                    var data = new EPosition(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 
@@ -874,7 +874,7 @@ namespace Proto4z
         public double startTime;  
         public double lastHitTime;  
         public ulong seq; //hit seq  
-        public EPoint dst; //目标位置  
+        public EPosition dst; //目标位置  
         public ulong foe; //锁定的目标  
         public SkillData data; //配置数据  
         public SkillInfo()  
@@ -883,11 +883,11 @@ namespace Proto4z
             startTime = 0.0;  
             lastHitTime = 0.0;  
             seq = 0;  
-            dst = new EPoint();  
+            dst = new EPosition();  
             foe = 0;  
             data = new SkillData();  
         } 
-        public SkillInfo(ulong skillID, double startTime, double lastHitTime, ulong seq, EPoint dst, ulong foe, SkillData data) 
+        public SkillInfo(ulong skillID, double startTime, double lastHitTime, ulong seq, EPosition dst, ulong foe, SkillData data) 
         { 
             this.skillID = skillID; 
             this.startTime = startTime; 
@@ -904,7 +904,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.startTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastHitTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.seq)); 
-            if (this.dst == null) this.dst = new EPoint(); 
+            if (this.dst == null) this.dst = new EPosition(); 
             data.AddRange(this.dst.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
             if (this.data == null) this.data = new SkillData(); 
@@ -917,7 +917,7 @@ namespace Proto4z
             this.startTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.lastHitTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.seq = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.dst = new EPoint(); 
+            this.dst = new EPosition(); 
             this.dst.__decode(binData, ref pos); 
             this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.data = new SkillData(); 
@@ -1147,29 +1147,29 @@ namespace Proto4z
         static public string getProtoName() { return "EntityMove"; } 
         //members   
         public ulong eid; //eid  
-        public ushort action; //状态  
-        public EPoint pos; //当前坐标  
-        public ulong frames; //移动终止条件之一. 剩余帧数  
-        public double speed; //移动速度 单位秒.   
-        public EPoints waypoints; //移动终止条件之一. 行走路点, 全部走完自动终止移动  
-        public ulong follow; //跟随的EID 始终  
+        public EPosition position; //当前坐标  
+        public ushort action; //移动状态  
+        public double realSpeed; //实时速度  
+        public double expectSpeed; //期望速度  
+        public EPositionArray waypoints; //移动路点  
+        public ulong follow; //eid  
         public EntityMove()  
         { 
             eid = 0;  
+            position = new EPosition();  
             action = 0;  
-            pos = new EPoint();  
-            frames = 0;  
-            speed = 0.0;  
-            waypoints = new EPoints();  
+            realSpeed = 0.0;  
+            expectSpeed = 0.0;  
+            waypoints = new EPositionArray();  
             follow = 0;  
         } 
-        public EntityMove(ulong eid, ushort action, EPoint pos, ulong frames, double speed, EPoints waypoints, ulong follow) 
+        public EntityMove(ulong eid, EPosition position, ushort action, double realSpeed, double expectSpeed, EPositionArray waypoints, ulong follow) 
         { 
             this.eid = eid; 
+            this.position = position; 
             this.action = action; 
-            this.pos = pos; 
-            this.frames = frames; 
-            this.speed = speed; 
+            this.realSpeed = realSpeed; 
+            this.expectSpeed = expectSpeed; 
             this.waypoints = waypoints; 
             this.follow = follow; 
         } 
@@ -1177,12 +1177,12 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            if (this.position == null) this.position = new EPosition(); 
+            data.AddRange(this.position.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.action)); 
-            if (this.pos == null) this.pos = new EPoint(); 
-            data.AddRange(this.pos.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.frames)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.speed)); 
-            if (this.waypoints == null) this.waypoints = new EPoints(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.realSpeed)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.expectSpeed)); 
+            if (this.waypoints == null) this.waypoints = new EPositionArray(); 
             data.AddRange(this.waypoints.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.follow)); 
             return data; 
@@ -1190,12 +1190,12 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.position = new EPosition(); 
+            this.position.__decode(binData, ref pos); 
             this.action = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.pos = new EPoint(); 
-            this.pos.__decode(binData, ref pos); 
-            this.frames = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.speed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.waypoints = new EPoints(); 
+            this.realSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.expectSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.waypoints = new EPositionArray(); 
             this.waypoints.__decode(binData, ref pos); 
             this.follow = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
@@ -1236,8 +1236,8 @@ namespace Proto4z
     public class EntityReport: Proto4z.IProtoObject //EntityReport  
     {     
         //proto id   
-        public const ushort protoID = 10013;  
-        static public ushort getProtoID() { return 10013; } 
+        public const ushort protoID = 10012;  
+        static public ushort getProtoID() { return 10012; } 
         static public string getProtoName() { return "EntityReport"; } 
         //members   
         public ulong eid; //eid  
@@ -1321,8 +1321,8 @@ namespace Proto4z
     public class EntityFullData: Proto4z.IProtoObject //EntityFullData  
     {     
         //proto id   
-        public const ushort protoID = 10014;  
-        static public ushort getProtoID() { return 10014; } 
+        public const ushort protoID = 10013;  
+        static public ushort getProtoID() { return 10013; } 
         static public string getProtoName() { return "EntityFullData"; } 
         //members   
         public AvatarBaseInfo baseInfo;  
@@ -1411,8 +1411,8 @@ namespace Proto4z
     public class SceneSection: Proto4z.IProtoObject //场景全景切片数据  
     {     
         //proto id   
-        public const ushort protoID = 10015;  
-        static public ushort getProtoID() { return 10015; } 
+        public const ushort protoID = 10014;  
+        static public ushort getProtoID() { return 10014; } 
         static public string getProtoName() { return "SceneSection"; } 
         //members   
         public ulong sceneID;  

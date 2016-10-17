@@ -215,7 +215,7 @@ public:
             break;
             case 10002:
             {
-                   return "EPoint";
+                   return "EPosition";
             }
             break;
             case 10003:
@@ -265,20 +265,15 @@ public:
             break;
             case 10012:
             {
-                   return "EntityControl";
+                   return "EntityReport";
             }
             break;
             case 10013:
             {
-                   return "EntityReport";
-            }
-            break;
-            case 10014:
-            {
                    return "EntityFullData";
             }
             break;
-            case 10015:
+            case 10014:
             {
                    return "SceneSection";
             }
@@ -310,17 +305,12 @@ public:
             break;
             case 39005:
             {
-                   return "SceneServerGroupStatusChangeIns";
+                   return "SceneServerCancelSceneIns";
             }
             break;
             case 39006:
             {
                    return "SceneServerGroupStateChangeIns";
-            }
-            break;
-            case 39007:
-            {
-                   return "SceneServerCancelSceneIns";
             }
             break;
             case 40000:
@@ -375,32 +365,32 @@ public:
             break;
             case 40010:
             {
-                   return "SceneGroupGetStatusReq";
+                   return "SceneGroupGetReq";
             }
             break;
             case 40011:
             {
-                   return "SceneGroupGetStatusResp";
+                   return "SceneGroupGetResp";
             }
             break;
             case 40012:
             {
-                   return "SceneGroupEnterSceneReq";
+                   return "SceneGroupEnterReq";
             }
             break;
             case 40013:
             {
-                   return "SceneGroupEnterSceneResp";
+                   return "SceneGroupEnterResp";
             }
             break;
             case 40014:
             {
-                   return "SceneGroupCancelEnterReq";
+                   return "SceneGroupCancelReq";
             }
             break;
             case 40015:
             {
-                   return "SceneGroupCancelEnterResp";
+                   return "SceneGroupCancelResp";
             }
             break;
             case 40016:
@@ -498,36 +488,6 @@ public:
                    return "ChangeModeIDResp";
             }
             break;
-            case 40035:
-            {
-                   return "SceneGroupGetReq";
-            }
-            break;
-            case 40036:
-            {
-                   return "SceneGroupGetResp";
-            }
-            break;
-            case 40037:
-            {
-                   return "SceneGroupEnterReq";
-            }
-            break;
-            case 40038:
-            {
-                   return "SceneGroupEnterResp";
-            }
-            break;
-            case 40039:
-            {
-                   return "SceneGroupCancelReq";
-            }
-            break;
-            case 40040:
-            {
-                   return "SceneGroupCancelResp";
-            }
-            break;
             case 50000:
             {
                    return "SceneClientPulse";
@@ -595,55 +555,40 @@ public:
             break;
             case 50013:
             {
-                   return "UserSkillReq";
+                   return "UseSkillReq";
             }
             break;
             case 50014:
             {
-                   return "UserSkillResp";
+                   return "UseSkillResp";
             }
             break;
             case 50015:
             {
-                   return "UserSkillNotice";
+                   return "UseSkillNotice";
             }
             break;
             case 50016:
             {
-                   return "UseSkillReq";
+                   return "ClientCustomReq";
             }
             break;
             case 50017:
             {
-                   return "UseSkillResp";
+                   return "ClientCustomResp";
             }
             break;
             case 50018:
             {
-                   return "UseSkillNotice";
+                   return "ClientCustomNotice";
             }
             break;
             case 50019:
             {
-                   return "ClientCustomReq";
-            }
-            break;
-            case 50020:
-            {
-                   return "ClientCustomResp";
-            }
-            break;
-            case 50021:
-            {
-                   return "ClientCustomNotice";
-            }
-            break;
-            case 50022:
-            {
                    return "ClientPingTestReq";
             }
             break;
-            case 50023:
+            case 50020:
             {
                    return "ClientPingTestResp";
             }

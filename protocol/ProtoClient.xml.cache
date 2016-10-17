@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>6b318dfc52916f141feb8ecd9ada371e</cppmd5> 
-<luamd5>ae3977bfac951e562b356df91d79e3a1</luamd5> 
-<csharpmd5>350169007bb1ba1aba675df9f351b3fd</csharpmd5> 
+<cppmd5>48b405a93e70103e4e6d7ba778f4e6d0</cppmd5> 
+<luamd5>50fb05d8df18020c7852ab5325d76fe8</luamd5> 
+<csharpmd5>260e015bb440d67d56adf622507924c1</csharpmd5> 
 <xmlmd5>4992cb23a1280ac371ce17df23fff6b0</xmlmd5> 
 <cacheNumber>
     <cache key = "AttachAvatarReq" Number = "40005" /> 
@@ -22,20 +22,14 @@
     <cache key = "CreateAvatarResp" Number = "40004" /> 
     <cache key = "PingPongReq" Number = "40029" /> 
     <cache key = "PingPongResp" Number = "40030" /> 
-    <cache key = "SceneGroupCancelEnterReq" Number = "40014" /> 
-    <cache key = "SceneGroupCancelEnterResp" Number = "40015" /> 
-    <cache key = "SceneGroupCancelReq" Number = "40039" /> 
-    <cache key = "SceneGroupCancelResp" Number = "40040" /> 
+    <cache key = "SceneGroupCancelReq" Number = "40014" /> 
+    <cache key = "SceneGroupCancelResp" Number = "40015" /> 
     <cache key = "SceneGroupCreateReq" Number = "40016" /> 
     <cache key = "SceneGroupCreateResp" Number = "40017" /> 
-    <cache key = "SceneGroupEnterReq" Number = "40037" /> 
-    <cache key = "SceneGroupEnterResp" Number = "40038" /> 
-    <cache key = "SceneGroupEnterSceneReq" Number = "40012" /> 
-    <cache key = "SceneGroupEnterSceneResp" Number = "40013" /> 
-    <cache key = "SceneGroupGetReq" Number = "40035" /> 
-    <cache key = "SceneGroupGetResp" Number = "40036" /> 
-    <cache key = "SceneGroupGetStatusReq" Number = "40010" /> 
-    <cache key = "SceneGroupGetStatusResp" Number = "40011" /> 
+    <cache key = "SceneGroupEnterReq" Number = "40012" /> 
+    <cache key = "SceneGroupEnterResp" Number = "40013" /> 
+    <cache key = "SceneGroupGetReq" Number = "40010" /> 
+    <cache key = "SceneGroupGetResp" Number = "40011" /> 
     <cache key = "SceneGroupInfoNotice" Number = "40009" /> 
     <cache key = "SceneGroupInviteNotice" Number = "40022" /> 
     <cache key = "SceneGroupInviteReq" Number = "40020" /> 

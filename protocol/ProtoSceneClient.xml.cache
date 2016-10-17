@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>e818d986a599199c1c824105fc5cd144</cppmd5> 
-<luamd5>1831b7299c71dc451d4a0260fe73bff1</luamd5> 
-<csharpmd5>90916f75d446fbdbb56783dd0579d663</csharpmd5> 
-<xmlmd5>fdd2f84edf883debdf239778b887ccca</xmlmd5> 
+<cppmd5>0c1898d8560099bd2a1464038d71fd61</cppmd5> 
+<luamd5>c936bca45fae6ea2704d74010ad05339</luamd5> 
+<csharpmd5>d95b87487a3486c35911b35103465716</csharpmd5> 
+<xmlmd5>3933a6c7d60d6da0c0127705ea2b72db</xmlmd5> 
 <cacheNumber>
     <cache key = "AddBuffNotice" Number = "50011" /> 
     <cache key = "AddEntityNotice" Number = "50006" /> 
     <cache key = "AttachSceneReq" Number = "50001" /> 
     <cache key = "AttachSceneResp" Number = "50002" /> 
-    <cache key = "ClientCustomNotice" Number = "50021" /> 
-    <cache key = "ClientCustomReq" Number = "50019" /> 
-    <cache key = "ClientCustomResp" Number = "50020" /> 
-    <cache key = "ClientPingTestReq" Number = "50022" /> 
-    <cache key = "ClientPingTestResp" Number = "50023" /> 
+    <cache key = "ClientCustomNotice" Number = "50018" /> 
+    <cache key = "ClientCustomReq" Number = "50016" /> 
+    <cache key = "ClientCustomResp" Number = "50017" /> 
+    <cache key = "ClientPingTestReq" Number = "50019" /> 
+    <cache key = "ClientPingTestResp" Number = "50020" /> 
     <cache key = "MoveNotice" Number = "50010" /> 
     <cache key = "MoveReq" Number = "50008" /> 
     <cache key = "MoveResp" Number = "50009" /> 
@@ -23,10 +23,7 @@
     <cache key = "SceneRefreshNotice" Number = "50004" /> 
     <cache key = "SceneReportsNotice" Number = "50005" /> 
     <cache key = "SceneSectionNotice" Number = "50003" /> 
-    <cache key = "UseSkillNotice" Number = "50018" /> 
-    <cache key = "UseSkillReq" Number = "50016" /> 
-    <cache key = "UseSkillResp" Number = "50017" /> 
-    <cache key = "UserSkillNotice" Number = "50015" /> 
-    <cache key = "UserSkillReq" Number = "50013" /> 
-    <cache key = "UserSkillResp" Number = "50014" /> 
+    <cache key = "UseSkillNotice" Number = "50015" /> 
+    <cache key = "UseSkillReq" Number = "50013" /> 
+    <cache key = "UseSkillResp" Number = "50014" /> 
 </cacheNumber>

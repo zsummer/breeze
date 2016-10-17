@@ -177,7 +177,7 @@ struct AvatarPreview //用户预览信息
 { 
     static const unsigned short getProtoID() { return 1003;} 
     static const std::string getProtoName() { return "AvatarPreview";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -208,7 +208,7 @@ struct AvatarPreview //用户预览信息
     } 
 }; 
  
-const std::vector<std::string>  AvatarPreview::getDBBuild() 
+std::vector<std::string>  AvatarPreview::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarPreview` (        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `avatarName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`avatarID`),        UNIQUE KEY `avatarName` (`avatarName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -224,7 +224,7 @@ const std::vector<std::string>  AvatarPreview::getDBBuild()
     ret.push_back("alter table `tb_AvatarPreview` change `modeID`  `modeID`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarPreview` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarPreview` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  AvatarPreview::getDBSelect() 
 { 
@@ -335,7 +335,7 @@ struct AvatarBaseInfo //用户基础数据
 { 
     static const unsigned short getProtoID() { return 1004;} 
     static const std::string getProtoName() { return "AvatarBaseInfo";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -378,7 +378,7 @@ struct AvatarBaseInfo //用户基础数据
     } 
 }; 
  
-const std::vector<std::string>  AvatarBaseInfo::getDBBuild() 
+std::vector<std::string>  AvatarBaseInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarBaseInfo` (        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `avatarName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`avatarID`),        UNIQUE KEY `avatarName` (`avatarName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -402,7 +402,7 @@ const std::vector<std::string>  AvatarBaseInfo::getDBBuild()
     ret.push_back("alter table `tb_AvatarBaseInfo` change `diamond`  `diamond`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` add `createTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` change `createTime`  `createTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  AvatarBaseInfo::getDBSelect() 
 { 
@@ -540,7 +540,7 @@ struct DictGlobal //全局配置
 { 
     static const unsigned short getProtoID() { return 1005;} 
     static const std::string getProtoName() { return "DictGlobal";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -568,7 +568,7 @@ struct DictGlobal //全局配置
     } 
 }; 
  
-const std::vector<std::string>  DictGlobal::getDBBuild() 
+std::vector<std::string>  DictGlobal::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictGlobal` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -582,7 +582,7 @@ const std::vector<std::string>  DictGlobal::getDBBuild()
     ret.push_back("alter table `tb_DictGlobal` change `combo`  `combo`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictGlobal` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictGlobal` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictGlobal::getDBSelect() 
 { 
@@ -684,7 +684,7 @@ struct DictRaffleAward //奖池中的奖品
 { 
     static const unsigned short getProtoID() { return 1006;} 
     static const std::string getProtoName() { return "DictRaffleAward";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -708,7 +708,7 @@ struct DictRaffleAward //奖池中的奖品
     } 
 }; 
  
-const std::vector<std::string>  DictRaffleAward::getDBBuild() 
+std::vector<std::string>  DictRaffleAward::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictRaffleAward` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -718,7 +718,7 @@ const std::vector<std::string>  DictRaffleAward::getDBBuild()
     ret.push_back("alter table `tb_DictRaffleAward` change `weight`  `weight`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRaffleAward` add `probability`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRaffleAward` change `probability`  `probability`  double NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictRaffleAward::getDBSelect() 
 { 
@@ -811,7 +811,7 @@ struct DictRafflePool //道具抽奖,道具掉落
 { 
     static const unsigned short getProtoID() { return 1007;} 
     static const std::string getProtoName() { return "DictRafflePool";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -836,7 +836,7 @@ struct DictRafflePool //道具抽奖,道具掉落
     } 
 }; 
  
-const std::vector<std::string>  DictRafflePool::getDBBuild() 
+std::vector<std::string>  DictRafflePool::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictRafflePool` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -848,7 +848,7 @@ const std::vector<std::string>  DictRafflePool::getDBBuild()
     ret.push_back("alter table `tb_DictRafflePool` change `pool`  `pool`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_DictRafflePool` add `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictRafflePool` change `poolString`  `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictRafflePool::getDBSelect() 
 { 
@@ -975,7 +975,7 @@ struct DictBaseProps //战斗属性效果,用于装备,属性类增减益buff
 { 
     static const unsigned short getProtoID() { return 1008;} 
     static const std::string getProtoName() { return "DictBaseProps";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -1020,7 +1020,7 @@ struct DictBaseProps //战斗属性效果,用于装备,属性类增减益buff
     } 
 }; 
  
-const std::vector<std::string>  DictBaseProps::getDBBuild() 
+std::vector<std::string>  DictBaseProps::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictBaseProps` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -1044,7 +1044,7 @@ const std::vector<std::string>  DictBaseProps::getDBBuild()
     ret.push_back("alter table `tb_DictBaseProps` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictBaseProps` add `vampirk`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictBaseProps` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictBaseProps::getDBSelect() 
 { 
@@ -1176,7 +1176,7 @@ struct DictItem //道具字典
 { 
     static const unsigned short getProtoID() { return 1009;} 
     static const std::string getProtoName() { return "DictItem";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -1223,7 +1223,7 @@ struct DictItem //道具字典
     } 
 }; 
  
-const std::vector<std::string>  DictItem::getDBBuild() 
+std::vector<std::string>  DictItem::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictItem` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `primitiveType` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `subType` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `primitiveType` (`primitiveType`),        KEY `subType` (`subType`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -1249,7 +1249,7 @@ const std::vector<std::string>  DictItem::getDBBuild()
     ret.push_back("alter table `tb_DictItem` change `levelLimit`  `levelLimit`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictItem` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictItem` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictItem::getDBSelect() 
 { 
@@ -1387,7 +1387,7 @@ struct ItemInfo //道具字典
 { 
     static const unsigned short getProtoID() { return 1010;} 
     static const std::string getProtoName() { return "ItemInfo";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -1405,13 +1405,13 @@ struct ItemInfo //道具字典
     } 
 }; 
  
-const std::vector<std::string>  ItemInfo::getDBBuild() 
+std::vector<std::string>  ItemInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_ItemInfo` ( ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_ItemInfo` add `stacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_ItemInfo` change `stacks`  `stacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  ItemInfo::getDBSelect() 
 { 
@@ -1497,7 +1497,7 @@ struct LogChat //聊天日志
 { 
     static const unsigned short getProtoID() { return 1011;} 
     static const std::string getProtoName() { return "LogChat";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -1533,7 +1533,7 @@ struct LogChat //聊天日志
     } 
 }; 
  
-const std::vector<std::string>  LogChat::getDBBuild() 
+std::vector<std::string>  LogChat::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_LogChat` (        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,        `sourceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `targetID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `chatTime` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `sourceID` (`sourceID`),        KEY `targetID` (`targetID`),        KEY `chatTime` (`chatTime`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -1553,7 +1553,7 @@ const std::vector<std::string>  LogChat::getDBBuild()
     ret.push_back("alter table `tb_LogChat` change `msg`  `msg`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_LogChat` add `chatTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_LogChat` change `chatTime`  `chatTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  LogChat::getDBSelect() 
 { 
@@ -1728,7 +1728,7 @@ struct SimplePack //简单示例
 { 
     static const unsigned short getProtoID() { return 1013;} 
     static const std::string getProtoName() { return "SimplePack";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -1753,7 +1753,7 @@ struct SimplePack //简单示例
     } 
 }; 
  
-const std::vector<std::string>  SimplePack::getDBBuild() 
+std::vector<std::string>  SimplePack::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_SimplePack` (        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,        `name` varchar(255) NOT NULL DEFAULT '' ,        `createTime` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        UNIQUE KEY `name` (`name`),        KEY `createTime` (`createTime`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -1765,7 +1765,7 @@ const std::vector<std::string>  SimplePack::getDBBuild()
     ret.push_back("alter table `tb_SimplePack` change `createTime`  `createTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_SimplePack` add `moneyTree`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_SimplePack` change `moneyTree`  `moneyTree`  longblob NOT NULL "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  SimplePack::getDBSelect() 
 { 

@@ -276,8 +276,8 @@ struct MoveReq
     static const std::string getProtoName() { return "MoveReq";} 
     unsigned long long eid;  
     unsigned short action;  
-    EPoint clientPos;  
-    EPoint dstPos;  
+    EPosition clientPos;  
+    EPositionArray waypoints;  
     unsigned long long follow;  
     MoveReq() 
     { 
@@ -285,12 +285,12 @@ struct MoveReq
         action = 0; 
         follow = 0; 
     } 
-    MoveReq(const unsigned long long & eid, const unsigned short & action, const EPoint & clientPos, const EPoint & dstPos, const unsigned long long & follow) 
+    MoveReq(const unsigned long long & eid, const unsigned short & action, const EPosition & clientPos, const EPositionArray & waypoints, const unsigned long long & follow) 
     { 
         this->eid = eid; 
         this->action = action; 
         this->clientPos = clientPos; 
-        this->dstPos = dstPos; 
+        this->waypoints = waypoints; 
         this->follow = follow; 
     } 
 }; 
@@ -299,7 +299,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.eid;  
     ws << data.action;  
     ws << data.clientPos;  
-    ws << data.dstPos;  
+    ws << data.waypoints;  
     ws << data.follow;  
     return ws; 
 } 
@@ -308,7 +308,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.eid;  
     rs >> data.action;  
     rs >> data.clientPos;  
-    rs >> data.dstPos;  
+    rs >> data.waypoints;  
     rs >> data.follow;  
     return rs; 
 } 
@@ -318,7 +318,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "eid=" << info.eid << ","; 
     stm << "action=" << info.action << ","; 
     stm << "clientPos=" << info.clientPos << ","; 
-    stm << "dstPos=" << info.dstPos << ","; 
+    stm << "waypoints=" << info.waypoints << ","; 
     stm << "follow=" << info.follow << ","; 
     stm << "]"; 
     return stm; 
@@ -465,7 +465,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UseSkillReq 
 { 
-    static const unsigned short getProtoID() { return 50016;} 
+    static const unsigned short getProtoID() { return 50013;} 
     static const std::string getProtoName() { return "UseSkillReq";} 
     unsigned long long eid;  
     UseSkillReq() 
@@ -497,7 +497,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UseSkillResp //只有失败时才会使用该协议  
 { 
-    static const unsigned short getProtoID() { return 50017;} 
+    static const unsigned short getProtoID() { return 50014;} 
     static const std::string getProtoName() { return "UseSkillResp";} 
     unsigned short retCode;  
     unsigned long long eid;  
@@ -535,7 +535,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UseSkillNotice 
 { 
-    static const unsigned short getProtoID() { return 50018;} 
+    static const unsigned short getProtoID() { return 50015;} 
     static const std::string getProtoName() { return "UseSkillNotice";} 
     unsigned long long eid;  
     UseSkillNotice() 
@@ -567,7 +567,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientCustomReq 
 { 
-    static const unsigned short getProtoID() { return 50019;} 
+    static const unsigned short getProtoID() { return 50016;} 
     static const std::string getProtoName() { return "ClientCustomReq";} 
     unsigned long long eid;  
     unsigned long long customID;  
@@ -622,7 +622,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientCustomResp //只有失败时才会使用该协议  
 { 
-    static const unsigned short getProtoID() { return 50020;} 
+    static const unsigned short getProtoID() { return 50017;} 
     static const std::string getProtoName() { return "ClientCustomResp";} 
     unsigned short retCode;  
     unsigned long long eid;  
@@ -666,7 +666,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientCustomNotice 
 { 
-    static const unsigned short getProtoID() { return 50021;} 
+    static const unsigned short getProtoID() { return 50018;} 
     static const std::string getProtoName() { return "ClientCustomNotice";} 
     unsigned long long eid;  
     unsigned long long customID;  
@@ -721,7 +721,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientPingTestReq 
 { 
-    static const unsigned short getProtoID() { return 50022;} 
+    static const unsigned short getProtoID() { return 50019;} 
     static const std::string getProtoName() { return "ClientPingTestReq";} 
     unsigned long long seqID;  
     double clientTime;  
@@ -759,7 +759,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientPingTestResp 
 { 
-    static const unsigned short getProtoID() { return 50023;} 
+    static const unsigned short getProtoID() { return 50020;} 
     static const std::string getProtoName() { return "ClientPingTestResp";} 
     unsigned short retCode;  
     unsigned long long seqID;  

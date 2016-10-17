@@ -34,58 +34,58 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 }
 
 
-inline EPoint operator + (const EPoint & dst, const EPoint & org)
+inline EPosition operator + (const EPosition & dst, const EPosition & org)
 {
-    return EPoint(dst.x + org.x, dst.y + org.y);
+    return EPosition(dst.x + org.x, dst.y + org.y);
 }
-inline EPoint operator - (const EPoint & dst, const EPoint & org)
+inline EPosition operator - (const EPosition & dst, const EPosition & org)
 {
-    return EPoint(dst.x - org.x, dst.y - org.y);
+    return EPosition(dst.x - org.x, dst.y - org.y);
 }
-inline EPoint operator * (const EPoint & dst, const EPoint & org)
+inline EPosition operator * (const EPosition & dst, const EPosition & org)
 {
-    return EPoint(dst.x * org.x, dst.y * org.y);
+    return EPosition(dst.x * org.x, dst.y * org.y);
 }
-inline EPoint operator / (const EPoint & dst, const EPoint & org)
+inline EPosition operator / (const EPosition & dst, const EPosition & org)
 {
-    return EPoint(dst.x / org.x, dst.y * org.y);
+    return EPosition(dst.x / org.x, dst.y * org.y);
 }
-inline EPoint operator + (const EPoint & dst, double val)
+inline EPosition operator + (const EPosition & dst, double val)
 {
-    return EPoint(dst.x + val, dst.y + val);
+    return EPosition(dst.x + val, dst.y + val);
 }
-inline EPoint operator - (const EPoint & dst, double val)
+inline EPosition operator - (const EPosition & dst, double val)
 {
-    return EPoint(dst.x - val, dst.y - val);
+    return EPosition(dst.x - val, dst.y - val);
 }
-inline EPoint operator * (const EPoint & dst, double val)
+inline EPosition operator * (const EPosition & dst, double val)
 {
-    return EPoint(dst.x * val, dst.y * val);
+    return EPosition(dst.x * val, dst.y * val);
 }
-inline EPoint operator / (const EPoint & dst, double val)
+inline EPosition operator / (const EPosition & dst, double val)
 {
-    return EPoint(dst.x / val, dst.y * val);
+    return EPosition(dst.x / val, dst.y * val);
 }
-inline EPoint normalize(const EPoint & dst)
+inline EPosition normalize(const EPosition & dst)
 {
     if (std::abs(dst.x) > std::abs(dst.y))
     {
-        return EPoint(dst.x / dst.x, dst.y / dst.x);
+        return EPosition(dst.x / dst.x, dst.y / dst.x);
     }
-    return EPoint(dst.x / dst.y, dst.y / dst.y);
+    return EPosition(dst.x / dst.y, dst.y / dst.y);
 }
 
 
 
-inline RVO::Vector2 toRVOVector2(const EPoint & pos)
+inline RVO::Vector2 toRVOVector2(const EPosition & pos)
 {
     return RVO::Vector2(pos.x, pos.y);
 }
-inline EPoint toEPoint(const RVO::Vector2 & pos)
+inline EPosition toEPoint(const RVO::Vector2 & pos)
 {
-    return EPoint(pos.x(), pos.y());
+    return EPosition(pos.x(), pos.y());
 }
-inline double getDistance(const EPoint& pos1, const EPoint & pos2)
+inline double getDistance(const EPosition& pos1, const EPosition & pos2)
 {
     return getDistance(pos1.x, pos1.y, pos2.x, pos2.y);
 }
@@ -94,13 +94,13 @@ struct EntityControl //EntityControl
     unsigned long long eid = InvalidEntityID;
     unsigned long long agentNo = -1; //agentNo. -1为无效  
     double stateChageTick = 0.0;
-    EPoint spawnpoint; //出生点  
+    EPosition spawnpoint; //出生点
     SkillInfoArray skills; //技能数据  
     BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
     double diedTime = 1E128; //实体死亡时间点 仅飞行道具类有效  
     ui64 hitTimes = -1; //实体碰撞, 仅飞行道具类有效  
     double blockMoveCount = 0; //移动被阻次数 
-    EPoint lastClientPos; //最后一次客户端提交的坐标  
+    EPosition lastClientPos; //最后一次客户端提交的坐标
 };
 
 class Entity

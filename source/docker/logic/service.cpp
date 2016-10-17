@@ -162,7 +162,7 @@ ServiceCallback Service::checkoutCallback(ui64 cbid)
     }
     auto cb = std::move(founder->second.second);
     _cbs.erase(founder);
-    return std::move(cb);
+    return cb;
 }
 
 void Service::cleanCallback()

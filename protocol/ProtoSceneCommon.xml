@@ -68,11 +68,11 @@
     <!------------------------------------------  实体 ------------------------------------------------------------------>
     <!-- 基础ID  -->
     <array name="EntityIDArray" type="ui64" desc="" />
-    <struct name="EPoint" desc="" >
+    <struct name="EPosition" desc="" >
         <member name="x" type="double" />
         <member name="y" type="double" />
     </struct>
-    <array name="EPoints" type="EPoint" desc="" />
+    <array name="EPositionArray" type="EPosition" desc="" />
 
     <array name="SkillIDArray" type="ui64" desc="技能ID数组" />
     <array name="BuffIDArray" type="ui64" desc="buff ID 数组" />
@@ -247,7 +247,7 @@
         <member name="startTime" type="double" desc=""/>
         <member name="lastHitTime" type="double" desc=""/>
         <member name="seq" type="ui64" desc="hit seq"/>
-        <member name="dst"  type="EPoint" desc="目标位置"/>  
+        <member name="dst"  type="EPosition" desc="目标位置"/>  
         <member name="foe"  type="ui64" desc="锁定的目标"/>  
         <member name="data" type="SkillData" desc="配置数据"/>
     </struct>
@@ -287,12 +287,12 @@
     <!-- 实体动态属性, 差异广播 -->
     <struct name="EntityMove" desc="EntityMove">
         <member name="eid" type="ui64"  desc="eid"/>
-        <member name="action" type="ui16"  desc="状态"/>
-        <member name="pos"  type="EPoint" desc="当前坐标"/>
-        <member name="frames" type="ui64"  desc="移动终止条件之一. 剩余帧数"/>
-        <member name="speed" type="double"  desc="移动速度 单位秒. "/>
-        <member name="waypoints"  type="EPoints" desc="移动终止条件之一. 行走路点, 全部走完自动终止移动"/>
-        <member name="follow"  type="ui64" desc="跟随的EID 始终"/>
+        <member name="position"  type="EPosition" desc="当前坐标"/>
+        <member name="action" type="ui16"  desc="移动状态"/>
+        <member name="realSpeed" type="double"  desc="实时速度"/>
+        <member name="expectSpeed" type="double"  desc="期望速度"/>
+        <member name="waypoints"  type="EPositionArray" desc="移动路点"/>
+        <member name="follow"  type="ui64" desc="eid"/>
     </struct>
     <array name="EntityMoveArray" type="EntityMove" desc="" />
 

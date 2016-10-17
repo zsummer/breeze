@@ -356,8 +356,8 @@ namespace Proto4z
     public class SceneGroupGetReq: Proto4z.IProtoObject //获取当前角色的场景状态数据  
     {     
         //proto id   
-        public const ushort protoID = 40035;  
-        static public ushort getProtoID() { return 40035; } 
+        public const ushort protoID = 40010;  
+        static public ushort getProtoID() { return 40010; } 
         static public string getProtoName() { return "SceneGroupGetReq"; } 
         //members   
         public SceneGroupGetReq()  
@@ -377,8 +377,8 @@ namespace Proto4z
     public class SceneGroupGetResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40036;  
-        static public ushort getProtoID() { return 40036; } 
+        public const ushort protoID = 40011;  
+        static public ushort getProtoID() { return 40011; } 
         static public string getProtoName() { return "SceneGroupGetResp"; } 
         //members   
         public ushort retCode;  
@@ -406,8 +406,8 @@ namespace Proto4z
     public class SceneGroupEnterReq: Proto4z.IProtoObject //申请进入场景  
     {     
         //proto id   
-        public const ushort protoID = 40037;  
-        static public ushort getProtoID() { return 40037; } 
+        public const ushort protoID = 40012;  
+        static public ushort getProtoID() { return 40012; } 
         static public string getProtoName() { return "SceneGroupEnterReq"; } 
         //members   
         public ushort sceneType;  
@@ -440,8 +440,8 @@ namespace Proto4z
     public class SceneGroupEnterResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40038;  
-        static public ushort getProtoID() { return 40038; } 
+        public const ushort protoID = 40013;  
+        static public ushort getProtoID() { return 40013; } 
         static public string getProtoName() { return "SceneGroupEnterResp"; } 
         //members   
         public ushort retCode;  
@@ -469,8 +469,8 @@ namespace Proto4z
     public class SceneGroupCancelReq: Proto4z.IProtoObject //取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)  
     {     
         //proto id   
-        public const ushort protoID = 40039;  
-        static public ushort getProtoID() { return 40039; } 
+        public const ushort protoID = 40014;  
+        static public ushort getProtoID() { return 40014; } 
         static public string getProtoName() { return "SceneGroupCancelReq"; } 
         //members   
         public SceneGroupCancelReq()  
@@ -490,8 +490,8 @@ namespace Proto4z
     public class SceneGroupCancelResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40040;  
-        static public ushort getProtoID() { return 40040; } 
+        public const ushort protoID = 40015;  
+        static public ushort getProtoID() { return 40015; } 
         static public string getProtoName() { return "SceneGroupCancelResp"; } 
         //members   
         public ushort retCode;  

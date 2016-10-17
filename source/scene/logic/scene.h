@@ -63,12 +63,12 @@ public:
     //operator
 public:
     void pushAsync(std::function<void()> && func);
-    bool doMove(ui64 eid, MoveAction action, double speed, ui64 frames, ui64 follow, EPoint clt, EPoint dst, AvatarID avatarID = InvalidAvatarID, bool clean = true);
+    bool doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosition clt, EPositionArray dsts);
     bool doSkill(EntityID eid);
     bool cleanSkill();
     bool addBuff();
     bool cleanBuff();
-    std::vector<EntityPtr> searchPlayer(const EPoint &org);
+    std::vector<EntityPtr> searchPlayer(const EPosition &org);
 public:
     Scene(SceneID id);
     ~Scene();

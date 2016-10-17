@@ -176,36 +176,36 @@ typedef std::map<unsigned long long, SceneGroupInfo> SceneGroupInfoMap;
  
 typedef std::vector<unsigned long long> EntityIDArray;  
  
-struct EPoint 
+struct EPosition 
 { 
     static const unsigned short getProtoID() { return 10002;} 
-    static const std::string getProtoName() { return "EPoint";} 
+    static const std::string getProtoName() { return "EPosition";} 
     double x;  
     double y;  
-    EPoint() 
+    EPosition() 
     { 
         x = 0.0; 
         y = 0.0; 
     } 
-    EPoint(const double & x, const double & y) 
+    EPosition(const double & x, const double & y) 
     { 
         this->x = x; 
         this->y = y; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EPoint & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EPosition & data) 
 { 
     ws << data.x;  
     ws << data.y;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EPoint & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EPosition & data) 
 { 
     rs >> data.x;  
     rs >> data.y;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EPoint & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EPosition & info) 
 { 
     stm << "["; 
     stm << "x=" << info.x << ","; 
@@ -215,7 +215,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 } 
  
  
-typedef std::vector<EPoint> EPoints;  
+typedef std::vector<EPosition> EPositionArray;  
  
  
 typedef std::vector<unsigned long long> SkillIDArray; //技能ID数组  
@@ -627,7 +627,7 @@ struct SkillInfo
     double startTime;  
     double lastHitTime;  
     unsigned long long seq; //hit seq  
-    EPoint dst; //目标位置  
+    EPosition dst; //目标位置  
     unsigned long long foe; //锁定的目标  
     SkillData data; //配置数据  
     SkillInfo() 
@@ -638,7 +638,7 @@ struct SkillInfo
         seq = 0; 
         foe = 0; 
     } 
-    SkillInfo(const unsigned long long & skillID, const double & startTime, const double & lastHitTime, const unsigned long long & seq, const EPoint & dst, const unsigned long long & foe, const SkillData & data) 
+    SkillInfo(const unsigned long long & skillID, const double & startTime, const double & lastHitTime, const unsigned long long & seq, const EPosition & dst, const unsigned long long & foe, const SkillData & data) 
     { 
         this->skillID = skillID; 
         this->startTime = startTime; 
@@ -834,27 +834,27 @@ struct EntityMove //EntityMove
     static const unsigned short getProtoID() { return 10011;} 
     static const std::string getProtoName() { return "EntityMove";} 
     unsigned long long eid; //eid  
-    unsigned short action; //状态  
-    EPoint pos; //当前坐标  
-    unsigned long long frames; //移动终止条件之一. 剩余帧数  
-    double speed; //移动速度 单位秒.   
-    EPoints waypoints; //移动终止条件之一. 行走路点, 全部走完自动终止移动  
-    unsigned long long follow; //跟随的EID 始终  
+    EPosition position; //当前坐标  
+    unsigned short action; //移动状态  
+    double realSpeed; //实时速度  
+    double expectSpeed; //期望速度  
+    EPositionArray waypoints; //移动路点  
+    unsigned long long follow; //eid  
     EntityMove() 
     { 
         eid = 0; 
         action = 0; 
-        frames = 0; 
-        speed = 0.0; 
+        realSpeed = 0.0; 
+        expectSpeed = 0.0; 
         follow = 0; 
     } 
-    EntityMove(const unsigned long long & eid, const unsigned short & action, const EPoint & pos, const unsigned long long & frames, const double & speed, const EPoints & waypoints, const unsigned long long & follow) 
+    EntityMove(const unsigned long long & eid, const EPosition & position, const unsigned short & action, const double & realSpeed, const double & expectSpeed, const EPositionArray & waypoints, const unsigned long long & follow) 
     { 
         this->eid = eid; 
+        this->position = position; 
         this->action = action; 
-        this->pos = pos; 
-        this->frames = frames; 
-        this->speed = speed; 
+        this->realSpeed = realSpeed; 
+        this->expectSpeed = expectSpeed; 
         this->waypoints = waypoints; 
         this->follow = follow; 
     } 
@@ -862,10 +862,10 @@ struct EntityMove //EntityMove
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityMove & data) 
 { 
     ws << data.eid;  
+    ws << data.position;  
     ws << data.action;  
-    ws << data.pos;  
-    ws << data.frames;  
-    ws << data.speed;  
+    ws << data.realSpeed;  
+    ws << data.expectSpeed;  
     ws << data.waypoints;  
     ws << data.follow;  
     return ws; 
@@ -873,10 +873,10 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityMove & data) 
 { 
     rs >> data.eid;  
+    rs >> data.position;  
     rs >> data.action;  
-    rs >> data.pos;  
-    rs >> data.frames;  
-    rs >> data.speed;  
+    rs >> data.realSpeed;  
+    rs >> data.expectSpeed;  
     rs >> data.waypoints;  
     rs >> data.follow;  
     return rs; 
@@ -885,10 +885,10 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "["; 
     stm << "eid=" << info.eid << ","; 
+    stm << "position=" << info.position << ","; 
     stm << "action=" << info.action << ","; 
-    stm << "pos=" << info.pos << ","; 
-    stm << "frames=" << info.frames << ","; 
-    stm << "speed=" << info.speed << ","; 
+    stm << "realSpeed=" << info.realSpeed << ","; 
+    stm << "expectSpeed=" << info.expectSpeed << ","; 
     stm << "waypoints=" << info.waypoints << ","; 
     stm << "follow=" << info.follow << ","; 
     stm << "]"; 
@@ -900,7 +900,7 @@ typedef std::vector<EntityMove> EntityMoveArray;
  
 struct EntityReport //EntityReport  
 { 
-    static const unsigned short getProtoID() { return 10013;} 
+    static const unsigned short getProtoID() { return 10012;} 
     static const std::string getProtoName() { return "EntityReport";} 
     unsigned long long eid; //eid  
     unsigned long long killOtherCount; //杀死其他玩家次数  
@@ -965,7 +965,7 @@ typedef std::vector<EntityReport> EntityReportArray;
  
 struct EntityFullData //EntityFullData  
 { 
-    static const unsigned short getProtoID() { return 10014;} 
+    static const unsigned short getProtoID() { return 10013;} 
     static const std::string getProtoName() { return "EntityFullData";} 
     AvatarBaseInfo baseInfo;  
     AvatarPropMap baseProps;  
@@ -1019,7 +1019,7 @@ typedef std::vector<EntityFullData> EntityFullDataArray;
  
 struct SceneSection //场景全景切片数据  
 { 
-    static const unsigned short getProtoID() { return 10015;} 
+    static const unsigned short getProtoID() { return 10014;} 
     static const std::string getProtoName() { return "SceneSection";} 
     unsigned long long sceneID;  
     unsigned short sceneType;  

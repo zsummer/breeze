@@ -203,7 +203,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerCancelSceneIns //退出场景  
 { 
-    static const unsigned short getProtoID() { return 39007;} 
+    static const unsigned short getProtoID() { return 39005;} 
     static const std::string getProtoName() { return "SceneServerCancelSceneIns";} 
     unsigned long long sceneID; //sceneID  
     unsigned long long groupID; //groupID  
