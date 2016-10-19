@@ -49,6 +49,8 @@ using SceneGroupInfoPtr = std::shared_ptr<SceneGroupInfo>;
 using SceneGroupInfoPool = std::list<SceneGroupInfoPtr>;
 
 
+
+
 class World : public Singleton<World>
 {
 public:
