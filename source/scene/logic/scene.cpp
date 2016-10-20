@@ -467,7 +467,7 @@ void Scene::doMonster()
     }
     for (auto monster: _monsters)
     {
-        auto ret = searchPlayer(monster.second->_entityMove.position, SEARCH_METHOD_SEACTOR, EPosition(1, 1), 1E20);
+        auto ret = searchPlayer(monster.second->_entityMove.position, SEARCH_METHOD_SEACTOR,0, 360, 1E20);
         if (ret.size() > 0)
         {
             if (monster.second->_entityMove.follow != ret.front()->_entityInfo.eid)
@@ -628,7 +628,7 @@ bool Scene::cleanBuff()
     return true;
 }
 
-std::vector<EntityPtr> Scene::searchPlayer(const EPosition &org, SearchMethodType searchMethod, const EPosition & toward, double dist)
+std::vector<EntityPtr> Scene::searchPlayer(const EPosition &org, SearchMethodType searchMethod, double face, double width, double length)
 {
     std::vector<EntityPtr> ret;
     if (_players.empty())
@@ -646,10 +646,24 @@ std::vector<EntityPtr> Scene::searchPlayer(const EPosition &org, SearchMethodTyp
         {
             continue;
         }
-        if (getDistance(org, entity._entityMove.position) > dist)
+        if (getDistance(org, entity._entityMove.position) > length)
         {
             continue;
         }
+        if (searchMethod == SEARCH_METHOD_SEACTOR && width < 340.0)
+        {
+            double curFace = getRadian(org.x, org.y, entity._entityMove.position.x, entity._entityMove.position.y)/PI/2.0*360.0 + width/2.0;
+            curFace = ::fmod(curFace, 360.0);
+            if ( (curFace - face  > width || curFace < face)  &&  curFace + 360 - face > width )
+            {
+                continue;
+            }
+        }
+        if (searchMethod == SEARCH_METHOD_RECT)
+        {
+            
+        }
+
         ret.push_back(kv.second);
     }
     std::sort(ret.begin(), ret.end(), [org](const EntityPtr & entity1, const EntityPtr & entity2)

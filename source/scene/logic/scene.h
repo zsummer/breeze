@@ -68,7 +68,7 @@ public:
     bool cleanSkill();
     bool addBuff();
     bool cleanBuff();
-    std::vector<EntityPtr> searchPlayer(const EPosition &org, SearchMethodType searchMethod, const EPosition & toward, double dist);
+    std::vector<EntityPtr> searchPlayer(const EPosition &org, SearchMethodType searchMethod, double face, double width, double length);
 public:
     Scene(SceneID id);
     ~Scene();
