@@ -114,18 +114,17 @@
 
     <!-- 搜索方法-->
     <enum type="ui16" name="SearchMethodType" desc="">
-        <member name="SEARCH_METHOD_DISTANCE" desc="org 半径,360度扇形的优化" />
         <member name="SEARCH_METHOD_SEACTOR" desc="org 扇形" />
         <member name="SEARCH_METHOD_RECT" desc="org 矩形" />
     </enum>
 
     <!-- 搜索目标阵营(组合位结构)-->
     <enum type="ui64" name="SearchTarget" desc="">
-        <member name="SEARCH_TARGET_NONE"  desc="无" />
-        <member name="SEARCH_TARGET_SELF"  desc="自身, 玩家或者AI" />
-        <member name="SEARCH_TARGET_ENEMY"  desc="敌人" />
-        <member name="SEARCH_TARGET_FRIEND"  desc="友方" />
-        <member name="SEARCH_TARGET_NEUTRAL"  desc="中立" />
+        <member name="SEARCH_TARGET_NONE"   value="0" desc="无" />
+        <member name="SEARCH_TARGET_SELF"   value="1" desc="自身, 玩家或者AI" />
+        <member name="SEARCH_TARGET_ENEMY"   value="2" desc="敌人" />
+        <member name="SEARCH_TARGET_FRIEND"   value="4" desc="友方" />
+        <member name="SEARCH_TARGET_NEUTRAL"   value="6" desc="中立" />
     </enum>
 
 

@@ -360,6 +360,17 @@ void Scene::checkStepRVO(bool preCheck)
                 {
                     break;
                 }
+                if (::accessFile("../rvo.txt"))
+                {
+                    std::string content = readFileContent("../rvo.txt");
+                    auto tp = splitTupleString<double, size_t, double, double, double>(content, ",", " ");
+                    _sim->setAgentNeighborDist(entity._control.agentNo, std::get<0>(tp));
+                    _sim->setAgentMaxNeighbors(entity._control.agentNo, std::get<1>(tp));
+                    _sim->setAgentTimeHorizon(entity._control.agentNo, std::get<2>(tp));
+                    _sim->setAgentTimeHorizonObst(entity._control.agentNo, std::get<3>(tp));
+                    _sim->setAgentRadius(entity._control.agentNo, std::get<4>(tp));
+                }
+                
                 _sim->setAgentMaxSpeed(entity._control.agentNo, entity._entityMove.expectSpeed);
                 double dist = getDistance(entity._entityMove.position, entity._entityMove.waypoints.front());
                 double needTime = dist / entity._entityMove.expectSpeed;
@@ -439,6 +450,10 @@ void Scene::doStepRVO()
 
 void Scene::doMonster()
 {
+    if (_sceneType != SCENE_HOME)
+    {
+        return;
+    }
     while (_monsters.size() < _players.size() * 3  )
     {
         AvatarBaseInfo base;
@@ -452,7 +467,7 @@ void Scene::doMonster()
     }
     for (auto monster: _monsters)
     {
-        auto ret = searchPlayer(monster.second->_entityMove.position);
+        auto ret = searchPlayer(monster.second->_entityMove.position, SEARCH_METHOD_SEACTOR, EPosition(1, 1), 1E20);
         if (ret.size() > 0)
         {
             if (monster.second->_entityMove.follow != ret.front()->_entityInfo.eid)
@@ -613,16 +628,29 @@ bool Scene::cleanBuff()
     return true;
 }
 
-std::vector<EntityPtr> Scene::searchPlayer(const EPosition &org)
+std::vector<EntityPtr> Scene::searchPlayer(const EPosition &org, SearchMethodType searchMethod, const EPosition & toward, double dist)
 {
     std::vector<EntityPtr> ret;
     if (_players.empty())
     {
         return ret;
     }
-    for (auto entity : _players)
+    for (auto kv : _players)
     {
-        ret.push_back(entity.second);
+        auto & entity = *(kv.second);
+        if (entity._entityInfo.etype != ENTITY_AVATAR && entity._entityInfo.etype != ENTITY_AI)
+        {
+            continue;
+        }
+        if (entity._entityInfo.state != ENTITY_STATE_ACTIVE)
+        {
+            continue;
+        }
+        if (getDistance(org, entity._entityMove.position) > dist)
+        {
+            continue;
+        }
+        ret.push_back(kv.second);
     }
     std::sort(ret.begin(), ret.end(), [org](const EntityPtr & entity1, const EntityPtr & entity2)
     {return getDistance(entity1->_entityMove.position, org) < getDistance(entity2->_entityMove.position, org); });
