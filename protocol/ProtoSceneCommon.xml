@@ -119,12 +119,11 @@
     </enum>
 
     <!-- 搜索目标阵营(组合位结构)-->
-    <enum type="ui64" name="SearchTarget" desc="">
-        <member name="SEARCH_TARGET_NONE"   value="0" desc="无" />
-        <member name="SEARCH_TARGET_SELF"   value="1" desc="自身, 玩家或者AI" />
-        <member name="SEARCH_TARGET_ENEMY"   value="2" desc="敌人" />
-        <member name="SEARCH_TARGET_FRIEND"   value="4" desc="友方" />
-        <member name="SEARCH_TARGET_NEUTRAL"   value="6" desc="中立" />
+    <enum type="ui64" name="SearchCampType" desc="">
+        <member name="SEARCH_CAMP_NONE"   desc="" />
+        <member name="SEARCH_CAMP_SELF"    desc="自身" />
+        <member name="SEARCH_CAMP_SAME_WITHOUT_SELF"    desc="同阵营非自己" />
+        <member name="SEARCH_CAMP_ALIEN"    desc="非己方阵营" />
     </enum>
 
 

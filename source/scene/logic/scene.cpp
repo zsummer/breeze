@@ -467,7 +467,7 @@ void Scene::doMonster()
     }
     for (auto monster: _monsters)
     {
-        auto ret = searchPlayer(monster.second->_entityMove.position, SEARCH_METHOD_SEACTOR,0, 360, 1E20);
+        auto ret = searchTarget(monster.second, ENTITY_AVATAR, SEARCH_CAMP_NONE, SEARCH_METHOD_SEACTOR, 0, 360, 1E20, 1);
         if (ret.size() > 0)
         {
             if (monster.second->_entityMove.follow != ret.front()->_entityInfo.eid)
@@ -628,14 +628,22 @@ bool Scene::cleanBuff()
     return true;
 }
 
-std::vector<EntityPtr> Scene::searchPlayer(const EPosition &org, SearchMethodType searchMethod, double face, double width, double length)
+std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EntityType targetType, ui16 targetSC, SearchMethodType searchMethod,
+    double face, double width, double length, size_t limit)
 {
+    EntityPtr master = caster;
     std::vector<EntityPtr> ret;
-    if (_players.empty())
+    if (caster->_entityInfo.etype != ENTITY_AVATAR && caster->_entityInfo.etype != ENTITY_AI && caster->_entityInfo.leader != InvalidEntityID)
     {
-        return ret;
+        master = getEntity(caster->_entityInfo.leader);
+        if (!master)
+        {
+            LOGE("");
+            return ret;
+        }
     }
-    for (auto kv : _players)
+    
+    for (auto kv : _entitys)
     {
         auto & entity = *(kv.second);
         if (entity._entityInfo.etype != ENTITY_AVATAR && entity._entityInfo.etype != ENTITY_AI)
@@ -646,13 +654,36 @@ std::vector<EntityPtr> Scene::searchPlayer(const EPosition &org, SearchMethodTyp
         {
             continue;
         }
-        if (getDistance(org, entity._entityMove.position) > length)
+        if (getBitFlag(targetSC, SEARCH_CAMP_SELF) && entity._entityInfo.eid == master->_entityInfo.eid)
+        {
+            ret.push_back(kv.second);
+            continue;
+        }
+        if ( (getBitFlag(targetSC, SEARCH_CAMP_SAME_WITHOUT_SELF) && master->_entityInfo.camp == entity._entityInfo.camp)
+            || (getBitFlag(targetSC, SEARCH_CAMP_ALIEN) && master->_entityInfo.camp != entity._entityInfo.camp))
+        {
+            
+        }
+        else
+        {
+            continue;
+        }
+        if (targetType != ENTITY_NONE)
+        {
+            if (entity._entityInfo.etype != targetType)
+            {
+                continue;
+            }
+        }
+
+        if (getDistance(caster->_entityMove.position, entity._entityMove.position) > length)
         {
             continue;
         }
         if (searchMethod == SEARCH_METHOD_SEACTOR && width < 340.0)
         {
-            double curFace = getRadian(org.x, org.y, entity._entityMove.position.x, entity._entityMove.position.y)/PI/2.0*360.0 + width/2.0;
+            double curFace = getRadian(caster->_entityMove.position.x, caster->_entityMove.position.y, 
+                entity._entityMove.position.x, entity._entityMove.position.y)/PI/2.0*360.0 + width/2.0;
             curFace = ::fmod(curFace, 360.0);
             if ( (curFace - face  > width || curFace < face)  &&  curFace + 360 - face > width )
             {
@@ -661,13 +692,22 @@ std::vector<EntityPtr> Scene::searchPlayer(const EPosition &org, SearchMethodTyp
         }
         if (searchMethod == SEARCH_METHOD_RECT)
         {
-            
+            double curRadian = getRadian(caster->_entityMove.position.x, caster->_entityMove.position.y, entity._entityMove.position.x, entity._entityMove.position.y);
+            auto dst = rotatePoint(caster->_entityMove.position.x, caster->_entityMove.position.y, face/360 * PI *2.0, 
+                getDistance(caster->_entityMove.position, entity._entityMove.position), PI *2 - face / 360 * PI *2.0);
+            if (abs(std::get<1>(dst) - caster->_entityMove.position.y) > width/2.0)
+            {
+                continue;
+            }
         }
-
         ret.push_back(kv.second);
     }
-    std::sort(ret.begin(), ret.end(), [org](const EntityPtr & entity1, const EntityPtr & entity2)
-    {return getDistance(entity1->_entityMove.position, org) < getDistance(entity2->_entityMove.position, org); });
+    std::sort(ret.begin(), ret.end(), [caster](const EntityPtr & entity1, const EntityPtr & entity2)
+    {return getDistance(entity1->_entityMove.position, caster->_entityMove.position) < getDistance(entity2->_entityMove.position, caster->_entityMove.position); });
+    while (ret.size() > limit)
+    {
+        ret.pop_back();
+    }
     return std::move(ret);
 }
 

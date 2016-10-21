@@ -111,15 +111,13 @@ Proto4z.MOVE_ACTION_PATH = 2--路径
 Proto4z.MOVE_ACTION_PASV_PATH = 3--不可取消, 直线移动一次. 
 Proto4z.MOVE_ACTION_FORCE_PATH = 4--不可取消&穿越地形, 直线移动一次 
  
-Proto4z.SEARCH_METHOD_DISTANCE = 0--org 半径,360度扇形的优化 
-Proto4z.SEARCH_METHOD_SEACTOR = 1--org 扇形 
-Proto4z.SEARCH_METHOD_RECT = 2--org 矩形 
+Proto4z.SEARCH_METHOD_SEACTOR = 0--org 扇形 
+Proto4z.SEARCH_METHOD_RECT = 1--org 矩形 
  
-Proto4z.SEARCH_TARGET_NONE = 0--无 
-Proto4z.SEARCH_TARGET_SELF = 1--自身, 玩家或者AI 
-Proto4z.SEARCH_TARGET_ENEMY = 2--敌人 
-Proto4z.SEARCH_TARGET_FRIEND = 3--友方 
-Proto4z.SEARCH_TARGET_NEUTRAL = 4--中立 
+Proto4z.SEARCH_CAMP_NONE = 0 
+Proto4z.SEARCH_CAMP_SELF = 1--自身 
+Proto4z.SEARCH_CAMP_SAME_WITHOUT_SELF = 2--同阵营非自己 
+Proto4z.SEARCH_CAMP_ALIEN = 3--非己方阵营 
  
 Proto4z.SKILL_NONE = 0 
 Proto4z.SKILL_AUTO = 1--普攻 

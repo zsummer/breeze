@@ -471,18 +471,16 @@ namespace Proto4z
  
     public enum SearchMethodType : ushort 
     { 
-        SEARCH_METHOD_DISTANCE = 0, //org 半径,360度扇形的优化  
-        SEARCH_METHOD_SEACTOR = 1, //org 扇形  
-        SEARCH_METHOD_RECT = 2, //org 矩形  
+        SEARCH_METHOD_SEACTOR = 0, //org 扇形  
+        SEARCH_METHOD_RECT = 1, //org 矩形  
     }; 
  
-    public enum SearchTarget : ulong 
+    public enum SearchCampType : ulong 
     { 
-        SEARCH_TARGET_NONE = 0, //无  
-        SEARCH_TARGET_SELF = 1, //自身, 玩家或者AI  
-        SEARCH_TARGET_ENEMY = 2, //敌人  
-        SEARCH_TARGET_FRIEND = 3, //友方  
-        SEARCH_TARGET_NEUTRAL = 4, //中立  
+        SEARCH_CAMP_NONE = 0,  
+        SEARCH_CAMP_SELF = 1, //自身  
+        SEARCH_CAMP_SAME_WITHOUT_SELF = 2, //同阵营非自己  
+        SEARCH_CAMP_ALIEN = 3, //非己方阵营  
     }; 
  
     public enum SkillType : ulong 

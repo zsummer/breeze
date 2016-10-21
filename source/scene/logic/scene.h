@@ -68,7 +68,12 @@ public:
     bool cleanSkill();
     bool addBuff();
     bool cleanBuff();
-    std::vector<EntityPtr> searchPlayer(const EPosition &org, SearchMethodType searchMethod, double face, double width, double length);
+    //caster为当前施法者, 如果当前施法者为飞行道具 则搜索目标为self的时候 应当是指master  
+    //targetType 如果是none 则忽略该过滤选项  
+    //targetSC如果是none 则忽略该选项, 否则取位判断  
+    //
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, EntityType targetType, ui16 targetSC, SearchMethodType searchMethod, 
+        double face, double width, double length, size_t limit);
 public:
     Scene(SceneID id);
     ~Scene();
