@@ -540,59 +540,59 @@ namespace Proto4z
         static public ushort getProtoID() { return 10003; } 
         static public string getProtoName() { return "SearchInfo"; } 
         //members   
-        public ushort searchMethod;  
-        public ulong searchTarget;  
-        public double rate; //概率  
+        public ushort etype; //实体类型, 玩家/AI 或者是NONE忽略该选项  
+        public ulong camp; //0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType  
+        public ushort method; //0扇形, 1矩形 SearchMethodType  
         public double distance; //伤害距离  
         public double radian; //弧度或者宽度  
-        public double offsetX; //坐标偏移量, 正数为x = x + offset  
-        public double offsetY; //坐标偏移量, 正数为y = y + offset  
-        public ulong targetMaxCount; //最大目标数  
+        public double offsetX; //坐标偏移量, 以caster为原点, 朝向为y轴  
+        public double offsetY; //坐标偏移量, 以caster为原点, 朝向为y轴  
+        public ulong limitEntitys; //最大目标数  
         public SearchInfo()  
         { 
-            searchMethod = 0;  
-            searchTarget = 0;  
-            rate = 0.0;  
+            etype = 0;  
+            camp = 0;  
+            method = 0;  
             distance = 0.0;  
             radian = 0.0;  
             offsetX = 0.0;  
             offsetY = 0.0;  
-            targetMaxCount = 0;  
+            limitEntitys = 0;  
         } 
-        public SearchInfo(ushort searchMethod, ulong searchTarget, double rate, double distance, double radian, double offsetX, double offsetY, ulong targetMaxCount) 
+        public SearchInfo(ushort etype, ulong camp, ushort method, double distance, double radian, double offsetX, double offsetY, ulong limitEntitys) 
         { 
-            this.searchMethod = searchMethod; 
-            this.searchTarget = searchTarget; 
-            this.rate = rate; 
+            this.etype = etype; 
+            this.camp = camp; 
+            this.method = method; 
             this.distance = distance; 
             this.radian = radian; 
             this.offsetX = offsetX; 
             this.offsetY = offsetY; 
-            this.targetMaxCount = targetMaxCount; 
+            this.limitEntitys = limitEntitys; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.searchMethod)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.searchTarget)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.rate)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.camp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.method)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.distance)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.radian)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.offsetX)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.offsetY)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.targetMaxCount)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.limitEntitys)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.searchMethod = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.searchTarget = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.rate = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.camp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.method = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.distance = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.radian = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.offsetX = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.offsetY = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.targetMaxCount = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.limitEntitys = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
     } 

@@ -467,7 +467,16 @@ void Scene::doMonster()
     }
     for (auto monster: _monsters)
     {
-        auto ret = searchTarget(monster.second, ENTITY_AVATAR, SEARCH_CAMP_NONE, SEARCH_METHOD_SEACTOR, 0, 360, 1E20, 1);
+        SearchInfo search;
+        search.camp = SEARCH_CAMP_NONE;
+        search.etype = ENTITY_AVATAR;
+        search.limitEntitys = 1;
+        search.radian = PI*2.0;
+        search.method = SEARCH_METHOD_SEACTOR;
+        search.distance = 1E20;
+        search.offsetX = 0;
+        search.offsetY = 0;
+        auto ret = searchTarget(monster.second, 0, search);
         if (ret.size() > 0)
         {
             if (monster.second->_entityMove.follow != ret.front()->_entityInfo.eid)
@@ -628,21 +637,30 @@ bool Scene::cleanBuff()
     return true;
 }
 
-std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EntityType targetType, ui16 targetSC, SearchMethodType searchMethod,
-    double face, double width, double length, size_t limit)
+std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, const SearchInfo & search)
 {
     EntityPtr master = caster;
     std::vector<EntityPtr> ret;
-    if (caster->_entityInfo.etype != ENTITY_AVATAR && caster->_entityInfo.etype != ENTITY_AI && caster->_entityInfo.leader != InvalidEntityID)
+    if (caster->_entityInfo.etype == ENTITY_FLIGHT  && caster->_entityInfo.leader != InvalidEntityID)
     {
-        master = getEntity(caster->_entityInfo.leader);
-        if (!master)
+        auto m = getEntity(caster->_entityInfo.leader);
+        if (!m)
         {
             LOGE("");
             return ret;
         }
+        master = m;
     }
-    
+    //偏移修正
+    auto org = caster->_entityMove.position;
+    if (true)
+    {
+        auto y = getFarPoint(caster->_entityMove.position.x, caster->_entityMove.position.y, radian, search.offsetY);
+        auto x = getFarPoint(std::get<0>(y), std::get<1>(y), fmod(radian+ PI*2.0 - PI/2.0, PI*2.0), search.offsetX);
+        org.x = std::get<0>(x);
+        org.y = std::get<1>(x);
+    }
+
     for (auto kv : _entitys)
     {
         auto & entity = *(kv.second);
@@ -654,48 +672,51 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EntityType targetTy
         {
             continue;
         }
-        if (getBitFlag(targetSC, SEARCH_CAMP_SELF) && entity._entityInfo.eid == master->_entityInfo.eid)
+        if (getBitFlag(search.camp, SEARCH_CAMP_SELF) && entity._entityInfo.eid == master->_entityInfo.eid)
         {
             ret.push_back(kv.second);
             continue;
         }
-        if ( (getBitFlag(targetSC, SEARCH_CAMP_SAME_WITHOUT_SELF) && master->_entityInfo.camp == entity._entityInfo.camp)
-            || (getBitFlag(targetSC, SEARCH_CAMP_ALIEN) && master->_entityInfo.camp != entity._entityInfo.camp))
+        if (search.camp == SEARCH_CAMP_NONE
+            ||(getBitFlag(search.camp, SEARCH_CAMP_SELF) && master->_entityInfo.eid == entity._entityInfo.eid)
+            ||(getBitFlag(search.camp, SEARCH_CAMP_SAME_WITHOUT_SELF)
+              && master->_entityInfo.camp == entity._entityInfo.camp
+              && master->_entityInfo.eid != entity._entityInfo.eid)
+            || (getBitFlag(search.camp, SEARCH_CAMP_ALIEN) && master->_entityInfo.camp != entity._entityInfo.camp))
         {
-            
+            //matched target camp
         }
         else
         {
             continue;
         }
-        if (targetType != ENTITY_NONE)
+        if (search.etype != ENTITY_NONE)
         {
-            if (entity._entityInfo.etype != targetType)
+            if (entity._entityInfo.etype != search.etype)
             {
                 continue;
             }
         }
 
-        if (getDistance(caster->_entityMove.position, entity._entityMove.position) > length)
+        if (getDistance(org, entity._entityMove.position) > search.distance)
         {
             continue;
         }
-        if (searchMethod == SEARCH_METHOD_SEACTOR && width < 340.0)
+        if (search.method == SEARCH_METHOD_SEACTOR && search.radian < PI*2.0*0.9)
         {
-            double curFace = getRadian(caster->_entityMove.position.x, caster->_entityMove.position.y, 
-                entity._entityMove.position.x, entity._entityMove.position.y)/PI/2.0*360.0 + width/2.0;
-            curFace = ::fmod(curFace, 360.0);
-            if ( (curFace - face  > width || curFace < face)  &&  curFace + 360 - face > width )
+            double radianEntity = getRadian(org.x, org.y, entity._entityMove.position.x, entity._entityMove.position.y);
+            double curRadian = fmod(radian+search.radian/2.0, PI*2.0);
+            if (radianEntity - curRadian  > search.radian &&  curRadian + PI*2.0 - curRadian > search.radian )
             {
                 continue;
             }
         }
-        if (searchMethod == SEARCH_METHOD_RECT)
+        if (search.method == SEARCH_METHOD_RECT)
         {
-            double curRadian = getRadian(caster->_entityMove.position.x, caster->_entityMove.position.y, entity._entityMove.position.x, entity._entityMove.position.y);
-            auto dst = rotatePoint(caster->_entityMove.position.x, caster->_entityMove.position.y, face/360 * PI *2.0, 
-                getDistance(caster->_entityMove.position, entity._entityMove.position), PI *2 - face / 360 * PI *2.0);
-            if (abs(std::get<1>(dst) - caster->_entityMove.position.y) > width/2.0)
+            double curRadian = getRadian(org.x, org.y, entity._entityMove.position.x, entity._entityMove.position.y);
+            auto dst = rotatePoint(org.x, org.y, curRadian,
+                getDistance(org, entity._entityMove.position), PI*2.0 - curRadian );
+            if (abs(std::get<1>(dst) - caster->_entityMove.position.y) > search.radian/2.0)
             {
                 continue;
             }
@@ -704,7 +725,7 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EntityType targetTy
     }
     std::sort(ret.begin(), ret.end(), [caster](const EntityPtr & entity1, const EntityPtr & entity2)
     {return getDistance(entity1->_entityMove.position, caster->_entityMove.position) < getDistance(entity2->_entityMove.position, caster->_entityMove.position); });
-    while (ret.size() > limit)
+    while (ret.size() > search.limitEntitys)
     {
         ret.pop_back();
     }

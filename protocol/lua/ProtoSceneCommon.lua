@@ -164,14 +164,14 @@ Proto4z.register(10003,"SearchInfo")
 Proto4z.SearchInfo = {}  
 Proto4z.SearchInfo.__protoID = 10003 
 Proto4z.SearchInfo.__protoName = "SearchInfo" 
-Proto4z.SearchInfo[1] = {name="searchMethod", type="ui16" }  
-Proto4z.SearchInfo[2] = {name="searchTarget", type="ui64" }  
-Proto4z.SearchInfo[3] = {name="rate", type="double" } --概率 
+Proto4z.SearchInfo[1] = {name="etype", type="ui16" } --实体类型, 玩家/AI 或者是NONE忽略该选项 
+Proto4z.SearchInfo[2] = {name="camp", type="ui64" } --0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType 
+Proto4z.SearchInfo[3] = {name="method", type="ui16" } --0扇形, 1矩形 SearchMethodType 
 Proto4z.SearchInfo[4] = {name="distance", type="double" } --伤害距离 
 Proto4z.SearchInfo[5] = {name="radian", type="double" } --弧度或者宽度 
-Proto4z.SearchInfo[6] = {name="offsetX", type="double" } --坐标偏移量, 正数为x = x + offset 
-Proto4z.SearchInfo[7] = {name="offsetY", type="double" } --坐标偏移量, 正数为y = y + offset 
-Proto4z.SearchInfo[8] = {name="targetMaxCount", type="ui64" } --最大目标数 
+Proto4z.SearchInfo[6] = {name="offsetX", type="double" } --坐标偏移量, 以caster为原点, 朝向为y轴 
+Proto4z.SearchInfo[7] = {name="offsetY", type="double" } --坐标偏移量, 以caster为原点, 朝向为y轴 
+Proto4z.SearchInfo[8] = {name="limitEntitys", type="ui64" } --最大目标数 
  
 Proto4z.register(10004,"SkillBehaviour") 
 Proto4z.SkillBehaviour = {} --技能触发行为 

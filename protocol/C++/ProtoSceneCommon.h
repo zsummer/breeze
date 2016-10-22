@@ -325,72 +325,72 @@ struct SearchInfo
 { 
     static const unsigned short getProtoID() { return 10003;} 
     static const std::string getProtoName() { return "SearchInfo";} 
-    unsigned short searchMethod;  
-    unsigned long long searchTarget;  
-    double rate; //概率  
+    unsigned short etype; //实体类型, 玩家/AI 或者是NONE忽略该选项  
+    unsigned long long camp; //0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType  
+    unsigned short method; //0扇形, 1矩形 SearchMethodType  
     double distance; //伤害距离  
     double radian; //弧度或者宽度  
-    double offsetX; //坐标偏移量, 正数为x = x + offset  
-    double offsetY; //坐标偏移量, 正数为y = y + offset  
-    unsigned long long targetMaxCount; //最大目标数  
+    double offsetX; //坐标偏移量, 以caster为原点, 朝向为y轴  
+    double offsetY; //坐标偏移量, 以caster为原点, 朝向为y轴  
+    unsigned long long limitEntitys; //最大目标数  
     SearchInfo() 
     { 
-        searchMethod = 0; 
-        searchTarget = 0; 
-        rate = 0.0; 
+        etype = 0; 
+        camp = 0; 
+        method = 0; 
         distance = 0.0; 
         radian = 0.0; 
         offsetX = 0.0; 
         offsetY = 0.0; 
-        targetMaxCount = 0; 
+        limitEntitys = 0; 
     } 
-    SearchInfo(const unsigned short & searchMethod, const unsigned long long & searchTarget, const double & rate, const double & distance, const double & radian, const double & offsetX, const double & offsetY, const unsigned long long & targetMaxCount) 
+    SearchInfo(const unsigned short & etype, const unsigned long long & camp, const unsigned short & method, const double & distance, const double & radian, const double & offsetX, const double & offsetY, const unsigned long long & limitEntitys) 
     { 
-        this->searchMethod = searchMethod; 
-        this->searchTarget = searchTarget; 
-        this->rate = rate; 
+        this->etype = etype; 
+        this->camp = camp; 
+        this->method = method; 
         this->distance = distance; 
         this->radian = radian; 
         this->offsetX = offsetX; 
         this->offsetY = offsetY; 
-        this->targetMaxCount = targetMaxCount; 
+        this->limitEntitys = limitEntitys; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SearchInfo & data) 
 { 
-    ws << data.searchMethod;  
-    ws << data.searchTarget;  
-    ws << data.rate;  
+    ws << data.etype;  
+    ws << data.camp;  
+    ws << data.method;  
     ws << data.distance;  
     ws << data.radian;  
     ws << data.offsetX;  
     ws << data.offsetY;  
-    ws << data.targetMaxCount;  
+    ws << data.limitEntitys;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SearchInfo & data) 
 { 
-    rs >> data.searchMethod;  
-    rs >> data.searchTarget;  
-    rs >> data.rate;  
+    rs >> data.etype;  
+    rs >> data.camp;  
+    rs >> data.method;  
     rs >> data.distance;  
     rs >> data.radian;  
     rs >> data.offsetX;  
     rs >> data.offsetY;  
-    rs >> data.targetMaxCount;  
+    rs >> data.limitEntitys;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SearchInfo & info) 
 { 
     stm << "["; 
-    stm << "searchMethod=" << info.searchMethod << ","; 
-    stm << "searchTarget=" << info.searchTarget << ","; 
-    stm << "rate=" << info.rate << ","; 
+    stm << "etype=" << info.etype << ","; 
+    stm << "camp=" << info.camp << ","; 
+    stm << "method=" << info.method << ","; 
     stm << "distance=" << info.distance << ","; 
     stm << "radian=" << info.radian << ","; 
     stm << "offsetX=" << info.offsetX << ","; 
     stm << "offsetY=" << info.offsetY << ","; 
-    stm << "targetMaxCount=" << info.targetMaxCount << ","; 
+    stm << "limitEntitys=" << info.limitEntitys << ","; 
     stm << "]"; 
     return stm; 
 } 

@@ -72,8 +72,7 @@ public:
     //targetType 如果是none 则忽略该过滤选项  
     //targetSC如果是none 则忽略该选项, 否则取位判断  
     //
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, EntityType targetType, ui16 targetSC, SearchMethodType searchMethod, 
-        double face, double width, double length, size_t limit);
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const SearchInfo & search);
 public:
     Scene(SceneID id);
     ~Scene();

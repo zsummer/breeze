@@ -187,14 +187,14 @@
 
 
     <struct name="SearchInfo" desc="">
-        <member name="searchMethod" type="ui16"  desc=""/>
-        <member name="searchTarget" type="ui64"  desc=""/>
-        <member name="rate" type="double"  desc="概率"/>
+        <member name="etype" type="ui16"  desc="实体类型, 玩家/AI 或者是NONE忽略该选项"/>
+        <member name="camp" type="ui64"  desc="0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType"/>
+        <member name="method" type="ui16"  desc="0扇形, 1矩形 SearchMethodType"/>
         <member name="distance" type="double"  desc="伤害距离"/>
         <member name="radian" type="double"  desc="弧度或者宽度"/>
-        <member name="offsetX" type="double"  desc="坐标偏移量, 正数为x = x + offset"/>
-        <member name="offsetY" type="double"  desc="坐标偏移量, 正数为y = y + offset"/>
-        <member name="targetMaxCount" type="ui64"  desc="最大目标数"/>
+        <member name="offsetX" type="double"  desc="坐标偏移量, 以caster为原点, 朝向为y轴"/>
+        <member name="offsetY" type="double"  desc="坐标偏移量, 以caster为原点, 朝向为y轴"/>
+        <member name="limitEntitys" type="ui64"  desc="最大目标数"/>
     </struct>
 
     <struct name="SkillBehaviour" desc="技能触发行为">
