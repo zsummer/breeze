@@ -623,8 +623,6 @@ struct SkillInfo
     static const std::string getProtoName() { return "SkillInfo";} 
     unsigned long long skillID;  
     double startTime;  
-    double lastHitTime;  
-    unsigned long long seq; //hit seq  
     EPosition dst; //目标位置  
     unsigned long long foe; //锁定的目标  
     SkillData data; //配置数据  
@@ -632,16 +630,12 @@ struct SkillInfo
     { 
         skillID = 0; 
         startTime = 0.0; 
-        lastHitTime = 0.0; 
-        seq = 0; 
         foe = 0; 
     } 
-    SkillInfo(const unsigned long long & skillID, const double & startTime, const double & lastHitTime, const unsigned long long & seq, const EPosition & dst, const unsigned long long & foe, const SkillData & data) 
+    SkillInfo(const unsigned long long & skillID, const double & startTime, const EPosition & dst, const unsigned long long & foe, const SkillData & data) 
     { 
         this->skillID = skillID; 
         this->startTime = startTime; 
-        this->lastHitTime = lastHitTime; 
-        this->seq = seq; 
         this->dst = dst; 
         this->foe = foe; 
         this->data = data; 
@@ -651,8 +645,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.skillID;  
     ws << data.startTime;  
-    ws << data.lastHitTime;  
-    ws << data.seq;  
     ws << data.dst;  
     ws << data.foe;  
     ws << data.data;  
@@ -662,8 +654,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.skillID;  
     rs >> data.startTime;  
-    rs >> data.lastHitTime;  
-    rs >> data.seq;  
     rs >> data.dst;  
     rs >> data.foe;  
     rs >> data.data;  
@@ -674,8 +664,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "skillID=" << info.skillID << ","; 
     stm << "startTime=" << info.startTime << ","; 
-    stm << "lastHitTime=" << info.lastHitTime << ","; 
-    stm << "seq=" << info.seq << ","; 
     stm << "dst=" << info.dst << ","; 
     stm << "foe=" << info.foe << ","; 
     stm << "data=" << info.data << ","; 

@@ -621,6 +621,39 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosi
 }
 bool Scene::doSkill(EntityID eid)
 {
+    auto entityPtr = getEntity(eid);
+    if (!entityPtr)
+    {
+        return false;
+    }
+    auto self = *entityPtr;
+
+    SkillData skill;
+    skill.cd = 1;
+    skill.skillID = 1;
+    skill.skillType = setBitFlag(0, SKILL_AUTO);
+
+    SkillBehaviour behaviour;
+    behaviour.behaviour = setBitFlag(0, SKILL_BEHAVIOUR_HIT);
+    behaviour.delay = 0.15;
+    behaviour.search.offsetX = 1;
+    behaviour.search.offsetY = 1;
+    behaviour.search.radian = PI/4.0;
+    behaviour.search.camp = setBitFlag(0, SEARCH_CAMP_ALIEN);
+    behaviour.search.distance = 5.0;
+    behaviour.search.limitEntitys = 100;
+    skill.behaviours.push_back(behaviour);
+
+    SkillInfo info;
+    info.data = skill;
+    info.dst = self._entityMove.position;
+    info.foe = InvalidEntityID;
+    info.skillID = skill.skillID;
+    info.startTime = getFloatSteadyNowTime();
+    self._control.skills.push_back(info);
+
+
+
     broadcast(UseSkillNotice(eid));
     return true;
 }

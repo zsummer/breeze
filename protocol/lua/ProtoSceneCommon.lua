@@ -232,11 +232,9 @@ Proto4z.SkillInfo.__protoID = 10008
 Proto4z.SkillInfo.__protoName = "SkillInfo" 
 Proto4z.SkillInfo[1] = {name="skillID", type="ui64" }  
 Proto4z.SkillInfo[2] = {name="startTime", type="double" }  
-Proto4z.SkillInfo[3] = {name="lastHitTime", type="double" }  
-Proto4z.SkillInfo[4] = {name="seq", type="ui64" } --hit seq 
-Proto4z.SkillInfo[5] = {name="dst", type="EPosition" } --目标位置 
-Proto4z.SkillInfo[6] = {name="foe", type="ui64" } --锁定的目标 
-Proto4z.SkillInfo[7] = {name="data", type="SkillData" } --配置数据 
+Proto4z.SkillInfo[3] = {name="dst", type="EPosition" } --目标位置 
+Proto4z.SkillInfo[4] = {name="foe", type="ui64" } --锁定的目标 
+Proto4z.SkillInfo[5] = {name="data", type="SkillData" } --配置数据 
  
 Proto4z.SkillInfoArray = {}  
 Proto4z.SkillInfoArray.__protoName = "SkillInfoArray" 

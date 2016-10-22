@@ -870,8 +870,6 @@ namespace Proto4z
         //members   
         public ulong skillID;  
         public double startTime;  
-        public double lastHitTime;  
-        public ulong seq; //hit seq  
         public EPosition dst; //目标位置  
         public ulong foe; //锁定的目标  
         public SkillData data; //配置数据  
@@ -879,18 +877,14 @@ namespace Proto4z
         { 
             skillID = 0;  
             startTime = 0.0;  
-            lastHitTime = 0.0;  
-            seq = 0;  
             dst = new EPosition();  
             foe = 0;  
             data = new SkillData();  
         } 
-        public SkillInfo(ulong skillID, double startTime, double lastHitTime, ulong seq, EPosition dst, ulong foe, SkillData data) 
+        public SkillInfo(ulong skillID, double startTime, EPosition dst, ulong foe, SkillData data) 
         { 
             this.skillID = skillID; 
             this.startTime = startTime; 
-            this.lastHitTime = lastHitTime; 
-            this.seq = seq; 
             this.dst = dst; 
             this.foe = foe; 
             this.data = data; 
@@ -900,8 +894,6 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.skillID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.startTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastHitTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.seq)); 
             if (this.dst == null) this.dst = new EPosition(); 
             data.AddRange(this.dst.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
@@ -913,8 +905,6 @@ namespace Proto4z
         { 
             this.skillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.startTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.lastHitTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.seq = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.dst = new EPosition(); 
             this.dst.__decode(binData, ref pos); 
             this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 

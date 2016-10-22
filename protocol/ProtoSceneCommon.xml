@@ -243,8 +243,6 @@
     <struct name="SkillInfo" desc="" >
         <member name="skillID" type="ui64" />
         <member name="startTime" type="double" desc=""/>
-        <member name="lastHitTime" type="double" desc=""/>
-        <member name="seq" type="ui64" desc="hit seq"/>
         <member name="dst"  type="EPosition" desc="目标位置"/>  
         <member name="foe"  type="ui64" desc="锁定的目标"/>  
         <member name="data" type="SkillData" desc="配置数据"/>
