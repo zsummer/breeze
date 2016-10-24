@@ -468,29 +468,34 @@ struct UseSkillReq
     static const unsigned short getProtoID() { return 50013;} 
     static const std::string getProtoName() { return "UseSkillReq";} 
     unsigned long long eid;  
+    EPosition dst;  
     UseSkillReq() 
     { 
         eid = 0; 
     } 
-    UseSkillReq(const unsigned long long & eid) 
+    UseSkillReq(const unsigned long long & eid, const EPosition & dst) 
     { 
         this->eid = eid; 
+        this->dst = dst; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UseSkillReq & data) 
 { 
     ws << data.eid;  
+    ws << data.dst;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UseSkillReq & data) 
 { 
     rs >> data.eid;  
+    rs >> data.dst;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UseSkillReq & info) 
 { 
     stm << "["; 
     stm << "eid=" << info.eid << ","; 
+    stm << "dst=" << info.dst << ","; 
     stm << "]"; 
     return stm; 
 } 
@@ -561,6 +566,37 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "["; 
     stm << "eid=" << info.eid << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct SceneEventNotice 
+{ 
+    static const unsigned short getProtoID() { return 50021;} 
+    static const std::string getProtoName() { return "SceneEventNotice";} 
+    SceneEventInfoArray info;  
+    SceneEventNotice() 
+    { 
+    } 
+    SceneEventNotice(const SceneEventInfoArray & info) 
+    { 
+        this->info = info; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneEventNotice & data) 
+{ 
+    ws << data.info;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneEventNotice & data) 
+{ 
+    rs >> data.info;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneEventNotice & info) 
+{ 
+    stm << "["; 
+    stm << "info=" << info.info << ","; 
     stm << "]"; 
     return stm; 
 } 

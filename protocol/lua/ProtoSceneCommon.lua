@@ -96,7 +96,7 @@ Proto4z.ENTITY_STATE_LIE = 3--跪, 不计死亡次数
 Proto4z.ENTITY_STATE_DIED = 4--死, 记死亡次数 
  
 Proto4z.ENTITY_NONE = 0 
-Proto4z.ENTITY_AVATAR = 1 
+Proto4z.ENTITY_PLAYER = 1 
 Proto4z.ENTITY_AI = 2 
 Proto4z.ENTITY_FLIGHT = 3--飞行道具 
  
@@ -120,7 +120,7 @@ Proto4z.SEARCH_CAMP_SAME_WITHOUT_SELF = 2--同阵营非自己
 Proto4z.SEARCH_CAMP_ALIEN = 3--非己方阵营 
  
 Proto4z.SKILL_NONE = 0 
-Proto4z.SKILL_AUTO = 1--普攻 
+Proto4z.SKILL_AUTO = 1--自动循环攻击 
 Proto4z.SKILL_PASSIVE = 2--被动技能 
 Proto4z.SKILL_CAN_BREAK = 3--可被中断 
 Proto4z.SKILL_CAN_MOVE = 4--可移动 
@@ -208,23 +208,28 @@ Proto4z.BuffData[4] = {name="keepTime", type="double" } --保持时间
 Proto4z.BuffData[5] = {name="value1", type="double" }  
 Proto4z.BuffData[6] = {name="value2", type="double" }  
  
-Proto4z.HARM_GENERAL = 0--普通伤害 
-Proto4z.HARM_MISS = 1--闪避 
-Proto4z.HARM_CRITICAL = 2--暴击 
-Proto4z.HARM_HILL = 3--治疗 
+Proto4z.SCENE_EVENT_LIE = 0 
+Proto4z.SCENE_EVENT_DIED = 1 
+Proto4z.SCENE_EVENT_FREEZE = 2 
+Proto4z.SCENE_EVENT_REBIRTH = 3 
+Proto4z.SCENE_EVENT_HARM_ATTACK = 4 
+Proto4z.SCENE_EVENT_HARM_HILL = 5 
+Proto4z.SCENE_EVENT_HARM_MISS = 6 
+Proto4z.SCENE_EVENT_HARM_CRITICAL = 7 
  
-Proto4z.register(10007,"HarmData") 
-Proto4z.HarmData = {} --伤害数据 
-Proto4z.HarmData.__protoID = 10007 
-Proto4z.HarmData.__protoName = "HarmData" 
-Proto4z.HarmData[1] = {name="eid", type="ui64" } --目标eid 
-Proto4z.HarmData[2] = {name="type", type="ui16" } --伤害类型HarmType 
-Proto4z.HarmData[3] = {name="harm", type="double" } --如果为正是伤害, 为负则是回血 
+Proto4z.register(10015,"SceneEventInfo") 
+Proto4z.SceneEventInfo = {} --伤害数据 
+Proto4z.SceneEventInfo.__protoID = 10015 
+Proto4z.SceneEventInfo.__protoName = "SceneEventInfo" 
+Proto4z.SceneEventInfo[1] = {name="src", type="ui64" } --eid 
+Proto4z.SceneEventInfo[2] = {name="dst", type="ui64" } --eid 
+Proto4z.SceneEventInfo[3] = {name="ev", type="ui16" } --伤害类型HarmType 
+Proto4z.SceneEventInfo[4] = {name="val", type="double" }  
  
-Proto4z.HarmDataArray = {}  
-Proto4z.HarmDataArray.__protoName = "HarmDataArray" 
-Proto4z.HarmDataArray.__protoDesc = "array" 
-Proto4z.HarmDataArray.__protoTypeV = "HarmData" 
+Proto4z.SceneEventInfoArray = {}  
+Proto4z.SceneEventInfoArray.__protoName = "SceneEventInfoArray" 
+Proto4z.SceneEventInfoArray.__protoDesc = "array" 
+Proto4z.SceneEventInfoArray.__protoTypeV = "SceneEventInfo" 
  
 Proto4z.register(10008,"SkillInfo") 
 Proto4z.SkillInfo = {}  

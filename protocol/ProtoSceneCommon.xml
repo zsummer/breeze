@@ -90,7 +90,7 @@
     <!-- 实体对象的类型, 区别玩家, AI, 技能-->
     <enum type="ui16" name="EntityType" desc="">
         <member name="ENTITY_NONE" desc="" />
-        <member name="ENTITY_AVATAR" desc="" />
+        <member name="ENTITY_PLAYER" desc="" />
         <member name="ENTITY_AI" desc="" />
         <member name="ENTITY_FLIGHT" desc="飞行道具" />
     </enum>
@@ -224,21 +224,29 @@
         <member name="value2" type="double"  desc=""/>
    </struct>
 
-    <!-- 伤害类型-->
-    <enum type="ui16" name="HarmType" desc="伤害类型">
-        <member name="HARM_GENERAL" value="0" desc="普通伤害" />
-        <member name="HARM_MISS"  desc="闪避" />
-        <member name="HARM_CRITICAL"  desc="暴击" />
-        <member name="HARM_HILL" desc="治疗" />
+
+    <!-- 事件类型-->
+    <enum type="ui16" name="SceneEvent" desc="">
+        <member name="SCENE_EVENT_LIE"  desc="" />
+        <member name="SCENE_EVENT_DIED"  desc="" />
+        <member name="SCENE_EVENT_FREEZE" desc="" />
+        <member name="SCENE_EVENT_REBIRTH" desc="" />
+        <member name="SCENE_EVENT_HARM_ATTACK" desc="" />
+        <member name="SCENE_EVENT_HARM_HILL" desc="" />
+        <member name="SCENE_EVENT_HARM_MISS" desc="" />
+        <member name="SCENE_EVENT_HARM_CRITICAL" desc="" />
     </enum>
 
-    <struct name="HarmData" desc="伤害数据">
-        <member name="eid" type="ui64"  desc="目标eid"/>
-        <member name="type" type="ui16"  desc="伤害类型HarmType"/>
-        <member name="harm" type="double"  desc="如果为正是伤害, 为负则是回血"/>
+    <struct name="SceneEventInfo" desc="伤害数据">
+        <member name="src" type="ui64"  desc="eid"/>
+        <member name="dst" type="ui64"  desc="eid"/>
+        <member name="ev" type="ui16"  desc="伤害类型HarmType"/>
+        <member name="val" type="double"  desc=""/>
    </struct>
-   <array name="HarmDataArray" type="HarmData" desc="" />
-   
+   <array name="SceneEventInfoArray" type="SceneEventInfo" desc="" />
+
+
+
     <!-- SkillInfo -->
     <struct name="SkillInfo" desc="" >
         <member name="skillID" type="ui64" />

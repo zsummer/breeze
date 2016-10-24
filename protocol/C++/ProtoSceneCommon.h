@@ -235,7 +235,7 @@ enum EntityState : unsigned short
 enum EntityType : unsigned short 
 { 
     ENTITY_NONE = 0,  
-    ENTITY_AVATAR = 1,  
+    ENTITY_PLAYER = 1,  
     ENTITY_AI = 2,  
     ENTITY_FLIGHT = 3, //飞行道具  
 }; 
@@ -274,7 +274,7 @@ enum SearchCampType : unsigned long long
 enum SkillType : unsigned long long 
 { 
     SKILL_NONE = 0,  
-    SKILL_AUTO = 1, //普攻  
+    SKILL_AUTO = 1, //自动循环攻击  
     SKILL_PASSIVE = 2, //被动技能  
     SKILL_CAN_BREAK = 3, //可被中断  
     SKILL_CAN_MOVE = 4, //可移动  
@@ -562,60 +562,70 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-enum HarmType : unsigned short 
+enum SceneEvent : unsigned short 
 { 
-    HARM_GENERAL = 0, //普通伤害  
-    HARM_MISS = 1, //闪避  
-    HARM_CRITICAL = 2, //暴击  
-    HARM_HILL = 3, //治疗  
+    SCENE_EVENT_LIE = 0,  
+    SCENE_EVENT_DIED = 1,  
+    SCENE_EVENT_FREEZE = 2,  
+    SCENE_EVENT_REBIRTH = 3,  
+    SCENE_EVENT_HARM_ATTACK = 4,  
+    SCENE_EVENT_HARM_HILL = 5,  
+    SCENE_EVENT_HARM_MISS = 6,  
+    SCENE_EVENT_HARM_CRITICAL = 7,  
 }; 
  
-struct HarmData //伤害数据  
+struct SceneEventInfo //伤害数据  
 { 
-    static const unsigned short getProtoID() { return 10007;} 
-    static const std::string getProtoName() { return "HarmData";} 
-    unsigned long long eid; //目标eid  
-    unsigned short type; //伤害类型HarmType  
-    double harm; //如果为正是伤害, 为负则是回血  
-    HarmData() 
+    static const unsigned short getProtoID() { return 10015;} 
+    static const std::string getProtoName() { return "SceneEventInfo";} 
+    unsigned long long src; //eid  
+    unsigned long long dst; //eid  
+    unsigned short ev; //伤害类型HarmType  
+    double val;  
+    SceneEventInfo() 
     { 
-        eid = 0; 
-        type = 0; 
-        harm = 0.0; 
+        src = 0; 
+        dst = 0; 
+        ev = 0; 
+        val = 0.0; 
     } 
-    HarmData(const unsigned long long & eid, const unsigned short & type, const double & harm) 
+    SceneEventInfo(const unsigned long long & src, const unsigned long long & dst, const unsigned short & ev, const double & val) 
     { 
-        this->eid = eid; 
-        this->type = type; 
-        this->harm = harm; 
+        this->src = src; 
+        this->dst = dst; 
+        this->ev = ev; 
+        this->val = val; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const HarmData & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneEventInfo & data) 
 { 
-    ws << data.eid;  
-    ws << data.type;  
-    ws << data.harm;  
+    ws << data.src;  
+    ws << data.dst;  
+    ws << data.ev;  
+    ws << data.val;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, HarmData & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneEventInfo & data) 
 { 
-    rs >> data.eid;  
-    rs >> data.type;  
-    rs >> data.harm;  
+    rs >> data.src;  
+    rs >> data.dst;  
+    rs >> data.ev;  
+    rs >> data.val;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const HarmData & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneEventInfo & info) 
 { 
     stm << "["; 
-    stm << "eid=" << info.eid << ","; 
-    stm << "type=" << info.type << ","; 
-    stm << "harm=" << info.harm << ","; 
+    stm << "src=" << info.src << ","; 
+    stm << "dst=" << info.dst << ","; 
+    stm << "ev=" << info.ev << ","; 
+    stm << "val=" << info.val << ","; 
     stm << "]"; 
     return stm; 
 } 
  
  
-typedef std::vector<HarmData> HarmDataArray;  
+typedef std::vector<SceneEventInfo> SceneEventInfoArray;  
  
 struct SkillInfo 
 { 

@@ -93,7 +93,7 @@ void SceneMgr::onTimer()
                 std::set<GroupID> groups;
                 for (auto &entity : notice.section.entitys)
                 {
-                    if (entity.entityInfo.etype == ENTITY_AVATAR)
+                    if (entity.entityInfo.etype == ENTITY_PLAYER)
                     {
                         groups.insert(entity.entityInfo.groupID);
                     }
@@ -531,7 +531,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         for (auto & avatar : group.members)
         {
             _tokens[avatar.first] = std::make_pair(avatar.second.token, scene->getSceneID());
-            scene->addEntity(avatar.second.baseInfo, avatar.second.baseProps, ENTITY_CAMP_BLUE, ENTITY_AVATAR, ENTITY_STATE_FREEZING, group.groupID);
+            scene->addEntity(avatar.second.baseInfo, avatar.second.baseProps, ENTITY_CAMP_BLUE, ENTITY_PLAYER, ENTITY_STATE_FREEZING, group.groupID);
         }
         SceneServerGroupStateChangeIns ret;
         ret.groupID = group.groupID;

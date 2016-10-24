@@ -93,7 +93,7 @@ struct EntityControl //EntityControl
 {
     unsigned long long eid = InvalidEntityID;
     unsigned long long agentNo = -1; //agentNo. -1为无效  
-    double stateChageTick = 0.0;
+    double stateChageTime = 0.0;
     EPosition spawnpoint; //出生点
     SkillInfoArray skills; //技能数据  
     BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  

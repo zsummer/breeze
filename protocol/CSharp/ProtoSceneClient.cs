@@ -452,23 +452,30 @@ namespace Proto4z
         static public string getProtoName() { return "UseSkillReq"; } 
         //members   
         public ulong eid;  
+        public EPosition dst;  
         public UseSkillReq()  
         { 
             eid = 0;  
+            dst = new EPosition();  
         } 
-        public UseSkillReq(ulong eid) 
+        public UseSkillReq(ulong eid, EPosition dst) 
         { 
             this.eid = eid; 
+            this.dst = dst; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            if (this.dst == null) this.dst = new EPosition(); 
+            data.AddRange(this.dst.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.dst = new EPosition(); 
+            this.dst.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -532,6 +539,37 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class SceneEventNotice: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 50021;  
+        static public ushort getProtoID() { return 50021; } 
+        static public string getProtoName() { return "SceneEventNotice"; } 
+        //members   
+        public SceneEventInfoArray info;  
+        public SceneEventNotice()  
+        { 
+            info = new SceneEventInfoArray();  
+        } 
+        public SceneEventNotice(SceneEventInfoArray info) 
+        { 
+            this.info = info; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            if (this.info == null) this.info = new SceneEventInfoArray(); 
+            data.AddRange(this.info.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.info = new SceneEventInfoArray(); 
+            this.info.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

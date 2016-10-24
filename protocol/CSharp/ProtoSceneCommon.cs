@@ -447,7 +447,7 @@ namespace Proto4z
     public enum EntityType : ushort 
     { 
         ENTITY_NONE = 0,  
-        ENTITY_AVATAR = 1,  
+        ENTITY_PLAYER = 1,  
         ENTITY_AI = 2,  
         ENTITY_FLIGHT = 3, //飞行道具  
     }; 
@@ -486,7 +486,7 @@ namespace Proto4z
     public enum SkillType : ulong 
     { 
         SKILL_NONE = 0,  
-        SKILL_AUTO = 1, //普攻  
+        SKILL_AUTO = 1, //自动循环攻击  
         SKILL_PASSIVE = 2, //被动技能  
         SKILL_CAN_BREAK = 3, //可被中断  
         SKILL_CAN_MOVE = 4, //可移动  
@@ -783,55 +783,64 @@ namespace Proto4z
         } 
     } 
  
-    public enum HarmType : ushort 
+    public enum SceneEvent : ushort 
     { 
-        HARM_GENERAL = 0, //普通伤害  
-        HARM_MISS = 1, //闪避  
-        HARM_CRITICAL = 2, //暴击  
-        HARM_HILL = 3, //治疗  
+        SCENE_EVENT_LIE = 0,  
+        SCENE_EVENT_DIED = 1,  
+        SCENE_EVENT_FREEZE = 2,  
+        SCENE_EVENT_REBIRTH = 3,  
+        SCENE_EVENT_HARM_ATTACK = 4,  
+        SCENE_EVENT_HARM_HILL = 5,  
+        SCENE_EVENT_HARM_MISS = 6,  
+        SCENE_EVENT_HARM_CRITICAL = 7,  
     }; 
  
-    public class HarmData: Proto4z.IProtoObject //伤害数据  
+    public class SceneEventInfo: Proto4z.IProtoObject //伤害数据  
     {     
         //proto id   
-        public const ushort protoID = 10007;  
-        static public ushort getProtoID() { return 10007; } 
-        static public string getProtoName() { return "HarmData"; } 
+        public const ushort protoID = 10015;  
+        static public ushort getProtoID() { return 10015; } 
+        static public string getProtoName() { return "SceneEventInfo"; } 
         //members   
-        public ulong eid; //目标eid  
-        public ushort type; //伤害类型HarmType  
-        public double harm; //如果为正是伤害, 为负则是回血  
-        public HarmData()  
+        public ulong src; //eid  
+        public ulong dst; //eid  
+        public ushort ev; //伤害类型HarmType  
+        public double val;  
+        public SceneEventInfo()  
         { 
-            eid = 0;  
-            type = 0;  
-            harm = 0.0;  
+            src = 0;  
+            dst = 0;  
+            ev = 0;  
+            val = 0.0;  
         } 
-        public HarmData(ulong eid, ushort type, double harm) 
+        public SceneEventInfo(ulong src, ulong dst, ushort ev, double val) 
         { 
-            this.eid = eid; 
-            this.type = type; 
-            this.harm = harm; 
+            this.src = src; 
+            this.dst = dst; 
+            this.ev = ev; 
+            this.val = val; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.type)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.harm)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.src)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.dst)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.ev)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.val)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.type = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.harm = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.src = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.dst = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.ev = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.val = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 
  
  
-    public class HarmDataArray : System.Collections.Generic.List<HarmData>, Proto4z.IProtoObject  
+    public class SceneEventInfoArray : System.Collections.Generic.List<SceneEventInfo>, Proto4z.IProtoObject  
     { 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -852,7 +861,7 @@ namespace Proto4z
             { 
                 for (int i=0; i<len; i++) 
                 { 
-                    var data = new HarmData(); 
+                    var data = new SceneEventInfo(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
                 } 

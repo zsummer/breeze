@@ -13,7 +13,7 @@ Entity::~Entity()
 
 double Entity::getSpeed()
 {
-    if (_entityInfo.etype == ENTITY_AVATAR)
+    if (_entityInfo.etype == ENTITY_PLAYER)
     {
         return 12.0;
     }

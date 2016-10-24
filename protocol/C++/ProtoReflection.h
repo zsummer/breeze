@@ -278,6 +278,11 @@ public:
                    return "SceneSection";
             }
             break;
+            case 10015:
+            {
+                   return "SceneEventInfo";
+            }
+            break;
             case 39000:
             {
                    return "SceneKnock";
@@ -591,6 +596,11 @@ public:
             case 50020:
             {
                    return "ClientPingTestResp";
+            }
+            break;
+            case 50021:
+            {
+                   return "SceneEventNotice";
             }
             break;
 

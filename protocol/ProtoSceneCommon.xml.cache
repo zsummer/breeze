@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>2a1a89398337a80528b663fe37a3f82f</cppmd5> 
-<luamd5>8d868f5441bc69fd2f8aacc5ff2392da</luamd5> 
-<csharpmd5>cb1038ad0b98d33abcca266139837ef8</csharpmd5> 
-<xmlmd5>cf02dc6a7fa976fb13e6a3765bda1a1a</xmlmd5> 
+<cppmd5>9002deaab32696caa266faf24e7446b5</cppmd5> 
+<luamd5>1c9b545c3fce783fe3f1aface1b73ac2</luamd5> 
+<csharpmd5>34a766204214f07db568093b2be0d774</csharpmd5> 
+<xmlmd5>737d2bcf9919adf6fb206b0e8bb390cc</xmlmd5> 
 <cacheNumber>
     <cache key = "BuffData" Number = "10006" /> 
     <cache key = "BuffInfo" Number = "10009" /> 
@@ -13,6 +13,7 @@
     <cache key = "EntityMove" Number = "10011" /> 
     <cache key = "EntityReport" Number = "10012" /> 
     <cache key = "HarmData" Number = "10007" /> 
+    <cache key = "SceneEventInfo" Number = "10015" /> 
     <cache key = "SceneGroupAvatarInfo" Number = "10000" /> 
     <cache key = "SceneGroupInfo" Number = "10001" /> 
     <cache key = "SceneSection" Number = "10014" /> 

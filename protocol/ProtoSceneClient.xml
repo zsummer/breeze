@@ -82,6 +82,7 @@
 
     <proto name="UseSkillReq" desc= "">
         <member name="eid"  type="ui64" desc=""/>
+        <member name="dst"  type="EPosition" desc=""/>
     </proto>
     <proto name="UseSkillResp" desc= "只有失败时才会使用该协议">
         <member name="retCode"  type="ui16" desc=""/>
@@ -90,6 +91,12 @@
     <proto name="UseSkillNotice" desc= "">
         <member name="eid"  type="ui64" desc=""/>
     </proto>
+
+
+    <proto name="SceneEventNotice" desc= "">
+        <member name="info"  type="SceneEventInfoArray" desc=""/>
+    </proto>
+
 
     <proto name="ClientCustomReq" desc= "">
         <member name="eid"  type="ui64" desc=""/>

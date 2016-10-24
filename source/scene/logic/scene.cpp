@@ -139,7 +139,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     entity->_control.spawnpoint = { 0.0 - 30 +  realRandF()*30 ,60 -30 + realRandF()*30 };
     entity->_control.eid = entity->_entityInfo.eid;
     entity->_control.agentNo = -1;
-    entity->_control.stateChageTick = getFloatSteadyNowTime();
+    entity->_control.stateChageTime = getFloatSteadyNowTime();
 
     entity->_entityMove.eid = entity->_entityInfo.eid;
     entity->_entityMove.position = entity->_control.spawnpoint;
@@ -152,7 +152,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     entity->_control.agentNo = _sim->addAgent(toRVOVector2(entity->_entityMove.position));
     _entitys.insert(std::make_pair(entity->_entityInfo.eid, entity));
 
-    if (baseInfo.avatarID != InvalidServiceID && etype == ENTITY_AVATAR)
+    if (baseInfo.avatarID != InvalidServiceID && etype == ENTITY_PLAYER)
     {
         _players[baseInfo.avatarID] = entity;
         _sim->setAgentRadius(entity->_control.agentNo, 0.5f);
@@ -182,7 +182,7 @@ bool Scene::removePlayerByGroupID(GroupID groupID)
     std::set<EntityID> removes;
     for (auto entity : _entitys)
     {
-        if (entity.second->_entityInfo.etype == ENTITY_AVATAR && entity.second->_entityInfo.groupID == groupID)
+        if (entity.second->_entityInfo.etype == ENTITY_PLAYER && entity.second->_entityInfo.groupID == groupID)
         {
             removes.insert(entity.second->_entityInfo.eid);
         }
@@ -208,7 +208,7 @@ bool Scene::removeEntity(EntityID eid)
         _sim->removeAgent(entity->_control.agentNo);
         entity->_control.agentNo = -1;
     }
-    if (entity->_entityInfo.etype == ENTITY_AVATAR)
+    if (entity->_entityInfo.etype == ENTITY_PLAYER)
     {
         _players.erase(entity->_baseInfo.avatarID);
         SceneMgr::getRef().sendToWorld(SceneServerGroupStateChangeIns(getSceneID(), entity->_entityInfo.groupID, SCENE_NONE));
@@ -277,13 +277,6 @@ bool Scene::onUpdate()
     {
         return false;
     }
-
-    while(!_asyncs.empty())
-    {
-        auto func = _asyncs.front();
-        _asyncs.pop();
-        func();
-    }
     if (getFloatSteadyNowTime() - _lastCheckMonstr > 0.5)
     {
         _lastCheckMonstr = getFloatSteadyNowTime();
@@ -292,6 +285,10 @@ bool Scene::onUpdate()
     }
 
     doStepRVO();
+    checkSkillBehaviour();
+    checkSceneState();
+
+
 
     SceneRefreshNotice notice;
     for (auto &kv : _entitys)
@@ -305,13 +302,19 @@ bool Scene::onUpdate()
         {
             notice.entityMoves.push_back(kv.second->_entityMove);
             kv.second->_isMoveDirty = false;
-//            LOGD("Scene::onUpdate avatarName=" << kv.second->_baseInfo.avatarName <<  ", EntityMove=" << kv.second->_entityMove);
         }
     }
     if (!notice.entityInfos.empty() || !notice.entityMoves.empty())
     {
         broadcast(notice);
     }
+    while (!_asyncs.empty())
+    {
+        auto func = _asyncs.front();
+        _asyncs.pop();
+        func();
+    }
+
     return true;
 }
 
@@ -469,7 +472,7 @@ void Scene::doMonster()
     {
         SearchInfo search;
         search.camp = SEARCH_CAMP_NONE;
-        search.etype = ENTITY_AVATAR;
+        search.etype = ENTITY_PLAYER;
         search.limitEntitys = 1;
         search.radian = PI*2.0;
         search.method = SEARCH_METHOD_SEACTOR;
@@ -533,7 +536,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         rs >> req;
         LOGD("MoveReq avatarID[" << avatarID << "] req=" << req);
         auto entity = getEntity(req.eid);
-        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_entityInfo.etype != ENTITY_AVATAR
+        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_entityInfo.etype != ENTITY_PLAYER
                 || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH
                     || !doMove(req.eid, (MoveAction)req.action, entity->getSpeed(), req.follow, req.clientPos, req.waypoints))
         {
@@ -544,7 +547,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
     {
         UseSkillReq req;
         rs >> req;
-        if (!doSkill(req.eid))
+        if (!doSkill(req.eid, 1))
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid));
         }
@@ -619,14 +622,14 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosi
     broadcast(MoveNotice(moveInfo));
     return true;
 }
-bool Scene::doSkill(EntityID eid)
+bool Scene::doSkill(EntityID eid, ui64 skillID)
 {
     auto entityPtr = getEntity(eid);
     if (!entityPtr)
     {
         return false;
     }
-    auto self = *entityPtr;
+    auto &self = *entityPtr;
 
     SkillData skill;
     skill.cd = 1;
@@ -638,9 +641,9 @@ bool Scene::doSkill(EntityID eid)
     behaviour.delay = 0.15;
     behaviour.search.offsetX = 1;
     behaviour.search.offsetY = 1;
-    behaviour.search.radian = PI/4.0;
-    behaviour.search.camp = setBitFlag(0, SEARCH_CAMP_ALIEN);
-    behaviour.search.distance = 5.0;
+    behaviour.search.radian = PI*2.0;
+    behaviour.search.camp = SEARCH_CAMP_NONE;
+    behaviour.search.distance = 50.0;
     behaviour.search.limitEntitys = 100;
     skill.behaviours.push_back(behaviour);
 
@@ -667,31 +670,94 @@ bool Scene::doSkill(EntityID eid)
     broadcast(UseSkillNotice(eid));
     return true;
 }
-bool Scene::checkSkillBehaviour(EntityID eid)
+bool Scene::checkSkillBehaviour()
 {
     double now = getFloatNowTime();
-    EntityPtr self = getEntity(eid);
-    if (!self || self->_control.skills.empty()) return false;
-    for (auto &skill : self->_control.skills)
+    for (auto kv:_entitys)
     {
-        while (!skill.data.behaviours.empty())
+        EntityPtr self = kv.second;
+        if (self->_control.skills.empty())
         {
-            auto first = skill.data.behaviours.front();
-            if (now < first.delay + skill.startTime)
+            continue;
+        }
+        for (auto &skill : self->_control.skills)
+        {
+            while (!skill.data.behaviours.empty())
             {
-                break;
-            }
-            if(getBitFlag(first.behaviour, SKILL_BEHAVIOUR_HIT))
-            {
-
+                auto first = skill.data.behaviours.front();
+                if (now < first.delay + skill.startTime)
+                {
+                    break;
+                }
+                if (getBitFlag(first.behaviour, SKILL_BEHAVIOUR_HIT))
+                {
+                    auto targets = searchTarget(self, getRadian(self->_entityMove.position.x, self->_entityMove.position.y, skill.dst.x, skill.dst.y), first.search);
+                    attackTargets(self, targets);
+                }
+                skill.data.behaviours.erase(skill.data.behaviours.begin());
             }
         }
     }
+
+
     return true;
 }
 
+bool Scene::attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets)
+{
+    EntityPtr master = caster;
+    if (caster->_entityInfo.etype == ENTITY_FLIGHT)
+    {
+        master = getEntity(caster->_entityInfo.foe);
+        if (!master)
+        {
+            return false;
+        }
+    }
+    SceneEventNotice notice;
+    for (auto target : targets)
+    {
+        if (target->_entityInfo.state != ENTITY_STATE_ACTIVE)
+        {
+            continue;
+        }
+        target->_entityInfo.curHP -= 20;
+        target->_isInfoDirty = true;
+        notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_HARM_ATTACK, 20));
+        if (target->_entityInfo.curHP <= 0)
+        {
+            target->_entityInfo.curHP = 0.0;
+            target->_entityInfo.state = ENTITY_STATE_LIE;
+            target->_control.stateChageTime = getFloatSteadyNowTime();
+            notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_LIE, 0));
+        }
+    }
+    broadcast(notice);
+    return true;
+}
 
-
+void Scene::checkSceneState()
+{
+    for (auto kv : _entitys)
+    {
+        if (kv.second->_entityInfo.state == ENTITY_STATE_LIE || kv.second->_entityInfo.state == ENTITY_STATE_DIED)
+        {
+            if (kv.second->_entityInfo.etype == ENTITY_FLIGHT)
+            {
+                _asyncs.push(std::bind(&Scene::removeEntity, shared_from_this(), kv.second->_entityInfo.eid));
+            }
+            else if (kv.second->_entityInfo.etype == ENTITY_PLAYER && kv.second->_control.stateChageTime + 10.0 < getFloatSteadyNowTime())
+            {
+                kv.second->_entityInfo.state = ENTITY_STATE_ACTIVE;
+                kv.second->_entityInfo.curHP = 100;
+                kv.second->_isInfoDirty = true;
+                SceneEventNotice notice;
+                notice.info.push_back(SceneEventInfo(InvalidEntityID, kv.second->_entityInfo.eid, SCENE_EVENT_REBIRTH, 0.0));
+                _asyncs.push(std::bind(&Scene::broadcast<SceneEventNotice>, shared_from_this(), notice, 0));
+            }
+        }
+    }
+}
 bool Scene::cleanSkill()
 {
     return true;
@@ -732,7 +798,7 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
     for (auto kv : _entitys)
     {
         auto & entity = *(kv.second);
-        if (entity._entityInfo.etype != ENTITY_AVATAR && entity._entityInfo.etype != ENTITY_AI)
+        if (entity._entityInfo.etype != ENTITY_PLAYER && entity._entityInfo.etype != ENTITY_AI)
         {
             continue;
         }

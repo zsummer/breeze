@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>0c1898d8560099bd2a1464038d71fd61</cppmd5> 
-<luamd5>c936bca45fae6ea2704d74010ad05339</luamd5> 
-<csharpmd5>d95b87487a3486c35911b35103465716</csharpmd5> 
-<xmlmd5>3933a6c7d60d6da0c0127705ea2b72db</xmlmd5> 
+<cppmd5>b7db1ea8ed13e891399b23998d49ab9b</cppmd5> 
+<luamd5>6019fe9e7bd7195549fce99b3303a8b2</luamd5> 
+<csharpmd5>3028613cc6b76f3267cb797c22d83ea3</csharpmd5> 
+<xmlmd5>2ac3acd829ae63323ebd5b09e40687f7</xmlmd5> 
 <cacheNumber>
     <cache key = "AddBuffNotice" Number = "50011" /> 
     <cache key = "AddEntityNotice" Number = "50006" /> 
@@ -20,6 +20,7 @@
     <cache key = "RemoveBuffNotice" Number = "50012" /> 
     <cache key = "RemoveEntityNotice" Number = "50007" /> 
     <cache key = "SceneClientPulse" Number = "50000" /> 
+    <cache key = "SceneEventNotice" Number = "50021" /> 
     <cache key = "SceneRefreshNotice" Number = "50004" /> 
     <cache key = "SceneReportsNotice" Number = "50005" /> 
     <cache key = "SceneSectionNotice" Number = "50003" /> 

@@ -150,6 +150,8 @@ namespace Proto4z
             _idToName.Add(10013, "EntityFullData");
             _nameToID.Add("SceneSection", 10014);
             _idToName.Add(10014, "SceneSection");
+            _nameToID.Add("SceneEventInfo", 10015);
+            _idToName.Add(10015, "SceneEventInfo");
             _nameToID.Add("SceneKnock", 39000);
             _idToName.Add(39000, "SceneKnock");
             _nameToID.Add("ScenePulse", 39001);
@@ -276,6 +278,8 @@ namespace Proto4z
             _idToName.Add(50019, "ClientPingTestReq");
             _nameToID.Add("ClientPingTestResp", 50020);
             _idToName.Add(50020, "ClientPingTestResp");
+            _nameToID.Add("SceneEventNotice", 50021);
+            _idToName.Add(50021, "SceneEventNotice");
             _errCodes.Add(0, "成功");
             _errCodes.Add(1, "错误");
             _errCodes.Add(2, "内部错误");

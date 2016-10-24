@@ -22,7 +22,7 @@
 
 
 
-class Scene
+class Scene : std::enable_shared_from_this<Scene>
 {
     //scene数据
 private:
@@ -64,8 +64,10 @@ public:
 public:
     void pushAsync(std::function<void()> && func);
     bool doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosition clt, EPositionArray dsts);
-    bool doSkill(EntityID eid);
-    bool checkSkillBehaviour(EntityID eid);
+    bool doSkill(EntityID eid, ui64 skillID);
+    bool checkSkillBehaviour();
+    bool attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets);
+    void checkSceneState();
     bool cleanSkill();
     bool addBuff();
     bool cleanBuff();
