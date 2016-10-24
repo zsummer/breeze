@@ -650,13 +650,48 @@ bool Scene::doSkill(EntityID eid)
     info.foe = InvalidEntityID;
     info.skillID = skill.skillID;
     info.startTime = getFloatSteadyNowTime();
+
+    auto founder = std::find_if(self._control.skills.begin(), self._control.skills.end(),
+                                [&info](const SkillInfo & skill){return skill.skillID == info.skillID;});
+    if (founder != self._control.skills.end() && getFloatNowTime() - founder->startTime > founder->data.cd
+        &&founder->data.behaviours.empty())
+    {
+        self._control.skills.erase(founder);
+    }
+    else if (founder != self._control.skills.end())
+    {
+        return false;//in cd
+    }
+
     self._control.skills.push_back(info);
-
-
-
     broadcast(UseSkillNotice(eid));
     return true;
 }
+bool Scene::checkSkillBehaviour(EntityID eid)
+{
+    double now = getFloatNowTime();
+    EntityPtr self = getEntity(eid);
+    if (!self || self->_control.skills.empty()) return false;
+    for (auto &skill : self->_control.skills)
+    {
+        while (!skill.data.behaviours.empty())
+        {
+            auto first = skill.data.behaviours.front();
+            if (now < first.delay + skill.startTime)
+            {
+                break;
+            }
+            if(getBitFlag(first.behaviour, SKILL_BEHAVIOUR_HIT))
+            {
+
+            }
+        }
+    }
+    return true;
+}
+
+
+
 bool Scene::cleanSkill()
 {
     return true;

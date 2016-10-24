@@ -130,7 +130,7 @@
     <!-- SKILL类型 (组合位结构) -->
     <enum type="ui64" name="SkillType" desc="">
         <member name="SKILL_NONE"  desc=""/>
-        <member name="SKILL_AUTO" desc="普攻"/>
+        <member name="SKILL_AUTO" desc="自动循环攻击"/>
         <member name="SKILL_PASSIVE"    desc="被动技能"/>
         <member name="SKILL_CAN_BREAK"   desc="可被中断"/>
         <member name="SKILL_CAN_MOVE"   desc="可移动"/>

@@ -65,6 +65,7 @@ public:
     void pushAsync(std::function<void()> && func);
     bool doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosition clt, EPositionArray dsts);
     bool doSkill(EntityID eid);
+    bool checkSkillBehaviour(EntityID eid);
     bool cleanSkill();
     bool addBuff();
     bool cleanBuff();
