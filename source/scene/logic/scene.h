@@ -22,7 +22,7 @@
 
 
 
-class Scene : std::enable_shared_from_this<Scene>
+class Scene : public std::enable_shared_from_this<Scene>
 {
     //scene数据
 private:
