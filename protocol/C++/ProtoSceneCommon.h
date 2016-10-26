@@ -580,8 +580,8 @@ struct SceneEventInfo //伤害数据
     static const std::string getProtoName() { return "SceneEventInfo";} 
     unsigned long long src; //eid  
     unsigned long long dst; //eid  
-    unsigned short ev; //伤害类型HarmType  
-    double val;  
+    unsigned short ev; //事件类型  
+    double val; //数值  
     SceneEventInfo() 
     { 
         src = 0; 

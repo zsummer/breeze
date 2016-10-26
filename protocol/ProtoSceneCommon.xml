@@ -240,8 +240,8 @@
     <struct name="SceneEventInfo" desc="伤害数据">
         <member name="src" type="ui64"  desc="eid"/>
         <member name="dst" type="ui64"  desc="eid"/>
-        <member name="ev" type="ui16"  desc="伤害类型HarmType"/>
-        <member name="val" type="double"  desc=""/>
+        <member name="ev" type="ui16"  desc="事件类型"/>
+        <member name="val" type="double"  desc="数值"/>
    </struct>
    <array name="SceneEventInfoArray" type="SceneEventInfo" desc="" />
 

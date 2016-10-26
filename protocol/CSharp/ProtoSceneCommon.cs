@@ -804,8 +804,8 @@ namespace Proto4z
         //members   
         public ulong src; //eid  
         public ulong dst; //eid  
-        public ushort ev; //伤害类型HarmType  
-        public double val;  
+        public ushort ev; //事件类型  
+        public double val; //数值  
         public SceneEventInfo()  
         { 
             src = 0;  

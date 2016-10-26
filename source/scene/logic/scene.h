@@ -41,6 +41,8 @@ private:
 
     double _lastCheckMonstr = 0.0;
 public:
+    Scene(SceneID id);
+    ~Scene();
     inline SceneID getSceneID() { return _sceneID; }
     inline SceneType getSceneType() { return _sceneType; }
     inline SceneState getSceneState() { return _sceneStatus; }
@@ -49,11 +51,14 @@ public:
     inline std::map<ServiceID, EntityPtr> & getPlayers() { return _players; }
     GroupID getGroupID(ServiceID avatarID);
     void getSceneSection(SceneSection & ss);
+    bool cleanScene();
+    bool initScene(SceneType sceneType, MapID mapID);
+    bool onUpdate();
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
     EntityPtr addEntity(const AvatarBaseInfo & baseInfo,
         const AvatarPropMap & baseProps,
-        EntityCampType camp,
+        ui16 camp,
         EntityType etype,
         EntityState state = ENTITY_STATE_ACTIVE,
         GroupID = InvalidGroupID);
@@ -63,8 +68,9 @@ public:
     //operator
 public:
     void pushAsync(std::function<void()> && func);
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const SearchInfo & search);
     bool doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosition clt, EPositionArray dsts);
-    bool doSkill(EntityID eid, ui64 skillID);
+    bool doSkill(EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst);
     bool checkSkillBehaviour();
     bool attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets);
     void checkSceneState();
@@ -75,13 +81,9 @@ public:
     //targetType 如果是none 则忽略该过滤选项  
     //targetSC如果是none 则忽略该选项, 否则取位判断  
     //
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const SearchInfo & search);
+    
 public:
-    Scene(SceneID id);
-    ~Scene();
-    bool cleanScene();
-    bool initScene(SceneType sceneType, MapID mapID);
-    bool onUpdate();
+
     void checkStepRVO(bool preCheck);
     void doStepRVO();
     void doMonster();

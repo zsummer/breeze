@@ -223,8 +223,8 @@ Proto4z.SceneEventInfo.__protoID = 10015
 Proto4z.SceneEventInfo.__protoName = "SceneEventInfo" 
 Proto4z.SceneEventInfo[1] = {name="src", type="ui64" } --eid 
 Proto4z.SceneEventInfo[2] = {name="dst", type="ui64" } --eid 
-Proto4z.SceneEventInfo[3] = {name="ev", type="ui16" } --伤害类型HarmType 
-Proto4z.SceneEventInfo[4] = {name="val", type="double" }  
+Proto4z.SceneEventInfo[3] = {name="ev", type="ui16" } --事件类型 
+Proto4z.SceneEventInfo[4] = {name="val", type="double" } --数值 
  
 Proto4z.SceneEventInfoArray = {}  
 Proto4z.SceneEventInfoArray.__protoName = "SceneEventInfoArray" 

@@ -452,21 +452,29 @@ namespace Proto4z
         static public string getProtoName() { return "UseSkillReq"; } 
         //members   
         public ulong eid;  
+        public ulong skillID;  
+        public ulong foe;  
         public EPosition dst;  
         public UseSkillReq()  
         { 
             eid = 0;  
+            skillID = 0;  
+            foe = 0;  
             dst = new EPosition();  
         } 
-        public UseSkillReq(ulong eid, EPosition dst) 
+        public UseSkillReq(ulong eid, ulong skillID, ulong foe, EPosition dst) 
         { 
             this.eid = eid; 
+            this.skillID = skillID; 
+            this.foe = foe; 
             this.dst = dst; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.skillID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
             if (this.dst == null) this.dst = new EPosition(); 
             data.AddRange(this.dst.__encode()); 
             return data; 
@@ -474,6 +482,8 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.skillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.dst = new EPosition(); 
             this.dst.__decode(binData, ref pos); 
             return pos; 
@@ -489,27 +499,44 @@ namespace Proto4z
         //members   
         public ushort retCode;  
         public ulong eid;  
+        public ulong skillID;  
+        public ulong foe;  
+        public EPosition dst;  
         public UseSkillResp()  
         { 
             retCode = 0;  
             eid = 0;  
+            skillID = 0;  
+            foe = 0;  
+            dst = new EPosition();  
         } 
-        public UseSkillResp(ushort retCode, ulong eid) 
+        public UseSkillResp(ushort retCode, ulong eid, ulong skillID, ulong foe, EPosition dst) 
         { 
             this.retCode = retCode; 
             this.eid = eid; 
+            this.skillID = skillID; 
+            this.foe = foe; 
+            this.dst = dst; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.retCode)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.skillID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
+            if (this.dst == null) this.dst = new EPosition(); 
+            data.AddRange(this.dst.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.retCode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.skillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.dst = new EPosition(); 
+            this.dst.__decode(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -522,23 +549,40 @@ namespace Proto4z
         static public string getProtoName() { return "UseSkillNotice"; } 
         //members   
         public ulong eid;  
+        public ulong skillID;  
+        public ulong foe;  
+        public EPosition dst;  
         public UseSkillNotice()  
         { 
             eid = 0;  
+            skillID = 0;  
+            foe = 0;  
+            dst = new EPosition();  
         } 
-        public UseSkillNotice(ulong eid) 
+        public UseSkillNotice(ulong eid, ulong skillID, ulong foe, EPosition dst) 
         { 
             this.eid = eid; 
+            this.skillID = skillID; 
+            this.foe = foe; 
+            this.dst = dst; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.skillID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
+            if (this.dst == null) this.dst = new EPosition(); 
+            data.AddRange(this.dst.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.skillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.dst = new EPosition(); 
+            this.dst.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

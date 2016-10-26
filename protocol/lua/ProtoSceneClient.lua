@@ -92,7 +92,9 @@ Proto4z.UseSkillReq = {}
 Proto4z.UseSkillReq.__protoID = 50013 
 Proto4z.UseSkillReq.__protoName = "UseSkillReq" 
 Proto4z.UseSkillReq[1] = {name="eid", type="ui64" }  
-Proto4z.UseSkillReq[2] = {name="dst", type="EPosition" }  
+Proto4z.UseSkillReq[2] = {name="skillID", type="ui64" }  
+Proto4z.UseSkillReq[3] = {name="foe", type="ui64" }  
+Proto4z.UseSkillReq[4] = {name="dst", type="EPosition" }  
  
 Proto4z.register(50014,"UseSkillResp") 
 Proto4z.UseSkillResp = {} --只有失败时才会使用该协议 
@@ -100,12 +102,18 @@ Proto4z.UseSkillResp.__protoID = 50014
 Proto4z.UseSkillResp.__protoName = "UseSkillResp" 
 Proto4z.UseSkillResp[1] = {name="retCode", type="ui16" }  
 Proto4z.UseSkillResp[2] = {name="eid", type="ui64" }  
+Proto4z.UseSkillResp[3] = {name="skillID", type="ui64" }  
+Proto4z.UseSkillResp[4] = {name="foe", type="ui64" }  
+Proto4z.UseSkillResp[5] = {name="dst", type="EPosition" }  
  
 Proto4z.register(50015,"UseSkillNotice") 
 Proto4z.UseSkillNotice = {}  
 Proto4z.UseSkillNotice.__protoID = 50015 
 Proto4z.UseSkillNotice.__protoName = "UseSkillNotice" 
 Proto4z.UseSkillNotice[1] = {name="eid", type="ui64" }  
+Proto4z.UseSkillNotice[2] = {name="skillID", type="ui64" }  
+Proto4z.UseSkillNotice[3] = {name="foe", type="ui64" }  
+Proto4z.UseSkillNotice[4] = {name="dst", type="EPosition" }  
  
 Proto4z.register(50021,"SceneEventNotice") 
 Proto4z.SceneEventNotice = {}  

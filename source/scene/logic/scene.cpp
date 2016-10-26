@@ -114,7 +114,7 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 
 EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     const AvatarPropMap & baseProps,
-    EntityCampType camp,
+    ui16 camp,
     EntityType etype,
     EntityState state,
     GroupID groupID)
@@ -465,7 +465,7 @@ void Scene::doMonster()
         base.avatarName += toString(_monsters.size());
         base.modeID = rand()%45+1;
         AvatarPropMap prop;
-        auto monster = addEntity(base, prop, ENTITY_CAMP_BLUE, ENTITY_AI);
+        auto monster = addEntity(base, prop, ENTITY_CAMP_BLUE+100, ENTITY_AI);
         _monsters[monster->_entityInfo.eid] = monster;
     }
     for (auto monster: _monsters)
@@ -482,7 +482,7 @@ void Scene::doMonster()
         auto ret = searchTarget(monster.second, 0, search);
         if (ret.size() > 0)
         {
-            if (monster.second->_entityMove.follow != ret.front()->_entityInfo.eid)
+            if (monster.second->_entityMove.follow != ret.front()->_entityInfo.eid && monster.second->_entityInfo.state == ENTITY_STATE_ACTIVE)
             {
                 if (monster.second->_entityMove.follow == InvalidEntityID || realRand() > 0.7)
                 {
@@ -536,8 +536,8 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         rs >> req;
         LOGD("MoveReq avatarID[" << avatarID << "] req=" << req);
         auto entity = getEntity(req.eid);
-        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_entityInfo.etype != ENTITY_PLAYER
-                || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH
+        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_entityInfo.etype != ENTITY_PLAYER 
+            || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH 
                     || !doMove(req.eid, (MoveAction)req.action, entity->getSpeed(), req.follow, req.clientPos, req.waypoints))
         {
             sendToClient(avatarID, MoveResp(EC_ERROR, req.eid, req.action));
@@ -547,9 +547,11 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
     {
         UseSkillReq req;
         rs >> req;
-        if (!doSkill(req.eid, 1))
+        auto entity = getEntity(req.eid);
+        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_entityInfo.etype != ENTITY_PLAYER
+            ||!doSkill(req.eid, req.skillID, req.foe, req.dst))
         {
-            sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid));
+            sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID, req.foe, req.dst));
         }
     }
     else if (rs.getProtoID() == ClientCustomReq::getProtoID())
@@ -582,6 +584,10 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosi
         return false;
     }
     if (entity->_control.agentNo >= _sim->getNumAgents())
+    {
+        return false;
+    }
+    if (entity->_entityInfo.state != ENTITY_STATE_ACTIVE)
     {
         return false;
     }
@@ -622,36 +628,40 @@ bool Scene::doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosi
     broadcast(MoveNotice(moveInfo));
     return true;
 }
-bool Scene::doSkill(EntityID eid, ui64 skillID)
+bool Scene::doSkill(EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst)
 {
-    auto entityPtr = getEntity(eid);
-    if (!entityPtr)
+    auto entity = getEntity(eid);
+    if (!entity)
     {
         return false;
     }
-    auto &self = *entityPtr;
+    if (entity->_entityInfo.state != ENTITY_STATE_ACTIVE)
+    {
+        return false;
+    }
+    auto &self = *entity;
 
     SkillData skill;
-    skill.cd = 1;
-    skill.skillID = 1;
+    skill.cd = 0;
+    skill.skillID = skillID;
     skill.skillType = setBitFlag(0, SKILL_AUTO);
 
     SkillBehaviour behaviour;
     behaviour.behaviour = setBitFlag(0, SKILL_BEHAVIOUR_HIT);
     behaviour.delay = 0.15;
-    behaviour.search.offsetX = 1;
-    behaviour.search.offsetY = 1;
-    behaviour.search.radian = PI*2.0;
-    behaviour.search.camp = SEARCH_CAMP_NONE;
-    behaviour.search.distance = 50.0;
+    behaviour.search.offsetX = -1;
+    behaviour.search.offsetY = -1;
+    behaviour.search.radian = PI/2.0;
+    behaviour.search.camp = setBitFlag(0, SEARCH_CAMP_ALIEN);
+    behaviour.search.distance = 5.0;
     behaviour.search.limitEntitys = 100;
     skill.behaviours.push_back(behaviour);
 
     SkillInfo info;
     info.data = skill;
     info.dst = self._entityMove.position;
-    info.foe = InvalidEntityID;
-    info.skillID = skill.skillID;
+    info.foe = foe;
+    info.skillID = skillID;
     info.startTime = getFloatSteadyNowTime();
 
     auto founder = std::find_if(self._control.skills.begin(), self._control.skills.end(),
@@ -667,9 +677,10 @@ bool Scene::doSkill(EntityID eid, ui64 skillID)
     }
 
     self._control.skills.push_back(info);
-    broadcast(UseSkillNotice(eid));
+    broadcast(UseSkillNotice(eid, skillID, foe, dst));
     return true;
 }
+
 bool Scene::checkSkillBehaviour()
 {
     double now = getFloatNowTime();
@@ -728,6 +739,10 @@ bool Scene::attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets)
         {
             target->_entityInfo.curHP = 0.0;
             target->_entityInfo.state = ENTITY_STATE_LIE;
+            target->_entityMove.action = MOVE_ACTION_IDLE;
+            target->_entityMove.follow = InvalidEntityID;
+            target->_entityInfo.foe = InvalidEntityID;
+
             target->_control.stateChageTime = getFloatSteadyNowTime();
             notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_LIE, 0));
         }
@@ -746,11 +761,16 @@ void Scene::checkSceneState()
             {
                 _asyncs.push(std::bind(&Scene::removeEntity, shared_from_this(), kv.second->_entityInfo.eid));
             }
-            else if (kv.second->_entityInfo.etype == ENTITY_PLAYER && kv.second->_control.stateChageTime + 10.0 < getFloatSteadyNowTime())
+            else if (kv.second->_control.stateChageTime + 10.0 < getFloatSteadyNowTime())
             {
                 kv.second->_entityInfo.state = ENTITY_STATE_ACTIVE;
                 kv.second->_entityInfo.curHP = 100;
                 kv.second->_isInfoDirty = true;
+                kv.second->_entityMove.position = kv.second->_control.spawnpoint;
+                if ( kv.second->_control.agentNo < _sim->getNumAgents())
+                {
+                    _sim->setAgentPosition(kv.second->_control.agentNo, toRVOVector2(kv.second->_entityMove.position));
+                }
                 SceneEventNotice notice;
                 notice.info.push_back(SceneEventInfo(InvalidEntityID, kv.second->_entityInfo.eid, SCENE_EVENT_REBIRTH, 0.0));
                 _asyncs.push(std::bind(&Scene::broadcast<SceneEventNotice>, shared_from_this(), notice, 0));
