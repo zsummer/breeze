@@ -1,17 +1,36 @@
 ﻿#include "avatarService.h"
 #include <ProtoClient.h>
-
+#include <ProtoSceneServer.h>
 
 AvatarService::AvatarService()
 {
     slotting<ChatReq>(std::bind(&AvatarService::onChatReq, this, _1, _2));
+    slotting<ChatResp>(std::bind(&AvatarService::onChatResp, this, _1, _2));
 	slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
 	slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
 	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
+    
+    slotting<SceneGroupInfoNotice>(std::bind(&SceneModule::onSceneGroupInfoNotice, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupGetReq>(std::bind(&SceneModule::onSceneGroupGetReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupEnterReq>(std::bind(&SceneModule::onSceneGroupEnterReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupCancelReq>(std::bind(&SceneModule::onSceneGroupCancelReq, _scene, std::ref(*this), _1, _2));
+    
+    slotting<SceneGroupCreateReq>(std::bind(&SceneModule::onSceneGroupCreateReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupJoinReq>(std::bind(&SceneModule::onSceneGroupJoinReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupInviteReq>(std::bind(&SceneModule::onSceneGroupInviteReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupRejectReq>(std::bind(&SceneModule::onSceneGroupRejectReq, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveReq>(std::bind(&SceneModule::onSceneGroupLeaveReq, _scene, std::ref(*this), _1, _2));
 
-    slotting<GetSceneTokenInfoReq>(std::bind(&AvatarService::onGetSceneTokenInfoReq, this, _1, _2));
-    slotting<JoinSceneReq>(std::bind(&AvatarService::onJoinSceneReq, this, _1, _2));
-    slotting<LeaveSceneReq>(std::bind(&AvatarService::onLeaveSceneReq, this, _1, _2));
+    slotting<SceneGroupGetResp>(std::bind(&SceneModule::onSceneGroupGetStatusResp, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupEnterResp>(std::bind(&SceneModule::onSceneGroupEnterResp, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupCancelResp>(std::bind(&SceneModule::onSceneGroupCancelResp, _scene, std::ref(*this), _1, _2));
+    
+    slotting<SceneServerJoinGroupAck>(std::bind(&SceneModule::onSceneServerJoinGroupAck, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupInviteResp>(std::bind(&SceneModule::onSceneGroupInviteResp, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupInviteNotice>(std::bind(&SceneModule::onSceneGroupInviteNotice, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupRejectResp>(std::bind(&SceneModule::onSceneGroupRejectResp, _scene, std::ref(*this), _1, _2));
+    slotting<SceneGroupLeaveResp>(std::bind(&SceneModule::onSceneGroupLeaveResp, _scene, std::ref(*this), _1, _2));
+
 
 }
 
@@ -33,7 +52,7 @@ void AvatarService::onClientChange()
 {
     if (getClientDockerID() != InvalidDockerID && getClientSessionID() != InvalidSessionID)
     {
-        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _props);
+        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _baseProps);
         toDocker(getClientDockerID(), resp);
     }
     if (getClientSessionID() == InvalidSessionID)
@@ -56,7 +75,7 @@ bool AvatarService::onLoad()
 {
     AvatarBaseInfo ubi;
     ubi.avatarID = getServiceID();
-    ubi.userName = getServiceName();
+    ubi.avatarName = getServiceName();
     _baseInfo.loadFromDB(shared_from_this(), ubi, std::bind(&AvatarService::onModuleLoad, std::static_pointer_cast<AvatarService>(shared_from_this()), _1, _2));
     return true;
 }
@@ -94,7 +113,7 @@ void AvatarService::onModuleLoad(bool success, const std::string & moduleName)
 			refreshProp("vampirk", 0.2);
 		}
         finishLoad();
-        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _props);
+        AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data, _baseProps);
         toDocker(getClientDockerID(), resp);
     }
     return ;
@@ -134,10 +153,8 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     resp.channelID = req.channelID;
     resp.chatTime = getNowTime();
 
-    double now = getFloatNowTime();
-    double limit = 0.0;
-    if (req.channelID == CC_PRIVATE) limit = 1.0;
-    else if (req.channelID == CC_WORLD) limit = 5.0;
+    double now = getFloatSteadyNowTime();
+    double limit = req.channelID == CC_WORLD ? 5.0 : 1.0;
 
     if (now - _lastChatTime < limit)
     {
@@ -150,9 +167,6 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
         toService(STClient, getServiceID(), resp);
         return;
     }
-
-
-
     _lastChatTime = now;
     if (req.channelID == CC_PRIVATE)
     {
@@ -171,6 +185,17 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
             toService(STClient, kv.second->getServiceID(), resp);
         }
     }
+    else if (req.channelID == CC_GROUP || req.channelID == CC_CAMP || req.channelID == CC_SCENE)
+    {
+        if (Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
+        {
+            toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
+        }
+        else
+        {
+            LOGW("STWorldMgr service not open. " << trace);
+        }
+    }
     if (true)
     {
         LogChat log;
@@ -187,6 +212,12 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     }
     
 }
+
+void AvatarService::onChatResp(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
+{
+    toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
+}
+
 
 void AvatarService::onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
@@ -217,74 +248,37 @@ void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::R
 	rs >> req;
 	_baseInfo._data.modeID = req.modeID;
 	_baseInfo.writeToDB();
+    _scene.refreshGroupInfo(*this);
     toService(STClient, getServiceID(), AvatarBaseInfoNotice(_baseInfo._data));
 	toService(STClient, getServiceID(), ChangeModeIDResp(EC_SUCCESS, req.modeID));
 }
 
 
 
-void AvatarService::onGetSceneTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream & rs)
-{
-    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
-    {
-        LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, GetSceneTokenInfoResp(EC_SERVICE_NOT_OPEN, SceneTokenInfo()));
-        return;
-    }
-    toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
-}
-
-void AvatarService::onJoinSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
-{
-    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
-    {
-        LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, JoinSceneResp(EC_SERVICE_NOT_OPEN, SceneTokenInfo()));
-        return;
-    }
-    toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
-}
-void AvatarService::onLeaveSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
-{
-    if (!Docker::getRef().peekService(STWorldMgr, InvalidServiceID))
-    {
-        LOGW("STWorldMgr service not open. " << trace);
-        toService(STClient, trace.oob, LeaveSceneResp(EC_SERVICE_NOT_OPEN, SceneTokenInfo()));
-        return;
-    }
-    toService(STWorldMgr, trace.oob, rs.getStream(), rs.getStreamLen());
-}
-
-
-
 void AvatarService::refreshProp(const std::string &prop, double val, bool overwrite)
 {
-	auto fouder = _props.find(prop);
-	if (fouder == _props.end())
-	{
-		_props.insert(std::make_pair(prop, val));
-		return;
-	}
-	if (overwrite)
-	{
-		fouder->second = val;
-		return;
-	}
-	fouder->second += val;
+    auto fouder = _baseProps.find(prop);
+    if (fouder == _baseProps.end())
+    {
+        _baseProps.insert(std::make_pair(prop, val));
+        return;
+    }
+    if (overwrite)
+    {
+        fouder->second = val;
+        return;
+    }
+    fouder->second += val;
 }
 double AvatarService::getProp(const std::string &prop)
 {
-	auto fouder = _props.find(prop);
-	if (fouder == _props.end())
-	{
-		return 0.0;
-	}
-	return fouder->second;
+    auto fouder = _baseProps.find(prop);
+    if (fouder == _baseProps.end())
+    {
+        return 0.0;
+    }
+    return fouder->second;
 }
-
-
-
-
 
 
 

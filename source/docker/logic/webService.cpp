@@ -178,7 +178,7 @@ void WebService::onWebServerRequest(Tracing trace, ReadStream &rs)
     request.traceID = trace.routing.traceID;
     request.fromServiceType = trace.routing.fromServiceType;
     request.fromServiceID = trace.routing.fromServiceID;
-    Docker::getRef().sendViaDockerID(Docker::getRef().getWebBalance().selectAuto(), request);
+    Docker::getRef().sendViaDockerID(Docker::getRef().getWebBalance().pickNode(1, 1), request);
 }
 
 void WebService::onWebServerResponseTest(Tracing trace, ReadStream &rs)

@@ -94,7 +94,12 @@ private:
 };
 
 
-
+inline std::string  toMD5(const std::string & org)
+{
+    MD5Data md5;
+    md5.append(org);
+    return md5.genMD5();
+}
 
 #endif
 

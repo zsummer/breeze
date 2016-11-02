@@ -33,8 +33,8 @@ struct Routing //docker to docker 路由信息
     unsigned long long toServiceID; //目标serviceID, 如果是单例 ID为InvalidServiceID.   
     unsigned short fromServiceType; //来源  
     unsigned long long fromServiceID; //来源  
-    unsigned int traceID; //本地产生的回调ID  
-    unsigned int traceBackID; //远端产生的回调ID  
+    unsigned long long traceID; //本地产生的回调ID  
+    unsigned long long traceBackID; //远端产生的回调ID  
     Routing() 
     { 
         toServiceType = 0; 
@@ -44,7 +44,7 @@ struct Routing //docker to docker 路由信息
         traceID = 0; 
         traceBackID = 0; 
     } 
-    Routing(const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned int & traceID, const unsigned int & traceBackID) 
+    Routing(const unsigned short & toServiceType, const unsigned long long & toServiceID, const unsigned short & fromServiceType, const unsigned long long & fromServiceID, const unsigned long long & traceID, const unsigned long long & traceBackID) 
     { 
         this->toServiceType = toServiceType; 
         this->toServiceID = toServiceID; 
@@ -76,14 +76,14 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Routing & info) 
 { 
-    stm << "[\n"; 
-    stm << "toServiceType=" << info.toServiceType << "\n"; 
-    stm << "toServiceID=" << info.toServiceID << "\n"; 
-    stm << "fromServiceType=" << info.fromServiceType << "\n"; 
-    stm << "fromServiceID=" << info.fromServiceID << "\n"; 
-    stm << "traceID=" << info.traceID << "\n"; 
-    stm << "traceBackID=" << info.traceBackID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "toServiceType=" << info.toServiceType << ","; 
+    stm << "toServiceID=" << info.toServiceID << ","; 
+    stm << "fromServiceType=" << info.fromServiceType << ","; 
+    stm << "fromServiceID=" << info.fromServiceID << ","; 
+    stm << "traceID=" << info.traceID << ","; 
+    stm << "traceBackID=" << info.traceBackID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -91,7 +91,7 @@ struct OutOfBand //带外信息
 { 
     static const unsigned short getProtoID() { return 1001;} 
     static const std::string getProtoName() { return "OutOfBand";} 
-    unsigned int clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
+    unsigned long long clientDockerID; //该数据由docker获得来自客户端的消息时自动填充.  
     unsigned int clientSessionID; //该数据由docker获得来自客户端的消息时自动填充.  
     unsigned long long clientAvatarID; //该数据由docker获得来自客户端的消息时自动填充.  
     OutOfBand() 
@@ -100,7 +100,7 @@ struct OutOfBand //带外信息
         clientSessionID = 0; 
         clientAvatarID = 0; 
     } 
-    OutOfBand(const unsigned int & clientDockerID, const unsigned int & clientSessionID, const unsigned long long & clientAvatarID) 
+    OutOfBand(const unsigned long long & clientDockerID, const unsigned int & clientSessionID, const unsigned long long & clientAvatarID) 
     { 
         this->clientDockerID = clientDockerID; 
         this->clientSessionID = clientSessionID; 
@@ -123,11 +123,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const OutOfBand & info) 
 { 
-    stm << "[\n"; 
-    stm << "clientDockerID=" << info.clientDockerID << "\n"; 
-    stm << "clientSessionID=" << info.clientSessionID << "\n"; 
-    stm << "clientAvatarID=" << info.clientAvatarID << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "clientDockerID=" << info.clientDockerID << ","; 
+    stm << "clientSessionID=" << info.clientSessionID << ","; 
+    stm << "clientAvatarID=" << info.clientAvatarID << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -160,21 +160,24 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const Tracing & info) 
 { 
-    stm << "[\n"; 
-    stm << "routing=" << info.routing << "\n"; 
-    stm << "oob=" << info.oob << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "routing=" << info.routing << ","; 
+    stm << "oob=" << info.oob << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
  
-typedef std::vector<unsigned long long> AvatarIDArray;  
+typedef std::vector<unsigned long long> ServiceIDArray;  
+ 
+ 
+typedef std::map<unsigned long long, unsigned long long> ServiceIDMap;  
  
 struct AvatarPreview //用户预览信息  
 { 
     static const unsigned short getProtoID() { return 1003;} 
     static const std::string getProtoName() { return "AvatarPreview";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -182,7 +185,7 @@ struct AvatarPreview //用户预览信息
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
-    std::string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
+    std::string avatarName; //用户唯一昵称, 对应AvatarService的ServiceName  
     std::string account; //帐号  
     int iconID; //头像  
     int modeID; //模型  
@@ -194,10 +197,10 @@ struct AvatarPreview //用户预览信息
         modeID = 0; 
         level = 0; 
     } 
-    AvatarPreview(const unsigned long long & avatarID, const std::string & userName, const std::string & account, const int & iconID, const int & modeID, const int & level) 
+    AvatarPreview(const unsigned long long & avatarID, const std::string & avatarName, const std::string & account, const int & iconID, const int & modeID, const int & level) 
     { 
         this->avatarID = avatarID; 
-        this->userName = userName; 
+        this->avatarName = avatarName; 
         this->account = account; 
         this->iconID = iconID; 
         this->modeID = modeID; 
@@ -205,14 +208,14 @@ struct AvatarPreview //用户预览信息
     } 
 }; 
  
-const std::vector<std::string>  AvatarPreview::getDBBuild() 
+std::vector<std::string>  AvatarPreview::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarPreview` (        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`avatarID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarPreview` (        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `avatarName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`avatarID`),        UNIQUE KEY `avatarName` (`avatarName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_AvatarPreview` add `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarPreview` change `avatarID`  `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarPreview` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_AvatarPreview` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarPreview` add `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `avatarName`  `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarPreview` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarPreview` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarPreview` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
@@ -221,25 +224,25 @@ const std::vector<std::string>  AvatarPreview::getDBBuild()
     ret.push_back("alter table `tb_AvatarPreview` change `modeID`  `modeID`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarPreview` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarPreview` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  AvatarPreview::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `avatarID`,`userName`,`account`,`iconID`,`modeID`,`level` from `tb_AvatarPreview` where `avatarID` = ? "); 
+    q.init("select `avatarID`,`avatarName`,`account`,`iconID`,`modeID`,`level` from `tb_AvatarPreview` where `avatarID` = ? "); 
     q << this->avatarID; 
     return q.pickSQL(); 
 } 
 std::string  AvatarPreview::getDBSelectPure() 
 { 
-    return "select `avatarID`,`userName`,`account`,`iconID`,`modeID`,`level` from `tb_AvatarPreview` "; 
+    return "select `avatarID`,`avatarName`,`account`,`iconID`,`modeID`,`level` from `tb_AvatarPreview` "; 
 } 
 std::string  AvatarPreview::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_AvatarPreview`(`avatarID`,`userName`,`account`,`iconID`,`modeID`,`level`) values(?,?,?,?,?,?)"); 
+    q.init("insert into `tb_AvatarPreview`(`avatarID`,`avatarName`,`account`,`iconID`,`modeID`,`level`) values(?,?,?,?,?,?)"); 
     q << this->avatarID; 
-    q << this->userName; 
+    q << this->avatarName; 
     q << this->account; 
     q << this->iconID; 
     q << this->modeID; 
@@ -256,9 +259,9 @@ std::string  AvatarPreview::getDBDelete()
 std::string  AvatarPreview::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_AvatarPreview`(avatarID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`modeID` = ?,`level` = ? "); 
+    q.init("insert into `tb_AvatarPreview`(avatarID) values(? ) on duplicate key update `avatarName` = ?,`account` = ?,`iconID` = ?,`modeID` = ?,`level` = ? "); 
     q << this->avatarID; 
-    q << this->userName; 
+    q << this->avatarName; 
     q << this->account; 
     q << this->iconID; 
     q << this->modeID; 
@@ -277,7 +280,7 @@ bool AvatarPreview::fetchFromDBResult(zsummer::mysql::DBResult &result)
         if (result.haveRow()) 
         { 
             result >> this->avatarID; 
-            result >> this->userName; 
+            result >> this->avatarName; 
             result >> this->account; 
             result >> this->iconID; 
             result >> this->modeID; 
@@ -295,7 +298,7 @@ bool AvatarPreview::fetchFromDBResult(zsummer::mysql::DBResult &result)
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarPreview & data) 
 { 
     ws << data.avatarID;  
-    ws << data.userName;  
+    ws << data.avatarName;  
     ws << data.account;  
     ws << data.iconID;  
     ws << data.modeID;  
@@ -305,7 +308,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarPreview & data) 
 { 
     rs >> data.avatarID;  
-    rs >> data.userName;  
+    rs >> data.avatarName;  
     rs >> data.account;  
     rs >> data.iconID;  
     rs >> data.modeID;  
@@ -314,14 +317,14 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarPreview & info) 
 { 
-    stm << "[\n"; 
-    stm << "avatarID=" << info.avatarID << "\n"; 
-    stm << "userName=" << info.userName << "\n"; 
-    stm << "account=" << info.account << "\n"; 
-    stm << "iconID=" << info.iconID << "\n"; 
-    stm << "modeID=" << info.modeID << "\n"; 
-    stm << "level=" << info.level << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "avatarName=" << info.avatarName << ","; 
+    stm << "account=" << info.account << ","; 
+    stm << "iconID=" << info.iconID << ","; 
+    stm << "modeID=" << info.modeID << ","; 
+    stm << "level=" << info.level << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -332,7 +335,7 @@ struct AvatarBaseInfo //用户基础数据
 { 
     static const unsigned short getProtoID() { return 1004;} 
     static const std::string getProtoName() { return "AvatarBaseInfo";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -340,7 +343,7 @@ struct AvatarBaseInfo //用户基础数据
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
-    std::string userName; //用户唯一昵称, 对应AvatarService的ServiceName  
+    std::string avatarName; //用户唯一昵称, 对应AvatarService的ServiceName  
     std::string account; //帐号  
     int iconID; //头像  
     int modeID; //模型  
@@ -360,10 +363,10 @@ struct AvatarBaseInfo //用户基础数据
         diamond = 0.0; 
         createTime = 0; 
     } 
-    AvatarBaseInfo(const unsigned long long & avatarID, const std::string & userName, const std::string & account, const int & iconID, const int & modeID, const int & level, const double & exp, const double & gold, const double & diamond, const unsigned long long & createTime) 
+    AvatarBaseInfo(const unsigned long long & avatarID, const std::string & avatarName, const std::string & account, const int & iconID, const int & modeID, const int & level, const double & exp, const double & gold, const double & diamond, const unsigned long long & createTime) 
     { 
         this->avatarID = avatarID; 
-        this->userName = userName; 
+        this->avatarName = avatarName; 
         this->account = account; 
         this->iconID = iconID; 
         this->modeID = modeID; 
@@ -375,14 +378,14 @@ struct AvatarBaseInfo //用户基础数据
     } 
 }; 
  
-const std::vector<std::string>  AvatarBaseInfo::getDBBuild() 
+std::vector<std::string>  AvatarBaseInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarBaseInfo` (        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `userName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`avatarID`),        UNIQUE KEY `userName` (`userName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_AvatarBaseInfo` (        `avatarID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `avatarName` varchar(255) NOT NULL DEFAULT '' ,        `account` varchar(255) NOT NULL DEFAULT '' ,        PRIMARY KEY(`avatarID`),        UNIQUE KEY `avatarName` (`avatarName`),        KEY `account` (`account`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_AvatarBaseInfo` add `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` change `avatarID`  `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarBaseInfo` add `userName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_AvatarBaseInfo` change `userName`  `userName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `avatarName`  `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
@@ -399,25 +402,25 @@ const std::vector<std::string>  AvatarBaseInfo::getDBBuild()
     ret.push_back("alter table `tb_AvatarBaseInfo` change `diamond`  `diamond`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` add `createTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` change `createTime`  `createTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  AvatarBaseInfo::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `avatarID`,`userName`,`account`,`iconID`,`modeID`,`level`,`exp`,`gold`,`diamond`,`createTime` from `tb_AvatarBaseInfo` where `avatarID` = ? "); 
+    q.init("select `avatarID`,`avatarName`,`account`,`iconID`,`modeID`,`level`,`exp`,`gold`,`diamond`,`createTime` from `tb_AvatarBaseInfo` where `avatarID` = ? "); 
     q << this->avatarID; 
     return q.pickSQL(); 
 } 
 std::string  AvatarBaseInfo::getDBSelectPure() 
 { 
-    return "select `avatarID`,`userName`,`account`,`iconID`,`modeID`,`level`,`exp`,`gold`,`diamond`,`createTime` from `tb_AvatarBaseInfo` "; 
+    return "select `avatarID`,`avatarName`,`account`,`iconID`,`modeID`,`level`,`exp`,`gold`,`diamond`,`createTime` from `tb_AvatarBaseInfo` "; 
 } 
 std::string  AvatarBaseInfo::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_AvatarBaseInfo`(`avatarID`,`userName`,`account`,`iconID`,`modeID`,`level`,`exp`,`gold`,`diamond`,`createTime`) values(?,?,?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_AvatarBaseInfo`(`avatarID`,`avatarName`,`account`,`iconID`,`modeID`,`level`,`exp`,`gold`,`diamond`,`createTime`) values(?,?,?,?,?,?,?,?,?,?)"); 
     q << this->avatarID; 
-    q << this->userName; 
+    q << this->avatarName; 
     q << this->account; 
     q << this->iconID; 
     q << this->modeID; 
@@ -438,9 +441,9 @@ std::string  AvatarBaseInfo::getDBDelete()
 std::string  AvatarBaseInfo::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_AvatarBaseInfo`(avatarID) values(? ) on duplicate key update `userName` = ?,`account` = ?,`iconID` = ?,`modeID` = ?,`level` = ?,`exp` = ?,`gold` = ?,`diamond` = ?,`createTime` = ? "); 
+    q.init("insert into `tb_AvatarBaseInfo`(avatarID) values(? ) on duplicate key update `avatarName` = ?,`account` = ?,`iconID` = ?,`modeID` = ?,`level` = ?,`exp` = ?,`gold` = ?,`diamond` = ?,`createTime` = ? "); 
     q << this->avatarID; 
-    q << this->userName; 
+    q << this->avatarName; 
     q << this->account; 
     q << this->iconID; 
     q << this->modeID; 
@@ -463,7 +466,7 @@ bool AvatarBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result)
         if (result.haveRow()) 
         { 
             result >> this->avatarID; 
-            result >> this->userName; 
+            result >> this->avatarName; 
             result >> this->account; 
             result >> this->iconID; 
             result >> this->modeID; 
@@ -485,7 +488,7 @@ bool AvatarBaseInfo::fetchFromDBResult(zsummer::mysql::DBResult &result)
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarBaseInfo & data) 
 { 
     ws << data.avatarID;  
-    ws << data.userName;  
+    ws << data.avatarName;  
     ws << data.account;  
     ws << data.iconID;  
     ws << data.modeID;  
@@ -499,7 +502,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarBaseInfo & data) 
 { 
     rs >> data.avatarID;  
-    rs >> data.userName;  
+    rs >> data.avatarName;  
     rs >> data.account;  
     rs >> data.iconID;  
     rs >> data.modeID;  
@@ -512,18 +515,18 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarBaseInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "avatarID=" << info.avatarID << "\n"; 
-    stm << "userName=" << info.userName << "\n"; 
-    stm << "account=" << info.account << "\n"; 
-    stm << "iconID=" << info.iconID << "\n"; 
-    stm << "modeID=" << info.modeID << "\n"; 
-    stm << "level=" << info.level << "\n"; 
-    stm << "exp=" << info.exp << "\n"; 
-    stm << "gold=" << info.gold << "\n"; 
-    stm << "diamond=" << info.diamond << "\n"; 
-    stm << "createTime=" << info.createTime << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "avatarName=" << info.avatarName << ","; 
+    stm << "account=" << info.account << ","; 
+    stm << "iconID=" << info.iconID << ","; 
+    stm << "modeID=" << info.modeID << ","; 
+    stm << "level=" << info.level << ","; 
+    stm << "exp=" << info.exp << ","; 
+    stm << "gold=" << info.gold << ","; 
+    stm << "diamond=" << info.diamond << ","; 
+    stm << "createTime=" << info.createTime << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -537,14 +540,14 @@ struct DictGlobal //全局配置
 { 
     static const unsigned short getProtoID() { return 1005;} 
     static const std::string getProtoName() { return "DictGlobal";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned int id;  
+    unsigned long long id;  
     unsigned long long val; //整数  
     double valFloat; //浮点数  
     std::string combo; //字符串  
@@ -555,7 +558,7 @@ struct DictGlobal //全局配置
         val = 0; 
         valFloat = 0.0; 
     } 
-    DictGlobal(const unsigned int & id, const unsigned long long & val, const double & valFloat, const std::string & combo, const std::string & desc) 
+    DictGlobal(const unsigned long long & id, const unsigned long long & val, const double & valFloat, const std::string & combo, const std::string & desc) 
     { 
         this->id = id; 
         this->val = val; 
@@ -565,7 +568,7 @@ struct DictGlobal //全局配置
     } 
 }; 
  
-const std::vector<std::string>  DictGlobal::getDBBuild() 
+std::vector<std::string>  DictGlobal::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictGlobal` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -579,7 +582,7 @@ const std::vector<std::string>  DictGlobal::getDBBuild()
     ret.push_back("alter table `tb_DictGlobal` change `combo`  `combo`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictGlobal` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictGlobal` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictGlobal::getDBSelect() 
 { 
@@ -667,13 +670,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictGlobal & info) 
 { 
-    stm << "[\n"; 
-    stm << "id=" << info.id << "\n"; 
-    stm << "val=" << info.val << "\n"; 
-    stm << "valFloat=" << info.valFloat << "\n"; 
-    stm << "combo=" << info.combo << "\n"; 
-    stm << "desc=" << info.desc << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "val=" << info.val << ","; 
+    stm << "valFloat=" << info.valFloat << ","; 
+    stm << "combo=" << info.combo << ","; 
+    stm << "desc=" << info.desc << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -681,15 +684,15 @@ struct DictRaffleAward //奖池中的奖品
 { 
     static const unsigned short getProtoID() { return 1006;} 
     static const std::string getProtoName() { return "DictRaffleAward";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned int id; //奖品ID  
-    unsigned int weight; //本奖品在奖池中的权重, 总权重在[10000~30000]之间的随机效果最好  
+    unsigned long long id; //奖品ID  
+    unsigned long long weight; //本奖品在奖池中的权重, 总权重在[10000~30000]之间的随机效果最好  
     double probability; //[0~1]独立随机的概率,0为永远无法随机到 1是100%随机到  
     DictRaffleAward() 
     { 
@@ -697,7 +700,7 @@ struct DictRaffleAward //奖池中的奖品
         weight = 0; 
         probability = 0.0; 
     } 
-    DictRaffleAward(const unsigned int & id, const unsigned int & weight, const double & probability) 
+    DictRaffleAward(const unsigned long long & id, const unsigned long long & weight, const double & probability) 
     { 
         this->id = id; 
         this->weight = weight; 
@@ -705,7 +708,7 @@ struct DictRaffleAward //奖池中的奖品
     } 
 }; 
  
-const std::vector<std::string>  DictRaffleAward::getDBBuild() 
+std::vector<std::string>  DictRaffleAward::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictRaffleAward` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -715,7 +718,7 @@ const std::vector<std::string>  DictRaffleAward::getDBBuild()
     ret.push_back("alter table `tb_DictRaffleAward` change `weight`  `weight`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRaffleAward` add `probability`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRaffleAward` change `probability`  `probability`  double NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictRaffleAward::getDBSelect() 
 { 
@@ -793,11 +796,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictRaffleAward & info) 
 { 
-    stm << "[\n"; 
-    stm << "id=" << info.id << "\n"; 
-    stm << "weight=" << info.weight << "\n"; 
-    stm << "probability=" << info.probability << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "weight=" << info.weight << ","; 
+    stm << "probability=" << info.probability << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -808,14 +811,14 @@ struct DictRafflePool //道具抽奖,道具掉落
 { 
     static const unsigned short getProtoID() { return 1007;} 
     static const std::string getProtoName() { return "DictRafflePool";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned int id;  
+    unsigned long long id;  
     int raffleCount; //批量抽取次数  
     DictRaffleAwardArray pool; //奖池  
     std::string poolString; //奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式  
@@ -824,7 +827,7 @@ struct DictRafflePool //道具抽奖,道具掉落
         id = 0; 
         raffleCount = 0; 
     } 
-    DictRafflePool(const unsigned int & id, const int & raffleCount, const DictRaffleAwardArray & pool, const std::string & poolString) 
+    DictRafflePool(const unsigned long long & id, const int & raffleCount, const DictRaffleAwardArray & pool, const std::string & poolString) 
     { 
         this->id = id; 
         this->raffleCount = raffleCount; 
@@ -833,7 +836,7 @@ struct DictRafflePool //道具抽奖,道具掉落
     } 
 }; 
  
-const std::vector<std::string>  DictRafflePool::getDBBuild() 
+std::vector<std::string>  DictRafflePool::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictRafflePool` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -845,7 +848,7 @@ const std::vector<std::string>  DictRafflePool::getDBBuild()
     ret.push_back("alter table `tb_DictRafflePool` change `pool`  `pool`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_DictRafflePool` add `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictRafflePool` change `poolString`  `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictRafflePool::getDBSelect() 
 { 
@@ -959,12 +962,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictRafflePool & info) 
 { 
-    stm << "[\n"; 
-    stm << "id=" << info.id << "\n"; 
-    stm << "raffleCount=" << info.raffleCount << "\n"; 
-    stm << "pool=" << info.pool << "\n"; 
-    stm << "poolString=" << info.poolString << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "raffleCount=" << info.raffleCount << ","; 
+    stm << "pool=" << info.pool << ","; 
+    stm << "poolString=" << info.poolString << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -972,14 +975,14 @@ struct DictBaseProps //战斗属性效果,用于装备,属性类增减益buff
 { 
     static const unsigned short getProtoID() { return 1008;} 
     static const std::string getProtoName() { return "DictBaseProps";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned int id;  
+    unsigned long long id;  
     double hp; //血量值  
     double hpRegen; //每秒血量值恢复  
     double attack; //伤害  
@@ -1002,7 +1005,7 @@ struct DictBaseProps //战斗属性效果,用于装备,属性类增减益buff
         attackSpeed = 0.0; 
         vampirk = 0.0; 
     } 
-    DictBaseProps(const unsigned int & id, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
+    DictBaseProps(const unsigned long long & id, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
     { 
         this->id = id; 
         this->hp = hp; 
@@ -1017,7 +1020,7 @@ struct DictBaseProps //战斗属性效果,用于装备,属性类增减益buff
     } 
 }; 
  
-const std::vector<std::string>  DictBaseProps::getDBBuild() 
+std::vector<std::string>  DictBaseProps::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictBaseProps` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -1041,7 +1044,7 @@ const std::vector<std::string>  DictBaseProps::getDBBuild()
     ret.push_back("alter table `tb_DictBaseProps` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictBaseProps` add `vampirk`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictBaseProps` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictBaseProps::getDBSelect() 
 { 
@@ -1154,18 +1157,18 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictBaseProps & info) 
 { 
-    stm << "[\n"; 
-    stm << "id=" << info.id << "\n"; 
-    stm << "hp=" << info.hp << "\n"; 
-    stm << "hpRegen=" << info.hpRegen << "\n"; 
-    stm << "attack=" << info.attack << "\n"; 
-    stm << "defense=" << info.defense << "\n"; 
-    stm << "crit=" << info.crit << "\n"; 
-    stm << "toughness=" << info.toughness << "\n"; 
-    stm << "moveSpeed=" << info.moveSpeed << "\n"; 
-    stm << "attackSpeed=" << info.attackSpeed << "\n"; 
-    stm << "vampirk=" << info.vampirk << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "hp=" << info.hp << ","; 
+    stm << "hpRegen=" << info.hpRegen << ","; 
+    stm << "attack=" << info.attack << ","; 
+    stm << "defense=" << info.defense << ","; 
+    stm << "crit=" << info.crit << ","; 
+    stm << "toughness=" << info.toughness << ","; 
+    stm << "moveSpeed=" << info.moveSpeed << ","; 
+    stm << "attackSpeed=" << info.attackSpeed << ","; 
+    stm << "vampirk=" << info.vampirk << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -1173,21 +1176,21 @@ struct DictItem //道具字典
 { 
     static const unsigned short getProtoID() { return 1009;} 
     static const std::string getProtoName() { return "DictItem";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned int id;  
+    unsigned long long id;  
     unsigned short primitiveType; //主类型  
     unsigned short subType; //子类型  
     unsigned short visible; //是否可见  
     unsigned short stacks; //可堆叠个数,0和1都是1次  
-    unsigned int fightEffectID; //战斗属性效果,装备后生效  
+    unsigned long long fightEffectID; //战斗属性效果,装备后生效  
     unsigned short autoUse; //0 不可使用, 1 可使用, 2 获得后自动使用  
-    unsigned int dropID; //DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取  
+    unsigned long long dropID; //DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取  
     unsigned short vocationLimit; //限制职业类型, 装备类型  
     int levelLimit; //限制职业最小等级, 装备类型  
     std::string desc;  
@@ -1204,7 +1207,7 @@ struct DictItem //道具字典
         vocationLimit = 0; 
         levelLimit = 0; 
     } 
-    DictItem(const unsigned int & id, const unsigned short & primitiveType, const unsigned short & subType, const unsigned short & visible, const unsigned short & stacks, const unsigned int & fightEffectID, const unsigned short & autoUse, const unsigned int & dropID, const unsigned short & vocationLimit, const int & levelLimit, const std::string & desc) 
+    DictItem(const unsigned long long & id, const unsigned short & primitiveType, const unsigned short & subType, const unsigned short & visible, const unsigned short & stacks, const unsigned long long & fightEffectID, const unsigned short & autoUse, const unsigned long long & dropID, const unsigned short & vocationLimit, const int & levelLimit, const std::string & desc) 
     { 
         this->id = id; 
         this->primitiveType = primitiveType; 
@@ -1220,7 +1223,7 @@ struct DictItem //道具字典
     } 
 }; 
  
-const std::vector<std::string>  DictItem::getDBBuild() 
+std::vector<std::string>  DictItem::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictItem` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `primitiveType` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `subType` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `primitiveType` (`primitiveType`),        KEY `subType` (`subType`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -1246,7 +1249,7 @@ const std::vector<std::string>  DictItem::getDBBuild()
     ret.push_back("alter table `tb_DictItem` change `levelLimit`  `levelLimit`  bigint(20) NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictItem` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictItem` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  DictItem::getDBSelect() 
 { 
@@ -1364,19 +1367,19 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictItem & info) 
 { 
-    stm << "[\n"; 
-    stm << "id=" << info.id << "\n"; 
-    stm << "primitiveType=" << info.primitiveType << "\n"; 
-    stm << "subType=" << info.subType << "\n"; 
-    stm << "visible=" << info.visible << "\n"; 
-    stm << "stacks=" << info.stacks << "\n"; 
-    stm << "fightEffectID=" << info.fightEffectID << "\n"; 
-    stm << "autoUse=" << info.autoUse << "\n"; 
-    stm << "dropID=" << info.dropID << "\n"; 
-    stm << "vocationLimit=" << info.vocationLimit << "\n"; 
-    stm << "levelLimit=" << info.levelLimit << "\n"; 
-    stm << "desc=" << info.desc << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "primitiveType=" << info.primitiveType << ","; 
+    stm << "subType=" << info.subType << ","; 
+    stm << "visible=" << info.visible << ","; 
+    stm << "stacks=" << info.stacks << ","; 
+    stm << "fightEffectID=" << info.fightEffectID << ","; 
+    stm << "autoUse=" << info.autoUse << ","; 
+    stm << "dropID=" << info.dropID << ","; 
+    stm << "vocationLimit=" << info.vocationLimit << ","; 
+    stm << "levelLimit=" << info.levelLimit << ","; 
+    stm << "desc=" << info.desc << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
@@ -1384,7 +1387,7 @@ struct ItemInfo //道具字典
 { 
     static const unsigned short getProtoID() { return 1010;} 
     static const std::string getProtoName() { return "ItemInfo";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
@@ -1402,13 +1405,13 @@ struct ItemInfo //道具字典
     } 
 }; 
  
-const std::vector<std::string>  ItemInfo::getDBBuild() 
+std::vector<std::string>  ItemInfo::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_ItemInfo` ( ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_ItemInfo` add `stacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_ItemInfo` change `stacks`  `stacks`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  ItemInfo::getDBSelect() 
 { 
@@ -1474,31 +1477,34 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ItemInfo & info) 
 { 
-    stm << "[\n"; 
-    stm << "stacks=" << info.stacks << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "stacks=" << info.stacks << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
 enum ChatChannelEnum : unsigned short 
 { 
-    CC_WORLD = 0,  
-    CC_PRIVATE = 1,  
-    CC_SYSTEM = 2,  
+    CC_WORLD = 0, //世界频道  
+    CC_PRIVATE = 1, //私人频道  
+    CC_SYSTEM = 2, //系统频道  
+    CC_GROUP = 3, //同编队频道  
+    CC_CAMP = 4, //同阵营频道  
+    CC_SCENE = 5, //同场景频道  
 }; 
  
 struct LogChat //聊天日志  
 { 
-    static const unsigned short getProtoID() { return 1013;} 
+    static const unsigned short getProtoID() { return 1011;} 
     static const std::string getProtoName() { return "LogChat";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned int id;  
+    unsigned long long id;  
     unsigned short channelID;  
     unsigned long long sourceID;  
     std::string sourceName;  
@@ -1514,7 +1520,7 @@ struct LogChat //聊天日志
         targetID = 0; 
         chatTime = 0; 
     } 
-    LogChat(const unsigned int & id, const unsigned short & channelID, const unsigned long long & sourceID, const std::string & sourceName, const unsigned long long & targetID, const std::string & targetName, const std::string & msg, const unsigned long long & chatTime) 
+    LogChat(const unsigned long long & id, const unsigned short & channelID, const unsigned long long & sourceID, const std::string & sourceName, const unsigned long long & targetID, const std::string & targetName, const std::string & msg, const unsigned long long & chatTime) 
     { 
         this->id = id; 
         this->channelID = channelID; 
@@ -1527,7 +1533,7 @@ struct LogChat //聊天日志
     } 
 }; 
  
-const std::vector<std::string>  LogChat::getDBBuild() 
+std::vector<std::string>  LogChat::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_LogChat` (        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,        `sourceID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `targetID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `chatTime` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        KEY `sourceID` (`sourceID`),        KEY `targetID` (`targetID`),        KEY `chatTime` (`chatTime`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -1547,7 +1553,7 @@ const std::vector<std::string>  LogChat::getDBBuild()
     ret.push_back("alter table `tb_LogChat` change `msg`  `msg`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_LogChat` add `chatTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_LogChat` change `chatTime`  `chatTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  LogChat::getDBSelect() 
 { 
@@ -1649,28 +1655,28 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const LogChat & info) 
 { 
-    stm << "[\n"; 
-    stm << "id=" << info.id << "\n"; 
-    stm << "channelID=" << info.channelID << "\n"; 
-    stm << "sourceID=" << info.sourceID << "\n"; 
-    stm << "sourceName=" << info.sourceName << "\n"; 
-    stm << "targetID=" << info.targetID << "\n"; 
-    stm << "targetName=" << info.targetName << "\n"; 
-    stm << "msg=" << info.msg << "\n"; 
-    stm << "chatTime=" << info.chatTime << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "channelID=" << info.channelID << ","; 
+    stm << "sourceID=" << info.sourceID << ","; 
+    stm << "sourceName=" << info.sourceName << ","; 
+    stm << "targetID=" << info.targetID << ","; 
+    stm << "targetName=" << info.targetName << ","; 
+    stm << "msg=" << info.msg << ","; 
+    stm << "chatTime=" << info.chatTime << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
 struct MoneyTree //摇钱树功能模块  
 { 
-    static const unsigned short getProtoID() { return 1011;} 
+    static const unsigned short getProtoID() { return 1012;} 
     static const std::string getProtoName() { return "MoneyTree";} 
-    unsigned int lastTime; //最后一次执行时间  
-    unsigned int freeCount; //今日剩余免费次数  
-    unsigned int payCount; //今日已购买次数  
-    unsigned int statSum; //历史总和  
-    unsigned int statCount; //历史总次数  
+    unsigned long long lastTime; //最后一次执行时间  
+    unsigned long long freeCount; //今日剩余免费次数  
+    unsigned long long payCount; //今日已购买次数  
+    unsigned long long statSum; //历史总和  
+    unsigned long long statCount; //历史总次数  
     MoneyTree() 
     { 
         lastTime = 0; 
@@ -1679,7 +1685,7 @@ struct MoneyTree //摇钱树功能模块
         statSum = 0; 
         statCount = 0; 
     } 
-    MoneyTree(const unsigned int & lastTime, const unsigned int & freeCount, const unsigned int & payCount, const unsigned int & statSum, const unsigned int & statCount) 
+    MoneyTree(const unsigned long long & lastTime, const unsigned long long & freeCount, const unsigned long long & payCount, const unsigned long long & statSum, const unsigned long long & statCount) 
     { 
         this->lastTime = lastTime; 
         this->freeCount = freeCount; 
@@ -1708,37 +1714,37 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const MoneyTree & info) 
 { 
-    stm << "[\n"; 
-    stm << "lastTime=" << info.lastTime << "\n"; 
-    stm << "freeCount=" << info.freeCount << "\n"; 
-    stm << "payCount=" << info.payCount << "\n"; 
-    stm << "statSum=" << info.statSum << "\n"; 
-    stm << "statCount=" << info.statCount << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "lastTime=" << info.lastTime << ","; 
+    stm << "freeCount=" << info.freeCount << ","; 
+    stm << "payCount=" << info.payCount << ","; 
+    stm << "statSum=" << info.statSum << ","; 
+    stm << "statCount=" << info.statCount << ","; 
+    stm << "]"; 
     return stm; 
 } 
  
 struct SimplePack //简单示例  
 { 
-    static const unsigned short getProtoID() { return 1012;} 
+    static const unsigned short getProtoID() { return 1013;} 
     static const std::string getProtoName() { return "SimplePack";} 
-    inline const std::vector<std::string>  getDBBuild(); 
+    inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
     inline std::string  getDBDelete(); 
     inline std::string  getDBUpdate(); 
     inline std::string  getDBSelect(); 
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned int id; //id, 对应数据库的结构为自增ID,key  
+    unsigned long long id; //id, 对应数据库的结构为自增ID,key  
     std::string name; //昵称, 唯一索引  
-    unsigned int createTime; //创建时间, 普通索引  
+    unsigned long long createTime; //创建时间, 普通索引  
     MoneyTree moneyTree;  
     SimplePack() 
     { 
         id = 0; 
         createTime = 0; 
     } 
-    SimplePack(const unsigned int & id, const std::string & name, const unsigned int & createTime, const MoneyTree & moneyTree) 
+    SimplePack(const unsigned long long & id, const std::string & name, const unsigned long long & createTime, const MoneyTree & moneyTree) 
     { 
         this->id = id; 
         this->name = name; 
@@ -1747,7 +1753,7 @@ struct SimplePack //简单示例
     } 
 }; 
  
-const std::vector<std::string>  SimplePack::getDBBuild() 
+std::vector<std::string>  SimplePack::getDBBuild() 
 { 
     std::vector<std::string> ret; 
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_SimplePack` (        `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT ,        `name` varchar(255) NOT NULL DEFAULT '' ,        `createTime` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`),        UNIQUE KEY `name` (`name`),        KEY `createTime` (`createTime`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
@@ -1759,7 +1765,7 @@ const std::vector<std::string>  SimplePack::getDBBuild()
     ret.push_back("alter table `tb_SimplePack` change `createTime`  `createTime`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_SimplePack` add `moneyTree`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_SimplePack` change `moneyTree`  `moneyTree`  longblob NOT NULL "); 
-    return std::move(ret); 
+    return ret; 
 } 
 std::string  SimplePack::getDBSelect() 
 { 
@@ -1872,12 +1878,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SimplePack & info) 
 { 
-    stm << "[\n"; 
-    stm << "id=" << info.id << "\n"; 
-    stm << "name=" << info.name << "\n"; 
-    stm << "createTime=" << info.createTime << "\n"; 
-    stm << "moneyTree=" << info.moneyTree << "\n"; 
-    stm << "]\n"; 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "name=" << info.name << ","; 
+    stm << "createTime=" << info.createTime << ","; 
+    stm << "moneyTree=" << info.moneyTree << ","; 
+    stm << "]"; 
     return stm; 
 } 
  

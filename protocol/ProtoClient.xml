@@ -8,7 +8,6 @@
 
 
 <Proto>
-
     <packet name="ClientPulse" desc= "客户端脉冲请求">
     </packet>
 
@@ -25,7 +24,7 @@
 
     <packet name="CreateAvatarReq" desc= "创角色请求">
         <member name="accountName" type="string"   desc="这个字段会被服务器填充.客户端可以不填写"/>
-        <member name="userName" type="string"   desc=""/>
+        <member name="avatarName" type="string"   desc=""/>
     </packet>
      <packet name="CreateAvatarResp" desc= "创角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
@@ -40,7 +39,7 @@
      <packet name="AttachAvatarResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
         <member name="baseInfo" type="AvatarBaseInfo"   desc=""/>
-        <member name="props" type="AvatarPropMap"   desc=""/>
+        <member name="baseProps" type="AvatarPropMap"   desc=""/>
     </packet>
 
      <packet name="AvatarBaseInfoNotice" desc= "">
@@ -48,38 +47,80 @@
     </packet>
      <packet name="AvatarPropMapNotice" desc= "">
         <member name="avatarID" type="ui64"  desc=""/>
-        <member name="props" type="AvatarPropMap"   desc=""/>
+        <member name="baseProps" type="AvatarPropMap"   desc=""/>
     </packet>
  
 
-<!------------------------------------ battle --------------------------------------------->
-    <packet name="GetSceneTokenInfoReq" desc= "">
-    </packet>
-    <packet name="GetSceneTokenInfoResp" desc= "">
-        <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
+<!------------------------------------ scene --------------------------------------------->
+
+    <packet name="SceneGroupInfoNotice" desc= "编队数据通知">
+        <member name="groupInfo" type="SceneGroupInfo"  desc=""/>
     </packet>
 
-   <packet name="JoinSceneReq" desc= "">
-        <member name="spaceType" type="ui16"   desc=""/>
-        <member name="mapID" type="ui32"   desc=""/>
-    </packet>
-    <packet name="JoinSceneResp" desc= "">
-        <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
 
+    <packet name="SceneGroupGetReq" desc= "获取当前角色的场景状态数据">
     </packet>
-    <packet name="JoinSceneNotice" desc= "">
-        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
+    <packet name="SceneGroupGetResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
     </packet>
 
-   <packet name="LeaveSceneReq" desc= "">
-        <member name="spaceID" type="ui32"   desc=""/>
+   <packet name="SceneGroupEnterReq" desc= "申请进入场景">
+        <member name="sceneType" type="ui16"   desc=""/>
+        <member name="mapID" type="ui64"   desc=""/>
     </packet>
-    <packet name="LeaveSceneResp" desc= "">
+    <packet name="SceneGroupEnterResp" desc= "">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokenInfo" type="SceneTokenInfo"   desc=""/>
     </packet>
+
+   <packet name="SceneGroupCancelReq" desc= "取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)">
+    </packet>
+    <packet name="SceneGroupCancelResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
+
+
+   <packet name="SceneGroupCreateReq" desc= "发起组队请求">
+    </packet>
+    <packet name="SceneGroupCreateResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
+    <packet name="SceneGroupJoinReq" desc= "加入组队">
+        <member name="groupID" type="ui64"   desc=""/>
+    </packet>
+    <packet name="SceneGroupJoinResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
+    <packet name="SceneGroupInviteReq" desc= "邀请对方加入自己的编队">
+        <member name="avatarID" type="ui64"   desc=""/>
+    </packet>
+    <packet name="SceneGroupInviteResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+    <packet name="SceneGroupInviteNotice" desc= "">
+        <member name="avatarID" type="ui64"   desc=""/>
+        <member name="avatarName" type="string"   desc=""/>
+        <member name="groupID" type="ui64"   desc=""/>
+    </packet>
+    <packet name="SceneGroupRejectReq" desc= "拒绝对方邀请">
+        <member name="groupID" type="ui64"   desc=""/>
+    </packet>
+    <packet name="SceneGroupRejectResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
+    <packet name="SceneGroupLeaveReq" desc= "离开编队">
+    </packet>
+    <packet name="SceneGroupLeaveResp" desc= "">
+        <member name="retCode" type="ui16"   desc=""/>
+    </packet>
+
+
+
+
+
 
 
 <!------------------------------------ other --------------------------------------------->

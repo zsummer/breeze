@@ -45,9 +45,6 @@
 #include <vector>
 #include <map>
 #include <list>
-#include <sstream>
-#include <iostream>
-#include <fstream>
 #include <algorithm>
 
 
@@ -161,6 +158,7 @@ public:
         return std::string();
     }
     inline const std::string readContent();
+	inline bool removeFile(const std::string & path) { return ::remove(path.c_str()) == 0; }
 public:
     FILE *_file;
 };
@@ -299,8 +297,9 @@ enum LogDataType
     LDT_SET_LOGGER_DISPLAY,
     LDT_SET_LOGGER_OUTFILE,
     LDT_SET_LOGGER_LIMITSIZE,
-    LDT_SET_LOGGER_MONTHDIR,
-//    LDT_SET_LOGGER_,
+	LDT_SET_LOGGER_MONTHDIR,
+	LDT_SET_LOGGER_RESERVETIME,
+	//    LDT_SET_LOGGER_,
 };
 
 
@@ -320,12 +319,14 @@ struct LoggerInfo
     unsigned int _limitsize; //limit file's size, unit Million byte.
     bool _enable;        //logger is enable 
     bool _fileLine;        //enable/disable the log's suffix.(file name:line number)
-
+	time_t _logReserveTime; //log file reserve time. unit is time second.
     //! runtime info
     time_t _curFileCreateTime;    //file create time
     unsigned int _curFileIndex; //rolling file index
     unsigned int _curWriteLen;  //current file length
     Log4zFileHandler    _handle;        //file handle.
+	//!history
+	std::list<std::pair<time_t, std::string> > _historyLogs;
 
     
     LoggerInfo()
@@ -343,6 +344,7 @@ struct LoggerInfo
         _curFileCreateTime = 0;
         _curFileIndex = 0;
         _curWriteLen = 0;
+		_logReserveTime = 0;
     }
 };
 
@@ -379,13 +381,14 @@ public:
     virtual bool setLoggerOutFile(LoggerId id, bool enable);
     virtual bool setLoggerLimitsize(LoggerId id, unsigned int limitsize);
     virtual bool setLoggerMonthdir(LoggerId id, bool enable);
-
+	virtual bool setLoggerReserveTime(LoggerId id, time_t sec);
     virtual bool setAutoUpdate(int interval);
     virtual bool updateConfig();
     virtual bool isLoggerEnable(LoggerId id);
     virtual unsigned long long getStatusTotalWriteCount(){return _ullStatusTotalWriteFileCount;}
-    virtual unsigned long long getStatusTotalWriteBytes(){return _ullStatusTotalWriteFileBytes;}
-    virtual unsigned long long getStatusWaitingCount(){return _ullStatusTotalPushLog - _ullStatusTotalPopLog;}
+    virtual unsigned long long getStatusTotalWriteBytes() { return _ullStatusTotalWriteFileBytes; }
+    virtual unsigned long long getStatusTotalPushQueue() { return _ullStatusTotalPushLog; }
+    virtual unsigned long long getStatusTotalPopQueue() { return _ullStatusTotalPopLog; }
     virtual unsigned int getStatusActiveLoggers();
 protected:
     virtual LogData * makeLogData(LoggerId id, int level);
@@ -422,7 +425,7 @@ private:
 
     //! log queue
     LockHelper    _logLock;
-    std::list<LogData *> _logs;
+    std::queue<LogData *> _logs;
     std::vector<LogData*> _freeLogDatas;
 
     //show color lock
@@ -435,6 +438,7 @@ private:
     //Log queue statistics
     unsigned long long _ullStatusTotalPushLog;
     unsigned long long _ullStatusTotalPopLog;
+    
 
 
 
@@ -623,7 +627,7 @@ static bool parseConfigLine(const std::string& line, int curLineNum, std::string
         }
         else
         {
-            std::cout << "log4z configure warning: duplicate logger key:["<< key << "] at line:" << curLineNum << std::endl;
+			printf("log4z configure warning: duplicate logger key:[%s] at line: %d \r\n", key.c_str(), curLineNum);
         }
         return true;
     }
@@ -632,8 +636,8 @@ static bool parseConfigLine(const std::string& line, int curLineNum, std::string
     std::map<std::string, LoggerInfo>::iterator iter = outInfo.find(key);
     if (iter == outInfo.end())
     {
-        std::cout << "log4z configure warning: not found current logger name:["<< key << "] at line:" << curLineNum
-            << ", key=" << kv.first << ", value=" << kv.second << std::endl;
+		printf("log4z configure warning: not found current logger name:[%s] at line:%d, key=%s, value=%s \r\n", 
+			key.c_str(), curLineNum, kv.first.c_str(), kv.second.c_str());
         return true;
     }
     std::transform(kv.first.begin(), kv.first.end(), kv.first.begin(), ::tolower);
@@ -746,6 +750,11 @@ static bool parseConfigLine(const std::string& line, int curLineNum, std::string
             iter->second._enable = true;
         }
     }
+	//! set reserve time 
+	else if (kv.first == "reserve")
+	{
+		iter->second._logReserveTime = atoi(kv.second.c_str());
+	}
     return true;
 }
 
@@ -1096,7 +1105,7 @@ bool ThreadHelper::start()
 
     if (ret == -1 || ret == 0)
     {
-        std::cout << "log4z: create log4z thread error! \r\n" <<std::endl;
+		printf("log4z: create log4z thread error! \r\n");
         return false;
     }
     _hThreadID = ret;
@@ -1104,7 +1113,7 @@ bool ThreadHelper::start()
     int ret = pthread_create(&_phtreadID, NULL, threadProc, (void*)this);
     if (ret != 0)
     {
-        std::cout <<"log4z: create log4z thread error! \r\n" << std::endl;
+		printf("log4z: create log4z thread error! \r\n");
         return false;
     }
 #endif
@@ -1289,9 +1298,9 @@ bool LogerManager::configFromStringImpl(std::string content, bool isUpdate)
     std::map<std::string, LoggerInfo> loggerMap;
     if (!parseConfigFromString(content, loggerMap))
     {
-        std::cout << " !!! !!! !!! !!!" << std::endl;
-        std::cout << " !!! !!! log4z load config file error" << std::endl;
-        std::cout << " !!! !!! !!! !!!" << std::endl;
+        printf(" !!! !!! !!! !!!\r\n");
+		printf(" !!! !!! log4z load config file error \r\n");
+		printf(" !!! !!! !!! !!!\r\n");
         return false;
     }
     for (std::map<std::string, LoggerInfo>::iterator iter = loggerMap.begin(); iter != loggerMap.end(); ++iter)
@@ -1331,9 +1340,10 @@ bool LogerManager::config(const char* configPath)
 {
     if (!_configFile.empty())
     {
-        std::cout << " !!! !!! !!! !!!" << std::endl;
-        std::cout << " !!! !!! log4z configure error: too many calls to Config. the old config file=" << _configFile << ", the new config file=" << configPath << " !!! !!! " << std::endl;
-        std::cout << " !!! !!! !!! !!!" << std::endl;
+		printf(" !!! !!! !!! !!!\r\n");
+		printf(" !!! !!! log4z configure error: too many calls to Config. the old config file=%s,  the new config file=%s !!! !!! \r\n"
+		, _configFile.c_str(), configPath);
+		printf(" !!! !!! !!! !!!\r\n");
         return false;
     }
     _configFile = configPath;
@@ -1342,9 +1352,9 @@ bool LogerManager::config(const char* configPath)
     f.open(_configFile.c_str(), "rb");
     if (!f.isOpen())
     {
-        std::cout << " !!! !!! !!! !!!" << std::endl;
-        std::cout << " !!! !!! log4z load config file error. filename=" << configPath << " !!! !!! " << std::endl;
-        std::cout << " !!! !!! !!! !!!" << std::endl;
+		printf(" !!! !!! !!! !!!\r\n");
+		printf(" !!! !!! log4z load config file error. filename=%s  !!! !!! \r\n", configPath);
+		printf(" !!! !!! !!! !!!\r\n");
         return false;
     }
     return configFromStringImpl(f.readContent().c_str(), false);
@@ -1425,6 +1435,10 @@ bool LogerManager::prePushLog(LoggerId id, int level)
     {
         return false;
     }
+    if (_logs.size() > LOG4Z_LOG_QUEUE_LIMIT_SIZE)
+    {
+        return false;
+    }
     return true;
 }
 bool LogerManager::pushLog(LogData * pLog, const char * file, int line)
@@ -1495,7 +1509,7 @@ bool LogerManager::pushLog(LogData * pLog, const char * file, int line)
     }
     
     AutoLock l(_logLock);
-    _logs.push_back(pLog);
+    _logs.push(pLog);
     _ullStatusTotalPushLog ++;
     return true;
 }
@@ -1527,7 +1541,7 @@ bool LogerManager::hotChange(LoggerId id, LogDataType ldt, int num, const std::s
     memcpy(pLog->_content, text.c_str(), text.length());
     pLog->_contentLen = (int)text.length();
     AutoLock l(_logLock);
-    _logs.push_back(pLog);
+    _logs.push(pLog);
     return true;
 }
 
@@ -1546,8 +1560,9 @@ bool LogerManager::onHotChange(LoggerId id, LogDataType ldt, int num, const std:
     else if (ldt == LDT_SET_LOGGER_DISPLAY) logger._display = num != 0;
     else if (ldt == LDT_SET_LOGGER_OUTFILE) logger._outfile = num != 0;
     else if (ldt == LDT_SET_LOGGER_LIMITSIZE) logger._limitsize = num;
-    else if (ldt == LDT_SET_LOGGER_MONTHDIR) logger._monthdir = num != 0;
-    return true;
+	else if (ldt == LDT_SET_LOGGER_MONTHDIR) logger._monthdir = num != 0;
+	else if (ldt == LDT_SET_LOGGER_RESERVETIME) logger._logReserveTime = num >= 0 ? num : 0;
+	return true;
 }
 
 bool LogerManager::enableLogger(LoggerId id, bool enable) 
@@ -1574,7 +1589,7 @@ bool LogerManager::setLoggerDisplay(LoggerId id, bool enable) { return hotChange
 bool LogerManager::setLoggerOutFile(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_OUTFILE, enable, ""); }
 bool LogerManager::setLoggerMonthdir(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_MONTHDIR, enable, ""); }
 bool LogerManager::setLoggerFileLine(LoggerId id, bool enable) { return hotChange(id, LDT_SET_LOGGER_FILELINE, enable, ""); }
-
+bool LogerManager::setLoggerReserveTime(LoggerId id, time_t sec) { return hotChange(id, LDT_SET_LOGGER_RESERVETIME, (int)sec, ""); }
 bool LogerManager::setLoggerLimitsize(LoggerId id, unsigned int limitsize)
 {
     if (limitsize == 0 ) {limitsize = (unsigned int)-1;}
@@ -1624,9 +1639,9 @@ bool LogerManager::updateConfig()
     f.open(_configFile.c_str(), "rb");
     if (!f.isOpen())
     {
-        std::cout << " !!! !!! !!! !!!" << std::endl;
-        std::cout << " !!! !!! log4z load config file error. filename=" << _configFile << " !!! !!! " << std::endl;
-        std::cout << " !!! !!! !!! !!!" << std::endl;
+		printf(" !!! !!! !!! !!!\r\n");
+		printf(" !!! !!! log4z load config file error. filename=%s  !!! !!! \r\n", _configFile.c_str());
+		printf(" !!! !!! !!! !!!\r\n");
         return false;
     }
     return configFromStringImpl(f.readContent().c_str(), true);
@@ -1697,7 +1712,7 @@ bool LogerManager::openLogger(LogData * pLog)
         path = pLogger->_path;
 
         
-        char buf[100] = { 0 };
+        char buf[500] = { 0 };
         if (pLogger->_monthdir)
         {
             sprintf(buf, "%04d_%02d/", t.tm_year + 1900, t.tm_mon + 1);
@@ -1716,14 +1731,25 @@ bool LogerManager::openLogger(LogData * pLog)
         pLogger->_handle.open(path.c_str(), "ab");
         if (!pLogger->_handle.isOpen())
         {
-            std::stringstream ss;
-            ss << "log4z: can not open log file " << path << " . \r\n";
+			sprintf(buf, "log4z: can not open log file %s. \r\n", path.c_str());
             showColorText("!!!!!!!!!!!!!!!!!!!!!!!!!! \r\n", LOG_LEVEL_FATAL);
-            showColorText(ss.str().c_str(), LOG_LEVEL_FATAL);
+            showColorText(buf, LOG_LEVEL_FATAL);
             showColorText("!!!!!!!!!!!!!!!!!!!!!!!!!! \r\n", LOG_LEVEL_FATAL);
             pLogger->_outfile = false;
             return false;
         }
+		if (pLogger->_logReserveTime > 0 )
+		{
+			if (pLogger->_historyLogs.size() > LOG4Z_FORCE_RESERVE_FILE_COUNT)
+			{
+				while (!pLogger->_historyLogs.empty() && pLogger->_historyLogs.front().first < time(NULL) - pLogger->_logReserveTime)
+				{
+					pLogger->_handle.removeFile(pLogger->_historyLogs.front().second.c_str());
+					pLogger->_historyLogs.pop_front();
+				}
+			}
+			pLogger->_historyLogs.push_back(std::make_pair(time(NULL), path));
+		}
         return true;
     }
     return true;
@@ -1751,7 +1777,7 @@ bool LogerManager::popLog(LogData *& log)
         return false;
     }
     log = _logs.front();
-    _logs.pop_front();
+    _logs.pop();
     return true;
 }
 

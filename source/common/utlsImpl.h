@@ -30,7 +30,7 @@ std::string toString(const T &t)
     std::stringstream os;
     os.precision(16);
     os << t;
-    return std::move(os.str());
+    return os.str();
 }
 
 
@@ -582,7 +582,7 @@ std::string mergeToString(const Container & contariner, const std::string& deli)
             ret.pop_back();
         }
     }
-    return std::move(ret);
+    return ret;
 }
 
 template<class T>  //example: Container = std::vector<int>

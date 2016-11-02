@@ -78,18 +78,14 @@ private:
     void onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
-    void onGetSceneTokenInfoResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSceneNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onLeaveSceneResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 
 
 
 private:
-    double _lastCheckFreeList = getFloatNowTime();
-    double _lastSystemChat = getFloatNowTime();
+    double _lastCheckFreeList = getFloatSteadyNowTime();
+    double _lastSystemChat = getFloatSteadyNowTime();
     std::map<ui64, AvatarStatusPtr> _freeList;
     std::map<ui64, AvatarStatusPtr> _userStatusByID;
     std::map<std::string, AvatarStatusPtr> _userStatusByName;

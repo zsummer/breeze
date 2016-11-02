@@ -50,8 +50,12 @@ public:
     template<class Proto>
     void sendViaSessionID(SessionID sessionID, const Proto & proto);
 
+    void sendToWorld(const char * block, unsigned int len);
+    void sendToWorld(const Tracing &trace, const char * block, unsigned int len);
     template<class Proto>
     void sendToWorld(const Proto & proto);
+    template<class Proto>
+    void sendToWorld(const Tracing &trace, const Proto & proto);
 private:
     //内部接口 
     //打开监听端口,新连接 
@@ -61,13 +65,15 @@ private:
     void onTimer();
 public:
     ScenePtr getScene(SceneID);
-    void refreshSceneStatusToWorld(SceneID sceneID);
+    ScenePtr getActiveScene(SceneID sceneID);
 private:
     //docker间通讯处理 
     void event_onWorldLinked(TcpSessionPtr session);
     void event_onWorldClosed(TcpSessionPtr session);
-    void event_onWorldMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
-
+    void event_onWorldMessage(TcpSessionPtr session, const char * begin, unsigned int len);
+    void onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins);
+    void onSceneServerCancelSceneIns(TcpSessionPtr session, SceneServerCancelSceneIns & ins);
+    void onForwardToService(TcpSessionPtr session, Tracing & trace, ReadStream & rs);
 private:
     //客户端通讯处理 
     void event_onClientLinked(TcpSessionPtr session);
@@ -75,14 +81,40 @@ private:
     void event_onClientClosed(TcpSessionPtr session);
     void event_onClientMessage(TcpSessionPtr   session, const char * begin, unsigned int len);
 
+
 private:
-    std::map<SceneID, ScenePtr> _scenes;
     std::map<SceneID, ScenePtr> _actives;
-    std::map<SceneID, ScenePtr> _frees;
+    std::queue<ScenePtr> _frees; //队列
+
+    std::map<SceneID, ScenePtr> _scenes;
+    std::map<SceneID, ScenePtr> _homes;
+    std::map<ServiceID, std::pair<std::string, SceneID>> _tokens;
 
     SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;
+
+    SceneID _lastSceneID = InvalidSceneID;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -101,6 +133,10 @@ void SceneMgr::sendViaSessionID(SessionID sessionID, const Proto & proto)
         LOGE("Docker::sendViaSessionID catch except error. e=" << e.what());
     }
 }
+
+
+
+
 template<class Proto>
 void SceneMgr::sendToWorld(const Proto & proto)
 {
@@ -109,6 +145,18 @@ void SceneMgr::sendToWorld(const Proto & proto)
         sendViaSessionID(_worldSessionID, proto);
     }
 }
+
+
+
+template<class Proto>
+void SceneMgr::sendToWorld(const Tracing &trace, const Proto & proto)
+{
+    WriteStream ws(Proto::getProtoID());
+    ws << proto;
+    sendToWorld(trace, ws.getStream(), ws.getStreamLen());
+}
+
+
 
 
 #endif

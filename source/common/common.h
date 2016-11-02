@@ -44,6 +44,7 @@
 #include "config.h"
 #include <ProtoCommon.h>
 #include <ProtoSceneCommon.h>
+#include <ProtoReflection.h>
 #include "dbDict.h"
 
 

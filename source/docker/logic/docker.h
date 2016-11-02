@@ -154,11 +154,11 @@ private:
     void event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell);
 
 public://负载均衡 
-    inline Balance & getAvatarBalance(){return _avatarBalance;}
-    inline Balance & getWebBalance(){return _webBalance;}
+    inline Balance<DockerID> & getAvatarBalance(){return _avatarBalance;}
+    inline Balance<DockerID> & getWebBalance(){return _webBalance;}
 private:
-    Balance _avatarBalance;
-    Balance _webBalance;
+    Balance<DockerID> _avatarBalance;
+    Balance<DockerID> _webBalance;
 
 private:
     std::unordered_map<ui16, std::unordered_map<ServiceID, ServicePtr > > _services;

@@ -14,50 +14,126 @@
 <!------------------------------------ scene --------------------------------------------->
 
 
-
+    <packet name="SceneClientPulse" desc= "客户端脉冲请求">
+    </packet>
 
 
 
     <proto name="AttachSceneReq" desc= "">
         <member name="avatarID" type="ui64"  desc=""/>
-        <member name="sceneID" type="ui32"  desc=""/>
+        <member name="sceneID" type="ui64"  desc=""/>
         <member name="token" type="string"  desc="令牌"/>
     </proto>
     <proto name="AttachSceneResp" desc= "">
         <member name="retCode"  type="ui16" desc="错误码"/> 
         <member name="avatarID" type="ui64"  desc=""/>
-        <member name="sceneID" type="ui32"  desc=""/>    
+        <member name="sceneID" type="ui64"  desc=""/>    
     </proto>
     
 
 
 
 
-    <proto name="FillSceneNotice" desc= "填充场景数据">
-        <member name="entitys"  type="EntityFullInfoArray" desc="这里包含有所有当前场景下的实体属性和状态数据"/>
-        <member name="sceneStartTime"  type="double" desc="服务器战场开始时间"/>
-        <member name="sceneEndTime"  type="double" desc="服务器战场结束时间"/>
-        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+    <proto name="SceneSectionNotice" desc= "填充场景数据">
+        <member name="section"  type="SceneSection" desc=""/>
     </proto>
 
-    <proto name="RefreshSceneEntitysNotice" desc= "">
-        <member name="entitys"  type="EntityInfoArray" desc=""/>
-        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+    <proto name="SceneRefreshNotice" desc= "">
+        <member name="entityInfos"  type="EntityInfoArray" desc=""/>
+        <member name="entityMoves"  type="EntityMoveArray" desc=""/>
     </proto>
 
-    <proto name="RefreshSceneReportsNotice" desc= "">
+    <proto name="SceneReportsNotice" desc= "">
         <member name="reports"  type="EntityReportArray" desc=""/>
-        <member name="serverTime"  type="double" desc="服务器当前时间"/>
     </proto>
 
      <proto name="AddEntityNotice" desc= "一批实体加入场景时, 把这些实体的数据广播给其他玩家">
-        <member name="entitys"  type="EntityFullInfoArray" desc=""/>
-        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+        <member name="entitys"  type="EntityFullDataArray" desc=""/>
     </proto>
 
-     <proto name="RemoveEntityNotice" desc= "实体离开场景时, 把该实体的数据广播给其他玩家">
+    <proto name="RemoveEntityNotice" desc= "实体离开场景时, 把该实体的数据广播给其他玩家">
         <member name="eids"  type="EntityIDArray" desc=""/>
-        <member name="serverTime"  type="double" desc="服务器当前时间"/>
+    </proto>
+
+    <proto name="MoveReq" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="action"  type="ui16" desc=""/>
+        <member name="clientPos"  type="EPosition" desc=""/>
+        <member name="waypoints"  type="EPositionArray" desc=""/>
+        <member name="follow"  type="ui64" desc=""/>
+    </proto>
+    <proto name="MoveResp" desc= "只有失败时才会使用该协议">
+        <member name="retCode"  type="ui16" desc=""/>
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="action"  type="ui16" desc=""/>
+    </proto>
+
+    <proto name="MoveNotice" desc= "移动开始/结束通知">
+        <member name="moveInfo"  type="EntityMove" desc=""/>
+    </proto>
+
+
+    <proto name="AddBuffNotice" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+    </proto>
+    <proto name="RemoveBuffNotice" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+    </proto>
+
+    <proto name="UseSkillReq" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="skillID"  type="ui64" desc=""/>
+        <member name="foe"  type="ui64" desc=""/>
+        <member name="dst"  type="EPosition" desc=""/>
+    </proto>
+    <proto name="UseSkillResp" desc= "只有失败时才会使用该协议">
+        <member name="retCode"  type="ui16" desc=""/>
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="skillID"  type="ui64" desc=""/>
+        <member name="foe"  type="ui64" desc=""/>
+        <member name="dst"  type="EPosition" desc=""/>
+    </proto>
+    <proto name="UseSkillNotice" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="skillID"  type="ui64" desc=""/>
+        <member name="foe"  type="ui64" desc=""/>
+        <member name="dst"  type="EPosition" desc=""/>
+    </proto>
+
+
+    <proto name="SceneEventNotice" desc= "">
+        <member name="info"  type="SceneEventInfoArray" desc=""/>
+    </proto>
+
+
+    <proto name="ClientCustomReq" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="customID" type="ui64" desc=""/>
+        <member name="fValue" type="double" desc=""/>
+        <member name="uValue" type="ui64" desc="" />
+        <member name="sValue" type="string" desc="" />
+    </proto>
+    <proto name="ClientCustomResp" desc= "只有失败时才会使用该协议">
+        <member name="retCode"  type="ui16" desc=""/>
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="customID" type="ui64" desc=""/>
+    </proto>
+    <proto name="ClientCustomNotice" desc= "">
+        <member name="eid"  type="ui64" desc=""/>
+        <member name="customID" type="ui64" desc=""/>
+        <member name="fValue" type="double" desc=""/>
+        <member name="uValue" type="ui64" desc="" />
+        <member name="sValue" type="string" desc="" />
+    </proto>
+
+    <proto name="ClientPingTestReq" desc= "">
+        <member name="seqID" type="ui64" desc=""/>
+        <member name="clientTime" type="double" desc=""/>
+    </proto>
+    <proto name="ClientPingTestResp" desc= "">
+        <member name="retCode"  type="ui16" desc=""/>
+        <member name="seqID" type="ui64" desc=""/>
+        <member name="clientTime" type="double" desc=""/>
     </proto>
 
 

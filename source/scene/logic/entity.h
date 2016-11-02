@@ -27,23 +27,100 @@
 #include <ProtoSceneClient.h>
 #include <rvo2/RVO.h>
 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v)
+{
+    stm << "[" << v.x() << "," << v.y() << "]";
+    return stm;
+}
+
+
+inline EPosition operator + (const EPosition & dst, const EPosition & org)
+{
+    return EPosition(dst.x + org.x, dst.y + org.y);
+}
+inline EPosition operator - (const EPosition & dst, const EPosition & org)
+{
+    return EPosition(dst.x - org.x, dst.y - org.y);
+}
+inline EPosition operator * (const EPosition & dst, const EPosition & org)
+{
+    return EPosition(dst.x * org.x, dst.y * org.y);
+}
+inline EPosition operator / (const EPosition & dst, const EPosition & org)
+{
+    return EPosition(dst.x / org.x, dst.y * org.y);
+}
+inline EPosition operator + (const EPosition & dst, double val)
+{
+    return EPosition(dst.x + val, dst.y + val);
+}
+inline EPosition operator - (const EPosition & dst, double val)
+{
+    return EPosition(dst.x - val, dst.y - val);
+}
+inline EPosition operator * (const EPosition & dst, double val)
+{
+    return EPosition(dst.x * val, dst.y * val);
+}
+inline EPosition operator / (const EPosition & dst, double val)
+{
+    return EPosition(dst.x / val, dst.y * val);
+}
+inline EPosition normalize(const EPosition & dst)
+{
+    if (std::abs(dst.x) > std::abs(dst.y))
+    {
+        return EPosition(dst.x / dst.x, dst.y / dst.x);
+    }
+    return EPosition(dst.x / dst.y, dst.y / dst.y);
+}
+
+
+
+inline RVO::Vector2 toRVOVector2(const EPosition & pos)
+{
+    return RVO::Vector2(pos.x, pos.y);
+}
+inline EPosition toEPoint(const RVO::Vector2 & pos)
+{
+    return EPosition(pos.x(), pos.y());
+}
+inline double getDistance(const EPosition& pos1, const EPosition & pos2)
+{
+    return getDistance(pos1.x, pos1.y, pos2.x, pos2.y);
+}
+struct EntityControl //EntityControl  
+{
+    unsigned long long eid = InvalidEntityID;
+    unsigned long long agentNo = -1; //agentNo. -1为无效  
+    double stateChageTime = 0.0;
+    EPosition spawnpoint; //出生点
+    SkillInfoArray skills; //技能数据  
+    BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
+    double diedTime = 1E128; //实体死亡时间点 仅飞行道具类有效  
+    ui64 hitTimes = -1; //实体碰撞, 仅飞行道具类有效  
+    double blockMoveCount = 0; //移动被阻次数 
+    EPosition lastClientPos; //最后一次客户端提交的坐标
+};
+
 class Entity
 {
 public:
     Entity();
     ~Entity();
     double getSpeed();
-    double getElapsed(double now);
     double getSuckBlood();
     double getAttack();
-    void pickProto(EntityFullInfo & info);
-    AvatarBaseInfo _base;
-    EntityInfo  _info;
+    EntityFullData getFullData();
+    AvatarBaseInfo _baseInfo;
+    AvatarPropMap _baseProps;
+    EntityInfo  _entityInfo;
+    EntityMove  _entityMove;
     EntityControl _control;
     EntityReport _report;
     SessionID _clientSessionID = InvalidSessionID;
-    std::string _token;
-    bool _isClientDirty = false;
+    bool _isInfoDirty = false;
+    bool _isMoveDirty = false;
 };
 
 using EntityPtr = std::shared_ptr<Entity>;

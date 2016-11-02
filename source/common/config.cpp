@@ -31,7 +31,7 @@ int luaopen_cjson(lua_State *l);
 static int panichHandler(lua_State * L)
 {
     std::string errMsg = lua_tostring(L, -1);
-    LOGE(errMsg);
+    LOGE("panichHandler:" << errMsg);
     return 0;
 }
 
@@ -196,6 +196,8 @@ bool ServerConfig::parseDocker(std::string configName, DockerID dockerID)
 
 
 
+
+
 bool ServerConfig::parseDB(std::string configName)
 {
     srand((unsigned int)time(NULL));
@@ -206,9 +208,14 @@ bool ServerConfig::parseDB(std::string configName)
     }
     luaL_openlibs(L);  /* open libraries */
     lua_atpanic(L, panichHandler);
-    if (luaL_dofile(L, configName.c_str()))
+	if (luaL_loadfile(L, configName.c_str()))
+	{
+		LOGE("ServerConfig can't load  file [" << configName << "]");
+		return false;
+	}
+    if (lua_pcall(L, 0, LUA_MULTRET, 0))
     {
-        LOGE("can't found the config file. configName=" << configName);
+        LOGE("ServerConfig can't pcall  file [" << configName << "]");
         return false;
     }
 
@@ -218,12 +225,12 @@ bool ServerConfig::parseDB(std::string configName)
     {
         if (!lua_isstring(L, -2))
         {
-            LOGE("config parse db false. key is not string type");
+            LOGE("ServerConfig  parse db config failed. key is not string type");
             return false;
         }
         if (!lua_istable(L, -1))
         {
-            LOGE("config parse db false. value is not table type");
+            LOGE("ServerConfig parse db config failed. value is not table type");
             return false;
         }
 
@@ -307,7 +314,7 @@ bool ServerConfig::parseWorld(std::string configName)
 bool ServerConfig::parseScenes(std::string configName, ui32 serverID)
 {
     srand((unsigned int)time(NULL));
-    _scene._sceneID = serverID;
+    _scene._lineID = serverID;
     lua_State *L = luaL_newstate();
     if (L == NULL)
     {
@@ -336,7 +343,7 @@ bool ServerConfig::parseScenes(std::string configName, ui32 serverID)
             return false;
         }
 
-        SceneConfig sconfig;
+        LineConfig sconfig;
         lua_getfield(L, -1, "clientListenHost");
         sconfig._clientListenHost = luaL_optstring(L, -1, "::");
         lua_pop(L, 1);
@@ -350,11 +357,11 @@ bool ServerConfig::parseScenes(std::string configName, ui32 serverID)
         lua_pop(L, 1);
 
 
-        lua_getfield(L, -1, "sceneID");
-        sconfig._sceneID = (unsigned int)luaL_optinteger(L, -1, 0);
+        lua_getfield(L, -1, "lineID");
+        sconfig._lineID = (unsigned int)luaL_optinteger(L, -1, 0);
         lua_pop(L, 1);
 
-        if (_scene._sceneID == sconfig._sceneID)
+        if (_scene._lineID == sconfig._lineID)
         {
             _scene = sconfig;
         }

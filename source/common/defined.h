@@ -114,30 +114,59 @@ using namespace zsummer::proto4z;
 using namespace std::placeholders;
 using namespace zsummer::mysql;
 
-//分区
-typedef ui32 AreaID;
+//分区ID  跨服交互时需要该ID表名分区ID, 该ID因为要merge到ServiceID的头部, 表达范围不能超过20bit(100万以下)
+typedef ui64 AreaID;
 const AreaID InvalidAreaID = 0;
 
-//节点索引ID
-typedef ui32 DockerID;
+//DockerID(集装箱ID) 集装箱可视为一个进程, 所有Service(服务)都装载于Docker中   
+typedef ui64 DockerID;
 const DockerID InvalidDockerID = 0;
 
-typedef ui32 SceneID;
-const SceneID InvalidSceneID = 0;
-typedef ui32 EntityID;
-const EntityID InvalidEntityID = 0;
-
-//每个service拥有两个唯一的基础属性ServiceID, ServiceName
+//服务ID  服务==>可满足某种业务需求的,可独立部署到分布式节点中的服务, 例如游戏角色,公会,  以及对应的管理器服务等
+//表达范围<=52bit, 其中areaid占用20bit, 自增部分占用32bit
 typedef ui64 ServiceID;
 const ServiceID InvalidServiceID = (ServiceID)0;
+typedef ServiceID AvatarID;
+const AvatarID InvalidAvatarID = InvalidServiceID;
 
+//服务名字 
 typedef std::string ServiceName;
 const ServiceName InvalidServiceName = "";
 
+//组队ID
+typedef ui64 GroupID;
+const GroupID InvalidGroupID = 0;
+
+//场景服务器的分线ID  标识具体的场景服务器  
+typedef ui64 LineID;
+const LineID InvalidLineID = 0;
+
+//场景ID  标识具体的场景实例 例如主城 副本 竞技场等  
+typedef ui64 SceneID;
+const SceneID InvalidSceneID = 0;
+
+typedef ui64 MapID;
+const MapID InvalidMapID = 0;
+
+//战报ID
+typedef ui64 ReportID;
+const ReportID InvalidReportID = 0;
+
+//实体ID 标识场景中的实体对象 例如怪物 玩家 飞行道具  
+typedef ui64 EntityID;
+const EntityID InvalidEntityID = 0;
 
 
+//服务器心跳超时检测间隔 
+const double ServerPulseInterval = 10.0;
+//客户端心跳超时检测间隔 
+const double ClientPulseInterval = 30.0;
+//web服务器响应超时时间 
+const double WebPulseTimeout = 10.0;
+//SCENE服务帧DELAY
+const double SceneFrameInterval = 0.1;
 
-//以下位置定义服务类型和依赖关系
+//服务类型和依赖关系
 
 typedef ui16 ServiceType;
 const ServiceType InvalidServiceType = (ServiceType)0;
@@ -268,12 +297,12 @@ struct WorldConfig
     unsigned short _sceneListenPort = 0;
 };
 
-struct SceneConfig
+struct LineConfig
 {
     std::string _clientListenHost;
     std::string _clientPubHost;
     unsigned short _clientListenPort = 0;
-    SceneID _sceneID = InvalidSceneID;
+    LineID _lineID = InvalidLineID;
 };
 
 using ProtoID = zsummer::proto4z::ProtoInteger;
@@ -315,7 +344,8 @@ enum ClientSessionData
     UPARAM_AVATAR_ID,
     UPARAM_LOGIN_TIME,
 
-    UPARAM_AREA_ID, //world集群
+    UPARAM_AREA_ID, //world集群用
+	UPARAM_DOCKER_ID,
     UPARAM_SCENE_ID,
 
 };
@@ -427,7 +457,7 @@ inline std::set<ServiceType> getServiceSubsidiary(ServiceType serviceType)
             }
         }
     }
-    return std::move(ret);
+    return ret;
 }
 
 #endif

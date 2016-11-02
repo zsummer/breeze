@@ -97,6 +97,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="logic\avatarMgrService.cpp" />
+    <ClCompile Include="logic\avatarModules\sceneModule.cpp" />
     <ClCompile Include="logic\avatarService.cpp" />
     <ClCompile Include="logic\dbService.cpp" />
     <ClCompile Include="logic\docker.cpp" />
@@ -110,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logic\avatarMgrService.h" />
+    <ClInclude Include="logic\avatarModules\sceneModule.h" />
     <ClInclude Include="logic\avatarService.h" />
     <ClInclude Include="logic\dbService.h" />
     <ClInclude Include="logic\docker.h" />

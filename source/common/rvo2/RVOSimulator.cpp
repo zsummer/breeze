@@ -82,9 +82,21 @@ namespace RVO {
 		if (defaultAgent_ == NULL) {
 			return RVO_ERROR;
 		}
-
-		Agent *agent = new Agent(this);
-
+        size_t agentNo = RVO_ERROR;
+        Agent *agent = nullptr;
+        if (freeAgents_.empty())
+        {
+            agent = new Agent(this);
+            agent->id_ = agents_.size();
+            agentNo = agents_.size();
+            agents_.push_back(agent);
+        }
+        else
+        {
+            agentNo = freeAgents_.front();
+            agent = agents_.at(agentNo);
+        }
+		
 		agent->position_ = position;
 		agent->maxNeighbors_ = defaultAgent_->maxNeighbors_;
 		agent->maxSpeed_ = defaultAgent_->maxSpeed_;
@@ -94,16 +106,27 @@ namespace RVO {
 		agent->timeHorizonObst_ = defaultAgent_->timeHorizonObst_;
 		agent->velocity_ = defaultAgent_->velocity_;
 
-		agent->id_ = agents_.size();
-
-		agents_.push_back(agent);
-
-		return agents_.size() - 1;
+        return agentNo;
 	}
 
 	size_t RVOSimulator::addAgent(const Vector2 &position, double neighborDist, size_t maxNeighbors, double timeHorizon, double timeHorizonObst, double radius, double maxSpeed, const Vector2 &velocity)
 	{
-		Agent *agent = new Agent(this);
+        size_t agentNo = RVO_ERROR;
+        Agent *agent = nullptr;
+        if (freeAgents_.empty())
+        {
+            agent = new Agent(this);
+            agent->id_ = agents_.size();
+            agentNo = agents_.size();
+            agents_.push_back(agent);
+        }
+        else
+        {
+            agentNo = freeAgents_.front();
+            agent = agents_.at(agentNo);
+        }
+
+
 
 		agent->position_ = position;
 		agent->maxNeighbors_ = maxNeighbors;
@@ -114,12 +137,20 @@ namespace RVO {
 		agent->timeHorizonObst_ = timeHorizonObst;
 		agent->velocity_ = velocity;
 
-		agent->id_ = agents_.size();
-
-		agents_.push_back(agent);
-
-		return agents_.size() - 1;
+        return agentNo;
 	}
+    void RVOSimulator::removeAgent(size_t agentNo)
+    {
+        if (agents_.size() < agentNo)
+        {
+            if (std::find_if(freeAgents_.begin(), freeAgents_.end(), [agentNo](size_t No) {return No == agentNo; }) != freeAgents_.end())
+            {
+                return;
+            }
+            freeAgents_.push_back(agentNo);
+            agents_.at(agentNo)->position_ = Vector2(1E120*agentNo, 1E120*agentNo);
+        }
+    }
 
 	size_t RVOSimulator::addObstacle(const std::vector<Vector2> &vertices)
 	{
@@ -341,6 +372,10 @@ namespace RVO {
 	{
 		agents_[agentNo]->prefVelocity_ = prefVelocity;
 	}
+    double RVOSimulator::getAgentRadius(size_t agentNo)
+    {
+        return agents_[agentNo]->radius_;
+    }
 
 	void RVOSimulator::setAgentRadius(size_t agentNo, double radius)
 	{

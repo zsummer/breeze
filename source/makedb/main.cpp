@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
         return 1;
     }
     LOGA("version released by " << __DATE__ << " " << __TIME__);
-    LOGD("filecontent=" << readFileContent(filename));
+    //LOGD("filecontent=" << readFileContent(filename));
     
     if (!ServerConfig::getRef().parseDB(filename))
     {

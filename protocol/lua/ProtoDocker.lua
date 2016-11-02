@@ -1,10 +1,10 @@
  
-Proto4z.register(2000,"SelfBeingPulse") 
-Proto4z.SelfBeingPulse = {}  
-Proto4z.SelfBeingPulse.__protoID = 2000 
-Proto4z.SelfBeingPulse.__protoName = "SelfBeingPulse" 
-Proto4z.SelfBeingPulse[1] = {name="areaID", type="ui64" }  
-Proto4z.SelfBeingPulse[2] = {name="dockerID", type="ui64" }  
+Proto4z.register(2000,"DockerKnock") 
+Proto4z.DockerKnock = {}  
+Proto4z.DockerKnock.__protoID = 2000 
+Proto4z.DockerKnock.__protoName = "DockerKnock" 
+Proto4z.DockerKnock[1] = {name="areaID", type="ui64" }  
+Proto4z.DockerKnock[2] = {name="dockerID", type="ui64" }  
  
 Proto4z.register(2001,"DockerPulse") 
 Proto4z.DockerPulse = {} --集群脉冲 
@@ -18,19 +18,19 @@ Proto4z.LoadService.__protoName = "LoadService"
 Proto4z.LoadService[1] = {name="serviceType", type="ui16" }  
 Proto4z.LoadService[2] = {name="serviceID", type="ui64" }  
 Proto4z.LoadService[3] = {name="serviceName", type="string" }  
-Proto4z.LoadService[4] = {name="clientDockerID", type="ui32" }  
+Proto4z.LoadService[4] = {name="clientDockerID", type="ui64" }  
 Proto4z.LoadService[5] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(2003,"ServiceInfo") 
 Proto4z.ServiceInfo = {} --Service被装载或者属性更改,需要通知给其他Docker的信息 
 Proto4z.ServiceInfo.__protoID = 2003 
 Proto4z.ServiceInfo.__protoName = "ServiceInfo" 
-Proto4z.ServiceInfo[1] = {name="serviceDockerID", type="ui32" }  
+Proto4z.ServiceInfo[1] = {name="serviceDockerID", type="ui64" }  
 Proto4z.ServiceInfo[2] = {name="serviceType", type="ui16" }  
 Proto4z.ServiceInfo[3] = {name="serviceID", type="ui64" }  
 Proto4z.ServiceInfo[4] = {name="serviceName", type="string" }  
 Proto4z.ServiceInfo[5] = {name="status", type="ui16" }  
-Proto4z.ServiceInfo[6] = {name="clientDockerID", type="ui32" }  
+Proto4z.ServiceInfo[6] = {name="clientDockerID", type="ui64" }  
 Proto4z.ServiceInfo[7] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.ServiceInfoArray = {}  
@@ -56,7 +56,7 @@ Proto4z.SwitchServiceClientNotice.__protoID = 2006
 Proto4z.SwitchServiceClientNotice.__protoName = "SwitchServiceClientNotice" 
 Proto4z.SwitchServiceClientNotice[1] = {name="serviceType", type="ui16" }  
 Proto4z.SwitchServiceClientNotice[2] = {name="serviceID", type="ui64" }  
-Proto4z.SwitchServiceClientNotice[3] = {name="clientDockerID", type="ui32" }  
+Proto4z.SwitchServiceClientNotice[3] = {name="clientDockerID", type="ui64" }  
 Proto4z.SwitchServiceClientNotice[4] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(2007,"KickRealClient") 
@@ -70,7 +70,7 @@ Proto4z.RealClientClosedNotice = {} --客户端离线通知
 Proto4z.RealClientClosedNotice.__protoID = 2008 
 Proto4z.RealClientClosedNotice.__protoName = "RealClientClosedNotice" 
 Proto4z.RealClientClosedNotice[1] = {name="serviceID", type="ui64" }  
-Proto4z.RealClientClosedNotice[2] = {name="clientDockerID", type="ui32" }  
+Proto4z.RealClientClosedNotice[2] = {name="clientDockerID", type="ui64" }  
 Proto4z.RealClientClosedNotice[3] = {name="clientSessionID", type="ui32" }  
  
 Proto4z.register(2009,"UnloadServiceInDocker") 
@@ -172,9 +172,9 @@ Proto4z.register(2021,"WebServerRequest")
 Proto4z.WebServerRequest = {}  
 Proto4z.WebServerRequest.__protoID = 2021 
 Proto4z.WebServerRequest.__protoName = "WebServerRequest" 
-Proto4z.WebServerRequest[1] = {name="fromServiceType", type="ui32" }  
+Proto4z.WebServerRequest[1] = {name="fromServiceType", type="ui16" }  
 Proto4z.WebServerRequest[2] = {name="fromServiceID", type="ui64" }  
-Proto4z.WebServerRequest[3] = {name="traceID", type="ui32" }  
+Proto4z.WebServerRequest[3] = {name="traceID", type="ui64" }  
 Proto4z.WebServerRequest[4] = {name="ip", type="string" }  
 Proto4z.WebServerRequest[5] = {name="port", type="ui16" }  
 Proto4z.WebServerRequest[6] = {name="host", type="string" }  

@@ -16,15 +16,45 @@
 
     <!------------------------------------ world <==> scene --------------------------------------------->
 
-    <proto name="AllocateSceneReq" desc= "分配新战场">
-        <member name="sceneType" type="ui16"  desc="类型"/>
-        <member name="mapID" type="ui32"  desc=""/>
-        <member name="involeds" type="AvatarBaseInfoArray"  desc="匹配列表中的玩家"/>
+    <proto name="SceneKnock" desc= "战场服务器挂载">
+        <member name="lineID" type="ui64"  desc="分线ID"/>
+        <member name="pubHost" type="string"  desc=""/>
+        <member name="pubPort" type="ui16"  desc=""/>
     </proto>
-    <proto name="AllocateSceneResp" desc= "分配新战场">
+    <packet name="ScenePulse" desc= "集群脉冲">
+    </packet>
+
+
+    <proto name="SceneServerJoinGroupIns" desc= "创建/加入编队, 来自docker的指令">
+        <member name="refresh" type="ui64"  desc="0为客户端请求操作, 1为仅仅刷新数据"/>
+        <member name="groupID" type="ui64"  desc="编队ID, 0为创建"/>
+        <member name="baseInfo" type="AvatarBaseInfo"  desc="角色数据"/>
+        <member name="baseProps" type="AvatarPropMap"  desc="角色属性数据"/>
+    </proto>
+    <proto name="SceneServerJoinGroupAck" desc= "创建/加入编队响应结果">
         <member name="retCode" type="ui16"   desc=""/>
-        <member name="tokens" type="SceneTokenInfoArray"  desc="匹配列表中的玩家"/>
+        <member name="newGroupID" type="ui64"  desc=""/>
+        <member name="oldGroupID" type="ui64"  desc=""/>
     </proto>
+
+    <proto name="SceneServerEnterSceneIns" desc= "开辟场景">
+        <member name="sceneType" type="ui16"  desc="类型"/>
+        <member name="mapID" type="ui64"  desc=""/>
+        <member name="groups" type="SceneGroupInfoArray"  desc="多个编队"/>
+    </proto>
+    
+    <proto name="SceneServerCancelSceneIns" desc= "退出场景">
+        <member name="sceneID" type="ui64"  desc="sceneID"/>
+        <member name="groupID" type="ui64"  desc="groupID"/>
+    </proto>
+
+    <proto name="SceneServerGroupStateChangeIns" desc= "scene ==> world">
+        <member name="sceneID" type="ui64"   desc=""/>
+        <member name="groupID" type="ui64"   desc=""/>
+        <member name="state" type="ui16"   desc="如果是NONE 说明离开场景"/>
+    </proto>
+
+
 
 
 </Proto>

@@ -59,7 +59,7 @@ std::string readFileContent(const std::string & filename, bool isBinary, size_t 
         limitSize = fileLen - beginIndex;
     }
     
-    fseek(f, beginIndex, SEEK_SET);
+    fseek(f, (long)beginIndex, SEEK_SET);
     std::string ret;
     ret.resize(limitSize, '\0');
     size_t readLen = fread(&ret[0], 1, limitSize, f);

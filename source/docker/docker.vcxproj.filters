@@ -13,18 +13,21 @@
     <Filter Include="config">
       <UniqueIdentifier>{fffa076f-2d53-440c-b3db-e36ad5907fec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="logic\avatarModules">
+      <UniqueIdentifier>{7015fc84-fd2e-40a9-895a-571a20611eac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="logic\avatarMgrService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\avatarService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
     <ClCompile Include="logic\dbService.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\service.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\shellService.cpp">
       <Filter>logic</Filter>
     </ClCompile>
     <ClCompile Include="logic\docker.cpp">
@@ -39,24 +42,27 @@
     <ClCompile Include="logic\offlineService.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\service.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\shellService.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
     <ClCompile Include="logic\webService.cpp">
       <Filter>logic</Filter>
     </ClCompile>
-    <ClCompile Include="logic\avatarMgrService.cpp">
-      <Filter>logic</Filter>
-    </ClCompile>
-    <ClCompile Include="logic\avatarService.cpp">
-      <Filter>logic</Filter>
+    <ClCompile Include="logic\avatarModules\sceneModule.cpp">
+      <Filter>logic\avatarModules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="logic\avatarMgrService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\avatarService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
     <ClInclude Include="logic\dbService.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\service.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\shellService.h">
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\docker.h">
@@ -71,14 +77,17 @@
     <ClInclude Include="logic\offlineService.h">
       <Filter>logic</Filter>
     </ClInclude>
+    <ClInclude Include="logic\service.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\shellService.h">
+      <Filter>logic</Filter>
+    </ClInclude>
     <ClInclude Include="logic\webService.h">
       <Filter>logic</Filter>
     </ClInclude>
-    <ClInclude Include="logic\avatarMgrService.h">
-      <Filter>logic</Filter>
-    </ClInclude>
-    <ClInclude Include="logic\avatarService.h">
-      <Filter>logic</Filter>
+    <ClInclude Include="logic\avatarModules\sceneModule.h">
+      <Filter>logic\avatarModules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -43,6 +43,7 @@ LoggerId logid_moniter;
 << ", constant:" << 1000 \
 << ", constant:" << 100.12345678\
 << ", bool:" << (bool) true
+//#define LOG_CONTENT "aaaaaaaaaaaa"
 
 #define  LOG_CONTENT_WINFMT "char:%c, unsigned char:%u, short:%d, unsigned short:%u, int:%d, unsigned int:%u, long:%d, unsigned long:%u, long long:%I64d, unsigned long long:%I64u, \
                                             float:%f, double:%lf, string:%s, void*:%x, const void*:%x, constant:%d, constant:%lf, bool:%d", \
@@ -58,8 +59,7 @@ LoggerId logid_moniter;
                                             (float)-1.234567, (double)-2.34566, "fffff", \
                                             32423324, 234, 1000, 100.12345678, true
 
-//! limit waiting count
-const unsigned int LIMIT_WAITING_COUNT = 10000;
+
 //! process quit.
 bool g_quit;
 
@@ -94,11 +94,6 @@ void multiThreadFunc()
 
 
 
-
-        if (ILog4zManager::getRef().getStatusWaitingCount() > LIMIT_WAITING_COUNT)
-        {
-            sleepMillisecond(50);
-        }
     }
     LOGA("thread quit ... ");
 }
@@ -126,14 +121,20 @@ int main(int argc, char *argv[])
     ILog4zManager::getRef().setLoggerDisplay(logid_mysql, false);
     ILog4zManager::getRef().setLoggerDisplay(logid_network, false);
     ILog4zManager::getRef().setLoggerDisplay(logid_moniter, false);
+    ILog4zManager::getRef().setLoggerOutFile(logid_mysql, false);
+    ILog4zManager::getRef().setLoggerOutFile(logid_network, false);
+    ILog4zManager::getRef().setLoggerOutFile(logid_moniter, false);
+
 
     //! ---------
     ILog4zManager::getRef().start();
 
     //! ---------
-    createThread(&multiThreadFunc);
-    createThread(&multiThreadFunc);
-    createThread(&multiThreadFunc);
+    for (int i=0; i<5; i++)
+    {
+        createThread(&multiThreadFunc);
+    }
+   
 
     //! ---------
     unsigned long long lastCount = 0;
@@ -147,7 +148,7 @@ int main(int argc, char *argv[])
         lastData += speedData;
         LOGI("Stress Status:  Write Speed: " << speedCount/5 
             << " n/s, Speed: " << speedData/1024/5 
-            << " KB/s, Waiting: " << ILog4zManager::getRef().getStatusWaitingCount());
+            << " KB/s, Waiting: " << ILog4zManager::getRef().getStatusTotalPushQueue() - ILog4zManager::getRef().getStatusTotalPopQueue());
         sleepMillisecond(5000);
     }
 

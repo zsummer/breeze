@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
   <MinNo>1000</MinNo>
@@ -8,6 +8,11 @@
 
 
 <Proto>
+
+    <!-- 类型使用概述 如无必要 应按照以下规定使用类型 -->
+    <!-- TYPE/枚举使用ui16, 数值使用double, ID使用ui64(ID范围需要小于52位) -->
+    <!-- 数值类 概率用浮点表达为[0.0-1.0], 时间用浮点表达单位为秒 精度为毫秒 -->
+
 
     <!------------- 错误码 ---------------------->
     <enum type="ui16" name="ERROR_CODE">
@@ -46,11 +51,11 @@
         <member name="fromServiceType" type="ui16" desc="来源"/>
         <member name="fromServiceID" type="ui64" desc="来源"/>
 
-        <member name="traceID" type="ui32" desc="本地产生的回调ID"/>
-        <member name="traceBackID" type="ui32" desc="远端产生的回调ID"/>
+        <member name="traceID" type="ui64" desc="本地产生的回调ID"/>
+        <member name="traceBackID" type="ui64" desc="远端产生的回调ID"/>
     </packet>
     <packet name="OutOfBand"  desc="带外信息">
-        <member name="clientDockerID" type="ui32"   desc="该数据由docker获得来自客户端的消息时自动填充."/>
+        <member name="clientDockerID" type="ui64"   desc="该数据由docker获得来自客户端的消息时自动填充."/>
         <member name="clientSessionID" type="ui32"   desc="该数据由docker获得来自客户端的消息时自动填充."/>
         <member name="clientAvatarID" type="ui64" desc="该数据由docker获得来自客户端的消息时自动填充."/>
     </packet>
@@ -62,13 +67,14 @@
 
 
     <!------------- 用户ID数组 ---------------------->
-    <array name="AvatarIDArray" type="ui64" desc="" />
+    <array name="ServiceIDArray" type="ui64" desc="" />
+    <map name="ServiceIDMap" key="ui64" value="ui64" desc="" />
 
 
     <!------------- 用户预览信息 ---------------------->
     <packet name="AvatarPreview" store="MyISAM" desc="用户预览信息">
         <member name="avatarID" type="ui64"  tag="key" desc="用户唯一ID, 对应AvatarService的ServiceID"/>
-        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
+        <member name="avatarName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i32" desc="头像"/>
         <member name="modeID"  type="i32" desc="模型"/>
@@ -81,7 +87,7 @@
     <!------------- 用户基础信息 ---------------------->
     <packet name="AvatarBaseInfo" store="MyISAM" desc="用户基础数据">
         <member name="avatarID" type="ui64"  tag="key" desc="用户唯一ID, 对应AvatarService的ServiceID"/>
-        <member name="userName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
+        <member name="avatarName" type="string" tag="uni"   desc="用户唯一昵称, 对应AvatarService的ServiceName"/>
         <member name="account"  type="string" tag="idx" desc="帐号"/>
         <member name="iconID"  type="i32" desc="头像"/>
         <member name="modeID"  type="i32" desc="模型"/>
@@ -113,7 +119,7 @@
 
     <!------------- 全局配置 ---------------------->
     <packet name="DictGlobal" store="MyISAM" desc= "全局配置">
-        <member name="id" type="ui32" tag="key"   desc=""/>
+        <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="val" type="ui64"   desc="整数"/>
         <member name="valFloat" type="double"   desc="浮点数"/>
         <member name="combo" type="string"   desc="字符串"/>
@@ -123,14 +129,14 @@
 
     <!------------- 抽奖 ---------------------->
     <packet name="DictRaffleAward" store="MyISAM"  desc= "奖池中的奖品">
-        <member name="id" type="ui32" tag="key"  desc="奖品ID"/>
-        <member name="weight" type="ui32"   desc="本奖品在奖池中的权重, 总权重在[10000~30000]之间的随机效果最好"/>
+        <member name="id" type="ui64" tag="key"  desc="奖品ID"/>
+        <member name="weight" type="ui64"   desc="本奖品在奖池中的权重, 总权重在[10000~30000]之间的随机效果最好"/>
         <member name="probability" type="double"   desc="[0~1]独立随机的概率,0为永远无法随机到 1是100%随机到"/>
     </packet>
     <array name="DictRaffleAwardArray" type="DictRaffleAward" desc="" />
 
     <packet name="DictRafflePool" store="MyISAM"  desc= "道具抽奖,道具掉落">
-        <member name="id" type="ui32" tag="key"  desc=""/>
+        <member name="id" type="ui64" tag="key"  desc=""/>
         <member name="raffleCount" type="i32"   desc="批量抽取次数"/>
         <member name="pool" type="DictRaffleAwardArray"   desc="奖池"/>
         <member name="poolString" type="string"   desc="奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式"/>
@@ -139,7 +145,7 @@
 
     <!------------- 基础属性 ---------------------->
     <packet name="DictBaseProps" store="MyISAM"  desc= "战斗属性效果,用于装备,属性类增减益buff">
-        <member name="id" type="ui32" tag="key"  desc=""/>
+        <member name="id" type="ui64" tag="key"  desc=""/>
         <member name="hp" type="double"   desc="血量值"/>
         <member name="hpRegen" type="double"   desc="每秒血量值恢复"/>
         <member name="attack" type="double"   desc="伤害"/>
@@ -155,15 +161,15 @@
     <!------------- 道具 ---------------------->
 
     <packet name="DictItem" store="MyISAM"  desc= "道具字典">
-        <member name="id" type="ui32" tag="key"  desc=""/>
+        <member name="id" type="ui64" tag="key"  desc=""/>
         <member name="primitiveType" type="ui16" tag="idx"  desc="主类型"/>
         <member name="subType" type="ui16" tag="idx"  desc="子类型"/>
         <member name="visible" type="ui16"   desc="是否可见"/>
         <member name="stacks" type="ui16"   desc="可堆叠个数,0和1都是1次"/>
-        <member name="fightEffectID" type="ui32"   desc="战斗属性效果,装备后生效"/>
+        <member name="fightEffectID" type="ui64"   desc="战斗属性效果,装备后生效"/>
 
         <member name="autoUse" type="ui16"   desc="0 不可使用, 1 可使用, 2 获得后自动使用"/>
-        <member name="dropID" type="ui32"   desc="DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取"/>
+        <member name="dropID" type="ui64"   desc="DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取"/>
 
 
         <member name="vocationLimit" type="ui16"   desc="限制职业类型, 装备类型"/>
@@ -180,12 +186,15 @@
 
     <!------------- 聊天 ---------------------->
     <enum name="ChatChannelEnum" type="ui16">
-        <member name="CC_WORLD" desc=""/>
-        <member name="CC_PRIVATE" desc=""/>
-        <member name="CC_SYSTEM" desc=""/>
+        <member name="CC_WORLD" desc="世界频道"/>
+        <member name="CC_PRIVATE" desc="私人频道"/>
+        <member name="CC_SYSTEM" desc="系统频道"/>
+        <member name="CC_GROUP" desc="同编队频道"/>
+        <member name="CC_CAMP" desc="同阵营频道"/>
+        <member name="CC_SCENE" desc="同场景频道"/>
     </enum>
     <packet    name="LogChat" store="true" desc= "聊天日志">
-        <member name="id" type="ui32" tag="auto,key" desc=""/>
+        <member name="id" type="ui64" tag="auto,key" desc=""/>
         <member name="channelID" type="ui16"   desc=""/>
         <member name="sourceID" type="ui64"  tag="idx" desc=""/>
         <member name="sourceName" type="string"   desc=""/>
@@ -199,16 +208,16 @@
 
 
     <packet    name="MoneyTree" desc= "摇钱树功能模块">
-        <member name="lastTime" type="ui32"  desc="最后一次执行时间"/>
-        <member name="freeCount" type="ui32"  desc="今日剩余免费次数"/>
-        <member name="payCount" type="ui32"  desc="今日已购买次数"/>
-        <member name="statSum" type="ui32" desc="历史总和"/>
-        <member name="statCount" type="ui32" desc="历史总次数"/>
+        <member name="lastTime" type="ui64"  desc="最后一次执行时间"/>
+        <member name="freeCount" type="ui64"  desc="今日剩余免费次数"/>
+        <member name="payCount" type="ui64"  desc="今日已购买次数"/>
+        <member name="statSum" type="ui64" desc="历史总和"/>
+        <member name="statCount" type="ui64" desc="历史总次数"/>
     </packet>
     <packet    name="SimplePack" store="true" desc= "简单示例">
-        <member name="id" type="ui32" tag="auto,key"     desc="id, 对应数据库的结构为自增ID,key"/>
+        <member name="id" type="ui64" tag="auto,key"     desc="id, 对应数据库的结构为自增ID,key"/>
         <member name="name" type="string" tag="uni"     desc="昵称, 唯一索引"/>
-        <member name="createTime" type="ui32" tag="idx"     desc="创建时间, 普通索引"/>
+        <member name="createTime" type="ui64" tag="idx"     desc="创建时间, 普通索引"/>
         <member name="moneyTree" type="MoneyTree"     desc=""/>
     </packet>
 

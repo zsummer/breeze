@@ -76,7 +76,7 @@ namespace RVO {
 		if (end - begin > MAX_LEAF_SIZE) {
 			/* No leaf node. */
 			const bool isVertical = (agentTree_[node].maxX - agentTree_[node].minX > agentTree_[node].maxY - agentTree_[node].minY);
-			const double splitValue = (isVertical ? 0.5f * (agentTree_[node].maxX + agentTree_[node].minX) : 0.5f * (agentTree_[node].maxY + agentTree_[node].minY));
+			const double splitValue = (isVertical ? 0.5 * (agentTree_[node].maxX + agentTree_[node].minX) : 0.5 * (agentTree_[node].maxY + agentTree_[node].minY));
 
 			size_t left = begin;
 			size_t right = end;

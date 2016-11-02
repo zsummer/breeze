@@ -10,25 +10,26 @@ Entity::~Entity()
 }
 
 
-double Entity::getElapsed(double now)
-{
-    if (_control.lastMoveTime < _control.extBeginTime)_control.lastMoveTime = _control.extBeginTime;
-    if (_control.lastMoveTime > now) _control.lastMoveTime = now;
-    double elapse = now - _control.lastMoveTime;
-    _control.lastMoveTime = now;
-    return elapse;
-}
+
 double Entity::getSpeed()
 {
-    if (_info.moveAction == MACTION_IDLE)
+    if (_entityInfo.etype == ENTITY_PLAYER)
     {
-        return 0.0;
+        return 12.0;
     }
-    if (_info.moveAction != MACTION_PATH && _info.moveAction != MACTION_FOLLOW && _info.moveAction != MACTION_IDLE)
+    else if (_entityInfo.etype == ENTITY_AI)
     {
-        return _control.extSpeed;
+        return 8.0;
     }
-    return 5.0;
+    else if (_entityInfo.etype == ENTITY_FLIGHT)
+    {
+        return 20.0;
+    }
+    else
+    {
+        return 10.0;
+    }
+    
 }
 
 double Entity::getSuckBlood()
@@ -41,11 +42,9 @@ double Entity::getAttack()
     return 1.0;
 }
 
-void Entity::pickProto(EntityFullInfo & info)
+EntityFullData Entity::getFullData()
 {
-    info.userInfo = _base;
-    info.info = _info;
-    info.report = _report;
+    return EntityFullData(_baseInfo, _baseProps, _entityInfo, _entityMove, _report);
 }
 
 

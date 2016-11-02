@@ -26,7 +26,7 @@
 #include "service.h"
 #include "module.h"
 #include "docker.h"
-
+#include "avatarModules/sceneModule.h"
 
 
 
@@ -45,32 +45,30 @@ public:
 public:
 	void refreshProp(const std::string &prop, double val, bool overwrite = true);
 	double getProp(const std::string &prop);
-	inline const AvatarPropMap& getProps() { return _props; };
+	inline const AvatarPropMap& getProps() { return _baseProps; };
 
 private:
     void onModuleLoad(bool success, const std::string & moduleName);
     void onModuleUnload(bool success, const std::string & moduleName);
 private:
     void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-	void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onChatResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 	void onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 	void onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
-    void onGetSceneTokenInfoReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onJoinSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-    void onLeaveSceneReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
-
-
-
+public:
+    ModuleData<AvatarBaseInfo> _baseInfo;
+    AvatarPropMap _baseProps;
 private:
     int _curLoadModuleCount = 0;
     int _curUnloadModuleCount = 0;
     int _totalModuleCount = 1;
-    ModuleData<AvatarBaseInfo> _baseInfo;
-	AvatarPropMap _props;
 private:
-    double _lastChatTime = getFloatNowTime();
+    double _lastChatTime = getFloatSteadyNowTime();
+private:
+    SceneModule _scene;
 };
 
 

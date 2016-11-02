@@ -1,5 +1,7 @@
 #!/bin/bash
 set -v on
-killall docker -w
+killall -9 docker 
+killall -9 world
+killall -9 scene
 set -v off
 

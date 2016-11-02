@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>abf58778910eb5d93ad8590cc5adafcb</cppmd5> 
-<luamd5>5dc3f6ae4d889358532ca7da57953659</luamd5> 
-<csharpmd5>86529fd834535ae786ed85991f9c8189</csharpmd5> 
-<xmlmd5>ae5c25666c6e3d2be52690eb66ce9aa6</xmlmd5> 
+<cppmd5>be01e56fcd1642ef3f7b4bbee1bee89d</cppmd5> 
+<luamd5>49cc1fded1ef0119a0f3d20387c2efbb</luamd5> 
+<csharpmd5>3600aff91e90b74bf0f64d287007da2e</csharpmd5> 
+<xmlmd5>b3eebb227dbee533f1c9bfec74a1f731</xmlmd5> 
 <cacheNumber>
-    <cache key = "BuffData" Number = "10005" /> 
-    <cache key = "BuffInfo" Number = "10008" /> 
-    <cache key = "EPoint" Number = "10001" /> 
-    <cache key = "EntityControl" Number = "10010" /> 
-    <cache key = "EntityFullInfo" Number = "10012" /> 
-    <cache key = "EntityInfo" Number = "10009" /> 
-    <cache key = "EntityReport" Number = "10011" /> 
-    <cache key = "HarmData" Number = "10006" /> 
-    <cache key = "SceneTokenInfo" Number = "10000" /> 
-    <cache key = "SearchInfo" Number = "10002" /> 
-    <cache key = "SkillBehaviour" Number = "10003" /> 
-    <cache key = "SkillData" Number = "10004" /> 
-    <cache key = "SkillInfo" Number = "10007" /> 
+    <cache key = "BuffData" Number = "10006" /> 
+    <cache key = "BuffInfo" Number = "10009" /> 
+    <cache key = "EPosition" Number = "10002" /> 
+    <cache key = "EntityFullData" Number = "10013" /> 
+    <cache key = "EntityInfo" Number = "10010" /> 
+    <cache key = "EntityMove" Number = "10011" /> 
+    <cache key = "EntityReport" Number = "10012" /> 
+    <cache key = "HarmData" Number = "10007" /> 
+    <cache key = "SceneEventInfo" Number = "10015" /> 
+    <cache key = "SceneGroupAvatarInfo" Number = "10000" /> 
+    <cache key = "SceneGroupInfo" Number = "10001" /> 
+    <cache key = "SceneSection" Number = "10014" /> 
+    <cache key = "SearchInfo" Number = "10003" /> 
+    <cache key = "SkillBehaviour" Number = "10004" /> 
+    <cache key = "SkillData" Number = "10005" /> 
+    <cache key = "SkillInfo" Number = "10008" /> 
 </cacheNumber>

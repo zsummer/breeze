@@ -35,160 +35,174 @@
 #ifndef _BALANCE_H_
 #define _BALANCE_H_
 #include <defined.h>
+template<class BalanceID>
 class Balance
 {
 public:
-    //server node, isAble, manual weight, auto weight, total select count
-    using BalanceInfo = std::tuple<DockerID, bool, float, float, float>;
+    struct  BalanceInfo
+    {
+        BalanceInfo(BalanceID arg1, bool arg2, double arg3, double arg4):id(arg1),active(arg2),weight(arg3), count(arg4){}
+        BalanceID id = 0;
+        bool active = false;
+        double weight = 0;
+        double count = 0;
+    };
     Balance(){}
-    inline bool enableNode(DockerID node);
-    inline bool cleanNode(DockerID node);
-    inline bool disableNode(DockerID node);
-    inline bool changeWeight(DockerID node, float weight);
+    inline bool enableNode(BalanceID node);
+    inline bool cleanNode(BalanceID node);
+    inline bool disableNode(BalanceID node);
+    inline size_t activeNodes();
 
-    inline DockerID selectAuto();
-    inline DockerID selectManual();
-    inline float getBalanceRate();
+    inline bool addWeight(BalanceID node, double weight);
+
+    inline BalanceID pickNode(double step, double weight);
+    inline double getBalanceDeviation();
     inline std::string getBalanceStatus();
 private:
     std::vector<BalanceInfo> _balance;
+    size_t _idx = -1;
 };
-inline bool Balance::enableNode(DockerID node)
+
+template<class BalanceID>
+inline bool Balance<BalanceID>::enableNode(BalanceID node)
 {
     if(node == InvalidDockerID)
     {
         return false;
     }
-    auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
+    auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt) {return node == bt.id; });
     if (founder != _balance.end())
     {
-        std::get<1>(*founder) = true;
+        founder->active = true;
     }
     else
     {
-        _balance.push_back(std::make_tuple(node, true, 0.0f, 0.0f, 0.0f));
+        _balance.push_back(BalanceInfo(node, true, 0.0, 0.0));
     }
     return true;
 }
-inline bool Balance::cleanNode(DockerID node)
+
+template<class BalanceID>
+inline bool Balance<BalanceID>::cleanNode(BalanceID node)
 {
-    auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
+    auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt) {return node == bt.id; });
     if (founder == _balance.end())
     {
         return false;
     }
-    std::get<2>(*founder) = 0;
-    std::get<3>(*founder) = 0;
-    std::get<4>(*founder) = 0;
+    founder->weight = 0.0;
+    founder->count = 0.0;
     return true;
 }
-inline bool Balance::disableNode(DockerID node)
+
+template<class BalanceID>
+inline bool Balance<BalanceID>::disableNode(BalanceID node)
 {
-    auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
+    auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt) {return node == bt.id; });
     if(founder == _balance.end())
     {
         return true;
     }
-    std::get<1>(*founder) = false;
+    founder->active = false;
     return true;
 }
-inline bool Balance::changeWeight(DockerID node, float weight)
+template<class BalanceID>
+inline size_t Balance<BalanceID>::activeNodes()
 {
-    auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt){return node == std::get<0>(bt);});
+    size_t ret = 0;
+    for (auto & node : _balance)
+    {
+        if (node.active)
+        {
+            ret++;
+        }
+    }
+    return ret;
+}
+template<class BalanceID>
+inline bool Balance<BalanceID>::addWeight(BalanceID node, double weight)
+{
+    auto founder = std::find_if(_balance.begin(), _balance.end(), [node](const BalanceInfo & bt) {return node == bt.id; });
     if (founder == _balance.end())
     {
         if (enableNode(node))
-            return changeWeight(node, weight);
+            return addWeight(node, weight);
         else
             return false;
     }
     else
     {
-        std::get<2>(*founder) += weight;
+        founder->weight += weight;
     }
     return true;
 }
 
-inline DockerID Balance::selectAuto()
+template<class BalanceID>
+inline BalanceID Balance<BalanceID>::pickNode(double step, double autoAdd)
 {
-    size_t idx = (size_t)-1;
-    float weight = (float)1E15;
-    for (size_t i = 0; i < _balance.size(); ++i)
+    if (_balance.empty())
     {
-        if(std::get<1>(_balance[i]) && std::get<3>(_balance[i]) < weight)
-        {
-            idx = i;
-            weight = std::get<3>(_balance[i]);
-        }
+        return 0;
     }
-    if (idx == (size_t)-1)
-    {
-        return InvalidDockerID;
-    }
-    std::get<3>(_balance[idx]) ++;
-    std::get<4>(_balance[idx]) ++;
-    return std::get<0>(_balance[idx]);
-}
-inline DockerID Balance::selectManual()
-{
-    size_t idx = (size_t)-1;
-    float weight = (float)1E15;
-    for (size_t i = 0; i < _balance.size(); ++i)
-    {
-        if(std::get<1>(_balance[i]) && std::get<2>(_balance[i]) < weight)
-        {
-            idx = i;
-            weight = std::get<2>(_balance[i]);
-        }
-    }
-    if (idx == (size_t)-1)
-    {
-        return InvalidDockerID;
-    }
-    std::get<4>(_balance[idx]) ++;
-    return std::get<0>(_balance[idx]);
-}
-inline float Balance::getBalanceRate()
-{
 
-    float light = 0.0;
-    float weight = 0.0;
-    float count = 0.0;
     for (size_t i = 0; i < _balance.size(); ++i)
     {
-        if(!std::get<1>(_balance[i])) continue;
-        if(std::get<2>(_balance[i]) < light)
+        if (!_balance[i].active)
         {
-            light = std::get<2>(_balance[i]);
+            continue;
         }
-        weight += std::get<2>(_balance[i]);
-        count ++;
+        if (_idx >= _balance.size() || !_balance[_idx].active || _balance[_idx].weight - step > _balance[i].weight)
+        {
+            _idx = (int)i;
+        }
     }
-    if (isZero(count, 1e-5) || isZero(weight, 1e-5))
+    if (_idx >= _balance.size() || !_balance[_idx].active)
     {
-        return 1.0;
+        return 0;
     }
-    return light/(weight/count);
+    _balance[_idx].weight += autoAdd;
+    _balance[_idx].count += 1;
+    return _balance[_idx].id;
 }
-inline std::string Balance::getBalanceStatus()
+
+template<class BalanceID>
+inline double Balance<BalanceID>::getBalanceDeviation()
+{
+    double light = 1E100;
+    double weight = -1E100;
+    for (size_t i = 0; i < _balance.size(); ++i)
+    {
+        if(!_balance[i].active) continue;
+        if(_balance[i].weight < light)
+        {
+            light = _balance[i].weight;
+        }
+        if (_balance[i].weight > weight)
+        {
+            weight = _balance[i].weight;
+        }
+    }
+    return weight - light;
+}
+
+template<class BalanceID>
+inline std::string Balance<BalanceID>::getBalanceStatus()
 {
     std::stringstream ss;
-    ss << "[balaceRate:" << getBalanceRate() << "],";
+    ss << "[balaceDeviation:" << getBalanceDeviation() << "], node/active/weight/count";
     for (size_t i= 0; i < _balance.size(); ++i)
     {
-        ss << "[node=";
-        ss << std::get<0>(_balance[i]);
-        ss << ", isable=";
-        ss << std::get<1>(_balance[i]);
-        ss << ", manualweight=";
-        ss << std::get<2>(_balance[i]);
-        ss << ", autoweight=";
-        ss << std::get<3>(_balance[i]);
-        ss << ", selected=";
-        ss << std::get<4>(_balance[i]);
+        ss << "[";
+        ss << _balance[i].id;
+        ss << "/";
+        ss << _balance[i].active;
+        ss << "/";
+        ss << _balance[i].weight;
+        ss << "/";
+        ss << _balance[i].count;
         ss << "],";
     }
-    return std::move(ss.str());
+    return ss.str();
 }
 
 
