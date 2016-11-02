@@ -64,9 +64,9 @@ service是breeze引擎的核心结构, 通过包装对docker接口的再次包�
 所有运行中的数据库操作, info,log等 都需要走该service中专.  
 配合proto4z的mysql序列化方案, 可以一个调用实现增删改查,  而通过ModuleData的模板类, 则实现按照业务模块一键从数据库中load/create/update/insert等同步.  
 
-### UserMgrService  
+### AvatarMgrService  
 --- 
-用户中心service, 用于用户service的创建,装载,客户端认证通讯关联等.  
+玩家中心service, 用于玩家service的创建,装载,客户端认证通讯关联等.  
 也用于玩家管理,特别是离线玩家的管理(在线玩家可以直接server对service进行交互). 
   
 ### WebService  
