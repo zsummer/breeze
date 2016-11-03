@@ -28,6 +28,8 @@ class AvatarService;
 class SceneModule
 {
 public:
+    void onModuleInit(AvatarService & avatar);
+public:
     void onSceneGroupInfoNotice(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
 
     void onSceneGroupGetReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
