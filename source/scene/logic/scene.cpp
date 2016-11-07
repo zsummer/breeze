@@ -653,13 +653,13 @@ bool Scene::doSkill(EntityID eid, ui64 skillID, EntityID foe, const EPosition & 
     behaviour.search.offsetY = -1;
     behaviour.search.radian = PI/2.0;
     behaviour.search.camp = setBitFlag(0, SEARCH_CAMP_ALIEN);
-    behaviour.search.distance = 5.0;
+    behaviour.search.distance = 8.0;
     behaviour.search.limitEntitys = 100;
     skill.behaviours.push_back(behaviour);
 
     SkillInfo info;
     info.data = skill;
-    info.dst = self._entityMove.position;
+    info.dst = dst;
     info.foe = foe;
     info.skillID = skillID;
     info.startTime = getFloatSteadyNowTime();
@@ -734,7 +734,7 @@ bool Scene::attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets)
         }
         target->_entityInfo.curHP -= 20;
         target->_isInfoDirty = true;
-        notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_HARM_ATTACK, 20));
+        notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_HARM_ATTACK, 20, ""));
         if (target->_entityInfo.curHP <= 0)
         {
             target->_entityInfo.curHP = 0.0;
@@ -744,7 +744,7 @@ bool Scene::attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets)
             target->_entityInfo.foe = InvalidEntityID;
 
             target->_control.stateChageTime = getFloatSteadyNowTime();
-            notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_LIE, 0));
+            notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_LIE, 0, ""));
         }
     }
     broadcast(notice);
@@ -753,6 +753,7 @@ bool Scene::attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets)
 
 void Scene::checkSceneState()
 {
+    SceneEventNotice eventNotice;
     for (auto kv : _entitys)
     {
         if (kv.second->_entityInfo.state == ENTITY_STATE_LIE || kv.second->_entityInfo.state == ENTITY_STATE_DIED)
@@ -771,11 +772,17 @@ void Scene::checkSceneState()
                 {
                     _sim->setAgentPosition(kv.second->_control.agentNo, toRVOVector2(kv.second->_entityMove.position));
                 }
-                SceneEventNotice notice;
-                notice.info.push_back(SceneEventInfo(InvalidEntityID, kv.second->_entityInfo.eid, SCENE_EVENT_REBIRTH, 0.0));
-                _asyncs.push(std::bind(&Scene::broadcast<SceneEventNotice>, shared_from_this(), notice, 0));
+                SceneEventInfo ev;
+                ev.src = InvalidEntityID;
+                ev.dst = kv.second->_entityInfo.eid;
+                ev.ev = SCENE_EVENT_REBIRTH;
+                ev.val = kv.second->_entityInfo.curHP;
+                mergeToString(ev.mix, ",", kv.second->_entityMove.position.x);
+                mergeToString(ev.mix, ",", kv.second->_entityMove.position.y);
+                eventNotice.info.push_back(ev);
             }
         }
+        broadcast(eventNotice);
     }
 }
 bool Scene::cleanSkill()
@@ -860,7 +867,12 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         {
             double radianEntity = getRadian(org.x, org.y, entity._entityMove.position.x, entity._entityMove.position.y);
             double curRadian = fmod(radian+search.radian/2.0, PI*2.0);
-            if (radianEntity - curRadian  > search.radian &&  curRadian + PI*2.0 - curRadian > search.radian )
+            if ((curRadian >= radianEntity && curRadian - radianEntity < search.radian)
+                || (curRadian < radianEntity && curRadian + PI*2.0 - radianEntity < search.radian))
+            {
+
+            }
+            else
             {
                 continue;
             }

@@ -65,25 +65,25 @@ config.scenes =
     {
         lineID = 1,
         clientListenHost="::",
-        clientPubHost="127.0.0.1",
+        clientPubHost="192.168.1.101",
         clientListenPort=17101,
     },
     {
         lineID = 2,
         clientListenHost="::",
-        clientPubHost="127.0.0.1",
+        clientPubHost="192.168.1.101",
         clientListenPort=17102,
     },
     {
         lineID = 3,
         clientListenHost="::",
-        clientPubHost="127.0.0.1",
+        clientPubHost="192.168.1.101",
         clientListenPort=17103,
     },
     {
         lineID = 4,
         clientListenHost="::",
-        clientPubHost="127.0.0.1",
+        clientPubHost="192.168.1.101",
         clientListenPort=17104,
     },
 

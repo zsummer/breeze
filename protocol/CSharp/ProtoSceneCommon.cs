@@ -806,19 +806,22 @@ namespace Proto4z
         public ulong dst; //eid  
         public ushort ev; //事件类型  
         public double val; //数值  
+        public string mix; //数值  
         public SceneEventInfo()  
         { 
             src = 0;  
             dst = 0;  
             ev = 0;  
             val = 0.0;  
+            mix = "";  
         } 
-        public SceneEventInfo(ulong src, ulong dst, ushort ev, double val) 
+        public SceneEventInfo(ulong src, ulong dst, ushort ev, double val, string mix) 
         { 
             this.src = src; 
             this.dst = dst; 
             this.ev = ev; 
             this.val = val; 
+            this.mix = mix; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -827,6 +830,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.dst)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.ev)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.val)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.mix)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -835,6 +839,7 @@ namespace Proto4z
             this.dst = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.ev = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.val = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.mix = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
     } 

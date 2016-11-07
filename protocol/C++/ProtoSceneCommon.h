@@ -582,6 +582,7 @@ struct SceneEventInfo //伤害数据
     unsigned long long dst; //eid  
     unsigned short ev; //事件类型  
     double val; //数值  
+    std::string mix; //数值  
     SceneEventInfo() 
     { 
         src = 0; 
@@ -589,12 +590,13 @@ struct SceneEventInfo //伤害数据
         ev = 0; 
         val = 0.0; 
     } 
-    SceneEventInfo(const unsigned long long & src, const unsigned long long & dst, const unsigned short & ev, const double & val) 
+    SceneEventInfo(const unsigned long long & src, const unsigned long long & dst, const unsigned short & ev, const double & val, const std::string & mix) 
     { 
         this->src = src; 
         this->dst = dst; 
         this->ev = ev; 
         this->val = val; 
+        this->mix = mix; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneEventInfo & data) 
@@ -603,6 +605,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.dst;  
     ws << data.ev;  
     ws << data.val;  
+    ws << data.mix;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneEventInfo & data) 
@@ -611,6 +614,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.dst;  
     rs >> data.ev;  
     rs >> data.val;  
+    rs >> data.mix;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneEventInfo & info) 
@@ -620,6 +624,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "dst=" << info.dst << ","; 
     stm << "ev=" << info.ev << ","; 
     stm << "val=" << info.val << ","; 
+    stm << "mix=" << info.mix << ","; 
     stm << "]"; 
     return stm; 
 } 
