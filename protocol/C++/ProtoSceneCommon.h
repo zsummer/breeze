@@ -25,13 +25,480 @@ enum SceneState : unsigned short
     SCENE_STATE_ACTIVE = 5, //战斗中  
 }; 
  
+enum PropType : unsigned short 
+{ 
+    PROP_FIXED = 0,  
+    PROP_FIXED_GROW = 1,  
+    PROP_GROWTH = 2,  
+}; 
+ 
+struct EntityProp 
+{ 
+    static const unsigned short getProtoID() { return 10016;} 
+    static const std::string getProtoName() { return "EntityProp";} 
+    inline std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned long long id;  
+    unsigned long long modelID;  
+    unsigned short propType; //0 fixed, 1 grow fixed, 2 growth PropType  
+    double hp; //血量值  
+    double hpRegen; //每秒血量值恢复  
+    double attack; //伤害  
+    double defense; //防御  
+    double crit; //暴击  
+    double toughness; //韧性  
+    double moveSpeed; //移动速度  
+    double attackSpeed; //攻击速度  
+    double vampirk; //吸血  
+    EntityProp() 
+    { 
+        id = 0; 
+        modelID = 0; 
+        propType = 0; 
+        hp = 0.0; 
+        hpRegen = 0.0; 
+        attack = 0.0; 
+        defense = 0.0; 
+        crit = 0.0; 
+        toughness = 0.0; 
+        moveSpeed = 0.0; 
+        attackSpeed = 0.0; 
+        vampirk = 0.0; 
+    } 
+    EntityProp(const unsigned long long & id, const unsigned long long & modelID, const unsigned short & propType, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
+    { 
+        this->id = id; 
+        this->modelID = modelID; 
+        this->propType = propType; 
+        this->hp = hp; 
+        this->hpRegen = hpRegen; 
+        this->attack = attack; 
+        this->defense = defense; 
+        this->crit = crit; 
+        this->toughness = toughness; 
+        this->moveSpeed = moveSpeed; 
+        this->attackSpeed = attackSpeed; 
+        this->vampirk = vampirk; 
+    } 
+}; 
+ 
+std::vector<std::string>  EntityProp::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_EntityProp` (        `modelID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `propType` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`modelID`,`propType`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_EntityProp` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `modelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `modelID`  `modelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `propType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `propType`  `propType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` add `vampirk`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityProp` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
+    return ret; 
+} 
+std::string  EntityProp::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `id`,`modelID`,`propType`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_EntityProp` where `modelID` = ? and `propType` = ? "); 
+    q << this->modelID; 
+    q << this->propType; 
+    return q.pickSQL(); 
+} 
+std::string  EntityProp::getDBSelectPure() 
+{ 
+    return "select `id`,`modelID`,`propType`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_EntityProp` "; 
+} 
+std::string  EntityProp::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_EntityProp`(`id`,`modelID`,`propType`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`) values(?,?,?,?,?,?,?,?,?,?,?,?)"); 
+    q << this->id; 
+    q << this->modelID; 
+    q << this->propType; 
+    q << this->hp; 
+    q << this->hpRegen; 
+    q << this->attack; 
+    q << this->defense; 
+    q << this->crit; 
+    q << this->toughness; 
+    q << this->moveSpeed; 
+    q << this->attackSpeed; 
+    q << this->vampirk; 
+    return q.pickSQL(); 
+} 
+std::string  EntityProp::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_EntityProp` where `modelID` = ?,`propType` = ? "); 
+    q << this->modelID; 
+    q << this->propType; 
+    return q.pickSQL(); 
+} 
+std::string  EntityProp::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_EntityProp`(modelID,propType) values(?,? ) on duplicate key update `id` = ?,`hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ? "); 
+    q << this->modelID; 
+    q << this->propType; 
+    q << this->id; 
+    q << this->hp; 
+    q << this->hpRegen; 
+    q << this->attack; 
+    q << this->defense; 
+    q << this->crit; 
+    q << this->toughness; 
+    q << this->moveSpeed; 
+    q << this->attackSpeed; 
+    q << this->vampirk; 
+    return q.pickSQL(); 
+} 
+bool EntityProp::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch EntityProp from table `tb_EntityProp` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->id; 
+            result >> this->modelID; 
+            result >> this->propType; 
+            result >> this->hp; 
+            result >> this->hpRegen; 
+            result >> this->attack; 
+            result >> this->defense; 
+            result >> this->crit; 
+            result >> this->toughness; 
+            result >> this->moveSpeed; 
+            result >> this->attackSpeed; 
+            result >> this->vampirk; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch EntityProp from table `tb_EntityProp` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityProp & data) 
+{ 
+    ws << data.id;  
+    ws << data.modelID;  
+    ws << data.propType;  
+    ws << data.hp;  
+    ws << data.hpRegen;  
+    ws << data.attack;  
+    ws << data.defense;  
+    ws << data.crit;  
+    ws << data.toughness;  
+    ws << data.moveSpeed;  
+    ws << data.attackSpeed;  
+    ws << data.vampirk;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityProp & data) 
+{ 
+    rs >> data.id;  
+    rs >> data.modelID;  
+    rs >> data.propType;  
+    rs >> data.hp;  
+    rs >> data.hpRegen;  
+    rs >> data.attack;  
+    rs >> data.defense;  
+    rs >> data.crit;  
+    rs >> data.toughness;  
+    rs >> data.moveSpeed;  
+    rs >> data.attackSpeed;  
+    rs >> data.vampirk;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityProp & info) 
+{ 
+    stm << "["; 
+    stm << "id=" << info.id << ","; 
+    stm << "modelID=" << info.modelID << ","; 
+    stm << "propType=" << info.propType << ","; 
+    stm << "hp=" << info.hp << ","; 
+    stm << "hpRegen=" << info.hpRegen << ","; 
+    stm << "attack=" << info.attack << ","; 
+    stm << "defense=" << info.defense << ","; 
+    stm << "crit=" << info.crit << ","; 
+    stm << "toughness=" << info.toughness << ","; 
+    stm << "moveSpeed=" << info.moveSpeed << ","; 
+    stm << "attackSpeed=" << info.attackSpeed << ","; 
+    stm << "vampirk=" << info.vampirk << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<EntityProp> EntityPropArray;  
+ 
+ 
+typedef std::map<unsigned long long, EntityProp> EntityPropMap;  
+ 
+struct EntityBase 
+{ 
+    static const unsigned short getProtoID() { return 10017;} 
+    static const std::string getProtoName() { return "EntityBase";} 
+    inline std::vector<std::string>  getDBBuild(); 
+    inline std::string  getDBInsert(); 
+    inline std::string  getDBDelete(); 
+    inline std::string  getDBUpdate(); 
+    inline std::string  getDBSelect(); 
+    inline std::string  getDBSelectPure(); 
+    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
+    unsigned long long eid;  
+    unsigned long long modelID;  
+    std::string modelName;  
+    unsigned long long avatarID;  
+    std::string avatarName;  
+    unsigned long long iconID; //头像  
+    double level; //等级  
+    double exp; //经验  
+    double gold; //金币  
+    unsigned short camp;  
+    unsigned short etype;  
+    unsigned short state;  
+    EntityBase() 
+    { 
+        eid = 0; 
+        modelID = 0; 
+        avatarID = 0; 
+        iconID = 0; 
+        level = 0.0; 
+        exp = 0.0; 
+        gold = 0.0; 
+        camp = 0; 
+        etype = 0; 
+        state = 0; 
+    } 
+    EntityBase(const unsigned long long & eid, const unsigned long long & modelID, const std::string & modelName, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & iconID, const double & level, const double & exp, const double & gold, const unsigned short & camp, const unsigned short & etype, const unsigned short & state) 
+    { 
+        this->eid = eid; 
+        this->modelID = modelID; 
+        this->modelName = modelName; 
+        this->avatarID = avatarID; 
+        this->avatarName = avatarName; 
+        this->iconID = iconID; 
+        this->level = level; 
+        this->exp = exp; 
+        this->gold = gold; 
+        this->camp = camp; 
+        this->etype = etype; 
+        this->state = state; 
+    } 
+}; 
+ 
+std::vector<std::string>  EntityBase::getDBBuild() 
+{ 
+    std::vector<std::string> ret; 
+    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_EntityBase` (        `modelID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`modelID`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
+    ret.push_back("alter table `tb_EntityBase` add `eid`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `eid`  `eid`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `modelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `modelID`  `modelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `modelName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_EntityBase` change `modelName`  `modelName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_EntityBase` add `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `avatarID`  `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_EntityBase` change `avatarName`  `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_EntityBase` add `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `iconID`  `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `level`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `level`  `level`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `exp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `exp`  `exp`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `gold`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `gold`  `gold`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `camp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `camp`  `camp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `etype`  `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` add `state`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_EntityBase` change `state`  `state`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    return ret; 
+} 
+std::string  EntityBase::getDBSelect() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("select `eid`,`modelID`,`modelName`,`avatarID`,`avatarName`,`iconID`,`level`,`exp`,`gold`,`camp`,`etype`,`state` from `tb_EntityBase` where `modelID` = ? "); 
+    q << this->modelID; 
+    return q.pickSQL(); 
+} 
+std::string  EntityBase::getDBSelectPure() 
+{ 
+    return "select `eid`,`modelID`,`modelName`,`avatarID`,`avatarName`,`iconID`,`level`,`exp`,`gold`,`camp`,`etype`,`state` from `tb_EntityBase` "; 
+} 
+std::string  EntityBase::getDBInsert() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_EntityBase`(`eid`,`modelID`,`modelName`,`avatarID`,`avatarName`,`iconID`,`level`,`exp`,`gold`,`camp`,`etype`,`state`) values(?,?,?,?,?,?,?,?,?,?,?,?)"); 
+    q << this->eid; 
+    q << this->modelID; 
+    q << this->modelName; 
+    q << this->avatarID; 
+    q << this->avatarName; 
+    q << this->iconID; 
+    q << this->level; 
+    q << this->exp; 
+    q << this->gold; 
+    q << this->camp; 
+    q << this->etype; 
+    q << this->state; 
+    return q.pickSQL(); 
+} 
+std::string  EntityBase::getDBDelete() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("delete from `tb_EntityBase` where `modelID` = ? "); 
+    q << this->modelID; 
+    return q.pickSQL(); 
+} 
+std::string  EntityBase::getDBUpdate() 
+{ 
+    zsummer::mysql::DBQuery q; 
+    q.init("insert into `tb_EntityBase`(modelID) values(? ) on duplicate key update `eid` = ?,`modelName` = ?,`avatarID` = ?,`avatarName` = ?,`iconID` = ?,`level` = ?,`exp` = ?,`gold` = ?,`camp` = ?,`etype` = ?,`state` = ? "); 
+    q << this->modelID; 
+    q << this->eid; 
+    q << this->modelName; 
+    q << this->avatarID; 
+    q << this->avatarName; 
+    q << this->iconID; 
+    q << this->level; 
+    q << this->exp; 
+    q << this->gold; 
+    q << this->camp; 
+    q << this->etype; 
+    q << this->state; 
+    return q.pickSQL(); 
+} 
+bool EntityBase::fetchFromDBResult(zsummer::mysql::DBResult &result) 
+{ 
+    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
+    { 
+        LOGE("error fetch EntityBase from table `tb_EntityBase` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    try 
+    { 
+        if (result.haveRow()) 
+        { 
+            result >> this->eid; 
+            result >> this->modelID; 
+            result >> this->modelName; 
+            result >> this->avatarID; 
+            result >> this->avatarName; 
+            result >> this->iconID; 
+            result >> this->level; 
+            result >> this->exp; 
+            result >> this->gold; 
+            result >> this->camp; 
+            result >> this->etype; 
+            result >> this->state; 
+            return true;  
+        } 
+    } 
+    catch(const std::exception & e) 
+    { 
+        LOGE("catch one except error when fetch EntityBase from table `tb_EntityBase` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+        return false; 
+    } 
+    return false; 
+} 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityBase & data) 
+{ 
+    ws << data.eid;  
+    ws << data.modelID;  
+    ws << data.modelName;  
+    ws << data.avatarID;  
+    ws << data.avatarName;  
+    ws << data.iconID;  
+    ws << data.level;  
+    ws << data.exp;  
+    ws << data.gold;  
+    ws << data.camp;  
+    ws << data.etype;  
+    ws << data.state;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityBase & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.modelID;  
+    rs >> data.modelName;  
+    rs >> data.avatarID;  
+    rs >> data.avatarName;  
+    rs >> data.iconID;  
+    rs >> data.level;  
+    rs >> data.exp;  
+    rs >> data.gold;  
+    rs >> data.camp;  
+    rs >> data.etype;  
+    rs >> data.state;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityBase & info) 
+{ 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "modelID=" << info.modelID << ","; 
+    stm << "modelName=" << info.modelName << ","; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "avatarName=" << info.avatarName << ","; 
+    stm << "iconID=" << info.iconID << ","; 
+    stm << "level=" << info.level << ","; 
+    stm << "exp=" << info.exp << ","; 
+    stm << "gold=" << info.gold << ","; 
+    stm << "camp=" << info.camp << ","; 
+    stm << "etype=" << info.etype << ","; 
+    stm << "state=" << info.state << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<EntityBase> EntityBaseArray;  
+ 
+ 
+typedef std::map<unsigned long long, EntityBase> EntityBaseMap;  
+ 
 struct SceneGroupAvatarInfo 
 { 
     static const unsigned short getProtoID() { return 10000;} 
     static const std::string getProtoName() { return "SceneGroupAvatarInfo";} 
     unsigned long long areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
-    AvatarBaseInfo baseInfo; //玩家基础数据  
-    AvatarPropMap baseProps; //角色属性数据  
+    EntityBase baseInfo; //玩家基础数据  
+    EntityProp fixedProps; //基础固定属性  
+    EntityProp growthProps; //成长基础属性  
+    EntityProp growths; //成长系数  
     unsigned short powerType; //组队权限: 0普通,1leader,2master  
     std::string token; //scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开.  
     SceneGroupAvatarInfo() 
@@ -39,11 +506,13 @@ struct SceneGroupAvatarInfo
         areaID = 0; 
         powerType = 0; 
     } 
-    SceneGroupAvatarInfo(const unsigned long long & areaID, const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps, const unsigned short & powerType, const std::string & token) 
+    SceneGroupAvatarInfo(const unsigned long long & areaID, const EntityBase & baseInfo, const EntityProp & fixedProps, const EntityProp & growthProps, const EntityProp & growths, const unsigned short & powerType, const std::string & token) 
     { 
         this->areaID = areaID; 
         this->baseInfo = baseInfo; 
-        this->baseProps = baseProps; 
+        this->fixedProps = fixedProps; 
+        this->growthProps = growthProps; 
+        this->growths = growths; 
         this->powerType = powerType; 
         this->token = token; 
     } 
@@ -52,7 +521,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.areaID;  
     ws << data.baseInfo;  
-    ws << data.baseProps;  
+    ws << data.fixedProps;  
+    ws << data.growthProps;  
+    ws << data.growths;  
     ws << data.powerType;  
     ws << data.token;  
     return ws; 
@@ -61,7 +532,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.areaID;  
     rs >> data.baseInfo;  
-    rs >> data.baseProps;  
+    rs >> data.fixedProps;  
+    rs >> data.growthProps;  
+    rs >> data.growths;  
     rs >> data.powerType;  
     rs >> data.token;  
     return rs; 
@@ -71,7 +544,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "areaID=" << info.areaID << ","; 
     stm << "baseInfo=" << info.baseInfo << ","; 
-    stm << "baseProps=" << info.baseProps << ","; 
+    stm << "fixedProps=" << info.fixedProps << ","; 
+    stm << "growthProps=" << info.growthProps << ","; 
+    stm << "growths=" << info.growths << ","; 
     stm << "powerType=" << info.powerType << ","; 
     stm << "token=" << info.token << ","; 
     stm << "]"; 
@@ -240,7 +715,7 @@ enum EntityType : unsigned short
     ENTITY_FLIGHT = 3, //飞行道具  
 }; 
  
-enum EntityCampType : unsigned short 
+enum EntityCampType : unsigned long long 
 { 
     ENTITY_CAMP_NONE = 0,  
     ENTITY_CAMP_RED = 1, //红方  
@@ -968,38 +1443,50 @@ struct EntityFullData //EntityFullData
 { 
     static const unsigned short getProtoID() { return 10013;} 
     static const std::string getProtoName() { return "EntityFullData";} 
-    AvatarBaseInfo baseInfo;  
-    AvatarPropMap baseProps;  
-    EntityInfo entityInfo;  
-    EntityMove entityMove;  
+    EntityBase baseInfo; //玩家基础数据  
+    EntityProp fixedProps; //基础固定属性  
+    EntityProp growthProps; //成长基础属性  
+    EntityProp growths; //成长系数  
+    EntityProp props; //当前  
+    EntityInfo info;  
+    EntityMove mv;  
     EntityReport report;  
     EntityFullData() 
     { 
     } 
-    EntityFullData(const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps, const EntityInfo & entityInfo, const EntityMove & entityMove, const EntityReport & report) 
+    EntityFullData(const EntityBase & baseInfo, const EntityProp & fixedProps, const EntityProp & growthProps, const EntityProp & growths, const EntityProp & props, const EntityInfo & info, const EntityMove & mv, const EntityReport & report) 
     { 
         this->baseInfo = baseInfo; 
-        this->baseProps = baseProps; 
-        this->entityInfo = entityInfo; 
-        this->entityMove = entityMove; 
+        this->fixedProps = fixedProps; 
+        this->growthProps = growthProps; 
+        this->growths = growths; 
+        this->props = props; 
+        this->info = info; 
+        this->mv = mv; 
         this->report = report; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityFullData & data) 
 { 
     ws << data.baseInfo;  
-    ws << data.baseProps;  
-    ws << data.entityInfo;  
-    ws << data.entityMove;  
+    ws << data.fixedProps;  
+    ws << data.growthProps;  
+    ws << data.growths;  
+    ws << data.props;  
+    ws << data.info;  
+    ws << data.mv;  
     ws << data.report;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityFullData & data) 
 { 
     rs >> data.baseInfo;  
-    rs >> data.baseProps;  
-    rs >> data.entityInfo;  
-    rs >> data.entityMove;  
+    rs >> data.fixedProps;  
+    rs >> data.growthProps;  
+    rs >> data.growths;  
+    rs >> data.props;  
+    rs >> data.info;  
+    rs >> data.mv;  
     rs >> data.report;  
     return rs; 
 } 
@@ -1007,9 +1494,12 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "["; 
     stm << "baseInfo=" << info.baseInfo << ","; 
-    stm << "baseProps=" << info.baseProps << ","; 
-    stm << "entityInfo=" << info.entityInfo << ","; 
-    stm << "entityMove=" << info.entityMove << ","; 
+    stm << "fixedProps=" << info.fixedProps << ","; 
+    stm << "growthProps=" << info.growthProps << ","; 
+    stm << "growths=" << info.growths << ","; 
+    stm << "props=" << info.props << ","; 
+    stm << "info=" << info.info << ","; 
+    stm << "mv=" << info.mv << ","; 
     stm << "report=" << info.report << ","; 
     stm << "]"; 
     return stm; 

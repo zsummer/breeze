@@ -187,17 +187,17 @@ struct AvatarPreview //用户预览信息
     unsigned long long avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
     std::string avatarName; //用户唯一昵称, 对应AvatarService的ServiceName  
     std::string account; //帐号  
-    int iconID; //头像  
-    int modeID; //模型  
-    int level; //等级  
+    unsigned long long iconID; //头像  
+    unsigned long long modeID; //模型  
+    double level; //等级  
     AvatarPreview() 
     { 
         avatarID = 0; 
         iconID = 0; 
         modeID = 0; 
-        level = 0; 
+        level = 0.0; 
     } 
-    AvatarPreview(const unsigned long long & avatarID, const std::string & avatarName, const std::string & account, const int & iconID, const int & modeID, const int & level) 
+    AvatarPreview(const unsigned long long & avatarID, const std::string & avatarName, const std::string & account, const unsigned long long & iconID, const unsigned long long & modeID, const double & level) 
     { 
         this->avatarID = avatarID; 
         this->avatarName = avatarName; 
@@ -218,12 +218,12 @@ std::vector<std::string>  AvatarPreview::getDBBuild()
     ret.push_back("alter table `tb_AvatarPreview` change `avatarName`  `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarPreview` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarPreview` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_AvatarPreview` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarPreview` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarPreview` add `modeID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarPreview` change `modeID`  `modeID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarPreview` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarPreview` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` add `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `iconID`  `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` add `modeID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `modeID`  `modeID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` add `level`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarPreview` change `level`  `level`  double NOT NULL DEFAULT '0' "); 
     return ret; 
 } 
 std::string  AvatarPreview::getDBSelect() 
@@ -345,9 +345,9 @@ struct AvatarBaseInfo //用户基础数据
     unsigned long long avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
     std::string avatarName; //用户唯一昵称, 对应AvatarService的ServiceName  
     std::string account; //帐号  
-    int iconID; //头像  
-    int modeID; //模型  
-    int level; //等级  
+    unsigned long long iconID; //头像  
+    unsigned long long modeID; //模型  
+    double level; //等级  
     double exp; //经验  
     double gold; //金币  
     double diamond; //钻石  
@@ -357,13 +357,13 @@ struct AvatarBaseInfo //用户基础数据
         avatarID = 0; 
         iconID = 0; 
         modeID = 0; 
-        level = 0; 
+        level = 0.0; 
         exp = 0.0; 
         gold = 0.0; 
         diamond = 0.0; 
         createTime = 0; 
     } 
-    AvatarBaseInfo(const unsigned long long & avatarID, const std::string & avatarName, const std::string & account, const int & iconID, const int & modeID, const int & level, const double & exp, const double & gold, const double & diamond, const unsigned long long & createTime) 
+    AvatarBaseInfo(const unsigned long long & avatarID, const std::string & avatarName, const std::string & account, const unsigned long long & iconID, const unsigned long long & modeID, const double & level, const double & exp, const double & gold, const double & diamond, const unsigned long long & createTime) 
     { 
         this->avatarID = avatarID; 
         this->avatarName = avatarName; 
@@ -388,12 +388,12 @@ std::vector<std::string>  AvatarBaseInfo::getDBBuild()
     ret.push_back("alter table `tb_AvatarBaseInfo` change `avatarName`  `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` add `account`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` change `account`  `account`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_AvatarBaseInfo` add `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarBaseInfo` change `iconID`  `iconID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarBaseInfo` add `modeID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarBaseInfo` change `modeID`  `modeID`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarBaseInfo` add `level`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AvatarBaseInfo` change `level`  `level`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `iconID`  `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `modeID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `modeID`  `modeID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` add `level`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AvatarBaseInfo` change `level`  `level`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` add `exp`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` change `exp`  `exp`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AvatarBaseInfo` add `gold`  double NOT NULL DEFAULT '0' "); 
@@ -532,9 +532,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
  
 typedef std::vector<AvatarBaseInfo> AvatarBaseInfoArray;  
- 
- 
-typedef std::map<std::string, double> AvatarPropMap;  
  
 struct DictGlobal //全局配置  
 { 
@@ -819,7 +816,7 @@ struct DictRafflePool //道具抽奖,道具掉落
     inline std::string  getDBSelectPure(); 
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long id;  
-    int raffleCount; //批量抽取次数  
+    unsigned long long raffleCount; //批量抽取次数  
     DictRaffleAwardArray pool; //奖池  
     std::string poolString; //奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式  
     DictRafflePool() 
@@ -827,7 +824,7 @@ struct DictRafflePool //道具抽奖,道具掉落
         id = 0; 
         raffleCount = 0; 
     } 
-    DictRafflePool(const unsigned long long & id, const int & raffleCount, const DictRaffleAwardArray & pool, const std::string & poolString) 
+    DictRafflePool(const unsigned long long & id, const unsigned long long & raffleCount, const DictRaffleAwardArray & pool, const std::string & poolString) 
     { 
         this->id = id; 
         this->raffleCount = raffleCount; 
@@ -842,8 +839,8 @@ std::vector<std::string>  DictRafflePool::getDBBuild()
     ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictRafflePool` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
     ret.push_back("alter table `tb_DictRafflePool` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRafflePool` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictRafflePool` add `raffleCount`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictRafflePool` change `raffleCount`  `raffleCount`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRafflePool` add `raffleCount`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictRafflePool` change `raffleCount`  `raffleCount`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictRafflePool` add `pool`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_DictRafflePool` change `pool`  `pool`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_DictRafflePool` add `poolString`  varchar(255) NOT NULL DEFAULT '' "); 
@@ -1192,7 +1189,7 @@ struct DictItem //道具字典
     unsigned short autoUse; //0 不可使用, 1 可使用, 2 获得后自动使用  
     unsigned long long dropID; //DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取  
     unsigned short vocationLimit; //限制职业类型, 装备类型  
-    int levelLimit; //限制职业最小等级, 装备类型  
+    double levelLimit; //限制职业最小等级, 装备类型  
     std::string desc;  
     DictItem() 
     { 
@@ -1205,9 +1202,9 @@ struct DictItem //道具字典
         autoUse = 0; 
         dropID = 0; 
         vocationLimit = 0; 
-        levelLimit = 0; 
+        levelLimit = 0.0; 
     } 
-    DictItem(const unsigned long long & id, const unsigned short & primitiveType, const unsigned short & subType, const unsigned short & visible, const unsigned short & stacks, const unsigned long long & fightEffectID, const unsigned short & autoUse, const unsigned long long & dropID, const unsigned short & vocationLimit, const int & levelLimit, const std::string & desc) 
+    DictItem(const unsigned long long & id, const unsigned short & primitiveType, const unsigned short & subType, const unsigned short & visible, const unsigned short & stacks, const unsigned long long & fightEffectID, const unsigned short & autoUse, const unsigned long long & dropID, const unsigned short & vocationLimit, const double & levelLimit, const std::string & desc) 
     { 
         this->id = id; 
         this->primitiveType = primitiveType; 
@@ -1245,8 +1242,8 @@ std::vector<std::string>  DictItem::getDBBuild()
     ret.push_back("alter table `tb_DictItem` change `dropID`  `dropID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictItem` add `vocationLimit`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictItem` change `vocationLimit`  `vocationLimit`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictItem` add `levelLimit`  bigint(20) NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictItem` change `levelLimit`  `levelLimit`  bigint(20) NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` add `levelLimit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictItem` change `levelLimit`  `levelLimit`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictItem` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictItem` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     return ret; 

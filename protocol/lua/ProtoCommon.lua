@@ -62,9 +62,9 @@ Proto4z.AvatarPreview.__protoName = "AvatarPreview"
 Proto4z.AvatarPreview[1] = {name="avatarID", type="ui64" } --用户唯一ID, 对应AvatarService的ServiceID 
 Proto4z.AvatarPreview[2] = {name="avatarName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
 Proto4z.AvatarPreview[3] = {name="account", type="string" } --帐号 
-Proto4z.AvatarPreview[4] = {name="iconID", type="i32" } --头像 
-Proto4z.AvatarPreview[5] = {name="modeID", type="i32" } --模型 
-Proto4z.AvatarPreview[6] = {name="level", type="i32" } --等级 
+Proto4z.AvatarPreview[4] = {name="iconID", type="ui64" } --头像 
+Proto4z.AvatarPreview[5] = {name="modeID", type="ui64" } --模型 
+Proto4z.AvatarPreview[6] = {name="level", type="double" } --等级 
  
 Proto4z.AvatarPreviewArray = {}  
 Proto4z.AvatarPreviewArray.__protoName = "AvatarPreviewArray" 
@@ -78,9 +78,9 @@ Proto4z.AvatarBaseInfo.__protoName = "AvatarBaseInfo"
 Proto4z.AvatarBaseInfo[1] = {name="avatarID", type="ui64" } --用户唯一ID, 对应AvatarService的ServiceID 
 Proto4z.AvatarBaseInfo[2] = {name="avatarName", type="string" } --用户唯一昵称, 对应AvatarService的ServiceName 
 Proto4z.AvatarBaseInfo[3] = {name="account", type="string" } --帐号 
-Proto4z.AvatarBaseInfo[4] = {name="iconID", type="i32" } --头像 
-Proto4z.AvatarBaseInfo[5] = {name="modeID", type="i32" } --模型 
-Proto4z.AvatarBaseInfo[6] = {name="level", type="i32" } --等级 
+Proto4z.AvatarBaseInfo[4] = {name="iconID", type="ui64" } --头像 
+Proto4z.AvatarBaseInfo[5] = {name="modeID", type="ui64" } --模型 
+Proto4z.AvatarBaseInfo[6] = {name="level", type="double" } --等级 
 Proto4z.AvatarBaseInfo[7] = {name="exp", type="double" } --经验 
 Proto4z.AvatarBaseInfo[8] = {name="gold", type="double" } --金币 
 Proto4z.AvatarBaseInfo[9] = {name="diamond", type="double" } --钻石 
@@ -90,12 +90,6 @@ Proto4z.AvatarBaseInfoArray = {}
 Proto4z.AvatarBaseInfoArray.__protoName = "AvatarBaseInfoArray" 
 Proto4z.AvatarBaseInfoArray.__protoDesc = "array" 
 Proto4z.AvatarBaseInfoArray.__protoTypeV = "AvatarBaseInfo" 
- 
-Proto4z.AvatarPropMap = {}  
-Proto4z.AvatarPropMap.__protoName = "AvatarPropMap" 
-Proto4z.AvatarPropMap.__protoDesc = "map" 
-Proto4z.AvatarPropMap.__protoTypeK = "string" 
-Proto4z.AvatarPropMap.__protoTypeV = "double" 
  
 Proto4z.register(1005,"DictGlobal") 
 Proto4z.DictGlobal = {} --全局配置 
@@ -125,7 +119,7 @@ Proto4z.DictRafflePool = {} --道具抽奖,道具掉落
 Proto4z.DictRafflePool.__protoID = 1007 
 Proto4z.DictRafflePool.__protoName = "DictRafflePool" 
 Proto4z.DictRafflePool[1] = {name="id", type="ui64" }  
-Proto4z.DictRafflePool[2] = {name="raffleCount", type="i32" } --批量抽取次数 
+Proto4z.DictRafflePool[2] = {name="raffleCount", type="ui64" } --批量抽取次数 
 Proto4z.DictRafflePool[3] = {name="pool", type="DictRaffleAwardArray" } --奖池 
 Proto4z.DictRafflePool[4] = {name="poolString", type="string" } --奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式 
  
@@ -157,7 +151,7 @@ Proto4z.DictItem[6] = {name="fightEffectID", type="ui64" } --战斗属性效果,
 Proto4z.DictItem[7] = {name="autoUse", type="ui16" } --0 不可使用, 1 可使用, 2 获得后自动使用 
 Proto4z.DictItem[8] = {name="dropID", type="ui64" } --DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取 
 Proto4z.DictItem[9] = {name="vocationLimit", type="ui16" } --限制职业类型, 装备类型 
-Proto4z.DictItem[10] = {name="levelLimit", type="i32" } --限制职业最小等级, 装备类型 
+Proto4z.DictItem[10] = {name="levelLimit", type="double" } --限制职业最小等级, 装备类型 
 Proto4z.DictItem[11] = {name="desc", type="string" }  
  
 Proto4z.register(1010,"ItemInfo") 

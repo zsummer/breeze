@@ -56,12 +56,11 @@ public:
     bool onUpdate();
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
-    EntityPtr addEntity(const AvatarBaseInfo & baseInfo,
-        const AvatarPropMap & baseProps,
-        ui16 camp,
-        EntityType etype,
-        EntityState state = ENTITY_STATE_ACTIVE,
-        GroupID = InvalidGroupID);
+    EntityPtr addEntity(const EntityBase & baseInfo, 
+        const EntityProp & fixedProps, 
+        const EntityProp & growProps, 
+        const EntityProp & growth,
+        GroupID groupID= InvalidGroupID);
     bool removeEntity(EntityID eid);
     bool removePlayer(AvatarID avatarID);
     bool removePlayerByGroupID(GroupID groupID);

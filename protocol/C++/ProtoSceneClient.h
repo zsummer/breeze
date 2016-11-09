@@ -145,25 +145,29 @@ struct SceneRefreshNotice
 { 
     static const unsigned short getProtoID() { return 50004;} 
     static const std::string getProtoName() { return "SceneRefreshNotice";} 
+    EntityPropArray entityProps;  
     EntityInfoArray entityInfos;  
     EntityMoveArray entityMoves;  
     SceneRefreshNotice() 
     { 
     } 
-    SceneRefreshNotice(const EntityInfoArray & entityInfos, const EntityMoveArray & entityMoves) 
+    SceneRefreshNotice(const EntityPropArray & entityProps, const EntityInfoArray & entityInfos, const EntityMoveArray & entityMoves) 
     { 
+        this->entityProps = entityProps; 
         this->entityInfos = entityInfos; 
         this->entityMoves = entityMoves; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneRefreshNotice & data) 
 { 
+    ws << data.entityProps;  
     ws << data.entityInfos;  
     ws << data.entityMoves;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneRefreshNotice & data) 
 { 
+    rs >> data.entityProps;  
     rs >> data.entityInfos;  
     rs >> data.entityMoves;  
     return rs; 
@@ -171,6 +175,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneRefreshNotice & info) 
 { 
     stm << "["; 
+    stm << "entityProps=" << info.entityProps << ","; 
     stm << "entityInfos=" << info.entityInfos << ","; 
     stm << "entityMoves=" << info.entityMoves << ","; 
     stm << "]"; 

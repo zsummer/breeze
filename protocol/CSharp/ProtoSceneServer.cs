@@ -71,41 +71,55 @@ namespace Proto4z
         //members   
         public ulong refresh; //0为客户端请求操作, 1为仅仅刷新数据  
         public ulong groupID; //编队ID, 0为创建  
-        public AvatarBaseInfo baseInfo; //角色数据  
-        public AvatarPropMap baseProps; //角色属性数据  
+        public EntityBase baseInfo; //玩家基础数据  
+        public EntityProp fixedProps; //基础固定属性  
+        public EntityProp growthProps; //成长基础属性  
+        public EntityProp growths; //成长系数  
         public SceneServerJoinGroupIns()  
         { 
             refresh = 0;  
             groupID = 0;  
-            baseInfo = new AvatarBaseInfo();  
-            baseProps = new AvatarPropMap();  
+            baseInfo = new EntityBase();  
+            fixedProps = new EntityProp();  
+            growthProps = new EntityProp();  
+            growths = new EntityProp();  
         } 
-        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, AvatarBaseInfo baseInfo, AvatarPropMap baseProps) 
+        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, EntityBase baseInfo, EntityProp fixedProps, EntityProp growthProps, EntityProp growths) 
         { 
             this.refresh = refresh; 
             this.groupID = groupID; 
             this.baseInfo = baseInfo; 
-            this.baseProps = baseProps; 
+            this.fixedProps = fixedProps; 
+            this.growthProps = growthProps; 
+            this.growths = growths; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.refresh)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
-            if (this.baseInfo == null) this.baseInfo = new AvatarBaseInfo(); 
+            if (this.baseInfo == null) this.baseInfo = new EntityBase(); 
             data.AddRange(this.baseInfo.__encode()); 
-            if (this.baseProps == null) this.baseProps = new AvatarPropMap(); 
-            data.AddRange(this.baseProps.__encode()); 
+            if (this.fixedProps == null) this.fixedProps = new EntityProp(); 
+            data.AddRange(this.fixedProps.__encode()); 
+            if (this.growthProps == null) this.growthProps = new EntityProp(); 
+            data.AddRange(this.growthProps.__encode()); 
+            if (this.growths == null) this.growths = new EntityProp(); 
+            data.AddRange(this.growths.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.refresh = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.baseInfo = new AvatarBaseInfo(); 
+            this.baseInfo = new EntityBase(); 
             this.baseInfo.__decode(binData, ref pos); 
-            this.baseProps = new AvatarPropMap(); 
-            this.baseProps.__decode(binData, ref pos); 
+            this.fixedProps = new EntityProp(); 
+            this.fixedProps.__decode(binData, ref pos); 
+            this.growthProps = new EntityProp(); 
+            this.growthProps.__decode(binData, ref pos); 
+            this.growths = new EntityProp(); 
+            this.growths.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

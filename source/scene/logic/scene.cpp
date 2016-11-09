@@ -112,29 +112,31 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 
 
 
-EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
-    const AvatarPropMap & baseProps,
-    ui16 camp,
-    EntityType etype,
-    EntityState state,
+EntityPtr Scene::addEntity(const EntityBase & baseInfo,
+    const EntityProp & fixedProps,
+    const EntityProp & growProps,
+    const EntityProp & growth,
     GroupID groupID)
 {
     EntityPtr entity = std::make_shared<Entity>();
 
     entity->_baseInfo = baseInfo;
-    entity->_baseProps = baseProps;
+    entity->_fixedProps = fixedProps;
+    entity->_growProps = growProps;
+    entity->_growth = growth;
 
-
+    entity->_props = processPropGrow(fixedProps, growProps, growth, baseInfo.level);
+    
 
     entity->_entityInfo.eid = ++_lastEID;
-    entity->_entityInfo.camp = camp;
-    entity->_entityInfo.etype = etype;
+    entity->_entityInfo.camp = baseInfo.camp;
+    entity->_entityInfo.etype = baseInfo.etype;
     entity->_entityInfo.groupID = groupID;
-    entity->_entityInfo.state = ENTITY_STATE_ACTIVE;
+    entity->_entityInfo.state = baseInfo.state;
     entity->_entityInfo.leader = InvalidEntityID;
     entity->_entityInfo.foe = InvalidEntityID;
 
-    entity->_entityInfo.curHP = 100;
+    entity->_entityInfo.curHP = entity->_props.hp;
 
     entity->_control.spawnpoint = { 0.0 - 30 +  realRandF()*30 ,60 -30 + realRandF()*30 };
     entity->_control.eid = entity->_entityInfo.eid;
@@ -152,7 +154,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     entity->_control.agentNo = _sim->addAgent(toRVOVector2(entity->_entityMove.position));
     _entitys.insert(std::make_pair(entity->_entityInfo.eid, entity));
 
-    if (baseInfo.avatarID != InvalidServiceID && etype == ENTITY_PLAYER)
+    if (baseInfo.avatarID != InvalidServiceID && entity->_entityInfo.etype == ENTITY_PLAYER)
     {
         _players[baseInfo.avatarID] = entity;
         _sim->setAgentRadius(entity->_control.agentNo, 0.5f);
@@ -459,13 +461,21 @@ void Scene::doMonster()
     }
     while (_monsters.size() < _players.size() * 3  )
     {
-        AvatarBaseInfo base;
+        EntityBase base;
         base.avatarID = 1000 + _monsters.size();
         base.avatarName = "MyLittlePet_";
         base.avatarName += toString(_monsters.size());
-        base.modeID = rand()%45+1;
-        AvatarPropMap prop;
-        auto monster = addEntity(base, prop, ENTITY_CAMP_BLUE+100, ENTITY_AI);
+        base.modelID = rand()%45+1;
+        base.modelName = base.avatarName;
+        base.camp = ENTITY_CAMP_BLUE + 100;
+        base.etype = ENTITY_AI;
+        base.state = ENTITY_STATE_ACTIVE;
+        EntityProp fixedProps;
+        fixedProps.hp = 1000;
+        fixedProps.attack = 10;
+        EntityProp grow;
+
+        auto monster = addEntity(base, fixedProps, grow, grow);
         _monsters[monster->_entityInfo.eid] = monster;
     }
     for (auto monster: _monsters)
@@ -765,7 +775,7 @@ void Scene::checkSceneState()
             else if (kv.second->_control.stateChageTime + 10.0 < getFloatSteadyNowTime())
             {
                 kv.second->_entityInfo.state = ENTITY_STATE_ACTIVE;
-                kv.second->_entityInfo.curHP = 100;
+                kv.second->_entityInfo.curHP = kv.second->_props.hp;
                 kv.second->_isInfoDirty = true;
                 kv.second->_entityMove.position = kv.second->_control.spawnpoint;
                 if ( kv.second->_control.agentNo < _sim->getNumAgents())

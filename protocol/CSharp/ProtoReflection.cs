@@ -152,6 +152,10 @@ namespace Proto4z
             _idToName.Add(10014, "SceneSection");
             _nameToID.Add("SceneEventInfo", 10015);
             _idToName.Add(10015, "SceneEventInfo");
+            _nameToID.Add("EntityProp", 10016);
+            _idToName.Add(10016, "EntityProp");
+            _nameToID.Add("EntityBase", 10017);
+            _idToName.Add(10017, "EntityBase");
             _nameToID.Add("SceneKnock", 39000);
             _idToName.Add(39000, "SceneKnock");
             _nameToID.Add("ScenePulse", 39001);

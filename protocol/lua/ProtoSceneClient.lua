@@ -30,8 +30,9 @@ Proto4z.register(50004,"SceneRefreshNotice")
 Proto4z.SceneRefreshNotice = {}  
 Proto4z.SceneRefreshNotice.__protoID = 50004 
 Proto4z.SceneRefreshNotice.__protoName = "SceneRefreshNotice" 
-Proto4z.SceneRefreshNotice[1] = {name="entityInfos", type="EntityInfoArray" }  
-Proto4z.SceneRefreshNotice[2] = {name="entityMoves", type="EntityMoveArray" }  
+Proto4z.SceneRefreshNotice[1] = {name="entityProps", type="EntityPropArray" }  
+Proto4z.SceneRefreshNotice[2] = {name="entityInfos", type="EntityInfoArray" }  
+Proto4z.SceneRefreshNotice[3] = {name="entityMoves", type="EntityMoveArray" }  
  
 Proto4z.register(50005,"SceneReportsNotice") 
 Proto4z.SceneReportsNotice = {}  

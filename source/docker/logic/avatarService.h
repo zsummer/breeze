@@ -42,10 +42,7 @@ public:
     void onTick(TimerID tID, ui32 count, ui32 repeat) override final; //只有client在线时候才会被调用, 间隔为session pulse的间隔. 精度为分钟.  
 
 
-public:
-	void refreshProp(const std::string &prop, double val, bool overwrite = true);
-	double getProp(const std::string &prop);
-	inline const AvatarPropMap& getProps() { return _baseProps; };
+
 
 private:
     void onModuleLoad(bool success, const std::string & moduleName);
@@ -60,7 +57,7 @@ private:
 
 public:
     ModuleData<AvatarBaseInfo> _baseInfo;
-    AvatarPropMap _baseProps;
+
 private:
     int _curLoadModuleCount = 0;
     int _curUnloadModuleCount = 0;

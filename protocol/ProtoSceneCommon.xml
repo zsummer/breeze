@@ -36,12 +36,55 @@
         <member name="SCENE_STATE_ACTIVE" desc="战斗中" />
     </enum>
 
+    <!-- prop type -->
+    <enum type="ui16" name="PropType" desc="">
+        <member name="PROP_FIXED" value="0" desc="" />
+        <member name="PROP_FIXED_GROW" value="1" desc="" />
+        <member name="PROP_GROWTH" value="2" desc="" />
+    </enum>
+
+    <struct name="EntityProp" store="MyISAM" desc="">
+        <member name="id" type="ui64"   desc=""/>
+        <member name="modelID" type="ui64" tag="key"   desc=""/>
+        <member name="propType" type="ui16" tag="key"   desc="0 fixed, 1 grow fixed, 2 growth PropType"/>
+        <member name="hp" type="double"   desc="血量值"/>
+        <member name="hpRegen" type="double"   desc="每秒血量值恢复"/>
+        <member name="attack" type="double"   desc="伤害"/>
+        <member name="defense" type="double"   desc="防御"/>
+        <member name="crit" type="double"   desc="暴击"/>
+        <member name="toughness" type="double"   desc="韧性"/>
+        <member name="moveSpeed" type="double"   desc="移动速度"/>
+        <member name="attackSpeed" type="double"   desc="攻击速度"/>
+        <member name="vampirk " type="double"   desc="吸血"/> 
+    </struct>
+    <array name="EntityPropArray" type="EntityProp" desc="" />
+    <map name="EntityPropMap" key="ui64" value="EntityProp" desc="" />
+
+    <struct name="EntityBase" store="MyISAM" desc="">
+    	<member name="eid" type="ui64"   desc=""/>
+    	<member name="modelID" type="ui64" tag="key"   desc=""/>
+        <member name="modelName" type="string"   desc=""/>
+        <member name="avatarID" type="ui64"   desc=""/>
+        <member name="avatarName" type="string"   desc=""/>
+        <member name="iconID"  type="ui64" desc="头像"/>
+        <member name="level"  type="double" desc="等级"/>
+        <member name="exp"  type="double" desc="经验"/>
+        <member name="gold"  type="double" desc="金币"/>
+        <member name="camp"  type="ui16" desc=""/>
+        <member name="etype"  type="ui16" desc=""/>
+        <member name="state"  type="ui16" desc=""/>
+    </struct>
+    <array name="EntityBaseArray" type="EntityBase" desc="" />
+    <map name="EntityBaseMap" key="ui64" value="EntityBase" desc="" />
 
 
     <struct name="SceneGroupAvatarInfo" desc="">
         <member name="areaID" type="ui64"  desc="考虑混服情况,必须指定该玩家来自哪个当前区"/>
-        <member name="baseInfo" type="AvatarBaseInfo"  desc="玩家基础数据"/>
-        <member name="baseProps" type="AvatarPropMap"  desc="角色属性数据"/>
+        <member name="baseInfo" type="EntityBase"  desc="玩家基础数据"/>
+        <member name="fixedProps" type="EntityProp"   desc="基础固定属性"/>
+        <member name="growthProps" type="EntityProp"   desc="成长基础属性"/>
+        <member name="growths" type="EntityProp"   desc="成长系数"/>
+
         <member name="powerType" type="ui16"  desc="组队权限: 0普通,1leader,2master"/>
         <member name="token" type="string"  desc="scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开."/>
     </struct>
@@ -96,7 +139,7 @@
     </enum>
 
     <!-- 实体阵营-->
-    <enum type="ui16" name="EntityCampType" desc="">
+    <enum type="ui64" name="EntityCampType" desc="">
         <member name="ENTITY_CAMP_NONE" desc="" />
         <member name="ENTITY_CAMP_RED" desc="红方" />
         <member name="ENTITY_CAMP_BLUE" desc="蓝方" />
@@ -315,10 +358,13 @@
 
     <!-- 一个实体的完整同步数据 -->
     <struct name="EntityFullData" desc="EntityFullData">
-        <member name="baseInfo" type="AvatarBaseInfo"  desc=""/>
-        <member name="baseProps" type="AvatarPropMap"  desc=""/>
-        <member name="entityInfo" type="EntityInfo"  desc=""/>
-        <member name="entityMove" type="EntityMove"  desc=""/>
+        <member name="baseInfo" type="EntityBase"  desc="玩家基础数据"/>
+        <member name="fixedProps" type="EntityProp"   desc="基础固定属性"/>
+        <member name="growthProps" type="EntityProp"   desc="成长基础属性"/>
+        <member name="growths" type="EntityProp"   desc="成长系数"/>
+        <member name="props" type="EntityProp"   desc="当前"/>
+        <member name="info" type="EntityInfo"  desc=""/>
+        <member name="mv" type="EntityMove"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>
     <array name="EntityFullDataArray" type="EntityFullData" desc="" />
