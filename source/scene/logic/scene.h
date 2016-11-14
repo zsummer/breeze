@@ -41,6 +41,7 @@ private:
 
     double _lastCheckMonstr = 0.0;
     double _lastPrintStatus = 0.0;
+    double _lastDoRVO = 0.0;
 public:
     Scene(SceneID id);
     ~Scene();

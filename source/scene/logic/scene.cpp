@@ -48,6 +48,8 @@ bool Scene::cleanScene()
     _sceneType = SCENE_NONE;
     _sceneStatus = SCENE_STATE_NONE;
     _lastStatusChangeTime = getFloatSteadyNowTime();
+    _lastPrintStatus = _lastStatusChangeTime;
+    _lastDoRVO = _lastStatusChangeTime;
     if (_sim)
     {
         delete _sim;
@@ -413,6 +415,9 @@ void Scene::doStepRVO()
     checkStepRVO(true);
     if (_sim)
     {
+        double timeStep = getFloatSteadyNowTime() - _lastDoRVO;
+        _lastDoRVO = getFloatSteadyNowTime();
+        _sim->setTimeStep(timeStep);
         _sim->doStep();
         for (auto &kv : _entitys)
         {
