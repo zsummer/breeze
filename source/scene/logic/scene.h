@@ -40,6 +40,7 @@ private:
     std::map<EntityID, EntityPtr> _monsters;
 
     double _lastCheckMonstr = 0.0;
+    double _lastPrintStatus = 0.0;
 public:
     Scene(SceneID id);
     ~Scene();

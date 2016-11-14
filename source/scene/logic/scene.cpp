@@ -285,7 +285,11 @@ bool Scene::onUpdate()
         doMonster();
         doFollow();
     }
-
+    if (getFloatSteadyNowTime() - _lastPrintStatus > 10)
+    {
+        _lastPrintStatus = getFloatSteadyNowTime();
+        LOGI("sceneID=" << _sceneID << ", rvo sum second=" << _sim->getGlobalTime() << ", scene sum second=" << getFloatSteadyNowTime() - _startTime);
+    }
     doStepRVO();
     checkSkillBehaviour();
     checkSceneState();

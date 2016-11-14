@@ -581,6 +581,10 @@ namespace RVO {
 		 */
 		void setTimeStep(double timeStep);
 
+        inline double getGlobalTime()
+        {
+            return globalTime_;
+        }
 	private:
 		std::vector<Agent *> agents_;
         std::vector<size_t> freeAgents_;
