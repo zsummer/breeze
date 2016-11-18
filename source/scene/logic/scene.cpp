@@ -434,8 +434,8 @@ void Scene::doStepRVO()
             if (entity._isMoveDirty)
             {
                 auto realMove = toRVOVector2(rvoPos) - toRVOVector2(entity._entityMove.position);
-                auto expectMove = _sim->getAgentVelocity(entity._control.agentNo);
-                entity._entityMove.realSpeed = RVO::abs(realMove)/SceneFrameInterval;
+                auto expectMove = _sim->getAgentPrefVelocity(entity._control.agentNo);
+                entity._entityMove.realSpeed = RVO::abs(realMove) / timeStep;
                 if (RVO::abs(expectMove) > 0.0001) //float over
                 {
                     if (RVO::abs(realMove) / (RVO::abs(expectMove)/ServerPulseInterval) < 0.1)
