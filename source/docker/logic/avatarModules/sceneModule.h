@@ -23,10 +23,13 @@
 #ifndef _SCENE_MODULE_H_
 #define _SCENE_MODULE_H_
 #include <common.h>
+#include <ProtoSceneServer.h>
 
 class AvatarService;
 class SceneModule
 {
+public:
+    void onModuleInit(AvatarService & avatar);
 public:
     void onSceneGroupInfoNotice(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
 
@@ -34,6 +37,7 @@ public:
     void onSceneGroupEnterReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
     void onSceneGroupCancelReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
 
+    void fillGroupInfo(AvatarService & avatar, SceneServerJoinGroupIns& ins);
     void refreshGroupInfo(AvatarService & avatar);
     void onSceneGroupCreateReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);
     void onSceneGroupJoinReq(AvatarService & avatar, const Tracing & trace, zsummer::proto4z::ReadStream & rs);

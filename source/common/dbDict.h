@@ -76,12 +76,55 @@ inline std::pair<bool, dt>  getOneKey##dt(keytype k) \
         return std::make_pair(false, dt()); \
     return std::make_pair(true, founder->second); \
 } \
-inline const std::map<keytype, dt> &  peekOneKey##dt(keytype k) \
+inline const std::map<keytype, dt> &  peekOneKey##dt() \
 { \
     return  _dictOneKey##dt; \
 } \
 private: \
 std::map<keytype, dt> _dictOneKey##dt 
+
+
+#define LOAD_TWO_KEY_DICT(dt) if(!loadTwoKey##dt()) return false; 
+
+#define MAKE_TWO_KEY_DICT(dt, keytype1, key1, keytype2, key2) public: \
+inline bool loadTwoKey##dt() \
+{ \
+    if (!fetchDict<dt>(_dictHelper, [this](const dt & dict) \
+    { \
+        _dictTwoKey##dt[dict.key1][dict.key2] = dict; \
+    })) \
+    { \
+        LOGE("fetchDict" #dt " error"); \
+        return false; \
+    } \
+    return true; \
+} \
+inline const dt & getTwoKey##dt##WithException(keytype1 k1, keytype2 k2) \
+{ \
+    auto founder1 =  _dictTwoKey##dt.find(k1); \
+    if (founder1 == _dictTwoKey##dt.end()) \
+        throw std::runtime_error("had exception when get" #dt "WithException not found key1[" + toString(k1) + "][" + toString(k2) + "]"); \
+    auto founder2 =  founder1->second.find(k2); \
+    if (founder2 == founder1->second.end()) \
+        throw std::runtime_error("had exception when get" #dt "WithException not found key2[" + toString(k1) + "][" + toString(k2) + "]"); \
+    return founder2->second; \
+} \
+inline std::pair<bool, dt>  getTwoKey##dt(keytype1 k1, keytype2 k2) \
+{ \
+    auto founder1 =  _dictTwoKey##dt.find(k1); \
+    if (founder1 == _dictTwoKey##dt.end()) \
+        return std::make_pair(false, dt()); \
+    auto founder2 =  founder1->second.find(k2); \
+    if (founder2 == founder1->second.end()) \
+        return std::make_pair(false, dt()); \
+    return std::make_pair(true, founder2->second); \
+} \
+inline const std::map<keytype1, std::map<keytype2, dt> > &  peekTwoKey##dt() \
+{ \
+    return  _dictTwoKey##dt; \
+} \
+private: \
+std::map<keytype1, std::map<keytype2, dt> > _dictTwoKey##dt 
 
 
 
@@ -96,6 +139,8 @@ public:
         buildTable<DictRafflePool>(helper);
         buildTable<DictBaseProps>(helper);
         buildTable<DictItem>(helper);
+        buildTable<EntityProp>(helper);
+        buildTable<EntityBase>(helper);
         return true;
     }
     inline bool buildInfoTable()
@@ -126,6 +171,8 @@ public:
         LOAD_ONE_KEY_DICT(DictRafflePool);
         LOAD_ONE_KEY_DICT(DictBaseProps);
         LOAD_ONE_KEY_DICT(DictItem);
+        LOAD_ONE_KEY_DICT(EntityBase);
+        LOAD_TWO_KEY_DICT(EntityProp);
         return true;
     }
     
@@ -133,6 +180,10 @@ public:
     MAKE_ONE_KEY_DICT(DictRafflePool, ui64, id);
     MAKE_ONE_KEY_DICT(DictBaseProps, ui64, id);
     MAKE_ONE_KEY_DICT(DictItem, ui64, id);
+    MAKE_ONE_KEY_DICT(EntityBase, ui64, modelID);
+
+
+    MAKE_TWO_KEY_DICT(EntityProp, ui64, modelID, ui16, propType);
 
 private:
     DBHelperPtr _dictHelper;

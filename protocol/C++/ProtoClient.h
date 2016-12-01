@@ -228,30 +228,26 @@ struct AttachAvatarResp //选角色请求返回
     static const std::string getProtoName() { return "AttachAvatarResp";} 
     unsigned short retCode;  
     AvatarBaseInfo baseInfo;  
-    AvatarPropMap baseProps;  
     AttachAvatarResp() 
     { 
         retCode = 0; 
     } 
-    AttachAvatarResp(const unsigned short & retCode, const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps) 
+    AttachAvatarResp(const unsigned short & retCode, const AvatarBaseInfo & baseInfo) 
     { 
         this->retCode = retCode; 
         this->baseInfo = baseInfo; 
-        this->baseProps = baseProps; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachAvatarResp & data) 
 { 
     ws << data.retCode;  
     ws << data.baseInfo;  
-    ws << data.baseProps;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachAvatarResp & data) 
 { 
     rs >> data.retCode;  
     rs >> data.baseInfo;  
-    rs >> data.baseProps;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachAvatarResp & info) 
@@ -259,7 +255,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "retCode=" << info.retCode << ","; 
     stm << "baseInfo=" << info.baseInfo << ","; 
-    stm << "baseProps=" << info.baseProps << ","; 
     stm << "]"; 
     return stm; 
 } 
@@ -300,34 +295,29 @@ struct AvatarPropMapNotice
     static const unsigned short getProtoID() { return 40008;} 
     static const std::string getProtoName() { return "AvatarPropMapNotice";} 
     unsigned long long avatarID;  
-    AvatarPropMap baseProps;  
     AvatarPropMapNotice() 
     { 
         avatarID = 0; 
     } 
-    AvatarPropMapNotice(const unsigned long long & avatarID, const AvatarPropMap & baseProps) 
+    AvatarPropMapNotice(const unsigned long long & avatarID) 
     { 
         this->avatarID = avatarID; 
-        this->baseProps = baseProps; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AvatarPropMapNotice & data) 
 { 
     ws << data.avatarID;  
-    ws << data.baseProps;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AvatarPropMapNotice & data) 
 { 
     rs >> data.avatarID;  
-    rs >> data.baseProps;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AvatarPropMapNotice & info) 
 { 
     stm << "["; 
     stm << "avatarID=" << info.avatarID << ","; 
-    stm << "baseProps=" << info.baseProps << ","; 
     stm << "]"; 
     return stm; 
 } 
@@ -1050,12 +1040,12 @@ struct ChangeIconIDReq
 { 
     static const unsigned short getProtoID() { return 40031;} 
     static const std::string getProtoName() { return "ChangeIconIDReq";} 
-    int iconID;  
+    unsigned long long iconID;  
     ChangeIconIDReq() 
     { 
         iconID = 0; 
     } 
-    ChangeIconIDReq(const int & iconID) 
+    ChangeIconIDReq(const unsigned long long & iconID) 
     { 
         this->iconID = iconID; 
     } 
@@ -1083,13 +1073,13 @@ struct ChangeIconIDResp
     static const unsigned short getProtoID() { return 40032;} 
     static const std::string getProtoName() { return "ChangeIconIDResp";} 
     unsigned short retCode;  
-    int iconID;  
+    unsigned long long iconID;  
     ChangeIconIDResp() 
     { 
         retCode = 0; 
         iconID = 0; 
     } 
-    ChangeIconIDResp(const unsigned short & retCode, const int & iconID) 
+    ChangeIconIDResp(const unsigned short & retCode, const unsigned long long & iconID) 
     { 
         this->retCode = retCode; 
         this->iconID = iconID; 
@@ -1120,12 +1110,12 @@ struct ChangeModeIDReq
 { 
     static const unsigned short getProtoID() { return 40033;} 
     static const std::string getProtoName() { return "ChangeModeIDReq";} 
-    int modeID;  
+    unsigned long long modeID;  
     ChangeModeIDReq() 
     { 
         modeID = 0; 
     } 
-    ChangeModeIDReq(const int & modeID) 
+    ChangeModeIDReq(const unsigned long long & modeID) 
     { 
         this->modeID = modeID; 
     } 
@@ -1153,13 +1143,13 @@ struct ChangeModeIDResp
     static const unsigned short getProtoID() { return 40034;} 
     static const std::string getProtoName() { return "ChangeModeIDResp";} 
     unsigned short retCode;  
-    int modeID;  
+    unsigned long long modeID;  
     ChangeModeIDResp() 
     { 
         retCode = 0; 
         modeID = 0; 
     } 
-    ChangeModeIDResp(const unsigned short & retCode, const int & modeID) 
+    ChangeModeIDResp(const unsigned short & retCode, const unsigned long long & modeID) 
     { 
         this->retCode = retCode; 
         this->modeID = modeID; 

@@ -283,6 +283,16 @@ public:
                    return "SceneEventInfo";
             }
             break;
+            case 10016:
+            {
+                   return "EntityProp";
+            }
+            break;
+            case 10017:
+            {
+                   return "EntityBase";
+            }
+            break;
             case 39000:
             {
                    return "SceneKnock";

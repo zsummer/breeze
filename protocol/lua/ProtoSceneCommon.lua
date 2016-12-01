@@ -15,15 +15,77 @@ Proto4z.SCENE_STATE_ALLOCATE = 3--服务器分配场景中
 Proto4z.SCENE_STATE_WAIT = 4--等待玩家加入战场 
 Proto4z.SCENE_STATE_ACTIVE = 5--战斗中 
  
+Proto4z.PROP_FIXED = 0 
+Proto4z.PROP_FIXED_GROW = 1 
+Proto4z.PROP_GROWTH = 2 
+ 
+Proto4z.register(10016,"EntityProp") 
+Proto4z.EntityProp = {}  
+Proto4z.EntityProp.__protoID = 10016 
+Proto4z.EntityProp.__protoName = "EntityProp" 
+Proto4z.EntityProp[1] = {name="id", type="ui64" }  
+Proto4z.EntityProp[2] = {name="modelID", type="ui64" }  
+Proto4z.EntityProp[3] = {name="propType", type="ui16" } --0 fixed, 1 grow fixed, 2 growth PropType 
+Proto4z.EntityProp[4] = {name="hp", type="double" } --血量值 
+Proto4z.EntityProp[5] = {name="hpRegen", type="double" } --每秒血量值恢复 
+Proto4z.EntityProp[6] = {name="attack", type="double" } --伤害 
+Proto4z.EntityProp[7] = {name="defense", type="double" } --防御 
+Proto4z.EntityProp[8] = {name="crit", type="double" } --暴击 
+Proto4z.EntityProp[9] = {name="toughness", type="double" } --韧性 
+Proto4z.EntityProp[10] = {name="moveSpeed", type="double" } --移动速度 
+Proto4z.EntityProp[11] = {name="attackSpeed", type="double" } --攻击速度 
+Proto4z.EntityProp[12] = {name="vampirk", type="double" } --吸血 
+ 
+Proto4z.EntityPropArray = {}  
+Proto4z.EntityPropArray.__protoName = "EntityPropArray" 
+Proto4z.EntityPropArray.__protoDesc = "array" 
+Proto4z.EntityPropArray.__protoTypeV = "EntityProp" 
+ 
+Proto4z.EntityPropMap = {}  
+Proto4z.EntityPropMap.__protoName = "EntityPropMap" 
+Proto4z.EntityPropMap.__protoDesc = "map" 
+Proto4z.EntityPropMap.__protoTypeK = "ui64" 
+Proto4z.EntityPropMap.__protoTypeV = "EntityProp" 
+ 
+Proto4z.register(10017,"EntityBase") 
+Proto4z.EntityBase = {}  
+Proto4z.EntityBase.__protoID = 10017 
+Proto4z.EntityBase.__protoName = "EntityBase" 
+Proto4z.EntityBase[1] = {name="eid", type="ui64" }  
+Proto4z.EntityBase[2] = {name="modelID", type="ui64" }  
+Proto4z.EntityBase[3] = {name="modelName", type="string" }  
+Proto4z.EntityBase[4] = {name="avatarID", type="ui64" }  
+Proto4z.EntityBase[5] = {name="avatarName", type="string" }  
+Proto4z.EntityBase[6] = {name="iconID", type="ui64" } --头像 
+Proto4z.EntityBase[7] = {name="level", type="double" } --等级 
+Proto4z.EntityBase[8] = {name="exp", type="double" } --经验 
+Proto4z.EntityBase[9] = {name="gold", type="double" } --金币 
+Proto4z.EntityBase[10] = {name="camp", type="ui16" }  
+Proto4z.EntityBase[11] = {name="etype", type="ui16" }  
+Proto4z.EntityBase[12] = {name="state", type="ui16" }  
+ 
+Proto4z.EntityBaseArray = {}  
+Proto4z.EntityBaseArray.__protoName = "EntityBaseArray" 
+Proto4z.EntityBaseArray.__protoDesc = "array" 
+Proto4z.EntityBaseArray.__protoTypeV = "EntityBase" 
+ 
+Proto4z.EntityBaseMap = {}  
+Proto4z.EntityBaseMap.__protoName = "EntityBaseMap" 
+Proto4z.EntityBaseMap.__protoDesc = "map" 
+Proto4z.EntityBaseMap.__protoTypeK = "ui64" 
+Proto4z.EntityBaseMap.__protoTypeV = "EntityBase" 
+ 
 Proto4z.register(10000,"SceneGroupAvatarInfo") 
 Proto4z.SceneGroupAvatarInfo = {}  
 Proto4z.SceneGroupAvatarInfo.__protoID = 10000 
 Proto4z.SceneGroupAvatarInfo.__protoName = "SceneGroupAvatarInfo" 
 Proto4z.SceneGroupAvatarInfo[1] = {name="areaID", type="ui64" } --考虑混服情况,必须指定该玩家来自哪个当前区 
-Proto4z.SceneGroupAvatarInfo[2] = {name="baseInfo", type="AvatarBaseInfo" } --玩家基础数据 
-Proto4z.SceneGroupAvatarInfo[3] = {name="baseProps", type="AvatarPropMap" } --角色属性数据 
-Proto4z.SceneGroupAvatarInfo[4] = {name="powerType", type="ui16" } --组队权限: 0普通,1leader,2master 
-Proto4z.SceneGroupAvatarInfo[5] = {name="token", type="string" } --scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开. 
+Proto4z.SceneGroupAvatarInfo[2] = {name="baseInfo", type="EntityBase" } --玩家基础数据 
+Proto4z.SceneGroupAvatarInfo[3] = {name="fixedProps", type="EntityProp" } --基础固定属性 
+Proto4z.SceneGroupAvatarInfo[4] = {name="growthProps", type="EntityProp" } --成长基础属性 
+Proto4z.SceneGroupAvatarInfo[5] = {name="growths", type="EntityProp" } --成长系数 
+Proto4z.SceneGroupAvatarInfo[6] = {name="powerType", type="ui16" } --组队权限: 0普通,1leader,2master 
+Proto4z.SceneGroupAvatarInfo[7] = {name="token", type="string" } --scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开. 
  
 Proto4z.SceneGroupAvatarInfoArray = {}  
 Proto4z.SceneGroupAvatarInfoArray.__protoName = "SceneGroupAvatarInfoArray" 
@@ -225,6 +287,7 @@ Proto4z.SceneEventInfo[1] = {name="src", type="ui64" } --eid
 Proto4z.SceneEventInfo[2] = {name="dst", type="ui64" } --eid 
 Proto4z.SceneEventInfo[3] = {name="ev", type="ui16" } --事件类型 
 Proto4z.SceneEventInfo[4] = {name="val", type="double" } --数值 
+Proto4z.SceneEventInfo[5] = {name="mix", type="string" } --数值 
  
 Proto4z.SceneEventInfoArray = {}  
 Proto4z.SceneEventInfoArray.__protoName = "SceneEventInfoArray" 
@@ -317,11 +380,14 @@ Proto4z.register(10013,"EntityFullData")
 Proto4z.EntityFullData = {} --EntityFullData 
 Proto4z.EntityFullData.__protoID = 10013 
 Proto4z.EntityFullData.__protoName = "EntityFullData" 
-Proto4z.EntityFullData[1] = {name="baseInfo", type="AvatarBaseInfo" }  
-Proto4z.EntityFullData[2] = {name="baseProps", type="AvatarPropMap" }  
-Proto4z.EntityFullData[3] = {name="entityInfo", type="EntityInfo" }  
-Proto4z.EntityFullData[4] = {name="entityMove", type="EntityMove" }  
-Proto4z.EntityFullData[5] = {name="report", type="EntityReport" }  
+Proto4z.EntityFullData[1] = {name="baseInfo", type="EntityBase" } --玩家基础数据 
+Proto4z.EntityFullData[2] = {name="fixedProps", type="EntityProp" } --基础固定属性 
+Proto4z.EntityFullData[3] = {name="growthProps", type="EntityProp" } --成长基础属性 
+Proto4z.EntityFullData[4] = {name="growths", type="EntityProp" } --成长系数 
+Proto4z.EntityFullData[5] = {name="props", type="EntityProp" } --当前 
+Proto4z.EntityFullData[6] = {name="info", type="EntityInfo" }  
+Proto4z.EntityFullData[7] = {name="mv", type="EntityMove" }  
+Proto4z.EntityFullData[8] = {name="report", type="EntityReport" }  
  
 Proto4z.EntityFullDataArray = {}  
 Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray" 

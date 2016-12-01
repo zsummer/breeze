@@ -226,9 +226,9 @@ namespace Proto4z
         public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
         public string avatarName; //用户唯一昵称, 对应AvatarService的ServiceName  
         public string account; //帐号  
-        public int iconID; //头像  
-        public int modeID; //模型  
-        public int level; //等级  
+        public ulong iconID; //头像  
+        public ulong modeID; //模型  
+        public double level; //等级  
         public AvatarPreview()  
         { 
             avatarID = 0;  
@@ -236,9 +236,9 @@ namespace Proto4z
             account = "";  
             iconID = 0;  
             modeID = 0;  
-            level = 0;  
+            level = 0.0;  
         } 
-        public AvatarPreview(ulong avatarID, string avatarName, string account, int iconID, int modeID, int level) 
+        public AvatarPreview(ulong avatarID, string avatarName, string account, ulong iconID, ulong modeID, double level) 
         { 
             this.avatarID = avatarID; 
             this.avatarName = avatarName; 
@@ -253,9 +253,9 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.modeID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modeID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.level)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -263,9 +263,9 @@ namespace Proto4z
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.modeID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.modeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.level = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -311,9 +311,9 @@ namespace Proto4z
         public ulong avatarID; //用户唯一ID, 对应AvatarService的ServiceID  
         public string avatarName; //用户唯一昵称, 对应AvatarService的ServiceName  
         public string account; //帐号  
-        public int iconID; //头像  
-        public int modeID; //模型  
-        public int level; //等级  
+        public ulong iconID; //头像  
+        public ulong modeID; //模型  
+        public double level; //等级  
         public double exp; //经验  
         public double gold; //金币  
         public double diamond; //钻石  
@@ -325,13 +325,13 @@ namespace Proto4z
             account = "";  
             iconID = 0;  
             modeID = 0;  
-            level = 0;  
+            level = 0.0;  
             exp = 0.0;  
             gold = 0.0;  
             diamond = 0.0;  
             createTime = 0;  
         } 
-        public AvatarBaseInfo(ulong avatarID, string avatarName, string account, int iconID, int modeID, int level, double exp, double gold, double diamond, ulong createTime) 
+        public AvatarBaseInfo(ulong avatarID, string avatarName, string account, ulong iconID, ulong modeID, double level, double exp, double gold, double diamond, ulong createTime) 
         { 
             this.avatarID = avatarID; 
             this.avatarName = avatarName; 
@@ -350,9 +350,9 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.account)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.iconID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.modeID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.level)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modeID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.level)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.exp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.gold)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.diamond)); 
@@ -364,9 +364,9 @@ namespace Proto4z
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.account = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.iconID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.modeID = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            this.level = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.modeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.level = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.exp = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.gold = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.diamond = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
@@ -400,38 +400,6 @@ namespace Proto4z
                     var data = new AvatarBaseInfo(); 
                     data.__decode(binData, ref pos); 
                     this.Add(data); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class AvatarPropMap : System.Collections.Generic.Dictionary<string, double>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            foreach(var kv in this) 
-            { 
-                ret.AddRange(Proto4z.BaseProtoObject.encodeString(kv.Key)); 
-                ret.AddRange(Proto4z.BaseProtoObject.encodeDouble(kv.Value)); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var key = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-                    var val = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-                    this.Add(key, val); 
                 } 
             } 
             return pos; 
@@ -565,7 +533,7 @@ namespace Proto4z
         static public string getProtoName() { return "DictRafflePool"; } 
         //members   
         public ulong id;  
-        public int raffleCount; //批量抽取次数  
+        public ulong raffleCount; //批量抽取次数  
         public DictRaffleAwardArray pool; //奖池  
         public string poolString; //奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式  
         public DictRafflePool()  
@@ -575,7 +543,7 @@ namespace Proto4z
             pool = new DictRaffleAwardArray();  
             poolString = "";  
         } 
-        public DictRafflePool(ulong id, int raffleCount, DictRaffleAwardArray pool, string poolString) 
+        public DictRafflePool(ulong id, ulong raffleCount, DictRaffleAwardArray pool, string poolString) 
         { 
             this.id = id; 
             this.raffleCount = raffleCount; 
@@ -586,7 +554,7 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.raffleCount)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.raffleCount)); 
             if (this.pool == null) this.pool = new DictRaffleAwardArray(); 
             data.AddRange(this.pool.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.poolString)); 
@@ -595,7 +563,7 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.raffleCount = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            this.raffleCount = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.pool = new DictRaffleAwardArray(); 
             this.pool.__decode(binData, ref pos); 
             this.poolString = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
@@ -693,7 +661,7 @@ namespace Proto4z
         public ushort autoUse; //0 不可使用, 1 可使用, 2 获得后自动使用  
         public ulong dropID; //DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取  
         public ushort vocationLimit; //限制职业类型, 装备类型  
-        public int levelLimit; //限制职业最小等级, 装备类型  
+        public double levelLimit; //限制职业最小等级, 装备类型  
         public string desc;  
         public DictItem()  
         { 
@@ -706,10 +674,10 @@ namespace Proto4z
             autoUse = 0;  
             dropID = 0;  
             vocationLimit = 0;  
-            levelLimit = 0;  
+            levelLimit = 0.0;  
             desc = "";  
         } 
-        public DictItem(ulong id, ushort primitiveType, ushort subType, ushort visible, ushort stacks, ulong fightEffectID, ushort autoUse, ulong dropID, ushort vocationLimit, int levelLimit, string desc) 
+        public DictItem(ulong id, ushort primitiveType, ushort subType, ushort visible, ushort stacks, ulong fightEffectID, ushort autoUse, ulong dropID, ushort vocationLimit, double levelLimit, string desc) 
         { 
             this.id = id; 
             this.primitiveType = primitiveType; 
@@ -735,7 +703,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.autoUse)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.dropID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.vocationLimit)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeI32(this.levelLimit)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.levelLimit)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
@@ -750,7 +718,7 @@ namespace Proto4z
             this.autoUse = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.dropID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.vocationLimit = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.levelLimit = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            this.levelLimit = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 

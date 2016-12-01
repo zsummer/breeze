@@ -48,6 +48,8 @@ bool Scene::cleanScene()
     _sceneType = SCENE_NONE;
     _sceneStatus = SCENE_STATE_NONE;
     _lastStatusChangeTime = getFloatSteadyNowTime();
+    _lastPrintStatus = _lastStatusChangeTime;
+    _lastDoRVO = _lastStatusChangeTime;
     if (_sim)
     {
         delete _sim;
@@ -112,29 +114,31 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 
 
 
-EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
-    const AvatarPropMap & baseProps,
-    ui16 camp,
-    EntityType etype,
-    EntityState state,
+EntityPtr Scene::addEntity(const EntityBase & baseInfo,
+    const EntityProp & fixedProps,
+    const EntityProp & growProps,
+    const EntityProp & growth,
     GroupID groupID)
 {
     EntityPtr entity = std::make_shared<Entity>();
 
     entity->_baseInfo = baseInfo;
-    entity->_baseProps = baseProps;
+    entity->_fixedProps = fixedProps;
+    entity->_growProps = growProps;
+    entity->_growth = growth;
 
-
+    entity->_props = processPropGrow(fixedProps, growProps, growth, baseInfo.level);
+    
 
     entity->_entityInfo.eid = ++_lastEID;
-    entity->_entityInfo.camp = camp;
-    entity->_entityInfo.etype = etype;
+    entity->_entityInfo.camp = baseInfo.camp;
+    entity->_entityInfo.etype = baseInfo.etype;
     entity->_entityInfo.groupID = groupID;
-    entity->_entityInfo.state = ENTITY_STATE_ACTIVE;
+    entity->_entityInfo.state = baseInfo.state;
     entity->_entityInfo.leader = InvalidEntityID;
     entity->_entityInfo.foe = InvalidEntityID;
 
-    entity->_entityInfo.curHP = 100;
+    entity->_entityInfo.curHP = entity->_props.hp;
 
     entity->_control.spawnpoint = { 0.0 - 30 +  realRandF()*30 ,60 -30 + realRandF()*30 };
     entity->_control.eid = entity->_entityInfo.eid;
@@ -152,7 +156,7 @@ EntityPtr Scene::addEntity(const AvatarBaseInfo & baseInfo,
     entity->_control.agentNo = _sim->addAgent(toRVOVector2(entity->_entityMove.position));
     _entitys.insert(std::make_pair(entity->_entityInfo.eid, entity));
 
-    if (baseInfo.avatarID != InvalidServiceID && etype == ENTITY_PLAYER)
+    if (baseInfo.avatarID != InvalidServiceID && entity->_entityInfo.etype == ENTITY_PLAYER)
     {
         _players[baseInfo.avatarID] = entity;
         _sim->setAgentRadius(entity->_control.agentNo, 0.5f);
@@ -283,7 +287,11 @@ bool Scene::onUpdate()
         doMonster();
         doFollow();
     }
-
+    if (getFloatSteadyNowTime() - _lastPrintStatus > 10)
+    {
+        _lastPrintStatus = getFloatSteadyNowTime();
+        LOGI("sceneID=" << _sceneID << ", rvo sum second=" << _sim->getGlobalTime() << ", scene sum second=" << getFloatSteadyNowTime() - _startTime);
+    }
     doStepRVO();
     checkSkillBehaviour();
     checkSceneState();
@@ -407,6 +415,9 @@ void Scene::doStepRVO()
     checkStepRVO(true);
     if (_sim)
     {
+        double timeStep = getFloatSteadyNowTime() - _lastDoRVO;
+        _lastDoRVO = getFloatSteadyNowTime();
+        _sim->setTimeStep(timeStep);
         _sim->doStep();
         for (auto &kv : _entitys)
         {
@@ -423,8 +434,8 @@ void Scene::doStepRVO()
             if (entity._isMoveDirty)
             {
                 auto realMove = toRVOVector2(rvoPos) - toRVOVector2(entity._entityMove.position);
-                auto expectMove = _sim->getAgentVelocity(entity._control.agentNo);
-                entity._entityMove.realSpeed = RVO::abs(realMove)/SceneFrameInterval;
+                auto expectMove = _sim->getAgentPrefVelocity(entity._control.agentNo);
+                entity._entityMove.realSpeed = RVO::abs(realMove) / timeStep;
                 if (RVO::abs(expectMove) > 0.0001) //float over
                 {
                     if (RVO::abs(realMove) / (RVO::abs(expectMove)/ServerPulseInterval) < 0.1)
@@ -459,13 +470,21 @@ void Scene::doMonster()
     }
     while (_monsters.size() < _players.size() * 3  )
     {
-        AvatarBaseInfo base;
+        EntityBase base;
         base.avatarID = 1000 + _monsters.size();
         base.avatarName = "MyLittlePet_";
         base.avatarName += toString(_monsters.size());
-        base.modeID = rand()%45+1;
-        AvatarPropMap prop;
-        auto monster = addEntity(base, prop, ENTITY_CAMP_BLUE+100, ENTITY_AI);
+        base.modelID = rand()%45+1;
+        base.modelName = base.avatarName;
+        base.camp = ENTITY_CAMP_BLUE + 100;
+        base.etype = ENTITY_AI;
+        base.state = ENTITY_STATE_ACTIVE;
+        EntityProp fixedProps;
+        fixedProps.hp = 1000;
+        fixedProps.attack = 10;
+        EntityProp grow;
+
+        auto monster = addEntity(base, fixedProps, grow, grow);
         _monsters[monster->_entityInfo.eid] = monster;
     }
     for (auto monster: _monsters)
@@ -653,13 +672,13 @@ bool Scene::doSkill(EntityID eid, ui64 skillID, EntityID foe, const EPosition & 
     behaviour.search.offsetY = -1;
     behaviour.search.radian = PI/2.0;
     behaviour.search.camp = setBitFlag(0, SEARCH_CAMP_ALIEN);
-    behaviour.search.distance = 5.0;
+    behaviour.search.distance = 8.0;
     behaviour.search.limitEntitys = 100;
     skill.behaviours.push_back(behaviour);
 
     SkillInfo info;
     info.data = skill;
-    info.dst = self._entityMove.position;
+    info.dst = dst;
     info.foe = foe;
     info.skillID = skillID;
     info.startTime = getFloatSteadyNowTime();
@@ -734,7 +753,7 @@ bool Scene::attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets)
         }
         target->_entityInfo.curHP -= 20;
         target->_isInfoDirty = true;
-        notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_HARM_ATTACK, 20));
+        notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_HARM_ATTACK, 20, ""));
         if (target->_entityInfo.curHP <= 0)
         {
             target->_entityInfo.curHP = 0.0;
@@ -744,7 +763,7 @@ bool Scene::attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets)
             target->_entityInfo.foe = InvalidEntityID;
 
             target->_control.stateChageTime = getFloatSteadyNowTime();
-            notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_LIE, 0));
+            notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_LIE, 0, ""));
         }
     }
     broadcast(notice);
@@ -753,6 +772,7 @@ bool Scene::attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets)
 
 void Scene::checkSceneState()
 {
+    SceneEventNotice eventNotice;
     for (auto kv : _entitys)
     {
         if (kv.second->_entityInfo.state == ENTITY_STATE_LIE || kv.second->_entityInfo.state == ENTITY_STATE_DIED)
@@ -764,18 +784,24 @@ void Scene::checkSceneState()
             else if (kv.second->_control.stateChageTime + 10.0 < getFloatSteadyNowTime())
             {
                 kv.second->_entityInfo.state = ENTITY_STATE_ACTIVE;
-                kv.second->_entityInfo.curHP = 100;
+                kv.second->_entityInfo.curHP = kv.second->_props.hp;
                 kv.second->_isInfoDirty = true;
                 kv.second->_entityMove.position = kv.second->_control.spawnpoint;
                 if ( kv.second->_control.agentNo < _sim->getNumAgents())
                 {
                     _sim->setAgentPosition(kv.second->_control.agentNo, toRVOVector2(kv.second->_entityMove.position));
                 }
-                SceneEventNotice notice;
-                notice.info.push_back(SceneEventInfo(InvalidEntityID, kv.second->_entityInfo.eid, SCENE_EVENT_REBIRTH, 0.0));
-                _asyncs.push(std::bind(&Scene::broadcast<SceneEventNotice>, shared_from_this(), notice, 0));
+                SceneEventInfo ev;
+                ev.src = InvalidEntityID;
+                ev.dst = kv.second->_entityInfo.eid;
+                ev.ev = SCENE_EVENT_REBIRTH;
+                ev.val = kv.second->_entityInfo.curHP;
+                mergeToString(ev.mix, ",", kv.second->_entityMove.position.x);
+                mergeToString(ev.mix, ",", kv.second->_entityMove.position.y);
+                eventNotice.info.push_back(ev);
             }
         }
+        broadcast(eventNotice);
     }
 }
 bool Scene::cleanSkill()
@@ -860,7 +886,12 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         {
             double radianEntity = getRadian(org.x, org.y, entity._entityMove.position.x, entity._entityMove.position.y);
             double curRadian = fmod(radian+search.radian/2.0, PI*2.0);
-            if (radianEntity - curRadian  > search.radian &&  curRadian + PI*2.0 - curRadian > search.radian )
+            if ((curRadian >= radianEntity && curRadian - radianEntity < search.radian)
+                || (curRadian < radianEntity && curRadian + PI*2.0 - radianEntity < search.radian))
+            {
+
+            }
+            else
             {
                 continue;
             }

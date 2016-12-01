@@ -23,8 +23,8 @@
 #define _WORLD_H_
 #include <common.h>
 #include <ProtoCommon.h>
-#include <ProtoDocker.h>
 #include <ProtoSceneCommon.h>
+#include <ProtoDocker.h>
 #include <ProtoSceneClient.h>
 #include <ProtoSceneServer.h>
 #include <rvo2/RVO.h>

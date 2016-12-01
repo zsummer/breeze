@@ -745,7 +745,9 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
             return;
         }
         founder->second.baseInfo = req.baseInfo;
-        founder->second.baseProps = req.baseProps;
+        founder->second.fixedProps = req.fixedProps;
+        founder->second.growthProps = req.growthProps;
+        founder->second.growths = req.growths;
         return;
     }
     if ((groupPtr && req.groupID == InvalidGroupID) || (groupPtr&& req.groupID != InvalidGroupID && groupPtr->sceneState != SCENE_STATE_NONE))
@@ -758,7 +760,9 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     SceneGroupAvatarInfo avatar;
     avatar.areaID = session->getUserParamNumber(UPARAM_AREA_ID);
     avatar.baseInfo = req.baseInfo;
-    avatar.baseProps = req.baseProps;
+    avatar.fixedProps = req.fixedProps;
+    avatar.growthProps = req.growthProps;
+    avatar.growths = req.growths;
     avatar.powerType = 1; //leader
     avatar.token = toMD5(avatar.baseInfo.avatarName + toString(rand()));
 
@@ -834,8 +838,10 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     else
     {
         founder->second.areaID = avatar.areaID;
-        founder->second.baseInfo = avatar.baseInfo;
-        founder->second.baseProps = avatar.baseProps;
+        founder->second.baseInfo = req.baseInfo;
+        founder->second.fixedProps = req.fixedProps;
+        founder->second.growthProps = req.growthProps;
+        founder->second.growths = req.growths;
         founder->second.token;
     }
     _avatars[req.baseInfo.avatarID] = groupPtr->groupID;

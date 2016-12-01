@@ -139,21 +139,26 @@ namespace Proto4z
         static public ushort getProtoID() { return 50004; } 
         static public string getProtoName() { return "SceneRefreshNotice"; } 
         //members   
+        public EntityPropArray entityProps;  
         public EntityInfoArray entityInfos;  
         public EntityMoveArray entityMoves;  
         public SceneRefreshNotice()  
         { 
+            entityProps = new EntityPropArray();  
             entityInfos = new EntityInfoArray();  
             entityMoves = new EntityMoveArray();  
         } 
-        public SceneRefreshNotice(EntityInfoArray entityInfos, EntityMoveArray entityMoves) 
+        public SceneRefreshNotice(EntityPropArray entityProps, EntityInfoArray entityInfos, EntityMoveArray entityMoves) 
         { 
+            this.entityProps = entityProps; 
             this.entityInfos = entityInfos; 
             this.entityMoves = entityMoves; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            if (this.entityProps == null) this.entityProps = new EntityPropArray(); 
+            data.AddRange(this.entityProps.__encode()); 
             if (this.entityInfos == null) this.entityInfos = new EntityInfoArray(); 
             data.AddRange(this.entityInfos.__encode()); 
             if (this.entityMoves == null) this.entityMoves = new EntityMoveArray(); 
@@ -162,6 +167,8 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
+            this.entityProps = new EntityPropArray(); 
+            this.entityProps.__decode(binData, ref pos); 
             this.entityInfos = new EntityInfoArray(); 
             this.entityInfos.__decode(binData, ref pos); 
             this.entityMoves = new EntityMoveArray(); 

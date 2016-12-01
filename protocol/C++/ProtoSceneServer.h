@@ -72,19 +72,23 @@ struct SceneServerJoinGroupIns //创建/加入编队, 来自docker的指令
     static const std::string getProtoName() { return "SceneServerJoinGroupIns";} 
     unsigned long long refresh; //0为客户端请求操作, 1为仅仅刷新数据  
     unsigned long long groupID; //编队ID, 0为创建  
-    AvatarBaseInfo baseInfo; //角色数据  
-    AvatarPropMap baseProps; //角色属性数据  
+    EntityBase baseInfo; //玩家基础数据  
+    EntityProp fixedProps; //基础固定属性  
+    EntityProp growthProps; //成长基础属性  
+    EntityProp growths; //成长系数  
     SceneServerJoinGroupIns() 
     { 
         refresh = 0; 
         groupID = 0; 
     } 
-    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const AvatarBaseInfo & baseInfo, const AvatarPropMap & baseProps) 
+    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const EntityBase & baseInfo, const EntityProp & fixedProps, const EntityProp & growthProps, const EntityProp & growths) 
     { 
         this->refresh = refresh; 
         this->groupID = groupID; 
         this->baseInfo = baseInfo; 
-        this->baseProps = baseProps; 
+        this->fixedProps = fixedProps; 
+        this->growthProps = growthProps; 
+        this->growths = growths; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerJoinGroupIns & data) 
@@ -92,7 +96,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.refresh;  
     ws << data.groupID;  
     ws << data.baseInfo;  
-    ws << data.baseProps;  
+    ws << data.fixedProps;  
+    ws << data.growthProps;  
+    ws << data.growths;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerJoinGroupIns & data) 
@@ -100,7 +106,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.refresh;  
     rs >> data.groupID;  
     rs >> data.baseInfo;  
-    rs >> data.baseProps;  
+    rs >> data.fixedProps;  
+    rs >> data.growthProps;  
+    rs >> data.growths;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerJoinGroupIns & info) 
@@ -109,7 +117,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "refresh=" << info.refresh << ","; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "baseInfo=" << info.baseInfo << ","; 
-    stm << "baseProps=" << info.baseProps << ","; 
+    stm << "fixedProps=" << info.fixedProps << ","; 
+    stm << "growthProps=" << info.growthProps << ","; 
+    stm << "growths=" << info.growths << ","; 
     stm << "]"; 
     return stm; 
 } 

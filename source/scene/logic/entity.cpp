@@ -44,7 +44,7 @@ double Entity::getAttack()
 
 EntityFullData Entity::getFullData()
 {
-    return EntityFullData(_baseInfo, _baseProps, _entityInfo, _entityMove, _report);
+    return EntityFullData(_baseInfo, _fixedProps, _growProps, _growth, _props, _entityInfo, _entityMove, _report);
 }
 
 
