@@ -123,11 +123,9 @@ EntityPtr Scene::addEntity(const EntityBase & baseInfo,
     EntityPtr entity = std::make_shared<Entity>();
 
     entity->_baseInfo = baseInfo;
-    entity->_fixedProps = fixedProps;
-    entity->_growProps = growProps;
-    entity->_growth = growth;
 
-    entity->_props = processPropGrow(fixedProps, growProps, growth, baseInfo.level);
+
+    entity->_props = fixedProps + growProps * (growth * baseInfo.level);
     
 
     entity->_entityInfo.eid = ++_lastEID;

@@ -45,6 +45,10 @@ private:
 public:
     Scene(SceneID id);
     ~Scene();
+    bool cleanScene();
+    bool initScene(SceneType sceneType, MapID mapID);
+    bool onUpdate();
+
     inline SceneID getSceneID() { return _sceneID; }
     inline SceneType getSceneType() { return _sceneType; }
     inline SceneState getSceneState() { return _sceneStatus; }
@@ -53,9 +57,7 @@ public:
     inline std::map<ServiceID, EntityPtr> & getPlayers() { return _players; }
     GroupID getGroupID(ServiceID avatarID);
     void getSceneSection(SceneSection & ss);
-    bool cleanScene();
-    bool initScene(SceneType sceneType, MapID mapID);
-    bool onUpdate();
+
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
     EntityPtr addEntity(const EntityBase & baseInfo, 
@@ -66,10 +68,11 @@ public:
     bool removeEntity(EntityID eid);
     bool removePlayer(AvatarID avatarID);
     bool removePlayerByGroupID(GroupID groupID);
-    //operator
-public:
+
     void pushAsync(std::function<void()> && func);
     std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const SearchInfo & search);
+public:
+    
     bool doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosition clt, EPositionArray dsts);
     bool doSkill(EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst);
     bool checkSkillBehaviour();
