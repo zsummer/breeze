@@ -24,6 +24,15 @@
     <ClCompile Include="logic\sceneMgr.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\move.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\skill.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic\ai.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\config.lua">
@@ -38,6 +47,15 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\sceneMgr.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\move.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\skill.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\ai.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>

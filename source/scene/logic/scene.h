@@ -18,18 +18,21 @@
 #ifndef _SCENE_H_
 #define _SCENE_H_
 #include "entity.h"
-
-
-
+#include "move.h"
+#include "skill.h"
+#include "ai.h"
 
 class Scene : public std::enable_shared_from_this<Scene>
 {
+    friend MoveSync;
+    friend Skill;
+    friend AI;
     //scene数据
 private:
     SceneID _sceneID;
     SceneType _sceneType;
     SceneState _sceneStatus;
-    RVO::RVOSimulator *_sim = nullptr;
+    
     EntityID _lastEID;
     double _lastStatusChangeTime;
     double _startTime;
@@ -37,18 +40,31 @@ private:
     std::map<EntityID, EntityPtr> _entitys;
     std::map<ServiceID, EntityPtr> _players;
     std::queue<std::function<void()>> _asyncs;
-    std::map<EntityID, EntityPtr> _monsters;
 
-    double _lastCheckMonstr = 0.0;
-    double _lastPrintStatus = 0.0;
-    double _lastDoRVO = 0.0;
+    
+    
 public:
     Scene(SceneID id);
     ~Scene();
     bool cleanScene();
     bool initScene(SceneType sceneType, MapID mapID);
     bool onUpdate();
+public:
+    bool playerAttach(ServiceID avatarID, SessionID sID);
+    bool playerDettach(ServiceID avatarID, SessionID sID);
+    void onPlayerInstruction(ServiceID avatarID, ReadStream & rs);
+    //消息队列 
+public:
+    template <typename MSG>
+    void broadcast(const MSG & msg, ServiceID without = InvalidServiceID);
+    template<typename MSG>
+    void sendToClient(ServiceID avatarID, const MSG &msg);
+public:
+    MoveSyncPtr _move;
+    SkillPtr _skill;
+    AIPtr _ai;
 
+public:
     inline SceneID getSceneID() { return _sceneID; }
     inline SceneType getSceneType() { return _sceneType; }
     inline SceneState getSceneState() { return _sceneStatus; }
@@ -73,36 +89,12 @@ public:
     std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const SearchInfo & search);
 public:
     
-    bool doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosition clt, EPositionArray dsts);
-    bool doSkill(EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst);
-    bool checkSkillBehaviour();
-    bool attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets);
-    void checkSceneState();
-    bool cleanSkill();
-    bool addBuff();
-    bool cleanBuff();
-    //caster为当前施法者, 如果当前施法者为飞行道具 则搜索目标为self的时候 应当是指master  
-    //targetType 如果是none 则忽略该过滤选项  
-    //targetSC如果是none 则忽略该选项, 否则取位判断  
-    //
+ 
     
-public:
 
-    void checkStepRVO(bool preCheck);
-    void doStepRVO();
-    void doMonster();
-    void doFollow();
-    bool playerAttach(ServiceID avatarID, SessionID sID);
-    bool playerDettach(ServiceID avatarID, SessionID sID);
-    void onPlayerInstruction(ServiceID avatarID, ReadStream & rs);
 
-public:
-    //消息队列 
-public:
-    template <typename MSG>
-    void broadcast(const MSG & msg, ServiceID without = InvalidServiceID);
-    template<typename MSG>
-    void sendToClient(ServiceID avatarID, const MSG &msg);
+
+
 };
 
 using ScenePtr = std::shared_ptr<Scene>;

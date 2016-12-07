@@ -96,15 +96,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="logic\ai.cpp" />
     <ClCompile Include="logic\entity.cpp" />
+    <ClCompile Include="logic\move.cpp" />
     <ClCompile Include="logic\scene.cpp" />
     <ClCompile Include="logic\sceneMgr.cpp" />
+    <ClCompile Include="logic\skill.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="logic\ai.h" />
     <ClInclude Include="logic\entity.h" />
+    <ClInclude Include="logic\move.h" />
     <ClInclude Include="logic\scene.h" />
     <ClInclude Include="logic\sceneMgr.h" />
+    <ClInclude Include="logic\skill.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\config.lua" />
