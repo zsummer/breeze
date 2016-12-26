@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>1751c4d1eb2c0ea63458c04be42c1952</cppmd5> 
+<luamd5>705745501eacef3b1f54669a9116e0b3</luamd5> 
+<csharpmd5>9698f154c21baf4ec557933c33fead8c</csharpmd5> 
+<xmlmd5>ddb037dae76ba800732ff23d48230e35</xmlmd5> 
+<cacheNumber>
+    <cache key = "DictDrop" Number = "10008" /> 
+    <cache key = "DictGlobal" Number = "10000" /> 
+    <cache key = "DictItem" Number = "10003" /> 
+    <cache key = "DictModel" Number = "10006" /> 
+    <cache key = "DictProp" Number = "10004" /> 
+    <cache key = "DictRaffleAward" Number = "10001" /> 
+    <cache key = "DictRafflePool" Number = "10002" /> 
+    <cache key = "DictReward" Number = "10007" /> 
+    <cache key = "DictSceneUpLevel" Number = "10005" /> 
+</cacheNumber>

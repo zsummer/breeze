@@ -76,10 +76,10 @@ public:
 
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
-    EntityPtr addEntity(const EntityBase & baseInfo, 
-        const EntityProp & fixedProps, 
-        const EntityProp & growProps, 
-        const EntityProp & growth,
+    EntityPtr addEntity(const EntityModel & baseInfo, 
+        const DictProp & fixedProps, 
+        const DictProp & growProps, 
+        const DictProp & growth,
         GroupID groupID= InvalidGroupID);
     bool removeEntity(EntityID eid);
     bool removePlayer(AvatarID avatarID);

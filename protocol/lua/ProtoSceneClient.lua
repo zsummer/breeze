@@ -30,8 +30,8 @@ Proto4z.register(50004,"SceneRefreshNotice")
 Proto4z.SceneRefreshNotice = {}  
 Proto4z.SceneRefreshNotice.__protoID = 50004 
 Proto4z.SceneRefreshNotice.__protoName = "SceneRefreshNotice" 
-Proto4z.SceneRefreshNotice[1] = {name="entityProps", type="EntityPropArray" }  
-Proto4z.SceneRefreshNotice[2] = {name="entityInfos", type="EntityInfoArray" }  
+Proto4z.SceneRefreshNotice[1] = {name="entityProps", type="DictPropArray" }  
+Proto4z.SceneRefreshNotice[2] = {name="entityInfos", type="EntityStateArray" }  
 Proto4z.SceneRefreshNotice[3] = {name="entityMoves", type="EntityMoveArray" }  
  
 Proto4z.register(50005,"SceneReportsNotice") 
@@ -116,15 +116,15 @@ Proto4z.UseSkillNotice[2] = {name="skillID", type="ui64" }
 Proto4z.UseSkillNotice[3] = {name="foe", type="ui64" }  
 Proto4z.UseSkillNotice[4] = {name="dst", type="EPosition" }  
  
-Proto4z.register(50021,"SceneEventNotice") 
+Proto4z.register(50016,"SceneEventNotice") 
 Proto4z.SceneEventNotice = {}  
-Proto4z.SceneEventNotice.__protoID = 50021 
+Proto4z.SceneEventNotice.__protoID = 50016 
 Proto4z.SceneEventNotice.__protoName = "SceneEventNotice" 
 Proto4z.SceneEventNotice[1] = {name="info", type="SceneEventInfoArray" }  
  
-Proto4z.register(50016,"ClientCustomReq") 
+Proto4z.register(50017,"ClientCustomReq") 
 Proto4z.ClientCustomReq = {}  
-Proto4z.ClientCustomReq.__protoID = 50016 
+Proto4z.ClientCustomReq.__protoID = 50017 
 Proto4z.ClientCustomReq.__protoName = "ClientCustomReq" 
 Proto4z.ClientCustomReq[1] = {name="eid", type="ui64" }  
 Proto4z.ClientCustomReq[2] = {name="customID", type="ui64" }  
@@ -132,17 +132,17 @@ Proto4z.ClientCustomReq[3] = {name="fValue", type="double" }
 Proto4z.ClientCustomReq[4] = {name="uValue", type="ui64" }  
 Proto4z.ClientCustomReq[5] = {name="sValue", type="string" }  
  
-Proto4z.register(50017,"ClientCustomResp") 
+Proto4z.register(50018,"ClientCustomResp") 
 Proto4z.ClientCustomResp = {} --只有失败时才会使用该协议 
-Proto4z.ClientCustomResp.__protoID = 50017 
+Proto4z.ClientCustomResp.__protoID = 50018 
 Proto4z.ClientCustomResp.__protoName = "ClientCustomResp" 
 Proto4z.ClientCustomResp[1] = {name="retCode", type="ui16" }  
 Proto4z.ClientCustomResp[2] = {name="eid", type="ui64" }  
 Proto4z.ClientCustomResp[3] = {name="customID", type="ui64" }  
  
-Proto4z.register(50018,"ClientCustomNotice") 
+Proto4z.register(50019,"ClientCustomNotice") 
 Proto4z.ClientCustomNotice = {}  
-Proto4z.ClientCustomNotice.__protoID = 50018 
+Proto4z.ClientCustomNotice.__protoID = 50019 
 Proto4z.ClientCustomNotice.__protoName = "ClientCustomNotice" 
 Proto4z.ClientCustomNotice[1] = {name="eid", type="ui64" }  
 Proto4z.ClientCustomNotice[2] = {name="customID", type="ui64" }  
@@ -150,16 +150,16 @@ Proto4z.ClientCustomNotice[3] = {name="fValue", type="double" }
 Proto4z.ClientCustomNotice[4] = {name="uValue", type="ui64" }  
 Proto4z.ClientCustomNotice[5] = {name="sValue", type="string" }  
  
-Proto4z.register(50019,"ClientPingTestReq") 
+Proto4z.register(50020,"ClientPingTestReq") 
 Proto4z.ClientPingTestReq = {}  
-Proto4z.ClientPingTestReq.__protoID = 50019 
+Proto4z.ClientPingTestReq.__protoID = 50020 
 Proto4z.ClientPingTestReq.__protoName = "ClientPingTestReq" 
 Proto4z.ClientPingTestReq[1] = {name="seqID", type="ui64" }  
 Proto4z.ClientPingTestReq[2] = {name="clientTime", type="double" }  
  
-Proto4z.register(50020,"ClientPingTestResp") 
+Proto4z.register(50021,"ClientPingTestResp") 
 Proto4z.ClientPingTestResp = {}  
-Proto4z.ClientPingTestResp.__protoID = 50020 
+Proto4z.ClientPingTestResp.__protoID = 50021 
 Proto4z.ClientPingTestResp.__protoName = "ClientPingTestResp" 
 Proto4z.ClientPingTestResp[1] = {name="retCode", type="ui16" }  
 Proto4z.ClientPingTestResp[2] = {name="seqID", type="ui64" }  

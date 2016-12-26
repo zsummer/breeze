@@ -15,75 +15,43 @@ Proto4z.SCENE_STATE_ALLOCATE = 3--服务器分配场景中
 Proto4z.SCENE_STATE_WAIT = 4--等待玩家加入战场 
 Proto4z.SCENE_STATE_ACTIVE = 5--战斗中 
  
-Proto4z.PROP_FIXED = 0 
-Proto4z.PROP_FIXED_GROW = 1 
-Proto4z.PROP_GROWTH = 2 
+Proto4z.register(2000,"EntityModel") 
+Proto4z.EntityModel = {}  
+Proto4z.EntityModel.__protoID = 2000 
+Proto4z.EntityModel.__protoName = "EntityModel" 
+Proto4z.EntityModel[1] = {name="eid", type="ui64" }  
+Proto4z.EntityModel[2] = {name="modelID", type="ui64" }  
+Proto4z.EntityModel[3] = {name="modelName", type="string" }  
+Proto4z.EntityModel[4] = {name="avatarID", type="ui64" }  
+Proto4z.EntityModel[5] = {name="avatarName", type="string" }  
+Proto4z.EntityModel[6] = {name="iconID", type="ui64" } --头像 
+Proto4z.EntityModel[7] = {name="level", type="double" } --等级 
+Proto4z.EntityModel[8] = {name="exp", type="double" } --经验 
+Proto4z.EntityModel[9] = {name="gold", type="double" } --金币 
+Proto4z.EntityModel[10] = {name="camp", type="ui16" }  
+Proto4z.EntityModel[11] = {name="etype", type="ui16" }  
+Proto4z.EntityModel[12] = {name="state", type="ui16" }  
  
-Proto4z.register(10016,"EntityProp") 
-Proto4z.EntityProp = {}  
-Proto4z.EntityProp.__protoID = 10016 
-Proto4z.EntityProp.__protoName = "EntityProp" 
-Proto4z.EntityProp[1] = {name="id", type="ui64" }  
-Proto4z.EntityProp[2] = {name="modelID", type="ui64" }  
-Proto4z.EntityProp[3] = {name="propType", type="ui16" } --0 fixed, 1 grow fixed, 2 growth PropType 
-Proto4z.EntityProp[4] = {name="hp", type="double" } --血量值 
-Proto4z.EntityProp[5] = {name="hpRegen", type="double" } --每秒血量值恢复 
-Proto4z.EntityProp[6] = {name="attack", type="double" } --伤害 
-Proto4z.EntityProp[7] = {name="defense", type="double" } --防御 
-Proto4z.EntityProp[8] = {name="crit", type="double" } --暴击 
-Proto4z.EntityProp[9] = {name="toughness", type="double" } --韧性 
-Proto4z.EntityProp[10] = {name="moveSpeed", type="double" } --移动速度 
-Proto4z.EntityProp[11] = {name="attackSpeed", type="double" } --攻击速度 
-Proto4z.EntityProp[12] = {name="vampirk", type="double" } --吸血 
+Proto4z.EntityModelArray = {}  
+Proto4z.EntityModelArray.__protoName = "EntityModelArray" 
+Proto4z.EntityModelArray.__protoDesc = "array" 
+Proto4z.EntityModelArray.__protoTypeV = "EntityModel" 
  
-Proto4z.EntityPropArray = {}  
-Proto4z.EntityPropArray.__protoName = "EntityPropArray" 
-Proto4z.EntityPropArray.__protoDesc = "array" 
-Proto4z.EntityPropArray.__protoTypeV = "EntityProp" 
+Proto4z.EntityModelMap = {}  
+Proto4z.EntityModelMap.__protoName = "EntityModelMap" 
+Proto4z.EntityModelMap.__protoDesc = "map" 
+Proto4z.EntityModelMap.__protoTypeK = "ui64" 
+Proto4z.EntityModelMap.__protoTypeV = "EntityModel" 
  
-Proto4z.EntityPropMap = {}  
-Proto4z.EntityPropMap.__protoName = "EntityPropMap" 
-Proto4z.EntityPropMap.__protoDesc = "map" 
-Proto4z.EntityPropMap.__protoTypeK = "ui64" 
-Proto4z.EntityPropMap.__protoTypeV = "EntityProp" 
- 
-Proto4z.register(10017,"EntityBase") 
-Proto4z.EntityBase = {}  
-Proto4z.EntityBase.__protoID = 10017 
-Proto4z.EntityBase.__protoName = "EntityBase" 
-Proto4z.EntityBase[1] = {name="eid", type="ui64" }  
-Proto4z.EntityBase[2] = {name="modelID", type="ui64" }  
-Proto4z.EntityBase[3] = {name="modelName", type="string" }  
-Proto4z.EntityBase[4] = {name="avatarID", type="ui64" }  
-Proto4z.EntityBase[5] = {name="avatarName", type="string" }  
-Proto4z.EntityBase[6] = {name="iconID", type="ui64" } --头像 
-Proto4z.EntityBase[7] = {name="level", type="double" } --等级 
-Proto4z.EntityBase[8] = {name="exp", type="double" } --经验 
-Proto4z.EntityBase[9] = {name="gold", type="double" } --金币 
-Proto4z.EntityBase[10] = {name="camp", type="ui16" }  
-Proto4z.EntityBase[11] = {name="etype", type="ui16" }  
-Proto4z.EntityBase[12] = {name="state", type="ui16" }  
- 
-Proto4z.EntityBaseArray = {}  
-Proto4z.EntityBaseArray.__protoName = "EntityBaseArray" 
-Proto4z.EntityBaseArray.__protoDesc = "array" 
-Proto4z.EntityBaseArray.__protoTypeV = "EntityBase" 
- 
-Proto4z.EntityBaseMap = {}  
-Proto4z.EntityBaseMap.__protoName = "EntityBaseMap" 
-Proto4z.EntityBaseMap.__protoDesc = "map" 
-Proto4z.EntityBaseMap.__protoTypeK = "ui64" 
-Proto4z.EntityBaseMap.__protoTypeV = "EntityBase" 
- 
-Proto4z.register(10000,"SceneGroupAvatarInfo") 
+Proto4z.register(2001,"SceneGroupAvatarInfo") 
 Proto4z.SceneGroupAvatarInfo = {}  
-Proto4z.SceneGroupAvatarInfo.__protoID = 10000 
+Proto4z.SceneGroupAvatarInfo.__protoID = 2001 
 Proto4z.SceneGroupAvatarInfo.__protoName = "SceneGroupAvatarInfo" 
 Proto4z.SceneGroupAvatarInfo[1] = {name="areaID", type="ui64" } --考虑混服情况,必须指定该玩家来自哪个当前区 
-Proto4z.SceneGroupAvatarInfo[2] = {name="baseInfo", type="EntityBase" } --玩家基础数据 
-Proto4z.SceneGroupAvatarInfo[3] = {name="fixedProps", type="EntityProp" } --基础固定属性 
-Proto4z.SceneGroupAvatarInfo[4] = {name="growthProps", type="EntityProp" } --成长基础属性 
-Proto4z.SceneGroupAvatarInfo[5] = {name="growths", type="EntityProp" } --成长系数 
+Proto4z.SceneGroupAvatarInfo[2] = {name="model", type="EntityModel" } --玩家基础数据 
+Proto4z.SceneGroupAvatarInfo[3] = {name="fixedProps", type="DictProp" } --基础固定属性 
+Proto4z.SceneGroupAvatarInfo[4] = {name="growthProps", type="DictProp" } --成长基础属性 
+Proto4z.SceneGroupAvatarInfo[5] = {name="growths", type="DictProp" } --成长系数 
 Proto4z.SceneGroupAvatarInfo[6] = {name="powerType", type="ui16" } --组队权限: 0普通,1leader,2master 
 Proto4z.SceneGroupAvatarInfo[7] = {name="token", type="string" } --scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开. 
  
@@ -98,9 +66,9 @@ Proto4z.SceneGroupAvatarInfoMap.__protoDesc = "map"
 Proto4z.SceneGroupAvatarInfoMap.__protoTypeK = "ui64" 
 Proto4z.SceneGroupAvatarInfoMap.__protoTypeV = "SceneGroupAvatarInfo" 
  
-Proto4z.register(10001,"SceneGroupInfo") 
+Proto4z.register(2002,"SceneGroupInfo") 
 Proto4z.SceneGroupInfo = {} --编队数据 
-Proto4z.SceneGroupInfo.__protoID = 10001 
+Proto4z.SceneGroupInfo.__protoID = 2002 
 Proto4z.SceneGroupInfo.__protoName = "SceneGroupInfo" 
 Proto4z.SceneGroupInfo[1] = {name="groupID", type="ui64" }  
 Proto4z.SceneGroupInfo[2] = {name="sceneType", type="ui16" } --场景类型 
@@ -129,9 +97,9 @@ Proto4z.EntityIDArray.__protoName = "EntityIDArray"
 Proto4z.EntityIDArray.__protoDesc = "array" 
 Proto4z.EntityIDArray.__protoTypeV = "ui64" 
  
-Proto4z.register(10002,"EPosition") 
+Proto4z.register(2003,"EPosition") 
 Proto4z.EPosition = {}  
-Proto4z.EPosition.__protoID = 10002 
+Proto4z.EPosition.__protoID = 2003 
 Proto4z.EPosition.__protoName = "EPosition" 
 Proto4z.EPosition[1] = {name="x", type="double" }  
 Proto4z.EPosition[2] = {name="y", type="double" }  
@@ -222,9 +190,9 @@ Proto4z.BUFF_INC_SPEED = 37--属性加成: 速度加成, value1加法, value2乘
 Proto4z.BUFF_INC_SUCK_BLOOD = 38--属性加成: 吸血加成 value1加法 
 Proto4z.BUFF_LIGHT_SKILL = 50--持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现 
  
-Proto4z.register(10003,"SearchInfo") 
+Proto4z.register(2004,"SearchInfo") 
 Proto4z.SearchInfo = {}  
-Proto4z.SearchInfo.__protoID = 10003 
+Proto4z.SearchInfo.__protoID = 2004 
 Proto4z.SearchInfo.__protoName = "SearchInfo" 
 Proto4z.SearchInfo[1] = {name="etype", type="ui16" } --实体类型, 玩家/AI 或者是NONE忽略该选项 
 Proto4z.SearchInfo[2] = {name="camp", type="ui64" } --0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType 
@@ -235,9 +203,9 @@ Proto4z.SearchInfo[6] = {name="offsetX", type="double" } --坐标偏移量, 以c
 Proto4z.SearchInfo[7] = {name="offsetY", type="double" } --坐标偏移量, 以caster为原点, 朝向为y轴 
 Proto4z.SearchInfo[8] = {name="limitEntitys", type="ui64" } --最大目标数 
  
-Proto4z.register(10004,"SkillBehaviour") 
+Proto4z.register(2005,"SkillBehaviour") 
 Proto4z.SkillBehaviour = {} --技能触发行为 
-Proto4z.SkillBehaviour.__protoID = 10004 
+Proto4z.SkillBehaviour.__protoID = 2005 
 Proto4z.SkillBehaviour.__protoName = "SkillBehaviour" 
 Proto4z.SkillBehaviour[1] = {name="behaviour", type="ui64" }  
 Proto4z.SkillBehaviour[2] = {name="delay", type="double" }  
@@ -250,18 +218,18 @@ Proto4z.SkillBehaviourArray.__protoName = "SkillBehaviourArray"
 Proto4z.SkillBehaviourArray.__protoDesc = "array" 
 Proto4z.SkillBehaviourArray.__protoTypeV = "SkillBehaviour" 
  
-Proto4z.register(10005,"SkillData") 
+Proto4z.register(2006,"SkillData") 
 Proto4z.SkillData = {} --技能 
-Proto4z.SkillData.__protoID = 10005 
+Proto4z.SkillData.__protoID = 2006 
 Proto4z.SkillData.__protoName = "SkillData" 
 Proto4z.SkillData[1] = {name="skillID", type="ui64" } --skillID 
 Proto4z.SkillData[2] = {name="skillType", type="ui64" } --SkillType 
 Proto4z.SkillData[3] = {name="behaviours", type="SkillBehaviourArray" }  
 Proto4z.SkillData[4] = {name="cd", type="double" }  
  
-Proto4z.register(10006,"BuffData") 
+Proto4z.register(2007,"BuffData") 
 Proto4z.BuffData = {} --buff 
-Proto4z.BuffData.__protoID = 10006 
+Proto4z.BuffData.__protoID = 2007 
 Proto4z.BuffData.__protoName = "BuffData" 
 Proto4z.BuffData[1] = {name="buffID", type="ui64" }  
 Proto4z.BuffData[2] = {name="buffType", type="ui64" } --buff类型 
@@ -279,9 +247,9 @@ Proto4z.SCENE_EVENT_HARM_HILL = 5
 Proto4z.SCENE_EVENT_HARM_MISS = 6 
 Proto4z.SCENE_EVENT_HARM_CRITICAL = 7 
  
-Proto4z.register(10015,"SceneEventInfo") 
+Proto4z.register(2008,"SceneEventInfo") 
 Proto4z.SceneEventInfo = {} --伤害数据 
-Proto4z.SceneEventInfo.__protoID = 10015 
+Proto4z.SceneEventInfo.__protoID = 2008 
 Proto4z.SceneEventInfo.__protoName = "SceneEventInfo" 
 Proto4z.SceneEventInfo[1] = {name="src", type="ui64" } --eid 
 Proto4z.SceneEventInfo[2] = {name="dst", type="ui64" } --eid 
@@ -294,9 +262,9 @@ Proto4z.SceneEventInfoArray.__protoName = "SceneEventInfoArray"
 Proto4z.SceneEventInfoArray.__protoDesc = "array" 
 Proto4z.SceneEventInfoArray.__protoTypeV = "SceneEventInfo" 
  
-Proto4z.register(10008,"SkillInfo") 
+Proto4z.register(2009,"SkillInfo") 
 Proto4z.SkillInfo = {}  
-Proto4z.SkillInfo.__protoID = 10008 
+Proto4z.SkillInfo.__protoID = 2009 
 Proto4z.SkillInfo.__protoName = "SkillInfo" 
 Proto4z.SkillInfo[1] = {name="skillID", type="ui64" }  
 Proto4z.SkillInfo[2] = {name="startTime", type="double" }  
@@ -309,9 +277,9 @@ Proto4z.SkillInfoArray.__protoName = "SkillInfoArray"
 Proto4z.SkillInfoArray.__protoDesc = "array" 
 Proto4z.SkillInfoArray.__protoTypeV = "SkillInfo" 
  
-Proto4z.register(10009,"BuffInfo") 
+Proto4z.register(2010,"BuffInfo") 
 Proto4z.BuffInfo = {}  
-Proto4z.BuffInfo.__protoID = 10009 
+Proto4z.BuffInfo.__protoID = 2010 
 Proto4z.BuffInfo.__protoName = "BuffInfo" 
 Proto4z.BuffInfo[1] = {name="eid", type="ui64" } --施放该buff的entity id 
 Proto4z.BuffInfo[2] = {name="skillID", type="ui64" } --如果该buff是被技能触发的 则记录该技能, 被动技能是0 
@@ -325,27 +293,27 @@ Proto4z.BuffInfoArray.__protoName = "BuffInfoArray"
 Proto4z.BuffInfoArray.__protoDesc = "array" 
 Proto4z.BuffInfoArray.__protoTypeV = "BuffInfo" 
  
-Proto4z.register(10010,"EntityInfo") 
-Proto4z.EntityInfo = {} --EntityInfo 
-Proto4z.EntityInfo.__protoID = 10010 
-Proto4z.EntityInfo.__protoName = "EntityInfo" 
-Proto4z.EntityInfo[1] = {name="eid", type="ui64" } --eid 
-Proto4z.EntityInfo[2] = {name="camp", type="ui16" } --阵营 
-Proto4z.EntityInfo[3] = {name="groupID", type="ui64" } --组队ID 
-Proto4z.EntityInfo[4] = {name="etype", type="ui16" } --实体类型 
-Proto4z.EntityInfo[5] = {name="state", type="ui16" } --状态 
-Proto4z.EntityInfo[6] = {name="foe", type="ui64" } --锁定的敌人 
-Proto4z.EntityInfo[7] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
-Proto4z.EntityInfo[8] = {name="curHP", type="double" } --当前的血量 
+Proto4z.register(2011,"EntityState") 
+Proto4z.EntityState = {} --EntityState 
+Proto4z.EntityState.__protoID = 2011 
+Proto4z.EntityState.__protoName = "EntityState" 
+Proto4z.EntityState[1] = {name="eid", type="ui64" } --eid 
+Proto4z.EntityState[2] = {name="camp", type="ui16" } --阵营 
+Proto4z.EntityState[3] = {name="groupID", type="ui64" } --组队ID 
+Proto4z.EntityState[4] = {name="etype", type="ui16" } --实体类型 
+Proto4z.EntityState[5] = {name="state", type="ui16" } --状态 
+Proto4z.EntityState[6] = {name="foe", type="ui64" } --锁定的敌人 
+Proto4z.EntityState[7] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
+Proto4z.EntityState[8] = {name="curHP", type="double" } --当前的血量 
  
-Proto4z.EntityInfoArray = {}  
-Proto4z.EntityInfoArray.__protoName = "EntityInfoArray" 
-Proto4z.EntityInfoArray.__protoDesc = "array" 
-Proto4z.EntityInfoArray.__protoTypeV = "EntityInfo" 
+Proto4z.EntityStateArray = {}  
+Proto4z.EntityStateArray.__protoName = "EntityStateArray" 
+Proto4z.EntityStateArray.__protoDesc = "array" 
+Proto4z.EntityStateArray.__protoTypeV = "EntityState" 
  
-Proto4z.register(10011,"EntityMove") 
+Proto4z.register(2012,"EntityMove") 
 Proto4z.EntityMove = {} --EntityMove 
-Proto4z.EntityMove.__protoID = 10011 
+Proto4z.EntityMove.__protoID = 2012 
 Proto4z.EntityMove.__protoName = "EntityMove" 
 Proto4z.EntityMove[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityMove[2] = {name="position", type="EPosition" } --当前坐标 
@@ -360,9 +328,9 @@ Proto4z.EntityMoveArray.__protoName = "EntityMoveArray"
 Proto4z.EntityMoveArray.__protoDesc = "array" 
 Proto4z.EntityMoveArray.__protoTypeV = "EntityMove" 
  
-Proto4z.register(10012,"EntityReport") 
+Proto4z.register(2013,"EntityReport") 
 Proto4z.EntityReport = {} --EntityReport 
-Proto4z.EntityReport.__protoID = 10012 
+Proto4z.EntityReport.__protoID = 2013 
 Proto4z.EntityReport.__protoName = "EntityReport" 
 Proto4z.EntityReport[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityReport[2] = {name="killOtherCount", type="ui64" } --杀死其他玩家次数 
@@ -376,16 +344,16 @@ Proto4z.EntityReportArray.__protoName = "EntityReportArray"
 Proto4z.EntityReportArray.__protoDesc = "array" 
 Proto4z.EntityReportArray.__protoTypeV = "EntityReport" 
  
-Proto4z.register(10013,"EntityFullData") 
+Proto4z.register(2014,"EntityFullData") 
 Proto4z.EntityFullData = {} --EntityFullData 
-Proto4z.EntityFullData.__protoID = 10013 
+Proto4z.EntityFullData.__protoID = 2014 
 Proto4z.EntityFullData.__protoName = "EntityFullData" 
-Proto4z.EntityFullData[1] = {name="baseInfo", type="EntityBase" } --玩家基础数据 
-Proto4z.EntityFullData[2] = {name="fixedProps", type="EntityProp" } --基础固定属性 
-Proto4z.EntityFullData[3] = {name="growthProps", type="EntityProp" } --成长基础属性 
-Proto4z.EntityFullData[4] = {name="growths", type="EntityProp" } --成长系数 
-Proto4z.EntityFullData[5] = {name="props", type="EntityProp" } --当前 
-Proto4z.EntityFullData[6] = {name="info", type="EntityInfo" }  
+Proto4z.EntityFullData[1] = {name="model", type="EntityModel" } --玩家基础数据 
+Proto4z.EntityFullData[2] = {name="fixedProps", type="DictProp" } --基础固定属性 
+Proto4z.EntityFullData[3] = {name="growthProps", type="DictProp" } --成长基础属性 
+Proto4z.EntityFullData[4] = {name="growths", type="DictProp" } --成长系数 
+Proto4z.EntityFullData[5] = {name="props", type="DictProp" } --当前 
+Proto4z.EntityFullData[6] = {name="state", type="EntityState" }  
 Proto4z.EntityFullData[7] = {name="mv", type="EntityMove" }  
 Proto4z.EntityFullData[8] = {name="report", type="EntityReport" }  
  
@@ -394,9 +362,9 @@ Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray"
 Proto4z.EntityFullDataArray.__protoDesc = "array" 
 Proto4z.EntityFullDataArray.__protoTypeV = "EntityFullData" 
  
-Proto4z.register(10014,"SceneSection") 
+Proto4z.register(2015,"SceneSection") 
 Proto4z.SceneSection = {} --场景全景切片数据 
-Proto4z.SceneSection.__protoID = 10014 
+Proto4z.SceneSection.__protoID = 2015 
 Proto4z.SceneSection.__protoName = "SceneSection" 
 Proto4z.SceneSection[1] = {name="sceneID", type="ui64" }  
 Proto4z.SceneSection[2] = {name="sceneType", type="ui16" }  

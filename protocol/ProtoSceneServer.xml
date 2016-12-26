@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
-  <MinNo>39000</MinNo>
-  <MaxNo>40000</MaxNo>
+  <MinNo>4000</MinNo>
+  <MaxNo>5000</MaxNo>
   <UseLog4z>1</UseLog4z>
 </ProtoTraits>
 
@@ -28,10 +28,10 @@
     <proto name="SceneServerJoinGroupIns" desc= "创建/加入编队, 来自docker的指令">
         <member name="refresh" type="ui64"  desc="0为客户端请求操作, 1为仅仅刷新数据"/>
         <member name="groupID" type="ui64"  desc="编队ID, 0为创建"/>
-        <member name="baseInfo" type="EntityBase"  desc="玩家基础数据"/>
-        <member name="fixedProps" type="EntityProp"   desc="基础固定属性"/>
-        <member name="growthProps" type="EntityProp"   desc="成长基础属性"/>
-        <member name="growths" type="EntityProp"   desc="成长系数"/>
+        <member name="model" type="EntityModel"  desc="玩家基础数据"/>
+        <member name="fixedProps" type="DictProp"   desc="基础固定属性"/>
+        <member name="growthProps" type="DictProp"   desc="成长基础属性"/>
+        <member name="growths" type="DictProp"   desc="成长系数"/>
     </proto>
     <proto name="SceneServerJoinGroupAck" desc= "创建/加入编队响应结果">
         <member name="retCode" type="ui16"   desc=""/>

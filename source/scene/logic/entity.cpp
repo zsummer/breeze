@@ -13,15 +13,15 @@ Entity::~Entity()
 
 double Entity::getSpeed()
 {
-    if (_entityInfo.etype == ENTITY_PLAYER)
+    if (_state.etype == ENTITY_PLAYER)
     {
         return 12.0;
     }
-    else if (_entityInfo.etype == ENTITY_AI)
+    else if (_state.etype == ENTITY_AI)
     {
         return 8.0;
     }
-    else if (_entityInfo.etype == ENTITY_FLIGHT)
+    else if (_state.etype == ENTITY_FLIGHT)
     {
         return 20.0;
     }
@@ -44,7 +44,7 @@ double Entity::getAttack()
 
 EntityFullData Entity::getFullData()
 {
-    return EntityFullData(_baseInfo, _baseProps, _baseProps, _baseProps, _props, _entityInfo, _entityMove, _report);
+    return EntityFullData(_baseInfo, _baseProps, _baseProps, _baseProps, _props, _state, _move, _report);
 }
 
 

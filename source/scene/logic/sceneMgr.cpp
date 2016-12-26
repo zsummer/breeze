@@ -93,9 +93,9 @@ void SceneMgr::onTimer()
                 std::set<GroupID> groups;
                 for (auto &entity : notice.section.entitys)
                 {
-                    if (entity.info.etype == ENTITY_PLAYER)
+                    if (entity.state.etype == ENTITY_PLAYER)
                     {
-                        groups.insert(entity.info.groupID);
+                        groups.insert(entity.state.groupID);
                     }
                 }
                 for (auto key : groups)
@@ -361,7 +361,7 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
             auto & players = checkscene->second->getPlayers();
             for (auto player : players)
             {
-                if (player.second->_entityInfo.camp == entity->_entityInfo.camp)
+                if (player.second->_state.camp == entity->_state.camp)
                 {
                     resp.targetID = player.second->_baseInfo.avatarID;
                     resp.targetName = player.second->_baseInfo.avatarName;
@@ -530,7 +530,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         for (auto & avatar : group.members)
         {
             _tokens[avatar.first] = std::make_pair(avatar.second.token, scene->getSceneID());
-            scene->addEntity(avatar.second.baseInfo, avatar.second.fixedProps, avatar.second.growthProps, avatar.second.growths, group.groupID);
+            scene->addEntity(avatar.second.model, avatar.second.fixedProps, avatar.second.growthProps, avatar.second.growths, group.groupID);
         }
         SceneServerGroupStateChangeIns ret;
         ret.groupID = group.groupID;

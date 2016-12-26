@@ -145,13 +145,13 @@ struct SceneRefreshNotice
 { 
     static const unsigned short getProtoID() { return 50004;} 
     static const std::string getProtoName() { return "SceneRefreshNotice";} 
-    EntityPropArray entityProps;  
-    EntityInfoArray entityInfos;  
+    DictPropArray entityProps;  
+    EntityStateArray entityInfos;  
     EntityMoveArray entityMoves;  
     SceneRefreshNotice() 
     { 
     } 
-    SceneRefreshNotice(const EntityPropArray & entityProps, const EntityInfoArray & entityInfos, const EntityMoveArray & entityMoves) 
+    SceneRefreshNotice(const DictPropArray & entityProps, const EntityStateArray & entityInfos, const EntityMoveArray & entityMoves) 
     { 
         this->entityProps = entityProps; 
         this->entityInfos = entityInfos; 
@@ -623,7 +623,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneEventNotice 
 { 
-    static const unsigned short getProtoID() { return 50021;} 
+    static const unsigned short getProtoID() { return 50016;} 
     static const std::string getProtoName() { return "SceneEventNotice";} 
     SceneEventInfoArray info;  
     SceneEventNotice() 
@@ -654,7 +654,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientCustomReq 
 { 
-    static const unsigned short getProtoID() { return 50016;} 
+    static const unsigned short getProtoID() { return 50017;} 
     static const std::string getProtoName() { return "ClientCustomReq";} 
     unsigned long long eid;  
     unsigned long long customID;  
@@ -709,7 +709,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientCustomResp //只有失败时才会使用该协议  
 { 
-    static const unsigned short getProtoID() { return 50017;} 
+    static const unsigned short getProtoID() { return 50018;} 
     static const std::string getProtoName() { return "ClientCustomResp";} 
     unsigned short retCode;  
     unsigned long long eid;  
@@ -753,7 +753,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientCustomNotice 
 { 
-    static const unsigned short getProtoID() { return 50018;} 
+    static const unsigned short getProtoID() { return 50019;} 
     static const std::string getProtoName() { return "ClientCustomNotice";} 
     unsigned long long eid;  
     unsigned long long customID;  
@@ -808,7 +808,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientPingTestReq 
 { 
-    static const unsigned short getProtoID() { return 50019;} 
+    static const unsigned short getProtoID() { return 50020;} 
     static const std::string getProtoName() { return "ClientPingTestReq";} 
     unsigned long long seqID;  
     double clientTime;  
@@ -846,7 +846,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ClientPingTestResp 
 { 
-    static const unsigned short getProtoID() { return 50020;} 
+    static const unsigned short getProtoID() { return 50021;} 
     static const std::string getProtoName() { return "ClientPingTestResp";} 
     unsigned short retCode;  
     unsigned long long seqID;  

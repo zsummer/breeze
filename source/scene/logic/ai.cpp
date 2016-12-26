@@ -37,7 +37,7 @@ void AI::update()
     }
     while (_monsters.size() < scene->_players.size() * 3)
     {
-        EntityBase base;
+        EntityModel base;
         base.avatarID = 1000 + _monsters.size();
         base.avatarName = "MyLittlePet_";
         base.avatarName += toString(_monsters.size());
@@ -46,13 +46,13 @@ void AI::update()
         base.camp = ENTITY_CAMP_BLUE + 100;
         base.etype = ENTITY_AI;
         base.state = ENTITY_STATE_ACTIVE;
-        EntityProp fixedProps;
+        DictProp fixedProps;
         fixedProps.hp = 1000;
         fixedProps.attack = 10;
-        EntityProp grow;
+        DictProp grow;
 
         auto monster = scene->addEntity(base, fixedProps, grow, grow);
-        _monsters[monster->_entityInfo.eid] = monster;
+        _monsters[monster->_state.eid] = monster;
     }
     for (auto monster : _monsters)
     {
@@ -68,11 +68,11 @@ void AI::update()
         auto ret = scene->searchTarget(monster.second, 0, search);
         if (ret.size() > 0)
         {
-            if (monster.second->_entityMove.follow != ret.front()->_entityInfo.eid && monster.second->_entityInfo.state == ENTITY_STATE_ACTIVE)
+            if (monster.second->_move.follow != ret.front()->_state.eid && monster.second->_state.state == ENTITY_STATE_ACTIVE)
             {
-                if (monster.second->_entityMove.follow == InvalidEntityID || realRand() > 0.7)
+                if (monster.second->_move.follow == InvalidEntityID || realRand() > 0.7)
                 {
-                    monster.second->_entityMove.follow = ret.front()->_entityInfo.eid;
+                    monster.second->_move.follow = ret.front()->_state.eid;
                 }
             }
         }
@@ -80,24 +80,24 @@ void AI::update()
 
     for (auto kv : scene->_entitys)
     {
-        if (kv.second->_entityMove.follow == InvalidEntityID)
+        if (kv.second->_move.follow == InvalidEntityID)
         {
             continue;
         }
         auto entity = kv.second;
-        auto follow = scene->getEntity(kv.second->_entityMove.follow);
+        auto follow = scene->getEntity(kv.second->_move.follow);
         if (!follow)
         {
-            kv.second->_entityMove.follow = InvalidEntityID;
+            kv.second->_move.follow = InvalidEntityID;
             continue;
         }
-        auto dist = getDistance(entity->_entityMove.position, follow->_entityMove.position);
+        auto dist = getDistance(entity->_move.position, follow->_move.position);
         if (dist > 12)
         {
             EPositionArray ways;
-            ways.push_back(follow->_entityMove.position);
-            scene->_move->doMove(entity->_entityInfo.eid, MOVE_ACTION_FOLLOW, entity->getSpeed(), follow->_entityInfo.eid,
-                entity->_entityMove.position, ways);
+            ways.push_back(follow->_move.position);
+            scene->_move->doMove(entity->_state.eid, MOVE_ACTION_FOLLOW, entity->getSpeed(), follow->_state.eid,
+                entity->_move.position, ways);
         }
     }
 
@@ -109,29 +109,29 @@ void AI::update()
     SceneEventNotice eventNotice;
     for (auto kv : scene->_entitys)
     {
-        if (kv.second->_entityInfo.state == ENTITY_STATE_LIE || kv.second->_entityInfo.state == ENTITY_STATE_DIED)
+        if (kv.second->_state.state == ENTITY_STATE_LIE || kv.second->_state.state == ENTITY_STATE_DIED)
         {
-            if (kv.second->_entityInfo.etype == ENTITY_FLIGHT)
+            if (kv.second->_state.etype == ENTITY_FLIGHT)
             {
-                scene->pushAsync(std::bind(&Scene::removeEntity, scene, kv.second->_entityInfo.eid));
+                scene->pushAsync(std::bind(&Scene::removeEntity, scene, kv.second->_state.eid));
             }
             else if (kv.second->_control.stateChageTime + 10.0 < getFloatSteadyNowTime())
             {
-                kv.second->_entityInfo.state = ENTITY_STATE_ACTIVE;
-                kv.second->_entityInfo.curHP = kv.second->_props.hp;
+                kv.second->_state.state = ENTITY_STATE_ACTIVE;
+                kv.second->_state.curHP = kv.second->_props.hp;
                 kv.second->_isInfoDirty = true;
-                kv.second->_entityMove.position = kv.second->_control.spawnpoint;
+                kv.second->_move.position = kv.second->_control.spawnpoint;
                 if (scene->_move->isValidAgent(kv.second->_control.agentNo))
                 {
-                    scene->_move->setAgentPosition(kv.second->_control.agentNo, kv.second->_entityMove.position);
+                    scene->_move->setAgentPosition(kv.second->_control.agentNo, kv.second->_move.position);
                 }
                 SceneEventInfo ev;
                 ev.src = InvalidEntityID;
-                ev.dst = kv.second->_entityInfo.eid;
+                ev.dst = kv.second->_state.eid;
                 ev.ev = SCENE_EVENT_REBIRTH;
-                ev.val = kv.second->_entityInfo.curHP;
-                mergeToString(ev.mix, ",", kv.second->_entityMove.position.x);
-                mergeToString(ev.mix, ",", kv.second->_entityMove.position.y);
+                ev.val = kv.second->_state.curHP;
+                mergeToString(ev.mix, ",", kv.second->_move.position.x);
+                mergeToString(ev.mix, ",", kv.second->_move.position.y);
                 eventNotice.info.push_back(ev);
             }
         }

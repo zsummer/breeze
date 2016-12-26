@@ -40,9 +40,9 @@ inline EPosition normalize(const EPosition & dst){if (std::abs(dst.x) > std::abs
 inline RVO::Vector2 toRVOVector2(const EPosition & pos){return RVO::Vector2(pos.x, pos.y);}
 inline EPosition toEPoint(const RVO::Vector2 & pos){return EPosition(pos.x(), pos.y());}
 inline double getDistance(const EPosition& pos1, const EPosition & pos2){return getDistance(pos1.x, pos1.y, pos2.x, pos2.y);}
-inline EntityProp operator + (const EntityProp & ep1, const EntityProp & ep2);
-inline EntityProp operator * (const EntityProp & ep1, const EntityProp & ep2);
-inline EntityProp operator * (const EntityProp & ep, double df);
+inline DictProp operator + (const DictProp & ep1, const DictProp & ep2);
+inline DictProp operator * (const DictProp & ep1, const DictProp & ep2);
+inline DictProp operator * (const DictProp & ep, double df);
 
 
 
@@ -71,11 +71,11 @@ public:
     double getSuckBlood();
     double getAttack();
     EntityFullData getFullData();
-    EntityBase _baseInfo; 
-    EntityProp _baseProps;
-    EntityProp _props;
-    EntityInfo  _entityInfo;
-    EntityMove  _entityMove;
+    EntityModel _baseInfo; 
+    DictProp _baseProps;
+    DictProp _props;
+    EntityState  _state;
+    EntityMove  _move;
     EntityControl _control;
     EntityReport _report;
     SessionID _clientSessionID = InvalidSessionID;
@@ -116,9 +116,9 @@ using EntityPtr = std::shared_ptr<Entity>;
 
 
 
-inline EntityProp operator + (const EntityProp & ep1, const EntityProp & ep2)
+inline DictProp operator + (const DictProp & ep1, const DictProp & ep2)
 {
-    EntityProp ret;
+    DictProp ret;
     ret.hp = ep1.hp + ep2.hp;
     ret.hpRegen = ep1.hpRegen + ep2.hpRegen;
     ret.attack = ep1.attack + ep2.attack;
@@ -131,9 +131,9 @@ inline EntityProp operator + (const EntityProp & ep1, const EntityProp & ep2)
     return ret;
 }
 
-inline EntityProp operator * (const EntityProp & ep1, const EntityProp & ep2)
+inline DictProp operator * (const DictProp & ep1, const DictProp & ep2)
 {
-    EntityProp ret;
+    DictProp ret;
     ret.hp = ep1.hp * ep2.hp;
     ret.hpRegen = ep1.hpRegen * ep2.hpRegen;
     ret.attack = ep1.attack * ep2.attack;
@@ -145,9 +145,9 @@ inline EntityProp operator * (const EntityProp & ep1, const EntityProp & ep2)
     ret.vampirk = ep1.vampirk * ep2.vampirk;
     return ret;
 }
-inline EntityProp operator * (const EntityProp & ep, double df)
+inline DictProp operator * (const DictProp & ep, double df)
 {
-    EntityProp ret;
+    DictProp ret;
     ret.hp = ep.hp * df;
     ret.hpRegen = ep.hpRegen * df;
     ret.attack = ep.attack * df;

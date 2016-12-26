@@ -5,7 +5,7 @@
  
 struct SceneKnock //战场服务器挂载  
 { 
-    static const unsigned short getProtoID() { return 39000;} 
+    static const unsigned short getProtoID() { return 4000;} 
     static const std::string getProtoName() { return "SceneKnock";} 
     unsigned long long lineID; //分线ID  
     std::string pubHost;  
@@ -48,7 +48,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ScenePulse //集群脉冲  
 { 
-    static const unsigned short getProtoID() { return 39001;} 
+    static const unsigned short getProtoID() { return 4001;} 
     static const std::string getProtoName() { return "ScenePulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ScenePulse & data) 
@@ -68,24 +68,24 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerJoinGroupIns //创建/加入编队, 来自docker的指令  
 { 
-    static const unsigned short getProtoID() { return 39002;} 
+    static const unsigned short getProtoID() { return 4002;} 
     static const std::string getProtoName() { return "SceneServerJoinGroupIns";} 
     unsigned long long refresh; //0为客户端请求操作, 1为仅仅刷新数据  
     unsigned long long groupID; //编队ID, 0为创建  
-    EntityBase baseInfo; //玩家基础数据  
-    EntityProp fixedProps; //基础固定属性  
-    EntityProp growthProps; //成长基础属性  
-    EntityProp growths; //成长系数  
+    EntityModel model; //玩家基础数据  
+    DictProp fixedProps; //基础固定属性  
+    DictProp growthProps; //成长基础属性  
+    DictProp growths; //成长系数  
     SceneServerJoinGroupIns() 
     { 
         refresh = 0; 
         groupID = 0; 
     } 
-    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const EntityBase & baseInfo, const EntityProp & fixedProps, const EntityProp & growthProps, const EntityProp & growths) 
+    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const EntityModel & model, const DictProp & fixedProps, const DictProp & growthProps, const DictProp & growths) 
     { 
         this->refresh = refresh; 
         this->groupID = groupID; 
-        this->baseInfo = baseInfo; 
+        this->model = model; 
         this->fixedProps = fixedProps; 
         this->growthProps = growthProps; 
         this->growths = growths; 
@@ -95,7 +95,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.refresh;  
     ws << data.groupID;  
-    ws << data.baseInfo;  
+    ws << data.model;  
     ws << data.fixedProps;  
     ws << data.growthProps;  
     ws << data.growths;  
@@ -105,7 +105,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.refresh;  
     rs >> data.groupID;  
-    rs >> data.baseInfo;  
+    rs >> data.model;  
     rs >> data.fixedProps;  
     rs >> data.growthProps;  
     rs >> data.growths;  
@@ -116,7 +116,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "refresh=" << info.refresh << ","; 
     stm << "groupID=" << info.groupID << ","; 
-    stm << "baseInfo=" << info.baseInfo << ","; 
+    stm << "model=" << info.model << ","; 
     stm << "fixedProps=" << info.fixedProps << ","; 
     stm << "growthProps=" << info.growthProps << ","; 
     stm << "growths=" << info.growths << ","; 
@@ -126,7 +126,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerJoinGroupAck //创建/加入编队响应结果  
 { 
-    static const unsigned short getProtoID() { return 39003;} 
+    static const unsigned short getProtoID() { return 4003;} 
     static const std::string getProtoName() { return "SceneServerJoinGroupAck";} 
     unsigned short retCode;  
     unsigned long long newGroupID;  
@@ -170,7 +170,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerEnterSceneIns //开辟场景  
 { 
-    static const unsigned short getProtoID() { return 39004;} 
+    static const unsigned short getProtoID() { return 4004;} 
     static const std::string getProtoName() { return "SceneServerEnterSceneIns";} 
     unsigned short sceneType; //类型  
     unsigned long long mapID;  
@@ -213,7 +213,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerCancelSceneIns //退出场景  
 { 
-    static const unsigned short getProtoID() { return 39005;} 
+    static const unsigned short getProtoID() { return 4005;} 
     static const std::string getProtoName() { return "SceneServerCancelSceneIns";} 
     unsigned long long sceneID; //sceneID  
     unsigned long long groupID; //groupID  
@@ -251,7 +251,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerGroupStateChangeIns //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 39006;} 
+    static const unsigned short getProtoID() { return 4006;} 
     static const std::string getProtoName() { return "SceneServerGroupStateChangeIns";} 
     unsigned long long sceneID;  
     unsigned long long groupID;  

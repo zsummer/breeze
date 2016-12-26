@@ -43,7 +43,7 @@ void Skill::update()
                 }
                 if (getBitFlag(first.behaviour, SKILL_BEHAVIOUR_HIT))
                 {
-                    auto targets = scene->searchTarget(self, getRadian(self->_entityMove.position.x, self->_entityMove.position.y, skill.dst.x, skill.dst.y), first.search);
+                    auto targets = scene->searchTarget(self, getRadian(self->_move.position.x, self->_move.position.y, skill.dst.x, skill.dst.y), first.search);
                     damage(self, targets);
                 }
                 skill.data.behaviours.erase(skill.data.behaviours.begin());
@@ -68,7 +68,7 @@ bool Skill::trigger(EntityID eid, ui64 skillID, EntityID foe, const EPosition & 
     {
         return false;
     }
-    if (entity->_entityInfo.state != ENTITY_STATE_ACTIVE)
+    if (entity->_state.state != ENTITY_STATE_ACTIVE)
     {
         return false;
     }
@@ -123,9 +123,9 @@ bool Skill::damage(EntityPtr caster, std::vector<EntityPtr> & targets)
     }
 
     EntityPtr master = caster;
-    if (caster->_entityInfo.etype == ENTITY_FLIGHT)
+    if (caster->_state.etype == ENTITY_FLIGHT)
     {
-        master = scene->getEntity(caster->_entityInfo.foe);
+        master = scene->getEntity(caster->_state.foe);
         if (!master)
         {
             return false;
@@ -134,23 +134,23 @@ bool Skill::damage(EntityPtr caster, std::vector<EntityPtr> & targets)
     SceneEventNotice notice;
     for (auto target : targets)
     {
-        if (target->_entityInfo.state != ENTITY_STATE_ACTIVE)
+        if (target->_state.state != ENTITY_STATE_ACTIVE)
         {
             continue;
         }
-        target->_entityInfo.curHP -= 20;
+        target->_state.curHP -= 20;
         target->_isInfoDirty = true;
-        notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_HARM_ATTACK, 20, ""));
-        if (target->_entityInfo.curHP <= 0)
+        notice.info.push_back(SceneEventInfo(master->_state.eid, target->_state.eid, SCENE_EVENT_HARM_ATTACK, 20, ""));
+        if (target->_state.curHP <= 0)
         {
-            target->_entityInfo.curHP = 0.0;
-            target->_entityInfo.state = ENTITY_STATE_LIE;
-            target->_entityMove.action = MOVE_ACTION_IDLE;
-            target->_entityMove.follow = InvalidEntityID;
-            target->_entityInfo.foe = InvalidEntityID;
+            target->_state.curHP = 0.0;
+            target->_state.state = ENTITY_STATE_LIE;
+            target->_move.action = MOVE_ACTION_IDLE;
+            target->_move.follow = InvalidEntityID;
+            target->_state.foe = InvalidEntityID;
 
             target->_control.stateChageTime = getFloatSteadyNowTime();
-            notice.info.push_back(SceneEventInfo(master->_entityInfo.eid, target->_entityInfo.eid, SCENE_EVENT_LIE, 0, ""));
+            notice.info.push_back(SceneEventInfo(master->_state.eid, target->_state.eid, SCENE_EVENT_LIE, 0, ""));
         }
     }
     scene->broadcast(notice);

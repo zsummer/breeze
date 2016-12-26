@@ -16,7 +16,7 @@ GroupID Scene::getGroupID(ServiceID avatarID)
     auto entity = getEntityByAvatarID(avatarID);
     if (entity)
     {
-        return entity->_entityInfo.groupID;
+        return entity->_state.groupID;
     }
     return InvalidGroupID;
 }
@@ -108,10 +108,10 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 
 
 
-EntityPtr Scene::addEntity(const EntityBase & baseInfo,
-    const EntityProp & fixedProps,
-    const EntityProp & growProps,
-    const EntityProp & growth,
+EntityPtr Scene::addEntity(const EntityModel & baseInfo,
+    const DictProp & fixedProps,
+    const DictProp & growProps,
+    const DictProp & growth,
     GroupID groupID)
 {
     EntityPtr entity = std::make_shared<Entity>();
@@ -122,33 +122,33 @@ EntityPtr Scene::addEntity(const EntityBase & baseInfo,
     entity->_props = fixedProps + growProps * (growth * baseInfo.level);
     
 
-    entity->_entityInfo.eid = ++_lastEID;
-    entity->_entityInfo.camp = baseInfo.camp;
-    entity->_entityInfo.etype = baseInfo.etype;
-    entity->_entityInfo.groupID = groupID;
-    entity->_entityInfo.state = baseInfo.state;
-    entity->_entityInfo.leader = InvalidEntityID;
-    entity->_entityInfo.foe = InvalidEntityID;
+    entity->_state.eid = ++_lastEID;
+    entity->_state.camp = baseInfo.camp;
+    entity->_state.etype = baseInfo.etype;
+    entity->_state.groupID = groupID;
+    entity->_state.state = baseInfo.state;
+    entity->_state.leader = InvalidEntityID;
+    entity->_state.foe = InvalidEntityID;
 
-    entity->_entityInfo.curHP = entity->_props.hp;
+    entity->_state.curHP = entity->_props.hp;
 
     entity->_control.spawnpoint = { 0.0 - 30 +  realRandF()*30 ,60 -30 + realRandF()*30 };
-    entity->_control.eid = entity->_entityInfo.eid;
+    entity->_control.eid = entity->_state.eid;
     entity->_control.agentNo = -1;
     entity->_control.stateChageTime = getFloatSteadyNowTime();
 
-    entity->_entityMove.eid = entity->_entityInfo.eid;
-    entity->_entityMove.position = entity->_control.spawnpoint;
-    entity->_entityMove.follow = InvalidEntityID;
-    entity->_entityMove.waypoints.clear();
-    entity->_entityMove.action = MOVE_ACTION_IDLE;
+    entity->_move.eid = entity->_state.eid;
+    entity->_move.position = entity->_control.spawnpoint;
+    entity->_move.follow = InvalidEntityID;
+    entity->_move.waypoints.clear();
+    entity->_move.action = MOVE_ACTION_IDLE;
 
-    entity->_report.eid = entity->_entityInfo.eid;
+    entity->_report.eid = entity->_state.eid;
 
-    entity->_control.agentNo = _move->addAgent(entity->_entityMove.position);
-    _entitys.insert(std::make_pair(entity->_entityInfo.eid, entity));
+    entity->_control.agentNo = _move->addAgent(entity->_move.position);
+    _entitys.insert(std::make_pair(entity->_state.eid, entity));
 
-    if (baseInfo.avatarID != InvalidServiceID && entity->_entityInfo.etype == ENTITY_PLAYER)
+    if (baseInfo.avatarID != InvalidServiceID && entity->_state.etype == ENTITY_PLAYER)
     {
         _players[baseInfo.avatarID] = entity;
     }
@@ -165,7 +165,7 @@ bool Scene::removePlayer(AvatarID avatarID)
     auto entity = getEntityByAvatarID(avatarID);
     if (entity)
     {
-        return removeEntity(entity->_entityInfo.eid);
+        return removeEntity(entity->_state.eid);
     }
     return false;
 }
@@ -174,9 +174,9 @@ bool Scene::removePlayerByGroupID(GroupID groupID)
     std::set<EntityID> removes;
     for (auto entity : _entitys)
     {
-        if (entity.second->_entityInfo.etype == ENTITY_PLAYER && entity.second->_entityInfo.groupID == groupID)
+        if (entity.second->_state.etype == ENTITY_PLAYER && entity.second->_state.groupID == groupID)
         {
-            removes.insert(entity.second->_entityInfo.eid);
+            removes.insert(entity.second->_state.eid);
         }
     }
     for (auto eid : removes)
@@ -200,10 +200,10 @@ bool Scene::removeEntity(EntityID eid)
         _move->delAgent(entity->_control.agentNo);
         entity->_control.agentNo = -1;
     }
-    if (entity->_entityInfo.etype == ENTITY_PLAYER)
+    if (entity->_state.etype == ENTITY_PLAYER)
     {
         _players.erase(entity->_baseInfo.avatarID);
-        SceneMgr::getRef().sendToWorld(SceneServerGroupStateChangeIns(getSceneID(), entity->_entityInfo.groupID, SCENE_NONE));
+        SceneMgr::getRef().sendToWorld(SceneServerGroupStateChangeIns(getSceneID(), entity->_state.groupID, SCENE_NONE));
     }
     _entitys.erase(eid);
 
@@ -223,7 +223,7 @@ bool Scene::playerAttach(ServiceID avatarID, SessionID sID)
     }
     entity->_clientSessionID = sID;
 
-    LOGI("Scene::playerAttach avatarName=" << entity->_baseInfo.avatarName << " sessionID=" << sID << ", entityID=" << entity->_entityInfo.eid);
+    LOGI("Scene::playerAttach avatarName=" << entity->_baseInfo.avatarName << " sessionID=" << sID << ", entityID=" << entity->_state.eid);
     EntityFullDataArray entitys;
     SceneSectionNotice section;
     getSceneSection(section.section);
@@ -255,7 +255,7 @@ bool Scene::playerDettach(ServiceID avatarID, SessionID sID)
     auto entity = getEntityByAvatarID(avatarID);
     if (entity && entity->_clientSessionID == sID)
     {
-        LOGI("Scene::playerDettach avatarName=" << entity->_baseInfo.avatarName << " sessionID=" << sID << ", entityID=" << entity->_entityInfo.eid);
+        LOGI("Scene::playerDettach avatarName=" << entity->_baseInfo.avatarName << " sessionID=" << sID << ", entityID=" << entity->_state.eid);
         entity->_clientSessionID = InvalidSessionID;
     }
     return true;
@@ -282,12 +282,12 @@ bool Scene::onUpdate()
     {
         if (kv.second->_isInfoDirty)
         {
-            notice.entityInfos.push_back(kv.second->_entityInfo);
+            notice.entityInfos.push_back(kv.second->_state);
             kv.second->_isInfoDirty = false;
         }
         if (kv.second->_isMoveDirty)
         {
-            notice.entityMoves.push_back(kv.second->_entityMove);
+            notice.entityMoves.push_back(kv.second->_move);
             kv.second->_isMoveDirty = false;
         }
     }
@@ -327,7 +327,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         rs >> req;
         LOGD("MoveReq avatarID[" << avatarID << "] req=" << req);
         auto entity = getEntity(req.eid);
-        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_entityInfo.etype != ENTITY_PLAYER 
+        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER 
             || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH 
                     || !_move->doMove(req.eid, (MoveAction)req.action, entity->getSpeed(), req.follow, req.clientPos, req.waypoints))
         {
@@ -339,7 +339,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         UseSkillReq req;
         rs >> req;
         auto entity = getEntity(req.eid);
-        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_entityInfo.etype != ENTITY_PLAYER
+        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
             ||!_skill->trigger(req.eid, req.skillID, req.foe, req.dst))
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID, req.foe, req.dst));
@@ -379,9 +379,9 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
 {
     EntityPtr master = caster;
     std::vector<EntityPtr> ret;
-    if (caster->_entityInfo.etype == ENTITY_FLIGHT  && caster->_entityInfo.leader != InvalidEntityID)
+    if (caster->_state.etype == ENTITY_FLIGHT  && caster->_state.leader != InvalidEntityID)
     {
-        auto m = getEntity(caster->_entityInfo.leader);
+        auto m = getEntity(caster->_state.leader);
         if (!m)
         {
             LOGE("");
@@ -390,10 +390,10 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         master = m;
     }
     //偏移修正
-    auto org = caster->_entityMove.position;
+    auto org = caster->_move.position;
     if (true)
     {
-        auto y = getFarPoint(caster->_entityMove.position.x, caster->_entityMove.position.y, radian, search.offsetY);
+        auto y = getFarPoint(caster->_move.position.x, caster->_move.position.y, radian, search.offsetY);
         auto x = getFarPoint(std::get<0>(y), std::get<1>(y), fmod(radian+ PI*2.0 - PI/2.0, PI*2.0), search.offsetX);
         org.x = std::get<0>(x);
         org.y = std::get<1>(x);
@@ -402,25 +402,25 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
     for (auto kv : _entitys)
     {
         auto & entity = *(kv.second);
-        if (entity._entityInfo.etype != ENTITY_PLAYER && entity._entityInfo.etype != ENTITY_AI)
+        if (entity._state.etype != ENTITY_PLAYER && entity._state.etype != ENTITY_AI)
         {
             continue;
         }
-        if (entity._entityInfo.state != ENTITY_STATE_ACTIVE)
+        if (entity._state.state != ENTITY_STATE_ACTIVE)
         {
             continue;
         }
-        if (getBitFlag(search.camp, SEARCH_CAMP_SELF) && entity._entityInfo.eid == master->_entityInfo.eid)
+        if (getBitFlag(search.camp, SEARCH_CAMP_SELF) && entity._state.eid == master->_state.eid)
         {
             ret.push_back(kv.second);
             continue;
         }
         if (search.camp == SEARCH_CAMP_NONE
-            ||(getBitFlag(search.camp, SEARCH_CAMP_SELF) && master->_entityInfo.eid == entity._entityInfo.eid)
+            ||(getBitFlag(search.camp, SEARCH_CAMP_SELF) && master->_state.eid == entity._state.eid)
             ||(getBitFlag(search.camp, SEARCH_CAMP_SAME_WITHOUT_SELF)
-              && master->_entityInfo.camp == entity._entityInfo.camp
-              && master->_entityInfo.eid != entity._entityInfo.eid)
-            || (getBitFlag(search.camp, SEARCH_CAMP_ALIEN) && master->_entityInfo.camp != entity._entityInfo.camp))
+              && master->_state.camp == entity._state.camp
+              && master->_state.eid != entity._state.eid)
+            || (getBitFlag(search.camp, SEARCH_CAMP_ALIEN) && master->_state.camp != entity._state.camp))
         {
             //matched target camp
         }
@@ -430,19 +430,19 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         }
         if (search.etype != ENTITY_NONE)
         {
-            if (entity._entityInfo.etype != search.etype)
+            if (entity._state.etype != search.etype)
             {
                 continue;
             }
         }
 
-        if (getDistance(org, entity._entityMove.position) > search.distance)
+        if (getDistance(org, entity._move.position) > search.distance)
         {
             continue;
         }
         if (search.method == SEARCH_METHOD_SEACTOR && search.radian < PI*2.0*0.9)
         {
-            double radianEntity = getRadian(org.x, org.y, entity._entityMove.position.x, entity._entityMove.position.y);
+            double radianEntity = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
             double curRadian = fmod(radian+search.radian/2.0, PI*2.0);
             if ((curRadian >= radianEntity && curRadian - radianEntity < search.radian)
                 || (curRadian < radianEntity && curRadian + PI*2.0 - radianEntity < search.radian))
@@ -456,10 +456,10 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         }
         if (search.method == SEARCH_METHOD_RECT)
         {
-            double curRadian = getRadian(org.x, org.y, entity._entityMove.position.x, entity._entityMove.position.y);
+            double curRadian = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
             auto dst = rotatePoint(org.x, org.y, curRadian,
-                getDistance(org, entity._entityMove.position), PI*2.0 - curRadian );
-            if (abs(std::get<1>(dst) - caster->_entityMove.position.y) > search.radian/2.0)
+                getDistance(org, entity._move.position), PI*2.0 - curRadian );
+            if (abs(std::get<1>(dst) - caster->_move.position.y) > search.radian/2.0)
             {
                 continue;
             }
@@ -467,7 +467,7 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         ret.push_back(kv.second);
     }
     std::sort(ret.begin(), ret.end(), [caster](const EntityPtr & entity1, const EntityPtr & entity2)
-    {return getDistance(entity1->_entityMove.position, caster->_entityMove.position) < getDistance(entity2->_entityMove.position, caster->_entityMove.position); });
+    {return getDistance(entity1->_move.position, caster->_move.position) < getDistance(entity2->_move.position, caster->_move.position); });
     while (ret.size() > search.limitEntitys)
     {
         ret.pop_back();

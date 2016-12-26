@@ -2,7 +2,7 @@
 
 <ProtoTraits>
   <MinNo>50000</MinNo>
-  <MaxNo>51000</MaxNo>
+  <MaxNo>55000</MaxNo>
   <UseLog4z>1</UseLog4z>
 </ProtoTraits>
 
@@ -39,8 +39,8 @@
     </proto>
 
     <proto name="SceneRefreshNotice" desc= "">
-        <member name="entityProps"  type="EntityPropArray" desc=""/>
-        <member name="entityInfos"  type="EntityInfoArray" desc=""/>
+        <member name="entityProps"  type="DictPropArray" desc=""/>
+        <member name="entityInfos"  type="EntityStateArray" desc=""/>
         <member name="entityMoves"  type="EntityMoveArray" desc=""/>
     </proto>
 

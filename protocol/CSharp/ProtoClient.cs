@@ -5,8 +5,8 @@ namespace Proto4z
     public class ClientPulse: Proto4z.IProtoObject //客户端脉冲请求  
     {     
         //proto id   
-        public const ushort protoID = 40000;  
-        static public ushort getProtoID() { return 40000; } 
+        public const ushort protoID = 55000;  
+        static public ushort getProtoID() { return 55000; } 
         static public string getProtoName() { return "ClientPulse"; } 
         //members   
         public ClientPulse()  
@@ -26,8 +26,8 @@ namespace Proto4z
     public class ClientAuthReq: Proto4z.IProtoObject //认证请求  
     {     
         //proto id   
-        public const ushort protoID = 40001;  
-        static public ushort getProtoID() { return 40001; } 
+        public const ushort protoID = 55001;  
+        static public ushort getProtoID() { return 55001; } 
         static public string getProtoName() { return "ClientAuthReq"; } 
         //members   
         public string account;  
@@ -60,8 +60,8 @@ namespace Proto4z
     public class ClientAuthResp: Proto4z.IProtoObject //认证返回  
     {     
         //proto id   
-        public const ushort protoID = 40002;  
-        static public ushort getProtoID() { return 40002; } 
+        public const ushort protoID = 55002;  
+        static public ushort getProtoID() { return 55002; } 
         static public string getProtoName() { return "ClientAuthResp"; } 
         //members   
         public ushort retCode;  
@@ -106,8 +106,8 @@ namespace Proto4z
     public class CreateAvatarReq: Proto4z.IProtoObject //创角色请求  
     {     
         //proto id   
-        public const ushort protoID = 40003;  
-        static public ushort getProtoID() { return 40003; } 
+        public const ushort protoID = 55003;  
+        static public ushort getProtoID() { return 55003; } 
         static public string getProtoName() { return "CreateAvatarReq"; } 
         //members   
         public string accountName; //这个字段会被服务器填充.客户端可以不填写  
@@ -140,8 +140,8 @@ namespace Proto4z
     public class CreateAvatarResp: Proto4z.IProtoObject //创角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 40004;  
-        static public ushort getProtoID() { return 40004; } 
+        public const ushort protoID = 55004;  
+        static public ushort getProtoID() { return 55004; } 
         static public string getProtoName() { return "CreateAvatarResp"; } 
         //members   
         public ushort retCode;  
@@ -181,8 +181,8 @@ namespace Proto4z
     public class AttachAvatarReq: Proto4z.IProtoObject //选角色请求  
     {     
         //proto id   
-        public const ushort protoID = 40005;  
-        static public ushort getProtoID() { return 40005; } 
+        public const ushort protoID = 55005;  
+        static public ushort getProtoID() { return 55005; } 
         static public string getProtoName() { return "AttachAvatarReq"; } 
         //members   
         public string accountName; //这个字段会被服务器填充.客户端可以不填写  
@@ -215,8 +215,8 @@ namespace Proto4z
     public class AttachAvatarResp: Proto4z.IProtoObject //选角色请求返回  
     {     
         //proto id   
-        public const ushort protoID = 40006;  
-        static public ushort getProtoID() { return 40006; } 
+        public const ushort protoID = 55006;  
+        static public ushort getProtoID() { return 55006; } 
         static public string getProtoName() { return "AttachAvatarResp"; } 
         //members   
         public ushort retCode;  
@@ -251,8 +251,8 @@ namespace Proto4z
     public class AvatarBaseInfoNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40007;  
-        static public ushort getProtoID() { return 40007; } 
+        public const ushort protoID = 55007;  
+        static public ushort getProtoID() { return 55007; } 
         static public string getProtoName() { return "AvatarBaseInfoNotice"; } 
         //members   
         public AvatarBaseInfo baseInfo;  
@@ -282,8 +282,8 @@ namespace Proto4z
     public class AvatarPropMapNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40008;  
-        static public ushort getProtoID() { return 40008; } 
+        public const ushort protoID = 55008;  
+        static public ushort getProtoID() { return 55008; } 
         static public string getProtoName() { return "AvatarPropMapNotice"; } 
         //members   
         public ulong avatarID;  
@@ -311,8 +311,8 @@ namespace Proto4z
     public class SceneGroupInfoNotice: Proto4z.IProtoObject //编队数据通知  
     {     
         //proto id   
-        public const ushort protoID = 40009;  
-        static public ushort getProtoID() { return 40009; } 
+        public const ushort protoID = 55009;  
+        static public ushort getProtoID() { return 55009; } 
         static public string getProtoName() { return "SceneGroupInfoNotice"; } 
         //members   
         public SceneGroupInfo groupInfo;  
@@ -342,8 +342,8 @@ namespace Proto4z
     public class SceneGroupGetReq: Proto4z.IProtoObject //获取当前角色的场景状态数据  
     {     
         //proto id   
-        public const ushort protoID = 40010;  
-        static public ushort getProtoID() { return 40010; } 
+        public const ushort protoID = 55010;  
+        static public ushort getProtoID() { return 55010; } 
         static public string getProtoName() { return "SceneGroupGetReq"; } 
         //members   
         public SceneGroupGetReq()  
@@ -363,8 +363,8 @@ namespace Proto4z
     public class SceneGroupGetResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40011;  
-        static public ushort getProtoID() { return 40011; } 
+        public const ushort protoID = 55011;  
+        static public ushort getProtoID() { return 55011; } 
         static public string getProtoName() { return "SceneGroupGetResp"; } 
         //members   
         public ushort retCode;  
@@ -392,8 +392,8 @@ namespace Proto4z
     public class SceneGroupEnterReq: Proto4z.IProtoObject //申请进入场景  
     {     
         //proto id   
-        public const ushort protoID = 40012;  
-        static public ushort getProtoID() { return 40012; } 
+        public const ushort protoID = 55012;  
+        static public ushort getProtoID() { return 55012; } 
         static public string getProtoName() { return "SceneGroupEnterReq"; } 
         //members   
         public ushort sceneType;  
@@ -426,8 +426,8 @@ namespace Proto4z
     public class SceneGroupEnterResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40013;  
-        static public ushort getProtoID() { return 40013; } 
+        public const ushort protoID = 55013;  
+        static public ushort getProtoID() { return 55013; } 
         static public string getProtoName() { return "SceneGroupEnterResp"; } 
         //members   
         public ushort retCode;  
@@ -455,8 +455,8 @@ namespace Proto4z
     public class SceneGroupCancelReq: Proto4z.IProtoObject //取消申请(根据状态不同会有取消匹配,重置状态,结束战斗(可中途结束的场景类型)  
     {     
         //proto id   
-        public const ushort protoID = 40014;  
-        static public ushort getProtoID() { return 40014; } 
+        public const ushort protoID = 55014;  
+        static public ushort getProtoID() { return 55014; } 
         static public string getProtoName() { return "SceneGroupCancelReq"; } 
         //members   
         public SceneGroupCancelReq()  
@@ -476,8 +476,8 @@ namespace Proto4z
     public class SceneGroupCancelResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40015;  
-        static public ushort getProtoID() { return 40015; } 
+        public const ushort protoID = 55015;  
+        static public ushort getProtoID() { return 55015; } 
         static public string getProtoName() { return "SceneGroupCancelResp"; } 
         //members   
         public ushort retCode;  
@@ -505,8 +505,8 @@ namespace Proto4z
     public class SceneGroupCreateReq: Proto4z.IProtoObject //发起组队请求  
     {     
         //proto id   
-        public const ushort protoID = 40016;  
-        static public ushort getProtoID() { return 40016; } 
+        public const ushort protoID = 55016;  
+        static public ushort getProtoID() { return 55016; } 
         static public string getProtoName() { return "SceneGroupCreateReq"; } 
         //members   
         public SceneGroupCreateReq()  
@@ -526,8 +526,8 @@ namespace Proto4z
     public class SceneGroupCreateResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40017;  
-        static public ushort getProtoID() { return 40017; } 
+        public const ushort protoID = 55017;  
+        static public ushort getProtoID() { return 55017; } 
         static public string getProtoName() { return "SceneGroupCreateResp"; } 
         //members   
         public ushort retCode;  
@@ -555,8 +555,8 @@ namespace Proto4z
     public class SceneGroupJoinReq: Proto4z.IProtoObject //加入组队  
     {     
         //proto id   
-        public const ushort protoID = 40018;  
-        static public ushort getProtoID() { return 40018; } 
+        public const ushort protoID = 55018;  
+        static public ushort getProtoID() { return 55018; } 
         static public string getProtoName() { return "SceneGroupJoinReq"; } 
         //members   
         public ulong groupID;  
@@ -584,8 +584,8 @@ namespace Proto4z
     public class SceneGroupJoinResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40019;  
-        static public ushort getProtoID() { return 40019; } 
+        public const ushort protoID = 55019;  
+        static public ushort getProtoID() { return 55019; } 
         static public string getProtoName() { return "SceneGroupJoinResp"; } 
         //members   
         public ushort retCode;  
@@ -613,8 +613,8 @@ namespace Proto4z
     public class SceneGroupInviteReq: Proto4z.IProtoObject //邀请对方加入自己的编队  
     {     
         //proto id   
-        public const ushort protoID = 40020;  
-        static public ushort getProtoID() { return 40020; } 
+        public const ushort protoID = 55020;  
+        static public ushort getProtoID() { return 55020; } 
         static public string getProtoName() { return "SceneGroupInviteReq"; } 
         //members   
         public ulong avatarID;  
@@ -642,8 +642,8 @@ namespace Proto4z
     public class SceneGroupInviteResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40021;  
-        static public ushort getProtoID() { return 40021; } 
+        public const ushort protoID = 55021;  
+        static public ushort getProtoID() { return 55021; } 
         static public string getProtoName() { return "SceneGroupInviteResp"; } 
         //members   
         public ushort retCode;  
@@ -671,8 +671,8 @@ namespace Proto4z
     public class SceneGroupInviteNotice: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40022;  
-        static public ushort getProtoID() { return 40022; } 
+        public const ushort protoID = 55022;  
+        static public ushort getProtoID() { return 55022; } 
         static public string getProtoName() { return "SceneGroupInviteNotice"; } 
         //members   
         public ulong avatarID;  
@@ -710,8 +710,8 @@ namespace Proto4z
     public class SceneGroupRejectReq: Proto4z.IProtoObject //拒绝对方邀请  
     {     
         //proto id   
-        public const ushort protoID = 40023;  
-        static public ushort getProtoID() { return 40023; } 
+        public const ushort protoID = 55023;  
+        static public ushort getProtoID() { return 55023; } 
         static public string getProtoName() { return "SceneGroupRejectReq"; } 
         //members   
         public ulong groupID;  
@@ -739,8 +739,8 @@ namespace Proto4z
     public class SceneGroupRejectResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40024;  
-        static public ushort getProtoID() { return 40024; } 
+        public const ushort protoID = 55024;  
+        static public ushort getProtoID() { return 55024; } 
         static public string getProtoName() { return "SceneGroupRejectResp"; } 
         //members   
         public ushort retCode;  
@@ -768,8 +768,8 @@ namespace Proto4z
     public class SceneGroupLeaveReq: Proto4z.IProtoObject //离开编队  
     {     
         //proto id   
-        public const ushort protoID = 40025;  
-        static public ushort getProtoID() { return 40025; } 
+        public const ushort protoID = 55025;  
+        static public ushort getProtoID() { return 55025; } 
         static public string getProtoName() { return "SceneGroupLeaveReq"; } 
         //members   
         public SceneGroupLeaveReq()  
@@ -789,8 +789,8 @@ namespace Proto4z
     public class SceneGroupLeaveResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40026;  
-        static public ushort getProtoID() { return 40026; } 
+        public const ushort protoID = 55026;  
+        static public ushort getProtoID() { return 55026; } 
         static public string getProtoName() { return "SceneGroupLeaveResp"; } 
         //members   
         public ushort retCode;  
@@ -818,8 +818,8 @@ namespace Proto4z
     public class ChatReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40027;  
-        static public ushort getProtoID() { return 40027; } 
+        public const ushort protoID = 55027;  
+        static public ushort getProtoID() { return 55027; } 
         static public string getProtoName() { return "ChatReq"; } 
         //members   
         public ushort channelID;  
@@ -857,8 +857,8 @@ namespace Proto4z
     public class ChatResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40028;  
-        static public ushort getProtoID() { return 40028; } 
+        public const ushort protoID = 55028;  
+        static public ushort getProtoID() { return 55028; } 
         static public string getProtoName() { return "ChatResp"; } 
         //members   
         public ushort channelID;  
@@ -916,8 +916,8 @@ namespace Proto4z
     public class PingPongReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40029;  
-        static public ushort getProtoID() { return 40029; } 
+        public const ushort protoID = 55029;  
+        static public ushort getProtoID() { return 55029; } 
         static public string getProtoName() { return "PingPongReq"; } 
         //members   
         public string msg;  
@@ -945,8 +945,8 @@ namespace Proto4z
     public class PingPongResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40030;  
-        static public ushort getProtoID() { return 40030; } 
+        public const ushort protoID = 55030;  
+        static public ushort getProtoID() { return 55030; } 
         static public string getProtoName() { return "PingPongResp"; } 
         //members   
         public string msg;  
@@ -974,8 +974,8 @@ namespace Proto4z
     public class ChangeIconIDReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40031;  
-        static public ushort getProtoID() { return 40031; } 
+        public const ushort protoID = 55031;  
+        static public ushort getProtoID() { return 55031; } 
         static public string getProtoName() { return "ChangeIconIDReq"; } 
         //members   
         public ulong iconID;  
@@ -1003,8 +1003,8 @@ namespace Proto4z
     public class ChangeIconIDResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40032;  
-        static public ushort getProtoID() { return 40032; } 
+        public const ushort protoID = 55032;  
+        static public ushort getProtoID() { return 55032; } 
         static public string getProtoName() { return "ChangeIconIDResp"; } 
         //members   
         public ushort retCode;  
@@ -1037,8 +1037,8 @@ namespace Proto4z
     public class ChangeModeIDReq: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40033;  
-        static public ushort getProtoID() { return 40033; } 
+        public const ushort protoID = 55033;  
+        static public ushort getProtoID() { return 55033; } 
         static public string getProtoName() { return "ChangeModeIDReq"; } 
         //members   
         public ulong modeID;  
@@ -1066,8 +1066,8 @@ namespace Proto4z
     public class ChangeModeIDResp: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 40034;  
-        static public ushort getProtoID() { return 40034; } 
+        public const ushort protoID = 55034;  
+        static public ushort getProtoID() { return 55034; } 
         static public string getProtoName() { return "ChangeModeIDResp"; } 
         //members   
         public ushort retCode;  

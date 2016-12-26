@@ -53,33 +53,33 @@ void MoveSync::checkStepRVO(bool preCheck)
         {
             continue;
         }
-        if (entity._entityMove.action == MOVE_ACTION_IDLE)
+        if (entity._move.action == MOVE_ACTION_IDLE)
         {
             continue;
         }
         do
         {
-            while (!entity._entityMove.waypoints.empty())
+            while (!entity._move.waypoints.empty())
             {
-                double dist = getDistance(entity._entityMove.position, entity._entityMove.waypoints.front());
-                if (dist < 1.0 || (dist < 6.0&&entity._entityMove.action == MOVE_ACTION_FOLLOW))
+                double dist = getDistance(entity._move.position, entity._move.waypoints.front());
+                if (dist < 1.0 || (dist < 6.0&&entity._move.action == MOVE_ACTION_FOLLOW))
                 {
-                    entity._entityMove.waypoints.erase(entity._entityMove.waypoints.begin());
+                    entity._move.waypoints.erase(entity._move.waypoints.begin());
                     continue;
                 }
                 break;
             }
-            if (entity._entityMove.waypoints.empty())
+            if (entity._move.waypoints.empty())
             {
                 LOGD("END MOVE[" << entity._baseInfo.avatarName << "]: all waypoints is gone");
-                entity._entityMove.action = MOVE_ACTION_IDLE;
+                entity._move.action = MOVE_ACTION_IDLE;
                 break;
             }
             if (entity._control.blockMoveCount > 1.0 / SceneFrameInterval)
             {
-                LOGW("BREAK MOVE[" << entity._baseInfo.avatarName << "][" << entity._entityInfo.eid << "]: block long time. count = " << entity._control.blockMoveCount);
-                entity._entityMove.waypoints.clear();
-                entity._entityMove.action = MOVE_ACTION_IDLE;
+                LOGW("BREAK MOVE[" << entity._baseInfo.avatarName << "][" << entity._state.eid << "]: block long time. count = " << entity._control.blockMoveCount);
+                entity._move.waypoints.clear();
+                entity._move.action = MOVE_ACTION_IDLE;
                 entity._control.blockMoveCount = 0;
                 break;
             }
@@ -98,29 +98,29 @@ void MoveSync::checkStepRVO(bool preCheck)
                 sim->setAgentRadius(entity._control.agentNo, std::get<4>(tp));
             }
 
-            sim->setAgentMaxSpeed(entity._control.agentNo, entity._entityMove.expectSpeed);
-            double dist = getDistance(entity._entityMove.position, entity._entityMove.waypoints.front());
-            double needTime = dist / entity._entityMove.expectSpeed;
-            RVO::Vector2 dir = RVO::normalize(toRVOVector2(entity._entityMove.waypoints.front()) - toRVOVector2(entity._entityMove.position));
+            sim->setAgentMaxSpeed(entity._control.agentNo, entity._move.expectSpeed);
+            double dist = getDistance(entity._move.position, entity._move.waypoints.front());
+            double needTime = dist / entity._move.expectSpeed;
+            RVO::Vector2 dir = RVO::normalize(toRVOVector2(entity._move.waypoints.front()) - toRVOVector2(entity._move.position));
             if (needTime > SceneFrameInterval)
             {
-                dir *= entity._entityMove.expectSpeed;
+                dir *= entity._move.expectSpeed;
             }
             else
             {
                 dir *= needTime / SceneFrameInterval;
             }
             sim->setAgentPrefVelocity(entity._control.agentNo, dir);
-            LOGD("RVO PRE MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._entityMove.position
-                << ", dst=" << entity._entityMove.waypoints.front() << ", dir=" << dir);
+            LOGD("RVO PRE MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.position
+                << ", dst=" << entity._move.waypoints.front() << ", dir=" << dir);
         } while (false);
 
-        if (entity._entityMove.action == MOVE_ACTION_IDLE)
+        if (entity._move.action == MOVE_ACTION_IDLE)
         {
-            entity._entityMove.waypoints.clear();
+            entity._move.waypoints.clear();
             sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0, 0));
-            scene->broadcast(MoveNotice(entity._entityMove));
-            LOGD("RVO FIN MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._entityMove.position);
+            scene->broadcast(MoveNotice(entity._move));
+            LOGD("RVO FIN MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.position);
         }
         entity._isMoveDirty = true;
     }
@@ -158,21 +158,21 @@ void MoveSync::update()
             continue;
         }
         auto rvoPos = toEPoint(sim->getAgentPosition(entity._control.agentNo));
-        if (getDistance(entity._entityMove.position, rvoPos) > 0.1)
+        if (getDistance(entity._move.position, rvoPos) > 0.1)
         {
             entity._isMoveDirty = true;
         }
         if (entity._isMoveDirty)
         {
-            auto realMove = toRVOVector2(rvoPos) - toRVOVector2(entity._entityMove.position);
+            auto realMove = toRVOVector2(rvoPos) - toRVOVector2(entity._move.position);
             auto expectMove = sim->getAgentPrefVelocity(entity._control.agentNo);
-            entity._entityMove.realSpeed = RVO::abs(realMove) / timeStep;
+            entity._move.realSpeed = RVO::abs(realMove) / timeStep;
             if (RVO::abs(expectMove) > 0.0001) //float over
             {
                 if (RVO::abs(realMove) / (RVO::abs(expectMove) / ServerPulseInterval) < 0.1)
                 {
                     entity._control.blockMoveCount++;
-                    LOGW("EXPECT MOVE DIST WRONG[" << entity._entityInfo.eid << "]: DIFF=" << RVO::abs(realMove) / RVO::abs(expectMove) << ", now blocks=" << entity._control.blockMoveCount);
+                    LOGW("EXPECT MOVE DIST WRONG[" << entity._state.eid << "]: DIFF=" << RVO::abs(realMove) / RVO::abs(expectMove) << ", now blocks=" << entity._control.blockMoveCount);
                 }
                 else
                 {
@@ -181,10 +181,10 @@ void MoveSync::update()
             }
         }
 
-        entity._entityMove.position = toEPoint(sim->getAgentPosition(entity._control.agentNo));
+        entity._move.position = toEPoint(sim->getAgentPosition(entity._control.agentNo));
         if (entity._isMoveDirty)
         {
-            LOGD("RVO AFT MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._entityMove.position);
+            LOGD("RVO AFT MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.position);
         }
 
     }
@@ -237,11 +237,11 @@ bool MoveSync::doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EP
     {
         return false;
     }
-    if (entity->_entityInfo.state != ENTITY_STATE_ACTIVE)
+    if (entity->_state.state != ENTITY_STATE_ACTIVE)
     {
         return false;
     }
-    auto & moveInfo = entity->_entityMove;
+    auto & moveInfo = entity->_move;
     if (moveInfo.action == MOVE_ACTION_PASV_PATH || moveInfo.action == MOVE_ACTION_FORCE_PATH)
     {
         return false;

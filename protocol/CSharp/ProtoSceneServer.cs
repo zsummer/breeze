@@ -5,8 +5,8 @@ namespace Proto4z
     public class SceneKnock: Proto4z.IProtoObject //战场服务器挂载  
     {     
         //proto id   
-        public const ushort protoID = 39000;  
-        static public ushort getProtoID() { return 39000; } 
+        public const ushort protoID = 4000;  
+        static public ushort getProtoID() { return 4000; } 
         static public string getProtoName() { return "SceneKnock"; } 
         //members   
         public ulong lineID; //分线ID  
@@ -44,8 +44,8 @@ namespace Proto4z
     public class ScenePulse: Proto4z.IProtoObject //集群脉冲  
     {     
         //proto id   
-        public const ushort protoID = 39001;  
-        static public ushort getProtoID() { return 39001; } 
+        public const ushort protoID = 4001;  
+        static public ushort getProtoID() { return 4001; } 
         static public string getProtoName() { return "ScenePulse"; } 
         //members   
         public ScenePulse()  
@@ -65,30 +65,30 @@ namespace Proto4z
     public class SceneServerJoinGroupIns: Proto4z.IProtoObject //创建/加入编队, 来自docker的指令  
     {     
         //proto id   
-        public const ushort protoID = 39002;  
-        static public ushort getProtoID() { return 39002; } 
+        public const ushort protoID = 4002;  
+        static public ushort getProtoID() { return 4002; } 
         static public string getProtoName() { return "SceneServerJoinGroupIns"; } 
         //members   
         public ulong refresh; //0为客户端请求操作, 1为仅仅刷新数据  
         public ulong groupID; //编队ID, 0为创建  
-        public EntityBase baseInfo; //玩家基础数据  
-        public EntityProp fixedProps; //基础固定属性  
-        public EntityProp growthProps; //成长基础属性  
-        public EntityProp growths; //成长系数  
+        public EntityModel model; //玩家基础数据  
+        public DictProp fixedProps; //基础固定属性  
+        public DictProp growthProps; //成长基础属性  
+        public DictProp growths; //成长系数  
         public SceneServerJoinGroupIns()  
         { 
             refresh = 0;  
             groupID = 0;  
-            baseInfo = new EntityBase();  
-            fixedProps = new EntityProp();  
-            growthProps = new EntityProp();  
-            growths = new EntityProp();  
+            model = new EntityModel();  
+            fixedProps = new DictProp();  
+            growthProps = new DictProp();  
+            growths = new DictProp();  
         } 
-        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, EntityBase baseInfo, EntityProp fixedProps, EntityProp growthProps, EntityProp growths) 
+        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, EntityModel model, DictProp fixedProps, DictProp growthProps, DictProp growths) 
         { 
             this.refresh = refresh; 
             this.groupID = groupID; 
-            this.baseInfo = baseInfo; 
+            this.model = model; 
             this.fixedProps = fixedProps; 
             this.growthProps = growthProps; 
             this.growths = growths; 
@@ -98,13 +98,13 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.refresh)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
-            if (this.baseInfo == null) this.baseInfo = new EntityBase(); 
-            data.AddRange(this.baseInfo.__encode()); 
-            if (this.fixedProps == null) this.fixedProps = new EntityProp(); 
+            if (this.model == null) this.model = new EntityModel(); 
+            data.AddRange(this.model.__encode()); 
+            if (this.fixedProps == null) this.fixedProps = new DictProp(); 
             data.AddRange(this.fixedProps.__encode()); 
-            if (this.growthProps == null) this.growthProps = new EntityProp(); 
+            if (this.growthProps == null) this.growthProps = new DictProp(); 
             data.AddRange(this.growthProps.__encode()); 
-            if (this.growths == null) this.growths = new EntityProp(); 
+            if (this.growths == null) this.growths = new DictProp(); 
             data.AddRange(this.growths.__encode()); 
             return data; 
         } 
@@ -112,13 +112,13 @@ namespace Proto4z
         { 
             this.refresh = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.baseInfo = new EntityBase(); 
-            this.baseInfo.__decode(binData, ref pos); 
-            this.fixedProps = new EntityProp(); 
+            this.model = new EntityModel(); 
+            this.model.__decode(binData, ref pos); 
+            this.fixedProps = new DictProp(); 
             this.fixedProps.__decode(binData, ref pos); 
-            this.growthProps = new EntityProp(); 
+            this.growthProps = new DictProp(); 
             this.growthProps.__decode(binData, ref pos); 
-            this.growths = new EntityProp(); 
+            this.growths = new DictProp(); 
             this.growths.__decode(binData, ref pos); 
             return pos; 
         } 
@@ -127,8 +127,8 @@ namespace Proto4z
     public class SceneServerJoinGroupAck: Proto4z.IProtoObject //创建/加入编队响应结果  
     {     
         //proto id   
-        public const ushort protoID = 39003;  
-        static public ushort getProtoID() { return 39003; } 
+        public const ushort protoID = 4003;  
+        static public ushort getProtoID() { return 4003; } 
         static public string getProtoName() { return "SceneServerJoinGroupAck"; } 
         //members   
         public ushort retCode;  
@@ -166,8 +166,8 @@ namespace Proto4z
     public class SceneServerEnterSceneIns: Proto4z.IProtoObject //开辟场景  
     {     
         //proto id   
-        public const ushort protoID = 39004;  
-        static public ushort getProtoID() { return 39004; } 
+        public const ushort protoID = 4004;  
+        static public ushort getProtoID() { return 4004; } 
         static public string getProtoName() { return "SceneServerEnterSceneIns"; } 
         //members   
         public ushort sceneType; //类型  
@@ -207,8 +207,8 @@ namespace Proto4z
     public class SceneServerCancelSceneIns: Proto4z.IProtoObject //退出场景  
     {     
         //proto id   
-        public const ushort protoID = 39005;  
-        static public ushort getProtoID() { return 39005; } 
+        public const ushort protoID = 4005;  
+        static public ushort getProtoID() { return 4005; } 
         static public string getProtoName() { return "SceneServerCancelSceneIns"; } 
         //members   
         public ulong sceneID; //sceneID  
@@ -241,8 +241,8 @@ namespace Proto4z
     public class SceneServerGroupStateChangeIns: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39006;  
-        static public ushort getProtoID() { return 39006; } 
+        public const ushort protoID = 4006;  
+        static public ushort getProtoID() { return 4006; } 
         static public string getProtoName() { return "SceneServerGroupStateChangeIns"; } 
         //members   
         public ulong sceneID;  

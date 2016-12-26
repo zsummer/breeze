@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>34daaa4d50e0a887b8a839e8b8110ed4</cppmd5> 
-<luamd5>f5ec9fc55e5bae34ad80b6fdae8b67ea</luamd5> 
-<csharpmd5>33b4d7db97cd14526476de4c646e4a22</csharpmd5> 
-<xmlmd5>97c757a694cb56bcec0e2fe86f7a2eff</xmlmd5> 
+<cppmd5>0d46b850a760e3730c14bf9352accbf6</cppmd5> 
+<luamd5>5bd546daca64c52e7e318bf9fbc2920c</luamd5> 
+<csharpmd5>846619583b594616663bd6c8047524be</csharpmd5> 
+<xmlmd5>d788793688b1883b2aae14925b0504f8</xmlmd5> 
 <cacheNumber>
-    <cache key = "BuffData" Number = "10006" /> 
-    <cache key = "BuffInfo" Number = "10009" /> 
-    <cache key = "EPosition" Number = "10002" /> 
-    <cache key = "EntityBase" Number = "10017" /> 
-    <cache key = "EntityFullData" Number = "10013" /> 
-    <cache key = "EntityInfo" Number = "10010" /> 
-    <cache key = "EntityMove" Number = "10011" /> 
-    <cache key = "EntityProp" Number = "10016" /> 
-    <cache key = "EntityReport" Number = "10012" /> 
-    <cache key = "HarmData" Number = "10007" /> 
-    <cache key = "SceneEventInfo" Number = "10015" /> 
-    <cache key = "SceneGroupAvatarInfo" Number = "10000" /> 
-    <cache key = "SceneGroupInfo" Number = "10001" /> 
-    <cache key = "SceneSection" Number = "10014" /> 
-    <cache key = "SearchInfo" Number = "10003" /> 
-    <cache key = "SkillBehaviour" Number = "10004" /> 
-    <cache key = "SkillData" Number = "10005" /> 
-    <cache key = "SkillInfo" Number = "10008" /> 
+    <cache key = "BuffData" Number = "2007" /> 
+    <cache key = "BuffInfo" Number = "2010" /> 
+    <cache key = "EPosition" Number = "2003" /> 
+    <cache key = "EntityFullData" Number = "2014" /> 
+    <cache key = "EntityModel" Number = "2000" /> 
+    <cache key = "EntityMove" Number = "2012" /> 
+    <cache key = "EntityReport" Number = "2013" /> 
+    <cache key = "EntityState" Number = "2011" /> 
+    <cache key = "SceneEventInfo" Number = "2008" /> 
+    <cache key = "SceneGroupAvatarInfo" Number = "2001" /> 
+    <cache key = "SceneGroupInfo" Number = "2002" /> 
+    <cache key = "SceneSection" Number = "2015" /> 
+    <cache key = "SearchInfo" Number = "2004" /> 
+    <cache key = "SkillBehaviour" Number = "2005" /> 
+    <cache key = "SkillData" Number = "2006" /> 
+    <cache key = "SkillInfo" Number = "2009" /> 
 </cacheNumber>
