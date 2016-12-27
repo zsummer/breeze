@@ -9,7 +9,17 @@
 
 <Proto>
 
+    <array name="DictArrayValue" type="double" desc="通用Value数组" />
+    <array name="DictArrayKey" type="ui64" desc="通用KEY数组" />
+    <map name="DictMapKeyValue" key="ui64" value="double" desc="通用Key value" />
+
+    <packet name="DictPairValue"  desc= "">
+        <member name="val1" type="ui64"   desc=""/>
+        <member name="val2" type="ui64"   desc=""/>
+    </packet>
+    <map name="DictMapKeyPairValue" key="ui64" value="DictPairValue" desc="" />
   
+
     <!------------- 全局配置 ---------------------->
     <packet name="DictGlobal" store="MyISAM" desc= "全局配置">
         <member name="id" type="ui64" tag="key"   desc=""/>
@@ -18,51 +28,43 @@
         <member name="combo" type="string"   desc="字符串"/>
         <member name="desc" type="string"   desc=""/>
     </packet>
+    <array name="DictGlobalArray" type="DictGlobal" desc="" />
+    <map name="DictGlobalMap" key="ui64" value="DictGlobal" desc="" />
 
 
-
-    <!------------- 抽奖 ---------------------->
-    <packet name="DictReward" desc= "奖品">
-        <member name="id" type="ui64"  desc="奖品ID"/>
-        <member name="count" type="ui64"   desc="数量"/>
-        <member name="probability" type="double"   desc="概率[0~1], 0为永远无法随机到 1是100%随机到"/>
-    </packet>
-    <array name="DictRewardArray" type="DictReward" desc="" />
-
+    <!------------- 道具, 掉落, 抽奖 ---------------------->
     <packet name="DictDrop" store="MyISAM"  desc= "道具抽奖,道具掉落">
         <member name="id" type="ui64" tag="key"  desc=""/>
-        <member name="dropType" type="ui64"   desc="0 独立随机, 所有奖品根据自身概率随机,  1 从奖池中抽取一个奖品, 如果所有奖品概率总和小于1则可能什么都抽取不到"/>
-        <member name="rewards" type="DictRewardArray" tag="ignore"  desc="奖池"/>
-        <member name="rewardsString" type="string"   desc="奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式"/>
-    </packet>
-
-
-
-
-
-    <!------------- 道具 ---------------------->
-
-    <packet name="DictItem" store="MyISAM"  desc= "道具字典">
-        <member name="id" type="ui64" tag="key"  desc=""/>
-        <member name="visible" type="ui16"   desc="是否可见"/>
-        <member name="icon" type="ui16"   desc=""/>
-        <member name="stacks" type="ui16"   desc="可堆叠个数,0和1都是1次"/>
-        <member name="autoUse" type="ui16"   desc="0 不可使用, 1 可使用, 2 获得后自动使用"/>
-        <member name="dropID" type="ui64"   desc=""/>
-        <member name="propID" type="ui64"   desc=""/>
-
-
-        <member name="vocationLimit" type="ui16"   desc="限制职业类型, 装备类型"/>
-        <member name="levelLimit" type="double"   desc="限制职业最小等级, 装备类型"/>
-
-
+        <member name="dropType" type="ui16"   desc="0 独立随机, 所有奖品根据自身概率随机,  1 从奖池中抽取一个奖品, 如果所有奖品概率总和小于1则可能什么都抽取不到"/>
+        <member name="rewards" type="DictMapKeyPairValue" tag="ignore"  desc="奖池"/>
+        <member name="rewardsText" type="string"   desc="奖池 格式为 id|count|prob,id|count|prob "/>
         <member name="desc" type="string"   desc=""/>
     </packet>
 
 
+    <packet name="DictItem" store="MyISAM"  desc= "道具字典">
+        <member name="id" type="ui64" tag="key"  desc=""/>
+        <member name="icon" type="ui16"   desc=""/>
+        <member name="autoUse" type="ui16"   desc="0 手动, 其他 自动使用"/>
+        <member name="stacks" type="double"   desc="可堆叠个数,0和1都是1次"/>
+        <member name="costItems" type="DictMapKeyValue"  tag="ignore"  desc="使用该道具需要消耗的其他道具"/>
+        <member name="costItemsText" type="DictMapKeyValue"   desc="使用该道具需要消耗的其他道具"/>
+        <member name="dropID" type="ui64"   desc="使用该道具后会产生掉落效果 0为无效"/>
+        <member name="propID" type="ui64"   desc="装备该道具带来的属性加成"/>
+        <member name="skills" type="DictArrayKey"  tag="ignore" desc="装备该道具带来的可用技能"/>
+        <member name="skillsText" type="string"   desc="装备该道具带来的可用技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="装备该道具带来的可用buff"/>
+        <member name="buffsText" type="string"   desc="装备该道具带来的可用buff 格式id,id,id"/>
+
+        <member name="visible" type="ui16"   desc="是否可见"/>
+        <member name="desc" type="string"   desc=""/>
+    </packet>
+    <array name="DictItemArray" type="DictItem" desc="" />
+    <map name="DictItemMap" key="ui64" value="DictItem" desc="" />
 
 
-    <struct name="DictProp" store="MyISAM" desc="">
+
+    <struct name="DictProp" store="MyISAM" desc="战斗属性">
         <member name="id" type="ui64" tag="key"  desc=""/>
         <member name="hp" type="double"   desc="血量值"/>
         <member name="hpRegen" type="double"   desc="每秒血量值恢复"/>
@@ -77,32 +79,58 @@
     <array name="DictPropArray" type="DictProp" desc="" />
     <map name="DictPropMap" key="ui64" value="DictProp" desc="" />
 
-    <struct name="DictSceneUpLevel" store="MyISAM" desc="">
-        <member name="id" type="ui64" tag="key"  desc=""/>
-        <member name="nextID" type="ui64"   desc="下一等级的ID"/>
-        <member name="propID" type="ui64"   desc="对应的prop数值"/>
-        <member name="upExp" type="double"   desc="升级所需经验"/>
+    <struct name="DictModelLevel" store="MyISAM" desc="">
+        <member name="modelID" type="ui64" tag="key"  desc=""/>
+        <member name="levelID" type="ui64" tag="key"  desc=""/>
+        <member name="needExp" type="double"   desc="升级所需经验"/>
+        <member name="propID" type="ui64"   desc="战斗属性"/>
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="该等级带来的可用技能"/>
+        <member name="skillsText" type="string"   desc="该等级带来的可用技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="该等级带来的可用buff"/>
+        <member name="buffsText" type="string"   desc="该等级带来的可用buff 格式id,id,id"/>
     </struct>
-    <array name="DictSceneUpLevelArray" type="DictSceneUpLevel" desc="" />
-    <map name="DictSceneUpLevelMap" key="ui64" value="DictSceneUpLevel" desc="" />
+    <array name="DictModelLevelArray" type="DictModelLevel" desc="" />
+    <map name="DictModelLevelMap" key="ui64" value="DictModelLevel" desc="" />
 
 
     <struct name="DictModel" store="MyISAM" desc="">
-        <member name="eid" type="ui64"   desc=""/>
         <member name="modelID" type="ui64" tag="key"   desc=""/>
         <member name="modelName" type="string"   desc=""/>
-        <member name="avatarID" type="ui64"   desc=""/>
-        <member name="avatarName" type="string"   desc=""/>
         <member name="iconID"  type="ui64" desc="头像"/>
-        <member name="level"  type="double" desc="等级"/>
-        <member name="exp"  type="double" desc="经验"/>
-        <member name="gold"  type="double" desc="金币"/>
-        <member name="camp"  type="ui16" desc=""/>
-        <member name="etype"  type="ui16" desc=""/>
-        <member name="state"  type="ui16" desc=""/>
+        <member name="initLevel"  type="double" desc="等级"/>
+        <member name="initCamp"  type="ui16" desc=""/>
+        <member name="initItems"  type="DictMapKeyPairValue" tag="ignore" desc=""/>
+        <member name="initItemsText"  type="string"  desc=""/>
+        <member name="initState"  type="ui16" desc="初始化状态"/>
+        <member name="actionScriptPath"  type="string" desc="行为树脚本路径"/>
+        <member name="clientModelPath"  type="string" desc="客户端模型路径"/>
+        <member name="desc" type="string"   desc=""/>
     </struct>
     <array name="DictModelArray" type="DictModel" desc="" />
     <map name="DictModelMap" key="ui64" value="DictModel" desc="" />
+
+    <struct name="DictSkillEffect" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="propID" type="ui64"   desc="提升的属性效果"/>
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
+        <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
+        <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
+        <member name="tirggerInteval" type="double"   desc="触发间隔 秒"/>
+        <member name="tirggerLimitCount" type="double"   desc="触发次数 秒"/>
+        <member name="keepTime"  type="double" desc=""/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+
+    <struct name="DictBuff" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+    <struct name="DictSkill" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+
 
 
 </Proto>
