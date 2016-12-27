@@ -96,6 +96,7 @@
     <struct name="DictModel" store="MyISAM" desc="">
         <member name="modelID" type="ui64" tag="key"   desc=""/>
         <member name="modelName" type="string"   desc=""/>
+        <member name="modelRedius" type="double"   desc="碰撞半径"/>
         <member name="iconID"  type="ui64" desc="头像"/>
         <member name="initLevel"  type="double" desc="等级"/>
         <member name="initCamp"  type="ui16" desc=""/>
