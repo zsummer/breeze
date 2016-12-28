@@ -110,25 +110,95 @@
     <array name="DictModelArray" type="DictModel" desc="" />
     <map name="DictModelMap" key="ui64" value="DictModel" desc="" />
 
+
+
+
+
+
+    <!-- BUFF类型-->
+    <enum type="ui64" name="BUFF_TYPE" desc="">
+        <member name="BUFF_HALO"  value="1"  desc="描述性类型: 光环"/>
+        <member name="BUFF_BUFF"  value="2"  desc="描述性类型: 增益buff"/>
+        <member name="BUFF_DEBUFF"  value="3"  desc="描述性类型: 减益BUFF"/>
+        <member name="BUFF_HIDE"  value="4"  desc="描述性类型: 客户端不表现"/>
+ 
+
+        <member name="BUFF_HOLD_MOVE"  value="10"  desc="控制: 禁止移动"/>
+        <member name="BUFF_REVERSE_MOVE" value="11"  desc="控制: 移动反向"/>
+        <member name="BUFF_SILENCE_GENERAL" value="12"  desc="控制: 沉默普攻"/>
+        <member name="BUFF_SILENCE_PHYSICAL" value="13"  desc="控制: 沉默物攻"/>
+        <member name="BUFF_SILENCE_MAGIC" value="14"  desc="控制: 沉默法攻"/>
+
+
+        <member name="BUFF_IMMUNE_MOVE" value="20"  desc="免疫: 免疫移动类控制"/>
+        <member name="BUFF_IMMUNE_SILENCE_GENERAL" value="21"  desc="免疫: 免疫沉默"/>
+        <member name="BUFF_IMMUNE_SILENCE_PHYSICAL" value="22"  desc="免疫: 免疫沉默"/>
+        <member name="BUFF_IMMUNE_SILENCE_MAGIC" value="23"  desc="免疫: 免疫沉默"/>
+
+        <member name="BUFF_IMMUNE_DEBUFF" value="30"  desc="免疫: 免疫DEBUFF"/>
+        <member name="BUFF_IMMUNE_BUFF" value="31"  desc="免疫: 免疫增益BUFF"/>
+        <member name="BUFF_IMMUNE_OCCUPIED" value="32"  desc="免疫: 免疫占据"/>
+        <member name="BUFF_IMMUNE_FLOAT" value="33"  desc="免疫: 击飞免疫"/>
+        <member name="BUFF_IMMUNE_MOVEBACK" value="34"  desc="免疫: 击退免疫"/>
+        <member name="BUFF_IMMUNE_BREAK" value="35"  desc="免疫: 免疫技能中断"/>
+
+        <member name="BUFF_PROP_MULTIPLICATION" value="40"  desc="属性加成: 乘法, 默认加法"/>
+        <member name="BUFF_REAL_DAMAGE" value="41"  desc="真实伤害,直接扣血"/>
+        <member name="BUFF_REFLACT_DAMAGE" value="42"  desc="反伤"/>
+
+        <member name="BUFF_NEAR_APPENDBUFF_AND_DIED" value="52"  desc="距离触发buff: 任何非飞行道具实体接近, 对其上一个buff, 然后死掉[buff瓶] 配置:trigger填写要触发的BUFFID, effect为距离"/>
+        <member name="BUFF_FOE_NEAR_RUNSKILL_AND_DIED" value="53"  desc="距离触发skill: 任何敌方非飞行道具实体接近, 执行一个技能, 然后死掉[机关地雷] 配置:trigger填写要触发的技能, effect为距离"/>
+
+        <member name="BUFF_PREDIED_APPENDBUFF" value="54"  desc="死亡前触发技能: 死亡前对杀死自己的人上BUFF."/>
+        <member name="BUFF_PREDIED_RUNSKILL" value="55"  desc="死亡前触发技能: 死亡前执行一个技能."/>
+
+        <member name="BUFF_HIT_TARGET_APPENDBUFF" value="56"  desc="攻击上buff: 每当攻击一个敌人后给敌人上buff. [浸毒武器 冰刃]"/>
+        <member name="BUFF_HIT_SELF_APPENDBUFF" value="57"  desc="攻击上buff: 每当攻击一个敌人给自己上buff. [攻击带加速]"/>
+        <member name="BUFF_ONHIT_SELF_APPENDBUFF" value="58"  desc="被打上buff: 每当被攻击后给自己上buff. []"/>
+        <member name="BUFF_ONHIT_TARGET_APPENDBUFF" value="59"  desc="被打上buff: 每当被攻击后给敌人上buff. [冰甲减速]"/>
+    </enum>
+
+
+
+
+
+
+
+
+
+
+
+
+
     <struct name="DictSkillEffect" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
-        <member name="propID" type="ui64"   desc="提升的属性效果"/>
+        <member name="isPropSum" type="ui16"   desc="0 属性数值求积后再相加  非0 属性数值求和"/>
+        <member name="propID" type="ui64"   desc="提升的属性效果, 求积方式的参数是基础属性 不算其他装备"/>
         <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
         <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
         <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
         <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
-        <member name="tirggerInteval" type="double"   desc="触发间隔 秒"/>
-        <member name="tirggerLimitCount" type="double"   desc="触发次数 秒"/>
-        <member name="keepTime"  type="double" desc=""/>
         <member name="desc" type="string"   desc=""/>
     </struct>
 
     <struct name="DictBuff" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="effectID" type="ui64"   desc=""/>
+        <member name="triggerInterval" type="double"   desc="触发间隔 秒, 0为没有定时触发"/>
+        <member name="areaLimit" type="double"   desc="距离触发条件, 0为不限制"/>
+        <member name="areaTrigger" type="double"   desc="距离触发条件, 0为不限制"/>
+        <member name="limitCount" type="double"   desc="触发次数限制"/>
+        <member name="keepTime"  type="double" desc=""/>
+        <member name="mutexType" type="ui16"   desc="0无互斥, 1 同ID时间叠加, 2 同ID时间最长的覆盖, 3 同ID最强的覆盖"/>
+        <member name="mutexID" type="ui64"   desc="0"/>
+        <member name="mutexStrength" type="double"   desc=""/>
         <member name="desc" type="string"   desc=""/>
     </struct>
     <struct name="DictSkill" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="effectID" type="ui64"   desc=""/>
+        <member name="hpMode" type="ui16"   desc="0 相加, 1与总血量相乘后再相加, 2与剩余血量相乘后再相加, 3与已损失血量相乘后叠加"/>
+        <member name="hpLeft" type="double"   desc="当前血量提升, 如果是求积 则是"/>
         <member name="desc" type="string"   desc=""/>
     </struct>
 
