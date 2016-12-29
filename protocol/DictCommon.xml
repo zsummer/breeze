@@ -216,15 +216,38 @@
         <member name="effectsText" type="string"  desc=""/>
 
         <member name="keepTime"  type="double" desc=""/>
-        <member name="keepTime"  type="double" desc=""/>
+        
         <member name="mutexType" type="ui16"   desc="0无互斥, 1 同ID时间叠加, 2 同ID时间最长的覆盖, 3 同ID最强的覆盖"/>
         <member name="mutexID" type="ui64"   desc="0"/>
         <member name="mutexStrength" type="double"   desc=""/>
+        <member name="limitTime"  type="double" desc=""/>
         <member name="desc" type="string"   desc=""/>
     </struct>
 
 
+    <!-- SKILL类型 (组合位结构) -->
+    <enum type="ui64" name="SKILL_STAMP" desc="">
+        <member name="SKILL_NONE"  desc=""/>
+        <member name="SKILL_AUTO" desc="自动循环攻击"/>
+        <member name="SKILL_PASSIVE"    desc="被动技能"/>
+        <member name="SKILL_CAN_BREAK"   desc="可被中断"/>
+        <member name="SKILL_CAN_MOVE"   desc="可移动"/>
+        <member name="SKILL_PHYSICAL"    desc="物理攻击"/>
+        <member name="SKILL_MAGIC"    desc="魔法攻击"/>
+    </enum>
 
+    <!-- SKILL行为(组合位结构)  -->
+    <enum type="ui64" name="SKILL_BEHAVIOUR_STAMP" desc="">
+        <member name="SKILL_BEHAVIOUR_NONE"  desc=""/>
+        <member name="SKILL_BEHAVIOUR_HIT"   desc="攻击"/>
+        <member name="SKILL_BEHAVIOUR_TELEPORT_TARGET"   desc="瞬移到目标"/>
+        <member name="SKILL_BEHAVIOUR_BREAK_MOVE"   desc="打断移动"/>
+        <member name="SKILL_BEHAVIOUR_BREAK_SKILL"   desc="打断技能"/>
+        <member name="SKILL_BEHAVIOUR_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
+        <member name="SKILL_BEHAVIOUR_REMOVE_BUFF"   desc="驱散增益BUFF"/>
+        <member name="SKILL_BEHAVIOUR_TRIGGER_BUFF"   desc="触发buff"/>
+        <member name="SKILL_BEHAVIOUR_TRIGGER_SKILL"   desc="触发技能"/>
+    </enum>
 
 
 
