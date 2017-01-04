@@ -52,8 +52,6 @@ struct EntityControl //EntityControl
     unsigned long long agentNo = -1; //agentNo. -1为无效  
     double stateChageTime = 0.0;
     EPosition spawnpoint; //出生点
-    SkillInfoArray skills; //技能数据  
-    BuffInfoArray buffs; //BUFF数据, 小标ID对应bufftype  
     double diedTime = 1E128; //实体死亡时间点 仅飞行道具类有效  
     ui64 hitTimes = -1; //实体碰撞, 仅飞行道具类有效  
     double blockMoveCount = 0; //移动被阻次数 

@@ -78,45 +78,6 @@ void SceneModule::fillGroupInfo(AvatarService & avatar, SceneServerJoinGroupIns&
     ins.model.state = ENTITY_STATE_ACTIVE;
     ins.model.camp = ENTITY_CAMP_NONE;
     ins.model.etype = ENTITY_PLAYER;
-    if (true)
-    {
-        auto result = DBDict::getRef().getOneKeyEntityModel(avatar._baseInfo._data.modeID);
-        if (!result.first)
-        {
-            ins.model.exp = result.second.exp;
-            ins.model.gold = result.second.gold;
-            ins.model.level = result.second.level;
-            ins.model.modelName = result.second.modelName;
-        }
-
-    }
-
-    if (true)
-    {
-//         auto result = DBDict::getRef().getTwoKeyDictProp(avatar._baseInfo._data.modeID, 0);
-//         if (!result.first)
-//         {
-//             ins.fixedProps = result.second;
-//         }
-//         result = DBDict::getRef().getTwoKeyDictProp(avatar._baseInfo._data.modeID, 1);
-//         if (!result.first)
-//         {
-//             ins.growthProps = result.second;
-//         }
-//         result = DBDict::getRef().getTwoKeyDictProp(avatar._baseInfo._data.modeID, 2);
-//         if (!result.first)
-//         {
-//             ins.growths = result.second;
-//         }
-//         if (ins.fixedProps.hp <= 0)
-//         {
-//             ins.fixedProps.hp = 1000;
-//         }
-//         if (ins.fixedProps.attack <= 0)
-//         {
-//             ins.fixedProps.attack = 10;
-//         }
-    }
 }
 void SceneModule::refreshGroupInfo(AvatarService & avatar)
 {

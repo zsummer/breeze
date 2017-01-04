@@ -338,6 +338,41 @@ public:
                    return "DictDrop";
             }
             break;
+            case 10009:
+            {
+                   return "DictPairValue";
+            }
+            break;
+            case 10010:
+            {
+                   return "DictModelLevel";
+            }
+            break;
+            case 10011:
+            {
+                   return "AOESearch";
+            }
+            break;
+            case 10012:
+            {
+                   return "DictBuffEffect";
+            }
+            break;
+            case 10013:
+            {
+                   return "DictBuff";
+            }
+            break;
+            case 10014:
+            {
+                   return "DictSkillEffect";
+            }
+            break;
+            case 10015:
+            {
+                   return "DictSkill";
+            }
+            break;
             case 50000:
             {
                    return "SceneClientPulse";

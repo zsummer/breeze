@@ -46,12 +46,12 @@ bool Scene::cleanScene()
     _players.clear();
     while (!_asyncs.empty()) _asyncs.pop();
     _move.reset();
-    _skill.reset();
+
     _ai.reset();
     return true;
 }
 
-bool Scene::initScene(SceneType sceneType, MapID mapID)
+bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
 {
     if (_sceneStatus != SCENE_STATE_NONE)
     {
@@ -71,8 +71,8 @@ bool Scene::initScene(SceneType sceneType, MapID mapID)
     _move = std::make_shared<MoveSync>();
     _move->init(shared_from_this());
 
-    _skill = std::make_shared<Skill>();
-    _skill->init(shared_from_this());
+
+
 
     _ai = std::make_shared<AI>();
     _ai->init(shared_from_this());
@@ -270,9 +270,8 @@ bool Scene::onUpdate()
         return false;
     }
 
-
     _move->update();
-    _skill->update();
+ 
     _ai->update();
 
 
@@ -329,7 +328,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         auto entity = getEntity(req.eid);
         if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER 
             || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH 
-                    || !_move->doMove(req.eid, (MoveAction)req.action, entity->getSpeed(), req.follow, req.clientPos, req.waypoints))
+                    || !_move->doMove(req.eid, (MOVE_ACTION)req.action, entity->getSpeed(), req.follow, req.clientPos, req.waypoints))
         {
             sendToClient(avatarID, MoveResp(EC_ERROR, req.eid, req.action));
         }
@@ -340,7 +339,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         rs >> req;
         auto entity = getEntity(req.eid);
         if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
-            ||!_skill->trigger(req.eid, req.skillID, req.foe, req.dst))
+           )
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID, req.foe, req.dst));
         }
@@ -375,7 +374,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
 
 
 
-std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, const SearchInfo & search)
+std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, const AOESearch & search)
 {
     EntityPtr master = caster;
     std::vector<EntityPtr> ret;
@@ -440,7 +439,7 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         {
             continue;
         }
-        if (search.method == SEARCH_METHOD_SEACTOR && search.radian < PI*2.0*0.9)
+        if (!search.isRect && search.radian < PI*2.0*0.9)
         {
             double radianEntity = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
             double curRadian = fmod(radian+search.radian/2.0, PI*2.0);
@@ -454,7 +453,7 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
                 continue;
             }
         }
-        if (search.method == SEARCH_METHOD_RECT)
+        if (search.isRect)
         {
             double curRadian = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
             auto dst = rotatePoint(org.x, org.y, curRadian,

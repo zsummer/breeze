@@ -137,10 +137,16 @@ public:
         auto helper = buildHelper("STDictDBMgr");
         if (!helper) return false;
         buildTable<DictGlobal>(helper);
-        buildTable<DictProp>(helper);
+        buildTable<DictDrop>(helper);
         buildTable<DictItem>(helper);
         buildTable<DictProp>(helper);
-        buildTable<EntityModel>(helper);
+        buildTable<DictModel>(helper);
+        buildTable<DictModelLevel>(helper);
+        buildTable<AOESearch>(helper);
+        buildTable<DictBuffEffect>(helper);
+        buildTable<DictBuff>(helper);
+        buildTable<DictSkillEffect>(helper);
+        buildTable<DictSkill>(helper);
         return true;
     }
     inline bool buildInfoTable()
@@ -168,16 +174,30 @@ public:
     inline bool load()
     {
         LOAD_ONE_KEY_DICT(DictGlobal);
-        LOAD_ONE_KEY_DICT(DictProp);
+        LOAD_ONE_KEY_DICT(DictDrop);
         LOAD_ONE_KEY_DICT(DictItem);
-        LOAD_ONE_KEY_DICT(EntityModel);
+        LOAD_ONE_KEY_DICT(DictProp);
+        LOAD_ONE_KEY_DICT(DictModel);
+        LOAD_TWO_KEY_DICT(DictModelLevel);
+        LOAD_ONE_KEY_DICT(AOESearch);
+        LOAD_ONE_KEY_DICT(DictBuffEffect);
+        LOAD_ONE_KEY_DICT(DictBuff);
+        LOAD_ONE_KEY_DICT(DictSkillEffect);
+        LOAD_ONE_KEY_DICT(DictSkill);
         return true;
     }
     
     MAKE_ONE_KEY_DICT(DictGlobal, ui64, id);
-    MAKE_ONE_KEY_DICT(DictProp, ui64, id);
+    MAKE_ONE_KEY_DICT(DictDrop, ui64, id);
     MAKE_ONE_KEY_DICT(DictItem, ui64, id);
-    MAKE_ONE_KEY_DICT(EntityModel, ui64, modelID);
+    MAKE_ONE_KEY_DICT(DictProp, ui64, id);
+    MAKE_ONE_KEY_DICT(DictModel, ui64, modelID);
+    MAKE_TWO_KEY_DICT(DictModelLevel, ui64, modelID, ui64, levelID);
+    MAKE_ONE_KEY_DICT(AOESearch, ui64, id);
+    MAKE_ONE_KEY_DICT(DictBuffEffect, ui64, id);
+    MAKE_ONE_KEY_DICT(DictBuff, ui64, id);
+    MAKE_ONE_KEY_DICT(DictSkillEffect, ui64, id);
+    MAKE_ONE_KEY_DICT(DictSkill, ui64, id);
 
 
 private:

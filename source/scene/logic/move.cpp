@@ -220,7 +220,7 @@ bool MoveSync::setAgentPosition(ui64 agent, EPosition pos)
     }
     return false;
 }
-bool MoveSync::doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosition clt, EPositionArray dsts)
+bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPosition clt, EPositionArray dsts)
 {
     auto scene = _scene.lock();
     if (!scene)

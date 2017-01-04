@@ -3,7 +3,7 @@
 #define _PROTOSCENECOMMON_H_ 
  
  
-enum SceneType : unsigned short 
+enum SCENE_TYPE : unsigned short 
 { 
     SCENE_NONE = 0, //无效  
     SCENE_HOME = 1, //主城  
@@ -15,7 +15,7 @@ enum SceneType : unsigned short
     SCENE_MAX = 7, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
 }; 
  
-enum SceneState : unsigned short 
+enum SCENE_STATE : unsigned short 
 { 
     SCENE_STATE_NONE = 0, //不存在  
     SCENE_STATE_MATCHING = 1, //匹配中  
@@ -460,7 +460,7 @@ typedef std::vector<unsigned long long> SkillIDArray; //技能ID数组
  
 typedef std::vector<unsigned long long> BuffIDArray; //buff ID 数组  
  
-enum EntityStateEnum : unsigned short 
+enum ENTITY_STATE : unsigned short 
 { 
     ENTITY_STATE_NONE = 0, //无效  
     ENTITY_STATE_FREEZING = 1, //冻结, 不可被攻击,不可主动移动,攻击等  
@@ -469,7 +469,7 @@ enum EntityStateEnum : unsigned short
     ENTITY_STATE_DIED = 4, //死, 记死亡次数  
 }; 
  
-enum EntityType : unsigned short 
+enum ENTITY_TYPE : unsigned short 
 { 
     ENTITY_NONE = 0,  
     ENTITY_PLAYER = 1,  
@@ -477,7 +477,7 @@ enum EntityType : unsigned short
     ENTITY_FLIGHT = 3, //飞行道具  
 }; 
  
-enum EntityCampType : unsigned long long 
+enum ENTITY_CAMP : unsigned long long 
 { 
     ENTITY_CAMP_NONE = 0,  
     ENTITY_CAMP_RED = 1, //红方  
@@ -485,7 +485,7 @@ enum EntityCampType : unsigned long long
     ENTITY_CAMP_NEUTRAL = 1000, //[0~ENTITY_CAMP_NEUTRAL)阵营相互敌对, [ENTITY_CAMP_NEUTRAL~)中立温和阵营  
 }; 
  
-enum MoveAction : unsigned short 
+enum MOVE_ACTION : unsigned short 
 { 
     MOVE_ACTION_IDLE = 0, //空闲  
     MOVE_ACTION_FOLLOW = 1, //跟随  
@@ -494,312 +494,7 @@ enum MoveAction : unsigned short
     MOVE_ACTION_FORCE_PATH = 4, //不可取消&穿越地形, 直线移动一次  
 }; 
  
-enum SearchMethodType : unsigned short 
-{ 
-    SEARCH_METHOD_SEACTOR = 0, //org 扇形  
-    SEARCH_METHOD_RECT = 1, //org 矩形  
-}; 
- 
-enum SearchCampType : unsigned long long 
-{ 
-    SEARCH_CAMP_NONE = 0,  
-    SEARCH_CAMP_SELF = 1, //自身  
-    SEARCH_CAMP_SAME_WITHOUT_SELF = 2, //同阵营非自己  
-    SEARCH_CAMP_ALIEN = 3, //非己方阵营  
-}; 
- 
-enum SkillType : unsigned long long 
-{ 
-    SKILL_NONE = 0,  
-    SKILL_AUTO = 1, //自动循环攻击  
-    SKILL_PASSIVE = 2, //被动技能  
-    SKILL_CAN_BREAK = 3, //可被中断  
-    SKILL_CAN_MOVE = 4, //可移动  
-    SKILL_PHYSICAL = 5, //物理攻击  
-    SKILL_MAGIC = 6, //魔法攻击  
-}; 
- 
-enum SkillBehaviourType : unsigned long long 
-{ 
-    SKILL_BEHAVIOUR_NONE = 0,  
-    SKILL_BEHAVIOUR_HIT = 1, //攻击  
-    SKILL_BEHAVIOUR_TELEPORT_TARGET = 2, //瞬移到目标  
-    SKILL_BEHAVIOUR_BREAK_MOVE = 3, //打断移动  
-    SKILL_BEHAVIOUR_BREAK_SKILL = 4, //打断技能  
-    SKILL_BEHAVIOUR_REMOVE_DEBUFF = 5, //驱散减益BUFF  
-    SKILL_BEHAVIOUR_REMOVE_BUFF = 6, //驱散增益BUFF  
-    SKILL_BEHAVIOUR_TRIGGER_BUFF = 7, //触发buff  
-    SKILL_BEHAVIOUR_TRIGGER_SKILL = 8, //触发技能  
-}; 
- 
-enum BuffType : unsigned long long 
-{ 
-    BUFF_HALO = 1, //非表达可检索类型: 光环  
-    BUFF_BUFF = 2, //非表达可检索类型: 增益buff  
-    BUFF_DEBUFF = 3, //非表达可检索类型: 减益BUFF  
-    BUFF_HIDE = 4, //非表达可检索类型: 客户端不表现  
-    BUFF_SNEAK = 5, //潜行类型: 潜行 不会被非己方阵营的任何AOE技能搜索到  
-    BUFF_HOLD_MOVE = 15, //控制: 禁止移动  
-    BUFF_REVERSE_MOVE = 16, //控制: 移动反向  
-    BUFF_SILENCE_AUTO_ATTACK = 17, //控制: 沉默普攻  
-    BUFF_SILENCE_WITHOUT_AUTO_ATTACK = 18, //控制: 沉默非普攻技能  
-    BUFF_SILENCE_PHYSICAL = 19, //控制: 沉默物理攻击  
-    BUFF_SILENCE_MAGIC = 20, //控制: 沉默魔法攻击  
-    BUFF_IMMUNE_MOVE = 25, //免疫: 免疫移动类控制  
-    BUFF_IMMUNE_SILENCE = 26, //免疫: 免疫沉默  
-    BUFF_IMMUNE_DEBUFF = 27, //免疫: 免疫添加DEBUFF, 指被地方添加不利buff  
-    BUFF_IMMUNE_REMOVE_BUFF = 28, //免疫: 免疫驱散BUFF,指被敌方移除有益buff  
-    BUFF_IMMUNE_PHYSICAL = 29, //免疫: 物攻免疫  
-    BUFF_IMMUNE_MAGIC = 30, //免疫: 法攻免疫  
-    BUFF_INC_HARM = 35, //属性加成: 最终扣血加成, value1加法, value2乘法  
-    BUFF_INC_DAMAGE = 36, //属性加成: 伤害加成, value1加法, value2乘法  
-    BUFF_INC_SPEED = 37, //属性加成: 速度加成, value1加法, value2乘法  
-    BUFF_INC_SUCK_BLOOD = 38, //属性加成: 吸血加成 value1加法  
-    BUFF_LIGHT_SKILL = 50, //持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现  
-}; 
- 
-struct SearchInfo 
-{ 
-    static const unsigned short getProtoID() { return 2004;} 
-    static const std::string getProtoName() { return "SearchInfo";} 
-    unsigned short etype; //实体类型, 玩家/AI 或者是NONE忽略该选项  
-    unsigned long long camp; //0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType  
-    unsigned short method; //0扇形, 1矩形 SearchMethodType  
-    double distance; //伤害距离  
-    double radian; //弧度或者宽度  
-    double offsetX; //坐标偏移量, 以caster为原点, 朝向为y轴  
-    double offsetY; //坐标偏移量, 以caster为原点, 朝向为y轴  
-    unsigned long long limitEntitys; //最大目标数  
-    SearchInfo() 
-    { 
-        etype = 0; 
-        camp = 0; 
-        method = 0; 
-        distance = 0.0; 
-        radian = 0.0; 
-        offsetX = 0.0; 
-        offsetY = 0.0; 
-        limitEntitys = 0; 
-    } 
-    SearchInfo(const unsigned short & etype, const unsigned long long & camp, const unsigned short & method, const double & distance, const double & radian, const double & offsetX, const double & offsetY, const unsigned long long & limitEntitys) 
-    { 
-        this->etype = etype; 
-        this->camp = camp; 
-        this->method = method; 
-        this->distance = distance; 
-        this->radian = radian; 
-        this->offsetX = offsetX; 
-        this->offsetY = offsetY; 
-        this->limitEntitys = limitEntitys; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SearchInfo & data) 
-{ 
-    ws << data.etype;  
-    ws << data.camp;  
-    ws << data.method;  
-    ws << data.distance;  
-    ws << data.radian;  
-    ws << data.offsetX;  
-    ws << data.offsetY;  
-    ws << data.limitEntitys;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SearchInfo & data) 
-{ 
-    rs >> data.etype;  
-    rs >> data.camp;  
-    rs >> data.method;  
-    rs >> data.distance;  
-    rs >> data.radian;  
-    rs >> data.offsetX;  
-    rs >> data.offsetY;  
-    rs >> data.limitEntitys;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SearchInfo & info) 
-{ 
-    stm << "["; 
-    stm << "etype=" << info.etype << ","; 
-    stm << "camp=" << info.camp << ","; 
-    stm << "method=" << info.method << ","; 
-    stm << "distance=" << info.distance << ","; 
-    stm << "radian=" << info.radian << ","; 
-    stm << "offsetX=" << info.offsetX << ","; 
-    stm << "offsetY=" << info.offsetY << ","; 
-    stm << "limitEntitys=" << info.limitEntitys << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
-struct SkillBehaviour //技能触发行为  
-{ 
-    static const unsigned short getProtoID() { return 2005;} 
-    static const std::string getProtoName() { return "SkillBehaviour";} 
-    unsigned long long behaviour;  
-    double delay;  
-    SearchInfo search;  
-    SkillIDArray skills;  
-    BuffIDArray buffs;  
-    SkillBehaviour() 
-    { 
-        behaviour = 0; 
-        delay = 0.0; 
-    } 
-    SkillBehaviour(const unsigned long long & behaviour, const double & delay, const SearchInfo & search, const SkillIDArray & skills, const BuffIDArray & buffs) 
-    { 
-        this->behaviour = behaviour; 
-        this->delay = delay; 
-        this->search = search; 
-        this->skills = skills; 
-        this->buffs = buffs; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SkillBehaviour & data) 
-{ 
-    ws << data.behaviour;  
-    ws << data.delay;  
-    ws << data.search;  
-    ws << data.skills;  
-    ws << data.buffs;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SkillBehaviour & data) 
-{ 
-    rs >> data.behaviour;  
-    rs >> data.delay;  
-    rs >> data.search;  
-    rs >> data.skills;  
-    rs >> data.buffs;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillBehaviour & info) 
-{ 
-    stm << "["; 
-    stm << "behaviour=" << info.behaviour << ","; 
-    stm << "delay=" << info.delay << ","; 
-    stm << "search=" << info.search << ","; 
-    stm << "skills=" << info.skills << ","; 
-    stm << "buffs=" << info.buffs << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<SkillBehaviour> SkillBehaviourArray;  
- 
-struct SkillData //技能  
-{ 
-    static const unsigned short getProtoID() { return 2006;} 
-    static const std::string getProtoName() { return "SkillData";} 
-    unsigned long long skillID; //skillID  
-    unsigned long long skillType; //SkillType  
-    SkillBehaviourArray behaviours;  
-    double cd;  
-    SkillData() 
-    { 
-        skillID = 0; 
-        skillType = 0; 
-        cd = 0.0; 
-    } 
-    SkillData(const unsigned long long & skillID, const unsigned long long & skillType, const SkillBehaviourArray & behaviours, const double & cd) 
-    { 
-        this->skillID = skillID; 
-        this->skillType = skillType; 
-        this->behaviours = behaviours; 
-        this->cd = cd; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SkillData & data) 
-{ 
-    ws << data.skillID;  
-    ws << data.skillType;  
-    ws << data.behaviours;  
-    ws << data.cd;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SkillData & data) 
-{ 
-    rs >> data.skillID;  
-    rs >> data.skillType;  
-    rs >> data.behaviours;  
-    rs >> data.cd;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillData & info) 
-{ 
-    stm << "["; 
-    stm << "skillID=" << info.skillID << ","; 
-    stm << "skillType=" << info.skillType << ","; 
-    stm << "behaviours=" << info.behaviours << ","; 
-    stm << "cd=" << info.cd << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
-struct BuffData //buff  
-{ 
-    static const unsigned short getProtoID() { return 2007;} 
-    static const std::string getProtoName() { return "BuffData";} 
-    unsigned long long buffID;  
-    unsigned long long buffType; //buff类型  
-    double piletime; //最大叠加时间  
-    double keepTime; //保持时间  
-    double value1;  
-    double value2;  
-    BuffData() 
-    { 
-        buffID = 0; 
-        buffType = 0; 
-        piletime = 0.0; 
-        keepTime = 0.0; 
-        value1 = 0.0; 
-        value2 = 0.0; 
-    } 
-    BuffData(const unsigned long long & buffID, const unsigned long long & buffType, const double & piletime, const double & keepTime, const double & value1, const double & value2) 
-    { 
-        this->buffID = buffID; 
-        this->buffType = buffType; 
-        this->piletime = piletime; 
-        this->keepTime = keepTime; 
-        this->value1 = value1; 
-        this->value2 = value2; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const BuffData & data) 
-{ 
-    ws << data.buffID;  
-    ws << data.buffType;  
-    ws << data.piletime;  
-    ws << data.keepTime;  
-    ws << data.value1;  
-    ws << data.value2;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, BuffData & data) 
-{ 
-    rs >> data.buffID;  
-    rs >> data.buffType;  
-    rs >> data.piletime;  
-    rs >> data.keepTime;  
-    rs >> data.value1;  
-    rs >> data.value2;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const BuffData & info) 
-{ 
-    stm << "["; 
-    stm << "buffID=" << info.buffID << ","; 
-    stm << "buffType=" << info.buffType << ","; 
-    stm << "piletime=" << info.piletime << ","; 
-    stm << "keepTime=" << info.keepTime << ","; 
-    stm << "value1=" << info.value1 << ","; 
-    stm << "value2=" << info.value2 << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
-enum SceneEvent : unsigned short 
+enum SCENE_EVENT : unsigned short 
 { 
     SCENE_EVENT_LIE = 0,  
     SCENE_EVENT_DIED = 1,  
@@ -868,127 +563,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
  
 typedef std::vector<SceneEventInfo> SceneEventInfoArray;  
- 
-struct SkillInfo 
-{ 
-    static const unsigned short getProtoID() { return 2009;} 
-    static const std::string getProtoName() { return "SkillInfo";} 
-    unsigned long long skillID;  
-    double startTime;  
-    EPosition dst; //目标位置  
-    unsigned long long foe; //锁定的目标  
-    SkillData data; //配置数据  
-    SkillInfo() 
-    { 
-        skillID = 0; 
-        startTime = 0.0; 
-        foe = 0; 
-    } 
-    SkillInfo(const unsigned long long & skillID, const double & startTime, const EPosition & dst, const unsigned long long & foe, const SkillData & data) 
-    { 
-        this->skillID = skillID; 
-        this->startTime = startTime; 
-        this->dst = dst; 
-        this->foe = foe; 
-        this->data = data; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SkillInfo & data) 
-{ 
-    ws << data.skillID;  
-    ws << data.startTime;  
-    ws << data.dst;  
-    ws << data.foe;  
-    ws << data.data;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SkillInfo & data) 
-{ 
-    rs >> data.skillID;  
-    rs >> data.startTime;  
-    rs >> data.dst;  
-    rs >> data.foe;  
-    rs >> data.data;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillInfo & info) 
-{ 
-    stm << "["; 
-    stm << "skillID=" << info.skillID << ","; 
-    stm << "startTime=" << info.startTime << ","; 
-    stm << "dst=" << info.dst << ","; 
-    stm << "foe=" << info.foe << ","; 
-    stm << "data=" << info.data << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<SkillInfo> SkillInfoArray;  
- 
-struct BuffInfo 
-{ 
-    static const unsigned short getProtoID() { return 2010;} 
-    static const std::string getProtoName() { return "BuffInfo";} 
-    unsigned long long eid; //施放该buff的entity id  
-    unsigned long long skillID; //如果该buff是被技能触发的 则记录该技能, 被动技能是0  
-    unsigned long long buffID;  
-    double start; //start (server)tick  
-    double lastTrigerTick; //lastTrigerTick  
-    BuffData data; //配置数据  
-    BuffInfo() 
-    { 
-        eid = 0; 
-        skillID = 0; 
-        buffID = 0; 
-        start = 0.0; 
-        lastTrigerTick = 0.0; 
-    } 
-    BuffInfo(const unsigned long long & eid, const unsigned long long & skillID, const unsigned long long & buffID, const double & start, const double & lastTrigerTick, const BuffData & data) 
-    { 
-        this->eid = eid; 
-        this->skillID = skillID; 
-        this->buffID = buffID; 
-        this->start = start; 
-        this->lastTrigerTick = lastTrigerTick; 
-        this->data = data; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const BuffInfo & data) 
-{ 
-    ws << data.eid;  
-    ws << data.skillID;  
-    ws << data.buffID;  
-    ws << data.start;  
-    ws << data.lastTrigerTick;  
-    ws << data.data;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, BuffInfo & data) 
-{ 
-    rs >> data.eid;  
-    rs >> data.skillID;  
-    rs >> data.buffID;  
-    rs >> data.start;  
-    rs >> data.lastTrigerTick;  
-    rs >> data.data;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const BuffInfo & info) 
-{ 
-    stm << "["; 
-    stm << "eid=" << info.eid << ","; 
-    stm << "skillID=" << info.skillID << ","; 
-    stm << "buffID=" << info.buffID << ","; 
-    stm << "start=" << info.start << ","; 
-    stm << "lastTrigerTick=" << info.lastTrigerTick << ","; 
-    stm << "data=" << info.data << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<BuffInfo> BuffInfoArray;  
  
 struct EntityState //EntityState  
 { 

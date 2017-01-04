@@ -25,13 +25,13 @@
 class Scene : public std::enable_shared_from_this<Scene>
 {
     friend MoveSync;
-    friend Skill;
+    friend SkillMgr;
     friend AI;
     //scene数据
 private:
     SceneID _sceneID;
-    SceneType _sceneType;
-    SceneState _sceneStatus;
+    SCENE_TYPE _sceneType;
+    SCENE_STATE _sceneStatus;
     
     EntityID _lastEID;
     double _lastStatusChangeTime;
@@ -47,7 +47,7 @@ public:
     Scene(SceneID id);
     ~Scene();
     bool cleanScene();
-    bool initScene(SceneType sceneType, MapID mapID);
+    bool initScene(SCENE_TYPE sceneType, MapID mapID);
     bool onUpdate();
 public:
     bool playerAttach(ServiceID avatarID, SessionID sID);
@@ -61,13 +61,12 @@ public:
     void sendToClient(ServiceID avatarID, const MSG &msg);
 public:
     MoveSyncPtr _move;
-    SkillPtr _skill;
     AIPtr _ai;
 
 public:
     inline SceneID getSceneID() { return _sceneID; }
-    inline SceneType getSceneType() { return _sceneType; }
-    inline SceneState getSceneState() { return _sceneStatus; }
+    inline SCENE_TYPE getSceneType() { return _sceneType; }
+    inline SCENE_STATE getSceneState() { return _sceneStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
     inline size_t getPlayerCount() { return _players.size(); }
     inline std::map<ServiceID, EntityPtr> & getPlayers() { return _players; }
@@ -86,7 +85,7 @@ public:
     bool removePlayerByGroupID(GroupID groupID);
 
     void pushAsync(std::function<void()> && func);
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const SearchInfo & search);
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const AOESearch & search);
 public:
     
  

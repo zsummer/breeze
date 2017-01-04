@@ -56,12 +56,12 @@ void AI::update()
     }
     for (auto monster : _monsters)
     {
-        SearchInfo search;
-        search.camp = SEARCH_CAMP_NONE;
+        AOESearch search;
+        search.camp = SEARCH_CAMP_ALIEN;
         search.etype = ENTITY_PLAYER;
         search.limitEntitys = 1;
         search.radian = PI*2.0;
-        search.method = SEARCH_METHOD_SEACTOR;
+        search.isRect = 0;
         search.distance = 1E20;
         search.offsetX = 0;
         search.offsetY = 0;

@@ -518,7 +518,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         }
         scene = _frees.front();
         _frees.pop();
-        scene->initScene((SceneType)ins.sceneType, ins.mapID);
+        scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
         _actives.insert(std::make_pair(scene->getSceneID(), scene));
         if (ins.sceneType == SCENE_HOME)
         {

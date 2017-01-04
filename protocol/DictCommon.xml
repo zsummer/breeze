@@ -75,6 +75,7 @@
         <member name="moveSpeed" type="double"   desc="移动速度"/>
         <member name="attackSpeed" type="double"   desc="攻击速度"/>
         <member name="vampirk " type="double"   desc="吸血"/> 
+        <member name="desc " type="string"   desc=""/> 
     </struct>
     <array name="DictPropArray" type="DictProp" desc="" />
     <map name="DictPropMap" key="ui64" value="DictProp" desc="" />
@@ -111,6 +112,27 @@
     <map name="DictModelMap" key="ui64" value="DictModel" desc="" />
 
 
+    <!-- 搜索目标阵营(组合位结构)-->
+    <enum type="ui64" name="TARGET_CAMP" desc="">
+        <member name="SEARCH_CAMP_NONE"    desc="自身" />
+        <member name="SEARCH_CAMP_SELF"    desc="自身" />
+        <member name="SEARCH_CAMP_SAME_WITHOUT_SELF"    desc="同阵营非自己" />
+        <member name="SEARCH_CAMP_ALIEN"    desc="非己方阵营" />
+    </enum>
+
+
+    <struct name="AOESearch" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="etype" type="ui16"  desc="实体类型, 玩家/AI 或者是NONE忽略该选项"/>
+        <member name="camp" type="ui64"  tag="ignore" desc="0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType"/>
+        <member name="campText" type="string"  desc=""/>
+        <member name="isRect" type="ui16"  desc="0扇形, 其他矩形"/>
+        <member name="distance" type="double"  desc="伤害距离"/>
+        <member name="radian" type="double"  desc="弧度或者宽度"/>
+        <member name="offsetX" type="double"  desc="坐标偏移量, 以caster为原点, 朝向为y轴"/>
+        <member name="offsetY" type="double"  desc="坐标偏移量, 以caster为原点, 朝向为y轴"/>
+        <member name="limitEntitys" type="ui64"  desc="最大目标数"/>
+    </struct>
 
 
 
@@ -143,21 +165,6 @@
         <member name="BUFF_IMMUNE_MOVEBACK" value="34"  desc="免疫: 免疫击退"/>
         <member name="BUFF_IMMUNE_BREAK" value="35"  desc="免疫: 免疫技能中断"/>
 
-        <member name="BUFF_PROP_MULTIPLICATION" value="40"  desc="属性加成: 乘法, 默认加法"/>
-
-        <member name="BUFF_REAL_DAMAGE" value="41"  desc="真实伤害,直接扣血"/>
-        <member name="BUFF_REFLACT_DAMAGE" value="42"  desc="反伤"/>
-
-        <member name="BUFF_NEAR_APPENDBUFF_AND_DIED" value="52"  desc="距离触发buff: 任何非飞行道具实体接近, 对其上一个buff, 然后死掉[buff瓶] 配置:trigger填写要触发的BUFFID, effect为距离"/>
-        <member name="BUFF_FOE_NEAR_RUNSKILL_AND_DIED" value="53"  desc="距离触发skill: 任何敌方非飞行道具实体接近, 执行一个技能, 然后死掉[机关地雷] 配置:trigger填写要触发的技能, effect为距离"/>
-
-        <member name="BUFF_PREDIED_APPENDBUFF" value="54"  desc="死亡前触发技能: 死亡前对杀死自己的人上BUFF."/>
-        <member name="BUFF_PREDIED_RUNSKILL" value="55"  desc="死亡前触发技能: 死亡前执行一个技能."/>
-
-        <member name="BUFF_HIT_TARGET_APPENDBUFF" value="56"  desc="攻击上buff: 每当攻击一个敌人后给敌人上buff. [浸毒武器 冰刃]"/>
-        <member name="BUFF_HIT_SELF_APPENDBUFF" value="57"  desc="攻击上buff: 每当攻击一个敌人给自己上buff. [攻击带加速]"/>
-        <member name="BUFF_ONHIT_SELF_APPENDBUFF" value="58"  desc="被打上buff: 每当被攻击后给自己上buff. []"/>
-        <member name="BUFF_ONHIT_TARGET_APPENDBUFF" value="59"  desc="被打上buff: 每当被攻击后给敌人上buff. [冰甲减速]"/>
     </enum>
 
     <!-- BUFF EFFECT 标记-->
@@ -183,8 +190,7 @@
         <member name="BUFF_EFFECT_TRIGGER_WHEN_ATTACH_GENERAL" value="30"  desc="攻击触发"/>
         <member name="BUFF_EFFECT_TRIGGER_WHEN_ON_ATTACH" value="31"  desc="被攻击触发"/>
 
-        <member name="BUFF_EFFECT_TRIGGER_AFT_DEATH" value="32"  desc="死亡后触发"/>
-        <member name="BUFF_EFFECT_TRIGGER_AFT_DEATH" value="33"  desc="死亡后触发"/>
+
     </enum>
 
 
@@ -228,28 +234,41 @@
     <!-- SKILL类型 (组合位结构) -->
     <enum type="ui64" name="SKILL_STAMP" desc="">
         <member name="SKILL_NONE"  desc=""/>
-        <member name="SKILL_AUTO" desc="自动循环攻击"/>
+        <member name="SKILL_AUTO_LOCK" desc="自动锁敌"/>
+        <member name="SKILL_AUTO_USE" desc="自动施法"/>
         <member name="SKILL_PASSIVE"    desc="被动技能"/>
-        <member name="SKILL_CAN_BREAK"   desc="可被中断"/>
+        <member name="SKILL_ON_HIT_BREAK"   desc="可被中断"/>
+        <member name="SKILL_ON_MOVE_BREAK"   desc="可被中断"/>
         <member name="SKILL_CAN_MOVE"   desc="可移动"/>
-        <member name="SKILL_PHYSICAL"    desc="物理攻击"/>
-        <member name="SKILL_MAGIC"    desc="魔法攻击"/>
+        <member name="SKILL_PHYSICAL"    desc="物理类型"/>
+        <member name="SKILL_MAGIC"    desc="魔法类型"/>
     </enum>
 
     <!-- SKILL行为(组合位结构)  -->
     <enum type="ui64" name="SKILL_BEHAVIOUR_STAMP" desc="">
         <member name="SKILL_BEHAVIOUR_NONE"  desc=""/>
         <member name="SKILL_BEHAVIOUR_HIT"   desc="攻击"/>
+        <member name="SKILL_BEHAVIOUR_HILL"   desc="治疗"/>
         <member name="SKILL_BEHAVIOUR_TELEPORT_TARGET"   desc="瞬移到目标"/>
-        <member name="SKILL_BEHAVIOUR_BREAK_MOVE"   desc="打断移动"/>
-        <member name="SKILL_BEHAVIOUR_BREAK_SKILL"   desc="打断技能"/>
         <member name="SKILL_BEHAVIOUR_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
         <member name="SKILL_BEHAVIOUR_REMOVE_BUFF"   desc="驱散增益BUFF"/>
         <member name="SKILL_BEHAVIOUR_TRIGGER_BUFF"   desc="触发buff"/>
         <member name="SKILL_BEHAVIOUR_TRIGGER_SKILL"   desc="触发技能"/>
     </enum>
 
-
+    <struct name="DictSkillEffect" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="stamp" type="ui64"    desc=""/>
+        <member name="hpMode" type="ui16"   desc="血量变化类型:0 相加, 1与总血量相乘后再相加, 2与剩余血量相乘后再相加, 3与已损失血量相乘后叠加"/>
+        <member name="hpLeft" type="double" desc="血量变化参数"/>
+        <member name="hitKeepTime" type="double" desc="击退,浮空,牵引,的持续时间" />
+        <member name="hitKeepSpeed" type="double" desc="击退,浮空,牵引,的持速度" />
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
+        <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
+        <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
 
     <struct name="DictSkill" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
