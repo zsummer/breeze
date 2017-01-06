@@ -108,11 +108,7 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 
 
 
-EntityPtr Scene::addEntity(const EntityModel & baseInfo,
-    const DictProp & fixedProps,
-    const DictProp & growProps,
-    const DictProp & growth,
-    GroupID groupID)
+EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips,GroupID groupID)
 {
     EntityPtr entity = std::make_shared<Entity>();
 

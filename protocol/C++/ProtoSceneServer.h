@@ -72,43 +72,50 @@ struct SceneServerJoinGroupIns //创建/加入编队, 来自docker的指令
     static const std::string getProtoName() { return "SceneServerJoinGroupIns";} 
     unsigned long long refresh; //0为客户端请求操作, 1为仅仅刷新数据  
     unsigned long long groupID; //编队ID, 0为创建  
-    EntityModel model; //玩家基础数据  
-    DictProp fixedProps; //基础固定属性  
-    DictProp growthProps; //成长基础属性  
-    DictProp growths; //成长系数  
+    unsigned long long modelID; //模型ID  
+    DictArrayKey equips; //额外装备  
+    unsigned long long avatarID;  
+    std::string avatarName;  
+    double rankScore; //天梯分数  
     SceneServerJoinGroupIns() 
     { 
         refresh = 0; 
         groupID = 0; 
+        modelID = 0; 
+        avatarID = 0; 
+        rankScore = 0.0; 
     } 
-    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const EntityModel & model, const DictProp & fixedProps, const DictProp & growthProps, const DictProp & growths) 
+    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const unsigned long long & modelID, const DictArrayKey & equips, const unsigned long long & avatarID, const std::string & avatarName, const double & rankScore) 
     { 
         this->refresh = refresh; 
         this->groupID = groupID; 
-        this->model = model; 
-        this->fixedProps = fixedProps; 
-        this->growthProps = growthProps; 
-        this->growths = growths; 
+        this->modelID = modelID; 
+        this->equips = equips; 
+        this->avatarID = avatarID; 
+        this->avatarName = avatarName; 
+        this->rankScore = rankScore; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerJoinGroupIns & data) 
 { 
     ws << data.refresh;  
     ws << data.groupID;  
-    ws << data.model;  
-    ws << data.fixedProps;  
-    ws << data.growthProps;  
-    ws << data.growths;  
+    ws << data.modelID;  
+    ws << data.equips;  
+    ws << data.avatarID;  
+    ws << data.avatarName;  
+    ws << data.rankScore;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerJoinGroupIns & data) 
 { 
     rs >> data.refresh;  
     rs >> data.groupID;  
-    rs >> data.model;  
-    rs >> data.fixedProps;  
-    rs >> data.growthProps;  
-    rs >> data.growths;  
+    rs >> data.modelID;  
+    rs >> data.equips;  
+    rs >> data.avatarID;  
+    rs >> data.avatarName;  
+    rs >> data.rankScore;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerJoinGroupIns & info) 
@@ -116,10 +123,11 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "refresh=" << info.refresh << ","; 
     stm << "groupID=" << info.groupID << ","; 
-    stm << "model=" << info.model << ","; 
-    stm << "fixedProps=" << info.fixedProps << ","; 
-    stm << "growthProps=" << info.growthProps << ","; 
-    stm << "growths=" << info.growths << ","; 
+    stm << "modelID=" << info.modelID << ","; 
+    stm << "equips=" << info.equips << ","; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "avatarName=" << info.avatarName << ","; 
+    stm << "rankScore=" << info.rankScore << ","; 
     stm << "]"; 
     return stm; 
 } 

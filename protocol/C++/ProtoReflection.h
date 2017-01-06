@@ -373,6 +373,46 @@ public:
                    return "DictSkill";
             }
             break;
+            case 11000:
+            {
+                   return "DictProp";
+            }
+            break;
+            case 11001:
+            {
+                   return "DictModelLevel";
+            }
+            break;
+            case 11002:
+            {
+                   return "DictModel";
+            }
+            break;
+            case 11003:
+            {
+                   return "AOESearch";
+            }
+            break;
+            case 11004:
+            {
+                   return "DictBuffEffect";
+            }
+            break;
+            case 11005:
+            {
+                   return "DictBuff";
+            }
+            break;
+            case 11006:
+            {
+                   return "DictSkillEffect";
+            }
+            break;
+            case 11007:
+            {
+                   return "DictSkill";
+            }
+            break;
             case 50000:
             {
                    return "SceneClientPulse";

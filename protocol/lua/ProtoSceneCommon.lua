@@ -15,45 +15,18 @@ Proto4z.SCENE_STATE_ALLOCATE = 3--服务器分配场景中
 Proto4z.SCENE_STATE_WAIT = 4--等待玩家加入战场 
 Proto4z.SCENE_STATE_ACTIVE = 5--战斗中 
  
-Proto4z.register(2000,"EntityModel") 
-Proto4z.EntityModel = {}  
-Proto4z.EntityModel.__protoID = 2000 
-Proto4z.EntityModel.__protoName = "EntityModel" 
-Proto4z.EntityModel[1] = {name="eid", type="ui64" }  
-Proto4z.EntityModel[2] = {name="modelID", type="ui64" }  
-Proto4z.EntityModel[3] = {name="modelName", type="string" }  
-Proto4z.EntityModel[4] = {name="avatarID", type="ui64" }  
-Proto4z.EntityModel[5] = {name="avatarName", type="string" }  
-Proto4z.EntityModel[6] = {name="iconID", type="ui64" } --头像 
-Proto4z.EntityModel[7] = {name="level", type="double" } --等级 
-Proto4z.EntityModel[8] = {name="exp", type="double" } --经验 
-Proto4z.EntityModel[9] = {name="gold", type="double" } --金币 
-Proto4z.EntityModel[10] = {name="camp", type="ui16" }  
-Proto4z.EntityModel[11] = {name="etype", type="ui16" }  
-Proto4z.EntityModel[12] = {name="state", type="ui16" }  
- 
-Proto4z.EntityModelArray = {}  
-Proto4z.EntityModelArray.__protoName = "EntityModelArray" 
-Proto4z.EntityModelArray.__protoDesc = "array" 
-Proto4z.EntityModelArray.__protoTypeV = "EntityModel" 
- 
-Proto4z.EntityModelMap = {}  
-Proto4z.EntityModelMap.__protoName = "EntityModelMap" 
-Proto4z.EntityModelMap.__protoDesc = "map" 
-Proto4z.EntityModelMap.__protoTypeK = "ui64" 
-Proto4z.EntityModelMap.__protoTypeV = "EntityModel" 
- 
 Proto4z.register(2001,"SceneGroupAvatarInfo") 
 Proto4z.SceneGroupAvatarInfo = {}  
 Proto4z.SceneGroupAvatarInfo.__protoID = 2001 
 Proto4z.SceneGroupAvatarInfo.__protoName = "SceneGroupAvatarInfo" 
 Proto4z.SceneGroupAvatarInfo[1] = {name="areaID", type="ui64" } --考虑混服情况,必须指定该玩家来自哪个当前区 
-Proto4z.SceneGroupAvatarInfo[2] = {name="model", type="EntityModel" } --玩家基础数据 
-Proto4z.SceneGroupAvatarInfo[3] = {name="fixedProps", type="DictProp" } --基础固定属性 
-Proto4z.SceneGroupAvatarInfo[4] = {name="growthProps", type="DictProp" } --成长基础属性 
-Proto4z.SceneGroupAvatarInfo[5] = {name="growths", type="DictProp" } --成长系数 
-Proto4z.SceneGroupAvatarInfo[6] = {name="powerType", type="ui16" } --组队权限: 0普通,1leader,2master 
-Proto4z.SceneGroupAvatarInfo[7] = {name="token", type="string" } --scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开. 
+Proto4z.SceneGroupAvatarInfo[2] = {name="modelID", type="ui64" } --模型ID 
+Proto4z.SceneGroupAvatarInfo[3] = {name="equips", type="DictArrayKey" } --额外装备 
+Proto4z.SceneGroupAvatarInfo[4] = {name="avatarID", type="ui64" }  
+Proto4z.SceneGroupAvatarInfo[5] = {name="avatarName", type="string" }  
+Proto4z.SceneGroupAvatarInfo[6] = {name="rankScore", type="double" } --天梯分数 
+Proto4z.SceneGroupAvatarInfo[7] = {name="powerType", type="ui16" } --组队权限: 0普通,1leader,2master 
+Proto4z.SceneGroupAvatarInfo[8] = {name="token", type="string" } --scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开. 
  
 Proto4z.SceneGroupAvatarInfoArray = {}  
 Proto4z.SceneGroupAvatarInfoArray.__protoName = "SceneGroupAvatarInfoArray" 
@@ -220,14 +193,11 @@ Proto4z.register(2014,"EntityFullData")
 Proto4z.EntityFullData = {} --EntityFullData 
 Proto4z.EntityFullData.__protoID = 2014 
 Proto4z.EntityFullData.__protoName = "EntityFullData" 
-Proto4z.EntityFullData[1] = {name="model", type="EntityModel" } --玩家基础数据 
-Proto4z.EntityFullData[2] = {name="fixedProps", type="DictProp" } --基础固定属性 
-Proto4z.EntityFullData[3] = {name="growthProps", type="DictProp" } --成长基础属性 
-Proto4z.EntityFullData[4] = {name="growths", type="DictProp" } --成长系数 
-Proto4z.EntityFullData[5] = {name="props", type="DictProp" } --当前 
-Proto4z.EntityFullData[6] = {name="state", type="EntityState" }  
-Proto4z.EntityFullData[7] = {name="mv", type="EntityMove" }  
-Proto4z.EntityFullData[8] = {name="report", type="EntityReport" }  
+Proto4z.EntityFullData[1] = {name="baseProps", type="DictProp" } --基础战斗属性 
+Proto4z.EntityFullData[2] = {name="props", type="DictProp" } --当前战斗属性 
+Proto4z.EntityFullData[3] = {name="state", type="EntityState" }  
+Proto4z.EntityFullData[4] = {name="mv", type="EntityMove" }  
+Proto4z.EntityFullData[5] = {name="report", type="EntityReport" }  
  
 Proto4z.EntityFullDataArray = {}  
 Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray" 

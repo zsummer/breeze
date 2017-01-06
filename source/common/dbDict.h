@@ -28,6 +28,7 @@
 #include "dbAsync.h"
 #include "utls.h"
 #include <DictCommon.h>
+#include <DictScene.h>
 #include <ProtoCommon.h>
 #include <ProtoSceneCommon.h>
 #include <ProtoClient.h>

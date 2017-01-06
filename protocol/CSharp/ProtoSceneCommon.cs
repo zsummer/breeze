@@ -24,154 +24,6 @@ namespace Proto4z
         SCENE_STATE_ACTIVE = 5, //战斗中  
     }; 
  
-    public class EntityModel: Proto4z.IProtoObject 
-    {     
-        //proto id   
-        public const ushort protoID = 2000;  
-        static public ushort getProtoID() { return 2000; } 
-        static public string getProtoName() { return "EntityModel"; } 
-        //members   
-        public ulong eid;  
-        public ulong modelID;  
-        public string modelName;  
-        public ulong avatarID;  
-        public string avatarName;  
-        public ulong iconID; //头像  
-        public double level; //等级  
-        public double exp; //经验  
-        public double gold; //金币  
-        public ushort camp;  
-        public ushort etype;  
-        public ushort state;  
-        public EntityModel()  
-        { 
-            eid = 0;  
-            modelID = 0;  
-            modelName = "";  
-            avatarID = 0;  
-            avatarName = "";  
-            iconID = 0;  
-            level = 0.0;  
-            exp = 0.0;  
-            gold = 0.0;  
-            camp = 0;  
-            etype = 0;  
-            state = 0;  
-        } 
-        public EntityModel(ulong eid, ulong modelID, string modelName, ulong avatarID, string avatarName, ulong iconID, double level, double exp, double gold, ushort camp, ushort etype, ushort state) 
-        { 
-            this.eid = eid; 
-            this.modelID = modelID; 
-            this.modelName = modelName; 
-            this.avatarID = avatarID; 
-            this.avatarName = avatarName; 
-            this.iconID = iconID; 
-            this.level = level; 
-            this.exp = exp; 
-            this.gold = gold; 
-            this.camp = camp; 
-            this.etype = etype; 
-            this.state = state; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.modelName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.iconID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.level)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.exp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.gold)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.camp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.modelName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.iconID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.level = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.exp = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.gold = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.camp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class EntityModelArray : System.Collections.Generic.List<EntityModel>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            for (int i = 0; i < this.Count; i++ ) 
-            { 
-                ret.AddRange(this[i].__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var data = new EntityModel(); 
-                    data.__decode(binData, ref pos); 
-                    this.Add(data); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class EntityModelMap : System.Collections.Generic.Dictionary<ulong, EntityModel>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            foreach(var kv in this) 
-            { 
-                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
-                ret.AddRange(kv.Value.__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-                    var val = new EntityModel(); 
-                    val.__decode(binData, ref pos); 
-                    this.Add(key, val); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
     public class SceneGroupAvatarInfo: Proto4z.IProtoObject 
     {     
         //proto id   
@@ -180,29 +32,32 @@ namespace Proto4z
         static public string getProtoName() { return "SceneGroupAvatarInfo"; } 
         //members   
         public ulong areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
-        public EntityModel model; //玩家基础数据  
-        public DictProp fixedProps; //基础固定属性  
-        public DictProp growthProps; //成长基础属性  
-        public DictProp growths; //成长系数  
+        public ulong modelID; //模型ID  
+        public DictArrayKey equips; //额外装备  
+        public ulong avatarID;  
+        public string avatarName;  
+        public double rankScore; //天梯分数  
         public ushort powerType; //组队权限: 0普通,1leader,2master  
         public string token; //scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开.  
         public SceneGroupAvatarInfo()  
         { 
             areaID = 0;  
-            model = new EntityModel();  
-            fixedProps = new DictProp();  
-            growthProps = new DictProp();  
-            growths = new DictProp();  
+            modelID = 0;  
+            equips = new DictArrayKey();  
+            avatarID = 0;  
+            avatarName = "";  
+            rankScore = 0.0;  
             powerType = 0;  
             token = "";  
         } 
-        public SceneGroupAvatarInfo(ulong areaID, EntityModel model, DictProp fixedProps, DictProp growthProps, DictProp growths, ushort powerType, string token) 
+        public SceneGroupAvatarInfo(ulong areaID, ulong modelID, DictArrayKey equips, ulong avatarID, string avatarName, double rankScore, ushort powerType, string token) 
         { 
             this.areaID = areaID; 
-            this.model = model; 
-            this.fixedProps = fixedProps; 
-            this.growthProps = growthProps; 
-            this.growths = growths; 
+            this.modelID = modelID; 
+            this.equips = equips; 
+            this.avatarID = avatarID; 
+            this.avatarName = avatarName; 
+            this.rankScore = rankScore; 
             this.powerType = powerType; 
             this.token = token; 
         } 
@@ -210,14 +65,12 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.areaID)); 
-            if (this.model == null) this.model = new EntityModel(); 
-            data.AddRange(this.model.__encode()); 
-            if (this.fixedProps == null) this.fixedProps = new DictProp(); 
-            data.AddRange(this.fixedProps.__encode()); 
-            if (this.growthProps == null) this.growthProps = new DictProp(); 
-            data.AddRange(this.growthProps.__encode()); 
-            if (this.growths == null) this.growths = new DictProp(); 
-            data.AddRange(this.growths.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
+            if (this.equips == null) this.equips = new DictArrayKey(); 
+            data.AddRange(this.equips.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.rankScore)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.powerType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.token)); 
             return data; 
@@ -225,14 +78,12 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.areaID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.model = new EntityModel(); 
-            this.model.__decode(binData, ref pos); 
-            this.fixedProps = new DictProp(); 
-            this.fixedProps.__decode(binData, ref pos); 
-            this.growthProps = new DictProp(); 
-            this.growthProps.__decode(binData, ref pos); 
-            this.growths = new DictProp(); 
-            this.growths.__decode(binData, ref pos); 
+            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.equips = new DictArrayKey(); 
+            this.equips.__decode(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.rankScore = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.powerType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.token = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
@@ -1004,31 +855,22 @@ namespace Proto4z
         static public ushort getProtoID() { return 2014; } 
         static public string getProtoName() { return "EntityFullData"; } 
         //members   
-        public EntityModel model; //玩家基础数据  
-        public DictProp fixedProps; //基础固定属性  
-        public DictProp growthProps; //成长基础属性  
-        public DictProp growths; //成长系数  
-        public DictProp props; //当前  
+        public DictProp baseProps; //基础战斗属性  
+        public DictProp props; //当前战斗属性  
         public EntityState state;  
         public EntityMove mv;  
         public EntityReport report;  
         public EntityFullData()  
         { 
-            model = new EntityModel();  
-            fixedProps = new DictProp();  
-            growthProps = new DictProp();  
-            growths = new DictProp();  
+            baseProps = new DictProp();  
             props = new DictProp();  
             state = new EntityState();  
             mv = new EntityMove();  
             report = new EntityReport();  
         } 
-        public EntityFullData(EntityModel model, DictProp fixedProps, DictProp growthProps, DictProp growths, DictProp props, EntityState state, EntityMove mv, EntityReport report) 
+        public EntityFullData(DictProp baseProps, DictProp props, EntityState state, EntityMove mv, EntityReport report) 
         { 
-            this.model = model; 
-            this.fixedProps = fixedProps; 
-            this.growthProps = growthProps; 
-            this.growths = growths; 
+            this.baseProps = baseProps; 
             this.props = props; 
             this.state = state; 
             this.mv = mv; 
@@ -1037,14 +879,8 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.model == null) this.model = new EntityModel(); 
-            data.AddRange(this.model.__encode()); 
-            if (this.fixedProps == null) this.fixedProps = new DictProp(); 
-            data.AddRange(this.fixedProps.__encode()); 
-            if (this.growthProps == null) this.growthProps = new DictProp(); 
-            data.AddRange(this.growthProps.__encode()); 
-            if (this.growths == null) this.growths = new DictProp(); 
-            data.AddRange(this.growths.__encode()); 
+            if (this.baseProps == null) this.baseProps = new DictProp(); 
+            data.AddRange(this.baseProps.__encode()); 
             if (this.props == null) this.props = new DictProp(); 
             data.AddRange(this.props.__encode()); 
             if (this.state == null) this.state = new EntityState(); 
@@ -1057,14 +893,8 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.model = new EntityModel(); 
-            this.model.__decode(binData, ref pos); 
-            this.fixedProps = new DictProp(); 
-            this.fixedProps.__decode(binData, ref pos); 
-            this.growthProps = new DictProp(); 
-            this.growthProps.__decode(binData, ref pos); 
-            this.growths = new DictProp(); 
-            this.growths.__decode(binData, ref pos); 
+            this.baseProps = new DictProp(); 
+            this.baseProps.__decode(binData, ref pos); 
             this.props = new DictProp(); 
             this.props.__decode(binData, ref pos); 
             this.state = new EntityState(); 

@@ -69,7 +69,6 @@ public:
     double getSuckBlood();
     double getAttack();
     EntityFullData getFullData();
-    EntityModel _baseInfo; 
     DictProp _baseProps;
     DictProp _props;
     EntityState  _state;

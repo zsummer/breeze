@@ -43,6 +43,7 @@
 #include "balance.h"
 #include "config.h"
 #include <DictCommon.h>
+#include <DictScene.h>
 #include <ProtoCommon.h>
 #include <ProtoSceneCommon.h>
 #include <ProtoReflection.h>

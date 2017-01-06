@@ -75,11 +75,7 @@ public:
 
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
-    EntityPtr addEntity(const EntityModel & baseInfo, 
-        const DictProp & fixedProps, 
-        const DictProp & growProps, 
-        const DictProp & growth,
-        GroupID groupID= InvalidGroupID);
+    EntityPtr addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips, GroupID groupID);
     bool removeEntity(EntityID eid);
     bool removePlayer(AvatarID avatarID);
     bool removePlayerByGroupID(GroupID groupID);

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>11000</MinNo>
+  <MaxNo>12000</MaxNo>
+  <UseLog4z>1</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+
+    <struct name="DictProp" store="MyISAM" desc="战斗属性">
+        <member name="id" type="ui64" tag="key"  desc=""/>
+        <member name="hp" type="double"   desc="血量值"/>
+        <member name="hpRegen" type="double"   desc="每秒血量值恢复"/>
+        <member name="attack" type="double"   desc="伤害"/>
+        <member name="defense" type="double"   desc="防御"/>
+        <member name="crit" type="double"   desc="暴击"/>
+        <member name="toughness" type="double"   desc="韧性"/>
+        <member name="moveSpeed" type="double"   desc="移动速度"/>
+        <member name="attackSpeed" type="double"   desc="攻击速度"/>
+        <member name="vampirk " type="double"   desc="吸血"/> 
+        <member name="desc " type="string"   desc=""/> 
+    </struct>
+    <array name="DictPropArray" type="DictProp" desc="" />
+    <map name="DictPropMap" key="ui64" value="DictProp" desc="" />
+
+    <struct name="DictModelLevel" store="MyISAM" desc="">
+        <member name="modelID" type="ui64" tag="key"  desc=""/>
+        <member name="levelID" type="ui64" tag="key"  desc=""/>
+        <member name="needExp" type="double"   desc="升级所需经验"/>
+        <member name="propID" type="ui64"   desc="战斗属性"/>
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="该等级带来的可用技能"/>
+        <member name="skillsText" type="string"   desc="该等级带来的可用技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="该等级带来的可用buff"/>
+        <member name="buffsText" type="string"   desc="该等级带来的可用buff 格式id,id,id"/>
+    </struct>
+    <array name="DictModelLevelArray" type="DictModelLevel" desc="" />
+    <map name="DictModelLevelMap" key="ui64" value="DictModelLevel" desc="" />
+
+
+    <struct name="DictModel" store="MyISAM" desc="">
+        <member name="modelID" type="ui64" tag="key"   desc=""/>
+        <member name="modelName" type="string"   desc=""/>
+        <member name="modelRedius" type="double"   desc="碰撞半径"/>
+        <member name="iconID"  type="ui64" desc="头像"/>
+        <member name="initLevel"  type="double" desc="等级"/>
+        <member name="initCamp"  type="ui16" desc=""/>
+        <member name="initItems"  type="DictMapPairValue" tag="ignore" desc=""/>
+        <member name="initItemsText"  type="string"  desc=""/>
+        <member name="initState"  type="ui16" desc="初始化状态"/>
+        <member name="actionScriptPath"  type="string" desc="行为树脚本路径"/>
+        <member name="clientModelPath"  type="string" desc="客户端模型路径"/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+    <array name="DictModelArray" type="DictModel" desc="" />
+    <map name="DictModelMap" key="ui64" value="DictModel" desc="" />
+
+
+
+
+    <struct name="AOESearch" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="etype" type="ui16"  desc="实体类型, 玩家/AI 或者是NONE忽略该选项"/>
+        <member name="camp" type="ui64"  tag="ignore" desc="0忽略阵营, 1自己, 2同阵营非自己, 3敌方,  4中立"/>
+        <member name="campText" type="string"  desc=""/>
+        <member name="isRect" type="ui16"  desc="0扇形, 其他矩形"/>
+        <member name="distance" type="double"  desc="伤害距离"/>
+        <member name="radian" type="double"  desc="弧度或者宽度"/>
+        <member name="offsetX" type="double"  desc="坐标偏移量, 以caster为原点, 朝向为y轴"/>
+        <member name="offsetY" type="double"  desc="坐标偏移量, 以caster为原点, 朝向为y轴"/>
+        <member name="limitEntitys" type="ui64"  desc="最大目标数, 距离优先"/>
+    </struct>
+
+
+
+
+    <!-- BUFF类型-->
+    <enum type="ui64" name="BUFF_STAMP" desc="">
+        <member name="BUFF_HALO"  value="1"  desc="描述性类型: 光环"/>
+        <member name="BUFF_BUFF"  value="2"  desc="描述性类型: 增益buff"/>
+        <member name="BUFF_DEBUFF"  value="3"  desc="描述性类型: 减益BUFF"/>
+        <member name="BUFF_HIDE"  value="4"  desc="描述性类型: 客户端不表现"/>
+        <member name="BUFF_PASSIVE"  value="5"  desc="描述性类型: 被动技能, 无法永久存在, 但死亡会停止任何触发"/>
+ 
+
+        <member name="BUFF_HOLD_MOVE"  value="10"  desc="控制: 禁止移动"/>
+        <member name="BUFF_REVERSE_MOVE" value="11"  desc="控制: 移动反向"/>
+        <member name="BUFF_SILENCE_GENERAL" value="12"  desc="控制: 沉默普攻"/>
+        <member name="BUFF_SILENCE_PHYSICAL" value="13"  desc="控制: 沉默物攻"/>
+        <member name="BUFF_SILENCE_MAGIC" value="14"  desc="控制: 沉默法攻"/>
+
+
+        <member name="BUFF_IMMUNE_MOVE" value="20"  desc="免疫: 免疫移动类控制"/>
+        <member name="BUFF_IMMUNE_SILENCE_GENERAL" value="21"  desc="免疫: 免疫普攻沉默"/>
+        <member name="BUFF_IMMUNE_SILENCE_PHYSICAL" value="22"  desc="免疫: 免疫物攻沉默"/>
+        <member name="BUFF_IMMUNE_SILENCE_MAGIC" value="23"  desc="免疫: 免疫法攻沉默"/>
+
+        <member name="BUFF_IMMUNE_DEBUFF" value="30"  desc="免疫: 免疫DEBUFF"/>
+        <member name="BUFF_IMMUNE_BUFF" value="31"  desc="免疫: 免疫增益BUFF"/>
+        <member name="BUFF_IMMUNE_OCCUPIED" value="32"  desc="免疫: 免疫占据"/>
+        <member name="BUFF_IMMUNE_FLOAT" value="33"  desc="免疫: 免疫击飞"/>
+        <member name="BUFF_IMMUNE_MOVEBACK" value="34"  desc="免疫: 免疫击退"/>
+        <member name="BUFF_IMMUNE_BREAK" value="35"  desc="免疫: 免疫技能中断"/>
+
+    </enum>
+
+    <!-- BUFF EFFECT 标记-->
+    <enum type="ui64" name="BUFF_EFFECT_STAMP" desc="">
+
+        <member name="BUFF_EFFECT_PROP_MULTIPLICATION" value="1"  desc="属性求积, 没有该标记为求和"/>
+        <member name="BUFF_EFFECT_LAST_TRIGGER_CLEAN" value="2"  desc="触发超出限制后移除buff"/>
+        <member name="BUFF_EFFECT_TRIGGER_TIMMER" value="3"  desc="定时检测触发"/>
+
+        <member name="BUFF_EFFECT_TRIGGER_WHEN_LOAD" value="5"  desc="加载buff立刻触发"/>
+        <member name="BUFF_EFFECT_TRIGGER_WHEN_UNLOAD" value="6"  desc="卸载buff立刻触发"/>
+
+
+        <member name="BUFF_EFFECT_TRIGGER_PRE_DEATH" value="10"  desc="死亡前触发"/>
+        <member name="BUFF_EFFECT_TRIGGER_AFT_DEATH" value="11"  desc="死亡后触发"/>
+
+
+        <member name="BUFF_EFFECT_TRIGGER_WHEN_GENERAL" value="15"  desc="攻击触发"/>
+        <member name="BUFF_EFFECT_TRIGGER_WHEN_PHYSICAL" value="16"  desc="攻击触发"/>
+        <member name="BUFF_EFFECT_TRIGGER_WHEN_MAGIC" value="17"  desc="攻击触发"/>
+
+        <member name="BUFF_EFFECT_TRIGGER_ON_GENERAL" value="20"  desc="被攻击触发"/>
+        <member name="BUFF_EFFECT_TRIGGER_ON_PHYSICAL" value="21"  desc="被攻击触发"/>
+        <member name="BUFF_EFFECT_TRIGGER_ON_MAGIC" value="22"  desc="被攻击触发"/>
+
+
+        <member name="BUFF_EFFECT_TRIGGER_WHEN_ATTACH_GENERAL" value="30"  desc="攻击触发"/>
+        <member name="BUFF_EFFECT_TRIGGER_WHEN_ON_ATTACH" value="31"  desc="被攻击触发"/>
+
+
+    </enum>
+
+
+
+    <struct name="DictBuffEffect" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="stamp" type="ui64" tag="ignore" desc="BUFF_EFFECT_STAMP"/>
+        <member name="stampText" type="string"  desc=""/>
+        <member name="propID" type="ui64"   desc="提升的属性效果, 求积方式的参数是基础属性 不算其他装备"/>
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
+        <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
+        <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
+        <member name="areaTrigger" type="double"   desc="距离触发, 0为无效"/>
+        <member name="intervalLimit" type="double"   desc="最小触发间隔时间, 0为无效"/>
+        <member name="countLimit" type="double"   desc="触发次数限制"/>
+
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+
+    <struct name="DictBuff" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="stamp" type="ui64" tag="ignore" desc="BUFF_STAMP"/>
+        <member name="stampText" type="string"  desc=""/>
+
+        <member name="effects" type="DictArrayKey" tag="ignore" desc="DictBuffEffect ID"/>
+        <member name="effectsText" type="string"  desc=""/>
+
+        <member name="keepTime"  type="double" desc=""/>
+        
+        <member name="mutexType" type="ui16"   desc="0无互斥, 1 同ID时间叠加, 2 同ID时间最长的覆盖, 3 同ID最强的覆盖"/>
+        <member name="mutexID" type="ui64"   desc="0"/>
+        <member name="mutexStrength" type="double"   desc=""/>
+        <member name="limitTime"  type="double" desc=""/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+
+
+    <!-- SKILL类型 (组合位结构) -->
+    <enum type="ui64" name="SKILL_STAMP" desc="">
+        <member name="SKILL_NONE"  desc=""/>
+        <member name="SKILL_AUTO_LOCK" desc="自动锁敌"/>
+        <member name="SKILL_AUTO_USE" desc="自动施法"/>
+        <member name="SKILL_PASSIVE"    desc="被动技能"/>
+        <member name="SKILL_ON_HIT_BREAK"   desc="可被中断"/>
+        <member name="SKILL_ON_MOVE_BREAK"   desc="可被中断"/>
+        <member name="SKILL_CAN_MOVE"   desc="可移动"/>
+        <member name="SKILL_PHYSICAL"    desc="物理类型"/>
+        <member name="SKILL_MAGIC"    desc="魔法类型"/>
+    </enum>
+
+    <!-- SKILL行为(组合位结构)  -->
+    <enum type="ui64" name="SKILL_BEHAVIOUR_STAMP" desc="">
+        <member name="SKILL_BEHAVIOUR_NONE"  desc=""/>
+        <member name="SKILL_BEHAVIOUR_HIT"   desc="攻击"/>
+        <member name="SKILL_BEHAVIOUR_HILL"   desc="治疗"/>
+        <member name="SKILL_BEHAVIOUR_TELEPORT_TARGET"   desc="瞬移到目标"/>
+        <member name="SKILL_BEHAVIOUR_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
+        <member name="SKILL_BEHAVIOUR_REMOVE_BUFF"   desc="驱散增益BUFF"/>
+        <member name="SKILL_BEHAVIOUR_TRIGGER_BUFF"   desc="触发buff"/>
+        <member name="SKILL_BEHAVIOUR_TRIGGER_SKILL"   desc="触发技能"/>
+    </enum>
+
+    <struct name="DictSkillEffect" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="stamp" type="ui64"    desc=""/>
+        <member name="searchID" type="ui64"    desc=""/>
+        <member name="hpMode" type="ui16"   desc="血量变化类型:0 相加, 1与总血量相乘后再相加, 2与剩余血量相乘后再相加, 3与已损失血量相乘后叠加"/>
+        <member name="hpLeft" type="double" desc="血量变化参数"/>
+        <member name="hitKeepTime" type="double" desc="击退,浮空,牵引,的持续时间" />
+        <member name="hitKeepSpeed" type="double" desc="击退,浮空,牵引,的持速度" />
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
+        <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
+        <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+
+    <struct name="DictSkill" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="stamp" type="ui64"    desc=""/>
+        <member name="effects" type="DictArrayPairValue"  tag="ignore" desc=""/>
+        <member name="effectsText" type="string"   desc="时间:效果,时间:效果,"/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+
+
+
+</Proto>
+

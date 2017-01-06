@@ -18,10 +18,11 @@ Proto4z.SceneServerJoinGroupIns.__protoID = 4002
 Proto4z.SceneServerJoinGroupIns.__protoName = "SceneServerJoinGroupIns" 
 Proto4z.SceneServerJoinGroupIns[1] = {name="refresh", type="ui64" } --0为客户端请求操作, 1为仅仅刷新数据 
 Proto4z.SceneServerJoinGroupIns[2] = {name="groupID", type="ui64" } --编队ID, 0为创建 
-Proto4z.SceneServerJoinGroupIns[3] = {name="model", type="EntityModel" } --玩家基础数据 
-Proto4z.SceneServerJoinGroupIns[4] = {name="fixedProps", type="DictProp" } --基础固定属性 
-Proto4z.SceneServerJoinGroupIns[5] = {name="growthProps", type="DictProp" } --成长基础属性 
-Proto4z.SceneServerJoinGroupIns[6] = {name="growths", type="DictProp" } --成长系数 
+Proto4z.SceneServerJoinGroupIns[3] = {name="modelID", type="ui64" } --模型ID 
+Proto4z.SceneServerJoinGroupIns[4] = {name="equips", type="DictArrayKey" } --额外装备 
+Proto4z.SceneServerJoinGroupIns[5] = {name="avatarID", type="ui64" }  
+Proto4z.SceneServerJoinGroupIns[6] = {name="avatarName", type="string" }  
+Proto4z.SceneServerJoinGroupIns[7] = {name="rankScore", type="double" } --天梯分数 
  
 Proto4z.register(4003,"SceneServerJoinGroupAck") 
 Proto4z.SceneServerJoinGroupAck = {} --创建/加入编队响应结果 

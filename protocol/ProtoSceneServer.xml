@@ -28,10 +28,11 @@
     <proto name="SceneServerJoinGroupIns" desc= "创建/加入编队, 来自docker的指令">
         <member name="refresh" type="ui64"  desc="0为客户端请求操作, 1为仅仅刷新数据"/>
         <member name="groupID" type="ui64"  desc="编队ID, 0为创建"/>
-        <member name="model" type="EntityModel"  desc="玩家基础数据"/>
-        <member name="fixedProps" type="DictProp"   desc="基础固定属性"/>
-        <member name="growthProps" type="DictProp"   desc="成长基础属性"/>
-        <member name="growths" type="DictProp"   desc="成长系数"/>
+        <member name="modelID" type="ui64"  desc="模型ID"/>
+        <member name="equips" type="DictArrayKey"   desc="额外装备"/>
+        <member name="avatarID" type="ui64"   desc=""/>
+        <member name="avatarName" type="string"   desc=""/>
+        <member name="rankScore" type="double"   desc="天梯分数"/>
     </proto>
     <proto name="SceneServerJoinGroupAck" desc= "创建/加入编队响应结果">
         <member name="retCode" type="ui16"   desc=""/>

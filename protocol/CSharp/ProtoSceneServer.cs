@@ -71,55 +71,54 @@ namespace Proto4z
         //members   
         public ulong refresh; //0为客户端请求操作, 1为仅仅刷新数据  
         public ulong groupID; //编队ID, 0为创建  
-        public EntityModel model; //玩家基础数据  
-        public DictProp fixedProps; //基础固定属性  
-        public DictProp growthProps; //成长基础属性  
-        public DictProp growths; //成长系数  
+        public ulong modelID; //模型ID  
+        public DictArrayKey equips; //额外装备  
+        public ulong avatarID;  
+        public string avatarName;  
+        public double rankScore; //天梯分数  
         public SceneServerJoinGroupIns()  
         { 
             refresh = 0;  
             groupID = 0;  
-            model = new EntityModel();  
-            fixedProps = new DictProp();  
-            growthProps = new DictProp();  
-            growths = new DictProp();  
+            modelID = 0;  
+            equips = new DictArrayKey();  
+            avatarID = 0;  
+            avatarName = "";  
+            rankScore = 0.0;  
         } 
-        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, EntityModel model, DictProp fixedProps, DictProp growthProps, DictProp growths) 
+        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, ulong modelID, DictArrayKey equips, ulong avatarID, string avatarName, double rankScore) 
         { 
             this.refresh = refresh; 
             this.groupID = groupID; 
-            this.model = model; 
-            this.fixedProps = fixedProps; 
-            this.growthProps = growthProps; 
-            this.growths = growths; 
+            this.modelID = modelID; 
+            this.equips = equips; 
+            this.avatarID = avatarID; 
+            this.avatarName = avatarName; 
+            this.rankScore = rankScore; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.refresh)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
-            if (this.model == null) this.model = new EntityModel(); 
-            data.AddRange(this.model.__encode()); 
-            if (this.fixedProps == null) this.fixedProps = new DictProp(); 
-            data.AddRange(this.fixedProps.__encode()); 
-            if (this.growthProps == null) this.growthProps = new DictProp(); 
-            data.AddRange(this.growthProps.__encode()); 
-            if (this.growths == null) this.growths = new DictProp(); 
-            data.AddRange(this.growths.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
+            if (this.equips == null) this.equips = new DictArrayKey(); 
+            data.AddRange(this.equips.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.rankScore)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.refresh = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.model = new EntityModel(); 
-            this.model.__decode(binData, ref pos); 
-            this.fixedProps = new DictProp(); 
-            this.fixedProps.__decode(binData, ref pos); 
-            this.growthProps = new DictProp(); 
-            this.growthProps.__decode(binData, ref pos); 
-            this.growths = new DictProp(); 
-            this.growths.__decode(binData, ref pos); 
+            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.equips = new DictArrayKey(); 
+            this.equips.__decode(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.rankScore = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 

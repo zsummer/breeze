@@ -530,7 +530,11 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         for (auto & avatar : group.members)
         {
             _tokens[avatar.first] = std::make_pair(avatar.second.token, scene->getSceneID());
-            scene->addEntity(avatar.second.model, avatar.second.fixedProps, avatar.second.growthProps, avatar.second.growths, group.groupID);
+            scene->addEntity(avatar.second.modelID, 
+                avatar.second.avatarID, 
+                avatar.second.avatarName,
+                avatar.second.equips,
+                group.groupID);
         }
         SceneServerGroupStateChangeIns ret;
         ret.groupID = group.groupID;
