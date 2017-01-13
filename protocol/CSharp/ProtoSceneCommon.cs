@@ -33,7 +33,7 @@ namespace Proto4z
         //members   
         public ulong areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
         public ulong modelID; //模型ID  
-        public DictArrayKey equips; //额外装备  
+        public DictMapKeyValue equips; //额外装备  
         public ulong avatarID;  
         public string avatarName;  
         public double rankScore; //天梯分数  
@@ -43,14 +43,14 @@ namespace Proto4z
         { 
             areaID = 0;  
             modelID = 0;  
-            equips = new DictArrayKey();  
+            equips = new DictMapKeyValue();  
             avatarID = 0;  
             avatarName = "";  
             rankScore = 0.0;  
             powerType = 0;  
             token = "";  
         } 
-        public SceneGroupAvatarInfo(ulong areaID, ulong modelID, DictArrayKey equips, ulong avatarID, string avatarName, double rankScore, ushort powerType, string token) 
+        public SceneGroupAvatarInfo(ulong areaID, ulong modelID, DictMapKeyValue equips, ulong avatarID, string avatarName, double rankScore, ushort powerType, string token) 
         { 
             this.areaID = areaID; 
             this.modelID = modelID; 
@@ -66,7 +66,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.areaID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
-            if (this.equips == null) this.equips = new DictArrayKey(); 
+            if (this.equips == null) this.equips = new DictMapKeyValue(); 
             data.AddRange(this.equips.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
@@ -79,7 +79,7 @@ namespace Proto4z
         { 
             this.areaID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.equips = new DictArrayKey(); 
+            this.equips = new DictMapKeyValue(); 
             this.equips.__decode(binData, ref pos); 
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
@@ -581,7 +581,10 @@ namespace Proto4z
         static public ushort getProtoID() { return 2011; } 
         static public string getProtoName() { return "EntityState"; } 
         //members   
-        public ulong eid; //eid  
+        public ulong eid;  
+        public ulong avatarID;  
+        public string avatarName;  
+        public ulong modelID;  
         public ushort camp; //阵营  
         public ulong groupID; //组队ID  
         public ushort etype; //实体类型  
@@ -592,6 +595,9 @@ namespace Proto4z
         public EntityState()  
         { 
             eid = 0;  
+            avatarID = 0;  
+            avatarName = "";  
+            modelID = 0;  
             camp = 0;  
             groupID = 0;  
             etype = 0;  
@@ -600,9 +606,12 @@ namespace Proto4z
             leader = 0;  
             curHP = 0.0;  
         } 
-        public EntityState(ulong eid, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP) 
+        public EntityState(ulong eid, ulong avatarID, string avatarName, ulong modelID, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP) 
         { 
             this.eid = eid; 
+            this.avatarID = avatarID; 
+            this.avatarName = avatarName; 
+            this.modelID = modelID; 
             this.camp = camp; 
             this.groupID = groupID; 
             this.etype = etype; 
@@ -615,6 +624,9 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.camp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
@@ -627,6 +639,9 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.camp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 

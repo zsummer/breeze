@@ -71,13 +71,13 @@ void MoveSync::checkStepRVO(bool preCheck)
             }
             if (entity._move.waypoints.empty())
             {
-                LOGD("END MOVE[" << entity._baseInfo.avatarName << "]: all waypoints is gone");
+                LOGD("END MOVE[" << entity._state.avatarName << "]: all waypoints is gone");
                 entity._move.action = MOVE_ACTION_IDLE;
                 break;
             }
             if (entity._control.blockMoveCount > 1.0 / SceneFrameInterval)
             {
-                LOGW("BREAK MOVE[" << entity._baseInfo.avatarName << "][" << entity._state.eid << "]: block long time. count = " << entity._control.blockMoveCount);
+                LOGW("BREAK MOVE[" << entity._state.avatarName << "][" << entity._state.eid << "]: block long time. count = " << entity._control.blockMoveCount);
                 entity._move.waypoints.clear();
                 entity._move.action = MOVE_ACTION_IDLE;
                 entity._control.blockMoveCount = 0;
@@ -111,7 +111,7 @@ void MoveSync::checkStepRVO(bool preCheck)
                 dir *= needTime / SceneFrameInterval;
             }
             sim->setAgentPrefVelocity(entity._control.agentNo, dir);
-            LOGD("RVO PRE MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.position
+            LOGD("RVO PRE MOVE[" << entity._state.avatarName << "] local=" << entity._move.position
                 << ", dst=" << entity._move.waypoints.front() << ", dir=" << dir);
         } while (false);
 
@@ -120,7 +120,7 @@ void MoveSync::checkStepRVO(bool preCheck)
             entity._move.waypoints.clear();
             sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0, 0));
             scene->broadcast(MoveNotice(entity._move));
-            LOGD("RVO FIN MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.position);
+            LOGD("RVO FIN MOVE[" << entity._state.avatarName << "] local=" << entity._move.position);
         }
         entity._isMoveDirty = true;
     }
@@ -184,7 +184,7 @@ void MoveSync::update()
         entity._move.position = toEPoint(sim->getAgentPosition(entity._control.agentNo));
         if (entity._isMoveDirty)
         {
-            LOGD("RVO AFT MOVE[" << entity._baseInfo.avatarName << "] local=" << entity._move.position);
+            LOGD("RVO AFT MOVE[" << entity._state.avatarName << "] local=" << entity._move.position);
         }
 
     }

@@ -363,8 +363,8 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
             {
                 if (player.second->_state.camp == entity->_state.camp)
                 {
-                    resp.targetID = player.second->_baseInfo.avatarID;
-                    resp.targetName = player.second->_baseInfo.avatarName;
+                    resp.targetID = player.second->_state.avatarID;
+                    resp.targetName = player.second->_state.avatarName;
                     sendToWorld(resp);
                 }
             }
@@ -374,8 +374,8 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
             auto & players = checkscene->second->getPlayers();
             for (auto player : players)
             {
-                resp.targetID = player.second->_baseInfo.avatarID;
-                resp.targetName = player.second->_baseInfo.avatarName;
+                resp.targetID = player.second->_state.avatarID;
+                resp.targetName = player.second->_state.avatarName;
                 sendToWorld(resp);
             }
         }

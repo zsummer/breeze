@@ -66,18 +66,9 @@ void SceneModule::fillGroupInfo(AvatarService & avatar, SceneServerJoinGroupIns&
 {
     ins.groupID = InvalidGroupID;
     ins.refresh = 1;
-    ins.model.avatarID = avatar._baseInfo._data.avatarID;
-    ins.model.avatarName = avatar._baseInfo._data.avatarName;
-    ins.model.eid = InvalidEntityID;
-    ins.model.exp = 0;
-    ins.model.gold = 0;
-    ins.model.iconID = avatar._baseInfo._data.iconID;
-    ins.model.level = 1;
-    ins.model.modelID = avatar._baseInfo._data.modeID;
-    ins.model.modelName = "";
-    ins.model.state = ENTITY_STATE_ACTIVE;
-    ins.model.camp = ENTITY_CAMP_NONE;
-    ins.model.etype = ENTITY_PLAYER;
+    ins.avatarID = avatar._baseInfo._data.avatarID;
+    ins.avatarName = avatar._baseInfo._data.avatarName;
+    ins.modelID = avatar._baseInfo._data.modeID;
 }
 void SceneModule::refreshGroupInfo(AvatarService & avatar)
 {

@@ -112,17 +112,14 @@ EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, 
 {
     EntityPtr entity = std::make_shared<Entity>();
 
-    entity->_baseInfo = baseInfo;
-
-
-    entity->_props = fixedProps + growProps * (growth * baseInfo.level);
-    
-
     entity->_state.eid = ++_lastEID;
-    entity->_state.camp = baseInfo.camp;
-    entity->_state.etype = baseInfo.etype;
+    entity->_state.avatarID = avatarID;
+    entity->_state.avatarName = avatarName;
+    entity->_state.modelID = modelID;
+    entity->_state.camp = 0;
+    entity->_state.etype = ENTITY_STATE_ACTIVE;
     entity->_state.groupID = groupID;
-    entity->_state.state = baseInfo.state;
+    entity->_state.state = ENTITY_STATE_ACTIVE;
     entity->_state.leader = InvalidEntityID;
     entity->_state.foe = InvalidEntityID;
 
@@ -144,15 +141,15 @@ EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, 
     entity->_control.agentNo = _move->addAgent(entity->_move.position);
     _entitys.insert(std::make_pair(entity->_state.eid, entity));
 
-    if (baseInfo.avatarID != InvalidServiceID && entity->_state.etype == ENTITY_PLAYER)
+    if (entity->_state.avatarID != InvalidServiceID && entity->_state.etype == ENTITY_PLAYER)
     {
-        _players[baseInfo.avatarID] = entity;
+        _players[entity->_state.avatarID] = entity;
     }
 
 
     AddEntityNotice notice;
     notice.entitys.push_back(entity->getFullData());
-    broadcast(notice, entity->_baseInfo.avatarID);
+    broadcast(notice, entity->_state.avatarID);
 
     return entity;
 }
@@ -198,7 +195,7 @@ bool Scene::removeEntity(EntityID eid)
     }
     if (entity->_state.etype == ENTITY_PLAYER)
     {
-        _players.erase(entity->_baseInfo.avatarID);
+        _players.erase(entity->_state.avatarID);
         SceneMgr::getRef().sendToWorld(SceneServerGroupStateChangeIns(getSceneID(), entity->_state.groupID, SCENE_NONE));
     }
     _entitys.erase(eid);
@@ -219,7 +216,7 @@ bool Scene::playerAttach(ServiceID avatarID, SessionID sID)
     }
     entity->_clientSessionID = sID;
 
-    LOGI("Scene::playerAttach avatarName=" << entity->_baseInfo.avatarName << " sessionID=" << sID << ", entityID=" << entity->_state.eid);
+    LOGI("Scene::playerAttach avatarName=" << entity->_state.avatarName << " sessionID=" << sID << ", entityID=" << entity->_state.eid);
     EntityFullDataArray entitys;
     SceneSectionNotice section;
     getSceneSection(section.section);
@@ -251,7 +248,7 @@ bool Scene::playerDettach(ServiceID avatarID, SessionID sID)
     auto entity = getEntityByAvatarID(avatarID);
     if (entity && entity->_clientSessionID == sID)
     {
-        LOGI("Scene::playerDettach avatarName=" << entity->_baseInfo.avatarName << " sessionID=" << sID << ", entityID=" << entity->_state.eid);
+        LOGI("Scene::playerDettach avatarName=" << entity->_state.avatarName << " sessionID=" << sID << ", entityID=" << entity->_state.eid);
         entity->_clientSessionID = InvalidSessionID;
     }
     return true;
@@ -322,7 +319,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         rs >> req;
         LOGD("MoveReq avatarID[" << avatarID << "] req=" << req);
         auto entity = getEntity(req.eid);
-        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER 
+        if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
             || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH 
                     || !_move->doMove(req.eid, (MOVE_ACTION)req.action, entity->getSpeed(), req.follow, req.clientPos, req.waypoints))
         {
@@ -334,7 +331,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         UseSkillReq req;
         rs >> req;
         auto entity = getEntity(req.eid);
-        if (!entity || entity->_baseInfo.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
+        if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
            )
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID, req.foe, req.dst));
@@ -345,7 +342,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         ClientCustomReq req;
         rs >> req;
         auto entity = getEntity(req.eid);
-        if (entity && entity->_baseInfo.avatarID == avatarID)
+        if (entity && entity->_state.avatarID == avatarID)
         {
             broadcast(ClientCustomNotice(req.eid, req.customID, req.fValue,req.uValue, req.sValue));
         }
@@ -405,17 +402,17 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         {
             continue;
         }
-        if (getBitFlag(search.camp, SEARCH_CAMP_SELF) && entity._state.eid == master->_state.eid)
+        if (getBitFlag(search.camp, 1) && entity._state.eid == master->_state.eid)
         {
             ret.push_back(kv.second);
             continue;
         }
-        if (search.camp == SEARCH_CAMP_NONE
-            ||(getBitFlag(search.camp, SEARCH_CAMP_SELF) && master->_state.eid == entity._state.eid)
-            ||(getBitFlag(search.camp, SEARCH_CAMP_SAME_WITHOUT_SELF)
+        if (search.camp == 0
+            ||(getBitFlag(search.camp, 1) && master->_state.eid == entity._state.eid)
+            ||(getBitFlag(search.camp, 2)
               && master->_state.camp == entity._state.camp
               && master->_state.eid != entity._state.eid)
-            || (getBitFlag(search.camp, SEARCH_CAMP_ALIEN) && master->_state.camp != entity._state.camp))
+            || (getBitFlag(search.camp, 3) && master->_state.camp != entity._state.camp))
         {
             //matched target camp
         }

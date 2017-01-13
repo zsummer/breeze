@@ -37,27 +37,27 @@ void AI::update()
     }
     while (_monsters.size() < scene->_players.size() * 3)
     {
-        EntityModel base;
-        base.avatarID = 1000 + _monsters.size();
-        base.avatarName = "MyLittlePet_";
-        base.avatarName += toString(_monsters.size());
-        base.modelID = rand() % 45 + 1;
-        base.modelName = base.avatarName;
-        base.camp = ENTITY_CAMP_BLUE + 100;
-        base.etype = ENTITY_AI;
-        base.state = ENTITY_STATE_ACTIVE;
-        DictProp fixedProps;
-        fixedProps.hp = 1000;
-        fixedProps.attack = 10;
-        DictProp grow;
-
-        auto monster = scene->addEntity(base, fixedProps, grow, grow);
-        _monsters[monster->_state.eid] = monster;
+//         EntityModel base;
+//         base.avatarID = 1000 + _monsters.size();
+//         base.avatarName = "MyLittlePet_";
+//         base.avatarName += toString(_monsters.size());
+//         base.modelID = rand() % 45 + 1;
+//         base.modelName = base.avatarName;
+//         base.camp = ENTITY_CAMP_BLUE + 100;
+//         base.etype = ENTITY_AI;
+//         base.state = ENTITY_STATE_ACTIVE;
+//         DictProp fixedProps;
+//         fixedProps.hp = 1000;
+//         fixedProps.attack = 10;
+//         DictProp grow;
+// 
+//         auto monster = scene->addEntity(base, fixedProps, grow, grow);
+//         _monsters[monster->_state.eid] = monster;
     }
     for (auto monster : _monsters)
     {
         AOESearch search;
-        search.camp = SEARCH_CAMP_ALIEN;
+        search.camp = 3;
         search.etype = ENTITY_PLAYER;
         search.limitEntitys = 1;
         search.radian = PI*2.0;

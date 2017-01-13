@@ -31,7 +31,7 @@ struct SceneGroupAvatarInfo
     static const std::string getProtoName() { return "SceneGroupAvatarInfo";} 
     unsigned long long areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
     unsigned long long modelID; //模型ID  
-    DictArrayKey equips; //额外装备  
+    DictMapKeyValue equips; //额外装备  
     unsigned long long avatarID;  
     std::string avatarName;  
     double rankScore; //天梯分数  
@@ -45,7 +45,7 @@ struct SceneGroupAvatarInfo
         rankScore = 0.0; 
         powerType = 0; 
     } 
-    SceneGroupAvatarInfo(const unsigned long long & areaID, const unsigned long long & modelID, const DictArrayKey & equips, const unsigned long long & avatarID, const std::string & avatarName, const double & rankScore, const unsigned short & powerType, const std::string & token) 
+    SceneGroupAvatarInfo(const unsigned long long & areaID, const unsigned long long & modelID, const DictMapKeyValue & equips, const unsigned long long & avatarID, const std::string & avatarName, const double & rankScore, const unsigned short & powerType, const std::string & token) 
     { 
         this->areaID = areaID; 
         this->modelID = modelID; 
@@ -349,7 +349,10 @@ struct EntityState //EntityState
 { 
     static const unsigned short getProtoID() { return 2011;} 
     static const std::string getProtoName() { return "EntityState";} 
-    unsigned long long eid; //eid  
+    unsigned long long eid;  
+    unsigned long long avatarID;  
+    std::string avatarName;  
+    unsigned long long modelID;  
     unsigned short camp; //阵营  
     unsigned long long groupID; //组队ID  
     unsigned short etype; //实体类型  
@@ -360,6 +363,8 @@ struct EntityState //EntityState
     EntityState() 
     { 
         eid = 0; 
+        avatarID = 0; 
+        modelID = 0; 
         camp = 0; 
         groupID = 0; 
         etype = 0; 
@@ -368,9 +373,12 @@ struct EntityState //EntityState
         leader = 0; 
         curHP = 0.0; 
     } 
-    EntityState(const unsigned long long & eid, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP) 
+    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP) 
     { 
         this->eid = eid; 
+        this->avatarID = avatarID; 
+        this->avatarName = avatarName; 
+        this->modelID = modelID; 
         this->camp = camp; 
         this->groupID = groupID; 
         this->etype = etype; 
@@ -383,6 +391,9 @@ struct EntityState //EntityState
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityState & data) 
 { 
     ws << data.eid;  
+    ws << data.avatarID;  
+    ws << data.avatarName;  
+    ws << data.modelID;  
     ws << data.camp;  
     ws << data.groupID;  
     ws << data.etype;  
@@ -395,6 +406,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityState & data) 
 { 
     rs >> data.eid;  
+    rs >> data.avatarID;  
+    rs >> data.avatarName;  
+    rs >> data.modelID;  
     rs >> data.camp;  
     rs >> data.groupID;  
     rs >> data.etype;  
@@ -408,6 +422,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "["; 
     stm << "eid=" << info.eid << ","; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "avatarName=" << info.avatarName << ","; 
+    stm << "modelID=" << info.modelID << ","; 
     stm << "camp=" << info.camp << ","; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "etype=" << info.etype << ","; 

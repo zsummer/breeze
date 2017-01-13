@@ -21,7 +21,7 @@ Proto4z.SceneGroupAvatarInfo.__protoID = 2001
 Proto4z.SceneGroupAvatarInfo.__protoName = "SceneGroupAvatarInfo" 
 Proto4z.SceneGroupAvatarInfo[1] = {name="areaID", type="ui64" } --考虑混服情况,必须指定该玩家来自哪个当前区 
 Proto4z.SceneGroupAvatarInfo[2] = {name="modelID", type="ui64" } --模型ID 
-Proto4z.SceneGroupAvatarInfo[3] = {name="equips", type="DictArrayKey" } --额外装备 
+Proto4z.SceneGroupAvatarInfo[3] = {name="equips", type="DictMapKeyValue" } --额外装备 
 Proto4z.SceneGroupAvatarInfo[4] = {name="avatarID", type="ui64" }  
 Proto4z.SceneGroupAvatarInfo[5] = {name="avatarName", type="string" }  
 Proto4z.SceneGroupAvatarInfo[6] = {name="rankScore", type="double" } --天梯分数 
@@ -142,14 +142,17 @@ Proto4z.register(2011,"EntityState")
 Proto4z.EntityState = {} --EntityState 
 Proto4z.EntityState.__protoID = 2011 
 Proto4z.EntityState.__protoName = "EntityState" 
-Proto4z.EntityState[1] = {name="eid", type="ui64" } --eid 
-Proto4z.EntityState[2] = {name="camp", type="ui16" } --阵营 
-Proto4z.EntityState[3] = {name="groupID", type="ui64" } --组队ID 
-Proto4z.EntityState[4] = {name="etype", type="ui16" } --实体类型 
-Proto4z.EntityState[5] = {name="state", type="ui16" } --状态 
-Proto4z.EntityState[6] = {name="foe", type="ui64" } --锁定的敌人 
-Proto4z.EntityState[7] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
-Proto4z.EntityState[8] = {name="curHP", type="double" } --当前的血量 
+Proto4z.EntityState[1] = {name="eid", type="ui64" }  
+Proto4z.EntityState[2] = {name="avatarID", type="ui64" }  
+Proto4z.EntityState[3] = {name="avatarName", type="string" }  
+Proto4z.EntityState[4] = {name="modelID", type="ui64" }  
+Proto4z.EntityState[5] = {name="camp", type="ui16" } --阵营 
+Proto4z.EntityState[6] = {name="groupID", type="ui64" } --组队ID 
+Proto4z.EntityState[7] = {name="etype", type="ui16" } --实体类型 
+Proto4z.EntityState[8] = {name="state", type="ui16" } --状态 
+Proto4z.EntityState[9] = {name="foe", type="ui64" } --锁定的敌人 
+Proto4z.EntityState[10] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
+Proto4z.EntityState[11] = {name="curHP", type="double" } --当前的血量 
  
 Proto4z.EntityStateArray = {}  
 Proto4z.EntityStateArray.__protoName = "EntityStateArray" 
