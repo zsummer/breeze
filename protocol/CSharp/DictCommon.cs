@@ -95,8 +95,8 @@ namespace Proto4z
     public class DictPairValue: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 10009;  
-        static public ushort getProtoID() { return 10009; } 
+        public const ushort protoID = 10000;  
+        static public ushort getProtoID() { return 10000; } 
         static public string getProtoName() { return "DictPairValue"; } 
         //members   
         public double val1;  
@@ -193,8 +193,8 @@ namespace Proto4z
     public class DictGlobal: Proto4z.IProtoObject //全局配置  
     {     
         //proto id   
-        public const ushort protoID = 10000;  
-        static public ushort getProtoID() { return 10000; } 
+        public const ushort protoID = 10001;  
+        static public ushort getProtoID() { return 10001; } 
         static public string getProtoName() { return "DictGlobal"; } 
         //members   
         public ulong id;  
@@ -306,8 +306,8 @@ namespace Proto4z
     public class DictDrop: Proto4z.IProtoObject //道具抽奖,道具掉落  
     {     
         //proto id   
-        public const ushort protoID = 10008;  
-        static public ushort getProtoID() { return 10008; } 
+        public const ushort protoID = 10002;  
+        static public ushort getProtoID() { return 10002; } 
         static public string getProtoName() { return "DictDrop"; } 
         //members   
         public ulong id;  

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>ed360ea24f29ebc2026f43bf670650c4</cppmd5> 
+<luamd5>158de39a55fb633b68ba03677e48454b</luamd5> 
+<csharpmd5>ad23c65e096a5b593083fba63d254d5f</csharpmd5> 
+<xmlmd5>4e74d01c328f2e7048c1d8ca6ad88387</xmlmd5> 
+<cacheNumber>
+    <cache key = "EPosition" Number = "2002" /> 
+    <cache key = "EntityFullData" Number = "2007" /> 
+    <cache key = "EntityMove" Number = "2005" /> 
+    <cache key = "EntityReport" Number = "2006" /> 
+    <cache key = "EntityState" Number = "2004" /> 
+    <cache key = "SceneEventInfo" Number = "2003" /> 
+    <cache key = "SceneGroupAvatarInfo" Number = "2000" /> 
+    <cache key = "SceneGroupInfo" Number = "2001" /> 
+    <cache key = "SceneSection" Number = "2008" /> 
+</cacheNumber>

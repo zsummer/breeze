@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>6c77e41c0cedbce508e5fc5526a11165</cppmd5> 
+<luamd5>e8da6ded568a5b320e3c737ce42323a0</luamd5> 
+<csharpmd5>7a4cf3515c299ce0604d27c079d92343</csharpmd5> 
+<xmlmd5>a5f8783dd47c4f768f93866e7b4f53f1</xmlmd5> 
+<cacheNumber>
+    <cache key = "AvatarBaseInfo" Number = "1004" /> 
+    <cache key = "AvatarPreview" Number = "1003" /> 
+    <cache key = "ItemInfo" Number = "1005" /> 
+    <cache key = "LogChat" Number = "1006" /> 
+    <cache key = "MoneyTree" Number = "1007" /> 
+    <cache key = "OutOfBand" Number = "1001" /> 
+    <cache key = "Routing" Number = "1000" /> 
+    <cache key = "SimplePack" Number = "1008" /> 
+    <cache key = "Tracing" Number = "1002" /> 
+</cacheNumber>

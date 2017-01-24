@@ -60,80 +60,45 @@ public:
             break;
             case 2000:
             {
-                   return "EntityModel";
+                   return "SceneGroupAvatarInfo";
             }
             break;
             case 2001:
             {
-                   return "SceneGroupAvatarInfo";
+                   return "SceneGroupInfo";
             }
             break;
             case 2002:
             {
-                   return "SceneGroupInfo";
+                   return "EPosition";
             }
             break;
             case 2003:
             {
-                   return "EPosition";
+                   return "SceneEventInfo";
             }
             break;
             case 2004:
             {
-                   return "SearchInfo";
+                   return "EntityState";
             }
             break;
             case 2005:
             {
-                   return "SkillBehaviour";
+                   return "EntityMove";
             }
             break;
             case 2006:
             {
-                   return "SkillData";
+                   return "EntityReport";
             }
             break;
             case 2007:
             {
-                   return "BuffData";
-            }
-            break;
-            case 2008:
-            {
-                   return "SceneEventInfo";
-            }
-            break;
-            case 2009:
-            {
-                   return "SkillInfo";
-            }
-            break;
-            case 2010:
-            {
-                   return "BuffInfo";
-            }
-            break;
-            case 2011:
-            {
-                   return "EntityState";
-            }
-            break;
-            case 2012:
-            {
-                   return "EntityMove";
-            }
-            break;
-            case 2013:
-            {
-                   return "EntityReport";
-            }
-            break;
-            case 2014:
-            {
                    return "EntityFullData";
             }
             break;
-            case 2015:
+            case 2008:
             {
                    return "SceneSection";
             }
@@ -295,82 +260,22 @@ public:
             break;
             case 10000:
             {
-                   return "DictGlobal";
+                   return "DictPairValue";
             }
             break;
             case 10001:
             {
-                   return "DictRaffleAward";
+                   return "DictGlobal";
             }
             break;
             case 10002:
             {
-                   return "DictRafflePool";
+                   return "DictDrop";
             }
             break;
             case 10003:
             {
                    return "DictItem";
-            }
-            break;
-            case 10004:
-            {
-                   return "DictProp";
-            }
-            break;
-            case 10005:
-            {
-                   return "DictSceneUpLevel";
-            }
-            break;
-            case 10006:
-            {
-                   return "DictModel";
-            }
-            break;
-            case 10007:
-            {
-                   return "DictReward";
-            }
-            break;
-            case 10008:
-            {
-                   return "DictDrop";
-            }
-            break;
-            case 10009:
-            {
-                   return "DictPairValue";
-            }
-            break;
-            case 10010:
-            {
-                   return "DictModelLevel";
-            }
-            break;
-            case 10011:
-            {
-                   return "AOESearch";
-            }
-            break;
-            case 10012:
-            {
-                   return "DictBuffEffect";
-            }
-            break;
-            case 10013:
-            {
-                   return "DictBuff";
-            }
-            break;
-            case 10014:
-            {
-                   return "DictSkillEffect";
-            }
-            break;
-            case 10015:
-            {
-                   return "DictSkill";
             }
             break;
             case 11000:
@@ -405,7 +310,7 @@ public:
             break;
             case 11006:
             {
-                   return "DictSkillEffect";
+                   return "DictSkillBehaviour";
             }
             break;
             case 11007:

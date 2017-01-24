@@ -27,8 +27,8 @@ namespace Proto4z
     public class SceneGroupAvatarInfo: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 2001;  
-        static public ushort getProtoID() { return 2001; } 
+        public const ushort protoID = 2000;  
+        static public ushort getProtoID() { return 2000; } 
         static public string getProtoName() { return "SceneGroupAvatarInfo"; } 
         //members   
         public ulong areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
@@ -157,8 +157,8 @@ namespace Proto4z
     public class SceneGroupInfo: Proto4z.IProtoObject //编队数据  
     {     
         //proto id   
-        public const ushort protoID = 2002;  
-        static public ushort getProtoID() { return 2002; } 
+        public const ushort protoID = 2001;  
+        static public ushort getProtoID() { return 2001; } 
         static public string getProtoName() { return "SceneGroupInfo"; } 
         //members   
         public ulong groupID;  
@@ -328,8 +328,8 @@ namespace Proto4z
     public class EPosition: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 2003;  
-        static public ushort getProtoID() { return 2003; } 
+        public const ushort protoID = 2002;  
+        static public ushort getProtoID() { return 2002; } 
         static public string getProtoName() { return "EPosition"; } 
         //members   
         public double x;  
@@ -497,8 +497,8 @@ namespace Proto4z
     public class SceneEventInfo: Proto4z.IProtoObject //伤害数据  
     {     
         //proto id   
-        public const ushort protoID = 2008;  
-        static public ushort getProtoID() { return 2008; } 
+        public const ushort protoID = 2003;  
+        static public ushort getProtoID() { return 2003; } 
         static public string getProtoName() { return "SceneEventInfo"; } 
         //members   
         public ulong src; //eid  
@@ -577,8 +577,8 @@ namespace Proto4z
     public class EntityState: Proto4z.IProtoObject //EntityState  
     {     
         //proto id   
-        public const ushort protoID = 2011;  
-        static public ushort getProtoID() { return 2011; } 
+        public const ushort protoID = 2004;  
+        static public ushort getProtoID() { return 2004; } 
         static public string getProtoName() { return "EntityState"; } 
         //members   
         public ulong eid;  
@@ -687,8 +687,8 @@ namespace Proto4z
     public class EntityMove: Proto4z.IProtoObject //EntityMove  
     {     
         //proto id   
-        public const ushort protoID = 2012;  
-        static public ushort getProtoID() { return 2012; } 
+        public const ushort protoID = 2005;  
+        static public ushort getProtoID() { return 2005; } 
         static public string getProtoName() { return "EntityMove"; } 
         //members   
         public ulong eid; //eid  
@@ -781,8 +781,8 @@ namespace Proto4z
     public class EntityReport: Proto4z.IProtoObject //EntityReport  
     {     
         //proto id   
-        public const ushort protoID = 2013;  
-        static public ushort getProtoID() { return 2013; } 
+        public const ushort protoID = 2006;  
+        static public ushort getProtoID() { return 2006; } 
         static public string getProtoName() { return "EntityReport"; } 
         //members   
         public ulong eid; //eid  
@@ -866,8 +866,8 @@ namespace Proto4z
     public class EntityFullData: Proto4z.IProtoObject //EntityFullData  
     {     
         //proto id   
-        public const ushort protoID = 2014;  
-        static public ushort getProtoID() { return 2014; } 
+        public const ushort protoID = 2007;  
+        static public ushort getProtoID() { return 2007; } 
         static public string getProtoName() { return "EntityFullData"; } 
         //members   
         public DictProp baseProps; //基础战斗属性  
@@ -956,8 +956,8 @@ namespace Proto4z
     public class SceneSection: Proto4z.IProtoObject //场景全景切片数据  
     {     
         //proto id   
-        public const ushort protoID = 2015;  
-        static public ushort getProtoID() { return 2015; } 
+        public const ushort protoID = 2008;  
+        static public ushort getProtoID() { return 2008; } 
         static public string getProtoName() { return "SceneSection"; } 
         //members   
         public ulong sceneID;  

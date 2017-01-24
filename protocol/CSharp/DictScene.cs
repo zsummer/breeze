@@ -501,6 +501,22 @@ namespace Proto4z
         } 
     } 
  
+    public enum SKILL_TRIGGER_STAMP : ulong 
+    { 
+        SKILL_TRIGGER_WHEN_LOAD_BUFF = 5, //加载buff立刻触发  
+        SKILL_TRIGGER_WHEN_UNLOAD_BUFF = 6, //卸载buff立刻触发  
+        SKILL_TRIGGER_PRE_DEATH = 10, //死亡前触发  
+        SKILL_TRIGGER_AFT_DEATH = 11, //死亡后触发  
+        SKILL_TRIGGER_WHEN_GENERAL = 15, //攻击触发  
+        SKILL_TRIGGER_WHEN_PHYSICAL = 16, //攻击触发  
+        SKILL_TRIGGER_WHEN_MAGIC = 17, //攻击触发  
+        SKILL_TRIGGER_ON_GENERAL = 20, //被攻击触发  
+        SKILL_TRIGGER_ON_PHYSICAL = 21, //被攻击触发  
+        SKILL_TRIGGER_ON_MAGIC = 22, //被攻击触发  
+        SKILL_TRIGGER_WHEN_ATTACH_GENERAL = 30, //攻击触发  
+        SKILL_TRIGGER_WHEN_ON_ATTACH = 31, //被攻击触发  
+    }; 
+ 
     public enum BUFF_STAMP : ulong 
     { 
         BUFF_HALO = 1, //描述性类型: 光环  
@@ -525,25 +541,6 @@ namespace Proto4z
         BUFF_IMMUNE_BREAK = 35, //免疫: 免疫技能中断  
     }; 
  
-    public enum BUFF_EFFECT_STAMP : ulong 
-    { 
-        BUFF_EFFECT_PROP_MULTIPLICATION = 1, //属性求积, 没有该标记为求和  
-        BUFF_EFFECT_LAST_TRIGGER_CLEAN = 2, //触发超出限制后移除buff  
-        BUFF_EFFECT_TRIGGER_TIMMER = 3, //定时检测触发  
-        BUFF_EFFECT_TRIGGER_WHEN_LOAD = 5, //加载buff立刻触发  
-        BUFF_EFFECT_TRIGGER_WHEN_UNLOAD = 6, //卸载buff立刻触发  
-        BUFF_EFFECT_TRIGGER_PRE_DEATH = 10, //死亡前触发  
-        BUFF_EFFECT_TRIGGER_AFT_DEATH = 11, //死亡后触发  
-        BUFF_EFFECT_TRIGGER_WHEN_GENERAL = 15, //攻击触发  
-        BUFF_EFFECT_TRIGGER_WHEN_PHYSICAL = 16, //攻击触发  
-        BUFF_EFFECT_TRIGGER_WHEN_MAGIC = 17, //攻击触发  
-        BUFF_EFFECT_TRIGGER_ON_GENERAL = 20, //被攻击触发  
-        BUFF_EFFECT_TRIGGER_ON_PHYSICAL = 21, //被攻击触发  
-        BUFF_EFFECT_TRIGGER_ON_MAGIC = 22, //被攻击触发  
-        BUFF_EFFECT_TRIGGER_WHEN_ATTACH_GENERAL = 30, //攻击触发  
-        BUFF_EFFECT_TRIGGER_WHEN_ON_ATTACH = 31, //被攻击触发  
-    }; 
- 
     public class DictBuffEffect: Proto4z.IProtoObject 
     {     
         //proto id   
@@ -552,53 +549,59 @@ namespace Proto4z
         static public string getProtoName() { return "DictBuffEffect"; } 
         //members   
         public ulong id;  
-        public ulong stamp; //BUFF_EFFECT_STAMP  
-        public string stampText;  
+        public ulong listenTriggerStamp;  
+        public string listenTriggerStampText;  
         public ulong propID; //提升的属性效果, 求积方式的参数是基础属性 不算其他装备  
         public DictArrayKey skills; //触发技能  
         public string skillsText; //触发技能 格式id,id,id   
         public DictArrayKey buffs; //触发buff  
         public string buffsText; //触发buff 格式id,id,id  
         public double areaTrigger; //距离触发, 0为无效  
+        public double timerTrigger; //定时器触发间隔  
         public double intervalLimit; //最小触发间隔时间, 0为无效  
-        public double countLimit; //触发次数限制  
+        public double triggerCountLimit; //触发次数限制  
+        public double autoUnloadBuff; //超出触发次数后自动移除buff  
         public string desc;  
         public DictBuffEffect()  
         { 
             id = 0;  
-            stamp = 0;  
-            stampText = "";  
+            listenTriggerStamp = 0;  
+            listenTriggerStampText = "";  
             propID = 0;  
             skills = new DictArrayKey();  
             skillsText = "";  
             buffs = new DictArrayKey();  
             buffsText = "";  
             areaTrigger = 0.0;  
+            timerTrigger = 0.0;  
             intervalLimit = 0.0;  
-            countLimit = 0.0;  
+            triggerCountLimit = 0.0;  
+            autoUnloadBuff = 0.0;  
             desc = "";  
         } 
-        public DictBuffEffect(ulong id, ulong stamp, string stampText, ulong propID, DictArrayKey skills, string skillsText, DictArrayKey buffs, string buffsText, double areaTrigger, double intervalLimit, double countLimit, string desc) 
+        public DictBuffEffect(ulong id, ulong listenTriggerStamp, string listenTriggerStampText, ulong propID, DictArrayKey skills, string skillsText, DictArrayKey buffs, string buffsText, double areaTrigger, double timerTrigger, double intervalLimit, double triggerCountLimit, double autoUnloadBuff, string desc) 
         { 
             this.id = id; 
-            this.stamp = stamp; 
-            this.stampText = stampText; 
+            this.listenTriggerStamp = listenTriggerStamp; 
+            this.listenTriggerStampText = listenTriggerStampText; 
             this.propID = propID; 
             this.skills = skills; 
             this.skillsText = skillsText; 
             this.buffs = buffs; 
             this.buffsText = buffsText; 
             this.areaTrigger = areaTrigger; 
+            this.timerTrigger = timerTrigger; 
             this.intervalLimit = intervalLimit; 
-            this.countLimit = countLimit; 
+            this.triggerCountLimit = triggerCountLimit; 
+            this.autoUnloadBuff = autoUnloadBuff; 
             this.desc = desc; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.stamp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.stampText)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.listenTriggerStamp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.listenTriggerStampText)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.propID)); 
             if (this.skills == null) this.skills = new DictArrayKey(); 
             data.AddRange(this.skills.__encode()); 
@@ -607,16 +610,18 @@ namespace Proto4z
             data.AddRange(this.buffs.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.buffsText)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.areaTrigger)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.timerTrigger)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.intervalLimit)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.countLimit)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.triggerCountLimit)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.autoUnloadBuff)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.stamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.stampText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.listenTriggerStamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.listenTriggerStampText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.propID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.skills = new DictArrayKey(); 
             this.skills.__decode(binData, ref pos); 
@@ -625,8 +630,10 @@ namespace Proto4z
             this.buffs.__decode(binData, ref pos); 
             this.buffsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.areaTrigger = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.timerTrigger = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.intervalLimit = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.countLimit = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.triggerCountLimit = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.autoUnloadBuff = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
@@ -645,10 +652,7 @@ namespace Proto4z
         public DictArrayKey effects; //DictBuffEffect ID  
         public string effectsText;  
         public double keepTime;  
-        public ushort mutexType; //0无互斥, 1 同ID时间叠加, 2 同ID时间最长的覆盖, 3 同ID最强的覆盖  
-        public ulong mutexID; //0  
-        public double mutexStrength;  
-        public double limitTime;  
+        public double limitStackTime; //相同buff叠加时间并且刷新触发次数  
         public string desc;  
         public DictBuff()  
         { 
@@ -658,13 +662,10 @@ namespace Proto4z
             effects = new DictArrayKey();  
             effectsText = "";  
             keepTime = 0.0;  
-            mutexType = 0;  
-            mutexID = 0;  
-            mutexStrength = 0.0;  
-            limitTime = 0.0;  
+            limitStackTime = 0.0;  
             desc = "";  
         } 
-        public DictBuff(ulong id, ulong stamp, string stampText, DictArrayKey effects, string effectsText, double keepTime, ushort mutexType, ulong mutexID, double mutexStrength, double limitTime, string desc) 
+        public DictBuff(ulong id, ulong stamp, string stampText, DictArrayKey effects, string effectsText, double keepTime, double limitStackTime, string desc) 
         { 
             this.id = id; 
             this.stamp = stamp; 
@@ -672,10 +673,7 @@ namespace Proto4z
             this.effects = effects; 
             this.effectsText = effectsText; 
             this.keepTime = keepTime; 
-            this.mutexType = mutexType; 
-            this.mutexID = mutexID; 
-            this.mutexStrength = mutexStrength; 
-            this.limitTime = limitTime; 
+            this.limitStackTime = limitStackTime; 
             this.desc = desc; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -688,10 +686,7 @@ namespace Proto4z
             data.AddRange(this.effects.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.effectsText)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.keepTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.mutexType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.mutexID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.mutexStrength)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.limitTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.limitStackTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
@@ -704,10 +699,7 @@ namespace Proto4z
             this.effects.__decode(binData, ref pos); 
             this.effectsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.keepTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.mutexType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.mutexID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.mutexStrength = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.limitTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.limitStackTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
@@ -738,49 +730,70 @@ namespace Proto4z
         SKILL_BEHAVIOUR_TRIGGER_SKILL = 7, //触发技能  
     }; 
  
-    public class DictSkillEffect: Proto4z.IProtoObject 
+    public class DictSkillBehaviour: Proto4z.IProtoObject 
     {     
         //proto id   
         public const ushort protoID = 11006;  
         static public ushort getProtoID() { return 11006; } 
-        static public string getProtoName() { return "DictSkillEffect"; } 
+        static public string getProtoName() { return "DictSkillBehaviour"; } 
         //members   
         public ulong id;  
-        public ulong stamp;  
+        public ushort isHit; //0为普通, 1为攻击  
         public ulong searchID;  
-        public ushort hpMode; //血量变化类型:0 相加, 1与总血量相乘后再相加, 2与剩余血量相乘后再相加, 3与已损失血量相乘后叠加  
-        public double hpLeft; //血量变化参数  
-        public double hitKeepTime; //击退,浮空,牵引,的持续时间  
-        public double hitKeepSpeed; //击退,浮空,牵引,的持速度  
+        public double hpAdd; //附加真实伤害  
+        public double hpAddScaleTotal;  
+        public double hpAddScaleRemanent;  
+        public double hpAddScaleLost;  
+        public ulong propID; //附加属性提升  
+        public double dstTeleport; //目标闪现到自己  
+        public double selfTeleport; //自己闪现到目标  
+        public double dstMoveTime; //附加给目标朝向自己的位移时间  
+        public double dstMoveSpeed; //附加给目标朝向自己的位移速度  
+        public double selfMoveTime; //附加给自己朝向目标的位移时间  
+        public double selfMoveSpeed; //附加给自己朝向目标的位移速度  
         public DictArrayKey skills; //触发技能  
         public string skillsText; //触发技能 格式id,id,id   
         public DictArrayKey buffs; //触发buff  
         public string buffsText; //触发buff 格式id,id,id  
         public string desc;  
-        public DictSkillEffect()  
+        public DictSkillBehaviour()  
         { 
             id = 0;  
-            stamp = 0;  
+            isHit = 0;  
             searchID = 0;  
-            hpMode = 0;  
-            hpLeft = 0.0;  
-            hitKeepTime = 0.0;  
-            hitKeepSpeed = 0.0;  
+            hpAdd = 0.0;  
+            hpAddScaleTotal = 0.0;  
+            hpAddScaleRemanent = 0.0;  
+            hpAddScaleLost = 0.0;  
+            propID = 0;  
+            dstTeleport = 0.0;  
+            selfTeleport = 0.0;  
+            dstMoveTime = 0.0;  
+            dstMoveSpeed = 0.0;  
+            selfMoveTime = 0.0;  
+            selfMoveSpeed = 0.0;  
             skills = new DictArrayKey();  
             skillsText = "";  
             buffs = new DictArrayKey();  
             buffsText = "";  
             desc = "";  
         } 
-        public DictSkillEffect(ulong id, ulong stamp, ulong searchID, ushort hpMode, double hpLeft, double hitKeepTime, double hitKeepSpeed, DictArrayKey skills, string skillsText, DictArrayKey buffs, string buffsText, string desc) 
+        public DictSkillBehaviour(ulong id, ushort isHit, ulong searchID, double hpAdd, double hpAddScaleTotal, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey skills, string skillsText, DictArrayKey buffs, string buffsText, string desc) 
         { 
             this.id = id; 
-            this.stamp = stamp; 
+            this.isHit = isHit; 
             this.searchID = searchID; 
-            this.hpMode = hpMode; 
-            this.hpLeft = hpLeft; 
-            this.hitKeepTime = hitKeepTime; 
-            this.hitKeepSpeed = hitKeepSpeed; 
+            this.hpAdd = hpAdd; 
+            this.hpAddScaleTotal = hpAddScaleTotal; 
+            this.hpAddScaleRemanent = hpAddScaleRemanent; 
+            this.hpAddScaleLost = hpAddScaleLost; 
+            this.propID = propID; 
+            this.dstTeleport = dstTeleport; 
+            this.selfTeleport = selfTeleport; 
+            this.dstMoveTime = dstMoveTime; 
+            this.dstMoveSpeed = dstMoveSpeed; 
+            this.selfMoveTime = selfMoveTime; 
+            this.selfMoveSpeed = selfMoveSpeed; 
             this.skills = skills; 
             this.skillsText = skillsText; 
             this.buffs = buffs; 
@@ -791,12 +804,19 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.stamp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.isHit)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.searchID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.hpMode)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hpLeft)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hitKeepTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hitKeepSpeed)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hpAdd)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hpAddScaleTotal)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hpAddScaleRemanent)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hpAddScaleLost)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.propID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.dstTeleport)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.selfTeleport)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.dstMoveTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.dstMoveSpeed)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.selfMoveTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.selfMoveSpeed)); 
             if (this.skills == null) this.skills = new DictArrayKey(); 
             data.AddRange(this.skills.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.skillsText)); 
@@ -809,12 +829,19 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.stamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.isHit = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.searchID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.hpMode = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.hpLeft = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.hitKeepTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.hitKeepSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.hpAdd = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.hpAddScaleTotal = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.hpAddScaleRemanent = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.hpAddScaleLost = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.propID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.dstTeleport = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.selfTeleport = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.dstMoveTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.dstMoveSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.selfMoveTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.selfMoveSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.skills = new DictArrayKey(); 
             this.skills.__decode(binData, ref pos); 
             this.skillsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
@@ -826,7 +853,7 @@ namespace Proto4z
         } 
     } 
  
-    public class DictSkill: Proto4z.IProtoObject 
+    public class DictSkill: Proto4z.IProtoObject //吟唱,引导  
     {     
         //proto id   
         public const ushort protoID = 11007;  

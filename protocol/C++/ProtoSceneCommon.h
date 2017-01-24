@@ -27,7 +27,7 @@ enum SCENE_STATE : unsigned short
  
 struct SceneGroupAvatarInfo 
 { 
-    static const unsigned short getProtoID() { return 2001;} 
+    static const unsigned short getProtoID() { return 2000;} 
     static const std::string getProtoName() { return "SceneGroupAvatarInfo";} 
     unsigned long long areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
     unsigned long long modelID; //模型ID  
@@ -104,7 +104,7 @@ typedef std::map<unsigned long long, SceneGroupAvatarInfo> SceneGroupAvatarInfoM
  
 struct SceneGroupInfo //编队数据  
 { 
-    static const unsigned short getProtoID() { return 2002;} 
+    static const unsigned short getProtoID() { return 2001;} 
     static const std::string getProtoName() { return "SceneGroupInfo";} 
     unsigned long long groupID;  
     unsigned short sceneType; //场景类型  
@@ -196,7 +196,7 @@ typedef std::vector<unsigned long long> EntityIDArray;
  
 struct EPosition 
 { 
-    static const unsigned short getProtoID() { return 2003;} 
+    static const unsigned short getProtoID() { return 2002;} 
     static const std::string getProtoName() { return "EPosition";} 
     double x;  
     double y;  
@@ -289,7 +289,7 @@ enum SCENE_EVENT : unsigned short
  
 struct SceneEventInfo //伤害数据  
 { 
-    static const unsigned short getProtoID() { return 2008;} 
+    static const unsigned short getProtoID() { return 2003;} 
     static const std::string getProtoName() { return "SceneEventInfo";} 
     unsigned long long src; //eid  
     unsigned long long dst; //eid  
@@ -347,7 +347,7 @@ typedef std::vector<SceneEventInfo> SceneEventInfoArray;
  
 struct EntityState //EntityState  
 { 
-    static const unsigned short getProtoID() { return 2011;} 
+    static const unsigned short getProtoID() { return 2004;} 
     static const std::string getProtoName() { return "EntityState";} 
     unsigned long long eid;  
     unsigned long long avatarID;  
@@ -441,7 +441,7 @@ typedef std::vector<EntityState> EntityStateArray;
  
 struct EntityMove //EntityMove  
 { 
-    static const unsigned short getProtoID() { return 2012;} 
+    static const unsigned short getProtoID() { return 2005;} 
     static const std::string getProtoName() { return "EntityMove";} 
     unsigned long long eid; //eid  
     EPosition position; //当前坐标  
@@ -510,7 +510,7 @@ typedef std::vector<EntityMove> EntityMoveArray;
  
 struct EntityReport //EntityReport  
 { 
-    static const unsigned short getProtoID() { return 2013;} 
+    static const unsigned short getProtoID() { return 2006;} 
     static const std::string getProtoName() { return "EntityReport";} 
     unsigned long long eid; //eid  
     unsigned long long killOtherCount; //杀死其他玩家次数  
@@ -575,7 +575,7 @@ typedef std::vector<EntityReport> EntityReportArray;
  
 struct EntityFullData //EntityFullData  
 { 
-    static const unsigned short getProtoID() { return 2014;} 
+    static const unsigned short getProtoID() { return 2007;} 
     static const std::string getProtoName() { return "EntityFullData";} 
     DictProp baseProps; //基础战斗属性  
     DictProp props; //当前战斗属性  
@@ -629,7 +629,7 @@ typedef std::vector<EntityFullData> EntityFullDataArray;
  
 struct SceneSection //场景全景切片数据  
 { 
-    static const unsigned short getProtoID() { return 2015;} 
+    static const unsigned short getProtoID() { return 2008;} 
     static const std::string getProtoName() { return "SceneSection";} 
     unsigned long long sceneID;  
     unsigned short sceneType;  

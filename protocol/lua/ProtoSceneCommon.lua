@@ -15,9 +15,9 @@ Proto4z.SCENE_STATE_ALLOCATE = 3--服务器分配场景中
 Proto4z.SCENE_STATE_WAIT = 4--等待玩家加入战场 
 Proto4z.SCENE_STATE_ACTIVE = 5--战斗中 
  
-Proto4z.register(2001,"SceneGroupAvatarInfo") 
+Proto4z.register(2000,"SceneGroupAvatarInfo") 
 Proto4z.SceneGroupAvatarInfo = {}  
-Proto4z.SceneGroupAvatarInfo.__protoID = 2001 
+Proto4z.SceneGroupAvatarInfo.__protoID = 2000 
 Proto4z.SceneGroupAvatarInfo.__protoName = "SceneGroupAvatarInfo" 
 Proto4z.SceneGroupAvatarInfo[1] = {name="areaID", type="ui64" } --考虑混服情况,必须指定该玩家来自哪个当前区 
 Proto4z.SceneGroupAvatarInfo[2] = {name="modelID", type="ui64" } --模型ID 
@@ -39,9 +39,9 @@ Proto4z.SceneGroupAvatarInfoMap.__protoDesc = "map"
 Proto4z.SceneGroupAvatarInfoMap.__protoTypeK = "ui64" 
 Proto4z.SceneGroupAvatarInfoMap.__protoTypeV = "SceneGroupAvatarInfo" 
  
-Proto4z.register(2002,"SceneGroupInfo") 
+Proto4z.register(2001,"SceneGroupInfo") 
 Proto4z.SceneGroupInfo = {} --编队数据 
-Proto4z.SceneGroupInfo.__protoID = 2002 
+Proto4z.SceneGroupInfo.__protoID = 2001 
 Proto4z.SceneGroupInfo.__protoName = "SceneGroupInfo" 
 Proto4z.SceneGroupInfo[1] = {name="groupID", type="ui64" }  
 Proto4z.SceneGroupInfo[2] = {name="sceneType", type="ui16" } --场景类型 
@@ -70,9 +70,9 @@ Proto4z.EntityIDArray.__protoName = "EntityIDArray"
 Proto4z.EntityIDArray.__protoDesc = "array" 
 Proto4z.EntityIDArray.__protoTypeV = "ui64" 
  
-Proto4z.register(2003,"EPosition") 
+Proto4z.register(2002,"EPosition") 
 Proto4z.EPosition = {}  
-Proto4z.EPosition.__protoID = 2003 
+Proto4z.EPosition.__protoID = 2002 
 Proto4z.EPosition.__protoName = "EPosition" 
 Proto4z.EPosition[1] = {name="x", type="double" }  
 Proto4z.EPosition[2] = {name="y", type="double" }  
@@ -123,9 +123,9 @@ Proto4z.SCENE_EVENT_HARM_HILL = 5
 Proto4z.SCENE_EVENT_HARM_MISS = 6 
 Proto4z.SCENE_EVENT_HARM_CRITICAL = 7 
  
-Proto4z.register(2008,"SceneEventInfo") 
+Proto4z.register(2003,"SceneEventInfo") 
 Proto4z.SceneEventInfo = {} --伤害数据 
-Proto4z.SceneEventInfo.__protoID = 2008 
+Proto4z.SceneEventInfo.__protoID = 2003 
 Proto4z.SceneEventInfo.__protoName = "SceneEventInfo" 
 Proto4z.SceneEventInfo[1] = {name="src", type="ui64" } --eid 
 Proto4z.SceneEventInfo[2] = {name="dst", type="ui64" } --eid 
@@ -138,9 +138,9 @@ Proto4z.SceneEventInfoArray.__protoName = "SceneEventInfoArray"
 Proto4z.SceneEventInfoArray.__protoDesc = "array" 
 Proto4z.SceneEventInfoArray.__protoTypeV = "SceneEventInfo" 
  
-Proto4z.register(2011,"EntityState") 
+Proto4z.register(2004,"EntityState") 
 Proto4z.EntityState = {} --EntityState 
-Proto4z.EntityState.__protoID = 2011 
+Proto4z.EntityState.__protoID = 2004 
 Proto4z.EntityState.__protoName = "EntityState" 
 Proto4z.EntityState[1] = {name="eid", type="ui64" }  
 Proto4z.EntityState[2] = {name="avatarID", type="ui64" }  
@@ -159,9 +159,9 @@ Proto4z.EntityStateArray.__protoName = "EntityStateArray"
 Proto4z.EntityStateArray.__protoDesc = "array" 
 Proto4z.EntityStateArray.__protoTypeV = "EntityState" 
  
-Proto4z.register(2012,"EntityMove") 
+Proto4z.register(2005,"EntityMove") 
 Proto4z.EntityMove = {} --EntityMove 
-Proto4z.EntityMove.__protoID = 2012 
+Proto4z.EntityMove.__protoID = 2005 
 Proto4z.EntityMove.__protoName = "EntityMove" 
 Proto4z.EntityMove[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityMove[2] = {name="position", type="EPosition" } --当前坐标 
@@ -176,9 +176,9 @@ Proto4z.EntityMoveArray.__protoName = "EntityMoveArray"
 Proto4z.EntityMoveArray.__protoDesc = "array" 
 Proto4z.EntityMoveArray.__protoTypeV = "EntityMove" 
  
-Proto4z.register(2013,"EntityReport") 
+Proto4z.register(2006,"EntityReport") 
 Proto4z.EntityReport = {} --EntityReport 
-Proto4z.EntityReport.__protoID = 2013 
+Proto4z.EntityReport.__protoID = 2006 
 Proto4z.EntityReport.__protoName = "EntityReport" 
 Proto4z.EntityReport[1] = {name="eid", type="ui64" } --eid 
 Proto4z.EntityReport[2] = {name="killOtherCount", type="ui64" } --杀死其他玩家次数 
@@ -192,9 +192,9 @@ Proto4z.EntityReportArray.__protoName = "EntityReportArray"
 Proto4z.EntityReportArray.__protoDesc = "array" 
 Proto4z.EntityReportArray.__protoTypeV = "EntityReport" 
  
-Proto4z.register(2014,"EntityFullData") 
+Proto4z.register(2007,"EntityFullData") 
 Proto4z.EntityFullData = {} --EntityFullData 
-Proto4z.EntityFullData.__protoID = 2014 
+Proto4z.EntityFullData.__protoID = 2007 
 Proto4z.EntityFullData.__protoName = "EntityFullData" 
 Proto4z.EntityFullData[1] = {name="baseProps", type="DictProp" } --基础战斗属性 
 Proto4z.EntityFullData[2] = {name="props", type="DictProp" } --当前战斗属性 
@@ -207,9 +207,9 @@ Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray"
 Proto4z.EntityFullDataArray.__protoDesc = "array" 
 Proto4z.EntityFullDataArray.__protoTypeV = "EntityFullData" 
  
-Proto4z.register(2015,"SceneSection") 
+Proto4z.register(2008,"SceneSection") 
 Proto4z.SceneSection = {} --场景全景切片数据 
-Proto4z.SceneSection.__protoID = 2015 
+Proto4z.SceneSection.__protoID = 2008 
 Proto4z.SceneSection.__protoName = "SceneSection" 
 Proto4z.SceneSection[1] = {name="sceneID", type="ui64" }  
 Proto4z.SceneSection[2] = {name="sceneType", type="ui16" }  

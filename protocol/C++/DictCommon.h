@@ -14,7 +14,7 @@ typedef std::map<unsigned long long, double> DictMapKeyValue; //通用Key value
  
 struct DictPairValue 
 { 
-    static const unsigned short getProtoID() { return 10009;} 
+    static const unsigned short getProtoID() { return 10000;} 
     static const std::string getProtoName() { return "DictPairValue";} 
     double val1;  
     double val2;  
@@ -58,7 +58,7 @@ typedef std::vector<DictPairValue> DictArrayPairValue;
  
 struct DictGlobal //全局配置  
 { 
-    static const unsigned short getProtoID() { return 10000;} 
+    static const unsigned short getProtoID() { return 10001;} 
     static const std::string getProtoName() { return "DictGlobal";} 
     inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -208,7 +208,7 @@ typedef std::map<unsigned long long, DictGlobal> DictGlobalMap;
  
 struct DictDrop //道具抽奖,道具掉落  
 { 
-    static const unsigned short getProtoID() { return 10008;} 
+    static const unsigned short getProtoID() { return 10002;} 
     static const std::string getProtoName() { return "DictDrop";} 
     inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 

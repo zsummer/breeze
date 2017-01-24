@@ -15,9 +15,9 @@ Proto4z.DictMapKeyValue.__protoDesc = "map"
 Proto4z.DictMapKeyValue.__protoTypeK = "ui64" 
 Proto4z.DictMapKeyValue.__protoTypeV = "double" 
  
-Proto4z.register(10009,"DictPairValue") 
+Proto4z.register(10000,"DictPairValue") 
 Proto4z.DictPairValue = {}  
-Proto4z.DictPairValue.__protoID = 10009 
+Proto4z.DictPairValue.__protoID = 10000 
 Proto4z.DictPairValue.__protoName = "DictPairValue" 
 Proto4z.DictPairValue[1] = {name="val1", type="double" }  
 Proto4z.DictPairValue[2] = {name="val2", type="double" }  
@@ -33,9 +33,9 @@ Proto4z.DictArrayPairValue.__protoName = "DictArrayPairValue"
 Proto4z.DictArrayPairValue.__protoDesc = "array" 
 Proto4z.DictArrayPairValue.__protoTypeV = "DictPairValue" 
  
-Proto4z.register(10000,"DictGlobal") 
+Proto4z.register(10001,"DictGlobal") 
 Proto4z.DictGlobal = {} --全局配置 
-Proto4z.DictGlobal.__protoID = 10000 
+Proto4z.DictGlobal.__protoID = 10001 
 Proto4z.DictGlobal.__protoName = "DictGlobal" 
 Proto4z.DictGlobal[1] = {name="id", type="ui64" }  
 Proto4z.DictGlobal[2] = {name="val", type="ui64" } --整数 
@@ -54,9 +54,9 @@ Proto4z.DictGlobalMap.__protoDesc = "map"
 Proto4z.DictGlobalMap.__protoTypeK = "ui64" 
 Proto4z.DictGlobalMap.__protoTypeV = "DictGlobal" 
  
-Proto4z.register(10008,"DictDrop") 
+Proto4z.register(10002,"DictDrop") 
 Proto4z.DictDrop = {} --道具抽奖,道具掉落 
-Proto4z.DictDrop.__protoID = 10008 
+Proto4z.DictDrop.__protoID = 10002 
 Proto4z.DictDrop.__protoName = "DictDrop" 
 Proto4z.DictDrop[1] = {name="id", type="ui64" }  
 Proto4z.DictDrop[2] = {name="dropType", type="ui16" } --0 独立随机, 所有奖品根据自身概率随机,  1 从奖池中抽取一个奖品, 如果所有奖品概率总和小于1则可能什么都抽取不到 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>6a767770611fb90fd4a9bb172873c319</cppmd5> 
+<luamd5>1d78e8b0155efea229e2f34b0e22daef</luamd5> 
+<csharpmd5>cd62f59a6d4de4255dc108c30c59759c</csharpmd5> 
+<xmlmd5>d9fcf958075613f88f8facdc0ff868e9</xmlmd5> 
+<cacheNumber>
+    <cache key = "AOESearch" Number = "11003" /> 
+    <cache key = "DictBuff" Number = "11005" /> 
+    <cache key = "DictBuffEffect" Number = "11004" /> 
+    <cache key = "DictModel" Number = "11002" /> 
+    <cache key = "DictModelLevel" Number = "11001" /> 
+    <cache key = "DictProp" Number = "11000" /> 
+    <cache key = "DictSkill" Number = "11007" /> 
+    <cache key = "DictSkillBehaviour" Number = "11006" /> 
+</cacheNumber>
