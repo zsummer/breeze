@@ -236,41 +236,52 @@ int checkString()
         LOGD("compareStringWildcard used time=" << (getFloatNowTime() - now));
     }
 
-    if (subStringFront("aa/bb/cc", "/") != "aa")
+    if (subString("aa/bb/cc", "/").first != "aa")
     {
         return 25;
     }
-    if (subStringBack("aa/bb/cc", "/") != "cc")
+    if (subString("aa/bb/cc", "/", true, true).second != "cc")
     {
         return 26;
     }
-    if (subStringWithoutFront("aa/bb/cc", "/") != "bb/cc")
+    if (subString("aa/bb/cc", "/").second != "bb/cc")
     {
         return 27;
     }
-    if (subStringWithoutBack("aa/bb/cc", "/") != "aa/bb")
+    if (subString("aa/bb/cc", "/", true, true).first != "aa/bb")
     {
         return 28;
     }
+
+    if (subString("aa", "/", false).second != "aa")
+    {
+        return 29;
+    }
+    if (subString("aa", "/", true).first != "aa")
+    {
+        return 30;
+    }
+
+
     if (true)
     {
         //蓝天and҉😌   
         char org[] = { (char)0xe8,  (char)0x93,  (char)0x9d,    (char)0xe5,  (char)0xa4,  (char)0xa9,    (char)0x61,  (char)0x6e,  (char)0x64,    (char)0xd2,  (char)0x89,    (char)0xf0, (char)0x9f, (char)0x98, (char)0x8c,   (char)0x00 };
         if (getCharUTF8Count(org) != 7)
         {
-            return 29;
+            return 31;
         }
         if (getCharASCIICount(org) != 3)
         {
-            return 30;
+            return 32;
         }
         if (getCharNoASCIICount(org) != 4)
         {
-            return 31;
+            return 33;
         }
         if (!hadIllegalChar(org))
         {
-            return 32;
+            return 34;
         }
 
     }

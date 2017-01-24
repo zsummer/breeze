@@ -188,10 +188,10 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
         return false;
     }
     path = fixPathString(path);
-    std::string wildcard = subStringBack(path, "/");
-    if (!wildcard.empty())
+    auto wildcard = subString(path, "/", true, true);
+    if (!wildcard.second.empty())
     {
-        path = subStringWithoutBack(path, "/") + "/";
+        path = wildcard.first + "/";
     }
     
 
@@ -215,13 +215,13 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
                 file.bDir = true;
                 strcpy_s(file.filename, sizeof(file.filename), fd.cFileName);
                 sprintf(file.fullpath, "%s%s", path.c_str(), fd.cFileName);
-                if (wildcard.empty())
+                if (wildcard.second.empty())
                 {
                     files.push_back(file);
                 }
                 if (recursion)
                 {
-                    tmpSearchPath(fixPathString(file.fullpath) + wildcard, files, recursion);
+                    tmpSearchPath(fixPathString(file.fullpath) + wildcard.second, files, recursion);
                 }
                 
             }
@@ -235,7 +235,7 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
             file.filesize += fd.nFileSizeLow;
             strcpy_s(file.filename, sizeof(file.filename), fd.cFileName);
             sprintf(file.fullpath, "%s%s", path.c_str(), fd.cFileName);
-            if (wildcard.empty() || compareStringWildcard(file.filename, wildcard))
+            if (wildcard.second.empty() || compareStringWildcard(file.filename, wildcard.second))
             {
                 files.push_back(file);
             }
@@ -266,13 +266,13 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
             file.filesize = statbuf.st_size;
             strcpy(file.filename, entry->d_name);
             sprintf(file.fullpath, "%s%s", path.c_str(), entry->d_name);
-            if (wildcard.empty())
+            if (wildcard.second.empty())
             {
                 files.push_back(file);
             }
             if (recursion)
             {
-                tmpSearchPath(fixPathString(file.fullpath)+wildcard, files, recursion);
+                tmpSearchPath(fixPathString(file.fullpath)+wildcard.second, files, recursion);
             }
         }
         else
@@ -282,7 +282,7 @@ static bool tmpSearchPath(std::string  path, std::vector<SearchFileInfo> & files
             file.filesize = statbuf.st_size;
             strcpy(file.filename, entry->d_name);
             file.fullpath[0] = '\0';
-            if (wildcard.empty() || compareStringWildcard(file.filename, wildcard))
+            if (wildcard.second.empty() || compareStringWildcard(file.filename, wildcard.second))
             {
                 files.push_back(file);
             }
@@ -440,44 +440,31 @@ std::string trim(std::string &&str, const std::string & ign, int both)
     return "";
 }
 
-std::string subStringFront(const std::string & text, const std::string & deli)
+std::pair<std::string,std::string> subString(const std::string & text, const std::string & deli, bool preStore, bool isGreedy)
 {
     auto pos = text.find(deli);
     if (pos == std::string::npos)
     {
-        return text;
+        if (preStore)
+        {
+            return std::make_pair(text, "");
+        }
+        return std::make_pair("", text);
     }
-    return text.substr(0, pos - 0);
-}
-std::string subStringBack(const std::string & text, const std::string & deli)
-{
-    auto pos = text.rfind(deli);
-    if (pos == std::string::npos)
+
+    if (isGreedy)
     {
-        return text;
+        auto rpos = text.rfind(deli);
+        if (rpos > pos)
+        {
+            pos = rpos;
+        }
     }
-    return text.substr(pos+deli.length());
+
+    return std::make_pair(text.substr(0, pos - 0), text.substr(pos+deli.length()));
 }
 
-std::string subStringWithoutFront(const std::string & text, const std::string & deli)
-{
-    auto pos = text.find(deli);
-    if (pos == std::string::npos)
-    {
-        return text;
-    }
-    return text.substr(pos+deli.length());
-}
 
-std::string subStringWithoutBack(const std::string & text, const std::string & deli)
-{
-    auto pos = text.rfind(deli);
-    if (pos == std::string::npos)
-    {
-        return text;
-    }
-    return text.substr(0, pos - 0);
-}
 std::string toUpperString(std::string  org)
 {
     std::for_each(org.begin(), org.end(), [](char &ch){ch = toupper(ch); });
@@ -903,9 +890,10 @@ double realRandF(double mi, double mx)
 
 std::string getHostByName(const std::string & name, unsigned short port)
 {
-    auto ret = subStringBack(name, "https://");
-    ret = subStringBack(ret, "http://");
-    ret = subStringFront(ret, "/");
+    auto ret = subString(name, "https://", false).second;
+    ret = subString(ret, "http://", false).second;
+    ret += "/";
+    ret = subString(ret, "/", true).first;
     if (std::find_if(ret.begin(), ret.end(), [](char ch) {return !isdigit(ch) && ch != '.'; }) == ret.end())
     {
         return ret; //ipv4 
