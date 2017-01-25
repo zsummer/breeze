@@ -21,14 +21,14 @@
 
 class Scene;
 using ScenePtr = std::shared_ptr<Scene>;
-class SkillMgr : public Singleton<SkillMgr>
+class Skill : public std::enable_shared_from_this<Skill>
 {
-
+    std::weak_ptr<Scene> _scene;
 public:
-    SkillMgr();
-    ~SkillMgr();
-    void init();
-    void update(ScenePtr scene);
+    Skill();
+    ~Skill();
+    void init(std::weak_ptr<Scene> scene);
+    void update();
 
     bool trigger(ScenePtr scene, EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst);
     bool damage(ScenePtr scene, EntityPtr caster, std::vector<EntityPtr> & targets);
@@ -37,6 +37,7 @@ public:
     bool cleanBuff();
 };
 
+using SkillPtr = std::shared_ptr<Skill>;
 
 
 

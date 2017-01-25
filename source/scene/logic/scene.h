@@ -25,7 +25,7 @@
 class Scene : public std::enable_shared_from_this<Scene>
 {
     friend MoveSync;
-    friend SkillMgr;
+    friend Skill;
     friend AI;
     //scene数据
 private:
@@ -62,7 +62,7 @@ public:
 public:
     MoveSyncPtr _move;
     AIPtr _ai;
-
+    SkillPtr _skill;
 public:
     inline SceneID getSceneID() { return _sceneID; }
     inline SCENE_TYPE getSceneType() { return _sceneType; }
@@ -82,6 +82,7 @@ public:
 
     void pushAsync(std::function<void()> && func);
     std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const AOESearch & search);
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, ui64  searchID);
 public:
     
  

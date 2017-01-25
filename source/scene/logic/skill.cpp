@@ -2,35 +2,31 @@
 #include "scene.h"
 #include "sceneMgr.h"
 
-SkillMgr::SkillMgr()
+Skill::Skill()
 {
 
 }
-SkillMgr::~SkillMgr()
+Skill::~Skill()
 {
 
 }
-void SkillMgr::init()
+void Skill::init(std::weak_ptr<Scene> scene)
 {
-
+    _scene = scene;
 }
 
 
-void SkillMgr::update(ScenePtr scene)
+void Skill::update()
 {
 
 
     double now = getFloatNowTime();
-    for (auto kv : scene->_entitys)
-    {
-
-    }
 
 
 }
 
 
-bool SkillMgr::trigger(ScenePtr scene, EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst)
+bool Skill::trigger(ScenePtr scene, EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst)
 {
     auto entity = scene->getEntity(eid);
     if (!entity)
@@ -45,7 +41,7 @@ bool SkillMgr::trigger(ScenePtr scene, EntityID eid, ui64 skillID, EntityID foe,
     return true;
 }
 
-bool SkillMgr::damage(ScenePtr scene, EntityPtr caster, std::vector<EntityPtr> & targets)
+bool Skill::damage(ScenePtr scene, EntityPtr caster, std::vector<EntityPtr> & targets)
 {
 
     EntityPtr master = caster;
@@ -83,15 +79,15 @@ bool SkillMgr::damage(ScenePtr scene, EntityPtr caster, std::vector<EntityPtr> &
     return true;
 }
 
-bool SkillMgr::cleanSkill()
+bool Skill::cleanSkill()
 {
     return true;
 }
-bool SkillMgr::addBuff()
+bool Skill::addBuff()
 {
     return true;
 }
-bool SkillMgr::cleanBuff()
+bool Skill::cleanBuff()
 {
     return true;
 }

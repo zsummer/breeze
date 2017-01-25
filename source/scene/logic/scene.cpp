@@ -46,7 +46,7 @@ bool Scene::cleanScene()
     _players.clear();
     while (!_asyncs.empty()) _asyncs.pop();
     _move.reset();
-
+    _skill.reset();
     _ai.reset();
     return true;
 }
@@ -71,7 +71,8 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
     _move = std::make_shared<MoveSync>();
     _move->init(shared_from_this());
 
-
+    _skill = std::make_shared<Skill>();
+    _skill->init(shared_from_this());
 
 
     _ai = std::make_shared<AI>();
@@ -264,7 +265,7 @@ bool Scene::onUpdate()
     }
 
     _move->update();
- 
+    _skill->update();
     _ai->update();
 
 
@@ -365,7 +366,15 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
 
 
 
-
+std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, ui64  searchID)
+{
+    auto founder =  DBDict::getRef().getOneKeyAOESearch(searchID);
+    if (!founder.first)
+    {
+        return std::vector<EntityPtr>();
+    }
+    return searchTarget(caster, radian, founder.second);
+}
 
 std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, const AOESearch & search)
 {
