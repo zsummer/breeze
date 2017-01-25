@@ -442,7 +442,15 @@ std::string trim(std::string &&str, const std::string & ign, int both)
 
 std::pair<std::string,std::string> subString(const std::string & text, const std::string & deli, bool preStore, bool isGreedy)
 {
-    auto pos = text.find(deli);
+    std::string::size_type pos = std::string::npos;
+    if (!isGreedy)
+    {
+        pos = text.find(deli);
+    }
+    else
+    {
+        pos = text.rfind(deli);
+    }
     if (pos == std::string::npos)
     {
         if (preStore)
@@ -451,16 +459,6 @@ std::pair<std::string,std::string> subString(const std::string & text, const std
         }
         return std::make_pair("", text);
     }
-
-    if (isGreedy)
-    {
-        auto rpos = text.rfind(deli);
-        if (rpos > pos)
-        {
-            pos = rpos;
-        }
-    }
-
     return std::make_pair(text.substr(0, pos - 0), text.substr(pos+deli.length()));
 }
 
