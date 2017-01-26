@@ -42,7 +42,94 @@ DBHelperPtr buildHelper(const std::string & db)
     return helper;
 }
 
+bool DBDict::fakeTestData()
+{
+    if (true)
+    {
+        DictProp prop;
+        prop.id = 1;
+        prop.attack = 200;
+        prop.hp = 10000;
+        prop.hpRegen = 20;
+        prop.moveSpeed = 6.0;
+        prop.attackSpeed = 2;
+        _dictOneKeyDictProp[prop.id] = prop;
 
+        prop.id = 2;
+        prop.hp /= 2.0;
+        prop.attackSpeed /= 2.0;
+        prop.moveSpeed = 4.0;
+        prop.attackSpeed = 3.0;
+        _dictOneKeyDictProp[prop.id] = prop;
+
+
+        prop = DictProp();
+        prop.id = 3;
+        prop.hp = 2000;
+        prop.hpRegen = 200;
+        _dictOneKeyDictProp[prop.id] = prop;
+
+        prop = DictProp();
+        prop.id = 4;
+        prop.attack = 500;
+        _dictOneKeyDictProp[prop.id] = prop;
+    }
+    if (true)
+    {
+        AOESearch s;
+        s.id = 1; //锁敌
+        s.etype = ENTITY_NONE; // all type
+        s.camp = 0;
+        s.camp = setBitFlag(s.camp, 2, 1); //敌方
+        s.camp = setBitFlag(s.camp, 3, 1); //包括中立
+        s.distance = 10.0;
+        s.radian = PI*2.0; //360度锁敌
+        s.isRect = false; //radian
+        s.limitEntitys = 1;
+        s.offsetX = 0.0;
+        s.offsetY = 0.0;
+        _dictOneKeyAOESearch[s.id] = s;
+
+        s.id = 2; //90度扇形伤害
+        s.distance = 5.0;
+        s.radian = PI/2.0;
+        s.limitEntitys = 10;
+        s.offsetY = -1.0;
+        s.offsetX = -1.0;
+        s.distance += 1;
+        _dictOneKeyAOESearch[s.id] = s;
+
+        s.id = 3; //90度扇形伤害 限制一个敌人
+        s.limitEntitys = 1;
+        _dictOneKeyAOESearch[s.id] = s;
+
+
+        s.id = 4; //长5,宽2, 修正长+1  长方形伤害
+        s.distance = 5.0;
+        s.radian = 2.0;
+        s.limitEntitys = 10;
+        s.offsetY = -1.0;
+        s.offsetX = -1.0;
+        s.distance += 1;
+        _dictOneKeyAOESearch[s.id] = s;
+
+        s.id = 5; //长5,宽2, 修正长+1  长方形伤害 限制1个敌人
+        s.limitEntitys = 1;
+        _dictOneKeyAOESearch[s.id] = s;
+    }
+    if (true)
+    {
+        DictBuffEffect effect;
+        effect.id = 1;
+        effect.areaTrigger = 0.0;
+        effect.autoUnloadBuff = 0.0;
+        effect.intervalLimit = 0.0;
+
+    }
+
+
+
+}
 
 
 

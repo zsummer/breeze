@@ -187,6 +187,7 @@ public:
         LOAD_ONE_KEY_DICT(DictSkill);
         return true;
     }
+    bool fakeTestData();
     
     MAKE_ONE_KEY_DICT(DictGlobal, ui64, id);
     MAKE_ONE_KEY_DICT(DictDrop, ui64, id);

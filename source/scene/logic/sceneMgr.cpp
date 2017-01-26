@@ -31,6 +31,7 @@ bool SceneMgr::init(const std::string & configName, ui32 serverID)
         LOGE("SceneMgr::init error. DBDict load error. ");
         return false;
     }
+
     _lastSceneID = ServerConfig::getRef().getSceneConfig()._lineID * 10000;
     onTimer();
     return true;

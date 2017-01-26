@@ -68,7 +68,7 @@ std::string readFileContent(const std::string & filename, bool isBinary, size_t 
     {
         return ret.substr(0, readLen);
     }
-    return std::move(ret);
+    return ret;
 }
 size_t writeFileContent(const std::string & filename, const char * buff, size_t buffLen, bool isAppend)
 {
@@ -466,12 +466,12 @@ std::pair<std::string,std::string> subString(const std::string & text, const std
 std::string toUpperString(std::string  org)
 {
     std::for_each(org.begin(), org.end(), [](char &ch){ch = toupper(ch); });
-    return std::move(org);
+    return org;
 }
 std::string toLowerString(std::string  org)
 {
     std::for_each(org.begin(), org.end(), [](char &ch){ch = tolower(ch); });
-    return std::move(org);
+    return org;
 }
 
 bool compareStringIgnCase(const std::string & left, const std::string & right, bool canTruncate)
@@ -599,7 +599,7 @@ bool compareStringWildcard(std::string source, std::string mod, bool ignCase)
 Char. number range  |        UTF-8 octet sequence
 (hexadecimal)    |              (binary)
 --------------------+---------------------------------------------
-0000 0000-0000 007F | 0xxxxxxx
+0000 0000-0000 00F | 0xxxxxxx
 0000 0080-0000 07FF | 110xxxxx 10xxxxxx
 0000 0800-0000 FFFF | 1110xxxx 10xxxxxx 10xxxxxx
 0001 0000-0010 FFFF | 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
