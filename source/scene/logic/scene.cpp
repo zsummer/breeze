@@ -82,7 +82,7 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
 
     //load map
     //load entitys
-
+    onSceneInit();
     return true;
 }
 
@@ -151,7 +151,7 @@ EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, 
     AddEntityNotice notice;
     notice.entitys.push_back(entity->getFullData());
     broadcast(notice, entity->_state.avatarID);
-
+    onAddEntity(entity);
     return entity;
 }
 bool Scene::removePlayer(AvatarID avatarID)
@@ -204,6 +204,7 @@ bool Scene::removeEntity(EntityID eid)
     RemoveEntityNotice notice;
     notice.eids.push_back(eid);
     broadcast(notice);
+    onRemoveEntity(entity);
     return true;
 }
 
@@ -239,6 +240,7 @@ bool Scene::playerAttach(ServiceID avatarID, SessionID sID)
     {
         sendToClient(avatarID, notice);
     }
+    onPlayerAttach(entity);
     return true;
 }
 
@@ -251,6 +253,7 @@ bool Scene::playerDettach(ServiceID avatarID, SessionID sID)
     {
         LOGI("Scene::playerDettach avatarName=" << entity->_state.avatarName << " sessionID=" << sID << ", entityID=" << entity->_state.eid);
         entity->_clientSessionID = InvalidSessionID;
+        onPlayerDettach(entity);
     }
     return true;
 }
@@ -476,5 +479,24 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
     return std::move(ret);
 }
 
+void Scene::onSceneInit()
+{
 
+}
+void Scene::onAddEntity(EntityPtr entity)
+{
+
+}
+void Scene::onRemoveEntity(EntityPtr entity)
+{
+
+}
+void Scene::onPlayerAttach(EntityPtr entity)
+{
+
+}
+void Scene::onPlayerDettach(EntityPtr entity)
+{
+
+}
 

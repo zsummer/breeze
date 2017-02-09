@@ -160,14 +160,13 @@ Proto4z.DictBuff[7] = {name="limitStackTime", type="double" } --相同buff叠加
 Proto4z.DictBuff[8] = {name="desc", type="string" }  
  
 Proto4z.SKILL_NONE = 0 
-Proto4z.SKILL_AUTO_LOCK = 1--自动锁敌 
-Proto4z.SKILL_AUTO_USE = 2--自动施法 
-Proto4z.SKILL_PASSIVE = 3--被动技能 
-Proto4z.SKILL_ON_HIT_BREAK = 4--可被中断 
-Proto4z.SKILL_ON_MOVE_BREAK = 5--可被中断 
-Proto4z.SKILL_CAN_MOVE = 6--可移动 
-Proto4z.SKILL_PHYSICAL = 7--物理类型 
-Proto4z.SKILL_MAGIC = 8--魔法类型 
+Proto4z.SKILL_AUTO_USE = 1--自动施法 
+Proto4z.SKILL_PASSIVE = 2--被动技能 
+Proto4z.SKILL_ON_HIT_BREAK = 3--可被中断 
+Proto4z.SKILL_ON_MOVE_BREAK = 4--可被中断 
+Proto4z.SKILL_CAN_MOVE = 5--可移动 
+Proto4z.SKILL_PHYSICAL = 6--物理类型 
+Proto4z.SKILL_MAGIC = 7--魔法类型 
  
 Proto4z.SKILL_BEHAVIOUR_NONE = 0 
 Proto4z.SKILL_BEHAVIOUR_HIT = 1--攻击 
@@ -184,7 +183,7 @@ Proto4z.DictSkillBehaviour.__protoID = 11006
 Proto4z.DictSkillBehaviour.__protoName = "DictSkillBehaviour" 
 Proto4z.DictSkillBehaviour[1] = {name="id", type="ui64" }  
 Proto4z.DictSkillBehaviour[2] = {name="isHit", type="ui16" } --0为普通, 1为攻击 
-Proto4z.DictSkillBehaviour[3] = {name="searchID", type="ui64" }  
+Proto4z.DictSkillBehaviour[3] = {name="searchID", type="ui64" } --如果为0则默认是给已锁定敌人或者锁定区域释放 
 Proto4z.DictSkillBehaviour[4] = {name="hpAdd", type="double" } --附加真实伤害 
 Proto4z.DictSkillBehaviour[5] = {name="hpAddScaleTotal", type="double" }  
 Proto4z.DictSkillBehaviour[6] = {name="hpAddScaleRemanent", type="double" }  
@@ -208,6 +207,8 @@ Proto4z.DictSkill.__protoID = 11007
 Proto4z.DictSkill.__protoName = "DictSkill" 
 Proto4z.DictSkill[1] = {name="id", type="ui64" }  
 Proto4z.DictSkill[2] = {name="stamp", type="ui64" }  
-Proto4z.DictSkill[3] = {name="effects", type="DictArrayPairValue" }  
-Proto4z.DictSkill[4] = {name="effectsText", type="string" } --时间:效果,时间:效果, 
-Proto4z.DictSkill[5] = {name="desc", type="string" }  
+Proto4z.DictSkill[3] = {name="cd", type="double" }  
+Proto4z.DictSkill[4] = {name="searchID", type="ui64" }  
+Proto4z.DictSkill[5] = {name="effects", type="DictArrayPairValue" }  
+Proto4z.DictSkill[6] = {name="effectsText", type="string" } --时间:效果,时间:效果, 
+Proto4z.DictSkill[7] = {name="desc", type="string" }  

@@ -708,14 +708,13 @@ namespace Proto4z
     public enum SKILL_STAMP : ulong 
     { 
         SKILL_NONE = 0,  
-        SKILL_AUTO_LOCK = 1, //自动锁敌  
-        SKILL_AUTO_USE = 2, //自动施法  
-        SKILL_PASSIVE = 3, //被动技能  
-        SKILL_ON_HIT_BREAK = 4, //可被中断  
-        SKILL_ON_MOVE_BREAK = 5, //可被中断  
-        SKILL_CAN_MOVE = 6, //可移动  
-        SKILL_PHYSICAL = 7, //物理类型  
-        SKILL_MAGIC = 8, //魔法类型  
+        SKILL_AUTO_USE = 1, //自动施法  
+        SKILL_PASSIVE = 2, //被动技能  
+        SKILL_ON_HIT_BREAK = 3, //可被中断  
+        SKILL_ON_MOVE_BREAK = 4, //可被中断  
+        SKILL_CAN_MOVE = 5, //可移动  
+        SKILL_PHYSICAL = 6, //物理类型  
+        SKILL_MAGIC = 7, //魔法类型  
     }; 
  
     public enum SKILL_BEHAVIOUR_STAMP : ulong 
@@ -739,7 +738,7 @@ namespace Proto4z
         //members   
         public ulong id;  
         public ushort isHit; //0为普通, 1为攻击  
-        public ulong searchID;  
+        public ulong searchID; //如果为0则默认是给已锁定敌人或者锁定区域释放  
         public double hpAdd; //附加真实伤害  
         public double hpAddScaleTotal;  
         public double hpAddScaleRemanent;  
@@ -862,6 +861,8 @@ namespace Proto4z
         //members   
         public ulong id;  
         public ulong stamp;  
+        public double cd;  
+        public ulong searchID;  
         public DictArrayPairValue effects;  
         public string effectsText; //时间:效果,时间:效果,  
         public string desc;  
@@ -869,14 +870,18 @@ namespace Proto4z
         { 
             id = 0;  
             stamp = 0;  
+            cd = 0.0;  
+            searchID = 0;  
             effects = new DictArrayPairValue();  
             effectsText = "";  
             desc = "";  
         } 
-        public DictSkill(ulong id, ulong stamp, DictArrayPairValue effects, string effectsText, string desc) 
+        public DictSkill(ulong id, ulong stamp, double cd, ulong searchID, DictArrayPairValue effects, string effectsText, string desc) 
         { 
             this.id = id; 
             this.stamp = stamp; 
+            this.cd = cd; 
+            this.searchID = searchID; 
             this.effects = effects; 
             this.effectsText = effectsText; 
             this.desc = desc; 
@@ -886,6 +891,8 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.stamp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.cd)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.searchID)); 
             if (this.effects == null) this.effects = new DictArrayPairValue(); 
             data.AddRange(this.effects.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.effectsText)); 
@@ -896,6 +903,8 @@ namespace Proto4z
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.stamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.cd = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.searchID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.effects = new DictArrayPairValue(); 
             this.effects.__decode(binData, ref pos); 
             this.effectsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 

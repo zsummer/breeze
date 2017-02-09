@@ -119,15 +119,115 @@ bool DBDict::fakeTestData()
     }
     if (true)
     {
+        DictSkillBehaviour bhr;
+        bhr.id = 1;
+        bhr.isHit = true;
+        bhr.propID = 4;
+        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;
+
+        bhr.id = 2;
+        bhr.isHit = false;
+        bhr.propID = 0;
+        bhr.buffs.push_back(1);
+        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;
+
+        bhr.id = 3;
+        bhr.buffs.clear();
+        bhr.buffs.push_back(2);
+        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;
+    }
+    if (true)
+    {
+        DictSkill skill;
+        skill.id = 1;
+        skill.stamp = 0;
+        skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, true);
+        skill.stamp = setBitFlag(skill.stamp, SKILL_PHYSICAL, true);
+        skill.cd = 0;
+        skill.effects.push_back(DictPairValue(200, 1));
+        _dictOneKeyDictSkill[skill.id] = skill;
+
+        skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, false);
+
+        skill.id = 2;
+        skill.effects.clear();
+        skill.effects.push_back(DictPairValue(0, 2));
+        _dictOneKeyDictSkill[skill.id] = skill;
+
+        skill.id = 3;
+        skill.effects.clear();
+        skill.effects.push_back(DictPairValue(0,3));
+        _dictOneKeyDictSkill[skill.id] = skill;
+
+    }
+    if (true)
+    {
         DictBuffEffect effect;
         effect.id = 1;
-        effect.areaTrigger = 0.0;
-        effect.autoUnloadBuff = 0.0;
-        effect.intervalLimit = 0.0;
+        effect.propID = 2; //move
+        _dictOneKeyDictBuffEffect[effect.id] = effect;
+        effect.id = 1;
+        effect.propID = 3; //hp
+        _dictOneKeyDictBuffEffect[effect.id] = effect;
+    }
+    if (true)
+    {
+        DictBuff buff;
+        buff.id = 1;
+        buff.effects.push_back(1);
+        buff.keepTime = 10;
+        buff.limitStackTime = 20;
+        buff.stamp = 0;
+        buff.stamp = setBitFlag(buff.stamp, BUFF_BUFF, true);
+        _dictOneKeyDictBuff[buff.id] = buff;
+
+        buff.id = 2;
+        buff.effects.push_back(2); // 1&2
+        buff.keepTime = 10;
+        buff.limitStackTime = 20;
+        buff.stamp = 0;
+        buff.stamp = setBitFlag(buff.stamp, BUFF_BUFF, true);
+        _dictOneKeyDictBuff[buff.id] = buff;
 
     }
 
+    if (true)
+    {
+        DictModel model;
+        model.modelID = 1;
+        model.modelName = "avatar";
+        model.initCamp = 0;
+        model.initLevel = 1;
+        model.modelRedius = 1.0;
+        model.initState = ENTITY_STATE_ACTIVE;
+        _dictOneKeyDictModel[model.modelID] = model;
 
+        model.modelID = 2;
+        model.modelName = "野";
+        model.initCamp = 0;
+        model.initLevel = 1;
+        model.initState = ENTITY_STATE_ACTIVE;
+        _dictOneKeyDictModel[model.modelID] = model;
+    }
+    if (true)
+    {
+        DictModelLevel level;
+        level.levelID = 1;
+        level.modelID = 1;
+        level.needExp = 1000;
+        level.propID = 1;
+        level.skills.push_back(1);
+        level.skills.push_back(2);
+        level.skills.push_back(3);
+        level.skills.push_back(4);
+        _dictTwoKeyDictModelLevel[level.modelID][level.levelID] = level;
+
+        level.modelID = 2;
+        level.propID = 3;
+        level.skills.clear();
+        level.skills.push_back(1);
+        _dictTwoKeyDictModelLevel[level.modelID][level.levelID] = level;
+    }
 
 }
 

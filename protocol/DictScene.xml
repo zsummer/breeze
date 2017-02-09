@@ -163,7 +163,6 @@
     <!-- SKILL类型 (组合位结构) -->
     <enum type="ui64" name="SKILL_STAMP" desc="">
         <member name="SKILL_NONE"  desc=""/>
-        <member name="SKILL_AUTO_LOCK" desc="自动锁敌"/>
         <member name="SKILL_AUTO_USE" desc="自动施法"/>
         <member name="SKILL_PASSIVE"    desc="被动技能"/>
         <member name="SKILL_ON_HIT_BREAK"   desc="可被中断"/>
@@ -189,7 +188,7 @@
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="isHit" type="ui16"    desc="0为普通, 1为攻击"/>
 
-        <member name="searchID" type="ui64"    desc=""/>
+        <member name="searchID" type="ui64"    desc="如果为0则默认是给已锁定敌人或者锁定区域释放"/>
 
         <member name="hpAdd" type="double" desc="附加真实伤害"/>
         <member name="hpAddScaleTotal" type="double" desc=""/>
@@ -219,6 +218,8 @@
     <struct name="DictSkill" store="MyISAM" desc="吟唱,引导">
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="stamp" type="ui64"    desc=""/>
+        <member name="cd" type="double" desc=""/>
+        <member name="searchID" type="ui64"   desc=""/>
         <member name="effects" type="DictArrayPairValue"  tag="ignore" desc=""/>
         <member name="effectsText" type="string"   desc="时间:效果,时间:效果,"/>
         <member name="desc" type="string"   desc=""/>

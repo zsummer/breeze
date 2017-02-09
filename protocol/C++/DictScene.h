@@ -1238,14 +1238,13 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 enum SKILL_STAMP : unsigned long long 
 { 
     SKILL_NONE = 0,  
-    SKILL_AUTO_LOCK = 1, //自动锁敌  
-    SKILL_AUTO_USE = 2, //自动施法  
-    SKILL_PASSIVE = 3, //被动技能  
-    SKILL_ON_HIT_BREAK = 4, //可被中断  
-    SKILL_ON_MOVE_BREAK = 5, //可被中断  
-    SKILL_CAN_MOVE = 6, //可移动  
-    SKILL_PHYSICAL = 7, //物理类型  
-    SKILL_MAGIC = 8, //魔法类型  
+    SKILL_AUTO_USE = 1, //自动施法  
+    SKILL_PASSIVE = 2, //被动技能  
+    SKILL_ON_HIT_BREAK = 3, //可被中断  
+    SKILL_ON_MOVE_BREAK = 4, //可被中断  
+    SKILL_CAN_MOVE = 5, //可移动  
+    SKILL_PHYSICAL = 6, //物理类型  
+    SKILL_MAGIC = 7, //魔法类型  
 }; 
  
 enum SKILL_BEHAVIOUR_STAMP : unsigned long long 
@@ -1273,7 +1272,7 @@ struct DictSkillBehaviour
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long id;  
     unsigned short isHit; //0为普通, 1为攻击  
-    unsigned long long searchID;  
+    unsigned long long searchID; //如果为0则默认是给已锁定敌人或者锁定区域释放  
     double hpAdd; //附加真实伤害  
     double hpAddScaleTotal;  
     double hpAddScaleRemanent;  
@@ -1558,6 +1557,8 @@ struct DictSkill //吟唱,引导
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long id;  
     unsigned long long stamp;  
+    double cd;  
+    unsigned long long searchID;  
     DictArrayPairValue effects;  
     std::string effectsText; //时间:效果,时间:效果,  
     std::string desc;  
@@ -1565,11 +1566,15 @@ struct DictSkill //吟唱,引导
     { 
         id = 0; 
         stamp = 0; 
+        cd = 0.0; 
+        searchID = 0; 
     } 
-    DictSkill(const unsigned long long & id, const unsigned long long & stamp, const DictArrayPairValue & effects, const std::string & effectsText, const std::string & desc) 
+    DictSkill(const unsigned long long & id, const unsigned long long & stamp, const double & cd, const unsigned long long & searchID, const DictArrayPairValue & effects, const std::string & effectsText, const std::string & desc) 
     { 
         this->id = id; 
         this->stamp = stamp; 
+        this->cd = cd; 
+        this->searchID = searchID; 
         this->effects = effects; 
         this->effectsText = effectsText; 
         this->desc = desc; 
@@ -1584,6 +1589,10 @@ std::vector<std::string>  DictSkill::getDBBuild()
     ret.push_back("alter table `tb_DictSkill` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `stamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` change `stamp`  `stamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` add `cd`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` change `cd`  `cd`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` add `searchID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` change `searchID`  `searchID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `effectsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` change `effectsText`  `effectsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
@@ -1593,20 +1602,22 @@ std::vector<std::string>  DictSkill::getDBBuild()
 std::string  DictSkill::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`stamp`,`effectsText`,`desc` from `tb_DictSkill` where `id` = ? "); 
+    q.init("select `id`,`stamp`,`cd`,`searchID`,`effectsText`,`desc` from `tb_DictSkill` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictSkill::getDBSelectPure() 
 { 
-    return "select `id`,`stamp`,`effectsText`,`desc` from `tb_DictSkill` "; 
+    return "select `id`,`stamp`,`cd`,`searchID`,`effectsText`,`desc` from `tb_DictSkill` "; 
 } 
 std::string  DictSkill::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictSkill`(`id`,`stamp`,`effectsText`,`desc`) values(?,?,?,?)"); 
+    q.init("insert into `tb_DictSkill`(`id`,`stamp`,`cd`,`searchID`,`effectsText`,`desc`) values(?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->stamp; 
+    q << this->cd; 
+    q << this->searchID; 
     q << this->effectsText; 
     q << this->desc; 
     return q.pickSQL(); 
@@ -1621,9 +1632,11 @@ std::string  DictSkill::getDBDelete()
 std::string  DictSkill::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictSkill`(id) values(? ) on duplicate key update `stamp` = ?,`effectsText` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictSkill`(id) values(? ) on duplicate key update `stamp` = ?,`cd` = ?,`searchID` = ?,`effectsText` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->stamp; 
+    q << this->cd; 
+    q << this->searchID; 
     q << this->effectsText; 
     q << this->desc; 
     return q.pickSQL(); 
@@ -1641,6 +1654,8 @@ bool DictSkill::fetchFromDBResult(zsummer::mysql::DBResult &result)
         { 
             result >> this->id; 
             result >> this->stamp; 
+            result >> this->cd; 
+            result >> this->searchID; 
             result >> this->effectsText; 
             result >> this->desc; 
             return true;  
@@ -1657,6 +1672,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.id;  
     ws << data.stamp;  
+    ws << data.cd;  
+    ws << data.searchID;  
     ws << data.effects;  
     ws << data.effectsText;  
     ws << data.desc;  
@@ -1666,6 +1683,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.id;  
     rs >> data.stamp;  
+    rs >> data.cd;  
+    rs >> data.searchID;  
     rs >> data.effects;  
     rs >> data.effectsText;  
     rs >> data.desc;  
@@ -1676,6 +1695,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "id=" << info.id << ","; 
     stm << "stamp=" << info.stamp << ","; 
+    stm << "cd=" << info.cd << ","; 
+    stm << "searchID=" << info.searchID << ","; 
     stm << "effects=" << info.effects << ","; 
     stm << "effectsText=" << info.effectsText << ","; 
     stm << "desc=" << info.desc << ","; 
