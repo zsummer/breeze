@@ -408,6 +408,7 @@ struct DictModel
     std::string modelName;  
     double modelRedius; //碰撞半径  
     unsigned long long iconID; //头像  
+    unsigned short etype;  
     double initLevel; //等级  
     unsigned short initCamp;  
     DictMapPairValue initItems;  
@@ -421,16 +422,18 @@ struct DictModel
         modelID = 0; 
         modelRedius = 0.0; 
         iconID = 0; 
+        etype = 0; 
         initLevel = 0.0; 
         initCamp = 0; 
         initState = 0; 
     } 
-    DictModel(const unsigned long long & modelID, const std::string & modelName, const double & modelRedius, const unsigned long long & iconID, const double & initLevel, const unsigned short & initCamp, const DictMapPairValue & initItems, const std::string & initItemsText, const unsigned short & initState, const std::string & actionScriptPath, const std::string & clientModelPath, const std::string & desc) 
+    DictModel(const unsigned long long & modelID, const std::string & modelName, const double & modelRedius, const unsigned long long & iconID, const unsigned short & etype, const double & initLevel, const unsigned short & initCamp, const DictMapPairValue & initItems, const std::string & initItemsText, const unsigned short & initState, const std::string & actionScriptPath, const std::string & clientModelPath, const std::string & desc) 
     { 
         this->modelID = modelID; 
         this->modelName = modelName; 
         this->modelRedius = modelRedius; 
         this->iconID = iconID; 
+        this->etype = etype; 
         this->initLevel = initLevel; 
         this->initCamp = initCamp; 
         this->initItems = initItems; 
@@ -454,6 +457,8 @@ std::vector<std::string>  DictModel::getDBBuild()
     ret.push_back("alter table `tb_DictModel` change `modelRedius`  `modelRedius`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictModel` add `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictModel` change `iconID`  `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictModel` add `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictModel` change `etype`  `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictModel` add `initLevel`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictModel` change `initLevel`  `initLevel`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictModel` add `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
@@ -473,22 +478,23 @@ std::vector<std::string>  DictModel::getDBBuild()
 std::string  DictModel::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `modelID`,`modelName`,`modelRedius`,`iconID`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc` from `tb_DictModel` where `modelID` = ? "); 
+    q.init("select `modelID`,`modelName`,`modelRedius`,`iconID`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc` from `tb_DictModel` where `modelID` = ? "); 
     q << this->modelID; 
     return q.pickSQL(); 
 } 
 std::string  DictModel::getDBSelectPure() 
 { 
-    return "select `modelID`,`modelName`,`modelRedius`,`iconID`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc` from `tb_DictModel` "; 
+    return "select `modelID`,`modelName`,`modelRedius`,`iconID`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc` from `tb_DictModel` "; 
 } 
 std::string  DictModel::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictModel`(`modelID`,`modelName`,`modelRedius`,`iconID`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictModel`(`modelID`,`modelName`,`modelRedius`,`iconID`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?,?)"); 
     q << this->modelID; 
     q << this->modelName; 
     q << this->modelRedius; 
     q << this->iconID; 
+    q << this->etype; 
     q << this->initLevel; 
     q << this->initCamp; 
     q << this->initItemsText; 
@@ -508,11 +514,12 @@ std::string  DictModel::getDBDelete()
 std::string  DictModel::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictModel`(modelID) values(? ) on duplicate key update `modelName` = ?,`modelRedius` = ?,`iconID` = ?,`initLevel` = ?,`initCamp` = ?,`initItemsText` = ?,`initState` = ?,`actionScriptPath` = ?,`clientModelPath` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictModel`(modelID) values(? ) on duplicate key update `modelName` = ?,`modelRedius` = ?,`iconID` = ?,`etype` = ?,`initLevel` = ?,`initCamp` = ?,`initItemsText` = ?,`initState` = ?,`actionScriptPath` = ?,`clientModelPath` = ?,`desc` = ? "); 
     q << this->modelID; 
     q << this->modelName; 
     q << this->modelRedius; 
     q << this->iconID; 
+    q << this->etype; 
     q << this->initLevel; 
     q << this->initCamp; 
     q << this->initItemsText; 
@@ -537,6 +544,7 @@ bool DictModel::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->modelName; 
             result >> this->modelRedius; 
             result >> this->iconID; 
+            result >> this->etype; 
             result >> this->initLevel; 
             result >> this->initCamp; 
             result >> this->initItemsText; 
@@ -560,6 +568,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.modelName;  
     ws << data.modelRedius;  
     ws << data.iconID;  
+    ws << data.etype;  
     ws << data.initLevel;  
     ws << data.initCamp;  
     ws << data.initItems;  
@@ -576,6 +585,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.modelName;  
     rs >> data.modelRedius;  
     rs >> data.iconID;  
+    rs >> data.etype;  
     rs >> data.initLevel;  
     rs >> data.initCamp;  
     rs >> data.initItems;  
@@ -593,6 +603,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "modelName=" << info.modelName << ","; 
     stm << "modelRedius=" << info.modelRedius << ","; 
     stm << "iconID=" << info.iconID << ","; 
+    stm << "etype=" << info.etype << ","; 
     stm << "initLevel=" << info.initLevel << ","; 
     stm << "initCamp=" << info.initCamp << ","; 
     stm << "initItems=" << info.initItems << ","; 

@@ -58,14 +58,15 @@ Proto4z.DictModel[1] = {name="modelID", type="ui64" }
 Proto4z.DictModel[2] = {name="modelName", type="string" }  
 Proto4z.DictModel[3] = {name="modelRedius", type="double" } --碰撞半径 
 Proto4z.DictModel[4] = {name="iconID", type="ui64" } --头像 
-Proto4z.DictModel[5] = {name="initLevel", type="double" } --等级 
-Proto4z.DictModel[6] = {name="initCamp", type="ui16" }  
-Proto4z.DictModel[7] = {name="initItems", type="DictMapPairValue" }  
-Proto4z.DictModel[8] = {name="initItemsText", type="string" }  
-Proto4z.DictModel[9] = {name="initState", type="ui16" } --初始化状态 
-Proto4z.DictModel[10] = {name="actionScriptPath", type="string" } --行为树脚本路径 
-Proto4z.DictModel[11] = {name="clientModelPath", type="string" } --客户端模型路径 
-Proto4z.DictModel[12] = {name="desc", type="string" }  
+Proto4z.DictModel[5] = {name="etype", type="ui16" }  
+Proto4z.DictModel[6] = {name="initLevel", type="double" } --等级 
+Proto4z.DictModel[7] = {name="initCamp", type="ui16" }  
+Proto4z.DictModel[8] = {name="initItems", type="DictMapPairValue" }  
+Proto4z.DictModel[9] = {name="initItemsText", type="string" }  
+Proto4z.DictModel[10] = {name="initState", type="ui16" } --初始化状态 
+Proto4z.DictModel[11] = {name="actionScriptPath", type="string" } --行为树脚本路径 
+Proto4z.DictModel[12] = {name="clientModelPath", type="string" } --客户端模型路径 
+Proto4z.DictModel[13] = {name="desc", type="string" }  
  
 Proto4z.DictModelArray = {}  
 Proto4z.DictModelArray.__protoName = "DictModelArray" 

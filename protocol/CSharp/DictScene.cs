@@ -288,6 +288,7 @@ namespace Proto4z
         public string modelName;  
         public double modelRedius; //碰撞半径  
         public ulong iconID; //头像  
+        public ushort etype;  
         public double initLevel; //等级  
         public ushort initCamp;  
         public DictMapPairValue initItems;  
@@ -302,6 +303,7 @@ namespace Proto4z
             modelName = "";  
             modelRedius = 0.0;  
             iconID = 0;  
+            etype = 0;  
             initLevel = 0.0;  
             initCamp = 0;  
             initItems = new DictMapPairValue();  
@@ -311,12 +313,13 @@ namespace Proto4z
             clientModelPath = "";  
             desc = "";  
         } 
-        public DictModel(ulong modelID, string modelName, double modelRedius, ulong iconID, double initLevel, ushort initCamp, DictMapPairValue initItems, string initItemsText, ushort initState, string actionScriptPath, string clientModelPath, string desc) 
+        public DictModel(ulong modelID, string modelName, double modelRedius, ulong iconID, ushort etype, double initLevel, ushort initCamp, DictMapPairValue initItems, string initItemsText, ushort initState, string actionScriptPath, string clientModelPath, string desc) 
         { 
             this.modelID = modelID; 
             this.modelName = modelName; 
             this.modelRedius = modelRedius; 
             this.iconID = iconID; 
+            this.etype = etype; 
             this.initLevel = initLevel; 
             this.initCamp = initCamp; 
             this.initItems = initItems; 
@@ -333,6 +336,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.modelName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.modelRedius)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.initLevel)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initCamp)); 
             if (this.initItems == null) this.initItems = new DictMapPairValue(); 
@@ -350,6 +354,7 @@ namespace Proto4z
             this.modelName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.modelRedius = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.initLevel = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.initCamp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.initItems = new DictMapPairValue(); 

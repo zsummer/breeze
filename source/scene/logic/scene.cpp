@@ -111,20 +111,41 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 
 EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips,GroupID groupID)
 {
+    auto dictModel = DBDict::getRef().getOneKeyDictModel(modelID);
+    if (!dictModel.first)
+    {
+        return nullptr;
+    }
+    auto dictModelLevel = DBDict::getRef().getTwoKeyDictModelLevel(modelID, dictModel.second.initLevel);
+    if (!dictModelLevel.first)
+    {
+        return nullptr;
+    }
+    auto dictProps = DBDict::getRef().getOneKeyDictProp(dictModelLevel.second.propID);
+    if (!dictProps.first)
+    {
+        return nullptr;
+    }
     EntityPtr entity = std::make_shared<Entity>();
+
+    entity->_baseProps = dictProps.second;
+    entity->_state.curHP = entity->_props.hp;
 
     entity->_state.eid = ++_lastEID;
     entity->_state.avatarID = avatarID;
     entity->_state.avatarName = avatarName;
     entity->_state.modelID = modelID;
-    entity->_state.camp = 0;
-    entity->_state.etype = ENTITY_STATE_ACTIVE;
     entity->_state.groupID = groupID;
-    entity->_state.state = ENTITY_STATE_ACTIVE;
+
+    entity->_state.camp = dictModel.second.initCamp;
+    entity->_state.etype = dictModel.second.etype;
+
+    entity->_state.state = dictModel.second.initState;
+
     entity->_state.leader = InvalidEntityID;
     entity->_state.foe = InvalidEntityID;
 
-    entity->_state.curHP = entity->_props.hp;
+    
 
     entity->_control.spawnpoint = { 0.0 - 30 +  realRandF()*30 ,60 -30 + realRandF()*30 };
     entity->_control.eid = entity->_state.eid;

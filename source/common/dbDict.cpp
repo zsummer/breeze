@@ -53,69 +53,69 @@ bool DBDict::fakeTestData()
         prop.hpRegen = 20;
         prop.moveSpeed = 6.0;
         prop.attackSpeed = 2;
-        _dictOneKeyDictProp[prop.id] = prop;
+        _dictOneKeyDictProp[prop.id] = prop; // player base prop 
 
         prop.id = 2;
         prop.hp /= 2.0;
         prop.attackSpeed /= 2.0;
         prop.moveSpeed = 4.0;
         prop.attackSpeed = 3.0;
-        _dictOneKeyDictProp[prop.id] = prop;
+        _dictOneKeyDictProp[prop.id] = prop; // ai base prop
 
 
         prop = DictProp();
         prop.id = 3;
         prop.hp = 2000;
         prop.hpRegen = 200;
-        _dictOneKeyDictProp[prop.id] = prop;
+        _dictOneKeyDictProp[prop.id] = prop; // hp regen buff prop
 
         prop = DictProp();
         prop.id = 4;
         prop.attack = 500;
-        _dictOneKeyDictProp[prop.id] = prop;
+        _dictOneKeyDictProp[prop.id] = prop; // attack buff prop 
     }
     if (true)
     {
         AOESearch s;
-        s.id = 1; //锁敌
+        s.id = 1; 
         s.etype = ENTITY_NONE; // all type
         s.camp = 0;
         s.camp = setBitFlag(s.camp, 2, 1); //敌方
         s.camp = setBitFlag(s.camp, 3, 1); //包括中立
         s.distance = 10.0;
-        s.radian = PI*2.0; //360度锁敌
-        s.isRect = false; //radian
+        s.radian = PI*2.0; 
+        s.isRect = 0; //radian
         s.limitEntitys = 1;
         s.offsetX = 0.0;
         s.offsetY = 0.0;
-        _dictOneKeyAOESearch[s.id] = s;
+        _dictOneKeyAOESearch[s.id] = s; // 360度索敌
 
-        s.id = 2; //90度扇形伤害
+        s.id = 2; 
         s.distance = 5.0;
         s.radian = PI/2.0;
-        s.limitEntitys = 10;
+        s.limitEntitys = 100;
         s.offsetY = -1.0;
         s.offsetX = -1.0;
         s.distance += 1;
-        _dictOneKeyAOESearch[s.id] = s;
+        _dictOneKeyAOESearch[s.id] = s; //90度扇形伤害
 
-        s.id = 3; //90度扇形伤害 限制一个敌人
+        s.id = 3; 
         s.limitEntitys = 1;
-        _dictOneKeyAOESearch[s.id] = s;
+        _dictOneKeyAOESearch[s.id] = s;//90度扇形伤害 限制一个敌人 
 
 
-        s.id = 4; //长5,宽2, 修正长+1  长方形伤害
+        s.id = 4; 
         s.distance = 5.0;
         s.radian = 2.0;
         s.limitEntitys = 10;
         s.offsetY = -1.0;
         s.offsetX = -1.0;
         s.distance += 1;
-        _dictOneKeyAOESearch[s.id] = s;
+        _dictOneKeyAOESearch[s.id] = s;//长5,宽2, 修正长+1  长方形伤害 
 
-        s.id = 5; //长5,宽2, 修正长+1  长方形伤害 限制1个敌人
+        s.id = 5; 
         s.limitEntitys = 1;
-        _dictOneKeyAOESearch[s.id] = s;
+        _dictOneKeyAOESearch[s.id] = s;//长5,宽2, 修正长+1  长方形伤害 限制1个敌人 
     }
     if (true)
     {
@@ -123,18 +123,18 @@ bool DBDict::fakeTestData()
         bhr.id = 1;
         bhr.isHit = true;
         bhr.propID = 4;
-        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;
+        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;  //攻击, 携带额外属性
 
         bhr.id = 2;
         bhr.isHit = false;
         bhr.propID = 0;
         bhr.buffs.push_back(1);
-        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;
+        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr; //攻击, 触发buff
 
         bhr.id = 3;
         bhr.buffs.clear();
         bhr.buffs.push_back(2);
-        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;
+        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;//攻击 触发双buff
     }
     if (true)
     {
@@ -228,7 +228,7 @@ bool DBDict::fakeTestData()
         level.skills.push_back(1);
         _dictTwoKeyDictModelLevel[level.modelID][level.levelID] = level;
     }
-
+    return true;
 }
 
 
