@@ -26,37 +26,7 @@
     <array name="DictPropArray" type="DictProp" desc="" />
     <map name="DictPropMap" key="ui64" value="DictProp" desc="" />
 
-    <struct name="DictModelLevel" store="MyISAM" desc="">
-        <member name="modelID" type="ui64" tag="key"  desc=""/>
-        <member name="levelID" type="ui64" tag="key"  desc=""/>
-        <member name="needExp" type="double"   desc="升级所需经验"/>
-        <member name="propID" type="ui64"   desc="战斗属性"/>
-        <member name="skills" type="DictArrayKey" tag="ignore"  desc="该等级带来的可用技能"/>
-        <member name="skillsText" type="string"   desc="该等级带来的可用技能 格式id,id,id "/>
-        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="该等级带来的可用buff"/>
-        <member name="buffsText" type="string"   desc="该等级带来的可用buff 格式id,id,id"/>
-    </struct>
-    <array name="DictModelLevelArray" type="DictModelLevel" desc="" />
-    <map name="DictModelLevelMap" key="ui64" value="DictModelLevel" desc="" />
 
-
-    <struct name="DictModel" store="MyISAM" desc="">
-        <member name="modelID" type="ui64" tag="key"   desc=""/>
-        <member name="modelName" type="string"   desc=""/>
-        <member name="modelRedius" type="double"   desc="碰撞半径"/>
-        <member name="iconID"  type="ui64" desc="头像"/>
-        <member name="etype"  type="ui16" desc=""/>
-        <member name="initLevel"  type="double" desc="等级"/>
-        <member name="initCamp"  type="ui16" desc=""/>
-        <member name="initItems"  type="DictMapPairValue" tag="ignore" desc=""/>
-        <member name="initItemsText"  type="string"  desc=""/>
-        <member name="initState"  type="ui16" desc="初始化状态"/>
-        <member name="actionScriptPath"  type="string" desc="行为树脚本路径"/>
-        <member name="clientModelPath"  type="string" desc="客户端模型路径"/>
-        <member name="desc" type="string"   desc=""/>
-    </struct>
-    <array name="DictModelArray" type="DictModel" desc="" />
-    <map name="DictModelMap" key="ui64" value="DictModel" desc="" />
 
 
 
@@ -226,6 +196,78 @@
         <member name="desc" type="string"   desc=""/>
     </struct>
 
+    <struct name="DictModelLevel" store="MyISAM" desc="">
+        <member name="modelID" type="ui64" tag="key"  desc=""/>
+        <member name="levelID" type="ui64" tag="key"  desc=""/>
+        <member name="needExp" type="double"   desc="升级所需经验"/>
+        <member name="propID" type="ui64"   desc="战斗属性"/>
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="该等级带来的可用技能"/>
+        <member name="skillsText" type="string"   desc="该等级带来的可用技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="该等级带来的可用buff"/>
+        <member name="buffsText" type="string"   desc="该等级带来的可用buff 格式id,id,id"/>
+    </struct>
+    <array name="DictModelLevelArray" type="DictModelLevel" desc="" />
+    <map name="DictModelLevelMap" key="ui64" value="DictModelLevel" desc="" />
+
+
+    <struct name="DictModel" store="MyISAM" desc="">
+        <member name="modelID" type="ui64" tag="key"   desc=""/>
+        <member name="modelName" type="string"   desc=""/>
+        <member name="modelRedius" type="double"   desc="碰撞半径"/>
+        <member name="iconID"  type="ui64" desc="头像"/>
+        <member name="etype"  type="ui16" desc=""/>
+        <member name="initLevel"  type="double" desc="等级"/>
+        <member name="initCamp"  type="ui16" desc=""/>
+        <member name="initItems"  type="DictMapPairValue" tag="ignore" desc=""/>
+        <member name="initItemsText"  type="string"  desc=""/>
+        <member name="initState"  type="ui16" desc="初始化状态"/>
+        <member name="actionScriptPath"  type="string" desc="行为树脚本路径"/>
+        <member name="clientModelPath"  type="string" desc="客户端模型路径"/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+    <array name="DictModelArray" type="DictModel" desc="" />
+    <map name="DictModelMap" key="ui64" value="DictModel" desc="" />
+
+    <struct name="DictSpawnPoint"  desc="">
+        <member name="x" type="double"   desc=""/>
+        <member name="y" type="double"   desc=""/>
+        <member name="faceToX" type="double"   desc=""/>
+        <member name="faceToY"  type="double" desc=""/>
+    </struct>
+    <array name="DictSpawnPointArray" type="DictSpawnPoint" desc="" />
+
+    <struct name="DictObstacle" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="auto,key"   desc=""/>
+        <member name="mapID" type="ui64"   desc=""/>
+        <member name="x" type="double"   desc=""/>
+        <member name="y" type="double"   desc=""/>
+        <member name="len" type="double"   desc=""/>
+        <member name="high"  type="double" desc=""/>
+    </struct>
+    <array name="DictObstacleArray" type="DictObstacle" desc="" />
+
+    <struct name="DictMonster" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc="monster id"/>
+        <member name="modelID" type="ui64"   desc=""/>
+        <member name="spawnPointsText" type="string"   desc=""/>
+        <member name="spawnPoints" type="DictSpawnPointArray"   desc=""/>
+        <member name="camp"  type="ui16" desc=""/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+    <array name="DictMonsterArray" type="DictMonster" desc="" />
+    <map name="DictMonsterMap" key="ui64" value="DictMonster" desc="" />
+
+
+    <struct name="DictMap" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="sceneType" type="ui16"   desc=""/>
+        <member name="monsters" type="DictArrayKey"   desc=""/>
+        <member name="redSpawnPointsText" type="string"   desc=""/>
+        <member name="redSpawnPoints" type="DictSpawnPointArray"   desc=""/>
+        <member name="blueSpawnPointsText" type="string"   desc=""/>
+        <member name="blueSpawnPoints" type="DictSpawnPointArray"   desc=""/>
+        <member name="desc" type="string"   desc=""/>
+    </struct>
 
 
 </Proto>

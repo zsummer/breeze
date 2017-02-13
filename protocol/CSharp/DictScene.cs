@@ -145,293 +145,6 @@ namespace Proto4z
         } 
     } 
  
-    public class DictModelLevel: Proto4z.IProtoObject 
-    {     
-        //proto id   
-        public const ushort protoID = 11001;  
-        static public ushort getProtoID() { return 11001; } 
-        static public string getProtoName() { return "DictModelLevel"; } 
-        //members   
-        public ulong modelID;  
-        public ulong levelID;  
-        public double needExp; //升级所需经验  
-        public ulong propID; //战斗属性  
-        public DictArrayKey skills; //该等级带来的可用技能  
-        public string skillsText; //该等级带来的可用技能 格式id,id,id   
-        public DictArrayKey buffs; //该等级带来的可用buff  
-        public string buffsText; //该等级带来的可用buff 格式id,id,id  
-        public DictModelLevel()  
-        { 
-            modelID = 0;  
-            levelID = 0;  
-            needExp = 0.0;  
-            propID = 0;  
-            skills = new DictArrayKey();  
-            skillsText = "";  
-            buffs = new DictArrayKey();  
-            buffsText = "";  
-        } 
-        public DictModelLevel(ulong modelID, ulong levelID, double needExp, ulong propID, DictArrayKey skills, string skillsText, DictArrayKey buffs, string buffsText) 
-        { 
-            this.modelID = modelID; 
-            this.levelID = levelID; 
-            this.needExp = needExp; 
-            this.propID = propID; 
-            this.skills = skills; 
-            this.skillsText = skillsText; 
-            this.buffs = buffs; 
-            this.buffsText = buffsText; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.levelID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.needExp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.propID)); 
-            if (this.skills == null) this.skills = new DictArrayKey(); 
-            data.AddRange(this.skills.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.skillsText)); 
-            if (this.buffs == null) this.buffs = new DictArrayKey(); 
-            data.AddRange(this.buffs.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.buffsText)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.levelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.needExp = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.propID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.skills = new DictArrayKey(); 
-            this.skills.__decode(binData, ref pos); 
-            this.skillsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.buffs = new DictArrayKey(); 
-            this.buffs.__decode(binData, ref pos); 
-            this.buffsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class DictModelLevelArray : System.Collections.Generic.List<DictModelLevel>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            for (int i = 0; i < this.Count; i++ ) 
-            { 
-                ret.AddRange(this[i].__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var data = new DictModelLevel(); 
-                    data.__decode(binData, ref pos); 
-                    this.Add(data); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class DictModelLevelMap : System.Collections.Generic.Dictionary<ulong, DictModelLevel>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            foreach(var kv in this) 
-            { 
-                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
-                ret.AddRange(kv.Value.__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-                    var val = new DictModelLevel(); 
-                    val.__decode(binData, ref pos); 
-                    this.Add(key, val); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
-    public class DictModel: Proto4z.IProtoObject 
-    {     
-        //proto id   
-        public const ushort protoID = 11002;  
-        static public ushort getProtoID() { return 11002; } 
-        static public string getProtoName() { return "DictModel"; } 
-        //members   
-        public ulong modelID;  
-        public string modelName;  
-        public double modelRedius; //碰撞半径  
-        public ulong iconID; //头像  
-        public ushort etype;  
-        public double initLevel; //等级  
-        public ushort initCamp;  
-        public DictMapPairValue initItems;  
-        public string initItemsText;  
-        public ushort initState; //初始化状态  
-        public string actionScriptPath; //行为树脚本路径  
-        public string clientModelPath; //客户端模型路径  
-        public string desc;  
-        public DictModel()  
-        { 
-            modelID = 0;  
-            modelName = "";  
-            modelRedius = 0.0;  
-            iconID = 0;  
-            etype = 0;  
-            initLevel = 0.0;  
-            initCamp = 0;  
-            initItems = new DictMapPairValue();  
-            initItemsText = "";  
-            initState = 0;  
-            actionScriptPath = "";  
-            clientModelPath = "";  
-            desc = "";  
-        } 
-        public DictModel(ulong modelID, string modelName, double modelRedius, ulong iconID, ushort etype, double initLevel, ushort initCamp, DictMapPairValue initItems, string initItemsText, ushort initState, string actionScriptPath, string clientModelPath, string desc) 
-        { 
-            this.modelID = modelID; 
-            this.modelName = modelName; 
-            this.modelRedius = modelRedius; 
-            this.iconID = iconID; 
-            this.etype = etype; 
-            this.initLevel = initLevel; 
-            this.initCamp = initCamp; 
-            this.initItems = initItems; 
-            this.initItemsText = initItemsText; 
-            this.initState = initState; 
-            this.actionScriptPath = actionScriptPath; 
-            this.clientModelPath = clientModelPath; 
-            this.desc = desc; 
-        } 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var data = new System.Collections.Generic.List<byte>(); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.modelName)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.modelRedius)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.iconID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.initLevel)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initCamp)); 
-            if (this.initItems == null) this.initItems = new DictMapPairValue(); 
-            data.AddRange(this.initItems.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.initItemsText)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initState)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.actionScriptPath)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.clientModelPath)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
-            return data; 
-        } 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.modelName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.modelRedius = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.iconID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.initLevel = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.initCamp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.initItems = new DictMapPairValue(); 
-            this.initItems.__decode(binData, ref pos); 
-            this.initItemsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.initState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.actionScriptPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.clientModelPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class DictModelArray : System.Collections.Generic.List<DictModel>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            for (int i = 0; i < this.Count; i++ ) 
-            { 
-                ret.AddRange(this[i].__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var data = new DictModel(); 
-                    data.__decode(binData, ref pos); 
-                    this.Add(data); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
- 
-    public class DictModelMap : System.Collections.Generic.Dictionary<ulong, DictModel>, Proto4z.IProtoObject  
-    { 
-        public System.Collections.Generic.List<byte> __encode() 
-        { 
-            var ret = new System.Collections.Generic.List<byte>(); 
-            int len = (int)this.Count; 
-            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
-            foreach(var kv in this) 
-            { 
-                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
-                ret.AddRange(kv.Value.__encode()); 
-            } 
-            return ret; 
-        } 
- 
-        public int __decode(byte[] binData, ref int pos) 
-        { 
-            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
-            if(len > 0) 
-            { 
-                for (int i=0; i<len; i++) 
-                { 
-                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-                    var val = new DictModel(); 
-                    val.__decode(binData, ref pos); 
-                    this.Add(key, val); 
-                } 
-            } 
-            return pos; 
-        } 
-    } 
- 
     public class AOESearch: Proto4z.IProtoObject 
     {     
         //proto id   
@@ -913,6 +626,643 @@ namespace Proto4z
             this.effects = new DictArrayPairValue(); 
             this.effects.__decode(binData, ref pos); 
             this.effectsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class DictModelLevel: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 11001;  
+        static public ushort getProtoID() { return 11001; } 
+        static public string getProtoName() { return "DictModelLevel"; } 
+        //members   
+        public ulong modelID;  
+        public ulong levelID;  
+        public double needExp; //升级所需经验  
+        public ulong propID; //战斗属性  
+        public DictArrayKey skills; //该等级带来的可用技能  
+        public string skillsText; //该等级带来的可用技能 格式id,id,id   
+        public DictArrayKey buffs; //该等级带来的可用buff  
+        public string buffsText; //该等级带来的可用buff 格式id,id,id  
+        public DictModelLevel()  
+        { 
+            modelID = 0;  
+            levelID = 0;  
+            needExp = 0.0;  
+            propID = 0;  
+            skills = new DictArrayKey();  
+            skillsText = "";  
+            buffs = new DictArrayKey();  
+            buffsText = "";  
+        } 
+        public DictModelLevel(ulong modelID, ulong levelID, double needExp, ulong propID, DictArrayKey skills, string skillsText, DictArrayKey buffs, string buffsText) 
+        { 
+            this.modelID = modelID; 
+            this.levelID = levelID; 
+            this.needExp = needExp; 
+            this.propID = propID; 
+            this.skills = skills; 
+            this.skillsText = skillsText; 
+            this.buffs = buffs; 
+            this.buffsText = buffsText; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.levelID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.needExp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.propID)); 
+            if (this.skills == null) this.skills = new DictArrayKey(); 
+            data.AddRange(this.skills.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.skillsText)); 
+            if (this.buffs == null) this.buffs = new DictArrayKey(); 
+            data.AddRange(this.buffs.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.buffsText)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.levelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.needExp = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.propID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.skills = new DictArrayKey(); 
+            this.skills.__decode(binData, ref pos); 
+            this.skillsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.buffs = new DictArrayKey(); 
+            this.buffs.__decode(binData, ref pos); 
+            this.buffsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class DictModelLevelArray : System.Collections.Generic.List<DictModelLevel>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new DictModelLevel(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class DictModelLevelMap : System.Collections.Generic.Dictionary<ulong, DictModelLevel>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            foreach(var kv in this) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
+                ret.AddRange(kv.Value.__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+                    var val = new DictModelLevel(); 
+                    val.__decode(binData, ref pos); 
+                    this.Add(key, val); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class DictModel: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 11002;  
+        static public ushort getProtoID() { return 11002; } 
+        static public string getProtoName() { return "DictModel"; } 
+        //members   
+        public ulong modelID;  
+        public string modelName;  
+        public double modelRedius; //碰撞半径  
+        public ulong iconID; //头像  
+        public ushort etype;  
+        public double initLevel; //等级  
+        public ushort initCamp;  
+        public DictMapPairValue initItems;  
+        public string initItemsText;  
+        public ushort initState; //初始化状态  
+        public string actionScriptPath; //行为树脚本路径  
+        public string clientModelPath; //客户端模型路径  
+        public string desc;  
+        public DictModel()  
+        { 
+            modelID = 0;  
+            modelName = "";  
+            modelRedius = 0.0;  
+            iconID = 0;  
+            etype = 0;  
+            initLevel = 0.0;  
+            initCamp = 0;  
+            initItems = new DictMapPairValue();  
+            initItemsText = "";  
+            initState = 0;  
+            actionScriptPath = "";  
+            clientModelPath = "";  
+            desc = "";  
+        } 
+        public DictModel(ulong modelID, string modelName, double modelRedius, ulong iconID, ushort etype, double initLevel, ushort initCamp, DictMapPairValue initItems, string initItemsText, ushort initState, string actionScriptPath, string clientModelPath, string desc) 
+        { 
+            this.modelID = modelID; 
+            this.modelName = modelName; 
+            this.modelRedius = modelRedius; 
+            this.iconID = iconID; 
+            this.etype = etype; 
+            this.initLevel = initLevel; 
+            this.initCamp = initCamp; 
+            this.initItems = initItems; 
+            this.initItemsText = initItemsText; 
+            this.initState = initState; 
+            this.actionScriptPath = actionScriptPath; 
+            this.clientModelPath = clientModelPath; 
+            this.desc = desc; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.modelName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.modelRedius)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.iconID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.initLevel)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initCamp)); 
+            if (this.initItems == null) this.initItems = new DictMapPairValue(); 
+            data.AddRange(this.initItems.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.initItemsText)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initState)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.actionScriptPath)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.clientModelPath)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.modelName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.modelRedius = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.iconID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.initLevel = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.initCamp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.initItems = new DictMapPairValue(); 
+            this.initItems.__decode(binData, ref pos); 
+            this.initItemsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.initState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.actionScriptPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.clientModelPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class DictModelArray : System.Collections.Generic.List<DictModel>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new DictModel(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class DictModelMap : System.Collections.Generic.Dictionary<ulong, DictModel>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            foreach(var kv in this) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
+                ret.AddRange(kv.Value.__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+                    var val = new DictModel(); 
+                    val.__decode(binData, ref pos); 
+                    this.Add(key, val); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class DictSpawnPoint: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 11008;  
+        static public ushort getProtoID() { return 11008; } 
+        static public string getProtoName() { return "DictSpawnPoint"; } 
+        //members   
+        public double x;  
+        public double y;  
+        public double faceToX;  
+        public double faceToY;  
+        public DictSpawnPoint()  
+        { 
+            x = 0.0;  
+            y = 0.0;  
+            faceToX = 0.0;  
+            faceToY = 0.0;  
+        } 
+        public DictSpawnPoint(double x, double y, double faceToX, double faceToY) 
+        { 
+            this.x = x; 
+            this.y = y; 
+            this.faceToX = faceToX; 
+            this.faceToY = faceToY; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.x)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.y)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.faceToX)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.faceToY)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.x = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.y = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.faceToX = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.faceToY = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class DictSpawnPointArray : System.Collections.Generic.List<DictSpawnPoint>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new DictSpawnPoint(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class DictObstacle: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 11009;  
+        static public ushort getProtoID() { return 11009; } 
+        static public string getProtoName() { return "DictObstacle"; } 
+        //members   
+        public ulong id;  
+        public ulong mapID;  
+        public double x;  
+        public double y;  
+        public double len;  
+        public double high;  
+        public DictObstacle()  
+        { 
+            id = 0;  
+            mapID = 0;  
+            x = 0.0;  
+            y = 0.0;  
+            len = 0.0;  
+            high = 0.0;  
+        } 
+        public DictObstacle(ulong id, ulong mapID, double x, double y, double len, double high) 
+        { 
+            this.id = id; 
+            this.mapID = mapID; 
+            this.x = x; 
+            this.y = y; 
+            this.len = len; 
+            this.high = high; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.mapID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.x)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.y)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.len)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.high)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.mapID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.x = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.y = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.len = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.high = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class DictObstacleArray : System.Collections.Generic.List<DictObstacle>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new DictObstacle(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class DictMonster: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 11010;  
+        static public ushort getProtoID() { return 11010; } 
+        static public string getProtoName() { return "DictMonster"; } 
+        //members   
+        public ulong id; //monster id  
+        public ulong modelID;  
+        public string spawnPointsText;  
+        public DictSpawnPointArray spawnPoints;  
+        public ushort camp;  
+        public string desc;  
+        public DictMonster()  
+        { 
+            id = 0;  
+            modelID = 0;  
+            spawnPointsText = "";  
+            spawnPoints = new DictSpawnPointArray();  
+            camp = 0;  
+            desc = "";  
+        } 
+        public DictMonster(ulong id, ulong modelID, string spawnPointsText, DictSpawnPointArray spawnPoints, ushort camp, string desc) 
+        { 
+            this.id = id; 
+            this.modelID = modelID; 
+            this.spawnPointsText = spawnPointsText; 
+            this.spawnPoints = spawnPoints; 
+            this.camp = camp; 
+            this.desc = desc; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.spawnPointsText)); 
+            if (this.spawnPoints == null) this.spawnPoints = new DictSpawnPointArray(); 
+            data.AddRange(this.spawnPoints.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.camp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.spawnPointsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.spawnPoints = new DictSpawnPointArray(); 
+            this.spawnPoints.__decode(binData, ref pos); 
+            this.camp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class DictMonsterArray : System.Collections.Generic.List<DictMonster>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new DictMonster(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class DictMonsterMap : System.Collections.Generic.Dictionary<ulong, DictMonster>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            foreach(var kv in this) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeUI64(kv.Key)); 
+                ret.AddRange(kv.Value.__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var key = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+                    var val = new DictMonster(); 
+                    val.__decode(binData, ref pos); 
+                    this.Add(key, val); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
+    public class DictMap: Proto4z.IProtoObject 
+    {     
+        //proto id   
+        public const ushort protoID = 11011;  
+        static public ushort getProtoID() { return 11011; } 
+        static public string getProtoName() { return "DictMap"; } 
+        //members   
+        public ulong id;  
+        public ushort sceneType;  
+        public DictArrayKey monsters;  
+        public string redSpawnPointsText;  
+        public DictSpawnPointArray redSpawnPoints;  
+        public string blueSpawnPointsText;  
+        public DictSpawnPointArray blueSpawnPoints;  
+        public string desc;  
+        public DictMap()  
+        { 
+            id = 0;  
+            sceneType = 0;  
+            monsters = new DictArrayKey();  
+            redSpawnPointsText = "";  
+            redSpawnPoints = new DictSpawnPointArray();  
+            blueSpawnPointsText = "";  
+            blueSpawnPoints = new DictSpawnPointArray();  
+            desc = "";  
+        } 
+        public DictMap(ulong id, ushort sceneType, DictArrayKey monsters, string redSpawnPointsText, DictSpawnPointArray redSpawnPoints, string blueSpawnPointsText, DictSpawnPointArray blueSpawnPoints, string desc) 
+        { 
+            this.id = id; 
+            this.sceneType = sceneType; 
+            this.monsters = monsters; 
+            this.redSpawnPointsText = redSpawnPointsText; 
+            this.redSpawnPoints = redSpawnPoints; 
+            this.blueSpawnPointsText = blueSpawnPointsText; 
+            this.blueSpawnPoints = blueSpawnPoints; 
+            this.desc = desc; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
+            if (this.monsters == null) this.monsters = new DictArrayKey(); 
+            data.AddRange(this.monsters.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.redSpawnPointsText)); 
+            if (this.redSpawnPoints == null) this.redSpawnPoints = new DictSpawnPointArray(); 
+            data.AddRange(this.redSpawnPoints.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.blueSpawnPointsText)); 
+            if (this.blueSpawnPoints == null) this.blueSpawnPoints = new DictSpawnPointArray(); 
+            data.AddRange(this.blueSpawnPoints.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.monsters = new DictArrayKey(); 
+            this.monsters.__decode(binData, ref pos); 
+            this.redSpawnPointsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.redSpawnPoints = new DictSpawnPointArray(); 
+            this.redSpawnPoints.__decode(binData, ref pos); 
+            this.blueSpawnPointsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.blueSpawnPoints = new DictSpawnPointArray(); 
+            this.blueSpawnPoints.__decode(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 

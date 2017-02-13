@@ -166,6 +166,14 @@ namespace Proto4z
             _idToName.Add(11006, "DictSkillBehaviour");
             _nameToID.Add("DictSkill", 11007);
             _idToName.Add(11007, "DictSkill");
+            _nameToID.Add("DictSpawnPoint", 11008);
+            _idToName.Add(11008, "DictSpawnPoint");
+            _nameToID.Add("DictObstacle", 11009);
+            _idToName.Add(11009, "DictObstacle");
+            _nameToID.Add("DictMonster", 11010);
+            _idToName.Add(11010, "DictMonster");
+            _nameToID.Add("DictMap", 11011);
+            _idToName.Add(11011, "DictMap");
             _nameToID.Add("SceneClientPulse", 50000);
             _idToName.Add(50000, "SceneClientPulse");
             _nameToID.Add("AttachSceneReq", 50001);

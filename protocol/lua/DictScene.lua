@@ -26,59 +26,6 @@ Proto4z.DictPropMap.__protoDesc = "map"
 Proto4z.DictPropMap.__protoTypeK = "ui64" 
 Proto4z.DictPropMap.__protoTypeV = "DictProp" 
  
-Proto4z.register(11001,"DictModelLevel") 
-Proto4z.DictModelLevel = {}  
-Proto4z.DictModelLevel.__protoID = 11001 
-Proto4z.DictModelLevel.__protoName = "DictModelLevel" 
-Proto4z.DictModelLevel[1] = {name="modelID", type="ui64" }  
-Proto4z.DictModelLevel[2] = {name="levelID", type="ui64" }  
-Proto4z.DictModelLevel[3] = {name="needExp", type="double" } --升级所需经验 
-Proto4z.DictModelLevel[4] = {name="propID", type="ui64" } --战斗属性 
-Proto4z.DictModelLevel[5] = {name="skills", type="DictArrayKey" } --该等级带来的可用技能 
-Proto4z.DictModelLevel[6] = {name="skillsText", type="string" } --该等级带来的可用技能 格式id,id,id  
-Proto4z.DictModelLevel[7] = {name="buffs", type="DictArrayKey" } --该等级带来的可用buff 
-Proto4z.DictModelLevel[8] = {name="buffsText", type="string" } --该等级带来的可用buff 格式id,id,id 
- 
-Proto4z.DictModelLevelArray = {}  
-Proto4z.DictModelLevelArray.__protoName = "DictModelLevelArray" 
-Proto4z.DictModelLevelArray.__protoDesc = "array" 
-Proto4z.DictModelLevelArray.__protoTypeV = "DictModelLevel" 
- 
-Proto4z.DictModelLevelMap = {}  
-Proto4z.DictModelLevelMap.__protoName = "DictModelLevelMap" 
-Proto4z.DictModelLevelMap.__protoDesc = "map" 
-Proto4z.DictModelLevelMap.__protoTypeK = "ui64" 
-Proto4z.DictModelLevelMap.__protoTypeV = "DictModelLevel" 
- 
-Proto4z.register(11002,"DictModel") 
-Proto4z.DictModel = {}  
-Proto4z.DictModel.__protoID = 11002 
-Proto4z.DictModel.__protoName = "DictModel" 
-Proto4z.DictModel[1] = {name="modelID", type="ui64" }  
-Proto4z.DictModel[2] = {name="modelName", type="string" }  
-Proto4z.DictModel[3] = {name="modelRedius", type="double" } --碰撞半径 
-Proto4z.DictModel[4] = {name="iconID", type="ui64" } --头像 
-Proto4z.DictModel[5] = {name="etype", type="ui16" }  
-Proto4z.DictModel[6] = {name="initLevel", type="double" } --等级 
-Proto4z.DictModel[7] = {name="initCamp", type="ui16" }  
-Proto4z.DictModel[8] = {name="initItems", type="DictMapPairValue" }  
-Proto4z.DictModel[9] = {name="initItemsText", type="string" }  
-Proto4z.DictModel[10] = {name="initState", type="ui16" } --初始化状态 
-Proto4z.DictModel[11] = {name="actionScriptPath", type="string" } --行为树脚本路径 
-Proto4z.DictModel[12] = {name="clientModelPath", type="string" } --客户端模型路径 
-Proto4z.DictModel[13] = {name="desc", type="string" }  
- 
-Proto4z.DictModelArray = {}  
-Proto4z.DictModelArray.__protoName = "DictModelArray" 
-Proto4z.DictModelArray.__protoDesc = "array" 
-Proto4z.DictModelArray.__protoTypeV = "DictModel" 
- 
-Proto4z.DictModelMap = {}  
-Proto4z.DictModelMap.__protoName = "DictModelMap" 
-Proto4z.DictModelMap.__protoDesc = "map" 
-Proto4z.DictModelMap.__protoTypeK = "ui64" 
-Proto4z.DictModelMap.__protoTypeV = "DictModel" 
- 
 Proto4z.register(11003,"AOESearch") 
 Proto4z.AOESearch = {}  
 Proto4z.AOESearch.__protoID = 11003 
@@ -213,3 +160,121 @@ Proto4z.DictSkill[4] = {name="searchID", type="ui64" }
 Proto4z.DictSkill[5] = {name="effects", type="DictArrayPairValue" }  
 Proto4z.DictSkill[6] = {name="effectsText", type="string" } --时间:效果,时间:效果, 
 Proto4z.DictSkill[7] = {name="desc", type="string" }  
+ 
+Proto4z.register(11001,"DictModelLevel") 
+Proto4z.DictModelLevel = {}  
+Proto4z.DictModelLevel.__protoID = 11001 
+Proto4z.DictModelLevel.__protoName = "DictModelLevel" 
+Proto4z.DictModelLevel[1] = {name="modelID", type="ui64" }  
+Proto4z.DictModelLevel[2] = {name="levelID", type="ui64" }  
+Proto4z.DictModelLevel[3] = {name="needExp", type="double" } --升级所需经验 
+Proto4z.DictModelLevel[4] = {name="propID", type="ui64" } --战斗属性 
+Proto4z.DictModelLevel[5] = {name="skills", type="DictArrayKey" } --该等级带来的可用技能 
+Proto4z.DictModelLevel[6] = {name="skillsText", type="string" } --该等级带来的可用技能 格式id,id,id  
+Proto4z.DictModelLevel[7] = {name="buffs", type="DictArrayKey" } --该等级带来的可用buff 
+Proto4z.DictModelLevel[8] = {name="buffsText", type="string" } --该等级带来的可用buff 格式id,id,id 
+ 
+Proto4z.DictModelLevelArray = {}  
+Proto4z.DictModelLevelArray.__protoName = "DictModelLevelArray" 
+Proto4z.DictModelLevelArray.__protoDesc = "array" 
+Proto4z.DictModelLevelArray.__protoTypeV = "DictModelLevel" 
+ 
+Proto4z.DictModelLevelMap = {}  
+Proto4z.DictModelLevelMap.__protoName = "DictModelLevelMap" 
+Proto4z.DictModelLevelMap.__protoDesc = "map" 
+Proto4z.DictModelLevelMap.__protoTypeK = "ui64" 
+Proto4z.DictModelLevelMap.__protoTypeV = "DictModelLevel" 
+ 
+Proto4z.register(11002,"DictModel") 
+Proto4z.DictModel = {}  
+Proto4z.DictModel.__protoID = 11002 
+Proto4z.DictModel.__protoName = "DictModel" 
+Proto4z.DictModel[1] = {name="modelID", type="ui64" }  
+Proto4z.DictModel[2] = {name="modelName", type="string" }  
+Proto4z.DictModel[3] = {name="modelRedius", type="double" } --碰撞半径 
+Proto4z.DictModel[4] = {name="iconID", type="ui64" } --头像 
+Proto4z.DictModel[5] = {name="etype", type="ui16" }  
+Proto4z.DictModel[6] = {name="initLevel", type="double" } --等级 
+Proto4z.DictModel[7] = {name="initCamp", type="ui16" }  
+Proto4z.DictModel[8] = {name="initItems", type="DictMapPairValue" }  
+Proto4z.DictModel[9] = {name="initItemsText", type="string" }  
+Proto4z.DictModel[10] = {name="initState", type="ui16" } --初始化状态 
+Proto4z.DictModel[11] = {name="actionScriptPath", type="string" } --行为树脚本路径 
+Proto4z.DictModel[12] = {name="clientModelPath", type="string" } --客户端模型路径 
+Proto4z.DictModel[13] = {name="desc", type="string" }  
+ 
+Proto4z.DictModelArray = {}  
+Proto4z.DictModelArray.__protoName = "DictModelArray" 
+Proto4z.DictModelArray.__protoDesc = "array" 
+Proto4z.DictModelArray.__protoTypeV = "DictModel" 
+ 
+Proto4z.DictModelMap = {}  
+Proto4z.DictModelMap.__protoName = "DictModelMap" 
+Proto4z.DictModelMap.__protoDesc = "map" 
+Proto4z.DictModelMap.__protoTypeK = "ui64" 
+Proto4z.DictModelMap.__protoTypeV = "DictModel" 
+ 
+Proto4z.register(11008,"DictSpawnPoint") 
+Proto4z.DictSpawnPoint = {}  
+Proto4z.DictSpawnPoint.__protoID = 11008 
+Proto4z.DictSpawnPoint.__protoName = "DictSpawnPoint" 
+Proto4z.DictSpawnPoint[1] = {name="x", type="double" }  
+Proto4z.DictSpawnPoint[2] = {name="y", type="double" }  
+Proto4z.DictSpawnPoint[3] = {name="faceToX", type="double" }  
+Proto4z.DictSpawnPoint[4] = {name="faceToY", type="double" }  
+ 
+Proto4z.DictSpawnPointArray = {}  
+Proto4z.DictSpawnPointArray.__protoName = "DictSpawnPointArray" 
+Proto4z.DictSpawnPointArray.__protoDesc = "array" 
+Proto4z.DictSpawnPointArray.__protoTypeV = "DictSpawnPoint" 
+ 
+Proto4z.register(11009,"DictObstacle") 
+Proto4z.DictObstacle = {}  
+Proto4z.DictObstacle.__protoID = 11009 
+Proto4z.DictObstacle.__protoName = "DictObstacle" 
+Proto4z.DictObstacle[1] = {name="id", type="ui64" }  
+Proto4z.DictObstacle[2] = {name="mapID", type="ui64" }  
+Proto4z.DictObstacle[3] = {name="x", type="double" }  
+Proto4z.DictObstacle[4] = {name="y", type="double" }  
+Proto4z.DictObstacle[5] = {name="len", type="double" }  
+Proto4z.DictObstacle[6] = {name="high", type="double" }  
+ 
+Proto4z.DictObstacleArray = {}  
+Proto4z.DictObstacleArray.__protoName = "DictObstacleArray" 
+Proto4z.DictObstacleArray.__protoDesc = "array" 
+Proto4z.DictObstacleArray.__protoTypeV = "DictObstacle" 
+ 
+Proto4z.register(11010,"DictMonster") 
+Proto4z.DictMonster = {}  
+Proto4z.DictMonster.__protoID = 11010 
+Proto4z.DictMonster.__protoName = "DictMonster" 
+Proto4z.DictMonster[1] = {name="id", type="ui64" } --monster id 
+Proto4z.DictMonster[2] = {name="modelID", type="ui64" }  
+Proto4z.DictMonster[3] = {name="spawnPointsText", type="string" }  
+Proto4z.DictMonster[4] = {name="spawnPoints", type="DictSpawnPointArray" }  
+Proto4z.DictMonster[5] = {name="camp", type="ui16" }  
+Proto4z.DictMonster[6] = {name="desc", type="string" }  
+ 
+Proto4z.DictMonsterArray = {}  
+Proto4z.DictMonsterArray.__protoName = "DictMonsterArray" 
+Proto4z.DictMonsterArray.__protoDesc = "array" 
+Proto4z.DictMonsterArray.__protoTypeV = "DictMonster" 
+ 
+Proto4z.DictMonsterMap = {}  
+Proto4z.DictMonsterMap.__protoName = "DictMonsterMap" 
+Proto4z.DictMonsterMap.__protoDesc = "map" 
+Proto4z.DictMonsterMap.__protoTypeK = "ui64" 
+Proto4z.DictMonsterMap.__protoTypeV = "DictMonster" 
+ 
+Proto4z.register(11011,"DictMap") 
+Proto4z.DictMap = {}  
+Proto4z.DictMap.__protoID = 11011 
+Proto4z.DictMap.__protoName = "DictMap" 
+Proto4z.DictMap[1] = {name="id", type="ui64" }  
+Proto4z.DictMap[2] = {name="sceneType", type="ui16" }  
+Proto4z.DictMap[3] = {name="monsters", type="DictArrayKey" }  
+Proto4z.DictMap[4] = {name="redSpawnPointsText", type="string" }  
+Proto4z.DictMap[5] = {name="redSpawnPoints", type="DictSpawnPointArray" }  
+Proto4z.DictMap[6] = {name="blueSpawnPointsText", type="string" }  
+Proto4z.DictMap[7] = {name="blueSpawnPoints", type="DictSpawnPointArray" }  
+Proto4z.DictMap[8] = {name="desc", type="string" }  

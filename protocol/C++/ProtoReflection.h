@@ -318,6 +318,26 @@ public:
                    return "DictSkill";
             }
             break;
+            case 11008:
+            {
+                   return "DictSpawnPoint";
+            }
+            break;
+            case 11009:
+            {
+                   return "DictObstacle";
+            }
+            break;
+            case 11010:
+            {
+                   return "DictMonster";
+            }
+            break;
+            case 11011:
+            {
+                   return "DictMap";
+            }
+            break;
             case 50000:
             {
                    return "SceneClientPulse";
