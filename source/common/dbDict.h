@@ -148,6 +148,9 @@ public:
         buildTable<DictBuff>(helper);
         buildTable<DictSkillBehaviour>(helper);
         buildTable<DictSkill>(helper);
+        buildTable<DictObstacle>(helper);
+        buildTable<DictMonster>(helper);
+        buildTable<DictMap>(helper);
         return true;
     }
     inline bool buildInfoTable()
@@ -185,6 +188,9 @@ public:
         LOAD_ONE_KEY_DICT(DictBuff);
         LOAD_ONE_KEY_DICT(DictSkillBehaviour);
         LOAD_ONE_KEY_DICT(DictSkill);
+        LOAD_ONE_KEY_DICT(DictObstacle);
+        LOAD_ONE_KEY_DICT(DictMonster);
+        LOAD_ONE_KEY_DICT(DictMap);
         return true;
     }
     bool fakeTestData();
@@ -200,6 +206,9 @@ public:
     MAKE_ONE_KEY_DICT(DictBuff, ui64, id);
     MAKE_ONE_KEY_DICT(DictSkillBehaviour, ui64, id);
     MAKE_ONE_KEY_DICT(DictSkill, ui64, id);
+    MAKE_ONE_KEY_DICT(DictObstacle, ui64, id);
+    MAKE_ONE_KEY_DICT(DictMonster, ui64, id);
+    MAKE_ONE_KEY_DICT(DictMap, ui64, id);
 
 
 private:

@@ -196,17 +196,12 @@ bool DBDict::fakeTestData()
         DictModel model;
         model.modelID = 1;
         model.modelName = "avatar";
-        model.initCamp = 0;
-        model.initLevel = 1;
         model.modelRedius = 1.0;
-        model.initState = ENTITY_STATE_ACTIVE;
+
         _dictOneKeyDictModel[model.modelID] = model;
 
         model.modelID = 2;
         model.modelName = "野";
-        model.initCamp = 0;
-        model.initLevel = 1;
-        model.initState = ENTITY_STATE_ACTIVE;
         _dictOneKeyDictModel[model.modelID] = model;
     }
     if (true)
@@ -228,6 +223,30 @@ bool DBDict::fakeTestData()
         level.skills.push_back(1);
         _dictTwoKeyDictModelLevel[level.modelID][level.levelID] = level;
     }
+    if (true)
+    {
+        DictMonster monster;
+        monster.id = 1;
+        monster.modelID = 2;
+        monster.initCamp = 1001;
+        monster.initLevel = 1;
+        monster.initState = ENTITY_STATE_ACTIVE;
+        monster.spawnPoints.push_back(DictSpawnPoint(10, 10, 20, 20));
+        monster.spawnPoints.push_back(DictSpawnPoint(20, 20, 20, 30));
+        monster.spawnPoints.push_back(DictSpawnPoint(20, 30, 10, 10));
+        _dictOneKeyDictMonster[monster.id] = monster;
+        monster.id = 2;
+        _dictOneKeyDictMonster[monster.id] = monster;
+        monster.id = 3;
+        _dictOneKeyDictMonster[monster.id] = monster;
+        monster.id = 4;
+        _dictOneKeyDictMonster[monster.id] = monster;
+
+    }
+    if (true)
+    {
+    }
+
     return true;
 }
 

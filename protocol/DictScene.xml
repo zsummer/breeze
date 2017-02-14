@@ -215,13 +215,6 @@
         <member name="modelName" type="string"   desc=""/>
         <member name="modelRedius" type="double"   desc="碰撞半径"/>
         <member name="iconID"  type="ui64" desc="头像"/>
-        <member name="etype"  type="ui16" desc=""/>
-        <member name="initLevel"  type="double" desc="等级"/>
-        <member name="initCamp"  type="ui16" desc=""/>
-        <member name="initItems"  type="DictMapPairValue" tag="ignore" desc=""/>
-        <member name="initItemsText"  type="string"  desc=""/>
-        <member name="initState"  type="ui16" desc="初始化状态"/>
-        <member name="actionScriptPath"  type="string" desc="行为树脚本路径"/>
         <member name="clientModelPath"  type="string" desc="客户端模型路径"/>
         <member name="desc" type="string"   desc=""/>
     </struct>
@@ -251,7 +244,13 @@
         <member name="modelID" type="ui64"   desc=""/>
         <member name="spawnPointsText" type="string"   desc=""/>
         <member name="spawnPoints" type="DictSpawnPointArray"   desc=""/>
-        <member name="camp"  type="ui16" desc=""/>
+        <member name="etype"  type="ui16" desc=""/>
+        <member name="initLevel"  type="double" desc="等级"/>
+        <member name="initCamp"  type="ui16" desc=""/>
+        <member name="initItems"  type="DictMapPairValue" tag="ignore" desc=""/>
+        <member name="initItemsText"  type="string"  desc=""/>
+        <member name="initState"  type="ui16" desc="初始化状态"/>
+        <member name="actionScriptPath"  type="string" desc="行为树脚本路径"/>
         <member name="desc" type="string"   desc=""/>
     </struct>
     <array name="DictMonsterArray" type="DictMonster" desc="" />

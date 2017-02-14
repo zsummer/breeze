@@ -1501,13 +1501,6 @@ struct DictModel
     std::string modelName;  
     double modelRedius; //碰撞半径  
     unsigned long long iconID; //头像  
-    unsigned short etype;  
-    double initLevel; //等级  
-    unsigned short initCamp;  
-    DictMapPairValue initItems;  
-    std::string initItemsText;  
-    unsigned short initState; //初始化状态  
-    std::string actionScriptPath; //行为树脚本路径  
     std::string clientModelPath; //客户端模型路径  
     std::string desc;  
     DictModel() 
@@ -1515,24 +1508,13 @@ struct DictModel
         modelID = 0; 
         modelRedius = 0.0; 
         iconID = 0; 
-        etype = 0; 
-        initLevel = 0.0; 
-        initCamp = 0; 
-        initState = 0; 
     } 
-    DictModel(const unsigned long long & modelID, const std::string & modelName, const double & modelRedius, const unsigned long long & iconID, const unsigned short & etype, const double & initLevel, const unsigned short & initCamp, const DictMapPairValue & initItems, const std::string & initItemsText, const unsigned short & initState, const std::string & actionScriptPath, const std::string & clientModelPath, const std::string & desc) 
+    DictModel(const unsigned long long & modelID, const std::string & modelName, const double & modelRedius, const unsigned long long & iconID, const std::string & clientModelPath, const std::string & desc) 
     { 
         this->modelID = modelID; 
         this->modelName = modelName; 
         this->modelRedius = modelRedius; 
         this->iconID = iconID; 
-        this->etype = etype; 
-        this->initLevel = initLevel; 
-        this->initCamp = initCamp; 
-        this->initItems = initItems; 
-        this->initItemsText = initItemsText; 
-        this->initState = initState; 
-        this->actionScriptPath = actionScriptPath; 
         this->clientModelPath = clientModelPath; 
         this->desc = desc; 
     } 
@@ -1550,18 +1532,6 @@ std::vector<std::string>  DictModel::getDBBuild()
     ret.push_back("alter table `tb_DictModel` change `modelRedius`  `modelRedius`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictModel` add `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictModel` change `iconID`  `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` add `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` change `etype`  `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` add `initLevel`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` change `initLevel`  `initLevel`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` add `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` change `initCamp`  `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` add `initItemsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictModel` change `initItemsText`  `initItemsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictModel` add `initState`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` change `initState`  `initState`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictModel` add `actionScriptPath`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictModel` change `actionScriptPath`  `actionScriptPath`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictModel` add `clientModelPath`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictModel` change `clientModelPath`  `clientModelPath`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictModel` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
@@ -1571,28 +1541,22 @@ std::vector<std::string>  DictModel::getDBBuild()
 std::string  DictModel::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `modelID`,`modelName`,`modelRedius`,`iconID`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc` from `tb_DictModel` where `modelID` = ? "); 
+    q.init("select `modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`desc` from `tb_DictModel` where `modelID` = ? "); 
     q << this->modelID; 
     return q.pickSQL(); 
 } 
 std::string  DictModel::getDBSelectPure() 
 { 
-    return "select `modelID`,`modelName`,`modelRedius`,`iconID`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc` from `tb_DictModel` "; 
+    return "select `modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`desc` from `tb_DictModel` "; 
 } 
 std::string  DictModel::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictModel`(`modelID`,`modelName`,`modelRedius`,`iconID`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`clientModelPath`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictModel`(`modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`desc`) values(?,?,?,?,?,?)"); 
     q << this->modelID; 
     q << this->modelName; 
     q << this->modelRedius; 
     q << this->iconID; 
-    q << this->etype; 
-    q << this->initLevel; 
-    q << this->initCamp; 
-    q << this->initItemsText; 
-    q << this->initState; 
-    q << this->actionScriptPath; 
     q << this->clientModelPath; 
     q << this->desc; 
     return q.pickSQL(); 
@@ -1607,17 +1571,11 @@ std::string  DictModel::getDBDelete()
 std::string  DictModel::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictModel`(modelID) values(? ) on duplicate key update `modelName` = ?,`modelRedius` = ?,`iconID` = ?,`etype` = ?,`initLevel` = ?,`initCamp` = ?,`initItemsText` = ?,`initState` = ?,`actionScriptPath` = ?,`clientModelPath` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictModel`(modelID) values(? ) on duplicate key update `modelName` = ?,`modelRedius` = ?,`iconID` = ?,`clientModelPath` = ?,`desc` = ? "); 
     q << this->modelID; 
     q << this->modelName; 
     q << this->modelRedius; 
     q << this->iconID; 
-    q << this->etype; 
-    q << this->initLevel; 
-    q << this->initCamp; 
-    q << this->initItemsText; 
-    q << this->initState; 
-    q << this->actionScriptPath; 
     q << this->clientModelPath; 
     q << this->desc; 
     return q.pickSQL(); 
@@ -1637,12 +1595,6 @@ bool DictModel::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->modelName; 
             result >> this->modelRedius; 
             result >> this->iconID; 
-            result >> this->etype; 
-            result >> this->initLevel; 
-            result >> this->initCamp; 
-            result >> this->initItemsText; 
-            result >> this->initState; 
-            result >> this->actionScriptPath; 
             result >> this->clientModelPath; 
             result >> this->desc; 
             return true;  
@@ -1661,13 +1613,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.modelName;  
     ws << data.modelRedius;  
     ws << data.iconID;  
-    ws << data.etype;  
-    ws << data.initLevel;  
-    ws << data.initCamp;  
-    ws << data.initItems;  
-    ws << data.initItemsText;  
-    ws << data.initState;  
-    ws << data.actionScriptPath;  
     ws << data.clientModelPath;  
     ws << data.desc;  
     return ws; 
@@ -1678,13 +1623,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.modelName;  
     rs >> data.modelRedius;  
     rs >> data.iconID;  
-    rs >> data.etype;  
-    rs >> data.initLevel;  
-    rs >> data.initCamp;  
-    rs >> data.initItems;  
-    rs >> data.initItemsText;  
-    rs >> data.initState;  
-    rs >> data.actionScriptPath;  
     rs >> data.clientModelPath;  
     rs >> data.desc;  
     return rs; 
@@ -1696,13 +1634,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "modelName=" << info.modelName << ","; 
     stm << "modelRedius=" << info.modelRedius << ","; 
     stm << "iconID=" << info.iconID << ","; 
-    stm << "etype=" << info.etype << ","; 
-    stm << "initLevel=" << info.initLevel << ","; 
-    stm << "initCamp=" << info.initCamp << ","; 
-    stm << "initItems=" << info.initItems << ","; 
-    stm << "initItemsText=" << info.initItemsText << ","; 
-    stm << "initState=" << info.initState << ","; 
-    stm << "actionScriptPath=" << info.actionScriptPath << ","; 
     stm << "clientModelPath=" << info.clientModelPath << ","; 
     stm << "desc=" << info.desc << ","; 
     stm << "]"; 
@@ -1942,21 +1873,36 @@ struct DictMonster
     unsigned long long modelID;  
     std::string spawnPointsText;  
     DictSpawnPointArray spawnPoints;  
-    unsigned short camp;  
+    unsigned short etype;  
+    double initLevel; //等级  
+    unsigned short initCamp;  
+    DictMapPairValue initItems;  
+    std::string initItemsText;  
+    unsigned short initState; //初始化状态  
+    std::string actionScriptPath; //行为树脚本路径  
     std::string desc;  
     DictMonster() 
     { 
         id = 0; 
         modelID = 0; 
-        camp = 0; 
+        etype = 0; 
+        initLevel = 0.0; 
+        initCamp = 0; 
+        initState = 0; 
     } 
-    DictMonster(const unsigned long long & id, const unsigned long long & modelID, const std::string & spawnPointsText, const DictSpawnPointArray & spawnPoints, const unsigned short & camp, const std::string & desc) 
+    DictMonster(const unsigned long long & id, const unsigned long long & modelID, const std::string & spawnPointsText, const DictSpawnPointArray & spawnPoints, const unsigned short & etype, const double & initLevel, const unsigned short & initCamp, const DictMapPairValue & initItems, const std::string & initItemsText, const unsigned short & initState, const std::string & actionScriptPath, const std::string & desc) 
     { 
         this->id = id; 
         this->modelID = modelID; 
         this->spawnPointsText = spawnPointsText; 
         this->spawnPoints = spawnPoints; 
-        this->camp = camp; 
+        this->etype = etype; 
+        this->initLevel = initLevel; 
+        this->initCamp = initCamp; 
+        this->initItems = initItems; 
+        this->initItemsText = initItemsText; 
+        this->initState = initState; 
+        this->actionScriptPath = actionScriptPath; 
         this->desc = desc; 
     } 
 }; 
@@ -1973,8 +1919,18 @@ std::vector<std::string>  DictMonster::getDBBuild()
     ret.push_back("alter table `tb_DictMonster` change `spawnPointsText`  `spawnPointsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictMonster` add `spawnPoints`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_DictMonster` change `spawnPoints`  `spawnPoints`  longblob NOT NULL "); 
-    ret.push_back("alter table `tb_DictMonster` add `camp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictMonster` change `camp`  `camp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` add `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` change `etype`  `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` add `initLevel`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` change `initLevel`  `initLevel`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` add `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` change `initCamp`  `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` add `initItemsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictMonster` change `initItemsText`  `initItemsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictMonster` add `initState`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` change `initState`  `initState`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictMonster` add `actionScriptPath`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictMonster` change `actionScriptPath`  `actionScriptPath`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictMonster` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictMonster` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     return ret; 
@@ -1982,18 +1938,18 @@ std::vector<std::string>  DictMonster::getDBBuild()
 std::string  DictMonster::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`modelID`,`spawnPointsText`,`spawnPoints`,`camp`,`desc` from `tb_DictMonster` where `id` = ? "); 
+    q.init("select `id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc` from `tb_DictMonster` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictMonster::getDBSelectPure() 
 { 
-    return "select `id`,`modelID`,`spawnPointsText`,`spawnPoints`,`camp`,`desc` from `tb_DictMonster` "; 
+    return "select `id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc` from `tb_DictMonster` "; 
 } 
 std::string  DictMonster::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictMonster`(`id`,`modelID`,`spawnPointsText`,`spawnPoints`,`camp`,`desc`) values(?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictMonster`(`id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->modelID; 
     q << this->spawnPointsText; 
@@ -2007,7 +1963,12 @@ std::string  DictMonster::getDBInsert()
     { 
         LOGW("catch one except error when insert DictMonster.spawnPoints error=" << e.what()); 
     } 
-    q << this->camp; 
+    q << this->etype; 
+    q << this->initLevel; 
+    q << this->initCamp; 
+    q << this->initItemsText; 
+    q << this->initState; 
+    q << this->actionScriptPath; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -2021,7 +1982,7 @@ std::string  DictMonster::getDBDelete()
 std::string  DictMonster::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictMonster`(id) values(? ) on duplicate key update `modelID` = ?,`spawnPointsText` = ?,`spawnPoints` = ?,`camp` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictMonster`(id) values(? ) on duplicate key update `modelID` = ?,`spawnPointsText` = ?,`spawnPoints` = ?,`etype` = ?,`initLevel` = ?,`initCamp` = ?,`initItemsText` = ?,`initState` = ?,`actionScriptPath` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->modelID; 
     q << this->spawnPointsText; 
@@ -2035,7 +1996,12 @@ std::string  DictMonster::getDBUpdate()
     { 
         LOGW("catch one except error when update DictMonster.spawnPoints error=" << e.what()); 
     } 
-    q << this->camp; 
+    q << this->etype; 
+    q << this->initLevel; 
+    q << this->initCamp; 
+    q << this->initItemsText; 
+    q << this->initState; 
+    q << this->actionScriptPath; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -2067,7 +2033,12 @@ bool DictMonster::fetchFromDBResult(zsummer::mysql::DBResult &result)
             { 
                 LOGW("catch one except error when fetch DictMonster.spawnPoints  from table `tb_DictMonster` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
             } 
-            result >> this->camp; 
+            result >> this->etype; 
+            result >> this->initLevel; 
+            result >> this->initCamp; 
+            result >> this->initItemsText; 
+            result >> this->initState; 
+            result >> this->actionScriptPath; 
             result >> this->desc; 
             return true;  
         } 
@@ -2085,7 +2056,13 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.modelID;  
     ws << data.spawnPointsText;  
     ws << data.spawnPoints;  
-    ws << data.camp;  
+    ws << data.etype;  
+    ws << data.initLevel;  
+    ws << data.initCamp;  
+    ws << data.initItems;  
+    ws << data.initItemsText;  
+    ws << data.initState;  
+    ws << data.actionScriptPath;  
     ws << data.desc;  
     return ws; 
 } 
@@ -2095,7 +2072,13 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.modelID;  
     rs >> data.spawnPointsText;  
     rs >> data.spawnPoints;  
-    rs >> data.camp;  
+    rs >> data.etype;  
+    rs >> data.initLevel;  
+    rs >> data.initCamp;  
+    rs >> data.initItems;  
+    rs >> data.initItemsText;  
+    rs >> data.initState;  
+    rs >> data.actionScriptPath;  
     rs >> data.desc;  
     return rs; 
 } 
@@ -2106,7 +2089,13 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "modelID=" << info.modelID << ","; 
     stm << "spawnPointsText=" << info.spawnPointsText << ","; 
     stm << "spawnPoints=" << info.spawnPoints << ","; 
-    stm << "camp=" << info.camp << ","; 
+    stm << "etype=" << info.etype << ","; 
+    stm << "initLevel=" << info.initLevel << ","; 
+    stm << "initCamp=" << info.initCamp << ","; 
+    stm << "initItems=" << info.initItems << ","; 
+    stm << "initItemsText=" << info.initItemsText << ","; 
+    stm << "initState=" << info.initState << ","; 
+    stm << "actionScriptPath=" << info.actionScriptPath << ","; 
     stm << "desc=" << info.desc << ","; 
     stm << "]"; 
     return stm; 

@@ -774,13 +774,6 @@ namespace Proto4z
         public string modelName;  
         public double modelRedius; //碰撞半径  
         public ulong iconID; //头像  
-        public ushort etype;  
-        public double initLevel; //等级  
-        public ushort initCamp;  
-        public DictMapPairValue initItems;  
-        public string initItemsText;  
-        public ushort initState; //初始化状态  
-        public string actionScriptPath; //行为树脚本路径  
         public string clientModelPath; //客户端模型路径  
         public string desc;  
         public DictModel()  
@@ -789,29 +782,15 @@ namespace Proto4z
             modelName = "";  
             modelRedius = 0.0;  
             iconID = 0;  
-            etype = 0;  
-            initLevel = 0.0;  
-            initCamp = 0;  
-            initItems = new DictMapPairValue();  
-            initItemsText = "";  
-            initState = 0;  
-            actionScriptPath = "";  
             clientModelPath = "";  
             desc = "";  
         } 
-        public DictModel(ulong modelID, string modelName, double modelRedius, ulong iconID, ushort etype, double initLevel, ushort initCamp, DictMapPairValue initItems, string initItemsText, ushort initState, string actionScriptPath, string clientModelPath, string desc) 
+        public DictModel(ulong modelID, string modelName, double modelRedius, ulong iconID, string clientModelPath, string desc) 
         { 
             this.modelID = modelID; 
             this.modelName = modelName; 
             this.modelRedius = modelRedius; 
             this.iconID = iconID; 
-            this.etype = etype; 
-            this.initLevel = initLevel; 
-            this.initCamp = initCamp; 
-            this.initItems = initItems; 
-            this.initItemsText = initItemsText; 
-            this.initState = initState; 
-            this.actionScriptPath = actionScriptPath; 
             this.clientModelPath = clientModelPath; 
             this.desc = desc; 
         } 
@@ -822,14 +801,6 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.modelName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.modelRedius)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.iconID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.initLevel)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initCamp)); 
-            if (this.initItems == null) this.initItems = new DictMapPairValue(); 
-            data.AddRange(this.initItems.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.initItemsText)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initState)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.actionScriptPath)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.clientModelPath)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
@@ -840,14 +811,6 @@ namespace Proto4z
             this.modelName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.modelRedius = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.initLevel = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.initCamp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.initItems = new DictMapPairValue(); 
-            this.initItems.__decode(binData, ref pos); 
-            this.initItemsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.initState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.actionScriptPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.clientModelPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
@@ -1089,7 +1052,13 @@ namespace Proto4z
         public ulong modelID;  
         public string spawnPointsText;  
         public DictSpawnPointArray spawnPoints;  
-        public ushort camp;  
+        public ushort etype;  
+        public double initLevel; //等级  
+        public ushort initCamp;  
+        public DictMapPairValue initItems;  
+        public string initItemsText;  
+        public ushort initState; //初始化状态  
+        public string actionScriptPath; //行为树脚本路径  
         public string desc;  
         public DictMonster()  
         { 
@@ -1097,16 +1066,28 @@ namespace Proto4z
             modelID = 0;  
             spawnPointsText = "";  
             spawnPoints = new DictSpawnPointArray();  
-            camp = 0;  
+            etype = 0;  
+            initLevel = 0.0;  
+            initCamp = 0;  
+            initItems = new DictMapPairValue();  
+            initItemsText = "";  
+            initState = 0;  
+            actionScriptPath = "";  
             desc = "";  
         } 
-        public DictMonster(ulong id, ulong modelID, string spawnPointsText, DictSpawnPointArray spawnPoints, ushort camp, string desc) 
+        public DictMonster(ulong id, ulong modelID, string spawnPointsText, DictSpawnPointArray spawnPoints, ushort etype, double initLevel, ushort initCamp, DictMapPairValue initItems, string initItemsText, ushort initState, string actionScriptPath, string desc) 
         { 
             this.id = id; 
             this.modelID = modelID; 
             this.spawnPointsText = spawnPointsText; 
             this.spawnPoints = spawnPoints; 
-            this.camp = camp; 
+            this.etype = etype; 
+            this.initLevel = initLevel; 
+            this.initCamp = initCamp; 
+            this.initItems = initItems; 
+            this.initItemsText = initItemsText; 
+            this.initState = initState; 
+            this.actionScriptPath = actionScriptPath; 
             this.desc = desc; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -1117,7 +1098,14 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.spawnPointsText)); 
             if (this.spawnPoints == null) this.spawnPoints = new DictSpawnPointArray(); 
             data.AddRange(this.spawnPoints.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.camp)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.initLevel)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initCamp)); 
+            if (this.initItems == null) this.initItems = new DictMapPairValue(); 
+            data.AddRange(this.initItems.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.initItemsText)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initState)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.actionScriptPath)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
@@ -1128,7 +1116,14 @@ namespace Proto4z
             this.spawnPointsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.spawnPoints = new DictSpawnPointArray(); 
             this.spawnPoints.__decode(binData, ref pos); 
-            this.camp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.initLevel = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.initCamp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.initItems = new DictMapPairValue(); 
+            this.initItems.__decode(binData, ref pos); 
+            this.initItemsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.initState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.actionScriptPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
