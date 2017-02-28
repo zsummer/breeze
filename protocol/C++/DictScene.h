@@ -1502,20 +1502,35 @@ struct DictModel
     double modelRedius; //碰撞半径  
     unsigned long long iconID; //头像  
     std::string clientModelPath; //客户端模型路径  
+    double initLevel; //等级  
+    unsigned short initCamp;  
+    DictMapPairValue initItems;  
+    std::string initItemsText;  
+    unsigned short initState; //初始化状态  
+    std::string actionScriptPath; //行为树脚本路径  
     std::string desc;  
     DictModel() 
     { 
         modelID = 0; 
         modelRedius = 0.0; 
         iconID = 0; 
+        initLevel = 0.0; 
+        initCamp = 0; 
+        initState = 0; 
     } 
-    DictModel(const unsigned long long & modelID, const std::string & modelName, const double & modelRedius, const unsigned long long & iconID, const std::string & clientModelPath, const std::string & desc) 
+    DictModel(const unsigned long long & modelID, const std::string & modelName, const double & modelRedius, const unsigned long long & iconID, const std::string & clientModelPath, const double & initLevel, const unsigned short & initCamp, const DictMapPairValue & initItems, const std::string & initItemsText, const unsigned short & initState, const std::string & actionScriptPath, const std::string & desc) 
     { 
         this->modelID = modelID; 
         this->modelName = modelName; 
         this->modelRedius = modelRedius; 
         this->iconID = iconID; 
         this->clientModelPath = clientModelPath; 
+        this->initLevel = initLevel; 
+        this->initCamp = initCamp; 
+        this->initItems = initItems; 
+        this->initItemsText = initItemsText; 
+        this->initState = initState; 
+        this->actionScriptPath = actionScriptPath; 
         this->desc = desc; 
     } 
 }; 
@@ -1534,6 +1549,16 @@ std::vector<std::string>  DictModel::getDBBuild()
     ret.push_back("alter table `tb_DictModel` change `iconID`  `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictModel` add `clientModelPath`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictModel` change `clientModelPath`  `clientModelPath`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictModel` add `initLevel`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictModel` change `initLevel`  `initLevel`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictModel` add `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictModel` change `initCamp`  `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictModel` add `initItemsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictModel` change `initItemsText`  `initItemsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictModel` add `initState`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictModel` change `initState`  `initState`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictModel` add `actionScriptPath`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictModel` change `actionScriptPath`  `actionScriptPath`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictModel` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictModel` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     return ret; 
@@ -1541,23 +1566,28 @@ std::vector<std::string>  DictModel::getDBBuild()
 std::string  DictModel::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`desc` from `tb_DictModel` where `modelID` = ? "); 
+    q.init("select `modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc` from `tb_DictModel` where `modelID` = ? "); 
     q << this->modelID; 
     return q.pickSQL(); 
 } 
 std::string  DictModel::getDBSelectPure() 
 { 
-    return "select `modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`desc` from `tb_DictModel` "; 
+    return "select `modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc` from `tb_DictModel` "; 
 } 
 std::string  DictModel::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictModel`(`modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`desc`) values(?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictModel`(`modelID`,`modelName`,`modelRedius`,`iconID`,`clientModelPath`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?)"); 
     q << this->modelID; 
     q << this->modelName; 
     q << this->modelRedius; 
     q << this->iconID; 
     q << this->clientModelPath; 
+    q << this->initLevel; 
+    q << this->initCamp; 
+    q << this->initItemsText; 
+    q << this->initState; 
+    q << this->actionScriptPath; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -1571,12 +1601,17 @@ std::string  DictModel::getDBDelete()
 std::string  DictModel::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictModel`(modelID) values(? ) on duplicate key update `modelName` = ?,`modelRedius` = ?,`iconID` = ?,`clientModelPath` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictModel`(modelID) values(? ) on duplicate key update `modelName` = ?,`modelRedius` = ?,`iconID` = ?,`clientModelPath` = ?,`initLevel` = ?,`initCamp` = ?,`initItemsText` = ?,`initState` = ?,`actionScriptPath` = ?,`desc` = ? "); 
     q << this->modelID; 
     q << this->modelName; 
     q << this->modelRedius; 
     q << this->iconID; 
     q << this->clientModelPath; 
+    q << this->initLevel; 
+    q << this->initCamp; 
+    q << this->initItemsText; 
+    q << this->initState; 
+    q << this->actionScriptPath; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -1596,6 +1631,11 @@ bool DictModel::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->modelRedius; 
             result >> this->iconID; 
             result >> this->clientModelPath; 
+            result >> this->initLevel; 
+            result >> this->initCamp; 
+            result >> this->initItemsText; 
+            result >> this->initState; 
+            result >> this->actionScriptPath; 
             result >> this->desc; 
             return true;  
         } 
@@ -1614,6 +1654,12 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.modelRedius;  
     ws << data.iconID;  
     ws << data.clientModelPath;  
+    ws << data.initLevel;  
+    ws << data.initCamp;  
+    ws << data.initItems;  
+    ws << data.initItemsText;  
+    ws << data.initState;  
+    ws << data.actionScriptPath;  
     ws << data.desc;  
     return ws; 
 } 
@@ -1624,6 +1670,12 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.modelRedius;  
     rs >> data.iconID;  
     rs >> data.clientModelPath;  
+    rs >> data.initLevel;  
+    rs >> data.initCamp;  
+    rs >> data.initItems;  
+    rs >> data.initItemsText;  
+    rs >> data.initState;  
+    rs >> data.actionScriptPath;  
     rs >> data.desc;  
     return rs; 
 } 
@@ -1635,6 +1687,12 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "modelRedius=" << info.modelRedius << ","; 
     stm << "iconID=" << info.iconID << ","; 
     stm << "clientModelPath=" << info.clientModelPath << ","; 
+    stm << "initLevel=" << info.initLevel << ","; 
+    stm << "initCamp=" << info.initCamp << ","; 
+    stm << "initItems=" << info.initItems << ","; 
+    stm << "initItemsText=" << info.initItemsText << ","; 
+    stm << "initState=" << info.initState << ","; 
+    stm << "actionScriptPath=" << info.actionScriptPath << ","; 
     stm << "desc=" << info.desc << ","; 
     stm << "]"; 
     return stm; 
@@ -1650,19 +1708,22 @@ struct DictSpawnPoint
 { 
     static const unsigned short getProtoID() { return 11008;} 
     static const std::string getProtoName() { return "DictSpawnPoint";} 
+    unsigned short limitCamp;  
     double x;  
     double y;  
     double faceToX;  
     double faceToY;  
     DictSpawnPoint() 
     { 
+        limitCamp = 0; 
         x = 0.0; 
         y = 0.0; 
         faceToX = 0.0; 
         faceToY = 0.0; 
     } 
-    DictSpawnPoint(const double & x, const double & y, const double & faceToX, const double & faceToY) 
+    DictSpawnPoint(const unsigned short & limitCamp, const double & x, const double & y, const double & faceToX, const double & faceToY) 
     { 
+        this->limitCamp = limitCamp; 
         this->x = x; 
         this->y = y; 
         this->faceToX = faceToX; 
@@ -1671,6 +1732,7 @@ struct DictSpawnPoint
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictSpawnPoint & data) 
 { 
+    ws << data.limitCamp;  
     ws << data.x;  
     ws << data.y;  
     ws << data.faceToX;  
@@ -1679,6 +1741,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictSpawnPoint & data) 
 { 
+    rs >> data.limitCamp;  
     rs >> data.x;  
     rs >> data.y;  
     rs >> data.faceToX;  
@@ -1688,6 +1751,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictSpawnPoint & info) 
 { 
     stm << "["; 
+    stm << "limitCamp=" << info.limitCamp << ","; 
     stm << "x=" << info.x << ","; 
     stm << "y=" << info.y << ","; 
     stm << "faceToX=" << info.faceToX << ","; 
@@ -1874,35 +1938,20 @@ struct DictMonster
     std::string spawnPointsText;  
     DictSpawnPointArray spawnPoints;  
     unsigned short etype;  
-    double initLevel; //等级  
-    unsigned short initCamp;  
-    DictMapPairValue initItems;  
-    std::string initItemsText;  
-    unsigned short initState; //初始化状态  
-    std::string actionScriptPath; //行为树脚本路径  
     std::string desc;  
     DictMonster() 
     { 
         id = 0; 
         modelID = 0; 
         etype = 0; 
-        initLevel = 0.0; 
-        initCamp = 0; 
-        initState = 0; 
     } 
-    DictMonster(const unsigned long long & id, const unsigned long long & modelID, const std::string & spawnPointsText, const DictSpawnPointArray & spawnPoints, const unsigned short & etype, const double & initLevel, const unsigned short & initCamp, const DictMapPairValue & initItems, const std::string & initItemsText, const unsigned short & initState, const std::string & actionScriptPath, const std::string & desc) 
+    DictMonster(const unsigned long long & id, const unsigned long long & modelID, const std::string & spawnPointsText, const DictSpawnPointArray & spawnPoints, const unsigned short & etype, const std::string & desc) 
     { 
         this->id = id; 
         this->modelID = modelID; 
         this->spawnPointsText = spawnPointsText; 
         this->spawnPoints = spawnPoints; 
         this->etype = etype; 
-        this->initLevel = initLevel; 
-        this->initCamp = initCamp; 
-        this->initItems = initItems; 
-        this->initItemsText = initItemsText; 
-        this->initState = initState; 
-        this->actionScriptPath = actionScriptPath; 
         this->desc = desc; 
     } 
 }; 
@@ -1921,16 +1970,6 @@ std::vector<std::string>  DictMonster::getDBBuild()
     ret.push_back("alter table `tb_DictMonster` change `spawnPoints`  `spawnPoints`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_DictMonster` add `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictMonster` change `etype`  `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictMonster` add `initLevel`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictMonster` change `initLevel`  `initLevel`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictMonster` add `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictMonster` change `initCamp`  `initCamp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictMonster` add `initItemsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictMonster` change `initItemsText`  `initItemsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictMonster` add `initState`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictMonster` change `initState`  `initState`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictMonster` add `actionScriptPath`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictMonster` change `actionScriptPath`  `actionScriptPath`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictMonster` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictMonster` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     return ret; 
@@ -1938,18 +1977,18 @@ std::vector<std::string>  DictMonster::getDBBuild()
 std::string  DictMonster::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc` from `tb_DictMonster` where `id` = ? "); 
+    q.init("select `id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`desc` from `tb_DictMonster` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictMonster::getDBSelectPure() 
 { 
-    return "select `id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc` from `tb_DictMonster` "; 
+    return "select `id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`desc` from `tb_DictMonster` "; 
 } 
 std::string  DictMonster::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictMonster`(`id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`initLevel`,`initCamp`,`initItemsText`,`initState`,`actionScriptPath`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictMonster`(`id`,`modelID`,`spawnPointsText`,`spawnPoints`,`etype`,`desc`) values(?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->modelID; 
     q << this->spawnPointsText; 
@@ -1964,11 +2003,6 @@ std::string  DictMonster::getDBInsert()
         LOGW("catch one except error when insert DictMonster.spawnPoints error=" << e.what()); 
     } 
     q << this->etype; 
-    q << this->initLevel; 
-    q << this->initCamp; 
-    q << this->initItemsText; 
-    q << this->initState; 
-    q << this->actionScriptPath; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -1982,7 +2016,7 @@ std::string  DictMonster::getDBDelete()
 std::string  DictMonster::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictMonster`(id) values(? ) on duplicate key update `modelID` = ?,`spawnPointsText` = ?,`spawnPoints` = ?,`etype` = ?,`initLevel` = ?,`initCamp` = ?,`initItemsText` = ?,`initState` = ?,`actionScriptPath` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictMonster`(id) values(? ) on duplicate key update `modelID` = ?,`spawnPointsText` = ?,`spawnPoints` = ?,`etype` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->modelID; 
     q << this->spawnPointsText; 
@@ -1997,11 +2031,6 @@ std::string  DictMonster::getDBUpdate()
         LOGW("catch one except error when update DictMonster.spawnPoints error=" << e.what()); 
     } 
     q << this->etype; 
-    q << this->initLevel; 
-    q << this->initCamp; 
-    q << this->initItemsText; 
-    q << this->initState; 
-    q << this->actionScriptPath; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -2034,11 +2063,6 @@ bool DictMonster::fetchFromDBResult(zsummer::mysql::DBResult &result)
                 LOGW("catch one except error when fetch DictMonster.spawnPoints  from table `tb_DictMonster` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
             } 
             result >> this->etype; 
-            result >> this->initLevel; 
-            result >> this->initCamp; 
-            result >> this->initItemsText; 
-            result >> this->initState; 
-            result >> this->actionScriptPath; 
             result >> this->desc; 
             return true;  
         } 
@@ -2057,12 +2081,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.spawnPointsText;  
     ws << data.spawnPoints;  
     ws << data.etype;  
-    ws << data.initLevel;  
-    ws << data.initCamp;  
-    ws << data.initItems;  
-    ws << data.initItemsText;  
-    ws << data.initState;  
-    ws << data.actionScriptPath;  
     ws << data.desc;  
     return ws; 
 } 
@@ -2073,12 +2091,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.spawnPointsText;  
     rs >> data.spawnPoints;  
     rs >> data.etype;  
-    rs >> data.initLevel;  
-    rs >> data.initCamp;  
-    rs >> data.initItems;  
-    rs >> data.initItemsText;  
-    rs >> data.initState;  
-    rs >> data.actionScriptPath;  
     rs >> data.desc;  
     return rs; 
 } 
@@ -2090,12 +2102,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "spawnPointsText=" << info.spawnPointsText << ","; 
     stm << "spawnPoints=" << info.spawnPoints << ","; 
     stm << "etype=" << info.etype << ","; 
-    stm << "initLevel=" << info.initLevel << ","; 
-    stm << "initCamp=" << info.initCamp << ","; 
-    stm << "initItems=" << info.initItems << ","; 
-    stm << "initItemsText=" << info.initItemsText << ","; 
-    stm << "initState=" << info.initState << ","; 
-    stm << "actionScriptPath=" << info.actionScriptPath << ","; 
     stm << "desc=" << info.desc << ","; 
     stm << "]"; 
     return stm; 
@@ -2121,25 +2127,21 @@ struct DictMap
     unsigned long long id;  
     unsigned short sceneType;  
     DictArrayKey monsters;  
-    std::string redSpawnPointsText;  
-    DictSpawnPointArray redSpawnPoints;  
-    std::string blueSpawnPointsText;  
-    DictSpawnPointArray blueSpawnPoints;  
+    std::string payerSpawnPointsText;  
+    DictSpawnPointArray payerSpawnPoints;  
     std::string desc;  
     DictMap() 
     { 
         id = 0; 
         sceneType = 0; 
     } 
-    DictMap(const unsigned long long & id, const unsigned short & sceneType, const DictArrayKey & monsters, const std::string & redSpawnPointsText, const DictSpawnPointArray & redSpawnPoints, const std::string & blueSpawnPointsText, const DictSpawnPointArray & blueSpawnPoints, const std::string & desc) 
+    DictMap(const unsigned long long & id, const unsigned short & sceneType, const DictArrayKey & monsters, const std::string & payerSpawnPointsText, const DictSpawnPointArray & payerSpawnPoints, const std::string & desc) 
     { 
         this->id = id; 
         this->sceneType = sceneType; 
         this->monsters = monsters; 
-        this->redSpawnPointsText = redSpawnPointsText; 
-        this->redSpawnPoints = redSpawnPoints; 
-        this->blueSpawnPointsText = blueSpawnPointsText; 
-        this->blueSpawnPoints = blueSpawnPoints; 
+        this->payerSpawnPointsText = payerSpawnPointsText; 
+        this->payerSpawnPoints = payerSpawnPoints; 
         this->desc = desc; 
     } 
 }; 
@@ -2154,14 +2156,10 @@ std::vector<std::string>  DictMap::getDBBuild()
     ret.push_back("alter table `tb_DictMap` change `sceneType`  `sceneType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictMap` add `monsters`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_DictMap` change `monsters`  `monsters`  longblob NOT NULL "); 
-    ret.push_back("alter table `tb_DictMap` add `redSpawnPointsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictMap` change `redSpawnPointsText`  `redSpawnPointsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictMap` add `redSpawnPoints`  longblob NOT NULL "); 
-    ret.push_back("alter table `tb_DictMap` change `redSpawnPoints`  `redSpawnPoints`  longblob NOT NULL "); 
-    ret.push_back("alter table `tb_DictMap` add `blueSpawnPointsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictMap` change `blueSpawnPointsText`  `blueSpawnPointsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictMap` add `blueSpawnPoints`  longblob NOT NULL "); 
-    ret.push_back("alter table `tb_DictMap` change `blueSpawnPoints`  `blueSpawnPoints`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_DictMap` add `payerSpawnPointsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictMap` change `payerSpawnPointsText`  `payerSpawnPointsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictMap` add `payerSpawnPoints`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_DictMap` change `payerSpawnPoints`  `payerSpawnPoints`  longblob NOT NULL "); 
     ret.push_back("alter table `tb_DictMap` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictMap` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     return ret; 
@@ -2169,18 +2167,18 @@ std::vector<std::string>  DictMap::getDBBuild()
 std::string  DictMap::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`sceneType`,`monsters`,`redSpawnPointsText`,`redSpawnPoints`,`blueSpawnPointsText`,`blueSpawnPoints`,`desc` from `tb_DictMap` where `id` = ? "); 
+    q.init("select `id`,`sceneType`,`monsters`,`payerSpawnPointsText`,`payerSpawnPoints`,`desc` from `tb_DictMap` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictMap::getDBSelectPure() 
 { 
-    return "select `id`,`sceneType`,`monsters`,`redSpawnPointsText`,`redSpawnPoints`,`blueSpawnPointsText`,`blueSpawnPoints`,`desc` from `tb_DictMap` "; 
+    return "select `id`,`sceneType`,`monsters`,`payerSpawnPointsText`,`payerSpawnPoints`,`desc` from `tb_DictMap` "; 
 } 
 std::string  DictMap::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictMap`(`id`,`sceneType`,`monsters`,`redSpawnPointsText`,`redSpawnPoints`,`blueSpawnPointsText`,`blueSpawnPoints`,`desc`) values(?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictMap`(`id`,`sceneType`,`monsters`,`payerSpawnPointsText`,`payerSpawnPoints`,`desc`) values(?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->sceneType; 
     try 
@@ -2193,27 +2191,16 @@ std::string  DictMap::getDBInsert()
     { 
         LOGW("catch one except error when insert DictMap.monsters error=" << e.what()); 
     } 
-    q << this->redSpawnPointsText; 
+    q << this->payerSpawnPointsText; 
     try 
     { 
         zsummer::proto4z::WriteStream ws(0); 
-        ws <<  this->redSpawnPoints; 
+        ws <<  this->payerSpawnPoints; 
         q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
     } 
     catch(const std::exception & e) 
     { 
-        LOGW("catch one except error when insert DictMap.redSpawnPoints error=" << e.what()); 
-    } 
-    q << this->blueSpawnPointsText; 
-    try 
-    { 
-        zsummer::proto4z::WriteStream ws(0); 
-        ws <<  this->blueSpawnPoints; 
-        q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
-    } 
-    catch(const std::exception & e) 
-    { 
-        LOGW("catch one except error when insert DictMap.blueSpawnPoints error=" << e.what()); 
+        LOGW("catch one except error when insert DictMap.payerSpawnPoints error=" << e.what()); 
     } 
     q << this->desc; 
     return q.pickSQL(); 
@@ -2228,7 +2215,7 @@ std::string  DictMap::getDBDelete()
 std::string  DictMap::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictMap`(id) values(? ) on duplicate key update `sceneType` = ?,`monsters` = ?,`redSpawnPointsText` = ?,`redSpawnPoints` = ?,`blueSpawnPointsText` = ?,`blueSpawnPoints` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictMap`(id) values(? ) on duplicate key update `sceneType` = ?,`monsters` = ?,`payerSpawnPointsText` = ?,`payerSpawnPoints` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->sceneType; 
     try 
@@ -2241,27 +2228,16 @@ std::string  DictMap::getDBUpdate()
     { 
         LOGW("catch one except error when update DictMap.monsters error=" << e.what()); 
     } 
-    q << this->redSpawnPointsText; 
+    q << this->payerSpawnPointsText; 
     try 
     { 
         zsummer::proto4z::WriteStream ws(0); 
-        ws <<  this->redSpawnPoints; 
+        ws <<  this->payerSpawnPoints; 
         q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
     } 
     catch(const std::exception & e) 
     { 
-        LOGW("catch one except error when update DictMap.redSpawnPoints error=" << e.what()); 
-    } 
-    q << this->blueSpawnPointsText; 
-    try 
-    { 
-        zsummer::proto4z::WriteStream ws(0); 
-        ws <<  this->blueSpawnPoints; 
-        q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
-    } 
-    catch(const std::exception & e) 
-    { 
-        LOGW("catch one except error when update DictMap.blueSpawnPoints error=" << e.what()); 
+        LOGW("catch one except error when update DictMap.payerSpawnPoints error=" << e.what()); 
     } 
     q << this->desc; 
     return q.pickSQL(); 
@@ -2293,7 +2269,7 @@ bool DictMap::fetchFromDBResult(zsummer::mysql::DBResult &result)
             { 
                 LOGW("catch one except error when fetch DictMap.monsters  from table `tb_DictMap` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
             } 
-            result >> this->redSpawnPointsText; 
+            result >> this->payerSpawnPointsText; 
             try 
             { 
                 std::string blob; 
@@ -2301,27 +2277,12 @@ bool DictMap::fetchFromDBResult(zsummer::mysql::DBResult &result)
                 if(!blob.empty()) 
                 { 
                     zsummer::proto4z::ReadStream rs(blob.c_str(), (zsummer::proto4z::Integer)blob.length(), false); 
-                    rs >> this->redSpawnPoints; 
+                    rs >> this->payerSpawnPoints; 
                 } 
             } 
             catch(const std::exception & e) 
             { 
-                LOGW("catch one except error when fetch DictMap.redSpawnPoints  from table `tb_DictMap` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
-            } 
-            result >> this->blueSpawnPointsText; 
-            try 
-            { 
-                std::string blob; 
-                result >> blob; 
-                if(!blob.empty()) 
-                { 
-                    zsummer::proto4z::ReadStream rs(blob.c_str(), (zsummer::proto4z::Integer)blob.length(), false); 
-                    rs >> this->blueSpawnPoints; 
-                } 
-            } 
-            catch(const std::exception & e) 
-            { 
-                LOGW("catch one except error when fetch DictMap.blueSpawnPoints  from table `tb_DictMap` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
+                LOGW("catch one except error when fetch DictMap.payerSpawnPoints  from table `tb_DictMap` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
             } 
             result >> this->desc; 
             return true;  
@@ -2339,10 +2300,8 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.id;  
     ws << data.sceneType;  
     ws << data.monsters;  
-    ws << data.redSpawnPointsText;  
-    ws << data.redSpawnPoints;  
-    ws << data.blueSpawnPointsText;  
-    ws << data.blueSpawnPoints;  
+    ws << data.payerSpawnPointsText;  
+    ws << data.payerSpawnPoints;  
     ws << data.desc;  
     return ws; 
 } 
@@ -2351,10 +2310,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.id;  
     rs >> data.sceneType;  
     rs >> data.monsters;  
-    rs >> data.redSpawnPointsText;  
-    rs >> data.redSpawnPoints;  
-    rs >> data.blueSpawnPointsText;  
-    rs >> data.blueSpawnPoints;  
+    rs >> data.payerSpawnPointsText;  
+    rs >> data.payerSpawnPoints;  
     rs >> data.desc;  
     return rs; 
 } 
@@ -2364,10 +2321,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "id=" << info.id << ","; 
     stm << "sceneType=" << info.sceneType << ","; 
     stm << "monsters=" << info.monsters << ","; 
-    stm << "redSpawnPointsText=" << info.redSpawnPointsText << ","; 
-    stm << "redSpawnPoints=" << info.redSpawnPoints << ","; 
-    stm << "blueSpawnPointsText=" << info.blueSpawnPointsText << ","; 
-    stm << "blueSpawnPoints=" << info.blueSpawnPoints << ","; 
+    stm << "payerSpawnPointsText=" << info.payerSpawnPointsText << ","; 
+    stm << "payerSpawnPoints=" << info.payerSpawnPoints << ","; 
     stm << "desc=" << info.desc << ","; 
     stm << "]"; 
     return stm; 

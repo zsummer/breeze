@@ -216,12 +216,19 @@
         <member name="modelRedius" type="double"   desc="碰撞半径"/>
         <member name="iconID"  type="ui64" desc="头像"/>
         <member name="clientModelPath"  type="string" desc="客户端模型路径"/>
+        <member name="initLevel"  type="double" desc="等级"/>
+        <member name="initCamp"  type="ui16" desc=""/>
+        <member name="initItems"  type="DictMapPairValue" tag="ignore" desc=""/>
+        <member name="initItemsText"  type="string"  desc=""/>
+        <member name="initState"  type="ui16" desc="初始化状态"/>
+        <member name="actionScriptPath"  type="string" desc="行为树脚本路径"/>
         <member name="desc" type="string"   desc=""/>
     </struct>
     <array name="DictModelArray" type="DictModel" desc="" />
     <map name="DictModelMap" key="ui64" value="DictModel" desc="" />
 
     <struct name="DictSpawnPoint"  desc="">
+        <member name="limitCamp" type="ui16"   desc=""/>
         <member name="x" type="double"   desc=""/>
         <member name="y" type="double"   desc=""/>
         <member name="faceToX" type="double"   desc=""/>
@@ -245,12 +252,6 @@
         <member name="spawnPointsText" type="string"   desc=""/>
         <member name="spawnPoints" type="DictSpawnPointArray"   desc=""/>
         <member name="etype"  type="ui16" desc=""/>
-        <member name="initLevel"  type="double" desc="等级"/>
-        <member name="initCamp"  type="ui16" desc=""/>
-        <member name="initItems"  type="DictMapPairValue" tag="ignore" desc=""/>
-        <member name="initItemsText"  type="string"  desc=""/>
-        <member name="initState"  type="ui16" desc="初始化状态"/>
-        <member name="actionScriptPath"  type="string" desc="行为树脚本路径"/>
         <member name="desc" type="string"   desc=""/>
     </struct>
     <array name="DictMonsterArray" type="DictMonster" desc="" />
@@ -261,10 +262,8 @@
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="sceneType" type="ui16"   desc=""/>
         <member name="monsters" type="DictArrayKey"   desc=""/>
-        <member name="redSpawnPointsText" type="string"   desc=""/>
-        <member name="redSpawnPoints" type="DictSpawnPointArray"   desc=""/>
-        <member name="blueSpawnPointsText" type="string"   desc=""/>
-        <member name="blueSpawnPoints" type="DictSpawnPointArray"   desc=""/>
+        <member name="payerSpawnPointsText" type="string"   desc=""/>
+        <member name="payerSpawnPoints" type="DictSpawnPointArray"   desc=""/>
         <member name="desc" type="string"   desc=""/>
     </struct>
 

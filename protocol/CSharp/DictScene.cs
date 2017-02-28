@@ -775,6 +775,12 @@ namespace Proto4z
         public double modelRedius; //碰撞半径  
         public ulong iconID; //头像  
         public string clientModelPath; //客户端模型路径  
+        public double initLevel; //等级  
+        public ushort initCamp;  
+        public DictMapPairValue initItems;  
+        public string initItemsText;  
+        public ushort initState; //初始化状态  
+        public string actionScriptPath; //行为树脚本路径  
         public string desc;  
         public DictModel()  
         { 
@@ -783,15 +789,27 @@ namespace Proto4z
             modelRedius = 0.0;  
             iconID = 0;  
             clientModelPath = "";  
+            initLevel = 0.0;  
+            initCamp = 0;  
+            initItems = new DictMapPairValue();  
+            initItemsText = "";  
+            initState = 0;  
+            actionScriptPath = "";  
             desc = "";  
         } 
-        public DictModel(ulong modelID, string modelName, double modelRedius, ulong iconID, string clientModelPath, string desc) 
+        public DictModel(ulong modelID, string modelName, double modelRedius, ulong iconID, string clientModelPath, double initLevel, ushort initCamp, DictMapPairValue initItems, string initItemsText, ushort initState, string actionScriptPath, string desc) 
         { 
             this.modelID = modelID; 
             this.modelName = modelName; 
             this.modelRedius = modelRedius; 
             this.iconID = iconID; 
             this.clientModelPath = clientModelPath; 
+            this.initLevel = initLevel; 
+            this.initCamp = initCamp; 
+            this.initItems = initItems; 
+            this.initItemsText = initItemsText; 
+            this.initState = initState; 
+            this.actionScriptPath = actionScriptPath; 
             this.desc = desc; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -802,6 +820,13 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.modelRedius)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.iconID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.clientModelPath)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.initLevel)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initCamp)); 
+            if (this.initItems == null) this.initItems = new DictMapPairValue(); 
+            data.AddRange(this.initItems.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.initItemsText)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initState)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.actionScriptPath)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
@@ -812,6 +837,13 @@ namespace Proto4z
             this.modelRedius = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.iconID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.clientModelPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.initLevel = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.initCamp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.initItems = new DictMapPairValue(); 
+            this.initItems.__decode(binData, ref pos); 
+            this.initItemsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.initState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.actionScriptPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
@@ -888,19 +920,22 @@ namespace Proto4z
         static public ushort getProtoID() { return 11008; } 
         static public string getProtoName() { return "DictSpawnPoint"; } 
         //members   
+        public ushort limitCamp;  
         public double x;  
         public double y;  
         public double faceToX;  
         public double faceToY;  
         public DictSpawnPoint()  
         { 
+            limitCamp = 0;  
             x = 0.0;  
             y = 0.0;  
             faceToX = 0.0;  
             faceToY = 0.0;  
         } 
-        public DictSpawnPoint(double x, double y, double faceToX, double faceToY) 
+        public DictSpawnPoint(ushort limitCamp, double x, double y, double faceToX, double faceToY) 
         { 
+            this.limitCamp = limitCamp; 
             this.x = x; 
             this.y = y; 
             this.faceToX = faceToX; 
@@ -909,6 +944,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.limitCamp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.x)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.y)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.faceToX)); 
@@ -917,6 +953,7 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
+            this.limitCamp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.x = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.y = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.faceToX = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
@@ -1053,12 +1090,6 @@ namespace Proto4z
         public string spawnPointsText;  
         public DictSpawnPointArray spawnPoints;  
         public ushort etype;  
-        public double initLevel; //等级  
-        public ushort initCamp;  
-        public DictMapPairValue initItems;  
-        public string initItemsText;  
-        public ushort initState; //初始化状态  
-        public string actionScriptPath; //行为树脚本路径  
         public string desc;  
         public DictMonster()  
         { 
@@ -1067,27 +1098,15 @@ namespace Proto4z
             spawnPointsText = "";  
             spawnPoints = new DictSpawnPointArray();  
             etype = 0;  
-            initLevel = 0.0;  
-            initCamp = 0;  
-            initItems = new DictMapPairValue();  
-            initItemsText = "";  
-            initState = 0;  
-            actionScriptPath = "";  
             desc = "";  
         } 
-        public DictMonster(ulong id, ulong modelID, string spawnPointsText, DictSpawnPointArray spawnPoints, ushort etype, double initLevel, ushort initCamp, DictMapPairValue initItems, string initItemsText, ushort initState, string actionScriptPath, string desc) 
+        public DictMonster(ulong id, ulong modelID, string spawnPointsText, DictSpawnPointArray spawnPoints, ushort etype, string desc) 
         { 
             this.id = id; 
             this.modelID = modelID; 
             this.spawnPointsText = spawnPointsText; 
             this.spawnPoints = spawnPoints; 
             this.etype = etype; 
-            this.initLevel = initLevel; 
-            this.initCamp = initCamp; 
-            this.initItems = initItems; 
-            this.initItemsText = initItemsText; 
-            this.initState = initState; 
-            this.actionScriptPath = actionScriptPath; 
             this.desc = desc; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -1099,13 +1118,6 @@ namespace Proto4z
             if (this.spawnPoints == null) this.spawnPoints = new DictSpawnPointArray(); 
             data.AddRange(this.spawnPoints.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.initLevel)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initCamp)); 
-            if (this.initItems == null) this.initItems = new DictMapPairValue(); 
-            data.AddRange(this.initItems.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.initItemsText)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.initState)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.actionScriptPath)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
@@ -1117,13 +1129,6 @@ namespace Proto4z
             this.spawnPoints = new DictSpawnPointArray(); 
             this.spawnPoints.__decode(binData, ref pos); 
             this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.initLevel = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.initCamp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.initItems = new DictMapPairValue(); 
-            this.initItems.__decode(binData, ref pos); 
-            this.initItemsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.initState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.actionScriptPath = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
@@ -1203,31 +1208,25 @@ namespace Proto4z
         public ulong id;  
         public ushort sceneType;  
         public DictArrayKey monsters;  
-        public string redSpawnPointsText;  
-        public DictSpawnPointArray redSpawnPoints;  
-        public string blueSpawnPointsText;  
-        public DictSpawnPointArray blueSpawnPoints;  
+        public string payerSpawnPointsText;  
+        public DictSpawnPointArray payerSpawnPoints;  
         public string desc;  
         public DictMap()  
         { 
             id = 0;  
             sceneType = 0;  
             monsters = new DictArrayKey();  
-            redSpawnPointsText = "";  
-            redSpawnPoints = new DictSpawnPointArray();  
-            blueSpawnPointsText = "";  
-            blueSpawnPoints = new DictSpawnPointArray();  
+            payerSpawnPointsText = "";  
+            payerSpawnPoints = new DictSpawnPointArray();  
             desc = "";  
         } 
-        public DictMap(ulong id, ushort sceneType, DictArrayKey monsters, string redSpawnPointsText, DictSpawnPointArray redSpawnPoints, string blueSpawnPointsText, DictSpawnPointArray blueSpawnPoints, string desc) 
+        public DictMap(ulong id, ushort sceneType, DictArrayKey monsters, string payerSpawnPointsText, DictSpawnPointArray payerSpawnPoints, string desc) 
         { 
             this.id = id; 
             this.sceneType = sceneType; 
             this.monsters = monsters; 
-            this.redSpawnPointsText = redSpawnPointsText; 
-            this.redSpawnPoints = redSpawnPoints; 
-            this.blueSpawnPointsText = blueSpawnPointsText; 
-            this.blueSpawnPoints = blueSpawnPoints; 
+            this.payerSpawnPointsText = payerSpawnPointsText; 
+            this.payerSpawnPoints = payerSpawnPoints; 
             this.desc = desc; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -1237,12 +1236,9 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.sceneType)); 
             if (this.monsters == null) this.monsters = new DictArrayKey(); 
             data.AddRange(this.monsters.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.redSpawnPointsText)); 
-            if (this.redSpawnPoints == null) this.redSpawnPoints = new DictSpawnPointArray(); 
-            data.AddRange(this.redSpawnPoints.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.blueSpawnPointsText)); 
-            if (this.blueSpawnPoints == null) this.blueSpawnPoints = new DictSpawnPointArray(); 
-            data.AddRange(this.blueSpawnPoints.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.payerSpawnPointsText)); 
+            if (this.payerSpawnPoints == null) this.payerSpawnPoints = new DictSpawnPointArray(); 
+            data.AddRange(this.payerSpawnPoints.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
@@ -1252,12 +1248,9 @@ namespace Proto4z
             this.sceneType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.monsters = new DictArrayKey(); 
             this.monsters.__decode(binData, ref pos); 
-            this.redSpawnPointsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.redSpawnPoints = new DictSpawnPointArray(); 
-            this.redSpawnPoints.__decode(binData, ref pos); 
-            this.blueSpawnPointsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.blueSpawnPoints = new DictSpawnPointArray(); 
-            this.blueSpawnPoints.__decode(binData, ref pos); 
+            this.payerSpawnPointsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.payerSpawnPoints = new DictSpawnPointArray(); 
+            this.payerSpawnPoints.__decode(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
