@@ -34,7 +34,6 @@ private:
     SCENE_STATE _sceneStatus;
     
     EntityID _lastEID;
-    double _lastStatusChangeTime;
     double _startTime;
     double _endTime;
     std::map<EntityID, EntityPtr> _entitys;
@@ -75,7 +74,8 @@ public:
 
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
-    EntityPtr addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips, GroupID groupID);
+    EntityPtr makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips, GroupID groupID);
+    void addEntity(EntityPtr entity);
     bool removeEntity(EntityID eid);
     bool removePlayer(AvatarID avatarID);
     bool removePlayerByGroupID(GroupID groupID);

@@ -62,9 +62,6 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
     _sceneType = sceneType;
     _sceneStatus = SCENE_STATE_ACTIVE;
 
-    _lastStatusChangeTime = getFloatSteadyNowTime();
-
-    _lastStatusChangeTime = getFloatSteadyNowTime();
     _startTime = getFloatSteadyNowTime();
     _endTime = getFloatSteadyNowTime() + 600;
 
@@ -108,27 +105,12 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 }
 
 
-
-EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips,GroupID groupID)
+EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips,GroupID groupID)
 {
-    auto dictModel = DBDict::getRef().getOneKeyDictModel(modelID);
-    if (!dictModel.first)
-    {
-        return nullptr;
-    }
-    auto dictModelLevel = DBDict::getRef().getTwoKeyDictModelLevel(modelID, dictModel.second.initLevel);
-    if (!dictModelLevel.first)
-    {
-        return nullptr;
-    }
-    auto dictProps = DBDict::getRef().getOneKeyDictProp(dictModelLevel.second.propID);
-    if (!dictProps.first)
-    {
-        return nullptr;
-    }
+
     EntityPtr entity = std::make_shared<Entity>();
 
-    entity->_baseProps = dictProps.second;
+    entity->_baseProps = DictProp();
     entity->_state.curHP = entity->_props.hp;
 
     entity->_state.eid = ++_lastEID;
@@ -137,10 +119,10 @@ EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, 
     entity->_state.modelID = modelID;
     entity->_state.groupID = groupID;
 
-    entity->_state.camp = dictModel.second.initCamp;
-    entity->_state.etype = dictModel.second.etype;
+    entity->_state.camp = ENTITY_CAMP_NONE;
+    entity->_state.etype = avatarID == InvalidAvatarID ? ENTITY_AI : ENTITY_PLAYER;
 
-    entity->_state.state = dictModel.second.initState;
+    entity->_state.state = ENTITY_STATE_ACTIVE;
 
     entity->_state.leader = InvalidEntityID;
     entity->_state.foe = InvalidEntityID;
@@ -160,6 +142,12 @@ EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, 
 
     entity->_report.eid = entity->_state.eid;
 
+    entity->_control.agentNo = RVO::RVO_ERROR;
+    return entity;
+}
+
+void Scene::addEntity(EntityPtr entity)
+{
     entity->_control.agentNo = _move->addAgent(entity->_move.position);
     _entitys.insert(std::make_pair(entity->_state.eid, entity));
 
@@ -173,8 +161,9 @@ EntityPtr Scene::addEntity(ui64 modelID, ui64 avatarID, std::string avatarName, 
     notice.entitys.push_back(entity->getFullData());
     broadcast(notice, entity->_state.avatarID);
     onAddEntity(entity);
-    return entity;
 }
+
+
 bool Scene::removePlayer(AvatarID avatarID)
 {
     auto entity = getEntityByAvatarID(avatarID);

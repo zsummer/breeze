@@ -191,61 +191,7 @@ bool DBDict::fakeTestData()
 
     }
 
-    if (true)
-    {
-        DictModel model;
-        model.modelID = 1;
-        model.modelName = "avatar";
-        model.modelRedius = 1.0;
 
-        _dictOneKeyDictModel[model.modelID] = model;
-
-        model.modelID = 2;
-        model.modelName = "野";
-        _dictOneKeyDictModel[model.modelID] = model;
-    }
-    if (true)
-    {
-        DictModelLevel level;
-        level.levelID = 1;
-        level.modelID = 1;
-        level.needExp = 1000;
-        level.propID = 1;
-        level.skills.push_back(1);
-        level.skills.push_back(2);
-        level.skills.push_back(3);
-        level.skills.push_back(4);
-        _dictTwoKeyDictModelLevel[level.modelID][level.levelID] = level;
-
-        level.modelID = 2;
-        level.propID = 3;
-        level.skills.clear();
-        level.skills.push_back(1);
-        _dictTwoKeyDictModelLevel[level.modelID][level.levelID] = level;
-    }
-    if (true)
-    {
-        DictMonster monster;
-        monster.id = 1;
-        monster.modelID = 2;
-        monster.initCamp = 1001;
-        monster.initLevel = 1;
-        monster.initState = ENTITY_STATE_ACTIVE;
-        monster.spawnPoints.push_back(DictSpawnPoint(10, 10, 20, 20));
-        monster.spawnPoints.push_back(DictSpawnPoint(20, 20, 20, 30));
-        monster.spawnPoints.push_back(DictSpawnPoint(20, 30, 10, 10));
-        _dictOneKeyDictMonster[monster.id] = monster;
-        monster.id = 2;
-        _dictOneKeyDictMonster[monster.id] = monster;
-        monster.id = 3;
-        _dictOneKeyDictMonster[monster.id] = monster;
-        monster.id = 4;
-        _dictOneKeyDictMonster[monster.id] = monster;
-
-    }
-    if (true)
-    {
-    }
 
     return true;
 }
