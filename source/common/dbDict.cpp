@@ -50,7 +50,6 @@ bool DBDict::fakeTestData()
         prop.id = 1;
         prop.attack = 200;
         prop.hp = 10000;
-        prop.hpRegen = 20;
         prop.moveSpeed = 6.0;
         prop.attackSpeed = 2;
         _dictOneKeyDictProp[prop.id] = prop; // player base prop 
@@ -66,7 +65,6 @@ bool DBDict::fakeTestData()
         prop = DictProp();
         prop.id = 3;
         prop.hp = 2000;
-        prop.hpRegen = 200;
         _dictOneKeyDictProp[prop.id] = prop; // hp regen buff prop
 
         prop = DictProp();

@@ -153,6 +153,7 @@ Proto4z.EntityState[8] = {name="state", type="ui16" } --状态
 Proto4z.EntityState[9] = {name="foe", type="ui64" } --锁定的敌人 
 Proto4z.EntityState[10] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
 Proto4z.EntityState[11] = {name="curHP", type="double" } --当前的血量 
+Proto4z.EntityState[12] = {name="maxHP", type="double" } --当前的血量上限 
  
 Proto4z.EntityStateArray = {}  
 Proto4z.EntityStateArray.__protoName = "EntityStateArray" 

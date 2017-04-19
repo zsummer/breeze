@@ -13,14 +13,9 @@
     <struct name="DictProp" store="MyISAM" desc="战斗属性">
         <member name="id" type="ui64" tag="key"  desc=""/>
         <member name="hp" type="double"   desc="血量值"/>
-        <member name="hpRegen" type="double"   desc="每秒血量值恢复"/>
         <member name="attack" type="double"   desc="伤害"/>
-        <member name="defense" type="double"   desc="防御"/>
-        <member name="crit" type="double"   desc="暴击"/>
-        <member name="toughness" type="double"   desc="韧性"/>
         <member name="moveSpeed" type="double"   desc="移动速度"/>
         <member name="attackSpeed" type="double"   desc="攻击速度"/>
-        <member name="vampirk " type="double"   desc="吸血"/> 
         <member name="desc " type="string"   desc=""/> 
     </struct>
     <array name="DictPropArray" type="DictProp" desc="" />

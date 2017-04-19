@@ -5,15 +5,10 @@ Proto4z.DictProp.__protoID = 11000
 Proto4z.DictProp.__protoName = "DictProp" 
 Proto4z.DictProp[1] = {name="id", type="ui64" }  
 Proto4z.DictProp[2] = {name="hp", type="double" } --血量值 
-Proto4z.DictProp[3] = {name="hpRegen", type="double" } --每秒血量值恢复 
-Proto4z.DictProp[4] = {name="attack", type="double" } --伤害 
-Proto4z.DictProp[5] = {name="defense", type="double" } --防御 
-Proto4z.DictProp[6] = {name="crit", type="double" } --暴击 
-Proto4z.DictProp[7] = {name="toughness", type="double" } --韧性 
-Proto4z.DictProp[8] = {name="moveSpeed", type="double" } --移动速度 
-Proto4z.DictProp[9] = {name="attackSpeed", type="double" } --攻击速度 
-Proto4z.DictProp[10] = {name="vampirk", type="double" } --吸血 
-Proto4z.DictProp[11] = {name="desc", type="string" }  
+Proto4z.DictProp[3] = {name="attack", type="double" } --伤害 
+Proto4z.DictProp[4] = {name="moveSpeed", type="double" } --移动速度 
+Proto4z.DictProp[5] = {name="attackSpeed", type="double" } --攻击速度 
+Proto4z.DictProp[6] = {name="desc", type="string" }  
  
 Proto4z.DictPropArray = {}  
 Proto4z.DictPropArray.__protoName = "DictPropArray" 

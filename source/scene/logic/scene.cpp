@@ -112,6 +112,7 @@ EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName,
 
     entity->_baseProps = DictProp();
     entity->_state.curHP = entity->_props.hp;
+    entity->_props = entity->_baseProps;
 
     entity->_state.eid = ++_lastEID;
     entity->_state.avatarID = avatarID;

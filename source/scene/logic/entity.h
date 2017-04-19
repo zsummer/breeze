@@ -29,9 +29,7 @@
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v){stm << "[" << v.x() << "," << v.y() << "]";return stm;}
 inline EPosition operator + (const EPosition & dst, const EPosition & org){return EPosition(dst.x + org.x, dst.y + org.y);}
-inline EPosition operator - (const EPosition & dst, const EPosition & org){return EPosition(dst.x - org.x, dst.y - org.y);}
 inline EPosition operator * (const EPosition & dst, const EPosition & org){return EPosition(dst.x * org.x, dst.y * org.y);}
-inline EPosition operator / (const EPosition & dst, const EPosition & org){return EPosition(dst.x / org.x, dst.y * org.y);}
 inline EPosition operator + (const EPosition & dst, double val){return EPosition(dst.x + val, dst.y + val);}
 inline EPosition operator - (const EPosition & dst, double val){return EPosition(dst.x - val, dst.y - val);}
 inline EPosition operator * (const EPosition & dst, double val){return EPosition(dst.x * val, dst.y * val);}
@@ -78,6 +76,9 @@ public:
     SessionID _clientSessionID = InvalidSessionID;
     bool _isInfoDirty = false;
     bool _isMoveDirty = false;
+
+public:
+    void flushProp();
 };
 
 using EntityPtr = std::shared_ptr<Entity>;
@@ -117,14 +118,9 @@ inline DictProp operator + (const DictProp & ep1, const DictProp & ep2)
 {
     DictProp ret;
     ret.hp = ep1.hp + ep2.hp;
-    ret.hpRegen = ep1.hpRegen + ep2.hpRegen;
     ret.attack = ep1.attack + ep2.attack;
-    ret.defense = ep1.defense + ep2.defense;
-    ret.crit = ep1.crit + ep2.crit;
-    ret.toughness = ep1.toughness + ep2.toughness;
     ret.moveSpeed = ep1.moveSpeed + ep2.moveSpeed;
     ret.attackSpeed = ep1.attackSpeed + ep2.attackSpeed;
-    ret.vampirk = ep1.vampirk + ep2.vampirk;
     return ret;
 }
 
@@ -132,28 +128,19 @@ inline DictProp operator * (const DictProp & ep1, const DictProp & ep2)
 {
     DictProp ret;
     ret.hp = ep1.hp * ep2.hp;
-    ret.hpRegen = ep1.hpRegen * ep2.hpRegen;
     ret.attack = ep1.attack * ep2.attack;
-    ret.defense = ep1.defense * ep2.defense;
-    ret.crit = ep1.crit * ep2.crit;
-    ret.toughness = ep1.toughness * ep2.toughness;
     ret.moveSpeed = ep1.moveSpeed * ep2.moveSpeed;
     ret.attackSpeed = ep1.attackSpeed * ep2.attackSpeed;
-    ret.vampirk = ep1.vampirk * ep2.vampirk;
     return ret;
 }
+
 inline DictProp operator * (const DictProp & ep, double df)
 {
     DictProp ret;
     ret.hp = ep.hp * df;
-    ret.hpRegen = ep.hpRegen * df;
     ret.attack = ep.attack * df;
-    ret.defense = ep.defense * df;
-    ret.crit = ep.crit * df;
-    ret.toughness = ep.toughness * df;
     ret.moveSpeed = ep.moveSpeed * df;
     ret.attackSpeed = ep.attackSpeed * df;
-    ret.vampirk = ep.vampirk * df;
     return ret;
 }
 

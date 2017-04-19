@@ -360,6 +360,7 @@ struct EntityState //EntityState
     unsigned long long foe; //锁定的敌人  
     unsigned long long leader; //实体的老大, 如果是飞行道具 这个指向施放飞行道具的人  
     double curHP; //当前的血量  
+    double maxHP; //当前的血量上限  
     EntityState() 
     { 
         eid = 0; 
@@ -372,8 +373,9 @@ struct EntityState //EntityState
         foe = 0; 
         leader = 0; 
         curHP = 0.0; 
+        maxHP = 0.0; 
     } 
-    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP) 
+    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP, const double & maxHP) 
     { 
         this->eid = eid; 
         this->avatarID = avatarID; 
@@ -386,6 +388,7 @@ struct EntityState //EntityState
         this->foe = foe; 
         this->leader = leader; 
         this->curHP = curHP; 
+        this->maxHP = maxHP; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityState & data) 
@@ -401,6 +404,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.foe;  
     ws << data.leader;  
     ws << data.curHP;  
+    ws << data.maxHP;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityState & data) 
@@ -416,6 +420,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.foe;  
     rs >> data.leader;  
     rs >> data.curHP;  
+    rs >> data.maxHP;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityState & info) 
@@ -432,6 +437,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "foe=" << info.foe << ","; 
     stm << "leader=" << info.leader << ","; 
     stm << "curHP=" << info.curHP << ","; 
+    stm << "maxHP=" << info.maxHP << ","; 
     stm << "]"; 
     return stm; 
 } 

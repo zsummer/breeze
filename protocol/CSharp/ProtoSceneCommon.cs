@@ -592,6 +592,7 @@ namespace Proto4z
         public ulong foe; //锁定的敌人  
         public ulong leader; //实体的老大, 如果是飞行道具 这个指向施放飞行道具的人  
         public double curHP; //当前的血量  
+        public double maxHP; //当前的血量上限  
         public EntityState()  
         { 
             eid = 0;  
@@ -605,8 +606,9 @@ namespace Proto4z
             foe = 0;  
             leader = 0;  
             curHP = 0.0;  
+            maxHP = 0.0;  
         } 
-        public EntityState(ulong eid, ulong avatarID, string avatarName, ulong modelID, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP) 
+        public EntityState(ulong eid, ulong avatarID, string avatarName, ulong modelID, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP, double maxHP) 
         { 
             this.eid = eid; 
             this.avatarID = avatarID; 
@@ -619,6 +621,7 @@ namespace Proto4z
             this.foe = foe; 
             this.leader = leader; 
             this.curHP = curHP; 
+            this.maxHP = maxHP; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -634,6 +637,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.leader)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.curHP)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.maxHP)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -649,6 +653,7 @@ namespace Proto4z
             this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.leader = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.curHP = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.maxHP = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 

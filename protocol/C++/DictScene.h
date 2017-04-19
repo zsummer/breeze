@@ -16,40 +16,25 @@ struct DictProp //战斗属性
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long id;  
     double hp; //血量值  
-    double hpRegen; //每秒血量值恢复  
     double attack; //伤害  
-    double defense; //防御  
-    double crit; //暴击  
-    double toughness; //韧性  
     double moveSpeed; //移动速度  
     double attackSpeed; //攻击速度  
-    double vampirk; //吸血  
     std::string desc;  
     DictProp() 
     { 
         id = 0; 
         hp = 0.0; 
-        hpRegen = 0.0; 
         attack = 0.0; 
-        defense = 0.0; 
-        crit = 0.0; 
-        toughness = 0.0; 
         moveSpeed = 0.0; 
         attackSpeed = 0.0; 
-        vampirk = 0.0; 
     } 
-    DictProp(const unsigned long long & id, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk, const std::string & desc) 
+    DictProp(const unsigned long long & id, const double & hp, const double & attack, const double & moveSpeed, const double & attackSpeed, const std::string & desc) 
     { 
         this->id = id; 
         this->hp = hp; 
-        this->hpRegen = hpRegen; 
         this->attack = attack; 
-        this->defense = defense; 
-        this->crit = crit; 
-        this->toughness = toughness; 
         this->moveSpeed = moveSpeed; 
         this->attackSpeed = attackSpeed; 
-        this->vampirk = vampirk; 
         this->desc = desc; 
     } 
 }; 
@@ -62,22 +47,12 @@ std::vector<std::string>  DictProp::getDBBuild()
     ret.push_back("alter table `tb_DictProp` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` add `hp`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` add `attack`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` add `defense`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` add `crit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` add `toughness`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` add `vampirk`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictProp` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     return ret; 
@@ -85,28 +60,23 @@ std::vector<std::string>  DictProp::getDBBuild()
 std::string  DictProp::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`,`desc` from `tb_DictProp` where `id` = ? "); 
+    q.init("select `id`,`hp`,`attack`,`moveSpeed`,`attackSpeed`,`desc` from `tb_DictProp` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictProp::getDBSelectPure() 
 { 
-    return "select `id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`,`desc` from `tb_DictProp` "; 
+    return "select `id`,`hp`,`attack`,`moveSpeed`,`attackSpeed`,`desc` from `tb_DictProp` "; 
 } 
 std::string  DictProp::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictProp`(`id`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictProp`(`id`,`hp`,`attack`,`moveSpeed`,`attackSpeed`,`desc`) values(?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->hp; 
-    q << this->hpRegen; 
     q << this->attack; 
-    q << this->defense; 
-    q << this->crit; 
-    q << this->toughness; 
     q << this->moveSpeed; 
     q << this->attackSpeed; 
-    q << this->vampirk; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -120,17 +90,12 @@ std::string  DictProp::getDBDelete()
 std::string  DictProp::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictProp`(id) values(? ) on duplicate key update `hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictProp`(id) values(? ) on duplicate key update `hp` = ?,`attack` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->hp; 
-    q << this->hpRegen; 
     q << this->attack; 
-    q << this->defense; 
-    q << this->crit; 
-    q << this->toughness; 
     q << this->moveSpeed; 
     q << this->attackSpeed; 
-    q << this->vampirk; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -147,14 +112,9 @@ bool DictProp::fetchFromDBResult(zsummer::mysql::DBResult &result)
         { 
             result >> this->id; 
             result >> this->hp; 
-            result >> this->hpRegen; 
             result >> this->attack; 
-            result >> this->defense; 
-            result >> this->crit; 
-            result >> this->toughness; 
             result >> this->moveSpeed; 
             result >> this->attackSpeed; 
-            result >> this->vampirk; 
             result >> this->desc; 
             return true;  
         } 
@@ -170,14 +130,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 { 
     ws << data.id;  
     ws << data.hp;  
-    ws << data.hpRegen;  
     ws << data.attack;  
-    ws << data.defense;  
-    ws << data.crit;  
-    ws << data.toughness;  
     ws << data.moveSpeed;  
     ws << data.attackSpeed;  
-    ws << data.vampirk;  
     ws << data.desc;  
     return ws; 
 } 
@@ -185,14 +140,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 { 
     rs >> data.id;  
     rs >> data.hp;  
-    rs >> data.hpRegen;  
     rs >> data.attack;  
-    rs >> data.defense;  
-    rs >> data.crit;  
-    rs >> data.toughness;  
     rs >> data.moveSpeed;  
     rs >> data.attackSpeed;  
-    rs >> data.vampirk;  
     rs >> data.desc;  
     return rs; 
 } 
@@ -201,14 +151,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "id=" << info.id << ","; 
     stm << "hp=" << info.hp << ","; 
-    stm << "hpRegen=" << info.hpRegen << ","; 
     stm << "attack=" << info.attack << ","; 
-    stm << "defense=" << info.defense << ","; 
-    stm << "crit=" << info.crit << ","; 
-    stm << "toughness=" << info.toughness << ","; 
     stm << "moveSpeed=" << info.moveSpeed << ","; 
     stm << "attackSpeed=" << info.attackSpeed << ","; 
-    stm << "vampirk=" << info.vampirk << ","; 
     stm << "desc=" << info.desc << ","; 
     stm << "]"; 
     return stm; 

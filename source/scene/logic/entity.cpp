@@ -48,5 +48,17 @@ EntityFullData Entity::getFullData()
 }
 
 
-
+void Entity::flushProp()
+{
+    _props = _baseProps;
+    if (_props.hp > _state.maxHP)
+    {
+        _state.curHP += _props.hp - _state.maxHP;
+    }
+    _state.maxHP = _props.hp;
+    if (_state.curHP > _state.maxHP)
+    {
+        _state.curHP = _state.maxHP;
+    }
+}
 

@@ -162,6 +162,7 @@
         <member name="foe"  type="ui64" desc="锁定的敌人"/>
         <member name="leader"  type="ui64" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
         <member name="curHP"  type="double" desc="当前的血量"/>
+        <member name="maxHP"  type="double" desc="当前的血量上限"/>
     </struct>
     <array name="EntityStateArray" type="EntityState" desc="" />
 
