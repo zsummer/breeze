@@ -197,11 +197,10 @@ Proto4z.register(2007,"EntityFullData")
 Proto4z.EntityFullData = {} --EntityFullData 
 Proto4z.EntityFullData.__protoID = 2007 
 Proto4z.EntityFullData.__protoName = "EntityFullData" 
-Proto4z.EntityFullData[1] = {name="baseProps", type="DictProp" } --基础战斗属性 
-Proto4z.EntityFullData[2] = {name="props", type="DictProp" } --当前战斗属性 
-Proto4z.EntityFullData[3] = {name="state", type="EntityState" }  
-Proto4z.EntityFullData[4] = {name="mv", type="EntityMove" }  
-Proto4z.EntityFullData[5] = {name="report", type="EntityReport" }  
+Proto4z.EntityFullData[1] = {name="props", type="DictProp" } --战斗属性 
+Proto4z.EntityFullData[2] = {name="state", type="EntityState" }  
+Proto4z.EntityFullData[3] = {name="mv", type="EntityMove" }  
+Proto4z.EntityFullData[4] = {name="report", type="EntityReport" }  
  
 Proto4z.EntityFullDataArray = {}  
 Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray" 

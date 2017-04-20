@@ -47,7 +47,7 @@ inline DictProp operator * (const DictProp & ep, double df);
 struct EntityControl //EntityControl  
 {
     unsigned long long eid = InvalidEntityID;
-    unsigned long long agentNo = -1; //agentNo. -1为无效  
+    unsigned long long agentNo = RVO::RVO_ERROR; //agentNo.   
     double stateChageTime = 0.0;
     EPosition spawnpoint; //出生点
     double diedTime = 1E128; //实体死亡时间点 仅飞行道具类有效  
@@ -67,7 +67,6 @@ public:
     double getSuckBlood();
     double getAttack();
     EntityFullData getFullData();
-    DictProp _baseProps;
     DictProp _props;
     EntityState  _state;
     EntityMove  _move;
@@ -77,8 +76,6 @@ public:
     bool _isInfoDirty = false;
     bool _isMoveDirty = false;
 
-public:
-    void flushProp();
 };
 
 using EntityPtr = std::shared_ptr<Entity>;

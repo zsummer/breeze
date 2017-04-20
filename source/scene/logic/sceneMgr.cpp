@@ -536,11 +536,11 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                 avatar.second.avatarName,
                 avatar.second.equips,
                 group.groupID);
-            entity->_baseProps.hp = 10000;
-            entity->_baseProps.moveSpeed = 6.0;
-            entity->_baseProps.attackSpeed = 1.0;
-            entity->_baseProps.attack = 200;
-            entity->flushProp();
+            entity->_props.hp = 10000;
+            entity->_props.moveSpeed = 6.0;
+            entity->_props.attackSpeed = 1.0;
+            entity->_props.attack = 200;
+            entity->_state.maxHP = entity->_props.hp;
             entity->_state.curHP = entity->_state.maxHP;
             scene->addEntity(entity);
         }

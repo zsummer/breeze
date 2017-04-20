@@ -583,17 +583,15 @@ struct EntityFullData //EntityFullData
 { 
     static const unsigned short getProtoID() { return 2007;} 
     static const std::string getProtoName() { return "EntityFullData";} 
-    DictProp baseProps; //基础战斗属性  
-    DictProp props; //当前战斗属性  
+    DictProp props; //战斗属性  
     EntityState state;  
     EntityMove mv;  
     EntityReport report;  
     EntityFullData() 
     { 
     } 
-    EntityFullData(const DictProp & baseProps, const DictProp & props, const EntityState & state, const EntityMove & mv, const EntityReport & report) 
+    EntityFullData(const DictProp & props, const EntityState & state, const EntityMove & mv, const EntityReport & report) 
     { 
-        this->baseProps = baseProps; 
         this->props = props; 
         this->state = state; 
         this->mv = mv; 
@@ -602,7 +600,6 @@ struct EntityFullData //EntityFullData
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityFullData & data) 
 { 
-    ws << data.baseProps;  
     ws << data.props;  
     ws << data.state;  
     ws << data.mv;  
@@ -611,7 +608,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityFullData & data) 
 { 
-    rs >> data.baseProps;  
     rs >> data.props;  
     rs >> data.state;  
     rs >> data.mv;  
@@ -621,7 +617,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityFullData & info) 
 { 
     stm << "["; 
-    stm << "baseProps=" << info.baseProps << ","; 
     stm << "props=" << info.props << ","; 
     stm << "state=" << info.state << ","; 
     stm << "mv=" << info.mv << ","; 

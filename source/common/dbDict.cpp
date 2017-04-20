@@ -115,25 +115,7 @@ bool DBDict::fakeTestData()
         s.limitEntitys = 1;
         _dictOneKeyAOESearch[s.id] = s;//长5,宽2, 修正长+1  长方形伤害 限制1个敌人 
     }
-    if (true)
-    {
-        DictSkillBehaviour bhr;
-        bhr.id = 1;
-        bhr.isHit = true;
-        bhr.propID = 4;
-        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;  //攻击, 携带额外属性
 
-        bhr.id = 2;
-        bhr.isHit = false;
-        bhr.propID = 0;
-        bhr.buffs.push_back(1);
-        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr; //攻击, 触发buff
-
-        bhr.id = 3;
-        bhr.buffs.clear();
-        bhr.buffs.push_back(2);
-        _dictOneKeyDictSkillBehaviour[bhr.id] = bhr;//攻击 触发双buff
-    }
     if (true)
     {
         DictSkill skill;
@@ -142,19 +124,14 @@ bool DBDict::fakeTestData()
         skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, true);
         skill.stamp = setBitFlag(skill.stamp, SKILL_PHYSICAL, true);
         skill.cd = 0;
-        skill.effects.push_back(DictPairValue(200, 1));
         _dictOneKeyDictSkill[skill.id] = skill;
 
         skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, false);
 
         skill.id = 2;
-        skill.effects.clear();
-        skill.effects.push_back(DictPairValue(0, 2));
         _dictOneKeyDictSkill[skill.id] = skill;
 
         skill.id = 3;
-        skill.effects.clear();
-        skill.effects.push_back(DictPairValue(0,3));
         _dictOneKeyDictSkill[skill.id] = skill;
 
     }

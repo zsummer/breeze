@@ -136,28 +136,22 @@
         <member name="SKILL_CAN_MOVE"   desc="可移动"/>
         <member name="SKILL_PHYSICAL"    desc="物理类型"/>
         <member name="SKILL_MAGIC"    desc="魔法类型"/>
+        <member name="SKILL_HIT"   desc="攻击"/>
+        <member name="SKILL_HILL"   desc="治疗"/>
+        <member name="SKILL_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
+        <member name="SKILL_REMOVE_BUFF"   desc="驱散增益BUFF"/>
     </enum>
 
-    <!-- SKILL行为(组合位结构)  -->
-    <enum type="ui64" name="SKILL_BEHAVIOUR_STAMP" desc="">
-        <member name="SKILL_BEHAVIOUR_NONE"  desc=""/>
-        <member name="SKILL_BEHAVIOUR_HIT"   desc="攻击"/>
-        <member name="SKILL_BEHAVIOUR_HILL"   desc="治疗"/>
-        <member name="SKILL_BEHAVIOUR_TELEPORT_TARGET"   desc="瞬移到目标"/>
-        <member name="SKILL_BEHAVIOUR_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
-        <member name="SKILL_BEHAVIOUR_REMOVE_BUFF"   desc="驱散增益BUFF"/>
-        <member name="SKILL_BEHAVIOUR_TRIGGER_BUFF"   desc="触发buff"/>
-        <member name="SKILL_BEHAVIOUR_TRIGGER_SKILL"   desc="触发技能"/>
-    </enum>
-
-    <struct name="DictSkillBehaviour" store="MyISAM" desc="">
+    <struct name="DictSkill" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
-        <member name="isHit" type="ui16"    desc="0为普通, 1为攻击"/>
+        <member name="stamp" type="ui64"    desc=""/>
+        <member name="searchID" type="ui64"   desc=""/>
+        <member name="delay" type="double" desc="前摇"/>
+        <member name="keep" type="double" desc="持续时间"/>
+        <member name="cd" type="double" desc="冷却"/>
 
-        <member name="searchID" type="ui64"    desc="如果为0则默认是给已锁定敌人或者锁定区域释放"/>
 
         <member name="hpAdd" type="double" desc="附加真实伤害"/>
-        <member name="hpAddScaleTotal" type="double" desc=""/>
         <member name="hpAddScaleRemanent" type="double" desc=""/>
         <member name="hpAddScaleLost" type="double" desc=""/>
 
@@ -166,28 +160,21 @@
         <member name="dstTeleport" type="double" desc="目标闪现到自己" />
         <member name="selfTeleport" type="double" desc="自己闪现到目标" />
 
-
         <member name="dstMoveTime" type="double" desc="附加给目标朝向自己的位移时间" />
         <member name="dstMoveSpeed" type="double" desc="附加给目标朝向自己的位移速度" />
 
         <member name="selfMoveTime" type="double" desc="附加给自己朝向目标的位移时间" />
         <member name="selfMoveSpeed" type="double" desc="附加给自己朝向目标的位移速度" />
 
-        <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
-        <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
-        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
-        <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
+        <member name="appendBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
+        <member name="appendBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>
 
-        <member name="desc" type="string"   desc=""/>
-    </struct>
+        <member name="harmBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
+        <member name="harmBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>
 
-    <struct name="DictSkill" store="MyISAM" desc="吟唱,引导">
-        <member name="id" type="ui64" tag="key"   desc=""/>
-        <member name="stamp" type="ui64"    desc=""/>
-        <member name="cd" type="double" desc=""/>
-        <member name="searchID" type="ui64"   desc=""/>
-        <member name="effects" type="DictArrayPairValue"  tag="ignore" desc=""/>
-        <member name="effectsText" type="string"   desc="时间:效果,时间:效果,"/>
+        <member name="nextSkills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
+        <member name="nextSkillsText" type="string"   desc="触发技能 格式 k,k,k, "/>
+
         <member name="desc" type="string"   desc=""/>
     </struct>
 

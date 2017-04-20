@@ -144,7 +144,6 @@ public:
         buildTable<AOESearch>(helper);
         buildTable<DictBuffEffect>(helper);
         buildTable<DictBuff>(helper);
-        buildTable<DictSkillBehaviour>(helper);
         buildTable<DictSkill>(helper);
         return true;
     }
@@ -180,7 +179,6 @@ public:
         LOAD_ONE_KEY_DICT(AOESearch);
         LOAD_ONE_KEY_DICT(DictBuffEffect);
         LOAD_ONE_KEY_DICT(DictBuff);
-        LOAD_ONE_KEY_DICT(DictSkillBehaviour);
         LOAD_ONE_KEY_DICT(DictSkill);
 
         return true;
@@ -194,7 +192,6 @@ public:
     MAKE_ONE_KEY_DICT(AOESearch, ui64, id);
     MAKE_ONE_KEY_DICT(DictBuffEffect, ui64, id);
     MAKE_ONE_KEY_DICT(DictBuff, ui64, id);
-    MAKE_ONE_KEY_DICT(DictSkillBehaviour, ui64, id);
     MAKE_ONE_KEY_DICT(DictSkill, ui64, id);
 
 

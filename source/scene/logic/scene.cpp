@@ -110,9 +110,9 @@ EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName,
 
     EntityPtr entity = std::make_shared<Entity>();
 
-    entity->_baseProps = DictProp();
+    entity->_props = DictProp();
     entity->_state.curHP = entity->_props.hp;
-    entity->_props = entity->_baseProps;
+
 
     entity->_state.eid = ++_lastEID;
     entity->_state.avatarID = avatarID;
@@ -132,7 +132,7 @@ EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName,
 
     entity->_control.spawnpoint = { 0.0 - 30 +  realRandF()*30 ,60 -30 + realRandF()*30 };
     entity->_control.eid = entity->_state.eid;
-    entity->_control.agentNo = -1;
+    entity->_control.agentNo = RVO::RVO_ERROR;
     entity->_control.stateChageTime = getFloatSteadyNowTime();
 
     entity->_move.eid = entity->_state.eid;
@@ -203,7 +203,7 @@ bool Scene::removeEntity(EntityID eid)
     if(_move->isValidAgent(entity->_control.agentNo))
     {
         _move->delAgent(entity->_control.agentNo);
-        entity->_control.agentNo = -1;
+        entity->_control.agentNo = RVO::RVO_ERROR;
     }
     if (entity->_state.etype == ENTITY_PLAYER)
     {

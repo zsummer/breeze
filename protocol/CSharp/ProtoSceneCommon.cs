@@ -875,22 +875,19 @@ namespace Proto4z
         static public ushort getProtoID() { return 2007; } 
         static public string getProtoName() { return "EntityFullData"; } 
         //members   
-        public DictProp baseProps; //基础战斗属性  
-        public DictProp props; //当前战斗属性  
+        public DictProp props; //战斗属性  
         public EntityState state;  
         public EntityMove mv;  
         public EntityReport report;  
         public EntityFullData()  
         { 
-            baseProps = new DictProp();  
             props = new DictProp();  
             state = new EntityState();  
             mv = new EntityMove();  
             report = new EntityReport();  
         } 
-        public EntityFullData(DictProp baseProps, DictProp props, EntityState state, EntityMove mv, EntityReport report) 
+        public EntityFullData(DictProp props, EntityState state, EntityMove mv, EntityReport report) 
         { 
-            this.baseProps = baseProps; 
             this.props = props; 
             this.state = state; 
             this.mv = mv; 
@@ -899,8 +896,6 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.baseProps == null) this.baseProps = new DictProp(); 
-            data.AddRange(this.baseProps.__encode()); 
             if (this.props == null) this.props = new DictProp(); 
             data.AddRange(this.props.__encode()); 
             if (this.state == null) this.state = new EntityState(); 
@@ -913,8 +908,6 @@ namespace Proto4z
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.baseProps = new DictProp(); 
-            this.baseProps.__decode(binData, ref pos); 
             this.props = new DictProp(); 
             this.props.__decode(binData, ref pos); 
             this.state = new EntityState(); 

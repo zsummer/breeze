@@ -192,8 +192,7 @@
 
     <!-- 一个实体的完整同步数据 -->
     <struct name="EntityFullData" desc="EntityFullData">
-        <member name="baseProps" type="DictProp"   desc="基础战斗属性"/>
-        <member name="props" type="DictProp"   desc="当前战斗属性"/>
+        <member name="props" type="DictProp"   desc="战斗属性"/>
         <member name="state" type="EntityState"  desc=""/>
         <member name="mv" type="EntityMove"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>

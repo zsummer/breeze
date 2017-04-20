@@ -110,48 +110,35 @@ Proto4z.SKILL_ON_MOVE_BREAK = 4--可被中断
 Proto4z.SKILL_CAN_MOVE = 5--可移动 
 Proto4z.SKILL_PHYSICAL = 6--物理类型 
 Proto4z.SKILL_MAGIC = 7--魔法类型 
- 
-Proto4z.SKILL_BEHAVIOUR_NONE = 0 
-Proto4z.SKILL_BEHAVIOUR_HIT = 1--攻击 
-Proto4z.SKILL_BEHAVIOUR_HILL = 2--治疗 
-Proto4z.SKILL_BEHAVIOUR_TELEPORT_TARGET = 3--瞬移到目标 
-Proto4z.SKILL_BEHAVIOUR_REMOVE_DEBUFF = 4--驱散减益BUFF 
-Proto4z.SKILL_BEHAVIOUR_REMOVE_BUFF = 5--驱散增益BUFF 
-Proto4z.SKILL_BEHAVIOUR_TRIGGER_BUFF = 6--触发buff 
-Proto4z.SKILL_BEHAVIOUR_TRIGGER_SKILL = 7--触发技能 
- 
-Proto4z.register(11006,"DictSkillBehaviour") 
-Proto4z.DictSkillBehaviour = {}  
-Proto4z.DictSkillBehaviour.__protoID = 11006 
-Proto4z.DictSkillBehaviour.__protoName = "DictSkillBehaviour" 
-Proto4z.DictSkillBehaviour[1] = {name="id", type="ui64" }  
-Proto4z.DictSkillBehaviour[2] = {name="isHit", type="ui16" } --0为普通, 1为攻击 
-Proto4z.DictSkillBehaviour[3] = {name="searchID", type="ui64" } --如果为0则默认是给已锁定敌人或者锁定区域释放 
-Proto4z.DictSkillBehaviour[4] = {name="hpAdd", type="double" } --附加真实伤害 
-Proto4z.DictSkillBehaviour[5] = {name="hpAddScaleTotal", type="double" }  
-Proto4z.DictSkillBehaviour[6] = {name="hpAddScaleRemanent", type="double" }  
-Proto4z.DictSkillBehaviour[7] = {name="hpAddScaleLost", type="double" }  
-Proto4z.DictSkillBehaviour[8] = {name="propID", type="ui64" } --附加属性提升 
-Proto4z.DictSkillBehaviour[9] = {name="dstTeleport", type="double" } --目标闪现到自己 
-Proto4z.DictSkillBehaviour[10] = {name="selfTeleport", type="double" } --自己闪现到目标 
-Proto4z.DictSkillBehaviour[11] = {name="dstMoveTime", type="double" } --附加给目标朝向自己的位移时间 
-Proto4z.DictSkillBehaviour[12] = {name="dstMoveSpeed", type="double" } --附加给目标朝向自己的位移速度 
-Proto4z.DictSkillBehaviour[13] = {name="selfMoveTime", type="double" } --附加给自己朝向目标的位移时间 
-Proto4z.DictSkillBehaviour[14] = {name="selfMoveSpeed", type="double" } --附加给自己朝向目标的位移速度 
-Proto4z.DictSkillBehaviour[15] = {name="skills", type="DictArrayKey" } --触发技能 
-Proto4z.DictSkillBehaviour[16] = {name="skillsText", type="string" } --触发技能 格式id,id,id  
-Proto4z.DictSkillBehaviour[17] = {name="buffs", type="DictArrayKey" } --触发buff 
-Proto4z.DictSkillBehaviour[18] = {name="buffsText", type="string" } --触发buff 格式id,id,id 
-Proto4z.DictSkillBehaviour[19] = {name="desc", type="string" }  
+Proto4z.SKILL_HIT = 8--攻击 
+Proto4z.SKILL_HILL = 9--治疗 
+Proto4z.SKILL_REMOVE_DEBUFF = 10--驱散减益BUFF 
+Proto4z.SKILL_REMOVE_BUFF = 11--驱散增益BUFF 
  
 Proto4z.register(11007,"DictSkill") 
-Proto4z.DictSkill = {} --吟唱,引导 
+Proto4z.DictSkill = {}  
 Proto4z.DictSkill.__protoID = 11007 
 Proto4z.DictSkill.__protoName = "DictSkill" 
 Proto4z.DictSkill[1] = {name="id", type="ui64" }  
 Proto4z.DictSkill[2] = {name="stamp", type="ui64" }  
-Proto4z.DictSkill[3] = {name="cd", type="double" }  
-Proto4z.DictSkill[4] = {name="searchID", type="ui64" }  
-Proto4z.DictSkill[5] = {name="effects", type="DictArrayPairValue" }  
-Proto4z.DictSkill[6] = {name="effectsText", type="string" } --时间:效果,时间:效果, 
-Proto4z.DictSkill[7] = {name="desc", type="string" }  
+Proto4z.DictSkill[3] = {name="searchID", type="ui64" }  
+Proto4z.DictSkill[4] = {name="delay", type="double" } --前摇 
+Proto4z.DictSkill[5] = {name="keep", type="double" } --持续时间 
+Proto4z.DictSkill[6] = {name="cd", type="double" } --冷却 
+Proto4z.DictSkill[7] = {name="hpAdd", type="double" } --附加真实伤害 
+Proto4z.DictSkill[8] = {name="hpAddScaleRemanent", type="double" }  
+Proto4z.DictSkill[9] = {name="hpAddScaleLost", type="double" }  
+Proto4z.DictSkill[10] = {name="propID", type="ui64" } --附加属性提升 
+Proto4z.DictSkill[11] = {name="dstTeleport", type="double" } --目标闪现到自己 
+Proto4z.DictSkill[12] = {name="selfTeleport", type="double" } --自己闪现到目标 
+Proto4z.DictSkill[13] = {name="dstMoveTime", type="double" } --附加给目标朝向自己的位移时间 
+Proto4z.DictSkill[14] = {name="dstMoveSpeed", type="double" } --附加给目标朝向自己的位移速度 
+Proto4z.DictSkill[15] = {name="selfMoveTime", type="double" } --附加给自己朝向目标的位移时间 
+Proto4z.DictSkill[16] = {name="selfMoveSpeed", type="double" } --附加给自己朝向目标的位移速度 
+Proto4z.DictSkill[17] = {name="appendBuffs", type="DictArrayKey" }  
+Proto4z.DictSkill[18] = {name="appendBuffsText", type="string" } --触发buff 格式 k,k,k,  
+Proto4z.DictSkill[19] = {name="harmBuffs", type="DictArrayKey" }  
+Proto4z.DictSkill[20] = {name="harmBuffsText", type="string" } --触发buff 格式 k,k,k,  
+Proto4z.DictSkill[21] = {name="nextSkills", type="DictArrayKey" } --触发技能 
+Proto4z.DictSkill[22] = {name="nextSkillsText", type="string" } --触发技能 格式 k,k,k,  
+Proto4z.DictSkill[23] = {name="desc", type="string" }  
