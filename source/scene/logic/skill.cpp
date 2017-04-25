@@ -26,9 +26,9 @@ void Skill::update()
 }
 
 
-bool Skill::trigger(ScenePtr scene, EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst)
+bool Skill::trigger(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, bool foeFirst)
 {
-    auto entity = scene->getEntity(eid);
+    auto entity = scene->getEntity(casterID);
     if (!entity)
     {
         return false;
@@ -37,7 +37,7 @@ bool Skill::trigger(ScenePtr scene, EntityID eid, ui64 skillID, EntityID foe, co
     auto &self = *entity;
 
 
-    scene->broadcast(UseSkillNotice(eid, skillID, foe, dst));
+    scene->broadcast(UseSkillNotice(casterID, skillID, self._state.foe, dst, foeFirst));
     return true;
 }
 

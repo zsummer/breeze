@@ -349,7 +349,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
            )
         {
-            sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID, req.foe, req.dst));
+            sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID, InvalidEntityID,  req.dst, req.foeFirst));
         }
     }
     else if (rs.getProtoID() == ClientCustomReq::getProtoID())

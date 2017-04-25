@@ -121,24 +121,26 @@ Proto4z.DictSkill.__protoID = 11007
 Proto4z.DictSkill.__protoName = "DictSkill" 
 Proto4z.DictSkill[1] = {name="id", type="ui64" }  
 Proto4z.DictSkill[2] = {name="stamp", type="ui64" }  
-Proto4z.DictSkill[3] = {name="searchID", type="ui64" }  
-Proto4z.DictSkill[4] = {name="delay", type="double" } --前摇 
-Proto4z.DictSkill[5] = {name="keep", type="double" } --持续时间 
-Proto4z.DictSkill[6] = {name="cd", type="double" } --冷却 
-Proto4z.DictSkill[7] = {name="hpAdd", type="double" } --附加真实伤害 
-Proto4z.DictSkill[8] = {name="hpAddScaleRemanent", type="double" }  
-Proto4z.DictSkill[9] = {name="hpAddScaleLost", type="double" }  
-Proto4z.DictSkill[10] = {name="propID", type="ui64" } --附加属性提升 
-Proto4z.DictSkill[11] = {name="dstTeleport", type="double" } --目标闪现到自己 
-Proto4z.DictSkill[12] = {name="selfTeleport", type="double" } --自己闪现到目标 
-Proto4z.DictSkill[13] = {name="dstMoveTime", type="double" } --附加给目标朝向自己的位移时间 
-Proto4z.DictSkill[14] = {name="dstMoveSpeed", type="double" } --附加给目标朝向自己的位移速度 
-Proto4z.DictSkill[15] = {name="selfMoveTime", type="double" } --附加给自己朝向目标的位移时间 
-Proto4z.DictSkill[16] = {name="selfMoveSpeed", type="double" } --附加给自己朝向目标的位移速度 
-Proto4z.DictSkill[17] = {name="appendBuffs", type="DictArrayKey" }  
-Proto4z.DictSkill[18] = {name="appendBuffsText", type="string" } --触发buff 格式 k,k,k,  
-Proto4z.DictSkill[19] = {name="harmBuffs", type="DictArrayKey" }  
-Proto4z.DictSkill[20] = {name="harmBuffsText", type="string" } --触发buff 格式 k,k,k,  
-Proto4z.DictSkill[21] = {name="nextSkills", type="DictArrayKey" } --触发技能 
-Proto4z.DictSkill[22] = {name="nextSkillsText", type="string" } --触发技能 格式 k,k,k,  
-Proto4z.DictSkill[23] = {name="desc", type="string" }  
+Proto4z.DictSkill[3] = {name="searchID", type="ui64" } --锁敌 
+Proto4z.DictSkill[4] = {name="aoeID", type="ui64" } --AOI伤害 
+Proto4z.DictSkill[5] = {name="appBuffID", type="ui64" } --上buff的searchid 
+Proto4z.DictSkill[6] = {name="delay", type="double" } --前摇 
+Proto4z.DictSkill[7] = {name="keep", type="double" } --持续时间 
+Proto4z.DictSkill[8] = {name="cd", type="double" } --冷却 
+Proto4z.DictSkill[9] = {name="hpAdd", type="double" } --附加真实伤害 
+Proto4z.DictSkill[10] = {name="hpAddScaleRemanent", type="double" }  
+Proto4z.DictSkill[11] = {name="hpAddScaleLost", type="double" }  
+Proto4z.DictSkill[12] = {name="propID", type="ui64" } --附加属性提升 
+Proto4z.DictSkill[13] = {name="dstTeleport", type="double" } --目标闪现到自己 
+Proto4z.DictSkill[14] = {name="selfTeleport", type="double" } --自己闪现到目标 
+Proto4z.DictSkill[15] = {name="dstMoveTime", type="double" } --附加给目标朝向自己的位移时间 
+Proto4z.DictSkill[16] = {name="dstMoveSpeed", type="double" } --附加给目标朝向自己的位移速度 
+Proto4z.DictSkill[17] = {name="selfMoveTime", type="double" } --附加给自己朝向目标的位移时间 
+Proto4z.DictSkill[18] = {name="selfMoveSpeed", type="double" } --附加给自己朝向目标的位移速度 
+Proto4z.DictSkill[19] = {name="appendBuffs", type="DictArrayKey" }  
+Proto4z.DictSkill[20] = {name="appendBuffsText", type="string" } --触发buff 格式 k,k,k,  
+Proto4z.DictSkill[21] = {name="harmBuffs", type="DictArrayKey" }  
+Proto4z.DictSkill[22] = {name="harmBuffsText", type="string" } --触发buff 格式 k,k,k,  
+Proto4z.DictSkill[23] = {name="nextSkills", type="DictArrayKey" } --触发技能 
+Proto4z.DictSkill[24] = {name="nextSkillsText", type="string" } --触发技能 格式 k,k,k,  
+Proto4z.DictSkill[25] = {name="desc", type="string" }  

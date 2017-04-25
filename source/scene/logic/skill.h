@@ -30,7 +30,7 @@ public:
     void init(std::weak_ptr<Scene> scene);
     void update();
 
-    bool trigger(ScenePtr scene, EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst);
+    bool trigger(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, bool foeFirst);
     bool damage(ScenePtr scene, EntityPtr caster, std::vector<EntityPtr> & targets);
     bool cleanSkill();
     bool addBuff();

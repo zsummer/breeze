@@ -44,17 +44,34 @@ inline DictProp operator * (const DictProp & ep, double df);
 
 
 
+using DictID = unsigned long long;
+const DictID InvalidDictID = -1;
+
+struct EntitySkillInfo
+{
+    DictID dictID = InvalidDictID;
+    double beginTime = 0.0; //技能开始释放时间
+};
+
+
+
 struct EntityControl //EntityControl  
 {
     unsigned long long eid = InvalidEntityID;
     unsigned long long agentNo = RVO::RVO_ERROR; //agentNo.   
     double stateChageTime = 0.0;
+    DictID activeSkillID = InvalidDictID; //激活的自动锁敌的技能ID
+    std::map<DictID, EntitySkillInfo> skills;
+
     EPosition spawnpoint; //出生点
     double diedTime = 1E128; //实体死亡时间点 仅飞行道具类有效  
     ui64 hitTimes = -1; //实体碰撞, 仅飞行道具类有效  
     double blockMoveCount = 0; //移动被阻次数 
     EPosition lastClientPos; //最后一次客户端提交的坐标
 };
+
+
+
 
 
 

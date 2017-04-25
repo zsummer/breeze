@@ -423,7 +423,9 @@ namespace Proto4z
         //members   
         public ulong id;  
         public ulong stamp;  
-        public ulong searchID;  
+        public ulong searchID; //锁敌  
+        public ulong aoeID; //AOI伤害  
+        public ulong appBuffID; //上buff的searchid  
         public double delay; //前摇  
         public double keep; //持续时间  
         public double cd; //冷却  
@@ -449,6 +451,8 @@ namespace Proto4z
             id = 0;  
             stamp = 0;  
             searchID = 0;  
+            aoeID = 0;  
+            appBuffID = 0;  
             delay = 0.0;  
             keep = 0.0;  
             cd = 0.0;  
@@ -470,11 +474,13 @@ namespace Proto4z
             nextSkillsText = "";  
             desc = "";  
         } 
-        public DictSkill(ulong id, ulong stamp, ulong searchID, double delay, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey nextSkills, string nextSkillsText, string desc) 
+        public DictSkill(ulong id, ulong stamp, ulong searchID, ulong aoeID, ulong appBuffID, double delay, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey nextSkills, string nextSkillsText, string desc) 
         { 
             this.id = id; 
             this.stamp = stamp; 
             this.searchID = searchID; 
+            this.aoeID = aoeID; 
+            this.appBuffID = appBuffID; 
             this.delay = delay; 
             this.keep = keep; 
             this.cd = cd; 
@@ -502,6 +508,8 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.stamp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.searchID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.aoeID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.appBuffID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.delay)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.keep)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.cd)); 
@@ -532,6 +540,8 @@ namespace Proto4z
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.stamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.searchID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.aoeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.appBuffID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.delay = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.keep = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.cd = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 

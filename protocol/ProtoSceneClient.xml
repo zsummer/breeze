@@ -84,8 +84,8 @@
     <proto name="UseSkillReq" desc= "">
         <member name="eid"  type="ui64" desc=""/>
         <member name="skillID"  type="ui64" desc=""/>
-        <member name="foe"  type="ui64" desc=""/>
         <member name="dst"  type="EPosition" desc=""/>
+        <member name="foeFirst"  type="bool" desc=""/>
     </proto>
     <proto name="UseSkillResp" desc= "只有失败时才会使用该协议">
         <member name="retCode"  type="ui16" desc=""/>
@@ -93,12 +93,14 @@
         <member name="skillID"  type="ui64" desc=""/>
         <member name="foe"  type="ui64" desc=""/>
         <member name="dst"  type="EPosition" desc=""/>
+        <member name="foeFirst"  type="bool" desc=""/>
     </proto>
     <proto name="UseSkillNotice" desc= "">
         <member name="eid"  type="ui64" desc=""/>
         <member name="skillID"  type="ui64" desc=""/>
         <member name="foe"  type="ui64" desc=""/>
         <member name="dst"  type="EPosition" desc=""/>
+        <member name="foeFirst"  type="bool" desc=""/>
     </proto>
 
 
