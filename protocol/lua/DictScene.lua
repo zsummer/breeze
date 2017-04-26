@@ -141,6 +141,5 @@ Proto4z.DictSkill[19] = {name="appendBuffs", type="DictArrayKey" }
 Proto4z.DictSkill[20] = {name="appendBuffsText", type="string" } --触发buff 格式 k,k,k,  
 Proto4z.DictSkill[21] = {name="harmBuffs", type="DictArrayKey" }  
 Proto4z.DictSkill[22] = {name="harmBuffsText", type="string" } --触发buff 格式 k,k,k,  
-Proto4z.DictSkill[23] = {name="nextSkills", type="DictArrayKey" } --触发技能 
-Proto4z.DictSkill[24] = {name="nextSkillsText", type="string" } --触发技能 格式 k,k,k,  
-Proto4z.DictSkill[25] = {name="desc", type="string" }  
+Proto4z.DictSkill[23] = {name="nextSkillID", type="ui64" } --技能结束释放下个技能 
+Proto4z.DictSkill[24] = {name="desc", type="string" }  

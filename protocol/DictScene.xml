@@ -174,8 +174,8 @@
         <member name="harmBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
         <member name="harmBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>
 
-        <member name="nextSkills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
-        <member name="nextSkillsText" type="string"   desc="触发技能 格式 k,k,k, "/>
+        <member name="nextSkillID" type="ui64"   desc="技能结束释放下个技能"/>
+
 
         <member name="desc" type="string"   desc=""/>
     </struct>

@@ -83,6 +83,7 @@ public:
     void pushAsync(std::function<void()> && func);
     std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const AOESearch & search);
     std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, ui64  searchID);
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition pos, ui64  searchID);
 
     void onSceneInit();
     void onAddEntity(EntityPtr entity);

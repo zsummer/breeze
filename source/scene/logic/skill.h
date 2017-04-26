@@ -30,6 +30,7 @@ public:
     void init(std::weak_ptr<Scene> scene);
     void update();
 
+    bool useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, EPosition dst, bool foeFirst);
     bool trigger(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, bool foeFirst);
     bool damage(ScenePtr scene, EntityPtr caster, std::vector<EntityPtr> & targets);
     bool cleanSkill();

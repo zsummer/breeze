@@ -49,7 +49,8 @@ const DictID InvalidDictID = -1;
 
 struct EntitySkillInfo
 {
-    DictID dictID = InvalidDictID;
+    DictID skillID = InvalidDictID;
+    DictID nextSkillID = InvalidDictID;
     double beginTime = 0.0; //技能开始释放时间
 };
 
@@ -61,7 +62,8 @@ struct EntityControl //EntityControl
     unsigned long long agentNo = RVO::RVO_ERROR; //agentNo.   
     double stateChageTime = 0.0;
     DictID activeSkillID = InvalidDictID; //激活的自动锁敌的技能ID
-    std::map<DictID, EntitySkillInfo> skills;
+    std::map<DictID, EntitySkillInfo> activeSkills;
+    std::map<DictID, double> waitSkills;
 
     EPosition spawnpoint; //出生点
     double diedTime = 1E128; //实体死亡时间点 仅飞行道具类有效  

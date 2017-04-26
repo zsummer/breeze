@@ -346,7 +346,8 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         UseSkillReq req;
         rs >> req;
         auto entity = getEntity(req.eid);
-        if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
+        if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER 
+            || ! _skill->useSkill(shared_from_this(), req.eid, req.skillID, req.dst, req.foeFirst)
            )
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID, InvalidEntityID,  req.dst, req.foeFirst));
@@ -379,7 +380,10 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
 
 
 
-
+std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition pos, ui64  searchID)
+{
+    return searchTarget(caster, getRadian(caster->_move.position.x, caster->_move.position.y, pos.x, pos.y), searchID);
+}
 std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, ui64  searchID)
 {
     auto founder =  DBDict::getRef().getOneKeyAOESearch(searchID);

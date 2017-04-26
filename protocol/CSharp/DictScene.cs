@@ -443,8 +443,7 @@ namespace Proto4z
         public string appendBuffsText; //触发buff 格式 k,k,k,   
         public DictArrayKey harmBuffs;  
         public string harmBuffsText; //触发buff 格式 k,k,k,   
-        public DictArrayKey nextSkills; //触发技能  
-        public string nextSkillsText; //触发技能 格式 k,k,k,   
+        public ulong nextSkillID; //技能结束释放下个技能  
         public string desc;  
         public DictSkill()  
         { 
@@ -470,11 +469,10 @@ namespace Proto4z
             appendBuffsText = "";  
             harmBuffs = new DictArrayKey();  
             harmBuffsText = "";  
-            nextSkills = new DictArrayKey();  
-            nextSkillsText = "";  
+            nextSkillID = 0;  
             desc = "";  
         } 
-        public DictSkill(ulong id, ulong stamp, ulong searchID, ulong aoeID, ulong appBuffID, double delay, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey nextSkills, string nextSkillsText, string desc) 
+        public DictSkill(ulong id, ulong stamp, ulong searchID, ulong aoeID, ulong appBuffID, double delay, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, ulong nextSkillID, string desc) 
         { 
             this.id = id; 
             this.stamp = stamp; 
@@ -498,8 +496,7 @@ namespace Proto4z
             this.appendBuffsText = appendBuffsText; 
             this.harmBuffs = harmBuffs; 
             this.harmBuffsText = harmBuffsText; 
-            this.nextSkills = nextSkills; 
-            this.nextSkillsText = nextSkillsText; 
+            this.nextSkillID = nextSkillID; 
             this.desc = desc; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -529,9 +526,7 @@ namespace Proto4z
             if (this.harmBuffs == null) this.harmBuffs = new DictArrayKey(); 
             data.AddRange(this.harmBuffs.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.harmBuffsText)); 
-            if (this.nextSkills == null) this.nextSkills = new DictArrayKey(); 
-            data.AddRange(this.nextSkills.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.nextSkillsText)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.nextSkillID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
@@ -561,9 +556,7 @@ namespace Proto4z
             this.harmBuffs = new DictArrayKey(); 
             this.harmBuffs.__decode(binData, ref pos); 
             this.harmBuffsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
-            this.nextSkills = new DictArrayKey(); 
-            this.nextSkills.__decode(binData, ref pos); 
-            this.nextSkillsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.nextSkillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 
