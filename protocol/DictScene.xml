@@ -29,7 +29,7 @@
     <struct name="AOESearch" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="etype" type="ui16"  desc="实体类型, 玩家/AI 或者是NONE忽略该选项"/>
-        <member name="camp" type="ui64"  tag="ignore" desc="0忽略阵营, 1自己, 2同阵营非自己, 3敌方,  4中立"/>
+        <member name="camp" type="ui64"  tag="ignore" desc="0忽略阵营, 1自己, 2 已锁定的敌人, 3已锁定的leader, 4同阵营非自己, 5敌方,  6中立"/>
         <member name="campText" type="string"  desc=""/>
         <member name="isRect" type="ui16"  desc="0扇形, 其他矩形"/>
         <member name="distance" type="double"  desc="伤害距离"/>
@@ -39,27 +39,7 @@
         <member name="limitEntitys" type="ui64"  desc="最大目标数, 距离优先"/>
     </struct>
 
-    <!-- SKILL TRIGGER 标记-->
-    <enum type="ui64" name="SKILL_TRIGGER_STAMP" desc="">
-        <member name="SKILL_TRIGGER_WHEN_LOAD_BUFF" value="5"  desc="加载buff立刻触发"/>
-        <member name="SKILL_TRIGGER_WHEN_UNLOAD_BUFF" value="6"  desc="卸载buff立刻触发"/>
 
-
-        <member name="SKILL_TRIGGER_PRE_DEATH" value="10"  desc="死亡前触发"/>
-        <member name="SKILL_TRIGGER_AFT_DEATH" value="11"  desc="死亡后触发"/>
-
-        <member name="SKILL_TRIGGER_WHEN_GENERAL" value="15"  desc="攻击触发"/>
-        <member name="SKILL_TRIGGER_WHEN_PHYSICAL" value="16"  desc="攻击触发"/>
-        <member name="SKILL_TRIGGER_WHEN_MAGIC" value="17"  desc="攻击触发"/>
-
-        <member name="SKILL_TRIGGER_ON_GENERAL" value="20"  desc="被攻击触发"/>
-        <member name="SKILL_TRIGGER_ON_PHYSICAL" value="21"  desc="被攻击触发"/>
-        <member name="SKILL_TRIGGER_ON_MAGIC" value="22"  desc="被攻击触发"/>
-
-        <member name="SKILL_TRIGGER_WHEN_ATTACH_GENERAL" value="30"  desc="攻击触发"/>
-        <member name="SKILL_TRIGGER_WHEN_ON_ATTACH" value="31"  desc="被攻击触发"/>
-
-    </enum>
 
 
 
@@ -94,30 +74,27 @@
     </enum>
 
 
-    <struct name="DictBuffEffect" store="MyISAM" desc="">
-        <member name="id" type="ui64" tag="key"   desc=""/>
-        <member name="listenTriggerStamp" type="ui64" tag="ignore" desc=""/>
-        <member name="listenTriggerStampText" type="string"  desc=""/>
-        <member name="propID" type="ui64"   desc="提升的属性效果, 求积方式的参数是基础属性 不算其他装备"/>
-        <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
-        <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
-        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
-        <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
-        <member name="areaTrigger" type="double"   desc="距离触发, 0为无效"/>
-        <member name="timerTrigger" type="double"   desc="定时器触发间隔"/>
-        <member name="intervalLimit" type="double"   desc="最小触发间隔时间, 0为无效"/>
-        <member name="triggerCountLimit" type="double"   desc="触发次数限制"/>
-        <member name="autoUnloadBuff" type="double"   desc="超出触发次数后自动移除buff"/>
-        <member name="desc" type="string"   desc=""/>
-    </struct>
+
 
     <struct name="DictBuff" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="stamp" type="ui64" tag="ignore" desc="BUFF_STAMP"/>
         <member name="stampText" type="string"  desc=""/>
 
-        <member name="effects" type="DictArrayKey" tag="ignore" desc="DictBuffEffect ID"/>
-        <member name="effectsText" type="string"  desc=""/>
+        <member name="propID" type="ui64"   desc="提升的属性效果, 求积方式的参数是基础属性 不算其他装备"/>
+
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
+        <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
+        <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
+
+        <member name="triggerAoeSearchID" type="double"   desc="search结果不为空触发"/>
+        <member name="triggerDelay" type="double"   desc="延迟触发, 当间隔触发不为0时生效"/>
+        <member name="triggerInterval" type="double"   desc="间隔触发"/>
+
+        <member name="triggerCountLimit" type="double"   desc="触发次数限制"/>
+
+        <member name="triggerAutoRemove" type="double"   desc="触发后移除buff"/>
 
         <member name="keepTime"  type="double" desc=""/>
         <member name="limitStackTime"  type="double" desc="相同buff叠加时间并且刷新触发次数"/>
@@ -148,9 +125,11 @@
         <member name="searchID" type="ui64"   desc="锁敌"/>
         <member name="aoeID" type="ui64"   desc="AOI伤害"/>
         <member name="appBuffID" type="ui64"   desc="上buff的searchid"/>
-        <member name="delay" type="double" desc="前摇"/>
+        <member name="delay" type="double"  desc=""/>
+        <member name="interval" type="double" desc="自动释放间隔,针对自动施法,被动技能有效"/>
         <member name="keep" type="double" desc="持续时间"/>
         <member name="cd" type="double" desc="冷却"/>
+        
 
 
         <member name="hpAdd" type="double" desc="附加真实伤害"/>
@@ -174,8 +153,11 @@
         <member name="harmBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
         <member name="harmBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>
 
-        <member name="nextSkillID" type="ui64"   desc="技能结束释放下个技能"/>
+        <member name="combSkills" type="DictArrayKey"  tag="ignore" desc=""/>
+        <member name="combSkillsText" type="string"   desc="组合技能"/>
 
+        <member name="followSkills" type="DictArrayKey"  tag="ignore" desc=""/>
+        <member name="followSkillsText" type="string"   desc="跟随技能"/>
 
         <member name="desc" type="string"   desc=""/>
     </struct>

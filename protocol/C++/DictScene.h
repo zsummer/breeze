@@ -178,7 +178,7 @@ struct AOESearch
     inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
     unsigned long long id;  
     unsigned short etype; //实体类型, 玩家/AI 或者是NONE忽略该选项  
-    unsigned long long camp; //0忽略阵营, 1自己, 2同阵营非自己, 3敌方,  4中立  
+    unsigned long long camp; //0忽略阵营, 1自己, 2 已锁定的敌人, 3已锁定的leader, 4同阵营非自己, 5敌方,  6中立  
     std::string campText;  
     unsigned short isRect; //0扇形, 其他矩形  
     double distance; //伤害距离  
@@ -360,22 +360,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-enum SKILL_TRIGGER_STAMP : unsigned long long 
-{ 
-    SKILL_TRIGGER_WHEN_LOAD_BUFF = 5, //加载buff立刻触发  
-    SKILL_TRIGGER_WHEN_UNLOAD_BUFF = 6, //卸载buff立刻触发  
-    SKILL_TRIGGER_PRE_DEATH = 10, //死亡前触发  
-    SKILL_TRIGGER_AFT_DEATH = 11, //死亡后触发  
-    SKILL_TRIGGER_WHEN_GENERAL = 15, //攻击触发  
-    SKILL_TRIGGER_WHEN_PHYSICAL = 16, //攻击触发  
-    SKILL_TRIGGER_WHEN_MAGIC = 17, //攻击触发  
-    SKILL_TRIGGER_ON_GENERAL = 20, //被攻击触发  
-    SKILL_TRIGGER_ON_PHYSICAL = 21, //被攻击触发  
-    SKILL_TRIGGER_ON_MAGIC = 22, //被攻击触发  
-    SKILL_TRIGGER_WHEN_ATTACH_GENERAL = 30, //攻击触发  
-    SKILL_TRIGGER_WHEN_ON_ATTACH = 31, //被攻击触发  
-}; 
- 
 enum BUFF_STAMP : unsigned long long 
 { 
     BUFF_HALO = 1, //描述性类型: 光环  
@@ -400,230 +384,6 @@ enum BUFF_STAMP : unsigned long long
     BUFF_IMMUNE_BREAK = 35, //免疫: 免疫技能中断  
 }; 
  
-struct DictBuffEffect 
-{ 
-    static const unsigned short getProtoID() { return 11004;} 
-    static const std::string getProtoName() { return "DictBuffEffect";} 
-    inline std::vector<std::string>  getDBBuild(); 
-    inline std::string  getDBInsert(); 
-    inline std::string  getDBDelete(); 
-    inline std::string  getDBUpdate(); 
-    inline std::string  getDBSelect(); 
-    inline std::string  getDBSelectPure(); 
-    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long id;  
-    unsigned long long listenTriggerStamp;  
-    std::string listenTriggerStampText;  
-    unsigned long long propID; //提升的属性效果, 求积方式的参数是基础属性 不算其他装备  
-    DictArrayKey skills; //触发技能  
-    std::string skillsText; //触发技能 格式id,id,id   
-    DictArrayKey buffs; //触发buff  
-    std::string buffsText; //触发buff 格式id,id,id  
-    double areaTrigger; //距离触发, 0为无效  
-    double timerTrigger; //定时器触发间隔  
-    double intervalLimit; //最小触发间隔时间, 0为无效  
-    double triggerCountLimit; //触发次数限制  
-    double autoUnloadBuff; //超出触发次数后自动移除buff  
-    std::string desc;  
-    DictBuffEffect() 
-    { 
-        id = 0; 
-        listenTriggerStamp = 0; 
-        propID = 0; 
-        areaTrigger = 0.0; 
-        timerTrigger = 0.0; 
-        intervalLimit = 0.0; 
-        triggerCountLimit = 0.0; 
-        autoUnloadBuff = 0.0; 
-    } 
-    DictBuffEffect(const unsigned long long & id, const unsigned long long & listenTriggerStamp, const std::string & listenTriggerStampText, const unsigned long long & propID, const DictArrayKey & skills, const std::string & skillsText, const DictArrayKey & buffs, const std::string & buffsText, const double & areaTrigger, const double & timerTrigger, const double & intervalLimit, const double & triggerCountLimit, const double & autoUnloadBuff, const std::string & desc) 
-    { 
-        this->id = id; 
-        this->listenTriggerStamp = listenTriggerStamp; 
-        this->listenTriggerStampText = listenTriggerStampText; 
-        this->propID = propID; 
-        this->skills = skills; 
-        this->skillsText = skillsText; 
-        this->buffs = buffs; 
-        this->buffsText = buffsText; 
-        this->areaTrigger = areaTrigger; 
-        this->timerTrigger = timerTrigger; 
-        this->intervalLimit = intervalLimit; 
-        this->triggerCountLimit = triggerCountLimit; 
-        this->autoUnloadBuff = autoUnloadBuff; 
-        this->desc = desc; 
-    } 
-}; 
- 
-std::vector<std::string>  DictBuffEffect::getDBBuild() 
-{ 
-    std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_DictBuffEffect` (        `id` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`id`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `listenTriggerStampText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `listenTriggerStampText`  `listenTriggerStampText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `propID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `propID`  `propID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `skillsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `skillsText`  `skillsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `buffsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `buffsText`  `buffsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `areaTrigger`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `areaTrigger`  `areaTrigger`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `timerTrigger`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `timerTrigger`  `timerTrigger`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `intervalLimit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `intervalLimit`  `intervalLimit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `triggerCountLimit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `triggerCountLimit`  `triggerCountLimit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `autoUnloadBuff`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `autoUnloadBuff`  `autoUnloadBuff`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuffEffect` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
-    return ret; 
-} 
-std::string  DictBuffEffect::getDBSelect() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`listenTriggerStampText`,`propID`,`skillsText`,`buffsText`,`areaTrigger`,`timerTrigger`,`intervalLimit`,`triggerCountLimit`,`autoUnloadBuff`,`desc` from `tb_DictBuffEffect` where `id` = ? "); 
-    q << this->id; 
-    return q.pickSQL(); 
-} 
-std::string  DictBuffEffect::getDBSelectPure() 
-{ 
-    return "select `id`,`listenTriggerStampText`,`propID`,`skillsText`,`buffsText`,`areaTrigger`,`timerTrigger`,`intervalLimit`,`triggerCountLimit`,`autoUnloadBuff`,`desc` from `tb_DictBuffEffect` "; 
-} 
-std::string  DictBuffEffect::getDBInsert() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictBuffEffect`(`id`,`listenTriggerStampText`,`propID`,`skillsText`,`buffsText`,`areaTrigger`,`timerTrigger`,`intervalLimit`,`triggerCountLimit`,`autoUnloadBuff`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?)"); 
-    q << this->id; 
-    q << this->listenTriggerStampText; 
-    q << this->propID; 
-    q << this->skillsText; 
-    q << this->buffsText; 
-    q << this->areaTrigger; 
-    q << this->timerTrigger; 
-    q << this->intervalLimit; 
-    q << this->triggerCountLimit; 
-    q << this->autoUnloadBuff; 
-    q << this->desc; 
-    return q.pickSQL(); 
-} 
-std::string  DictBuffEffect::getDBDelete() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_DictBuffEffect` where `id` = ? "); 
-    q << this->id; 
-    return q.pickSQL(); 
-} 
-std::string  DictBuffEffect::getDBUpdate() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictBuffEffect`(id) values(? ) on duplicate key update `listenTriggerStampText` = ?,`propID` = ?,`skillsText` = ?,`buffsText` = ?,`areaTrigger` = ?,`timerTrigger` = ?,`intervalLimit` = ?,`triggerCountLimit` = ?,`autoUnloadBuff` = ?,`desc` = ? "); 
-    q << this->id; 
-    q << this->listenTriggerStampText; 
-    q << this->propID; 
-    q << this->skillsText; 
-    q << this->buffsText; 
-    q << this->areaTrigger; 
-    q << this->timerTrigger; 
-    q << this->intervalLimit; 
-    q << this->triggerCountLimit; 
-    q << this->autoUnloadBuff; 
-    q << this->desc; 
-    return q.pickSQL(); 
-} 
-bool DictBuffEffect::fetchFromDBResult(zsummer::mysql::DBResult &result) 
-{ 
-    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
-    { 
-        LOGE("error fetch DictBuffEffect from table `tb_DictBuffEffect` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
-        return false; 
-    } 
-    try 
-    { 
-        if (result.haveRow()) 
-        { 
-            result >> this->id; 
-            result >> this->listenTriggerStampText; 
-            result >> this->propID; 
-            result >> this->skillsText; 
-            result >> this->buffsText; 
-            result >> this->areaTrigger; 
-            result >> this->timerTrigger; 
-            result >> this->intervalLimit; 
-            result >> this->triggerCountLimit; 
-            result >> this->autoUnloadBuff; 
-            result >> this->desc; 
-            return true;  
-        } 
-    } 
-    catch(const std::exception & e) 
-    { 
-        LOGE("catch one except error when fetch DictBuffEffect from table `tb_DictBuffEffect` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
-        return false; 
-    } 
-    return false; 
-} 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DictBuffEffect & data) 
-{ 
-    ws << data.id;  
-    ws << data.listenTriggerStamp;  
-    ws << data.listenTriggerStampText;  
-    ws << data.propID;  
-    ws << data.skills;  
-    ws << data.skillsText;  
-    ws << data.buffs;  
-    ws << data.buffsText;  
-    ws << data.areaTrigger;  
-    ws << data.timerTrigger;  
-    ws << data.intervalLimit;  
-    ws << data.triggerCountLimit;  
-    ws << data.autoUnloadBuff;  
-    ws << data.desc;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, DictBuffEffect & data) 
-{ 
-    rs >> data.id;  
-    rs >> data.listenTriggerStamp;  
-    rs >> data.listenTriggerStampText;  
-    rs >> data.propID;  
-    rs >> data.skills;  
-    rs >> data.skillsText;  
-    rs >> data.buffs;  
-    rs >> data.buffsText;  
-    rs >> data.areaTrigger;  
-    rs >> data.timerTrigger;  
-    rs >> data.intervalLimit;  
-    rs >> data.triggerCountLimit;  
-    rs >> data.autoUnloadBuff;  
-    rs >> data.desc;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const DictBuffEffect & info) 
-{ 
-    stm << "["; 
-    stm << "id=" << info.id << ","; 
-    stm << "listenTriggerStamp=" << info.listenTriggerStamp << ","; 
-    stm << "listenTriggerStampText=" << info.listenTriggerStampText << ","; 
-    stm << "propID=" << info.propID << ","; 
-    stm << "skills=" << info.skills << ","; 
-    stm << "skillsText=" << info.skillsText << ","; 
-    stm << "buffs=" << info.buffs << ","; 
-    stm << "buffsText=" << info.buffsText << ","; 
-    stm << "areaTrigger=" << info.areaTrigger << ","; 
-    stm << "timerTrigger=" << info.timerTrigger << ","; 
-    stm << "intervalLimit=" << info.intervalLimit << ","; 
-    stm << "triggerCountLimit=" << info.triggerCountLimit << ","; 
-    stm << "autoUnloadBuff=" << info.autoUnloadBuff << ","; 
-    stm << "desc=" << info.desc << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
 struct DictBuff 
 { 
     static const unsigned short getProtoID() { return 11005;} 
@@ -638,8 +398,16 @@ struct DictBuff
     unsigned long long id;  
     unsigned long long stamp; //BUFF_STAMP  
     std::string stampText;  
-    DictArrayKey effects; //DictBuffEffect ID  
-    std::string effectsText;  
+    unsigned long long propID; //提升的属性效果, 求积方式的参数是基础属性 不算其他装备  
+    DictArrayKey skills; //触发技能  
+    std::string skillsText; //触发技能 格式id,id,id   
+    DictArrayKey buffs; //触发buff  
+    std::string buffsText; //触发buff 格式id,id,id  
+    double triggerAoeSearchID; //search结果不为空触发  
+    double triggerDelay; //延迟触发, 当间隔触发不为0时生效  
+    double triggerInterval; //间隔触发  
+    double triggerCountLimit; //触发次数限制  
+    double triggerAutoRemove; //触发后移除buff  
     double keepTime;  
     double limitStackTime; //相同buff叠加时间并且刷新触发次数  
     std::string desc;  
@@ -647,16 +415,30 @@ struct DictBuff
     { 
         id = 0; 
         stamp = 0; 
+        propID = 0; 
+        triggerAoeSearchID = 0.0; 
+        triggerDelay = 0.0; 
+        triggerInterval = 0.0; 
+        triggerCountLimit = 0.0; 
+        triggerAutoRemove = 0.0; 
         keepTime = 0.0; 
         limitStackTime = 0.0; 
     } 
-    DictBuff(const unsigned long long & id, const unsigned long long & stamp, const std::string & stampText, const DictArrayKey & effects, const std::string & effectsText, const double & keepTime, const double & limitStackTime, const std::string & desc) 
+    DictBuff(const unsigned long long & id, const unsigned long long & stamp, const std::string & stampText, const unsigned long long & propID, const DictArrayKey & skills, const std::string & skillsText, const DictArrayKey & buffs, const std::string & buffsText, const double & triggerAoeSearchID, const double & triggerDelay, const double & triggerInterval, const double & triggerCountLimit, const double & triggerAutoRemove, const double & keepTime, const double & limitStackTime, const std::string & desc) 
     { 
         this->id = id; 
         this->stamp = stamp; 
         this->stampText = stampText; 
-        this->effects = effects; 
-        this->effectsText = effectsText; 
+        this->propID = propID; 
+        this->skills = skills; 
+        this->skillsText = skillsText; 
+        this->buffs = buffs; 
+        this->buffsText = buffsText; 
+        this->triggerAoeSearchID = triggerAoeSearchID; 
+        this->triggerDelay = triggerDelay; 
+        this->triggerInterval = triggerInterval; 
+        this->triggerCountLimit = triggerCountLimit; 
+        this->triggerAutoRemove = triggerAutoRemove; 
         this->keepTime = keepTime; 
         this->limitStackTime = limitStackTime; 
         this->desc = desc; 
@@ -671,8 +453,22 @@ std::vector<std::string>  DictBuff::getDBBuild()
     ret.push_back("alter table `tb_DictBuff` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictBuff` add `stampText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictBuff` change `stampText`  `stampText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuff` add `effectsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictBuff` change `effectsText`  `effectsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictBuff` add `propID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` change `propID`  `propID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` add `skillsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictBuff` change `skillsText`  `skillsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictBuff` add `buffsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictBuff` change `buffsText`  `buffsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictBuff` add `triggerAoeSearchID`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` change `triggerAoeSearchID`  `triggerAoeSearchID`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` add `triggerDelay`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` change `triggerDelay`  `triggerDelay`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` add `triggerInterval`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` change `triggerInterval`  `triggerInterval`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` add `triggerCountLimit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` change `triggerCountLimit`  `triggerCountLimit`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` add `triggerAutoRemove`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictBuff` change `triggerAutoRemove`  `triggerAutoRemove`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictBuff` add `keepTime`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictBuff` change `keepTime`  `keepTime`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictBuff` add `limitStackTime`  double NOT NULL DEFAULT '0' "); 
@@ -684,21 +480,28 @@ std::vector<std::string>  DictBuff::getDBBuild()
 std::string  DictBuff::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`stampText`,`effectsText`,`keepTime`,`limitStackTime`,`desc` from `tb_DictBuff` where `id` = ? "); 
+    q.init("select `id`,`stampText`,`propID`,`skillsText`,`buffsText`,`triggerAoeSearchID`,`triggerDelay`,`triggerInterval`,`triggerCountLimit`,`triggerAutoRemove`,`keepTime`,`limitStackTime`,`desc` from `tb_DictBuff` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictBuff::getDBSelectPure() 
 { 
-    return "select `id`,`stampText`,`effectsText`,`keepTime`,`limitStackTime`,`desc` from `tb_DictBuff` "; 
+    return "select `id`,`stampText`,`propID`,`skillsText`,`buffsText`,`triggerAoeSearchID`,`triggerDelay`,`triggerInterval`,`triggerCountLimit`,`triggerAutoRemove`,`keepTime`,`limitStackTime`,`desc` from `tb_DictBuff` "; 
 } 
 std::string  DictBuff::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictBuff`(`id`,`stampText`,`effectsText`,`keepTime`,`limitStackTime`,`desc`) values(?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictBuff`(`id`,`stampText`,`propID`,`skillsText`,`buffsText`,`triggerAoeSearchID`,`triggerDelay`,`triggerInterval`,`triggerCountLimit`,`triggerAutoRemove`,`keepTime`,`limitStackTime`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->stampText; 
-    q << this->effectsText; 
+    q << this->propID; 
+    q << this->skillsText; 
+    q << this->buffsText; 
+    q << this->triggerAoeSearchID; 
+    q << this->triggerDelay; 
+    q << this->triggerInterval; 
+    q << this->triggerCountLimit; 
+    q << this->triggerAutoRemove; 
     q << this->keepTime; 
     q << this->limitStackTime; 
     q << this->desc; 
@@ -714,10 +517,17 @@ std::string  DictBuff::getDBDelete()
 std::string  DictBuff::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictBuff`(id) values(? ) on duplicate key update `stampText` = ?,`effectsText` = ?,`keepTime` = ?,`limitStackTime` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictBuff`(id) values(? ) on duplicate key update `stampText` = ?,`propID` = ?,`skillsText` = ?,`buffsText` = ?,`triggerAoeSearchID` = ?,`triggerDelay` = ?,`triggerInterval` = ?,`triggerCountLimit` = ?,`triggerAutoRemove` = ?,`keepTime` = ?,`limitStackTime` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->stampText; 
-    q << this->effectsText; 
+    q << this->propID; 
+    q << this->skillsText; 
+    q << this->buffsText; 
+    q << this->triggerAoeSearchID; 
+    q << this->triggerDelay; 
+    q << this->triggerInterval; 
+    q << this->triggerCountLimit; 
+    q << this->triggerAutoRemove; 
     q << this->keepTime; 
     q << this->limitStackTime; 
     q << this->desc; 
@@ -736,7 +546,14 @@ bool DictBuff::fetchFromDBResult(zsummer::mysql::DBResult &result)
         { 
             result >> this->id; 
             result >> this->stampText; 
-            result >> this->effectsText; 
+            result >> this->propID; 
+            result >> this->skillsText; 
+            result >> this->buffsText; 
+            result >> this->triggerAoeSearchID; 
+            result >> this->triggerDelay; 
+            result >> this->triggerInterval; 
+            result >> this->triggerCountLimit; 
+            result >> this->triggerAutoRemove; 
             result >> this->keepTime; 
             result >> this->limitStackTime; 
             result >> this->desc; 
@@ -755,8 +572,16 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.id;  
     ws << data.stamp;  
     ws << data.stampText;  
-    ws << data.effects;  
-    ws << data.effectsText;  
+    ws << data.propID;  
+    ws << data.skills;  
+    ws << data.skillsText;  
+    ws << data.buffs;  
+    ws << data.buffsText;  
+    ws << data.triggerAoeSearchID;  
+    ws << data.triggerDelay;  
+    ws << data.triggerInterval;  
+    ws << data.triggerCountLimit;  
+    ws << data.triggerAutoRemove;  
     ws << data.keepTime;  
     ws << data.limitStackTime;  
     ws << data.desc;  
@@ -767,8 +592,16 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.id;  
     rs >> data.stamp;  
     rs >> data.stampText;  
-    rs >> data.effects;  
-    rs >> data.effectsText;  
+    rs >> data.propID;  
+    rs >> data.skills;  
+    rs >> data.skillsText;  
+    rs >> data.buffs;  
+    rs >> data.buffsText;  
+    rs >> data.triggerAoeSearchID;  
+    rs >> data.triggerDelay;  
+    rs >> data.triggerInterval;  
+    rs >> data.triggerCountLimit;  
+    rs >> data.triggerAutoRemove;  
     rs >> data.keepTime;  
     rs >> data.limitStackTime;  
     rs >> data.desc;  
@@ -780,8 +613,16 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "id=" << info.id << ","; 
     stm << "stamp=" << info.stamp << ","; 
     stm << "stampText=" << info.stampText << ","; 
-    stm << "effects=" << info.effects << ","; 
-    stm << "effectsText=" << info.effectsText << ","; 
+    stm << "propID=" << info.propID << ","; 
+    stm << "skills=" << info.skills << ","; 
+    stm << "skillsText=" << info.skillsText << ","; 
+    stm << "buffs=" << info.buffs << ","; 
+    stm << "buffsText=" << info.buffsText << ","; 
+    stm << "triggerAoeSearchID=" << info.triggerAoeSearchID << ","; 
+    stm << "triggerDelay=" << info.triggerDelay << ","; 
+    stm << "triggerInterval=" << info.triggerInterval << ","; 
+    stm << "triggerCountLimit=" << info.triggerCountLimit << ","; 
+    stm << "triggerAutoRemove=" << info.triggerAutoRemove << ","; 
     stm << "keepTime=" << info.keepTime << ","; 
     stm << "limitStackTime=" << info.limitStackTime << ","; 
     stm << "desc=" << info.desc << ","; 
@@ -821,7 +662,8 @@ struct DictSkill
     unsigned long long searchID; //锁敌  
     unsigned long long aoeID; //AOI伤害  
     unsigned long long appBuffID; //上buff的searchid  
-    double delay; //前摇  
+    double delay;  
+    double interval; //自动释放间隔,针对自动施法,被动技能有效  
     double keep; //持续时间  
     double cd; //冷却  
     double hpAdd; //附加真实伤害  
@@ -838,7 +680,10 @@ struct DictSkill
     std::string appendBuffsText; //触发buff 格式 k,k,k,   
     DictArrayKey harmBuffs;  
     std::string harmBuffsText; //触发buff 格式 k,k,k,   
-    unsigned long long nextSkillID; //技能结束释放下个技能  
+    DictArrayKey combSkills;  
+    std::string combSkillsText; //组合技能  
+    DictArrayKey followSkills;  
+    std::string followSkillsText; //跟随技能  
     std::string desc;  
     DictSkill() 
     { 
@@ -848,6 +693,7 @@ struct DictSkill
         aoeID = 0; 
         appBuffID = 0; 
         delay = 0.0; 
+        interval = 0.0; 
         keep = 0.0; 
         cd = 0.0; 
         hpAdd = 0.0; 
@@ -860,9 +706,8 @@ struct DictSkill
         dstMoveSpeed = 0.0; 
         selfMoveTime = 0.0; 
         selfMoveSpeed = 0.0; 
-        nextSkillID = 0; 
     } 
-    DictSkill(const unsigned long long & id, const unsigned long long & stamp, const unsigned long long & searchID, const unsigned long long & aoeID, const unsigned long long & appBuffID, const double & delay, const double & keep, const double & cd, const double & hpAdd, const double & hpAddScaleRemanent, const double & hpAddScaleLost, const unsigned long long & propID, const double & dstTeleport, const double & selfTeleport, const double & dstMoveTime, const double & dstMoveSpeed, const double & selfMoveTime, const double & selfMoveSpeed, const DictArrayKey & appendBuffs, const std::string & appendBuffsText, const DictArrayKey & harmBuffs, const std::string & harmBuffsText, const unsigned long long & nextSkillID, const std::string & desc) 
+    DictSkill(const unsigned long long & id, const unsigned long long & stamp, const unsigned long long & searchID, const unsigned long long & aoeID, const unsigned long long & appBuffID, const double & delay, const double & interval, const double & keep, const double & cd, const double & hpAdd, const double & hpAddScaleRemanent, const double & hpAddScaleLost, const unsigned long long & propID, const double & dstTeleport, const double & selfTeleport, const double & dstMoveTime, const double & dstMoveSpeed, const double & selfMoveTime, const double & selfMoveSpeed, const DictArrayKey & appendBuffs, const std::string & appendBuffsText, const DictArrayKey & harmBuffs, const std::string & harmBuffsText, const DictArrayKey & combSkills, const std::string & combSkillsText, const DictArrayKey & followSkills, const std::string & followSkillsText, const std::string & desc) 
     { 
         this->id = id; 
         this->stamp = stamp; 
@@ -870,6 +715,7 @@ struct DictSkill
         this->aoeID = aoeID; 
         this->appBuffID = appBuffID; 
         this->delay = delay; 
+        this->interval = interval; 
         this->keep = keep; 
         this->cd = cd; 
         this->hpAdd = hpAdd; 
@@ -886,7 +732,10 @@ struct DictSkill
         this->appendBuffsText = appendBuffsText; 
         this->harmBuffs = harmBuffs; 
         this->harmBuffsText = harmBuffsText; 
-        this->nextSkillID = nextSkillID; 
+        this->combSkills = combSkills; 
+        this->combSkillsText = combSkillsText; 
+        this->followSkills = followSkills; 
+        this->followSkillsText = followSkillsText; 
         this->desc = desc; 
     } 
 }; 
@@ -907,6 +756,8 @@ std::vector<std::string>  DictSkill::getDBBuild()
     ret.push_back("alter table `tb_DictSkill` change `appBuffID`  `appBuffID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `delay`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` change `delay`  `delay`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` add `interval`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` change `interval`  `interval`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `keep`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` change `keep`  `keep`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `cd`  double NOT NULL DEFAULT '0' "); 
@@ -935,8 +786,10 @@ std::vector<std::string>  DictSkill::getDBBuild()
     ret.push_back("alter table `tb_DictSkill` change `appendBuffsText`  `appendBuffsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` add `harmBuffsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` change `harmBuffsText`  `harmBuffsText`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_DictSkill` add `nextSkillID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictSkill` change `nextSkillID`  `nextSkillID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` add `combSkillsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictSkill` change `combSkillsText`  `combSkillsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictSkill` add `followSkillsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictSkill` change `followSkillsText`  `followSkillsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     return ret; 
@@ -944,24 +797,25 @@ std::vector<std::string>  DictSkill::getDBBuild()
 std::string  DictSkill::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`stamp`,`searchID`,`aoeID`,`appBuffID`,`delay`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`harmBuffsText`,`nextSkillID`,`desc` from `tb_DictSkill` where `id` = ? "); 
+    q.init("select `id`,`stamp`,`searchID`,`aoeID`,`appBuffID`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc` from `tb_DictSkill` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictSkill::getDBSelectPure() 
 { 
-    return "select `id`,`stamp`,`searchID`,`aoeID`,`appBuffID`,`delay`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`harmBuffsText`,`nextSkillID`,`desc` from `tb_DictSkill` "; 
+    return "select `id`,`stamp`,`searchID`,`aoeID`,`appBuffID`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc` from `tb_DictSkill` "; 
 } 
 std::string  DictSkill::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictSkill`(`id`,`stamp`,`searchID`,`aoeID`,`appBuffID`,`delay`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`harmBuffsText`,`nextSkillID`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictSkill`(`id`,`stamp`,`searchID`,`aoeID`,`appBuffID`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->stamp; 
     q << this->searchID; 
     q << this->aoeID; 
     q << this->appBuffID; 
     q << this->delay; 
+    q << this->interval; 
     q << this->keep; 
     q << this->cd; 
     q << this->hpAdd; 
@@ -976,7 +830,8 @@ std::string  DictSkill::getDBInsert()
     q << this->selfMoveSpeed; 
     q << this->appendBuffsText; 
     q << this->harmBuffsText; 
-    q << this->nextSkillID; 
+    q << this->combSkillsText; 
+    q << this->followSkillsText; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -990,13 +845,14 @@ std::string  DictSkill::getDBDelete()
 std::string  DictSkill::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictSkill`(id) values(? ) on duplicate key update `stamp` = ?,`searchID` = ?,`aoeID` = ?,`appBuffID` = ?,`delay` = ?,`keep` = ?,`cd` = ?,`hpAdd` = ?,`hpAddScaleRemanent` = ?,`hpAddScaleLost` = ?,`propID` = ?,`dstTeleport` = ?,`selfTeleport` = ?,`dstMoveTime` = ?,`dstMoveSpeed` = ?,`selfMoveTime` = ?,`selfMoveSpeed` = ?,`appendBuffsText` = ?,`harmBuffsText` = ?,`nextSkillID` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictSkill`(id) values(? ) on duplicate key update `stamp` = ?,`searchID` = ?,`aoeID` = ?,`appBuffID` = ?,`delay` = ?,`interval` = ?,`keep` = ?,`cd` = ?,`hpAdd` = ?,`hpAddScaleRemanent` = ?,`hpAddScaleLost` = ?,`propID` = ?,`dstTeleport` = ?,`selfTeleport` = ?,`dstMoveTime` = ?,`dstMoveSpeed` = ?,`selfMoveTime` = ?,`selfMoveSpeed` = ?,`appendBuffsText` = ?,`harmBuffsText` = ?,`combSkillsText` = ?,`followSkillsText` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->stamp; 
     q << this->searchID; 
     q << this->aoeID; 
     q << this->appBuffID; 
     q << this->delay; 
+    q << this->interval; 
     q << this->keep; 
     q << this->cd; 
     q << this->hpAdd; 
@@ -1011,7 +867,8 @@ std::string  DictSkill::getDBUpdate()
     q << this->selfMoveSpeed; 
     q << this->appendBuffsText; 
     q << this->harmBuffsText; 
-    q << this->nextSkillID; 
+    q << this->combSkillsText; 
+    q << this->followSkillsText; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -1032,6 +889,7 @@ bool DictSkill::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->aoeID; 
             result >> this->appBuffID; 
             result >> this->delay; 
+            result >> this->interval; 
             result >> this->keep; 
             result >> this->cd; 
             result >> this->hpAdd; 
@@ -1046,7 +904,8 @@ bool DictSkill::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->selfMoveSpeed; 
             result >> this->appendBuffsText; 
             result >> this->harmBuffsText; 
-            result >> this->nextSkillID; 
+            result >> this->combSkillsText; 
+            result >> this->followSkillsText; 
             result >> this->desc; 
             return true;  
         } 
@@ -1066,6 +925,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.aoeID;  
     ws << data.appBuffID;  
     ws << data.delay;  
+    ws << data.interval;  
     ws << data.keep;  
     ws << data.cd;  
     ws << data.hpAdd;  
@@ -1082,7 +942,10 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.appendBuffsText;  
     ws << data.harmBuffs;  
     ws << data.harmBuffsText;  
-    ws << data.nextSkillID;  
+    ws << data.combSkills;  
+    ws << data.combSkillsText;  
+    ws << data.followSkills;  
+    ws << data.followSkillsText;  
     ws << data.desc;  
     return ws; 
 } 
@@ -1094,6 +957,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.aoeID;  
     rs >> data.appBuffID;  
     rs >> data.delay;  
+    rs >> data.interval;  
     rs >> data.keep;  
     rs >> data.cd;  
     rs >> data.hpAdd;  
@@ -1110,7 +974,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.appendBuffsText;  
     rs >> data.harmBuffs;  
     rs >> data.harmBuffsText;  
-    rs >> data.nextSkillID;  
+    rs >> data.combSkills;  
+    rs >> data.combSkillsText;  
+    rs >> data.followSkills;  
+    rs >> data.followSkillsText;  
     rs >> data.desc;  
     return rs; 
 } 
@@ -1123,6 +990,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "aoeID=" << info.aoeID << ","; 
     stm << "appBuffID=" << info.appBuffID << ","; 
     stm << "delay=" << info.delay << ","; 
+    stm << "interval=" << info.interval << ","; 
     stm << "keep=" << info.keep << ","; 
     stm << "cd=" << info.cd << ","; 
     stm << "hpAdd=" << info.hpAdd << ","; 
@@ -1139,7 +1007,10 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "appendBuffsText=" << info.appendBuffsText << ","; 
     stm << "harmBuffs=" << info.harmBuffs << ","; 
     stm << "harmBuffsText=" << info.harmBuffsText << ","; 
-    stm << "nextSkillID=" << info.nextSkillID << ","; 
+    stm << "combSkills=" << info.combSkills << ","; 
+    stm << "combSkillsText=" << info.combSkillsText << ","; 
+    stm << "followSkills=" << info.followSkills << ","; 
+    stm << "followSkillsText=" << info.followSkillsText << ","; 
     stm << "desc=" << info.desc << ","; 
     stm << "]"; 
     return stm; 

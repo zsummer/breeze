@@ -30,8 +30,14 @@ public:
     void init(std::weak_ptr<Scene> scene);
     void update();
 
-    bool useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, EPosition dst, bool foeFirst);
+    //普攻的寻敌
+    void selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bool change);
+
     bool trigger(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, bool foeFirst);
+    bool trigger(ScenePtr scene, EntityID casterID, ui64 skillID);
+
+
+
     bool damage(ScenePtr scene, EntityPtr caster, std::vector<EntityPtr> & targets);
     bool cleanSkill();
     bool addBuff();
