@@ -125,7 +125,7 @@ EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName,
 
     entity->_state.state = ENTITY_STATE_ACTIVE;
 
-    entity->_state.leader = InvalidEntityID;
+    entity->_state.master = InvalidEntityID;
     entity->_state.foe = InvalidEntityID;
 
     
@@ -336,10 +336,21 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         auto entity = getEntity(req.eid);
         if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
             || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH 
-                    || !_move->doMove(req.eid, (MOVE_ACTION)req.action, entity->getSpeed(), req.follow, req.clientPos, req.waypoints))
+                    )
         {
             sendToClient(avatarID, MoveResp(EC_ERROR, req.eid, req.action));
+            return;
         }
+        if (!_move->doMove(req.eid, (MOVE_ACTION)req.action, entity->getSpeed(), req.follow, req.waypoints))
+        {
+            sendToClient(avatarID, MoveResp(EC_ERROR, req.eid, req.action));
+            return;
+        }
+        if (entity->_skillSys.autoAttack)
+        {
+            entity->_skillSys.autoAttack = false;
+        }
+
     }
     else if (rs.getProtoID() == UseSkillReq::getProtoID())
     {
@@ -350,7 +361,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
             || ! _skill->useSkill(shared_from_this(), req.eid, req.skillID, req.dst, req.foeFirst)
            )
         {
-            sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID, InvalidEntityID,  req.dst, req.foeFirst));
+            sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID,  req.dst, req.foeFirst));
         }
     }
     else if (rs.getProtoID() == ClientCustomReq::getProtoID())
@@ -380,43 +391,82 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
 
 
 
-std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition pos, ui64  searchID)
+
+std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition org, double radian, ui64  searchID)
 {
-    return searchTarget(caster, getRadian(caster->_move.position.x, caster->_move.position.y, pos.x, pos.y), searchID);
-}
-std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, ui64  searchID)
-{
-    auto founder =  DBDict::getRef().getOneKeyAOESearch(searchID);
-    if (!founder.first)
+    auto search = DBDict::getRef().getOneKeyAOESearch(searchID);
+    if (!search.first)
     {
+        LOGE("Scene::searchTarget not found search config. searchID=" << searchID);
         return std::vector<EntityPtr>();
     }
-    return searchTarget(caster, radian, founder.second);
+    return searchTarget(caster, org, radian, search.second);
 }
 
-std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, const AOESearch & search)
+std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition org, double radian, const AOESearch & search)
 {
     EntityPtr master = caster;
-    std::vector<EntityPtr> ret;
-    if (caster->_state.etype == ENTITY_FLIGHT  && caster->_state.leader != InvalidEntityID)
+    if (caster->_state.etype == ENTITY_FLIGHT && caster->_state.master != InvalidEntityID)
     {
-        auto m = getEntity(caster->_state.leader);
-        if (!m)
-        {
-            LOGE("");
-            return ret;
-        }
-        master = m;
+        master = getEntity(caster->_state.master);
     }
-    //偏移修正
-    auto org = caster->_move.position;
+
+    auto ret = searchTarget(org, radian, search.isRect,
+        search.distance, search.value, search.compensateForward, search.compensateRight);
+
+    std::vector<EntityPtr> filtered;
+    for (auto e : ret)
+    {
+        if (filtered.size() >= search.limitEntitys)
+        {
+            break;
+        }
+        if (search.etype != ENTITY_NONE && search.etype != e->_state.etype)
+        {
+            continue;
+        }
+
+        if (getBitFlag(search.filter, FILTER_SELF) && master && master->_state.eid == e->_state.eid)
+        {
+            filtered.push_back(e);
+            continue;
+        }
+        if (getBitFlag(search.filter, FILTER_OTHER_FRIEND) &&  caster->_state.camp == e->_state.camp)
+        {
+            if (master && master->_state.eid == e->_state.eid)
+            {
+                continue;
+            }
+            filtered.push_back(e);
+            continue;
+        }
+        if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != e->_state.camp && e->_state.camp < ENTITY_CAMP_NEUTRAL)
+        {
+            filtered.push_back(e);
+            continue;
+        }
+        if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != e->_state.camp && e->_state.camp > ENTITY_CAMP_NEUTRAL)
+        {
+            filtered.push_back(e);
+            continue;
+        }
+    }
+    return std::move(filtered);
+}
+
+std::vector<EntityPtr> Scene::searchTarget(EPosition org, double radian, ui16 isRect, double distance, double value, double compensateForward, double compensateRight)
+{
+    //位移补偿
     if (true)
     {
-        auto y = getFarPoint(caster->_move.position.x, caster->_move.position.y, radian, search.offsetY);
-        auto x = getFarPoint(std::get<0>(y), std::get<1>(y), fmod(radian+ PI*2.0 - PI/2.0, PI*2.0), search.offsetX);
-        org.x = std::get<0>(x);
-        org.y = std::get<1>(x);
+        auto ofstForward = getFarPoint(org.x, org.y, radian, compensateForward);
+        auto ofstRight = getFarPoint(std::get<0>(ofstForward), std::get<1>(ofstForward), fmod(radian+ PI*2.0 - PI/2.0, PI*2.0), compensateRight);
+        distance += getDistance(org.x, org.y, std::get<0>(ofstRight), std::get<1>(ofstRight));
+        org.x = std::get<0>(ofstRight);
+        org.y = std::get<1>(ofstRight);
     }
+
+    std::vector<EntityPtr> ret;
 
     for (auto kv : _entitys)
     {
@@ -429,42 +479,17 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
         {
             continue;
         }
-        if (getBitFlag(search.camp, 1) && entity._state.eid == master->_state.eid)
-        {
-            ret.push_back(kv.second);
-            continue;
-        }
-        if (search.camp == 0
-            ||(getBitFlag(search.camp, 1) && master->_state.eid == entity._state.eid)
-            ||(getBitFlag(search.camp, 2)
-              && master->_state.camp == entity._state.camp
-              && master->_state.eid != entity._state.eid)
-            || (getBitFlag(search.camp, 3) && master->_state.camp != entity._state.camp))
-        {
-            //matched target camp
-        }
-        else
+        
+        if (getDistance(org, entity._move.position) > distance)
         {
             continue;
         }
-        if (search.etype != ENTITY_NONE)
-        {
-            if (entity._state.etype != search.etype)
-            {
-                continue;
-            }
-        }
-
-        if (getDistance(org, entity._move.position) > search.distance)
-        {
-            continue;
-        }
-        if (!search.isRect && search.radian < PI*2.0*0.9)
+        if (!isRect && value < PI*2.0*0.9)
         {
             double radianEntity = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
-            double curRadian = fmod(radian+search.radian/2.0, PI*2.0);
-            if ((curRadian >= radianEntity && curRadian - radianEntity < search.radian)
-                || (curRadian < radianEntity && curRadian + PI*2.0 - radianEntity < search.radian))
+            double curRadian = fmod(radian+value/2.0, PI*2.0);
+            if ((curRadian >= radianEntity && curRadian - radianEntity < value)
+                || (curRadian < radianEntity && curRadian + PI*2.0 - radianEntity < value))
             {
 
             }
@@ -473,24 +498,20 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, double radian, cons
                 continue;
             }
         }
-        if (search.isRect)
+        if (isRect)
         {
             double curRadian = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
             auto dst = rotatePoint(org.x, org.y, curRadian,
                 getDistance(org, entity._move.position), PI*2.0 - curRadian );
-            if (abs(std::get<1>(dst) - caster->_move.position.y) > search.radian/2.0)
+            if (abs(std::get<1>(dst) - org.y) > value/2.0)
             {
                 continue;
             }
         }
         ret.push_back(kv.second);
     }
-    std::sort(ret.begin(), ret.end(), [caster](const EntityPtr & entity1, const EntityPtr & entity2)
-    {return getDistance(entity1->_move.position, caster->_move.position) < getDistance(entity2->_move.position, caster->_move.position); });
-    while (ret.size() > search.limitEntitys)
-    {
-        ret.pop_back();
-    }
+    std::sort(ret.begin(), ret.end(), [org](const EntityPtr & entity1, const EntityPtr & entity2)
+    {return getDistance(org, entity1->_move.position) < getDistance(org, entity2->_move.position); });
     return std::move(ret);
 }
 

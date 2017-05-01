@@ -81,9 +81,15 @@ public:
     bool removePlayerByGroupID(GroupID groupID);
 
     void pushAsync(std::function<void()> && func);
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const AOESearch & search);
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, ui64  searchID);
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition pos, ui64  searchID);
+
+
+
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition org, double radian, ui64  searchID);
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition org, double radian, const AOESearch & search);
+    std::vector<EntityPtr> searchTarget(EPosition org, double radian, ui16 isRect, double distance, double value, double compensateForward, double compensateRight);
+
+
+
 
     void onSceneInit();
     void onAddEntity(EntityPtr entity);

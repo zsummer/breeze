@@ -220,7 +220,7 @@ bool MoveSync::setAgentPosition(ui64 agent, EPosition pos)
     }
     return false;
 }
-bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPosition clt, EPositionArray dsts)
+bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPositionArray dsts)
 {
     auto scene = _scene.lock();
     if (!scene)
@@ -246,6 +246,22 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
     {
         return false;
     }
+
+
+
+    auto followEntity = scene->getEntity(follow);
+    if (!followEntity || followEntity->_state.state != ENTITY_STATE_ACTIVE)
+    {
+        action = MOVE_ACTION_IDLE;
+    }
+
+
+    if (action != MOVE_ACTION_FOLLOW && action != MOVE_ACTION_IDLE && dsts.empty())
+    {
+        return false;
+    }
+
+
     //stop
     if (action == MOVE_ACTION_IDLE)
     {
@@ -272,7 +288,20 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         moveInfo.realSpeed = moveInfo.realSpeed;
         moveInfo.expectSpeed = speed;
         moveInfo.follow = follow;
-        moveInfo.waypoints = dsts;
+        if (action != MOVE_ACTION_FOLLOW)
+        {
+            moveInfo.waypoints = dsts;
+        }
+        else
+        {
+            moveInfo.waypoints.clear();
+            moveInfo.waypoints.push_back(followEntity->_move.position);
+        }
+        
+    }
+    if (action != MOVE_ACTION_IDLE && !dsts.empty())
+    {
+        entity->_control.lastClientFaceRadian = getRadian(entity->_move.position.x, entity->_move.position.y, dsts.at(0).x, dsts.at(0).y);
     }
     entity->_isMoveDirty = true;
     scene->broadcast(MoveNotice(moveInfo));

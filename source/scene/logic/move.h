@@ -37,7 +37,7 @@ public:
     void delAgent(ui64 agent);
     bool isValidAgent(ui64 agent);
     bool setAgentPosition(ui64 agent, EPosition pos);
-    bool doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPosition clt, EPositionArray dsts);
+    bool doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPositionArray dsts);
 };
 
 using MoveSyncPtr = std::shared_ptr<MoveSync>;

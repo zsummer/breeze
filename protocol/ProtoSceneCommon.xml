@@ -160,7 +160,7 @@
         <member name="etype" type="ui16"  desc="实体类型"/>
         <member name="state" type="ui16"  desc="状态"/>
         <member name="foe"  type="ui64" desc="锁定的敌人"/>
-        <member name="leader"  type="ui64" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
+        <member name="master"  type="ui64" desc="如果是飞行道具 这个指向施放飞行道具的人"/>
         <member name="curHP"  type="double" desc="当前的血量"/>
         <member name="maxHP"  type="double" desc="当前的血量上限"/>
     </struct>
@@ -208,6 +208,32 @@
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
         <member name="entitys"  type="EntityFullDataArray" desc="这里包含有所有当前场景下的实体属性和状态数据"/>
     </proto>
+
+
+    <proto name="EntitySkillInfo" desc= "技能">
+        <member name="skillID"  type="ui64" desc=""/>
+        <member name="activeOrg"  type="EPosition" desc=""/>
+        <member name="activeOrgEID"  type="ui64" desc=""/>
+        <member name="activeDst"  type="EPosition" desc=""/>
+        <member name="activeDstEID"  type="ui64" desc=""/>
+        <member name="activeTime"  type="double" desc=""/>
+        <member name="lastTriggerTime"  type="double" desc=""/>
+        <member name="isFinish"  type="bool" desc=""/>
+        <member name="activeCount"  type="double" desc=""/>
+    </proto>
+
+    <proto name="EntityBuffInfo" desc= "BUFF">
+        <member name="buffID"  type="ui64" desc=""/>
+        <member name="activeOrg"  type="EPosition" desc=""/>
+        <member name="activeOrgEID"  type="ui64" desc=""/>
+        <member name="activeDst"  type="EPosition" desc=""/>
+        <member name="activeDstEID"  type="ui64" desc=""/>
+        <member name="activeTime"  type="double" desc=""/>
+        <member name="lastTriggerTime"  type="double" desc=""/>
+        <member name="activeCount"  type="double" desc=""/>
+    </proto>
+
+
 
 </Proto>
 

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>a43237cc881b7fc60ff8207b1446bf8e</cppmd5> 
-<luamd5>32b499c31d3b422fc63eecb757e70d8a</luamd5> 
-<csharpmd5>ecaec410fd215baabe7d35f76768dccb</csharpmd5> 
-<xmlmd5>87bd3d6e611265bcf2752830d94dc2b5</xmlmd5> 
+<cppmd5>8fc290b0a29d8be09ce7b27d0a11c277</cppmd5> 
+<luamd5>9090dfd7a21a478a5e9ad59d38d8ce08</luamd5> 
+<csharpmd5>7494cfb260c11a248a276687fde0670b</csharpmd5> 
+<xmlmd5>75c481246695388f2f8c9d040106e3b6</xmlmd5> 
 <cacheNumber>
     <cache key = "EPosition" Number = "2002" /> 
+    <cache key = "EntityBuffInfo" Number = "2010" /> 
     <cache key = "EntityFullData" Number = "2007" /> 
     <cache key = "EntityMove" Number = "2005" /> 
     <cache key = "EntityReport" Number = "2006" /> 
+    <cache key = "EntitySkillInfo" Number = "2009" /> 
     <cache key = "EntityState" Number = "2004" /> 
     <cache key = "SceneEventInfo" Number = "2003" /> 
     <cache key = "SceneGroupAvatarInfo" Number = "2000" /> 

@@ -57,25 +57,25 @@ void AI::update()
     for (auto monster : _monsters)
     {
         AOESearch search;
-        search.camp = 3;
-        search.etype = ENTITY_PLAYER;
-        search.limitEntitys = 1;
-        search.radian = PI*2.0;
-        search.isRect = 0;
-        search.distance = 1E20;
-        search.offsetX = 0;
-        search.offsetY = 0;
-        auto ret = scene->searchTarget(monster.second, 0, search);
-        if (ret.size() > 0)
-        {
-            if (monster.second->_move.follow != ret.front()->_state.eid && monster.second->_state.state == ENTITY_STATE_ACTIVE)
-            {
-                if (monster.second->_move.follow == InvalidEntityID || realRand() > 0.7)
-                {
-                    monster.second->_move.follow = ret.front()->_state.eid;
-                }
-            }
-        }
+//         search.camp = 3;
+//         search.etype = ENTITY_PLAYER;
+//         search.limitEntitys = 1;
+//         search.radian = PI*2.0;
+//         search.isRect = 0;
+//         search.distance = 1E20;
+//         search.offsetX = 0;
+//         search.offsetY = 0;
+//         auto ret = scene->searchTarget(monster.second, 0, search);
+//         if (ret.size() > 0)
+//         {
+//             if (monster.second->_move.follow != ret.front()->_state.eid && monster.second->_state.state == ENTITY_STATE_ACTIVE)
+//             {
+//                 if (monster.second->_move.follow == InvalidEntityID || realRand() > 0.7)
+//                 {
+//                     monster.second->_move.follow = ret.front()->_state.eid;
+//                 }
+//             }
+//         }
     }
 
     for (auto kv : scene->_entitys)
@@ -96,8 +96,7 @@ void AI::update()
         {
             EPositionArray ways;
             ways.push_back(follow->_move.position);
-            scene->_move->doMove(entity->_state.eid, MOVE_ACTION_FOLLOW, entity->getSpeed(), follow->_state.eid,
-                entity->_move.position, ways);
+            scene->_move->doMove(entity->_state.eid, MOVE_ACTION_FOLLOW, entity->getSpeed(), follow->_state.eid, ways);
         }
     }
 

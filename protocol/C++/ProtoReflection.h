@@ -103,6 +103,16 @@ public:
                    return "SceneSection";
             }
             break;
+            case 2009:
+            {
+                   return "EntitySkillInfo";
+            }
+            break;
+            case 2010:
+            {
+                   return "EntityBuffInfo";
+            }
+            break;
             case 3000:
             {
                    return "DockerKnock";

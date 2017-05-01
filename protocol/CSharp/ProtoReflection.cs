@@ -80,6 +80,10 @@ namespace Proto4z
             _idToName.Add(2007, "EntityFullData");
             _nameToID.Add("SceneSection", 2008);
             _idToName.Add(2008, "SceneSection");
+            _nameToID.Add("EntitySkillInfo", 2009);
+            _idToName.Add(2009, "EntitySkillInfo");
+            _nameToID.Add("EntityBuffInfo", 2010);
+            _idToName.Add(2010, "EntityBuffInfo");
             _nameToID.Add("DockerKnock", 3000);
             _idToName.Add(3000, "DockerKnock");
             _nameToID.Add("DockerPulse", 3001);

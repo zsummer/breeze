@@ -523,7 +523,6 @@ struct UseSkillResp //只有失败时才会使用该协议
     unsigned short retCode;  
     unsigned long long eid;  
     unsigned long long skillID;  
-    unsigned long long foe;  
     EPosition dst;  
     bool foeFirst;  
     UseSkillResp() 
@@ -531,14 +530,12 @@ struct UseSkillResp //只有失败时才会使用该协议
         retCode = 0; 
         eid = 0; 
         skillID = 0; 
-        foe = 0; 
     } 
-    UseSkillResp(const unsigned short & retCode, const unsigned long long & eid, const unsigned long long & skillID, const unsigned long long & foe, const EPosition & dst, const bool & foeFirst) 
+    UseSkillResp(const unsigned short & retCode, const unsigned long long & eid, const unsigned long long & skillID, const EPosition & dst, const bool & foeFirst) 
     { 
         this->retCode = retCode; 
         this->eid = eid; 
         this->skillID = skillID; 
-        this->foe = foe; 
         this->dst = dst; 
         this->foeFirst = foeFirst; 
     } 
@@ -548,7 +545,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.retCode;  
     ws << data.eid;  
     ws << data.skillID;  
-    ws << data.foe;  
     ws << data.dst;  
     ws << data.foeFirst;  
     return ws; 
@@ -558,7 +554,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.retCode;  
     rs >> data.eid;  
     rs >> data.skillID;  
-    rs >> data.foe;  
     rs >> data.dst;  
     rs >> data.foeFirst;  
     return rs; 
@@ -569,7 +564,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "retCode=" << info.retCode << ","; 
     stm << "eid=" << info.eid << ","; 
     stm << "skillID=" << info.skillID << ","; 
-    stm << "foe=" << info.foe << ","; 
     stm << "dst=" << info.dst << ","; 
     stm << "foeFirst=" << info.foeFirst << ","; 
     stm << "]"; 
@@ -581,51 +575,34 @@ struct UseSkillNotice
     static const unsigned short getProtoID() { return 50015;} 
     static const std::string getProtoName() { return "UseSkillNotice";} 
     unsigned long long eid;  
-    unsigned long long skillID;  
-    unsigned long long foe;  
-    EPosition dst;  
-    bool foeFirst;  
+    EntitySkillInfo skill;  
     UseSkillNotice() 
     { 
         eid = 0; 
-        skillID = 0; 
-        foe = 0; 
     } 
-    UseSkillNotice(const unsigned long long & eid, const unsigned long long & skillID, const unsigned long long & foe, const EPosition & dst, const bool & foeFirst) 
+    UseSkillNotice(const unsigned long long & eid, const EntitySkillInfo & skill) 
     { 
         this->eid = eid; 
-        this->skillID = skillID; 
-        this->foe = foe; 
-        this->dst = dst; 
-        this->foeFirst = foeFirst; 
+        this->skill = skill; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const UseSkillNotice & data) 
 { 
     ws << data.eid;  
-    ws << data.skillID;  
-    ws << data.foe;  
-    ws << data.dst;  
-    ws << data.foeFirst;  
+    ws << data.skill;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, UseSkillNotice & data) 
 { 
     rs >> data.eid;  
-    rs >> data.skillID;  
-    rs >> data.foe;  
-    rs >> data.dst;  
-    rs >> data.foeFirst;  
+    rs >> data.skill;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const UseSkillNotice & info) 
 { 
     stm << "["; 
     stm << "eid=" << info.eid << ","; 
-    stm << "skillID=" << info.skillID << ","; 
-    stm << "foe=" << info.foe << ","; 
-    stm << "dst=" << info.dst << ","; 
-    stm << "foeFirst=" << info.foeFirst << ","; 
+    stm << "skill=" << info.skill << ","; 
     stm << "]"; 
     return stm; 
 } 

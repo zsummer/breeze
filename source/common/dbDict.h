@@ -142,7 +142,6 @@ public:
         buildTable<DictItem>(helper);
         buildTable<DictProp>(helper);
         buildTable<AOESearch>(helper);
-        buildTable<DictBuffEffect>(helper);
         buildTable<DictBuff>(helper);
         buildTable<DictSkill>(helper);
         return true;
@@ -177,7 +176,6 @@ public:
         LOAD_ONE_KEY_DICT(DictProp);
 
         LOAD_ONE_KEY_DICT(AOESearch);
-        LOAD_ONE_KEY_DICT(DictBuffEffect);
         LOAD_ONE_KEY_DICT(DictBuff);
         LOAD_ONE_KEY_DICT(DictSkill);
 
@@ -190,7 +188,6 @@ public:
     MAKE_ONE_KEY_DICT(DictItem, ui64, id);
     MAKE_ONE_KEY_DICT(DictProp, ui64, id);
     MAKE_ONE_KEY_DICT(AOESearch, ui64, id);
-    MAKE_ONE_KEY_DICT(DictBuffEffect, ui64, id);
     MAKE_ONE_KEY_DICT(DictBuff, ui64, id);
     MAKE_ONE_KEY_DICT(DictSkill, ui64, id);
 

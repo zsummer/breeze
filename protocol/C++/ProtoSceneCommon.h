@@ -358,7 +358,7 @@ struct EntityState //EntityState
     unsigned short etype; //实体类型  
     unsigned short state; //状态  
     unsigned long long foe; //锁定的敌人  
-    unsigned long long leader; //实体的老大, 如果是飞行道具 这个指向施放飞行道具的人  
+    unsigned long long master; //如果是飞行道具 这个指向施放飞行道具的人  
     double curHP; //当前的血量  
     double maxHP; //当前的血量上限  
     EntityState() 
@@ -371,11 +371,11 @@ struct EntityState //EntityState
         etype = 0; 
         state = 0; 
         foe = 0; 
-        leader = 0; 
+        master = 0; 
         curHP = 0.0; 
         maxHP = 0.0; 
     } 
-    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP, const double & maxHP) 
+    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & master, const double & curHP, const double & maxHP) 
     { 
         this->eid = eid; 
         this->avatarID = avatarID; 
@@ -386,7 +386,7 @@ struct EntityState //EntityState
         this->etype = etype; 
         this->state = state; 
         this->foe = foe; 
-        this->leader = leader; 
+        this->master = master; 
         this->curHP = curHP; 
         this->maxHP = maxHP; 
     } 
@@ -402,7 +402,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.etype;  
     ws << data.state;  
     ws << data.foe;  
-    ws << data.leader;  
+    ws << data.master;  
     ws << data.curHP;  
     ws << data.maxHP;  
     return ws; 
@@ -418,7 +418,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.etype;  
     rs >> data.state;  
     rs >> data.foe;  
-    rs >> data.leader;  
+    rs >> data.master;  
     rs >> data.curHP;  
     rs >> data.maxHP;  
     return rs; 
@@ -435,7 +435,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "etype=" << info.etype << ","; 
     stm << "state=" << info.state << ","; 
     stm << "foe=" << info.foe << ","; 
-    stm << "leader=" << info.leader << ","; 
+    stm << "master=" << info.master << ","; 
     stm << "curHP=" << info.curHP << ","; 
     stm << "maxHP=" << info.maxHP << ","; 
     stm << "]"; 
@@ -691,6 +691,155 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "sceneEndTime=" << info.sceneEndTime << ","; 
     stm << "serverTime=" << info.serverTime << ","; 
     stm << "entitys=" << info.entitys << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct EntitySkillInfo //技能  
+{ 
+    static const unsigned short getProtoID() { return 2009;} 
+    static const std::string getProtoName() { return "EntitySkillInfo";} 
+    unsigned long long skillID;  
+    EPosition activeOrg;  
+    unsigned long long activeOrgEID;  
+    EPosition activeDst;  
+    unsigned long long activeDstEID;  
+    double activeTime;  
+    double lastTriggerTime;  
+    bool isFinish;  
+    double activeCount;  
+    EntitySkillInfo() 
+    { 
+        skillID = 0; 
+        activeOrgEID = 0; 
+        activeDstEID = 0; 
+        activeTime = 0.0; 
+        lastTriggerTime = 0.0; 
+        activeCount = 0.0; 
+    } 
+    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const bool & isFinish, const double & activeCount) 
+    { 
+        this->skillID = skillID; 
+        this->activeOrg = activeOrg; 
+        this->activeOrgEID = activeOrgEID; 
+        this->activeDst = activeDst; 
+        this->activeDstEID = activeDstEID; 
+        this->activeTime = activeTime; 
+        this->lastTriggerTime = lastTriggerTime; 
+        this->isFinish = isFinish; 
+        this->activeCount = activeCount; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntitySkillInfo & data) 
+{ 
+    ws << data.skillID;  
+    ws << data.activeOrg;  
+    ws << data.activeOrgEID;  
+    ws << data.activeDst;  
+    ws << data.activeDstEID;  
+    ws << data.activeTime;  
+    ws << data.lastTriggerTime;  
+    ws << data.isFinish;  
+    ws << data.activeCount;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntitySkillInfo & data) 
+{ 
+    rs >> data.skillID;  
+    rs >> data.activeOrg;  
+    rs >> data.activeOrgEID;  
+    rs >> data.activeDst;  
+    rs >> data.activeDstEID;  
+    rs >> data.activeTime;  
+    rs >> data.lastTriggerTime;  
+    rs >> data.isFinish;  
+    rs >> data.activeCount;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntitySkillInfo & info) 
+{ 
+    stm << "["; 
+    stm << "skillID=" << info.skillID << ","; 
+    stm << "activeOrg=" << info.activeOrg << ","; 
+    stm << "activeOrgEID=" << info.activeOrgEID << ","; 
+    stm << "activeDst=" << info.activeDst << ","; 
+    stm << "activeDstEID=" << info.activeDstEID << ","; 
+    stm << "activeTime=" << info.activeTime << ","; 
+    stm << "lastTriggerTime=" << info.lastTriggerTime << ","; 
+    stm << "isFinish=" << info.isFinish << ","; 
+    stm << "activeCount=" << info.activeCount << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct EntityBuffInfo //BUFF  
+{ 
+    static const unsigned short getProtoID() { return 2010;} 
+    static const std::string getProtoName() { return "EntityBuffInfo";} 
+    unsigned long long buffID;  
+    EPosition activeOrg;  
+    unsigned long long activeOrgEID;  
+    EPosition activeDst;  
+    unsigned long long activeDstEID;  
+    double activeTime;  
+    double lastTriggerTime;  
+    double activeCount;  
+    EntityBuffInfo() 
+    { 
+        buffID = 0; 
+        activeOrgEID = 0; 
+        activeDstEID = 0; 
+        activeTime = 0.0; 
+        lastTriggerTime = 0.0; 
+        activeCount = 0.0; 
+    } 
+    EntityBuffInfo(const unsigned long long & buffID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const double & activeCount) 
+    { 
+        this->buffID = buffID; 
+        this->activeOrg = activeOrg; 
+        this->activeOrgEID = activeOrgEID; 
+        this->activeDst = activeDst; 
+        this->activeDstEID = activeDstEID; 
+        this->activeTime = activeTime; 
+        this->lastTriggerTime = lastTriggerTime; 
+        this->activeCount = activeCount; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityBuffInfo & data) 
+{ 
+    ws << data.buffID;  
+    ws << data.activeOrg;  
+    ws << data.activeOrgEID;  
+    ws << data.activeDst;  
+    ws << data.activeDstEID;  
+    ws << data.activeTime;  
+    ws << data.lastTriggerTime;  
+    ws << data.activeCount;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityBuffInfo & data) 
+{ 
+    rs >> data.buffID;  
+    rs >> data.activeOrg;  
+    rs >> data.activeOrgEID;  
+    rs >> data.activeDst;  
+    rs >> data.activeDstEID;  
+    rs >> data.activeTime;  
+    rs >> data.lastTriggerTime;  
+    rs >> data.activeCount;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityBuffInfo & info) 
+{ 
+    stm << "["; 
+    stm << "buffID=" << info.buffID << ","; 
+    stm << "activeOrg=" << info.activeOrg << ","; 
+    stm << "activeOrgEID=" << info.activeOrgEID << ","; 
+    stm << "activeDst=" << info.activeDst << ","; 
+    stm << "activeDstEID=" << info.activeDstEID << ","; 
+    stm << "activeTime=" << info.activeTime << ","; 
+    stm << "lastTriggerTime=" << info.lastTriggerTime << ","; 
+    stm << "activeCount=" << info.activeCount << ","; 
     stm << "]"; 
     return stm; 
 } 

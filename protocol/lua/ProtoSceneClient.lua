@@ -104,19 +104,15 @@ Proto4z.UseSkillResp.__protoName = "UseSkillResp"
 Proto4z.UseSkillResp[1] = {name="retCode", type="ui16" }  
 Proto4z.UseSkillResp[2] = {name="eid", type="ui64" }  
 Proto4z.UseSkillResp[3] = {name="skillID", type="ui64" }  
-Proto4z.UseSkillResp[4] = {name="foe", type="ui64" }  
-Proto4z.UseSkillResp[5] = {name="dst", type="EPosition" }  
-Proto4z.UseSkillResp[6] = {name="foeFirst", type="bool" }  
+Proto4z.UseSkillResp[4] = {name="dst", type="EPosition" }  
+Proto4z.UseSkillResp[5] = {name="foeFirst", type="bool" }  
  
 Proto4z.register(50015,"UseSkillNotice") 
 Proto4z.UseSkillNotice = {}  
 Proto4z.UseSkillNotice.__protoID = 50015 
 Proto4z.UseSkillNotice.__protoName = "UseSkillNotice" 
 Proto4z.UseSkillNotice[1] = {name="eid", type="ui64" }  
-Proto4z.UseSkillNotice[2] = {name="skillID", type="ui64" }  
-Proto4z.UseSkillNotice[3] = {name="foe", type="ui64" }  
-Proto4z.UseSkillNotice[4] = {name="dst", type="EPosition" }  
-Proto4z.UseSkillNotice[5] = {name="foeFirst", type="bool" }  
+Proto4z.UseSkillNotice[2] = {name="skill", type="EntitySkillInfo" }  
  
 Proto4z.register(50016,"SceneEventNotice") 
 Proto4z.SceneEventNotice = {}  

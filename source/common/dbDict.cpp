@@ -74,46 +74,7 @@ bool DBDict::fakeTestData()
     }
     if (true)
     {
-        AOESearch s;
-        s.id = 1; 
-        s.etype = ENTITY_NONE; // all type
-        s.camp = 0;
-        s.camp = setBitFlag(s.camp, 2, 1); //敌方
-        s.camp = setBitFlag(s.camp, 3, 1); //包括中立
-        s.distance = 10.0;
-        s.radian = PI*2.0; 
-        s.isRect = 0; //radian
-        s.limitEntitys = 1;
-        s.offsetX = 0.0;
-        s.offsetY = 0.0;
-        _dictOneKeyAOESearch[s.id] = s; // 360度索敌
 
-        s.id = 2; 
-        s.distance = 5.0;
-        s.radian = PI/2.0;
-        s.limitEntitys = 100;
-        s.offsetY = -1.0;
-        s.offsetX = -1.0;
-        s.distance += 1;
-        _dictOneKeyAOESearch[s.id] = s; //90度扇形伤害
-
-        s.id = 3; 
-        s.limitEntitys = 1;
-        _dictOneKeyAOESearch[s.id] = s;//90度扇形伤害 限制一个敌人 
-
-
-        s.id = 4; 
-        s.distance = 5.0;
-        s.radian = 2.0;
-        s.limitEntitys = 10;
-        s.offsetY = -1.0;
-        s.offsetX = -1.0;
-        s.distance += 1;
-        _dictOneKeyAOESearch[s.id] = s;//长5,宽2, 修正长+1  长方形伤害 
-
-        s.id = 5; 
-        s.limitEntitys = 1;
-        _dictOneKeyAOESearch[s.id] = s;//长5,宽2, 修正长+1  长方形伤害 限制1个敌人 
     }
 
     if (true)
@@ -135,36 +96,8 @@ bool DBDict::fakeTestData()
         _dictOneKeyDictSkill[skill.id] = skill;
 
     }
-    if (true)
-    {
-        DictBuffEffect effect;
-        effect.id = 1;
-        effect.propID = 2; //move
-        _dictOneKeyDictBuffEffect[effect.id] = effect;
-        effect.id = 1;
-        effect.propID = 3; //hp
-        _dictOneKeyDictBuffEffect[effect.id] = effect;
-    }
-    if (true)
-    {
-        DictBuff buff;
-        buff.id = 1;
-        buff.effects.push_back(1);
-        buff.keepTime = 10;
-        buff.limitStackTime = 20;
-        buff.stamp = 0;
-        buff.stamp = setBitFlag(buff.stamp, BUFF_BUFF, true);
-        _dictOneKeyDictBuff[buff.id] = buff;
 
-        buff.id = 2;
-        buff.effects.push_back(2); // 1&2
-        buff.keepTime = 10;
-        buff.limitStackTime = 20;
-        buff.stamp = 0;
-        buff.stamp = setBitFlag(buff.stamp, BUFF_BUFF, true);
-        _dictOneKeyDictBuff[buff.id] = buff;
 
-    }
 
 
 

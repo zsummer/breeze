@@ -20,11 +20,16 @@
 #define _ENTITY_H_
 #include <common.h>
 #include <utls.h>
+
+#include <DictCommon.h>
+#include <DictScene.h>
+
 #include <ProtoCommon.h>
 #include <ProtoClient.h>
 #include <ProtoSceneCommon.h>
 #include <ProtoSceneServer.h>
 #include <ProtoSceneClient.h>
+
 #include <rvo2/RVO.h>
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v){stm << "[" << v.x() << "," << v.y() << "]";return stm;}
@@ -47,24 +52,17 @@ inline DictProp operator * (const DictProp & ep, double df);
 using DictID = unsigned long long;
 const DictID InvalidDictID = -1;
 
-struct EntitySkillInfo
-{
-    DictID skillID = InvalidDictID;
-    double beginTime = 0.0; //技能开始释放时间
-    double lastTrigger = 0.0; //技能最后一次触发
-};
-struct EntityBuffInfo
-{
-    DictID buffID = InvalidDictID;
-    double beginTime = 0.0; //技能开始释放时间
-};
 
+
+using EntitySkillInfoPtr = std::shared_ptr<EntitySkillInfo>;
+
+using EntityBuffInfoPtr = std::shared_ptr<EntityBuffInfo>;
 
 struct EntitySkillSystem
 {
-    std::map<DictID, EntitySkillInfo> activeSkills; 
-    std::map<DictID, EntityBuffInfo> activeBuffs; 
-    std::map<DictID, DictSkill> dictPlayerSkills; 
+    std::map<DictID, EntitySkillInfoPtr> activeSkills;
+    std::map<DictID, EntityBuffInfoPtr> activeBuffs;
+    std::map<DictID, DictSkill> dictBootSkills; 
     bool autoAttack = false;
 };
 

@@ -590,7 +590,7 @@ namespace Proto4z
         public ushort etype; //实体类型  
         public ushort state; //状态  
         public ulong foe; //锁定的敌人  
-        public ulong leader; //实体的老大, 如果是飞行道具 这个指向施放飞行道具的人  
+        public ulong master; //如果是飞行道具 这个指向施放飞行道具的人  
         public double curHP; //当前的血量  
         public double maxHP; //当前的血量上限  
         public EntityState()  
@@ -604,11 +604,11 @@ namespace Proto4z
             etype = 0;  
             state = 0;  
             foe = 0;  
-            leader = 0;  
+            master = 0;  
             curHP = 0.0;  
             maxHP = 0.0;  
         } 
-        public EntityState(ulong eid, ulong avatarID, string avatarName, ulong modelID, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong leader, double curHP, double maxHP) 
+        public EntityState(ulong eid, ulong avatarID, string avatarName, ulong modelID, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong master, double curHP, double maxHP) 
         { 
             this.eid = eid; 
             this.avatarID = avatarID; 
@@ -619,7 +619,7 @@ namespace Proto4z
             this.etype = etype; 
             this.state = state; 
             this.foe = foe; 
-            this.leader = leader; 
+            this.master = master; 
             this.curHP = curHP; 
             this.maxHP = maxHP; 
         } 
@@ -635,7 +635,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.state)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.foe)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.leader)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.master)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.curHP)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.maxHP)); 
             return data; 
@@ -651,7 +651,7 @@ namespace Proto4z
             this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.foe = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.leader = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.master = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.curHP = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.maxHP = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
@@ -1008,6 +1008,149 @@ namespace Proto4z
             this.serverTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.entitys = new EntityFullDataArray(); 
             this.entitys.__decode(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class EntitySkillInfo: Proto4z.IProtoObject //技能  
+    {     
+        //proto id   
+        public const ushort protoID = 2009;  
+        static public ushort getProtoID() { return 2009; } 
+        static public string getProtoName() { return "EntitySkillInfo"; } 
+        //members   
+        public ulong skillID;  
+        public EPosition activeOrg;  
+        public ulong activeOrgEID;  
+        public EPosition activeDst;  
+        public ulong activeDstEID;  
+        public double activeTime;  
+        public double lastTriggerTime;  
+        public bool isFinish;  
+        public double activeCount;  
+        public EntitySkillInfo()  
+        { 
+            skillID = 0;  
+            activeOrg = new EPosition();  
+            activeOrgEID = 0;  
+            activeDst = new EPosition();  
+            activeDstEID = 0;  
+            activeTime = 0.0;  
+            lastTriggerTime = 0.0;  
+            isFinish = new bool();  
+            activeCount = 0.0;  
+        } 
+        public EntitySkillInfo(ulong skillID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ulong activeDstEID, double activeTime, double lastTriggerTime, bool isFinish, double activeCount) 
+        { 
+            this.skillID = skillID; 
+            this.activeOrg = activeOrg; 
+            this.activeOrgEID = activeOrgEID; 
+            this.activeDst = activeDst; 
+            this.activeDstEID = activeDstEID; 
+            this.activeTime = activeTime; 
+            this.lastTriggerTime = lastTriggerTime; 
+            this.isFinish = isFinish; 
+            this.activeCount = activeCount; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.skillID)); 
+            if (this.activeOrg == null) this.activeOrg = new EPosition(); 
+            data.AddRange(this.activeOrg.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeOrgEID)); 
+            if (this.activeDst == null) this.activeDst = new EPosition(); 
+            data.AddRange(this.activeDst.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeDstEID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastTriggerTime)); 
+            if (this.isFinish == null) this.isFinish = new bool(); 
+            data.AddRange(this.isFinish.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeCount)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.skillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.activeOrg = new EPosition(); 
+            this.activeOrg.__decode(binData, ref pos); 
+            this.activeOrgEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.activeDst = new EPosition(); 
+            this.activeDst.__decode(binData, ref pos); 
+            this.activeDstEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.activeTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.lastTriggerTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.isFinish = new bool(); 
+            this.isFinish.__decode(binData, ref pos); 
+            this.activeCount = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class EntityBuffInfo: Proto4z.IProtoObject //BUFF  
+    {     
+        //proto id   
+        public const ushort protoID = 2010;  
+        static public ushort getProtoID() { return 2010; } 
+        static public string getProtoName() { return "EntityBuffInfo"; } 
+        //members   
+        public ulong buffID;  
+        public EPosition activeOrg;  
+        public ulong activeOrgEID;  
+        public EPosition activeDst;  
+        public ulong activeDstEID;  
+        public double activeTime;  
+        public double lastTriggerTime;  
+        public double activeCount;  
+        public EntityBuffInfo()  
+        { 
+            buffID = 0;  
+            activeOrg = new EPosition();  
+            activeOrgEID = 0;  
+            activeDst = new EPosition();  
+            activeDstEID = 0;  
+            activeTime = 0.0;  
+            lastTriggerTime = 0.0;  
+            activeCount = 0.0;  
+        } 
+        public EntityBuffInfo(ulong buffID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ulong activeDstEID, double activeTime, double lastTriggerTime, double activeCount) 
+        { 
+            this.buffID = buffID; 
+            this.activeOrg = activeOrg; 
+            this.activeOrgEID = activeOrgEID; 
+            this.activeDst = activeDst; 
+            this.activeDstEID = activeDstEID; 
+            this.activeTime = activeTime; 
+            this.lastTriggerTime = lastTriggerTime; 
+            this.activeCount = activeCount; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.buffID)); 
+            if (this.activeOrg == null) this.activeOrg = new EPosition(); 
+            data.AddRange(this.activeOrg.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeOrgEID)); 
+            if (this.activeDst == null) this.activeDst = new EPosition(); 
+            data.AddRange(this.activeDst.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeDstEID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastTriggerTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeCount)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.buffID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.activeOrg = new EPosition(); 
+            this.activeOrg.__decode(binData, ref pos); 
+            this.activeOrgEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.activeDst = new EPosition(); 
+            this.activeDst.__decode(binData, ref pos); 
+            this.activeDstEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.activeTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.lastTriggerTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.activeCount = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 

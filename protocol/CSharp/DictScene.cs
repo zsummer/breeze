@@ -120,6 +120,15 @@ namespace Proto4z
         } 
     } 
  
+    public enum FILTER_STAMP : ulong 
+    { 
+        FILTER_NONE = 1, //全部  
+        FILTER_SELF = 2, //自己  
+        FILTER_OTHER_FRIEND = 3, //友方阵营  
+        FILTER_ENEMY_CAMP = 4, //敌方阵营  
+        FILTER_NEUTRAL_CAMP = 5, //中立阵营  
+    }; 
+ 
     public class AOESearch: Proto4z.IProtoObject 
     {     
         //proto id   
@@ -129,38 +138,38 @@ namespace Proto4z
         //members   
         public ulong id;  
         public ushort etype; //实体类型, 玩家/AI 或者是NONE忽略该选项  
-        public ulong camp; //0忽略阵营, 1自己, 2 已锁定的敌人, 3已锁定的leader, 4同阵营非自己, 5敌方,  6中立  
-        public string campText;  
+        public ulong filter;  
+        public string filterText;  
         public ushort isRect; //0扇形, 其他矩形  
         public double distance; //伤害距离  
-        public double radian; //弧度或者宽度  
-        public double offsetX; //坐标偏移量, 以caster为原点, 朝向为y轴  
-        public double offsetY; //坐标偏移量, 以caster为原点, 朝向为y轴  
+        public double value; //弧度或者宽度  
+        public double compensateForward; //前向补偿  
+        public double compensateRight; //右向补偿  
         public ulong limitEntitys; //最大目标数, 距离优先  
         public AOESearch()  
         { 
             id = 0;  
             etype = 0;  
-            camp = 0;  
-            campText = "";  
+            filter = 0;  
+            filterText = "";  
             isRect = 0;  
             distance = 0.0;  
-            radian = 0.0;  
-            offsetX = 0.0;  
-            offsetY = 0.0;  
+            value = 0.0;  
+            compensateForward = 0.0;  
+            compensateRight = 0.0;  
             limitEntitys = 0;  
         } 
-        public AOESearch(ulong id, ushort etype, ulong camp, string campText, ushort isRect, double distance, double radian, double offsetX, double offsetY, ulong limitEntitys) 
+        public AOESearch(ulong id, ushort etype, ulong filter, string filterText, ushort isRect, double distance, double value, double compensateForward, double compensateRight, ulong limitEntitys) 
         { 
             this.id = id; 
             this.etype = etype; 
-            this.camp = camp; 
-            this.campText = campText; 
+            this.filter = filter; 
+            this.filterText = filterText; 
             this.isRect = isRect; 
             this.distance = distance; 
-            this.radian = radian; 
-            this.offsetX = offsetX; 
-            this.offsetY = offsetY; 
+            this.value = value; 
+            this.compensateForward = compensateForward; 
+            this.compensateRight = compensateRight; 
             this.limitEntitys = limitEntitys; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -168,13 +177,13 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.camp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.campText)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.filter)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.filterText)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.isRect)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.distance)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.radian)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.offsetX)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.offsetY)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.value)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.compensateForward)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.compensateRight)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.limitEntitys)); 
             return data; 
         } 
@@ -182,13 +191,13 @@ namespace Proto4z
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.camp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.campText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.filter = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.filterText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.isRect = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.distance = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.radian = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.offsetX = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.offsetY = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.value = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.compensateForward = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.compensateRight = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.limitEntitys = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
@@ -353,7 +362,9 @@ namespace Proto4z
         public ulong stamp;  
         public ulong searchID; //锁敌  
         public ulong aoeID; //AOI伤害  
-        public ulong appBuffID; //上buff的searchid  
+        public ushort orgType; //1 施法者位置, 2 锁定的敌人位置或者目标位置  
+        public bool orgFixed; //位置固定化成坐标, 否则可能跟随自己或者目标位置实时变化  
+        public double orgLimitDistance; //如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离  
         public double delay;  
         public double interval; //自动释放间隔,针对自动施法,被动技能有效  
         public double keep; //持续时间  
@@ -368,6 +379,7 @@ namespace Proto4z
         public double dstMoveSpeed; //附加给目标朝向自己的位移速度  
         public double selfMoveTime; //附加给自己朝向目标的位移时间  
         public double selfMoveSpeed; //附加给自己朝向目标的位移速度  
+        public ulong appendBuffsAoeID; //上buff的searchid  
         public DictArrayKey appendBuffs;  
         public string appendBuffsText; //触发buff 格式 k,k,k,   
         public DictArrayKey harmBuffs;  
@@ -383,7 +395,9 @@ namespace Proto4z
             stamp = 0;  
             searchID = 0;  
             aoeID = 0;  
-            appBuffID = 0;  
+            orgType = 0;  
+            orgFixed = new bool();  
+            orgLimitDistance = 0.0;  
             delay = 0.0;  
             interval = 0.0;  
             keep = 0.0;  
@@ -398,6 +412,7 @@ namespace Proto4z
             dstMoveSpeed = 0.0;  
             selfMoveTime = 0.0;  
             selfMoveSpeed = 0.0;  
+            appendBuffsAoeID = 0;  
             appendBuffs = new DictArrayKey();  
             appendBuffsText = "";  
             harmBuffs = new DictArrayKey();  
@@ -408,13 +423,15 @@ namespace Proto4z
             followSkillsText = "";  
             desc = "";  
         } 
-        public DictSkill(ulong id, ulong stamp, ulong searchID, ulong aoeID, ulong appBuffID, double delay, double interval, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey combSkills, string combSkillsText, DictArrayKey followSkills, string followSkillsText, string desc) 
+        public DictSkill(ulong id, ulong stamp, ulong searchID, ulong aoeID, ushort orgType, bool orgFixed, double orgLimitDistance, double delay, double interval, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, ulong appendBuffsAoeID, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey combSkills, string combSkillsText, DictArrayKey followSkills, string followSkillsText, string desc) 
         { 
             this.id = id; 
             this.stamp = stamp; 
             this.searchID = searchID; 
             this.aoeID = aoeID; 
-            this.appBuffID = appBuffID; 
+            this.orgType = orgType; 
+            this.orgFixed = orgFixed; 
+            this.orgLimitDistance = orgLimitDistance; 
             this.delay = delay; 
             this.interval = interval; 
             this.keep = keep; 
@@ -429,6 +446,7 @@ namespace Proto4z
             this.dstMoveSpeed = dstMoveSpeed; 
             this.selfMoveTime = selfMoveTime; 
             this.selfMoveSpeed = selfMoveSpeed; 
+            this.appendBuffsAoeID = appendBuffsAoeID; 
             this.appendBuffs = appendBuffs; 
             this.appendBuffsText = appendBuffsText; 
             this.harmBuffs = harmBuffs; 
@@ -446,7 +464,10 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.stamp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.searchID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.aoeID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.appBuffID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgType)); 
+            if (this.orgFixed == null) this.orgFixed = new bool(); 
+            data.AddRange(this.orgFixed.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.orgLimitDistance)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.delay)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.interval)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.keep)); 
@@ -461,6 +482,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.dstMoveSpeed)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.selfMoveTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.selfMoveSpeed)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.appendBuffsAoeID)); 
             if (this.appendBuffs == null) this.appendBuffs = new DictArrayKey(); 
             data.AddRange(this.appendBuffs.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.appendBuffsText)); 
@@ -482,7 +504,10 @@ namespace Proto4z
             this.stamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.searchID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.aoeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.appBuffID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.orgType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.orgFixed = new bool(); 
+            this.orgFixed.__decode(binData, ref pos); 
+            this.orgLimitDistance = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.delay = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.interval = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.keep = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
@@ -497,6 +522,7 @@ namespace Proto4z
             this.dstMoveSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.selfMoveTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.selfMoveSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.appendBuffsAoeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.appendBuffs = new DictArrayKey(); 
             this.appendBuffs.__decode(binData, ref pos); 
             this.appendBuffsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 

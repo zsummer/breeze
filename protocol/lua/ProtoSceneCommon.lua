@@ -151,7 +151,7 @@ Proto4z.EntityState[6] = {name="groupID", type="ui64" } --组队ID
 Proto4z.EntityState[7] = {name="etype", type="ui16" } --实体类型 
 Proto4z.EntityState[8] = {name="state", type="ui16" } --状态 
 Proto4z.EntityState[9] = {name="foe", type="ui64" } --锁定的敌人 
-Proto4z.EntityState[10] = {name="leader", type="ui64" } --实体的老大, 如果是飞行道具 这个指向施放飞行道具的人 
+Proto4z.EntityState[10] = {name="master", type="ui64" } --如果是飞行道具 这个指向施放飞行道具的人 
 Proto4z.EntityState[11] = {name="curHP", type="double" } --当前的血量 
 Proto4z.EntityState[12] = {name="maxHP", type="double" } --当前的血量上限 
  
@@ -218,3 +218,30 @@ Proto4z.SceneSection[4] = {name="sceneStartTime", type="double" } --服务器战
 Proto4z.SceneSection[5] = {name="sceneEndTime", type="double" } --服务器战场结束时间 
 Proto4z.SceneSection[6] = {name="serverTime", type="double" } --服务器当前时间 
 Proto4z.SceneSection[7] = {name="entitys", type="EntityFullDataArray" } --这里包含有所有当前场景下的实体属性和状态数据 
+ 
+Proto4z.register(2009,"EntitySkillInfo") 
+Proto4z.EntitySkillInfo = {} --技能 
+Proto4z.EntitySkillInfo.__protoID = 2009 
+Proto4z.EntitySkillInfo.__protoName = "EntitySkillInfo" 
+Proto4z.EntitySkillInfo[1] = {name="skillID", type="ui64" }  
+Proto4z.EntitySkillInfo[2] = {name="activeOrg", type="EPosition" }  
+Proto4z.EntitySkillInfo[3] = {name="activeOrgEID", type="ui64" }  
+Proto4z.EntitySkillInfo[4] = {name="activeDst", type="EPosition" }  
+Proto4z.EntitySkillInfo[5] = {name="activeDstEID", type="ui64" }  
+Proto4z.EntitySkillInfo[6] = {name="activeTime", type="double" }  
+Proto4z.EntitySkillInfo[7] = {name="lastTriggerTime", type="double" }  
+Proto4z.EntitySkillInfo[8] = {name="isFinish", type="bool" }  
+Proto4z.EntitySkillInfo[9] = {name="activeCount", type="double" }  
+ 
+Proto4z.register(2010,"EntityBuffInfo") 
+Proto4z.EntityBuffInfo = {} --BUFF 
+Proto4z.EntityBuffInfo.__protoID = 2010 
+Proto4z.EntityBuffInfo.__protoName = "EntityBuffInfo" 
+Proto4z.EntityBuffInfo[1] = {name="buffID", type="ui64" }  
+Proto4z.EntityBuffInfo[2] = {name="activeOrg", type="EPosition" }  
+Proto4z.EntityBuffInfo[3] = {name="activeOrgEID", type="ui64" }  
+Proto4z.EntityBuffInfo[4] = {name="activeDst", type="EPosition" }  
+Proto4z.EntityBuffInfo[5] = {name="activeDstEID", type="ui64" }  
+Proto4z.EntityBuffInfo[6] = {name="activeTime", type="double" }  
+Proto4z.EntityBuffInfo[7] = {name="lastTriggerTime", type="double" }  
+Proto4z.EntityBuffInfo[8] = {name="activeCount", type="double" }  
