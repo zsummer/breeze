@@ -250,7 +250,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
 
 
     auto followEntity = scene->getEntity(follow);
-    if (!followEntity || followEntity->_state.state != ENTITY_STATE_ACTIVE)
+    if (action == MOVE_ACTION_FOLLOW && (!followEntity || followEntity->_state.state != ENTITY_STATE_ACTIVE))
     {
         action = MOVE_ACTION_IDLE;
     }

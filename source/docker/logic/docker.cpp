@@ -1376,12 +1376,12 @@ void Docker::toService(Tracing trace, const char * block, unsigned int len, bool
 //    LOGT("Docker::toService " << trace << ", len=" << len << ", syncCall=" << syncCall);
     if (getServiceTrait(trace.routing.toServiceType) == STrait_Single && trace.routing.toServiceID != InvalidServiceID)
     {
-        LOGE("toService dst Type is Single[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID);
+        LOGE("toService dst Type is Single[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID << ", block protoID=" << protoID);
         return;
     }
     if (getServiceTrait(trace.routing.toServiceType) == STrait_Multi && trace.routing.toServiceType != STClient && trace.routing.toServiceID == InvalidServiceID)
     {
-        LOGE("toService dst Type is Multi[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID);
+        LOGE("toService dst Type is Multi[" << getServiceName(trace.routing.toServiceType) << "] but dst Service ID is " << trace.routing.toServiceID << ", block protoID=" << protoID);
         return;
     }
     if (trace.routing.toServiceType == STClient)

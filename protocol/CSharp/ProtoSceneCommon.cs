@@ -33,7 +33,7 @@ namespace Proto4z
         //members   
         public ulong areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
         public ulong modelID; //模型ID  
-        public DictMapKeyValue equips; //额外装备  
+        public DictArrayKey equips; //额外装备  
         public ulong avatarID;  
         public string avatarName;  
         public double rankScore; //天梯分数  
@@ -43,14 +43,14 @@ namespace Proto4z
         { 
             areaID = 0;  
             modelID = 0;  
-            equips = new DictMapKeyValue();  
+            equips = new DictArrayKey();  
             avatarID = 0;  
             avatarName = "";  
             rankScore = 0.0;  
             powerType = 0;  
             token = "";  
         } 
-        public SceneGroupAvatarInfo(ulong areaID, ulong modelID, DictMapKeyValue equips, ulong avatarID, string avatarName, double rankScore, ushort powerType, string token) 
+        public SceneGroupAvatarInfo(ulong areaID, ulong modelID, DictArrayKey equips, ulong avatarID, string avatarName, double rankScore, ushort powerType, string token) 
         { 
             this.areaID = areaID; 
             this.modelID = modelID; 
@@ -66,7 +66,7 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.areaID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
-            if (this.equips == null) this.equips = new DictMapKeyValue(); 
+            if (this.equips == null) this.equips = new DictArrayKey(); 
             data.AddRange(this.equips.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
@@ -79,7 +79,7 @@ namespace Proto4z
         { 
             this.areaID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.equips = new DictMapKeyValue(); 
+            this.equips = new DictArrayKey(); 
             this.equips.__decode(binData, ref pos); 
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
@@ -1026,7 +1026,7 @@ namespace Proto4z
         public ulong activeDstEID;  
         public double activeTime;  
         public double lastTriggerTime;  
-        public bool isFinish;  
+        public ushort isFinish;  
         public double activeCount;  
         public EntitySkillInfo()  
         { 
@@ -1037,10 +1037,10 @@ namespace Proto4z
             activeDstEID = 0;  
             activeTime = 0.0;  
             lastTriggerTime = 0.0;  
-            isFinish = new bool();  
+            isFinish = 0;  
             activeCount = 0.0;  
         } 
-        public EntitySkillInfo(ulong skillID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ulong activeDstEID, double activeTime, double lastTriggerTime, bool isFinish, double activeCount) 
+        public EntitySkillInfo(ulong skillID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ulong activeDstEID, double activeTime, double lastTriggerTime, ushort isFinish, double activeCount) 
         { 
             this.skillID = skillID; 
             this.activeOrg = activeOrg; 
@@ -1064,8 +1064,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeDstEID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastTriggerTime)); 
-            if (this.isFinish == null) this.isFinish = new bool(); 
-            data.AddRange(this.isFinish.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.isFinish)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeCount)); 
             return data; 
         } 
@@ -1080,8 +1079,7 @@ namespace Proto4z
             this.activeDstEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.activeTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.lastTriggerTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.isFinish = new bool(); 
-            this.isFinish.__decode(binData, ref pos); 
+            this.isFinish = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.activeCount = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 

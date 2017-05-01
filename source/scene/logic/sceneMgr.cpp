@@ -542,6 +542,8 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
             entity->_props.attack = 200;
             entity->_state.maxHP = entity->_props.hp;
             entity->_state.curHP = entity->_state.maxHP;
+            entity->_state.camp = ENTITY_CAMP_BLUE + rand()%100;
+            entity->_skillSys.dictBootSkills[1] = DBDict::getRef().getOneKeyDictSkill(1).second;
             scene->addEntity(entity);
         }
         SceneServerGroupStateChangeIns ret;

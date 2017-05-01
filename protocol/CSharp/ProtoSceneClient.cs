@@ -140,18 +140,18 @@ namespace Proto4z
         static public string getProtoName() { return "SceneRefreshNotice"; } 
         //members   
         public DictPropArray entityProps;  
-        public EntityStateArray entityInfos;  
+        public EntityStateArray entityStates;  
         public EntityMoveArray entityMoves;  
         public SceneRefreshNotice()  
         { 
             entityProps = new DictPropArray();  
-            entityInfos = new EntityStateArray();  
+            entityStates = new EntityStateArray();  
             entityMoves = new EntityMoveArray();  
         } 
-        public SceneRefreshNotice(DictPropArray entityProps, EntityStateArray entityInfos, EntityMoveArray entityMoves) 
+        public SceneRefreshNotice(DictPropArray entityProps, EntityStateArray entityStates, EntityMoveArray entityMoves) 
         { 
             this.entityProps = entityProps; 
-            this.entityInfos = entityInfos; 
+            this.entityStates = entityStates; 
             this.entityMoves = entityMoves; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -159,8 +159,8 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             if (this.entityProps == null) this.entityProps = new DictPropArray(); 
             data.AddRange(this.entityProps.__encode()); 
-            if (this.entityInfos == null) this.entityInfos = new EntityStateArray(); 
-            data.AddRange(this.entityInfos.__encode()); 
+            if (this.entityStates == null) this.entityStates = new EntityStateArray(); 
+            data.AddRange(this.entityStates.__encode()); 
             if (this.entityMoves == null) this.entityMoves = new EntityMoveArray(); 
             data.AddRange(this.entityMoves.__encode()); 
             return data; 
@@ -169,8 +169,8 @@ namespace Proto4z
         { 
             this.entityProps = new DictPropArray(); 
             this.entityProps.__decode(binData, ref pos); 
-            this.entityInfos = new EntityStateArray(); 
-            this.entityInfos.__decode(binData, ref pos); 
+            this.entityStates = new EntityStateArray(); 
+            this.entityStates.__decode(binData, ref pos); 
             this.entityMoves = new EntityMoveArray(); 
             this.entityMoves.__decode(binData, ref pos); 
             return pos; 
@@ -461,15 +461,15 @@ namespace Proto4z
         public ulong eid;  
         public ulong skillID;  
         public EPosition dst;  
-        public bool foeFirst;  
+        public ushort foeFirst;  
         public UseSkillReq()  
         { 
             eid = 0;  
             skillID = 0;  
             dst = new EPosition();  
-            foeFirst = new bool();  
+            foeFirst = 0;  
         } 
-        public UseSkillReq(ulong eid, ulong skillID, EPosition dst, bool foeFirst) 
+        public UseSkillReq(ulong eid, ulong skillID, EPosition dst, ushort foeFirst) 
         { 
             this.eid = eid; 
             this.skillID = skillID; 
@@ -483,8 +483,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.skillID)); 
             if (this.dst == null) this.dst = new EPosition(); 
             data.AddRange(this.dst.__encode()); 
-            if (this.foeFirst == null) this.foeFirst = new bool(); 
-            data.AddRange(this.foeFirst.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.foeFirst)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -493,8 +492,7 @@ namespace Proto4z
             this.skillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.dst = new EPosition(); 
             this.dst.__decode(binData, ref pos); 
-            this.foeFirst = new bool(); 
-            this.foeFirst.__decode(binData, ref pos); 
+            this.foeFirst = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -510,16 +508,16 @@ namespace Proto4z
         public ulong eid;  
         public ulong skillID;  
         public EPosition dst;  
-        public bool foeFirst;  
+        public ushort foeFirst;  
         public UseSkillResp()  
         { 
             retCode = 0;  
             eid = 0;  
             skillID = 0;  
             dst = new EPosition();  
-            foeFirst = new bool();  
+            foeFirst = 0;  
         } 
-        public UseSkillResp(ushort retCode, ulong eid, ulong skillID, EPosition dst, bool foeFirst) 
+        public UseSkillResp(ushort retCode, ulong eid, ulong skillID, EPosition dst, ushort foeFirst) 
         { 
             this.retCode = retCode; 
             this.eid = eid; 
@@ -535,8 +533,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.skillID)); 
             if (this.dst == null) this.dst = new EPosition(); 
             data.AddRange(this.dst.__encode()); 
-            if (this.foeFirst == null) this.foeFirst = new bool(); 
-            data.AddRange(this.foeFirst.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.foeFirst)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -546,8 +543,7 @@ namespace Proto4z
             this.skillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.dst = new EPosition(); 
             this.dst.__decode(binData, ref pos); 
-            this.foeFirst = new bool(); 
-            this.foeFirst.__decode(binData, ref pos); 
+            this.foeFirst = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             return pos; 
         } 
     } 

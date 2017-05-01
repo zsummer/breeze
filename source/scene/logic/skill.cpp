@@ -254,7 +254,7 @@ bool  Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID)
 }
 
 
-bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, bool foeFirst)
+bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, ui16 foeFirst)
 {
     auto e = scene->getEntity(casterID);
     if (!e)
@@ -308,7 +308,7 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
     skill->activeCount++;
     skill->activeTime = getFloatSteadyNowTime();
     skill->lastTriggerTime = skill->activeTime - 1;
-    skill->isFinish = false;
+    skill->isFinish = 0;
 
     auto foe = scene->getEntity(e->_state.foe);
     if (dictSkill.second.orgType == 1)
@@ -409,7 +409,7 @@ bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr sk
     if (skill->lastTriggerTime >= skill->activeTime + dictSkill.delay //已经触发过一次 
         && isOutCD(*skill, dictSkill) )
     {
-        skill->isFinish = true;
+        skill->isFinish = 1;
         for (auto skillID : dictSkill.followSkills)
         {
 

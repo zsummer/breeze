@@ -31,7 +31,7 @@ struct SceneGroupAvatarInfo
     static const std::string getProtoName() { return "SceneGroupAvatarInfo";} 
     unsigned long long areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
     unsigned long long modelID; //模型ID  
-    DictMapKeyValue equips; //额外装备  
+    DictArrayKey equips; //额外装备  
     unsigned long long avatarID;  
     std::string avatarName;  
     double rankScore; //天梯分数  
@@ -45,7 +45,7 @@ struct SceneGroupAvatarInfo
         rankScore = 0.0; 
         powerType = 0; 
     } 
-    SceneGroupAvatarInfo(const unsigned long long & areaID, const unsigned long long & modelID, const DictMapKeyValue & equips, const unsigned long long & avatarID, const std::string & avatarName, const double & rankScore, const unsigned short & powerType, const std::string & token) 
+    SceneGroupAvatarInfo(const unsigned long long & areaID, const unsigned long long & modelID, const DictArrayKey & equips, const unsigned long long & avatarID, const std::string & avatarName, const double & rankScore, const unsigned short & powerType, const std::string & token) 
     { 
         this->areaID = areaID; 
         this->modelID = modelID; 
@@ -706,7 +706,7 @@ struct EntitySkillInfo //技能
     unsigned long long activeDstEID;  
     double activeTime;  
     double lastTriggerTime;  
-    bool isFinish;  
+    unsigned short isFinish;  
     double activeCount;  
     EntitySkillInfo() 
     { 
@@ -715,9 +715,10 @@ struct EntitySkillInfo //技能
         activeDstEID = 0; 
         activeTime = 0.0; 
         lastTriggerTime = 0.0; 
+        isFinish = 0; 
         activeCount = 0.0; 
     } 
-    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const bool & isFinish, const double & activeCount) 
+    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const unsigned short & isFinish, const double & activeCount) 
     { 
         this->skillID = skillID; 
         this->activeOrg = activeOrg; 

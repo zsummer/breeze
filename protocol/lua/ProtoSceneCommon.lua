@@ -21,7 +21,7 @@ Proto4z.SceneGroupAvatarInfo.__protoID = 2000
 Proto4z.SceneGroupAvatarInfo.__protoName = "SceneGroupAvatarInfo" 
 Proto4z.SceneGroupAvatarInfo[1] = {name="areaID", type="ui64" } --考虑混服情况,必须指定该玩家来自哪个当前区 
 Proto4z.SceneGroupAvatarInfo[2] = {name="modelID", type="ui64" } --模型ID 
-Proto4z.SceneGroupAvatarInfo[3] = {name="equips", type="DictMapKeyValue" } --额外装备 
+Proto4z.SceneGroupAvatarInfo[3] = {name="equips", type="DictArrayKey" } --额外装备 
 Proto4z.SceneGroupAvatarInfo[4] = {name="avatarID", type="ui64" }  
 Proto4z.SceneGroupAvatarInfo[5] = {name="avatarName", type="string" }  
 Proto4z.SceneGroupAvatarInfo[6] = {name="rankScore", type="double" } --天梯分数 
@@ -230,7 +230,7 @@ Proto4z.EntitySkillInfo[4] = {name="activeDst", type="EPosition" }
 Proto4z.EntitySkillInfo[5] = {name="activeDstEID", type="ui64" }  
 Proto4z.EntitySkillInfo[6] = {name="activeTime", type="double" }  
 Proto4z.EntitySkillInfo[7] = {name="lastTriggerTime", type="double" }  
-Proto4z.EntitySkillInfo[8] = {name="isFinish", type="bool" }  
+Proto4z.EntitySkillInfo[8] = {name="isFinish", type="ui16" }  
 Proto4z.EntitySkillInfo[9] = {name="activeCount", type="double" }  
  
 Proto4z.register(2010,"EntityBuffInfo") 

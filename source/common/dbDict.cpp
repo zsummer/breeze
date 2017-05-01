@@ -46,37 +46,21 @@ bool DBDict::fakeTestData()
 {
     if (true)
     {
-        DictProp prop;
-        prop.id = 1;
-        prop.attack = 200;
-        prop.hp = 10000;
-        prop.moveSpeed = 6.0;
-        prop.attackSpeed = 2;
-        _dictOneKeyDictProp[prop.id] = prop; // player base prop 
+        AOESearch aoe;
+        aoe.isRect = 0;
+        aoe.distance = 18;
+        aoe.value = 2 * PI;
+        aoe.limitEntitys = 1;
+        aoe.filter = FILTER_ENEMY_CAMP;
+        aoe.id = 1;
+        _dictOneKeyAOESearch[1] = aoe;
 
-        prop.id = 2;
-        prop.hp /= 2.0;
-        prop.attackSpeed /= 2.0;
-        prop.moveSpeed = 4.0;
-        prop.attackSpeed = 3.0;
-        _dictOneKeyDictProp[prop.id] = prop; // ai base prop
-
-
-        prop = DictProp();
-        prop.id = 3;
-        prop.hp = 2000;
-        _dictOneKeyDictProp[prop.id] = prop; // hp regen buff prop
-
-        prop = DictProp();
-        prop.id = 4;
-        prop.attack = 500;
-        _dictOneKeyDictProp[prop.id] = prop; // attack buff prop 
+        aoe.distance = 6;
+        aoe.value = PI / 2;
+        aoe.id = 2;
+        _dictOneKeyAOESearch[aoe.id] = aoe;
+        
     }
-    if (true)
-    {
-
-    }
-
     if (true)
     {
         DictSkill skill;
@@ -84,17 +68,11 @@ bool DBDict::fakeTestData()
         skill.stamp = 0;
         skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, true);
         skill.stamp = setBitFlag(skill.stamp, SKILL_PHYSICAL, true);
-        skill.cd = 0;
+        skill.stamp = setBitFlag(skill.stamp, SKILL_HIT, true);
+        skill.interval = 1.0;
+        skill.aoeID = 2;
+        skill.searchID = 1;
         _dictOneKeyDictSkill[skill.id] = skill;
-
-        skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, false);
-
-        skill.id = 2;
-        _dictOneKeyDictSkill[skill.id] = skill;
-
-        skill.id = 3;
-        _dictOneKeyDictSkill[skill.id] = skill;
-
     }
 
 

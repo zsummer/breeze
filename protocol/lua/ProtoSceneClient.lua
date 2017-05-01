@@ -31,7 +31,7 @@ Proto4z.SceneRefreshNotice = {}
 Proto4z.SceneRefreshNotice.__protoID = 50004 
 Proto4z.SceneRefreshNotice.__protoName = "SceneRefreshNotice" 
 Proto4z.SceneRefreshNotice[1] = {name="entityProps", type="DictPropArray" }  
-Proto4z.SceneRefreshNotice[2] = {name="entityInfos", type="EntityStateArray" }  
+Proto4z.SceneRefreshNotice[2] = {name="entityStates", type="EntityStateArray" }  
 Proto4z.SceneRefreshNotice[3] = {name="entityMoves", type="EntityMoveArray" }  
  
 Proto4z.register(50005,"SceneReportsNotice") 
@@ -95,7 +95,7 @@ Proto4z.UseSkillReq.__protoName = "UseSkillReq"
 Proto4z.UseSkillReq[1] = {name="eid", type="ui64" }  
 Proto4z.UseSkillReq[2] = {name="skillID", type="ui64" }  
 Proto4z.UseSkillReq[3] = {name="dst", type="EPosition" }  
-Proto4z.UseSkillReq[4] = {name="foeFirst", type="bool" }  
+Proto4z.UseSkillReq[4] = {name="foeFirst", type="ui16" }  
  
 Proto4z.register(50014,"UseSkillResp") 
 Proto4z.UseSkillResp = {} --只有失败时才会使用该协议 
@@ -105,7 +105,7 @@ Proto4z.UseSkillResp[1] = {name="retCode", type="ui16" }
 Proto4z.UseSkillResp[2] = {name="eid", type="ui64" }  
 Proto4z.UseSkillResp[3] = {name="skillID", type="ui64" }  
 Proto4z.UseSkillResp[4] = {name="dst", type="EPosition" }  
-Proto4z.UseSkillResp[5] = {name="foeFirst", type="bool" }  
+Proto4z.UseSkillResp[5] = {name="foeFirst", type="ui16" }  
  
 Proto4z.register(50015,"UseSkillNotice") 
 Proto4z.UseSkillNotice = {}  

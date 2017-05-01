@@ -106,7 +106,7 @@ Proto4z.DictSkill[2] = {name="stamp", type="ui64" }
 Proto4z.DictSkill[3] = {name="searchID", type="ui64" } --锁敌 
 Proto4z.DictSkill[4] = {name="aoeID", type="ui64" } --AOI伤害 
 Proto4z.DictSkill[5] = {name="orgType", type="ui16" } --1 施法者位置, 2 锁定的敌人位置或者目标位置 
-Proto4z.DictSkill[6] = {name="orgFixed", type="bool" } --位置固定化成坐标, 否则可能跟随自己或者目标位置实时变化 
+Proto4z.DictSkill[6] = {name="orgFixed", type="ui16" } --1位置固定化成坐标, 0跟随自己或者目标位置实时变化 
 Proto4z.DictSkill[7] = {name="orgLimitDistance", type="double" } --如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离 
 Proto4z.DictSkill[8] = {name="delay", type="double" }  
 Proto4z.DictSkill[9] = {name="interval", type="double" } --自动释放间隔,针对自动施法,被动技能有效 

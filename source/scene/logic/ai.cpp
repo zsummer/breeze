@@ -37,45 +37,37 @@ void AI::update()
     }
     while (_monsters.size() < scene->_players.size() * 3)
     {
-//         EntityModel base;
-//         base.avatarID = 1000 + _monsters.size();
-//         base.avatarName = "MyLittlePet_";
-//         base.avatarName += toString(_monsters.size());
-//         base.modelID = rand() % 45 + 1;
-//         base.modelName = base.avatarName;
-//         base.camp = ENTITY_CAMP_BLUE + 100;
-//         base.etype = ENTITY_AI;
-//         base.state = ENTITY_STATE_ACTIVE;
-//         DictProp fixedProps;
-//         fixedProps.hp = 1000;
-//         fixedProps.attack = 10;
-//         DictProp grow;
-// 
-//         auto monster = scene->addEntity(base, fixedProps, grow, grow);
-//         _monsters[monster->_state.eid] = monster;
+        auto entity = scene->makeEntity(rand()%20+1,
+            InvalidAvatarID,
+            "小白兔",
+            DictArrayKey(),
+            InvalidGroupID);
+        entity->_props.hp = 5000;
+        entity->_props.moveSpeed = 4.0;
+        entity->_props.attackSpeed = 1.0;
+        entity->_props.attack = 200;
+        entity->_state.maxHP = entity->_props.hp;
+        entity->_state.curHP = entity->_state.maxHP;
+        entity->_state.camp = ENTITY_CAMP_BLUE + 100;
+        entity->_skillSys.dictBootSkills[1] = DBDict::getRef().getOneKeyDictSkill(1).second;
+        scene->addEntity(entity);
+        _monsters[entity->_state.eid] = entity;
+
+
     }
     for (auto monster : _monsters)
     {
-        AOESearch search;
-//         search.camp = 3;
-//         search.etype = ENTITY_PLAYER;
-//         search.limitEntitys = 1;
-//         search.radian = PI*2.0;
-//         search.isRect = 0;
-//         search.distance = 1E20;
-//         search.offsetX = 0;
-//         search.offsetY = 0;
-//         auto ret = scene->searchTarget(monster.second, 0, search);
-//         if (ret.size() > 0)
-//         {
-//             if (monster.second->_move.follow != ret.front()->_state.eid && monster.second->_state.state == ENTITY_STATE_ACTIVE)
-//             {
-//                 if (monster.second->_move.follow == InvalidEntityID || realRand() > 0.7)
-//                 {
-//                     monster.second->_move.follow = ret.front()->_state.eid;
-//                 }
-//             }
-//         }
+         auto ret = scene->searchTarget(monster.second, monster.second->_move.position, 0, 1);
+         if (ret.size() > 0)
+         {
+             if (monster.second->_move.follow != ret.front()->_state.eid && monster.second->_state.state == ENTITY_STATE_ACTIVE)
+             {
+                 if (monster.second->_move.follow == InvalidEntityID || realRand() > 0.7)
+                 {
+                     monster.second->_move.follow = ret.front()->_state.eid;
+                 }
+             }
+         }
     }
 
     for (auto kv : scene->_entitys)

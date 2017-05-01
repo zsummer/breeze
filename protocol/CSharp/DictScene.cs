@@ -363,7 +363,7 @@ namespace Proto4z
         public ulong searchID; //锁敌  
         public ulong aoeID; //AOI伤害  
         public ushort orgType; //1 施法者位置, 2 锁定的敌人位置或者目标位置  
-        public bool orgFixed; //位置固定化成坐标, 否则可能跟随自己或者目标位置实时变化  
+        public ushort orgFixed; //1位置固定化成坐标, 0跟随自己或者目标位置实时变化  
         public double orgLimitDistance; //如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离  
         public double delay;  
         public double interval; //自动释放间隔,针对自动施法,被动技能有效  
@@ -396,7 +396,7 @@ namespace Proto4z
             searchID = 0;  
             aoeID = 0;  
             orgType = 0;  
-            orgFixed = new bool();  
+            orgFixed = 0;  
             orgLimitDistance = 0.0;  
             delay = 0.0;  
             interval = 0.0;  
@@ -423,7 +423,7 @@ namespace Proto4z
             followSkillsText = "";  
             desc = "";  
         } 
-        public DictSkill(ulong id, ulong stamp, ulong searchID, ulong aoeID, ushort orgType, bool orgFixed, double orgLimitDistance, double delay, double interval, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, ulong appendBuffsAoeID, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey combSkills, string combSkillsText, DictArrayKey followSkills, string followSkillsText, string desc) 
+        public DictSkill(ulong id, ulong stamp, ulong searchID, ulong aoeID, ushort orgType, ushort orgFixed, double orgLimitDistance, double delay, double interval, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, ulong appendBuffsAoeID, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey combSkills, string combSkillsText, DictArrayKey followSkills, string followSkillsText, string desc) 
         { 
             this.id = id; 
             this.stamp = stamp; 
@@ -465,8 +465,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.searchID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.aoeID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgType)); 
-            if (this.orgFixed == null) this.orgFixed = new bool(); 
-            data.AddRange(this.orgFixed.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgFixed)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.orgLimitDistance)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.delay)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.interval)); 
@@ -505,8 +504,7 @@ namespace Proto4z
             this.searchID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.aoeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.orgType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.orgFixed = new bool(); 
-            this.orgFixed.__decode(binData, ref pos); 
+            this.orgFixed = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.orgLimitDistance = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.delay = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.interval = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 

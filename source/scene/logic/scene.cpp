@@ -105,7 +105,7 @@ EntityPtr Scene::getEntityByAvatarID(ServiceID avatarID)
 }
 
 
-EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips,GroupID groupID)
+EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictArrayKey equips,GroupID groupID)
 {
 
     EntityPtr entity = std::make_shared<Entity>();
@@ -289,7 +289,7 @@ bool Scene::onUpdate()
     {
         if (kv.second->_isInfoDirty)
         {
-            notice.entityInfos.push_back(kv.second->_state);
+            notice.entityStates.push_back(kv.second->_state);
             kv.second->_isInfoDirty = false;
         }
         if (kv.second->_isMoveDirty)
@@ -298,7 +298,7 @@ bool Scene::onUpdate()
             kv.second->_isMoveDirty = false;
         }
     }
-    if (!notice.entityInfos.empty() || !notice.entityMoves.empty())
+    if (!notice.entityStates.empty() || !notice.entityMoves.empty())
     {
         broadcast(notice);
     }

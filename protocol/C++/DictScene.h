@@ -671,7 +671,7 @@ struct DictSkill
     unsigned long long searchID; //锁敌  
     unsigned long long aoeID; //AOI伤害  
     unsigned short orgType; //1 施法者位置, 2 锁定的敌人位置或者目标位置  
-    bool orgFixed; //位置固定化成坐标, 否则可能跟随自己或者目标位置实时变化  
+    unsigned short orgFixed; //1位置固定化成坐标, 0跟随自己或者目标位置实时变化  
     double orgLimitDistance; //如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离  
     double delay;  
     double interval; //自动释放间隔,针对自动施法,被动技能有效  
@@ -704,6 +704,7 @@ struct DictSkill
         searchID = 0; 
         aoeID = 0; 
         orgType = 0; 
+        orgFixed = 0; 
         orgLimitDistance = 0.0; 
         delay = 0.0; 
         interval = 0.0; 
@@ -721,7 +722,7 @@ struct DictSkill
         selfMoveSpeed = 0.0; 
         appendBuffsAoeID = 0; 
     } 
-    DictSkill(const unsigned long long & id, const unsigned long long & stamp, const unsigned long long & searchID, const unsigned long long & aoeID, const unsigned short & orgType, const bool & orgFixed, const double & orgLimitDistance, const double & delay, const double & interval, const double & keep, const double & cd, const double & hpAdd, const double & hpAddScaleRemanent, const double & hpAddScaleLost, const unsigned long long & propID, const double & dstTeleport, const double & selfTeleport, const double & dstMoveTime, const double & dstMoveSpeed, const double & selfMoveTime, const double & selfMoveSpeed, const unsigned long long & appendBuffsAoeID, const DictArrayKey & appendBuffs, const std::string & appendBuffsText, const DictArrayKey & harmBuffs, const std::string & harmBuffsText, const DictArrayKey & combSkills, const std::string & combSkillsText, const DictArrayKey & followSkills, const std::string & followSkillsText, const std::string & desc) 
+    DictSkill(const unsigned long long & id, const unsigned long long & stamp, const unsigned long long & searchID, const unsigned long long & aoeID, const unsigned short & orgType, const unsigned short & orgFixed, const double & orgLimitDistance, const double & delay, const double & interval, const double & keep, const double & cd, const double & hpAdd, const double & hpAddScaleRemanent, const double & hpAddScaleLost, const unsigned long long & propID, const double & dstTeleport, const double & selfTeleport, const double & dstMoveTime, const double & dstMoveSpeed, const double & selfMoveTime, const double & selfMoveSpeed, const unsigned long long & appendBuffsAoeID, const DictArrayKey & appendBuffs, const std::string & appendBuffsText, const DictArrayKey & harmBuffs, const std::string & harmBuffsText, const DictArrayKey & combSkills, const std::string & combSkillsText, const DictArrayKey & followSkills, const std::string & followSkillsText, const std::string & desc) 
     { 
         this->id = id; 
         this->stamp = stamp; 
@@ -771,8 +772,8 @@ std::vector<std::string>  DictSkill::getDBBuild()
     ret.push_back("alter table `tb_DictSkill` change `aoeID`  `aoeID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `orgType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` change `orgType`  `orgType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictSkill` add `orgFixed`  longblob NOT NULL "); 
-    ret.push_back("alter table `tb_DictSkill` change `orgFixed`  `orgFixed`  longblob NOT NULL "); 
+    ret.push_back("alter table `tb_DictSkill` add `orgFixed`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` change `orgFixed`  `orgFixed`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `orgLimitDistance`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` change `orgLimitDistance`  `orgLimitDistance`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `delay`  double NOT NULL DEFAULT '0' "); 
@@ -837,16 +838,7 @@ std::string  DictSkill::getDBInsert()
     q << this->searchID; 
     q << this->aoeID; 
     q << this->orgType; 
-    try 
-    { 
-        zsummer::proto4z::WriteStream ws(0); 
-        ws <<  this->orgFixed; 
-        q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
-    } 
-    catch(const std::exception & e) 
-    { 
-        LOGW("catch one except error when insert DictSkill.orgFixed error=" << e.what()); 
-    } 
+    q << this->orgFixed; 
     q << this->orgLimitDistance; 
     q << this->delay; 
     q << this->interval; 
@@ -886,16 +878,7 @@ std::string  DictSkill::getDBUpdate()
     q << this->searchID; 
     q << this->aoeID; 
     q << this->orgType; 
-    try 
-    { 
-        zsummer::proto4z::WriteStream ws(0); 
-        ws <<  this->orgFixed; 
-        q.add(ws.getStreamBody(), ws.getStreamBodyLen()); 
-    } 
-    catch(const std::exception & e) 
-    { 
-        LOGW("catch one except error when update DictSkill.orgFixed error=" << e.what()); 
-    } 
+    q << this->orgFixed; 
     q << this->orgLimitDistance; 
     q << this->delay; 
     q << this->interval; 
@@ -935,20 +918,7 @@ bool DictSkill::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->searchID; 
             result >> this->aoeID; 
             result >> this->orgType; 
-            try 
-            { 
-                std::string blob; 
-                result >> blob; 
-                if(!blob.empty()) 
-                { 
-                    zsummer::proto4z::ReadStream rs(blob.c_str(), (zsummer::proto4z::Integer)blob.length(), false); 
-                    rs >> this->orgFixed; 
-                } 
-            } 
-            catch(const std::exception & e) 
-            { 
-                LOGW("catch one except error when fetch DictSkill.orgFixed  from table `tb_DictSkill` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
-            } 
+            result >> this->orgFixed; 
             result >> this->orgLimitDistance; 
             result >> this->delay; 
             result >> this->interval; 

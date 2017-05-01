@@ -40,7 +40,7 @@
 
     <proto name="SceneRefreshNotice" desc= "">
         <member name="entityProps"  type="DictPropArray" desc=""/>
-        <member name="entityInfos"  type="EntityStateArray" desc=""/>
+        <member name="entityStates"  type="EntityStateArray" desc=""/>
         <member name="entityMoves"  type="EntityMoveArray" desc=""/>
     </proto>
 
@@ -85,14 +85,14 @@
         <member name="eid"  type="ui64" desc=""/>
         <member name="skillID"  type="ui64" desc=""/>
         <member name="dst"  type="EPosition" desc=""/>
-        <member name="foeFirst"  type="bool" desc=""/>
+        <member name="foeFirst"  type="ui16" desc=""/>
     </proto>
     <proto name="UseSkillResp" desc= "只有失败时才会使用该协议">
         <member name="retCode"  type="ui16" desc=""/>
         <member name="eid"  type="ui64" desc=""/>
         <member name="skillID"  type="ui64" desc=""/>
         <member name="dst"  type="EPosition" desc=""/>
-        <member name="foeFirst"  type="bool" desc=""/>
+        <member name="foeFirst"  type="ui16" desc=""/>
     </proto>
     <proto name="UseSkillNotice" desc= "">
         <member name="eid"  type="ui64" desc=""/>

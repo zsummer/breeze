@@ -134,7 +134,7 @@
         <member name="aoeID" type="ui64"   desc="AOI伤害"/>
 
         <member name="orgType" type="ui16"   desc="1 施法者位置, 2 锁定的敌人位置或者目标位置"/>
-        <member name="orgFixed" type="bool"   desc="位置固定化成坐标, 否则可能跟随自己或者目标位置实时变化"/>
+        <member name="orgFixed" type="ui16"   desc="1位置固定化成坐标, 0跟随自己或者目标位置实时变化"/>
         <member name="orgLimitDistance" type="double"   desc="如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离"/>
 
 

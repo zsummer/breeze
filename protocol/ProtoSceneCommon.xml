@@ -41,7 +41,7 @@
     <struct name="SceneGroupAvatarInfo" desc="">
         <member name="areaID" type="ui64"  desc="考虑混服情况,必须指定该玩家来自哪个当前区"/>
         <member name="modelID" type="ui64"  desc="模型ID"/>
-        <member name="equips" type="DictMapKeyValue"   desc="额外装备"/>
+        <member name="equips" type="DictArrayKey"   desc="额外装备"/>
         <member name="avatarID" type="ui64"   desc=""/>
         <member name="avatarName" type="string"   desc=""/>
         <member name="rankScore" type="double"   desc="天梯分数"/>
@@ -218,7 +218,7 @@
         <member name="activeDstEID"  type="ui64" desc=""/>
         <member name="activeTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
-        <member name="isFinish"  type="bool" desc=""/>
+        <member name="isFinish"  type="ui16" desc=""/>
         <member name="activeCount"  type="double" desc=""/>
     </proto>
 

@@ -146,29 +146,29 @@ struct SceneRefreshNotice
     static const unsigned short getProtoID() { return 50004;} 
     static const std::string getProtoName() { return "SceneRefreshNotice";} 
     DictPropArray entityProps;  
-    EntityStateArray entityInfos;  
+    EntityStateArray entityStates;  
     EntityMoveArray entityMoves;  
     SceneRefreshNotice() 
     { 
     } 
-    SceneRefreshNotice(const DictPropArray & entityProps, const EntityStateArray & entityInfos, const EntityMoveArray & entityMoves) 
+    SceneRefreshNotice(const DictPropArray & entityProps, const EntityStateArray & entityStates, const EntityMoveArray & entityMoves) 
     { 
         this->entityProps = entityProps; 
-        this->entityInfos = entityInfos; 
+        this->entityStates = entityStates; 
         this->entityMoves = entityMoves; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneRefreshNotice & data) 
 { 
     ws << data.entityProps;  
-    ws << data.entityInfos;  
+    ws << data.entityStates;  
     ws << data.entityMoves;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneRefreshNotice & data) 
 { 
     rs >> data.entityProps;  
-    rs >> data.entityInfos;  
+    rs >> data.entityStates;  
     rs >> data.entityMoves;  
     return rs; 
 } 
@@ -176,7 +176,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "["; 
     stm << "entityProps=" << info.entityProps << ","; 
-    stm << "entityInfos=" << info.entityInfos << ","; 
+    stm << "entityStates=" << info.entityStates << ","; 
     stm << "entityMoves=" << info.entityMoves << ","; 
     stm << "]"; 
     return stm; 
@@ -475,13 +475,14 @@ struct UseSkillReq
     unsigned long long eid;  
     unsigned long long skillID;  
     EPosition dst;  
-    bool foeFirst;  
+    unsigned short foeFirst;  
     UseSkillReq() 
     { 
         eid = 0; 
         skillID = 0; 
+        foeFirst = 0; 
     } 
-    UseSkillReq(const unsigned long long & eid, const unsigned long long & skillID, const EPosition & dst, const bool & foeFirst) 
+    UseSkillReq(const unsigned long long & eid, const unsigned long long & skillID, const EPosition & dst, const unsigned short & foeFirst) 
     { 
         this->eid = eid; 
         this->skillID = skillID; 
@@ -524,14 +525,15 @@ struct UseSkillResp //只有失败时才会使用该协议
     unsigned long long eid;  
     unsigned long long skillID;  
     EPosition dst;  
-    bool foeFirst;  
+    unsigned short foeFirst;  
     UseSkillResp() 
     { 
         retCode = 0; 
         eid = 0; 
         skillID = 0; 
+        foeFirst = 0; 
     } 
-    UseSkillResp(const unsigned short & retCode, const unsigned long long & eid, const unsigned long long & skillID, const EPosition & dst, const bool & foeFirst) 
+    UseSkillResp(const unsigned short & retCode, const unsigned long long & eid, const unsigned long long & skillID, const EPosition & dst, const unsigned short & foeFirst) 
     { 
         this->retCode = retCode; 
         this->eid = eid; 

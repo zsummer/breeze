@@ -756,8 +756,13 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     SceneGroupAvatarInfo avatar;
     avatar.areaID = session->getUserParamNumber(UPARAM_AREA_ID);
     avatar.powerType = 1; //leader
+    avatar.avatarID = req.avatarID;
+    avatar.avatarName = req.avatarName;
+    avatar.modelID = req.modelID;
+    avatar.equips = req.equips;
+    avatar.rankScore = req.rankScore;
     avatar.token = toMD5(avatar.avatarName + toString(rand()));
-
+    
     
 
     if (req.groupID == InvalidGroupID)

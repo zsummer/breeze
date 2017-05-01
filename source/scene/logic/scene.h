@@ -74,7 +74,7 @@ public:
 
     EntityPtr getEntity(EntityID eID);
     EntityPtr getEntityByAvatarID(ServiceID avatarID);
-    EntityPtr makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictMapKeyValue equips, GroupID groupID);
+    EntityPtr makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictArrayKey equips, GroupID groupID);
     void addEntity(EntityPtr entity);
     bool removeEntity(EntityID eid);
     bool removePlayer(AvatarID avatarID);
