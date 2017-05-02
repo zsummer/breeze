@@ -491,15 +491,15 @@ bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
         {
             continue;
         }
-        target->_state.curHP -= 20;
+        target->_state.curHP -= 80;
         target->_isInfoDirty = true;
         if (caster->_state.etype != ENTITY_FLIGHT)
         {
-            notice.info.push_back(SceneEventInfo(caster->_state.eid, target->_state.eid, SCENE_EVENT_HARM_ATTACK, 20, ""));
+            notice.info.push_back(SceneEventInfo(caster->_state.eid, target->_state.eid, SCENE_EVENT_HARM_ATTACK, 80, ""));
         }
         else
         {
-            notice.info.push_back(SceneEventInfo(caster->_state.master, target->_state.eid, SCENE_EVENT_HARM_ATTACK, 20, ""));
+            notice.info.push_back(SceneEventInfo(caster->_state.master, target->_state.eid, SCENE_EVENT_HARM_ATTACK, 80, ""));
         }
 
         if (target->_state.curHP <= 0)
