@@ -257,41 +257,41 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SceneServerGroupStateChangeIns //scene ==> world  
+struct SceneServerGroupStateFeedback //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 4006;} 
-    static const std::string getProtoName() { return "SceneServerGroupStateChangeIns";} 
+    static const unsigned short getProtoID() { return 4007;} 
+    static const std::string getProtoName() { return "SceneServerGroupStateFeedback";} 
     unsigned long long sceneID;  
     unsigned long long groupID;  
     unsigned short state; //如果是NONE 说明离开场景  
-    SceneServerGroupStateChangeIns() 
+    SceneServerGroupStateFeedback() 
     { 
         sceneID = 0; 
         groupID = 0; 
         state = 0; 
     } 
-    SceneServerGroupStateChangeIns(const unsigned long long & sceneID, const unsigned long long & groupID, const unsigned short & state) 
+    SceneServerGroupStateFeedback(const unsigned long long & sceneID, const unsigned long long & groupID, const unsigned short & state) 
     { 
         this->sceneID = sceneID; 
         this->groupID = groupID; 
         this->state = state; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerGroupStateChangeIns & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerGroupStateFeedback & data) 
 { 
     ws << data.sceneID;  
     ws << data.groupID;  
     ws << data.state;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerGroupStateChangeIns & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerGroupStateFeedback & data) 
 { 
     rs >> data.sceneID;  
     rs >> data.groupID;  
     rs >> data.state;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerGroupStateChangeIns & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerGroupStateFeedback & info) 
 { 
     stm << "["; 
     stm << "sceneID=" << info.sceneID << ","; 

@@ -48,16 +48,17 @@ bool DBDict::fakeTestData()
     {
         AOESearch aoe;
         aoe.isRect = 0;
-        aoe.distance = 18;
+        aoe.distance = 25;
         aoe.value = 2 * PI;
         aoe.limitEntitys = 1;
-        aoe.filter = FILTER_ENEMY_CAMP;
+        aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
         aoe.id = 1;
         _dictOneKeyAOESearch[1] = aoe;
 
-        aoe.distance = 6;
-        aoe.value = PI / 2;
+        aoe.distance = 17;
+        aoe.value = PI / 18*12;
         aoe.id = 2;
+        aoe.limitEntitys = 1000;
         _dictOneKeyAOESearch[aoe.id] = aoe;
         
     }

@@ -492,9 +492,9 @@ void World::event_onSceneClosed(TcpSessionPtr session)
 void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    if (rs.getProtoID() == SceneServerGroupStateChangeIns::getProtoID())
+    if (rs.getProtoID() == SceneServerGroupStateFeedback::getProtoID())
     {
-        SceneServerGroupStateChangeIns ins;
+        SceneServerGroupStateFeedback ins;
         rs >> ins;
         auto group = getGroupInfo(ins.groupID);
         if (group->sceneState == SCENE_STATE_ALLOCATE && ins.state == SCENE_STATE_WAIT)
@@ -513,6 +513,7 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
             group->sceneState = ins.state;
             group->sceneType = SCENE_NONE;
             pushGroupInfoToClient(group);
+            group->sceneID = InvalidSceneID;
             //write report to db
             //push report to client
         }
@@ -743,6 +744,17 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         if (founder == groupPtr->members.end())
         {
             return;
+        }
+        founder->second.modelID = req.modelID;
+        pushGroupInfoToClient(groupPtr);
+
+        auto line = getLineInfo(groupPtr->lineID);
+        if (line)
+        {
+            for (auto &group : groupPtr->members)
+            {
+                sendViaSessionID(line->sessionID, group.second);  // to scene server
+            }
         }
         return;
     }

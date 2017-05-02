@@ -237,23 +237,23 @@ namespace Proto4z
         } 
     } 
  
-    public class SceneServerGroupStateChangeIns: Proto4z.IProtoObject //scene ==> world  
+    public class SceneServerGroupStateFeedback: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 4006;  
-        static public ushort getProtoID() { return 4006; } 
-        static public string getProtoName() { return "SceneServerGroupStateChangeIns"; } 
+        public const ushort protoID = 4007;  
+        static public ushort getProtoID() { return 4007; } 
+        static public string getProtoName() { return "SceneServerGroupStateFeedback"; } 
         //members   
         public ulong sceneID;  
         public ulong groupID;  
         public ushort state; //如果是NONE 说明离开场景  
-        public SceneServerGroupStateChangeIns()  
+        public SceneServerGroupStateFeedback()  
         { 
             sceneID = 0;  
             groupID = 0;  
             state = 0;  
         } 
-        public SceneServerGroupStateChangeIns(ulong sceneID, ulong groupID, ushort state) 
+        public SceneServerGroupStateFeedback(ulong sceneID, ulong groupID, ushort state) 
         { 
             this.sceneID = sceneID; 
             this.groupID = groupID; 

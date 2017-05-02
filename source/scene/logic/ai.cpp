@@ -57,22 +57,19 @@ void AI::update()
     }
     for (auto monster : _monsters)
     {
-         auto ret = scene->searchTarget(monster.second, monster.second->_move.position, 0, 1);
-         if (ret.size() > 0)
-         {
-             if (monster.second->_move.follow != ret.front()->_state.eid && monster.second->_state.state == ENTITY_STATE_ACTIVE)
-             {
-                 if (monster.second->_move.follow == InvalidEntityID || realRand() > 0.7)
-                 {
-                     monster.second->_move.follow = ret.front()->_state.eid;
-                 }
-             }
-         }
+        if (monster.second->_move.follow == InvalidEntityID || realRand() > 0.7)
+        {
+            auto ret = scene->searchTarget(monster.second, monster.second->_move.position, 0, 1);
+            if (ret.size() > 0)
+            {
+            monster.second->_move.follow = ret.front()->_state.eid;
+            }
+        }
     }
 
     for (auto kv : scene->_entitys)
     {
-        if (kv.second->_move.follow == InvalidEntityID)
+        if (kv.second->_move.follow == InvalidEntityID || kv.second->_state.foe != InvalidEntityID)
         {
             continue;
         }
@@ -84,11 +81,15 @@ void AI::update()
             continue;
         }
         auto dist = getDistance(entity->_move.position, follow->_move.position);
-        if (dist > 12)
+        if (dist > 10 - 2 ) // 近战距离 
         {
             EPositionArray ways;
             ways.push_back(follow->_move.position);
             scene->_move->doMove(entity->_state.eid, MOVE_ACTION_FOLLOW, entity->getSpeed(), follow->_state.eid, ways);
+        }
+        else if (entity->_move.action == MOVE_ACTION_FOLLOW)
+        {
+            scene->_move->doMove(entity->_state.eid, MOVE_ACTION_IDLE, entity->getSpeed(), follow->_state.eid, EPositionArray());
         }
     }
 

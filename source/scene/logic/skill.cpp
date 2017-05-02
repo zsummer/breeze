@@ -43,7 +43,34 @@ bool Skill::isOutCD(const EntitySkillInfo & skill, const DictSkill & dict)
     return true;
 }
 
-
+bool Skill::updateSkillPos(ScenePtr scene, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
+{
+    if (skill->activeOrgEID != InvalidEntityID)
+    {
+        EntityPtr orgE = scene->getEntity(skill->activeOrgEID);
+        if (orgE)
+        {
+            skill->activeOrg = orgE->_move.position;
+        }
+        else
+        {
+            skill->activeOrgEID = InvalidEntityID;
+        }
+    }
+    if (skill->activeDstEID != InvalidEntityID)
+    {
+        EntityPtr dstE = scene->getEntity(skill->activeDstEID);
+        if (dstE)
+        {
+            skill->activeDst = dstE->_move.position;
+        }
+        else
+        {
+            skill->activeDstEID = InvalidEntityID;
+        }
+    }
+    return true;
+}
 
 void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bool change)
 {
@@ -147,13 +174,18 @@ void Skill::update()
 
 
         //check select
-        if (e._state.foe != InvalidEntityID)
+        if (e._skillSys.autoAttack)
         {
-            selectFoe(scene, pr.second, !e._skillSys.autoAttack, false);
+            selectFoe(scene, pr.second, false, false);
+        }
+        else if (e._state.foe != InvalidEntityID)
+        {
+            selectFoe(scene, pr.second, true, false);
         }
 
+
         //自动攻击
-        if (e._skillSys.autoAttack)
+        if (e._skillSys.autoAttack && e._state.foe != InvalidEntityID)
         {
             for (auto &skill : e._skillSys.dictBootSkills)
             {
@@ -167,10 +199,16 @@ void Skill::update()
                     else
                     {
                         //激活 追敌逻辑  
-                        auto ret = scene->searchTarget(pr.second, pr.second->_move.position, e._control.lastClientFaceRadian, skill.second.aoeID);
+                        updateSkillPos(scene, finder->second, skill.second);
+
+                        auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(skill.second.aoeID);
+                        auto radian = getRadian(finder->second->activeOrg.x, finder->second->activeOrg.y, finder->second->activeDst.x, finder->second->activeDst.y);
+                        auto ret = scene->searchTarget(finder->second->activeOrg, radian, aoeSearch.second.isRect, aoeSearch.second.distance, aoeSearch.second.value,
+                            aoeSearch.second.compensateForward, aoeSearch.second.compensateRight);
                         EntityID foe = e._state.foe;
                         if (std::find_if(ret.begin(), ret.end(), [foe](EntityPtr ep) {return ep->_state.eid == foe; }) != ret.end())
                         {
+                            scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe, std::vector<EPosition>());
                             if (isOutCD(*finder->second, skill.second) && finder->second->isFinish)
                             {
                                 useSkill(scene, e._state.eid, skill.first);
@@ -423,38 +461,7 @@ bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr sk
 bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
 {
     //update skill pos  
-    if (skill->activeOrgEID != InvalidEntityID)
-    {
-        EntityPtr orgE;
-        if (skill->activeOrgEID == caster->_state.eid)
-        {
-            orgE = caster;
-        }
-        else
-        {
-            orgE = scene->getEntity(skill->activeOrgEID);
-        }
-        if (orgE)
-        {
-            skill->activeOrg = orgE->_move.position;
-        }
-        else
-        {
-            skill->activeOrgEID = InvalidEntityID;
-        }
-    }
-    if (skill->activeDstEID != InvalidEntityID)
-    {
-        EntityPtr dstE = scene->getEntity(skill->activeDstEID);
-        if (dstE)
-        {
-            skill->activeDst = dstE->_move.position;
-        }
-        else
-        {
-            skill->activeDstEID = InvalidEntityID;
-        }
-    }
+    updateSkillPos(scene, skill, dictSkill);
 
     auto dictAoe = DBDict::getRef().getOneKeyAOESearch(dictSkill.aoeID);
     if (!dictAoe.first)

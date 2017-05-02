@@ -57,12 +57,21 @@ void MoveSync::checkStepRVO(bool preCheck)
         {
             continue;
         }
+        if (entity._move.action == MOVE_ACTION_FOLLOW)
+        {
+            auto fl = scene->getEntity(entity._move.follow);
+            if (fl)
+            {
+                entity._move.waypoints.clear();
+                entity._move.waypoints.push_back(fl->_move.position);
+            }
+        }
         do
         {
             while (!entity._move.waypoints.empty())
             {
                 double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-                if (dist < 1.0 || (dist < 6.0&&entity._move.action == MOVE_ACTION_FOLLOW))
+                if (dist < 1.0 || (dist < 5.0&&entity._move.action == MOVE_ACTION_FOLLOW))
                 {
                     entity._move.waypoints.erase(entity._move.waypoints.begin());
                     continue;

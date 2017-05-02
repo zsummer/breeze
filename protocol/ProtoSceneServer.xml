@@ -51,7 +51,7 @@
         <member name="groupID" type="ui64"  desc="groupID"/>
     </proto>
 
-    <proto name="SceneServerGroupStateChangeIns" desc= "scene ==> world">
+    <proto name="SceneServerGroupStateFeedback" desc= "scene ==> world">
         <member name="sceneID" type="ui64"   desc=""/>
         <member name="groupID" type="ui64"   desc=""/>
         <member name="state" type="ui16"   desc="如果是NONE 说明离开场景"/>

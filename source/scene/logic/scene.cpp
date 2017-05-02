@@ -208,7 +208,7 @@ bool Scene::removeEntity(EntityID eid)
     if (entity->_state.etype == ENTITY_PLAYER)
     {
         _players.erase(entity->_state.avatarID);
-        SceneMgr::getRef().sendToWorld(SceneServerGroupStateChangeIns(getSceneID(), entity->_state.groupID, SCENE_NONE));
+        SceneMgr::getRef().sendToWorld(SceneServerGroupStateFeedback(getSceneID(), entity->_state.groupID, SCENE_NONE));
     }
     _entitys.erase(eid);
 

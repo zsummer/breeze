@@ -265,7 +265,12 @@ public:
             break;
             case 4006:
             {
-                   return "SceneServerGroupStateChangeIns";
+                   return "SceneServerGroupStateFeedback";
+            }
+            break;
+            case 4007:
+            {
+                   return "SceneServerGroupStateFeedback";
             }
             break;
             case 10000:

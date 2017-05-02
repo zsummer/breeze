@@ -146,6 +146,8 @@ namespace Proto4z
             _idToName.Add(4005, "SceneServerCancelSceneIns");
             _nameToID.Add("SceneServerGroupStateChangeIns", 4006);
             _idToName.Add(4006, "SceneServerGroupStateChangeIns");
+            _nameToID.Add("SceneServerGroupStateFeedback", 4007);
+            _idToName.Add(4007, "SceneServerGroupStateFeedback");
             _nameToID.Add("DictPairValue", 10000);
             _idToName.Add(10000, "DictPairValue");
             _nameToID.Add("DictGlobal", 10001);
