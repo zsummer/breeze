@@ -3,7 +3,7 @@
 #define _PROTOSCENECOMMON_H_ 
  
  
-enum SceneType : unsigned short 
+enum SCENE_TYPE : unsigned short 
 { 
     SCENE_NONE = 0, //无效  
     SCENE_HOME = 1, //主城  
@@ -15,7 +15,7 @@ enum SceneType : unsigned short
     SCENE_MAX = 7, //最大类型数值. 扩展类型在该枚举之前插入新类型.  
 }; 
  
-enum SceneState : unsigned short 
+enum SCENE_STATE : unsigned short 
 { 
     SCENE_STATE_NONE = 0, //不存在  
     SCENE_STATE_MATCHING = 1, //匹配中  
@@ -25,494 +25,34 @@ enum SceneState : unsigned short
     SCENE_STATE_ACTIVE = 5, //战斗中  
 }; 
  
-enum PropType : unsigned short 
-{ 
-    PROP_FIXED = 0,  
-    PROP_FIXED_GROW = 1,  
-    PROP_GROWTH = 2,  
-}; 
- 
-struct EntityProp 
-{ 
-    static const unsigned short getProtoID() { return 10016;} 
-    static const std::string getProtoName() { return "EntityProp";} 
-    inline std::vector<std::string>  getDBBuild(); 
-    inline std::string  getDBInsert(); 
-    inline std::string  getDBDelete(); 
-    inline std::string  getDBUpdate(); 
-    inline std::string  getDBSelect(); 
-    inline std::string  getDBSelectPure(); 
-    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long id;  
-    unsigned long long modelID;  
-    unsigned short propType; //0 fixed, 1 grow fixed, 2 growth PropType  
-    double hp; //血量值  
-    double hpRegen; //每秒血量值恢复  
-    double attack; //伤害  
-    double defense; //防御  
-    double crit; //暴击  
-    double toughness; //韧性  
-    double moveSpeed; //移动速度  
-    double attackSpeed; //攻击速度  
-    double vampirk; //吸血  
-    EntityProp() 
-    { 
-        id = 0; 
-        modelID = 0; 
-        propType = 0; 
-        hp = 0.0; 
-        hpRegen = 0.0; 
-        attack = 0.0; 
-        defense = 0.0; 
-        crit = 0.0; 
-        toughness = 0.0; 
-        moveSpeed = 0.0; 
-        attackSpeed = 0.0; 
-        vampirk = 0.0; 
-    } 
-    EntityProp(const unsigned long long & id, const unsigned long long & modelID, const unsigned short & propType, const double & hp, const double & hpRegen, const double & attack, const double & defense, const double & crit, const double & toughness, const double & moveSpeed, const double & attackSpeed, const double & vampirk) 
-    { 
-        this->id = id; 
-        this->modelID = modelID; 
-        this->propType = propType; 
-        this->hp = hp; 
-        this->hpRegen = hpRegen; 
-        this->attack = attack; 
-        this->defense = defense; 
-        this->crit = crit; 
-        this->toughness = toughness; 
-        this->moveSpeed = moveSpeed; 
-        this->attackSpeed = attackSpeed; 
-        this->vampirk = vampirk; 
-    } 
-}; 
- 
-std::vector<std::string>  EntityProp::getDBBuild() 
-{ 
-    std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_EntityProp` (        `modelID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        `propType` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`modelID`,`propType`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_EntityProp` add `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `id`  `id`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `modelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `modelID`  `modelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `propType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `propType`  `propType`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `hp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `hp`  `hp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `hpRegen`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `hpRegen`  `hpRegen`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `attack`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `defense`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `defense`  `defense`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `crit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `crit`  `crit`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `toughness`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `toughness`  `toughness`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` add `vampirk`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityProp` change `vampirk`  `vampirk`  double NOT NULL DEFAULT '0' "); 
-    return ret; 
-} 
-std::string  EntityProp::getDBSelect() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`modelID`,`propType`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_EntityProp` where `modelID` = ? and `propType` = ? "); 
-    q << this->modelID; 
-    q << this->propType; 
-    return q.pickSQL(); 
-} 
-std::string  EntityProp::getDBSelectPure() 
-{ 
-    return "select `id`,`modelID`,`propType`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk` from `tb_EntityProp` "; 
-} 
-std::string  EntityProp::getDBInsert() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_EntityProp`(`id`,`modelID`,`propType`,`hp`,`hpRegen`,`attack`,`defense`,`crit`,`toughness`,`moveSpeed`,`attackSpeed`,`vampirk`) values(?,?,?,?,?,?,?,?,?,?,?,?)"); 
-    q << this->id; 
-    q << this->modelID; 
-    q << this->propType; 
-    q << this->hp; 
-    q << this->hpRegen; 
-    q << this->attack; 
-    q << this->defense; 
-    q << this->crit; 
-    q << this->toughness; 
-    q << this->moveSpeed; 
-    q << this->attackSpeed; 
-    q << this->vampirk; 
-    return q.pickSQL(); 
-} 
-std::string  EntityProp::getDBDelete() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_EntityProp` where `modelID` = ?,`propType` = ? "); 
-    q << this->modelID; 
-    q << this->propType; 
-    return q.pickSQL(); 
-} 
-std::string  EntityProp::getDBUpdate() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_EntityProp`(modelID,propType) values(?,? ) on duplicate key update `id` = ?,`hp` = ?,`hpRegen` = ?,`attack` = ?,`defense` = ?,`crit` = ?,`toughness` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`vampirk` = ? "); 
-    q << this->modelID; 
-    q << this->propType; 
-    q << this->id; 
-    q << this->hp; 
-    q << this->hpRegen; 
-    q << this->attack; 
-    q << this->defense; 
-    q << this->crit; 
-    q << this->toughness; 
-    q << this->moveSpeed; 
-    q << this->attackSpeed; 
-    q << this->vampirk; 
-    return q.pickSQL(); 
-} 
-bool EntityProp::fetchFromDBResult(zsummer::mysql::DBResult &result) 
-{ 
-    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
-    { 
-        LOGE("error fetch EntityProp from table `tb_EntityProp` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
-        return false; 
-    } 
-    try 
-    { 
-        if (result.haveRow()) 
-        { 
-            result >> this->id; 
-            result >> this->modelID; 
-            result >> this->propType; 
-            result >> this->hp; 
-            result >> this->hpRegen; 
-            result >> this->attack; 
-            result >> this->defense; 
-            result >> this->crit; 
-            result >> this->toughness; 
-            result >> this->moveSpeed; 
-            result >> this->attackSpeed; 
-            result >> this->vampirk; 
-            return true;  
-        } 
-    } 
-    catch(const std::exception & e) 
-    { 
-        LOGE("catch one except error when fetch EntityProp from table `tb_EntityProp` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
-        return false; 
-    } 
-    return false; 
-} 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityProp & data) 
-{ 
-    ws << data.id;  
-    ws << data.modelID;  
-    ws << data.propType;  
-    ws << data.hp;  
-    ws << data.hpRegen;  
-    ws << data.attack;  
-    ws << data.defense;  
-    ws << data.crit;  
-    ws << data.toughness;  
-    ws << data.moveSpeed;  
-    ws << data.attackSpeed;  
-    ws << data.vampirk;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityProp & data) 
-{ 
-    rs >> data.id;  
-    rs >> data.modelID;  
-    rs >> data.propType;  
-    rs >> data.hp;  
-    rs >> data.hpRegen;  
-    rs >> data.attack;  
-    rs >> data.defense;  
-    rs >> data.crit;  
-    rs >> data.toughness;  
-    rs >> data.moveSpeed;  
-    rs >> data.attackSpeed;  
-    rs >> data.vampirk;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityProp & info) 
-{ 
-    stm << "["; 
-    stm << "id=" << info.id << ","; 
-    stm << "modelID=" << info.modelID << ","; 
-    stm << "propType=" << info.propType << ","; 
-    stm << "hp=" << info.hp << ","; 
-    stm << "hpRegen=" << info.hpRegen << ","; 
-    stm << "attack=" << info.attack << ","; 
-    stm << "defense=" << info.defense << ","; 
-    stm << "crit=" << info.crit << ","; 
-    stm << "toughness=" << info.toughness << ","; 
-    stm << "moveSpeed=" << info.moveSpeed << ","; 
-    stm << "attackSpeed=" << info.attackSpeed << ","; 
-    stm << "vampirk=" << info.vampirk << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<EntityProp> EntityPropArray;  
- 
- 
-typedef std::map<unsigned long long, EntityProp> EntityPropMap;  
- 
-struct EntityBase 
-{ 
-    static const unsigned short getProtoID() { return 10017;} 
-    static const std::string getProtoName() { return "EntityBase";} 
-    inline std::vector<std::string>  getDBBuild(); 
-    inline std::string  getDBInsert(); 
-    inline std::string  getDBDelete(); 
-    inline std::string  getDBUpdate(); 
-    inline std::string  getDBSelect(); 
-    inline std::string  getDBSelectPure(); 
-    inline bool fetchFromDBResult(zsummer::mysql::DBResult &result); 
-    unsigned long long eid;  
-    unsigned long long modelID;  
-    std::string modelName;  
-    unsigned long long avatarID;  
-    std::string avatarName;  
-    unsigned long long iconID; //头像  
-    double level; //等级  
-    double exp; //经验  
-    double gold; //金币  
-    unsigned short camp;  
-    unsigned short etype;  
-    unsigned short state;  
-    EntityBase() 
-    { 
-        eid = 0; 
-        modelID = 0; 
-        avatarID = 0; 
-        iconID = 0; 
-        level = 0.0; 
-        exp = 0.0; 
-        gold = 0.0; 
-        camp = 0; 
-        etype = 0; 
-        state = 0; 
-    } 
-    EntityBase(const unsigned long long & eid, const unsigned long long & modelID, const std::string & modelName, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & iconID, const double & level, const double & exp, const double & gold, const unsigned short & camp, const unsigned short & etype, const unsigned short & state) 
-    { 
-        this->eid = eid; 
-        this->modelID = modelID; 
-        this->modelName = modelName; 
-        this->avatarID = avatarID; 
-        this->avatarName = avatarName; 
-        this->iconID = iconID; 
-        this->level = level; 
-        this->exp = exp; 
-        this->gold = gold; 
-        this->camp = camp; 
-        this->etype = etype; 
-        this->state = state; 
-    } 
-}; 
- 
-std::vector<std::string>  EntityBase::getDBBuild() 
-{ 
-    std::vector<std::string> ret; 
-    ret.push_back("CREATE TABLE IF NOT EXISTS `tb_EntityBase` (        `modelID` bigint(20) unsigned NOT NULL DEFAULT '0' ,        PRIMARY KEY(`modelID`) ) ENGINE = MyISAM DEFAULT CHARSET = utf8"); 
-    ret.push_back("alter table `tb_EntityBase` add `eid`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `eid`  `eid`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `modelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `modelID`  `modelID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `modelName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_EntityBase` change `modelName`  `modelName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_EntityBase` add `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `avatarID`  `avatarID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_EntityBase` change `avatarName`  `avatarName`  varchar(255) NOT NULL DEFAULT '' "); 
-    ret.push_back("alter table `tb_EntityBase` add `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `iconID`  `iconID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `level`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `level`  `level`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `exp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `exp`  `exp`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `gold`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `gold`  `gold`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `camp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `camp`  `camp`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `etype`  `etype`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` add `state`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_EntityBase` change `state`  `state`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    return ret; 
-} 
-std::string  EntityBase::getDBSelect() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("select `eid`,`modelID`,`modelName`,`avatarID`,`avatarName`,`iconID`,`level`,`exp`,`gold`,`camp`,`etype`,`state` from `tb_EntityBase` where `modelID` = ? "); 
-    q << this->modelID; 
-    return q.pickSQL(); 
-} 
-std::string  EntityBase::getDBSelectPure() 
-{ 
-    return "select `eid`,`modelID`,`modelName`,`avatarID`,`avatarName`,`iconID`,`level`,`exp`,`gold`,`camp`,`etype`,`state` from `tb_EntityBase` "; 
-} 
-std::string  EntityBase::getDBInsert() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_EntityBase`(`eid`,`modelID`,`modelName`,`avatarID`,`avatarName`,`iconID`,`level`,`exp`,`gold`,`camp`,`etype`,`state`) values(?,?,?,?,?,?,?,?,?,?,?,?)"); 
-    q << this->eid; 
-    q << this->modelID; 
-    q << this->modelName; 
-    q << this->avatarID; 
-    q << this->avatarName; 
-    q << this->iconID; 
-    q << this->level; 
-    q << this->exp; 
-    q << this->gold; 
-    q << this->camp; 
-    q << this->etype; 
-    q << this->state; 
-    return q.pickSQL(); 
-} 
-std::string  EntityBase::getDBDelete() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("delete from `tb_EntityBase` where `modelID` = ? "); 
-    q << this->modelID; 
-    return q.pickSQL(); 
-} 
-std::string  EntityBase::getDBUpdate() 
-{ 
-    zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_EntityBase`(modelID) values(? ) on duplicate key update `eid` = ?,`modelName` = ?,`avatarID` = ?,`avatarName` = ?,`iconID` = ?,`level` = ?,`exp` = ?,`gold` = ?,`camp` = ?,`etype` = ?,`state` = ? "); 
-    q << this->modelID; 
-    q << this->eid; 
-    q << this->modelName; 
-    q << this->avatarID; 
-    q << this->avatarName; 
-    q << this->iconID; 
-    q << this->level; 
-    q << this->exp; 
-    q << this->gold; 
-    q << this->camp; 
-    q << this->etype; 
-    q << this->state; 
-    return q.pickSQL(); 
-} 
-bool EntityBase::fetchFromDBResult(zsummer::mysql::DBResult &result) 
-{ 
-    if (result.getErrorCode() != zsummer::mysql::QEC_SUCCESS) 
-    { 
-        LOGE("error fetch EntityBase from table `tb_EntityBase` . ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
-        return false; 
-    } 
-    try 
-    { 
-        if (result.haveRow()) 
-        { 
-            result >> this->eid; 
-            result >> this->modelID; 
-            result >> this->modelName; 
-            result >> this->avatarID; 
-            result >> this->avatarName; 
-            result >> this->iconID; 
-            result >> this->level; 
-            result >> this->exp; 
-            result >> this->gold; 
-            result >> this->camp; 
-            result >> this->etype; 
-            result >> this->state; 
-            return true;  
-        } 
-    } 
-    catch(const std::exception & e) 
-    { 
-        LOGE("catch one except error when fetch EntityBase from table `tb_EntityBase` . what=" << e.what() << "  ErrorCode="  <<  result.getErrorCode() << ", Error=" << result.getErrorMsg() << ", sql=" << result.peekSQL()); 
-        return false; 
-    } 
-    return false; 
-} 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityBase & data) 
-{ 
-    ws << data.eid;  
-    ws << data.modelID;  
-    ws << data.modelName;  
-    ws << data.avatarID;  
-    ws << data.avatarName;  
-    ws << data.iconID;  
-    ws << data.level;  
-    ws << data.exp;  
-    ws << data.gold;  
-    ws << data.camp;  
-    ws << data.etype;  
-    ws << data.state;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityBase & data) 
-{ 
-    rs >> data.eid;  
-    rs >> data.modelID;  
-    rs >> data.modelName;  
-    rs >> data.avatarID;  
-    rs >> data.avatarName;  
-    rs >> data.iconID;  
-    rs >> data.level;  
-    rs >> data.exp;  
-    rs >> data.gold;  
-    rs >> data.camp;  
-    rs >> data.etype;  
-    rs >> data.state;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityBase & info) 
-{ 
-    stm << "["; 
-    stm << "eid=" << info.eid << ","; 
-    stm << "modelID=" << info.modelID << ","; 
-    stm << "modelName=" << info.modelName << ","; 
-    stm << "avatarID=" << info.avatarID << ","; 
-    stm << "avatarName=" << info.avatarName << ","; 
-    stm << "iconID=" << info.iconID << ","; 
-    stm << "level=" << info.level << ","; 
-    stm << "exp=" << info.exp << ","; 
-    stm << "gold=" << info.gold << ","; 
-    stm << "camp=" << info.camp << ","; 
-    stm << "etype=" << info.etype << ","; 
-    stm << "state=" << info.state << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<EntityBase> EntityBaseArray;  
- 
- 
-typedef std::map<unsigned long long, EntityBase> EntityBaseMap;  
- 
 struct SceneGroupAvatarInfo 
 { 
-    static const unsigned short getProtoID() { return 10000;} 
+    static const unsigned short getProtoID() { return 2000;} 
     static const std::string getProtoName() { return "SceneGroupAvatarInfo";} 
     unsigned long long areaID; //考虑混服情况,必须指定该玩家来自哪个当前区  
-    EntityBase baseInfo; //玩家基础数据  
-    EntityProp fixedProps; //基础固定属性  
-    EntityProp growthProps; //成长基础属性  
-    EntityProp growths; //成长系数  
+    unsigned long long modelID; //模型ID  
+    DictArrayKey equips; //额外装备  
+    unsigned long long avatarID;  
+    std::string avatarName;  
+    double rankScore; //天梯分数  
     unsigned short powerType; //组队权限: 0普通,1leader,2master  
     std::string token; //scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开.  
     SceneGroupAvatarInfo() 
     { 
         areaID = 0; 
+        modelID = 0; 
+        avatarID = 0; 
+        rankScore = 0.0; 
         powerType = 0; 
     } 
-    SceneGroupAvatarInfo(const unsigned long long & areaID, const EntityBase & baseInfo, const EntityProp & fixedProps, const EntityProp & growthProps, const EntityProp & growths, const unsigned short & powerType, const std::string & token) 
+    SceneGroupAvatarInfo(const unsigned long long & areaID, const unsigned long long & modelID, const DictArrayKey & equips, const unsigned long long & avatarID, const std::string & avatarName, const double & rankScore, const unsigned short & powerType, const std::string & token) 
     { 
         this->areaID = areaID; 
-        this->baseInfo = baseInfo; 
-        this->fixedProps = fixedProps; 
-        this->growthProps = growthProps; 
-        this->growths = growths; 
+        this->modelID = modelID; 
+        this->equips = equips; 
+        this->avatarID = avatarID; 
+        this->avatarName = avatarName; 
+        this->rankScore = rankScore; 
         this->powerType = powerType; 
         this->token = token; 
     } 
@@ -520,10 +60,11 @@ struct SceneGroupAvatarInfo
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneGroupAvatarInfo & data) 
 { 
     ws << data.areaID;  
-    ws << data.baseInfo;  
-    ws << data.fixedProps;  
-    ws << data.growthProps;  
-    ws << data.growths;  
+    ws << data.modelID;  
+    ws << data.equips;  
+    ws << data.avatarID;  
+    ws << data.avatarName;  
+    ws << data.rankScore;  
     ws << data.powerType;  
     ws << data.token;  
     return ws; 
@@ -531,10 +72,11 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneGroupAvatarInfo & data) 
 { 
     rs >> data.areaID;  
-    rs >> data.baseInfo;  
-    rs >> data.fixedProps;  
-    rs >> data.growthProps;  
-    rs >> data.growths;  
+    rs >> data.modelID;  
+    rs >> data.equips;  
+    rs >> data.avatarID;  
+    rs >> data.avatarName;  
+    rs >> data.rankScore;  
     rs >> data.powerType;  
     rs >> data.token;  
     return rs; 
@@ -543,10 +85,11 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "["; 
     stm << "areaID=" << info.areaID << ","; 
-    stm << "baseInfo=" << info.baseInfo << ","; 
-    stm << "fixedProps=" << info.fixedProps << ","; 
-    stm << "growthProps=" << info.growthProps << ","; 
-    stm << "growths=" << info.growths << ","; 
+    stm << "modelID=" << info.modelID << ","; 
+    stm << "equips=" << info.equips << ","; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "avatarName=" << info.avatarName << ","; 
+    stm << "rankScore=" << info.rankScore << ","; 
     stm << "powerType=" << info.powerType << ","; 
     stm << "token=" << info.token << ","; 
     stm << "]"; 
@@ -561,7 +104,7 @@ typedef std::map<unsigned long long, SceneGroupAvatarInfo> SceneGroupAvatarInfoM
  
 struct SceneGroupInfo //编队数据  
 { 
-    static const unsigned short getProtoID() { return 10001;} 
+    static const unsigned short getProtoID() { return 2001;} 
     static const std::string getProtoName() { return "SceneGroupInfo";} 
     unsigned long long groupID;  
     unsigned short sceneType; //场景类型  
@@ -653,7 +196,7 @@ typedef std::vector<unsigned long long> EntityIDArray;
  
 struct EPosition 
 { 
-    static const unsigned short getProtoID() { return 10002;} 
+    static const unsigned short getProtoID() { return 2002;} 
     static const std::string getProtoName() { return "EPosition";} 
     double x;  
     double y;  
@@ -698,7 +241,7 @@ typedef std::vector<unsigned long long> SkillIDArray; //技能ID数组
  
 typedef std::vector<unsigned long long> BuffIDArray; //buff ID 数组  
  
-enum EntityState : unsigned short 
+enum ENTITY_STATE : unsigned short 
 { 
     ENTITY_STATE_NONE = 0, //无效  
     ENTITY_STATE_FREEZING = 1, //冻结, 不可被攻击,不可主动移动,攻击等  
@@ -707,7 +250,7 @@ enum EntityState : unsigned short
     ENTITY_STATE_DIED = 4, //死, 记死亡次数  
 }; 
  
-enum EntityType : unsigned short 
+enum ENTITY_TYPE : unsigned short 
 { 
     ENTITY_NONE = 0,  
     ENTITY_PLAYER = 1,  
@@ -715,7 +258,7 @@ enum EntityType : unsigned short
     ENTITY_FLIGHT = 3, //飞行道具  
 }; 
  
-enum EntityCampType : unsigned long long 
+enum ENTITY_CAMP : unsigned long long 
 { 
     ENTITY_CAMP_NONE = 0,  
     ENTITY_CAMP_RED = 1, //红方  
@@ -723,7 +266,7 @@ enum EntityCampType : unsigned long long
     ENTITY_CAMP_NEUTRAL = 1000, //[0~ENTITY_CAMP_NEUTRAL)阵营相互敌对, [ENTITY_CAMP_NEUTRAL~)中立温和阵营  
 }; 
  
-enum MoveAction : unsigned short 
+enum MOVE_ACTION : unsigned short 
 { 
     MOVE_ACTION_IDLE = 0, //空闲  
     MOVE_ACTION_FOLLOW = 1, //跟随  
@@ -732,312 +275,7 @@ enum MoveAction : unsigned short
     MOVE_ACTION_FORCE_PATH = 4, //不可取消&穿越地形, 直线移动一次  
 }; 
  
-enum SearchMethodType : unsigned short 
-{ 
-    SEARCH_METHOD_SEACTOR = 0, //org 扇形  
-    SEARCH_METHOD_RECT = 1, //org 矩形  
-}; 
- 
-enum SearchCampType : unsigned long long 
-{ 
-    SEARCH_CAMP_NONE = 0,  
-    SEARCH_CAMP_SELF = 1, //自身  
-    SEARCH_CAMP_SAME_WITHOUT_SELF = 2, //同阵营非自己  
-    SEARCH_CAMP_ALIEN = 3, //非己方阵营  
-}; 
- 
-enum SkillType : unsigned long long 
-{ 
-    SKILL_NONE = 0,  
-    SKILL_AUTO = 1, //自动循环攻击  
-    SKILL_PASSIVE = 2, //被动技能  
-    SKILL_CAN_BREAK = 3, //可被中断  
-    SKILL_CAN_MOVE = 4, //可移动  
-    SKILL_PHYSICAL = 5, //物理攻击  
-    SKILL_MAGIC = 6, //魔法攻击  
-}; 
- 
-enum SkillBehaviourType : unsigned long long 
-{ 
-    SKILL_BEHAVIOUR_NONE = 0,  
-    SKILL_BEHAVIOUR_HIT = 1, //攻击  
-    SKILL_BEHAVIOUR_TELEPORT_TARGET = 2, //瞬移到目标  
-    SKILL_BEHAVIOUR_BREAK_MOVE = 3, //打断移动  
-    SKILL_BEHAVIOUR_BREAK_SKILL = 4, //打断技能  
-    SKILL_BEHAVIOUR_REMOVE_DEBUFF = 5, //驱散减益BUFF  
-    SKILL_BEHAVIOUR_REMOVE_BUFF = 6, //驱散增益BUFF  
-    SKILL_BEHAVIOUR_TRIGGER_BUFF = 7, //触发buff  
-    SKILL_BEHAVIOUR_TRIGGER_SKILL = 8, //触发技能  
-}; 
- 
-enum BuffType : unsigned long long 
-{ 
-    BUFF_HALO = 1, //非表达可检索类型: 光环  
-    BUFF_BUFF = 2, //非表达可检索类型: 增益buff  
-    BUFF_DEBUFF = 3, //非表达可检索类型: 减益BUFF  
-    BUFF_HIDE = 4, //非表达可检索类型: 客户端不表现  
-    BUFF_SNEAK = 5, //潜行类型: 潜行 不会被非己方阵营的任何AOE技能搜索到  
-    BUFF_HOLD_MOVE = 15, //控制: 禁止移动  
-    BUFF_REVERSE_MOVE = 16, //控制: 移动反向  
-    BUFF_SILENCE_AUTO_ATTACK = 17, //控制: 沉默普攻  
-    BUFF_SILENCE_WITHOUT_AUTO_ATTACK = 18, //控制: 沉默非普攻技能  
-    BUFF_SILENCE_PHYSICAL = 19, //控制: 沉默物理攻击  
-    BUFF_SILENCE_MAGIC = 20, //控制: 沉默魔法攻击  
-    BUFF_IMMUNE_MOVE = 25, //免疫: 免疫移动类控制  
-    BUFF_IMMUNE_SILENCE = 26, //免疫: 免疫沉默  
-    BUFF_IMMUNE_DEBUFF = 27, //免疫: 免疫添加DEBUFF, 指被地方添加不利buff  
-    BUFF_IMMUNE_REMOVE_BUFF = 28, //免疫: 免疫驱散BUFF,指被敌方移除有益buff  
-    BUFF_IMMUNE_PHYSICAL = 29, //免疫: 物攻免疫  
-    BUFF_IMMUNE_MAGIC = 30, //免疫: 法攻免疫  
-    BUFF_INC_HARM = 35, //属性加成: 最终扣血加成, value1加法, value2乘法  
-    BUFF_INC_DAMAGE = 36, //属性加成: 伤害加成, value1加法, value2乘法  
-    BUFF_INC_SPEED = 37, //属性加成: 速度加成, value1加法, value2乘法  
-    BUFF_INC_SUCK_BLOOD = 38, //属性加成: 吸血加成 value1加法  
-    BUFF_LIGHT_SKILL = 50, //持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现  
-}; 
- 
-struct SearchInfo 
-{ 
-    static const unsigned short getProtoID() { return 10003;} 
-    static const std::string getProtoName() { return "SearchInfo";} 
-    unsigned short etype; //实体类型, 玩家/AI 或者是NONE忽略该选项  
-    unsigned long long camp; //0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType  
-    unsigned short method; //0扇形, 1矩形 SearchMethodType  
-    double distance; //伤害距离  
-    double radian; //弧度或者宽度  
-    double offsetX; //坐标偏移量, 以caster为原点, 朝向为y轴  
-    double offsetY; //坐标偏移量, 以caster为原点, 朝向为y轴  
-    unsigned long long limitEntitys; //最大目标数  
-    SearchInfo() 
-    { 
-        etype = 0; 
-        camp = 0; 
-        method = 0; 
-        distance = 0.0; 
-        radian = 0.0; 
-        offsetX = 0.0; 
-        offsetY = 0.0; 
-        limitEntitys = 0; 
-    } 
-    SearchInfo(const unsigned short & etype, const unsigned long long & camp, const unsigned short & method, const double & distance, const double & radian, const double & offsetX, const double & offsetY, const unsigned long long & limitEntitys) 
-    { 
-        this->etype = etype; 
-        this->camp = camp; 
-        this->method = method; 
-        this->distance = distance; 
-        this->radian = radian; 
-        this->offsetX = offsetX; 
-        this->offsetY = offsetY; 
-        this->limitEntitys = limitEntitys; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SearchInfo & data) 
-{ 
-    ws << data.etype;  
-    ws << data.camp;  
-    ws << data.method;  
-    ws << data.distance;  
-    ws << data.radian;  
-    ws << data.offsetX;  
-    ws << data.offsetY;  
-    ws << data.limitEntitys;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SearchInfo & data) 
-{ 
-    rs >> data.etype;  
-    rs >> data.camp;  
-    rs >> data.method;  
-    rs >> data.distance;  
-    rs >> data.radian;  
-    rs >> data.offsetX;  
-    rs >> data.offsetY;  
-    rs >> data.limitEntitys;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SearchInfo & info) 
-{ 
-    stm << "["; 
-    stm << "etype=" << info.etype << ","; 
-    stm << "camp=" << info.camp << ","; 
-    stm << "method=" << info.method << ","; 
-    stm << "distance=" << info.distance << ","; 
-    stm << "radian=" << info.radian << ","; 
-    stm << "offsetX=" << info.offsetX << ","; 
-    stm << "offsetY=" << info.offsetY << ","; 
-    stm << "limitEntitys=" << info.limitEntitys << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
-struct SkillBehaviour //技能触发行为  
-{ 
-    static const unsigned short getProtoID() { return 10004;} 
-    static const std::string getProtoName() { return "SkillBehaviour";} 
-    unsigned long long behaviour;  
-    double delay;  
-    SearchInfo search;  
-    SkillIDArray skills;  
-    BuffIDArray buffs;  
-    SkillBehaviour() 
-    { 
-        behaviour = 0; 
-        delay = 0.0; 
-    } 
-    SkillBehaviour(const unsigned long long & behaviour, const double & delay, const SearchInfo & search, const SkillIDArray & skills, const BuffIDArray & buffs) 
-    { 
-        this->behaviour = behaviour; 
-        this->delay = delay; 
-        this->search = search; 
-        this->skills = skills; 
-        this->buffs = buffs; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SkillBehaviour & data) 
-{ 
-    ws << data.behaviour;  
-    ws << data.delay;  
-    ws << data.search;  
-    ws << data.skills;  
-    ws << data.buffs;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SkillBehaviour & data) 
-{ 
-    rs >> data.behaviour;  
-    rs >> data.delay;  
-    rs >> data.search;  
-    rs >> data.skills;  
-    rs >> data.buffs;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillBehaviour & info) 
-{ 
-    stm << "["; 
-    stm << "behaviour=" << info.behaviour << ","; 
-    stm << "delay=" << info.delay << ","; 
-    stm << "search=" << info.search << ","; 
-    stm << "skills=" << info.skills << ","; 
-    stm << "buffs=" << info.buffs << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<SkillBehaviour> SkillBehaviourArray;  
- 
-struct SkillData //技能  
-{ 
-    static const unsigned short getProtoID() { return 10005;} 
-    static const std::string getProtoName() { return "SkillData";} 
-    unsigned long long skillID; //skillID  
-    unsigned long long skillType; //SkillType  
-    SkillBehaviourArray behaviours;  
-    double cd;  
-    SkillData() 
-    { 
-        skillID = 0; 
-        skillType = 0; 
-        cd = 0.0; 
-    } 
-    SkillData(const unsigned long long & skillID, const unsigned long long & skillType, const SkillBehaviourArray & behaviours, const double & cd) 
-    { 
-        this->skillID = skillID; 
-        this->skillType = skillType; 
-        this->behaviours = behaviours; 
-        this->cd = cd; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SkillData & data) 
-{ 
-    ws << data.skillID;  
-    ws << data.skillType;  
-    ws << data.behaviours;  
-    ws << data.cd;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SkillData & data) 
-{ 
-    rs >> data.skillID;  
-    rs >> data.skillType;  
-    rs >> data.behaviours;  
-    rs >> data.cd;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillData & info) 
-{ 
-    stm << "["; 
-    stm << "skillID=" << info.skillID << ","; 
-    stm << "skillType=" << info.skillType << ","; 
-    stm << "behaviours=" << info.behaviours << ","; 
-    stm << "cd=" << info.cd << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
-struct BuffData //buff  
-{ 
-    static const unsigned short getProtoID() { return 10006;} 
-    static const std::string getProtoName() { return "BuffData";} 
-    unsigned long long buffID;  
-    unsigned long long buffType; //buff类型  
-    double piletime; //最大叠加时间  
-    double keepTime; //保持时间  
-    double value1;  
-    double value2;  
-    BuffData() 
-    { 
-        buffID = 0; 
-        buffType = 0; 
-        piletime = 0.0; 
-        keepTime = 0.0; 
-        value1 = 0.0; 
-        value2 = 0.0; 
-    } 
-    BuffData(const unsigned long long & buffID, const unsigned long long & buffType, const double & piletime, const double & keepTime, const double & value1, const double & value2) 
-    { 
-        this->buffID = buffID; 
-        this->buffType = buffType; 
-        this->piletime = piletime; 
-        this->keepTime = keepTime; 
-        this->value1 = value1; 
-        this->value2 = value2; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const BuffData & data) 
-{ 
-    ws << data.buffID;  
-    ws << data.buffType;  
-    ws << data.piletime;  
-    ws << data.keepTime;  
-    ws << data.value1;  
-    ws << data.value2;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, BuffData & data) 
-{ 
-    rs >> data.buffID;  
-    rs >> data.buffType;  
-    rs >> data.piletime;  
-    rs >> data.keepTime;  
-    rs >> data.value1;  
-    rs >> data.value2;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const BuffData & info) 
-{ 
-    stm << "["; 
-    stm << "buffID=" << info.buffID << ","; 
-    stm << "buffType=" << info.buffType << ","; 
-    stm << "piletime=" << info.piletime << ","; 
-    stm << "keepTime=" << info.keepTime << ","; 
-    stm << "value1=" << info.value1 << ","; 
-    stm << "value2=" << info.value2 << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
-enum SceneEvent : unsigned short 
+enum SCENE_EVENT : unsigned short 
 { 
     SCENE_EVENT_LIE = 0,  
     SCENE_EVENT_DIED = 1,  
@@ -1051,7 +289,7 @@ enum SceneEvent : unsigned short
  
 struct SceneEventInfo //伤害数据  
 { 
-    static const unsigned short getProtoID() { return 10015;} 
+    static const unsigned short getProtoID() { return 2003;} 
     static const std::string getProtoName() { return "SceneEventInfo";} 
     unsigned long long src; //eid  
     unsigned long long dst; //eid  
@@ -1107,207 +345,109 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 typedef std::vector<SceneEventInfo> SceneEventInfoArray;  
  
-struct SkillInfo 
+struct EntityState //EntityState  
 { 
-    static const unsigned short getProtoID() { return 10008;} 
-    static const std::string getProtoName() { return "SkillInfo";} 
-    unsigned long long skillID;  
-    double startTime;  
-    EPosition dst; //目标位置  
-    unsigned long long foe; //锁定的目标  
-    SkillData data; //配置数据  
-    SkillInfo() 
-    { 
-        skillID = 0; 
-        startTime = 0.0; 
-        foe = 0; 
-    } 
-    SkillInfo(const unsigned long long & skillID, const double & startTime, const EPosition & dst, const unsigned long long & foe, const SkillData & data) 
-    { 
-        this->skillID = skillID; 
-        this->startTime = startTime; 
-        this->dst = dst; 
-        this->foe = foe; 
-        this->data = data; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SkillInfo & data) 
-{ 
-    ws << data.skillID;  
-    ws << data.startTime;  
-    ws << data.dst;  
-    ws << data.foe;  
-    ws << data.data;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SkillInfo & data) 
-{ 
-    rs >> data.skillID;  
-    rs >> data.startTime;  
-    rs >> data.dst;  
-    rs >> data.foe;  
-    rs >> data.data;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SkillInfo & info) 
-{ 
-    stm << "["; 
-    stm << "skillID=" << info.skillID << ","; 
-    stm << "startTime=" << info.startTime << ","; 
-    stm << "dst=" << info.dst << ","; 
-    stm << "foe=" << info.foe << ","; 
-    stm << "data=" << info.data << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<SkillInfo> SkillInfoArray;  
- 
-struct BuffInfo 
-{ 
-    static const unsigned short getProtoID() { return 10009;} 
-    static const std::string getProtoName() { return "BuffInfo";} 
-    unsigned long long eid; //施放该buff的entity id  
-    unsigned long long skillID; //如果该buff是被技能触发的 则记录该技能, 被动技能是0  
-    unsigned long long buffID;  
-    double start; //start (server)tick  
-    double lastTrigerTick; //lastTrigerTick  
-    BuffData data; //配置数据  
-    BuffInfo() 
-    { 
-        eid = 0; 
-        skillID = 0; 
-        buffID = 0; 
-        start = 0.0; 
-        lastTrigerTick = 0.0; 
-    } 
-    BuffInfo(const unsigned long long & eid, const unsigned long long & skillID, const unsigned long long & buffID, const double & start, const double & lastTrigerTick, const BuffData & data) 
-    { 
-        this->eid = eid; 
-        this->skillID = skillID; 
-        this->buffID = buffID; 
-        this->start = start; 
-        this->lastTrigerTick = lastTrigerTick; 
-        this->data = data; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const BuffInfo & data) 
-{ 
-    ws << data.eid;  
-    ws << data.skillID;  
-    ws << data.buffID;  
-    ws << data.start;  
-    ws << data.lastTrigerTick;  
-    ws << data.data;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, BuffInfo & data) 
-{ 
-    rs >> data.eid;  
-    rs >> data.skillID;  
-    rs >> data.buffID;  
-    rs >> data.start;  
-    rs >> data.lastTrigerTick;  
-    rs >> data.data;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const BuffInfo & info) 
-{ 
-    stm << "["; 
-    stm << "eid=" << info.eid << ","; 
-    stm << "skillID=" << info.skillID << ","; 
-    stm << "buffID=" << info.buffID << ","; 
-    stm << "start=" << info.start << ","; 
-    stm << "lastTrigerTick=" << info.lastTrigerTick << ","; 
-    stm << "data=" << info.data << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<BuffInfo> BuffInfoArray;  
- 
-struct EntityInfo //EntityInfo  
-{ 
-    static const unsigned short getProtoID() { return 10010;} 
-    static const std::string getProtoName() { return "EntityInfo";} 
-    unsigned long long eid; //eid  
+    static const unsigned short getProtoID() { return 2004;} 
+    static const std::string getProtoName() { return "EntityState";} 
+    unsigned long long eid;  
+    unsigned long long avatarID;  
+    std::string avatarName;  
+    unsigned long long modelID;  
     unsigned short camp; //阵营  
     unsigned long long groupID; //组队ID  
     unsigned short etype; //实体类型  
     unsigned short state; //状态  
     unsigned long long foe; //锁定的敌人  
-    unsigned long long leader; //实体的老大, 如果是飞行道具 这个指向施放飞行道具的人  
+    unsigned long long master; //如果是飞行道具 这个指向施放飞行道具的人  
     double curHP; //当前的血量  
-    EntityInfo() 
+    double maxHP; //当前的血量上限  
+    EntityState() 
     { 
         eid = 0; 
+        avatarID = 0; 
+        modelID = 0; 
         camp = 0; 
         groupID = 0; 
         etype = 0; 
         state = 0; 
         foe = 0; 
-        leader = 0; 
+        master = 0; 
         curHP = 0.0; 
+        maxHP = 0.0; 
     } 
-    EntityInfo(const unsigned long long & eid, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & leader, const double & curHP) 
+    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & master, const double & curHP, const double & maxHP) 
     { 
         this->eid = eid; 
+        this->avatarID = avatarID; 
+        this->avatarName = avatarName; 
+        this->modelID = modelID; 
         this->camp = camp; 
         this->groupID = groupID; 
         this->etype = etype; 
         this->state = state; 
         this->foe = foe; 
-        this->leader = leader; 
+        this->master = master; 
         this->curHP = curHP; 
+        this->maxHP = maxHP; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityInfo & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityState & data) 
 { 
     ws << data.eid;  
+    ws << data.avatarID;  
+    ws << data.avatarName;  
+    ws << data.modelID;  
     ws << data.camp;  
     ws << data.groupID;  
     ws << data.etype;  
     ws << data.state;  
     ws << data.foe;  
-    ws << data.leader;  
+    ws << data.master;  
     ws << data.curHP;  
+    ws << data.maxHP;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityInfo & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityState & data) 
 { 
     rs >> data.eid;  
+    rs >> data.avatarID;  
+    rs >> data.avatarName;  
+    rs >> data.modelID;  
     rs >> data.camp;  
     rs >> data.groupID;  
     rs >> data.etype;  
     rs >> data.state;  
     rs >> data.foe;  
-    rs >> data.leader;  
+    rs >> data.master;  
     rs >> data.curHP;  
+    rs >> data.maxHP;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityInfo & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityState & info) 
 { 
     stm << "["; 
     stm << "eid=" << info.eid << ","; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "avatarName=" << info.avatarName << ","; 
+    stm << "modelID=" << info.modelID << ","; 
     stm << "camp=" << info.camp << ","; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "etype=" << info.etype << ","; 
     stm << "state=" << info.state << ","; 
     stm << "foe=" << info.foe << ","; 
-    stm << "leader=" << info.leader << ","; 
+    stm << "master=" << info.master << ","; 
     stm << "curHP=" << info.curHP << ","; 
+    stm << "maxHP=" << info.maxHP << ","; 
     stm << "]"; 
     return stm; 
 } 
  
  
-typedef std::vector<EntityInfo> EntityInfoArray;  
+typedef std::vector<EntityState> EntityStateArray;  
  
 struct EntityMove //EntityMove  
 { 
-    static const unsigned short getProtoID() { return 10011;} 
+    static const unsigned short getProtoID() { return 2005;} 
     static const std::string getProtoName() { return "EntityMove";} 
     unsigned long long eid; //eid  
     EPosition position; //当前坐标  
@@ -1376,7 +516,7 @@ typedef std::vector<EntityMove> EntityMoveArray;
  
 struct EntityReport //EntityReport  
 { 
-    static const unsigned short getProtoID() { return 10012;} 
+    static const unsigned short getProtoID() { return 2006;} 
     static const std::string getProtoName() { return "EntityReport";} 
     unsigned long long eid; //eid  
     unsigned long long killOtherCount; //杀死其他玩家次数  
@@ -1441,51 +581,35 @@ typedef std::vector<EntityReport> EntityReportArray;
  
 struct EntityFullData //EntityFullData  
 { 
-    static const unsigned short getProtoID() { return 10013;} 
+    static const unsigned short getProtoID() { return 2007;} 
     static const std::string getProtoName() { return "EntityFullData";} 
-    EntityBase baseInfo; //玩家基础数据  
-    EntityProp fixedProps; //基础固定属性  
-    EntityProp growthProps; //成长基础属性  
-    EntityProp growths; //成长系数  
-    EntityProp props; //当前  
-    EntityInfo info;  
+    DictProp props; //战斗属性  
+    EntityState state;  
     EntityMove mv;  
     EntityReport report;  
     EntityFullData() 
     { 
     } 
-    EntityFullData(const EntityBase & baseInfo, const EntityProp & fixedProps, const EntityProp & growthProps, const EntityProp & growths, const EntityProp & props, const EntityInfo & info, const EntityMove & mv, const EntityReport & report) 
+    EntityFullData(const DictProp & props, const EntityState & state, const EntityMove & mv, const EntityReport & report) 
     { 
-        this->baseInfo = baseInfo; 
-        this->fixedProps = fixedProps; 
-        this->growthProps = growthProps; 
-        this->growths = growths; 
         this->props = props; 
-        this->info = info; 
+        this->state = state; 
         this->mv = mv; 
         this->report = report; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityFullData & data) 
 { 
-    ws << data.baseInfo;  
-    ws << data.fixedProps;  
-    ws << data.growthProps;  
-    ws << data.growths;  
     ws << data.props;  
-    ws << data.info;  
+    ws << data.state;  
     ws << data.mv;  
     ws << data.report;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityFullData & data) 
 { 
-    rs >> data.baseInfo;  
-    rs >> data.fixedProps;  
-    rs >> data.growthProps;  
-    rs >> data.growths;  
     rs >> data.props;  
-    rs >> data.info;  
+    rs >> data.state;  
     rs >> data.mv;  
     rs >> data.report;  
     return rs; 
@@ -1493,12 +617,8 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityFullData & info) 
 { 
     stm << "["; 
-    stm << "baseInfo=" << info.baseInfo << ","; 
-    stm << "fixedProps=" << info.fixedProps << ","; 
-    stm << "growthProps=" << info.growthProps << ","; 
-    stm << "growths=" << info.growths << ","; 
     stm << "props=" << info.props << ","; 
-    stm << "info=" << info.info << ","; 
+    stm << "state=" << info.state << ","; 
     stm << "mv=" << info.mv << ","; 
     stm << "report=" << info.report << ","; 
     stm << "]"; 
@@ -1510,7 +630,7 @@ typedef std::vector<EntityFullData> EntityFullDataArray;
  
 struct SceneSection //场景全景切片数据  
 { 
-    static const unsigned short getProtoID() { return 10014;} 
+    static const unsigned short getProtoID() { return 2008;} 
     static const std::string getProtoName() { return "SceneSection";} 
     unsigned long long sceneID;  
     unsigned short sceneType;  
@@ -1571,6 +691,156 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "sceneEndTime=" << info.sceneEndTime << ","; 
     stm << "serverTime=" << info.serverTime << ","; 
     stm << "entitys=" << info.entitys << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct EntitySkillInfo //技能  
+{ 
+    static const unsigned short getProtoID() { return 2009;} 
+    static const std::string getProtoName() { return "EntitySkillInfo";} 
+    unsigned long long skillID;  
+    EPosition activeOrg;  
+    unsigned long long activeOrgEID;  
+    EPosition activeDst;  
+    unsigned long long activeDstEID;  
+    double activeTime;  
+    double lastTriggerTime;  
+    unsigned short isFinish;  
+    double activeCount;  
+    EntitySkillInfo() 
+    { 
+        skillID = 0; 
+        activeOrgEID = 0; 
+        activeDstEID = 0; 
+        activeTime = 0.0; 
+        lastTriggerTime = 0.0; 
+        isFinish = 0; 
+        activeCount = 0.0; 
+    } 
+    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const unsigned short & isFinish, const double & activeCount) 
+    { 
+        this->skillID = skillID; 
+        this->activeOrg = activeOrg; 
+        this->activeOrgEID = activeOrgEID; 
+        this->activeDst = activeDst; 
+        this->activeDstEID = activeDstEID; 
+        this->activeTime = activeTime; 
+        this->lastTriggerTime = lastTriggerTime; 
+        this->isFinish = isFinish; 
+        this->activeCount = activeCount; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntitySkillInfo & data) 
+{ 
+    ws << data.skillID;  
+    ws << data.activeOrg;  
+    ws << data.activeOrgEID;  
+    ws << data.activeDst;  
+    ws << data.activeDstEID;  
+    ws << data.activeTime;  
+    ws << data.lastTriggerTime;  
+    ws << data.isFinish;  
+    ws << data.activeCount;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntitySkillInfo & data) 
+{ 
+    rs >> data.skillID;  
+    rs >> data.activeOrg;  
+    rs >> data.activeOrgEID;  
+    rs >> data.activeDst;  
+    rs >> data.activeDstEID;  
+    rs >> data.activeTime;  
+    rs >> data.lastTriggerTime;  
+    rs >> data.isFinish;  
+    rs >> data.activeCount;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntitySkillInfo & info) 
+{ 
+    stm << "["; 
+    stm << "skillID=" << info.skillID << ","; 
+    stm << "activeOrg=" << info.activeOrg << ","; 
+    stm << "activeOrgEID=" << info.activeOrgEID << ","; 
+    stm << "activeDst=" << info.activeDst << ","; 
+    stm << "activeDstEID=" << info.activeDstEID << ","; 
+    stm << "activeTime=" << info.activeTime << ","; 
+    stm << "lastTriggerTime=" << info.lastTriggerTime << ","; 
+    stm << "isFinish=" << info.isFinish << ","; 
+    stm << "activeCount=" << info.activeCount << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct EntityBuffInfo //BUFF  
+{ 
+    static const unsigned short getProtoID() { return 2010;} 
+    static const std::string getProtoName() { return "EntityBuffInfo";} 
+    unsigned long long buffID;  
+    EPosition activeOrg;  
+    unsigned long long activeOrgEID;  
+    EPosition activeDst;  
+    unsigned long long activeDstEID;  
+    double activeTime;  
+    double lastTriggerTime;  
+    double activeCount;  
+    EntityBuffInfo() 
+    { 
+        buffID = 0; 
+        activeOrgEID = 0; 
+        activeDstEID = 0; 
+        activeTime = 0.0; 
+        lastTriggerTime = 0.0; 
+        activeCount = 0.0; 
+    } 
+    EntityBuffInfo(const unsigned long long & buffID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const double & activeCount) 
+    { 
+        this->buffID = buffID; 
+        this->activeOrg = activeOrg; 
+        this->activeOrgEID = activeOrgEID; 
+        this->activeDst = activeDst; 
+        this->activeDstEID = activeDstEID; 
+        this->activeTime = activeTime; 
+        this->lastTriggerTime = lastTriggerTime; 
+        this->activeCount = activeCount; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityBuffInfo & data) 
+{ 
+    ws << data.buffID;  
+    ws << data.activeOrg;  
+    ws << data.activeOrgEID;  
+    ws << data.activeDst;  
+    ws << data.activeDstEID;  
+    ws << data.activeTime;  
+    ws << data.lastTriggerTime;  
+    ws << data.activeCount;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityBuffInfo & data) 
+{ 
+    rs >> data.buffID;  
+    rs >> data.activeOrg;  
+    rs >> data.activeOrgEID;  
+    rs >> data.activeDst;  
+    rs >> data.activeDstEID;  
+    rs >> data.activeTime;  
+    rs >> data.lastTriggerTime;  
+    rs >> data.activeCount;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityBuffInfo & info) 
+{ 
+    stm << "["; 
+    stm << "buffID=" << info.buffID << ","; 
+    stm << "activeOrg=" << info.activeOrg << ","; 
+    stm << "activeOrgEID=" << info.activeOrgEID << ","; 
+    stm << "activeDst=" << info.activeDst << ","; 
+    stm << "activeDstEID=" << info.activeDstEID << ","; 
+    stm << "activeTime=" << info.activeTime << ","; 
+    stm << "lastTriggerTime=" << info.lastTriggerTime << ","; 
+    stm << "activeCount=" << info.activeCount << ","; 
     stm << "]"; 
     return stm; 
 } 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>10000</MinNo>
+  <MaxNo>11000</MaxNo>
+  <UseLog4z>1</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+    <array name="DictArrayValue" type="double" desc="通用Value数组" />
+    <array name="DictArrayKey" type="ui64" desc="通用KEY数组" />
+    <map name="DictMapKeyValue" key="ui64" value="double" desc="通用Key value" />
+
+    <packet name="DictPairValue"  desc= "">
+        <member name="val1" type="double"   desc=""/>
+        <member name="val2" type="double"   desc=""/>
+    </packet>
+    <map name="DictMapPairValue" key="ui64" value="DictPairValue" desc="" />
+    <array name="DictArrayPairValue" type="DictPairValue" desc="" />
+
+
+    <!------------- 全局配置 ---------------------->
+    <packet name="DictGlobal" store="MyISAM" desc= "全局配置">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="val" type="ui64"   desc="整数"/>
+        <member name="valFloat" type="double"   desc="浮点数"/>
+        <member name="combo" type="string"   desc="字符串"/>
+        <member name="desc" type="string"   desc=""/>
+    </packet>
+    <array name="DictGlobalArray" type="DictGlobal" desc="" />
+    <map name="DictGlobalMap" key="ui64" value="DictGlobal" desc="" />
+
+
+    <!------------- 道具, 掉落, 抽奖 ---------------------->
+    <packet name="DictDrop" store="MyISAM"  desc= "道具抽奖,道具掉落">
+        <member name="id" type="ui64" tag="key"  desc=""/>
+        <member name="dropType" type="ui16"   desc="0 独立随机, 所有奖品根据自身概率随机,  1 从奖池中抽取一个奖品, 如果所有奖品概率总和小于1则可能什么都抽取不到"/>
+        <member name="rewards" type="DictMapPairValue" tag="ignore"  desc="奖池"/>
+        <member name="rewardsText" type="string"   desc="奖池 格式为 id|count|prob,id|count|prob "/>
+        <member name="desc" type="string"   desc=""/>
+    </packet>
+
+
+    <packet name="DictItem" store="MyISAM"  desc= "道具字典">
+        <member name="id" type="ui64" tag="key"  desc=""/>
+        <member name="icon" type="ui16"   desc=""/>
+        <member name="autoUse" type="ui16"   desc="0 手动, 其他 自动使用"/>
+        <member name="stacks" type="double"   desc="可堆叠个数,0和1都是1次"/>
+        <member name="costItems" type="DictMapKeyValue"  tag="ignore"  desc="使用该道具需要消耗的其他道具"/>
+        <member name="costItemsText" type="DictMapKeyValue"   desc="使用该道具需要消耗的其他道具"/>
+        <member name="dropID" type="ui64"   desc="使用该道具后会产生掉落效果 0为无效"/>
+        <member name="propID" type="ui64"   desc="装备该道具带来的属性加成"/>
+        <member name="skills" type="DictArrayKey"  tag="ignore" desc="装备该道具带来的可用技能"/>
+        <member name="skillsText" type="string"   desc="装备该道具带来的可用技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="装备该道具带来的可用buff"/>
+        <member name="buffsText" type="string"   desc="装备该道具带来的可用buff 格式id,id,id"/>
+
+        <member name="visible" type="ui16"   desc="是否可见"/>
+        <member name="desc" type="string"   desc=""/>
+    </packet>
+    <array name="DictItemArray" type="DictItem" desc="" />
+    <map name="DictItemMap" key="ui64" value="DictItem" desc="" />
+
+
+
+
+
+</Proto>
+

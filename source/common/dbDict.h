@@ -27,6 +27,8 @@
 #include "single.h"
 #include "dbAsync.h"
 #include "utls.h"
+#include <DictCommon.h>
+#include <DictScene.h>
 #include <ProtoCommon.h>
 #include <ProtoSceneCommon.h>
 #include <ProtoClient.h>
@@ -136,11 +138,12 @@ public:
         auto helper = buildHelper("STDictDBMgr");
         if (!helper) return false;
         buildTable<DictGlobal>(helper);
-        buildTable<DictRafflePool>(helper);
-        buildTable<DictBaseProps>(helper);
+        buildTable<DictDrop>(helper);
         buildTable<DictItem>(helper);
-        buildTable<EntityProp>(helper);
-        buildTable<EntityBase>(helper);
+        buildTable<DictProp>(helper);
+        buildTable<AOESearch>(helper);
+        buildTable<DictBuff>(helper);
+        buildTable<DictSkill>(helper);
         return true;
     }
     inline bool buildInfoTable()
@@ -168,22 +171,27 @@ public:
     inline bool load()
     {
         LOAD_ONE_KEY_DICT(DictGlobal);
-        LOAD_ONE_KEY_DICT(DictRafflePool);
-        LOAD_ONE_KEY_DICT(DictBaseProps);
+        LOAD_ONE_KEY_DICT(DictDrop);
         LOAD_ONE_KEY_DICT(DictItem);
-        LOAD_ONE_KEY_DICT(EntityBase);
-        LOAD_TWO_KEY_DICT(EntityProp);
+        LOAD_ONE_KEY_DICT(DictProp);
+
+        LOAD_ONE_KEY_DICT(AOESearch);
+        LOAD_ONE_KEY_DICT(DictBuff);
+        LOAD_ONE_KEY_DICT(DictSkill);
+        fakeTestData();
         return true;
     }
+    bool fakeTestData();
     
     MAKE_ONE_KEY_DICT(DictGlobal, ui64, id);
-    MAKE_ONE_KEY_DICT(DictRafflePool, ui64, id);
-    MAKE_ONE_KEY_DICT(DictBaseProps, ui64, id);
+    MAKE_ONE_KEY_DICT(DictDrop, ui64, id);
     MAKE_ONE_KEY_DICT(DictItem, ui64, id);
-    MAKE_ONE_KEY_DICT(EntityBase, ui64, modelID);
+    MAKE_ONE_KEY_DICT(DictProp, ui64, id);
+    MAKE_ONE_KEY_DICT(AOESearch, ui64, id);
+    MAKE_ONE_KEY_DICT(DictBuff, ui64, id);
+    MAKE_ONE_KEY_DICT(DictSkill, ui64, id);
 
 
-    MAKE_TWO_KEY_DICT(EntityProp, ui64, modelID, ui16, propType);
 
 private:
     DBHelperPtr _dictHelper;

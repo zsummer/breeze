@@ -71,6 +71,7 @@ private:
     void event_onWorldLinked(TcpSessionPtr session);
     void event_onWorldClosed(TcpSessionPtr session);
     void event_onWorldMessage(TcpSessionPtr session, const char * begin, unsigned int len);
+    void onSceneGroupAvatarInfo(TcpSessionPtr session, SceneGroupAvatarInfo & info);
     void onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins);
     void onSceneServerCancelSceneIns(TcpSessionPtr session, SceneServerCancelSceneIns & ins);
     void onForwardToService(TcpSessionPtr session, Tracing & trace, ReadStream & rs);

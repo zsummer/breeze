@@ -5,7 +5,7 @@
  
 struct DockerKnock 
 { 
-    static const unsigned short getProtoID() { return 2000;} 
+    static const unsigned short getProtoID() { return 3000;} 
     static const std::string getProtoName() { return "DockerKnock";} 
     unsigned long long areaID;  
     unsigned long long dockerID;  
@@ -43,7 +43,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DockerPulse //集群脉冲  
 { 
-    static const unsigned short getProtoID() { return 2001;} 
+    static const unsigned short getProtoID() { return 3001;} 
     static const std::string getProtoName() { return "DockerPulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const DockerPulse & data) 
@@ -63,7 +63,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct LoadService //在Docker中装载一个Service  
 { 
-    static const unsigned short getProtoID() { return 2002;} 
+    static const unsigned short getProtoID() { return 3002;} 
     static const std::string getProtoName() { return "LoadService";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
@@ -118,7 +118,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ServiceInfo //Service被装载或者属性更改,需要通知给其他Docker的信息  
 { 
-    static const unsigned short getProtoID() { return 2003;} 
+    static const unsigned short getProtoID() { return 3003;} 
     static const std::string getProtoName() { return "ServiceInfo";} 
     unsigned long long serviceDockerID;  
     unsigned short serviceType;  
@@ -188,7 +188,7 @@ typedef std::vector<ServiceInfo> ServiceInfoArray;
  
 struct LoadServiceNotice //通知其他Docker有Service已装载  
 { 
-    static const unsigned short getProtoID() { return 2004;} 
+    static const unsigned short getProtoID() { return 3004;} 
     static const std::string getProtoName() { return "LoadServiceNotice";} 
     ServiceInfoArray shellServiceInfos;  
     LoadServiceNotice() 
@@ -219,7 +219,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct RefreshServiceToMgrNotice //Multi-Servie发生状态变化时候通知给管理器  
 { 
-    static const unsigned short getProtoID() { return 2005;} 
+    static const unsigned short getProtoID() { return 3005;} 
     static const std::string getProtoName() { return "RefreshServiceToMgrNotice";} 
     ServiceInfoArray shellServiceInfos;  
     RefreshServiceToMgrNotice() 
@@ -250,7 +250,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SwitchServiceClientNotice //更改clientID  
 { 
-    static const unsigned short getProtoID() { return 2006;} 
+    static const unsigned short getProtoID() { return 3006;} 
     static const std::string getProtoName() { return "SwitchServiceClientNotice";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
@@ -300,7 +300,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct KickRealClient //踢掉一个客户端  
 { 
-    static const unsigned short getProtoID() { return 2007;} 
+    static const unsigned short getProtoID() { return 3007;} 
     static const std::string getProtoName() { return "KickRealClient";} 
     unsigned int clientSessionID;  
     KickRealClient() 
@@ -332,7 +332,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct RealClientClosedNotice //客户端离线通知  
 { 
-    static const unsigned short getProtoID() { return 2008;} 
+    static const unsigned short getProtoID() { return 3008;} 
     static const std::string getProtoName() { return "RealClientClosedNotice";} 
     unsigned long long serviceID;  
     unsigned long long clientDockerID;  
@@ -376,7 +376,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UnloadServiceInDocker //卸载一个Service  
 { 
-    static const unsigned short getProtoID() { return 2009;} 
+    static const unsigned short getProtoID() { return 3009;} 
     static const std::string getProtoName() { return "UnloadServiceInDocker";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
@@ -414,7 +414,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct UnloadedServiceNotice //已卸载并完成销毁,广播给所有docker  
 { 
-    static const unsigned short getProtoID() { return 2010;} 
+    static const unsigned short getProtoID() { return 3010;} 
     static const std::string getProtoName() { return "UnloadedServiceNotice";} 
     unsigned short serviceType;  
     unsigned long long serviceID;  
@@ -452,7 +452,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ShutdownClusterServer //关闭服务器集群  
 { 
-    static const unsigned short getProtoID() { return 2011;} 
+    static const unsigned short getProtoID() { return 3011;} 
     static const std::string getProtoName() { return "ShutdownClusterServer";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ShutdownClusterServer & data) 
@@ -472,7 +472,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ForwardToService //转发到其他docker上的Service  
 { 
-    static const unsigned short getProtoID() { return 2012;} 
+    static const unsigned short getProtoID() { return 3012;} 
     static const std::string getProtoName() { return "ForwardToService";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToService & data) 
@@ -492,7 +492,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ForwardToRealClient //转发给真正的client  
 { 
-    static const unsigned short getProtoID() { return 2013;} 
+    static const unsigned short getProtoID() { return 3013;} 
     static const std::string getProtoName() { return "ForwardToRealClient";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToRealClient & data) 
@@ -512,7 +512,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ForwardToDocker //转发给Docker  
 { 
-    static const unsigned short getProtoID() { return 2014;} 
+    static const unsigned short getProtoID() { return 3014;} 
     static const std::string getProtoName() { return "ForwardToDocker";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ForwardToDocker & data) 
@@ -535,7 +535,7 @@ typedef std::vector<std::string> DBStringArray;
  
 struct DBDataResult 
 { 
-    static const unsigned short getProtoID() { return 2015;} 
+    static const unsigned short getProtoID() { return 3015;} 
     static const std::string getProtoName() { return "DBDataResult";} 
     unsigned short qc;  
     std::string errMsg;  
@@ -591,7 +591,7 @@ typedef std::vector<DBDataResult> DBDataResultArray;
  
 struct DBQueryReq //通用SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 2016;} 
+    static const unsigned short getProtoID() { return 3016;} 
     static const std::string getProtoName() { return "DBQueryReq";} 
     std::string sql;  
     DBQueryReq() 
@@ -622,7 +622,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryResp //通用SQL语句执行协议返回,DBDataResult可以借助dbHepler进行构建DBResult  
 { 
-    static const unsigned short getProtoID() { return 2017;} 
+    static const unsigned short getProtoID() { return 3017;} 
     static const std::string getProtoName() { return "DBQueryResp";} 
     unsigned short retCode;  
     DBDataResult result;  
@@ -659,7 +659,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryArrayReq //通用批量SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 2018;} 
+    static const unsigned short getProtoID() { return 3018;} 
     static const std::string getProtoName() { return "DBQueryArrayReq";} 
     DBStringArray sqls;  
     DBQueryArrayReq() 
@@ -690,7 +690,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryArrayResp //通用批量SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 2019;} 
+    static const unsigned short getProtoID() { return 3019;} 
     static const std::string getProtoName() { return "DBQueryArrayResp";} 
     unsigned short retCode;  
     DBDataResultArray results; //批量返回,注意不要超出协议包最大长度  
@@ -730,7 +730,7 @@ typedef std::map<std::string, std::string> WebAgentHead;
  
 struct WebAgentClientRequestAPI 
 { 
-    static const unsigned short getProtoID() { return 2020;} 
+    static const unsigned short getProtoID() { return 3020;} 
     static const std::string getProtoName() { return "WebAgentClientRequestAPI";} 
     std::string method;  
     std::string methodLine;  
@@ -776,7 +776,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct WebServerRequest 
 { 
-    static const unsigned short getProtoID() { return 2021;} 
+    static const unsigned short getProtoID() { return 3021;} 
     static const std::string getProtoName() { return "WebServerRequest";} 
     unsigned short fromServiceType;  
     unsigned long long fromServiceID;  
@@ -857,7 +857,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct WebServerResponse 
 { 
-    static const unsigned short getProtoID() { return 2022;} 
+    static const unsigned short getProtoID() { return 3022;} 
     static const std::string getProtoName() { return "WebServerResponse";} 
     std::string method;  
     std::string methodLine;  
@@ -903,7 +903,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AvatarOffline 
 { 
-    static const unsigned short getProtoID() { return 2023;} 
+    static const unsigned short getProtoID() { return 3023;} 
     static const std::string getProtoName() { return "AvatarOffline";} 
     inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 

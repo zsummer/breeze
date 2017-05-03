@@ -5,8 +5,8 @@ namespace Proto4z
     public class SceneKnock: Proto4z.IProtoObject //战场服务器挂载  
     {     
         //proto id   
-        public const ushort protoID = 39000;  
-        static public ushort getProtoID() { return 39000; } 
+        public const ushort protoID = 4000;  
+        static public ushort getProtoID() { return 4000; } 
         static public string getProtoName() { return "SceneKnock"; } 
         //members   
         public ulong lineID; //分线ID  
@@ -44,8 +44,8 @@ namespace Proto4z
     public class ScenePulse: Proto4z.IProtoObject //集群脉冲  
     {     
         //proto id   
-        public const ushort protoID = 39001;  
-        static public ushort getProtoID() { return 39001; } 
+        public const ushort protoID = 4001;  
+        static public ushort getProtoID() { return 4001; } 
         static public string getProtoName() { return "ScenePulse"; } 
         //members   
         public ScenePulse()  
@@ -65,61 +65,60 @@ namespace Proto4z
     public class SceneServerJoinGroupIns: Proto4z.IProtoObject //创建/加入编队, 来自docker的指令  
     {     
         //proto id   
-        public const ushort protoID = 39002;  
-        static public ushort getProtoID() { return 39002; } 
+        public const ushort protoID = 4002;  
+        static public ushort getProtoID() { return 4002; } 
         static public string getProtoName() { return "SceneServerJoinGroupIns"; } 
         //members   
         public ulong refresh; //0为客户端请求操作, 1为仅仅刷新数据  
         public ulong groupID; //编队ID, 0为创建  
-        public EntityBase baseInfo; //玩家基础数据  
-        public EntityProp fixedProps; //基础固定属性  
-        public EntityProp growthProps; //成长基础属性  
-        public EntityProp growths; //成长系数  
+        public ulong modelID; //模型ID  
+        public DictArrayKey equips; //额外装备  
+        public ulong avatarID;  
+        public string avatarName;  
+        public double rankScore; //天梯分数  
         public SceneServerJoinGroupIns()  
         { 
             refresh = 0;  
             groupID = 0;  
-            baseInfo = new EntityBase();  
-            fixedProps = new EntityProp();  
-            growthProps = new EntityProp();  
-            growths = new EntityProp();  
+            modelID = 0;  
+            equips = new DictArrayKey();  
+            avatarID = 0;  
+            avatarName = "";  
+            rankScore = 0.0;  
         } 
-        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, EntityBase baseInfo, EntityProp fixedProps, EntityProp growthProps, EntityProp growths) 
+        public SceneServerJoinGroupIns(ulong refresh, ulong groupID, ulong modelID, DictArrayKey equips, ulong avatarID, string avatarName, double rankScore) 
         { 
             this.refresh = refresh; 
             this.groupID = groupID; 
-            this.baseInfo = baseInfo; 
-            this.fixedProps = fixedProps; 
-            this.growthProps = growthProps; 
-            this.growths = growths; 
+            this.modelID = modelID; 
+            this.equips = equips; 
+            this.avatarID = avatarID; 
+            this.avatarName = avatarName; 
+            this.rankScore = rankScore; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.refresh)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
-            if (this.baseInfo == null) this.baseInfo = new EntityBase(); 
-            data.AddRange(this.baseInfo.__encode()); 
-            if (this.fixedProps == null) this.fixedProps = new EntityProp(); 
-            data.AddRange(this.fixedProps.__encode()); 
-            if (this.growthProps == null) this.growthProps = new EntityProp(); 
-            data.AddRange(this.growthProps.__encode()); 
-            if (this.growths == null) this.growths = new EntityProp(); 
-            data.AddRange(this.growths.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
+            if (this.equips == null) this.equips = new DictArrayKey(); 
+            data.AddRange(this.equips.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.rankScore)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.refresh = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.baseInfo = new EntityBase(); 
-            this.baseInfo.__decode(binData, ref pos); 
-            this.fixedProps = new EntityProp(); 
-            this.fixedProps.__decode(binData, ref pos); 
-            this.growthProps = new EntityProp(); 
-            this.growthProps.__decode(binData, ref pos); 
-            this.growths = new EntityProp(); 
-            this.growths.__decode(binData, ref pos); 
+            this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.equips = new DictArrayKey(); 
+            this.equips.__decode(binData, ref pos); 
+            this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.rankScore = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 
@@ -127,8 +126,8 @@ namespace Proto4z
     public class SceneServerJoinGroupAck: Proto4z.IProtoObject //创建/加入编队响应结果  
     {     
         //proto id   
-        public const ushort protoID = 39003;  
-        static public ushort getProtoID() { return 39003; } 
+        public const ushort protoID = 4003;  
+        static public ushort getProtoID() { return 4003; } 
         static public string getProtoName() { return "SceneServerJoinGroupAck"; } 
         //members   
         public ushort retCode;  
@@ -166,8 +165,8 @@ namespace Proto4z
     public class SceneServerEnterSceneIns: Proto4z.IProtoObject //开辟场景  
     {     
         //proto id   
-        public const ushort protoID = 39004;  
-        static public ushort getProtoID() { return 39004; } 
+        public const ushort protoID = 4004;  
+        static public ushort getProtoID() { return 4004; } 
         static public string getProtoName() { return "SceneServerEnterSceneIns"; } 
         //members   
         public ushort sceneType; //类型  
@@ -207,8 +206,8 @@ namespace Proto4z
     public class SceneServerCancelSceneIns: Proto4z.IProtoObject //退出场景  
     {     
         //proto id   
-        public const ushort protoID = 39005;  
-        static public ushort getProtoID() { return 39005; } 
+        public const ushort protoID = 4005;  
+        static public ushort getProtoID() { return 4005; } 
         static public string getProtoName() { return "SceneServerCancelSceneIns"; } 
         //members   
         public ulong sceneID; //sceneID  
@@ -238,23 +237,23 @@ namespace Proto4z
         } 
     } 
  
-    public class SceneServerGroupStateChangeIns: Proto4z.IProtoObject //scene ==> world  
+    public class SceneServerGroupStateFeedback: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 39006;  
-        static public ushort getProtoID() { return 39006; } 
-        static public string getProtoName() { return "SceneServerGroupStateChangeIns"; } 
+        public const ushort protoID = 4007;  
+        static public ushort getProtoID() { return 4007; } 
+        static public string getProtoName() { return "SceneServerGroupStateFeedback"; } 
         //members   
         public ulong sceneID;  
         public ulong groupID;  
         public ushort state; //如果是NONE 说明离开场景  
-        public SceneServerGroupStateChangeIns()  
+        public SceneServerGroupStateFeedback()  
         { 
             sceneID = 0;  
             groupID = 0;  
             state = 0;  
         } 
-        public SceneServerGroupStateChangeIns(ulong sceneID, ulong groupID, ushort state) 
+        public SceneServerGroupStateFeedback(ulong sceneID, ulong groupID, ushort state) 
         { 
             this.sceneID = sceneID; 
             this.groupID = groupID; 

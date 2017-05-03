@@ -91,72 +91,9 @@ Proto4z.AvatarBaseInfoArray.__protoName = "AvatarBaseInfoArray"
 Proto4z.AvatarBaseInfoArray.__protoDesc = "array" 
 Proto4z.AvatarBaseInfoArray.__protoTypeV = "AvatarBaseInfo" 
  
-Proto4z.register(1005,"DictGlobal") 
-Proto4z.DictGlobal = {} --全局配置 
-Proto4z.DictGlobal.__protoID = 1005 
-Proto4z.DictGlobal.__protoName = "DictGlobal" 
-Proto4z.DictGlobal[1] = {name="id", type="ui64" }  
-Proto4z.DictGlobal[2] = {name="val", type="ui64" } --整数 
-Proto4z.DictGlobal[3] = {name="valFloat", type="double" } --浮点数 
-Proto4z.DictGlobal[4] = {name="combo", type="string" } --字符串 
-Proto4z.DictGlobal[5] = {name="desc", type="string" }  
- 
-Proto4z.register(1006,"DictRaffleAward") 
-Proto4z.DictRaffleAward = {} --奖池中的奖品 
-Proto4z.DictRaffleAward.__protoID = 1006 
-Proto4z.DictRaffleAward.__protoName = "DictRaffleAward" 
-Proto4z.DictRaffleAward[1] = {name="id", type="ui64" } --奖品ID 
-Proto4z.DictRaffleAward[2] = {name="weight", type="ui64" } --本奖品在奖池中的权重, 总权重在[10000~30000]之间的随机效果最好 
-Proto4z.DictRaffleAward[3] = {name="probability", type="double" } --[0~1]独立随机的概率,0为永远无法随机到 1是100%随机到 
- 
-Proto4z.DictRaffleAwardArray = {}  
-Proto4z.DictRaffleAwardArray.__protoName = "DictRaffleAwardArray" 
-Proto4z.DictRaffleAwardArray.__protoDesc = "array" 
-Proto4z.DictRaffleAwardArray.__protoTypeV = "DictRaffleAward" 
- 
-Proto4z.register(1007,"DictRafflePool") 
-Proto4z.DictRafflePool = {} --道具抽奖,道具掉落 
-Proto4z.DictRafflePool.__protoID = 1007 
-Proto4z.DictRafflePool.__protoName = "DictRafflePool" 
-Proto4z.DictRafflePool[1] = {name="id", type="ui64" }  
-Proto4z.DictRafflePool[2] = {name="raffleCount", type="ui64" } --批量抽取次数 
-Proto4z.DictRafflePool[3] = {name="pool", type="DictRaffleAwardArray" } --奖池 
-Proto4z.DictRafflePool[4] = {name="poolString", type="string" } --奖池,为填写方便,暂时用id|weight|prob, 格式的字符串填写, 服务器load后手动解析成RaffleAwardArray格式 
- 
-Proto4z.register(1008,"DictBaseProps") 
-Proto4z.DictBaseProps = {} --战斗属性效果,用于装备,属性类增减益buff 
-Proto4z.DictBaseProps.__protoID = 1008 
-Proto4z.DictBaseProps.__protoName = "DictBaseProps" 
-Proto4z.DictBaseProps[1] = {name="id", type="ui64" }  
-Proto4z.DictBaseProps[2] = {name="hp", type="double" } --血量值 
-Proto4z.DictBaseProps[3] = {name="hpRegen", type="double" } --每秒血量值恢复 
-Proto4z.DictBaseProps[4] = {name="attack", type="double" } --伤害 
-Proto4z.DictBaseProps[5] = {name="defense", type="double" } --防御 
-Proto4z.DictBaseProps[6] = {name="crit", type="double" } --暴击 
-Proto4z.DictBaseProps[7] = {name="toughness", type="double" } --韧性 
-Proto4z.DictBaseProps[8] = {name="moveSpeed", type="double" } --移动速度 
-Proto4z.DictBaseProps[9] = {name="attackSpeed", type="double" } --攻击速度 
-Proto4z.DictBaseProps[10] = {name="vampirk", type="double" } --吸血 
- 
-Proto4z.register(1009,"DictItem") 
-Proto4z.DictItem = {} --道具字典 
-Proto4z.DictItem.__protoID = 1009 
-Proto4z.DictItem.__protoName = "DictItem" 
-Proto4z.DictItem[1] = {name="id", type="ui64" }  
-Proto4z.DictItem[2] = {name="primitiveType", type="ui16" } --主类型 
-Proto4z.DictItem[3] = {name="subType", type="ui16" } --子类型 
-Proto4z.DictItem[4] = {name="visible", type="ui16" } --是否可见 
-Proto4z.DictItem[5] = {name="stacks", type="ui16" } --可堆叠个数,0和1都是1次 
-Proto4z.DictItem[6] = {name="fightEffectID", type="ui64" } --战斗属性效果,装备后生效 
-Proto4z.DictItem[7] = {name="autoUse", type="ui16" } --0 不可使用, 1 可使用, 2 获得后自动使用 
-Proto4z.DictItem[8] = {name="dropID", type="ui64" } --DictRafflePool中的id, 使用后销毁本道具并根据配置进行道具抽取 
-Proto4z.DictItem[9] = {name="vocationLimit", type="ui16" } --限制职业类型, 装备类型 
-Proto4z.DictItem[10] = {name="levelLimit", type="double" } --限制职业最小等级, 装备类型 
-Proto4z.DictItem[11] = {name="desc", type="string" }  
- 
-Proto4z.register(1010,"ItemInfo") 
+Proto4z.register(1005,"ItemInfo") 
 Proto4z.ItemInfo = {} --道具字典 
-Proto4z.ItemInfo.__protoID = 1010 
+Proto4z.ItemInfo.__protoID = 1005 
 Proto4z.ItemInfo.__protoName = "ItemInfo" 
 Proto4z.ItemInfo[1] = {name="stacks", type="ui16" } --可堆叠个数,0和1都是1次 
  
@@ -167,9 +104,9 @@ Proto4z.CC_GROUP = 3--同编队频道
 Proto4z.CC_CAMP = 4--同阵营频道 
 Proto4z.CC_SCENE = 5--同场景频道 
  
-Proto4z.register(1011,"LogChat") 
+Proto4z.register(1006,"LogChat") 
 Proto4z.LogChat = {} --聊天日志 
-Proto4z.LogChat.__protoID = 1011 
+Proto4z.LogChat.__protoID = 1006 
 Proto4z.LogChat.__protoName = "LogChat" 
 Proto4z.LogChat[1] = {name="id", type="ui64" }  
 Proto4z.LogChat[2] = {name="channelID", type="ui16" }  
@@ -180,9 +117,9 @@ Proto4z.LogChat[6] = {name="targetName", type="string" }
 Proto4z.LogChat[7] = {name="msg", type="string" }  
 Proto4z.LogChat[8] = {name="chatTime", type="ui64" }  
  
-Proto4z.register(1012,"MoneyTree") 
+Proto4z.register(1007,"MoneyTree") 
 Proto4z.MoneyTree = {} --摇钱树功能模块 
-Proto4z.MoneyTree.__protoID = 1012 
+Proto4z.MoneyTree.__protoID = 1007 
 Proto4z.MoneyTree.__protoName = "MoneyTree" 
 Proto4z.MoneyTree[1] = {name="lastTime", type="ui64" } --最后一次执行时间 
 Proto4z.MoneyTree[2] = {name="freeCount", type="ui64" } --今日剩余免费次数 
@@ -190,9 +127,9 @@ Proto4z.MoneyTree[3] = {name="payCount", type="ui64" } --今日已购买次数
 Proto4z.MoneyTree[4] = {name="statSum", type="ui64" } --历史总和 
 Proto4z.MoneyTree[5] = {name="statCount", type="ui64" } --历史总次数 
  
-Proto4z.register(1013,"SimplePack") 
+Proto4z.register(1008,"SimplePack") 
 Proto4z.SimplePack = {} --简单示例 
-Proto4z.SimplePack.__protoID = 1013 
+Proto4z.SimplePack.__protoID = 1008 
 Proto4z.SimplePack.__protoName = "SimplePack" 
 Proto4z.SimplePack[1] = {name="id", type="ui64" } --id, 对应数据库的结构为自增ID,key 
 Proto4z.SimplePack[2] = {name="name", type="string" } --昵称, 唯一索引 

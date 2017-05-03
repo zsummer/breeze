@@ -369,7 +369,7 @@ void World::pushGroupInfoToClient(SceneGroupInfoPtr groupPtr)
     SceneGroupInfoNotice notice(*groupPtr);
     for (auto &kv : groupPtr->members)
     {
-        toService(kv.second.areaID, STAvatarMgr, STAvatar, kv.second.baseInfo.avatarID, notice);
+        toService(kv.second.areaID, STAvatarMgr, STAvatar, kv.second.avatarID, notice);
     }
 }
 
@@ -492,9 +492,9 @@ void World::event_onSceneClosed(TcpSessionPtr session)
 void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    if (rs.getProtoID() == SceneServerGroupStateChangeIns::getProtoID())
+    if (rs.getProtoID() == SceneServerGroupStateFeedback::getProtoID())
     {
-        SceneServerGroupStateChangeIns ins;
+        SceneServerGroupStateFeedback ins;
         rs >> ins;
         auto group = getGroupInfo(ins.groupID);
         if (group->sceneState == SCENE_STATE_ALLOCATE && ins.state == SCENE_STATE_WAIT)
@@ -513,6 +513,7 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
             group->sceneState = ins.state;
             group->sceneType = SCENE_NONE;
             pushGroupInfoToClient(group);
+            group->sceneID = InvalidSceneID;
             //write report to db
             //push report to client
         }
@@ -543,7 +544,7 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
         {
             for ( auto &mber : group->members)
             {
-                if (mber.second.baseInfo.avatarID == resp.targetID)
+                if (mber.second.avatarID == resp.targetID)
                 {
                     toService(mber.second.areaID, STAvatarMgr, STAvatar, resp.targetID, resp);
                     return;
@@ -694,9 +695,9 @@ void World::onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & re
     resp.sourceID = trace.oob.clientAvatarID;
     for (auto &kv : groupPtr->members)
     {
-        if (kv.second.baseInfo.avatarID == trace.oob.clientAvatarID)
+        if (kv.second.avatarID == trace.oob.clientAvatarID)
         {
-            resp.sourceName = kv.second.baseInfo.avatarName;
+            resp.sourceName = kv.second.avatarName;
             break;
         }
     }
@@ -707,10 +708,10 @@ void World::onChatReq(TcpSessionPtr session, const Tracing & trace, ChatReq & re
 
         for (auto &kv : groupPtr->members)
         {
-            if (kv.second.baseInfo.avatarID == trace.oob.clientAvatarID)
+            if (kv.second.avatarID == trace.oob.clientAvatarID)
             {
-                resp.targetID = kv.second.baseInfo.avatarID;
-                resp.targetName = kv.second.baseInfo.avatarName;
+                resp.targetID = kv.second.avatarID;
+                resp.targetName = kv.second.avatarName;
                 toService(kv.second.areaID, STAvatarMgr, STAvatar, resp.targetID, resp);
             }
         }
@@ -739,15 +740,22 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         {
             return;
         }
-        auto founder = groupPtr->members.find(req.baseInfo.avatarID);
+        auto founder = groupPtr->members.find(req.avatarID);
         if (founder == groupPtr->members.end())
         {
             return;
         }
-        founder->second.baseInfo = req.baseInfo;
-        founder->second.fixedProps = req.fixedProps;
-        founder->second.growthProps = req.growthProps;
-        founder->second.growths = req.growths;
+        founder->second.modelID = req.modelID;
+        pushGroupInfoToClient(groupPtr);
+
+        auto line = getLineInfo(groupPtr->lineID);
+        if (line)
+        {
+            for (auto &group : groupPtr->members)
+            {
+                sendViaSessionID(line->sessionID, group.second);  // to scene server
+            }
+        }
         return;
     }
     if ((groupPtr && req.groupID == InvalidGroupID) || (groupPtr&& req.groupID != InvalidGroupID && groupPtr->sceneState != SCENE_STATE_NONE))
@@ -759,13 +767,14 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     }
     SceneGroupAvatarInfo avatar;
     avatar.areaID = session->getUserParamNumber(UPARAM_AREA_ID);
-    avatar.baseInfo = req.baseInfo;
-    avatar.fixedProps = req.fixedProps;
-    avatar.growthProps = req.growthProps;
-    avatar.growths = req.growths;
     avatar.powerType = 1; //leader
-    avatar.token = toMD5(avatar.baseInfo.avatarName + toString(rand()));
-
+    avatar.avatarID = req.avatarID;
+    avatar.avatarName = req.avatarName;
+    avatar.modelID = req.modelID;
+    avatar.equips = req.equips;
+    avatar.rankScore = req.rankScore;
+    avatar.token = toMD5(avatar.avatarName + toString(rand()));
+    
     
 
     if (req.groupID == InvalidGroupID)
@@ -780,9 +789,9 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         group.mapID = InvalidMapID;
         group.host;
         group.port = 0;
-        group.members.insert(std::make_pair(avatar.baseInfo.avatarID,avatar));
+        group.members.insert(std::make_pair(avatar.avatarID,avatar));
         
-        _avatars[avatar.baseInfo.avatarID] = group.groupID;
+        _avatars[avatar.avatarID] = group.groupID;
         _groups[group.groupID] = groupPtr;
         
         ack.newGroupID = group.groupID;
@@ -794,7 +803,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
 
     if (groupPtr)
     {
-        _avatars.erase(req.baseInfo.avatarID);
+        _avatars.erase(req.avatarID);
         _groups.erase(groupPtr->groupID);
     }
     groupPtr = getGroupInfo(req.groupID);
@@ -805,7 +814,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         backToService(session->getSessionID(), trace, ack);
         return;
     }
-    if (groupPtr->invitees.find(req.baseInfo.avatarID) == groupPtr->invitees.end())
+    if (groupPtr->invitees.find(req.avatarID) == groupPtr->invitees.end())
     {
         LOGE("World::onSceneServerJoinGroupIns the dst group not invite the avatar. avatar=" << trace.oob.clientAvatarID << ", groupID=" << req.groupID);
         ack.retCode = EC_ERROR;
@@ -819,7 +828,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         backToService(session->getSessionID(), trace, ack);
         return;
     }
-    auto founder = groupPtr->members.find(req.baseInfo.avatarID);
+    auto founder = groupPtr->members.find(req.avatarID);
     if (founder == groupPtr->members.end())
     {
         if (groupPtr->members.size() > 10) //组队上限  
@@ -833,18 +842,14 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         {
             avatar.powerType = 0;
         }
-        groupPtr->members.insert(std::make_pair(avatar.baseInfo.avatarID, avatar));
+        groupPtr->members.insert(std::make_pair(avatar.avatarID, avatar));
     }
     else
     {
         founder->second.areaID = avatar.areaID;
-        founder->second.baseInfo = req.baseInfo;
-        founder->second.fixedProps = req.fixedProps;
-        founder->second.growthProps = req.growthProps;
-        founder->second.growths = req.growths;
         founder->second.token;
     }
-    _avatars[req.baseInfo.avatarID] = groupPtr->groupID;
+    _avatars[req.avatarID] = groupPtr->groupID;
     backToService(session->getSessionID(), trace, ack); 
     pushGroupInfoToClient(groupPtr);
 }
@@ -1007,7 +1012,7 @@ void World::onSceneGroupInviteReq(TcpSessionPtr session, const Tracing & trace, 
         return;
     }
     groupPtr->invitees[req.avatarID] = 0;
-    backToService(session->getSessionID(), trace, SceneGroupInviteNotice(found->second.baseInfo.avatarID, found->second.baseInfo.avatarName, groupPtr->groupID));
+    backToService(session->getSessionID(), trace, SceneGroupInviteNotice(found->second.avatarID, found->second.avatarName, groupPtr->groupID));
     pushGroupInfoToClient(groupPtr);
 }
 

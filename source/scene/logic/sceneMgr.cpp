@@ -31,6 +31,7 @@ bool SceneMgr::init(const std::string & configName, ui32 serverID)
         LOGE("SceneMgr::init error. DBDict load error. ");
         return false;
     }
+
     _lastSceneID = ServerConfig::getRef().getSceneConfig()._lineID * 10000;
     onTimer();
     return true;
@@ -93,14 +94,14 @@ void SceneMgr::onTimer()
                 std::set<GroupID> groups;
                 for (auto &entity : notice.section.entitys)
                 {
-                    if (entity.info.etype == ENTITY_PLAYER)
+                    if (entity.state.etype == ENTITY_PLAYER)
                     {
-                        groups.insert(entity.info.groupID);
+                        groups.insert(entity.state.groupID);
                     }
                 }
                 for (auto key : groups)
                 {
-                    SceneServerGroupStateChangeIns ret;
+                    SceneServerGroupStateFeedback ret;
                     ret.groupID = key;
                     ret.sceneID = notice.section.sceneID;
                     ret.state = SCENE_STATE_NONE;
@@ -311,6 +312,13 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
+    else if (rsShell.getProtoID() == SceneGroupAvatarInfo::getProtoID())
+    {
+        SceneGroupAvatarInfo info;
+        rsShell >> info;
+        onSceneGroupAvatarInfo(session, info);
+        return;
+    }
     else if (rsShell.getProtoID() == SceneServerEnterSceneIns::getProtoID())
     {
         SceneServerEnterSceneIns ins;
@@ -361,10 +369,10 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
             auto & players = checkscene->second->getPlayers();
             for (auto player : players)
             {
-                if (player.second->_entityInfo.camp == entity->_entityInfo.camp)
+                if (player.second->_state.camp == entity->_state.camp)
                 {
-                    resp.targetID = player.second->_baseInfo.avatarID;
-                    resp.targetName = player.second->_baseInfo.avatarName;
+                    resp.targetID = player.second->_state.avatarID;
+                    resp.targetName = player.second->_state.avatarName;
                     sendToWorld(resp);
                 }
             }
@@ -374,8 +382,8 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
             auto & players = checkscene->second->getPlayers();
             for (auto player : players)
             {
-                resp.targetID = player.second->_baseInfo.avatarID;
-                resp.targetName = player.second->_baseInfo.avatarName;
+                resp.targetID = player.second->_state.avatarID;
+                resp.targetName = player.second->_state.avatarName;
                 sendToWorld(resp);
             }
         }
@@ -493,6 +501,38 @@ void SceneMgr::onSceneServerCancelSceneIns(TcpSessionPtr session, SceneServerCan
     }
     scene->removePlayerByGroupID(ins.groupID);
 }
+
+
+void SceneMgr::onSceneGroupAvatarInfo(TcpSessionPtr session, SceneGroupAvatarInfo & info)
+{
+    auto finder =  _tokens.find(info.avatarID);
+    if (finder == _tokens.end())
+    {
+        LOGE("SceneMgr::onSceneGroupAvatarInfo not found token. avatar=" << info.avatarID << ", name=" << info.avatarName);
+        return;
+    }
+    if (finder->second.second == InvalidSceneID)
+    {
+        LOGE("SceneMgr::onSceneGroupAvatarInfo scene not invalid. avatar=" << info.avatarID << ", name=" << info.avatarName);
+        return;
+    }
+
+    auto scene = getActiveScene(finder->second.second);
+    if (!scene)
+    {
+        LOGE("SceneMgr::onSceneGroupAvatarInfo scene not active. avatar=" << info.avatarID << ", name=" << info.avatarName << ", sceneID=" << finder->second.second);
+        return;
+    }
+    auto entity = scene->getEntityByAvatarID(info.avatarID);
+    if (!entity)
+    {
+        LOGE("SceneMgr::onSceneGroupAvatarInfo not found entity. avatar=" << info.avatarID << ", name=" << info.avatarName << ", sceneID=" << finder->second.second);
+        return;
+    }
+    entity->_state.avatarName = info.avatarName;
+    entity->_state.modelID = info.modelID;
+    entity->_isInfoDirty = true;
+}
 void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins)
 {
     ScenePtr scene;
@@ -508,6 +548,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
             }
         }
     }
+   
     if (!scene )
     {
         if (_frees.empty())
@@ -518,8 +559,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         }
         scene = _frees.front();
         _frees.pop();
-        scene->cleanScene();
-        scene->initScene((SceneType)ins.sceneType, ins.mapID);
+        scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
         _actives.insert(std::make_pair(scene->getSceneID(), scene));
         if (ins.sceneType == SCENE_HOME)
         {
@@ -531,9 +571,22 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         for (auto & avatar : group.members)
         {
             _tokens[avatar.first] = std::make_pair(avatar.second.token, scene->getSceneID());
-            scene->addEntity(avatar.second.baseInfo, avatar.second.fixedProps, avatar.second.growthProps, avatar.second.growths, group.groupID);
+            auto entity = scene->makeEntity(avatar.second.modelID,
+                    avatar.second.avatarID,
+                    avatar.second.avatarName,
+                    avatar.second.equips,
+                    group.groupID);
+                entity->_props.hp = 10000;
+                entity->_props.moveSpeed = 6.0;
+                entity->_props.attackSpeed = 1.0;
+                entity->_props.attack = 200;
+                entity->_state.maxHP = entity->_props.hp;
+                entity->_state.curHP = entity->_state.maxHP;
+                entity->_state.camp = ENTITY_CAMP_BLUE + rand() % 100;
+                entity->_skillSys.dictBootSkills[1] = DBDict::getRef().getOneKeyDictSkill(1).second;
+                scene->addEntity(entity);
         }
-        SceneServerGroupStateChangeIns ret;
+        SceneServerGroupStateFeedback ret;
         ret.groupID = group.groupID;
         ret.sceneID = scene->getSceneID();
         ret.state = SCENE_STATE_WAIT;

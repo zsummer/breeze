@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <ProtoTraits>
-  <MinNo>10000</MinNo>
-  <MaxNo>15000</MaxNo>
+  <MinNo>2000</MinNo>
+  <MaxNo>3000</MaxNo>
   <UseLog4z>1</UseLog4z>
 </ProtoTraits>
 
@@ -15,7 +15,7 @@
 
    
      <!-- scene类型 -->
-    <enum type="ui16" name="SceneType" desc="scene类型" >
+    <enum type="ui16" name="SCENE_TYPE" desc="scene类型" >
         <member name="SCENE_NONE" value="0"   desc="无效"/>
         <member name="SCENE_HOME"   desc="主城"/>
         <member name="SCENE_MELEE" desc="乱斗场"/>
@@ -27,7 +27,7 @@
     </enum>
 
     <!-- scene状态 -->
-    <enum type="ui16" name="SceneState" desc="scene状态">
+    <enum type="ui16" name="SCENE_STATE" desc="scene状态">
         <member name="SCENE_STATE_NONE" value="0" desc="不存在" />
         <member name="SCENE_STATE_MATCHING"  desc="匹配中" />
         <member name="SCENE_STATE_CHOISE" desc="选择英雄" />
@@ -36,55 +36,15 @@
         <member name="SCENE_STATE_ACTIVE" desc="战斗中" />
     </enum>
 
-    <!-- prop type -->
-    <enum type="ui16" name="PropType" desc="">
-        <member name="PROP_FIXED" value="0" desc="" />
-        <member name="PROP_FIXED_GROW" value="1" desc="" />
-        <member name="PROP_GROWTH" value="2" desc="" />
-    </enum>
-
-    <struct name="EntityProp" store="MyISAM" desc="">
-        <member name="id" type="ui64"   desc=""/>
-        <member name="modelID" type="ui64" tag="key"   desc=""/>
-        <member name="propType" type="ui16" tag="key"   desc="0 fixed, 1 grow fixed, 2 growth PropType"/>
-        <member name="hp" type="double"   desc="血量值"/>
-        <member name="hpRegen" type="double"   desc="每秒血量值恢复"/>
-        <member name="attack" type="double"   desc="伤害"/>
-        <member name="defense" type="double"   desc="防御"/>
-        <member name="crit" type="double"   desc="暴击"/>
-        <member name="toughness" type="double"   desc="韧性"/>
-        <member name="moveSpeed" type="double"   desc="移动速度"/>
-        <member name="attackSpeed" type="double"   desc="攻击速度"/>
-        <member name="vampirk " type="double"   desc="吸血"/> 
-    </struct>
-    <array name="EntityPropArray" type="EntityProp" desc="" />
-    <map name="EntityPropMap" key="ui64" value="EntityProp" desc="" />
-
-    <struct name="EntityBase" store="MyISAM" desc="">
-    	<member name="eid" type="ui64"   desc=""/>
-    	<member name="modelID" type="ui64" tag="key"   desc=""/>
-        <member name="modelName" type="string"   desc=""/>
-        <member name="avatarID" type="ui64"   desc=""/>
-        <member name="avatarName" type="string"   desc=""/>
-        <member name="iconID"  type="ui64" desc="头像"/>
-        <member name="level"  type="double" desc="等级"/>
-        <member name="exp"  type="double" desc="经验"/>
-        <member name="gold"  type="double" desc="金币"/>
-        <member name="camp"  type="ui16" desc=""/>
-        <member name="etype"  type="ui16" desc=""/>
-        <member name="state"  type="ui16" desc=""/>
-    </struct>
-    <array name="EntityBaseArray" type="EntityBase" desc="" />
-    <map name="EntityBaseMap" key="ui64" value="EntityBase" desc="" />
 
 
     <struct name="SceneGroupAvatarInfo" desc="">
         <member name="areaID" type="ui64"  desc="考虑混服情况,必须指定该玩家来自哪个当前区"/>
-        <member name="baseInfo" type="EntityBase"  desc="玩家基础数据"/>
-        <member name="fixedProps" type="EntityProp"   desc="基础固定属性"/>
-        <member name="growthProps" type="EntityProp"   desc="成长基础属性"/>
-        <member name="growths" type="EntityProp"   desc="成长系数"/>
-
+        <member name="modelID" type="ui64"  desc="模型ID"/>
+        <member name="equips" type="DictArrayKey"   desc="额外装备"/>
+        <member name="avatarID" type="ui64"   desc=""/>
+        <member name="avatarName" type="string"   desc=""/>
+        <member name="rankScore" type="double"   desc="天梯分数"/>
         <member name="powerType" type="ui16"  desc="组队权限: 0普通,1leader,2master"/>
         <member name="token" type="string"  desc="scene服务器的口令, 该字段在广播给客户端时需要清空非自己所属的token,否则将会造成token公开."/>
     </struct>
@@ -122,7 +82,7 @@
 
 
     <!-- 实体状态-->
-    <enum type="ui16" name="EntityState" desc="">
+    <enum type="ui16" name="ENTITY_STATE" desc="">
         <member name="ENTITY_STATE_NONE" desc="无效" />
         <member name="ENTITY_STATE_FREEZING" desc="冻结, 不可被攻击,不可主动移动,攻击等" />
         <member name="ENTITY_STATE_ACTIVE" desc="活跃状态" />
@@ -131,7 +91,7 @@
     </enum>
 
     <!-- 实体对象的类型, 区别玩家, AI, 技能-->
-    <enum type="ui16" name="EntityType" desc="">
+    <enum type="ui16" name="ENTITY_TYPE" desc="">
         <member name="ENTITY_NONE" desc="" />
         <member name="ENTITY_PLAYER" desc="" />
         <member name="ENTITY_AI" desc="" />
@@ -139,7 +99,7 @@
     </enum>
 
     <!-- 实体阵营-->
-    <enum type="ui64" name="EntityCampType" desc="">
+    <enum type="ui64" name="ENTITY_CAMP" desc="">
         <member name="ENTITY_CAMP_NONE" desc="" />
         <member name="ENTITY_CAMP_RED" desc="红方" />
         <member name="ENTITY_CAMP_BLUE" desc="蓝方" />
@@ -147,7 +107,7 @@
     </enum>
 
     <!-- 移动行为-->
-    <enum type="ui16" name="MoveAction" desc="">
+    <enum type="ui16" name="MOVE_ACTION" desc="">
         <member name="MOVE_ACTION_IDLE" value="0" desc="空闲" />
         <member name="MOVE_ACTION_FOLLOW" desc="跟随" />
         <member name="MOVE_ACTION_PATH" desc="路径" />
@@ -155,121 +115,14 @@
         <member name="MOVE_ACTION_FORCE_PATH" desc="不可取消&穿越地形, 直线移动一次" />
     </enum>
 
-    <!-- 搜索方法-->
-    <enum type="ui16" name="SearchMethodType" desc="">
-        <member name="SEARCH_METHOD_SEACTOR" desc="org 扇形" />
-        <member name="SEARCH_METHOD_RECT" desc="org 矩形" />
-    </enum>
-
-    <!-- 搜索目标阵营(组合位结构)-->
-    <enum type="ui64" name="SearchCampType" desc="">
-        <member name="SEARCH_CAMP_NONE"   desc="" />
-        <member name="SEARCH_CAMP_SELF"    desc="自身" />
-        <member name="SEARCH_CAMP_SAME_WITHOUT_SELF"    desc="同阵营非自己" />
-        <member name="SEARCH_CAMP_ALIEN"    desc="非己方阵营" />
-    </enum>
-
-
-    <!-- SKILL类型 (组合位结构) -->
-    <enum type="ui64" name="SkillType" desc="">
-        <member name="SKILL_NONE"  desc=""/>
-        <member name="SKILL_AUTO" desc="自动循环攻击"/>
-        <member name="SKILL_PASSIVE"    desc="被动技能"/>
-        <member name="SKILL_CAN_BREAK"   desc="可被中断"/>
-        <member name="SKILL_CAN_MOVE"   desc="可移动"/>
-        <member name="SKILL_PHYSICAL"    desc="物理攻击"/>
-        <member name="SKILL_MAGIC"    desc="魔法攻击"/>
-    </enum>
-
-    <!-- SKILL行为(组合位结构)  -->
-    <enum type="ui64" name="SkillBehaviourType" desc="">
-        <member name="SKILL_BEHAVIOUR_NONE"  desc=""/>
-        <member name="SKILL_BEHAVIOUR_HIT"   desc="攻击"/>
-        <member name="SKILL_BEHAVIOUR_TELEPORT_TARGET"   desc="瞬移到目标"/>
-        <member name="SKILL_BEHAVIOUR_BREAK_MOVE"   desc="打断移动"/>
-        <member name="SKILL_BEHAVIOUR_BREAK_SKILL"   desc="打断技能"/>
-        <member name="SKILL_BEHAVIOUR_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
-        <member name="SKILL_BEHAVIOUR_REMOVE_BUFF"   desc="驱散增益BUFF"/>
-        <member name="SKILL_BEHAVIOUR_TRIGGER_BUFF"   desc="触发buff"/>
-        <member name="SKILL_BEHAVIOUR_TRIGGER_SKILL"   desc="触发技能"/>
-    </enum>
-
-
-    <!-- BUFF基础类型(组合位结构) 35以下可任意搭配, 如果多个类型组合需要避免value/effect字段的使用冲突-->
-    <enum type="ui64" name="BuffType" desc="">
-        <member name="BUFF_HALO"  value="1"  desc="非表达可检索类型: 光环"/>
-        <member name="BUFF_BUFF"  value="2"  desc="非表达可检索类型: 增益buff"/>
-        <member name="BUFF_DEBUFF"  value="3"  desc="非表达可检索类型: 减益BUFF"/>
-        <member name="BUFF_HIDE"  value="4"  desc="非表达可检索类型: 客户端不表现"/>
-
-        <member name="BUFF_SNEAK"  value="5"  desc="潜行类型: 潜行 不会被非己方阵营的任何AOE技能搜索到"/>
-
-        <member name="BUFF_HOLD_MOVE"  value="15"  desc="控制: 禁止移动"/>
-        <member name="BUFF_REVERSE_MOVE" value="16"  desc="控制: 移动反向"/>
-        <member name="BUFF_SILENCE_AUTO_ATTACK" value="17"  desc="控制: 沉默普攻"/>
-        <member name="BUFF_SILENCE_WITHOUT_AUTO_ATTACK" value="18"  desc="控制: 沉默非普攻技能"/>
-        <member name="BUFF_SILENCE_PHYSICAL" value="19"  desc="控制: 沉默物理攻击"/>
-        <member name="BUFF_SILENCE_MAGIC" value="20"  desc="控制: 沉默魔法攻击"/>
-
-        <member name="BUFF_IMMUNE_MOVE" value="25"  desc="免疫: 免疫移动类控制"/>
-        <member name="BUFF_IMMUNE_SILENCE" value="26"  desc="免疫: 免疫沉默"/>
-        <member name="BUFF_IMMUNE_DEBUFF" value="27"  desc="免疫: 免疫添加DEBUFF, 指被地方添加不利buff"/>
-        <member name="BUFF_IMMUNE_REMOVE_BUFF" value="28"  desc="免疫: 免疫驱散BUFF,指被敌方移除有益buff"/>
-        <member name="BUFF_IMMUNE_PHYSICAL" value="29"  desc="免疫: 物攻免疫"/>
-        <member name="BUFF_IMMUNE_MAGIC" value="30"  desc="免疫: 法攻免疫"/>
-
-        <member name="BUFF_INC_HARM" value="35"  desc="属性加成: 最终扣血加成, value1加法, value2乘法"/>
-        <member name="BUFF_INC_DAMAGE" value="36"  desc="属性加成: 伤害加成, value1加法, value2乘法"/>
-        <member name="BUFF_INC_SPEED" value="37"  desc="属性加成: 速度加成, value1加法, value2乘法"/>
-        <member name="BUFF_INC_SUCK_BLOOD" value="38"  desc="属性加成: 吸血加成 value1加法"/>
-
-        <member name="BUFF_LIGHT_SKILL" value="50"  desc="持续性触发: value1为技能ID, value2为间隔, 用于光环类,持续触发类buff实现"/>
-
-    </enum>
 
 
 
-    <struct name="SearchInfo" desc="">
-        <member name="etype" type="ui16"  desc="实体类型, 玩家/AI 或者是NONE忽略该选项"/>
-        <member name="camp" type="ui64"  desc="0忽略改选项, 1位标识自己, 2位标识同阵营非自己, 3其他阵营,   逗号分割 多选 SearchCampType"/>
-        <member name="method" type="ui16"  desc="0扇形, 1矩形 SearchMethodType"/>
-        <member name="distance" type="double"  desc="伤害距离"/>
-        <member name="radian" type="double"  desc="弧度或者宽度"/>
-        <member name="offsetX" type="double"  desc="坐标偏移量, 以caster为原点, 朝向为y轴"/>
-        <member name="offsetY" type="double"  desc="坐标偏移量, 以caster为原点, 朝向为y轴"/>
-        <member name="limitEntitys" type="ui64"  desc="最大目标数"/>
-    </struct>
 
-    <struct name="SkillBehaviour" desc="技能触发行为">
-        <member name="behaviour" type="ui64"  desc=""/>
-        <member name="delay" type="double"  desc=""/>
-        <member name="search" type="SearchInfo"  desc=""/>
-        <member name="skills" type="SkillIDArray"  desc=""/>
-        <member name="buffs" type="BuffIDArray"  desc=""/>
-    </struct>
-    <array name="SkillBehaviourArray" type="SkillBehaviour" desc="" />
-
-
-
-    <struct name="SkillData" desc="技能">
-        <member name="skillID" type="ui64"  desc="skillID"/>
-        <member name="skillType" type="ui64"  desc="SkillType"/>
-        <member name="behaviours" type="SkillBehaviourArray"  desc=""/>
-        <member name="cd" type="double"  desc=""/>
-   </struct>
-
-    <struct name="BuffData" desc="buff">
-        <member name="buffID" type="ui64"  desc=""/>
-        <member name="buffType" type="ui64"  desc="buff类型"/>
-        <member name="piletime" type="double"  desc="最大叠加时间"/>
-        <member name="keepTime" type="double"  desc="保持时间"/>
-        <member name="value1" type="double"  desc=""/>
-        <member name="value2" type="double"  desc=""/>
-   </struct>
 
 
     <!-- 事件类型-->
-    <enum type="ui16" name="SceneEvent" desc="">
+    <enum type="ui16" name="SCENE_EVENT" desc="">
         <member name="SCENE_EVENT_LIE"  desc="" />
         <member name="SCENE_EVENT_DIED"  desc="" />
         <member name="SCENE_EVENT_FREEZE" desc="" />
@@ -291,46 +144,27 @@
 
 
 
-    <!-- SkillInfo -->
-    <struct name="SkillInfo" desc="" >
-        <member name="skillID" type="ui64" />
-        <member name="startTime" type="double" desc=""/>
-        <member name="dst"  type="EPosition" desc="目标位置"/>  
-        <member name="foe"  type="ui64" desc="锁定的目标"/>  
-        <member name="data" type="SkillData" desc="配置数据"/>
-    </struct>
-    <array name="SkillInfoArray" type="SkillInfo" desc="" />
-
-
-    <!-- BuffInfo -->
-    <struct name="BuffInfo" desc="" >
-        <member name="eid" type="ui64" desc="施放该buff的entity id"/>
-        <member name="skillID" type="ui64" desc="如果该buff是被技能触发的 则记录该技能, 被动技能是0"/>
-        <member name="buffID" type="ui64" />
-        <member name="start" type="double" desc="start (server)tick"/>
-        <member name="lastTrigerTick" type="double" desc="lastTrigerTick"/>
-        <member name="data" type="BuffData" desc="配置数据"/>
-    </struct>
-    <array name="BuffInfoArray" type="BuffInfo" desc="" />
-
-
 
 
 
 
 
     <!-- 实体动态属性, 差异广播 -->
-    <struct name="EntityInfo" desc="EntityInfo">
-        <member name="eid" type="ui64"  desc="eid"/>
+    <struct name="EntityState" desc="EntityState">
+        <member name="eid" type="ui64"  desc=""/>
+        <member name="avatarID" type="ui64"  desc=""/>
+        <member name="avatarName" type="string"  desc=""/>
+        <member name="modelID" type="ui64"  desc=""/>
         <member name="camp" type="ui16"  desc="阵营"/>
         <member name="groupID" type="ui64"  desc="组队ID"/>
         <member name="etype" type="ui16"  desc="实体类型"/>
         <member name="state" type="ui16"  desc="状态"/>
         <member name="foe"  type="ui64" desc="锁定的敌人"/>
-        <member name="leader"  type="ui64" desc="实体的老大, 如果是飞行道具 这个指向施放飞行道具的人"/>
+        <member name="master"  type="ui64" desc="如果是飞行道具 这个指向施放飞行道具的人"/>
         <member name="curHP"  type="double" desc="当前的血量"/>
+        <member name="maxHP"  type="double" desc="当前的血量上限"/>
     </struct>
-    <array name="EntityInfoArray" type="EntityInfo" desc="" />
+    <array name="EntityStateArray" type="EntityState" desc="" />
 
     <!-- 实体动态属性, 差异广播 -->
     <struct name="EntityMove" desc="EntityMove">
@@ -358,12 +192,8 @@
 
     <!-- 一个实体的完整同步数据 -->
     <struct name="EntityFullData" desc="EntityFullData">
-        <member name="baseInfo" type="EntityBase"  desc="玩家基础数据"/>
-        <member name="fixedProps" type="EntityProp"   desc="基础固定属性"/>
-        <member name="growthProps" type="EntityProp"   desc="成长基础属性"/>
-        <member name="growths" type="EntityProp"   desc="成长系数"/>
-        <member name="props" type="EntityProp"   desc="当前"/>
-        <member name="info" type="EntityInfo"  desc=""/>
+        <member name="props" type="DictProp"   desc="战斗属性"/>
+        <member name="state" type="EntityState"  desc=""/>
         <member name="mv" type="EntityMove"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>
@@ -378,6 +208,32 @@
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
         <member name="entitys"  type="EntityFullDataArray" desc="这里包含有所有当前场景下的实体属性和状态数据"/>
     </proto>
+
+
+    <proto name="EntitySkillInfo" desc= "技能">
+        <member name="skillID"  type="ui64" desc=""/>
+        <member name="activeOrg"  type="EPosition" desc=""/>
+        <member name="activeOrgEID"  type="ui64" desc=""/>
+        <member name="activeDst"  type="EPosition" desc=""/>
+        <member name="activeDstEID"  type="ui64" desc=""/>
+        <member name="activeTime"  type="double" desc=""/>
+        <member name="lastTriggerTime"  type="double" desc=""/>
+        <member name="isFinish"  type="ui16" desc=""/>
+        <member name="activeCount"  type="double" desc=""/>
+    </proto>
+
+    <proto name="EntityBuffInfo" desc= "BUFF">
+        <member name="buffID"  type="ui64" desc=""/>
+        <member name="activeOrg"  type="EPosition" desc=""/>
+        <member name="activeOrgEID"  type="ui64" desc=""/>
+        <member name="activeDst"  type="EPosition" desc=""/>
+        <member name="activeDstEID"  type="ui64" desc=""/>
+        <member name="activeTime"  type="double" desc=""/>
+        <member name="lastTriggerTime"  type="double" desc=""/>
+        <member name="activeCount"  type="double" desc=""/>
+    </proto>
+
+
 
 </Proto>
 

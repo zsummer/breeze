@@ -18,88 +18,92 @@
 #ifndef _SCENE_H_
 #define _SCENE_H_
 #include "entity.h"
-
-
-
+#include "move.h"
+#include "skill.h"
+#include "ai.h"
 
 class Scene : public std::enable_shared_from_this<Scene>
 {
+    friend MoveSync;
+    friend Skill;
+    friend AI;
     //scene数据
 private:
     SceneID _sceneID;
-    SceneType _sceneType;
-    SceneState _sceneStatus;
-    RVO::RVOSimulator *_sim = nullptr;
+    SCENE_TYPE _sceneType;
+    SCENE_STATE _sceneStatus;
+    
     EntityID _lastEID;
-    double _lastStatusChangeTime;
     double _startTime;
     double _endTime;
     std::map<EntityID, EntityPtr> _entitys;
     std::map<ServiceID, EntityPtr> _players;
     std::queue<std::function<void()>> _asyncs;
-    std::map<EntityID, EntityPtr> _monsters;
 
-    double _lastCheckMonstr = 0.0;
-    double _lastPrintStatus = 0.0;
-    double _lastDoRVO = 0.0;
+    
+    
 public:
     Scene(SceneID id);
     ~Scene();
-    inline SceneID getSceneID() { return _sceneID; }
-    inline SceneType getSceneType() { return _sceneType; }
-    inline SceneState getSceneState() { return _sceneStatus; }
-    inline size_t getEntitysCount() { return _entitys.size(); }
-    inline size_t getPlayerCount() { return _players.size(); }
-    inline std::map<ServiceID, EntityPtr> & getPlayers() { return _players; }
-    GroupID getGroupID(ServiceID avatarID);
-    void getSceneSection(SceneSection & ss);
     bool cleanScene();
-    bool initScene(SceneType sceneType, MapID mapID);
+    bool initScene(SCENE_TYPE sceneType, MapID mapID);
     bool onUpdate();
-    EntityPtr getEntity(EntityID eID);
-    EntityPtr getEntityByAvatarID(ServiceID avatarID);
-    EntityPtr addEntity(const EntityBase & baseInfo, 
-        const EntityProp & fixedProps, 
-        const EntityProp & growProps, 
-        const EntityProp & growth,
-        GroupID groupID= InvalidGroupID);
-    bool removeEntity(EntityID eid);
-    bool removePlayer(AvatarID avatarID);
-    bool removePlayerByGroupID(GroupID groupID);
-    //operator
 public:
-    void pushAsync(std::function<void()> && func);
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, double radian, const SearchInfo & search);
-    bool doMove(ui64 eid, MoveAction action, double speed, ui64 follow, EPosition clt, EPositionArray dsts);
-    bool doSkill(EntityID eid, ui64 skillID, EntityID foe, const EPosition & dst);
-    bool checkSkillBehaviour();
-    bool attackTargets(EntityPtr caster, std::vector<EntityPtr> & targets);
-    void checkSceneState();
-    bool cleanSkill();
-    bool addBuff();
-    bool cleanBuff();
-    //caster为当前施法者, 如果当前施法者为飞行道具 则搜索目标为self的时候 应当是指master  
-    //targetType 如果是none 则忽略该过滤选项  
-    //targetSC如果是none 则忽略该选项, 否则取位判断  
-    //
-    
-public:
-
-    void checkStepRVO(bool preCheck);
-    void doStepRVO();
-    void doMonster();
-    void doFollow();
     bool playerAttach(ServiceID avatarID, SessionID sID);
     bool playerDettach(ServiceID avatarID, SessionID sID);
     void onPlayerInstruction(ServiceID avatarID, ReadStream & rs);
-
-public:
     //消息队列 
 public:
     template <typename MSG>
     void broadcast(const MSG & msg, ServiceID without = InvalidServiceID);
     template<typename MSG>
     void sendToClient(ServiceID avatarID, const MSG &msg);
+public:
+    MoveSyncPtr _move;
+    AIPtr _ai;
+    SkillPtr _skill;
+public:
+    inline SceneID getSceneID() { return _sceneID; }
+    inline SCENE_TYPE getSceneType() { return _sceneType; }
+    inline SCENE_STATE getSceneState() { return _sceneStatus; }
+    inline size_t getEntitysCount() { return _entitys.size(); }
+    inline size_t getPlayerCount() { return _players.size(); }
+    inline std::map<ServiceID, EntityPtr> & getPlayers() { return _players; }
+    GroupID getGroupID(ServiceID avatarID);
+    void getSceneSection(SceneSection & ss);
+
+    EntityPtr getEntity(EntityID eID);
+    EntityPtr getEntityByAvatarID(ServiceID avatarID);
+    EntityPtr makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName, DictArrayKey equips, GroupID groupID);
+    void addEntity(EntityPtr entity);
+    bool removeEntity(EntityID eid);
+    bool removePlayer(AvatarID avatarID);
+    bool removePlayerByGroupID(GroupID groupID);
+
+    void pushAsync(std::function<void()> && func);
+
+
+
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition org, double radian, ui64  searchID);
+    std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition org, double radian, const AOESearch & search);
+    std::vector<EntityPtr> searchTarget(EPosition org, double radian, ui16 isRect, double distance, double value, double compensateForward, double compensateRight);
+
+
+
+
+    void onSceneInit();
+    void onAddEntity(EntityPtr entity);
+    void onRemoveEntity(EntityPtr entity);
+    void onPlayerAttach(EntityPtr entity);
+    void onPlayerDettach(EntityPtr entity);
+public:
+    
+ 
+    
+
+
+
+
 };
 
 using ScenePtr = std::shared_ptr<Scene>;

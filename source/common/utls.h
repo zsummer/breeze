@@ -156,10 +156,10 @@ std::string mergeToString(const Container & contariner, const std::string& deli)
 template<class T>  //example: Container = std::vector<int>
 void mergeToString(std::string & dstString, const std::string& deli, const T & t);
 
-std::string subStringFront(const std::string & text, const std::string & deli);
-std::string subStringBack(const std::string & text, const std::string & deli);
-std::string subStringWithoutFront(const std::string & text, const std::string & deli);
-std::string subStringWithoutBack(const std::string & text, const std::string & deli);
+// text, deli, store text in pair.first when not found deli, greedy search
+std::pair<std::string, std::string> subString(const std::string & text, const std::string & deli, bool preStore = true, bool isGreedy = false);
+
+
 
 std::string toUpperString(std::string  org);
 std::string toLowerString(std::string  org);

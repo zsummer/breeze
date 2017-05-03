@@ -5,7 +5,7 @@
  
 struct SceneKnock //战场服务器挂载  
 { 
-    static const unsigned short getProtoID() { return 39000;} 
+    static const unsigned short getProtoID() { return 4000;} 
     static const std::string getProtoName() { return "SceneKnock";} 
     unsigned long long lineID; //分线ID  
     std::string pubHost;  
@@ -48,7 +48,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ScenePulse //集群脉冲  
 { 
-    static const unsigned short getProtoID() { return 39001;} 
+    static const unsigned short getProtoID() { return 4001;} 
     static const std::string getProtoName() { return "ScenePulse";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ScenePulse & data) 
@@ -68,47 +68,54 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerJoinGroupIns //创建/加入编队, 来自docker的指令  
 { 
-    static const unsigned short getProtoID() { return 39002;} 
+    static const unsigned short getProtoID() { return 4002;} 
     static const std::string getProtoName() { return "SceneServerJoinGroupIns";} 
     unsigned long long refresh; //0为客户端请求操作, 1为仅仅刷新数据  
     unsigned long long groupID; //编队ID, 0为创建  
-    EntityBase baseInfo; //玩家基础数据  
-    EntityProp fixedProps; //基础固定属性  
-    EntityProp growthProps; //成长基础属性  
-    EntityProp growths; //成长系数  
+    unsigned long long modelID; //模型ID  
+    DictArrayKey equips; //额外装备  
+    unsigned long long avatarID;  
+    std::string avatarName;  
+    double rankScore; //天梯分数  
     SceneServerJoinGroupIns() 
     { 
         refresh = 0; 
         groupID = 0; 
+        modelID = 0; 
+        avatarID = 0; 
+        rankScore = 0.0; 
     } 
-    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const EntityBase & baseInfo, const EntityProp & fixedProps, const EntityProp & growthProps, const EntityProp & growths) 
+    SceneServerJoinGroupIns(const unsigned long long & refresh, const unsigned long long & groupID, const unsigned long long & modelID, const DictArrayKey & equips, const unsigned long long & avatarID, const std::string & avatarName, const double & rankScore) 
     { 
         this->refresh = refresh; 
         this->groupID = groupID; 
-        this->baseInfo = baseInfo; 
-        this->fixedProps = fixedProps; 
-        this->growthProps = growthProps; 
-        this->growths = growths; 
+        this->modelID = modelID; 
+        this->equips = equips; 
+        this->avatarID = avatarID; 
+        this->avatarName = avatarName; 
+        this->rankScore = rankScore; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerJoinGroupIns & data) 
 { 
     ws << data.refresh;  
     ws << data.groupID;  
-    ws << data.baseInfo;  
-    ws << data.fixedProps;  
-    ws << data.growthProps;  
-    ws << data.growths;  
+    ws << data.modelID;  
+    ws << data.equips;  
+    ws << data.avatarID;  
+    ws << data.avatarName;  
+    ws << data.rankScore;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerJoinGroupIns & data) 
 { 
     rs >> data.refresh;  
     rs >> data.groupID;  
-    rs >> data.baseInfo;  
-    rs >> data.fixedProps;  
-    rs >> data.growthProps;  
-    rs >> data.growths;  
+    rs >> data.modelID;  
+    rs >> data.equips;  
+    rs >> data.avatarID;  
+    rs >> data.avatarName;  
+    rs >> data.rankScore;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerJoinGroupIns & info) 
@@ -116,17 +123,18 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "refresh=" << info.refresh << ","; 
     stm << "groupID=" << info.groupID << ","; 
-    stm << "baseInfo=" << info.baseInfo << ","; 
-    stm << "fixedProps=" << info.fixedProps << ","; 
-    stm << "growthProps=" << info.growthProps << ","; 
-    stm << "growths=" << info.growths << ","; 
+    stm << "modelID=" << info.modelID << ","; 
+    stm << "equips=" << info.equips << ","; 
+    stm << "avatarID=" << info.avatarID << ","; 
+    stm << "avatarName=" << info.avatarName << ","; 
+    stm << "rankScore=" << info.rankScore << ","; 
     stm << "]"; 
     return stm; 
 } 
  
 struct SceneServerJoinGroupAck //创建/加入编队响应结果  
 { 
-    static const unsigned short getProtoID() { return 39003;} 
+    static const unsigned short getProtoID() { return 4003;} 
     static const std::string getProtoName() { return "SceneServerJoinGroupAck";} 
     unsigned short retCode;  
     unsigned long long newGroupID;  
@@ -170,7 +178,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerEnterSceneIns //开辟场景  
 { 
-    static const unsigned short getProtoID() { return 39004;} 
+    static const unsigned short getProtoID() { return 4004;} 
     static const std::string getProtoName() { return "SceneServerEnterSceneIns";} 
     unsigned short sceneType; //类型  
     unsigned long long mapID;  
@@ -213,7 +221,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerCancelSceneIns //退出场景  
 { 
-    static const unsigned short getProtoID() { return 39005;} 
+    static const unsigned short getProtoID() { return 4005;} 
     static const std::string getProtoName() { return "SceneServerCancelSceneIns";} 
     unsigned long long sceneID; //sceneID  
     unsigned long long groupID; //groupID  
@@ -249,41 +257,41 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct SceneServerGroupStateChangeIns //scene ==> world  
+struct SceneServerGroupStateFeedback //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 39006;} 
-    static const std::string getProtoName() { return "SceneServerGroupStateChangeIns";} 
+    static const unsigned short getProtoID() { return 4007;} 
+    static const std::string getProtoName() { return "SceneServerGroupStateFeedback";} 
     unsigned long long sceneID;  
     unsigned long long groupID;  
     unsigned short state; //如果是NONE 说明离开场景  
-    SceneServerGroupStateChangeIns() 
+    SceneServerGroupStateFeedback() 
     { 
         sceneID = 0; 
         groupID = 0; 
         state = 0; 
     } 
-    SceneServerGroupStateChangeIns(const unsigned long long & sceneID, const unsigned long long & groupID, const unsigned short & state) 
+    SceneServerGroupStateFeedback(const unsigned long long & sceneID, const unsigned long long & groupID, const unsigned short & state) 
     { 
         this->sceneID = sceneID; 
         this->groupID = groupID; 
         this->state = state; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerGroupStateChangeIns & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneServerGroupStateFeedback & data) 
 { 
     ws << data.sceneID;  
     ws << data.groupID;  
     ws << data.state;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerGroupStateChangeIns & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneServerGroupStateFeedback & data) 
 { 
     rs >> data.sceneID;  
     rs >> data.groupID;  
     rs >> data.state;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerGroupStateChangeIns & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneServerGroupStateFeedback & info) 
 { 
     stm << "["; 
     stm << "sceneID=" << info.sceneID << ","; 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>abce5225cf2967e350944cce831059d7</cppmd5> 
+<luamd5>85b9c3a1cbb4f0a048645b77f496ef86</luamd5> 
+<csharpmd5>11af7f3d12c751ce75caa4b3074b4db6</csharpmd5> 
+<xmlmd5>f3b915bfb56dee78465b8010579141e4</xmlmd5> 
+<cacheNumber>
+    <cache key = "DictDrop" Number = "10002" /> 
+    <cache key = "DictGlobal" Number = "10001" /> 
+    <cache key = "DictItem" Number = "10003" /> 
+    <cache key = "DictPairValue" Number = "10000" /> 
+</cacheNumber>

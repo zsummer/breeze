@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>11000</MinNo>
+  <MaxNo>12000</MaxNo>
+  <UseLog4z>1</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+
+    <struct name="DictProp" store="MyISAM" desc="战斗属性">
+        <member name="id" type="ui64" tag="key"  desc=""/>
+        <member name="hp" type="double"   desc="血量值"/>
+        <member name="attack" type="double"   desc="伤害"/>
+        <member name="moveSpeed" type="double"   desc="移动速度"/>
+        <member name="attackSpeed" type="double"   desc="攻击速度"/>
+        <member name="desc " type="string"   desc=""/> 
+    </struct>
+    <array name="DictPropArray" type="DictProp" desc="" />
+    <map name="DictPropMap" key="ui64" value="DictProp" desc="" />
+
+
+    <!-- AOE Filter -->
+    <enum type="ui64" name="FILTER_STAMP" desc="">
+        <member name="FILTER_NONE"  value="1"  desc="全部"/>
+        <member name="FILTER_SELF"  value="2"  desc="自己"/>
+        <member name="FILTER_OTHER_FRIEND"  value="3"  desc="友方阵营"/>
+        <member name="FILTER_ENEMY_CAMP"  value="4"  desc="敌方阵营"/>
+        <member name="FILTER_NEUTRAL_CAMP"  value="5"  desc="中立阵营"/>
+    </enum>
+
+
+
+    <struct name="AOESearch" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="etype" type="ui16"  desc="实体类型, 玩家/AI 或者是NONE忽略该选项"/>
+        <member name="filter" type="ui64"  tag="ignore" desc=""/>
+        <member name="filterText" type="string"  desc=""/>
+        <member name="isRect" type="ui16"  desc="0扇形, 其他矩形"/>
+        <member name="distance" type="double"  desc="伤害距离"/>
+        <member name="value" type="double"  desc="弧度或者宽度"/>
+        <member name="compensateForward" type="double"  desc="前向补偿"/>
+        <member name="compensateRight" type="double"  desc="右向补偿"/>
+        <member name="limitEntitys" type="ui64"  desc="最大目标数, 距离优先"/>
+    </struct>
+
+
+
+
+
+    <!-- BUFF类型-->
+    <enum type="ui64" name="BUFF_STAMP" desc="">
+        <member name="BUFF_HALO"  value="1"  desc="描述性类型: 光环"/>
+        <member name="BUFF_BUFF"  value="2"  desc="描述性类型: 增益buff"/>
+        <member name="BUFF_DEBUFF"  value="3"  desc="描述性类型: 减益BUFF"/>
+        <member name="BUFF_HIDE"  value="4"  desc="描述性类型: 客户端不表现"/>
+        <member name="BUFF_PASSIVE"  value="5"  desc="描述性类型: 被动技能, 无法永久存在, 但死亡会停止任何触发"/>
+ 
+
+        <member name="BUFF_HOLD_MOVE"  value="10"  desc="控制: 禁止移动"/>
+        <member name="BUFF_REVERSE_MOVE" value="11"  desc="控制: 移动反向"/>
+        <member name="BUFF_SILENCE_GENERAL" value="12"  desc="控制: 沉默普攻"/>
+        <member name="BUFF_SILENCE_PHYSICAL" value="13"  desc="控制: 沉默物攻"/>
+        <member name="BUFF_SILENCE_MAGIC" value="14"  desc="控制: 沉默法攻"/>
+
+
+        <member name="BUFF_IMMUNE_MOVE" value="20"  desc="免疫: 免疫移动类控制"/>
+        <member name="BUFF_IMMUNE_SILENCE_GENERAL" value="21"  desc="免疫: 免疫普攻沉默"/>
+        <member name="BUFF_IMMUNE_SILENCE_PHYSICAL" value="22"  desc="免疫: 免疫物攻沉默"/>
+        <member name="BUFF_IMMUNE_SILENCE_MAGIC" value="23"  desc="免疫: 免疫法攻沉默"/>
+
+        <member name="BUFF_IMMUNE_DEBUFF" value="30"  desc="免疫: 免疫DEBUFF"/>
+        <member name="BUFF_IMMUNE_BUFF" value="31"  desc="免疫: 免疫增益BUFF"/>
+        <member name="BUFF_IMMUNE_OCCUPIED" value="32"  desc="免疫: 免疫占据"/>
+        <member name="BUFF_IMMUNE_FLOAT" value="33"  desc="免疫: 免疫击飞"/>
+        <member name="BUFF_IMMUNE_MOVEBACK" value="34"  desc="免疫: 免疫击退"/>
+        <member name="BUFF_IMMUNE_BREAK" value="35"  desc="免疫: 免疫技能中断"/>
+
+    </enum>
+
+
+
+
+    <struct name="DictBuff" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="stamp" type="ui64" tag="ignore" desc="BUFF_STAMP"/>
+        <member name="stampText" type="string"  desc=""/>
+
+        <member name="propID" type="ui64"   desc="提升的属性效果, 求积方式的参数是基础属性 不算其他装备"/>
+
+        <member name="skills" type="DictArrayKey" tag="ignore"  desc="触发技能"/>
+        <member name="skillsText" type="string"   desc="触发技能 格式id,id,id "/>
+        <member name="buffs" type="DictArrayKey"  tag="ignore" desc="触发buff"/>
+        <member name="buffsText" type="string"   desc="触发buff 格式id,id,id"/>
+
+        <member name="triggerAoeSearchID" type="double"   desc="search结果不为空触发"/>
+        <member name="triggerDelay" type="double"   desc="延迟触发, 当间隔触发不为0时生效"/>
+        <member name="triggerInterval" type="double"   desc="间隔触发"/>
+
+        <member name="triggerCountLimit" type="double"   desc="触发次数限制"/>
+
+        <member name="triggerAutoRemove" type="double"   desc="触发后移除buff"/>
+
+        <member name="keepTime"  type="double" desc=""/>
+        <member name="limitStackTime"  type="double" desc="相同buff叠加时间并且刷新触发次数"/>
+
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+
+
+    <!-- SKILL类型 (组合位结构) -->
+    <enum type="ui64" name="SKILL_STAMP" desc="">
+        <member name="SKILL_NONE"  desc=""/>
+        <member name="SKILL_AUTO_USE" desc="自动施法"/>
+        <member name="SKILL_PASSIVE"    desc="被动技能"/>
+        <member name="SKILL_ON_HIT_BREAK"   desc="可被中断"/>
+        <member name="SKILL_ON_MOVE_BREAK"   desc="可被中断"/>
+        <member name="SKILL_CAN_MOVE"   desc="可移动"/>
+        <member name="SKILL_PHYSICAL"    desc="物理类型"/>
+        <member name="SKILL_MAGIC"    desc="魔法类型"/>
+        <member name="SKILL_HIT"   desc="攻击"/>
+        <member name="SKILL_HILL"   desc="治疗"/>
+        <member name="SKILL_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
+        <member name="SKILL_REMOVE_BUFF"   desc="驱散增益BUFF"/>
+    </enum>
+
+    <struct name="DictSkill" store="MyISAM" desc="">
+        <member name="id" type="ui64" tag="key"   desc=""/>
+        <member name="stamp" type="ui64"    desc=""/>
+        <member name="searchID" type="ui64"   desc="锁敌"/>
+
+        <member name="aoeID" type="ui64"   desc="AOI伤害"/>
+
+        <member name="orgType" type="ui16"   desc="1 施法者位置, 2 锁定的敌人位置或者目标位置"/>
+        <member name="orgFixed" type="ui16"   desc="1位置固定化成坐标, 0跟随自己或者目标位置实时变化"/>
+        <member name="orgLimitDistance" type="double"   desc="如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离"/>
+
+
+        <member name="delay" type="double"  desc=""/>
+        <member name="interval" type="double" desc="自动释放间隔,针对自动施法,被动技能有效"/>
+        <member name="keep" type="double" desc="持续时间"/>
+        <member name="cd" type="double" desc="冷却"/>
+        
+
+
+        <member name="hpAdd" type="double" desc="附加真实伤害"/>
+        <member name="hpAddScaleRemanent" type="double" desc=""/>
+        <member name="hpAddScaleLost" type="double" desc=""/>
+
+        <member name="propID" type="ui64"   desc="附加属性提升"/>
+
+        <member name="dstTeleport" type="double" desc="目标闪现到自己" />
+        <member name="selfTeleport" type="double" desc="自己闪现到目标" />
+
+        <member name="dstMoveTime" type="double" desc="附加给目标朝向自己的位移时间" />
+        <member name="dstMoveSpeed" type="double" desc="附加给目标朝向自己的位移速度" />
+
+        <member name="selfMoveTime" type="double" desc="附加给自己朝向目标的位移时间" />
+        <member name="selfMoveSpeed" type="double" desc="附加给自己朝向目标的位移速度" />
+
+        <member name="appendBuffsAoeID" type="ui64"   desc="上buff的searchid"/>
+        <member name="appendBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
+        <member name="appendBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>
+
+        <member name="harmBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
+        <member name="harmBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>
+
+        <member name="combSkills" type="DictArrayKey"  tag="ignore" desc=""/>
+        <member name="combSkillsText" type="string"   desc="组合技能"/>
+
+        <member name="followSkills" type="DictArrayKey"  tag="ignore" desc=""/>
+        <member name="followSkillsText" type="string"   desc="跟随技能"/>
+
+        <member name="desc" type="string"   desc=""/>
+    </struct>
+
+
+
+
+
+</Proto>
+

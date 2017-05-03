@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>709fd840a395b351656ad4c45db964a3</cppmd5> 
+<luamd5>ffa20e05821eb6def54aa5ef72abb10c</luamd5> 
+<csharpmd5>90f30120b080a05f3b7d7e0673c429d5</csharpmd5> 
+<xmlmd5>539c61bdf155d1eddc99079c5040ebfa</xmlmd5> 
+<cacheNumber>
+    <cache key = "SceneKnock" Number = "4000" /> 
+    <cache key = "ScenePulse" Number = "4001" /> 
+    <cache key = "SceneServerCancelSceneIns" Number = "4005" /> 
+    <cache key = "SceneServerEnterSceneIns" Number = "4004" /> 
+    <cache key = "SceneServerGroupStateChangeIns" Number = "4006" /> 
+    <cache key = "SceneServerGroupStateFeedback" Number = "4007" /> 
+    <cache key = "SceneServerJoinGroupAck" Number = "4003" /> 
+    <cache key = "SceneServerJoinGroupIns" Number = "4002" /> 
+</cacheNumber>

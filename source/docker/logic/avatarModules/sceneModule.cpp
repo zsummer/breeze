@@ -66,57 +66,9 @@ void SceneModule::fillGroupInfo(AvatarService & avatar, SceneServerJoinGroupIns&
 {
     ins.groupID = InvalidGroupID;
     ins.refresh = 1;
-    ins.baseInfo.avatarID = avatar._baseInfo._data.avatarID;
-    ins.baseInfo.avatarName = avatar._baseInfo._data.avatarName;
-    ins.baseInfo.eid = InvalidEntityID;
-    ins.baseInfo.exp = 0;
-    ins.baseInfo.gold = 0;
-    ins.baseInfo.iconID = avatar._baseInfo._data.iconID;
-    ins.baseInfo.level = 1;
-    ins.baseInfo.modelID = avatar._baseInfo._data.modeID;
-    ins.baseInfo.modelName = "";
-    ins.baseInfo.state = ENTITY_STATE_ACTIVE;
-    ins.baseInfo.camp = ENTITY_CAMP_NONE;
-    ins.baseInfo.etype = ENTITY_PLAYER;
-    if (true)
-    {
-        auto result = DBDict::getRef().getOneKeyEntityBase(avatar._baseInfo._data.modeID);
-        if (!result.first)
-        {
-            ins.baseInfo.exp = result.second.exp;
-            ins.baseInfo.gold = result.second.gold;
-            ins.baseInfo.level = result.second.level;
-            ins.baseInfo.modelName = result.second.modelName;
-        }
-
-    }
-
-    if (true)
-    {
-        auto result = DBDict::getRef().getTwoKeyEntityProp(avatar._baseInfo._data.modeID, 0);
-        if (!result.first)
-        {
-            ins.fixedProps = result.second;
-        }
-        result = DBDict::getRef().getTwoKeyEntityProp(avatar._baseInfo._data.modeID, 1);
-        if (!result.first)
-        {
-            ins.growthProps = result.second;
-        }
-        result = DBDict::getRef().getTwoKeyEntityProp(avatar._baseInfo._data.modeID, 2);
-        if (!result.first)
-        {
-            ins.growths = result.second;
-        }
-        if (ins.fixedProps.hp <= 0)
-        {
-            ins.fixedProps.hp = 1000;
-        }
-        if (ins.fixedProps.attack <= 0)
-        {
-            ins.fixedProps.attack = 10;
-        }
-    }
+    ins.avatarID = avatar._baseInfo._data.avatarID;
+    ins.avatarName = avatar._baseInfo._data.avatarName;
+    ins.modelID = avatar._baseInfo._data.modeID;
 }
 void SceneModule::refreshGroupInfo(AvatarService & avatar)
 {
