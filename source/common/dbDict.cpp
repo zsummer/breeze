@@ -48,7 +48,7 @@ bool DBDict::fakeTestData()
     {
         AOESearch aoe;
         aoe.isRect = 0;
-        aoe.distance = 25;
+        aoe.distance = 20;
         aoe.value = 2 * PI;
         aoe.limitEntitys = 1;
         aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);

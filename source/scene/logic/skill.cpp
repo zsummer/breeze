@@ -115,7 +115,7 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
         else
         {
             double dis = getDistance(caster->_move.position, dst->_move.position);
-            if (dis > dictSearch.second.distance * 1.5)
+            if (dis > dictSearch.second.distance)
             {
                 caster->_state.foe = InvalidEntityID;
                 caster->_isInfoDirty = true;
