@@ -585,6 +585,7 @@ namespace Proto4z
         public ulong avatarID;  
         public string avatarName;  
         public ulong modelID;  
+        public double collision; //collision radius  
         public ushort camp; //阵营  
         public ulong groupID; //组队ID  
         public ushort etype; //实体类型  
@@ -599,6 +600,7 @@ namespace Proto4z
             avatarID = 0;  
             avatarName = "";  
             modelID = 0;  
+            collision = 0.0;  
             camp = 0;  
             groupID = 0;  
             etype = 0;  
@@ -608,12 +610,13 @@ namespace Proto4z
             curHP = 0.0;  
             maxHP = 0.0;  
         } 
-        public EntityState(ulong eid, ulong avatarID, string avatarName, ulong modelID, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong master, double curHP, double maxHP) 
+        public EntityState(ulong eid, ulong avatarID, string avatarName, ulong modelID, double collision, ushort camp, ulong groupID, ushort etype, ushort state, ulong foe, ulong master, double curHP, double maxHP) 
         { 
             this.eid = eid; 
             this.avatarID = avatarID; 
             this.avatarName = avatarName; 
             this.modelID = modelID; 
+            this.collision = collision; 
             this.camp = camp; 
             this.groupID = groupID; 
             this.etype = etype; 
@@ -630,6 +633,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.avatarID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.avatarName)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.modelID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.collision)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.camp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.groupID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.etype)); 
@@ -646,6 +650,7 @@ namespace Proto4z
             this.avatarID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.avatarName = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.modelID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.collision = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.camp = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.etype = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 

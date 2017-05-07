@@ -33,7 +33,9 @@ void MoveSync::init(std::weak_ptr<Scene> scene)
     _lastDoRVO = getFloatSteadyNowTime();
     _lastPrintStatus = _lastDoRVO;
 }
-void MoveSync::checkStepRVO(bool preCheck)
+
+
+void MoveSync::fillRVO(double frame)
 {
     auto scene = _scene.lock();
     if (!scene)
@@ -45,7 +47,6 @@ void MoveSync::checkStepRVO(bool preCheck)
         return;
     }
     auto sim = _sim;
-
     for (auto &kv : scene->_entitys)
     {
         auto &entity = *kv.second;
@@ -57,21 +58,14 @@ void MoveSync::checkStepRVO(bool preCheck)
         {
             continue;
         }
-        if (entity._move.action == MOVE_ACTION_FOLLOW)
-        {
-            auto fl = scene->getEntity(entity._move.follow);
-            if (fl)
-            {
-                entity._move.waypoints.clear();
-                entity._move.waypoints.push_back(fl->_move.position);
-            }
-        }
+
         do
         {
+
             while (!entity._move.waypoints.empty())
             {
                 double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-                if (dist < 1.0 || (dist < 5.0&&entity._move.action == MOVE_ACTION_FOLLOW))
+                if (dist < entity._state.collision +  PATH_PRECISTION )
                 {
                     entity._move.waypoints.erase(entity._move.waypoints.begin());
                     continue;
@@ -80,22 +74,11 @@ void MoveSync::checkStepRVO(bool preCheck)
             }
             if (entity._move.waypoints.empty())
             {
-                LOGD("END MOVE[" << entity._state.avatarName << "]: all waypoints is gone");
-                entity._move.action = MOVE_ACTION_IDLE;
+                entity._move.waypoints.push_back(entity._move.position);
+                entity._isMoveDirty = true;
                 break;
             }
-            if (entity._control.blockMoveCount > 1.0 / SceneFrameInterval)
-            {
-                LOGW("BREAK MOVE[" << entity._state.avatarName << "][" << entity._state.eid << "]: block long time. count = " << entity._control.blockMoveCount);
-                entity._move.waypoints.clear();
-                entity._move.action = MOVE_ACTION_IDLE;
-                entity._control.blockMoveCount = 0;
-                break;
-            }
-            if (!preCheck)
-            {
-                break;
-            }
+
             if (::accessFile("../rvo.txt"))
             {
                 std::string content = readFileContent("../rvo.txt");
@@ -104,36 +87,35 @@ void MoveSync::checkStepRVO(bool preCheck)
                 sim->setAgentMaxNeighbors(entity._control.agentNo, std::get<1>(tp));
                 sim->setAgentTimeHorizon(entity._control.agentNo, std::get<2>(tp));
                 sim->setAgentTimeHorizonObst(entity._control.agentNo, std::get<3>(tp));
-                sim->setAgentRadius(entity._control.agentNo, std::get<4>(tp));
+                sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
             }
-
-            sim->setAgentMaxSpeed(entity._control.agentNo, entity._move.expectSpeed);
             double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-            double needTime = dist / entity._move.expectSpeed;
-            RVO::Vector2 dir = RVO::normalize(toRVOVector2(entity._move.waypoints.front()) - toRVOVector2(entity._move.position));
-            if (needTime > SceneFrameInterval)
+            if (dist < entity._state.collision + PATH_PRECISTION)
             {
-                dir *= entity._move.expectSpeed;
+                sim->setAgentMaxSpeed(entity._control.agentNo, 0);
+                sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0,0));
+            }
+            else if (dist < entity._move.expectSpeed * frame)
+            {
+                sim->setAgentMaxSpeed(entity._control.agentNo,  dist / frame);
+                RVO::Vector2 dir = RVO::normalize(toRVOVector2(entity._move.waypoints.front()) - toRVOVector2(entity._move.position));
+                sim->setAgentPrefVelocity(entity._control.agentNo, dir);
             }
             else
             {
-                dir *= needTime / SceneFrameInterval;
+                sim->setAgentMaxSpeed(entity._control.agentNo, entity._move.expectSpeed);
+                RVO::Vector2 dir = RVO::normalize(toRVOVector2(entity._move.waypoints.front()) - toRVOVector2(entity._move.position));
+                sim->setAgentPrefVelocity(entity._control.agentNo, dir);
             }
-            sim->setAgentPrefVelocity(entity._control.agentNo, dir);
-            LOGD("RVO PRE MOVE[" << entity._state.avatarName << "] local=" << entity._move.position
-                << ", dst=" << entity._move.waypoints.front() << ", dir=" << dir);
-        } while (false);
+            LOGD("RVO fill move[" << entity._state.avatarName << "] local=" << entity._move.position
+                << ", dst=" << entity._move.waypoints.front() << ", dir=" << sim->getAgentPrefVelocity(entity._control.agentNo) << ", max Speed=" 
+            << sim->getAgentMaxSpeed(entity._control.agentNo));
 
-        if (entity._move.action == MOVE_ACTION_IDLE)
-        {
-            entity._move.waypoints.clear();
-            sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0, 0));
-            scene->broadcast(MoveNotice(entity._move));
-            LOGD("RVO FIN MOVE[" << entity._state.avatarName << "] local=" << entity._move.position);
-        }
+        } while (false);
         entity._isMoveDirty = true;
     }
 }
+
 
 void MoveSync::update()
 {
@@ -142,69 +124,161 @@ void MoveSync::update()
     {
         return;
     }
-    if (getFloatSteadyNowTime() - _lastPrintStatus > 10)
+    if (!_sim)
+    {
+        return;
+    }
+    double now = getFloatSteadyNowTime();
+
+    if (now - _lastPrintStatus > 10)
     {
         _lastPrintStatus = getFloatSteadyNowTime();
-        LOGI("sceneID=" << scene->_sceneID << ", rvo sum second=" << _sim->getGlobalTime() << ", scene sum second=" << getFloatSteadyNowTime() - scene->_startTime);
+        LOGI("sceneID=" << scene->_sceneID << ", rvo sum second=" << _sim->getGlobalTime() << ", scene sum second=" << now - scene->_startTime);
     }
 
-    checkStepRVO(true);
+    
+
+    auto sim = _sim;
+    double timeStep = now - _lastDoRVO;
+    _lastDoRVO = now;
+
+    fillRVO(timeStep);
+    sim->setTimeStep(timeStep);
+    sim->doStep();
+    fixDirtyMove(timeStep);
+
+}
+void MoveSync::fixDirtyMove(double frame)
+{
+    auto scene = _scene.lock();
+    if (!scene)
+    {
+        return;
+    }
     if (!_sim)
     {
         return;
     }
     auto sim = _sim;
-
-    double timeStep = getFloatSteadyNowTime() - _lastDoRVO;
-    _lastDoRVO = getFloatSteadyNowTime();
-    sim->setTimeStep(timeStep);
-    sim->doStep();
     for (auto &kv : scene->_entitys)
     {
         auto &entity = *kv.second;
         if (entity._control.agentNo >= sim->getNumAgents())
         {
+            if (entity._move.action != MOVE_ACTION_IDLE)
+            {
+                entity._move.waypoints.clear();
+                sim->setAgentMaxSpeed(entity._control.agentNo, 0);
+                sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0, 0));
+                entity._move.action = MOVE_ACTION_IDLE;
+                scene->broadcast(MoveNotice(entity._move));
+                LOGE("move update no agentNo. entity id=" << entity._state.eid);
+            }
             continue;
         }
-        auto rvoPos = toEPoint(sim->getAgentPosition(entity._control.agentNo));
-        if (getDistance(entity._move.position, rvoPos) > 0.1)
+        if (entity._move.action == MOVE_ACTION_IDLE)
         {
-            entity._isMoveDirty = true;
-        }
-        if (entity._isMoveDirty)
-        {
-            auto realMove = toRVOVector2(rvoPos) - toRVOVector2(entity._move.position);
-            auto expectMove = sim->getAgentPrefVelocity(entity._control.agentNo);
-            entity._move.realSpeed = RVO::abs(realMove) / timeStep;
-            if (RVO::abs(expectMove) > 0.0001) //float over
+            //check
+            auto rvoPos = toEPoint(sim->getAgentPosition(entity._control.agentNo));
+            if (getDistance(rvoPos, entity._move.position) > 0.1 )
             {
-                if (RVO::abs(realMove) / (RVO::abs(expectMove) / ServerPulseInterval) < 0.1)
-                {
-                    entity._control.blockMoveCount++;
-                    LOGW("EXPECT MOVE DIST WRONG[" << entity._state.eid << "]: DIFF=" << RVO::abs(realMove) / RVO::abs(expectMove) << ", now blocks=" << entity._control.blockMoveCount);
-                }
-                else
-                {
-                    entity._control.blockMoveCount = 0;
-                }
+                LOGE("move idle entity had move.  entity pos =" << entity._move.position << ", rvoPos=" << rvoPos);
             }
+            //end check 
+            sim->setAgentPosition(entity._control.agentNo, toRVOVector2(entity._move.position));
+            continue;
         }
+        entity._isMoveDirty = true;
+        auto rvoPos = toEPoint(sim->getAgentPosition(entity._control.agentNo));
+        auto realMove = toRVOVector2(rvoPos) - toRVOVector2(entity._move.position);
+        entity._move.realSpeed = RVO::abs(realMove) / frame;
 
-        entity._move.position = toEPoint(sim->getAgentPosition(entity._control.agentNo));
-        if (entity._isMoveDirty)
+        if (entity._move.waypoints.empty())
         {
-            LOGD("RVO AFT MOVE[" << entity._state.avatarName << "] local=" << entity._move.position);
+            LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << toEPoint(realMove));
+        }
+        else
+        {
+            LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << toEPoint(realMove)
+             << ", dst=" << entity._move.waypoints.front());
         }
 
-    }
+        entity._move.position = rvoPos;
 
-    checkStepRVO(false);
-    
+        //check move end
+        bool moveEnd = false;
+        do
+        {
+            if (entity._state.state != ENTITY_STATE_ACTIVE)
+            {
+                moveEnd = true;
+                break;
+            }
+            if (entity._move.action == MOVE_ACTION_FOLLOW)
+            {
+                if (entity._move.follow == InvalidEntityID)
+                {
+                    moveEnd = true;
+                    break;
+                }
+                auto follow = scene->getEntity(entity._move.follow);
+                if (!follow || follow->_state.state != ENTITY_STATE_ACTIVE)
+                {
+                    moveEnd = true;
+                    break;
+                }
+                if (getDistance(entity._move.position, follow->_move.position) <= entity._state.collision + follow->_state.collision + PATH_PRECISTION)
+                {
+                    moveEnd = true;
+                    break;
+                }
+                break;
+            }
+            if (entity._move.waypoints.empty())
+            {
+                LOGE("");
+                moveEnd = true;
+                break;
+            }
+
+            while (!entity._move.waypoints.empty())
+            {
+                double dist = getDistance(entity._move.position, entity._move.waypoints.front());
+                if (dist <= entity._state.collision + PATH_PRECISTION)
+                {
+                    entity._move.waypoints.erase(entity._move.waypoints.begin());
+                    continue;
+                }
+                break;
+            }
+            if (entity._move.waypoints.empty())
+            {
+                entity._move.waypoints.push_back(entity._move.position);
+                moveEnd = true;
+                break;
+            }
+        } while (false);
+
+        if (moveEnd)
+        {
+            entity._move.waypoints.clear();
+            entity._move.action = MOVE_ACTION_IDLE;
+            sim->setAgentMaxSpeed(entity._control.agentNo, 0);
+            sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0, 0));
+            scene->broadcast(MoveNotice(entity._move));
+            LOGD("RVO FIN MOVE[" << entity._state.avatarName << "] local=" << entity._move.position);
+        }
+    }
 }
-ui64 MoveSync::addAgent(EPosition pos)
+
+
+
+ui64 MoveSync::addAgent(EPosition pos, double collision)
 {
     auto agent = _sim->addAgent(toRVOVector2(pos));
-    _sim->setAgentRadius(agent, 0.5f);
+    _sim->setAgentMaxSpeed(agent, 0);
+    _sim->setAgentPrefVelocity(agent, RVO::Vector2(0, 0));
+    _sim->setAgentRadius(agent, collision);
     return agent;
 }
 
@@ -256,18 +330,45 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         return false;
     }
 
-
-
-    auto followEntity = scene->getEntity(follow);
-    if (action == MOVE_ACTION_FOLLOW && (!followEntity || followEntity->_state.state != ENTITY_STATE_ACTIVE))
+    if (action == MOVE_ACTION_FOLLOW)
     {
-        action = MOVE_ACTION_IDLE;
+        do
+        {
+            action = MOVE_ACTION_IDLE;
+            dsts.clear();
+            if (follow == InvalidEntityID)
+            {
+                LOGE("doMove follow EntityID is invalid. self eid=" << eid);
+                break;
+            }
+            auto followEntity = scene->getEntity(follow);
+            if (!followEntity || followEntity->_state.state != ENTITY_STATE_ACTIVE)
+            {
+                LOGW("doMove follow EntityID not found or state not active. self eid=" << eid << ", follow eid=" << follow);
+                break;
+            }
+
+            //collision check 
+            double dist = getDistance(entity->_move.position.x, entity->_move.position.y, followEntity->_move.position.x, followEntity->_move.position.y);
+            if (dist <= entity->_state.collision + followEntity->_state.collision + PATH_PRECISTION)
+            {
+                break;
+            }
+            action = MOVE_ACTION_FOLLOW;
+            dsts.push_back(followEntity->_move.position);
+        }
+        while (false);
     }
 
-
-    if (action != MOVE_ACTION_FOLLOW && action != MOVE_ACTION_IDLE && dsts.empty())
+    if (action != MOVE_ACTION_IDLE &&  dsts.empty())
     {
+        LOGE("doMove param error. action = " << action << ", dsts is empty.");
         return false;
+    }
+
+    if (action == MOVE_ACTION_IDLE && moveInfo.action == MOVE_ACTION_IDLE)
+    {
+        return false;  //invalid action 
     }
 
 
@@ -297,21 +398,14 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         moveInfo.realSpeed = moveInfo.realSpeed;
         moveInfo.expectSpeed = speed;
         moveInfo.follow = follow;
-        if (action != MOVE_ACTION_FOLLOW)
-        {
-            moveInfo.waypoints = dsts;
-        }
-        else
-        {
-            moveInfo.waypoints.clear();
-            moveInfo.waypoints.push_back(followEntity->_move.position);
-        }
-        
+        moveInfo.waypoints = dsts;
     }
+
     if (action != MOVE_ACTION_IDLE && !dsts.empty())
     {
         entity->_control.lastClientFaceRadian = getRadian(entity->_move.position.x, entity->_move.position.y, dsts.at(0).x, dsts.at(0).y);
     }
+
     entity->_isMoveDirty = true;
     scene->broadcast(MoveNotice(moveInfo));
     return true;

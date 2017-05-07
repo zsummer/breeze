@@ -19,6 +19,7 @@
 #define _MOVE_SYNC_H_
 #include "entity.h"
 
+const double PATH_PRECISTION = 1.0;
 class Scene;
 class MoveSync : public std::enable_shared_from_this<MoveSync>
 {
@@ -30,10 +31,11 @@ public:
     MoveSync();
     ~MoveSync();
     void init(std::weak_ptr<Scene> scene);
-    void checkStepRVO(bool preCheck);
+    void fillRVO(double frame);
     void update();
+    void fixDirtyMove(double frame);
 
-    ui64 addAgent(EPosition pos);
+    ui64 addAgent(EPosition pos, double collision);
     void delAgent(ui64 agent);
     bool isValidAgent(ui64 agent);
     bool setAgentPosition(ui64 agent, EPosition pos);

@@ -265,7 +265,7 @@ public:
             break;
             case 4006:
             {
-                   return "SceneServerGroupStateFeedback";
+                   return "SceneServerGroupStateChangeIns";
             }
             break;
             case 4007:
