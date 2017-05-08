@@ -334,6 +334,19 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
     {
         return false;
     }
+    if (moveInfo.action != MOVE_ACTION_IDLE)
+    {
+        for (auto skill : entity->_skillSys.activeSkills)
+        {
+            auto ds = DBDict::getRef().getOneKeyDictSkill(skill.first);
+            if (ds.first && !scene->_skill->isOutCD(entity, *skill.second, ds.second))
+            {
+                LOGE("can not move when skill action");
+                return false;
+            }
+        }
+    }
+
 
     if (action == MOVE_ACTION_FOLLOW)
     {

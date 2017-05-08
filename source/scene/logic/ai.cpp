@@ -68,20 +68,29 @@ void AI::update()
 
 
 
-    for (auto kv : scene->_entitys)
+    for (auto kv : _monsters)
     {
-        if (kv.second->_move.follow == InvalidEntityID || kv.second->_state.foe != InvalidEntityID)
+        bool checkBack = false;
+        do 
         {
-            continue;
-        }
-        auto entity = kv.second;
-        auto dist = getDistance(entity->_move.position, entity->_control.spawnpoint);
-        if ((dist > 20 || (dist > 8 && entity->_state.foe == InvalidEntityID)) && entity->_move.action != MOVE_ACTION_FORCE_PATH)
+            auto entity = kv.second;
+            auto dist = getDistance(entity->_move.position, entity->_control.spawnpoint);
+            if (dist > 20)
+            {
+                checkBack = true;
+                break;
+            }
+            if (dist > 8 && entity->_state.foe == InvalidEntityID)
+            {
+                checkBack = true;
+                break;
+            }
+        } while (false);
+        if (checkBack && kv.second->_move.action != MOVE_ACTION_FORCE_PATH)
         {
             EPositionArray dsts;
-            dsts.push_back(entity->_control.spawnpoint);
-            scene->_move->doMove(entity->_state.eid, MOVE_ACTION_FORCE_PATH, entity->getSpeed(), InvalidEntityID, dsts);
-            continue;
+            dsts.push_back(kv.second->_control.spawnpoint);
+            scene->_move->doMove(kv.second->_state.eid, MOVE_ACTION_FORCE_PATH, kv.second->getSpeed(), InvalidEntityID, dsts);
         }
 
     }

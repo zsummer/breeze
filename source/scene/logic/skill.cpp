@@ -355,6 +355,10 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
         LOGF("");
         return false;
     }
+    if (e->_move.action == MOVE_ACTION_FOLLOW || e->_move.action == MOVE_ACTION_PATH)
+    {
+        scene->_move->doMove(casterID, MOVE_ACTION_IDLE, 0, InvalidEntityID, EPositionArray());
+    }
     skill->activeCount++;
     skill->activeTime = getFloatSteadyNowTime();
     skill->lastTriggerTime = skill->activeTime - 1;
