@@ -16,7 +16,7 @@ void Skill::init(std::weak_ptr<Scene> scene)
 }
 
 
-bool Skill::isOutCD(const EntitySkillInfo & skill, const DictSkill & dict)
+bool Skill::isOutCD(EntityPtr caster, const EntitySkillInfo & skill, const DictSkill & dict)
 {
     double now = getFloatSteadyNowTime();
     if (skill.activeTime == 0.0)
@@ -24,9 +24,10 @@ bool Skill::isOutCD(const EntitySkillInfo & skill, const DictSkill & dict)
         return true;
     }
     double keep = dict.keep;
-    if (keep < dict.interval)
+    double interval = dict.interval / (1+caster->_props.attackQuick);
+    if (keep < interval)
     {
-        keep = dict.interval;
+        keep = interval;
     }
     if (now <= skill.activeTime + dict.cd)
     {
@@ -36,14 +37,14 @@ bool Skill::isOutCD(const EntitySkillInfo & skill, const DictSkill & dict)
     {
         return false;
     }
-    if (now <= skill.lastTriggerTime + dict.interval)
+    if (now <= skill.lastTriggerTime + interval)
     {
         return false;
     }
     return true;
 }
 
-bool Skill::updateSkillPos(ScenePtr scene, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
+bool Skill::updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
 {
     if (skill->activeOrgEID != InvalidEntityID)
     {
@@ -57,16 +58,12 @@ bool Skill::updateSkillPos(ScenePtr scene, EntitySkillInfoPtr skill, const DictS
             skill->activeOrgEID = InvalidEntityID;
         }
     }
-    if (skill->activeDstEID != InvalidEntityID)
+    if (skill->activeFoeFirst && caster->_state.foe != InvalidEntityID)
     {
-        EntityPtr dstE = scene->getEntity(skill->activeDstEID);
+        EntityPtr dstE = scene->getEntity(caster->_state.foe);
         if (dstE)
         {
             skill->activeDst = dstE->_move.position;
-        }
-        else
-        {
-            skill->activeDstEID = InvalidEntityID;
         }
     }
     return true;
@@ -169,6 +166,7 @@ void Skill::update()
             {
                 auto ptr = std::make_shared<EntitySkillInfo>();
                 ptr->skillID = id;
+                ptr->isFinish = 1;
                 e._skillSys.activeSkills[id] = ptr;
             }
         }
@@ -206,12 +204,8 @@ void Skill::update()
                     }
                     else
                     {
-                        //激活 追敌逻辑  
-                        updateSkillPos(scene, finder->second, dict.second);
-
                         auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(dict.second.aoeID);
-                        auto radian = getRadian(finder->second->activeOrg.x, finder->second->activeOrg.y, finder->second->activeDst.x, finder->second->activeDst.y);
-                        auto ret = scene->searchTarget(finder->second->activeOrg, radian, aoeSearch.second.isRect, aoeSearch.second.distance, aoeSearch.second.value,
+                        auto ret = scene->searchTarget(e._move.position, e._control.lastClientFaceRadian, aoeSearch.second.isRect, aoeSearch.second.distance, aoeSearch.second.value,
                             aoeSearch.second.compensateForward, aoeSearch.second.compensateRight);
                         EntityID foe = e._state.foe;
                         if (std::find_if(ret.begin(), ret.end(), [foe](EntityPtr ep) {return ep->_state.eid == foe; }) != ret.end())
@@ -220,7 +214,7 @@ void Skill::update()
                             {
                                 scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe, std::vector<EPosition>());
                             }
-                            if (isOutCD(*finder->second, dict.second) && finder->second->isFinish)
+                            if (isOutCD(pr.second, *finder->second, dict.second) && finder->second->isFinish)
                             {
                                 useSkill(scene, e._state.eid, id);
                             }
@@ -250,7 +244,7 @@ void Skill::update()
                 auto finder = e._skillSys.activeSkills.find(dict.second.id);
                 if (finder != e._skillSys.activeSkills.end())
                 {
-                    if (isOutCD(*finder->second, dict.second) && finder->second->isFinish)
+                    if (isOutCD(pr.second,*finder->second, dict.second) && finder->second->isFinish)
                     {
                         useSkill(scene, e._state.eid, id);
                     }
@@ -339,7 +333,7 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
     if (finder != e->_skillSys.activeSkills.end())
     {
         skill = finder->second;
-        if (!isOutCD(*skill, dictSkill.second))
+        if (!isOutCD(e, *skill, dictSkill.second))
         {
             LOGE("Skill::useSkill cd ing. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
             return false;
@@ -365,7 +359,8 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
     skill->activeTime = getFloatSteadyNowTime();
     skill->lastTriggerTime = skill->activeTime - 1;
     skill->isFinish = 0;
-
+    skill->activeFoeFirst = foeFirst;
+    selectFoe(scene, e, false, false);
     auto foe = scene->getEntity(e->_state.foe);
     if (dictSkill.second.orgType == 1)
     {
@@ -375,17 +370,14 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
         skill->activeOrgEID = casterID;
         skill->activeOrg = e->_move.position;
         skill->activeDst = dst;
-        skill->activeDstEID = InvalidEntityID;
 
         if (foeFirst && foe)
         {
-            skill->activeDstEID = e->_state.foe;
             skill->activeDst = foe->_move.position;
         }
         if (dictSkill.second.orgFixed)
         {
-            skill->activeDstEID = InvalidEntityID;
-            skill->activeOrgEID = InvalidEntityID;
+            skill->activeFoeFirst = 0;
         }
     }
     else
@@ -411,7 +403,7 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
         auto pos = getFarPoint(skill->activeOrg.x, skill->activeOrg.y, radian, 10.0/*这里只是起到radian作用*/); 
         skill->activeDst.x = std::get<0>(pos);
         skill->activeDst.y = std::get<1>(pos);
-        skill->activeDstEID = InvalidEntityID;
+        skill->activeFoeFirst = 0;
     }
 
     scene->broadcast(UseSkillNotice(casterID, *skill));
@@ -456,18 +448,19 @@ bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr sk
     }
 
     //引导技能
-    while (dictSkill.interval > 0 
+    double interval = dictSkill.interval / (1 + caster->_props.attackQuick);
+    while (interval > 0
         && skill->lastTriggerTime >= skill->activeTime + dictSkill.delay
-        && dictSkill.keep > dictSkill.interval 
-        && now - skill->lastTriggerTime > dictSkill.interval)
+        && dictSkill.keep > interval
+        && now - skill->lastTriggerTime > interval)
     {
         attack(scene, caster, skill, dictSkill);
-        skill->lastTriggerTime += dictSkill.interval;
+        skill->lastTriggerTime += interval;
     }
 
     //结束判断
     if (skill->lastTriggerTime >= skill->activeTime + dictSkill.delay //已经触发过一次 
-        && isOutCD(*skill, dictSkill) )
+        && isOutCD(caster, *skill, dictSkill) )
     {
         skill->isFinish = 1;
         for (auto skillID : dictSkill.followSkills)
@@ -483,7 +476,7 @@ bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr sk
 bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
 {
     //update skill pos  
-    updateSkillPos(scene, skill, dictSkill);
+    updateSkillPos(scene, caster,skill, dictSkill);
 
     auto dictAoe = DBDict::getRef().getOneKeyAOESearch(dictSkill.aoeID);
     if (!dictAoe.first)

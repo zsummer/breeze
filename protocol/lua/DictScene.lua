@@ -7,7 +7,7 @@ Proto4z.DictProp[1] = {name="id", type="ui64" }
 Proto4z.DictProp[2] = {name="hp", type="double" } --血量值 
 Proto4z.DictProp[3] = {name="attack", type="double" } --伤害 
 Proto4z.DictProp[4] = {name="moveSpeed", type="double" } --移动速度 
-Proto4z.DictProp[5] = {name="attackSpeed", type="double" } --攻击速度 
+Proto4z.DictProp[5] = {name="attackQuick", type="double" } --攻击加速 
 Proto4z.DictProp[6] = {name="desc", type="string" }  
  
 Proto4z.DictPropArray = {}  

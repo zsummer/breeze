@@ -90,7 +90,7 @@ void AvatarService::onModuleLoad(bool success, const std::string & moduleName)
 // 			refreshProp("crit", 0.1);
 // 			refreshProp("toughness", 0.1);
 // 			refreshProp("moveSpeed", 7);
-// 			refreshProp("attackSpeed", 1);
+// 			refreshProp("attackQuick", 1);
 // 			refreshProp("vampirk", 0.2);
 // 		}
         finishLoad();

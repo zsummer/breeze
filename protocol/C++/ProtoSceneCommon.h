@@ -709,7 +709,7 @@ struct EntitySkillInfo //技能
     EPosition activeOrg;  
     unsigned long long activeOrgEID;  
     EPosition activeDst;  
-    unsigned long long activeDstEID;  
+    unsigned short activeFoeFirst;  
     double activeTime;  
     double lastTriggerTime;  
     unsigned short isFinish;  
@@ -718,19 +718,19 @@ struct EntitySkillInfo //技能
     { 
         skillID = 0; 
         activeOrgEID = 0; 
-        activeDstEID = 0; 
+        activeFoeFirst = 0; 
         activeTime = 0.0; 
         lastTriggerTime = 0.0; 
         isFinish = 0; 
         activeCount = 0.0; 
     } 
-    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const unsigned short & isFinish, const double & activeCount) 
+    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned short & activeFoeFirst, const double & activeTime, const double & lastTriggerTime, const unsigned short & isFinish, const double & activeCount) 
     { 
         this->skillID = skillID; 
         this->activeOrg = activeOrg; 
         this->activeOrgEID = activeOrgEID; 
         this->activeDst = activeDst; 
-        this->activeDstEID = activeDstEID; 
+        this->activeFoeFirst = activeFoeFirst; 
         this->activeTime = activeTime; 
         this->lastTriggerTime = lastTriggerTime; 
         this->isFinish = isFinish; 
@@ -743,7 +743,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.activeOrg;  
     ws << data.activeOrgEID;  
     ws << data.activeDst;  
-    ws << data.activeDstEID;  
+    ws << data.activeFoeFirst;  
     ws << data.activeTime;  
     ws << data.lastTriggerTime;  
     ws << data.isFinish;  
@@ -756,7 +756,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.activeOrg;  
     rs >> data.activeOrgEID;  
     rs >> data.activeDst;  
-    rs >> data.activeDstEID;  
+    rs >> data.activeFoeFirst;  
     rs >> data.activeTime;  
     rs >> data.lastTriggerTime;  
     rs >> data.isFinish;  
@@ -770,7 +770,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "activeOrg=" << info.activeOrg << ","; 
     stm << "activeOrgEID=" << info.activeOrgEID << ","; 
     stm << "activeDst=" << info.activeDst << ","; 
-    stm << "activeDstEID=" << info.activeDstEID << ","; 
+    stm << "activeFoeFirst=" << info.activeFoeFirst << ","; 
     stm << "activeTime=" << info.activeTime << ","; 
     stm << "lastTriggerTime=" << info.lastTriggerTime << ","; 
     stm << "isFinish=" << info.isFinish << ","; 

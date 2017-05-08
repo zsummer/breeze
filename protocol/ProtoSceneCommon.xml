@@ -217,7 +217,7 @@
         <member name="activeOrg"  type="EPosition" desc=""/>
         <member name="activeOrgEID"  type="ui64" desc=""/>
         <member name="activeDst"  type="EPosition" desc=""/>
-        <member name="activeDstEID"  type="ui64" desc=""/>
+        <member name="activeFoeFirst"  type="ui16" desc=""/>
         <member name="activeTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
         <member name="isFinish"  type="ui16" desc=""/>

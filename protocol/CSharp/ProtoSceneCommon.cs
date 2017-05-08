@@ -1028,7 +1028,7 @@ namespace Proto4z
         public EPosition activeOrg;  
         public ulong activeOrgEID;  
         public EPosition activeDst;  
-        public ulong activeDstEID;  
+        public ushort activeFoeFirst;  
         public double activeTime;  
         public double lastTriggerTime;  
         public ushort isFinish;  
@@ -1039,19 +1039,19 @@ namespace Proto4z
             activeOrg = new EPosition();  
             activeOrgEID = 0;  
             activeDst = new EPosition();  
-            activeDstEID = 0;  
+            activeFoeFirst = 0;  
             activeTime = 0.0;  
             lastTriggerTime = 0.0;  
             isFinish = 0;  
             activeCount = 0.0;  
         } 
-        public EntitySkillInfo(ulong skillID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ulong activeDstEID, double activeTime, double lastTriggerTime, ushort isFinish, double activeCount) 
+        public EntitySkillInfo(ulong skillID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ushort activeFoeFirst, double activeTime, double lastTriggerTime, ushort isFinish, double activeCount) 
         { 
             this.skillID = skillID; 
             this.activeOrg = activeOrg; 
             this.activeOrgEID = activeOrgEID; 
             this.activeDst = activeDst; 
-            this.activeDstEID = activeDstEID; 
+            this.activeFoeFirst = activeFoeFirst; 
             this.activeTime = activeTime; 
             this.lastTriggerTime = lastTriggerTime; 
             this.isFinish = isFinish; 
@@ -1066,7 +1066,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeOrgEID)); 
             if (this.activeDst == null) this.activeDst = new EPosition(); 
             data.AddRange(this.activeDst.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeDstEID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.activeFoeFirst)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastTriggerTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.isFinish)); 
@@ -1081,7 +1081,7 @@ namespace Proto4z
             this.activeOrgEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.activeDst = new EPosition(); 
             this.activeDst.__decode(binData, ref pos); 
-            this.activeDstEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.activeFoeFirst = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.activeTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.lastTriggerTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.isFinish = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 

@@ -41,7 +41,7 @@ inline EPosition operator * (const EPosition & dst, double val){return EPosition
 inline EPosition operator / (const EPosition & dst, double val){return EPosition(dst.x / val, dst.y * val);}
 inline EPosition normalize(const EPosition & dst){if (std::abs(dst.x) > std::abs(dst.y)){return EPosition(dst.x / dst.x, dst.y / dst.x);}return EPosition(dst.x / dst.y, dst.y / dst.y);}
 inline RVO::Vector2 toRVOVector2(const EPosition & pos){return RVO::Vector2(pos.x, pos.y);}
-inline EPosition toEPoint(const RVO::Vector2 & pos){return EPosition(pos.x(), pos.y());}
+inline EPosition toEPosition(const RVO::Vector2 & pos){return EPosition(pos.x(), pos.y());}
 inline double getDistance(const EPosition& pos1, const EPosition & pos2){return getDistance(pos1.x, pos1.y, pos2.x, pos2.y);}
 inline DictProp operator + (const DictProp & ep1, const DictProp & ep2);
 inline DictProp operator * (const DictProp & ep1, const DictProp & ep2);
@@ -148,7 +148,7 @@ inline DictProp operator + (const DictProp & ep1, const DictProp & ep2)
     ret.hp = ep1.hp + ep2.hp;
     ret.attack = ep1.attack + ep2.attack;
     ret.moveSpeed = ep1.moveSpeed + ep2.moveSpeed;
-    ret.attackSpeed = ep1.attackSpeed + ep2.attackSpeed;
+    ret.attackQuick = ep1.attackQuick + ep2.attackQuick;
     return ret;
 }
 
@@ -158,7 +158,7 @@ inline DictProp operator * (const DictProp & ep1, const DictProp & ep2)
     ret.hp = ep1.hp * ep2.hp;
     ret.attack = ep1.attack * ep2.attack;
     ret.moveSpeed = ep1.moveSpeed * ep2.moveSpeed;
-    ret.attackSpeed = ep1.attackSpeed * ep2.attackSpeed;
+    ret.attackQuick = ep1.attackQuick * ep2.attackQuick;
     return ret;
 }
 
@@ -168,7 +168,7 @@ inline DictProp operator * (const DictProp & ep, double df)
     ret.hp = ep.hp * df;
     ret.attack = ep.attack * df;
     ret.moveSpeed = ep.moveSpeed * df;
-    ret.attackSpeed = ep.attackSpeed * df;
+    ret.attackQuick = ep.attackQuick * df;
     return ret;
 }
 

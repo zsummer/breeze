@@ -87,8 +87,9 @@ void MoveSync::fillRVO(double frame)
                 sim->setAgentMaxNeighbors(entity._control.agentNo, std::get<1>(tp));
                 sim->setAgentTimeHorizon(entity._control.agentNo, std::get<2>(tp));
                 sim->setAgentTimeHorizonObst(entity._control.agentNo, std::get<3>(tp));
-                sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
+                
             }
+            sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
             double dist = getDistance(entity._move.position, entity._move.waypoints.front());
             if (dist < entity._state.collision + PATH_PRECISTION)
             {
@@ -99,12 +100,14 @@ void MoveSync::fillRVO(double frame)
             {
                 sim->setAgentMaxSpeed(entity._control.agentNo,  dist / frame);
                 RVO::Vector2 dir = RVO::normalize(toRVOVector2(entity._move.waypoints.front()) - toRVOVector2(entity._move.position));
+                dir *= dist / frame;
                 sim->setAgentPrefVelocity(entity._control.agentNo, dir);
             }
             else
             {
                 sim->setAgentMaxSpeed(entity._control.agentNo, entity._move.expectSpeed);
                 RVO::Vector2 dir = RVO::normalize(toRVOVector2(entity._move.waypoints.front()) - toRVOVector2(entity._move.position));
+                dir *= entity._move.expectSpeed;
                 sim->setAgentPrefVelocity(entity._control.agentNo, dir);
             }
             LOGD("RVO fill move[" << entity._state.avatarName << "] local=" << entity._move.position
@@ -179,27 +182,29 @@ void MoveSync::fixDirtyMove(double frame)
         if (entity._move.action == MOVE_ACTION_IDLE)
         {
             //check
-            auto rvoPos = toEPoint(sim->getAgentPosition(entity._control.agentNo));
+            auto rvoPos = toEPosition(sim->getAgentPosition(entity._control.agentNo));
             if (getDistance(rvoPos, entity._move.position) > 0.1 )
             {
-                LOGE("move idle entity had move.  entity pos =" << entity._move.position << ", rvoPos=" << rvoPos);
+                LOGE("move idle entity had move.  entity pos =" << entity._move.position << ", rvoPos=" << rvoPos 
+                    << ", rvo v=" << sim->getAgentPrefVelocity(entity._control.agentNo)
+                    << ", rvo speed=" << sim->getAgentMaxSpeed(entity._control.agentNo));
             }
             //end check 
             sim->setAgentPosition(entity._control.agentNo, toRVOVector2(entity._move.position));
             continue;
         }
         entity._isMoveDirty = true;
-        auto rvoPos = toEPoint(sim->getAgentPosition(entity._control.agentNo));
+        auto rvoPos = toEPosition(sim->getAgentPosition(entity._control.agentNo));
         auto realMove = toRVOVector2(rvoPos) - toRVOVector2(entity._move.position);
         entity._move.realSpeed = RVO::abs(realMove) / frame;
 
         if (entity._move.waypoints.empty())
         {
-            LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << toEPoint(realMove));
+            LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << toEPosition(realMove));
         }
         else
         {
-            LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << toEPoint(realMove)
+            LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << toEPosition(realMove)
              << ", dst=" << entity._move.waypoints.front());
         }
 
@@ -381,6 +386,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         moveInfo.follow = moveInfo.follow; //don't reset here
         moveInfo.waypoints.clear();
         _sim->setAgentPrefVelocity(entity->_control.agentNo, RVO::Vector2(0, 0));
+        _sim->setAgentMaxSpeed(entity->_control.agentNo, 0);
     }
     //begin move
     else if (moveInfo.action == MOVE_ACTION_IDLE)

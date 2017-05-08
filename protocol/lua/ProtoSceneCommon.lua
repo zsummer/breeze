@@ -228,7 +228,7 @@ Proto4z.EntitySkillInfo[1] = {name="skillID", type="ui64" }
 Proto4z.EntitySkillInfo[2] = {name="activeOrg", type="EPosition" }  
 Proto4z.EntitySkillInfo[3] = {name="activeOrgEID", type="ui64" }  
 Proto4z.EntitySkillInfo[4] = {name="activeDst", type="EPosition" }  
-Proto4z.EntitySkillInfo[5] = {name="activeDstEID", type="ui64" }  
+Proto4z.EntitySkillInfo[5] = {name="activeFoeFirst", type="ui16" }  
 Proto4z.EntitySkillInfo[6] = {name="activeTime", type="double" }  
 Proto4z.EntitySkillInfo[7] = {name="lastTriggerTime", type="double" }  
 Proto4z.EntitySkillInfo[8] = {name="isFinish", type="ui16" }  

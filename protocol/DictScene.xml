@@ -15,7 +15,7 @@
         <member name="hp" type="double"   desc="血量值"/>
         <member name="attack" type="double"   desc="伤害"/>
         <member name="moveSpeed" type="double"   desc="移动速度"/>
-        <member name="attackSpeed" type="double"   desc="攻击速度"/>
+        <member name="attackQuick" type="double"   desc="攻击加速"/>
         <member name="desc " type="string"   desc=""/> 
     </struct>
     <array name="DictPropArray" type="DictProp" desc="" />

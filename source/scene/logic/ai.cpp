@@ -37,7 +37,7 @@ void AI::update()
     }
     if (_monsters.empty())
     {
-        std::vector<EPosition>  sps = { {62.4,62.4},{47.1,63.6}, {100,63} };
+        std::vector<EPosition>  sps = { {62.4,62.4},{47.1,63.6}, {100,63},{-13.3, 62.5}, { -62.4,63.4 } };
         for (auto sp : sps)
         {
             auto entity = scene->makeEntity(rand() % 20 + 1,
@@ -47,13 +47,13 @@ void AI::update()
                 InvalidGroupID);
             entity->_props.hp = 3000 + (rand() % 100) * 20;
             entity->_props.moveSpeed = 4.0;
-            entity->_props.attackSpeed = 2.0;
+            entity->_props.attackQuick = 0.5;
             entity->_props.attack = 80;
             entity->_state.maxHP = entity->_props.hp;
             entity->_state.curHP = entity->_state.maxHP;
             entity->_state.camp = ENTITY_CAMP_BLUE + 100;
             entity->_state.collision = 1.0;
-            entity->_skillSys.dictBootSkills.insert(1);
+            entity->_skillSys.dictBootSkills.insert(2);
             entity->_skillSys.autoAttack = true;
 
             entity->_move.position = sp;
