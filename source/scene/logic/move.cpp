@@ -367,7 +367,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
 
     if (action != MOVE_ACTION_IDLE &&  dsts.empty())
     {
-        LOGE("doMove param error. action = " << action << ", dsts is empty.");
+        LOGE("doMove param error. action = " << (int)action << ", dsts is empty.");
         return false;
     }
 
