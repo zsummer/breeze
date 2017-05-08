@@ -76,7 +76,7 @@ void AI::update()
         }
         auto entity = kv.second;
         auto dist = getDistance(entity->_move.position, entity->_control.spawnpoint);
-        if ((dist > 30 || (dist > 8 && entity->_state.foe == InvalidEntityID)) && entity->_move.action != MOVE_ACTION_FORCE_PATH)
+        if ((dist > 20 || (dist > 8 && entity->_state.foe == InvalidEntityID)) && entity->_move.action != MOVE_ACTION_FORCE_PATH)
         {
             EPositionArray dsts;
             dsts.push_back(entity->_control.spawnpoint);
