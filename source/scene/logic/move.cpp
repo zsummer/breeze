@@ -334,7 +334,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
     {
         return false;
     }
-    if (moveInfo.action != MOVE_ACTION_IDLE)
+    if (action != MOVE_ACTION_IDLE && false)
     {
         for (auto skill : entity->_skillSys.activeSkills)
         {
