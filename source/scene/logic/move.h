@@ -19,7 +19,7 @@
 #define _MOVE_SYNC_H_
 #include "entity.h"
 
-const double PATH_PRECISTION = 1.0;
+const double PATH_PRECISION = 1.0;
 class Scene;
 class MoveSync : public std::enable_shared_from_this<MoveSync>
 {

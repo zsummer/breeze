@@ -80,7 +80,12 @@ void AI::update()
                 checkBack = true;
                 break;
             }
-            if (dist > 8 && entity->_state.foe == InvalidEntityID)
+            if (dist > entity->_state.collision + PATH_PRECISION + 1.0 && entity->_state.foe == InvalidEntityID)
+            {
+                checkBack = true;
+                break;
+            }
+            if (entity->_state.foe == InvalidEntityID && entity->_move.action == MOVE_ACTION_FOLLOW)
             {
                 checkBack = true;
                 break;

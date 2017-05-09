@@ -195,7 +195,9 @@ void Skill::update()
                     continue;
                 }
 
-                if (getBitFlag(dict.second.stamp, SKILL_AUTO_USE))
+                if (getBitFlag(dict.second.stamp, SKILL_AUTO_USE) 
+			&& e._move.action != MOVE_ACTION_FORCE_PATH
+			&& e._move.action != MOVE_ACTION_PASV_PATH )
                 {
                     auto finder = e._skillSys.activeSkills.find(id);
                     if (finder == e._skillSys.activeSkills.end())

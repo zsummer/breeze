@@ -65,7 +65,7 @@ void MoveSync::fillRVO(double frame)
             while (!entity._move.waypoints.empty())
             {
                 double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-                if (dist < entity._state.collision +  PATH_PRECISTION )
+                if (dist < entity._state.collision +  PATH_PRECISION )
                 {
                     entity._move.waypoints.erase(entity._move.waypoints.begin());
                     continue;
@@ -91,7 +91,7 @@ void MoveSync::fillRVO(double frame)
             }
             sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
             double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-            if (dist < entity._state.collision + PATH_PRECISTION)
+            if (dist < entity._state.collision + PATH_PRECISION)
             {
                 sim->setAgentMaxSpeed(entity._control.agentNo, 0);
                 sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0,0));
@@ -232,7 +232,7 @@ void MoveSync::fixDirtyMove(double frame)
                     moveEnd = true;
                     break;
                 }
-                if (getDistance(entity._move.position, follow->_move.position) <= entity._state.collision + follow->_state.collision + PATH_PRECISTION)
+                if (getDistance(entity._move.position, follow->_move.position) <= entity._state.collision + follow->_state.collision + PATH_PRECISION)
                 {
                     moveEnd = true;
                     break;
@@ -249,7 +249,7 @@ void MoveSync::fixDirtyMove(double frame)
             while (!entity._move.waypoints.empty())
             {
                 double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-                if (dist <= entity._state.collision + PATH_PRECISTION)
+                if (dist <= entity._state.collision + PATH_PRECISION)
                 {
                     entity._move.waypoints.erase(entity._move.waypoints.begin());
                     continue;
@@ -368,7 +368,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
 
             //collision check 
             double dist = getDistance(entity->_move.position.x, entity->_move.position.y, followEntity->_move.position.x, followEntity->_move.position.y);
-            if (dist <= entity->_state.collision + followEntity->_state.collision + PATH_PRECISTION)
+            if (dist <= entity->_state.collision + followEntity->_state.collision + PATH_PRECISION)
             {
                 break;
             }
