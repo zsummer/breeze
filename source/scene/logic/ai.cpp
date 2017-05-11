@@ -35,62 +35,69 @@ void AI::update()
     {
         return;
     }
-    while (_monsters.size() < scene->_players.size() * 3)
+    if (_monsters.empty())
     {
-        auto entity = scene->makeEntity(rand()%20+1,
-            InvalidAvatarID,
-            "小白兔",
-            DictArrayKey(),
-            InvalidGroupID);
-        entity->_props.hp = 5000;
-        entity->_props.moveSpeed = 4.0;
-        entity->_props.attackSpeed = 1.0;
-        entity->_props.attack = 200;
-        entity->_state.maxHP = entity->_props.hp;
-        entity->_state.curHP = entity->_state.maxHP;
-        entity->_state.camp = ENTITY_CAMP_BLUE + 100;
-        entity->_skillSys.dictBootSkills[1] = DBDict::getRef().getOneKeyDictSkill(1).second;
-        scene->addEntity(entity);
-        _monsters[entity->_state.eid] = entity;
+        std::vector<EPosition>  sps = { {62.4,62.4},{47.1,63.6}, {100,63},{-13.3, 62.5}, { -62.4,63.4 } };
+        for (auto sp : sps)
+        {
+            auto entity = scene->makeEntity(rand() % 20 + 1,
+                InvalidAvatarID,
+                "mylittleairport",
+                DictArrayKey(),
+                InvalidGroupID);
+            entity->_props.hp = 3000 + (rand() % 100) * 20;
+            entity->_props.moveSpeed = 4.0;
+            entity->_props.attackQuick = 0.5;
+            entity->_props.attack = 80;
+            entity->_state.maxHP = entity->_props.hp;
+            entity->_state.curHP = entity->_state.maxHP;
+            entity->_state.camp = ENTITY_CAMP_BLUE + 100;
+            entity->_state.collision = 1.0;
+            entity->_skillSys.dictBootSkills.insert(2);
+            entity->_skillSys.autoAttack = true;
 
+            entity->_move.position = sp;
+            entity->_control.spawnpoint = sp;
+
+            scene->addEntity(entity);
+            _monsters[entity->_state.eid] = entity;
+            scene->pushAsync([scene, entity]() {scene->_skill->useSkill(scene, entity->_state.eid, 1); });
+        }
 
     }
-    for (auto monster : _monsters)
+
+
+
+    for (auto kv : _monsters)
     {
-        if (monster.second->_move.follow == InvalidEntityID || realRand() > 0.7)
+        bool checkBack = false;
+        do 
         {
-            auto ret = scene->searchTarget(monster.second, monster.second->_move.position, 0, 1);
-            if (ret.size() > 0)
+            auto entity = kv.second;
+            auto dist = getDistance(entity->_move.position, entity->_control.spawnpoint);
+            if (dist > 20)
             {
-            monster.second->_move.follow = ret.front()->_state.eid;
+                checkBack = true;
+                break;
             }
+            if (dist > entity->_state.collision + PATH_PRECISION + 1.0 && entity->_state.foe == InvalidEntityID)
+            {
+                checkBack = true;
+                break;
+            }
+            if (entity->_state.foe == InvalidEntityID && entity->_move.action == MOVE_ACTION_FOLLOW)
+            {
+                checkBack = true;
+                break;
+            }
+        } while (false);
+        if (checkBack && kv.second->_move.action != MOVE_ACTION_FORCE_PATH)
+        {
+            EPositionArray dsts;
+            dsts.push_back(kv.second->_control.spawnpoint);
+            scene->_move->doMove(kv.second->_state.eid, MOVE_ACTION_FORCE_PATH, kv.second->getSpeed(), InvalidEntityID, dsts);
         }
-    }
 
-    for (auto kv : scene->_entitys)
-    {
-        if (kv.second->_move.follow == InvalidEntityID || kv.second->_state.foe != InvalidEntityID)
-        {
-            continue;
-        }
-        auto entity = kv.second;
-        auto follow = scene->getEntity(kv.second->_move.follow);
-        if (!follow)
-        {
-            kv.second->_move.follow = InvalidEntityID;
-            continue;
-        }
-        auto dist = getDistance(entity->_move.position, follow->_move.position);
-        if (dist > 10 - 2 ) // 近战距离 
-        {
-            EPositionArray ways;
-            ways.push_back(follow->_move.position);
-            scene->_move->doMove(entity->_state.eid, MOVE_ACTION_FOLLOW, entity->getSpeed(), follow->_state.eid, ways);
-        }
-        else if (entity->_move.action == MOVE_ACTION_FOLLOW)
-        {
-            scene->_move->doMove(entity->_state.eid, MOVE_ACTION_IDLE, entity->getSpeed(), follow->_state.eid, EPositionArray());
-        }
     }
 
 

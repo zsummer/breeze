@@ -13,7 +13,7 @@ namespace Proto4z
         public double hp; //血量值  
         public double attack; //伤害  
         public double moveSpeed; //移动速度  
-        public double attackSpeed; //攻击速度  
+        public double attackQuick; //攻击加速  
         public string desc;  
         public DictProp()  
         { 
@@ -21,16 +21,16 @@ namespace Proto4z
             hp = 0.0;  
             attack = 0.0;  
             moveSpeed = 0.0;  
-            attackSpeed = 0.0;  
+            attackQuick = 0.0;  
             desc = "";  
         } 
-        public DictProp(ulong id, double hp, double attack, double moveSpeed, double attackSpeed, string desc) 
+        public DictProp(ulong id, double hp, double attack, double moveSpeed, double attackQuick, string desc) 
         { 
             this.id = id; 
             this.hp = hp; 
             this.attack = attack; 
             this.moveSpeed = moveSpeed; 
-            this.attackSpeed = attackSpeed; 
+            this.attackQuick = attackQuick; 
             this.desc = desc; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -40,7 +40,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.hp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.attack)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.moveSpeed)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.attackSpeed)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.attackQuick)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.desc)); 
             return data; 
         } 
@@ -50,7 +50,7 @@ namespace Proto4z
             this.hp = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.attack = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.moveSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.attackSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.attackQuick = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.desc = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             return pos; 
         } 

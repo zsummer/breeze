@@ -155,6 +155,7 @@
         <member name="avatarID" type="ui64"  desc=""/>
         <member name="avatarName" type="string"  desc=""/>
         <member name="modelID" type="ui64"  desc=""/>
+        <member name="collision"  type="double" desc="collision radius"/>
         <member name="camp" type="ui16"  desc="阵营"/>
         <member name="groupID" type="ui64"  desc="组队ID"/>
         <member name="etype" type="ui16"  desc="实体类型"/>
@@ -175,6 +176,7 @@
         <member name="expectSpeed" type="double"  desc="期望速度"/>
         <member name="waypoints"  type="EPositionArray" desc="移动路点"/>
         <member name="follow"  type="ui64" desc="eid"/>
+        
     </struct>
     <array name="EntityMoveArray" type="EntityMove" desc="" />
 
@@ -215,7 +217,7 @@
         <member name="activeOrg"  type="EPosition" desc=""/>
         <member name="activeOrgEID"  type="ui64" desc=""/>
         <member name="activeDst"  type="EPosition" desc=""/>
-        <member name="activeDstEID"  type="ui64" desc=""/>
+        <member name="activeFoeFirst"  type="ui16" desc=""/>
         <member name="activeTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
         <member name="isFinish"  type="ui16" desc=""/>

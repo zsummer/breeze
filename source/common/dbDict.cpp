@@ -48,16 +48,22 @@ bool DBDict::fakeTestData()
     {
         AOESearch aoe;
         aoe.isRect = 0;
-        aoe.distance = 25;
+        aoe.distance = 20;
         aoe.value = 2 * PI;
         aoe.limitEntitys = 1;
         aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
         aoe.id = 1;
         _dictOneKeyAOESearch[1] = aoe;
 
-        aoe.distance = 17;
+        aoe.distance = 7;
         aoe.value = PI / 18*12;
         aoe.id = 2;
+        aoe.limitEntitys = 1000;
+        _dictOneKeyAOESearch[aoe.id] = aoe;
+
+        aoe.distance = 12;
+        aoe.value = PI / 18 * 12;
+        aoe.id = 3;
         aoe.limitEntitys = 1000;
         _dictOneKeyAOESearch[aoe.id] = aoe;
         
@@ -70,10 +76,14 @@ bool DBDict::fakeTestData()
         skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, true);
         skill.stamp = setBitFlag(skill.stamp, SKILL_PHYSICAL, true);
         skill.stamp = setBitFlag(skill.stamp, SKILL_HIT, true);
-        skill.interval = 1.0;
-        skill.aoeID = 2;
+        skill.interval = 3.0;
+        skill.orgType = 1;
+        skill.aoeID = 3;
         skill.searchID = 1;
         _dictOneKeyDictSkill[skill.id] = skill;
+        skill.aoeID = 2;
+        skill.id = 2;
+        _dictOneKeyDictSkill[skill.id] = skill; //ai 
     }
 
 

@@ -32,8 +32,8 @@ public:
 
     //普攻的寻敌
     void selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bool change);
-    bool isOutCD(const EntitySkillInfo & skill, const DictSkill & dict);
-    bool updateSkillPos(ScenePtr scene, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
+    bool isOutCD(EntityPtr caster, const EntitySkillInfo & skill, const DictSkill & dict);
+    bool updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
     bool useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, ui16 foeFirst);
     bool useSkill(ScenePtr scene, EntityID casterID, ui64 skillID);
 

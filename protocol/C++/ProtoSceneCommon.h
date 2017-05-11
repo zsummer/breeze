@@ -353,6 +353,7 @@ struct EntityState //EntityState
     unsigned long long avatarID;  
     std::string avatarName;  
     unsigned long long modelID;  
+    double collision; //collision radius  
     unsigned short camp; //阵营  
     unsigned long long groupID; //组队ID  
     unsigned short etype; //实体类型  
@@ -366,6 +367,7 @@ struct EntityState //EntityState
         eid = 0; 
         avatarID = 0; 
         modelID = 0; 
+        collision = 0.0; 
         camp = 0; 
         groupID = 0; 
         etype = 0; 
@@ -375,12 +377,13 @@ struct EntityState //EntityState
         curHP = 0.0; 
         maxHP = 0.0; 
     } 
-    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & master, const double & curHP, const double & maxHP) 
+    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const double & collision, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & master, const double & curHP, const double & maxHP) 
     { 
         this->eid = eid; 
         this->avatarID = avatarID; 
         this->avatarName = avatarName; 
         this->modelID = modelID; 
+        this->collision = collision; 
         this->camp = camp; 
         this->groupID = groupID; 
         this->etype = etype; 
@@ -397,6 +400,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.avatarID;  
     ws << data.avatarName;  
     ws << data.modelID;  
+    ws << data.collision;  
     ws << data.camp;  
     ws << data.groupID;  
     ws << data.etype;  
@@ -413,6 +417,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.avatarID;  
     rs >> data.avatarName;  
     rs >> data.modelID;  
+    rs >> data.collision;  
     rs >> data.camp;  
     rs >> data.groupID;  
     rs >> data.etype;  
@@ -430,6 +435,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "avatarID=" << info.avatarID << ","; 
     stm << "avatarName=" << info.avatarName << ","; 
     stm << "modelID=" << info.modelID << ","; 
+    stm << "collision=" << info.collision << ","; 
     stm << "camp=" << info.camp << ","; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "etype=" << info.etype << ","; 
@@ -703,7 +709,7 @@ struct EntitySkillInfo //技能
     EPosition activeOrg;  
     unsigned long long activeOrgEID;  
     EPosition activeDst;  
-    unsigned long long activeDstEID;  
+    unsigned short activeFoeFirst;  
     double activeTime;  
     double lastTriggerTime;  
     unsigned short isFinish;  
@@ -712,19 +718,19 @@ struct EntitySkillInfo //技能
     { 
         skillID = 0; 
         activeOrgEID = 0; 
-        activeDstEID = 0; 
+        activeFoeFirst = 0; 
         activeTime = 0.0; 
         lastTriggerTime = 0.0; 
         isFinish = 0; 
         activeCount = 0.0; 
     } 
-    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const unsigned short & isFinish, const double & activeCount) 
+    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned short & activeFoeFirst, const double & activeTime, const double & lastTriggerTime, const unsigned short & isFinish, const double & activeCount) 
     { 
         this->skillID = skillID; 
         this->activeOrg = activeOrg; 
         this->activeOrgEID = activeOrgEID; 
         this->activeDst = activeDst; 
-        this->activeDstEID = activeDstEID; 
+        this->activeFoeFirst = activeFoeFirst; 
         this->activeTime = activeTime; 
         this->lastTriggerTime = lastTriggerTime; 
         this->isFinish = isFinish; 
@@ -737,7 +743,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.activeOrg;  
     ws << data.activeOrgEID;  
     ws << data.activeDst;  
-    ws << data.activeDstEID;  
+    ws << data.activeFoeFirst;  
     ws << data.activeTime;  
     ws << data.lastTriggerTime;  
     ws << data.isFinish;  
@@ -750,7 +756,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.activeOrg;  
     rs >> data.activeOrgEID;  
     rs >> data.activeDst;  
-    rs >> data.activeDstEID;  
+    rs >> data.activeFoeFirst;  
     rs >> data.activeTime;  
     rs >> data.lastTriggerTime;  
     rs >> data.isFinish;  
@@ -764,7 +770,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "activeOrg=" << info.activeOrg << ","; 
     stm << "activeOrgEID=" << info.activeOrgEID << ","; 
     stm << "activeDst=" << info.activeDst << ","; 
-    stm << "activeDstEID=" << info.activeDstEID << ","; 
+    stm << "activeFoeFirst=" << info.activeFoeFirst << ","; 
     stm << "activeTime=" << info.activeTime << ","; 
     stm << "lastTriggerTime=" << info.lastTriggerTime << ","; 
     stm << "isFinish=" << info.isFinish << ","; 

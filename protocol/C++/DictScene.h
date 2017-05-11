@@ -18,7 +18,7 @@ struct DictProp //战斗属性
     double hp; //血量值  
     double attack; //伤害  
     double moveSpeed; //移动速度  
-    double attackSpeed; //攻击速度  
+    double attackQuick; //攻击加速  
     std::string desc;  
     DictProp() 
     { 
@@ -26,15 +26,15 @@ struct DictProp //战斗属性
         hp = 0.0; 
         attack = 0.0; 
         moveSpeed = 0.0; 
-        attackSpeed = 0.0; 
+        attackQuick = 0.0; 
     } 
-    DictProp(const unsigned long long & id, const double & hp, const double & attack, const double & moveSpeed, const double & attackSpeed, const std::string & desc) 
+    DictProp(const unsigned long long & id, const double & hp, const double & attack, const double & moveSpeed, const double & attackQuick, const std::string & desc) 
     { 
         this->id = id; 
         this->hp = hp; 
         this->attack = attack; 
         this->moveSpeed = moveSpeed; 
-        this->attackSpeed = attackSpeed; 
+        this->attackQuick = attackQuick; 
         this->desc = desc; 
     } 
 }; 
@@ -51,8 +51,8 @@ std::vector<std::string>  DictProp::getDBBuild()
     ret.push_back("alter table `tb_DictProp` change `attack`  `attack`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` add `moveSpeed`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` change `moveSpeed`  `moveSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` add `attackSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictProp` change `attackSpeed`  `attackSpeed`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictProp` add `attackQuick`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictProp` change `attackQuick`  `attackQuick`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictProp` add `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictProp` change `desc`  `desc`  varchar(255) NOT NULL DEFAULT '' "); 
     return ret; 
@@ -60,23 +60,23 @@ std::vector<std::string>  DictProp::getDBBuild()
 std::string  DictProp::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`hp`,`attack`,`moveSpeed`,`attackSpeed`,`desc` from `tb_DictProp` where `id` = ? "); 
+    q.init("select `id`,`hp`,`attack`,`moveSpeed`,`attackQuick`,`desc` from `tb_DictProp` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictProp::getDBSelectPure() 
 { 
-    return "select `id`,`hp`,`attack`,`moveSpeed`,`attackSpeed`,`desc` from `tb_DictProp` "; 
+    return "select `id`,`hp`,`attack`,`moveSpeed`,`attackQuick`,`desc` from `tb_DictProp` "; 
 } 
 std::string  DictProp::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictProp`(`id`,`hp`,`attack`,`moveSpeed`,`attackSpeed`,`desc`) values(?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictProp`(`id`,`hp`,`attack`,`moveSpeed`,`attackQuick`,`desc`) values(?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->hp; 
     q << this->attack; 
     q << this->moveSpeed; 
-    q << this->attackSpeed; 
+    q << this->attackQuick; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -90,12 +90,12 @@ std::string  DictProp::getDBDelete()
 std::string  DictProp::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictProp`(id) values(? ) on duplicate key update `hp` = ?,`attack` = ?,`moveSpeed` = ?,`attackSpeed` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictProp`(id) values(? ) on duplicate key update `hp` = ?,`attack` = ?,`moveSpeed` = ?,`attackQuick` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->hp; 
     q << this->attack; 
     q << this->moveSpeed; 
-    q << this->attackSpeed; 
+    q << this->attackQuick; 
     q << this->desc; 
     return q.pickSQL(); 
 } 
@@ -114,7 +114,7 @@ bool DictProp::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->hp; 
             result >> this->attack; 
             result >> this->moveSpeed; 
-            result >> this->attackSpeed; 
+            result >> this->attackQuick; 
             result >> this->desc; 
             return true;  
         } 
@@ -132,7 +132,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.hp;  
     ws << data.attack;  
     ws << data.moveSpeed;  
-    ws << data.attackSpeed;  
+    ws << data.attackQuick;  
     ws << data.desc;  
     return ws; 
 } 
@@ -142,7 +142,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.hp;  
     rs >> data.attack;  
     rs >> data.moveSpeed;  
-    rs >> data.attackSpeed;  
+    rs >> data.attackQuick;  
     rs >> data.desc;  
     return rs; 
 } 
@@ -153,7 +153,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "hp=" << info.hp << ","; 
     stm << "attack=" << info.attack << ","; 
     stm << "moveSpeed=" << info.moveSpeed << ","; 
-    stm << "attackSpeed=" << info.attackSpeed << ","; 
+    stm << "attackQuick=" << info.attackQuick << ","; 
     stm << "desc=" << info.desc << ","; 
     stm << "]"; 
     return stm; 

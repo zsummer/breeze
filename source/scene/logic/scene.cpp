@@ -149,7 +149,8 @@ EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName,
 
 void Scene::addEntity(EntityPtr entity)
 {
-    entity->_control.agentNo = _move->addAgent(entity->_move.position);
+    entity->_control.agentNo = _move->addAgent(entity->_move.position, entity->_state.collision);
+
     _entitys.insert(std::make_pair(entity->_state.eid, entity));
 
     if (entity->_state.avatarID != InvalidServiceID && entity->_state.etype == ENTITY_PLAYER)
