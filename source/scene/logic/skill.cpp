@@ -184,8 +184,15 @@ void Skill::update()
 
 
         //自动攻击
-        if (e._skillSys.autoAttack && e._state.foe != InvalidEntityID)
+        while (e._skillSys.autoAttack && e._state.foe != InvalidEntityID)
         {
+            auto foe = scene->getEntity(e._state.foe);
+            if (!foe || foe->_state.state != ENTITY_STATE_ACTIVE)
+            {
+                break;
+            }
+            double radian = getRadian(e._move.position.x, e._move.position.y, foe->_move.position.x, foe->_move.position.y);
+            double distance = getDistance(e._move.position, foe->_move.position);
             for (auto id : e._skillSys.dictBootSkills)
             {
                 auto dict = DBDict::getRef().getOneKeyDictSkill(id);
@@ -195,9 +202,9 @@ void Skill::update()
                     continue;
                 }
 
-                if (getBitFlag(dict.second.stamp, SKILL_AUTO_USE) 
-			&& e._move.action != MOVE_ACTION_FORCE_PATH
-			&& e._move.action != MOVE_ACTION_PASV_PATH )
+                if (getBitFlag(dict.second.stamp, SKILL_AUTO_USE)
+                    && e._move.action != MOVE_ACTION_FORCE_PATH
+                    && e._move.action != MOVE_ACTION_PASV_PATH)
                 {
                     auto finder = e._skillSys.activeSkills.find(id);
                     if (finder == e._skillSys.activeSkills.end())
@@ -206,29 +213,34 @@ void Skill::update()
                     }
                     else
                     {
+                        
+
                         auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(dict.second.aoeID);
-                        auto ret = scene->searchTarget(e._move.position, e._control.lastClientFaceRadian, aoeSearch.second.isRect, aoeSearch.second.distance, aoeSearch.second.value,
+                        auto ret = scene->searchTarget(e._move.position, radian, aoeSearch.second.isRect, aoeSearch.second.distance, aoeSearch.second.value,
                             aoeSearch.second.compensateForward, aoeSearch.second.compensateRight);
-                        EntityID foe = e._state.foe;
-                        if (std::find_if(ret.begin(), ret.end(), [foe](EntityPtr ep) {return ep->_state.eid == foe; }) != ret.end())
+
+                        if (std::find_if(ret.begin(), ret.end(), [foe](EntityPtr ep) {return ep->_state.eid == foe->_state.eid; }) != ret.end())
                         {
                             if (e._move.action == MOVE_ACTION_FOLLOW)
                             {
-                                scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe, std::vector<EPosition>());
+                                scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                             }
                             if (isOutCD(pr.second, *finder->second, dict.second) && finder->second->isFinish)
                             {
                                 useSkill(scene, e._state.eid, id);
                             }
                         }
-                        else if (foe != InvalidEntityID && e._move.action == MOVE_ACTION_IDLE)
+                        else if (foe != InvalidEntityID && e._move.action == MOVE_ACTION_IDLE && distance > aoeSearch.second.distance)
                         {
-                            scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe, std::vector<EPosition>());
+                            scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                         }
                     }
                 }
             }
+
+            break; // once  
         }
+
 
 
         //被动技能 
