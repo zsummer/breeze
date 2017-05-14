@@ -607,7 +607,7 @@ void World::onMatchHomeTimer()
 void World::onMatchMeleeTimer()
 {
     auto &pool = _matchPools[SCENE_MELEE];
-    const size_t MatchCount = 2;
+    const size_t MatchCount = 1;
     auto matched = matchingPool(pool, MatchCount, 0);
     for (auto &one : matched)
     {
@@ -946,7 +946,7 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
         return;
     }
 
-    if (groupPtr->sceneState != SCENE_STATE_MATCHING && groupPtr->sceneType != SCENE_HOME)
+    if (groupPtr->sceneState != SCENE_STATE_MATCHING && (groupPtr->sceneType != SCENE_HOME && groupPtr->sceneType != SCENE_MELEE ))
     {
         LOGE("World::onSceneGroupCancelReq the scene sceneState error. avatar=" << trace.oob.clientAvatarID);
         backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
@@ -972,7 +972,7 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
             return;
         }
     }
-    else if (groupPtr->sceneState == SCENE_STATE_ACTIVE && groupPtr->sceneType == SCENE_HOME)
+    else if (groupPtr->sceneState == SCENE_STATE_ACTIVE && (groupPtr->sceneType == SCENE_HOME || groupPtr->sceneType == SCENE_MELEE))
     {
         auto line = getLineInfo(groupPtr->lineID);
         if (line)

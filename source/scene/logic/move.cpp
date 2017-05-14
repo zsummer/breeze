@@ -14,24 +14,65 @@ MoveSync::~MoveSync()
         _sim = nullptr;
     }
 }
-void MoveSync::init(std::weak_ptr<Scene> scene)
+void MoveSync::init(std::weak_ptr<Scene> weak_scene)
 {
-    _scene = scene;
+    _scene = weak_scene;
     _sim = new RVO::RVOSimulator();
     _sim->setTimeStep(SceneFrameInterval);
-    _sim->setAgentDefaults(15.0, 1000, 70.0, 70.0, 2.0, 7.0);
-    if (false)
-    {
-        std::vector<RVO::Vector2> vertices;
-        vertices.push_back(RVO::Vector2(-7.0, -20.0));
-        vertices.push_back(RVO::Vector2(7.0, -20.0));
-        vertices.push_back(RVO::Vector2(7.0, 20.0));
-        vertices.push_back(RVO::Vector2(-7.0, 20.0));
-        _sim->addObstacle(vertices);
-        _sim->processObstacles();
-    }
+    _sim->setAgentDefaults(3.0, 10, 1.0, 1.0, 1.0, 7.0);
     _lastDoRVO = getFloatSteadyNowTime();
     _lastPrintStatus = _lastDoRVO;
+
+    auto scene = weak_scene.lock();
+    if (!scene)
+    {
+        return;
+    }
+
+    if (::accessFile("../scripts/rvo.txt"))
+    {
+        std::string content = readFileContent("../scripts/rvo.txt");
+        LOGI("../scripts/rvo.txt: " << content);
+        auto tp = splitTupleString<double, size_t, double, double>(content, ",", " ");
+        _sim->setAgentDefaults(std::get<0>(tp), std::get<1>(tp), std::get<2>(tp), std::get<3>(tp), 1.0, 0);
+    }
+
+    std::string obstacleFileName;
+    if (scene->getSceneType() == SCENE_HOME)
+    {
+        obstacleFileName = "../scripts/home_obstacle.txt";
+    }
+    else if (scene->getSceneType() == SCENE_MELEE)
+    {
+        obstacleFileName = "../scripts/melee_obstacle.txt";
+    }
+    if (!obstacleFileName.empty() && accessFile(obstacleFileName))
+    {
+        std::string content = readFileContent(obstacleFileName);
+        auto obs = splitString<std::string>(content, "\n", " \r");
+        for (auto &ob : obs)
+        {
+            std::vector<RVO::Vector2> vertices;
+            auto as = splitArrayString<double, double>(ob, " ", ",", "");
+            for (auto &pos : as)
+            {
+                vertices.push_back(RVO::Vector2(std::get<0>(pos), std::get<1>(pos)));
+            }
+            if (!vertices.empty())
+            {
+                auto id = _sim->addObstacle(vertices);
+                std::string log = "add one obstacle. id=" + toString(id) + " [";
+
+                for (auto t : vertices)
+                {
+                    log += toString(t.x()) + ":" + toString(t.y()) + "  ";
+                }
+                LOGI(log);
+
+            }
+        }
+        _sim->processObstacles();
+    }
 }
 
 
@@ -58,7 +99,18 @@ void MoveSync::fillRVO(double frame)
         {
             continue;
         }
-
+        //debug
+        if (true)
+        {
+            if (::accessFile("../scripts/rvo.txt"))
+            {
+                std::string content = readFileContent("../scripts/rvo.txt");
+                LOGI("../scripts/rvo.txt: " << content);
+                auto tp = splitTupleString<double, size_t, double, double>(content, ",", " ");
+                _sim->setAgentTimeHorizon(entity._control.agentNo, std::get<2>(tp));
+                _sim->setAgentTimeHorizonObst(entity._control.agentNo, std::get<3>(tp));
+            }
+        }
         do
         {
 
@@ -79,16 +131,7 @@ void MoveSync::fillRVO(double frame)
                 break;
             }
 
-            if (::accessFile("../rvo.txt"))
-            {
-                std::string content = readFileContent("../rvo.txt");
-                auto tp = splitTupleString<double, size_t, double, double, double>(content, ",", " ");
-                sim->setAgentNeighborDist(entity._control.agentNo, std::get<0>(tp));
-                sim->setAgentMaxNeighbors(entity._control.agentNo, std::get<1>(tp));
-                sim->setAgentTimeHorizon(entity._control.agentNo, std::get<2>(tp));
-                sim->setAgentTimeHorizonObst(entity._control.agentNo, std::get<3>(tp));
-                
-            }
+
             sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
             double dist = getDistance(entity._move.position, entity._move.waypoints.front());
             if (dist < entity._state.collision + PATH_PRECISION)
@@ -179,7 +222,7 @@ void MoveSync::fixDirtyMove(double frame)
             }
             continue;
         }
-        if (entity._move.action == MOVE_ACTION_IDLE)
+        if (entity._move.action == MOVE_ACTION_IDLE )
         {
             //check
             auto rvoPos = toEPosition(sim->getAgentPosition(entity._control.agentNo));
@@ -284,6 +327,7 @@ ui64 MoveSync::addAgent(EPosition pos, double collision)
     _sim->setAgentMaxSpeed(agent, 0);
     _sim->setAgentPrefVelocity(agent, RVO::Vector2(0, 0));
     _sim->setAgentRadius(agent, collision);
+    _sim->setAgentTimeHorizon(agent, collision);
     return agent;
 }
 

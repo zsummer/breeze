@@ -122,7 +122,7 @@ void SceneMgr::onTimer()
     for (auto scene : frees)
     {
         _frees.push(scene);
-        if (scene->getSceneType() == SCENE_HOME)
+        if (scene->getSceneType() == SCENE_HOME || scene->getSceneType() == SCENE_MELEE)
         {
             _homes.erase(scene->getSceneID());
         }
@@ -537,11 +537,11 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
 {
     ScenePtr scene;
     //如果类型是主城并且存在未满人的主城 直接丢进去
-    if (ins.sceneType == SCENE_HOME)
+    if (ins.sceneType == SCENE_HOME || ins.sceneType == SCENE_MELEE)
     {
         for (auto &kv : _homes)
         {
-            if( kv.second->getPlayerCount() < 30 )
+            if( kv.second->getPlayerCount() < 30  && kv.second->getSceneType() == ins.sceneType)
             {
                 scene = kv.second;
                 break;
@@ -561,7 +561,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         _frees.pop();
         scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
         _actives.insert(std::make_pair(scene->getSceneID(), scene));
-        if (ins.sceneType == SCENE_HOME)
+        if (ins.sceneType == SCENE_HOME || ins.sceneType == SCENE_MELEE)
         {
             _homes.insert(std::make_pair(scene->getSceneID(), scene));
         }
@@ -585,6 +585,13 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                 entity->_state.camp = ENTITY_CAMP_BLUE + rand() % 100;
                 entity->_state.collision = 1.0;
                 entity->_skillSys.dictBootSkills.insert(1);
+
+                if (scene->getSceneType() == SCENE_MELEE)
+                {
+                    entity->_control.spawnpoint = EPosition(10, 180);
+                    entity->_move.position = entity->_control.spawnpoint;
+                }
+
                 scene->addEntity(entity);
         }
         SceneServerGroupStateFeedback ret;

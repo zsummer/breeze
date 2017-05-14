@@ -30,7 +30,7 @@ class MoveSync : public std::enable_shared_from_this<MoveSync>
 public:
     MoveSync();
     ~MoveSync();
-    void init(std::weak_ptr<Scene> scene);
+    void init(std::weak_ptr<Scene> weak_scene);
     void fillRVO(double frame);
     void update();
     void fixDirtyMove(double frame);
