@@ -230,7 +230,7 @@ void Skill::update()
                                 useSkill(scene, e._state.eid, id);
                             }
                         }
-                        else if (foe != InvalidEntityID && e._move.action == MOVE_ACTION_IDLE && distance > aoeSearch.second.distance)
+                        else if (e._move.action == MOVE_ACTION_IDLE && distance > aoeSearch.second.distance)
                         {
                             scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                         }
