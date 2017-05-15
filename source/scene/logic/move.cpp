@@ -71,6 +71,29 @@ void MoveSync::init(std::weak_ptr<Scene> weak_scene)
 
             }
         }
+ /*      for (double x=-120; x < 60;  )
+        {
+            double y = 210;
+            std::vector<RVO::Vector2> vs;
+            vs.push_back(RVO::Vector2(x, y));
+            vs.push_back(RVO::Vector2(x+2, y));
+            vs.push_back(RVO::Vector2(x+2, y+2));
+            vs.push_back(RVO::Vector2(x, y+2));
+            _sim->addObstacle(vs);
+            x += 2;
+        } */
+ /*       for (double x = -120; x < 60; )
+        {
+            double y = 210;
+            std::vector<RVO::Vector2> vs;
+            vs.push_back(RVO::Vector2(x, y));
+            vs.push_back(RVO::Vector2(x - 2, y));
+            vs.push_back(RVO::Vector2(x - 2, y + 2));
+            vs.push_back(RVO::Vector2(x, y + 2));
+            _sim->addObstacle(vs);
+            x += 2;
+        }
+        */
         _sim->processObstacles();
     }
 }

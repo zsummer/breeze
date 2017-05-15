@@ -70,7 +70,7 @@ void AI::update()
                 DictArrayKey(),
                 InvalidGroupID);
             entity->_props.hp = 3000 + (rand() % 100) * 20;
-            entity->_props.moveSpeed = 4.0;
+            entity->_props.moveSpeed = 8.0;
             entity->_props.attackQuick = 0.5;
             entity->_props.attack = 80;
             entity->_state.maxHP = entity->_props.hp;
