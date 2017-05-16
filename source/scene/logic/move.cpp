@@ -19,7 +19,7 @@ void MoveSync::init(std::weak_ptr<Scene> weak_scene)
     _scene = weak_scene;
     _sim = new RVO::RVOSimulator();
     _sim->setTimeStep(SceneFrameInterval);
-    _sim->setAgentDefaults(3.0, 10, 1.0, 1.0, 1.0, 7.0);
+    _sim->setAgentDefaults(30.0, 10, 1.0, 1.0, 1.0, 0.0);
     _lastDoRVO = getFloatSteadyNowTime();
     _lastPrintStatus = _lastDoRVO;
 
@@ -29,13 +29,7 @@ void MoveSync::init(std::weak_ptr<Scene> weak_scene)
         return;
     }
 
-    if (::accessFile("../scripts/rvo.txt"))
-    {
-        std::string content = readFileContent("../scripts/rvo.txt");
-        LOGI("../scripts/rvo.txt: " << content);
-        auto tp = splitTupleString<double, size_t, double, double>(content, ",", " ");
-        _sim->setAgentDefaults(std::get<0>(tp), std::get<1>(tp), std::get<2>(tp), std::get<3>(tp), 1.0, 0);
-    }
+
 
     std::string obstacleFileName;
     if (scene->getSceneType() == SCENE_HOME)
@@ -71,29 +65,7 @@ void MoveSync::init(std::weak_ptr<Scene> weak_scene)
 
             }
         }
- /*      for (double x=-120; x < 60;  )
-        {
-            double y = 210;
-            std::vector<RVO::Vector2> vs;
-            vs.push_back(RVO::Vector2(x, y));
-            vs.push_back(RVO::Vector2(x+2, y));
-            vs.push_back(RVO::Vector2(x+2, y+2));
-            vs.push_back(RVO::Vector2(x, y+2));
-            _sim->addObstacle(vs);
-            x += 2;
-        } */
- /*       for (double x = -120; x < 60; )
-        {
-            double y = 210;
-            std::vector<RVO::Vector2> vs;
-            vs.push_back(RVO::Vector2(x, y));
-            vs.push_back(RVO::Vector2(x - 2, y));
-            vs.push_back(RVO::Vector2(x - 2, y + 2));
-            vs.push_back(RVO::Vector2(x, y + 2));
-            _sim->addObstacle(vs);
-            x += 2;
-        }
-        */
+
         _sim->processObstacles();
     }
 }
@@ -122,18 +94,7 @@ void MoveSync::fillRVO(double frame)
         {
             continue;
         }
-        //debug
-        if (true)
-        {
-            if (::accessFile("../scripts/rvo.txt"))
-            {
-                std::string content = readFileContent("../scripts/rvo.txt");
-                LOGI("../scripts/rvo.txt: " << content);
-                auto tp = splitTupleString<double, size_t, double, double>(content, ",", " ");
-                _sim->setAgentTimeHorizon(entity._control.agentNo, std::get<2>(tp));
-                _sim->setAgentTimeHorizonObst(entity._control.agentNo, std::get<3>(tp));
-            }
-        }
+
         do
         {
 
@@ -155,7 +116,7 @@ void MoveSync::fillRVO(double frame)
             }
 
 
-            sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
+
             double dist = getDistance(entity._move.position, entity._move.waypoints.front());
             if (dist < entity._state.collision + PATH_PRECISION)
             {
@@ -176,6 +137,14 @@ void MoveSync::fillRVO(double frame)
                 dir *= entity._move.expectSpeed;
                 sim->setAgentPrefVelocity(entity._control.agentNo, dir);
             }
+            sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
+            sim->setAgentTimeHorizon(entity._control.agentNo, 1.0);
+            sim->setAgentTimeHorizonObst(entity._control.agentNo, frame);
+            sim->setAgentNeighborDist(entity._control.agentNo, 1.5 * sim->getAgentMaxSpeed(entity._control.agentNo));
+            sim->setAgentMaxNeighbors(entity._control.agentNo, 100);
+
+
+
             LOGD("RVO fill move[" << entity._state.avatarName << "] local=" << entity._move.position
                 << ", dst=" << entity._move.waypoints.front() << ", dir=" << sim->getAgentPrefVelocity(entity._control.agentNo) << ", max Speed=" 
             << sim->getAgentMaxSpeed(entity._control.agentNo));
@@ -350,7 +319,6 @@ ui64 MoveSync::addAgent(EPosition pos, double collision)
     _sim->setAgentMaxSpeed(agent, 0);
     _sim->setAgentPrefVelocity(agent, RVO::Vector2(0, 0));
     _sim->setAgentRadius(agent, collision);
-    _sim->setAgentTimeHorizon(agent, collision);
     return agent;
 }
 

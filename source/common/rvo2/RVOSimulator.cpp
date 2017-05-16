@@ -93,7 +93,8 @@ namespace RVO {
         }
         else
         {
-            agentNo = freeAgents_.front();
+            agentNo = freeAgents_.back();
+            freeAgents_.pop_back();
             agent = agents_.at(agentNo);
         }
 		
@@ -122,7 +123,8 @@ namespace RVO {
         }
         else
         {
-            agentNo = freeAgents_.front();
+            agentNo = freeAgents_.back();
+            freeAgents_.pop_back();
             agent = agents_.at(agentNo);
         }
 
@@ -141,7 +143,7 @@ namespace RVO {
 	}
     void RVOSimulator::removeAgent(size_t agentNo)
     {
-        if (agents_.size() < agentNo)
+        if (agentNo < agents_.size())
         {
             if (std::find_if(freeAgents_.begin(), freeAgents_.end(), [agentNo](size_t No) {return No == agentNo; }) != freeAgents_.end())
             {
@@ -149,6 +151,7 @@ namespace RVO {
             }
             freeAgents_.push_back(agentNo);
             agents_.at(agentNo)->position_ = Vector2(1E120*agentNo, 1E120*agentNo);
+            agents_.at(agentNo)->prefVelocity_ = Vector2(0, 0);
         }
     }
 
