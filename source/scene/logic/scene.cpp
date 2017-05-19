@@ -455,6 +455,17 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition org, doub
     return std::move(filtered);
 }
 
+std::vector<EntityPtr> Scene::searchTarget(EPosition org, EPosition unitVt, ui16 isRect, double value1, double value2, double value3, double compensate)
+{
+    std::vector<EntityPtr> ret;
+    org = org + unitVt*compensate;
+    std::vector<EPosition> convexs;
+    if (isRect)
+    {
+
+    }
+    return ret;
+}
 std::vector<EntityPtr> Scene::searchTarget(EPosition org, double radian, ui16 isRect, double distance, double value, double compensateForward, double compensateRight)
 {
     //位移补偿
@@ -487,7 +498,7 @@ std::vector<EntityPtr> Scene::searchTarget(EPosition org, double radian, ui16 is
         }
         if (!isRect && value < PI*2.0*0.9)
         {
-            double radianEntity = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
+            double radianEntity = getRadian(entity._move.position.x - org.x, entity._move.position.y - org.y);
             double curRadian = fmod(radian+value/2.0, PI*2.0);
             if ((curRadian >= radianEntity && curRadian - radianEntity < value)
                 || (curRadian < radianEntity && curRadian + PI*2.0 - radianEntity < value))
@@ -501,7 +512,7 @@ std::vector<EntityPtr> Scene::searchTarget(EPosition org, double radian, ui16 is
         }
         if (isRect)
         {
-            double curRadian = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
+            double curRadian = getRadian(entity._move.position.x - org.x, entity._move.position.y - org.y);
             auto dst = rotatePoint(org.x, org.y, curRadian,
                 getDistance(org, entity._move.position), PI*2.0 - curRadian );
             if (abs(std::get<1>(dst) - org.y) > value/2.0)

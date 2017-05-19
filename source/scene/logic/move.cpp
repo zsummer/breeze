@@ -457,7 +457,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
 
     if (action != MOVE_ACTION_IDLE && !dsts.empty())
     {
-        entity->_control.lastClientFaceRadian = getRadian(entity->_move.position.x, entity->_move.position.y, dsts.at(0).x, dsts.at(0).y);
+        entity->_control.lastClientFaceRadian = getRadian(dsts.at(0).x - entity->_move.position.x, dsts.at(0).y - entity->_move.position.y);
     }
 
     entity->_isMoveDirty = true;

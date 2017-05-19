@@ -409,17 +409,15 @@ inline double getDistance(double orgx, double orgy, double dstx, double dsty)
 }
 
 
-inline double getRadian(double orgx, double orgy, double dstx, double dsty)
+inline double getRadian(double vx, double vy)
 {
-    double disx = dstx - orgx;
-    double disy = dsty - orgy;
-    double h = getDistance(orgx, orgy, dstx, dsty);
+    double h = getDistance(0, 0, vx, vy);
     if (h == 0)
     {
         h = 1;
     }
-    double rad = acos(disx / h);
-    if (disy < 0)
+    double rad = acos(vx / h);
+    if (vy < 0)
     {
         rad = PI * 2.0f - rad;
     }
@@ -444,7 +442,25 @@ inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double o
     return std::make_tuple(orgx + cos(orgrad + radian)*distance, orgy + sin(orgrad + radian)*distance);
 }
 
-
+inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isClockwise)
+{
+    if (isClockwise)
+    {
+        return std::make_tuple(vy, vx*-1);
+    }
+    return std::make_tuple(vy*-1, vx);
+}
+inline std::tuple<double, double> normalizeVertical(double vx, double vy)
+{
+    double absx = std::abs(vx);
+    double absy = std::abs(vy);
+    absx = absx > absy ? absx : absy;
+    if (absx == 0.0)
+    {
+        return std::make_tuple(0, 0);
+    }
+    return std::make_tuple(vx/absx, vy/absx);
+}
 
 
 template<class Integer, class Pos>

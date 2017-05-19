@@ -32,6 +32,7 @@
 
 #include <rvo2/RVO.h>
 
+
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v){stm << "[" << v.x() << "," << v.y() << "]";return stm;}
 inline EPosition operator + (const EPosition & dst, const EPosition & org){return EPosition(dst.x + org.x, dst.y + org.y);}
 inline EPosition operator * (const EPosition & dst, const EPosition & org){return EPosition(dst.x * org.x, dst.y * org.y);}
@@ -39,6 +40,7 @@ inline EPosition operator + (const EPosition & dst, double val){return EPosition
 inline EPosition operator - (const EPosition & dst, double val){return EPosition(dst.x - val, dst.y - val);}
 inline EPosition operator * (const EPosition & dst, double val){return EPosition(dst.x * val, dst.y * val);}
 inline EPosition operator / (const EPosition & dst, double val){return EPosition(dst.x / val, dst.y * val);}
+
 inline EPosition normalize(const EPosition & dst){if (std::abs(dst.x) > std::abs(dst.y)){return EPosition(dst.x / dst.x, dst.y / dst.x);}return EPosition(dst.x / dst.y, dst.y / dst.y);}
 inline RVO::Vector2 toRVOVector2(const EPosition & pos){return RVO::Vector2(pos.x, pos.y);}
 inline EPosition toEPosition(const RVO::Vector2 & pos){return EPosition(pos.x(), pos.y());}

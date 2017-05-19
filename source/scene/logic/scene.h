@@ -88,6 +88,9 @@ public:
     std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition org, double radian, const AOESearch & search);
     std::vector<EntityPtr> searchTarget(EPosition org, double radian, ui16 isRect, double distance, double value, double compensateForward, double compensateRight);
 
+    //org起点, unitVt单位向量, isRect是否为矩形, value1距离或者长度, value2 矩形前端宽度或者扇形弧度, value3矩形近端宽度或者忽略,  org起点补偿
+    std::vector<EntityPtr> searchTarget(EPosition org, EPosition unitVt, ui16 isRect, double value1, double value2, double value3, double compensate);
+
 
 
 

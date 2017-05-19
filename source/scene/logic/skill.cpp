@@ -191,7 +191,7 @@ void Skill::update()
             {
                 break;
             }
-            double radian = getRadian(e._move.position.x, e._move.position.y, foe->_move.position.x, foe->_move.position.y);
+            double radian = getRadian(foe->_move.position.x - e._move.position.x, foe->_move.position.y - e._move.position.y);
             double distance = getDistance(e._move.position, foe->_move.position);
             for (auto id : e._skillSys.dictBootSkills)
             {
@@ -410,7 +410,7 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
             skill->activeOrgEID = foe->_state.eid;
             skill->activeOrg = foe->_move.position;
         }
-        double radian = getRadian(e->_move.position.x, e->_move.position.y, skill->activeDst.x, skill->activeDst.y);
+        double radian = getRadian(skill->activeDst.x - e->_move.position.x, skill->activeDst.y - e->_move.position.y);
         if (getDistance(e->_move.position, skill->activeOrg) > dictSkill.second.orgLimitDistance)
         {
             auto pos = getFarPoint(e->_move.position.x, e->_move.position.y, radian, dictSkill.second.orgLimitDistance);
@@ -503,7 +503,7 @@ bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
     }
 
     auto result = scene->searchTarget(caster, skill->activeOrg,
-        getRadian(skill->activeOrg.x, skill->activeOrg.y, skill->activeDst.x, skill->activeDst.y),
+        getRadian(skill->activeDst.x - skill->activeOrg.x, skill->activeDst.y - skill->activeOrg.y),
         dictAoe.second);
 
    if (result.empty())

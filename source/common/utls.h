@@ -86,6 +86,8 @@
 #undef  min
 #endif // min
 
+
+
 //file
 //==========================================================================
 //it's will jump UTF-8 BOM when isBinary  is false .
@@ -228,12 +230,13 @@ const double PI = 3.14159265358979323;
 
 inline bool isEqual(double f1, double f2, double acc = POINT_DOUBLE);
 inline bool isZero(double f, double acc = POINT_DOUBLE);
-inline double getDistance(double org, double dst);
 inline double getDistance(double orgx, double orgy, double dstx, double dsty);
-inline double getRadian(double orgx, double orgy, double dstx, double dsty);
+inline double getRadian(double vx, double vy);
 inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance);
 inline std::tuple<double, double> getFarOffset(double orgx, double orgy, double dstx, double dsty, double distance);
 inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double orgrad, double distance, double radian);
+inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isClockwise);
+inline std::tuple<double, double> normalizeVertical(double vx, double vy);
 
 //bit
 //==========================================================================

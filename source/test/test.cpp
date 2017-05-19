@@ -556,11 +556,11 @@ int checkFloat()
     {
         return 17;
     }
-    if (!isEqual(getRadian(0.0, 0.0, 1.0, 0.0), 0.0))
+    if (!isEqual(getRadian(1.0, 0.0), 0.0))
     {
         return 18;
     }
-    if (!isEqual(getRadian(0.0, 0.0, -1.0, 0.0), PI))
+    if (!isEqual(getRadian(-1.0, 0.0), PI))
     {
         return 19;
     }
@@ -590,6 +590,40 @@ int checkFloat()
     }
     if (true)
     {
+        double vx, vy, s;
+        for (int i=0; i<10000; i++)
+        {
+            if (i < 1000)
+            {
+                vx = rand() % 2 - 1;
+                vy = rand() % 2 - 1;
+            }
+            else
+            {
+                vx = rand() % 200 - 100;
+                vy = rand() % 200 - 100;
+            }
+
+            auto ret = rotateVertical(vx, vy, true);
+            if (i%2 == 0)
+            {
+                ret = rotateVertical(vx, vy, false);
+            }
+            ret = normalizeVertical(std::get<0>(ret), std::get<1>(ret));
+            s = std::get<0>(ret)*vx + std::get<1>(ret)*vy;
+            if (s < -1E-14 || s > 1E-14)
+            {
+                LOGE("radian = " << getRadian(vx, vy) / PI / 2 * 360 << ", ret = " << getRadian(std::get<0>(ret), std::get<1>(ret)) / PI / 2 * 360 );
+                return 28;
+            }
+            if (s > 0 && s < 0)
+            {
+                return 29;
+            }
+        }
+    }
+    if (true)
+    {
         double now = getFloatNowTime();
         volatile double f = 0.0;
         for (int i = 0; i < 100 * 10000; i++)
@@ -599,6 +633,7 @@ int checkFloat()
         f = 0.0;
         LOGD("isEqual used time=" << (getFloatNowTime() - now) << f);
     }
+
     if (true)
     {
         double owner = 2500;
@@ -611,6 +646,9 @@ int checkFloat()
             owner = newOwner;
             dst = newDst;
         }
+    }
+    if (true)
+    {
     }
 
 
