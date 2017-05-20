@@ -18,10 +18,6 @@ AOECheck::~AOECheck()
 
 bool AOECheck::init(std::tuple<double, double> org, std::tuple<double, double> vt, bool isRect, double value1, double value2, double value3, double clip)
 {
-    if (clip != 0.0 && (isRect || value2 > PI * 2 * 0.9))
-    {
-        return false;
-    }
 
     _org = org;
     _orgc = org + vt*clip;
@@ -43,8 +39,8 @@ bool AOECheck::init(std::tuple<double, double> org, std::tuple<double, double> v
         std::tuple<double, double> rvt = rotateVertical(std::get<0>(vt), std::get<1>(vt), true);
         _convexs.reserve(4);
         _convexs.push_back(org + rvt*value3 / 2.0);
-        _convexs.push_back(org + vt * value1 + rvt*value3 / 2.0);
-        _convexs.push_back(org + vt * value1 - rvt*value3 / 2.0);
+        _convexs.push_back(org + vt * value1 + rvt*value2 / 2.0);
+        _convexs.push_back(org + vt * value1 - rvt*value2 / 2.0);
         _convexs.push_back(org - rvt*value3 / 2.0);
         _fastBot = _convexs.front();
         _fastTop = _convexs.back();
@@ -73,18 +69,11 @@ std::tuple<bool, double> AOECheck::check(std::tuple<double, double> pos, double 
     //circle 
     if (!_isRect && _value2 > PI * 2.0 * 0.9)
     {
-        /*
-        //small clip
-        if (clip != 0.0 && getDistance(orgc, entity._move.position) < clip)
+        //clip
+        if (_clip != 0.0 && distance < _clip)
         {
-        continue;
+            return outRet;
         }
-        // big clip
-        if (clip != 0.0 && getDistance(orgc, entity._move.position) < value1)
-        {
-        continue;
-        }
-        */
         return inRet;
     }
 
@@ -96,7 +85,7 @@ std::tuple<bool, double> AOECheck::check(std::tuple<double, double> pos, double 
         {
             return outRet;
         }
-        double r = getRadian(pos - _orgc, _vt);
+        double r = getRadian(pos - _org, _vt);
         if (r < _value2 / 2.0)
         {
             return inRet;

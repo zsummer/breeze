@@ -21,11 +21,6 @@ endif()
 
 include_directories(${breeze_SOURCE_DIR}/../protocol/C++)
 include_directories(${breeze_SOURCE_DIR}/common)
-include_directories(${breeze_SOURCE_DIR}/common/dbhelper)
-include_directories(${breeze_SOURCE_DIR}/common/lua)
-include_directories(${breeze_SOURCE_DIR}/common/md5)
-include_directories(${breeze_SOURCE_DIR}/common/aoe)
-include_directories(${breeze_SOURCE_DIR}/common/bcui)
 
 link_directories(${breeze_SOURCE_DIR}/lib/)
 

@@ -19,6 +19,7 @@
 //! 测试
 #include "test.h"
 
+#include "aoeTest.h"
 
 #define TestUtls(func) do \
 { \
@@ -61,10 +62,11 @@ int main(int argc, char* argv[])
 #endif
     srand((ui32)time(NULL));
 
+    AoeTest();
     ILog4zManager::getPtr()->start();
     SessionManager::getRef().start();
 
-
+    
 
     checkBalance();
     auto ret =getHostByName("github.com", 3389);

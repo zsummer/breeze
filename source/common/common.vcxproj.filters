@@ -128,7 +128,7 @@
     <ClInclude Include="aoe\aoe.h">
       <Filter>aoe</Filter>
     </ClInclude>
-    <ClInclude Include="bcui\cui.h">
+    <ClInclude Include="bcui\bcui.h">
       <Filter>bcui</Filter>
     </ClInclude>
   </ItemGroup>
@@ -269,7 +269,7 @@
     <ClCompile Include="aoe\aoe.cpp">
       <Filter>aoe</Filter>
     </ClCompile>
-    <ClCompile Include="bcui\cui.cpp">
+    <ClCompile Include="bcui\bcui.cpp">
       <Filter>bcui</Filter>
     </ClCompile>
   </ItemGroup>

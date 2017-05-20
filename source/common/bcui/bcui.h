@@ -15,13 +15,21 @@
 * limitations under the License.
 */
 
-#ifndef _CUI_H_
-#define _CUI_H_
+#ifndef _BCUI_H_
+#define _BCUI_H_
 
 #include "../utls.h"
 #include <tuple>
 
 
+enum BCUI_PIXEL
+{
+    BCUI_PIXEL_BLACK,
+    BCUI_PIXEL_WHITE,
+    BCUI_PIXEL_RED,
+    BCUI_PIXEL_BLUE,
+    BCUI_PIXEL_YELLOW,
+};
 
 
 //breeze CUI 
@@ -30,9 +38,12 @@ class BCUI
 public:
     BCUI();
     ~BCUI();
-    bool init(int level, int vrtc);
+    bool init();
+    bool setPos(int x, int y, BCUI_PIXEL bp);
 private:
-
+#ifdef WIN32
+    HANDLE _handle;
+#endif
 protected:
 private:
 };
