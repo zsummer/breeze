@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 #endif
     srand((ui32)time(NULL));
 
-    AoeTest();
+    //AoeTest();
     ILog4zManager::getPtr()->start();
     SessionManager::getRef().start();
 
