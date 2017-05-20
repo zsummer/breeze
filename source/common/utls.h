@@ -232,11 +232,14 @@ inline bool isEqual(double f1, double f2, double acc = POINT_DOUBLE);
 inline bool isZero(double f, double acc = POINT_DOUBLE);
 inline double getDistance(double orgx, double orgy, double dstx, double dsty);
 inline double getRadian(double vx, double vy);
+inline double getRadian(double vx1, double vy1, double vx2, double vy2);
 inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance);
-inline std::tuple<double, double> getFarOffset(double orgx, double orgy, double dstx, double dsty, double distance);
-inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double orgrad, double distance, double radian);
+
+
 inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isClockwise);
-inline std::tuple<double, double> normalizeVertical(double vx, double vy);
+inline std::tuple<double, double> rotateVertical(std::tuple<double, double> vt, bool isClockwise);
+inline std::tuple<double, double> normalizeVector(double vx, double vy);
+inline std::tuple<double, double> normalizeVector(std::tuple<double, double> vt);
 
 //bit
 //==========================================================================

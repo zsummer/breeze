@@ -455,17 +455,117 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition org, doub
     return std::move(filtered);
 }
 
-std::vector<EntityPtr> Scene::searchTarget(EPosition org, EPosition unitVt, ui16 isRect, double value1, double value2, double value3, double compensate)
+std::vector<EntityPtr> Scene::searchTarget(EPosition org, EPosition vt, ui16 isRect, double value1, double value2, double value3, double compensate, double clip)
 {
     std::vector<EntityPtr> ret;
-    org = org + unitVt*compensate;
-    std::vector<EPosition> convexs;
+    org = org + vt*compensate;
+    value1 = value1 + compensate;
+    EPosition orgc = org + vt*clip;
+    if (clip != 0.0 && (isRect || value2 > PI*2*0.9))
+    {
+        LOGE("searchTarget not support clip when rect or circle");
+    }
+    double areaDistance= value1;
     if (isRect)
     {
-
+        double v = std::max(value2, value3)/2.0;
+        areaDistance = std::sqrt(v*v + value1*value1);
     }
+
+    std::vector<EPosition> convexs;
+    EPosition bot;
+    EPosition top;
+
+    if (isRect)
+    {
+        EPosition rvt = toEPosition(rotateVertical(vt.x, vt.y, true));
+        convexs.push_back(org + rvt*value3 / 2.0);
+        convexs.push_back(org + vt * value1 + rvt*value3 / 2.0);
+        convexs.push_back(org + vt * value1 - rvt*value3 / 2.0);
+        convexs.push_back(org - rvt*value3 / 2.0);
+        for (size_t i = 0; i < convexs.size(); i++)
+        {
+            bot.x = std::min(bot.x, convexs[i].x);
+            bot.y = std::min(bot.y, convexs[i].y);
+            top.x = std::max(top.x, convexs[i].x);
+            top.y = std::max(top.y, convexs[i].y);
+        }
+    }
+
+    for (auto kv : _entitys)
+    {
+        EPosition dstPos = kv.second->_move.position;
+        double distance = getDistance(org, dstPos) - kv.second->_state.collision;
+        if (distance > areaDistance)
+        {
+            continue;
+        }
+
+        //circle 
+        if (!isRect && value2 > PI * 2.0 * 0.9)
+        {
+            /*
+            //small clip
+            if (clip != 0.0 && getDistance(orgc, entity._move.position) < clip)
+            {
+                continue;
+            }
+            // big clip 
+            if (clip != 0.0 && getDistance(orgc, entity._move.position) < value1)
+            {
+                continue;
+            }
+            */
+            ret.push_back(kv.second);
+            continue;
+        }
+        //radian 
+        if (!isRect)
+        {
+            //clip
+            if (clip != 0.0 && distance < clip)
+            {
+                continue;
+            }
+            double r = getRadian(dstPos - orgc, vt);
+            if (r < value2/2.0)
+            {
+                ret.push_back(kv.second);
+            }
+            continue;
+        }
+        if (isRect)
+        {
+            if (convexs.size() < 3 )
+            {
+                LOGE("");
+                continue;
+            }
+            //fast check
+            if (dstPos.x < bot.x || dstPos.y < bot.y || dstPos.x > top.x || dstPos.y > top.y)
+            {
+                continue;
+            }
+            bool prime = false;
+            for (int i = 0, j = convexs.size() - 1; i < convexs.size(); j = i++) 
+            {
+                if (((convexs[i].y > dstPos.y) != (convexs[j].y > dstPos.y)) 
+                    &&
+                    (dstPos.x < (convexs[j].x - convexs[i].x) * (dstPos.y - convexs[i].y)  / (convexs[j].y - convexs[i].y) + convexs[i].x))
+                    prime = !prime;
+            }
+            if (prime)
+            {
+                ret.push_back(kv.second);
+            }
+            continue;
+        }
+    }
+    std::sort(ret.begin(), ret.end(), [org](const EntityPtr & entity1, const EntityPtr & entity2)
+    {return getDistance(org, entity1->_move.position) < getDistance(org, entity2->_move.position); });
     return ret;
 }
+
 std::vector<EntityPtr> Scene::searchTarget(EPosition org, double radian, ui16 isRect, double distance, double value, double compensateForward, double compensateRight)
 {
     //位移补偿
@@ -513,12 +613,7 @@ std::vector<EntityPtr> Scene::searchTarget(EPosition org, double radian, ui16 is
         if (isRect)
         {
             double curRadian = getRadian(entity._move.position.x - org.x, entity._move.position.y - org.y);
-            auto dst = rotatePoint(org.x, org.y, curRadian,
-                getDistance(org, entity._move.position), PI*2.0 - curRadian );
-            if (abs(std::get<1>(dst) - org.y) > value/2.0)
-            {
-                continue;
-            }
+  
         }
         ret.push_back(kv.second);
     }

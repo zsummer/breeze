@@ -411,37 +411,29 @@ inline double getDistance(double orgx, double orgy, double dstx, double dsty)
 
 inline double getRadian(double vx, double vy)
 {
-    double h = getDistance(0, 0, vx, vy);
-    if (h == 0)
-    {
-        h = 1;
-    }
-    double rad = acos(vx / h);
+    double r = getRadian(1, 0, vx, vy);
     if (vy < 0)
     {
-        rad = PI * 2.0f - rad;
+        return PI * 2.0 - r;
     }
-    return rad;
+    return r;
 }
 
+inline double getRadian(double vx1, double vy1, double vx2, double vy2)
+{
+    return acos((vx1*vx2 + vy1*vy2) / sqrt((vx1*vx1 + vy1*vy1)*(vx2*vx2 + vy2*vy2)));
+}
 inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance)
 {
     return std::make_tuple(orgx + cos(radian) * distance, orgy + sin(radian) * distance);
 }
 
-inline std::tuple<double, double> getFarOffset(double orgx, double orgy, double dstx, double dsty, double distance)
-{
-    double rate = distance / getDistance(orgx, orgy, dstx, dsty);
-    return std::make_tuple(orgx + (dstx - orgx) * rate, orgy + (dsty - orgy) * rate);
-}
 
 
 
-inline std::tuple<double, double> rotatePoint(double orgx, double orgy, double orgrad, double distance, double radian)
-{
-    return std::make_tuple(orgx + cos(orgrad + radian)*distance, orgy + sin(orgrad + radian)*distance);
-}
 
+
+inline std::tuple<double, double> rotateVertical(std::tuple<double, double> vt, bool isClockwise) { return rotateVertical(std::get<0>(vt), std::get<1>(vt), isClockwise); }
 inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isClockwise)
 {
     if (isClockwise)
@@ -450,7 +442,9 @@ inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isCl
     }
     return std::make_tuple(vy*-1, vx);
 }
-inline std::tuple<double, double> normalizeVertical(double vx, double vy)
+
+inline std::tuple<double, double> normalizeVector(std::tuple<double, double> vt) { return normalizeVector(std::get<0>(vt), std::get<1>(vt)); }
+inline std::tuple<double, double> normalizeVector(double vx, double vy)
 {
     double absx = std::abs(vx);
     double absy = std::abs(vy);
@@ -461,7 +455,6 @@ inline std::tuple<double, double> normalizeVertical(double vx, double vy)
     }
     return std::make_tuple(vx/absx, vy/absx);
 }
-
 
 template<class Integer, class Pos>
 inline bool getBitFlag(Integer bin, Pos pos)
