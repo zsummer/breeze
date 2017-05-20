@@ -228,18 +228,26 @@ inline int distanceDays(time_t first, time_t second);
 const double POINT_DOUBLE = 1E-15; // the number N is decimal places (decimalism). N=log10(1/POINT_DOUBLE) . example 1E-15 ==> 15 number of decimal places.
 const double PI = 3.14159265358979323;
 
+
 inline bool isEqual(double f1, double f2, double acc = POINT_DOUBLE);
 inline bool isZero(double f, double acc = POINT_DOUBLE);
-inline double getDistance(double orgx, double orgy, double dstx, double dsty);
+
+inline double getDistance(double posx1, double posy1, double posx2, double posy2);
+inline double getDistance(const std::tuple<double, double> & pos1, const std::tuple<double, double> & pos2);
+
 inline double getRadian(double vx, double vy);
 inline double getRadian(double vx1, double vy1, double vx2, double vy2);
-inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance);
+inline double getRadian(const std::tuple<double, double> & v);
+inline double getRadian(const std::tuple<double, double> & v1, const std::tuple<double, double> & v2);
 
+
+inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance);
 
 inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isClockwise);
 inline std::tuple<double, double> rotateVertical(std::tuple<double, double> vt, bool isClockwise);
 inline std::tuple<double, double> normalizeVector(double vx, double vy);
 inline std::tuple<double, double> normalizeVector(std::tuple<double, double> vt);
+
 
 //bit
 //==========================================================================

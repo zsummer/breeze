@@ -386,6 +386,47 @@ inline int distanceDays(time_t first, time_t second)
 
 
 
+
+
+inline std::tuple<double, double> operator + (const std::tuple<double, double> & self, const std::tuple<double, double> & val) 
+{ 
+    return std::tuple<double, double>(std::get<0>(self) + std::get<0>(val), std::get<1>(self) + std::get<1>(val)); 
+}
+inline std::tuple<double, double> operator - (const std::tuple<double, double> & self, const std::tuple<double, double> & val) 
+{ 
+    return std::tuple<double, double>(std::get<0>(self) - std::get<0>(val), std::get<1>(self) - std::get<1>(val)); 
+}
+inline std::tuple<double, double> operator * (const std::tuple<double, double> & self, const std::tuple<double, double> & val) 
+{ 
+    return std::tuple<double, double>(std::get<0>(self) * std::get<0>(val), std::get<1>(self) * std::get<1>(val)); 
+}
+inline std::tuple<double, double> operator / (const std::tuple<double, double> & self, const std::tuple<double, double> & val) 
+{ 
+    return std::tuple<double, double>(std::get<0>(self) / std::get<0>(val), std::get<1>(self) / std::get<1>(val)); 
+}
+
+inline std::tuple<double, double> operator + (const std::tuple<double, double> & self, double val)
+{
+    return std::tuple<double, double>(std::get<0>(self) + val, std::get<1>(self) + val);
+}
+inline std::tuple<double, double> operator - (const std::tuple<double, double> & self, double val)
+{
+    return std::tuple<double, double>(std::get<0>(self) - val, std::get<1>(self) - val);
+}
+inline std::tuple<double, double> operator * (const std::tuple<double, double> & self, double val)
+{
+    return std::tuple<double, double>(std::get<0>(self) * val, std::get<1>(self) * val);
+}
+inline std::tuple<double, double> operator / (const std::tuple<double, double> & self, double val)
+{
+    return std::tuple<double, double>(std::get<0>(self) / val, std::get<1>(self) / val);
+}
+
+
+
+
+
+
 inline bool isZero(double f, double acc)
 {
     return fabs(f) < acc;
@@ -403,11 +444,14 @@ inline double getDistance(double org, double dst)
     return fabs(org - dst);
 }
 
-inline double getDistance(double orgx, double orgy, double dstx, double dsty)
+inline double getDistance(double posx1, double posy1, double posx2, double posy2)
 {
-    return sqrt(pow(orgx - dstx, 2) + pow(orgy - dsty, 2));
+    return sqrt((posx1 - posx2)*(posx1 - posx2) +(posy1 - posy2)*(posy1-posy2));
 }
-
+inline double getDistance(const std::tuple<double, double> & pos1, const std::tuple<double, double> & pos2)
+{
+    return getDistance(std::get<0>(pos1), std::get<1>(pos1), std::get<0>(pos2), std::get<1>(pos2));
+}
 
 inline double getRadian(double vx, double vy)
 {
@@ -423,6 +467,17 @@ inline double getRadian(double vx1, double vy1, double vx2, double vy2)
 {
     return acos((vx1*vx2 + vy1*vy2) / sqrt((vx1*vx1 + vy1*vy1)*(vx2*vx2 + vy2*vy2)));
 }
+
+inline double getRadian(const std::tuple<double, double> & v)
+{
+    return getRadian(std::get<0>(v), std::get<1>(v));
+}
+inline double getRadian(const std::tuple<double, double> & v1, const std::tuple<double, double> & v2)
+{
+    return getRadian(std::get<0>(v1), std::get<1>(v1), std::get<0>(v2), std::get<1>(v2));
+}
+
+
 inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance)
 {
     return std::make_tuple(orgx + cos(radian) * distance, orgy + sin(radian) * distance);
