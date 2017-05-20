@@ -502,7 +502,7 @@ std::vector<EntityPtr> Scene::searchTarget(EPosition org, EPosition vt, ui16 isR
         }
 
         //circle 
-        if (!isRect && value2 > PI)
+        if (!isRect && value2 > PI * 2.0 * 0.9)
         {
             /*
             //small clip
