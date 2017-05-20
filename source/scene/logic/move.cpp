@@ -98,6 +98,34 @@ void MoveSync::fillRVO(double frame)
         do
         {
 
+            if (entity._move.action == MOVE_ACTION_FOLLOW)
+            {
+                do
+                {
+                    entity._move.waypoints.clear();
+                    if (entity._move.follow == InvalidEntityID)
+                    {
+                        LOGE("doMove follow EntityID is invalid. self eid=" << entity._state.eid);
+                        break;
+                    }
+                    auto followEntity = scene->getEntity(entity._move.follow);
+                    if (!followEntity || followEntity->_state.state != ENTITY_STATE_ACTIVE)
+                    {
+                        LOGW("doMove follow EntityID not found or state not active. self eid=" << entity._state.eid << ", follow eid=" << entity._move.follow);
+                        break;
+                    }
+
+                    //collision check 
+                    double dist = getDistance(entity._move.position, followEntity->_move.position);
+                    if (dist <= entity._state.collision + followEntity->_state.collision + PATH_PRECISION)
+                    {
+                        break;
+                    }
+                    entity._move.waypoints.push_back(followEntity->_move.position);
+                } while (false);
+            }
+
+
             while (!entity._move.waypoints.empty())
             {
                 double dist = getDistance(entity._move.position, entity._move.waypoints.front());
@@ -402,7 +430,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
             }
 
             //collision check 
-            double dist = getDistance(entity->_move.position.x, entity->_move.position.y, followEntity->_move.position.x, followEntity->_move.position.y);
+            double dist = getDistance(entity->_move.position, followEntity->_move.position);
             if (dist <= entity->_state.collision + followEntity->_state.collision + PATH_PRECISION)
             {
                 break;
@@ -455,10 +483,6 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         moveInfo.waypoints = dsts;
     }
 
-    if (action != MOVE_ACTION_IDLE && !dsts.empty())
-    {
-        entity->_control.lastClientFaceRadian = getRadian(dsts.at(0).x - entity->_move.position.x, dsts.at(0).y - entity->_move.position.y);
-    }
 
     entity->_isMoveDirty = true;
     scene->broadcast(MoveNotice(moveInfo));

@@ -83,9 +83,6 @@ struct EntityControl //EntityControl
     unsigned long long eid = InvalidEntityID;
 
 
-    //cache
-    double lastClientFaceRadian = 0.0; //实体朝向 用于非精准或者次选需求   
-
     //server
     unsigned long long agentNo = RVO::RVO_ERROR; //agentNo.   
     double stateChageTime = 0.0;

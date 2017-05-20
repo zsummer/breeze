@@ -415,7 +415,7 @@ std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, 
 
     auto ret = searchTarget(org, vt, search.isRect,
         search.value1, search.value2, search.value3, search.compensate, search.clip);
-    std::remove_if(ret.begin(), ret.end(), [&search, master, caster](const std::pair<EntityPtr, double> & e)
+    auto beginIter = std::remove_if(ret.begin(), ret.end(), [&search, master, caster](const std::pair<EntityPtr, double> & e)
     {
         if (search.etype != ENTITY_NONE && search.etype != e.first->_state.etype)
         {
@@ -446,6 +446,7 @@ std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, 
         }
         return true;
     });
+    ret.erase(beginIter, ret.end());
     if (ret.size()> search.limitEntitys)
     {
         ret.resize(search.limitEntitys);
