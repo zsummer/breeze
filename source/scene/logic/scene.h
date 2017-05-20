@@ -82,19 +82,10 @@ public:
 
     void pushAsync(std::function<void()> && func);
 
-
-
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition org, double radian, ui64  searchID);
-    std::vector<EntityPtr> searchTarget(EntityPtr caster, EPosition org, double radian, const AOESearch & search);
-
-
-
-    std::vector<EntityPtr> searchTarget(EPosition org, double radian, ui16 isRect, double distance, double value, double compensateForward, double compensateRight);
-
-    //org起点, vt单位向量, isRect是否为矩形, value1向量单位, value2 矩形前端垂直宽度或者扇形弧度, value3矩形近端垂直宽度或者忽略,  compensate向量前向补偿, clip前向裁剪
-    std::vector<EntityPtr> searchTarget(EPosition org, EPosition vt, ui16 isRect, double value1, double value2, double value3, double compensate, double clip);
-
-
+    std::vector<std::pair<EntityPtr, double>> searchTarget(EntityPtr caster, EPosition org, EPosition vt, ui64  searchID);
+    std::vector<std::pair<EntityPtr, double>> searchTarget(EntityPtr caster, EPosition org, EPosition vt, const AOESearch & search);
+    //org起点, vt单位向量, isRect是否为矩形, value1向量单位, value2 矩形前端垂直宽度或者扇形弧度, value3矩形近端垂直宽度或者忽略,  compensate向后补偿一段距离, clip前向裁剪
+    std::vector<std::pair<EntityPtr, double>> searchTarget(EPosition org, EPosition vt, ui16 isRect, double value1, double value2, double value3, double compensate, double clip);
 
 
     void onSceneInit();

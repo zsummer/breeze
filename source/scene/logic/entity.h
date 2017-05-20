@@ -52,6 +52,7 @@ inline double getDistance(const EPosition& pos1, const EPosition & pos2) { retur
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v) { stm << "[" << v.x() << "," << v.y() << "]"; return stm; }
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const std::tuple<double, double> & v) { stm << "[" << std::get<0>(v) << "," << std::get<1>(v) << "]"; return stm; }
 inline RVO::Vector2 toRVOVector2(const EPosition & pos) { return RVO::Vector2(pos.x, pos.y); }
+inline std::tuple<double, double> toTuple(const EPosition & pos) { return std::make_tuple(pos.x, pos.y); }
 inline EPosition toEPosition(const RVO::Vector2 & pos) { return EPosition(pos.x(), pos.y()); }
 inline EPosition toEPosition(const std::tuple<double, double> & pos) { return EPosition(std::get<0>(pos), std::get<1>(pos)); }
 inline DictProp operator + (const DictProp & ep1, const DictProp & ep2);

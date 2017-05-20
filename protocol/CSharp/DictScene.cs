@@ -141,10 +141,11 @@ namespace Proto4z
         public ulong filter;  
         public string filterText;  
         public ushort isRect; //0扇形, 其他矩形  
-        public double distance; //伤害距离  
-        public double value; //弧度或者宽度  
-        public double compensateForward; //前向补偿  
-        public double compensateRight; //右向补偿  
+        public double value1; //伤害距离  
+        public double value2; //弧度或者远端宽度  
+        public double value3; //忽略或者近端宽度  
+        public double compensate; //距离补偿, 一般填负数 规避视觉上的灯下黑问题  
+        public double clip; //可以裁剪扇形的尖角, 圆环等 矩形忽略该参数  
         public ulong limitEntitys; //最大目标数, 距离优先  
         public AOESearch()  
         { 
@@ -153,23 +154,25 @@ namespace Proto4z
             filter = 0;  
             filterText = "";  
             isRect = 0;  
-            distance = 0.0;  
-            value = 0.0;  
-            compensateForward = 0.0;  
-            compensateRight = 0.0;  
+            value1 = 0.0;  
+            value2 = 0.0;  
+            value3 = 0.0;  
+            compensate = 0.0;  
+            clip = 0.0;  
             limitEntitys = 0;  
         } 
-        public AOESearch(ulong id, ushort etype, ulong filter, string filterText, ushort isRect, double distance, double value, double compensateForward, double compensateRight, ulong limitEntitys) 
+        public AOESearch(ulong id, ushort etype, ulong filter, string filterText, ushort isRect, double value1, double value2, double value3, double compensate, double clip, ulong limitEntitys) 
         { 
             this.id = id; 
             this.etype = etype; 
             this.filter = filter; 
             this.filterText = filterText; 
             this.isRect = isRect; 
-            this.distance = distance; 
-            this.value = value; 
-            this.compensateForward = compensateForward; 
-            this.compensateRight = compensateRight; 
+            this.value1 = value1; 
+            this.value2 = value2; 
+            this.value3 = value3; 
+            this.compensate = compensate; 
+            this.clip = clip; 
             this.limitEntitys = limitEntitys; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
@@ -180,10 +183,11 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.filter)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.filterText)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.isRect)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.distance)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.value)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.compensateForward)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.compensateRight)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.value1)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.value2)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.value3)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.compensate)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.clip)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.limitEntitys)); 
             return data; 
         } 
@@ -194,10 +198,11 @@ namespace Proto4z
             this.filter = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.filterText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
             this.isRect = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.distance = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.value = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.compensateForward = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.compensateRight = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.value1 = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.value2 = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.value3 = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.compensate = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.clip = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.limitEntitys = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             return pos; 
         } 
