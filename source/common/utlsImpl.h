@@ -501,14 +501,8 @@ inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isCl
 inline std::tuple<double, double> normalizeVector(std::tuple<double, double> vt) { return normalizeVector(std::get<0>(vt), std::get<1>(vt)); }
 inline std::tuple<double, double> normalizeVector(double vx, double vy)
 {
-    double absx = std::abs(vx);
-    double absy = std::abs(vy);
-    absx = absx > absy ? absx : absy;
-    if (absx == 0.0)
-    {
-        return std::make_tuple(0, 0);
-    }
-    return std::make_tuple(vx/absx, vy/absx);
+    double mode = std::sqrt(vx*vx + vy*vy);
+    return std::make_tuple(vx / mode, vy / mode);
 }
 
 template<class Integer, class Pos>

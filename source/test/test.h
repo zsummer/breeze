@@ -528,7 +528,7 @@ inline int checkFloat()
             }
             ret = normalizeVector(std::get<0>(ret), std::get<1>(ret));
             s = std::get<0>(ret)*vx + std::get<1>(ret)*vy;
-            if (s < -1E-14 || s > 1E-14)
+            if (s < -1E-12 || s > 1E-12)
             {
                 LOGE("radian = " << getRadian(vx, vy) / PI / 2 * 360 << ", ret = " << getRadian(std::get<0>(ret), std::get<1>(ret)) / PI / 2 * 360 );
                 return 28;
