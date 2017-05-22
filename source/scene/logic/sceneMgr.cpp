@@ -591,6 +591,19 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                     entity->_control.spawnpoint = EPosition(10, 180);
                     entity->_move.position = entity->_control.spawnpoint;
                 }
+                else if (scene->getSceneType() == SCENE_HOME)
+                {
+                    if (group.groupID %2 == 0)
+                    {
+                        entity->_control.spawnpoint = EPosition(-63.8 + rand() % 4 - 2, 62.5 + rand() % 4 - 2);
+                    }
+                    else
+                    {
+                        entity->_control.spawnpoint = EPosition(99 + rand()%4-2, 61.5 + rand() % 4 - 2);
+                    }
+                    
+                    entity->_move.position = entity->_control.spawnpoint;
+                }
 
                 scene->addEntity(entity);
         }
