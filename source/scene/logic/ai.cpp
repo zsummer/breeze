@@ -31,13 +31,37 @@ void AI::update()
     }
 
 
-    if (scene->_sceneType != SCENE_HOME)
+    if (scene->_sceneType != SCENE_HOME && scene->_sceneType != SCENE_MELEE)
     {
         return;
     }
     if (_monsters.empty())
     {
-        std::vector<EPosition>  sps = { {62.4,62.4},{47.1,63.6}, {100,63},{-13.3, 62.5}, { -62.4,63.4 } };
+        std::string aiFileName;
+        std::vector<EPosition>  sps;
+        if (scene->getSceneType() == SCENE_HOME)
+        {
+            aiFileName = "../scripts/home_ai.txt";
+        }
+        else if (scene->getSceneType() == SCENE_MELEE)
+        {
+            aiFileName = "../scripts/melee_ai.txt";
+        }
+        if (!aiFileName.empty() && accessFile(aiFileName))
+        {
+            std::string content = readFileContent(aiFileName);
+            auto obs = splitString<std::string>(content, "\n", " \r");
+            for (auto &ob : obs)
+            {
+                std::vector<RVO::Vector2> vertices;
+                auto as = splitArrayString<double, double>(ob, " ", ",", "");
+                for (auto &pos : as)
+                {
+                    sps.push_back(EPosition(std::get<0>(pos), std::get<1>(pos)));
+                }
+            }
+        }
+
         for (auto sp : sps)
         {
             auto entity = scene->makeEntity(rand() % 20 + 1,
@@ -46,7 +70,7 @@ void AI::update()
                 DictArrayKey(),
                 InvalidGroupID);
             entity->_props.hp = 3000 + (rand() % 100) * 20;
-            entity->_props.moveSpeed = 4.0;
+            entity->_props.moveSpeed = 8.0;
             entity->_props.attackQuick = 0.5;
             entity->_props.attack = 80;
             entity->_state.maxHP = entity->_props.hp;

@@ -18,9 +18,9 @@
 
 #ifndef _ENTITY_H_
 #define _ENTITY_H_
-#include <common.h>
-#include <utls.h>
 
+
+#include <common.h>
 #include <DictCommon.h>
 #include <DictScene.h>
 
@@ -29,24 +29,35 @@
 #include <ProtoSceneCommon.h>
 #include <ProtoSceneServer.h>
 #include <ProtoSceneClient.h>
-
 #include <rvo2/RVO.h>
 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v){stm << "[" << v.x() << "," << v.y() << "]";return stm;}
-inline EPosition operator + (const EPosition & dst, const EPosition & org){return EPosition(dst.x + org.x, dst.y + org.y);}
-inline EPosition operator * (const EPosition & dst, const EPosition & org){return EPosition(dst.x * org.x, dst.y * org.y);}
-inline EPosition operator + (const EPosition & dst, double val){return EPosition(dst.x + val, dst.y + val);}
-inline EPosition operator - (const EPosition & dst, double val){return EPosition(dst.x - val, dst.y - val);}
-inline EPosition operator * (const EPosition & dst, double val){return EPosition(dst.x * val, dst.y * val);}
-inline EPosition operator / (const EPosition & dst, double val){return EPosition(dst.x / val, dst.y * val);}
-inline EPosition normalize(const EPosition & dst){if (std::abs(dst.x) > std::abs(dst.y)){return EPosition(dst.x / dst.x, dst.y / dst.x);}return EPosition(dst.x / dst.y, dst.y / dst.y);}
-inline RVO::Vector2 toRVOVector2(const EPosition & pos){return RVO::Vector2(pos.x, pos.y);}
-inline EPosition toEPosition(const RVO::Vector2 & pos){return EPosition(pos.x(), pos.y());}
-inline double getDistance(const EPosition& pos1, const EPosition & pos2){return getDistance(pos1.x, pos1.y, pos2.x, pos2.y);}
+
+inline EPosition operator + (const EPosition & self, const EPosition & org) { return EPosition(self.x + org.x, self.y + org.y); }
+inline EPosition operator - (const EPosition & self, const EPosition & org) { return EPosition(self.x - org.x, self.y - org.y); }
+inline EPosition operator * (const EPosition & self, const EPosition & org) { return EPosition(self.x * org.x, self.y * org.y); }
+inline EPosition operator / (const EPosition & self, const EPosition & org) { return EPosition(self.x / org.x, self.y / org.y); }
+
+inline EPosition operator + (const EPosition & self, double val) { return EPosition(self.x + val, self.y + val); }
+inline EPosition operator - (const EPosition & self, double val) { return EPosition(self.x - val, self.y - val); }
+inline EPosition operator * (const EPosition & self, double val) { return EPosition(self.x * val, self.y * val); }
+inline EPosition operator / (const EPosition & self, double val) { return EPosition(self.x / val, self.y * val); }
+
+inline double getRadian(const EPosition & vt1, const EPosition & vt2) { return getRadian(vt1.x, vt1.y, vt2.x, vt2.y); }
+
+
+inline EPosition normalize(const EPosition & dst) { if (std::abs(dst.x) > std::abs(dst.y)) { return EPosition(dst.x / dst.x, dst.y / dst.x); }return EPosition(dst.x / dst.y, dst.y / dst.y); }
+
+inline double getDistance(const EPosition& pos1, const EPosition & pos2) { return getDistance(pos1.x, pos1.y, pos2.x, pos2.y); }
+
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v) { stm << "[" << v.x() << "," << v.y() << "]"; return stm; }
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const std::tuple<double, double> & v) { stm << "[" << std::get<0>(v) << "," << std::get<1>(v) << "]"; return stm; }
+inline RVO::Vector2 toRVOVector2(const EPosition & pos) { return RVO::Vector2(pos.x, pos.y); }
+inline std::tuple<double, double> toTuple(const EPosition & pos) { return std::make_tuple(pos.x, pos.y); }
+inline EPosition toEPosition(const RVO::Vector2 & pos) { return EPosition(pos.x(), pos.y()); }
+inline EPosition toEPosition(const std::tuple<double, double> & pos) { return EPosition(std::get<0>(pos), std::get<1>(pos)); }
 inline DictProp operator + (const DictProp & ep1, const DictProp & ep2);
 inline DictProp operator * (const DictProp & ep1, const DictProp & ep2);
 inline DictProp operator * (const DictProp & ep, double df);
-
 
 
 using DictID = unsigned long long;
@@ -71,9 +82,6 @@ struct EntityControl //EntityControl
 {
     unsigned long long eid = InvalidEntityID;
 
-
-    //cache
-    double lastClientFaceRadian = 0.0; //实体朝向 用于非精准或者次选需求   
 
     //server
     unsigned long long agentNo = RVO::RVO_ERROR; //agentNo.   

@@ -36,11 +36,12 @@ Proto4z.AOESearch[2] = {name="etype", type="ui16" } --实体类型, 玩家/AI �
 Proto4z.AOESearch[3] = {name="filter", type="ui64" }  
 Proto4z.AOESearch[4] = {name="filterText", type="string" }  
 Proto4z.AOESearch[5] = {name="isRect", type="ui16" } --0扇形, 其他矩形 
-Proto4z.AOESearch[6] = {name="distance", type="double" } --伤害距离 
-Proto4z.AOESearch[7] = {name="value", type="double" } --弧度或者宽度 
-Proto4z.AOESearch[8] = {name="compensateForward", type="double" } --前向补偿 
-Proto4z.AOESearch[9] = {name="compensateRight", type="double" } --右向补偿 
-Proto4z.AOESearch[10] = {name="limitEntitys", type="ui64" } --最大目标数, 距离优先 
+Proto4z.AOESearch[6] = {name="value1", type="double" } --伤害距离 
+Proto4z.AOESearch[7] = {name="value2", type="double" } --弧度或者远端宽度 
+Proto4z.AOESearch[8] = {name="value3", type="double" } --忽略或者近端宽度 
+Proto4z.AOESearch[9] = {name="compensate", type="double" } --距离补偿, 一般填负数 规避视觉上的灯下黑问题 
+Proto4z.AOESearch[10] = {name="clip", type="double" } --可以裁剪扇形的尖角, 圆环等 矩形忽略该参数 
+Proto4z.AOESearch[11] = {name="limitEntitys", type="ui64" } --最大目标数, 距离优先 
  
 Proto4z.BUFF_HALO = 1--描述性类型: 光环 
 Proto4z.BUFF_BUFF = 2--描述性类型: 增益buff 

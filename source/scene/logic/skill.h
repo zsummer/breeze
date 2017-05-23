@@ -41,7 +41,7 @@ public:
     bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
     
 
-    bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill, std::vector<EntityPtr> & targets);
+    bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets);
     bool addBuff();
     bool cleanBuff();
 };

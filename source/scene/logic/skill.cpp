@@ -112,8 +112,8 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
         }
         else
         {
-            double dis = getDistance(caster->_move.position, dst->_move.position);
-            if (dis > dictSearch.second.distance)
+            double dis = getDistance(caster->_move.position, dst->_move.position) - dst->_state.collision;
+            if (dis > dictSearch.second.value1)
             {
                 caster->_state.foe = InvalidEntityID;
                 caster->_isInfoDirty = true;
@@ -131,14 +131,14 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
         return; //needn't change foe .  
     }
 
-    auto result = scene->searchTarget(caster, caster->_move.position,  caster->_control.lastClientFaceRadian, dictSearch.second);
+    auto result = scene->searchTarget(caster, caster->_move.position,  EPosition(0, 1), dictSearch.second);
     if (!result.empty())
     {
         for (auto dst : result)
         {
-            if (caster->_state.foe != dst->_state.eid)
+            if (caster->_state.foe != dst.first->_state.eid)
             {
-                caster->_state.foe = dst->_state.eid;
+                caster->_state.foe = dst.first->_state.eid;
                 caster->_isInfoDirty = true;
                 return;
             }
@@ -184,8 +184,14 @@ void Skill::update()
 
 
         //自动攻击
-        if (e._skillSys.autoAttack && e._state.foe != InvalidEntityID)
+        while (e._skillSys.autoAttack && e._state.foe != InvalidEntityID)
         {
+            auto foe = scene->getEntity(e._state.foe);
+            if (!foe || foe->_state.state != ENTITY_STATE_ACTIVE)
+            {
+                break;
+            }
+            double distance = getDistance(e._move.position, foe->_move.position);
             for (auto id : e._skillSys.dictBootSkills)
             {
                 auto dict = DBDict::getRef().getOneKeyDictSkill(id);
@@ -195,40 +201,56 @@ void Skill::update()
                     continue;
                 }
 
-                if (getBitFlag(dict.second.stamp, SKILL_AUTO_USE) 
-			&& e._move.action != MOVE_ACTION_FORCE_PATH
-			&& e._move.action != MOVE_ACTION_PASV_PATH )
+                if (getBitFlag(dict.second.stamp, SKILL_AUTO_USE)
+                    && e._move.action != MOVE_ACTION_FORCE_PATH
+                    && e._move.action != MOVE_ACTION_PASV_PATH)
                 {
                     auto finder = e._skillSys.activeSkills.find(id);
                     if (finder == e._skillSys.activeSkills.end())
                     {
                         LOGE("error. boot skill not fill. skill id=" << dict.second.id);
+                        continue;
                     }
                     else
                     {
+                        
+
                         auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(dict.second.aoeID);
-                        auto ret = scene->searchTarget(e._move.position, e._control.lastClientFaceRadian, aoeSearch.second.isRect, aoeSearch.second.distance, aoeSearch.second.value,
-                            aoeSearch.second.compensateForward, aoeSearch.second.compensateRight);
-                        EntityID foe = e._state.foe;
-                        if (std::find_if(ret.begin(), ret.end(), [foe](EntityPtr ep) {return ep->_state.eid == foe; }) != ret.end())
+                        if (!aoeSearch.first)
+                        {
+                            LOGE("error");
+                            continue;
+                        }
+
+                        if (e._move.action == MOVE_ACTION_FOLLOW && distance > (std::max(aoeSearch.second.value1, aoeSearch.second.value2) + foe->_state.collision)*0.8)
+                        {
+                            continue;
+                        }
+
+                        auto ret = scene->searchTarget(pr.second, e._move.position, foe->_move.position - e._move.position, aoeSearch.second);
+
+                        if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr,double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
                         {
                             if (e._move.action == MOVE_ACTION_FOLLOW)
                             {
-                                scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe, std::vector<EPosition>());
+                                scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                             }
                             if (isOutCD(pr.second, *finder->second, dict.second) && finder->second->isFinish)
                             {
                                 useSkill(scene, e._state.eid, id);
                             }
                         }
-                        else if (foe != InvalidEntityID && e._move.action == MOVE_ACTION_IDLE)
+                        else if (e._move.action == MOVE_ACTION_IDLE)
                         {
-                            scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe, std::vector<EPosition>());
+                            scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                         }
                     }
                 }
             }
+
+            break; // once  
         }
+
 
 
         //被动技能 
@@ -298,11 +320,7 @@ bool  Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID)
         return false;
     }
 
-    auto tpPos = getFarPoint(e->_move.position.x, e->_move.position.y, e->_control.lastClientFaceRadian, aoeSearch.second.distance);
-    EPosition pos;
-    pos.x = std::get<0>(tpPos);
-    pos.y = std::get<1>(tpPos);
-    return useSkill(scene, casterID, skillID, pos, true);
+    return useSkill(scene, casterID, skillID, EPosition(0, 1), true);
 }
 
 
@@ -398,7 +416,7 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
             skill->activeOrgEID = foe->_state.eid;
             skill->activeOrg = foe->_move.position;
         }
-        double radian = getRadian(e->_move.position.x, e->_move.position.y, skill->activeDst.x, skill->activeDst.y);
+        double radian = getRadian(skill->activeDst.x - e->_move.position.x, skill->activeDst.y - e->_move.position.y);
         if (getDistance(e->_move.position, skill->activeOrg) > dictSkill.second.orgLimitDistance)
         {
             auto pos = getFarPoint(e->_move.position.x, e->_move.position.y, radian, dictSkill.second.orgLimitDistance);
@@ -490,9 +508,7 @@ bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
         return false;
     }
 
-    auto result = scene->searchTarget(caster, skill->activeOrg,
-        getRadian(skill->activeOrg.x, skill->activeOrg.y, skill->activeDst.x, skill->activeDst.y),
-        dictAoe.second);
+    auto result = scene->searchTarget(caster, skill->activeOrg,skill->activeDst - skill->activeOrg, dictAoe.second);
 
    if (result.empty())
    {
@@ -503,43 +519,43 @@ bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
 }
 
 
-bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill, std::vector<EntityPtr> & targets)
+bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets)
 {
     SceneEventNotice notice;
     for (auto target : targets)
     {
-        if (target->_state.state != ENTITY_STATE_ACTIVE)
+        if (target.first->_state.state != ENTITY_STATE_ACTIVE)
         {
             continue;
         }
-        target->_state.curHP -= 80;
-        target->_isInfoDirty = true;
+        target.first->_state.curHP -= 80;
+        target.first->_isInfoDirty = true;
         if (caster->_state.etype != ENTITY_FLIGHT)
         {
-            notice.info.push_back(SceneEventInfo(caster->_state.eid, target->_state.eid, SCENE_EVENT_HARM_ATTACK, 80, ""));
+            notice.info.push_back(SceneEventInfo(caster->_state.eid, target.first->_state.eid, SCENE_EVENT_HARM_ATTACK, 80, ""));
         }
         else
         {
-            notice.info.push_back(SceneEventInfo(caster->_state.master, target->_state.eid, SCENE_EVENT_HARM_ATTACK, 80, ""));
+            notice.info.push_back(SceneEventInfo(caster->_state.master, target.first->_state.eid, SCENE_EVENT_HARM_ATTACK, 80, ""));
         }
 
-        if (target->_state.curHP <= 0)
+        if (target.first->_state.curHP <= 0)
         {
-            target->_state.curHP = 0.0;
-            target->_state.state = ENTITY_STATE_LIE;
-            target->_move.action = MOVE_ACTION_IDLE;
-            target->_move.follow = InvalidEntityID;
-            target->_state.foe = InvalidEntityID;
+            target.first->_state.curHP = 0.0;
+            target.first->_state.state = ENTITY_STATE_LIE;
+            target.first->_move.action = MOVE_ACTION_IDLE;
+            target.first->_move.follow = InvalidEntityID;
+            target.first->_state.foe = InvalidEntityID;
 
-            target->_control.stateChageTime = getFloatSteadyNowTime();
+            target.first->_control.stateChageTime = getFloatSteadyNowTime();
 
             if (caster->_state.etype != ENTITY_FLIGHT)
             {
-                notice.info.push_back(SceneEventInfo(caster->_state.eid, target->_state.eid, SCENE_EVENT_LIE, 0, ""));
+                notice.info.push_back(SceneEventInfo(caster->_state.eid, target.first->_state.eid, SCENE_EVENT_LIE, 0, ""));
             }
             else
             {
-                notice.info.push_back(SceneEventInfo(caster->_state.master, target->_state.eid, SCENE_EVENT_LIE, 0, ""));
+                notice.info.push_back(SceneEventInfo(caster->_state.master, target.first->_state.eid, SCENE_EVENT_LIE, 0, ""));
             }
         }
     }

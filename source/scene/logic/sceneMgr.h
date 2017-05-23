@@ -84,11 +84,13 @@ private:
 
 
 private:
+
+
+    std::map<SceneID, ScenePtr> _homes;
     std::map<SceneID, ScenePtr> _actives;
     std::queue<ScenePtr> _frees; //队列
-
     std::map<SceneID, ScenePtr> _scenes;
-    std::map<SceneID, ScenePtr> _homes;
+    
     std::map<ServiceID, std::pair<std::string, SceneID>> _tokens;
 
     SessionID _worldSessionID = InvalidSessionID;

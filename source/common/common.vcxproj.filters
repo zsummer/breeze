@@ -125,6 +125,12 @@
     <ClInclude Include="rvo2\Vector2.h">
       <Filter>rvo2</Filter>
     </ClInclude>
+    <ClInclude Include="aoe\aoe.h">
+      <Filter>aoe</Filter>
+    </ClInclude>
+    <ClInclude Include="bcui\bcui.h">
+      <Filter>bcui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbAsync.cpp" />
@@ -260,6 +266,12 @@
     <ClCompile Include="rvo2\RVOSimulator.cpp">
       <Filter>rvo2</Filter>
     </ClCompile>
+    <ClCompile Include="aoe\aoe.cpp">
+      <Filter>aoe</Filter>
+    </ClCompile>
+    <ClCompile Include="bcui\bcui.cpp">
+      <Filter>bcui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lua">
@@ -270,6 +282,12 @@
     </Filter>
     <Filter Include="rvo2">
       <UniqueIdentifier>{3250f30c-9078-4fbe-935a-30ba88018f95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="aoe">
+      <UniqueIdentifier>{5269f94d-299e-45d1-95d9-5ea8abde2429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bcui">
+      <UniqueIdentifier>{51b01437-6480-49ae-b3c0-723580e69304}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

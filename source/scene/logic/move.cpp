@@ -14,24 +14,60 @@ MoveSync::~MoveSync()
         _sim = nullptr;
     }
 }
-void MoveSync::init(std::weak_ptr<Scene> scene)
+void MoveSync::init(std::weak_ptr<Scene> weak_scene)
 {
-    _scene = scene;
+    _scene = weak_scene;
     _sim = new RVO::RVOSimulator();
     _sim->setTimeStep(SceneFrameInterval);
-    _sim->setAgentDefaults(15.0, 1000, 70.0, 70.0, 2.0, 7.0);
-    if (false)
-    {
-        std::vector<RVO::Vector2> vertices;
-        vertices.push_back(RVO::Vector2(-7.0, -20.0));
-        vertices.push_back(RVO::Vector2(7.0, -20.0));
-        vertices.push_back(RVO::Vector2(7.0, 20.0));
-        vertices.push_back(RVO::Vector2(-7.0, 20.0));
-        _sim->addObstacle(vertices);
-        _sim->processObstacles();
-    }
+    _sim->setAgentDefaults(30.0, 10, 1.0, 1.0, 1.0, 0.0);
     _lastDoRVO = getFloatSteadyNowTime();
     _lastPrintStatus = _lastDoRVO;
+
+    auto scene = weak_scene.lock();
+    if (!scene)
+    {
+        return;
+    }
+
+
+
+    std::string obstacleFileName;
+    if (scene->getSceneType() == SCENE_HOME)
+    {
+        obstacleFileName = "../scripts/home_obstacle.txt";
+    }
+    else if (scene->getSceneType() == SCENE_MELEE)
+    {
+        obstacleFileName = "../scripts/melee_obstacle.txt";
+    }
+    if (!obstacleFileName.empty() && accessFile(obstacleFileName))
+    {
+        std::string content = readFileContent(obstacleFileName);
+        auto obs = splitString<std::string>(content, "\n", " \r");
+        for (auto &ob : obs)
+        {
+            std::vector<RVO::Vector2> vertices;
+            auto as = splitArrayString<double, double>(ob, " ", ",", "");
+            for (auto &pos : as)
+            {
+                vertices.push_back(RVO::Vector2(std::get<0>(pos), std::get<1>(pos)));
+            }
+            if (!vertices.empty())
+            {
+                auto id = _sim->addObstacle(vertices);
+                std::string log = "add one obstacle. id=" + toString(id) + " [";
+
+                for (auto t : vertices)
+                {
+                    log += toString(t.x()) + ":" + toString(t.y()) + "  ";
+                }
+                LOGI(log);
+
+            }
+        }
+
+        _sim->processObstacles();
+    }
 }
 
 
@@ -62,6 +98,34 @@ void MoveSync::fillRVO(double frame)
         do
         {
 
+            if (entity._move.action == MOVE_ACTION_FOLLOW)
+            {
+                do
+                {
+                    entity._move.waypoints.clear();
+                    if (entity._move.follow == InvalidEntityID)
+                    {
+                        LOGE("doMove follow EntityID is invalid. self eid=" << entity._state.eid);
+                        break;
+                    }
+                    auto followEntity = scene->getEntity(entity._move.follow);
+                    if (!followEntity || followEntity->_state.state != ENTITY_STATE_ACTIVE)
+                    {
+                        LOGW("doMove follow EntityID not found or state not active. self eid=" << entity._state.eid << ", follow eid=" << entity._move.follow);
+                        break;
+                    }
+
+                    //collision check 
+                    double dist = getDistance(entity._move.position, followEntity->_move.position);
+                    if (dist <= entity._state.collision + followEntity->_state.collision + PATH_PRECISION)
+                    {
+                        break;
+                    }
+                    entity._move.waypoints.push_back(followEntity->_move.position);
+                } while (false);
+            }
+
+
             while (!entity._move.waypoints.empty())
             {
                 double dist = getDistance(entity._move.position, entity._move.waypoints.front());
@@ -79,17 +143,8 @@ void MoveSync::fillRVO(double frame)
                 break;
             }
 
-            if (::accessFile("../rvo.txt"))
-            {
-                std::string content = readFileContent("../rvo.txt");
-                auto tp = splitTupleString<double, size_t, double, double, double>(content, ",", " ");
-                sim->setAgentNeighborDist(entity._control.agentNo, std::get<0>(tp));
-                sim->setAgentMaxNeighbors(entity._control.agentNo, std::get<1>(tp));
-                sim->setAgentTimeHorizon(entity._control.agentNo, std::get<2>(tp));
-                sim->setAgentTimeHorizonObst(entity._control.agentNo, std::get<3>(tp));
-                
-            }
-            sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
+
+
             double dist = getDistance(entity._move.position, entity._move.waypoints.front());
             if (dist < entity._state.collision + PATH_PRECISION)
             {
@@ -110,6 +165,14 @@ void MoveSync::fillRVO(double frame)
                 dir *= entity._move.expectSpeed;
                 sim->setAgentPrefVelocity(entity._control.agentNo, dir);
             }
+            sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
+            sim->setAgentTimeHorizon(entity._control.agentNo, 1.0);
+            sim->setAgentTimeHorizonObst(entity._control.agentNo, frame);
+            sim->setAgentNeighborDist(entity._control.agentNo, 1.5 * sim->getAgentMaxSpeed(entity._control.agentNo));
+            sim->setAgentMaxNeighbors(entity._control.agentNo, 100);
+
+
+
             LOGD("RVO fill move[" << entity._state.avatarName << "] local=" << entity._move.position
                 << ", dst=" << entity._move.waypoints.front() << ", dir=" << sim->getAgentPrefVelocity(entity._control.agentNo) << ", max Speed=" 
             << sim->getAgentMaxSpeed(entity._control.agentNo));
@@ -179,7 +242,7 @@ void MoveSync::fixDirtyMove(double frame)
             }
             continue;
         }
-        if (entity._move.action == MOVE_ACTION_IDLE)
+        if (entity._move.action == MOVE_ACTION_IDLE )
         {
             //check
             auto rvoPos = toEPosition(sim->getAgentPosition(entity._control.agentNo));
@@ -367,7 +430,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
             }
 
             //collision check 
-            double dist = getDistance(entity->_move.position.x, entity->_move.position.y, followEntity->_move.position.x, followEntity->_move.position.y);
+            double dist = getDistance(entity->_move.position, followEntity->_move.position);
             if (dist <= entity->_state.collision + followEntity->_state.collision + PATH_PRECISION)
             {
                 break;
@@ -420,10 +483,6 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         moveInfo.waypoints = dsts;
     }
 
-    if (action != MOVE_ACTION_IDLE && !dsts.empty())
-    {
-        entity->_control.lastClientFaceRadian = getRadian(entity->_move.position.x, entity->_move.position.y, dsts.at(0).x, dsts.at(0).y);
-    }
 
     entity->_isMoveDirty = true;
     scene->broadcast(MoveNotice(moveInfo));

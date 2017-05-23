@@ -1,5 +1,6 @@
 ﻿#include "scene.h"
 #include "sceneMgr.h"
+#include <aoe/aoe.h>
 Scene::Scene(SceneID id)
 {
     _sceneID = id;
@@ -393,18 +394,18 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
 
 
 
-std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition org, double radian, ui64  searchID)
+std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, EPosition org, EPosition vt, ui64  searchID)
 {
     auto search = DBDict::getRef().getOneKeyAOESearch(searchID);
     if (!search.first)
     {
         LOGE("Scene::searchTarget not found search config. searchID=" << searchID);
-        return std::vector<EntityPtr>();
+        return std::vector<std::pair<EntityPtr, double>>();
     }
-    return searchTarget(caster, org, radian, search.second);
+    return searchTarget(caster, org, vt, search.second);
 }
 
-std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition org, double radian, const AOESearch & search)
+std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, EPosition org, EPosition vt, const AOESearch & search)
 {
     EntityPtr master = caster;
     if (caster->_state.etype == ENTITY_FLIGHT && caster->_state.master != InvalidEntityID)
@@ -412,109 +413,79 @@ std::vector<EntityPtr> Scene::searchTarget(EntityPtr caster, EPosition org, doub
         master = getEntity(caster->_state.master);
     }
 
-    auto ret = searchTarget(org, radian, search.isRect,
-        search.distance, search.value, search.compensateForward, search.compensateRight);
-
-    std::vector<EntityPtr> filtered;
-    for (auto e : ret)
+    auto ret = searchTarget(org, vt, search.isRect,
+        search.value1, search.value2, search.value3, search.compensate, search.clip);
+    auto beginIter = std::remove_if(ret.begin(), ret.end(), [&search, master, caster](const std::pair<EntityPtr, double> & e)
     {
-        if (filtered.size() >= search.limitEntitys)
+        if (search.etype != ENTITY_NONE && search.etype != e.first->_state.etype)
         {
-            break;
-        }
-        if (search.etype != ENTITY_NONE && search.etype != e->_state.etype)
-        {
-            continue;
+            return true;
         }
 
-        if (getBitFlag(search.filter, FILTER_SELF) && master && master->_state.eid == e->_state.eid)
+        if (getBitFlag(search.filter, FILTER_SELF) && master && master->_state.eid == e.first->_state.eid)
         {
-            filtered.push_back(e);
-            continue;
+            return false;
         }
-        if (getBitFlag(search.filter, FILTER_OTHER_FRIEND) &&  caster->_state.camp == e->_state.camp)
+
+        if (getBitFlag(search.filter, FILTER_OTHER_FRIEND) && caster->_state.camp == e.first->_state.camp)
         {
-            if (master && master->_state.eid == e->_state.eid)
+            if (master && master->_state.eid == e.first->_state.eid)
             {
-                continue;
+                return true;
             }
-            filtered.push_back(e);
-            continue;
+            return false;
         }
-        if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != e->_state.camp && e->_state.camp < ENTITY_CAMP_NEUTRAL)
+
+        if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != e.first->_state.camp && e.first->_state.camp < ENTITY_CAMP_NEUTRAL)
         {
-            filtered.push_back(e);
-            continue;
+            return false;
         }
-        if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != e->_state.camp && e->_state.camp > ENTITY_CAMP_NEUTRAL)
+        if (getBitFlag(search.filter, FILTER_NEUTRAL_CAMP) && e.first->_state.camp > ENTITY_CAMP_NEUTRAL)
         {
-            filtered.push_back(e);
-            continue;
+            return false;
         }
+        return true;
+    });
+    ret.erase(beginIter, ret.end());
+    if (ret.size()> search.limitEntitys)
+    {
+        ret.resize(search.limitEntitys);
     }
-    return std::move(filtered);
+    return ret;
 }
 
-std::vector<EntityPtr> Scene::searchTarget(EPosition org, double radian, ui16 isRect, double distance, double value, double compensateForward, double compensateRight)
+std::vector<std::pair<EntityPtr, double>>  Scene::searchTarget(EPosition org, EPosition vt, ui16 isRect, double value1, double value2, double value3, double compensate, double clip)
 {
-    //位移补偿
-    if (true)
-    {
-        auto ofstForward = getFarPoint(org.x, org.y, radian, compensateForward);
-        auto ofstRight = getFarPoint(std::get<0>(ofstForward), std::get<1>(ofstForward), fmod(radian+ PI*2.0 - PI/2.0, PI*2.0), compensateRight);
-        distance += getDistance(org.x, org.y, std::get<0>(ofstRight), std::get<1>(ofstRight));
-        org.x = std::get<0>(ofstRight);
-        org.y = std::get<1>(ofstRight);
-    }
-
-    std::vector<EntityPtr> ret;
+    std::vector<std::pair<EntityPtr, double>> ret;
+    vt = normalize(vt);
+    org = org - vt*compensate;
+    value1 = value1 + compensate;
+    AOECheck ac;
+    ac.init(toTuple(org), toTuple(vt), isRect != 0, value1, value2, value3, clip);
 
     for (auto kv : _entitys)
     {
-        auto & entity = *(kv.second);
-        if (entity._state.etype != ENTITY_PLAYER && entity._state.etype != ENTITY_AI)
+        EPosition pos = kv.second->_move.position;
+        if (kv.second->_state.etype != ENTITY_PLAYER && kv.second->_state.etype != ENTITY_AI)
         {
             continue;
         }
-        if (entity._state.state != ENTITY_STATE_ACTIVE)
+        if (kv.second->_state.state != ENTITY_STATE_ACTIVE)
         {
             continue;
         }
-        
-        if (getDistance(org, entity._move.position) > distance)
+        auto cRet = ac.check(toTuple(pos), kv.second->_state.collision);
+        if (std::get<0>(cRet))
         {
-            continue;
+            ret.push_back(std::make_pair(kv.second, std::get<1>(cRet)));
         }
-        if (!isRect && value < PI*2.0*0.9)
-        {
-            double radianEntity = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
-            double curRadian = fmod(radian+value/2.0, PI*2.0);
-            if ((curRadian >= radianEntity && curRadian - radianEntity < value)
-                || (curRadian < radianEntity && curRadian + PI*2.0 - radianEntity < value))
-            {
-
-            }
-            else
-            {
-                continue;
-            }
-        }
-        if (isRect)
-        {
-            double curRadian = getRadian(org.x, org.y, entity._move.position.x, entity._move.position.y);
-            auto dst = rotatePoint(org.x, org.y, curRadian,
-                getDistance(org, entity._move.position), PI*2.0 - curRadian );
-            if (abs(std::get<1>(dst) - org.y) > value/2.0)
-            {
-                continue;
-            }
-        }
-        ret.push_back(kv.second);
     }
-    std::sort(ret.begin(), ret.end(), [org](const EntityPtr & entity1, const EntityPtr & entity2)
-    {return getDistance(org, entity1->_move.position) < getDistance(org, entity2->_move.position); });
-    return std::move(ret);
+    std::sort(ret.begin(), ret.end(), [org](const std::pair<EntityPtr, double> & e1, const std::pair<EntityPtr, double> & e2){return e1.second < e2.second; });
+    return ret;
 }
+
+
+
 
 void Scene::onSceneInit()
 {

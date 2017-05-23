@@ -39,10 +39,11 @@
         <member name="filter" type="ui64"  tag="ignore" desc=""/>
         <member name="filterText" type="string"  desc=""/>
         <member name="isRect" type="ui16"  desc="0扇形, 其他矩形"/>
-        <member name="distance" type="double"  desc="伤害距离"/>
-        <member name="value" type="double"  desc="弧度或者宽度"/>
-        <member name="compensateForward" type="double"  desc="前向补偿"/>
-        <member name="compensateRight" type="double"  desc="右向补偿"/>
+        <member name="value1" type="double"  desc="伤害距离"/>
+        <member name="value2" type="double"  desc="弧度或者远端宽度"/>
+        <member name="value3" type="double"  desc="忽略或者近端宽度"/>
+        <member name="compensate" type="double"  desc="距离补偿, 一般填负数 规避视觉上的灯下黑问题"/>
+        <member name="clip" type="double"  desc="可以裁剪扇形的尖角, 圆环等 矩形忽略该参数"/>
         <member name="limitEntitys" type="ui64"  desc="最大目标数, 距离优先"/>
     </struct>
 

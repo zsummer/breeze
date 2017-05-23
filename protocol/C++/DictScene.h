@@ -190,10 +190,11 @@ struct AOESearch
     unsigned long long filter;  
     std::string filterText;  
     unsigned short isRect; //0扇形, 其他矩形  
-    double distance; //伤害距离  
-    double value; //弧度或者宽度  
-    double compensateForward; //前向补偿  
-    double compensateRight; //右向补偿  
+    double value1; //伤害距离  
+    double value2; //弧度或者远端宽度  
+    double value3; //忽略或者近端宽度  
+    double compensate; //距离补偿, 一般填负数 规避视觉上的灯下黑问题  
+    double clip; //可以裁剪扇形的尖角, 圆环等 矩形忽略该参数  
     unsigned long long limitEntitys; //最大目标数, 距离优先  
     AOESearch() 
     { 
@@ -201,23 +202,25 @@ struct AOESearch
         etype = 0; 
         filter = 0; 
         isRect = 0; 
-        distance = 0.0; 
-        value = 0.0; 
-        compensateForward = 0.0; 
-        compensateRight = 0.0; 
+        value1 = 0.0; 
+        value2 = 0.0; 
+        value3 = 0.0; 
+        compensate = 0.0; 
+        clip = 0.0; 
         limitEntitys = 0; 
     } 
-    AOESearch(const unsigned long long & id, const unsigned short & etype, const unsigned long long & filter, const std::string & filterText, const unsigned short & isRect, const double & distance, const double & value, const double & compensateForward, const double & compensateRight, const unsigned long long & limitEntitys) 
+    AOESearch(const unsigned long long & id, const unsigned short & etype, const unsigned long long & filter, const std::string & filterText, const unsigned short & isRect, const double & value1, const double & value2, const double & value3, const double & compensate, const double & clip, const unsigned long long & limitEntitys) 
     { 
         this->id = id; 
         this->etype = etype; 
         this->filter = filter; 
         this->filterText = filterText; 
         this->isRect = isRect; 
-        this->distance = distance; 
-        this->value = value; 
-        this->compensateForward = compensateForward; 
-        this->compensateRight = compensateRight; 
+        this->value1 = value1; 
+        this->value2 = value2; 
+        this->value3 = value3; 
+        this->compensate = compensate; 
+        this->clip = clip; 
         this->limitEntitys = limitEntitys; 
     } 
 }; 
@@ -234,14 +237,16 @@ std::vector<std::string>  AOESearch::getDBBuild()
     ret.push_back("alter table `tb_AOESearch` change `filterText`  `filterText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_AOESearch` add `isRect`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AOESearch` change `isRect`  `isRect`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AOESearch` add `distance`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AOESearch` change `distance`  `distance`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AOESearch` add `value`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AOESearch` change `value`  `value`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AOESearch` add `compensateForward`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AOESearch` change `compensateForward`  `compensateForward`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AOESearch` add `compensateRight`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_AOESearch` change `compensateRight`  `compensateRight`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` add `value1`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` change `value1`  `value1`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` add `value2`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` change `value2`  `value2`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` add `value3`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` change `value3`  `value3`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` add `compensate`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` change `compensate`  `compensate`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` add `clip`  double NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_AOESearch` change `clip`  `clip`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AOESearch` add `limitEntitys`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_AOESearch` change `limitEntitys`  `limitEntitys`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     return ret; 
@@ -249,26 +254,27 @@ std::vector<std::string>  AOESearch::getDBBuild()
 std::string  AOESearch::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`etype`,`filterText`,`isRect`,`distance`,`value`,`compensateForward`,`compensateRight`,`limitEntitys` from `tb_AOESearch` where `id` = ? "); 
+    q.init("select `id`,`etype`,`filterText`,`isRect`,`value1`,`value2`,`value3`,`compensate`,`clip`,`limitEntitys` from `tb_AOESearch` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  AOESearch::getDBSelectPure() 
 { 
-    return "select `id`,`etype`,`filterText`,`isRect`,`distance`,`value`,`compensateForward`,`compensateRight`,`limitEntitys` from `tb_AOESearch` "; 
+    return "select `id`,`etype`,`filterText`,`isRect`,`value1`,`value2`,`value3`,`compensate`,`clip`,`limitEntitys` from `tb_AOESearch` "; 
 } 
 std::string  AOESearch::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_AOESearch`(`id`,`etype`,`filterText`,`isRect`,`distance`,`value`,`compensateForward`,`compensateRight`,`limitEntitys`) values(?,?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_AOESearch`(`id`,`etype`,`filterText`,`isRect`,`value1`,`value2`,`value3`,`compensate`,`clip`,`limitEntitys`) values(?,?,?,?,?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->etype; 
     q << this->filterText; 
     q << this->isRect; 
-    q << this->distance; 
-    q << this->value; 
-    q << this->compensateForward; 
-    q << this->compensateRight; 
+    q << this->value1; 
+    q << this->value2; 
+    q << this->value3; 
+    q << this->compensate; 
+    q << this->clip; 
     q << this->limitEntitys; 
     return q.pickSQL(); 
 } 
@@ -282,15 +288,16 @@ std::string  AOESearch::getDBDelete()
 std::string  AOESearch::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_AOESearch`(id) values(? ) on duplicate key update `etype` = ?,`filterText` = ?,`isRect` = ?,`distance` = ?,`value` = ?,`compensateForward` = ?,`compensateRight` = ?,`limitEntitys` = ? "); 
+    q.init("insert into `tb_AOESearch`(id) values(? ) on duplicate key update `etype` = ?,`filterText` = ?,`isRect` = ?,`value1` = ?,`value2` = ?,`value3` = ?,`compensate` = ?,`clip` = ?,`limitEntitys` = ? "); 
     q << this->id; 
     q << this->etype; 
     q << this->filterText; 
     q << this->isRect; 
-    q << this->distance; 
-    q << this->value; 
-    q << this->compensateForward; 
-    q << this->compensateRight; 
+    q << this->value1; 
+    q << this->value2; 
+    q << this->value3; 
+    q << this->compensate; 
+    q << this->clip; 
     q << this->limitEntitys; 
     return q.pickSQL(); 
 } 
@@ -309,10 +316,11 @@ bool AOESearch::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->etype; 
             result >> this->filterText; 
             result >> this->isRect; 
-            result >> this->distance; 
-            result >> this->value; 
-            result >> this->compensateForward; 
-            result >> this->compensateRight; 
+            result >> this->value1; 
+            result >> this->value2; 
+            result >> this->value3; 
+            result >> this->compensate; 
+            result >> this->clip; 
             result >> this->limitEntitys; 
             return true;  
         } 
@@ -331,10 +339,11 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.filter;  
     ws << data.filterText;  
     ws << data.isRect;  
-    ws << data.distance;  
-    ws << data.value;  
-    ws << data.compensateForward;  
-    ws << data.compensateRight;  
+    ws << data.value1;  
+    ws << data.value2;  
+    ws << data.value3;  
+    ws << data.compensate;  
+    ws << data.clip;  
     ws << data.limitEntitys;  
     return ws; 
 } 
@@ -345,10 +354,11 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.filter;  
     rs >> data.filterText;  
     rs >> data.isRect;  
-    rs >> data.distance;  
-    rs >> data.value;  
-    rs >> data.compensateForward;  
-    rs >> data.compensateRight;  
+    rs >> data.value1;  
+    rs >> data.value2;  
+    rs >> data.value3;  
+    rs >> data.compensate;  
+    rs >> data.clip;  
     rs >> data.limitEntitys;  
     return rs; 
 } 
@@ -360,10 +370,11 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "filter=" << info.filter << ","; 
     stm << "filterText=" << info.filterText << ","; 
     stm << "isRect=" << info.isRect << ","; 
-    stm << "distance=" << info.distance << ","; 
-    stm << "value=" << info.value << ","; 
-    stm << "compensateForward=" << info.compensateForward << ","; 
-    stm << "compensateRight=" << info.compensateRight << ","; 
+    stm << "value1=" << info.value1 << ","; 
+    stm << "value2=" << info.value2 << ","; 
+    stm << "value3=" << info.value3 << ","; 
+    stm << "compensate=" << info.compensate << ","; 
+    stm << "clip=" << info.clip << ","; 
     stm << "limitEntitys=" << info.limitEntitys << ","; 
     stm << "]"; 
     return stm; 

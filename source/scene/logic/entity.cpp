@@ -13,23 +13,7 @@ Entity::~Entity()
 
 double Entity::getSpeed()
 {
-    if (_state.etype == ENTITY_PLAYER)
-    {
-        return 12.0;
-    }
-    else if (_state.etype == ENTITY_AI)
-    {
-        return 8.0;
-    }
-    else if (_state.etype == ENTITY_FLIGHT)
-    {
-        return 20.0;
-    }
-    else
-    {
-        return 10.0;
-    }
-    
+    return _props.moveSpeed;
 }
 
 double Entity::getSuckBlood()

@@ -122,7 +122,7 @@ void SceneMgr::onTimer()
     for (auto scene : frees)
     {
         _frees.push(scene);
-        if (scene->getSceneType() == SCENE_HOME)
+        if (scene->getSceneType() == SCENE_HOME || scene->getSceneType() == SCENE_MELEE)
         {
             _homes.erase(scene->getSceneID());
         }
@@ -537,11 +537,11 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
 {
     ScenePtr scene;
     //如果类型是主城并且存在未满人的主城 直接丢进去
-    if (ins.sceneType == SCENE_HOME)
+    if (ins.sceneType == SCENE_HOME || ins.sceneType == SCENE_MELEE)
     {
         for (auto &kv : _homes)
         {
-            if( kv.second->getPlayerCount() < 30 )
+            if( kv.second->getPlayerCount() < 30  && kv.second->getSceneType() == ins.sceneType)
             {
                 scene = kv.second;
                 break;
@@ -561,7 +561,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         _frees.pop();
         scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
         _actives.insert(std::make_pair(scene->getSceneID(), scene));
-        if (ins.sceneType == SCENE_HOME)
+        if (ins.sceneType == SCENE_HOME || ins.sceneType == SCENE_MELEE)
         {
             _homes.insert(std::make_pair(scene->getSceneID(), scene));
         }
@@ -577,14 +577,34 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                     avatar.second.equips,
                     group.groupID);
                 entity->_props.hp = 10000;
-                entity->_props.moveSpeed = 6.0;
+                entity->_props.moveSpeed = 12.0;
                 entity->_props.attackQuick = 1.0;
                 entity->_props.attack = 200;
                 entity->_state.maxHP = entity->_props.hp;
                 entity->_state.curHP = entity->_state.maxHP;
                 entity->_state.camp = ENTITY_CAMP_BLUE + rand() % 100;
-                entity->_state.collision = 1.0;
+                entity->_state.collision = 1.5;
                 entity->_skillSys.dictBootSkills.insert(1);
+
+                if (scene->getSceneType() == SCENE_MELEE)
+                {
+                    entity->_control.spawnpoint = EPosition(10, 180);
+                    entity->_move.position = entity->_control.spawnpoint;
+                }
+                else if (scene->getSceneType() == SCENE_HOME)
+                {
+                    if (group.groupID %2 == 0)
+                    {
+                        entity->_control.spawnpoint = EPosition(-63.8 + rand() % 4 - 2, 62.5 + rand() % 4 - 2);
+                    }
+                    else
+                    {
+                        entity->_control.spawnpoint = EPosition(99 + rand()%4-2, 61.5 + rand() % 4 - 2);
+                    }
+                    
+                    entity->_move.position = entity->_control.spawnpoint;
+                }
+
                 scene->addEntity(entity);
         }
         SceneServerGroupStateFeedback ret;

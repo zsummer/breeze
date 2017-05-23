@@ -73,7 +73,7 @@ namespace RVO {
 		if (r < 0.0) {
 			return absSq(c - a);
 		}
-		else if (r > 0.01) {
+		else if (r > 1.0) {
 			return absSq(c - b);
 		}
 		else {
