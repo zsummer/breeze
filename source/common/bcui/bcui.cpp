@@ -5,19 +5,67 @@
 
 
 
-BCUI::BCUI()
+BCUI::BCUI(int x, int y, BCUI_PIXEL background)
 {
+    _x = x;
+    _y = y;
+    _bg = background;
+    if (x*y > 0 && background != BCUI_PIXEL_NONE)
+    {
+        _vector2 = new char[x*y];
+    }
 
 }
 
 BCUI::~BCUI()
 {
-
+    if (_vector2)
+    {
+        delete _vector2;
+        _vector2 = nullptr;
+    }
 }
+
+BCUI_PIXEL BCUI::getPos(int x, int y)
+{
+    if (!_vector2)
+    {
+        return BCUI_PIXEL_NONE;
+    }
+    if (x < 0 || y < 0 || x >= _x || y >= _y)
+    {
+        return BCUI_PIXEL_NONE;
+    }
+    return (BCUI_PIXEL)_vector2[x*_x +  _y - y];
+}
+void BCUI::reset(BCUI_PIXEL view)
+{
+    if (!_vector2)
+    {
+        return;
+    }
+    for (int i = 0; i < _x; i++)
+    {
+        for (int j = 0; j < _y; j++)
+        {
+            if (getPos(i, j) != view)
+            {
+                setPos(i, j, view);
+            }
+        }
+    }
+}
+
+
+
 
 #ifdef WIN32
 bool BCUI::init()
 {
+    if (!_vector2 )
+    {
+        return false;
+    }
     _handle = GetStdHandle(STD_OUTPUT_HANDLE);
     if (_handle == NULL || _handle == INVALID_HANDLE_VALUE)
     {
@@ -42,6 +90,15 @@ bool BCUI::init()
 
 bool BCUI::setPos(int x, int y, BCUI_PIXEL bp)
 {
+    if (x < 0 || y < 0 || x >= _x || y >= _y)
+    {
+        return false;
+    }
+    y = _y - y;
+    if (!_vector2)
+    {
+        return false;
+    }
     if (_handle == NULL || _handle == INVALID_HANDLE_VALUE)
     {
         return false;
@@ -86,19 +143,33 @@ bool BCUI::setPos(int x, int y, BCUI_PIXEL bp)
     printf("%c%c", ' ', ' ');
     SetConsoleTextAttribute(_handle, oldInfo.wAttributes);
 
-
-
+    _vector2[x*_x + y] = bp;
     return true;
 }
 #else
 bool BCUI::init()
 {
+    if (!_vector2)
+    {
+        return false;
+    }
+
     printf("%s", "\033[?25l\033[0m");
     return true;
 }
 
 bool BCUI::setPos(int x, int y, BCUI_PIXEL bp)
 {
+    if (x < 0 || y < 0 || x >= _x || y >= _y)
+    {
+        return false;
+    }
+    y = _y - y;
+    if (!_vector2)
+    {
+        return false;
+    }
+
     x = x * 2;
     std::string s;
     s += "\033[" + toString(y) + ";" + toString(x) + "H";
@@ -127,6 +198,7 @@ bool BCUI::setPos(int x, int y, BCUI_PIXEL bp)
     s += "  ";
     s += "\033[0m";
     printf("%s", s.c_str());
+    _vector2[x*_x + y] = bp;
     return true;
 }
 #endif

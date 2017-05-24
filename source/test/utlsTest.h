@@ -499,12 +499,35 @@ inline int checkFloat()
     {
         return 20;
     }
-
-
     if (!isEqual(calcELORatingUpper(1500, 1800, 1), 1527, 1E0))
+    {
+        return 21;
+    }
+    if (det(1,0, 0, 1) <= 0)
+    {
+        return 22;
+    }
+    if (det(1, 0, 0, -1) >= 0)
+    {
+        return 23;
+    }
+    if (!isEqual(det(1, 0, 1, 0)+1 , 1, 1E-10))
+    {
+        return 24;
+    }
+    if (!isEqual(dot(1, 0, 0, 1) + 1, 1, 1E-10))
+    {
+        return 25;
+    }
+    if (dot(1, 0, 1, 1) <= 0 )
+    {
+        return 26;
+    }
+    if (dot(1, 0, -1, 1) >= 0)
     {
         return 27;
     }
+
     if (true)
     {
         double vx, vy, s;
@@ -526,7 +549,7 @@ inline int checkFloat()
             {
                 ret = rotateVertical(vx, vy, false);
             }
-            ret = normalizeVector(std::get<0>(ret), std::get<1>(ret));
+            ret = normalize(std::get<0>(ret), std::get<1>(ret));
             s = std::get<0>(ret)*vx + std::get<1>(ret)*vy;
             if (s < -1E-12 || s > 1E-12)
             {
@@ -564,9 +587,7 @@ inline int checkFloat()
             dst = newDst;
         }
     }
-    if (true)
-    {
-    }
+
 
 
     return 0;

@@ -17,9 +17,10 @@
 
 
 //! 测试
-#include "test.h"
+#include "utlsTest.h"
 
-#include "aoeTest.h"
+#include "aoeViewer.h"
+#include "vectorViewer.h"
 
 #define TestUtls(func) do \
 { \
@@ -62,7 +63,8 @@ int main(int argc, char* argv[])
 #endif
     srand((ui32)time(NULL));
 
-    //AoeTest();
+    //AoeViewer();
+    //vectorViewer();
     ILog4zManager::getPtr()->start();
     SessionManager::getRef().start();
 
@@ -79,8 +81,8 @@ int main(int argc, char* argv[])
     LOGI("0second" << formatDateTimeString(0));
     LOGI("now" << formatDateTimeString(getNowTime()));
     LOGA("version released by " << __DATE__ << " " << __TIME__);
-    TestUtls(checkString);
-    TestUtls(checkFile);
+    //TestUtls(checkString);
+    //TestUtls(checkFile);
     TestUtls(checkFloat);
     TestUtls(checkBalance);
     TestUtls(checkRandom);

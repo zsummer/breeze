@@ -42,12 +42,7 @@ inline EPosition operator - (const EPosition & self, double val) { return EPosit
 inline EPosition operator * (const EPosition & self, double val) { return EPosition(self.x * val, self.y * val); }
 inline EPosition operator / (const EPosition & self, double val) { return EPosition(self.x / val, self.y * val); }
 
-inline double getRadian(const EPosition & vt1, const EPosition & vt2) { return getRadian(vt1.x, vt1.y, vt2.x, vt2.y); }
 
-
-inline EPosition normalize(const EPosition & dst) { if (std::abs(dst.x) > std::abs(dst.y)) { return EPosition(dst.x / dst.x, dst.y / dst.x); }return EPosition(dst.x / dst.y, dst.y / dst.y); }
-
-inline double getDistance(const EPosition& pos1, const EPosition & pos2) { return getDistance(pos1.x, pos1.y, pos2.x, pos2.y); }
 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const RVO::Vector2 & v) { stm << "[" << v.x() << "," << v.y() << "]"; return stm; }
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const std::tuple<double, double> & v) { stm << "[" << std::get<0>(v) << "," << std::get<1>(v) << "]"; return stm; }
@@ -55,6 +50,11 @@ inline RVO::Vector2 toRVOVector2(const EPosition & pos) { return RVO::Vector2(po
 inline std::tuple<double, double> toTuple(const EPosition & pos) { return std::make_tuple(pos.x, pos.y); }
 inline EPosition toEPosition(const RVO::Vector2 & pos) { return EPosition(pos.x(), pos.y()); }
 inline EPosition toEPosition(const std::tuple<double, double> & pos) { return EPosition(std::get<0>(pos), std::get<1>(pos)); }
+
+inline EPosition normalize(const EPosition & dst) { return toEPosition(normalize(dst.x, dst.y)); }
+inline double getRadian(const EPosition & vt1, const EPosition & vt2) { return getRadian(vt1.x, vt1.y, vt2.x, vt2.y); }
+inline double getDistance(const EPosition& pos1, const EPosition & pos2) { return getDistance(pos1.x, pos1.y, pos2.x, pos2.y); }
+
 inline DictProp operator + (const DictProp & ep1, const DictProp & ep2);
 inline DictProp operator * (const DictProp & ep1, const DictProp & ep2);
 inline DictProp operator * (const DictProp & ep, double df);

@@ -22,8 +22,9 @@
 #include <tuple>
 
 
-enum BCUI_PIXEL
+enum BCUI_PIXEL : char
 {
+    BCUI_PIXEL_NONE,
     BCUI_PIXEL_BLACK,
     BCUI_PIXEL_WHITE,
     BCUI_PIXEL_RED,
@@ -36,16 +37,24 @@ enum BCUI_PIXEL
 class BCUI
 {
 public:
-    BCUI();
+    BCUI(int x, int y, BCUI_PIXEL background);
     ~BCUI();
+
     bool init();
+    inline int getX() { return _x; }
+    inline int getY() { return _y; }
     bool setPos(int x, int y, BCUI_PIXEL bp);
+    BCUI_PIXEL getPos(int x, int y);
+    void reset(BCUI_PIXEL view);
 private:
 #ifdef WIN32
     HANDLE _handle;
 #endif
-protected:
 private:
+    char * _vector2 = nullptr;
+    int _x = 0;
+    int _y = 0;
+    BCUI_PIXEL _bg = BCUI_PIXEL_NONE;
 };
 
 

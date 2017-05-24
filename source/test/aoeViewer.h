@@ -28,13 +28,12 @@ using namespace zsummer::mysql;
 
 
 
-const int screenX = 70;
-const int screenY = 70;
+static  int screenX = 50;
+static  int screenY = 50;
 
-int AoeMap[screenX][screenY] = { 9};
 struct Aoe
 {
-    std::tuple<double, double> org; 
+    std::tuple<double, double> org;
     std::tuple<double, double> vt;
     bool isRect;
     double value1;
@@ -43,37 +42,13 @@ struct Aoe
     double clip;
 };
 
-inline void cleanScreen(BCUI & bcui)
-{
-    for (int i = 0; i < screenX; i++)
-    {
-        for (int j = 0; j < screenY; j++)
-        {
-            if (i ==0 || j ==0 || i == screenX -1 || j == screenY - 1)
-            {
-                if (AoeMap[i][j] != (int)BCUI_PIXEL_BLACK)
-                {
-                    bcui.setPos(i, j, BCUI_PIXEL_BLACK);
-                }
-            }
-            else
-            {
-                if (AoeMap[i][j] != (int)BCUI_PIXEL_WHITE)
-                {
-                    bcui.setPos(i, j, BCUI_PIXEL_WHITE);
-                }
-            }
-            
-        }
-    }
-}
 
-inline void AoeTest()
+inline void AoeViewer()
 {
-    BCUI bcui;
+    BCUI bcui(screenX, screenY, BCUI_PIXEL_WHITE);
     bcui.init();
+    bcui.reset(BCUI_PIXEL_WHITE);
 
-    cleanScreen(bcui);
 
     std::vector<Aoe> aoes;
     if (true)
@@ -86,20 +61,20 @@ inline void AoeTest()
         aoe.value3 = 10;
         aoe.isRect = false;
         aoe.clip = 1;
-        for (int i=1; i<=7; i++)
+        for (int i = 1; i <= 7; i++)
         {
             aoe.value2 = PI / 180.0 * 60.0 * i;
-            for (int j=0; j<5; j++)
+            for (int j = 0; j < 5; j++)
             {
                 aoe.vt = getFarPoint(0, 0, PI * 2 / 4 * j, 1);
-                for (int c=0; c<2; c++)
+                for (int c = 0; c < 2; c++)
                 {
                     aoe.clip = 6 * c;
                     aoes.push_back(aoe);
                 }
             }
         }
-        
+
         aoe.isRect = true;
         aoe.clip = 0;
 
@@ -128,15 +103,14 @@ inline void AoeTest()
 
     for (auto aoe : aoes)
     {
-        cleanScreen(bcui);
-        bcui.setPos(5, 0, BCUI_PIXEL_BLUE);
-        AoeMap[5][0] = (int)BCUI_PIXEL_BLUE;
+        bcui.reset(BCUI_PIXEL_WHITE);
+        bcui.setPos(0, 0, BCUI_PIXEL_WHITE);
         if (!aoe.isRect)
         {
-            printf("AOE Circle  dist=%.2lf  angle=%.2lf  clip=%.2lf  face=%.2lf", aoe.value1, aoe.value2, aoe.clip, getRadian(aoe.vt));
+            printf("AOE Circle  dist=%.2lf  angle=%.2lf  clip=%.2lf  face=%.2lf", aoe.value1, aoe.value2/PI*180, aoe.clip, getRadian(aoe.vt) / PI * 180);
         }
-        
-        
+
+
         AOECheck ac;
         if (ac.init(aoe.org, aoe.vt, aoe.isRect, aoe.value1, aoe.value2, aoe.value3, aoe.clip))
         {
@@ -147,26 +121,20 @@ inline void AoeTest()
             printf("  AOeCheck init error");
         }
         bcui.setPos((int)std::get<0>(aoe.org), (int)std::get<1>(aoe.org), BCUI_PIXEL_RED);
-        AoeMap[(int)std::get<0>(aoe.org)][(int)std::get<1>(aoe.org)] = (int)BCUI_PIXEL_RED;
-        for (int i=0; i<screenX; i++)
+        for (int i = 0; i < screenX; i++)
         {
-            for (int j=0; j<screenY; j++)
+            for (int j = 0; j < screenY; j++)
             {
                 auto ret = ac.check(std::make_tuple(i*1.0, j*1.0), 0);
                 if (std::get<0>(ret))
                 {
                     bcui.setPos(i, j, BCUI_PIXEL_BLUE);
-                    AoeMap[i][j] = (int)BCUI_PIXEL_BLUE;
                 }
             }
         }
         bcui.setPos((int)std::get<0>(aoe.org), (int)std::get<1>(aoe.org), BCUI_PIXEL_RED);
-        AoeMap[(int)std::get<0>(aoe.org)][(int)std::get<1>(aoe.org)] = (int)BCUI_PIXEL_RED;
         sleepMillisecond(500);
     }
 
-
-    bcui.setPos(0, screenY, BCUI_PIXEL_BLUE);
-
-    return ;
+    return;
 }
