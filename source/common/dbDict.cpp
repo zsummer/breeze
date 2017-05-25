@@ -48,7 +48,7 @@ bool DBDict::fakeTestData()
     {
         AOESearch aoe;
         aoe.isRect = 0;
-        aoe.value1 = 20;
+        aoe.value1 = 12;
         aoe.value2 = PI * 2;
         aoe.value3 = 0;
         aoe.clip = 0;
@@ -67,7 +67,7 @@ bool DBDict::fakeTestData()
         aoe.limitEntitys = 1000;
         _dictOneKeyAOESearch[aoe.id] = aoe;
 
-        aoe.value1 = 12;
+        aoe.value1 = 10;
         aoe.value2 = PI / 2;
         aoe.compensate = 3;
         aoe.clip = 2;

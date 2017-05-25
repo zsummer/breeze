@@ -338,6 +338,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         auto entity = getEntity(req.eid);
         if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
             || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH 
+            || entity->_state.state != ENTITY_STATE_ACTIVE
                     )
         {
             sendToClient(avatarID, MoveResp(EC_ERROR, req.eid, req.action));
@@ -359,7 +360,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         UseSkillReq req;
         rs >> req;
         auto entity = getEntity(req.eid);
-        if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER 
+        if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER || entity->_state.state != ENTITY_STATE_ACTIVE
             || ! _skill->useSkill(shared_from_this(), req.eid, req.skillID, req.dst, req.foeFirst)
            )
         {
