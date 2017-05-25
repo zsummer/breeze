@@ -46,6 +46,32 @@ void MoveSync::init(std::weak_ptr<Scene> weak_scene)
         auto obs = splitString<std::string>(content, "\n", " \r");
         for (auto &ob : obs)
         {
+            if (ob.empty())
+            {
+                continue;
+            }
+            if (true)
+            {
+                bool isComment = false;
+                for (auto c : ob)
+                {
+                    if (c == '#')
+                    {
+                        isComment = true;
+                        break;
+                    }
+                    if (c > '0' && c <='9')
+                    {
+                        break;
+                    }
+                }
+                if (isComment)
+                {
+                    continue;
+                }
+            }
+
+
             std::vector<RVO::Vector2> vertices;
             auto as = splitArrayString<double, double>(ob, " ", ",", "");
             for (auto &pos : as)

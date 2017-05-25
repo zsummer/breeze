@@ -112,7 +112,7 @@ public:
     EntitySkillSystem _skillSys;
     EntityControl _control;
     SessionID _clientSessionID = InvalidSessionID;
-    bool _isInfoDirty = false;
+    bool _isStateDirty = false;
     bool _isMoveDirty = false;
 
 };

@@ -94,7 +94,7 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
         if (caster->_state.foe != InvalidEntityID)
         {
             caster->_state.foe = InvalidEntityID;
-            caster->_isInfoDirty = true;
+            caster->_isStateDirty = true;
         }
         LOGE("can not found searchID config . searchID=" << searchID);
         return;
@@ -108,7 +108,7 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
         if (!dst || dst->_state.state != ENTITY_STATE_ACTIVE)
         {
             caster->_state.foe = InvalidEntityID;
-            caster->_isInfoDirty = true;
+            caster->_isStateDirty = true;
         }
         else
         {
@@ -116,7 +116,7 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
             if (dis > dictSearch.second.value1)
             {
                 caster->_state.foe = InvalidEntityID;
-                caster->_isInfoDirty = true;
+                caster->_isStateDirty = true;
             }
         }
     }
@@ -139,7 +139,7 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
             if (caster->_state.foe != dst.first->_state.eid)
             {
                 caster->_state.foe = dst.first->_state.eid;
-                caster->_isInfoDirty = true;
+                caster->_isStateDirty = true;
                 return;
             }
         }
@@ -184,10 +184,10 @@ void Skill::update()
 
 
         //自动攻击
-        while (e._skillSys.autoAttack && e._state.foe != InvalidEntityID)
+        while (e._skillSys.autoAttack && e._state.foe != InvalidEntityID && e._state.state == ENTITY_STATE_ACTIVE)
         {
             auto foe = scene->getEntity(e._state.foe);
-            if (!foe || foe->_state.state != ENTITY_STATE_ACTIVE)
+            if (!foe || foe->_state.state != ENTITY_STATE_ACTIVE )
             {
                 break;
             }
@@ -300,6 +300,11 @@ bool  Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID)
     if (!e)
     {
         LOGE("not found caster. casterID=" << casterID << ", skillID=" << skillID);
+        return false;
+    }
+    if (e->_state.state != ENTITY_STATE_ACTIVE)
+    {
+        LOGE("caster state is not ENTITY_STATE_ACTIVE. casterID=" << casterID << ", skillID=" << skillID << ", state=" << e->_state.state);
         return false;
     }
     auto dictSkill =  DBDict::getRef().getOneKeyDictSkill(skillID);
@@ -531,7 +536,7 @@ bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
         //process harm     
         double harm = caster->_props.attack;  
         target.first->_state.curHP -= harm;
-        target.first->_isInfoDirty = true;
+        target.first->_isStateDirty = true;
         if (caster->_state.etype != ENTITY_FLIGHT)
         {
             notice.info.push_back(SceneEventInfo(caster->_state.eid, target.first->_state.eid, SCENE_EVENT_HARM_ATTACK, harm, ""));
@@ -560,6 +565,7 @@ bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
                 notice.info.push_back(SceneEventInfo(caster->_state.master, target.first->_state.eid, SCENE_EVENT_LIE, 0, ""));
             }
         }
+        target.first->_isStateDirty = true;
     }
     scene->broadcast(notice);
     return true;

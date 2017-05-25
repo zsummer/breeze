@@ -53,6 +53,31 @@ void AI::update()
             auto obs = splitString<std::string>(content, "\n", " \r");
             for (auto &ob : obs)
             {
+                if (ob.empty())
+                {
+                    continue;
+                }
+                if (true)
+                {
+                    bool isComment = false;
+                    for (auto c : ob)
+                    {
+                        if (c == '#')
+                        {
+                            isComment = true;
+                            break;
+                        }
+                        if (c > '0' && c <= '9')
+                        {
+                            break;
+                        }
+                    }
+                    if (isComment)
+                    {
+                        continue;
+                    }
+                }
+
                 std::vector<RVO::Vector2> vertices;
                 auto as = splitArrayString<double, double>(ob, " ", ",", "");
                 for (auto &pos : as)
@@ -142,7 +167,7 @@ void AI::update()
             {
                 kv.second->_state.state = ENTITY_STATE_ACTIVE;
                 kv.second->_state.curHP = kv.second->_props.hp;
-                kv.second->_isInfoDirty = true;
+                kv.second->_isStateDirty = true;
                 kv.second->_move.position = kv.second->_control.spawnpoint;
                 if (scene->_move->isValidAgent(kv.second->_control.agentNo))
                 {

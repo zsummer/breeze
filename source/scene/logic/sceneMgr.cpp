@@ -531,7 +531,7 @@ void SceneMgr::onSceneGroupAvatarInfo(TcpSessionPtr session, SceneGroupAvatarInf
     }
     entity->_state.avatarName = info.avatarName;
     entity->_state.modelID = info.modelID;
-    entity->_isInfoDirty = true;
+    entity->_isStateDirty = true;
 }
 void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins)
 {

@@ -289,10 +289,10 @@ bool Scene::onUpdate()
     SceneRefreshNotice notice;
     for (auto &kv : _entitys)
     {
-        if (kv.second->_isInfoDirty)
+        if (kv.second->_isStateDirty)
         {
             notice.entityStates.push_back(kv.second->_state);
-            kv.second->_isInfoDirty = false;
+            kv.second->_isStateDirty = false;
         }
         if (kv.second->_isMoveDirty)
         {
