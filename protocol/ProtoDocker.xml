@@ -106,7 +106,13 @@
         </body>
     </packet>
 
-
+    <packet name="ReloadDBDictNotice" desc= "重新加载字典文件">
+    </packet>
+    <packet name="ReloadDBDictFinish" desc= "重新加载字典文件">
+         <member name="dockerID" type="ui64" desc="" />
+         <member name="activeTime" type="double" desc="" />
+         <member name="used" type="double" desc="" />
+    </packet>
     <!-------------------------------------------------------------------------------------------->
     <!--------------------------------   db service   -------------------------------------------->
     <!-------------------------------------------------------------------------------------------->

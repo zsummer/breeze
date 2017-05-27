@@ -290,6 +290,7 @@ struct DBConfig
 
 struct WorldConfig 
 {
+    DockerID _dockerID = InvalidDockerID;
     std::string _dockerListenHost;
     unsigned short _dockerListenPort = 0;
     std::string _sceneListenHost;

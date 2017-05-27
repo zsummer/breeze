@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>606b4e9b73807914b0bbf65ae75f0c75</cppmd5> 
-<luamd5>ceeca830ff60b8fdcf04780e01c2f304</luamd5> 
-<csharpmd5>20d2bccf8efa9e77f2e0adee8af3a31c</csharpmd5> 
-<xmlmd5>9e3e6449bc6b48077aae1e9f127addbb</xmlmd5> 
+<cppmd5>be5c5002f98ff17b989d8d46828483d7</cppmd5> 
+<luamd5>b229052555c6f4e9d5a65d24dafbe31c</luamd5> 
+<csharpmd5>6826fa4c37c9edc7aedfc82288939c71</csharpmd5> 
+<xmlmd5>5a9d0646cd514a0054150e1769c6b1e2</xmlmd5> 
 <cacheNumber>
     <cache key = "AvatarOffline" Number = "3023" /> 
     <cache key = "DBDataResult" Number = "3015" /> 
@@ -21,6 +21,9 @@
     <cache key = "LoadServiceNotice" Number = "3004" /> 
     <cache key = "RealClientClosedNotice" Number = "3008" /> 
     <cache key = "RefreshServiceToMgrNotice" Number = "3005" /> 
+    <cache key = "ReloadDBDict" Number = "3024" /> 
+    <cache key = "ReloadDBDictFinish" Number = "3026" /> 
+    <cache key = "ReloadDBDictNotice" Number = "3025" /> 
     <cache key = "ServiceInfo" Number = "3003" /> 
     <cache key = "ShutdownClusterServer" Number = "3011" /> 
     <cache key = "SwitchServiceClientNotice" Number = "3006" /> 

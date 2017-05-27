@@ -602,6 +602,18 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     {
         event_onWebServerRequest(session, rsShell);
     }
+    else if (rsShell.getProtoID() == ReloadDBDictNotice::getProtoID())
+    {
+        size_t nowDate = getNowTime();
+        double now = getFloatSteadyNowTime();
+        DBDict::getRef().load();
+        now = getFloatSteadyNowTime() - now;
+        Tracing trace;
+        trace.routing.toServiceType = STWebAgent;
+        trace.routing.toServiceID = InvalidServiceID;
+        trace.routing.traceBackID = InvalidServiceID;
+        toService(trace, ReloadDBDictFinish(ServerConfig::getRef().getDockerID(), (double)nowDate, now));
+    }
 
     
 }

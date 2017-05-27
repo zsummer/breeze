@@ -107,6 +107,19 @@ Proto4z.ForwardToDocker = {} --转发给Docker
 Proto4z.ForwardToDocker.__protoID = 3014 
 Proto4z.ForwardToDocker.__protoName = "ForwardToDocker" 
  
+Proto4z.register(3025,"ReloadDBDictNotice") 
+Proto4z.ReloadDBDictNotice = {} --重新加载字典文件 
+Proto4z.ReloadDBDictNotice.__protoID = 3025 
+Proto4z.ReloadDBDictNotice.__protoName = "ReloadDBDictNotice" 
+ 
+Proto4z.register(3026,"ReloadDBDictFinish") 
+Proto4z.ReloadDBDictFinish = {} --重新加载字典文件 
+Proto4z.ReloadDBDictFinish.__protoID = 3026 
+Proto4z.ReloadDBDictFinish.__protoName = "ReloadDBDictFinish" 
+Proto4z.ReloadDBDictFinish[1] = {name="dockerID", type="ui64" }  
+Proto4z.ReloadDBDictFinish[2] = {name="activeTime", type="double" }  
+Proto4z.ReloadDBDictFinish[3] = {name="used", type="double" }  
+ 
 Proto4z.DBStringArray = {}  
 Proto4z.DBStringArray.__protoName = "DBStringArray" 
 Proto4z.DBStringArray.__protoDesc = "array" 

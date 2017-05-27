@@ -233,6 +233,21 @@ public:
                    return "AvatarOffline";
             }
             break;
+            case 3024:
+            {
+                   return "ReloadDBDict";
+            }
+            break;
+            case 3025:
+            {
+                   return "ReloadDBDictNotice";
+            }
+            break;
+            case 3026:
+            {
+                   return "ReloadDBDictFinish";
+            }
+            break;
             case 4000:
             {
                    return "SceneKnock";

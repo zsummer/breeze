@@ -45,12 +45,18 @@ private:
     void getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
     void offlinechat(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
 
+
+    std::map<DockerID, std::tuple<double, double>> _reloadState;
+    double _lastReloadTick = 0;
+    void reload(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
+    void onReloadState(Tracing trace, ReadStream &rs);
+
 private:
     void onWebServerRequest(Tracing trace, ReadStream &rs);
     void onWebServerResponseTest(Tracing trace, ReadStream &rs);
     void onWebServerResponseTestCallback(ReadStream &rs, DockerID dockerID, SessionID clientID);
 private:
-    void responseError(DockerID dockerID, SessionID clientID);
+    void responseError(DockerID dockerID, SessionID clientID, unsigned int ecode, const std::string & msg);
     void responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body);
     void responseSuccess(DockerID dockerID, SessionID clientID, const std::string & body, const std::map<std::string, std::string> &  heads);
 private:

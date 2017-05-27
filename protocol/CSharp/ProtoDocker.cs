@@ -522,6 +522,66 @@ namespace Proto4z
         } 
     } 
  
+    public class ReloadDBDictNotice: Proto4z.IProtoObject //重新加载字典文件  
+    {     
+        //proto id   
+        public const ushort protoID = 3025;  
+        static public ushort getProtoID() { return 3025; } 
+        static public string getProtoName() { return "ReloadDBDictNotice"; } 
+        //members   
+        public ReloadDBDictNotice()  
+        { 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            return pos; 
+        } 
+    } 
+ 
+    public class ReloadDBDictFinish: Proto4z.IProtoObject //重新加载字典文件  
+    {     
+        //proto id   
+        public const ushort protoID = 3026;  
+        static public ushort getProtoID() { return 3026; } 
+        static public string getProtoName() { return "ReloadDBDictFinish"; } 
+        //members   
+        public ulong dockerID;  
+        public double activeTime;  
+        public double used;  
+        public ReloadDBDictFinish()  
+        { 
+            dockerID = 0;  
+            activeTime = 0.0;  
+            used = 0.0;  
+        } 
+        public ReloadDBDictFinish(ulong dockerID, double activeTime, double used) 
+        { 
+            this.dockerID = dockerID; 
+            this.activeTime = activeTime; 
+            this.used = used; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.dockerID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.used)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.dockerID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.activeTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.used = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
  
     public class DBStringArray : System.Collections.Generic.List<string>, Proto4z.IProtoObject  
     { 

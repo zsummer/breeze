@@ -132,6 +132,12 @@ namespace Proto4z
             _idToName.Add(3022, "WebServerResponse");
             _nameToID.Add("AvatarOffline", 3023);
             _idToName.Add(3023, "AvatarOffline");
+            _nameToID.Add("ReloadDBDict", 3024);
+            _idToName.Add(3024, "ReloadDBDict");
+            _nameToID.Add("ReloadDBDictNotice", 3025);
+            _idToName.Add(3025, "ReloadDBDictNotice");
+            _nameToID.Add("ReloadDBDictFinish", 3026);
+            _idToName.Add(3026, "ReloadDBDictFinish");
             _nameToID.Add("SceneKnock", 4000);
             _idToName.Add(4000, "SceneKnock");
             _nameToID.Add("ScenePulse", 4001);

@@ -319,6 +319,15 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         onSceneGroupAvatarInfo(session, info);
         return;
     }
+    else if (rsShell.getProtoID() == ReloadDBDictNotice::getProtoID())
+    {
+        LOGI("ReloadDBDictNotice Hotupdate begin.");
+        double now = getFloatSteadyNowTime();
+        DBDict::getRef().load();
+        now = getFloatSteadyNowTime() - now;
+        LOGI("ReloadDBDictNotice Hotupdate success. usedTime=" << now);
+        return;
+    }
     else if (rsShell.getProtoID() == SceneServerEnterSceneIns::getProtoID())
     {
         SceneServerEnterSceneIns ins;

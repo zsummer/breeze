@@ -530,6 +530,70 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct ReloadDBDictNotice //重新加载字典文件  
+{ 
+    static const unsigned short getProtoID() { return 3025;} 
+    static const std::string getProtoName() { return "ReloadDBDictNotice";} 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ReloadDBDictNotice & data) 
+{ 
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ReloadDBDictNotice & data) 
+{ 
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ReloadDBDictNotice & info) 
+{ 
+    stm << "["; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct ReloadDBDictFinish //重新加载字典文件  
+{ 
+    static const unsigned short getProtoID() { return 3026;} 
+    static const std::string getProtoName() { return "ReloadDBDictFinish";} 
+    unsigned long long dockerID;  
+    double activeTime;  
+    double used;  
+    ReloadDBDictFinish() 
+    { 
+        dockerID = 0; 
+        activeTime = 0.0; 
+        used = 0.0; 
+    } 
+    ReloadDBDictFinish(const unsigned long long & dockerID, const double & activeTime, const double & used) 
+    { 
+        this->dockerID = dockerID; 
+        this->activeTime = activeTime; 
+        this->used = used; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ReloadDBDictFinish & data) 
+{ 
+    ws << data.dockerID;  
+    ws << data.activeTime;  
+    ws << data.used;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, ReloadDBDictFinish & data) 
+{ 
+    rs >> data.dockerID;  
+    rs >> data.activeTime;  
+    rs >> data.used;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const ReloadDBDictFinish & info) 
+{ 
+    stm << "["; 
+    stm << "dockerID=" << info.dockerID << ","; 
+    stm << "activeTime=" << info.activeTime << ","; 
+    stm << "used=" << info.used << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
  
 typedef std::vector<std::string> DBStringArray;  
  

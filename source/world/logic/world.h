@@ -120,7 +120,7 @@ private:
     std::map<AreaID, std::map<ServiceType, SceneDockerInfo> > _services; //只记录singleton的service   
 	std::map<LineID, SceneLineInfoPtr> _lines;
     Balance<LineID> _homeBalance;
-    Balance<LineID> _otherBalance;
+    Balance<LineID> _closureBalance;
     AccepterID _dockerListen = InvalidAccepterID;
     AccepterID _sceneListen = InvalidAccepterID;
 

@@ -307,6 +307,24 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
         ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
         event_onServiceForwardMessage(session, trace, rs);
     }
+    else if (rsShell.getProtoID() == ReloadDBDictNotice::getProtoID())
+    {
+        size_t nowDate = getNowTime();
+        double now = getFloatSteadyNowTime();
+        DBDict::getRef().load();
+        now = getFloatSteadyNowTime() - now;
+        Tracing trace;
+        trace.routing.toServiceType = STWebAgent;
+        trace.routing.toServiceID = InvalidServiceID;
+        trace.routing.traceBackID = InvalidServiceID;
+        toService(session->getSessionID(), trace, ReloadDBDictFinish(ServerConfig::getRef().getDockerID(), (double)nowDate, now));
+
+        for (auto & l : _lines)
+        {
+            sendViaSessionID(l.second->sessionID, ReloadDBDictNotice());
+        }
+
+    }
 }
 
 SceneGroupInfoPtr World::getGroupInfoByAvatarID(ServiceID serviceID)
@@ -341,7 +359,7 @@ SceneLineInfoPtr World::pickHomeLineNode(double step, double autoAdd)
 
 SceneLineInfoPtr World::pickOtherLineNode(double step, double autoAdd)
 {
-    LineID id = _otherBalance.pickNode(step, autoAdd);
+    LineID id = _closureBalance.pickNode(step, autoAdd);
     if (id == InvalidLineID)
     {
         return nullptr;
@@ -481,7 +499,7 @@ void World::event_onSceneClosed(TcpSessionPtr session)
 			}
             founder->second->sessionID = InvalidSessionID;
             _homeBalance.disableNode(founder->second->knock.lineID);
-            _otherBalance.disableNode(founder->second->knock.lineID);
+            _closureBalance.disableNode(founder->second->knock.lineID);
 			break;
 		}
 
@@ -528,7 +546,7 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
         line->knock = knock;
         _lines[knock.lineID] = line;
         _homeBalance.enableNode(knock.lineID);
-        _otherBalance.enableNode(knock.lineID);
+        _closureBalance.enableNode(knock.lineID);
 	}
     else if (rs.getProtoID() == ScenePulse::getProtoID())
     {

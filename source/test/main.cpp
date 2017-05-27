@@ -15,6 +15,8 @@
 * limitations under the License.
 */
 
+int screenX = 50;
+int screenY = 50;
 
 //! 测试
 #include "utlsTest.h"

@@ -28,8 +28,7 @@ using namespace zsummer::mysql;
 
 
 
-static  int screenX = 50;
-static  int screenY = 50;
+
 
 struct Aoe
 {
