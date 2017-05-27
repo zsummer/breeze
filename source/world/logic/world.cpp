@@ -61,7 +61,6 @@ inline std::list<SceneGroupInfoPool> matchingPool(SceneGroupInfoPool & org, size
 
 World::World()
 {
-    _matchPools.resize(SCENE_MAX);
 }
 
 bool World::init(const std::string & configName)
@@ -347,9 +346,9 @@ SceneLineInfoPtr World::getLineInfo(LineID lineID)
     return nullptr;
 }
 
-SceneLineInfoPtr World::pickHomeLineNode(double step, double autoAdd)
+SceneLineInfoPtr World::pickFreeLineNode(double step, double autoAdd)
 {
-    LineID id = _homeBalance.pickNode(step, autoAdd);
+    LineID id = _freeBalance.pickNode(step, autoAdd);
     if (id == InvalidLineID)
     {
         return nullptr;
@@ -357,7 +356,7 @@ SceneLineInfoPtr World::pickHomeLineNode(double step, double autoAdd)
     return getLineInfo(id);
 }
 
-SceneLineInfoPtr World::pickOtherLineNode(double step, double autoAdd)
+SceneLineInfoPtr World::pickClosureLineNode(double step, double autoAdd)
 {
     LineID id = _closureBalance.pickNode(step, autoAdd);
     if (id == InvalidLineID)
@@ -498,7 +497,7 @@ void World::event_onSceneClosed(TcpSessionPtr session)
 				break;
 			}
             founder->second->sessionID = InvalidSessionID;
-            _homeBalance.disableNode(founder->second->knock.lineID);
+            _freeBalance.disableNode(founder->second->knock.lineID);
             _closureBalance.disableNode(founder->second->knock.lineID);
 			break;
 		}
@@ -545,7 +544,7 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
         line->sessionID = session->getSessionID();
         line->knock = knock;
         _lines[knock.lineID] = line;
-        _homeBalance.enableNode(knock.lineID);
+        _freeBalance.enableNode(knock.lineID);
         _closureBalance.enableNode(knock.lineID);
 	}
     else if (rs.getProtoID() == ScenePulse::getProtoID())
@@ -582,19 +581,28 @@ void World::onMatchTimer()
     {
         _matchTimerID = SessionManager::getRef().createTimer(1000, std::bind(&World::onMatchTimer, this));
     }
-    onMatchHomeTimer();
-    onMatchMeleeTimer();
+    for (auto &kv : _matchPools)
+    {
+        if (kv.first == SCENE_HOME || kv.first == SCENE_MELEE)
+        {
+            for (auto & kvm : kv.second)
+            {
+                onMatchFreeTimer(kv.first, kvm.first);
+            }
+        }
+    }
+
     onMatchArenaTimer();
 }
 
-void World::onMatchHomeTimer()
+void World::onMatchFreeTimer(ui16 sceneType, ui64 mapID)
 {
-    auto &pool = _matchPools[SCENE_HOME];
+    auto &pool = _matchPools[sceneType][mapID];
     const size_t MatchCount = 1;
     auto matched = matchingPool(pool, MatchCount, 0);
     for (auto &one : matched)
     {
-        auto linePtr = pickHomeLineNode(30, 1);
+        auto linePtr = pickFreeLineNode(30, 1);
         if (!linePtr)
         {
             for (auto & group : one)
@@ -605,8 +613,8 @@ void World::onMatchHomeTimer()
             continue;;
         }
         SceneServerEnterSceneIns ins;
-        ins.mapID = InvalidMapID;
-        ins.sceneType = SCENE_HOME;
+        ins.mapID = mapID;
+        ins.sceneType = sceneType;
         for (auto & group : one)
         {
             group->sceneState = SCENE_STATE_CHOISE;
@@ -614,7 +622,6 @@ void World::onMatchHomeTimer()
             group->lineID = linePtr->knock.lineID;
             group->host = linePtr->knock.pubHost;
             group->port = linePtr->knock.pubPort;
-            ins.mapID = group->mapID;
             ins.groups.push_back(*group);
             pushGroupInfoToClient(group);
         }
@@ -622,44 +629,10 @@ void World::onMatchHomeTimer()
     }
 }
 
-void World::onMatchMeleeTimer()
-{
-    auto &pool = _matchPools[SCENE_MELEE];
-    const size_t MatchCount = 1;
-    auto matched = matchingPool(pool, MatchCount, 0);
-    for (auto &one : matched)
-    {
-        auto linePtr = pickOtherLineNode(30, 1);
-        if (!linePtr)
-        {
-            for (auto & group : one)
-            {
-                group->sceneType = SCENE_STATE_NONE;
-                group->sceneState = SCENE_STATE_NONE;
-            }
-            continue;;
-        }
-        SceneServerEnterSceneIns ins;
-        ins.mapID = InvalidMapID;
-        ins.sceneType = SCENE_MELEE;
-        for (auto & group : one)
-        {
-            group->sceneState = SCENE_STATE_CHOISE;
-            group->sceneState = SCENE_STATE_ALLOCATE;
-            group->lineID = linePtr->knock.lineID;
-            group->host = linePtr->knock.pubHost;
-            group->port = linePtr->knock.pubPort;
-            ins.mapID = group->mapID;
-            ins.groups.push_back(*group);
-            pushGroupInfoToClient(group);
-        }
-        sendViaSessionID(linePtr->sessionID, ins);
-    }
-}
 
 void World::onMatchArenaTimer()
 {
-    auto &pool = _matchPools[SCENE_ARENA];
+    auto &pool = _matchPools[SCENE_ARENA][InvalidMapID];
     const size_t MatchCount = 2;
     auto matched = matchingPool(pool, MatchCount, 1);
     auto matched2 = matchingPool(pool, MatchCount, 2);
@@ -668,7 +641,7 @@ void World::onMatchArenaTimer()
     matched.insert(matched.end(), matched3.begin(), matched3.end());
     for (auto &one : matched)
     {
-        auto linePtr = pickOtherLineNode(30, 1);
+        auto linePtr = pickClosureLineNode(30, 1);
         if (!linePtr)
         {
             for (auto & group : one)
@@ -943,7 +916,7 @@ void World::onSceneGroupEnterReq(TcpSessionPtr session, const Tracing & trace, S
     groupPtr->sceneType = req.sceneType;
     groupPtr->sceneState = SCENE_STATE_MATCHING;
     groupPtr->mapID = req.mapID;
-    _matchPools[req.sceneType].push_back(groupPtr);
+    _matchPools[req.sceneType][groupPtr->mapID].push_back(groupPtr);
     backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_SUCCESS));
     pushGroupInfoToClient(groupPtr);
 }
@@ -973,22 +946,37 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
 
     if (groupPtr->sceneState == SCENE_STATE_MATCHING)
     {
-        auto founder = std::find_if(_matchPools[groupPtr->sceneType].begin(), _matchPools[groupPtr->sceneType].end(),
-                                    [groupPtr](SceneGroupInfoPtr gp) {return groupPtr->groupID == gp->groupID; });
-        if (founder != _matchPools[groupPtr->sceneType].end())
+        do 
         {
-            _matchPools[groupPtr->sceneType].erase(founder);
+            if (_matchPools.find(groupPtr->sceneType) == _matchPools.end())
+            {
+                break;
+            }
+            auto scenePool = _matchPools.at(groupPtr->sceneType);
+            if (scenePool.find(groupPtr->mapID) == scenePool.end())
+            {
+                break;
+            }
+            auto mapPool = scenePool.at(groupPtr->mapID);
+
+            auto founder = std::find_if(mapPool.begin(), mapPool.end(),
+                [groupPtr](SceneGroupInfoPtr gp) {return groupPtr->groupID == gp->groupID; });
+            if (founder == mapPool.end())
+            {
+                break;
+            }
+            mapPool.erase(founder);
+
             groupPtr->sceneType = SCENE_NONE;
             groupPtr->sceneState = SCENE_STATE_NONE;
             groupPtr->mapID = InvalidMapID;
             backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_SUCCESS));
             pushGroupInfoToClient(groupPtr);
-        }
-        else
-        {
-            backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
             return;
-        }
+        } while (false);
+        backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
+        return;
+
     }
     else if (groupPtr->sceneState == SCENE_STATE_ACTIVE && (groupPtr->sceneType == SCENE_HOME || groupPtr->sceneType == SCENE_MELEE))
     {
@@ -998,11 +986,6 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
             sendViaSessionID(line->sessionID, SceneServerCancelSceneIns(groupPtr->sceneID, groupPtr->groupID));  // to scene server
         }
     }
-
-
-
-
-
 }
 
 

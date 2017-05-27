@@ -113,13 +113,13 @@ private:
 
 public:
     SceneLineInfoPtr getLineInfo(LineID lineID);
-    SceneLineInfoPtr pickHomeLineNode(double step, double autoAdd);
-    SceneLineInfoPtr pickOtherLineNode(double step, double autoAdd);
+    SceneLineInfoPtr pickFreeLineNode(double step, double autoAdd);
+    SceneLineInfoPtr pickClosureLineNode(double step, double autoAdd);
 
 private:
     std::map<AreaID, std::map<ServiceType, SceneDockerInfo> > _services; //只记录singleton的service   
 	std::map<LineID, SceneLineInfoPtr> _lines;
-    Balance<LineID> _homeBalance;
+    Balance<LineID> _freeBalance;
     Balance<LineID> _closureBalance;
     AccepterID _dockerListen = InvalidAccepterID;
     AccepterID _sceneListen = InvalidAccepterID;
@@ -134,11 +134,10 @@ private:
     GroupID _lastGroupID = InvalidGroupID;
 
 private:
-    std::vector<SceneGroupInfoPool> _matchPools;
+    std::map<ui16, std::map<ui64, SceneGroupInfoPool> > _matchPools;
     TimerID _matchTimerID = InvalidTimerID;
     void onMatchTimer();
-    void onMatchHomeTimer();
-    void onMatchMeleeTimer();
+    void onMatchFreeTimer(ui16 sceneType, ui64 mapID);
     void onMatchArenaTimer();
 };
 
