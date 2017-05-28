@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="glfw\winsrc\context.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\egl_context.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\init.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\input.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\osmesa_context.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\vulkan.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\wgl_context.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\win32_init.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\win32_joystick.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\win32_monitor.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\win32_time.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\win32_tls.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\win32_window.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\window.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\winsrc\monitor.c">
+      <Filter>glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfw\deps\glad.c">
+      <Filter>glad</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="glfw">
+      <UniqueIdentifier>{76eb24b6-116c-4826-8c9c-b90520dc377c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glad">
+      <UniqueIdentifier>{a292e236-3a93-4af2-a4d6-03a8f1db83dc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="glfw\winsrc\egl_context.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\winsrc\glfw_config.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\winsrc\internal.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\winsrc\osmesa_context.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\winsrc\wgl_context.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\winsrc\win32_joystick.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\winsrc\win32_platform.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\include\GLFW\glfw3.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\include\GLFW\glfw3native.h">
+      <Filter>glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="glfw\deps\glad\glad.h">
+      <Filter>glad</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
