@@ -24,14 +24,20 @@ class AI : public std::enable_shared_from_this<AI>
 {
     std::weak_ptr<Scene> _scene;
     std::map<EntityID, EntityPtr> _monsters;
-    double _lastCheckMonstr = 0.0;
+
+
+    std::vector<EntityPtr> _march;
+    EPosition _marchOrg;
+    double _lastMarch = 0;
 public:
     AI();
     ~AI();
     void init(std::weak_ptr<Scene> scene);
     void update();
 
-
+    void createMonster();
+    void monsterHomingCheck();
+    void rebirthCheck();
 };
 
 using AIPtr = std::shared_ptr<AI>;

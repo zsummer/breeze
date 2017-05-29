@@ -24,17 +24,65 @@ void AI::update()
         return;
     }
 
-    double now = getFloatNowTime();
-    if (now - _lastCheckMonstr > 0.5)
+    createMonster();
+    monsterHomingCheck();
+    rebirthCheck();
+
+    if (scene->getSceneType() == SCENE_MELEE)
     {
-        _lastCheckMonstr = getFloatSteadyNowTime();
+        if (_march.empty())
+        {
+            _marchOrg =  EPosition(34, 170);
+            double dist = 20;
+            for (size_t i = 0; i < 20; i++)
+            {
+                EPosition sp = toEPosition(getFarPoint(_marchOrg.x, _marchOrg.y, i*(PI*2/20.0)*1.0, dist));
+                auto entity = scene->makeEntity(rand() % 20 + 1,
+                    InvalidAvatarID,
+                    "march",
+                    DictArrayKey(),
+                    InvalidGroupID);
+                entity->_props.hp = 3000 + (rand() % 100) * 20;
+                entity->_props.moveSpeed = 8.0;
+                entity->_props.attackQuick = 0.5;
+                entity->_props.attack = 80;
+                entity->_state.maxHP = entity->_props.hp;
+                entity->_state.curHP = entity->_state.maxHP;
+                entity->_state.camp = ENTITY_CAMP_BLUE + 100;
+                entity->_state.collision = 1.0;
+                entity->_skillSys.dictBootSkills.insert(2);
+                entity->_skillSys.autoAttack = false;
+
+                entity->_move.position = sp;
+                entity->_control.spawnpoint = sp;
+
+                scene->addEntity(entity);
+                _march.push_back(entity);
+            }
+        }
+        double now = getFloatNowTime();
+        if (now - _lastMarch > 20 && !_march.empty() && _march.at(0)->_move.action == MOVE_ACTION_IDLE)
+        {
+            _lastMarch = now;
+            for (auto & e : _march)
+            {
+                double d = getDistance(e->_move.position, e->_control.spawnpoint);
+                EPosition dst = (_marchOrg - e->_move.position) * 2 + e->_move.position;
+                scene->_move->doMove(e->_state.eid, MOVE_ACTION_PATH, e->getSpeed(), 0, { dst });
+            }
+
+        }
     }
+}
 
-
-    if (scene->_sceneType != SCENE_HOME && scene->_sceneType != SCENE_MELEE)
+void AI::createMonster()
+{
+    auto scene = _scene.lock();
+    if (!scene)
     {
         return;
     }
+
     if (_monsters.empty())
     {
         std::string aiFileName;
@@ -91,7 +139,7 @@ void AI::update()
         {
             auto entity = scene->makeEntity(rand() % 20 + 1,
                 InvalidAvatarID,
-                "mylittleairport",
+                "monster",
                 DictArrayKey(),
                 InvalidGroupID);
             entity->_props.hp = 3000 + (rand() % 100) * 20;
@@ -114,13 +162,18 @@ void AI::update()
         }
 
     }
-
-
-
+}
+void AI::monsterHomingCheck()
+{
+    auto scene = _scene.lock();
+    if (!scene)
+    {
+        return;
+    }
     for (auto kv : _monsters)
     {
         bool checkBack = false;
-        do 
+        do
         {
             auto entity = kv.second;
             auto dist = getDistance(entity->_move.position, entity->_control.spawnpoint);
@@ -149,11 +202,14 @@ void AI::update()
 
     }
 
-
-
-
-
-
+}
+void AI::rebirthCheck()
+{
+    auto scene = _scene.lock();
+    if (!scene)
+    {
+        return;
+    }
     SceneEventNotice eventNotice;
     for (auto kv : scene->_entitys)
     {
@@ -185,10 +241,7 @@ void AI::update()
         }
         scene->broadcast(eventNotice);
     }
-
 }
-
-
 
 
 
