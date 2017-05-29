@@ -122,10 +122,6 @@ void SceneMgr::onTimer()
     for (auto scene : frees)
     {
         _frees.push(scene);
-        if (scene->getSceneType() == SCENE_HOME || scene->getSceneType() == SCENE_MELEE)
-        {
-            _homes.erase(scene->getSceneID());
-        }
         _actives.erase(scene->getSceneID());
         scene->cleanScene();
     }
@@ -548,16 +544,18 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
     //如果类型是主城并且存在未满人的主城 直接丢进去
     if (ins.sceneType == SCENE_HOME || ins.sceneType == SCENE_MELEE)
     {
-        for (auto &kv : _homes)
+        for (auto & scn : _actives)
         {
-            if( kv.second->getPlayerCount() < 30  && kv.second->getSceneType() == ins.sceneType)
+            if (scn.second->getSceneType() == ins.sceneType 
+                && scn.second->getMapID() == ins.mapID
+                && scn.second->getPlayerCount() < 20)
             {
-                scene = kv.second;
+                scene = scn.second;
                 break;
             }
         }
     }
-   
+
     if (!scene )
     {
         if (_frees.empty())
@@ -570,10 +568,6 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         _frees.pop();
         scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
         _actives.insert(std::make_pair(scene->getSceneID(), scene));
-        if (ins.sceneType == SCENE_HOME || ins.sceneType == SCENE_MELEE)
-        {
-            _homes.insert(std::make_pair(scene->getSceneID(), scene));
-        }
     }
     for (auto & group : ins.groups)
     {

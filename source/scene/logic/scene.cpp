@@ -1,9 +1,9 @@
 ﻿#include "scene.h"
 #include "sceneMgr.h"
 #include <aoe/aoe.h>
-Scene::Scene(SceneID id)
+Scene::Scene(SceneID sceneID)
 {
-    _sceneID = id;
+    _sceneID = sceneID;
     _sceneType = SCENE_NONE;
     _sceneStatus = SCENE_STATE_NONE;
 }
@@ -61,6 +61,7 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
     }
 
     _sceneType = sceneType;
+    _mapID = mapID;
     _sceneStatus = SCENE_STATE_ACTIVE;
 
     _startTime = getFloatSteadyNowTime();

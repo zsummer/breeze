@@ -86,7 +86,6 @@ private:
 private:
 
 
-    std::map<SceneID, ScenePtr> _homes;
     std::map<SceneID, ScenePtr> _actives;
     std::queue<ScenePtr> _frees; //队列
     std::map<SceneID, ScenePtr> _scenes;

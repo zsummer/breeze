@@ -29,7 +29,8 @@ class Scene : public std::enable_shared_from_this<Scene>
     friend AI;
     //scene数据
 private:
-    SceneID _sceneID;
+    SceneID _sceneID ;
+    MapID _mapID = InvalidMapID;
     SCENE_TYPE _sceneType;
     SCENE_STATE _sceneStatus;
     
@@ -43,7 +44,7 @@ private:
     
     
 public:
-    Scene(SceneID id);
+    Scene(SceneID sceneID);
     ~Scene();
     bool cleanScene();
     bool initScene(SCENE_TYPE sceneType, MapID mapID);
@@ -64,6 +65,7 @@ public:
     SkillPtr _skill;
 public:
     inline SceneID getSceneID() { return _sceneID; }
+    inline MapID getMapID() { return _mapID; }
     inline SCENE_TYPE getSceneType() { return _sceneType; }
     inline SCENE_STATE getSceneState() { return _sceneStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
