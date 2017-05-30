@@ -36,7 +36,7 @@ void AI::update()
             double dist = 20;
             for (size_t i = 0; i < 20; i++)
             {
-                EPosition sp = toEPosition(getFarPoint(_marchOrg.x, _marchOrg.y, i*(PI*2/20.0)*1.0, dist));
+                EPosition sp = toEPosition(getFarPoint(_marchOrg.x, _marchOrg.y, i*(PI*2/19.0)*1.0, dist));
                 auto entity = scene->makeEntity(rand() % 20 + 1,
                     InvalidAvatarID,
                     "march",
@@ -61,16 +61,32 @@ void AI::update()
             }
         }
         double now = getFloatNowTime();
-        if (now - _lastMarch > 20 && !_march.empty() && _march.at(0)->_move.action == MOVE_ACTION_IDLE)
+        if (now - _lastMarch > 10 && !_march.empty() )
         {
             _lastMarch = now;
-            for (auto & e : _march)
-            {
-                double d = getDistance(e->_move.position, e->_control.spawnpoint);
-                EPosition dst = (_marchOrg - e->_move.position) * 2 + e->_move.position;
-                scene->_move->doMove(e->_state.eid, MOVE_ACTION_PATH, e->getSpeed(), 0, { dst });
-            }
 
+            bool allIdle = true;
+            for (auto e : _march)
+            {
+                if (e->_move.action != MOVE_ACTION_IDLE)
+                {
+                    allIdle = false;
+                    break;
+                }
+            }
+            if (allIdle)
+            {
+                for (auto & e : _march)
+                {
+                    double d = getDistance(e->_move.position, e->_control.spawnpoint);
+                    EPosition dst = e->_control.spawnpoint;
+                    if (d  < 2.0)
+                    {
+                        dst = (_marchOrg - dst)*2.0 + dst;
+                    }
+                    scene->_move->doMove(e->_state.eid, MOVE_ACTION_PATH, e->getSpeed(), 0, { dst });
+                }
+            }
         }
     }
 }
@@ -239,8 +255,12 @@ void AI::rebirthCheck()
                 eventNotice.info.push_back(ev);
             }
         }
+    }
+    if (!eventNotice.info.empty())
+    {
         scene->broadcast(eventNotice);
     }
+
 }
 
 

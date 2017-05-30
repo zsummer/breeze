@@ -567,7 +567,11 @@ bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
         }
         target.first->_isStateDirty = true;
     }
-    scene->broadcast(notice);
+    if (!notice.info.empty())
+    {
+        scene->broadcast(notice);
+    }
+    
     return true;
 }
 

@@ -198,7 +198,7 @@ void MoveSync::fillRVO(double frame)
             }
             else
             {
-                sim->setAgentTimeHorizon(entity._control.agentNo, frame);
+                sim->setAgentTimeHorizon(entity._control.agentNo, frame*3);
             }
             
             sim->setAgentTimeHorizonObst(entity._control.agentNo, frame);
@@ -207,9 +207,9 @@ void MoveSync::fillRVO(double frame)
 
 
 
-            LOGD("RVO fill move[" << entity._state.avatarName << "] local=" << entity._move.position
+            /* LOGD("RVO fill move[" << entity._state.avatarName << "] local=" << entity._move.position
                 << ", dst=" << entity._move.waypoints.front() << ", dir=" << sim->getAgentPrefVelocity(entity._control.agentNo) << ", max Speed=" 
-            << sim->getAgentMaxSpeed(entity._control.agentNo));
+            << sim->getAgentMaxSpeed(entity._control.agentNo)); */
 
         } while (false);
         entity._isMoveDirty = true;
@@ -292,7 +292,7 @@ void MoveSync::fixDirtyMove(double frame)
         entity._move.position = rvoPos;
         entity._move.realSpeed = realDist / frame;
         entity._isMoveDirty = true;
-
+        /*
         if (entity._move.waypoints.empty())
         {
             LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << realMove);
@@ -301,7 +301,7 @@ void MoveSync::fixDirtyMove(double frame)
         {
             LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << realMove
              << ", dst=" << entity._move.waypoints.front());
-        }
+        } */
 
 
 
