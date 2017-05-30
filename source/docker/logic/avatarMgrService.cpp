@@ -36,6 +36,7 @@ void AvatarMgrService::systemAutoChat()
     auto avatars = Docker::getRef().peekService(STAvatar);
     ChatResp resp;
     resp.channelID = CC_SYSTEM;
+    resp.chatTime = getNowTime();
     for (auto kv : avatars)
     {
         resp.msg.clear();
@@ -356,6 +357,7 @@ void AvatarMgrService::onCreateAvatarReq(const Tracing & trace, zsummer::proto4z
     userBaseInfo.avatarName = req.avatarName;
     userBaseInfo.level = 1;
     userBaseInfo.iconID = 0;
+    userBaseInfo.createTime = getNowTime();
 
     DBQueryReq sql(userBaseInfo.getDBInsert());
     toService(STInfoDBMgr, sql,
