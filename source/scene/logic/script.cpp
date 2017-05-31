@@ -2,6 +2,7 @@
 #include "scene.h"
 #include "sceneMgr.h"
 
+static const char * SceneKey = "Scene";
 
 static void * luaAllocFunc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
@@ -14,14 +15,55 @@ static void * luaAllocFunc(void *ud, void *ptr, size_t osize, size_t nsize)
     return realloc(ptr, nsize);
 }
 
-static int l(lua_State * L)
+static int pcall_error(lua_State *L)
 {
+    const char *msg = lua_tostring(L, 1);
+    if (msg)
+    {
+        luaL_traceback(L, L, msg, 1);
+    }
+    else if (!lua_isnoneornil(L, 1))
+    {  /* is there an error object? */
+        if (!luaL_callmeta(L, 1, "__tostring"))  /* try its 'tostring' metamethod */
+        {
+            lua_pushliteral(L, "(no error message)");
+        }
+    }
+    return 1;
+}
 
+
+static void flushSceneToScript(Scene * scene, lua_State * L);
+static int lGetEntity(lua_State * L)
+{
+    int top = lua_gettop(L);
+    EntityID eid = (EntityID) luaL_checknumber(L, 1);
+    lua_getglobal(L, SceneKey);
+    Scene * scene = nullptr;
+    if (lua_istable(L, -1))
+    {
+        lua_getfield(L, -1, "__scene");
+        if (!lua_islightuserdata(L, -1))
+        {
+            LOGE("__scene not userdata");
+            return 0;
+        }
+        scene = (Scene*)lua_touserdata(L, -1);
+    }
+    lua_settop(L, top);
+    auto e = scene->getEntity(eid);
+    if (e)
+    {
+        lua_newtable(L);
+        lua_pushinteger(L, e->_state.eid);
+        lua_setfield(L, -2, "eid");
+        return 1;
+    }
     return 0;
 }
 
-static luaL_Reg summer[] = {
-    { "l", l },
+static luaL_Reg SceneReg[] = {
+    { "getEntity", lGetEntity},
     { NULL, NULL }
 };
 
@@ -65,8 +107,48 @@ void Script::init(std::weak_ptr<Scene> scene)
     luaopen_summer(_luaState);
     luaopen_proto4z_util(_luaState);
     lua_newtable(_luaState);
-    lua_setglobal(_luaState, "Scene");
+    for (luaL_Reg *l = SceneReg; l->name != NULL; l++) {
+        lua_pushcclosure(_luaState, l->func, 0);  
+        lua_setfield(_luaState, -2, l->name);
+    }
+    lua_setglobal(_luaState, SceneKey);
     lua_gc(_luaState, LUA_GCRESTART, 0);
+
+    lua_getglobal(_luaState, "summer");
+    lua_getfield(_luaState, -1, "logd");
+    lua_setglobal(_luaState, "logd");
+    lua_getfield(_luaState, -1, "logi");
+    lua_setglobal(_luaState, "logi");
+    lua_getfield(_luaState, -1, "logw");
+    lua_setglobal(_luaState, "logw");
+    lua_getfield(_luaState, -1, "loge");
+    lua_setglobal(_luaState, "loge");
+    lua_getfield(_luaState, -1, "logi");
+    lua_setglobal(_luaState, "print");
+    lua_pop(_luaState, 1);
+
+    int status = luaL_dostring(_luaState, R"(package.path = package.path .. ";" .. "../?.lua" .. ";" .. "../script/scene/?.lua" .. ";" .. "../../protocol/lua/?.lua" )");
+    if (status && !lua_isnil(_luaState, -1))
+    {
+        const char *msg = lua_tostring(_luaState, -1);
+        if (msg == NULL) msg = "(error object is not a string)";
+        LOGE(msg);
+    }
+
+    flushSceneToScript(s.get(), _luaState);
+
+    std::string sceneScript = "require 'scene_" + toString(s->getSceneType()) + "_" + toString(s->getMapID()) + "'";
+
+    status = luaL_dostring(_luaState, sceneScript.c_str());
+    if (status && !lua_isnil(_luaState, -1))
+    {
+        const char *msg = lua_tostring(_luaState, -1);
+        if (msg == NULL) msg = "(error object is not a string)";
+        LOGW("load scene script error. scene Type=" << s->getSceneType() << ", scene map id=" << s->getMapID() << ", error=" <<  msg);
+        lua_pop(_luaState, 1);
+    }
+
+
 }
 
 
@@ -77,5 +159,54 @@ void Script::update()
     {
         return;
     }
+    if (!_luaState)
+    {
+        return;
+    }
+
+    lua_settop(_luaState, 0);
+    flushSceneToScript(scene.get(), _luaState);
+
 
 }
+
+
+
+
+
+
+
+
+void flushSceneToScript(Scene * scene, lua_State * L)
+{
+    lua_getglobal(L, SceneKey);
+    if (!lua_istable(L, -1))
+    {
+        LOGE("Script not found Scene");
+        lua_settop(L, 0);
+        return;
+    }
+
+    lua_pushlightuserdata(L, scene);
+    lua_setfield(L, -2, "__scene");
+
+    lua_pushinteger(L, scene->getSceneID());
+    lua_setfield(L, -2, "sceneID");
+
+    lua_pushinteger(L, scene->getMapID());
+    lua_setfield(L, -2, "mapID");
+
+    lua_pushinteger(L, scene->getSceneType());
+    lua_setfield(L, -2, "sceneType");
+
+    lua_pop(L, 1);
+}
+
+
+
+
+
+
+
+
+
