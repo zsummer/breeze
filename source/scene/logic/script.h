@@ -15,32 +15,23 @@
 * limitations under the License.
 */
 
-#ifndef _AI_H_
-#define _AI_H_
+#ifndef _SCRIPT_H_
+#define _SCRIPT_H_
 #include "entity.h"
 
 class Scene;
-class AI : public std::enable_shared_from_this<AI>
+class Script : public std::enable_shared_from_this<Script>
 {
     std::weak_ptr<Scene> _scene;
-    std::map<EntityID, EntityPtr> _monsters;
-
-
-    std::vector<EntityPtr> _march;
-    EPosition _marchOrg;
-    double _lastMarch = 0;
+    lua_State * _luaState = nullptr;
 public:
-    AI();
-    ~AI();
+    Script();
+    ~Script();
     void init(std::weak_ptr<Scene> scene);
     void update();
-
-    void createMonster();
-    void monsterHomingCheck();
-    void rebirthCheck();
 };
 
-using AIPtr = std::shared_ptr<AI>;
+using ScriptPtr = std::shared_ptr<Script>;
 
 
 

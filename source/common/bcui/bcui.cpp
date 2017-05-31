@@ -139,7 +139,7 @@ bool BCUI::setPos(int x, int y, BCUI_PIXEL bp)
     {
         return false;
     }
-    SetConsoleTextAttribute(_handle, bg|fg);
+    SetConsoleTextAttribute(_handle, (WORD)(bg|fg));
     printf("%c%c", ' ', ' ');
     SetConsoleTextAttribute(_handle, oldInfo.wAttributes);
 

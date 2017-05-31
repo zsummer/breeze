@@ -49,6 +49,7 @@ bool Scene::cleanScene()
     _move.reset();
     _skill.reset();
     _ai.reset();
+    _script.reset();
     return true;
 }
 
@@ -77,6 +78,8 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
     _ai = std::make_shared<AI>();
     _ai->init(shared_from_this());
 
+    _script = std::make_shared<Script>();
+    _script->init(shared_from_this());
 
 
     //load map

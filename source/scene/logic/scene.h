@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2015 - 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2015 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,19 +21,20 @@
 #include "move.h"
 #include "skill.h"
 #include "ai.h"
+#include "script.h"
 
 class Scene : public std::enable_shared_from_this<Scene>
 {
     friend MoveSync;
     friend Skill;
     friend AI;
+    friend Script;
     //scene数据
 private:
     SceneID _sceneID ;
     MapID _mapID = InvalidMapID;
     SCENE_TYPE _sceneType;
     SCENE_STATE _sceneStatus;
-    
     EntityID _lastEID;
     double _startTime;
     double _endTime;
@@ -63,6 +64,7 @@ public:
     MoveSyncPtr _move;
     AIPtr _ai;
     SkillPtr _skill;
+    ScriptPtr _script;
 public:
     inline SceneID getSceneID() { return _sceneID; }
     inline MapID getMapID() { return _mapID; }
