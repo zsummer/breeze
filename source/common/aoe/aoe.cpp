@@ -107,7 +107,7 @@ std::tuple<bool, double> AOECheck::check(std::tuple<double, double> pos, double 
     }
 
     bool prime = false;
-    for (int i = 0, j = (int)_convexs.size() - 1; i < _convexs.size(); j = i++)
+    for (int i = 0, j = (int)_convexs.size() - 1; i < (int)_convexs.size(); j = i++)
     {
         if (((std::get<1>(_convexs[i]) > std::get<1>(pos)) != (std::get<1>(_convexs[j]) > std::get<1>(pos)))
             &&
