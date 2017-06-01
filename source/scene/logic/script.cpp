@@ -41,7 +41,7 @@ static void safeDoString(ScenePtr scene, lua_State * L, const std::string & lua)
     {
         const char *msg = lua_tostring(L, -1);
         if (msg == NULL) msg = "(error object is not a string)";
-        LOGW("load scene script error. scene Type=" << scene->getSceneType() << ", scene map id=" << scene->getMapID() << ", error=" << msg);
+        LOGW("load scene script error. scene Type=" << (int)scene->getSceneType() << ", scene map id=" << scene->getMapID() << ", error=" << msg);
         lua_pop(L, 1);
     }
 }
@@ -142,7 +142,7 @@ void Script::init(std::weak_ptr<Scene> scene)
 
     flushSceneToScript(s.get(), _luaState);
 
-    std::string sceneScript = "require 'scene_" + toString(s->getSceneType()) + "_" + toString(s->getMapID()) + "'";
+    std::string sceneScript = "require 'scene_" + toString((int)s->getSceneType()) + "_" + toString(s->getMapID()) + "'";
     safeDoString(s, _luaState, sceneScript);
 }
 
