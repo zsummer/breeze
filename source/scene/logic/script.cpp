@@ -161,8 +161,25 @@ void Script::update()
 
     lua_settop(_luaState, 0);
     flushSceneToScript(scene.get(), _luaState);
+    
 
-
+    lua_pushcfunction(_luaState, pcall_error);
+    lua_getglobal(_luaState, "onUpdate");
+    if (!lua_isfunction(_luaState, 1))
+    {
+        LOGW("Script::update scene[" << scene->getSceneID() << "] not found script onUpdate type=" 
+            << (int)scene->getSceneType() << ", mapID=" << scene->getMapID());
+        return;
+    }
+    int status = lua_pcall(_luaState, 0, 0, 1);
+    lua_remove(_luaState, 1);
+    if (status)
+    {
+        const char *msg = lua_tostring(_luaState, -1);
+        if (msg == NULL) msg = "(error object is not a string)";
+        LOGE(msg);
+        lua_pop(_luaState, 1);
+    }
 }
 
 

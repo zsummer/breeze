@@ -311,6 +311,9 @@ bool Scene::onUpdate()
     {
         broadcast(notice);
     }
+    //after flush data
+    _script->update();
+
     while (!_asyncs.empty())
     {
         auto func = _asyncs.front();

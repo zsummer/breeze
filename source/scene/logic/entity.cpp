@@ -1,7 +1,7 @@
 ﻿#include "entity.h"
 Entity::Entity()
 {
-
+    _control.agentNo = RVO::RVO_ERROR;
 }
 
 Entity::~Entity()

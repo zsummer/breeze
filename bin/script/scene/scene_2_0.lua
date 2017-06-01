@@ -17,6 +17,13 @@ end
 dump(Scene)
 
 function sceneInit()
-end
 
+end
+sceneInit()
+
+
+
+function onUpdate()
+    logd("scene_2_0 entityid=" .. Scene.sceneID)
+end
 

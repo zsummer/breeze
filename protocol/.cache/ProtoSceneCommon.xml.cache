@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>5f3d0df46dd76e7f064c98ca8b9a4d3b</cppmd5> 
-<luamd5>c63a44d7b0c028224673812d0cc02e42</luamd5> 
-<csharpmd5>503fb2d5ce03c98bc659783dddb86313</csharpmd5> 
-<xmlmd5>aba3eee5f089bc36d4aaf4b0527d11ad</xmlmd5> 
+<cppmd5>c1700a343dba6f7f2d44d20736b6780a</cppmd5> 
+<luamd5>515b110396aeb38371150d556b4a0f4c</luamd5> 
+<csharpmd5>8e03c71febee5926a83df14d54b863ab</csharpmd5> 
+<xmlmd5>740348c6303ec48980e0d30b4034c51b</xmlmd5> 
 <cacheNumber>
     <cache key = "EPosition" Number = "2002" /> 
     <cache key = "EntityBuffInfo" Number = "2010" /> 
+    <cache key = "EntityControl" Number = "2011" /> 
     <cache key = "EntityFullData" Number = "2007" /> 
     <cache key = "EntityMove" Number = "2005" /> 
     <cache key = "EntityReport" Number = "2006" /> 

@@ -29,6 +29,7 @@ public:
     ~Script();
     void init(std::weak_ptr<Scene> scene);
     void update();
+
 };
 
 using ScriptPtr = std::shared_ptr<Script>;

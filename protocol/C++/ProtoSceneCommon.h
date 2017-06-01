@@ -634,6 +634,64 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 typedef std::vector<EntityFullData> EntityFullDataArray;  
  
+struct EntityControl //EntityControl  
+{ 
+    static const unsigned short getProtoID() { return 2011;} 
+    static const std::string getProtoName() { return "EntityControl";} 
+    unsigned long long eid;  
+    unsigned long long agentNo;  
+    double stateChageTime;  
+    EPosition spawnpoint;  
+    double blockMoveCount;  
+    EntityControl() 
+    { 
+        eid = 0; 
+        agentNo = 0; 
+        stateChageTime = 0.0; 
+        blockMoveCount = 0.0; 
+    } 
+    EntityControl(const unsigned long long & eid, const unsigned long long & agentNo, const double & stateChageTime, const EPosition & spawnpoint, const double & blockMoveCount) 
+    { 
+        this->eid = eid; 
+        this->agentNo = agentNo; 
+        this->stateChageTime = stateChageTime; 
+        this->spawnpoint = spawnpoint; 
+        this->blockMoveCount = blockMoveCount; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityControl & data) 
+{ 
+    ws << data.eid;  
+    ws << data.agentNo;  
+    ws << data.stateChageTime;  
+    ws << data.spawnpoint;  
+    ws << data.blockMoveCount;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityControl & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.agentNo;  
+    rs >> data.stateChageTime;  
+    rs >> data.spawnpoint;  
+    rs >> data.blockMoveCount;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityControl & info) 
+{ 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "agentNo=" << info.agentNo << ","; 
+    stm << "stateChageTime=" << info.stateChageTime << ","; 
+    stm << "spawnpoint=" << info.spawnpoint << ","; 
+    stm << "blockMoveCount=" << info.blockMoveCount << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<EntityFullData> EntityFullDataArray;  
+ 
 struct SceneSection //场景全景切片数据  
 { 
     static const unsigned short getProtoID() { return 2008;} 

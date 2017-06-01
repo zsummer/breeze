@@ -956,6 +956,88 @@ namespace Proto4z
         } 
     } 
  
+    public class EntityControl: Proto4z.IProtoObject //EntityControl  
+    {     
+        //proto id   
+        public const ushort protoID = 2011;  
+        static public ushort getProtoID() { return 2011; } 
+        static public string getProtoName() { return "EntityControl"; } 
+        //members   
+        public ulong eid;  
+        public ulong agentNo;  
+        public double stateChageTime;  
+        public EPosition spawnpoint;  
+        public double blockMoveCount;  
+        public EntityControl()  
+        { 
+            eid = 0;  
+            agentNo = 0;  
+            stateChageTime = 0.0;  
+            spawnpoint = new EPosition();  
+            blockMoveCount = 0.0;  
+        } 
+        public EntityControl(ulong eid, ulong agentNo, double stateChageTime, EPosition spawnpoint, double blockMoveCount) 
+        { 
+            this.eid = eid; 
+            this.agentNo = agentNo; 
+            this.stateChageTime = stateChageTime; 
+            this.spawnpoint = spawnpoint; 
+            this.blockMoveCount = blockMoveCount; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.agentNo)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.stateChageTime)); 
+            if (this.spawnpoint == null) this.spawnpoint = new EPosition(); 
+            data.AddRange(this.spawnpoint.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.blockMoveCount)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.agentNo = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.stateChageTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.spawnpoint = new EPosition(); 
+            this.spawnpoint.__decode(binData, ref pos); 
+            this.blockMoveCount = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class EntityFullDataArray : System.Collections.Generic.List<EntityFullData>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new EntityFullData(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
     public class SceneSection: Proto4z.IProtoObject //场景全景切片数据  
     {     
         //proto id   

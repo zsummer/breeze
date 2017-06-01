@@ -113,6 +113,11 @@ public:
                    return "EntityBuffInfo";
             }
             break;
+            case 2011:
+            {
+                   return "EntityControl";
+            }
+            break;
             case 3000:
             {
                    return "DockerKnock";

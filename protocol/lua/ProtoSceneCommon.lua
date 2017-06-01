@@ -208,6 +208,21 @@ Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray"
 Proto4z.EntityFullDataArray.__protoDesc = "array" 
 Proto4z.EntityFullDataArray.__protoTypeV = "EntityFullData" 
  
+Proto4z.register(2011,"EntityControl") 
+Proto4z.EntityControl = {} --EntityControl 
+Proto4z.EntityControl.__protoID = 2011 
+Proto4z.EntityControl.__protoName = "EntityControl" 
+Proto4z.EntityControl[1] = {name="eid", type="ui64" }  
+Proto4z.EntityControl[2] = {name="agentNo", type="ui64" }  
+Proto4z.EntityControl[3] = {name="stateChageTime", type="double" }  
+Proto4z.EntityControl[4] = {name="spawnpoint", type="EPosition" }  
+Proto4z.EntityControl[5] = {name="blockMoveCount", type="double" }  
+ 
+Proto4z.EntityFullDataArray = {}  
+Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray" 
+Proto4z.EntityFullDataArray.__protoDesc = "array" 
+Proto4z.EntityFullDataArray.__protoTypeV = "EntityFullData" 
+ 
 Proto4z.register(2008,"SceneSection") 
 Proto4z.SceneSection = {} --场景全景切片数据 
 Proto4z.SceneSection.__protoID = 2008 

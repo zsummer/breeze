@@ -201,6 +201,18 @@
     </struct>
     <array name="EntityFullDataArray" type="EntityFullData" desc="" />
 
+
+    <!-- 一个实体的完整同步数据 -->
+    <struct name="EntityControl" desc="EntityControl">
+        <member name="eid" type="ui64"   desc=""/>
+        <member name="agentNo" type="ui64"  desc=""/>
+        <member name="stateChageTime" type="double"  desc=""/>
+        <member name="spawnpoint" type="EPosition"  desc=""/>
+        <member name="blockMoveCount" type="double"  desc=""/>
+    </struct>
+    <array name="EntityFullDataArray" type="EntityFullData" desc="" />
+
+
     <proto name="SceneSection" desc= "场景全景切片数据">
         <member name="sceneID"  type="ui64" desc=""/>
         <member name="sceneType"  type="ui16" desc=""/>

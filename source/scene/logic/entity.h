@@ -78,17 +78,6 @@ struct EntitySkillSystem
 };
 
 
-struct EntityControl //EntityControl  
-{
-    unsigned long long eid = InvalidEntityID;
-
-
-    //server
-    unsigned long long agentNo = RVO::RVO_ERROR; //agentNo.   
-    double stateChageTime = 0.0;
-    EPosition spawnpoint; //出生点 
-    double blockMoveCount = 0; //移动被阻次数
-};
 
 
 
@@ -114,6 +103,7 @@ public:
     SessionID _clientSessionID = InvalidSessionID;
     bool _isStateDirty = false;
     bool _isMoveDirty = false;
+    bool _isControlDirty = false;
 
 };
 
