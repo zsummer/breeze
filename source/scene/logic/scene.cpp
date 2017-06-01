@@ -61,6 +61,7 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
         return false;
     }
 
+    double now = getFloatNowTime();
     _sceneType = sceneType;
     _mapID = mapID;
     _sceneStatus = SCENE_STATE_ACTIVE;
@@ -85,6 +86,8 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
     //load map
     //load entitys
     onSceneInit();
+
+    LOGD("initScene success. used time=" << getFloatNowTime() - now);
     return true;
 }
 

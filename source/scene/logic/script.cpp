@@ -34,6 +34,17 @@ static int pcall_error(lua_State *L)
 
 
 static void flushSceneToScript(Scene * scene, lua_State * L);
+static void safeDoString(ScenePtr scene, lua_State * L, const std::string & lua)
+{
+    int status = luaL_dostring(L, lua.c_str());
+    if (status && !lua_isnil(L, -1))
+    {
+        const char *msg = lua_tostring(L, -1);
+        if (msg == NULL) msg = "(error object is not a string)";
+        LOGW("load scene script error. scene Type=" << scene->getSceneType() << ", scene map id=" << scene->getMapID() << ", error=" << msg);
+        lua_pop(L, 1);
+    }
+}
 static int lGetEntity(lua_State * L)
 {
     int top = lua_gettop(L);
@@ -127,28 +138,12 @@ void Script::init(std::weak_ptr<Scene> scene)
     lua_setglobal(_luaState, "print");
     lua_pop(_luaState, 1);
 
-    int status = luaL_dostring(_luaState, R"(package.path = package.path .. ";" .. "../?.lua" .. ";" .. "../script/scene/?.lua" .. ";" .. "../../protocol/lua/?.lua" )");
-    if (status && !lua_isnil(_luaState, -1))
-    {
-        const char *msg = lua_tostring(_luaState, -1);
-        if (msg == NULL) msg = "(error object is not a string)";
-        LOGE(msg);
-    }
+    safeDoString(s, _luaState, R"(package.path = package.path .. ";" .. "../?.lua" .. ";" .. "../script/scene/?.lua" .. ";" .. "../../protocol/lua/?.lua" )");
 
     flushSceneToScript(s.get(), _luaState);
 
     std::string sceneScript = "require 'scene_" + toString(s->getSceneType()) + "_" + toString(s->getMapID()) + "'";
-
-    status = luaL_dostring(_luaState, sceneScript.c_str());
-    if (status && !lua_isnil(_luaState, -1))
-    {
-        const char *msg = lua_tostring(_luaState, -1);
-        if (msg == NULL) msg = "(error object is not a string)";
-        LOGW("load scene script error. scene Type=" << s->getSceneType() << ", scene map id=" << s->getMapID() << ", error=" <<  msg);
-        lua_pop(_luaState, 1);
-    }
-
-
+    safeDoString(s, _luaState, sceneScript);
 }
 
 
