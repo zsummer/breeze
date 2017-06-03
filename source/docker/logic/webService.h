@@ -51,6 +51,9 @@ private:
     void reload(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
     void onReloadState(Tracing trace, ReadStream &rs);
 
+
+    void KickClients(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
+
 private:
     void onWebServerRequest(Tracing trace, ReadStream &rs);
     void onWebServerResponseTest(Tracing trace, ReadStream &rs);

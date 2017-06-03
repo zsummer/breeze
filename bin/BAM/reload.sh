@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-webPort=`cat config.lua |grep "webPort"| awk -F= '{print $2}' |grep -Eo "[0-9]+" `
+webPort=`cat ../config.lua |grep "webPort"| awk -F= '{print $2}' |grep -Eo "[0-9]+" `
 curl localhost:$webPort/getonline
 echo ""
 curl localhost:$webPort/reload

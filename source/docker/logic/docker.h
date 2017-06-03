@@ -146,6 +146,7 @@ private:
     void event_onLoadServiceNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onSwitchServiceClientNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onKickRealClient(TcpSessionPtr session, ReadStream & rs);
+    void event_onKickClientsNotice(TcpSessionPtr session, ReadStream & rs);
     void event_onUnloadServiceInDocker(TcpSessionPtr session, ReadStream & rs);
     void event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & rs);
 

@@ -582,6 +582,54 @@ namespace Proto4z
         } 
     } 
  
+    public class KickClientsNotice: Proto4z.IProtoObject //踢人  
+    {     
+        //proto id   
+        public const ushort protoID = 3027;  
+        static public ushort getProtoID() { return 3027; } 
+        static public string getProtoName() { return "KickClientsNotice"; } 
+        //members   
+        public ushort isAll;  
+        public ServiceIDArray avatars; //指定avatar  
+        public AccountArray accounts; //指定account  
+        public ulong forbidDuration; //限制登录的持续时间(关服前有效 不记录到数据库)  
+        public KickClientsNotice()  
+        { 
+            isAll = 0;  
+            avatars = new ServiceIDArray();  
+            accounts = new AccountArray();  
+            forbidDuration = 0;  
+        } 
+        public KickClientsNotice(ushort isAll, ServiceIDArray avatars, AccountArray accounts, ulong forbidDuration) 
+        { 
+            this.isAll = isAll; 
+            this.avatars = avatars; 
+            this.accounts = accounts; 
+            this.forbidDuration = forbidDuration; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.isAll)); 
+            if (this.avatars == null) this.avatars = new ServiceIDArray(); 
+            data.AddRange(this.avatars.__encode()); 
+            if (this.accounts == null) this.accounts = new AccountArray(); 
+            data.AddRange(this.accounts.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.forbidDuration)); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.isAll = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.avatars = new ServiceIDArray(); 
+            this.avatars.__decode(binData, ref pos); 
+            this.accounts = new AccountArray(); 
+            this.accounts.__decode(binData, ref pos); 
+            this.forbidDuration = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
  
     public class DBStringArray : System.Collections.Generic.List<string>, Proto4z.IProtoObject  
     { 

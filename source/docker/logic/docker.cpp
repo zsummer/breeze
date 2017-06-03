@@ -566,7 +566,11 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onSwitchServiceClientNotice(session, rsShell);
         return;
     }
-
+    else if (rsShell.getProtoID() == KickClientsNotice::getProtoID())
+    {
+        event_onKickClientsNotice(session, rsShell);
+        return;
+    }
 
     else if (rsShell.getProtoID() == KickRealClient::getProtoID())
     {
@@ -1031,6 +1035,16 @@ void Docker::event_onKickRealClient(TcpSessionPtr session, ReadStream & rs)
     SessionManager::getRef().kickSession(notice.clientSessionID);
 }
 
+void Docker::event_onKickClientsNotice(TcpSessionPtr session, ReadStream & rs)
+{
+    KickClientsNotice notice;
+    rs >> notice;
+    LOGI("Docker::event_onKickClientsNotice kick all client .  ");
+    if (_widelisten != InvalidAccepterID)
+    {
+        SessionManager::getRef().kickClientSession(_widelisten);
+    }
+}
 
 void Docker::event_onUnloadServiceInDocker(TcpSessionPtr session, ReadStream & rs)
 {

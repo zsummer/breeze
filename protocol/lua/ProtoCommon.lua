@@ -55,6 +55,11 @@ Proto4z.ServiceIDMap.__protoDesc = "map"
 Proto4z.ServiceIDMap.__protoTypeK = "ui64" 
 Proto4z.ServiceIDMap.__protoTypeV = "ui64" 
  
+Proto4z.AccountArray = {}  
+Proto4z.AccountArray.__protoName = "AccountArray" 
+Proto4z.AccountArray.__protoDesc = "array" 
+Proto4z.AccountArray.__protoTypeV = "string" 
+ 
 Proto4z.register(1003,"AvatarPreview") 
 Proto4z.AvatarPreview = {} --用户预览信息 
 Proto4z.AvatarPreview.__protoID = 1003 

@@ -140,6 +140,8 @@ namespace Proto4z
             _idToName.Add(3025, "ReloadDBDictNotice");
             _nameToID.Add("ReloadDBDictFinish", 3026);
             _idToName.Add(3026, "ReloadDBDictFinish");
+            _nameToID.Add("KickClientsNotice", 3027);
+            _idToName.Add(3027, "KickClientsNotice");
             _nameToID.Add("SceneKnock", 4000);
             _idToName.Add(4000, "SceneKnock");
             _nameToID.Add("ScenePulse", 4001);

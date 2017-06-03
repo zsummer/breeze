@@ -173,6 +173,9 @@ typedef std::vector<unsigned long long> ServiceIDArray;
  
 typedef std::map<unsigned long long, unsigned long long> ServiceIDMap;  
  
+ 
+typedef std::vector<std::string> AccountArray;  
+ 
 struct AvatarPreview //用户预览信息  
 { 
     static const unsigned short getProtoID() { return 1003;} 

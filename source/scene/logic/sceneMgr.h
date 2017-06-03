@@ -91,6 +91,8 @@ private:
     std::map<SceneID, ScenePtr> _scenes;
     
     std::map<ServiceID, std::pair<std::string, SceneID>> _tokens;
+    std::map<ServiceID, time_t> _forbids;
+    time_t _forbidAll = 0;
 
     SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;

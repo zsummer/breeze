@@ -324,6 +324,13 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
         }
 
     }
+    else if (rsShell.getProtoID() == KickClientsNotice::getProtoID())
+    {
+        for (auto & l : _lines)
+        {
+            sendViaSessionID(l.second->sessionID, rsShell.getStream(), rsShell.getStreamLen());
+        }
+    }
 }
 
 SceneGroupInfoPtr World::getGroupInfoByAvatarID(ServiceID serviceID)

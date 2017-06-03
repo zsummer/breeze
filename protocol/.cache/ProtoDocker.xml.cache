@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>be5c5002f98ff17b989d8d46828483d7</cppmd5> 
-<luamd5>b229052555c6f4e9d5a65d24dafbe31c</luamd5> 
-<csharpmd5>6826fa4c37c9edc7aedfc82288939c71</csharpmd5> 
-<xmlmd5>5a9d0646cd514a0054150e1769c6b1e2</xmlmd5> 
+<cppmd5>35bef5e4514f36ec451a7a6c283efe4e</cppmd5> 
+<luamd5>ccf585381633cfa448fccdf77a4c329e</luamd5> 
+<csharpmd5>a33cfbd06e41b540110e71c81514f179</csharpmd5> 
+<xmlmd5>f4730ebf61eb3dd5d2b6a1580251d185</xmlmd5> 
 <cacheNumber>
     <cache key = "AvatarOffline" Number = "3023" /> 
     <cache key = "DBDataResult" Number = "3015" /> 
@@ -16,6 +16,7 @@
     <cache key = "ForwardToDocker" Number = "3014" /> 
     <cache key = "ForwardToRealClient" Number = "3013" /> 
     <cache key = "ForwardToService" Number = "3012" /> 
+    <cache key = "KickClientsNotice" Number = "3027" /> 
     <cache key = "KickRealClient" Number = "3007" /> 
     <cache key = "LoadService" Number = "3002" /> 
     <cache key = "LoadServiceNotice" Number = "3004" /> 

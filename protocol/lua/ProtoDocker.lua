@@ -120,6 +120,15 @@ Proto4z.ReloadDBDictFinish[1] = {name="dockerID", type="ui64" }
 Proto4z.ReloadDBDictFinish[2] = {name="activeTime", type="double" }  
 Proto4z.ReloadDBDictFinish[3] = {name="used", type="double" }  
  
+Proto4z.register(3027,"KickClientsNotice") 
+Proto4z.KickClientsNotice = {} --踢人 
+Proto4z.KickClientsNotice.__protoID = 3027 
+Proto4z.KickClientsNotice.__protoName = "KickClientsNotice" 
+Proto4z.KickClientsNotice[1] = {name="isAll", type="ui16" }  
+Proto4z.KickClientsNotice[2] = {name="avatars", type="ServiceIDArray" } --指定avatar 
+Proto4z.KickClientsNotice[3] = {name="accounts", type="AccountArray" } --指定account 
+Proto4z.KickClientsNotice[4] = {name="forbidDuration", type="ui64" } --限制登录的持续时间(关服前有效 不记录到数据库) 
+ 
 Proto4z.DBStringArray = {}  
 Proto4z.DBStringArray.__protoName = "DBStringArray" 
 Proto4z.DBStringArray.__protoDesc = "array" 

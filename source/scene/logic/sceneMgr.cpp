@@ -346,6 +346,41 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         onForwardToService(session, trace, rs);
         return;
     }
+    else if (rsShell.getProtoID() == KickClientsNotice::getProtoID())
+    {
+        KickClientsNotice notice;
+        rsShell >> notice;
+        time_t endTime = getNowTime() + notice.forbidDuration;
+        if (notice.isAll)
+        {
+            _forbidAll = endTime;
+            SessionManager::getRef().kickClientSession(_clientListen);
+        }
+        else
+        {
+            for (auto id : notice.avatars)
+            {
+                _forbids[id] = endTime;
+                auto iter = _tokens.find(id);
+                if (iter != _tokens.end() && iter->second.second != InvalidSceneID)
+                {
+                    auto scene = getActiveScene(iter->second.second);
+                    if (scene)
+                    {
+                        auto e = scene->getEntityByAvatarID(id);
+                        if (e)
+                        {
+                            if (e->_clientSessionID != InvalidSessionID)
+                            {
+                                SessionManager::getRef().kickSession(e->_clientSessionID);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     else if (rsShell.getProtoID() == ChatResp::getProtoID())
     {
       
@@ -454,8 +489,22 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
     {
         AttachSceneReq req;
         rs >> req;
+        if (true)
+        {
+            if (getNowTime() < _forbidAll)
+            {
+                sendViaSessionID(session->getSessionID(), AttachSceneResp(EC_PERMISSION_DENIED, req.avatarID, req.sceneID));
+                return;
+            }
+            auto finder = _forbids.find(req.avatarID);
+            if (finder != _forbids.end() && getNowTime() < finder->second)
+            {
+                sendViaSessionID(session->getSessionID(), AttachSceneResp(EC_PERMISSION_DENIED, req.avatarID, req.sceneID));
+                return;
+            }
+        }
         auto founder = _tokens.find(req.avatarID);
-        if (founder != _tokens.end() && founder->second.first == req.token  && _actives.find(req.sceneID) != _actives.end())
+        if (founder != _tokens.end() && founder->second.first == req.token  && _actives.find(req.sceneID) != _actives.end() )
         {
             session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
             session->setUserParam(UPARAM_AVATAR_ID, req.avatarID);

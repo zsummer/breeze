@@ -253,6 +253,11 @@ public:
                    return "ReloadDBDictFinish";
             }
             break;
+            case 3027:
+            {
+                   return "KickClientsNotice";
+            }
+            break;
             case 4000:
             {
                    return "SceneKnock";

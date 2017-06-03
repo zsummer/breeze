@@ -127,19 +127,24 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
 
         }
 
-        if (uri == "/getonline")
+        if (compareStringIgnCase(uri, "/getonline"))
         {
             getonline(trace.oob.clientDockerID, trace.oob.clientSessionID, params);
         }
-        else if (uri == "/reload")
+        else if (compareStringIgnCase(uri, "/reload"))
+
         {
             reload(trace.oob.clientDockerID, trace.oob.clientSessionID, params);
         }
-        else if (uri == "/offlinechat")
+        else if (compareStringIgnCase(uri, "/KickClients"))
+        {
+            KickClients(trace.oob.clientDockerID, trace.oob.clientSessionID, params);
+        }
+        else if (compareStringIgnCase(uri, "/offlinechat"))
         {
             offlinechat(trace.oob.clientDockerID, trace.oob.clientSessionID, params);
         }
-        else if (uri == "/test")
+        else if (compareStringIgnCase(uri, "/test"))
         {
             WebServerRequest request;
             request.ip = "42.121.252.58";
@@ -175,6 +180,40 @@ void WebService::onReloadState(Tracing trace, ReadStream &rs)
     std::get<1>(val) = f.used;
 }
 
+void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
+{
+    KickClientsNotice notice;
+
+    for (const auto & kv : params)
+    {
+        if (compareStringIgnCase(kv.first, "isAll"))
+        {
+            notice.isAll = fromString<ui16>(kv.second);
+        }
+        else if (compareStringIgnCase(kv.first, "avatars"))
+        {
+            notice.avatars = splitString<ui64>(kv.second, ",", " ");
+
+        }
+        else if (compareStringIgnCase(kv.first, "avatars"))
+        {
+            notice.accounts = splitString<std::string>(kv.second, ",", " ");
+        }
+        else if (compareStringIgnCase(kv.first, "forbidDuration"))
+        {
+            notice.forbidDuration = fromString<ui64>(kv.second);
+        }
+    }
+
+    if (notice.isAll == 0 && notice.avatars.empty())
+    {
+        responseError(dockerID, clientID, 404, R"({"result":"error","msg":"KickClients no avatars to kick. "})");
+        return;
+    }
+
+    responseSuccess(dockerID, clientID, R"({"result":"success","kicked":)" + toString(Docker::getRef().peekService(STAvatar).size()) + "}");
+    toService(STAvatarMgr, notice);
+}
 
 void WebService::reload(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
 {

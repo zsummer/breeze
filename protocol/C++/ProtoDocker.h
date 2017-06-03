@@ -594,6 +594,54 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+struct KickClientsNotice //踢人  
+{ 
+    static const unsigned short getProtoID() { return 3027;} 
+    static const std::string getProtoName() { return "KickClientsNotice";} 
+    unsigned short isAll;  
+    ServiceIDArray avatars; //指定avatar  
+    AccountArray accounts; //指定account  
+    unsigned long long forbidDuration; //限制登录的持续时间(关服前有效 不记录到数据库)  
+    KickClientsNotice() 
+    { 
+        isAll = 0; 
+        forbidDuration = 0; 
+    } 
+    KickClientsNotice(const unsigned short & isAll, const ServiceIDArray & avatars, const AccountArray & accounts, const unsigned long long & forbidDuration) 
+    { 
+        this->isAll = isAll; 
+        this->avatars = avatars; 
+        this->accounts = accounts; 
+        this->forbidDuration = forbidDuration; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const KickClientsNotice & data) 
+{ 
+    ws << data.isAll;  
+    ws << data.avatars;  
+    ws << data.accounts;  
+    ws << data.forbidDuration;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, KickClientsNotice & data) 
+{ 
+    rs >> data.isAll;  
+    rs >> data.avatars;  
+    rs >> data.accounts;  
+    rs >> data.forbidDuration;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const KickClientsNotice & info) 
+{ 
+    stm << "["; 
+    stm << "isAll=" << info.isAll << ","; 
+    stm << "avatars=" << info.avatars << ","; 
+    stm << "accounts=" << info.accounts << ","; 
+    stm << "forbidDuration=" << info.forbidDuration << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
  
 typedef std::vector<std::string> DBStringArray;  
  
