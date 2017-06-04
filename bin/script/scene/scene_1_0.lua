@@ -24,6 +24,6 @@ sceneInit()
 
 
 function onUpdate()
-    logd("scene_2_0 entityid=" .. Scene.sceneID)
+--    logd("scene_2_0 entityid=" .. Scene.sceneID)
 end
 

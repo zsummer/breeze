@@ -57,7 +57,7 @@ public:
     //消息队列 
 public:
     template <typename MSG>
-    void broadcast(const MSG & msg, ServiceID without = InvalidServiceID);
+    void broadcast(const MSG & msg, ServiceID without = InvalidServiceID, bool withScript = true);
     template<typename MSG>
     void sendToClient(ServiceID avatarID, const MSG &msg);
 public:
@@ -161,7 +161,7 @@ void Scene::sendToClient(ServiceID avatarID, const MSG &msg)
 
 
 template<typename MSG>
-void Scene::broadcast(const MSG &msg, ServiceID without)
+void Scene::broadcast(const MSG &msg, ServiceID without, bool withScript)
 {
     try
     {
@@ -176,6 +176,11 @@ void Scene::broadcast(const MSG &msg, ServiceID without)
             }
             SessionManager::getRef().sendSessionData(user.second->_clientSessionID, ws.getStream(), ws.getStreamLen());
         }
+		if (withScript)
+		{
+			_script->protoSync(MSG::getProtoName(), ws.pickStream());
+			return;
+		}
 
     }
     catch (...)

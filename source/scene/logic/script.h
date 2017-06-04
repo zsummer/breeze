@@ -27,8 +27,11 @@ class Script : public std::enable_shared_from_this<Script>
 public:
     Script();
     ~Script();
+public:
     void init(std::weak_ptr<Scene> scene);
     void update();
+	void protoSync(const std::string & protoName, const std::string & data);
+	
 
 };
 
