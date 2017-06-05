@@ -240,8 +240,8 @@ namespace Proto4z
     public class SceneServerGroupStateFeedback: Proto4z.IProtoObject //scene ==> world  
     {     
         //proto id   
-        public const ushort protoID = 4007;  
-        static public ushort getProtoID() { return 4007; } 
+        public const ushort protoID = 4006;  
+        static public ushort getProtoID() { return 4006; } 
         static public string getProtoName() { return "SceneServerGroupStateFeedback"; } 
         //members   
         public ulong sceneID;  
@@ -272,6 +272,37 @@ namespace Proto4z
             this.sceneID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.groupID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.state = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+    public class EntityControlNotice: Proto4z.IProtoObject //实体的控制类同步更新, 只同步给脚本不给客户端  
+    {     
+        //proto id   
+        public const ushort protoID = 4007;  
+        static public ushort getProtoID() { return 4007; } 
+        static public string getProtoName() { return "EntityControlNotice"; } 
+        //members   
+        public EntityControlArray controls;  
+        public EntityControlNotice()  
+        { 
+            controls = new EntityControlArray();  
+        } 
+        public EntityControlNotice(EntityControlArray controls) 
+        { 
+            this.controls = controls; 
+        } 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var data = new System.Collections.Generic.List<byte>(); 
+            if (this.controls == null) this.controls = new EntityControlArray(); 
+            data.AddRange(this.controls.__encode()); 
+            return data; 
+        } 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            this.controls = new EntityControlArray(); 
+            this.controls.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

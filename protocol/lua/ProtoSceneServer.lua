@@ -47,10 +47,16 @@ Proto4z.SceneServerCancelSceneIns.__protoName = "SceneServerCancelSceneIns"
 Proto4z.SceneServerCancelSceneIns[1] = {name="sceneID", type="ui64" } --sceneID 
 Proto4z.SceneServerCancelSceneIns[2] = {name="groupID", type="ui64" } --groupID 
  
-Proto4z.register(4007,"SceneServerGroupStateFeedback") 
+Proto4z.register(4006,"SceneServerGroupStateFeedback") 
 Proto4z.SceneServerGroupStateFeedback = {} --scene ==> world 
-Proto4z.SceneServerGroupStateFeedback.__protoID = 4007 
+Proto4z.SceneServerGroupStateFeedback.__protoID = 4006 
 Proto4z.SceneServerGroupStateFeedback.__protoName = "SceneServerGroupStateFeedback" 
 Proto4z.SceneServerGroupStateFeedback[1] = {name="sceneID", type="ui64" }  
 Proto4z.SceneServerGroupStateFeedback[2] = {name="groupID", type="ui64" }  
 Proto4z.SceneServerGroupStateFeedback[3] = {name="state", type="ui16" } --如果是NONE 说明离开场景 
+ 
+Proto4z.register(4007,"EntityControlNotice") 
+Proto4z.EntityControlNotice = {} --实体的控制类同步更新, 只同步给脚本不给客户端 
+Proto4z.EntityControlNotice.__protoID = 4007 
+Proto4z.EntityControlNotice.__protoName = "EntityControlNotice" 
+Proto4z.EntityControlNotice[1] = {name="controls", type="EntityControlArray" }  

@@ -532,7 +532,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ReloadDBDictNotice //重新加载字典文件  
 { 
-    static const unsigned short getProtoID() { return 3025;} 
+    static const unsigned short getProtoID() { return 3015;} 
     static const std::string getProtoName() { return "ReloadDBDictNotice";} 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const ReloadDBDictNotice & data) 
@@ -552,7 +552,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct ReloadDBDictFinish //重新加载字典文件  
 { 
-    static const unsigned short getProtoID() { return 3026;} 
+    static const unsigned short getProtoID() { return 3016;} 
     static const std::string getProtoName() { return "ReloadDBDictFinish";} 
     unsigned long long dockerID;  
     double activeTime;  
@@ -596,7 +596,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct KickClientsNotice //踢人  
 { 
-    static const unsigned short getProtoID() { return 3027;} 
+    static const unsigned short getProtoID() { return 3017;} 
     static const std::string getProtoName() { return "KickClientsNotice";} 
     unsigned short isAll;  
     ServiceIDArray avatars; //指定avatar  
@@ -647,7 +647,7 @@ typedef std::vector<std::string> DBStringArray;
  
 struct DBDataResult 
 { 
-    static const unsigned short getProtoID() { return 3015;} 
+    static const unsigned short getProtoID() { return 3018;} 
     static const std::string getProtoName() { return "DBDataResult";} 
     unsigned short qc;  
     std::string errMsg;  
@@ -703,7 +703,7 @@ typedef std::vector<DBDataResult> DBDataResultArray;
  
 struct DBQueryReq //通用SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 3016;} 
+    static const unsigned short getProtoID() { return 3019;} 
     static const std::string getProtoName() { return "DBQueryReq";} 
     std::string sql;  
     DBQueryReq() 
@@ -734,7 +734,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryResp //通用SQL语句执行协议返回,DBDataResult可以借助dbHepler进行构建DBResult  
 { 
-    static const unsigned short getProtoID() { return 3017;} 
+    static const unsigned short getProtoID() { return 3020;} 
     static const std::string getProtoName() { return "DBQueryResp";} 
     unsigned short retCode;  
     DBDataResult result;  
@@ -771,7 +771,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryArrayReq //通用批量SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 3018;} 
+    static const unsigned short getProtoID() { return 3021;} 
     static const std::string getProtoName() { return "DBQueryArrayReq";} 
     DBStringArray sqls;  
     DBQueryArrayReq() 
@@ -802,7 +802,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct DBQueryArrayResp //通用批量SQL语句执行协议  
 { 
-    static const unsigned short getProtoID() { return 3019;} 
+    static const unsigned short getProtoID() { return 3022;} 
     static const std::string getProtoName() { return "DBQueryArrayResp";} 
     unsigned short retCode;  
     DBDataResultArray results; //批量返回,注意不要超出协议包最大长度  
@@ -842,7 +842,7 @@ typedef std::map<std::string, std::string> WebAgentHead;
  
 struct WebAgentClientRequestAPI 
 { 
-    static const unsigned short getProtoID() { return 3020;} 
+    static const unsigned short getProtoID() { return 3023;} 
     static const std::string getProtoName() { return "WebAgentClientRequestAPI";} 
     std::string method;  
     std::string methodLine;  
@@ -888,7 +888,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct WebServerRequest 
 { 
-    static const unsigned short getProtoID() { return 3021;} 
+    static const unsigned short getProtoID() { return 3024;} 
     static const std::string getProtoName() { return "WebServerRequest";} 
     unsigned short fromServiceType;  
     unsigned long long fromServiceID;  
@@ -969,7 +969,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct WebServerResponse 
 { 
-    static const unsigned short getProtoID() { return 3022;} 
+    static const unsigned short getProtoID() { return 3025;} 
     static const std::string getProtoName() { return "WebServerResponse";} 
     std::string method;  
     std::string methodLine;  
@@ -1015,7 +1015,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct AvatarOffline 
 { 
-    static const unsigned short getProtoID() { return 3023;} 
+    static const unsigned short getProtoID() { return 3026;} 
     static const std::string getProtoName() { return "AvatarOffline";} 
     inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 

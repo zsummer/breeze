@@ -143,7 +143,7 @@ void MoveSync::fillRVO(double frame)
 
                     //collision check 
                     double dist = getDistance(entity._move.position, followEntity->_move.position);
-                    if (dist <= entity._state.collision + followEntity->_state.collision + PATH_PRECISION)
+                    if (dist <= entity._control.collision + followEntity->_control.collision + PATH_PRECISION)
                     {
                         break;
                     }
@@ -155,7 +155,7 @@ void MoveSync::fillRVO(double frame)
             while (!entity._move.waypoints.empty())
             {
                 double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-                if (dist < entity._state.collision +  PATH_PRECISION )
+                if (dist < entity._control.collision +  PATH_PRECISION )
                 {
                     entity._move.waypoints.erase(entity._move.waypoints.begin());
                     continue;
@@ -172,7 +172,7 @@ void MoveSync::fillRVO(double frame)
 
 
             double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-            if (dist < entity._state.collision + PATH_PRECISION)
+            if (dist < entity._control.collision + PATH_PRECISION)
             {
                 sim->setAgentMaxSpeed(entity._control.agentNo, 0 );
                 sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0,0));
@@ -191,7 +191,7 @@ void MoveSync::fillRVO(double frame)
                 dir *= entity._move.expectSpeed;
                 sim->setAgentPrefVelocity(entity._control.agentNo, dir);
             }
-            sim->setAgentRadius(entity._control.agentNo, entity._state.collision);
+            sim->setAgentRadius(entity._control.agentNo, entity._control.collision);
             if (entity._state.etype == ENTITY_PLAYER)
             {
                 sim->setAgentTimeHorizon(entity._control.agentNo, 0.1);
@@ -327,7 +327,7 @@ void MoveSync::fixDirtyMove(double frame)
                     moveEnd = true;
                     break;
                 }
-                if (getDistance(entity._move.position, follow->_move.position) <= entity._state.collision + follow->_state.collision + PATH_PRECISION)
+                if (getDistance(entity._move.position, follow->_move.position) <= entity._control.collision + follow->_control.collision + PATH_PRECISION)
                 {
                     moveEnd = true;
                     break;
@@ -344,7 +344,7 @@ void MoveSync::fixDirtyMove(double frame)
             while (!entity._move.waypoints.empty())
             {
                 double dist = getDistance(entity._move.position, entity._move.waypoints.front());
-                if (dist <= entity._state.collision + PATH_PRECISION)
+                if (dist <= entity._control.collision + PATH_PRECISION)
                 {
                     entity._move.waypoints.erase(entity._move.waypoints.begin());
                     continue;
@@ -463,7 +463,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
 
             //collision check 
             double dist = getDistance(entity->_move.position, followEntity->_move.position);
-            if (dist <= entity->_state.collision + followEntity->_state.collision + PATH_PRECISION)
+            if (dist <= entity->_control.collision + followEntity->_control.collision + PATH_PRECISION)
             {
                 break;
             }

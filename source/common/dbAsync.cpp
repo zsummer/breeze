@@ -137,8 +137,9 @@ void DBAsync::run()
         {
             _event->runOnce();
         }
-        catch (...)
+        catch (const std::exception & e)
         {
+            std::cout << "DBAsync::run error. e=" << e.what() << std::endl;
         }
 
     } while (true);

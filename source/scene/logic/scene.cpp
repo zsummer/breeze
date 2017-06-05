@@ -29,10 +29,6 @@ void Scene::getSceneSection(SceneSection & ss)
     ss.sceneStartTime = _startTime;
     ss.sceneEndTime = _endTime;
     ss.serverTime = getFloatSteadyNowTime();
-    for (auto & entity : _entitys)
-    {
-        ss.entitys.push_back(entity.second->getFullData());
-    }
 }
 
 
@@ -157,7 +153,7 @@ EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName,
 
 void Scene::addEntity(EntityPtr entity)
 {
-    entity->_control.agentNo = _move->addAgent(entity->_move.position, entity->_state.collision);
+    entity->_control.agentNo = _move->addAgent(entity->_move.position, entity->_control.collision);
 
     _entitys.insert(std::make_pair(entity->_state.eid, entity));
 
@@ -168,7 +164,7 @@ void Scene::addEntity(EntityPtr entity)
 
 
     AddEntityNotice notice;
-    notice.entitys.push_back(entity->getFullData());
+    notice.syncs.push_back(entity->getClientSyncData());
     broadcast(notice, entity->_state.avatarID);
     onAddEntity(entity);
 }
@@ -239,24 +235,16 @@ bool Scene::playerAttach(ServiceID avatarID, SessionID sID)
     entity->_clientSessionID = sID;
 
     LOGI("Scene::playerAttach avatarName=" << entity->_state.avatarName << " sessionID=" << sID << ", entityID=" << entity->_state.eid);
-    EntityFullDataArray entitys;
     SceneSectionNotice section;
     getSceneSection(section.section);
-    entitys.swap(section.section.entitys);
     sendToClient(avatarID, section);
 
     AddEntityNotice notice;
-    while (!entitys.empty())
+    for (auto & e : _entitys)
     {
-        notice.entitys.push_back(entitys.back());
-        entitys.pop_back();
-        if (notice.entitys.size() >= 10)
-        {
-            sendToClient(avatarID, notice);
-            notice.entitys.clear();
-        }
+        notice.syncs.push_back(e.second->getClientSyncData());
     }
-    if (!notice.entitys.empty())
+    if (!notice.syncs.empty())
     {
         sendToClient(avatarID, notice);
     }
@@ -294,6 +282,7 @@ bool Scene::onUpdate()
 
 
     SceneRefreshNotice notice;
+    EntityControlNotice controls;
     for (auto &kv : _entitys)
     {
         if (kv.second->_isStateDirty)
@@ -306,10 +295,19 @@ bool Scene::onUpdate()
             notice.entityMoves.push_back(kv.second->_move);
             kv.second->_isMoveDirty = false;
         }
+        if (kv.second->_isControlDirty)
+        {
+            kv.second->_isControlDirty = false;
+            controls.controls.push_back(kv.second->_control);
+        }
     }
     if (!notice.entityStates.empty() || !notice.entityMoves.empty())
     {
         broadcast(notice);
+    }
+    if (!controls.controls.empty())
+    {
+        _script->protoSync(controls);
     }
     //after flush data
     _script->update();
@@ -485,7 +483,7 @@ std::vector<std::pair<EntityPtr, double>>  Scene::searchTarget(EPosition org, EP
         {
             continue;
         }
-        auto cRet = ac.check(toTuple(pos), kv.second->_state.collision);
+        auto cRet = ac.check(toTuple(pos), kv.second->_control.collision);
         if (std::get<0>(cRet))
         {
             ret.push_back(std::make_pair(kv.second, std::get<1>(cRet)));

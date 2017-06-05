@@ -49,13 +49,13 @@ void AI::update()
                 entity->_state.maxHP = entity->_props.hp;
                 entity->_state.curHP = entity->_state.maxHP;
                 entity->_state.camp = ENTITY_CAMP_BLUE + 100;
-                entity->_state.collision = 1.0;
+                
                 entity->_skillSys.dictBootSkills.insert(2);
                 entity->_skillSys.autoAttack = false;
 
                 entity->_move.position = sp;
                 entity->_control.spawnpoint = sp;
-
+                entity->_control.collision = 1.0;
                 scene->addEntity(entity);
                 _march.push_back(entity);
             }
@@ -165,13 +165,12 @@ void AI::createMonster()
             entity->_state.maxHP = entity->_props.hp;
             entity->_state.curHP = entity->_state.maxHP;
             entity->_state.camp = ENTITY_CAMP_BLUE + 100;
-            entity->_state.collision = 1.0;
             entity->_skillSys.dictBootSkills.insert(2);
             entity->_skillSys.autoAttack = true;
 
             entity->_move.position = sp;
             entity->_control.spawnpoint = sp;
-
+            entity->_control.collision = 1.0;
             scene->addEntity(entity);
             _monsters[entity->_state.eid] = entity;
             scene->pushAsync([scene, entity]() {scene->_skill->useSkill(scene, entity->_state.eid, 1); });
@@ -198,7 +197,7 @@ void AI::monsterHomingCheck()
                 checkBack = true;
                 break;
             }
-            if (dist > entity->_state.collision + PATH_PRECISION + 1.0 && entity->_state.foe == InvalidEntityID)
+            if (dist > entity->_control.collision + PATH_PRECISION + 1.0 && entity->_state.foe == InvalidEntityID)
             {
                 checkBack = true;
                 break;

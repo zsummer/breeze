@@ -525,8 +525,8 @@ namespace Proto4z
     public class ReloadDBDictNotice: Proto4z.IProtoObject //重新加载字典文件  
     {     
         //proto id   
-        public const ushort protoID = 3025;  
-        static public ushort getProtoID() { return 3025; } 
+        public const ushort protoID = 3015;  
+        static public ushort getProtoID() { return 3015; } 
         static public string getProtoName() { return "ReloadDBDictNotice"; } 
         //members   
         public ReloadDBDictNotice()  
@@ -546,8 +546,8 @@ namespace Proto4z
     public class ReloadDBDictFinish: Proto4z.IProtoObject //重新加载字典文件  
     {     
         //proto id   
-        public const ushort protoID = 3026;  
-        static public ushort getProtoID() { return 3026; } 
+        public const ushort protoID = 3016;  
+        static public ushort getProtoID() { return 3016; } 
         static public string getProtoName() { return "ReloadDBDictFinish"; } 
         //members   
         public ulong dockerID;  
@@ -585,8 +585,8 @@ namespace Proto4z
     public class KickClientsNotice: Proto4z.IProtoObject //踢人  
     {     
         //proto id   
-        public const ushort protoID = 3027;  
-        static public ushort getProtoID() { return 3027; } 
+        public const ushort protoID = 3017;  
+        static public ushort getProtoID() { return 3017; } 
         static public string getProtoName() { return "KickClientsNotice"; } 
         //members   
         public ushort isAll;  
@@ -662,8 +662,8 @@ namespace Proto4z
     public class DBDataResult: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 3015;  
-        static public ushort getProtoID() { return 3015; } 
+        public const ushort protoID = 3018;  
+        static public ushort getProtoID() { return 3018; } 
         static public string getProtoName() { return "DBDataResult"; } 
         //members   
         public ushort qc;  
@@ -744,8 +744,8 @@ namespace Proto4z
     public class DBQueryReq: Proto4z.IProtoObject //通用SQL语句执行协议  
     {     
         //proto id   
-        public const ushort protoID = 3016;  
-        static public ushort getProtoID() { return 3016; } 
+        public const ushort protoID = 3019;  
+        static public ushort getProtoID() { return 3019; } 
         static public string getProtoName() { return "DBQueryReq"; } 
         //members   
         public string sql;  
@@ -773,8 +773,8 @@ namespace Proto4z
     public class DBQueryResp: Proto4z.IProtoObject //通用SQL语句执行协议返回,DBDataResult可以借助dbHepler进行构建DBResult  
     {     
         //proto id   
-        public const ushort protoID = 3017;  
-        static public ushort getProtoID() { return 3017; } 
+        public const ushort protoID = 3020;  
+        static public ushort getProtoID() { return 3020; } 
         static public string getProtoName() { return "DBQueryResp"; } 
         //members   
         public ushort retCode;  
@@ -809,8 +809,8 @@ namespace Proto4z
     public class DBQueryArrayReq: Proto4z.IProtoObject //通用批量SQL语句执行协议  
     {     
         //proto id   
-        public const ushort protoID = 3018;  
-        static public ushort getProtoID() { return 3018; } 
+        public const ushort protoID = 3021;  
+        static public ushort getProtoID() { return 3021; } 
         static public string getProtoName() { return "DBQueryArrayReq"; } 
         //members   
         public DBStringArray sqls;  
@@ -840,8 +840,8 @@ namespace Proto4z
     public class DBQueryArrayResp: Proto4z.IProtoObject //通用批量SQL语句执行协议  
     {     
         //proto id   
-        public const ushort protoID = 3019;  
-        static public ushort getProtoID() { return 3019; } 
+        public const ushort protoID = 3022;  
+        static public ushort getProtoID() { return 3022; } 
         static public string getProtoName() { return "DBQueryArrayResp"; } 
         //members   
         public ushort retCode;  
@@ -908,8 +908,8 @@ namespace Proto4z
     public class WebAgentClientRequestAPI: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 3020;  
-        static public ushort getProtoID() { return 3020; } 
+        public const ushort protoID = 3023;  
+        static public ushort getProtoID() { return 3023; } 
         static public string getProtoName() { return "WebAgentClientRequestAPI"; } 
         //members   
         public string method;  
@@ -954,8 +954,8 @@ namespace Proto4z
     public class WebServerRequest: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 3021;  
-        static public ushort getProtoID() { return 3021; } 
+        public const ushort protoID = 3024;  
+        static public ushort getProtoID() { return 3024; } 
         static public string getProtoName() { return "WebServerRequest"; } 
         //members   
         public ushort fromServiceType;  
@@ -1030,8 +1030,8 @@ namespace Proto4z
     public class WebServerResponse: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 3022;  
-        static public ushort getProtoID() { return 3022; } 
+        public const ushort protoID = 3025;  
+        static public ushort getProtoID() { return 3025; } 
         static public string getProtoName() { return "WebServerResponse"; } 
         //members   
         public string method;  
@@ -1076,8 +1076,8 @@ namespace Proto4z
     public class AvatarOffline: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 3023;  
-        static public ushort getProtoID() { return 3023; } 
+        public const ushort protoID = 3026;  
+        static public ushort getProtoID() { return 3026; } 
         static public string getProtoName() { return "AvatarOffline"; } 
         //members   
         public ulong id;  

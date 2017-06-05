@@ -92,7 +92,7 @@ public:
     double getSpeed();
     double getSuckBlood();
     double getAttack();
-    EntityFullData getFullData();
+    EntityClientSync getClientSyncData();
     DictProp _props;
     EntityState  _state;
     EntityMove  _move;

@@ -132,8 +132,8 @@ namespace Proto4z
     public class AOESearch: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 11003;  
-        static public ushort getProtoID() { return 11003; } 
+        public const ushort protoID = 11001;  
+        static public ushort getProtoID() { return 11001; } 
         static public string getProtoName() { return "AOESearch"; } 
         //members   
         public ulong id;  
@@ -235,8 +235,8 @@ namespace Proto4z
     public class DictBuff: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 11005;  
-        static public ushort getProtoID() { return 11005; } 
+        public const ushort protoID = 11002;  
+        static public ushort getProtoID() { return 11002; } 
         static public string getProtoName() { return "DictBuff"; } 
         //members   
         public ulong id;  
@@ -359,8 +359,8 @@ namespace Proto4z
     public class DictSkill: Proto4z.IProtoObject 
     {     
         //proto id   
-        public const ushort protoID = 11007;  
-        static public ushort getProtoID() { return 11007; } 
+        public const ushort protoID = 11003;  
+        static public ushort getProtoID() { return 11003; } 
         static public string getProtoName() { return "DictSkill"; } 
         //members   
         public ulong id;  

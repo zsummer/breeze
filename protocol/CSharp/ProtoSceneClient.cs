@@ -215,26 +215,26 @@ namespace Proto4z
         static public ushort getProtoID() { return 50006; } 
         static public string getProtoName() { return "AddEntityNotice"; } 
         //members   
-        public EntityFullDataArray entitys;  
+        public EntityClientSyncArray syncs;  
         public AddEntityNotice()  
         { 
-            entitys = new EntityFullDataArray();  
+            syncs = new EntityClientSyncArray();  
         } 
-        public AddEntityNotice(EntityFullDataArray entitys) 
+        public AddEntityNotice(EntityClientSyncArray syncs) 
         { 
-            this.entitys = entitys; 
+            this.syncs = syncs; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
-            if (this.entitys == null) this.entitys = new EntityFullDataArray(); 
-            data.AddRange(this.entitys.__encode()); 
+            if (this.syncs == null) this.syncs = new EntityClientSyncArray(); 
+            data.AddRange(this.syncs.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
-            this.entitys = new EntityFullDataArray(); 
-            this.entitys.__decode(binData, ref pos); 
+            this.syncs = new EntityClientSyncArray(); 
+            this.syncs.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

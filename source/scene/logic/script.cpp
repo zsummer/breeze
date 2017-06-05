@@ -194,22 +194,23 @@ void Script::protoSync(const std::string & protoName, const std::string & data)
 		return;
 	}
 
-	std::string protoFunc = "on" + protoName;
 	lua_settop(_luaState, 0);
 	flushSceneToScript(scene.get(), _luaState);
+
+
 	lua_pushcfunction(_luaState, pcall_error);
-	lua_getglobal(_luaState, protoFunc.c_str());
-	if (!lua_isfunction(_luaState, 1))
-	{
-		LOGW("Script::protoSync scene[" << scene->getSceneID() << "] not found script func [" + protoFunc + "] type="
-			<< (int)scene->getSceneType() << ", mapID=" << scene->getMapID());
-		return;
-	}
-	lua_pushstring(_luaState, protoFunc.c_str());
+    lua_getglobal(_luaState, "onSyncEntry");
+    if (!lua_isfunction(_luaState, -1))
+    {
+        LOGW("Script::protoSync scene[" << scene->getSceneID() << "] not found Scene.onSyncEntry type="
+            << (int)scene->getSceneType() << ", mapID=" << scene->getMapID());
+        return;
+    }
+	lua_pushstring(_luaState, protoName.c_str());
 	lua_pushlstring(_luaState, data.c_str(), data.size());
 	int status = lua_pcall(_luaState, 2, 0, 1);
-	lua_remove(_luaState, 1);
-	if (status)
+    lua_remove(_luaState, 1);
+    if (status)
 	{
 		const char *msg = lua_tostring(_luaState, -1);
 		if (msg == NULL) msg = "(error object is not a string)";

@@ -92,12 +92,9 @@ void SceneMgr::onTimer()
                 kv.second->getSceneSection(notice.section);
                 //status ins
                 std::set<GroupID> groups;
-                for (auto &entity : notice.section.entitys)
+                for (auto &ekv : kv.second->getPlayers())
                 {
-                    if (entity.state.etype == ENTITY_PLAYER)
-                    {
-                        groups.insert(entity.state.groupID);
-                    }
+                    groups.insert(ekv.second->_state.groupID);
                 }
                 for (auto key : groups)
                 {
@@ -635,7 +632,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                 entity->_state.maxHP = entity->_props.hp;
                 entity->_state.curHP = entity->_state.maxHP;
                 entity->_state.camp = ENTITY_CAMP_BLUE + rand() % 100;
-                entity->_state.collision = 1.0;
+                entity->_control.collision = 1.0;
                 entity->_skillSys.dictBootSkills.insert(1);
 
                 if (scene->getSceneType() == SCENE_MELEE)

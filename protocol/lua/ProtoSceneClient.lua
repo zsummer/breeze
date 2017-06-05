@@ -44,7 +44,7 @@ Proto4z.register(50006,"AddEntityNotice")
 Proto4z.AddEntityNotice = {} --一批实体加入场景时, 把这些实体的数据广播给其他玩家 
 Proto4z.AddEntityNotice.__protoID = 50006 
 Proto4z.AddEntityNotice.__protoName = "AddEntityNotice" 
-Proto4z.AddEntityNotice[1] = {name="entitys", type="EntityFullDataArray" }  
+Proto4z.AddEntityNotice[1] = {name="syncs", type="EntityClientSyncArray" }  
  
 Proto4z.register(50007,"RemoveEntityNotice") 
 Proto4z.RemoveEntityNotice = {} --实体离开场景时, 把该实体的数据广播给其他玩家 

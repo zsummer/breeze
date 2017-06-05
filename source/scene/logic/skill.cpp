@@ -112,7 +112,7 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
         }
         else
         {
-            double dis = getDistance(caster->_move.position, dst->_move.position) - dst->_state.collision;
+            double dis = getDistance(caster->_move.position, dst->_move.position) - dst->_control.collision;
             if (dis > dictSearch.second.value1)
             {
                 caster->_state.foe = InvalidEntityID;
@@ -222,7 +222,7 @@ void Skill::update()
                             continue;
                         }
 
-                        if (e._move.action == MOVE_ACTION_FOLLOW && distance > (std::max(aoeSearch.second.value1, aoeSearch.second.value2) + foe->_state.collision)*0.8)
+                        if (e._move.action == MOVE_ACTION_FOLLOW && distance > (std::max(aoeSearch.second.value1, aoeSearch.second.value2) + foe->_control.collision)*0.8)
                         {
                             continue;
                         }

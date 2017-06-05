@@ -152,9 +152,9 @@ void Scene::sendToClient(ServiceID avatarID, const MSG &msg)
         ws << msg;
         SessionManager::getRef().sendSessionData(founder->second->_clientSessionID, ws.getStream(), ws.getStreamLen());
     }
-    catch (...)
+    catch (const std::exception & e)
     {
-        LOGE("Scene::sendToClient ServiceID=" << avatarID << ",  protoid=" << MSG::getProtoID());
+        LOGE("Scene::sendToClient ServiceID=" << avatarID << ",  protoid=" << MSG::getProtoID() << ", e=" << e.what());
         return;
     }
 }
@@ -183,9 +183,9 @@ void Scene::broadcast(const MSG &msg, ServiceID without, bool withScript)
 		}
 
     }
-    catch (...)
+    catch (const std::exception & e)
     {
-        LOGE("Scene::broadcast protoid=" << MSG::getProtoID());
+        LOGE("Scene::broadcast protoid=" << MSG::getProtoID() << ", e=" << e.what());
         return;
     }
 }

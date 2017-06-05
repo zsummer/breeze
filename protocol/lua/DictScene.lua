@@ -27,9 +27,9 @@ Proto4z.FILTER_OTHER_FRIEND = 3--友方阵营
 Proto4z.FILTER_ENEMY_CAMP = 4--敌方阵营 
 Proto4z.FILTER_NEUTRAL_CAMP = 5--中立阵营 
  
-Proto4z.register(11003,"AOESearch") 
+Proto4z.register(11001,"AOESearch") 
 Proto4z.AOESearch = {}  
-Proto4z.AOESearch.__protoID = 11003 
+Proto4z.AOESearch.__protoID = 11001 
 Proto4z.AOESearch.__protoName = "AOESearch" 
 Proto4z.AOESearch[1] = {name="id", type="ui64" }  
 Proto4z.AOESearch[2] = {name="etype", type="ui16" } --实体类型, 玩家/AI 或者是NONE忽略该选项 
@@ -64,9 +64,9 @@ Proto4z.BUFF_IMMUNE_FLOAT = 33--免疫: 免疫击飞
 Proto4z.BUFF_IMMUNE_MOVEBACK = 34--免疫: 免疫击退 
 Proto4z.BUFF_IMMUNE_BREAK = 35--免疫: 免疫技能中断 
  
-Proto4z.register(11005,"DictBuff") 
+Proto4z.register(11002,"DictBuff") 
 Proto4z.DictBuff = {}  
-Proto4z.DictBuff.__protoID = 11005 
+Proto4z.DictBuff.__protoID = 11002 
 Proto4z.DictBuff.__protoName = "DictBuff" 
 Proto4z.DictBuff[1] = {name="id", type="ui64" }  
 Proto4z.DictBuff[2] = {name="stamp", type="ui64" } --BUFF_STAMP 
@@ -98,9 +98,9 @@ Proto4z.SKILL_HILL = 9--治疗
 Proto4z.SKILL_REMOVE_DEBUFF = 10--驱散减益BUFF 
 Proto4z.SKILL_REMOVE_BUFF = 11--驱散增益BUFF 
  
-Proto4z.register(11007,"DictSkill") 
+Proto4z.register(11003,"DictSkill") 
 Proto4z.DictSkill = {}  
-Proto4z.DictSkill.__protoID = 11007 
+Proto4z.DictSkill.__protoID = 11003 
 Proto4z.DictSkill.__protoName = "DictSkill" 
 Proto4z.DictSkill[1] = {name="id", type="ui64" }  
 Proto4z.DictSkill[2] = {name="stamp", type="ui64" }  

@@ -176,7 +176,7 @@ enum FILTER_STAMP : unsigned long long
  
 struct AOESearch 
 { 
-    static const unsigned short getProtoID() { return 11003;} 
+    static const unsigned short getProtoID() { return 11001;} 
     static const std::string getProtoName() { return "AOESearch";} 
     inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -406,7 +406,7 @@ enum BUFF_STAMP : unsigned long long
  
 struct DictBuff 
 { 
-    static const unsigned short getProtoID() { return 11005;} 
+    static const unsigned short getProtoID() { return 11002;} 
     static const std::string getProtoName() { return "DictBuff";} 
     inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 
@@ -668,7 +668,7 @@ enum SKILL_STAMP : unsigned long long
  
 struct DictSkill 
 { 
-    static const unsigned short getProtoID() { return 11007;} 
+    static const unsigned short getProtoID() { return 11003;} 
     static const std::string getProtoName() { return "DictSkill";} 
     inline std::vector<std::string>  getDBBuild(); 
     inline std::string  getDBInsert(); 

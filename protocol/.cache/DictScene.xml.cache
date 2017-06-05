@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>1031eeffb955bb50b8b94e78416367ea</cppmd5> 
-<luamd5>f5aaf812cb6be0e1c37697179338e2bb</luamd5> 
-<csharpmd5>f4708e4ee354c816122fd6675ffdf909</csharpmd5> 
+<cppmd5>0678015f6d8b4a04c4f8a0065a0fb217</cppmd5> 
+<luamd5>331d411a3a3c066a0622fb6afecb2da5</luamd5> 
+<csharpmd5>81bb8fb711e0dc11c45a5681f663f5af</csharpmd5> 
 <xmlmd5>0a04244d256394b012006234c378654c</xmlmd5> 
 <cacheNumber>
-    <cache key = "AOESearch" Number = "11003" /> 
-    <cache key = "DictBuff" Number = "11005" /> 
-    <cache key = "DictBuffEffect" Number = "11004" /> 
-    <cache key = "DictMap" Number = "11011" /> 
-    <cache key = "DictModel" Number = "11002" /> 
-    <cache key = "DictModelLevel" Number = "11001" /> 
-    <cache key = "DictMonster" Number = "11010" /> 
-    <cache key = "DictObstacle" Number = "11009" /> 
+    <cache key = "AOESearch" Number = "11001" /> 
+    <cache key = "DictBuff" Number = "11002" /> 
     <cache key = "DictProp" Number = "11000" /> 
-    <cache key = "DictSkill" Number = "11007" /> 
-    <cache key = "DictSkillBehaviour" Number = "11006" /> 
-    <cache key = "DictSpawnPoint" Number = "11008" /> 
+    <cache key = "DictSkill" Number = "11003" /> 
 </cacheNumber>

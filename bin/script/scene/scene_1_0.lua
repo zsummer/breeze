@@ -27,3 +27,11 @@ function onUpdate()
 --    logd("scene_2_0 entityid=" .. Scene.sceneID)
 end
 
+function onSyncEntry(protoName, binData)
+    local len, msg = Proto4z.unpack(binData, protoName)
+    if not msg then
+        logw("onSyncEntry decode error")
+        return
+    end
+    --dump(msg)
+end

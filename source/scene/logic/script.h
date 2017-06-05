@@ -31,15 +31,29 @@ public:
     void init(std::weak_ptr<Scene> scene);
     void update();
 	void protoSync(const std::string & protoName, const std::string & data);
-	
-
+    template<class Proto>
+    void protoSync(const Proto & proto);
 };
 
 using ScriptPtr = std::shared_ptr<Script>;
 
 
 
-
+template<class Proto>
+void Script::protoSync(const Proto & proto)
+{
+    try
+    {
+        WriteStream ws(Proto::getProtoID());
+        ws << proto;
+        protoSync(Proto::getProtoName(), ws.pickStream());
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Scene::protoSync protoid=" << Proto::getProtoID() << ", e=" << e.what());
+        return;
+    }
+}
 
 
 

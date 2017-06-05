@@ -353,7 +353,6 @@ struct EntityState //EntityState
     unsigned long long avatarID;  
     std::string avatarName;  
     unsigned long long modelID;  
-    double collision; //collision radius  
     unsigned short camp; //阵营  
     unsigned long long groupID; //组队ID  
     unsigned short etype; //实体类型  
@@ -367,7 +366,6 @@ struct EntityState //EntityState
         eid = 0; 
         avatarID = 0; 
         modelID = 0; 
-        collision = 0.0; 
         camp = 0; 
         groupID = 0; 
         etype = 0; 
@@ -377,13 +375,12 @@ struct EntityState //EntityState
         curHP = 0.0; 
         maxHP = 0.0; 
     } 
-    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const double & collision, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & master, const double & curHP, const double & maxHP) 
+    EntityState(const unsigned long long & eid, const unsigned long long & avatarID, const std::string & avatarName, const unsigned long long & modelID, const unsigned short & camp, const unsigned long long & groupID, const unsigned short & etype, const unsigned short & state, const unsigned long long & foe, const unsigned long long & master, const double & curHP, const double & maxHP) 
     { 
         this->eid = eid; 
         this->avatarID = avatarID; 
         this->avatarName = avatarName; 
         this->modelID = modelID; 
-        this->collision = collision; 
         this->camp = camp; 
         this->groupID = groupID; 
         this->etype = etype; 
@@ -400,7 +397,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.avatarID;  
     ws << data.avatarName;  
     ws << data.modelID;  
-    ws << data.collision;  
     ws << data.camp;  
     ws << data.groupID;  
     ws << data.etype;  
@@ -417,7 +413,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.avatarID;  
     rs >> data.avatarName;  
     rs >> data.modelID;  
-    rs >> data.collision;  
     rs >> data.camp;  
     rs >> data.groupID;  
     rs >> data.etype;  
@@ -435,7 +430,6 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "avatarID=" << info.avatarID << ","; 
     stm << "avatarName=" << info.avatarName << ","; 
     stm << "modelID=" << info.modelID << ","; 
-    stm << "collision=" << info.collision << ","; 
     stm << "camp=" << info.camp << ","; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "etype=" << info.etype << ","; 
@@ -585,18 +579,82 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 typedef std::vector<EntityReport> EntityReportArray;  
  
-struct EntityFullData //EntityFullData  
+struct EntityControl //EntityControl  
 { 
     static const unsigned short getProtoID() { return 2007;} 
-    static const std::string getProtoName() { return "EntityFullData";} 
+    static const std::string getProtoName() { return "EntityControl";} 
+    unsigned long long eid;  
+    unsigned long long agentNo;  
+    double collision;  
+    double stateChageTime;  
+    EPosition spawnpoint;  
+    double blockMoveCount;  
+    EntityControl() 
+    { 
+        eid = 0; 
+        agentNo = 0; 
+        collision = 0.0; 
+        stateChageTime = 0.0; 
+        blockMoveCount = 0.0; 
+    } 
+    EntityControl(const unsigned long long & eid, const unsigned long long & agentNo, const double & collision, const double & stateChageTime, const EPosition & spawnpoint, const double & blockMoveCount) 
+    { 
+        this->eid = eid; 
+        this->agentNo = agentNo; 
+        this->collision = collision; 
+        this->stateChageTime = stateChageTime; 
+        this->spawnpoint = spawnpoint; 
+        this->blockMoveCount = blockMoveCount; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityControl & data) 
+{ 
+    ws << data.eid;  
+    ws << data.agentNo;  
+    ws << data.collision;  
+    ws << data.stateChageTime;  
+    ws << data.spawnpoint;  
+    ws << data.blockMoveCount;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityControl & data) 
+{ 
+    rs >> data.eid;  
+    rs >> data.agentNo;  
+    rs >> data.collision;  
+    rs >> data.stateChageTime;  
+    rs >> data.spawnpoint;  
+    rs >> data.blockMoveCount;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityControl & info) 
+{ 
+    stm << "["; 
+    stm << "eid=" << info.eid << ","; 
+    stm << "agentNo=" << info.agentNo << ","; 
+    stm << "collision=" << info.collision << ","; 
+    stm << "stateChageTime=" << info.stateChageTime << ","; 
+    stm << "spawnpoint=" << info.spawnpoint << ","; 
+    stm << "blockMoveCount=" << info.blockMoveCount << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+ 
+typedef std::vector<EntityControl> EntityControlArray;  
+ 
+struct EntityClientSync //EntityClientSync  
+{ 
+    static const unsigned short getProtoID() { return 2008;} 
+    static const std::string getProtoName() { return "EntityClientSync";} 
     DictProp props; //战斗属性  
     EntityState state;  
     EntityMove mv;  
     EntityReport report;  
-    EntityFullData() 
+    EntityClientSync() 
     { 
     } 
-    EntityFullData(const DictProp & props, const EntityState & state, const EntityMove & mv, const EntityReport & report) 
+    EntityClientSync(const DictProp & props, const EntityState & state, const EntityMove & mv, const EntityReport & report) 
     { 
         this->props = props; 
         this->state = state; 
@@ -604,7 +662,7 @@ struct EntityFullData //EntityFullData
         this->report = report; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityFullData & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityClientSync & data) 
 { 
     ws << data.props;  
     ws << data.state;  
@@ -612,7 +670,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.report;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityFullData & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityClientSync & data) 
 { 
     rs >> data.props;  
     rs >> data.state;  
@@ -620,7 +678,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.report;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityFullData & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityClientSync & info) 
 { 
     stm << "["; 
     stm << "props=" << info.props << ","; 
@@ -632,69 +690,11 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 } 
  
  
-typedef std::vector<EntityFullData> EntityFullDataArray;  
- 
-struct EntityControl //EntityControl  
-{ 
-    static const unsigned short getProtoID() { return 2011;} 
-    static const std::string getProtoName() { return "EntityControl";} 
-    unsigned long long eid;  
-    unsigned long long agentNo;  
-    double stateChageTime;  
-    EPosition spawnpoint;  
-    double blockMoveCount;  
-    EntityControl() 
-    { 
-        eid = 0; 
-        agentNo = 0; 
-        stateChageTime = 0.0; 
-        blockMoveCount = 0.0; 
-    } 
-    EntityControl(const unsigned long long & eid, const unsigned long long & agentNo, const double & stateChageTime, const EPosition & spawnpoint, const double & blockMoveCount) 
-    { 
-        this->eid = eid; 
-        this->agentNo = agentNo; 
-        this->stateChageTime = stateChageTime; 
-        this->spawnpoint = spawnpoint; 
-        this->blockMoveCount = blockMoveCount; 
-    } 
-}; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityControl & data) 
-{ 
-    ws << data.eid;  
-    ws << data.agentNo;  
-    ws << data.stateChageTime;  
-    ws << data.spawnpoint;  
-    ws << data.blockMoveCount;  
-    return ws; 
-} 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityControl & data) 
-{ 
-    rs >> data.eid;  
-    rs >> data.agentNo;  
-    rs >> data.stateChageTime;  
-    rs >> data.spawnpoint;  
-    rs >> data.blockMoveCount;  
-    return rs; 
-} 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityControl & info) 
-{ 
-    stm << "["; 
-    stm << "eid=" << info.eid << ","; 
-    stm << "agentNo=" << info.agentNo << ","; 
-    stm << "stateChageTime=" << info.stateChageTime << ","; 
-    stm << "spawnpoint=" << info.spawnpoint << ","; 
-    stm << "blockMoveCount=" << info.blockMoveCount << ","; 
-    stm << "]"; 
-    return stm; 
-} 
- 
- 
-typedef std::vector<EntityFullData> EntityFullDataArray;  
+typedef std::vector<EntityClientSync> EntityClientSyncArray;  
  
 struct SceneSection //场景全景切片数据  
 { 
-    static const unsigned short getProtoID() { return 2008;} 
+    static const unsigned short getProtoID() { return 2009;} 
     static const std::string getProtoName() { return "SceneSection";} 
     unsigned long long sceneID;  
     unsigned short sceneType;  
@@ -702,7 +702,6 @@ struct SceneSection //场景全景切片数据
     double sceneStartTime; //服务器战场开始时间  
     double sceneEndTime; //服务器战场结束时间  
     double serverTime; //服务器当前时间  
-    EntityFullDataArray entitys; //这里包含有所有当前场景下的实体属性和状态数据  
     SceneSection() 
     { 
         sceneID = 0; 
@@ -712,7 +711,7 @@ struct SceneSection //场景全景切片数据
         sceneEndTime = 0.0; 
         serverTime = 0.0; 
     } 
-    SceneSection(const unsigned long long & sceneID, const unsigned short & sceneType, const unsigned short & sceneState, const double & sceneStartTime, const double & sceneEndTime, const double & serverTime, const EntityFullDataArray & entitys) 
+    SceneSection(const unsigned long long & sceneID, const unsigned short & sceneType, const unsigned short & sceneState, const double & sceneStartTime, const double & sceneEndTime, const double & serverTime) 
     { 
         this->sceneID = sceneID; 
         this->sceneType = sceneType; 
@@ -720,7 +719,6 @@ struct SceneSection //场景全景切片数据
         this->sceneStartTime = sceneStartTime; 
         this->sceneEndTime = sceneEndTime; 
         this->serverTime = serverTime; 
-        this->entitys = entitys; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneSection & data) 
@@ -731,7 +729,6 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.sceneStartTime;  
     ws << data.sceneEndTime;  
     ws << data.serverTime;  
-    ws << data.entitys;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneSection & data) 
@@ -742,7 +739,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.sceneStartTime;  
     rs >> data.sceneEndTime;  
     rs >> data.serverTime;  
-    rs >> data.entitys;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneSection & info) 
@@ -754,14 +750,13 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "sceneStartTime=" << info.sceneStartTime << ","; 
     stm << "sceneEndTime=" << info.sceneEndTime << ","; 
     stm << "serverTime=" << info.serverTime << ","; 
-    stm << "entitys=" << info.entitys << ","; 
     stm << "]"; 
     return stm; 
 } 
  
 struct EntitySkillInfo //技能  
 { 
-    static const unsigned short getProtoID() { return 2009;} 
+    static const unsigned short getProtoID() { return 2010;} 
     static const std::string getProtoName() { return "EntitySkillInfo";} 
     unsigned long long skillID;  
     EPosition activeOrg;  
@@ -839,7 +834,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct EntityBuffInfo //BUFF  
 { 
-    static const unsigned short getProtoID() { return 2010;} 
+    static const unsigned short getProtoID() { return 2011;} 
     static const std::string getProtoName() { return "EntityBuffInfo";} 
     unsigned long long buffID;  
     EPosition activeOrg;  

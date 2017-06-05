@@ -146,15 +146,14 @@ Proto4z.EntityState[1] = {name="eid", type="ui64" }
 Proto4z.EntityState[2] = {name="avatarID", type="ui64" }  
 Proto4z.EntityState[3] = {name="avatarName", type="string" }  
 Proto4z.EntityState[4] = {name="modelID", type="ui64" }  
-Proto4z.EntityState[5] = {name="collision", type="double" } --collision radius 
-Proto4z.EntityState[6] = {name="camp", type="ui16" } --阵营 
-Proto4z.EntityState[7] = {name="groupID", type="ui64" } --组队ID 
-Proto4z.EntityState[8] = {name="etype", type="ui16" } --实体类型 
-Proto4z.EntityState[9] = {name="state", type="ui16" } --状态 
-Proto4z.EntityState[10] = {name="foe", type="ui64" } --锁定的敌人 
-Proto4z.EntityState[11] = {name="master", type="ui64" } --如果是飞行道具 这个指向施放飞行道具的人 
-Proto4z.EntityState[12] = {name="curHP", type="double" } --当前的血量 
-Proto4z.EntityState[13] = {name="maxHP", type="double" } --当前的血量上限 
+Proto4z.EntityState[5] = {name="camp", type="ui16" } --阵营 
+Proto4z.EntityState[6] = {name="groupID", type="ui64" } --组队ID 
+Proto4z.EntityState[7] = {name="etype", type="ui16" } --实体类型 
+Proto4z.EntityState[8] = {name="state", type="ui16" } --状态 
+Proto4z.EntityState[9] = {name="foe", type="ui64" } --锁定的敌人 
+Proto4z.EntityState[10] = {name="master", type="ui64" } --如果是飞行道具 这个指向施放飞行道具的人 
+Proto4z.EntityState[11] = {name="curHP", type="double" } --当前的血量 
+Proto4z.EntityState[12] = {name="maxHP", type="double" } --当前的血量上限 
  
 Proto4z.EntityStateArray = {}  
 Proto4z.EntityStateArray.__protoName = "EntityStateArray" 
@@ -194,38 +193,39 @@ Proto4z.EntityReportArray.__protoName = "EntityReportArray"
 Proto4z.EntityReportArray.__protoDesc = "array" 
 Proto4z.EntityReportArray.__protoTypeV = "EntityReport" 
  
-Proto4z.register(2007,"EntityFullData") 
-Proto4z.EntityFullData = {} --EntityFullData 
-Proto4z.EntityFullData.__protoID = 2007 
-Proto4z.EntityFullData.__protoName = "EntityFullData" 
-Proto4z.EntityFullData[1] = {name="props", type="DictProp" } --战斗属性 
-Proto4z.EntityFullData[2] = {name="state", type="EntityState" }  
-Proto4z.EntityFullData[3] = {name="mv", type="EntityMove" }  
-Proto4z.EntityFullData[4] = {name="report", type="EntityReport" }  
- 
-Proto4z.EntityFullDataArray = {}  
-Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray" 
-Proto4z.EntityFullDataArray.__protoDesc = "array" 
-Proto4z.EntityFullDataArray.__protoTypeV = "EntityFullData" 
- 
-Proto4z.register(2011,"EntityControl") 
+Proto4z.register(2007,"EntityControl") 
 Proto4z.EntityControl = {} --EntityControl 
-Proto4z.EntityControl.__protoID = 2011 
+Proto4z.EntityControl.__protoID = 2007 
 Proto4z.EntityControl.__protoName = "EntityControl" 
 Proto4z.EntityControl[1] = {name="eid", type="ui64" }  
 Proto4z.EntityControl[2] = {name="agentNo", type="ui64" }  
-Proto4z.EntityControl[3] = {name="stateChageTime", type="double" }  
-Proto4z.EntityControl[4] = {name="spawnpoint", type="EPosition" }  
-Proto4z.EntityControl[5] = {name="blockMoveCount", type="double" }  
+Proto4z.EntityControl[3] = {name="collision", type="double" }  
+Proto4z.EntityControl[4] = {name="stateChageTime", type="double" }  
+Proto4z.EntityControl[5] = {name="spawnpoint", type="EPosition" }  
+Proto4z.EntityControl[6] = {name="blockMoveCount", type="double" }  
  
-Proto4z.EntityFullDataArray = {}  
-Proto4z.EntityFullDataArray.__protoName = "EntityFullDataArray" 
-Proto4z.EntityFullDataArray.__protoDesc = "array" 
-Proto4z.EntityFullDataArray.__protoTypeV = "EntityFullData" 
+Proto4z.EntityControlArray = {}  
+Proto4z.EntityControlArray.__protoName = "EntityControlArray" 
+Proto4z.EntityControlArray.__protoDesc = "array" 
+Proto4z.EntityControlArray.__protoTypeV = "EntityControl" 
  
-Proto4z.register(2008,"SceneSection") 
+Proto4z.register(2008,"EntityClientSync") 
+Proto4z.EntityClientSync = {} --EntityClientSync 
+Proto4z.EntityClientSync.__protoID = 2008 
+Proto4z.EntityClientSync.__protoName = "EntityClientSync" 
+Proto4z.EntityClientSync[1] = {name="props", type="DictProp" } --战斗属性 
+Proto4z.EntityClientSync[2] = {name="state", type="EntityState" }  
+Proto4z.EntityClientSync[3] = {name="mv", type="EntityMove" }  
+Proto4z.EntityClientSync[4] = {name="report", type="EntityReport" }  
+ 
+Proto4z.EntityClientSyncArray = {}  
+Proto4z.EntityClientSyncArray.__protoName = "EntityClientSyncArray" 
+Proto4z.EntityClientSyncArray.__protoDesc = "array" 
+Proto4z.EntityClientSyncArray.__protoTypeV = "EntityClientSync" 
+ 
+Proto4z.register(2009,"SceneSection") 
 Proto4z.SceneSection = {} --场景全景切片数据 
-Proto4z.SceneSection.__protoID = 2008 
+Proto4z.SceneSection.__protoID = 2009 
 Proto4z.SceneSection.__protoName = "SceneSection" 
 Proto4z.SceneSection[1] = {name="sceneID", type="ui64" }  
 Proto4z.SceneSection[2] = {name="sceneType", type="ui16" }  
@@ -233,11 +233,10 @@ Proto4z.SceneSection[3] = {name="sceneState", type="ui16" }
 Proto4z.SceneSection[4] = {name="sceneStartTime", type="double" } --服务器战场开始时间 
 Proto4z.SceneSection[5] = {name="sceneEndTime", type="double" } --服务器战场结束时间 
 Proto4z.SceneSection[6] = {name="serverTime", type="double" } --服务器当前时间 
-Proto4z.SceneSection[7] = {name="entitys", type="EntityFullDataArray" } --这里包含有所有当前场景下的实体属性和状态数据 
  
-Proto4z.register(2009,"EntitySkillInfo") 
+Proto4z.register(2010,"EntitySkillInfo") 
 Proto4z.EntitySkillInfo = {} --技能 
-Proto4z.EntitySkillInfo.__protoID = 2009 
+Proto4z.EntitySkillInfo.__protoID = 2010 
 Proto4z.EntitySkillInfo.__protoName = "EntitySkillInfo" 
 Proto4z.EntitySkillInfo[1] = {name="skillID", type="ui64" }  
 Proto4z.EntitySkillInfo[2] = {name="activeOrg", type="EPosition" }  
@@ -249,9 +248,9 @@ Proto4z.EntitySkillInfo[7] = {name="lastTriggerTime", type="double" }
 Proto4z.EntitySkillInfo[8] = {name="isFinish", type="ui16" }  
 Proto4z.EntitySkillInfo[9] = {name="activeCount", type="double" }  
  
-Proto4z.register(2010,"EntityBuffInfo") 
+Proto4z.register(2011,"EntityBuffInfo") 
 Proto4z.EntityBuffInfo = {} --BUFF 
-Proto4z.EntityBuffInfo.__protoID = 2010 
+Proto4z.EntityBuffInfo.__protoID = 2011 
 Proto4z.EntityBuffInfo.__protoName = "EntityBuffInfo" 
 Proto4z.EntityBuffInfo[1] = {name="buffID", type="ui64" }  
 Proto4z.EntityBuffInfo[2] = {name="activeOrg", type="EPosition" }  
