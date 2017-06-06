@@ -33,15 +33,15 @@ public:
     //普攻的寻敌
     void selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bool change);
     bool isOutCD(EntityPtr caster, const EntitySkillInfo & skill, const DictSkill & dict);
-    bool updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
+    bool updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill);
     bool useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, ui16 foeFirst);
     bool useSkill(ScenePtr scene, EntityID casterID, ui64 skillID);
 
-    bool triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
-    bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
+    bool triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill);
+    bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill);
     
 
-    bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets);
+    bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets);
     bool addBuff();
     bool cleanBuff();
 };

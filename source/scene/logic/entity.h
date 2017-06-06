@@ -65,17 +65,7 @@ const DictID InvalidDictID = -1;
 
 
 
-using EntitySkillInfoPtr = std::shared_ptr<EntitySkillInfo>;
 
-using EntityBuffInfoPtr = std::shared_ptr<EntityBuffInfo>;
-
-struct EntitySkillSystem
-{
-    std::map<DictID, EntitySkillInfoPtr> activeSkills;
-    std::map<DictID, EntityBuffInfoPtr> activeBuffs;
-    std::set<DictID> dictBootSkills; 
-    bool autoAttack = false;
-};
 
 
 

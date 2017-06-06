@@ -246,7 +246,21 @@ Proto4z.EntitySkillInfo[5] = {name="activeFoeFirst", type="ui16" }
 Proto4z.EntitySkillInfo[6] = {name="activeTime", type="double" }  
 Proto4z.EntitySkillInfo[7] = {name="lastTriggerTime", type="double" }  
 Proto4z.EntitySkillInfo[8] = {name="isFinish", type="ui16" }  
-Proto4z.EntitySkillInfo[9] = {name="activeCount", type="double" }  
+Proto4z.EntitySkillInfo[9] = {name="isUnwield", type="ui16" }  
+Proto4z.EntitySkillInfo[10] = {name="activeCount", type="double" }  
+Proto4z.EntitySkillInfo[11] = {name="dict", type="DictSkill" }  
+ 
+Proto4z.EntitySkillInfoMap = {} --已装备的SKILL ID, 技能执行数据 
+Proto4z.EntitySkillInfoMap.__protoName = "EntitySkillInfoMap" 
+Proto4z.EntitySkillInfoMap.__protoDesc = "map" 
+Proto4z.EntitySkillInfoMap.__protoTypeK = "ui64" 
+Proto4z.EntitySkillInfoMap.__protoTypeV = "EntitySkillInfo" 
+ 
+Proto4z.EntityEquippedSkillMap = {} --已装备的SKILL ID, value保留 
+Proto4z.EntityEquippedSkillMap.__protoName = "EntityEquippedSkillMap" 
+Proto4z.EntityEquippedSkillMap.__protoDesc = "map" 
+Proto4z.EntityEquippedSkillMap.__protoTypeK = "ui64" 
+Proto4z.EntityEquippedSkillMap.__protoTypeV = "ui64" 
  
 Proto4z.register(2011,"EntityBuffInfo") 
 Proto4z.EntityBuffInfo = {} --BUFF 
@@ -260,3 +274,19 @@ Proto4z.EntityBuffInfo[5] = {name="activeDstEID", type="ui64" }
 Proto4z.EntityBuffInfo[6] = {name="activeTime", type="double" }  
 Proto4z.EntityBuffInfo[7] = {name="lastTriggerTime", type="double" }  
 Proto4z.EntityBuffInfo[8] = {name="activeCount", type="double" }  
+Proto4z.EntityBuffInfo[9] = {name="dict", type="DictBuff" }  
+ 
+Proto4z.EntityBuffInfoMap = {} --附加到entity上的buff 
+Proto4z.EntityBuffInfoMap.__protoName = "EntityBuffInfoMap" 
+Proto4z.EntityBuffInfoMap.__protoDesc = "map" 
+Proto4z.EntityBuffInfoMap.__protoTypeK = "ui64" 
+Proto4z.EntityBuffInfoMap.__protoTypeV = "EntityBuffInfo" 
+ 
+Proto4z.register(2012,"EntitySkillSystem") 
+Proto4z.EntitySkillSystem = {} --EntitySkillSystem 
+Proto4z.EntitySkillSystem.__protoID = 2012 
+Proto4z.EntitySkillSystem.__protoName = "EntitySkillSystem" 
+Proto4z.EntitySkillSystem[1] = {name="activeSkills", type="EntitySkillInfoMap" }  
+Proto4z.EntitySkillSystem[2] = {name="activeBuffs", type="EntityBuffInfoMap" }  
+Proto4z.EntitySkillSystem[3] = {name="dictEquippedSkills", type="EntityEquippedSkillMap" }  
+Proto4z.EntitySkillSystem[4] = {name="autoAttack", type="ui16" }  

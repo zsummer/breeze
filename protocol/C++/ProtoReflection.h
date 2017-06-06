@@ -118,6 +118,11 @@ public:
                    return "EntityBuffInfo";
             }
             break;
+            case 2012:
+            {
+                   return "EntitySkillSystem";
+            }
+            break;
             case 3000:
             {
                    return "DockerKnock";

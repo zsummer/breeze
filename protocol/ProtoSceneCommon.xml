@@ -231,8 +231,15 @@
         <member name="activeTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
         <member name="isFinish"  type="ui16" desc=""/>
+        <member name="isUnwield"  type="ui16" desc=""/>
         <member name="activeCount"  type="double" desc=""/>
+        <member name="dict"  type="DictSkill" desc=""/>
     </proto>
+
+    <map name="EntitySkillInfoMap" key="ui64" value="EntitySkillInfo" desc="已装备的SKILL ID, 技能执行数据" />
+
+    <map name="EntityEquippedSkillMap" key="ui64" value="ui64" desc="已装备的SKILL ID, value保留" />
+
 
     <proto name="EntityBuffInfo" desc= "BUFF">
         <member name="buffID"  type="ui64" desc=""/>
@@ -243,8 +250,18 @@
         <member name="activeTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
         <member name="activeCount"  type="double" desc=""/>
-    </proto>
+        <member name="dict"  type="DictBuff" desc=""/>
+   </proto>
+    <map name="EntityBuffInfoMap" key="ui64" value="EntityBuffInfo" desc="附加到entity上的buff" />
 
+
+
+    <proto name="EntitySkillSystem" desc= "EntitySkillSystem">
+        <member name="activeSkills"  type="EntitySkillInfoMap" desc=""/>
+        <member name="activeBuffs"  type="EntityBuffInfoMap" desc=""/>
+        <member name="dictEquippedSkills"  type="EntityEquippedSkillMap" desc=""/>
+        <member name="autoAttack"  type="ui16" desc=""/>
+    </proto>
 
 
 </Proto>

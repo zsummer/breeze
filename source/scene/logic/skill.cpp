@@ -44,26 +44,26 @@ bool Skill::isOutCD(EntityPtr caster, const EntitySkillInfo & skill, const DictS
     return true;
 }
 
-bool Skill::updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
+bool Skill::updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill)
 {
-    if (skill->activeOrgEID != InvalidEntityID)
+    if (skill.activeOrgEID != InvalidEntityID)
     {
-        EntityPtr orgE = scene->getEntity(skill->activeOrgEID);
+        EntityPtr orgE = scene->getEntity(skill.activeOrgEID);
         if (orgE)
         {
-            skill->activeOrg = orgE->_move.position;
+            skill.activeOrg = orgE->_move.position;
         }
         else
         {
-            skill->activeOrgEID = InvalidEntityID;
+            skill.activeOrgEID = InvalidEntityID;
         }
     }
-    if (skill->activeFoeFirst && caster->_state.foe != InvalidEntityID)
+    if (skill.activeFoeFirst && caster->_state.foe != InvalidEntityID)
     {
         EntityPtr dstE = scene->getEntity(caster->_state.foe);
         if (dstE)
         {
-            skill->activeDst = dstE->_move.position;
+            skill.activeDst = dstE->_move.position;
         }
     }
     return true;
@@ -78,9 +78,9 @@ void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bo
     }
 
     DictID searchID = InvalidDictID;
-    for (auto id : caster->_skillSys.dictBootSkills)
+    for (auto kv : caster->_skillSys.dictEquippedSkills)
     {
-        auto dict = DBDict::getRef().getOneKeyDictSkill(id);
+        auto dict = DBDict::getRef().getOneKeyDictSkill(kv.first);
         if (dict.first && dict.second.searchID != InvalidDictID)
         {
             searchID = dict.second.searchID;
@@ -159,18 +159,43 @@ void Skill::update()
     {
         Entity & e = *pr.second;
 
-        //check boot skill 
-        for (auto id : e._skillSys.dictBootSkills)
-        {
-            if (e._skillSys.activeSkills.find(id) == e._skillSys.activeSkills.end())
-            {
-                auto ptr = std::make_shared<EntitySkillInfo>();
-                ptr->skillID = id;
-                ptr->isFinish = 1;
-                e._skillSys.activeSkills[id] = ptr;
-            }
-        }
-
+        //check equipped skill 
+		for (auto iter = e._skillSys.dictEquippedSkills.begin(); iter != e._skillSys.dictEquippedSkills.end;)
+		{
+			if (e._skillSys.activeSkills.find(iter->first) == e._skillSys.activeSkills.end())
+			{
+				auto dict = DBDict::getRef().getOneKeyDictSkill(iter->first);
+				if (!dict.first)
+				{
+					LOGE("not found skill id when equip it  skillid=" << iter->first);
+					iter = e._skillSys.dictEquippedSkills.erase(iter);
+					continue;
+				}
+				EntitySkillInfo info;
+				info.skillID = iter->first;
+				info.isFinish = 1;
+				info.dict = dict.second;
+				e._skillSys.activeSkills[dict.second.id] = info;
+			}
+			iter++;
+		}
+		//check active skill 
+		for (auto iter = e._skillSys.activeSkills.begin(); iter != e._skillSys.activeSkills.end;)
+		{
+			if (e._skillSys.dictEquippedSkills.find(iter->first) == e._skillSys.dictEquippedSkills.end())
+			{
+				if (iter->second.isFinish)
+				{
+					iter = e._skillSys.activeSkills.erase(iter);
+					continue;
+				}
+				else
+				{
+					iter->second.isUnwield = 1;
+				}
+			}
+			iter++;
+		}
 
         //check select
         if (e._skillSys.autoAttack)
@@ -192,16 +217,14 @@ void Skill::update()
                 break;
             }
             double distance = getDistance(e._move.position, foe->_move.position);
-            for (auto id : e._skillSys.dictBootSkills)
+            for (auto skv : e._skillSys.activeSkills)
             {
-                auto dict = DBDict::getRef().getOneKeyDictSkill(id);
-                if (!dict.first)
-                {
-                    LOGE("");
-                    continue;
-                }
+				if (skv.second.isUnwield)
+				{
+					continue;
+				}
 
-                if (getBitFlag(dict.second.stamp, SKILL_AUTO_USE)
+                if (getBitFlag(skv.second.dict.stamp, SKILL_AUTO_USE)
                     && e._move.action != MOVE_ACTION_FORCE_PATH
                     && e._move.action != MOVE_ACTION_PASV_PATH)
                 {
@@ -215,7 +238,7 @@ void Skill::update()
                     {
                         
 
-                        auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(dict.second.aoeID);
+                        auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(skv.second.dict..aoeID);
                         if (!aoeSearch.first)
                         {
                             LOGE("error");
@@ -443,7 +466,7 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
 
 
 
-bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
+bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill)
 {
     if (skill->isFinish)
     {
@@ -502,7 +525,7 @@ bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr sk
 
 
 
-bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
+bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill)
 {
     //update skill pos  
     updateSkillPos(scene, caster,skill, dictSkill);
@@ -524,7 +547,7 @@ bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
 }
 
 
-bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets)
+bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets)
 {
     SceneEventNotice notice;
     for (auto target : targets)

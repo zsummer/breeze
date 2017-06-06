@@ -73,6 +73,37 @@ static int lGetEntity(lua_State * L)
     return 0;
 }
 
+static int lAddEntity(lua_State * L)
+{
+	
+	int top = lua_gettop(L);
+	EntityID eid = (EntityID)luaL_checknumber(L, 1);
+	lua_getglobal(L, SceneKey);
+	Scene * scene = nullptr;
+	if (lua_istable(L, -1))
+	{
+		lua_getfield(L, -1, "__scene");
+		if (!lua_islightuserdata(L, -1))
+		{
+			LOGE("__scene not userdata");
+			return 0;
+		}
+		scene = (Scene*)lua_touserdata(L, -1);
+	}
+	lua_settop(L, top);
+	auto e = scene->getEntity(eid);
+	if (e)
+	{
+		lua_newtable(L);
+		lua_pushinteger(L, e->_state.eid);
+		lua_setfield(L, -2, "eid");
+		return 1;
+	}
+	return 0;
+}
+
+
+
 static luaL_Reg SceneReg[] = {
     { "getEntity", lGetEntity},
     { NULL, NULL }
