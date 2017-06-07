@@ -154,8 +154,8 @@ void Skill::update()
     {
         return;
     }
-    std::map<EntityID, EntityPtr> entitys = scene->_entitys;
-    for (auto pr : entitys)
+
+    for (auto pr : scene->_entitys)
     {
         Entity & e = *pr.second;
 
@@ -180,6 +180,7 @@ void Skill::update()
 			iter++;
 		}
 		//check active skill 
+		//only this can erase iter.
 		for (auto iter = e._skillSys.activeSkills.begin(); iter != e._skillSys.activeSkills.end();)
 		{
 			if (e._skillSys.dictEquippedSkills.find(iter->first) == e._skillSys.dictEquippedSkills.end())
