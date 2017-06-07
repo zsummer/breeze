@@ -633,7 +633,7 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                 entity->_state.curHP = entity->_state.maxHP;
                 entity->_state.camp = ENTITY_CAMP_BLUE + rand() % 100;
                 entity->_control.collision = 1.0;
-                entity->_skillSys.dictBootSkills.insert(1);
+                entity->_skillSys.dictEquippedSkills[1] = 0;
 
                 if (scene->getSceneType() == SCENE_MELEE)
                 {

@@ -50,7 +50,7 @@ void AI::update()
                 entity->_state.curHP = entity->_state.maxHP;
                 entity->_state.camp = ENTITY_CAMP_BLUE + 100;
                 
-                entity->_skillSys.dictBootSkills.insert(2);
+                entity->_skillSys.dictEquippedSkills[2] = 0;
                 entity->_skillSys.autoAttack = false;
 
                 entity->_move.position = sp;
@@ -165,7 +165,7 @@ void AI::createMonster()
             entity->_state.maxHP = entity->_props.hp;
             entity->_state.curHP = entity->_state.maxHP;
             entity->_state.camp = ENTITY_CAMP_BLUE + 100;
-            entity->_skillSys.dictBootSkills.insert(2);
+            entity->_skillSys.dictEquippedSkills[2] = 0;
             entity->_skillSys.autoAttack = true;
 
             entity->_move.position = sp;

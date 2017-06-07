@@ -42,7 +42,7 @@ DBHelperPtr buildHelper(const std::string & db)
     return helper;
 }
 
-bool DBDict::fakeTestData()
+bool DBDict::finish()
 {
     if (true)
     {
@@ -95,7 +95,39 @@ bool DBDict::fakeTestData()
     }
 
 
-
+    for (auto & skv : _dictOneKeyDictSkill)
+    {
+        if (skv.second.searchID != InvalidDictID)
+        {
+            auto aoe = getOneKeyAOESearch(skv.second.searchID);
+            if (!aoe.first)
+            {
+                LOGE("DictSkill config error. not found searchID dict. searchID=" << skv.second.searchID);
+                return false;
+            }
+            skv.second.searchDict = aoe.second;
+        }
+        if (skv.second.aoeID != InvalidDictID)
+        {
+            auto aoe = getOneKeyAOESearch(skv.second.aoeID);
+            if (!aoe.first)
+            {
+                LOGE("DictSkill config error. not found aoeID dict. aoeID=" << skv.second.aoeID);
+                return false;
+            }
+            skv.second.aoeDict = aoe.second;
+        }
+        if (skv.second.appendBuffsAreaID != InvalidDictID)
+        {
+            auto aoe = getOneKeyAOESearch(skv.second.appendBuffsAreaID);
+            if (!aoe.first)
+            {
+                LOGE("DictSkill config error. not found appendBuffsAreaID dict. aoeID=" << skv.second.appendBuffsAreaID);
+                return false;
+            }
+            skv.second.appendBuffsAreaDict = aoe.second;
+        }
+    }
 
 
     return true;

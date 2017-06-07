@@ -680,7 +680,9 @@ struct DictSkill
     unsigned long long id;  
     unsigned long long stamp;  
     unsigned long long searchID; //锁敌  
+    AOESearch searchDict; //锁敌  
     unsigned long long aoeID; //AOI伤害  
+    AOESearch aoeDict;  
     unsigned short orgType; //1 施法者位置, 2 锁定的敌人位置或者目标位置  
     unsigned short orgFixed; //1位置固定化成坐标, 0跟随自己或者目标位置实时变化  
     double orgLimitDistance; //如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离  
@@ -698,9 +700,10 @@ struct DictSkill
     double dstMoveSpeed; //附加给目标朝向自己的位移速度  
     double selfMoveTime; //附加给自己朝向目标的位移时间  
     double selfMoveSpeed; //附加给自己朝向目标的位移速度  
-    unsigned long long appendBuffsAoeID; //上buff的searchid  
     DictArrayKey appendBuffs;  
     std::string appendBuffsText; //触发buff 格式 k,k,k,   
+    unsigned long long appendBuffsAreaID; //上buff的searchid  
+    AOESearch appendBuffsAreaDict;  
     DictArrayKey harmBuffs;  
     std::string harmBuffsText; //触发buff 格式 k,k,k,   
     DictArrayKey combSkills;  
@@ -731,14 +734,16 @@ struct DictSkill
         dstMoveSpeed = 0.0; 
         selfMoveTime = 0.0; 
         selfMoveSpeed = 0.0; 
-        appendBuffsAoeID = 0; 
+        appendBuffsAreaID = 0; 
     } 
-    DictSkill(const unsigned long long & id, const unsigned long long & stamp, const unsigned long long & searchID, const unsigned long long & aoeID, const unsigned short & orgType, const unsigned short & orgFixed, const double & orgLimitDistance, const double & delay, const double & interval, const double & keep, const double & cd, const double & hpAdd, const double & hpAddScaleRemanent, const double & hpAddScaleLost, const unsigned long long & propID, const double & dstTeleport, const double & selfTeleport, const double & dstMoveTime, const double & dstMoveSpeed, const double & selfMoveTime, const double & selfMoveSpeed, const unsigned long long & appendBuffsAoeID, const DictArrayKey & appendBuffs, const std::string & appendBuffsText, const DictArrayKey & harmBuffs, const std::string & harmBuffsText, const DictArrayKey & combSkills, const std::string & combSkillsText, const DictArrayKey & followSkills, const std::string & followSkillsText, const std::string & desc) 
+    DictSkill(const unsigned long long & id, const unsigned long long & stamp, const unsigned long long & searchID, const AOESearch & searchDict, const unsigned long long & aoeID, const AOESearch & aoeDict, const unsigned short & orgType, const unsigned short & orgFixed, const double & orgLimitDistance, const double & delay, const double & interval, const double & keep, const double & cd, const double & hpAdd, const double & hpAddScaleRemanent, const double & hpAddScaleLost, const unsigned long long & propID, const double & dstTeleport, const double & selfTeleport, const double & dstMoveTime, const double & dstMoveSpeed, const double & selfMoveTime, const double & selfMoveSpeed, const DictArrayKey & appendBuffs, const std::string & appendBuffsText, const unsigned long long & appendBuffsAreaID, const AOESearch & appendBuffsAreaDict, const DictArrayKey & harmBuffs, const std::string & harmBuffsText, const DictArrayKey & combSkills, const std::string & combSkillsText, const DictArrayKey & followSkills, const std::string & followSkillsText, const std::string & desc) 
     { 
         this->id = id; 
         this->stamp = stamp; 
         this->searchID = searchID; 
+        this->searchDict = searchDict; 
         this->aoeID = aoeID; 
+        this->aoeDict = aoeDict; 
         this->orgType = orgType; 
         this->orgFixed = orgFixed; 
         this->orgLimitDistance = orgLimitDistance; 
@@ -756,9 +761,10 @@ struct DictSkill
         this->dstMoveSpeed = dstMoveSpeed; 
         this->selfMoveTime = selfMoveTime; 
         this->selfMoveSpeed = selfMoveSpeed; 
-        this->appendBuffsAoeID = appendBuffsAoeID; 
         this->appendBuffs = appendBuffs; 
         this->appendBuffsText = appendBuffsText; 
+        this->appendBuffsAreaID = appendBuffsAreaID; 
+        this->appendBuffsAreaDict = appendBuffsAreaDict; 
         this->harmBuffs = harmBuffs; 
         this->harmBuffsText = harmBuffsText; 
         this->combSkills = combSkills; 
@@ -815,10 +821,10 @@ std::vector<std::string>  DictSkill::getDBBuild()
     ret.push_back("alter table `tb_DictSkill` change `selfMoveTime`  `selfMoveTime`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `selfMoveSpeed`  double NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` change `selfMoveSpeed`  `selfMoveSpeed`  double NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictSkill` add `appendBuffsAoeID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
-    ret.push_back("alter table `tb_DictSkill` change `appendBuffsAoeID`  `appendBuffsAoeID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `appendBuffsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` change `appendBuffsText`  `appendBuffsText`  varchar(255) NOT NULL DEFAULT '' "); 
+    ret.push_back("alter table `tb_DictSkill` add `appendBuffsAreaID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
+    ret.push_back("alter table `tb_DictSkill` change `appendBuffsAreaID`  `appendBuffsAreaID`  bigint(20) unsigned NOT NULL DEFAULT '0' "); 
     ret.push_back("alter table `tb_DictSkill` add `harmBuffsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` change `harmBuffsText`  `harmBuffsText`  varchar(255) NOT NULL DEFAULT '' "); 
     ret.push_back("alter table `tb_DictSkill` add `combSkillsText`  varchar(255) NOT NULL DEFAULT '' "); 
@@ -832,18 +838,18 @@ std::vector<std::string>  DictSkill::getDBBuild()
 std::string  DictSkill::getDBSelect() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("select `id`,`stamp`,`searchID`,`aoeID`,`orgType`,`orgFixed`,`orgLimitDistance`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsAoeID`,`appendBuffsText`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc` from `tb_DictSkill` where `id` = ? "); 
+    q.init("select `id`,`stamp`,`searchID`,`aoeID`,`orgType`,`orgFixed`,`orgLimitDistance`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`appendBuffsAreaID`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc` from `tb_DictSkill` where `id` = ? "); 
     q << this->id; 
     return q.pickSQL(); 
 } 
 std::string  DictSkill::getDBSelectPure() 
 { 
-    return "select `id`,`stamp`,`searchID`,`aoeID`,`orgType`,`orgFixed`,`orgLimitDistance`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsAoeID`,`appendBuffsText`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc` from `tb_DictSkill` "; 
+    return "select `id`,`stamp`,`searchID`,`aoeID`,`orgType`,`orgFixed`,`orgLimitDistance`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`appendBuffsAreaID`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc` from `tb_DictSkill` "; 
 } 
 std::string  DictSkill::getDBInsert() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictSkill`(`id`,`stamp`,`searchID`,`aoeID`,`orgType`,`orgFixed`,`orgLimitDistance`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsAoeID`,`appendBuffsText`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
+    q.init("insert into `tb_DictSkill`(`id`,`stamp`,`searchID`,`aoeID`,`orgType`,`orgFixed`,`orgLimitDistance`,`delay`,`interval`,`keep`,`cd`,`hpAdd`,`hpAddScaleRemanent`,`hpAddScaleLost`,`propID`,`dstTeleport`,`selfTeleport`,`dstMoveTime`,`dstMoveSpeed`,`selfMoveTime`,`selfMoveSpeed`,`appendBuffsText`,`appendBuffsAreaID`,`harmBuffsText`,`combSkillsText`,`followSkillsText`,`desc`) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"); 
     q << this->id; 
     q << this->stamp; 
     q << this->searchID; 
@@ -865,8 +871,8 @@ std::string  DictSkill::getDBInsert()
     q << this->dstMoveSpeed; 
     q << this->selfMoveTime; 
     q << this->selfMoveSpeed; 
-    q << this->appendBuffsAoeID; 
     q << this->appendBuffsText; 
+    q << this->appendBuffsAreaID; 
     q << this->harmBuffsText; 
     q << this->combSkillsText; 
     q << this->followSkillsText; 
@@ -883,7 +889,7 @@ std::string  DictSkill::getDBDelete()
 std::string  DictSkill::getDBUpdate() 
 { 
     zsummer::mysql::DBQuery q; 
-    q.init("insert into `tb_DictSkill`(id) values(? ) on duplicate key update `stamp` = ?,`searchID` = ?,`aoeID` = ?,`orgType` = ?,`orgFixed` = ?,`orgLimitDistance` = ?,`delay` = ?,`interval` = ?,`keep` = ?,`cd` = ?,`hpAdd` = ?,`hpAddScaleRemanent` = ?,`hpAddScaleLost` = ?,`propID` = ?,`dstTeleport` = ?,`selfTeleport` = ?,`dstMoveTime` = ?,`dstMoveSpeed` = ?,`selfMoveTime` = ?,`selfMoveSpeed` = ?,`appendBuffsAoeID` = ?,`appendBuffsText` = ?,`harmBuffsText` = ?,`combSkillsText` = ?,`followSkillsText` = ?,`desc` = ? "); 
+    q.init("insert into `tb_DictSkill`(id) values(? ) on duplicate key update `stamp` = ?,`searchID` = ?,`aoeID` = ?,`orgType` = ?,`orgFixed` = ?,`orgLimitDistance` = ?,`delay` = ?,`interval` = ?,`keep` = ?,`cd` = ?,`hpAdd` = ?,`hpAddScaleRemanent` = ?,`hpAddScaleLost` = ?,`propID` = ?,`dstTeleport` = ?,`selfTeleport` = ?,`dstMoveTime` = ?,`dstMoveSpeed` = ?,`selfMoveTime` = ?,`selfMoveSpeed` = ?,`appendBuffsText` = ?,`appendBuffsAreaID` = ?,`harmBuffsText` = ?,`combSkillsText` = ?,`followSkillsText` = ?,`desc` = ? "); 
     q << this->id; 
     q << this->stamp; 
     q << this->searchID; 
@@ -905,8 +911,8 @@ std::string  DictSkill::getDBUpdate()
     q << this->dstMoveSpeed; 
     q << this->selfMoveTime; 
     q << this->selfMoveSpeed; 
-    q << this->appendBuffsAoeID; 
     q << this->appendBuffsText; 
+    q << this->appendBuffsAreaID; 
     q << this->harmBuffsText; 
     q << this->combSkillsText; 
     q << this->followSkillsText; 
@@ -945,8 +951,8 @@ bool DictSkill::fetchFromDBResult(zsummer::mysql::DBResult &result)
             result >> this->dstMoveSpeed; 
             result >> this->selfMoveTime; 
             result >> this->selfMoveSpeed; 
-            result >> this->appendBuffsAoeID; 
             result >> this->appendBuffsText; 
+            result >> this->appendBuffsAreaID; 
             result >> this->harmBuffsText; 
             result >> this->combSkillsText; 
             result >> this->followSkillsText; 
@@ -966,7 +972,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.id;  
     ws << data.stamp;  
     ws << data.searchID;  
+    ws << data.searchDict;  
     ws << data.aoeID;  
+    ws << data.aoeDict;  
     ws << data.orgType;  
     ws << data.orgFixed;  
     ws << data.orgLimitDistance;  
@@ -984,9 +992,10 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.dstMoveSpeed;  
     ws << data.selfMoveTime;  
     ws << data.selfMoveSpeed;  
-    ws << data.appendBuffsAoeID;  
     ws << data.appendBuffs;  
     ws << data.appendBuffsText;  
+    ws << data.appendBuffsAreaID;  
+    ws << data.appendBuffsAreaDict;  
     ws << data.harmBuffs;  
     ws << data.harmBuffsText;  
     ws << data.combSkills;  
@@ -1001,7 +1010,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.id;  
     rs >> data.stamp;  
     rs >> data.searchID;  
+    rs >> data.searchDict;  
     rs >> data.aoeID;  
+    rs >> data.aoeDict;  
     rs >> data.orgType;  
     rs >> data.orgFixed;  
     rs >> data.orgLimitDistance;  
@@ -1019,9 +1030,10 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.dstMoveSpeed;  
     rs >> data.selfMoveTime;  
     rs >> data.selfMoveSpeed;  
-    rs >> data.appendBuffsAoeID;  
     rs >> data.appendBuffs;  
     rs >> data.appendBuffsText;  
+    rs >> data.appendBuffsAreaID;  
+    rs >> data.appendBuffsAreaDict;  
     rs >> data.harmBuffs;  
     rs >> data.harmBuffsText;  
     rs >> data.combSkills;  
@@ -1037,7 +1049,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "id=" << info.id << ","; 
     stm << "stamp=" << info.stamp << ","; 
     stm << "searchID=" << info.searchID << ","; 
+    stm << "searchDict=" << info.searchDict << ","; 
     stm << "aoeID=" << info.aoeID << ","; 
+    stm << "aoeDict=" << info.aoeDict << ","; 
     stm << "orgType=" << info.orgType << ","; 
     stm << "orgFixed=" << info.orgFixed << ","; 
     stm << "orgLimitDistance=" << info.orgLimitDistance << ","; 
@@ -1055,9 +1069,10 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "dstMoveSpeed=" << info.dstMoveSpeed << ","; 
     stm << "selfMoveTime=" << info.selfMoveTime << ","; 
     stm << "selfMoveSpeed=" << info.selfMoveSpeed << ","; 
-    stm << "appendBuffsAoeID=" << info.appendBuffsAoeID << ","; 
     stm << "appendBuffs=" << info.appendBuffs << ","; 
     stm << "appendBuffsText=" << info.appendBuffsText << ","; 
+    stm << "appendBuffsAreaID=" << info.appendBuffsAreaID << ","; 
+    stm << "appendBuffsAreaDict=" << info.appendBuffsAreaDict << ","; 
     stm << "harmBuffs=" << info.harmBuffs << ","; 
     stm << "harmBuffsText=" << info.harmBuffsText << ","; 
     stm << "combSkills=" << info.combSkills << ","; 

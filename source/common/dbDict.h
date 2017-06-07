@@ -178,10 +178,9 @@ public:
         LOAD_ONE_KEY_DICT(AOESearch);
         LOAD_ONE_KEY_DICT(DictBuff);
         LOAD_ONE_KEY_DICT(DictSkill);
-        fakeTestData();
-        return true;
+        return finish();
     }
-    bool fakeTestData();
+    bool finish();
     
     MAKE_ONE_KEY_DICT(DictGlobal, ui64, id);
     MAKE_ONE_KEY_DICT(DictDrop, ui64, id);

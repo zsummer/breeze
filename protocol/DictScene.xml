@@ -131,8 +131,10 @@
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="stamp" type="ui64"    desc=""/>
         <member name="searchID" type="ui64"   desc="锁敌"/>
+        <member name="searchDict" type="AOESearch"  tag="ignore" desc="锁敌"/>
 
         <member name="aoeID" type="ui64"   desc="AOI伤害"/>
+        <member name="aoeDict" type="AOESearch"  tag="ignore" desc=""/>
 
         <member name="orgType" type="ui16"   desc="1 施法者位置, 2 锁定的敌人位置或者目标位置"/>
         <member name="orgFixed" type="ui16"   desc="1位置固定化成坐标, 0跟随自己或者目标位置实时变化"/>
@@ -161,9 +163,11 @@
         <member name="selfMoveTime" type="double" desc="附加给自己朝向目标的位移时间" />
         <member name="selfMoveSpeed" type="double" desc="附加给自己朝向目标的位移速度" />
 
-        <member name="appendBuffsAoeID" type="ui64"   desc="上buff的searchid"/>
+        
         <member name="appendBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
         <member name="appendBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>
+        <member name="appendBuffsAreaID" type="ui64"   desc="上buff的searchid"/>
+        <member name="appendBuffsAreaDict" type="AOESearch"  tag="ignore" desc=""/>
 
         <member name="harmBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
         <member name="harmBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>

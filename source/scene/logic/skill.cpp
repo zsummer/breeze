@@ -16,24 +16,24 @@ void Skill::init(std::weak_ptr<Scene> scene)
 }
 
 
-bool Skill::isOutCD(EntityPtr caster, const EntitySkillInfo & skill, const DictSkill & dict)
+bool Skill::isOutCD(EntityPtr caster, const EntitySkillInfo & skill)
 {
     double now = getFloatSteadyNowTime();
     if (skill.activeTime == 0.0)
     {
         return true;
     }
-    double keep = dict.keep;
-    double interval = dict.interval / (1+caster->_props.attackQuick);
+    double keep = skill.dict.keep;
+    double interval = skill.dict.interval / (1+caster->_props.attackQuick);
     if (keep < interval)
     {
         keep = interval;
     }
-    if (now <= skill.activeTime + dict.cd)
+    if (now <= skill.activeTime + skill.dict.cd)
     {
         return false;
     }
-    if (now <= skill.activeTime + dict.delay + keep)
+    if (now <= skill.activeTime + skill.dict.delay + keep)
     {
         return false;
     }
@@ -160,7 +160,7 @@ void Skill::update()
         Entity & e = *pr.second;
 
         //check equipped skill 
-		for (auto iter = e._skillSys.dictEquippedSkills.begin(); iter != e._skillSys.dictEquippedSkills.end;)
+		for (auto iter = e._skillSys.dictEquippedSkills.begin(); iter != e._skillSys.dictEquippedSkills.end();)
 		{
 			if (e._skillSys.activeSkills.find(iter->first) == e._skillSys.activeSkills.end())
 			{
@@ -180,7 +180,7 @@ void Skill::update()
 			iter++;
 		}
 		//check active skill 
-		for (auto iter = e._skillSys.activeSkills.begin(); iter != e._skillSys.activeSkills.end;)
+		for (auto iter = e._skillSys.activeSkills.begin(); iter != e._skillSys.activeSkills.end();)
 		{
 			if (e._skillSys.dictEquippedSkills.find(iter->first) == e._skillSys.dictEquippedSkills.end())
 			{
@@ -217,7 +217,7 @@ void Skill::update()
                 break;
             }
             double distance = getDistance(e._move.position, foe->_move.position);
-            for (auto skv : e._skillSys.activeSkills)
+            for (auto &skv : e._skillSys.activeSkills)
             {
 				if (skv.second.isUnwield)
 				{
@@ -228,45 +228,29 @@ void Skill::update()
                     && e._move.action != MOVE_ACTION_FORCE_PATH
                     && e._move.action != MOVE_ACTION_PASV_PATH)
                 {
-                    auto finder = e._skillSys.activeSkills.find(id);
-                    if (finder == e._skillSys.activeSkills.end())
+
+                    if (e._move.action == MOVE_ACTION_FOLLOW && 
+                        distance > (std::max(skv.second.dict.aoeDict.value1, skv.second.dict.aoeDict.value2) + foe->_control.collision)*0.8)
                     {
-                        LOGE("error. boot skill not fill. skill id=" << dict.second.id);
                         continue;
                     }
-                    else
+
+                    auto ret = scene->searchTarget(pr.second, e._move.position, foe->_move.position - e._move.position, skv.second.dict.aoeDict);
+
+                    if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr, double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
                     {
-                        
-
-                        auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(skv.second.dict..aoeID);
-                        if (!aoeSearch.first)
+                        if (e._move.action == MOVE_ACTION_FOLLOW)
                         {
-                            LOGE("error");
-                            continue;
+                            scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                         }
-
-                        if (e._move.action == MOVE_ACTION_FOLLOW && distance > (std::max(aoeSearch.second.value1, aoeSearch.second.value2) + foe->_control.collision)*0.8)
+                        if (isOutCD(pr.second, skv.second) && skv.second.isFinish)
                         {
-                            continue;
+                            useSkill(scene, e._state.eid, id);
                         }
-
-                        auto ret = scene->searchTarget(pr.second, e._move.position, foe->_move.position - e._move.position, aoeSearch.second);
-
-                        if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr,double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
-                        {
-                            if (e._move.action == MOVE_ACTION_FOLLOW)
-                            {
-                                scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
-                            }
-                            if (isOutCD(pr.second, *finder->second, dict.second) && finder->second->isFinish)
-                            {
-                                useSkill(scene, e._state.eid, id);
-                            }
-                        }
-                        else if (e._move.action == MOVE_ACTION_IDLE)
-                        {
-                            scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
-                        }
+                    }
+                    else if (e._move.action == MOVE_ACTION_IDLE)
+                    {
+                        scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                     }
                 }
             }

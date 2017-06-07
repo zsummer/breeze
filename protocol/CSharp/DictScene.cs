@@ -366,7 +366,9 @@ namespace Proto4z
         public ulong id;  
         public ulong stamp;  
         public ulong searchID; //锁敌  
+        public AOESearch searchDict; //锁敌  
         public ulong aoeID; //AOI伤害  
+        public AOESearch aoeDict;  
         public ushort orgType; //1 施法者位置, 2 锁定的敌人位置或者目标位置  
         public ushort orgFixed; //1位置固定化成坐标, 0跟随自己或者目标位置实时变化  
         public double orgLimitDistance; //如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离  
@@ -384,9 +386,10 @@ namespace Proto4z
         public double dstMoveSpeed; //附加给目标朝向自己的位移速度  
         public double selfMoveTime; //附加给自己朝向目标的位移时间  
         public double selfMoveSpeed; //附加给自己朝向目标的位移速度  
-        public ulong appendBuffsAoeID; //上buff的searchid  
         public DictArrayKey appendBuffs;  
         public string appendBuffsText; //触发buff 格式 k,k,k,   
+        public ulong appendBuffsAreaID; //上buff的searchid  
+        public AOESearch appendBuffsAreaDict;  
         public DictArrayKey harmBuffs;  
         public string harmBuffsText; //触发buff 格式 k,k,k,   
         public DictArrayKey combSkills;  
@@ -399,7 +402,9 @@ namespace Proto4z
             id = 0;  
             stamp = 0;  
             searchID = 0;  
+            searchDict = new AOESearch();  
             aoeID = 0;  
+            aoeDict = new AOESearch();  
             orgType = 0;  
             orgFixed = 0;  
             orgLimitDistance = 0.0;  
@@ -417,9 +422,10 @@ namespace Proto4z
             dstMoveSpeed = 0.0;  
             selfMoveTime = 0.0;  
             selfMoveSpeed = 0.0;  
-            appendBuffsAoeID = 0;  
             appendBuffs = new DictArrayKey();  
             appendBuffsText = "";  
+            appendBuffsAreaID = 0;  
+            appendBuffsAreaDict = new AOESearch();  
             harmBuffs = new DictArrayKey();  
             harmBuffsText = "";  
             combSkills = new DictArrayKey();  
@@ -428,12 +434,14 @@ namespace Proto4z
             followSkillsText = "";  
             desc = "";  
         } 
-        public DictSkill(ulong id, ulong stamp, ulong searchID, ulong aoeID, ushort orgType, ushort orgFixed, double orgLimitDistance, double delay, double interval, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, ulong appendBuffsAoeID, DictArrayKey appendBuffs, string appendBuffsText, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey combSkills, string combSkillsText, DictArrayKey followSkills, string followSkillsText, string desc) 
+        public DictSkill(ulong id, ulong stamp, ulong searchID, AOESearch searchDict, ulong aoeID, AOESearch aoeDict, ushort orgType, ushort orgFixed, double orgLimitDistance, double delay, double interval, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey appendBuffs, string appendBuffsText, ulong appendBuffsAreaID, AOESearch appendBuffsAreaDict, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey combSkills, string combSkillsText, DictArrayKey followSkills, string followSkillsText, string desc) 
         { 
             this.id = id; 
             this.stamp = stamp; 
             this.searchID = searchID; 
+            this.searchDict = searchDict; 
             this.aoeID = aoeID; 
+            this.aoeDict = aoeDict; 
             this.orgType = orgType; 
             this.orgFixed = orgFixed; 
             this.orgLimitDistance = orgLimitDistance; 
@@ -451,9 +459,10 @@ namespace Proto4z
             this.dstMoveSpeed = dstMoveSpeed; 
             this.selfMoveTime = selfMoveTime; 
             this.selfMoveSpeed = selfMoveSpeed; 
-            this.appendBuffsAoeID = appendBuffsAoeID; 
             this.appendBuffs = appendBuffs; 
             this.appendBuffsText = appendBuffsText; 
+            this.appendBuffsAreaID = appendBuffsAreaID; 
+            this.appendBuffsAreaDict = appendBuffsAreaDict; 
             this.harmBuffs = harmBuffs; 
             this.harmBuffsText = harmBuffsText; 
             this.combSkills = combSkills; 
@@ -468,7 +477,11 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.stamp)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.searchID)); 
+            if (this.searchDict == null) this.searchDict = new AOESearch(); 
+            data.AddRange(this.searchDict.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.aoeID)); 
+            if (this.aoeDict == null) this.aoeDict = new AOESearch(); 
+            data.AddRange(this.aoeDict.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgFixed)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.orgLimitDistance)); 
@@ -486,10 +499,12 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.dstMoveSpeed)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.selfMoveTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.selfMoveSpeed)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.appendBuffsAoeID)); 
             if (this.appendBuffs == null) this.appendBuffs = new DictArrayKey(); 
             data.AddRange(this.appendBuffs.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.appendBuffsText)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.appendBuffsAreaID)); 
+            if (this.appendBuffsAreaDict == null) this.appendBuffsAreaDict = new AOESearch(); 
+            data.AddRange(this.appendBuffsAreaDict.__encode()); 
             if (this.harmBuffs == null) this.harmBuffs = new DictArrayKey(); 
             data.AddRange(this.harmBuffs.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeString(this.harmBuffsText)); 
@@ -507,7 +522,11 @@ namespace Proto4z
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.stamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.searchID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.searchDict = new AOESearch(); 
+            this.searchDict.__decode(binData, ref pos); 
             this.aoeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.aoeDict = new AOESearch(); 
+            this.aoeDict.__decode(binData, ref pos); 
             this.orgType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.orgFixed = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.orgLimitDistance = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
@@ -525,10 +544,12 @@ namespace Proto4z
             this.dstMoveSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.selfMoveTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.selfMoveSpeed = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.appendBuffsAoeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.appendBuffs = new DictArrayKey(); 
             this.appendBuffs.__decode(binData, ref pos); 
             this.appendBuffsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 
+            this.appendBuffsAreaID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.appendBuffsAreaDict = new AOESearch(); 
+            this.appendBuffsAreaDict.__decode(binData, ref pos); 
             this.harmBuffs = new DictArrayKey(); 
             this.harmBuffs.__decode(binData, ref pos); 
             this.harmBuffsText = Proto4z.BaseProtoObject.decodeString(binData, ref pos); 

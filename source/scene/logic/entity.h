@@ -60,8 +60,7 @@ inline DictProp operator * (const DictProp & ep1, const DictProp & ep2);
 inline DictProp operator * (const DictProp & ep, double df);
 
 
-using DictID = unsigned long long;
-const DictID InvalidDictID = -1;
+
 
 
 
