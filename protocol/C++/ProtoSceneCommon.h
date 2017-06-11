@@ -759,38 +759,30 @@ struct EntitySkillInfo //技能
     static const unsigned short getProtoID() { return 2010;} 
     static const std::string getProtoName() { return "EntitySkillInfo";} 
     unsigned long long skillID;  
-    EPosition activeOrg;  
-    unsigned long long activeOrgEID;  
     EPosition activeDst;  
     unsigned short activeFoeFirst;  
-    double activeTime;  
+    double lastActiveTime;  
     double lastTriggerTime;  
-    unsigned short isFinish;  
-    unsigned short isUnwield;  
+    unsigned short activeState; //0无效, 1锁敌成功但AOE超范围的准备阶段, 2开始前摇, 3执行中, 4开始后摇 后摇结束后置零, 5技能已卸载等待删除  
     double activeCount;  
     DictSkill dict;  
     EntitySkillInfo() 
     { 
         skillID = 0; 
-        activeOrgEID = 0; 
         activeFoeFirst = 0; 
-        activeTime = 0.0; 
+        lastActiveTime = 0.0; 
         lastTriggerTime = 0.0; 
-        isFinish = 0; 
-        isUnwield = 0; 
+        activeState = 0; 
         activeCount = 0.0; 
     } 
-    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned short & activeFoeFirst, const double & activeTime, const double & lastTriggerTime, const unsigned short & isFinish, const unsigned short & isUnwield, const double & activeCount, const DictSkill & dict) 
+    EntitySkillInfo(const unsigned long long & skillID, const EPosition & activeDst, const unsigned short & activeFoeFirst, const double & lastActiveTime, const double & lastTriggerTime, const unsigned short & activeState, const double & activeCount, const DictSkill & dict) 
     { 
         this->skillID = skillID; 
-        this->activeOrg = activeOrg; 
-        this->activeOrgEID = activeOrgEID; 
         this->activeDst = activeDst; 
         this->activeFoeFirst = activeFoeFirst; 
-        this->activeTime = activeTime; 
+        this->lastActiveTime = lastActiveTime; 
         this->lastTriggerTime = lastTriggerTime; 
-        this->isFinish = isFinish; 
-        this->isUnwield = isUnwield; 
+        this->activeState = activeState; 
         this->activeCount = activeCount; 
         this->dict = dict; 
     } 
@@ -798,14 +790,11 @@ struct EntitySkillInfo //技能
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntitySkillInfo & data) 
 { 
     ws << data.skillID;  
-    ws << data.activeOrg;  
-    ws << data.activeOrgEID;  
     ws << data.activeDst;  
     ws << data.activeFoeFirst;  
-    ws << data.activeTime;  
+    ws << data.lastActiveTime;  
     ws << data.lastTriggerTime;  
-    ws << data.isFinish;  
-    ws << data.isUnwield;  
+    ws << data.activeState;  
     ws << data.activeCount;  
     ws << data.dict;  
     return ws; 
@@ -813,14 +802,11 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntitySkillInfo & data) 
 { 
     rs >> data.skillID;  
-    rs >> data.activeOrg;  
-    rs >> data.activeOrgEID;  
     rs >> data.activeDst;  
     rs >> data.activeFoeFirst;  
-    rs >> data.activeTime;  
+    rs >> data.lastActiveTime;  
     rs >> data.lastTriggerTime;  
-    rs >> data.isFinish;  
-    rs >> data.isUnwield;  
+    rs >> data.activeState;  
     rs >> data.activeCount;  
     rs >> data.dict;  
     return rs; 
@@ -829,14 +815,11 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 { 
     stm << "["; 
     stm << "skillID=" << info.skillID << ","; 
-    stm << "activeOrg=" << info.activeOrg << ","; 
-    stm << "activeOrgEID=" << info.activeOrgEID << ","; 
     stm << "activeDst=" << info.activeDst << ","; 
     stm << "activeFoeFirst=" << info.activeFoeFirst << ","; 
-    stm << "activeTime=" << info.activeTime << ","; 
+    stm << "lastActiveTime=" << info.lastActiveTime << ","; 
     stm << "lastTriggerTime=" << info.lastTriggerTime << ","; 
-    stm << "isFinish=" << info.isFinish << ","; 
-    stm << "isUnwield=" << info.isUnwield << ","; 
+    stm << "activeState=" << info.activeState << ","; 
     stm << "activeCount=" << info.activeCount << ","; 
     stm << "dict=" << info.dict << ","; 
     stm << "]"; 

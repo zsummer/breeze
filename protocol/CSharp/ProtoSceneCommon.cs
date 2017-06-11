@@ -1100,41 +1100,32 @@ namespace Proto4z
         static public string getProtoName() { return "EntitySkillInfo"; } 
         //members   
         public ulong skillID;  
-        public EPosition activeOrg;  
-        public ulong activeOrgEID;  
         public EPosition activeDst;  
         public ushort activeFoeFirst;  
-        public double activeTime;  
+        public double lastActiveTime;  
         public double lastTriggerTime;  
-        public ushort isFinish;  
-        public ushort isUnwield;  
+        public ushort activeState; //0无效, 1锁敌成功但AOE超范围的准备阶段, 2开始前摇, 3执行中, 4开始后摇 后摇结束后置零, 5技能已卸载等待删除  
         public double activeCount;  
         public DictSkill dict;  
         public EntitySkillInfo()  
         { 
             skillID = 0;  
-            activeOrg = new EPosition();  
-            activeOrgEID = 0;  
             activeDst = new EPosition();  
             activeFoeFirst = 0;  
-            activeTime = 0.0;  
+            lastActiveTime = 0.0;  
             lastTriggerTime = 0.0;  
-            isFinish = 0;  
-            isUnwield = 0;  
+            activeState = 0;  
             activeCount = 0.0;  
             dict = new DictSkill();  
         } 
-        public EntitySkillInfo(ulong skillID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ushort activeFoeFirst, double activeTime, double lastTriggerTime, ushort isFinish, ushort isUnwield, double activeCount, DictSkill dict) 
+        public EntitySkillInfo(ulong skillID, EPosition activeDst, ushort activeFoeFirst, double lastActiveTime, double lastTriggerTime, ushort activeState, double activeCount, DictSkill dict) 
         { 
             this.skillID = skillID; 
-            this.activeOrg = activeOrg; 
-            this.activeOrgEID = activeOrgEID; 
             this.activeDst = activeDst; 
             this.activeFoeFirst = activeFoeFirst; 
-            this.activeTime = activeTime; 
+            this.lastActiveTime = lastActiveTime; 
             this.lastTriggerTime = lastTriggerTime; 
-            this.isFinish = isFinish; 
-            this.isUnwield = isUnwield; 
+            this.activeState = activeState; 
             this.activeCount = activeCount; 
             this.dict = dict; 
         } 
@@ -1142,16 +1133,12 @@ namespace Proto4z
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.skillID)); 
-            if (this.activeOrg == null) this.activeOrg = new EPosition(); 
-            data.AddRange(this.activeOrg.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeOrgEID)); 
             if (this.activeDst == null) this.activeDst = new EPosition(); 
             data.AddRange(this.activeDst.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.activeFoeFirst)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastActiveTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastTriggerTime)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.isFinish)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.isUnwield)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.activeState)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeCount)); 
             if (this.dict == null) this.dict = new DictSkill(); 
             data.AddRange(this.dict.__encode()); 
@@ -1160,16 +1147,12 @@ namespace Proto4z
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.skillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.activeOrg = new EPosition(); 
-            this.activeOrg.__decode(binData, ref pos); 
-            this.activeOrgEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.activeDst = new EPosition(); 
             this.activeDst.__decode(binData, ref pos); 
             this.activeFoeFirst = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.activeTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.lastActiveTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.lastTriggerTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
-            this.isFinish = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.isUnwield = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.activeState = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.activeCount = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.dict = new DictSkill(); 
             this.dict.__decode(binData, ref pos); 

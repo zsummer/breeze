@@ -130,16 +130,13 @@
     <struct name="DictSkill" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="stamp" type="ui64"    desc=""/>
-        <member name="searchID" type="ui64"   desc="锁敌"/>
-        <member name="searchDict" type="AOESearch"  tag="ignore" desc="锁敌"/>
 
-        <member name="aoeID" type="ui64"   desc="AOI伤害"/>
+        <member name="aosID" type="ui64"   desc="锁敌范围"/>
+        <member name="aosDict" type="AOESearch"  tag="ignore" desc="锁敌"/>
+        <member name="aosType" type="ui16"   desc="0锁坐标, 1锁方向, 2永久锁目标, 3锁目标 范围外解锁"/>
+
+        <member name="aoeID" type="ui64"   desc="AOE范围"/>
         <member name="aoeDict" type="AOESearch"  tag="ignore" desc=""/>
-
-        <member name="orgType" type="ui16"   desc="1 施法者位置, 2 锁定的敌人位置或者目标位置"/>
-        <member name="orgFixed" type="ui16"   desc="1位置固定化成坐标, 0跟随自己或者目标位置实时变化"/>
-        <member name="orgLimitDistance" type="double"   desc="如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离"/>
-
 
         <member name="delay" type="double"  desc=""/>
         <member name="interval" type="double" desc="自动释放间隔,针对自动施法,被动技能有效"/>

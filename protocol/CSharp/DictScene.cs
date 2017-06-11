@@ -365,13 +365,11 @@ namespace Proto4z
         //members   
         public ulong id;  
         public ulong stamp;  
-        public ulong searchID; //锁敌  
-        public AOESearch searchDict; //锁敌  
-        public ulong aoeID; //AOI伤害  
+        public ulong aosID; //锁敌范围  
+        public AOESearch aosDict; //锁敌  
+        public ushort aosType; //0锁坐标, 1锁方向, 2永久锁目标, 3锁目标 范围外解锁  
+        public ulong aoeID; //AOE范围  
         public AOESearch aoeDict;  
-        public ushort orgType; //1 施法者位置, 2 锁定的敌人位置或者目标位置  
-        public ushort orgFixed; //1位置固定化成坐标, 0跟随自己或者目标位置实时变化  
-        public double orgLimitDistance; //如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离  
         public double delay;  
         public double interval; //自动释放间隔,针对自动施法,被动技能有效  
         public double keep; //持续时间  
@@ -401,13 +399,11 @@ namespace Proto4z
         { 
             id = 0;  
             stamp = 0;  
-            searchID = 0;  
-            searchDict = new AOESearch();  
+            aosID = 0;  
+            aosDict = new AOESearch();  
+            aosType = 0;  
             aoeID = 0;  
             aoeDict = new AOESearch();  
-            orgType = 0;  
-            orgFixed = 0;  
-            orgLimitDistance = 0.0;  
             delay = 0.0;  
             interval = 0.0;  
             keep = 0.0;  
@@ -434,17 +430,15 @@ namespace Proto4z
             followSkillsText = "";  
             desc = "";  
         } 
-        public DictSkill(ulong id, ulong stamp, ulong searchID, AOESearch searchDict, ulong aoeID, AOESearch aoeDict, ushort orgType, ushort orgFixed, double orgLimitDistance, double delay, double interval, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey appendBuffs, string appendBuffsText, ulong appendBuffsAreaID, AOESearch appendBuffsAreaDict, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey combSkills, string combSkillsText, DictArrayKey followSkills, string followSkillsText, string desc) 
+        public DictSkill(ulong id, ulong stamp, ulong aosID, AOESearch aosDict, ushort aosType, ulong aoeID, AOESearch aoeDict, double delay, double interval, double keep, double cd, double hpAdd, double hpAddScaleRemanent, double hpAddScaleLost, ulong propID, double dstTeleport, double selfTeleport, double dstMoveTime, double dstMoveSpeed, double selfMoveTime, double selfMoveSpeed, DictArrayKey appendBuffs, string appendBuffsText, ulong appendBuffsAreaID, AOESearch appendBuffsAreaDict, DictArrayKey harmBuffs, string harmBuffsText, DictArrayKey combSkills, string combSkillsText, DictArrayKey followSkills, string followSkillsText, string desc) 
         { 
             this.id = id; 
             this.stamp = stamp; 
-            this.searchID = searchID; 
-            this.searchDict = searchDict; 
+            this.aosID = aosID; 
+            this.aosDict = aosDict; 
+            this.aosType = aosType; 
             this.aoeID = aoeID; 
             this.aoeDict = aoeDict; 
-            this.orgType = orgType; 
-            this.orgFixed = orgFixed; 
-            this.orgLimitDistance = orgLimitDistance; 
             this.delay = delay; 
             this.interval = interval; 
             this.keep = keep; 
@@ -476,15 +470,13 @@ namespace Proto4z
             var data = new System.Collections.Generic.List<byte>(); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.id)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.stamp)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.searchID)); 
-            if (this.searchDict == null) this.searchDict = new AOESearch(); 
-            data.AddRange(this.searchDict.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.aosID)); 
+            if (this.aosDict == null) this.aosDict = new AOESearch(); 
+            data.AddRange(this.aosDict.__encode()); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.aosType)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.aoeID)); 
             if (this.aoeDict == null) this.aoeDict = new AOESearch(); 
             data.AddRange(this.aoeDict.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgType)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.orgFixed)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.orgLimitDistance)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.delay)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.interval)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.keep)); 
@@ -521,15 +513,13 @@ namespace Proto4z
         { 
             this.id = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.stamp = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.searchID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.searchDict = new AOESearch(); 
-            this.searchDict.__decode(binData, ref pos); 
+            this.aosID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.aosDict = new AOESearch(); 
+            this.aosDict.__decode(binData, ref pos); 
+            this.aosType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.aoeID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.aoeDict = new AOESearch(); 
             this.aoeDict.__decode(binData, ref pos); 
-            this.orgType = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.orgFixed = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.orgLimitDistance = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.delay = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.interval = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.keep = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 

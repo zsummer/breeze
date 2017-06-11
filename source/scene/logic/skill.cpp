@@ -301,43 +301,9 @@ void Skill::update()
     }
 }
 
-//填充默认的技能参数
-bool  Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID)
-{
-    auto e = scene->getEntity(casterID);
-    if (!e)
-    {
-        LOGE("not found caster. casterID=" << casterID << ", skillID=" << skillID);
-        return false;
-    }
-    if (e->_state.state != ENTITY_STATE_ACTIVE)
-    {
-        LOGE("caster state is not ENTITY_STATE_ACTIVE. casterID=" << casterID << ", skillID=" << skillID << ", state=" << e->_state.state);
-        return false;
-    }
-    auto dictSkill =  DBDict::getRef().getOneKeyDictSkill(skillID);
-    if (!dictSkill.first)
-    {
-        LOGE("not found skill. casterID=" << casterID << ", skillID=" << skillID);
-        return false;
-    }
-    if (dictSkill.second.aoeID == InvalidDictID)
-    {
-        LOGE("not found aoeid. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
-        return false;
-    }
-    auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(dictSkill.second.aoeID);
-    if (!aoeSearch.first)
-    {
-        LOGE("not found aoeid. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
-        return false;
-    }
-
-    return useSkill(scene, casterID, skillID, EPosition(0, 1), true);
-}
 
 
-bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, ui16 foeFirst)
+bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, ui16 foeFirst)
 {
     auto e = scene->getEntity(casterID);
     if (!e)
@@ -361,7 +327,7 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
         e->_skillSys.autoAttack = true;
     }
 
-    EntitySkillInfoPtr skill;
+    EntitySkillInfo * skill;
     auto finder = e->_skillSys.activeSkills.find(dictSkill.second.id);
     if (finder != e->_skillSys.activeSkills.end())
     {
@@ -449,9 +415,77 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
     return true;
 }
 
+bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill)
+{
+	if (getBitFlag(skill.dict.stamp, SKILL_AUTO_USE))
+	{
+		caster->_skillSys.autoAttack = true;
+	}
+	if (skill.activeState != 0 && skill.activeState != 1 && skill.activeState != 4)
+	{
+		LOGW("Skill::doSkill doSkill conflict.  eID=" << caster->_state.eid << ", eName=" << caster->_state.avatarName
+			<< ", skillID=" << skill.skillID << ", skill state=" << skill.activeState);
+		return false;
+	}
 
+	skill.activeCount++;
+	skill.lastActiveTime = getFloatSteadyNowTime();
+	skill.lastTriggerTime = skill.lastActiveTime - 1;
+	skill.activeState = 1;
+	skill.activeFoeFirst = foeFirst;
+	selectFoe(scene, e, false, false);
+	auto foe = scene->getEntity(e->_state.foe);
+	if (dictSkill.second.orgType == 1)
+	{
+		// 普通类型的技能 施法位置以施法者为中心  以客户端传来的目标位置dst或者锁定的敌人为目标(方向) . 
+		// 根据orgFixed选项可以选择施法中心是否跟随施法者(如果不是引导技能 跟随不跟随的没有区别) 
+		// 飞行道具类的技能也必须配置为该类型.  (只支持从自身位置飞向锁定敌人或者目标方向的飞行道具)  
+		skill->activeOrgEID = casterID;
+		skill->activeOrg = e->_move.position;
+		skill->activeDst = dst;
 
-bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill)
+		if (foeFirst && foe)
+		{
+			skill->activeDst = foe->_move.position;
+		}
+		if (dictSkill.second.orgFixed)
+		{
+			skill->activeFoeFirst = 0;
+		}
+	}
+	else
+	{
+		//在指定的目标位置为中心进行施法 
+		//例如 鲁班七号的手雷(王者荣耀), 人族大法的暴风雪(war3 引导技能)  
+		skill->activeOrgEID = InvalidEntityID;
+		skill->activeOrg = dst;
+		//fix foe   
+		if (foe)
+		{
+			skill->activeOrgEID = foe->_state.eid;
+			skill->activeOrg = foe->_move.position;
+		}
+		double radian = getRadian(skill->activeDst.x - e->_move.position.x, skill->activeDst.y - e->_move.position.y);
+		if (getDistance(e->_move.position, skill->activeOrg) > dictSkill.second.orgLimitDistance)
+		{
+			auto pos = getFarPoint(e->_move.position.x, e->_move.position.y, radian, dictSkill.second.orgLimitDistance);
+			skill->activeOrg.x = std::get<0>(pos);
+			skill->activeOrg.y = std::get<1>(pos);
+			skill->activeOrgEID = InvalidEntityID; //这种情况要退化成fixed dst, 否则外挂可以造成地图炮. 
+		}
+		auto pos = getFarPoint(skill->activeOrg.x, skill->activeOrg.y, radian, 10.0/*这里只是起到radian作用*/);
+		skill->activeDst.x = std::get<0>(pos);
+		skill->activeDst.y = std::get<1>(pos);
+		skill->activeFoeFirst = 0;
+	}
+
+	scene->broadcast(UseSkillNotice(casterID, *skill));
+
+	triggerSkill(scene, e, skill, dictSkill.second);
+	return true;
+}
+
+bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill)
 {
     if (skill->isFinish)
     {

@@ -224,14 +224,11 @@
 
     <proto name="EntitySkillInfo" desc= "技能">
         <member name="skillID"  type="ui64" desc=""/>
-        <member name="activeOrg"  type="EPosition" desc=""/>
-        <member name="activeOrgEID"  type="ui64" desc=""/>
         <member name="activeDst"  type="EPosition" desc=""/>
         <member name="activeFoeFirst"  type="ui16" desc=""/>
-        <member name="activeTime"  type="double" desc=""/>
+        <member name="lastActiveTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
-        <member name="isFinish"  type="ui16" desc=""/>
-        <member name="isUnwield"  type="ui16" desc=""/>
+        <member name="activeState"  type="ui16" desc="0无效, 1锁敌成功但AOE超范围的准备阶段, 2开始前摇, 3执行中, 4开始后摇 后摇结束后置零, 5技能已卸载等待删除"/>
         <member name="activeCount"  type="double" desc=""/>
         <member name="dict"  type="DictSkill" desc=""/>
     </proto>

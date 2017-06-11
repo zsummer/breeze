@@ -239,16 +239,13 @@ Proto4z.EntitySkillInfo = {} --技能
 Proto4z.EntitySkillInfo.__protoID = 2010 
 Proto4z.EntitySkillInfo.__protoName = "EntitySkillInfo" 
 Proto4z.EntitySkillInfo[1] = {name="skillID", type="ui64" }  
-Proto4z.EntitySkillInfo[2] = {name="activeOrg", type="EPosition" }  
-Proto4z.EntitySkillInfo[3] = {name="activeOrgEID", type="ui64" }  
-Proto4z.EntitySkillInfo[4] = {name="activeDst", type="EPosition" }  
-Proto4z.EntitySkillInfo[5] = {name="activeFoeFirst", type="ui16" }  
-Proto4z.EntitySkillInfo[6] = {name="activeTime", type="double" }  
-Proto4z.EntitySkillInfo[7] = {name="lastTriggerTime", type="double" }  
-Proto4z.EntitySkillInfo[8] = {name="isFinish", type="ui16" }  
-Proto4z.EntitySkillInfo[9] = {name="isUnwield", type="ui16" }  
-Proto4z.EntitySkillInfo[10] = {name="activeCount", type="double" }  
-Proto4z.EntitySkillInfo[11] = {name="dict", type="DictSkill" }  
+Proto4z.EntitySkillInfo[2] = {name="activeDst", type="EPosition" }  
+Proto4z.EntitySkillInfo[3] = {name="activeFoeFirst", type="ui16" }  
+Proto4z.EntitySkillInfo[4] = {name="lastActiveTime", type="double" }  
+Proto4z.EntitySkillInfo[5] = {name="lastTriggerTime", type="double" }  
+Proto4z.EntitySkillInfo[6] = {name="activeState", type="ui16" } --0无效, 1锁敌成功但AOE超范围的准备阶段, 2开始前摇, 3执行中, 4开始后摇 后摇结束后置零, 5技能已卸载等待删除 
+Proto4z.EntitySkillInfo[7] = {name="activeCount", type="double" }  
+Proto4z.EntitySkillInfo[8] = {name="dict", type="DictSkill" }  
  
 Proto4z.EntitySkillInfoMap = {} --已装备的SKILL ID, 技能执行数据 
 Proto4z.EntitySkillInfoMap.__protoName = "EntitySkillInfoMap" 
