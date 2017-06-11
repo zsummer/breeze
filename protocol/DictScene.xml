@@ -130,13 +130,23 @@
         <member name="SKILL_REMOVE_BUFF"   desc="驱散增益BUFF"/>
     </enum>
 
+
+    <!-- SKILL AOS type -->
+    <enum type="ui64" name="SKILL_AOS" desc="">
+        <member name="SKILL_LOCKED_POS"  desc="锁坐标"/>
+        <member name="SKILL_LOCKED_VECTOR"  desc="锁方向"/>
+        <member name="SKILL_LOCKED_ENTITY"  desc="永久锁目标"/>
+        <member name="SKILL_LOCKED_FREE"  desc="自由锁定"/>
+    </enum>
+
+
     <struct name="DictSkill" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="stamp" type="ui64"    desc=""/>
 
         <member name="aosID" type="ui64"   desc="锁敌范围"/>
         <member name="aosDict" type="AOESearch"  tag="ignore" desc="锁敌"/>
-        <member name="aosType" type="ui16"   desc="0锁坐标, 1锁方向, 2永久锁目标, 3锁目标 范围外解锁"/>
+        <member name="aosType" type="ui16"   desc="0一次性锁坐标, 1一次性锁方向, 2永久锁目标, 3锁目标 超出范围外锁坐标"/>
 
         <member name="aoeID" type="ui64"   desc="AOE范围"/>
         <member name="aoeDict" type="AOESearch"  tag="ignore" desc=""/>

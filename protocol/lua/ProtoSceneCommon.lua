@@ -234,6 +234,13 @@ Proto4z.SceneSection[4] = {name="sceneStartTime", type="double" } --服务器战
 Proto4z.SceneSection[5] = {name="sceneEndTime", type="double" } --服务器战场结束时间 
 Proto4z.SceneSection[6] = {name="serverTime", type="double" } --服务器当前时间 
  
+Proto4z.ENTITY_SKILL_NONE = 0--无效 
+Proto4z.ENTITY_SKILL_LOCKED = 1--锁定/就绪 
+Proto4z.ENTITY_SKILL_PREFIX = 2--前摇 
+Proto4z.ENTITY_SKILL_ACTIVE = 3--执行中 
+Proto4z.ENTITY_SKILL_POST = 4--后摇 
+Proto4z.ENTITY_SKILL_REMOVE = 5--删除 
+ 
 Proto4z.register(2010,"EntitySkillInfo") 
 Proto4z.EntitySkillInfo = {} --技能 
 Proto4z.EntitySkillInfo.__protoID = 2010 
@@ -243,7 +250,7 @@ Proto4z.EntitySkillInfo[2] = {name="activeDst", type="EPosition" }
 Proto4z.EntitySkillInfo[3] = {name="activeFoeFirst", type="ui16" }  
 Proto4z.EntitySkillInfo[4] = {name="lastActiveTime", type="double" }  
 Proto4z.EntitySkillInfo[5] = {name="lastTriggerTime", type="double" }  
-Proto4z.EntitySkillInfo[6] = {name="activeState", type="ui16" } --0无效, 1锁敌成功但AOE超范围的准备阶段, 2开始前摇, 3执行中, 4开始后摇 后摇结束后置零, 5技能已卸载等待删除 
+Proto4z.EntitySkillInfo[6] = {name="activeState", type="ui16" } --ENTITY_SKILL_STATE 
 Proto4z.EntitySkillInfo[7] = {name="activeCount", type="double" }  
 Proto4z.EntitySkillInfo[8] = {name="dict", type="DictSkill" }  
  
@@ -268,7 +275,7 @@ Proto4z.EntityBuffInfo[2] = {name="activeOrg", type="EPosition" }
 Proto4z.EntityBuffInfo[3] = {name="activeOrgEID", type="ui64" }  
 Proto4z.EntityBuffInfo[4] = {name="activeDst", type="EPosition" }  
 Proto4z.EntityBuffInfo[5] = {name="activeDstEID", type="ui64" }  
-Proto4z.EntityBuffInfo[6] = {name="activeTime", type="double" }  
+Proto4z.EntityBuffInfo[6] = {name="lastActiveTime", type="double" }  
 Proto4z.EntityBuffInfo[7] = {name="lastTriggerTime", type="double" }  
 Proto4z.EntityBuffInfo[8] = {name="activeCount", type="double" }  
 Proto4z.EntityBuffInfo[9] = {name="dict", type="DictBuff" }  
@@ -286,4 +293,6 @@ Proto4z.EntitySkillSystem.__protoName = "EntitySkillSystem"
 Proto4z.EntitySkillSystem[1] = {name="activeSkills", type="EntitySkillInfoMap" }  
 Proto4z.EntitySkillSystem[2] = {name="activeBuffs", type="EntityBuffInfoMap" }  
 Proto4z.EntitySkillSystem[3] = {name="dictEquippedSkills", type="EntityEquippedSkillMap" }  
-Proto4z.EntitySkillSystem[4] = {name="autoAttack", type="ui16" }  
+Proto4z.EntitySkillSystem[4] = {name="combating", type="ui16" } --战斗中 
+Proto4z.EntitySkillSystem[5] = {name="readySkillID", type="ui32" }  
+Proto4z.EntitySkillSystem[6] = {name="normalSkillID", type="ui32" }  

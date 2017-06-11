@@ -86,17 +86,22 @@ Proto4z.DictBuff[15] = {name="limitStackTime", type="double" } --相同buff叠�
 Proto4z.DictBuff[16] = {name="desc", type="string" }  
  
 Proto4z.SKILL_NONE = 0 
-Proto4z.SKILL_AUTO_USE = 1--自动施法 
+Proto4z.SKILL_NORMAL = 1--普攻攻击技能 
 Proto4z.SKILL_PASSIVE = 2--被动技能 
-Proto4z.SKILL_ON_HIT_BREAK = 3--可被中断 
-Proto4z.SKILL_ON_MOVE_BREAK = 4--可被中断 
-Proto4z.SKILL_CAN_MOVE = 5--可移动 
-Proto4z.SKILL_PHYSICAL = 6--物理类型 
-Proto4z.SKILL_MAGIC = 7--魔法类型 
-Proto4z.SKILL_HIT = 8--攻击 
-Proto4z.SKILL_HILL = 9--治疗 
+Proto4z.SKILL_PHYSICAL = 3--物理伤害 
+Proto4z.SKILL_MAGIC = 4--魔法伤害 
+Proto4z.SKILL_HARM = 5--血量减损 
+Proto4z.SKILL_REGEN = 6--血量再生 
+Proto4z.SKILL_ON_HIT_BREAK = 7--可被中断 
+Proto4z.SKILL_ON_MOVE_BREAK = 8--可被中断 
+Proto4z.SKILL_CAN_MOVE = 9--可移动 
 Proto4z.SKILL_REMOVE_DEBUFF = 10--驱散减益BUFF 
 Proto4z.SKILL_REMOVE_BUFF = 11--驱散增益BUFF 
+ 
+Proto4z.SKILL_LOCKED_POS = 0--锁坐标 
+Proto4z.SKILL_LOCKED_VECTOR = 1--锁方向 
+Proto4z.SKILL_LOCKED_ENTITY = 2--永久锁目标 
+Proto4z.SKILL_LOCKED_FREE = 3--自由锁定 
  
 Proto4z.register(11003,"DictSkill") 
 Proto4z.DictSkill = {}  
@@ -106,7 +111,7 @@ Proto4z.DictSkill[1] = {name="id", type="ui64" }
 Proto4z.DictSkill[2] = {name="stamp", type="ui64" }  
 Proto4z.DictSkill[3] = {name="aosID", type="ui64" } --锁敌范围 
 Proto4z.DictSkill[4] = {name="aosDict", type="AOESearch" } --锁敌 
-Proto4z.DictSkill[5] = {name="aosType", type="ui16" } --0锁坐标, 1锁方向, 2永久锁目标, 3锁目标 范围外解锁 
+Proto4z.DictSkill[5] = {name="aosType", type="ui16" } --0一次性锁坐标, 1一次性锁方向, 2永久锁目标, 3锁目标 超出范围外锁坐标 
 Proto4z.DictSkill[6] = {name="aoeID", type="ui64" } --AOE范围 
 Proto4z.DictSkill[7] = {name="aoeDict", type="AOESearch" }  
 Proto4z.DictSkill[8] = {name="delay", type="double" }  

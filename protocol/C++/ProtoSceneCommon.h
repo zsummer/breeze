@@ -754,6 +754,16 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+enum ENTITY_SKILL_STATE : unsigned short 
+{ 
+    ENTITY_SKILL_NONE = 0, //无效  
+    ENTITY_SKILL_LOCKED = 1, //锁定/就绪  
+    ENTITY_SKILL_PREFIX = 2, //前摇  
+    ENTITY_SKILL_ACTIVE = 3, //执行中  
+    ENTITY_SKILL_POST = 4, //后摇  
+    ENTITY_SKILL_REMOVE = 5, //删除  
+}; 
+ 
 struct EntitySkillInfo //技能  
 { 
     static const unsigned short getProtoID() { return 2010;} 
@@ -763,7 +773,7 @@ struct EntitySkillInfo //技能
     unsigned short activeFoeFirst;  
     double lastActiveTime;  
     double lastTriggerTime;  
-    unsigned short activeState; //0无效, 1锁敌成功但AOE超范围的准备阶段, 2开始前摇, 3执行中, 4开始后摇 后摇结束后置零, 5技能已卸载等待删除  
+    unsigned short activeState; //ENTITY_SKILL_STATE  
     double activeCount;  
     DictSkill dict;  
     EntitySkillInfo() 
@@ -841,7 +851,7 @@ struct EntityBuffInfo //BUFF
     unsigned long long activeOrgEID;  
     EPosition activeDst;  
     unsigned long long activeDstEID;  
-    double activeTime;  
+    double lastActiveTime;  
     double lastTriggerTime;  
     double activeCount;  
     DictBuff dict;  
@@ -850,18 +860,18 @@ struct EntityBuffInfo //BUFF
         buffID = 0; 
         activeOrgEID = 0; 
         activeDstEID = 0; 
-        activeTime = 0.0; 
+        lastActiveTime = 0.0; 
         lastTriggerTime = 0.0; 
         activeCount = 0.0; 
     } 
-    EntityBuffInfo(const unsigned long long & buffID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & activeTime, const double & lastTriggerTime, const double & activeCount, const DictBuff & dict) 
+    EntityBuffInfo(const unsigned long long & buffID, const EPosition & activeOrg, const unsigned long long & activeOrgEID, const EPosition & activeDst, const unsigned long long & activeDstEID, const double & lastActiveTime, const double & lastTriggerTime, const double & activeCount, const DictBuff & dict) 
     { 
         this->buffID = buffID; 
         this->activeOrg = activeOrg; 
         this->activeOrgEID = activeOrgEID; 
         this->activeDst = activeDst; 
         this->activeDstEID = activeDstEID; 
-        this->activeTime = activeTime; 
+        this->lastActiveTime = lastActiveTime; 
         this->lastTriggerTime = lastTriggerTime; 
         this->activeCount = activeCount; 
         this->dict = dict; 
@@ -874,7 +884,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.activeOrgEID;  
     ws << data.activeDst;  
     ws << data.activeDstEID;  
-    ws << data.activeTime;  
+    ws << data.lastActiveTime;  
     ws << data.lastTriggerTime;  
     ws << data.activeCount;  
     ws << data.dict;  
@@ -887,7 +897,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.activeOrgEID;  
     rs >> data.activeDst;  
     rs >> data.activeDstEID;  
-    rs >> data.activeTime;  
+    rs >> data.lastActiveTime;  
     rs >> data.lastTriggerTime;  
     rs >> data.activeCount;  
     rs >> data.dict;  
@@ -901,7 +911,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "activeOrgEID=" << info.activeOrgEID << ","; 
     stm << "activeDst=" << info.activeDst << ","; 
     stm << "activeDstEID=" << info.activeDstEID << ","; 
-    stm << "activeTime=" << info.activeTime << ","; 
+    stm << "lastActiveTime=" << info.lastActiveTime << ","; 
     stm << "lastTriggerTime=" << info.lastTriggerTime << ","; 
     stm << "activeCount=" << info.activeCount << ","; 
     stm << "dict=" << info.dict << ","; 
@@ -919,17 +929,23 @@ struct EntitySkillSystem //EntitySkillSystem
     EntitySkillInfoMap activeSkills;  
     EntityBuffInfoMap activeBuffs;  
     EntityEquippedSkillMap dictEquippedSkills;  
-    unsigned short autoAttack;  
+    unsigned short combating; //战斗中  
+    unsigned int readySkillID;  
+    unsigned int normalSkillID;  
     EntitySkillSystem() 
     { 
-        autoAttack = 0; 
+        combating = 0; 
+        readySkillID = 0; 
+        normalSkillID = 0; 
     } 
-    EntitySkillSystem(const EntitySkillInfoMap & activeSkills, const EntityBuffInfoMap & activeBuffs, const EntityEquippedSkillMap & dictEquippedSkills, const unsigned short & autoAttack) 
+    EntitySkillSystem(const EntitySkillInfoMap & activeSkills, const EntityBuffInfoMap & activeBuffs, const EntityEquippedSkillMap & dictEquippedSkills, const unsigned short & combating, const unsigned int & readySkillID, const unsigned int & normalSkillID) 
     { 
         this->activeSkills = activeSkills; 
         this->activeBuffs = activeBuffs; 
         this->dictEquippedSkills = dictEquippedSkills; 
-        this->autoAttack = autoAttack; 
+        this->combating = combating; 
+        this->readySkillID = readySkillID; 
+        this->normalSkillID = normalSkillID; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntitySkillSystem & data) 
@@ -937,7 +953,9 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.activeSkills;  
     ws << data.activeBuffs;  
     ws << data.dictEquippedSkills;  
-    ws << data.autoAttack;  
+    ws << data.combating;  
+    ws << data.readySkillID;  
+    ws << data.normalSkillID;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntitySkillSystem & data) 
@@ -945,7 +963,9 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.activeSkills;  
     rs >> data.activeBuffs;  
     rs >> data.dictEquippedSkills;  
-    rs >> data.autoAttack;  
+    rs >> data.combating;  
+    rs >> data.readySkillID;  
+    rs >> data.normalSkillID;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntitySkillSystem & info) 
@@ -954,7 +974,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "activeSkills=" << info.activeSkills << ","; 
     stm << "activeBuffs=" << info.activeBuffs << ","; 
     stm << "dictEquippedSkills=" << info.dictEquippedSkills << ","; 
-    stm << "autoAttack=" << info.autoAttack << ","; 
+    stm << "combating=" << info.combating << ","; 
+    stm << "readySkillID=" << info.readySkillID << ","; 
+    stm << "normalSkillID=" << info.normalSkillID << ","; 
     stm << "]"; 
     return stm; 
 } 

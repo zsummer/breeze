@@ -31,7 +31,7 @@
 #include <ProtoSceneClient.h>
 #include <rvo2/RVO.h>
 
-
+class Entity;
 inline EPosition operator + (const EPosition & self, const EPosition & org) { return EPosition(self.x + org.x, self.y + org.y); }
 inline EPosition operator - (const EPosition & self, const EPosition & org) { return EPosition(self.x - org.x, self.y - org.y); }
 inline EPosition operator * (const EPosition & self, const EPosition & org) { return EPosition(self.x * org.x, self.y * org.y); }
@@ -97,6 +97,7 @@ public:
 };
 
 using EntityPtr = std::shared_ptr<Entity>;
+inline double getDistance(const EntityPtr& e1, const EntityPtr & e2) { return getDistance(e1->_move.position, e2->_move.position); }
 
 
 

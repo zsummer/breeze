@@ -31,12 +31,13 @@ public:
     void update();
 
     //普攻的寻敌
-    EntityPtr selectFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo & skill);
-    void checkLocked(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bool change);
+    EntityPtr lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo & skill);
     bool isOutCD(EntityPtr caster, const EntitySkillInfo & skill);
     bool updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill);
 	bool doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst = { 1,1 }, ui16 foeFirst = 1);
-	bool doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
+
+	bool doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & dst, EntityID foe, bool foeFirst);
+
 	bool updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
 	bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill);
     

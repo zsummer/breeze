@@ -343,17 +343,25 @@ namespace Proto4z
     public enum SKILL_STAMP : ulong 
     { 
         SKILL_NONE = 0,  
-        SKILL_AUTO_USE = 1, //自动施法  
+        SKILL_NORMAL = 1, //普攻攻击技能  
         SKILL_PASSIVE = 2, //被动技能  
-        SKILL_ON_HIT_BREAK = 3, //可被中断  
-        SKILL_ON_MOVE_BREAK = 4, //可被中断  
-        SKILL_CAN_MOVE = 5, //可移动  
-        SKILL_PHYSICAL = 6, //物理类型  
-        SKILL_MAGIC = 7, //魔法类型  
-        SKILL_HIT = 8, //攻击  
-        SKILL_HILL = 9, //治疗  
+        SKILL_PHYSICAL = 3, //物理伤害  
+        SKILL_MAGIC = 4, //魔法伤害  
+        SKILL_HARM = 5, //血量减损  
+        SKILL_REGEN = 6, //血量再生  
+        SKILL_ON_HIT_BREAK = 7, //可被中断  
+        SKILL_ON_MOVE_BREAK = 8, //可被中断  
+        SKILL_CAN_MOVE = 9, //可移动  
         SKILL_REMOVE_DEBUFF = 10, //驱散减益BUFF  
         SKILL_REMOVE_BUFF = 11, //驱散增益BUFF  
+    }; 
+ 
+    public enum SKILL_AOS : ulong 
+    { 
+        SKILL_LOCKED_POS = 0, //锁坐标  
+        SKILL_LOCKED_VECTOR = 1, //锁方向  
+        SKILL_LOCKED_ENTITY = 2, //永久锁目标  
+        SKILL_LOCKED_FREE = 3, //自由锁定  
     }; 
  
     public class DictSkill: Proto4z.IProtoObject 
@@ -367,7 +375,7 @@ namespace Proto4z
         public ulong stamp;  
         public ulong aosID; //锁敌范围  
         public AOESearch aosDict; //锁敌  
-        public ushort aosType; //0锁坐标, 1锁方向, 2永久锁目标, 3锁目标 范围外解锁  
+        public ushort aosType; //0一次性锁坐标, 1一次性锁方向, 2永久锁目标, 3锁目标 超出范围外锁坐标  
         public ulong aoeID; //AOE范围  
         public AOESearch aoeDict;  
         public double delay;  

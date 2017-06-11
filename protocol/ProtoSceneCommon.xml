@@ -221,6 +221,15 @@
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
     </proto>
 
+     <!-- SKILL state -->
+    <enum type="ui16" name="ENTITY_SKILL_STATE" desc="" >
+        <member name="ENTITY_SKILL_NONE" value="0"   desc="无效"/>
+        <member name="ENTITY_SKILL_LOCKED"   desc="锁定/就绪"/>
+        <member name="ENTITY_SKILL_PREFIX" desc="前摇"/>
+        <member name="ENTITY_SKILL_ACTIVE" desc="执行中"/>
+        <member name="ENTITY_SKILL_POST"  desc="后摇"/>
+        <member name="ENTITY_SKILL_REMOVE"  desc="删除"/>
+    </enum>
 
     <proto name="EntitySkillInfo" desc= "技能">
         <member name="skillID"  type="ui64" desc=""/>
@@ -228,7 +237,7 @@
         <member name="activeFoeFirst"  type="ui16" desc=""/>
         <member name="lastActiveTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
-        <member name="activeState"  type="ui16" desc="0无效, 1锁敌成功但AOE超范围的准备阶段, 2开始前摇, 3执行中, 4开始后摇 后摇结束后置零, 5技能已卸载等待删除"/>
+        <member name="activeState"  type="ui16" desc="ENTITY_SKILL_STATE"/>
         <member name="activeCount"  type="double" desc=""/>
         <member name="dict"  type="DictSkill" desc=""/>
     </proto>
@@ -244,7 +253,7 @@
         <member name="activeOrgEID"  type="ui64" desc=""/>
         <member name="activeDst"  type="EPosition" desc=""/>
         <member name="activeDstEID"  type="ui64" desc=""/>
-        <member name="activeTime"  type="double" desc=""/>
+        <member name="lastActiveTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
         <member name="activeCount"  type="double" desc=""/>
         <member name="dict"  type="DictBuff" desc=""/>
@@ -257,7 +266,7 @@
         <member name="activeSkills"  type="EntitySkillInfoMap" desc=""/>
         <member name="activeBuffs"  type="EntityBuffInfoMap" desc=""/>
         <member name="dictEquippedSkills"  type="EntityEquippedSkillMap" desc=""/>
-        <member name="autoAttack"  type="ui16" desc=""/>
+        <member name="combating"  type="ui16" desc="战斗中"/>
         <member name="readySkillID"  type="ui32" desc=""/>
         <member name="normalSkillID"  type="ui32" desc=""/>
     </proto>

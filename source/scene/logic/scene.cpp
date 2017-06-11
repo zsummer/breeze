@@ -414,6 +414,38 @@ std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, 
     return searchTarget(caster, org, vt, search.second);
 }
 
+bool Scene::searchMatched(const EntityPtr & master, const EntityPtr & caster, const EntityPtr & dst, const AOESearch & search)
+{
+	if (getBitFlag(search.filter, FILTER_SELF) && master && master->_state.eid == dst->_state.eid)
+	{
+		return true;
+	}
+
+	if (search.etype != ENTITY_NONE && search.etype != dst->_state.etype)
+	{
+		return false;
+	}
+
+	if (getBitFlag(search.filter, FILTER_OTHER_FRIEND) && caster->_state.camp == dst->_state.camp)
+	{
+		if (master && master->_state.eid == dst->_state.eid)
+		{
+			return false;
+		}
+		return true;
+	}
+	if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != dst->_state.camp && dst->_state.camp < ENTITY_CAMP_NEUTRAL)
+	{
+		return true;
+	}
+	if (getBitFlag(search.filter, FILTER_NEUTRAL_CAMP) && dst->_state.camp > ENTITY_CAMP_NEUTRAL)
+	{
+		return true;
+	}
+	return false;
+}
+
+
 std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, EPosition org, EPosition vt, const AOESearch & search)
 {
     EntityPtr master = caster;
@@ -424,36 +456,21 @@ std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, 
 
     auto ret = searchTarget(org, vt, search.isRect,
         search.value1, search.value2, search.value3, search.compensate, search.clip);
-    auto beginIter = std::remove_if(ret.begin(), ret.end(), [&search, master, caster](const std::pair<EntityPtr, double> & e)
+	if (getBitFlag(search.filter, FILTER_SELF))
+	{
+		if (std::find_if(ret.begin(), ret.end(), [&master](const std::pair<EntityPtr, double> & pr) {return pr.first->_state.eid == master->_state.eid; })
+			 == ret.end())
+		{
+			ret.push_back(std::make_pair(master, 0));
+		}
+	}
+    auto beginIter = std::remove_if(ret.begin(), ret.end(), [this, &search, &master, &caster](const std::pair<EntityPtr, double> & e)
     {
-        if (search.etype != ENTITY_NONE && search.etype != e.first->_state.etype)
-        {
-            return true;
-        }
-
-        if (getBitFlag(search.filter, FILTER_SELF) && master && master->_state.eid == e.first->_state.eid)
-        {
-            return false;
-        }
-
-        if (getBitFlag(search.filter, FILTER_OTHER_FRIEND) && caster->_state.camp == e.first->_state.camp)
-        {
-            if (master && master->_state.eid == e.first->_state.eid)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != e.first->_state.camp && e.first->_state.camp < ENTITY_CAMP_NEUTRAL)
-        {
-            return false;
-        }
-        if (getBitFlag(search.filter, FILTER_NEUTRAL_CAMP) && e.first->_state.camp > ENTITY_CAMP_NEUTRAL)
-        {
-            return false;
-        }
-        return true;
+		if (searchMatched(master, caster, e.first, search))
+		{
+			return false;
+		}
+		return true;
     });
     ret.erase(beginIter, ret.end());
     if (ret.size()> search.limitEntitys)

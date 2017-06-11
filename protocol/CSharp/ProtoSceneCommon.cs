@@ -1092,6 +1092,16 @@ namespace Proto4z
         } 
     } 
  
+    public enum ENTITY_SKILL_STATE : ushort 
+    { 
+        ENTITY_SKILL_NONE = 0, //无效  
+        ENTITY_SKILL_LOCKED = 1, //锁定/就绪  
+        ENTITY_SKILL_PREFIX = 2, //前摇  
+        ENTITY_SKILL_ACTIVE = 3, //执行中  
+        ENTITY_SKILL_POST = 4, //后摇  
+        ENTITY_SKILL_REMOVE = 5, //删除  
+    }; 
+ 
     public class EntitySkillInfo: Proto4z.IProtoObject //技能  
     {     
         //proto id   
@@ -1104,7 +1114,7 @@ namespace Proto4z
         public ushort activeFoeFirst;  
         public double lastActiveTime;  
         public double lastTriggerTime;  
-        public ushort activeState; //0无效, 1锁敌成功但AOE超范围的准备阶段, 2开始前摇, 3执行中, 4开始后摇 后摇结束后置零, 5技能已卸载等待删除  
+        public ushort activeState; //ENTITY_SKILL_STATE  
         public double activeCount;  
         public DictSkill dict;  
         public EntitySkillInfo()  
@@ -1237,7 +1247,7 @@ namespace Proto4z
         public ulong activeOrgEID;  
         public EPosition activeDst;  
         public ulong activeDstEID;  
-        public double activeTime;  
+        public double lastActiveTime;  
         public double lastTriggerTime;  
         public double activeCount;  
         public DictBuff dict;  
@@ -1248,19 +1258,19 @@ namespace Proto4z
             activeOrgEID = 0;  
             activeDst = new EPosition();  
             activeDstEID = 0;  
-            activeTime = 0.0;  
+            lastActiveTime = 0.0;  
             lastTriggerTime = 0.0;  
             activeCount = 0.0;  
             dict = new DictBuff();  
         } 
-        public EntityBuffInfo(ulong buffID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ulong activeDstEID, double activeTime, double lastTriggerTime, double activeCount, DictBuff dict) 
+        public EntityBuffInfo(ulong buffID, EPosition activeOrg, ulong activeOrgEID, EPosition activeDst, ulong activeDstEID, double lastActiveTime, double lastTriggerTime, double activeCount, DictBuff dict) 
         { 
             this.buffID = buffID; 
             this.activeOrg = activeOrg; 
             this.activeOrgEID = activeOrgEID; 
             this.activeDst = activeDst; 
             this.activeDstEID = activeDstEID; 
-            this.activeTime = activeTime; 
+            this.lastActiveTime = lastActiveTime; 
             this.lastTriggerTime = lastTriggerTime; 
             this.activeCount = activeCount; 
             this.dict = dict; 
@@ -1275,7 +1285,7 @@ namespace Proto4z
             if (this.activeDst == null) this.activeDst = new EPosition(); 
             data.AddRange(this.activeDst.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.activeDstEID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeTime)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastActiveTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.lastTriggerTime)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.activeCount)); 
             if (this.dict == null) this.dict = new DictBuff(); 
@@ -1291,7 +1301,7 @@ namespace Proto4z
             this.activeDst = new EPosition(); 
             this.activeDst.__decode(binData, ref pos); 
             this.activeDstEID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
-            this.activeTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
+            this.lastActiveTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.lastTriggerTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.activeCount = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             this.dict = new DictBuff(); 
@@ -1343,20 +1353,26 @@ namespace Proto4z
         public EntitySkillInfoMap activeSkills;  
         public EntityBuffInfoMap activeBuffs;  
         public EntityEquippedSkillMap dictEquippedSkills;  
-        public ushort autoAttack;  
+        public ushort combating; //战斗中  
+        public uint readySkillID;  
+        public uint normalSkillID;  
         public EntitySkillSystem()  
         { 
             activeSkills = new EntitySkillInfoMap();  
             activeBuffs = new EntityBuffInfoMap();  
             dictEquippedSkills = new EntityEquippedSkillMap();  
-            autoAttack = 0;  
+            combating = 0;  
+            readySkillID = 0;  
+            normalSkillID = 0;  
         } 
-        public EntitySkillSystem(EntitySkillInfoMap activeSkills, EntityBuffInfoMap activeBuffs, EntityEquippedSkillMap dictEquippedSkills, ushort autoAttack) 
+        public EntitySkillSystem(EntitySkillInfoMap activeSkills, EntityBuffInfoMap activeBuffs, EntityEquippedSkillMap dictEquippedSkills, ushort combating, uint readySkillID, uint normalSkillID) 
         { 
             this.activeSkills = activeSkills; 
             this.activeBuffs = activeBuffs; 
             this.dictEquippedSkills = dictEquippedSkills; 
-            this.autoAttack = autoAttack; 
+            this.combating = combating; 
+            this.readySkillID = readySkillID; 
+            this.normalSkillID = normalSkillID; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -1367,7 +1383,9 @@ namespace Proto4z
             data.AddRange(this.activeBuffs.__encode()); 
             if (this.dictEquippedSkills == null) this.dictEquippedSkills = new EntityEquippedSkillMap(); 
             data.AddRange(this.dictEquippedSkills.__encode()); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.autoAttack)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.combating)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.readySkillID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.normalSkillID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -1378,7 +1396,9 @@ namespace Proto4z
             this.activeBuffs.__decode(binData, ref pos); 
             this.dictEquippedSkills = new EntityEquippedSkillMap(); 
             this.dictEquippedSkills.__decode(binData, ref pos); 
-            this.autoAttack = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.combating = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
+            this.readySkillID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.normalSkillID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
             return pos; 
         } 
     } 
