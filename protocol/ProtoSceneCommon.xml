@@ -258,6 +258,7 @@
         <member name="activeBuffs"  type="EntityBuffInfoMap" desc=""/>
         <member name="dictEquippedSkills"  type="EntityEquippedSkillMap" desc=""/>
         <member name="autoAttack"  type="ui16" desc=""/>
+        <member name="autoAttack"  type="ui16" desc=""/>
     </proto>
 
 

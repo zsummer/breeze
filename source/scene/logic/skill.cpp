@@ -68,7 +68,26 @@ bool Skill::updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfo & s
     }
     return true;
 }
-
+EntityPtr Skill::selectFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo & skill)
+{
+    EntityPtr foe;
+    while(caster->_state.foe != InvalidEntityID)
+    {
+        foe = scene->getEntity(caster->_state.foe);
+        if (!foe)
+        {
+            break;
+        }
+        if (foe->_state.state != ENTITY_STATE_ACTIVE)
+        {
+            foe = nullptr;
+            break;
+        }
+        double dist =0;
+        break;
+    }
+    return scene->searchTarget(caster, caster->_move.position,  EPosition(1,1), skill.dict.aosDict);
+};
 void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bool change)
 {
 

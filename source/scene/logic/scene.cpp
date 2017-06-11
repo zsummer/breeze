@@ -467,8 +467,8 @@ std::vector<std::pair<EntityPtr, double>>  Scene::searchTarget(EPosition org, EP
 {
     std::vector<std::pair<EntityPtr, double>> ret;
     vt = normalize(vt);
-    org = org - vt*compensate;
-    value1 = value1 + compensate;
+    org = org + vt*compensate;
+    value1 = value1 - compensate;
     AOECheck ac;
     ac.init(toTuple(org), toTuple(vt), isRect != 0, value1, value2, value3, clip);
 

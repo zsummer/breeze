@@ -85,9 +85,9 @@ bool DBDict::finish()
         skill.stamp = setBitFlag(skill.stamp, SKILL_PHYSICAL, true);
         skill.stamp = setBitFlag(skill.stamp, SKILL_HIT, true);
         skill.interval = 3.0;
-        skill.orgType = 1;
-        skill.aoeID = 3;
-        skill.searchID = 1;
+        skill.aosType = 3;
+        skill.aosID = 1;
+        skill.aoeID = 1;
         _dictOneKeyDictSkill[skill.id] = skill;
         skill.aoeID = 2;
         skill.id = 2;
@@ -95,41 +95,30 @@ bool DBDict::finish()
     }
 
 
-    for (auto & skv : _dictOneKeyDictSkill)
+    for(auto &kv : _dictOneKeyDictSkill)
     {
-        if (skv.second.searchID != InvalidDictID)
+        if  (kv.second.aosID != InvalidDictID)
         {
-            auto aoe = getOneKeyAOESearch(skv.second.searchID);
-            if (!aoe.first)
+            auto  aos = getOneKeyAOESearch(kv.second.aosID);
+            if (!aos.first)
             {
-                LOGE("DictSkill config error. not found searchID dict. searchID=" << skv.second.searchID);
+                LOGE("DBDict finish dict check error. not found aos dict. skillID=" << kv.second.aosID);
                 return false;
             }
-            skv.second.searchDict = aoe.second;
+            kv.second.aosDict = aos.second;
         }
-        if (skv.second.aoeID != InvalidDictID)
+        if  (kv.second.aoeID != InvalidDictID)
         {
-            auto aoe = getOneKeyAOESearch(skv.second.aoeID);
+            auto  aoe = getOneKeyAOESearch(kv.second.aoeID);
             if (!aoe.first)
             {
-                LOGE("DictSkill config error. not found aoeID dict. aoeID=" << skv.second.aoeID);
+                LOGE("DBDict finish dict check error. not found aoe dict. skillID=" << kv.second.aosID);
                 return false;
             }
-            skv.second.aoeDict = aoe.second;
+            kv.second.aoeDict = aoe.second;
         }
-        if (skv.second.appendBuffsAreaID != InvalidDictID)
-        {
-            auto aoe = getOneKeyAOESearch(skv.second.appendBuffsAreaID);
-            if (!aoe.first)
-            {
-                LOGE("DictSkill config error. not found appendBuffsAreaID dict. aoeID=" << skv.second.appendBuffsAreaID);
-                return false;
-            }
-            skv.second.appendBuffsAreaDict = aoe.second;
-        }
+
     }
-
-
     return true;
 }
 

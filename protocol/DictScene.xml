@@ -114,15 +114,18 @@
     <!-- SKILL类型 (组合位结构) -->
     <enum type="ui64" name="SKILL_STAMP" desc="">
         <member name="SKILL_NONE"  desc=""/>
-        <member name="SKILL_AUTO_USE" desc="自动施法"/>
+        <member name="SKILL_NORMAL" desc="普攻攻击技能"/>
+
         <member name="SKILL_PASSIVE"    desc="被动技能"/>
+        <member name="SKILL_PHYSICAL"    desc="物理伤害"/>
+        <member name="SKILL_MAGIC"    desc="魔法伤害"/>
+        <member name="SKILL_HARM"   desc="血量减损"/>
+        <member name="SKILL_REGEN"   desc="血量再生"/>
+
         <member name="SKILL_ON_HIT_BREAK"   desc="可被中断"/>
         <member name="SKILL_ON_MOVE_BREAK"   desc="可被中断"/>
         <member name="SKILL_CAN_MOVE"   desc="可移动"/>
-        <member name="SKILL_PHYSICAL"    desc="物理类型"/>
-        <member name="SKILL_MAGIC"    desc="魔法类型"/>
-        <member name="SKILL_HIT"   desc="攻击"/>
-        <member name="SKILL_HILL"   desc="治疗"/>
+
         <member name="SKILL_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
         <member name="SKILL_REMOVE_BUFF"   desc="驱散增益BUFF"/>
     </enum>
