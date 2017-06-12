@@ -51,7 +51,8 @@ void AI::update()
                 entity->_state.camp = ENTITY_CAMP_BLUE + 100;
                 
                 entity->_skillSys.dictEquippedSkills[2] = 0;
-                entity->_skillSys.autoAttack = false;
+                entity->_skillSys.readySkillID = 2;
+				
 
                 entity->_move.position = sp;
                 entity->_control.spawnpoint = sp;

@@ -81,9 +81,9 @@ bool DBDict::finish()
         DictSkill skill;
         skill.id = 1;
         skill.stamp = 0;
-        skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, true);
+        skill.stamp = setBitFlag(skill.stamp, SKILL_NORMAL, true);
         skill.stamp = setBitFlag(skill.stamp, SKILL_PHYSICAL, true);
-        skill.stamp = setBitFlag(skill.stamp, SKILL_HIT, true);
+        skill.stamp = setBitFlag(skill.stamp, SKILL_HARM, true);
         skill.interval = 3.0;
         skill.aosType = 3;
         skill.aosID = 1;

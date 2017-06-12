@@ -449,14 +449,21 @@ bool Scene::searchMatched(const EntityPtr & master, const EntityPtr & caster, co
 std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, EPosition org, EPosition vt, const AOESearch & search)
 {
     EntityPtr master = caster;
-    if (caster->_state.etype == ENTITY_FLIGHT && caster->_state.master != InvalidEntityID)
+    if (caster->_state.etype == ENTITY_FLIGHT)
     {
-        master = getEntity(caster->_state.master);
+		if (caster->_state.master != InvalidEntityID)
+		{
+			master = getEntity(caster->_state.master);
+		}
+		else
+		{
+			master = nullptr;
+		}
     }
 
     auto ret = searchTarget(org, vt, search.isRect,
         search.value1, search.value2, search.value3, search.compensate, search.clip);
-	if (getBitFlag(search.filter, FILTER_SELF))
+	if (getBitFlag(search.filter, FILTER_SELF) && master)
 	{
 		if (std::find_if(ret.begin(), ret.end(), [&master](const std::pair<EntityPtr, double> & pr) {return pr.first->_state.eid == master->_state.eid; })
 			 == ret.end())

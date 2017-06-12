@@ -16,58 +16,9 @@ void Skill::init(std::weak_ptr<Scene> scene)
 }
 
 
-bool Skill::isOutCD(EntityPtr caster, const EntitySkillInfo & skill)
-{
-    double now = getFloatSteadyNowTime();
-    if (skill.activeTime == 0.0)
-    {
-        return true;
-    }
-    double keep = skill.dict.keep;
-    double interval = skill.dict.interval / (1+caster->_props.attackQuick);
-    if (keep < interval)
-    {
-        keep = interval;
-    }
-    if (now <= skill.activeTime + skill.dict.cd)
-    {
-        return false;
-    }
-    if (now <= skill.activeTime + skill.dict.delay + keep)
-    {
-        return false;
-    }
-    if (now <= skill.lastTriggerTime + interval)
-    {
-        return false;
-    }
-    return true;
-}
 
-bool Skill::updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill)
-{
-    if (skill.activeOrgEID != InvalidEntityID)
-    {
-        EntityPtr orgE = scene->getEntity(skill.activeOrgEID);
-        if (orgE)
-        {
-            skill.activeOrg = orgE->_move.position;
-        }
-        else
-        {
-            skill.activeOrgEID = InvalidEntityID;
-        }
-    }
-    if (skill.activeFoeFirst && caster->_state.foe != InvalidEntityID)
-    {
-        EntityPtr dstE = scene->getEntity(caster->_state.foe);
-        if (dstE)
-        {
-            skill.activeDst = dstE->_move.position;
-        }
-    }
-    return true;
-}
+
+
 EntityPtr Skill::lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo & skill)
 {
     EntityPtr foe;
@@ -84,9 +35,16 @@ EntityPtr Skill::lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo
             break;
         }
 		EntityPtr master = caster;
-		if (caster->_state.etype == ENTITY_FLIGHT && caster->_state.master != InvalidEntityID)
+		if (caster->_state.etype == ENTITY_FLIGHT )
 		{
-			master = scene->getEntity(caster->_state.master);
+			if (caster->_state.master != InvalidEntityID)
+			{
+				master = scene->getEntity(caster->_state.master);
+			}
+			else
+			{
+				master = nullptr;
+			}
 		}
 
 		if (!scene->searchMatched(master, caster,locked, skill.dict.aosDict))
@@ -284,7 +242,7 @@ void Skill::update()
 
 
 
-bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, ui16 foeFirst)
+bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & clientDst, EntityID clientFoe, bool autoFoe)
 {
     auto e = scene->getEntity(casterID);
     if (!e)
@@ -292,119 +250,66 @@ bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosi
         LOGE("Skill::useSkill not found caster. casterID=" << casterID << ", skillID=" << skillID);
         return false;
     }
-    auto dictSkill = DBDict::getRef().getOneKeyDictSkill(skillID);
-    if (!dictSkill.first)
-    {
-        LOGE("Skill::useSkill not found skill. casterID=" << casterID << ", skillID=" << skillID);
-        return false;
-    }
-    if (dictSkill.second.aoeID == InvalidDictID)
-    {
-        LOGE("Skill::useSkill not found aoeid. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
-        return false;
-    }
-    if (getBitFlag(dictSkill.second.stamp, SKILL_AUTO_USE))
-    {
-        e->_skillSys.autoAttack = true;
-    }
 
-    EntitySkillInfo * skill;
-    auto finder = e->_skillSys.activeSkills.find(dictSkill.second.id);
-    if (finder != e->_skillSys.activeSkills.end())
-    {
-        skill = finder->second;
-        if (!isOutCD(e, *skill, dictSkill.second))
-        {
-            LOGE("Skill::useSkill cd ing. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
-            return false;
-        }
-    }
-    if (!skill)
-    {
-        skill = std::make_shared<EntitySkillInfo>();
-        skill->skillID = dictSkill.second.id;
-        if (e->_skillSys.dictBootSkills.find(dictSkill.first) != e->_skillSys.dictBootSkills.end())
-        {
-            LOGE("Skill::useSkill boot skill only fill in skill system update. skillID=" << dictSkill.second.id);
-            return false;
-        }
-        e->_skillSys.activeSkills.insert(std::make_pair(dictSkill.second.id, skill));
-    }
-    if (!skill)
-    {
-        LOGF("");
-        return false;
-    }
-//    if (e->_move.action == MOVE_ACTION_FOLLOW || e->_move.action == MOVE_ACTION_PATH)
-//    {
-//        scene->_move->doMove(casterID, MOVE_ACTION_IDLE, 0, InvalidEntityID, EPositionArray());
-//    }
-    skill->activeCount++;
-    skill->activeTime = getFloatSteadyNowTime();
-    skill->lastTriggerTime = skill->activeTime - 1;
-    skill->isFinish = 0;
-    skill->activeFoeFirst = foeFirst;
-    selectFoe(scene, e, false, false);
-    auto foe = scene->getEntity(e->_state.foe);
-    if (dictSkill.second.orgType == 1)
-    {
-        // 普通类型的技能 施法位置以施法者为中心  以客户端传来的目标位置dst或者锁定的敌人为目标(方向) . 
-        // 根据orgFixed选项可以选择施法中心是否跟随施法者(如果不是引导技能 跟随不跟随的没有区别) 
-        // 飞行道具类的技能也必须配置为该类型.  (只支持从自身位置飞向锁定敌人或者目标方向的飞行道具)  
-        skill->activeOrgEID = casterID;
-        skill->activeOrg = e->_move.position;
-        skill->activeDst = dst;
+	EntitySkillInfo * skill = nullptr;
+	auto finder = e->_skillSys.activeSkills.find(skillID);
+	if (finder != e->_skillSys.activeSkills.end())
+	{
+		skill = &finder->second;
+	}
+	if (!skill)
+	{
+		auto dictSkill = DBDict::getRef().getOneKeyDictSkill(skillID);
+		if (!dictSkill.first)
+		{
+			LOGE("Skill::useSkill not found skill dict. casterID=" << casterID << ", skillID=" << skillID);
+			return false;
+		}
 
-        if (foeFirst && foe)
-        {
-            skill->activeDst = foe->_move.position;
-        }
-        if (dictSkill.second.orgFixed)
-        {
-            skill->activeFoeFirst = 0;
-        }
-    }
-    else
-    {
-        //在指定的目标位置为中心进行施法 
-        //例如 鲁班七号的手雷(王者荣耀), 人族大法的暴风雪(war3 引导技能)  
-        skill->activeOrgEID = InvalidEntityID;
-        skill->activeOrg = dst;
-        //fix foe   
-        if (foe)
-        {
-            skill->activeOrgEID = foe->_state.eid;
-            skill->activeOrg = foe->_move.position;
-        }
-        double radian = getRadian(skill->activeDst.x - e->_move.position.x, skill->activeDst.y - e->_move.position.y);
-        if (getDistance(e->_move.position, skill->activeOrg) > dictSkill.second.orgLimitDistance)
-        {
-            auto pos = getFarPoint(e->_move.position.x, e->_move.position.y, radian, dictSkill.second.orgLimitDistance);
-            skill->activeOrg.x = std::get<0>(pos);
-            skill->activeOrg.y = std::get<1>(pos);
-            skill->activeOrgEID = InvalidEntityID; //这种情况要退化成fixed dst, 否则外挂可以造成地图炮. 
-        }
-        auto pos = getFarPoint(skill->activeOrg.x, skill->activeOrg.y, radian, 10.0/*这里只是起到radian作用*/); 
-        skill->activeDst.x = std::get<0>(pos);
-        skill->activeDst.y = std::get<1>(pos);
-        skill->activeFoeFirst = 0;
-    }
+		auto inst = e->_skillSys.activeSkills.insert(std::make_pair(skillID, EntitySkillInfo()));
+		skill = &inst.first->second;
+		skill->skillID = skillID;
+		skill->activeState = ENTITY_SKILL_NONE;
+		skill->dict = dictSkill.second;
+	}
+	if (clientFoe != InvalidEntityID && autoFoe)
+	{
+		e->_state.eid = clientFoe;
+	}
 
-    scene->broadcast(UseSkillNotice(casterID, *skill));
-
-    triggerSkill(scene, e, skill, dictSkill.second);
-    return true;
+    return doSkill(scene, e, *skill, clientDst, autoFoe);
 }
 
-bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & dst, EntityID foe, bool foeFirst)
+bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe)
 {
-	if (skill.activeState != ENTITY_SKILL_NONE && skill.activeState != ENTITY_SKILL_LOCKED && skill.activeState != ENTITY_SKILL_POST)
+	if (skill.activeState != ENTITY_SKILL_NONE && skill.activeState != ENTITY_SKILL_LOCKED
+		&& skill.activeState != ENTITY_SKILL_PREFIX && skill.activeState != ENTITY_SKILL_POST)
 	{
-		LOGW("Skill::doSkill doSkill conflict.  eID=" << caster->_state.eid << ", eName=" << caster->_state.avatarName
-			<< ", skillID=" << skill.skillID << ", skill state=" << skill.activeState);
+		LOGE("Skill::useSkill not found skill dict. casterID=" << caster->_state.eid << ", skillID=" << skill.skillID);
 		return false;
 	}
+
 	caster->_skillSys.combating = true;
+	if (getBitFlag(skill.dict.stamp, SKILL_NORMAL))
+	{
+		caster->_skillSys.combating = true;
+		caster->_skillSys.normalSkillID = skill.skillID;
+	}
+	caster->_skillSys.readySkillID = skill.skillID;
+
+	if (!autoFoe)
+	{
+
+	}
+	else
+	{
+
+	}
+
+
+
+
+	
 	if (foe != InvalidEntityID && caster->_state.foe != foe)
 	{
 		caster->_state.foe = foe;

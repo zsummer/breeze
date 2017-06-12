@@ -32,11 +32,8 @@ public:
 
     //普攻的寻敌
     EntityPtr lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo & skill);
-    bool isOutCD(EntityPtr caster, const EntitySkillInfo & skill);
-    bool updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill);
-	bool doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst = { 1,1 }, ui16 foeFirst = 1);
-
-	bool doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & dst, EntityID foe, bool foeFirst);
+	bool doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & clientDst = { 1,1 }, EntityID clientFoe = InvalidEntityID, bool autoFoe = true);
+	bool doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe);
 
 	bool updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
 	bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill);
