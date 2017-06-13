@@ -36,10 +36,10 @@ public:
 	bool doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe);
 
 	bool updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
-	bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill);
+	bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
     
 
-    bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets);
+    bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, std::vector<std::pair<EntityPtr, double>> & targets);
     bool addBuff();
     bool cleanBuff();
 };

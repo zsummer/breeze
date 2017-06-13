@@ -760,7 +760,7 @@ enum ENTITY_SKILL_STATE : unsigned short
     ENTITY_SKILL_LOCKED = 1, //锁定/就绪  
     ENTITY_SKILL_PREFIX = 2, //前摇  
     ENTITY_SKILL_ACTIVE = 3, //执行中  
-    ENTITY_SKILL_POST = 4, //后摇  
+    ENTITY_SKILL_CD = 4, //技能冷却中  
     ENTITY_SKILL_REMOVE = 5, //删除  
 }; 
  

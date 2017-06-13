@@ -238,7 +238,7 @@ Proto4z.ENTITY_SKILL_NONE = 0--无效
 Proto4z.ENTITY_SKILL_LOCKED = 1--锁定/就绪 
 Proto4z.ENTITY_SKILL_PREFIX = 2--前摇 
 Proto4z.ENTITY_SKILL_ACTIVE = 3--执行中 
-Proto4z.ENTITY_SKILL_POST = 4--后摇 
+Proto4z.ENTITY_SKILL_CD = 4--技能冷却中 
 Proto4z.ENTITY_SKILL_REMOVE = 5--删除 
  
 Proto4z.register(2010,"EntitySkillInfo") 

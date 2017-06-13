@@ -282,11 +282,10 @@ bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosi
 
 bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe)
 {
-	if (skill.activeState != ENTITY_SKILL_NONE && skill.activeState != ENTITY_SKILL_LOCKED
-		&& skill.activeState != ENTITY_SKILL_PREFIX && skill.activeState != ENTITY_SKILL_POST)
+	if (skill.activeState != ENTITY_SKILL_NONE && skill.activeState != ENTITY_SKILL_LOCKED)
 	{
-		LOGE("Skill::useSkill not found skill dict. casterID=" << caster->_state.eid << ", skillID=" << skill.skillID);
-		return false;
+        LOGE("Skill::doSkill error. state not none or locked or post. casterID="
+            << caster->_state.eid << ", skillID=" << skill.skillID);		return false;
 	}
 
 	caster->_skillSys.combating = true;
@@ -297,135 +296,88 @@ bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, c
 	}
 	caster->_skillSys.readySkillID = skill.skillID;
 
-	if (!autoFoe)
-	{
-
-	}
-	else
-	{
-
-	}
-
-
-
-
-	
-	if (foe != InvalidEntityID && caster->_state.foe != foe)
-	{
-		caster->_state.foe = foe;
-		caster->_isStateDirty = true;
-	}
-	auto foe = lockFoe(scene, caster, skill);
-
-
+    auto foe = lockFoe(scene, caster, skill);
 
 	skill.activeCount++;
 	skill.lastActiveTime = getFloatSteadyNowTime();
-	skill.lastTriggerTime = skill.lastActiveTime - 1;
-	skill.activeState = 1;
-	skill.activeFoeFirst = foeFirst;
-	selectFoe(scene, e, false, false);
-	auto foe = scene->getEntity(e->_state.foe);
-	if (dictSkill.second.orgType == 1)
-	{
-		// 普通类型的技能 施法位置以施法者为中心  以客户端传来的目标位置dst或者锁定的敌人为目标(方向) . 
-		// 根据orgFixed选项可以选择施法中心是否跟随施法者(如果不是引导技能 跟随不跟随的没有区别) 
-		// 飞行道具类的技能也必须配置为该类型.  (只支持从自身位置飞向锁定敌人或者目标方向的飞行道具)  
-		skill->activeOrgEID = casterID;
-		skill->activeOrg = e->_move.position;
-		skill->activeDst = dst;
+    skill.lastTriggerTime = skill.lastActiveTime;
+	skill.activeState = ENTITY_SKILL_PREFIX;
+	skill.activeFoeFirst = autoFoe ? 1: 0;
+    skill.activeDst = clientDst;
+    if (autoFoe && foe)
+    {
+        skill.activeDst = foe->_move.position;
+    }
 
-		if (foeFirst && foe)
-		{
-			skill->activeDst = foe->_move.position;
-		}
-		if (dictSkill.second.orgFixed)
-		{
-			skill->activeFoeFirst = 0;
-		}
-	}
-	else
-	{
-		//在指定的目标位置为中心进行施法 
-		//例如 鲁班七号的手雷(王者荣耀), 人族大法的暴风雪(war3 引导技能)  
-		skill->activeOrgEID = InvalidEntityID;
-		skill->activeOrg = dst;
-		//fix foe   
-		if (foe)
-		{
-			skill->activeOrgEID = foe->_state.eid;
-			skill->activeOrg = foe->_move.position;
-		}
-		double radian = getRadian(skill->activeDst.x - e->_move.position.x, skill->activeDst.y - e->_move.position.y);
-		if (getDistance(e->_move.position, skill->activeOrg) > dictSkill.second.orgLimitDistance)
-		{
-			auto pos = getFarPoint(e->_move.position.x, e->_move.position.y, radian, dictSkill.second.orgLimitDistance);
-			skill->activeOrg.x = std::get<0>(pos);
-			skill->activeOrg.y = std::get<1>(pos);
-			skill->activeOrgEID = InvalidEntityID; //这种情况要退化成fixed dst, 否则外挂可以造成地图炮. 
-		}
-		auto pos = getFarPoint(skill->activeOrg.x, skill->activeOrg.y, radian, 10.0/*这里只是起到radian作用*/);
-		skill->activeDst.x = std::get<0>(pos);
-		skill->activeDst.y = std::get<1>(pos);
-		skill->activeFoeFirst = 0;
-	}
+	scene->broadcast(UseSkillNotice(caster->_state.eid, skill));
 
-	scene->broadcast(UseSkillNotice(casterID, *skill));
-
-	triggerSkill(scene, e, skill, dictSkill.second);
+    updateSkill(scene, caster, skill);
 	return true;
 }
 
-bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill)
+bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill)
 {
-    if (skill->isFinish)
+    if (skill.activeState != ENTITY_SKILL_PREFIX && skill.activeState != ENTITY_SKILL_ACTIVE
+        && skill.activeState != ENTITY_SKILL_CD)
     {
+        LOGE("Skill::updateSkill error. state not prefix or active or post. casterID="
+            << caster->_state.eid << ", skillID=" << skill.skillID);
         return false;
     }
     double now = getFloatSteadyNowTime();
-
     int damageCount = 0;
-    //check first trigger 
-    //isOutCD can assure  all active skill (lastTriggerTime < activeTime) is true after active skill. 
-    if (skill->lastTriggerTime < skill->activeTime + dictSkill.delay && now >= skill->activeTime + dictSkill.delay)
+    if (skill.activeState == ENTITY_SKILL_PREFIX && skill.lastActiveTime + 0 <= now)
     {
-        for (auto skillID : dictSkill.combSkills)
+        skill.lastTriggerTime = skill.lastActiveTime + 0;
+        skill.activeState = ENTITY_SKILL_ACTIVE;
+        //consume MP 
+        //combSkills
+        for (auto combID : skill.dict.combSkills)
         {
-
+            doSkill(scene, caster->_state.eid, combID, skill.activeDst, caster->_state.foe, skill.activeFoeFirst);
         }
-        if (dictSkill.appendBuffsAoeID != InvalidDictID)
-        {
-            auto dictAoeBuff = DBDict::getRef().getOneKeyAOESearch(dictSkill.appendBuffsAoeID);
-            if (dictAoeBuff.first)
-            {
-                for (auto buffID: dictSkill.appendBuffs)
-                {
+        damageCount++;
+    }
 
-                }
+
+    if (skill.activeState == ENTITY_SKILL_ACTIVE && skill.dict.interval > 0 && skill.dict.keep > 0 && now > skill.lastTriggerTime)
+    {
+        double endtime = std::min(skill.lastActiveTime + 0 + skill.dict.keep, now);
+        double intv = std::min(endtime - skill.lastTriggerTime, skill.dict.keep);
+        double spd = std::max(skill.dict.interval / (1 + caster->_props.attackQuick), 0.05);
+        int addCount = (int)floor(std::max(intv, 0.0) / spd);
+        if (addCount > 0)
+        {
+            skill.lastTriggerTime += spd*addCount;
+        }
+        damageCount == addCount;
+    }
+
+    for (int i=0; i++; i < damageCount)
+    {
+        if (skill.dict.appendBuffsAreaID != InvalidDictID)
+        {
+            for (auto buffID : skill.dict.appendBuffs)
+            {
+
             }
         }
-
-        attack(scene, caster, skill, dictSkill);
-        skill->lastTriggerTime = skill->activeTime + dictSkill.delay;
+        attack(scene, caster, skill);
     }
 
-    //引导技能
-    double interval = dictSkill.interval / (1 + caster->_props.attackQuick);
-    while (interval > 0
-        && skill->lastTriggerTime >= skill->activeTime + dictSkill.delay
-        && dictSkill.keep > interval
-        && now - skill->lastTriggerTime > interval)
+    //进入CD  
+    if (skill.activeState == ENTITY_SKILL_ACTIVE 
+        && now > skill.lastActiveTime + 0 + std::max(skill.dict.interval, skill.dict.keep))
     {
-        attack(scene, caster, skill, dictSkill);
-        skill->lastTriggerTime += interval;
+        skill.activeState == ENTITY_SKILL_CD;
     }
 
-    //结束判断
-    if (skill->lastTriggerTime >= skill->activeTime + dictSkill.delay //已经触发过一次 
-        && isOutCD(caster, *skill, dictSkill) )
+    //CD结束 
+    if (skill.activeState == ENTITY_SKILL_CD
+        && now > skill.lastActiveTime + 0 + std::max(std::max(skill.dict.interval, skill.dict.keep), skill.dict.cd))
     {
-        skill->isFinish = 1;
-        for (auto skillID : dictSkill.followSkills)
+        skill.activeState == ENTITY_SKILL_NONE;
+        for (auto buffID : skill.dict.followSkills)
         {
 
         }
@@ -435,29 +387,35 @@ bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skil
 
 
 
-bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill)
+bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill)
 {
     //update skill pos  
-    updateSkillPos(scene, caster,skill, dictSkill);
-
-    auto dictAoe = DBDict::getRef().getOneKeyAOESearch(dictSkill.aoeID);
-    if (!dictAoe.first)
+    auto foe = lockFoe(scene, caster, skill);
+    if (skill.activeFoeFirst && foe)
     {
-        return false;
+        skill.activeDst = foe->_move.position;
+    }
+    std::vector<std::pair<EntityPtr, double>> targets;
+    if (foe && skill.dict.aoeID == InvalidDictID)
+    {
+        targets.push_back(std::make_pair(foe, getDistance(caster, foe)));
+    }
+    if (skill.dict.aoeID != InvalidDictID)
+    {
+        targets = scene->searchTarget(caster, caster->_move.position,
+            normalize(skill.activeDst - caster->_move.position), skill.dict.aoeDict);
     }
 
-    auto result = scene->searchTarget(caster, skill->activeOrg,skill->activeDst - skill->activeOrg, dictAoe.second);
-
-   if (result.empty())
+   if (targets.empty())
    {
        return true;
    }
    
-   return damage(scene, caster, skill, dictSkill, result);
+   return damage(scene, caster, skill, targets);
 }
 
 
-bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets)
+bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill,  std::vector<std::pair<EntityPtr, double>> & targets)
 {
     SceneEventNotice notice;
     for (auto target : targets)

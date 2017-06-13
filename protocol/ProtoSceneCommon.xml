@@ -227,7 +227,8 @@
         <member name="ENTITY_SKILL_LOCKED"   desc="锁定/就绪"/>
         <member name="ENTITY_SKILL_PREFIX" desc="前摇"/>
         <member name="ENTITY_SKILL_ACTIVE" desc="执行中"/>
-        <member name="ENTITY_SKILL_POST"  desc="后摇"/>
+    <!--    <member name="ENTITY_SKILL_POST"  desc="后摇"/> -->
+        <member name="ENTITY_SKILL_CD"  desc="技能冷却中"/>
         <member name="ENTITY_SKILL_REMOVE"  desc="删除"/>
     </enum>
 
