@@ -103,7 +103,7 @@ void Skill::update()
 		{
 			if (e._skillSys.activeSkills.find(iter->first) == e._skillSys.activeSkills.end())
 			{
-                if (!doSkill(scene, e._state.eid, iter->first, { 1,1 }, false, true))
+                if (!doSkill(scene, e._state.eid, iter->first, { 1,1 }, InvalidEntityID, false, true))
                 {
                     LOGE("Skill::update auto fill skill info error. skillid=" << iter->first);
                     iter = e._skillSys.dictEquippedSkills.erase(iter);
@@ -149,7 +149,7 @@ void Skill::update()
 
 
         //自动攻击
-        while (skill && foe && e._state.state == ENTITY_STATE_ACTIVE)
+        while (skill && foe && e._state.state == ENTITY_STATE_ACTIVE && e._skillSys.combating)
         {
             double distance = getDistance(pr.second, foe);
             if (e._move.action == MOVE_ACTION_FORCE_PATH || e._move.action == MOVE_ACTION_PASV_PATH)
@@ -160,7 +160,7 @@ void Skill::update()
             if (e._move.action == MOVE_ACTION_FOLLOW &&
                 distance > (std::max(skill->dict.aoeDict.value1, skill->dict.aoeDict.value2) + foe->_control.collision)*0.8)
             {
-                continue;
+				break;
             }
 
             auto ret = scene->searchTarget(pr.second, e._move.position, foe->_move.position - e._move.position, skill->dict.aoeDict);
@@ -188,7 +188,7 @@ void Skill::update()
 
 
         //被动技能 
-        for (auto kv : e._skillSys.activeSkills)
+        for (auto &kv : e._skillSys.activeSkills)
         {
 
             if (getBitFlag(kv.second.dict.stamp, SKILL_PASSIVE) )
@@ -200,11 +200,11 @@ void Skill::update()
             }
         }
 
-        for (auto kv : e._skillSys.activeSkills)
+        for (auto & kv : e._skillSys.activeSkills)
         {
             if (kv.second.activeState == ENTITY_SKILL_PREFIX || kv.second.activeState == ENTITY_SKILL_ACTIVE || kv.second.activeState == ENTITY_SKILL_CD)
             {
-                doSkill(scene, pr.second, kv.second, { 1,1 }, true);
+                updateSkill(scene, pr.second, kv.second);
             }
         }
 
@@ -253,6 +253,7 @@ bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosi
 		e->_state.eid = clientFoe;
 	}
 
+
     return doSkill(scene, e, *skill, clientDst, autoFoe);
 }
 
@@ -260,11 +261,10 @@ bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, c
 {
 	if (skill.activeState != ENTITY_SKILL_NONE )
 	{
-        LOGE("Skill::doSkill error. state not none or locked or post. casterID="
-            << caster->_state.eid << ", skillID=" << skill.skillID);		return false;
+        LOGE("Skill::doSkill error. state not none . casterID="<< caster->_state.eid << ", skillID=" << skill.skillID 
+			<< ", state=" << skill.activeState << ", trace=" << proto4z_traceback());		return false;
 	}
 
-	caster->_skillSys.combating = true;
 	if (getBitFlag(skill.dict.stamp, SKILL_NORMAL))
 	{
 		caster->_skillSys.combating = true;
@@ -273,6 +273,24 @@ bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, c
 	caster->_skillSys.readySkillID = skill.skillID;
 
     auto foe = lockFoe(scene, caster, skill);
+	if (foe && getBitFlag(skill.dict.stamp, SKILL_NORMAL))
+	{
+		auto ret = scene->searchTarget(caster, caster->_move.position, foe->_move.position - caster->_move.position, skill.dict.aoeDict);
+
+		if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr, double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
+		{
+			if (caster->_move.action == MOVE_ACTION_FOLLOW)
+			{
+				scene->_move->doMove(caster->_state.eid, MOVE_ACTION_IDLE, caster->getSpeed(), foe->_state.eid, std::vector<EPosition>());
+			}
+		}
+		else if (caster->_move.action == MOVE_ACTION_IDLE)
+		{
+			scene->_move->doMove(caster->_state.eid, MOVE_ACTION_FOLLOW, caster->getSpeed(), foe->_state.eid, std::vector<EPosition>());
+			return true;
+		}
+	}
+
 
 	skill.activeCount++;
 	skill.lastActiveTime = getFloatSteadyNowTime();
@@ -296,7 +314,7 @@ bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skil
     if (skill.activeState != ENTITY_SKILL_PREFIX && skill.activeState != ENTITY_SKILL_ACTIVE
         && skill.activeState != ENTITY_SKILL_CD)
     {
-        LOGE("Skill::updateSkill error. state not prefix or active or post. casterID="
+        LOGE("Skill::updateSkill error. state not prefix or active or cd. casterID="
             << caster->_state.eid << ", skillID=" << skill.skillID);
         return false;
     }

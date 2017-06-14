@@ -173,7 +173,7 @@ void AI::createMonster()
             entity->_control.spawnpoint = sp;
             entity->_control.collision = 1.0;
             scene->addEntity(entity);
-
+			_monsters[entity->_state.eid] = entity;
         }
 
     }

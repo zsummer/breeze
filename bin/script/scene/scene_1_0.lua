@@ -1,8 +1,18 @@
 ﻿--require
 --process msg
-package.path =  "../../depends/include/proto4z/?.lua;" .. package.path
 local config = require("config")
 require("proto4z")
+
+require("DictCommon")
+require("DictScene")
+require("ProtoCommon")
+require("ProtoDocker")
+
+require("ProtoSceneCommon")
+require("ProtoSceneServer")
+require("ProtoSceneClient")
+
+
 
 dump = Proto4z.dump
 --[[

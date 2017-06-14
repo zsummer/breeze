@@ -116,7 +116,7 @@ using namespace zsummer::mysql;
 
 //字典ID
 using DictID = unsigned long long;
-const DictID InvalidDictID = -1;
+const DictID InvalidDictID = 0;
 
 //分区ID  跨服交互时需要该ID表名分区ID, 该ID因为要merge到ServiceID的头部, 表达范围不能超过20bit(100万以下)
 typedef ui64 AreaID;

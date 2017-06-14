@@ -169,7 +169,10 @@ void Script::init(std::weak_ptr<Scene> scene)
     lua_setglobal(_luaState, "print");
     lua_pop(_luaState, 1);
 
-    safeDoString(s, _luaState, R"(package.path = package.path .. ";" .. "../?.lua" .. ";" .. "../script/scene/?.lua" .. ";" .. "../../protocol/lua/?.lua" )");
+	safeDoString(s, _luaState, R"(package.path = package.path .. ";" .. "../?.lua"  )");
+	safeDoString(s, _luaState, R"(package.path = package.path .. ";" .. "../script/scene/?.lua"  )");
+	safeDoString(s, _luaState, R"(package.path = package.path .. ";" .. "../../protocol/lua/?.lua" )");
+	safeDoString(s, _luaState, R"(package.path = package.path .. ";" .. "../../depends/include/proto4z/?.lua" )");
 
     flushSceneToScript(s.get(), _luaState);
 
@@ -230,13 +233,13 @@ void Script::protoSync(const std::string & protoName, const std::string & data)
 
 
 	lua_pushcfunction(_luaState, pcall_error);
-    lua_getglobal(_luaState, "onSyncEntry");
-    if (!lua_isfunction(_luaState, -1))
-    {
-        LOGW("Script::protoSync scene[" << scene->getSceneID() << "] not found Scene.onSyncEntry type="
-            << (int)scene->getSceneType() << ", mapID=" << scene->getMapID());
-        return;
-    }
+	if (lua_getglobal(_luaState, "onSyncEntry") != LUA_TFUNCTION)
+	{
+		LOGW("Script::protoSync scene[" << scene->getSceneID() << "] not found onSyncEntry type="
+			<< (int)scene->getSceneType() << ", mapID=" << scene->getMapID());
+		return;
+	}
+
 	lua_pushstring(_luaState, protoName.c_str());
 	lua_pushlstring(_luaState, data.c_str(), data.size());
 	int status = lua_pcall(_luaState, 2, 0, 1);

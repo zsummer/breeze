@@ -364,7 +364,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         rs >> req;
         auto entity = getEntity(req.eid);
         if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER || entity->_state.state != ENTITY_STATE_ACTIVE
-            || ! _skill->doSkill(shared_from_this(), req.eid, req.skillID, req.dst, req.foeFirst)
+            || ! _skill->doSkill(shared_from_this(), req.eid, req.skillID, req.dst)
            )
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID,  req.dst, req.foeFirst));
