@@ -92,7 +92,7 @@ public:
     SessionID _clientSessionID = InvalidSessionID;
     bool _isStateDirty = false;
     bool _isMoveDirty = false;
-    bool _isControlDirty = false;
+
 
 };
 

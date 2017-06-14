@@ -224,12 +224,9 @@
      <!-- SKILL state -->
     <enum type="ui16" name="ENTITY_SKILL_STATE" desc="" >
         <member name="ENTITY_SKILL_NONE" value="0"   desc="无效"/>
-        <member name="ENTITY_SKILL_LOCKED"   desc="锁定/就绪"/>
         <member name="ENTITY_SKILL_PREFIX" desc="前摇"/>
         <member name="ENTITY_SKILL_ACTIVE" desc="执行中"/>
-    <!--    <member name="ENTITY_SKILL_POST"  desc="后摇"/> -->
-        <member name="ENTITY_SKILL_CD"  desc="技能冷却中"/>
-        <member name="ENTITY_SKILL_REMOVE"  desc="删除"/>
+        <member name="ENTITY_SKILL_CD"  desc="冷却中"/>
     </enum>
 
     <proto name="EntitySkillInfo" desc= "技能">
@@ -264,13 +261,15 @@
 
 
     <proto name="EntitySkillSystem" desc= "EntitySkillSystem">
+        <member name="eid" type="ui64"   desc=""/>
         <member name="activeSkills"  type="EntitySkillInfoMap" desc=""/>
         <member name="activeBuffs"  type="EntityBuffInfoMap" desc=""/>
         <member name="dictEquippedSkills"  type="EntityEquippedSkillMap" desc=""/>
         <member name="combating"  type="ui16" desc="战斗中"/>
-        <member name="readySkillID"  type="ui32" desc=""/>
-        <member name="normalSkillID"  type="ui32" desc=""/>
+        <member name="readySkillID"  type="ui64" desc=""/>
+        <member name="normalSkillID"  type="ui64" desc=""/>
     </proto>
+    <array name="EntitySkillSystemArray" type="EntitySkillSystem" desc="" />
 
 
 </Proto>

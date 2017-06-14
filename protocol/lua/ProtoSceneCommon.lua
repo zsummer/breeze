@@ -235,11 +235,9 @@ Proto4z.SceneSection[5] = {name="sceneEndTime", type="double" } --服务器战�
 Proto4z.SceneSection[6] = {name="serverTime", type="double" } --服务器当前时间 
  
 Proto4z.ENTITY_SKILL_NONE = 0--无效 
-Proto4z.ENTITY_SKILL_LOCKED = 1--锁定/就绪 
-Proto4z.ENTITY_SKILL_PREFIX = 2--前摇 
-Proto4z.ENTITY_SKILL_ACTIVE = 3--执行中 
-Proto4z.ENTITY_SKILL_CD = 4--技能冷却中 
-Proto4z.ENTITY_SKILL_REMOVE = 5--删除 
+Proto4z.ENTITY_SKILL_PREFIX = 1--前摇 
+Proto4z.ENTITY_SKILL_ACTIVE = 2--执行中 
+Proto4z.ENTITY_SKILL_CD = 3--冷却中 
  
 Proto4z.register(2010,"EntitySkillInfo") 
 Proto4z.EntitySkillInfo = {} --技能 
@@ -290,9 +288,15 @@ Proto4z.register(2012,"EntitySkillSystem")
 Proto4z.EntitySkillSystem = {} --EntitySkillSystem 
 Proto4z.EntitySkillSystem.__protoID = 2012 
 Proto4z.EntitySkillSystem.__protoName = "EntitySkillSystem" 
-Proto4z.EntitySkillSystem[1] = {name="activeSkills", type="EntitySkillInfoMap" }  
-Proto4z.EntitySkillSystem[2] = {name="activeBuffs", type="EntityBuffInfoMap" }  
-Proto4z.EntitySkillSystem[3] = {name="dictEquippedSkills", type="EntityEquippedSkillMap" }  
-Proto4z.EntitySkillSystem[4] = {name="combating", type="ui16" } --战斗中 
-Proto4z.EntitySkillSystem[5] = {name="readySkillID", type="ui32" }  
-Proto4z.EntitySkillSystem[6] = {name="normalSkillID", type="ui32" }  
+Proto4z.EntitySkillSystem[1] = {name="eid", type="ui64" }  
+Proto4z.EntitySkillSystem[2] = {name="activeSkills", type="EntitySkillInfoMap" }  
+Proto4z.EntitySkillSystem[3] = {name="activeBuffs", type="EntityBuffInfoMap" }  
+Proto4z.EntitySkillSystem[4] = {name="dictEquippedSkills", type="EntityEquippedSkillMap" }  
+Proto4z.EntitySkillSystem[5] = {name="combating", type="ui16" } --战斗中 
+Proto4z.EntitySkillSystem[6] = {name="readySkillID", type="ui64" }  
+Proto4z.EntitySkillSystem[7] = {name="normalSkillID", type="ui64" }  
+ 
+Proto4z.EntitySkillSystemArray = {}  
+Proto4z.EntitySkillSystemArray.__protoName = "EntitySkillSystemArray" 
+Proto4z.EntitySkillSystemArray.__protoDesc = "array" 
+Proto4z.EntitySkillSystemArray.__protoTypeV = "EntitySkillSystem" 

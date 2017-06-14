@@ -757,11 +757,9 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
 enum ENTITY_SKILL_STATE : unsigned short 
 { 
     ENTITY_SKILL_NONE = 0, //无效  
-    ENTITY_SKILL_LOCKED = 1, //锁定/就绪  
-    ENTITY_SKILL_PREFIX = 2, //前摇  
-    ENTITY_SKILL_ACTIVE = 3, //执行中  
-    ENTITY_SKILL_CD = 4, //技能冷却中  
-    ENTITY_SKILL_REMOVE = 5, //删除  
+    ENTITY_SKILL_PREFIX = 1, //前摇  
+    ENTITY_SKILL_ACTIVE = 2, //执行中  
+    ENTITY_SKILL_CD = 3, //冷却中  
 }; 
  
 struct EntitySkillInfo //技能  
@@ -926,20 +924,23 @@ struct EntitySkillSystem //EntitySkillSystem
 { 
     static const unsigned short getProtoID() { return 2012;} 
     static const std::string getProtoName() { return "EntitySkillSystem";} 
+    unsigned long long eid;  
     EntitySkillInfoMap activeSkills;  
     EntityBuffInfoMap activeBuffs;  
     EntityEquippedSkillMap dictEquippedSkills;  
     unsigned short combating; //战斗中  
-    unsigned int readySkillID;  
-    unsigned int normalSkillID;  
+    unsigned long long readySkillID;  
+    unsigned long long normalSkillID;  
     EntitySkillSystem() 
     { 
+        eid = 0; 
         combating = 0; 
         readySkillID = 0; 
         normalSkillID = 0; 
     } 
-    EntitySkillSystem(const EntitySkillInfoMap & activeSkills, const EntityBuffInfoMap & activeBuffs, const EntityEquippedSkillMap & dictEquippedSkills, const unsigned short & combating, const unsigned int & readySkillID, const unsigned int & normalSkillID) 
+    EntitySkillSystem(const unsigned long long & eid, const EntitySkillInfoMap & activeSkills, const EntityBuffInfoMap & activeBuffs, const EntityEquippedSkillMap & dictEquippedSkills, const unsigned short & combating, const unsigned long long & readySkillID, const unsigned long long & normalSkillID) 
     { 
+        this->eid = eid; 
         this->activeSkills = activeSkills; 
         this->activeBuffs = activeBuffs; 
         this->dictEquippedSkills = dictEquippedSkills; 
@@ -950,6 +951,7 @@ struct EntitySkillSystem //EntitySkillSystem
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntitySkillSystem & data) 
 { 
+    ws << data.eid;  
     ws << data.activeSkills;  
     ws << data.activeBuffs;  
     ws << data.dictEquippedSkills;  
@@ -960,6 +962,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntitySkillSystem & data) 
 { 
+    rs >> data.eid;  
     rs >> data.activeSkills;  
     rs >> data.activeBuffs;  
     rs >> data.dictEquippedSkills;  
@@ -971,6 +974,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntitySkillSystem & info) 
 { 
     stm << "["; 
+    stm << "eid=" << info.eid << ","; 
     stm << "activeSkills=" << info.activeSkills << ","; 
     stm << "activeBuffs=" << info.activeBuffs << ","; 
     stm << "dictEquippedSkills=" << info.dictEquippedSkills << ","; 
@@ -980,5 +984,8 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "]"; 
     return stm; 
 } 
+ 
+ 
+typedef std::vector<EntitySkillSystem> EntitySkillSystemArray;  
  
 #endif 

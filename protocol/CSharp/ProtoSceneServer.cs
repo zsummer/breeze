@@ -276,33 +276,40 @@ namespace Proto4z
         } 
     } 
  
-    public class EntityControlNotice: Proto4z.IProtoObject //实体的控制类同步更新, 只同步给脚本不给客户端  
+    public class EntityScriptNotice: Proto4z.IProtoObject //同步给脚本  
     {     
         //proto id   
-        public const ushort protoID = 4007;  
-        static public ushort getProtoID() { return 4007; } 
-        static public string getProtoName() { return "EntityControlNotice"; } 
+        public const ushort protoID = 4008;  
+        static public ushort getProtoID() { return 4008; } 
+        static public string getProtoName() { return "EntityScriptNotice"; } 
         //members   
         public EntityControlArray controls;  
-        public EntityControlNotice()  
+        public EntitySkillSystemArray skills;  
+        public EntityScriptNotice()  
         { 
             controls = new EntityControlArray();  
+            skills = new EntitySkillSystemArray();  
         } 
-        public EntityControlNotice(EntityControlArray controls) 
+        public EntityScriptNotice(EntityControlArray controls, EntitySkillSystemArray skills) 
         { 
             this.controls = controls; 
+            this.skills = skills; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
             if (this.controls == null) this.controls = new EntityControlArray(); 
             data.AddRange(this.controls.__encode()); 
+            if (this.skills == null) this.skills = new EntitySkillSystemArray(); 
+            data.AddRange(this.skills.__encode()); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
             this.controls = new EntityControlArray(); 
             this.controls.__decode(binData, ref pos); 
+            this.skills = new EntitySkillSystemArray(); 
+            this.skills.__decode(binData, ref pos); 
             return pos; 
         } 
     } 

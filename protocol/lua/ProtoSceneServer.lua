@@ -55,8 +55,9 @@ Proto4z.SceneServerGroupStateFeedback[1] = {name="sceneID", type="ui64" }
 Proto4z.SceneServerGroupStateFeedback[2] = {name="groupID", type="ui64" }  
 Proto4z.SceneServerGroupStateFeedback[3] = {name="state", type="ui16" } --如果是NONE 说明离开场景 
  
-Proto4z.register(4007,"EntityControlNotice") 
-Proto4z.EntityControlNotice = {} --实体的控制类同步更新, 只同步给脚本不给客户端 
-Proto4z.EntityControlNotice.__protoID = 4007 
-Proto4z.EntityControlNotice.__protoName = "EntityControlNotice" 
-Proto4z.EntityControlNotice[1] = {name="controls", type="EntityControlArray" }  
+Proto4z.register(4008,"EntityScriptNotice") 
+Proto4z.EntityScriptNotice = {} --同步给脚本 
+Proto4z.EntityScriptNotice.__protoID = 4008 
+Proto4z.EntityScriptNotice.__protoName = "EntityScriptNotice" 
+Proto4z.EntityScriptNotice[1] = {name="controls", type="EntityControlArray" }  
+Proto4z.EntityScriptNotice[2] = {name="skills", type="EntitySkillSystemArray" }  

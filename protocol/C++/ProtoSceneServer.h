@@ -301,33 +301,38 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
-struct EntityControlNotice //实体的控制类同步更新, 只同步给脚本不给客户端  
+struct EntityScriptNotice //同步给脚本  
 { 
-    static const unsigned short getProtoID() { return 4007;} 
-    static const std::string getProtoName() { return "EntityControlNotice";} 
+    static const unsigned short getProtoID() { return 4008;} 
+    static const std::string getProtoName() { return "EntityScriptNotice";} 
     EntityControlArray controls;  
-    EntityControlNotice() 
+    EntitySkillSystemArray skills;  
+    EntityScriptNotice() 
     { 
     } 
-    EntityControlNotice(const EntityControlArray & controls) 
+    EntityScriptNotice(const EntityControlArray & controls, const EntitySkillSystemArray & skills) 
     { 
         this->controls = controls; 
+        this->skills = skills; 
     } 
 }; 
-inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityControlNotice & data) 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityScriptNotice & data) 
 { 
     ws << data.controls;  
+    ws << data.skills;  
     return ws; 
 } 
-inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityControlNotice & data) 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityScriptNotice & data) 
 { 
     rs >> data.controls;  
+    rs >> data.skills;  
     return rs; 
 } 
-inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityControlNotice & info) 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityScriptNotice & info) 
 { 
     stm << "["; 
     stm << "controls=" << info.controls << ","; 
+    stm << "skills=" << info.skills << ","; 
     stm << "]"; 
     return stm; 
 } 

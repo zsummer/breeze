@@ -429,17 +429,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
     {
         return false;
     }
-    if (action != MOVE_ACTION_IDLE && false)
-    {
-        for (auto& kv : entity->_skillSys.activeSkills)
-        {
-            if ( !scene->_skill->isOutCD(entity, kv.second))
-            {
-                LOGE("can not move when skill action");
-                return false;
-            }
-        }
-    }
+
 
 
     if (action == MOVE_ACTION_FOLLOW)

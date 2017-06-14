@@ -158,6 +158,8 @@ namespace Proto4z
             _idToName.Add(4006, "SceneServerGroupStateFeedback");
             _nameToID.Add("EntityControlNotice", 4007);
             _idToName.Add(4007, "EntityControlNotice");
+            _nameToID.Add("EntityScriptNotice", 4008);
+            _idToName.Add(4008, "EntityScriptNotice");
             _nameToID.Add("DictPairValue", 10000);
             _idToName.Add(10000, "DictPairValue");
             _nameToID.Add("DictGlobal", 10001);

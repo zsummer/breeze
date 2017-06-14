@@ -147,7 +147,7 @@ EntityPtr Scene::makeEntity(ui64 modelID, ui64 avatarID, std::string avatarName,
 
     entity->_report.eid = entity->_state.eid;
 
-    entity->_control.agentNo = RVO::RVO_ERROR;
+    entity->_skillSys.eid = entity->_state.eid;
     return entity;
 }
 
@@ -282,7 +282,7 @@ bool Scene::onUpdate()
 
 
     SceneRefreshNotice notice;
-    EntityControlNotice controls;
+    EntityScriptNotice scripts;
     for (auto &kv : _entitys)
     {
         if (kv.second->_isStateDirty)
@@ -295,20 +295,15 @@ bool Scene::onUpdate()
             notice.entityMoves.push_back(kv.second->_move);
             kv.second->_isMoveDirty = false;
         }
-        if (kv.second->_isControlDirty)
-        {
-            kv.second->_isControlDirty = false;
-            controls.controls.push_back(kv.second->_control);
-        }
+        scripts.controls.push_back(kv.second->_control);
+        scripts.skills.push_back(kv.second->_skillSys);
     }
     if (!notice.entityStates.empty() || !notice.entityMoves.empty())
     {
         broadcast(notice);
     }
-    if (!controls.controls.empty())
-    {
-        _script->protoSync(controls);
-    }
+    
+    _script->protoSync(scripts);
     //after flush data
     _script->update();
 
@@ -357,9 +352,9 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
             sendToClient(avatarID, MoveResp(EC_ERROR, req.eid, req.action));
             return;
         }
-        if (entity->_skillSys.autoAttack)
+        if (entity->_skillSys.combating)
         {
-            entity->_skillSys.autoAttack = false;
+            entity->_skillSys.combating = false;
         }
 
     }
@@ -369,7 +364,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         rs >> req;
         auto entity = getEntity(req.eid);
         if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER || entity->_state.state != ENTITY_STATE_ACTIVE
-            || ! _skill->useSkill(shared_from_this(), req.eid, req.skillID, req.dst, req.foeFirst)
+            || ! _skill->doSkill(shared_from_this(), req.eid, req.skillID, req.dst, req.foeFirst)
            )
         {
             sendToClient(avatarID, UseSkillResp(EC_ERROR, req.eid, req.skillID,  req.dst, req.foeFirst));

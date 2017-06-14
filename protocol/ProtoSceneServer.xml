@@ -58,8 +58,9 @@
     </proto>
 
 
-    <proto name="EntityControlNotice" desc= "实体的控制类同步更新, 只同步给脚本不给客户端">
+    <proto name="EntityScriptNotice" desc= "同步给脚本">
         <member name="controls"  type="EntityControlArray" desc=""/>
+        <member name="skills"  type="EntitySkillSystemArray" desc=""/>
     </proto>
 
 

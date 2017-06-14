@@ -298,6 +298,11 @@ public:
                    return "EntityControlNotice";
             }
             break;
+            case 4008:
+            {
+                   return "EntityScriptNotice";
+            }
+            break;
             case 10000:
             {
                    return "DictPairValue";

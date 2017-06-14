@@ -1095,11 +1095,9 @@ namespace Proto4z
     public enum ENTITY_SKILL_STATE : ushort 
     { 
         ENTITY_SKILL_NONE = 0, //无效  
-        ENTITY_SKILL_LOCKED = 1, //锁定/就绪  
-        ENTITY_SKILL_PREFIX = 2, //前摇  
-        ENTITY_SKILL_ACTIVE = 3, //执行中  
-        ENTITY_SKILL_CD = 4, //技能冷却中  
-        ENTITY_SKILL_REMOVE = 5, //删除  
+        ENTITY_SKILL_PREFIX = 1, //前摇  
+        ENTITY_SKILL_ACTIVE = 2, //执行中  
+        ENTITY_SKILL_CD = 3, //冷却中  
     }; 
  
     public class EntitySkillInfo: Proto4z.IProtoObject //技能  
@@ -1350,14 +1348,16 @@ namespace Proto4z
         static public ushort getProtoID() { return 2012; } 
         static public string getProtoName() { return "EntitySkillSystem"; } 
         //members   
+        public ulong eid;  
         public EntitySkillInfoMap activeSkills;  
         public EntityBuffInfoMap activeBuffs;  
         public EntityEquippedSkillMap dictEquippedSkills;  
         public ushort combating; //战斗中  
-        public uint readySkillID;  
-        public uint normalSkillID;  
+        public ulong readySkillID;  
+        public ulong normalSkillID;  
         public EntitySkillSystem()  
         { 
+            eid = 0;  
             activeSkills = new EntitySkillInfoMap();  
             activeBuffs = new EntityBuffInfoMap();  
             dictEquippedSkills = new EntityEquippedSkillMap();  
@@ -1365,8 +1365,9 @@ namespace Proto4z
             readySkillID = 0;  
             normalSkillID = 0;  
         } 
-        public EntitySkillSystem(EntitySkillInfoMap activeSkills, EntityBuffInfoMap activeBuffs, EntityEquippedSkillMap dictEquippedSkills, ushort combating, uint readySkillID, uint normalSkillID) 
+        public EntitySkillSystem(ulong eid, EntitySkillInfoMap activeSkills, EntityBuffInfoMap activeBuffs, EntityEquippedSkillMap dictEquippedSkills, ushort combating, ulong readySkillID, ulong normalSkillID) 
         { 
+            this.eid = eid; 
             this.activeSkills = activeSkills; 
             this.activeBuffs = activeBuffs; 
             this.dictEquippedSkills = dictEquippedSkills; 
@@ -1377,6 +1378,7 @@ namespace Proto4z
         public System.Collections.Generic.List<byte> __encode() 
         { 
             var data = new System.Collections.Generic.List<byte>(); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.eid)); 
             if (this.activeSkills == null) this.activeSkills = new EntitySkillInfoMap(); 
             data.AddRange(this.activeSkills.__encode()); 
             if (this.activeBuffs == null) this.activeBuffs = new EntityBuffInfoMap(); 
@@ -1384,12 +1386,13 @@ namespace Proto4z
             if (this.dictEquippedSkills == null) this.dictEquippedSkills = new EntityEquippedSkillMap(); 
             data.AddRange(this.dictEquippedSkills.__encode()); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.combating)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.readySkillID)); 
-            data.AddRange(Proto4z.BaseProtoObject.encodeUI32(this.normalSkillID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.readySkillID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.normalSkillID)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
         { 
+            this.eid = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.activeSkills = new EntitySkillInfoMap(); 
             this.activeSkills.__decode(binData, ref pos); 
             this.activeBuffs = new EntityBuffInfoMap(); 
@@ -1397,8 +1400,39 @@ namespace Proto4z
             this.dictEquippedSkills = new EntityEquippedSkillMap(); 
             this.dictEquippedSkills.__decode(binData, ref pos); 
             this.combating = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
-            this.readySkillID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
-            this.normalSkillID = Proto4z.BaseProtoObject.decodeUI32(binData, ref pos); 
+            this.readySkillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.normalSkillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            return pos; 
+        } 
+    } 
+ 
+ 
+    public class EntitySkillSystemArray : System.Collections.Generic.List<EntitySkillSystem>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(this[i].__encode()); 
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    var data = new EntitySkillSystem(); 
+                    data.__decode(binData, ref pos); 
+                    this.Add(data); 
+                } 
+            } 
             return pos; 
         } 
     } 
