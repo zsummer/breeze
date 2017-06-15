@@ -45,67 +45,130 @@ static void safeDoString(ScenePtr scene, lua_State * L, const std::string & lua)
         lua_pop(L, 1);
     }
 }
-static int lGetEntity(lua_State * L)
-{
-    int top = lua_gettop(L);
-    EntityID eid = (EntityID) luaL_checknumber(L, 1);
-    lua_getglobal(L, SceneKey);
-    Scene * scene = nullptr;
-    if (lua_istable(L, -1))
-    {
-        lua_getfield(L, -1, "__scene");
-        if (!lua_islightuserdata(L, -1))
-        {
-            LOGE("__scene not userdata");
-            return 0;
-        }
-        scene = (Scene*)lua_touserdata(L, -1);
-    }
-    lua_settop(L, top);
-    auto e = scene->getEntity(eid);
-    if (e)
-    {
-        lua_newtable(L);
-        lua_pushinteger(L, e->_state.eid);
-        lua_setfield(L, -2, "eid");
-        return 1;
-    }
-    return 0;
-}
+
 
 static int lAddEntity(lua_State * L)
 {
-	
-	int top = lua_gettop(L);
-	EntityID eid = (EntityID)luaL_checknumber(L, 1);
+    size_t propLen = 0;
+    const char * propData = luaL_checklstring(L, 1, &propLen);
+    if (!propData)
+    {
+        return 0;
+    }
+
+    size_t stateLen = 0;
+    const char * stateData = luaL_checklstring(L, 2, &stateLen);
+    if (!stateData)
+    {
+        return 0;
+    }
+
+    size_t skillLen = 0;
+    const char * skillData = luaL_checklstring(L, 3, &skillLen);
+    if (!skillData)
+    {
+        return 0;
+    }
+
+    size_t ctlLen = 0;
+    const char * ctlData = luaL_checklstring(L, 4, &ctlLen);
+    if (!ctlData)
+    {
+        return 0;
+    }
+
+    DictProp prop;
+    try
+    {
+        ReadStream rs(propData, propLen, false);
+        rs >> prop;
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Script lAddEntity  DictProp except error. e=" << e.what());
+        return 0;
+    }
+
+    EntityState state;
+    try
+    {
+        ReadStream rs(stateData, stateLen, false);
+        rs >> state;
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Script lAddEntity  EntityState except error. e=" << e.what());
+        return 0;
+    }
+
+
+    EntitySkillSystem skills;
+    try
+    {
+        ReadStream rs(skillData, skillLen, false);
+        rs >> skills;
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Script lAddEntity EntitySkillSystem except error. e=" << e.what());
+        return 0;
+    }
+
+    EntityControl ctls;
+    try
+    {
+        ReadStream rs(ctlData, ctlLen, false);
+        rs >> ctls;
+    }
+    catch (const std::exception & e)
+    {
+        LOGE("Script lAddEntity EntityControl except error. e=" << e.what());
+        return 0;
+    }
+
 	lua_getglobal(L, SceneKey);
 	Scene * scene = nullptr;
-	if (lua_istable(L, -1))
-	{
-		lua_getfield(L, -1, "__scene");
-		if (!lua_islightuserdata(L, -1))
-		{
-			LOGE("__scene not userdata");
-			return 0;
-		}
-		scene = (Scene*)lua_touserdata(L, -1);
-	}
-	lua_settop(L, top);
-	auto e = scene->getEntity(eid);
-	if (e)
-	{
-		lua_newtable(L);
-		lua_pushinteger(L, e->_state.eid);
-		lua_setfield(L, -2, "eid");
-		return 1;
-	}
-	return 0;
+    if (!lua_istable(L, -1))
+    {
+        LOGE("Script not found Scene class.");
+        return 0;
+    }
+
+    lua_getfield(L, -1, "__scene");
+    if (!lua_islightuserdata(L, -1))
+    {
+        LOGE(SceneKey << ".__scene not userdata");
+        return 0;
+    }
+    scene = (Scene*)lua_touserdata(L, -1);
+
+    EntityPtr entity = scene->makeEntity(state.modelID, state.avatarID, state.avatarName, {}, InvalidGroupID);
+    entity->_props = prop;
+    entity->_skillSys = skills;
+    entity->_state = state;
+    entity->_control = ctls;
+
+    entity->_state.eid = entity->_report.eid;
+    entity->_state.maxHP = entity->_props.hp;
+    entity->_state.curHP = entity->_state.maxHP;
+
+
+    entity->_skillSys.eid = entity->_report.eid;
+    entity->_control.eid = entity->_report.eid;
+
+
+    entity->_move.position = entity->_control.spawnpoint;
+    entity->_control.agentNo = RVO::RVO_ERROR;
+
+    scene->addEntity(entity);
+    lua_pushnumber(L, entity->_state.eid);
+	return 1;
 }
 
 
 
 static luaL_Reg SceneReg[] = {
-    { "getEntity", lGetEntity},
+    { "addEntity", lAddEntity },
     { NULL, NULL }
 };
 
