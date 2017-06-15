@@ -361,7 +361,7 @@ bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skil
 
     //进入CD  
     if (skill.activeState == ENTITY_SKILL_ACTIVE 
-        && now > skill.lastActiveTime + 0 + std::max(skill.dict.interval, skill.dict.keep))
+        && now > skill.lastActiveTime + 0 + std::max(std::max(skill.dict.interval / (1 + caster->_props.attackQuick), 0.05), skill.dict.keep))
     {
         skill.activeState = ENTITY_SKILL_CD;
         if (skill.skillID == caster->_skillSys.readySkillID)
@@ -372,7 +372,7 @@ bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skil
 
     //CD结束 
     if (skill.activeState == ENTITY_SKILL_CD
-        && now > skill.lastActiveTime + 0 + std::max(std::max(skill.dict.interval, skill.dict.keep), skill.dict.cd))
+        && now > skill.lastActiveTime + 0 + std::max(std::max(std::max(skill.dict.interval / (1 + caster->_props.attackQuick), 0.05), skill.dict.keep), skill.dict.cd))
     {
         skill.activeState = ENTITY_SKILL_NONE;
         for (auto buffID : skill.dict.followSkills)
