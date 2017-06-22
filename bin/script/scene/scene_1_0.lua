@@ -1,44 +1,11 @@
 ﻿--require
 --process msg
-local config = require("config")
-require("proto4z")
-
-require("DictCommon")
-require("DictScene")
-require("ProtoCommon")
-require("ProtoDocker")
-
-require("ProtoSceneCommon")
-require("ProtoSceneServer")
-require("ProtoSceneClient")
+require("scene")
 
 
 
-dump = Proto4z.dump
---[[
-Scene.__scene,  --point
-Scene.sceneType,
-Scene.mapID,
-Scene.sceneID,
-function Scene.addEntity()
-    return {eid, data}
-end
-]]--
-dump(Scene)
 
-function addEntity(pos)
-    local prop = {hp=1000, attak=100, attackQuick=1, moveSpeed=8}
-    local state = {modelID=math.random(1,20), avatarName="scripts", camp=Proto4z.ENTITY_CAMP_NEUTRAL, maxHP=prop.hp, curHP=prop.hp, etype=Proto4z.ENTITY_AI, state=Proto4z.ENTITY_STATE_ACTIVE}
-    local skill = {dictEquippedSkills = {[2]=0}, readySkillID = 2 , combating = 1  }
-    local ctl = {spawnpoint = pos,  collision=1 }
 
-    local propData = Proto4z.encode(prop, "DictProp")
-    local stateData = Proto4z.encode(state, "EntityState")
-    local skillData = Proto4z.encode(skill, "EntitySkillSystem")
-    local ctlData = Proto4z.encode(ctl, "EntityControl")
-    logd("prop len=" .. #propData .. ", state len=" .. #stateData)
-    return Scene.addEntity(propData, stateData, skillData, ctlData)
-end
 
 
 
@@ -53,10 +20,11 @@ sceneInit()
 
 
 monster = {}
+entitys = {}
 
+local updateCount = 0
 function onUpdate()
 --    logd("scene_2_0 entityid=" .. Scene.sceneID)
-
     if not monster.init then
         monster.init = true
         local eid = addEntity(11,22)
@@ -65,16 +33,82 @@ function onUpdate()
         end
     end
 
+    updateCount = updateCount + 1
+    if math.fmod(updateCount, 100) == 0 then
+        dump(entitys)
+    end
 end
 
-function onSyncEntry(protoName, binData)
-    local len, msg = Proto4z.unpack(binData, protoName)
-    if not msg then
-        logw("onSyncEntry decode error")
-        return
+function onAddEntityNotice(msg)
+    logd("onAddEntityNotice sceneID=" .. Scene.sceneID)
+    
+    for _, client in pairs(msg.syncs) do
+        logd("onAddEntityNotice sceneID=" .. Scene.sceneID .. ", add eid=" .. client.state.eid)
+        local entity = entitys[client.state.eid] or {}
+        entitys[client.state.eid] = entity
+        entity.props = client.props
+        entity.state = client.state
+        entity.mv = client.mv
+        entity.report = client.report
+        if monster[entity.state.eid] and type(monster[entity.state.eid]) ~= "table" then
+            monster[entity.state.eid] = entity
+        end
     end
-    --dump(msg)
 end
+
+function onRemoveEntityNotice(msg)
+    logd("onRemoveEntityNotice sceneID=" .. Scene.sceneID)
+    dump(msg)
+    for k, eid in pairs(msg.eids) do
+        logd("onRemoveEntityNotice sceneID=" .. Scene.sceneID .. ", remove eid=" .. eid)
+        monster[eid] = nil
+        entitys[eid] = nil
+    end
+end
+
+
+function onSceneRefreshNotice(msg)
+    logd("onSceneRefreshNotice sceneID=" .. Scene.sceneID)
+
+
+    for _, state in pairs(msg.entityStates) do
+        local entity =  entitys[state.eid]
+        if entity then
+            entity.state = state
+        end
+    end
+
+    for _, mv in pairs(msg.entityMoves) do
+        local entity =  entitys[mv.eid]
+        if entity then
+            entity.mv = mv
+        end
+    end
+
+end
+
+
+function onEntityScriptNotice(msg)
+    logd("onEntityScriptNotice sceneID=" .. Scene.sceneID)
+
+    for _, ctl in pairs(msg.controls) do
+        local entity =  entitys[ctl.eid]
+        if entity then
+            entity.control = ctl
+        end
+    end
+
+    for _, skill in pairs(msg.skills) do
+        local entity =  entitys[skill.eid]
+        if entity then
+            entity.skill = skill
+        end
+    end
+
+end
+
+
+
 
 
 

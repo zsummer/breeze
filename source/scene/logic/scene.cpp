@@ -61,6 +61,7 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
     _sceneType = sceneType;
     _mapID = mapID;
     _sceneStatus = SCENE_STATE_ACTIVE;
+	_lastEID = ServerConfig::getRef().getSceneConfig()._lineID * 1000 + 1000;
 
     _startTime = getFloatSteadyNowTime();
     _endTime = getFloatSteadyNowTime() + 600;
