@@ -19,6 +19,9 @@
 #define _SCRIPT_H_
 #include "entity.h"
 
+
+
+
 class Scene;
 class Script : public std::enable_shared_from_this<Script>
 {
@@ -36,6 +39,25 @@ public:
 };
 
 using ScriptPtr = std::shared_ptr<Script>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

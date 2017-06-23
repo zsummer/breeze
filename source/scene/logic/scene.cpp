@@ -341,7 +341,7 @@ void Scene::onPlayerInstruction(ServiceID avatarID, ReadStream & rs)
         LOGD("MoveReq avatarID[" << avatarID << "] req=" << req);
         auto entity = getEntity(req.eid);
         if (!entity || entity->_state.avatarID != avatarID || entity->_state.etype != ENTITY_PLAYER
-            || req.action == MOVE_ACTION_PASV_PATH || req.action == MOVE_ACTION_FORCE_PATH 
+            || (req.action != MOVE_ACTION_IDLE && req.action == MOVE_ACTION_FOLLOW && req.action == MOVE_ACTION_PATH)
             || entity->_state.state != ENTITY_STATE_ACTIVE
                     )
         {

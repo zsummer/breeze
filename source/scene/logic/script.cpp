@@ -49,6 +49,13 @@ static void safeDoString(ScenePtr scene, lua_State * L, const std::string & lua)
 
 static int lAddEntity(lua_State * L)
 {
+	if (lua_gettop(L) != 4)
+	{
+		LOGE("Script lAddEntity  lua_gettop(L)=" << lua_gettop(L));
+		return 0;
+	}
+
+
     size_t propLen = 0;
     const char * propData = luaL_checklstring(L, 1, &propLen);
     if (!propData)
@@ -167,9 +174,95 @@ static int lAddEntity(lua_State * L)
 
 
 
+static int lRemoveEntity(lua_State * L)
+{
+	if (lua_gettop(L) != 1)
+	{
+		LOGE("Script lRemoteEntity  lua_gettop(L)=" << lua_gettop(L));
+		return 0;
+	}
+	EntityID eid = (EntityID)luaL_checknumber(L, 1);
+	lua_getglobal(L, SceneKey);
+	Scene * scene = nullptr;
+	if (!lua_istable(L, -1))
+	{
+		LOGE("Script lRemoteEntity  not found Scene class.");
+		return 0;
+	}
+
+	lua_getfield(L, -1, "__scene");
+	if (!lua_islightuserdata(L, -1))
+	{
+		LOGE(SceneKey << "lRemoteEntity __scene not userdata");
+		return 0;
+	}
+	scene = (Scene*)lua_touserdata(L, -1);
+	bool ret = scene->removeEntity(eid);
+	lua_pushboolean(L, ret ? 1 : 0);
+	return 1;
+}
+
+static int lDoMove(lua_State * L)
+{
+	ui64 eid;
+	unsigned short  action;
+	double speed;
+	ui64 follow;
+	EPositionArray dsts;
+	if (lua_gettop(L) == 4)
+	{
+		eid = (ui64)luaL_checknumber(L, 1);
+		action = (unsigned short)luaL_checknumber(L, 2);
+		speed = luaL_checknumber(L, 3);
+		follow = (ui64)luaL_checknumber(L, 4);
+		if (lua_istable(L, 5))
+		{
+
+		}
+	}
+	else if (lua_gettop(L) == 5)
+	{
+		eid = (ui64)luaL_checknumber(L, 1);
+		action = (unsigned short)luaL_checknumber(L, 2);
+		speed = luaL_checknumber(L, 3);
+		follow = (ui64)luaL_checknumber(L, 4);
+		if (lua_istable(L, 5))
+		{
+
+		}
+	}
+	else 
+	{
+		LOGE("Script lDoMove  lua_gettop(L)=" << lua_gettop(L));
+		return 0;
+	}
+
+
+	lua_getglobal(L, SceneKey);
+	Scene * scene = nullptr;
+	if (!lua_istable(L, -1))
+	{
+		LOGE("Script lRemoteEntity  not found Scene class.");
+		return 0;
+	}
+
+	lua_getfield(L, -1, "__scene");
+	if (!lua_islightuserdata(L, -1))
+	{
+		LOGE(SceneKey << "lRemoteEntity __scene not userdata");
+		return 0;
+	}
+	scene = (Scene*)lua_touserdata(L, -1);
+
+	return 1;
+}
+
+
 static luaL_Reg SceneReg[] = {
-    { "addEntity", lAddEntity },
-    { NULL, NULL }
+	{ "addEntity", lAddEntity },
+	{ "removeEntity", lRemoveEntity },
+	{ "doMove", lDoMove },
+	{ NULL, NULL }
 };
 
 
