@@ -46,6 +46,29 @@ static void safeDoString(ScenePtr scene, lua_State * L, const std::string & lua)
     }
 }
 
+static Scene* fetchScenePtr(lua_State * L)
+{
+	int top = lua_gettop(L);
+	lua_getglobal(L, SceneKey);
+	Scene * scene = nullptr;
+	if (!lua_istable(L, -1))
+	{
+		LOGE("fetchScenePtr error. not found " << SceneKey);
+		lua_settop(L, top);
+		return nullptr;
+	}
+
+	lua_getfield(L, -1, "__scene");
+	if (!lua_islightuserdata(L, -1))
+	{
+		LOGE("fetchScenePtr error. not found " << SceneKey << ".__scene");
+		lua_settop(L, top);
+		return nullptr;
+	}
+	scene = (Scene*)lua_touserdata(L, -1);
+	lua_settop(L, top);
+	return scene;
+}
 
 static int lAddEntity(lua_State * L)
 {
@@ -54,7 +77,12 @@ static int lAddEntity(lua_State * L)
 		LOGE("Script lAddEntity  lua_gettop(L)=" << lua_gettop(L));
 		return 0;
 	}
-
+	Scene * scene = fetchScenePtr(L);
+	if (!scene)
+	{
+		LOGE("lAddEntity fetchScenePtr error");
+		return 0;
+	}
 
     size_t propLen = 0;
     const char * propData = luaL_checklstring(L, 1, &propLen);
@@ -133,21 +161,11 @@ static int lAddEntity(lua_State * L)
         return 0;
     }
 
-	lua_getglobal(L, SceneKey);
-	Scene * scene = nullptr;
-    if (!lua_istable(L, -1))
-    {
-        LOGE("Script not found Scene class.");
-        return 0;
-    }
 
-    lua_getfield(L, -1, "__scene");
-    if (!lua_islightuserdata(L, -1))
-    {
-        LOGE(SceneKey << ".__scene not userdata");
-        return 0;
-    }
-    scene = (Scene*)lua_touserdata(L, -1);
+
+
+
+
 
     EntityPtr entity = scene->makeEntity(state.modelID, state.avatarID, state.avatarName, {}, InvalidGroupID);
     entity->_props = prop;
@@ -181,22 +199,16 @@ static int lRemoveEntity(lua_State * L)
 		LOGE("Script lRemoteEntity  lua_gettop(L)=" << lua_gettop(L));
 		return 0;
 	}
-	EntityID eid = (EntityID)luaL_checknumber(L, 1);
-	lua_getglobal(L, SceneKey);
-	Scene * scene = nullptr;
-	if (!lua_istable(L, -1))
+	Scene * scene = fetchScenePtr(L);
+	if (!scene)
 	{
-		LOGE("Script lRemoteEntity  not found Scene class.");
+		LOGE("lRemoveEntity fetchScenePtr error");
 		return 0;
 	}
 
-	lua_getfield(L, -1, "__scene");
-	if (!lua_islightuserdata(L, -1))
-	{
-		LOGE(SceneKey << "lRemoteEntity __scene not userdata");
-		return 0;
-	}
-	scene = (Scene*)lua_touserdata(L, -1);
+
+	EntityID eid = (EntityID)luaL_checknumber(L, 1);
+	
 	bool ret = scene->removeEntity(eid);
 	lua_pushboolean(L, ret ? 1 : 0);
 	return 1;
@@ -204,31 +216,83 @@ static int lRemoveEntity(lua_State * L)
 
 static int lDoMove(lua_State * L)
 {
+	Scene * scene = fetchScenePtr(L);
+	if (!scene)
+	{
+		LOGE("lDoMove fetchScenePtr error");
+		return 0;
+	}
+
+	int top = lua_gettop(L);
 	ui64 eid;
 	unsigned short  action;
 	double speed;
 	ui64 follow;
-	EPositionArray dsts;
-	if (lua_gettop(L) == 4)
-	{
-		eid = (ui64)luaL_checknumber(L, 1);
-		action = (unsigned short)luaL_checknumber(L, 2);
-		speed = luaL_checknumber(L, 3);
-		follow = (ui64)luaL_checknumber(L, 4);
-		if (lua_istable(L, 5))
-		{
+	EPositionArray waypoints;
 
+	eid = (ui64)luaL_checknumber(L, 1);
+	action = (unsigned short)luaL_checknumber(L, 2);
+
+	auto entity = scene->getEntity(eid);
+	if (!entity)
+	{
+		LOGE("Script lDoMove  not found entity eid=" << eid);
+		return 0;
+	}
+
+
+	if (top == 4)
+	{
+		speed = entity->getSpeed();
+		follow = (ui64)luaL_checknumber(L, 3);
+		if (lua_istable(L, 4))
+		{
+			lua_settop(L, 4);
+			lua_pushnil(L);
+			while (lua_next(L, 4) != 0)
+			{
+				EPosition pos;
+				if (lua_getfield(L, 6, "x") == LUA_TNUMBER)
+				{
+					pos.x = luaL_checknumber(L, 7);
+				}
+				lua_pop(L, 1);
+				if (lua_getfield(L, 6, "y") == LUA_TNUMBER)
+				{
+					pos.y = luaL_checknumber(L, 7);
+				}
+				waypoints.push_back(pos);
+				lua_pop(L, 1);
+				lua_settop(L, 5);
+			}
+			lua_pop(L, 1);
 		}
 	}
-	else if (lua_gettop(L) == 5)
+	else if (top == 5)
 	{
-		eid = (ui64)luaL_checknumber(L, 1);
-		action = (unsigned short)luaL_checknumber(L, 2);
 		speed = luaL_checknumber(L, 3);
 		follow = (ui64)luaL_checknumber(L, 4);
 		if (lua_istable(L, 5))
 		{
-
+			lua_settop(L, 5);
+			lua_pushnil(L);
+			while (lua_next(L, 5) != 0)
+			{
+				EPosition pos;
+				if (lua_getfield(L, 7, "x") == LUA_TNUMBER)
+				{
+					pos.x = luaL_checknumber(L, 8);
+				}
+				lua_pop(L, 1);
+				if (lua_getfield(L, 7, "y") == LUA_TNUMBER)
+				{
+					pos.y = luaL_checknumber(L, 8);
+				}
+				waypoints.push_back(pos);
+				lua_pop(L, 1);
+				lua_settop(L, 6);
+			}
+			lua_pop(L, 1);
 		}
 	}
 	else 
@@ -238,21 +302,8 @@ static int lDoMove(lua_State * L)
 	}
 
 
-	lua_getglobal(L, SceneKey);
-	Scene * scene = nullptr;
-	if (!lua_istable(L, -1))
-	{
-		LOGE("Script lRemoteEntity  not found Scene class.");
-		return 0;
-	}
+	scene->_move->doMove(eid, (MOVE_ACTION)action, speed, follow, waypoints);
 
-	lua_getfield(L, -1, "__scene");
-	if (!lua_islightuserdata(L, -1))
-	{
-		LOGE(SceneKey << "lRemoteEntity __scene not userdata");
-		return 0;
-	}
-	scene = (Scene*)lua_touserdata(L, -1);
 
 	return 1;
 }

@@ -403,7 +403,7 @@ bool MoveSync::setAgentPosition(ui64 agent, EPosition pos)
     }
     return false;
 }
-bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPositionArray dsts)
+bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPositionArray waypoints)
 {
     auto scene = _scene.lock();
     if (!scene)
@@ -437,7 +437,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         do
         {
             action = MOVE_ACTION_IDLE;
-            dsts.clear();
+            waypoints.clear();
             if (follow == InvalidEntityID)
             {
                 LOGE("doMove follow EntityID is invalid. self eid=" << eid);
@@ -457,14 +457,14 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
                 break;
             }
             action = MOVE_ACTION_FOLLOW;
-            dsts.push_back(followEntity->_move.position);
+            waypoints.push_back(followEntity->_move.position);
         }
         while (false);
     }
 
-    if (action != MOVE_ACTION_IDLE &&  dsts.empty())
+    if (action != MOVE_ACTION_IDLE &&  waypoints.empty())
     {
-        LOGE("doMove param error. action = " << (int)action << ", dsts is empty.");
+        LOGE("doMove param error. action = " << (int)action << ", waypoints is empty.");
         return false;
     }
 
@@ -492,7 +492,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         moveInfo.realSpeed = 0.0f;
         moveInfo.expectSpeed = speed;
         moveInfo.follow = follow;
-        moveInfo.waypoints = dsts;
+        moveInfo.waypoints = waypoints;
     }
     //refresh move
     else
@@ -501,7 +501,7 @@ bool MoveSync::doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, E
         moveInfo.realSpeed = moveInfo.realSpeed;
         moveInfo.expectSpeed = speed;
         moveInfo.follow = follow;
-        moveInfo.waypoints = dsts;
+        moveInfo.waypoints = waypoints;
     }
 
 
