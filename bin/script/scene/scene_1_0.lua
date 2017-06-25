@@ -2,18 +2,27 @@
 --process msg
 require("scene")
 
+function addMonster(pos)
+    local prop = {hp=1000, attak=100, attackQuick=1, moveSpeed=8}
+    local state = {modelID=math.random(1,20), 
+                    avatarName="monster", 
+                    camp=Proto4z.ENTITY_CAMP_BLUE +100, 
+                    maxHP=prop.hp, 
+                    curHP=prop.hp, 
+                    etype=Proto4z.ENTITY_AI, 
+                    state=Proto4z.ENTITY_STATE_ACTIVE}
 
+    local skill = {dictEquippedSkills = {[2]=0}, readySkillID = 2 , combating = 1  }
+    local ctl = {spawnpoint = pos,  collision=1 }
 
+    local propData = Proto4z.encode(prop, "DictProp")
+    local stateData = Proto4z.encode(state, "EntityState")
+    local skillData = Proto4z.encode(skill, "EntitySkillSystem")
+    local ctlData = Proto4z.encode(ctl, "EntityControl")
+    return Scene.addEntity(propData, stateData, skillData, ctlData)
+end
 
-
-
-
-
-
-
-
-function sceneInit()
-
+function fillObstacle()
     Scene.cleanObstacle()
     -- area map
     Scene.addObstacle({ {-74.36,17.82},  {-74.36,115},  {108,115}, {108,17.82}})
@@ -34,28 +43,75 @@ function sceneInit()
 
     Scene.processObstacle()
 end
-sceneInit()
-
-
 
 monster = {}
 entitys = {}
 
-local updateCount = 0
-function onUpdate()
---    logd("scene_2_0 entityid=" .. Scene.sceneID)
-    if not monster.init then
-        monster.init = true
-        local eid = addEntity(11,22)
-        if eid then
-            monster[eid] = 1
-        end
+
+function fillMonster()
+    local sps = {{51.92,80.98 },
+                    {-15.90,43.03 },
+                    {47.45,63.14 },
+                    {-13.15,63.14 },
+                    {52.05,43.08 },
+                    {3.65,44.45 },
+                    {25.84,44.65 },
+                    {33.58,81.71 },
+                    {10.63,81.18 },
+                    {-17.07,80.59 }}
+
+    for _, sp in pairs(sps) do
+        local eid = addMonster({x=sp[1], y=sp[2]})
+        monster[eid] = entitys[eid]
     end
 
-    updateCount = updateCount + 1
-    if math.fmod(updateCount, 100) == 0 then
-        dump(entitys)
+end
+
+function sceneInit()
+
+    fillObstacle()
+    fillMonster()
+
+
+
+
+end
+
+
+
+
+
+
+
+PATH_PRECISION = 1.0
+_sceneInit = false
+function onUpdate()
+    if not _sceneInit then
+        _sceneInit = true
+        sceneInit()
     end
+    for eid, e in pairs(monster) do
+        if type(e) == "table" and e.control then
+            local dist = getDistance(e.control.spawnpoint, e.mv.position)
+            local back = false
+            if dist > 20 then
+                back = true
+            end
+            if dist > e.control.collision + PATH_PRECISION and e.state.foe == 0 then
+                back = true
+            end
+
+            if e.state.foe == 0 and e.mv.action == Proto4z.MOVE_ACTION_FOLLOW then
+                back = true
+            end
+
+            if back and e.mv.action ~= Proto4z.MOVE_ACTION_FORCE_PATH then
+                Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_FORCE_PATH, 0, { {[1]=e.control.spawnpoint.x, [2]=e.control.spawnpoint.y} })
+            end
+        end
+
+    end
+
 end
 
 function onAddEntityNotice(msg)
@@ -69,9 +125,7 @@ function onAddEntityNotice(msg)
         entity.state = client.state
         entity.mv = client.mv
         entity.report = client.report
-        if monster[entity.state.eid] and type(monster[entity.state.eid]) ~= "table" then
-            monster[entity.state.eid] = entity
-        end
+
     end
 end
 

@@ -23,7 +23,7 @@ class Scene;
 class AI : public std::enable_shared_from_this<AI>
 {
     std::weak_ptr<Scene> _scene;
-    std::map<EntityID, EntityPtr> _monsters;
+
 
 
     std::vector<EntityPtr> _march;
@@ -35,8 +35,7 @@ public:
     void init(std::weak_ptr<Scene> scene);
     void update();
 
-    void createMonster();
-    void monsterHomingCheck();
+
     void rebirthCheck();
 };
 

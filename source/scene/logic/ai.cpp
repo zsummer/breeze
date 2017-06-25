@@ -24,8 +24,7 @@ void AI::update()
         return;
     }
 
-    createMonster();
-    monsterHomingCheck();
+
     rebirthCheck();
 
     if (scene->getSceneType() == SCENE_MELEE)
@@ -92,132 +91,7 @@ void AI::update()
     }
 }
 
-void AI::createMonster()
-{
-    auto scene = _scene.lock();
-    if (!scene)
-    {
-        return;
-    }
 
-    if (_monsters.empty())
-    {
-        std::string aiFileName;
-        std::vector<EPosition>  sps;
-        if (scene->getSceneType() == SCENE_HOME)
-        {
-            aiFileName = "../scripts/home_ai.txt";
-        }
-        else if (scene->getSceneType() == SCENE_MELEE)
-        {
-            aiFileName = "../scripts/melee_ai.txt";
-        }
-        if (!aiFileName.empty() && accessFile(aiFileName))
-        {
-            std::string content = readFileContent(aiFileName);
-            auto obs = splitString<std::string>(content, "\n", " \r");
-            for (auto &ob : obs)
-            {
-                if (ob.empty())
-                {
-                    continue;
-                }
-                if (true)
-                {
-                    bool isComment = false;
-                    for (auto c : ob)
-                    {
-                        if (c == '#')
-                        {
-                            isComment = true;
-                            break;
-                        }
-                        if (c > '0' && c <= '9')
-                        {
-                            break;
-                        }
-                    }
-                    if (isComment)
-                    {
-                        continue;
-                    }
-                }
-
-                std::vector<RVO::Vector2> vertices;
-                auto as = splitArrayString<double, double>(ob, " ", ",", "");
-                for (auto &pos : as)
-                {
-                    sps.push_back(EPosition(std::get<0>(pos), std::get<1>(pos)));
-                }
-            }
-        }
-
-        for (auto sp : sps)
-        {
-            auto entity = scene->makeEntity(rand() % 20 + 1,
-                InvalidAvatarID,
-                "monster",
-                DictArrayKey(),
-                InvalidGroupID);
-            entity->_props.hp = 3000 + (rand() % 100) * 20;
-            entity->_props.moveSpeed = 8.0;
-            entity->_props.attackQuick = 0.5;
-            entity->_props.attack = 80;
-            entity->_state.maxHP = entity->_props.hp;
-            entity->_state.curHP = entity->_state.maxHP;
-            entity->_state.camp = ENTITY_CAMP_BLUE + 100;
-            entity->_skillSys.combating = true;
-            entity->_skillSys.dictEquippedSkills[2] = 0;
-
-            entity->_move.position = sp;
-            entity->_control.spawnpoint = sp;
-            entity->_control.collision = 1.0;
-            scene->addEntity(entity);
-			_monsters[entity->_state.eid] = entity;
-        }
-
-    }
-}
-void AI::monsterHomingCheck()
-{
-    auto scene = _scene.lock();
-    if (!scene)
-    {
-        return;
-    }
-    for (auto kv : _monsters)
-    {
-        bool checkBack = false;
-        do
-        {
-            auto entity = kv.second;
-            auto dist = getDistance(entity->_move.position, entity->_control.spawnpoint);
-            if (dist > 20)
-            {
-                checkBack = true;
-                break;
-            }
-            if (dist > entity->_control.collision + PATH_PRECISION + 1.0 && entity->_state.foe == InvalidEntityID)
-            {
-                checkBack = true;
-                break;
-            }
-            if (entity->_state.foe == InvalidEntityID && entity->_move.action == MOVE_ACTION_FOLLOW)
-            {
-                checkBack = true;
-                break;
-            }
-        } while (false);
-        if (checkBack && kv.second->_move.action != MOVE_ACTION_FORCE_PATH)
-        {
-            EPositionArray dsts;
-            dsts.push_back(kv.second->_control.spawnpoint);
-            scene->_move->doMove(kv.second->_state.eid, MOVE_ACTION_FORCE_PATH, kv.second->getSpeed(), InvalidEntityID, dsts);
-        }
-
-    }
-
-}
 void AI::rebirthCheck()
 {
     auto scene = _scene.lock();

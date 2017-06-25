@@ -167,6 +167,10 @@ void Scene::addEntity(EntityPtr entity)
     AddEntityNotice notice;
     notice.syncs.push_back(entity->getClientSyncData());
     broadcast(notice, entity->_state.avatarID);
+	EntityScriptNotice sn;
+	sn.controls.push_back(entity->_control);
+	sn.skills.push_back(entity->_skillSys);
+	broadcast(notice, entity->_state.avatarID);
     onAddEntity(entity);
 }
 

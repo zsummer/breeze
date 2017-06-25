@@ -165,9 +165,10 @@ static int lAddEntity(lua_State * L)
 
 
 
-
+	LOGD("from script addEntity. state=" << state);
 
     EntityPtr entity = scene->makeEntity(state.modelID, state.avatarID, state.avatarName, {}, InvalidGroupID);
+
     entity->_props = prop;
     entity->_skillSys = skills;
     entity->_state = state;
@@ -184,6 +185,7 @@ static int lAddEntity(lua_State * L)
 
     entity->_move.position = entity->_control.spawnpoint;
     entity->_control.agentNo = RVO::RVO_ERROR;
+	entity->_control.stateChageTime = getFloatSteadyNowTime();
 
     scene->addEntity(entity);
     lua_pushnumber(L, entity->_state.eid);
@@ -415,18 +417,7 @@ void Script::init(std::weak_ptr<Scene> scene)
     lua_setglobal(_luaState, SceneKey);
     lua_gc(_luaState, LUA_GCRESTART, 0);
 
-    lua_getglobal(_luaState, "summer");
-    lua_getfield(_luaState, -1, "logd");
-    lua_setglobal(_luaState, "logd");
-    lua_getfield(_luaState, -1, "logi");
-    lua_setglobal(_luaState, "logi");
-    lua_getfield(_luaState, -1, "logw");
-    lua_setglobal(_luaState, "logw");
-    lua_getfield(_luaState, -1, "loge");
-    lua_setglobal(_luaState, "loge");
-    lua_getfield(_luaState, -1, "logi");
-    lua_setglobal(_luaState, "print");
-    lua_pop(_luaState, 1);
+
 
 	safeDoString(s, _luaState, R"(package.path = package.path .. ";" .. "../?.lua"  )");
 	safeDoString(s, _luaState, R"(package.path = package.path .. ";" .. "../script/scene/?.lua"  )");

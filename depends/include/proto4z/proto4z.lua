@@ -237,12 +237,12 @@ function Proto4z.__encode(obj, name, data)
     --------------------------------------
     elseif proto.__protoDesc == "map" then
         local obj = obj or {}
-        table.insert(data, Proto4zUtil.pack(#obj, "ui32", name))
-        for i =1, #obj do
-            local k = obj[i] and obj[i].k
-            local v = obj[i] and obj[i].v
+        table.insert(data, Proto4zUtil.pack(0, "ui32", name))
+        local fixPos = #data
+        local mapCount = 0
+        for k, v in pairs(obj) do
+            mapCount = mapCount + 1
             if proto.__protoTypeK == "string" then
-                local k = k or ""
                 table.insert(data, Proto4zUtil.pack(#k, "ui32", name))
                 table.insert(data, k)
             else
@@ -258,6 +258,7 @@ function Proto4z.__encode(obj, name, data)
                 Proto4z.__encode(v, proto.__protoTypeV, data)
             end
         end
+        data[fixPos] = Proto4zUtil.pack(mapCount, "ui32", name)
     --base typ or struct or proto
     --------------------------------------
     else

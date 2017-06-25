@@ -39,7 +39,6 @@
     </proto>
 
     <proto name="SceneRefreshNotice" desc= "">
-        <member name="entityProps"  type="DictPropArray" desc=""/>
         <member name="entityStates"  type="EntityStateArray" desc=""/>
         <member name="entityMoves"  type="EntityMoveArray" desc=""/>
     </proto>
