@@ -208,7 +208,7 @@ namespace RVO {
 		 *             order.
 		 */
 		size_t addObstacle(const std::vector<Vector2> &vertices);
-
+		void cleanObstacle();
 		/**
 		 * \brief      Lets the simulator perform a simulation step and updates the
 		 *             two-dimensional position and two-dimensional velocity of

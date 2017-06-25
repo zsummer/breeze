@@ -193,7 +193,13 @@ namespace RVO {
 
 		return obstacleNo;
 	}
-
+	void RVOSimulator::cleanObstacle()
+	{
+		for (size_t i = 0; i < obstacles_.size(); ++i) {
+			delete obstacles_[i];
+		}
+		obstacles_.clear();
+	}
 	void RVOSimulator::doStep()
 	{
 		kdTree_->buildAgentTree();

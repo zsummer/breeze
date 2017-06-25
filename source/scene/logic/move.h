@@ -37,6 +37,9 @@ public:
 
     ui64 addAgent(EPosition pos, double collision);
     void delAgent(ui64 agent);
+    void addObstacle(const std::vector<RVO::Vector2> &vertices);
+    void cleanObstacle();
+    void processObstacles();
     bool isValidAgent(ui64 agent);
     bool setAgentPosition(ui64 agent, EPosition pos);
     bool doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPositionArray waypoints);

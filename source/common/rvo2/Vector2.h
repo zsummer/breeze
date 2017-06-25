@@ -68,12 +68,14 @@ namespace RVO {
 		 * \return     The x-coordinate of the two-dimensional vector.
 		 */
 		inline double x() const { return x_; }
+		inline void x(double sx) { x_=sx; }
 
 		/**
 		 * \brief      Returns the y-coordinate of this two-dimensional vector.
 		 * \return     The y-coordinate of the two-dimensional vector.
 		 */
 		inline double y() const { return y_; }
+		inline void y(double sy) { y_=sy; }
 
 		/**
 		 * \brief      Computes the negation of this two-dimensional vector.

@@ -269,7 +269,7 @@ void MoveSync::fixDirtyMove(double frame)
             continue;
         }
         auto rvoPos = toEPosition(sim->getAgentPosition(entity._control.agentNo));
-        auto realMove = rvoPos - entity._move.position;
+        //auto realMove = rvoPos - entity._move.position;
         auto realDist = getDistance(rvoPos, entity._move.position);
         if (entity._move.action == MOVE_ACTION_IDLE)
         {
@@ -385,6 +385,27 @@ ui64 MoveSync::addAgent(EPosition pos, double collision)
 void MoveSync::delAgent(ui64 agent)
 {
     _sim->removeAgent(agent);
+}
+void MoveSync::addObstacle(const std::vector<RVO::Vector2> &vertices)
+{
+    if (_sim)
+    {
+        _sim->addObstacle(vertices);
+    }
+}
+void MoveSync::cleanObstacle()
+{
+    if (_sim)
+    {
+        _sim->cleanObstacle();
+    }
+}
+void MoveSync::processObstacles()
+{
+    if (_sim)
+    {
+        _sim->processObstacles();
+    }
 }
 bool MoveSync::isValidAgent(ui64 agent)
 {

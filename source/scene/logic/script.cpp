@@ -252,20 +252,15 @@ static int lDoMove(lua_State * L)
 			while (lua_next(L, 4) != 0)
 			{
 				EPosition pos;
-				if (lua_getfield(L, 6, "x") == LUA_TNUMBER)
-				{
-					pos.x = luaL_checknumber(L, 7);
-				}
+                lua_geti(L, 6, 1);
+                pos.x = luaL_checknumber(L, 7);
 				lua_pop(L, 1);
-				if (lua_getfield(L, 6, "y") == LUA_TNUMBER)
-				{
-					pos.y = luaL_checknumber(L, 7);
-				}
+                lua_geti(L, 6, 2);
+                pos.y = luaL_checknumber(L, 7);
 				waypoints.push_back(pos);
 				lua_pop(L, 1);
 				lua_settop(L, 5);
 			}
-			lua_pop(L, 1);
 		}
 	}
 	else if (top == 5)
@@ -279,20 +274,15 @@ static int lDoMove(lua_State * L)
 			while (lua_next(L, 5) != 0)
 			{
 				EPosition pos;
-				if (lua_getfield(L, 7, "x") == LUA_TNUMBER)
-				{
-					pos.x = luaL_checknumber(L, 8);
-				}
+                lua_geti(L, 7, 1);
+                pos.x = luaL_checknumber(L, 8);
 				lua_pop(L, 1);
-				if (lua_getfield(L, 7, "y") == LUA_TNUMBER)
-				{
-					pos.y = luaL_checknumber(L, 8);
-				}
+                lua_geti(L, 7, 2);
+                pos.y = luaL_checknumber(L, 8);
 				waypoints.push_back(pos);
 				lua_pop(L, 1);
 				lua_settop(L, 6);
 			}
-			lua_pop(L, 1);
 		}
 	}
 	else 
@@ -308,11 +298,73 @@ static int lDoMove(lua_State * L)
 	return 1;
 }
 
+static int lAddObstacle(lua_State * L)
+{
+    if (lua_gettop(L) != 1)
+    {
+        LOGE("Script lAddObstacle  lua_gettop(L)=" << lua_gettop(L));
+        return 0;
+    }
+    if (!lua_istable(L, 1))
+    {
+        LOGE("Script lAddObstacle param error.");
+        return 0;
+    }
+    Scene * scene = fetchScenePtr(L);
+    if (!scene)
+    {
+        LOGE("lDoMove fetchScenePtr error");
+        return 0;
+    }
+    lua_settop(L, 1);
+    lua_pushnil(L);
+    std::vector<RVO::Vector2>  ob;
+    while(lua_next(L, 1) != 0)
+    {
+        RVO::Vector2 v;
+        lua_geti(L, 3, 1);
+        v.x(luaL_checknumber(L, 4));
+        lua_pop(L, 1);
+        lua_geti(L, 3, 2);
+        v.y(luaL_checknumber(L, 4));
+        lua_pop(L, 1);
+        ob.push_back(v);
+        lua_pop(L, 1);
+    }
+    scene->_move->addObstacle(ob);
+    return 0;
+}
+static int lCleanObstacle(lua_State * L)
+{
+    Scene * scene = fetchScenePtr(L);
+    if (!scene)
+    {
+        LOGE("lDoMove fetchScenePtr error");
+        return 0;
+    }
+    scene->_move->cleanObstacle();
+    scene->_move->processObstacles();
+    return 0;
+}
+static int lProcessObstacle(lua_State * L)
+{
+    Scene * scene = fetchScenePtr(L);
+    if (!scene)
+    {
+        LOGE("lDoMove fetchScenePtr error");
+        return 0;
+    }
+    scene->_move->processObstacles();
+    return 0;
+}
 
 static luaL_Reg SceneReg[] = {
 	{ "addEntity", lAddEntity },
 	{ "removeEntity", lRemoveEntity },
 	{ "doMove", lDoMove },
+    { "addObstacle", lAddObstacle },
+    { "cleanObstacle", lCleanObstacle },
+    { "processObstacle", lProcessObstacle },
 	{ NULL, NULL }
 };
 

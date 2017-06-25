@@ -785,7 +785,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         group.sceneID = InvalidSceneID;
         group.lineID = InvalidLineID;
         group.mapID = InvalidMapID;
-        group.host;
+        group.host = group.host;
         group.port = 0;
         group.members.insert(std::make_pair(avatar.avatarID,avatar));
         
@@ -845,7 +845,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     else
     {
         founder->second.areaID = avatar.areaID;
-        founder->second.token;
+        founder->second.token = founder->second.token;
     }
     _avatars[req.avatarID] = groupPtr->groupID;
     backToService(session->getSessionID(), trace, ack); 
