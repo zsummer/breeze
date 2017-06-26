@@ -49,8 +49,16 @@ end
 function getDistance(pos1, pos2)
     return ((pos2.x - pos1.x)^2 + (pos2.y - pos1.y)^2)^0.5 
 end
-
-
+function getRemotePos(pos, radian, dist)
+    return {pos[1] + math.cos(radian) * dist, pos[2] + math.sin(radian) * dist}
+end
+function getFarPos(pos, vt, dist)
+    dump(pos)
+    dump(vt)
+    dump(dist)
+    local md = (vt[1]^2+vt[2]^2)^0.5
+    return {pos[1] + vt[1]/md*dist, pos[2]+vt[2]/md*dist}
+end
 
 
 

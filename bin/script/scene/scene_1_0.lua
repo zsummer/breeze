@@ -3,7 +3,7 @@
 require("scene")
 
 function addMonster(pos)
-    local prop = {hp=1000, attak=100, attackQuick=1, moveSpeed=8}
+    local prop = {hp=1000, attack=100, attackQuick=1, moveSpeed=8}
     local state = {modelID=math.random(1,20), 
                     avatarName="monster", 
                     camp=Proto4z.ENTITY_CAMP_BLUE +100, 
@@ -106,7 +106,7 @@ function onUpdate()
             end
 
             if back and e.mv.action ~= Proto4z.MOVE_ACTION_FORCE_PATH then
-                Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_FORCE_PATH, 0, { {[1]=e.control.spawnpoint.x, [2]=e.control.spawnpoint.y} })
+                Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_FORCE_PATH, 0, { {e.control.spawnpoint.x, e.control.spawnpoint.y} })
             end
         end
 

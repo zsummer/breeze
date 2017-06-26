@@ -3,40 +3,84 @@
 require("scene")
 
 
+function addMonster(pos)
+    local prop = {hp=1000, attack=100, attackQuick=1, moveSpeed=8}
+    local state = {modelID=math.random(1,20), 
+                    avatarName="monster", 
+                    camp=Proto4z.ENTITY_CAMP_BLUE +100, 
+                    maxHP=prop.hp, 
+                    curHP=prop.hp, 
+                    etype=Proto4z.ENTITY_AI, 
+                    state=Proto4z.ENTITY_STATE_ACTIVE}
 
+    local skill = {dictEquippedSkills = {[2]=0}, readySkillID = 2 , combating = 0  }
+    local ctl = {spawnpoint = pos,  collision=1 }
 
-
-
-
-
-
-
-
-function sceneInit()
-
+    local propData = Proto4z.encode(prop, "DictProp")
+    local stateData = Proto4z.encode(state, "EntityState")
+    local skillData = Proto4z.encode(skill, "EntitySkillSystem")
+    local ctlData = Proto4z.encode(ctl, "EntityControl")
+    return Scene.addEntity(propData, stateData, skillData, ctlData)
 end
-sceneInit()
-
 
 
 monster = {}
 entitys = {}
 
-local updateCount = 0
+local OriginPos = {34, 170}
+local MonsterCount = 20
+local Dia = 40
+function fillMonster()
+    local sps = {}
+    for i=0, MonsterCount do 
+        table.insert(sps, getRemotePos(OriginPos, math.pi*2.0/(MonsterCount+1)*i,  Dia/2))
+    end
+    for _, sp in pairs(sps) do
+        local eid = addMonster({x=sp[1], y=sp[2]})
+        monster[eid] = entitys[eid]
+    end
+end
+
+function sceneInit()
+    fillMonster()
+end
+
+
+
+
+
+
+
+PATH_PRECISION = 1.0
+_sceneInit = false
+standTime = 0
 function onUpdate()
---    logd("scene_2_0 entityid=" .. Scene.sceneID)
-    if not monster.init then
-        monster.init = true
-        local eid = addEntity(11,22)
-        if eid then
-            monster[eid] = 1
+    if not _sceneInit then
+        _sceneInit = true
+        sceneInit()
+    end
+    for eid, e in pairs(monster) do
+        if e.mv.action ~= Proto4z.MOVE_ACTION_IDLE then
+            standTime = Scene.now()
+            break
+        end
+    end
+    local now = Scene.now()
+    if now - standTime > 8 then
+        for eid, e in pairs(monster) do
+            if type(e) == "table" and e.control then
+                local dist = getDistance(e.control.spawnpoint, e.mv.position)
+                local rpos = {e.control.spawnpoint.x, e.control.spawnpoint.y}
+                if dist < (PATH_PRECISION + Dia/10) then
+                    rpos = getFarPos(rpos, {OriginPos[1] - e.control.spawnpoint.x, OriginPos[2] - e.control.spawnpoint.y}, Dia)
+                    dump(rpos)
+                end
+                Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_PATH, 0, { rpos})
+            end
         end
     end
 
-    updateCount = updateCount + 1
-    if math.fmod(updateCount, 100) == 0 then
-        dump(entitys)
-    end
+
 end
 
 function onAddEntityNotice(msg)
@@ -50,9 +94,6 @@ function onAddEntityNotice(msg)
         entity.state = client.state
         entity.mv = client.mv
         entity.report = client.report
-        if monster[entity.state.eid] and type(monster[entity.state.eid]) ~= "table" then
-            monster[entity.state.eid] = entity
-        end
     end
 end
 

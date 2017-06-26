@@ -27,68 +27,6 @@ void AI::update()
 
     rebirthCheck();
 
-    if (scene->getSceneType() == SCENE_MELEE)
-    {
-        if (_march.empty())
-        {
-            _marchOrg =  EPosition(34, 170);
-            double dist = 20;
-            for (size_t i = 0; i < 20; i++)
-            {
-                EPosition sp = toEPosition(getFarPoint(_marchOrg.x, _marchOrg.y, i*(PI*2/19.0)*1.0, dist));
-                auto entity = scene->makeEntity(rand() % 20 + 1,
-                    InvalidAvatarID,
-                    "march",
-                    DictArrayKey(),
-                    InvalidGroupID);
-                entity->_props.hp = 3000 + (rand() % 100) * 20;
-                entity->_props.moveSpeed = 8.0;
-                entity->_props.attackQuick = 0.5;
-                entity->_props.attack = 80;
-                entity->_state.maxHP = entity->_props.hp;
-                entity->_state.curHP = entity->_state.maxHP;
-                entity->_state.camp = ENTITY_CAMP_BLUE + 100;
-                
-                entity->_skillSys.dictEquippedSkills[2] = 0;
-                entity->_skillSys.readySkillID = 2;
-				
-
-                entity->_move.position = sp;
-                entity->_control.spawnpoint = sp;
-                entity->_control.collision = 1.0;
-                scene->addEntity(entity);
-                _march.push_back(entity);
-            }
-        }
-        double now = getFloatNowTime();
-        if (now - _lastMarch > 10 && !_march.empty() )
-        {
-            _lastMarch = now;
-
-            bool allIdle = true;
-            for (auto e : _march)
-            {
-                if (e->_move.action != MOVE_ACTION_IDLE)
-                {
-                    allIdle = false;
-                    break;
-                }
-            }
-            if (allIdle)
-            {
-                for (auto & e : _march)
-                {
-                    double d = getDistance(e->_move.position, e->_control.spawnpoint);
-                    EPosition dst = e->_control.spawnpoint;
-                    if (d  < 2.0)
-                    {
-                        dst = (_marchOrg - dst)*2.0 + dst;
-                    }
-                    scene->_move->doMove(e->_state.eid, MOVE_ACTION_PATH, e->getSpeed(), 0, { dst });
-                }
-            }
-        }
-    }
 }
 
 

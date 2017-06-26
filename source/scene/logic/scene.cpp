@@ -275,7 +275,7 @@ bool Scene::playerDettach(ServiceID avatarID, SessionID sID)
 
 bool Scene::onUpdate()
 {
-    if (getFloatSteadyNowTime() > _endTime)
+    if (getFloatSteadyNowTime() > _endTime || _players.empty())
     {
         return false;
     }

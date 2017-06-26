@@ -360,13 +360,26 @@ static int lProcessObstacle(lua_State * L)
     return 0;
 }
 
+static int lNow(lua_State * L)
+{
+	lua_pushnumber(L, getFloatSteadyNowTime());
+	return 1;
+}
+static int lSysNow(lua_State * L)
+{
+	lua_pushnumber(L, getFloatNowTime());
+	return 1;
+}
+
 static luaL_Reg SceneReg[] = {
 	{ "addEntity", lAddEntity },
 	{ "removeEntity", lRemoveEntity },
 	{ "doMove", lDoMove },
     { "addObstacle", lAddObstacle },
     { "cleanObstacle", lCleanObstacle },
-    { "processObstacle", lProcessObstacle },
+	{ "processObstacle", lProcessObstacle },
+	{ "now", lNow },
+	{ "sysNow", lSysNow },
 	{ NULL, NULL }
 };
 
