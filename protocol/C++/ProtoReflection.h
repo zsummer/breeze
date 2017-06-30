@@ -343,6 +343,16 @@ public:
                    return "DictSkill";
             }
             break;
+            case 20000:
+            {
+                   return "LogLogin";
+            }
+            break;
+            case 20001:
+            {
+                   return "LogQuit";
+            }
+            break;
             case 50000:
             {
                    return "SceneClientPulse";
@@ -626,6 +636,11 @@ public:
             case 55034:
             {
                    return "ChangeModeIDResp";
+            }
+            break;
+            case 55035:
+            {
+                   return "ClientDeviceInfoUpdate";
             }
             break;
 

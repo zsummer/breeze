@@ -2,6 +2,7 @@
 #include "avatarMgrService.h"
 #include <ProtoCommon.h>
 #include <ProtoClient.h>
+#include <LogCommon.h>
 
 AvatarMgrService::AvatarMgrService()
 {
@@ -443,6 +444,31 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
         status._clientSessionID = trace.oob.clientSessionID;
         LoadService notice(STAvatar, req.avatarID, status._preview.avatarName, status._clientDockerID, status._clientSessionID);
         Docker::getRef().sendViaDockerID(dockerID, notice);
+
+		if (true)
+		{
+			LogLogin ll;
+			ll.avatarID = req.avatarID;
+			auto ptr = getAvatarStatus(req.avatarID);
+			if (ptr)
+			{
+				ll.avatarName = ptr->_preview.avatarName;
+			}
+			ll.logTime = getNowTime();
+			ll.id = 0;
+			for (auto & kv : req.di)
+			{
+				ll.deviceInfo += kv.first;
+				ll.deviceInfo += ":";
+				ll.deviceInfo += kv.second;
+				ll.deviceInfo += ",  ";
+			}
+
+			DBQueryReq req(ll.getDBInsert());
+			toService(STLogDBMgr, req, NULL);
+		}
+
+
     }
     else if(status._status == SS_WORKING)
     {
@@ -450,6 +476,30 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
         status._clientSessionID = trace.oob.clientSessionID;
         SwitchServiceClientNotice change(STAvatar, req.avatarID, status._clientDockerID, status._clientSessionID);
         Docker::getRef().broadcastToDockers(change, true);
+
+		if (true)
+		{
+			LogLogin ll;
+			ll.avatarID = req.avatarID;
+			auto ptr = getAvatarStatus(req.avatarID);
+			if (ptr)
+			{
+				ll.avatarName = ptr->_preview.avatarName;
+			}
+			ll.logTime = getNowTime();
+			ll.id = 0;
+			for (auto & kv : req.di)
+			{
+				ll.deviceInfo += kv.first;
+				ll.deviceInfo += ":";
+				ll.deviceInfo += kv.second;
+				ll.deviceInfo += ",  ";
+			}
+
+			DBQueryReq req(ll.getDBInsert());
+			toService(STLogDBMgr, req, NULL);
+		}
+
     }
     else
     {

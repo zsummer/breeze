@@ -35,12 +35,19 @@ Proto4z.CreateAvatarResp[1] = {name="retCode", type="ui16" }
 Proto4z.CreateAvatarResp[2] = {name="avatarID", type="ui64" }  
 Proto4z.CreateAvatarResp[3] = {name="previews", type="AvatarPreviewArray" }  
  
+Proto4z.DeviceInfo = {}  
+Proto4z.DeviceInfo.__protoName = "DeviceInfo" 
+Proto4z.DeviceInfo.__protoDesc = "map" 
+Proto4z.DeviceInfo.__protoTypeK = "string" 
+Proto4z.DeviceInfo.__protoTypeV = "string" 
+ 
 Proto4z.register(55005,"AttachAvatarReq") 
 Proto4z.AttachAvatarReq = {} --选角色请求 
 Proto4z.AttachAvatarReq.__protoID = 55005 
 Proto4z.AttachAvatarReq.__protoName = "AttachAvatarReq" 
 Proto4z.AttachAvatarReq[1] = {name="accountName", type="string" } --这个字段会被服务器填充.客户端可以不填写 
 Proto4z.AttachAvatarReq[2] = {name="avatarID", type="ui64" }  
+Proto4z.AttachAvatarReq[3] = {name="di", type="DeviceInfo" }  
  
 Proto4z.register(55006,"AttachAvatarResp") 
 Proto4z.AttachAvatarResp = {} --选角色请求返回 

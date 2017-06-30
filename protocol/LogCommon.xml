@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ProtoTraits>
+  <MinNo>20000</MinNo>
+  <MaxNo>21000</MaxNo>
+  <UseLog4z>1</UseLog4z>
+</ProtoTraits>
+
+
+<Proto>
+
+    <packet name="LogLogin" store="MyISAM"  desc= "">
+        <member name="id" type="ui64" tag="key,auto"  desc=""/>
+        <member name="logTime" type="ui64" tag="idx"    desc=""/>
+        <member name="avatarID" type="ui64"  tag="idx"   desc=""/>
+        <member name="avatarName" type="string"  tag="idx"   desc=""/>
+        <member name="deviceInfo" type="string"  tag="blob"    desc=""/>
+    </packet>
+
+    <packet name="LogQuit" store="MyISAM"  desc= "">
+        <member name="id" type="ui64" tag="key,auto"  desc=""/>
+        <member name="logTime" type="ui64" tag="idx"    desc=""/>
+        <member name="avatarID" type="ui64"  tag="idx"   desc=""/>
+        <member name="avatarName" type="string"  tag="idx"   desc=""/>
+    </packet>
+
+
+</Proto>
+

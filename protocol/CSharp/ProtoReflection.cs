@@ -176,6 +176,10 @@ namespace Proto4z
             _idToName.Add(11002, "DictBuff");
             _nameToID.Add("DictSkill", 11003);
             _idToName.Add(11003, "DictSkill");
+            _nameToID.Add("LogLogin", 20000);
+            _idToName.Add(20000, "LogLogin");
+            _nameToID.Add("LogQuit", 20001);
+            _idToName.Add(20001, "LogQuit");
             _nameToID.Add("SceneClientPulse", 50000);
             _idToName.Add(50000, "SceneClientPulse");
             _nameToID.Add("AttachSceneReq", 50001);
@@ -290,6 +294,8 @@ namespace Proto4z
             _idToName.Add(55033, "ChangeModeIDReq");
             _nameToID.Add("ChangeModeIDResp", 55034);
             _idToName.Add(55034, "ChangeModeIDResp");
+            _nameToID.Add("ClientDeviceInfoUpdate", 55035);
+            _idToName.Add(55035, "ClientDeviceInfoUpdate");
             _errCodes.Add(0, "成功");
             _errCodes.Add(1, "错误");
             _errCodes.Add(2, "内部错误");

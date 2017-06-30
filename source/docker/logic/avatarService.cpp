@@ -1,11 +1,13 @@
 ﻿#include "avatarService.h"
 #include <ProtoClient.h>
 #include <ProtoSceneServer.h>
+#include <LogCommon.h>
 
 AvatarService::AvatarService()
 {
-    slotting<ChatReq>(std::bind(&AvatarService::onChatReq, this, _1, _2));
-    slotting<ChatResp>(std::bind(&AvatarService::onChatResp, this, _1, _2));
+
+	slotting<ChatReq>(std::bind(&AvatarService::onChatReq, this, _1, _2));
+	slotting<ChatResp>(std::bind(&AvatarService::onChatResp, this, _1, _2));
 	slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
 	slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
 	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
@@ -38,7 +40,7 @@ void AvatarService::onClientChange()
     }
     if (getClientSessionID() == InvalidSessionID)
     {
-        do
+        if (true)
         {
             ChatResp resp;
             resp.channelID = CC_SYSTEM;
@@ -49,7 +51,21 @@ void AvatarService::onClientChange()
             {
                 toService(STClient, kv.second->getServiceID(), resp);
             }
-        } while (false);
+        } 
+
+
+		if (true)
+		{
+			LogQuit lq;
+			lq.avatarID = _baseInfo._data.avatarID;
+			lq.avatarName = _baseInfo._data.avatarName;
+			lq.logTime = getNowTime();
+			lq.id = 0;
+
+			DBQueryReq req(lq.getDBInsert());
+			toService(STLogDBMgr, req, NULL);
+		}
+
     }
 }
 
@@ -194,6 +210,8 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     }
     
 }
+
+
 
 void AvatarService::onChatResp(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {

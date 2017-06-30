@@ -32,9 +32,11 @@
         <member name="previews" type="AvatarPreviewArray"   desc=""/>
     </packet>
 
+    <map name="DeviceInfo" key="string" value="string" desc="" />
     <packet name="AttachAvatarReq" desc= "选角色请求">
         <member name="accountName" type="string"   desc="这个字段会被服务器填充.客户端可以不填写"/>
         <member name="avatarID" type="ui64"   desc=""/>
+        <member name="di" type="DeviceInfo"   desc=""/>
     </packet>
      <packet name="AttachAvatarResp" desc= "选角色请求返回">
         <member name="retCode" type="ui16"   desc=""/>
@@ -124,7 +126,7 @@
 <!------------------------------------ other --------------------------------------------->
 
 
-   <packet name="ChatReq" desc= "">
+    <packet name="ChatReq" desc= "">
         <member name="channelID" type="ui16"   desc=""/>
         <member name="targetID" type="ui64"   desc=""/>
         <member name="msg" type="string"   desc=""/>

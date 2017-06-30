@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF - 8"?>
+
+<cppmd5>53cd517ab2dddcd7210d4bbebcc4ae6f</cppmd5> 
+<luamd5>2dc9a036b9a2d707f404ca22fcb11d77</luamd5> 
+<csharpmd5>22689ee14802f8fe7c59299b4cd91a73</csharpmd5> 
+<xmlmd5>31f36d524a6a9a8e0261d08cf39ae4f2</xmlmd5> 
+<cacheNumber>
+    <cache key = "LogLogin" Number = "20000" /> 
+    <cache key = "LogQuit" Number = "20001" /> 
+</cacheNumber>

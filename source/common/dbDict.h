@@ -33,7 +33,7 @@
 #include <ProtoSceneCommon.h>
 #include <ProtoClient.h>
 #include <ProtoDocker.h>
-
+#include <LogCommon.h>
 
 /*
 服务器引擎的配置走数据库
@@ -158,8 +158,10 @@ public:
     {
         auto helper = buildHelper("STLogDBMgr");
         if (!helper) return false;
-        buildTable<LogChat>(helper);
-        return true;
+		buildTable<LogChat>(helper);
+		buildTable<LogQuit>(helper);
+		buildTable<LogLogin>(helper);
+		return true;
     }
 
 public:
