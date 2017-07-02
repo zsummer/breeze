@@ -253,6 +253,8 @@ inline double dot(double vx1, double vy1, double vx2, double vy2);
 inline double det(double vx1, double vy1, double vx2, double vy2);
 inline double distLine(double linex1, double liney1, double linex2, double liney2, double cx, double cy);
 inline double distLine(std::tuple<double, double> line1, std::tuple<double, double> line2, std::tuple<double, double> pos);
+inline std::tuple<double, double> shortestLine(std::tuple<double, double> line1, std::tuple<double, double> line2, std::tuple<double, double> pos);
+inline std::tuple<double, double> shortestLine(double linex1, double liney1, double linex2, double liney2, double cx, double cy);
 
 //bit
 //==========================================================================
