@@ -10,17 +10,17 @@
 #include "lobject.h"
 
 
-#define gnode(t,i)	(&(t)->node[i])
-#define gval(n)		(&(n)->i_val)
-#define gnext(n)	((n)->i_key.nk.next)
+#define gnode(t,i)    (&(t)->node[i])
+#define gval(n)        (&(n)->i_val)
+#define gnext(n)    ((n)->i_key.nk.next)
 
 
 /* 'const' to avoid wrong writings that can mess up field 'next' */ 
-#define gkey(n)		cast(const TValue*, (&(n)->i_key.tvk))
+#define gkey(n)        cast(const TValue*, (&(n)->i_key.tvk))
 
-#define wgkey(n)		(&(n)->i_key.nk)
+#define wgkey(n)        (&(n)->i_key.nk)
 
-#define invalidateTMcache(t)	((t)->flags = 0)
+#define invalidateTMcache(t)    ((t)->flags = 0)
 
 
 /* returns the key, given the value of a table entry */

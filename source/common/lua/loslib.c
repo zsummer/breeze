@@ -22,50 +22,50 @@
 #include "lualib.h"
 
 
-#if !defined(LUA_STRFTIMEOPTIONS)	/* { */
+#if !defined(LUA_STRFTIMEOPTIONS)    /* { */
 /*
 ** list of valid conversion specifiers for the 'strftime' function
 */
 
 #if defined(LUA_USE_C89)
-#define LUA_STRFTIMEOPTIONS	{ "aAbBcdHIjmMpSUwWxXyYz%", "" }
+#define LUA_STRFTIMEOPTIONS    { "aAbBcdHIjmMpSUwWxXyYz%", "" }
 #else  /* C99 specification */
 #define LUA_STRFTIMEOPTIONS \
-	{ "aAbBcCdDeFgGhHIjmMnprRStTuUVwWxXyYzZ%", "", \
-	  "E", "cCxXyY",  \
-	  "O", "deHImMSuUVwWy" }
+    { "aAbBcCdDeFgGhHIjmMnprRStTuUVwWxXyYzZ%", "", \
+      "E", "cCxXyY",  \
+      "O", "deHImMSuUVwWy" }
 #endif
 
-#endif					/* } */
+#endif                    /* } */
 
 
 
-#if !defined(l_time_t)		/* { */
+#if !defined(l_time_t)        /* { */
 /*
 ** type to represent time_t in Lua
 */
-#define l_timet			lua_Integer
-#define l_pushtime(L,t)		lua_pushinteger(L,(lua_Integer)(t))
-#define l_checktime(L,a)	((time_t)luaL_checkinteger(L,a))
+#define l_timet            lua_Integer
+#define l_pushtime(L,t)        lua_pushinteger(L,(lua_Integer)(t))
+#define l_checktime(L,a)    ((time_t)luaL_checkinteger(L,a))
 
-#endif				/* } */
+#endif                /* } */
 
 
 
-#if !defined(lua_tmpnam)	/* { */
+#if !defined(lua_tmpnam)    /* { */
 /*
 ** By default, Lua uses tmpnam except when POSIX is available, where it
 ** uses mkstemp.
 */
 
-#if defined(LUA_USE_POSIX)	/* { */
+#if defined(LUA_USE_POSIX)    /* { */
 
 #include <unistd.h>
 
-#define LUA_TMPNAMBUFSIZE	32
+#define LUA_TMPNAMBUFSIZE    32
 
 #if !defined(LUA_TMPNAMTEMPLATE)
-#define LUA_TMPNAMTEMPLATE	"/tmp/lua_XXXXXX"
+#define LUA_TMPNAMTEMPLATE    "/tmp/lua_XXXXXX"
 #endif
 
 #define lua_tmpnam(b,e) { \
@@ -74,38 +74,38 @@
         if (e != -1) close(e); \
         e = (e == -1); }
 
-#else				/* }{ */
+#else                /* }{ */
 
 /* ISO C definitions */
-#define LUA_TMPNAMBUFSIZE	L_tmpnam
-#define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
+#define LUA_TMPNAMBUFSIZE    L_tmpnam
+#define lua_tmpnam(b,e)        { e = (tmpnam(b) == NULL); }
 
-#endif				/* } */
+#endif                /* } */
 
-#endif				/* } */
+#endif                /* } */
 
 
 
-#if !defined(l_gmtime)		/* { */
+#if !defined(l_gmtime)        /* { */
 /*
 ** By default, Lua uses gmtime/localtime, except when POSIX is available,
 ** where it uses gmtime_r/localtime_r
 */
 
-#if defined(LUA_USE_POSIX)	/* { */
+#if defined(LUA_USE_POSIX)    /* { */
 
-#define l_gmtime(t,r)		gmtime_r(t,r)
-#define l_localtime(t,r)	localtime_r(t,r)
+#define l_gmtime(t,r)        gmtime_r(t,r)
+#define l_localtime(t,r)    localtime_r(t,r)
 
-#else				/* }{ */
+#else                /* }{ */
 
 /* ISO C definitions */
-#define l_gmtime(t,r)		((void)(r)->tm_sec, gmtime(t))
-#define l_localtime(t,r)  	((void)(r)->tm_sec, localtime(t))
+#define l_gmtime(t,r)        ((void)(r)->tm_sec, gmtime(t))
+#define l_localtime(t,r)      ((void)(r)->tm_sec, localtime(t))
 
-#endif				/* } */
+#endif                /* } */
 
-#endif				/* } */
+#endif                /* } */
 
 
 

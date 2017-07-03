@@ -24,8 +24,8 @@ EntityPtr Skill::lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo
     EntityPtr foe;
     while(caster->_state.foe != InvalidEntityID)
     {
-		EntityPtr locked;
-		locked = scene->getEntity(caster->_state.foe);
+        EntityPtr locked;
+        locked = scene->getEntity(caster->_state.foe);
         if (!locked)
         {
             break;
@@ -34,60 +34,60 @@ EntityPtr Skill::lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo
         {
             break;
         }
-		EntityPtr master = caster;
-		if (caster->_state.etype == ENTITY_FLIGHT )
-		{
-			if (caster->_state.master != InvalidEntityID)
-			{
-				master = scene->getEntity(caster->_state.master);
-			}
-			else
-			{
-				master = nullptr;
-			}
-		}
+        EntityPtr master = caster;
+        if (caster->_state.etype == ENTITY_FLIGHT )
+        {
+            if (caster->_state.master != InvalidEntityID)
+            {
+                master = scene->getEntity(caster->_state.master);
+            }
+            else
+            {
+                master = nullptr;
+            }
+        }
 
-		if (!scene->searchMatched(master, caster,locked, skill.dict.aosDict))
-		{
-			break;
-		}
-		if (skill.dict.aosType == SKILL_LOCKED_ENTITY)
-		{
-			return locked;
-		}
-		if (skill.dict.aosType == SKILL_LOCKED_FREE)
-		{
-			double dist = getDistance(caster, locked);
-			if (dist > skill.dict.aoeDict.value1)
-			{
-				break;
-			}
-		}
-		foe = locked;
+        if (!scene->searchMatched(master, caster,locked, skill.dict.aosDict))
+        {
+            break;
+        }
+        if (skill.dict.aosType == SKILL_LOCKED_ENTITY)
+        {
+            return locked;
+        }
+        if (skill.dict.aosType == SKILL_LOCKED_FREE)
+        {
+            double dist = getDistance(caster, locked);
+            if (dist > skill.dict.aoeDict.value1)
+            {
+                break;
+            }
+        }
+        foe = locked;
         break;
     }
-	if (!foe && caster->_state.foe != InvalidEntityID)
-	{
-		caster->_state.foe = InvalidEntityID;
-		caster->_isStateDirty = true;
-	}
-	if (!foe)
-	{
-		auto foeList = scene->searchTarget(caster, caster->_move.position, EPosition(1, 1), skill.dict.aosDict);
-		if (!foeList.empty())
-		{
-			foe = foeList.front().first;
-			caster->_state.foe = foe->_state.eid;
-			caster->_isStateDirty = true;
-		}
-	}
-	return foe;
+    if (!foe && caster->_state.foe != InvalidEntityID)
+    {
+        caster->_state.foe = InvalidEntityID;
+        caster->_isStateDirty = true;
+    }
+    if (!foe)
+    {
+        auto foeList = scene->searchTarget(caster, caster->_move.position, EPosition(1, 1), skill.dict.aosDict);
+        if (!foeList.empty())
+        {
+            foe = foeList.front().first;
+            caster->_state.foe = foe->_state.eid;
+            caster->_isStateDirty = true;
+        }
+    }
+    return foe;
 };
 
 
 void Skill::update()
 {
-    double now = getFloatNowTime();
+
     auto scene = _scene.lock();
     if (! scene)
     {
@@ -99,33 +99,33 @@ void Skill::update()
         Entity & e = *pr.second;
 
         //check equipped skill 
-		for (auto iter = e._skillSys.dictEquippedSkills.begin(); iter != e._skillSys.dictEquippedSkills.end();)
-		{
-			if (e._skillSys.activeSkills.find(iter->first) == e._skillSys.activeSkills.end())
-			{
+        for (auto iter = e._skillSys.dictEquippedSkills.begin(); iter != e._skillSys.dictEquippedSkills.end();)
+        {
+            if (e._skillSys.activeSkills.find(iter->first) == e._skillSys.activeSkills.end())
+            {
                 if (!doSkill(scene, e._state.eid, iter->first, { 1,1 }, InvalidEntityID, false, true))
                 {
                     LOGE("Skill::update auto fill skill info error. skillid=" << iter->first);
                     iter = e._skillSys.dictEquippedSkills.erase(iter);
                     continue;
                 }
-			}
-			iter++;
-		}
+            }
+            iter++;
+        }
 
-		//check active skill 
-		//only this can erase iter.
+        //check active skill 
+        //only this can erase iter.
         EntitySkillInfo * skill = nullptr;
-		for (auto iter = e._skillSys.activeSkills.begin(); iter != e._skillSys.activeSkills.end();)
-		{
-			if (e._skillSys.dictEquippedSkills.find(iter->first) == e._skillSys.dictEquippedSkills.end())
-			{
+        for (auto iter = e._skillSys.activeSkills.begin(); iter != e._skillSys.activeSkills.end();)
+        {
+            if (e._skillSys.dictEquippedSkills.find(iter->first) == e._skillSys.dictEquippedSkills.end())
+            {
                 if (iter->second.activeState == ENTITY_SKILL_NONE)
                 {
                     iter = e._skillSys.activeSkills.erase(iter);
                     continue;
                 }
-			}
+            }
             if (getBitFlag(iter->second.dict.stamp, SKILL_NORMAL))
             {
                 e._skillSys.normalSkillID = iter->second.skillID;
@@ -138,8 +138,8 @@ void Skill::update()
             {
                 skill = &iter->second;
             }
-			iter++;
-		}
+            iter++;
+        }
 
         EntityPtr foe;
         if (skill)
@@ -160,7 +160,7 @@ void Skill::update()
             if (e._move.action == MOVE_ACTION_FOLLOW &&
                 distance > (std::max(skill->dict.aoeDict.value1, skill->dict.aoeDict.value2) + foe->_control.collision)*0.8)
             {
-				break;
+                break;
             }
 
             auto ret = scene->searchTarget(pr.second, e._move.position, foe->_move.position - e._move.position, skill->dict.aoeDict);
@@ -223,35 +223,35 @@ bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosi
         return false;
     }
 
-	EntitySkillInfo * skill = nullptr;
-	auto finder = e->_skillSys.activeSkills.find(skillID);
-	if (finder != e->_skillSys.activeSkills.end())
-	{
-		skill = &finder->second;
-	}
-	if (!skill)
-	{
-		auto dictSkill = DBDict::getRef().getOneKeyDictSkill(skillID);
-		if (!dictSkill.first)
-		{
-			LOGE("Skill::useSkill not found skill dict. casterID=" << casterID << ", skillID=" << skillID);
-			return false;
-		}
+    EntitySkillInfo * skill = nullptr;
+    auto finder = e->_skillSys.activeSkills.find(skillID);
+    if (finder != e->_skillSys.activeSkills.end())
+    {
+        skill = &finder->second;
+    }
+    if (!skill)
+    {
+        auto dictSkill = DBDict::getRef().getOneKeyDictSkill(skillID);
+        if (!dictSkill.first)
+        {
+            LOGE("Skill::useSkill not found skill dict. casterID=" << casterID << ", skillID=" << skillID);
+            return false;
+        }
 
-		auto inst = e->_skillSys.activeSkills.insert(std::make_pair(skillID, EntitySkillInfo()));
-		skill = &inst.first->second;
-		skill->skillID = skillID;
-		skill->activeState = ENTITY_SKILL_NONE;
-		skill->dict = dictSkill.second;
-	}
+        auto inst = e->_skillSys.activeSkills.insert(std::make_pair(skillID, EntitySkillInfo()));
+        skill = &inst.first->second;
+        skill->skillID = skillID;
+        skill->activeState = ENTITY_SKILL_NONE;
+        skill->dict = dictSkill.second;
+    }
     if (onlyFill)
     {
         return true;
     }
-	if (clientFoe != InvalidEntityID && autoFoe)
-	{
-		e->_state.eid = clientFoe;
-	}
+    if (clientFoe != InvalidEntityID && autoFoe)
+    {
+        e->_state.eid = clientFoe;
+    }
 
 
     return doSkill(scene, e, *skill, clientDst, autoFoe);
@@ -259,54 +259,54 @@ bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosi
 
 bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe)
 {
-	if (skill.activeState != ENTITY_SKILL_NONE )
-	{
+    if (skill.activeState != ENTITY_SKILL_NONE )
+    {
         LOGE("Skill::doSkill error. state not none . casterID="<< caster->_state.eid << ", skillID=" << skill.skillID 
-			<< ", state=" << skill.activeState << ", trace=" << proto4z_traceback());		return false;
-	}
+            << ", state=" << skill.activeState << ", trace=" << proto4z_traceback());        return false;
+    }
 
-	if (getBitFlag(skill.dict.stamp, SKILL_NORMAL))
-	{
-		caster->_skillSys.combating = true;
-		caster->_skillSys.normalSkillID = skill.skillID;
-	}
-	caster->_skillSys.readySkillID = skill.skillID;
+    if (getBitFlag(skill.dict.stamp, SKILL_NORMAL))
+    {
+        caster->_skillSys.combating = true;
+        caster->_skillSys.normalSkillID = skill.skillID;
+    }
+    caster->_skillSys.readySkillID = skill.skillID;
 
     auto foe = lockFoe(scene, caster, skill);
-	if (foe && getBitFlag(skill.dict.stamp, SKILL_NORMAL))
-	{
-		auto ret = scene->searchTarget(caster, caster->_move.position, foe->_move.position - caster->_move.position, skill.dict.aoeDict);
+    if (foe && getBitFlag(skill.dict.stamp, SKILL_NORMAL))
+    {
+        auto ret = scene->searchTarget(caster, caster->_move.position, foe->_move.position - caster->_move.position, skill.dict.aoeDict);
 
-		if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr, double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
-		{
-			if (caster->_move.action == MOVE_ACTION_FOLLOW)
-			{
-				scene->_move->doMove(caster->_state.eid, MOVE_ACTION_IDLE, caster->getSpeed(), foe->_state.eid, std::vector<EPosition>());
-			}
-		}
-		else if (caster->_move.action == MOVE_ACTION_IDLE)
-		{
-			scene->_move->doMove(caster->_state.eid, MOVE_ACTION_FOLLOW, caster->getSpeed(), foe->_state.eid, std::vector<EPosition>());
-			return true;
-		}
-	}
+        if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr, double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
+        {
+            if (caster->_move.action == MOVE_ACTION_FOLLOW)
+            {
+                scene->_move->doMove(caster->_state.eid, MOVE_ACTION_IDLE, caster->getSpeed(), foe->_state.eid, std::vector<EPosition>());
+            }
+        }
+        else if (caster->_move.action == MOVE_ACTION_IDLE)
+        {
+            scene->_move->doMove(caster->_state.eid, MOVE_ACTION_FOLLOW, caster->getSpeed(), foe->_state.eid, std::vector<EPosition>());
+            return true;
+        }
+    }
 
 
-	skill.activeCount++;
-	skill.lastActiveTime = getFloatSteadyNowTime();
+    skill.activeCount++;
+    skill.lastActiveTime = getFloatSteadyNowTime();
     skill.lastTriggerTime = skill.lastActiveTime;
-	skill.activeState = ENTITY_SKILL_PREFIX;
-	skill.activeFoeFirst = autoFoe ? 1: 0;
+    skill.activeState = ENTITY_SKILL_PREFIX;
+    skill.activeFoeFirst = autoFoe ? 1: 0;
     skill.activeDst = clientDst;
     if (autoFoe && foe)
     {
         skill.activeDst = foe->_move.position;
     }
 
-	scene->broadcast(UseSkillNotice(caster->_state.eid, skill));
+    scene->broadcast(UseSkillNotice(caster->_state.eid, skill));
 
     updateSkill(scene, caster, skill);
-	return true;
+    return true;
 }
 
 bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill)

@@ -158,10 +158,10 @@ public:
     {
         auto helper = buildHelper("STLogDBMgr");
         if (!helper) return false;
-		buildTable<LogChat>(helper);
-		buildTable<LogQuit>(helper);
-		buildTable<LogLogin>(helper);
-		return true;
+        buildTable<LogChat>(helper);
+        buildTable<LogQuit>(helper);
+        buildTable<LogLogin>(helper);
+        return true;
     }
 
 public:

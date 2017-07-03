@@ -84,13 +84,13 @@ summer.start()
 for i=1, 6 do
     local cur = 2
     cur = math.fmod (i, cur) + 1
-	local sID = summer.addConnect(config.docker[cur].clientPubHost, config.docker[cur].clientPubPort, nil, 0)
-	if sID == nil then
-		summer.logw("sID == nil when addConnect")
+    local sID = summer.addConnect(config.docker[cur].clientPubHost, config.docker[cur].clientPubPort, nil, 0)
+    if sID == nil then
+        summer.logw("sID == nil when addConnect")
     else
         summer.logi("new connect sID=" .. sID)
         _sessions[sID] = Session.new(sID, string.format("test%04d", i), "111222", string.format("nick%04d", i), 0)
-	end
+    end
 
 end
 

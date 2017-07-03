@@ -48,11 +48,11 @@ private:
     void onModuleLoad(bool success, const std::string & moduleName);
     void onModuleUnload(bool success, const std::string & moduleName);
 private:
-	void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-	void onChatResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
-	void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-	void onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
-	void onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onChatReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onChatResp(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 
 public:

@@ -52,7 +52,7 @@ static void checktab (lua_State *L, int arg, TabA *ta) {
 }
 
 
-#define aux_getn(L,n,ta)	(checktab(L, n, ta), luaL_len(L, n))
+#define aux_getn(L,n,ta)    (checktab(L, n, ta), luaL_len(L, n))
 
 
 #if defined(LUA_COMPAT_MAXN)

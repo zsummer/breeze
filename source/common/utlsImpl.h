@@ -535,46 +535,46 @@ inline double distLine(std::tuple<double, double> line1, std::tuple<double, doub
 }
 inline std::tuple<double, double> shortestLine(double linex1, double liney1, double linex2, double liney2, double cx, double cy)
 {
-	return shortestLine(std::tuple<double, double>(linex1, liney1), std::tuple<double, double>(linex2, liney2), std::tuple<double, double>(cx, cy));
+    return shortestLine(std::tuple<double, double>(linex1, liney1), std::tuple<double, double>(linex2, liney2), std::tuple<double, double>(cx, cy));
 }
 
 inline std::tuple<double, double> shortestLine(std::tuple<double, double> line1, std::tuple<double, double> line2, std::tuple<double, double> pos)
 {
-	const double prec = 0.001;
-	std::tuple<double, double> ret;
-	double distl1 = getDistance(line1, pos);
-	double distl2 = getDistance(line2, pos);
-	if (distl1 < prec)
-	{
-		return line1;
-	}
-	if (distl2 < prec)
-	{
-		return line2;
-	}
+    const double prec = 0.001;
+    std::tuple<double, double> ret;
+    double distl1 = getDistance(line1, pos);
+    double distl2 = getDistance(line2, pos);
+    if (distl1 < prec)
+    {
+        return line1;
+    }
+    if (distl2 < prec)
+    {
+        return line2;
+    }
 
-	double x1 = dot(line2 - line1, pos - line1); 
-	if (std::abs(x1) < prec)
-	{
-		return line1;
-	}
-	double x2 = dot(line1 - line2, pos - line2);
-	if (std::abs(x2) < prec)
-	{
-		return line2;
-	}
-	if (x2 > 0.0 && x1 > 0.0)
-	{
-		double distL = distLine(line1, line2, pos);
-		double distL1 = getDistance(line1, pos);
-		double dist = std::sqrt(distL1*distL1 - distL*distL);
-		return normalize(line2 - line1)*dist;
-	}
-	if (x1 < 0)
-	{
-		return line1;
-	}
-	return line2;
+    double x1 = dot(line2 - line1, pos - line1); 
+    if (std::abs(x1) < prec)
+    {
+        return line1;
+    }
+    double x2 = dot(line1 - line2, pos - line2);
+    if (std::abs(x2) < prec)
+    {
+        return line2;
+    }
+    if (x2 > 0.0 && x1 > 0.0)
+    {
+        double distL = distLine(line1, line2, pos);
+        double distL1 = getDistance(line1, pos);
+        double dist = std::sqrt(distL1*distL1 - distL*distL);
+        return normalize(line2 - line1)*dist;
+    }
+    if (x1 < 0)
+    {
+        return line1;
+    }
+    return line2;
 }
 
 

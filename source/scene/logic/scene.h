@@ -91,7 +91,7 @@ public:
     //org起点, vt单位向量, isRect是否为矩形, value1向量单位, value2 矩形前端垂直宽度或者扇形弧度, value3矩形近端垂直宽度或者忽略,  compensate前向偏移原点并修正value1, clip前向裁剪
     std::vector<std::pair<EntityPtr, double>> searchTarget(EPosition org, EPosition vt, ui16 isRect, double value1, double value2, double value3, double compensate, double clip);
     //根据AOESearch中的etype字段和filter过滤方法进行检测当前目标实体是否匹配
-	bool searchMatched(const EntityPtr & master, const EntityPtr & caster, const EntityPtr & dst, const AOESearch & search);
+    bool searchMatched(const EntityPtr & master, const EntityPtr & caster, const EntityPtr & dst, const AOESearch & search);
 
     void onSceneInit();
     void onAddEntity(EntityPtr entity);
@@ -177,11 +177,11 @@ void Scene::broadcast(const MSG &msg, ServiceID without, bool withScript)
             }
             SessionManager::getRef().sendSessionData(user.second->_clientSessionID, ws.getStream(), ws.getStreamLen());
         }
-		if (withScript)
-		{
-			_script->protoSync(MSG::getProtoName(), ws.pickStream());
-			return;
-		}
+        if (withScript)
+        {
+            _script->protoSync(MSG::getProtoName(), ws.pickStream());
+            return;
+        }
 
     }
     catch (const std::exception & e)

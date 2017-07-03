@@ -300,12 +300,12 @@ void AvatarMgrService::onClientAuthReqFromDB(zsummer::proto4z::ReadStream & rs, 
     resp.retCode = sqlResp.retCode != EC_SUCCESS ? sqlResp.retCode : (dbResult.getErrorCode() != QEC_SUCCESS ? EC_DB_ERROR : EC_SUCCESS);
     if (sqlResp.retCode == EC_SUCCESS && dbResult.getErrorCode() == QEC_SUCCESS )
     {
-		auto asp = getAccountStatus(req.account);
-		if (!asp)
-		{
-			asp = std::make_shared<AccountStatus>();
-			_accountStatus[req.account] = asp;
-		}
+        auto asp = getAccountStatus(req.account);
+        if (!asp)
+        {
+            asp = std::make_shared<AccountStatus>();
+            _accountStatus[req.account] = asp;
+        }
         while (dbResult.haveRow())
         {
             AvatarPreview pre;
@@ -445,28 +445,28 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
         LoadService notice(STAvatar, req.avatarID, status._preview.avatarName, status._clientDockerID, status._clientSessionID);
         Docker::getRef().sendViaDockerID(dockerID, notice);
 
-		if (true)
-		{
-			LogLogin ll;
-			ll.avatarID = req.avatarID;
-			auto ptr = getAvatarStatus(req.avatarID);
-			if (ptr)
-			{
-				ll.avatarName = ptr->_preview.avatarName;
-			}
-			ll.logTime = getNowTime();
-			ll.id = 0;
-			for (auto & kv : req.di)
-			{
-				ll.deviceInfo += kv.first;
-				ll.deviceInfo += ":";
-				ll.deviceInfo += kv.second;
-				ll.deviceInfo += ",  ";
-			}
+        if (true)
+        {
+            LogLogin ll;
+            ll.avatarID = req.avatarID;
+            auto ptr = getAvatarStatus(req.avatarID);
+            if (ptr)
+            {
+                ll.avatarName = ptr->_preview.avatarName;
+            }
+            ll.logTime = getNowTime();
+            ll.id = 0;
+            for (auto & kv : req.di)
+            {
+                ll.deviceInfo += kv.first;
+                ll.deviceInfo += ":";
+                ll.deviceInfo += kv.second;
+                ll.deviceInfo += ",  ";
+            }
 
-			DBQueryReq req(ll.getDBInsert());
-			toService(STLogDBMgr, req, NULL);
-		}
+            DBQueryReq req(ll.getDBInsert());
+            toService(STLogDBMgr, req, NULL);
+        }
 
 
     }
@@ -477,28 +477,28 @@ void AvatarMgrService::onAttachAvatarReq(const Tracing & trace, zsummer::proto4z
         SwitchServiceClientNotice change(STAvatar, req.avatarID, status._clientDockerID, status._clientSessionID);
         Docker::getRef().broadcastToDockers(change, true);
 
-		if (true)
-		{
-			LogLogin ll;
-			ll.avatarID = req.avatarID;
-			auto ptr = getAvatarStatus(req.avatarID);
-			if (ptr)
-			{
-				ll.avatarName = ptr->_preview.avatarName;
-			}
-			ll.logTime = getNowTime();
-			ll.id = 0;
-			for (auto & kv : req.di)
-			{
-				ll.deviceInfo += kv.first;
-				ll.deviceInfo += ":";
-				ll.deviceInfo += kv.second;
-				ll.deviceInfo += ",  ";
-			}
+        if (true)
+        {
+            LogLogin ll;
+            ll.avatarID = req.avatarID;
+            auto ptr = getAvatarStatus(req.avatarID);
+            if (ptr)
+            {
+                ll.avatarName = ptr->_preview.avatarName;
+            }
+            ll.logTime = getNowTime();
+            ll.id = 0;
+            for (auto & kv : req.di)
+            {
+                ll.deviceInfo += kv.first;
+                ll.deviceInfo += ":";
+                ll.deviceInfo += kv.second;
+                ll.deviceInfo += ",  ";
+            }
 
-			DBQueryReq req(ll.getDBInsert());
-			toService(STLogDBMgr, req, NULL);
-		}
+            DBQueryReq req(ll.getDBInsert());
+            toService(STLogDBMgr, req, NULL);
+        }
 
     }
     else

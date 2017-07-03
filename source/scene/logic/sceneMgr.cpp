@@ -216,13 +216,13 @@ bool SceneMgr::startWorldConnect()
     options._sessionPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
     options._onSessionPulse = [](TcpSessionPtr session)
     {
-		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0  )
-		{
-			LOGE("SceneMgr check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
-			session->close();
-			return;
-		}
-		ScenePulse pulse;
+        if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0  )
+        {
+            LOGE("SceneMgr check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
+            session->close();
+            return;
+        }
+        ScenePulse pulse;
         WriteStream ws(pulse.getProtoID());
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
@@ -276,12 +276,12 @@ void SceneMgr::event_onWorldLinked(TcpSessionPtr session)
     session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
     session->getOptions()._reconnects = 0;
-	SceneKnock notice;
+    SceneKnock notice;
     notice.lineID = ServerConfig::getRef().getSceneConfig()._lineID;
-	notice.pubHost = ServerConfig::getRef().getSceneConfig()._clientPubHost;
-	notice.pubPort = ServerConfig::getRef().getSceneConfig()._clientListenPort;
-	sendViaSessionID(session->getSessionID(), notice);
-	LOGI("event_onWorldLinked cID=" << session->getSessionID() );
+    notice.pubHost = ServerConfig::getRef().getSceneConfig()._clientPubHost;
+    notice.pubPort = ServerConfig::getRef().getSceneConfig()._clientListenPort;
+    sendViaSessionID(session->getSessionID(), notice);
+    LOGI("event_onWorldLinked cID=" << session->getSessionID() );
 }
 
 

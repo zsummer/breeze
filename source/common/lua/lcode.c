@@ -30,10 +30,10 @@
 
 
 /* Maximum number of registers in a Lua function */
-#define MAXREGS		250
+#define MAXREGS        250
 
 
-#define hasjumps(e)	((e)->t != (e)->f)
+#define hasjumps(e)    ((e)->t != (e)->f)
 
 
 static int tonumeral(expdesc *e, TValue *v) {

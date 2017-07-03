@@ -61,7 +61,7 @@ bool Scene::initScene(SCENE_TYPE sceneType, MapID mapID)
     _sceneType = sceneType;
     _mapID = mapID;
     _sceneStatus = SCENE_STATE_ACTIVE;
-	_lastEID = ServerConfig::getRef().getSceneConfig()._lineID * 1000 + 1000;
+    _lastEID = ServerConfig::getRef().getSceneConfig()._lineID * 1000 + 1000;
 
     _startTime = getFloatSteadyNowTime();
     _endTime = getFloatSteadyNowTime() + 600;
@@ -167,10 +167,10 @@ void Scene::addEntity(EntityPtr entity)
     AddEntityNotice notice;
     notice.syncs.push_back(entity->getClientSyncData());
     broadcast(notice, entity->_state.avatarID);
-	EntityScriptNotice sn;
-	sn.controls.push_back(entity->_control);
-	sn.skills.push_back(entity->_skillSys);
-	broadcast(notice, entity->_state.avatarID);
+    EntityScriptNotice sn;
+    sn.controls.push_back(entity->_control);
+    sn.skills.push_back(entity->_skillSys);
+    broadcast(notice, entity->_state.avatarID);
     onAddEntity(entity);
 }
 
@@ -416,33 +416,33 @@ std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, 
 
 bool Scene::searchMatched(const EntityPtr & master, const EntityPtr & caster, const EntityPtr & dst, const AOESearch & search)
 {
-	if (getBitFlag(search.filter, FILTER_SELF) && master && master->_state.eid == dst->_state.eid)
-	{
-		return true;
-	}
+    if (getBitFlag(search.filter, FILTER_SELF) && master && master->_state.eid == dst->_state.eid)
+    {
+        return true;
+    }
 
-	if (search.etype != ENTITY_NONE && search.etype != dst->_state.etype)
-	{
-		return false;
-	}
+    if (search.etype != ENTITY_NONE && search.etype != dst->_state.etype)
+    {
+        return false;
+    }
 
-	if (getBitFlag(search.filter, FILTER_OTHER_FRIEND) && caster->_state.camp == dst->_state.camp)
-	{
-		if (master && master->_state.eid == dst->_state.eid)
-		{
-			return false;
-		}
-		return true;
-	}
-	if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != dst->_state.camp && dst->_state.camp < ENTITY_CAMP_NEUTRAL)
-	{
-		return true;
-	}
-	if (getBitFlag(search.filter, FILTER_NEUTRAL_CAMP) && dst->_state.camp > ENTITY_CAMP_NEUTRAL)
-	{
-		return true;
-	}
-	return false;
+    if (getBitFlag(search.filter, FILTER_OTHER_FRIEND) && caster->_state.camp == dst->_state.camp)
+    {
+        if (master && master->_state.eid == dst->_state.eid)
+        {
+            return false;
+        }
+        return true;
+    }
+    if (getBitFlag(search.filter, FILTER_ENEMY_CAMP) && caster->_state.camp != dst->_state.camp && dst->_state.camp < ENTITY_CAMP_NEUTRAL)
+    {
+        return true;
+    }
+    if (getBitFlag(search.filter, FILTER_NEUTRAL_CAMP) && dst->_state.camp > ENTITY_CAMP_NEUTRAL)
+    {
+        return true;
+    }
+    return false;
 }
 
 
@@ -451,33 +451,33 @@ std::vector<std::pair<EntityPtr, double>> Scene::searchTarget(EntityPtr caster, 
     EntityPtr master = caster;
     if (caster->_state.etype == ENTITY_FLIGHT)
     {
-		if (caster->_state.master != InvalidEntityID)
-		{
-			master = getEntity(caster->_state.master);
-		}
-		else
-		{
-			master = nullptr;
-		}
+        if (caster->_state.master != InvalidEntityID)
+        {
+            master = getEntity(caster->_state.master);
+        }
+        else
+        {
+            master = nullptr;
+        }
     }
 
     auto ret = searchTarget(org, vt, search.isRect,
         search.value1, search.value2, search.value3, search.compensate, search.clip);
-	if (getBitFlag(search.filter, FILTER_SELF) && master)
-	{
-		if (std::find_if(ret.begin(), ret.end(), [&master](const std::pair<EntityPtr, double> & pr) {return pr.first->_state.eid == master->_state.eid; })
-			 == ret.end())
-		{
-			ret.push_back(std::make_pair(master, 0));
-		}
-	}
+    if (getBitFlag(search.filter, FILTER_SELF) && master)
+    {
+        if (std::find_if(ret.begin(), ret.end(), [&master](const std::pair<EntityPtr, double> & pr) {return pr.first->_state.eid == master->_state.eid; })
+             == ret.end())
+        {
+            ret.push_back(std::make_pair(master, 0));
+        }
+    }
     auto beginIter = std::remove_if(ret.begin(), ret.end(), [this, &search, &master, &caster](const std::pair<EntityPtr, double> & e)
     {
-		if (searchMatched(master, caster, e.first, search))
-		{
-			return false;
-		}
-		return true;
+        if (searchMatched(master, caster, e.first, search))
+        {
+            return false;
+        }
+        return true;
     });
     ret.erase(beginIter, ret.end());
     if (ret.size()> search.limitEntitys)

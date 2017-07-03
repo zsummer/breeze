@@ -33,7 +33,7 @@ public:
 public:
     void init(std::weak_ptr<Scene> scene);
     void update();
-	void protoSync(const std::string & protoName, const std::string & data);
+    void protoSync(const std::string & protoName, const std::string & data);
     template<class Proto>
     void protoSync(const Proto & proto);
 };

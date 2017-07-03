@@ -208,11 +208,11 @@ bool ServerConfig::parseDB(std::string configName)
     }
     luaL_openlibs(L);  /* open libraries */
     lua_atpanic(L, panichHandler);
-	if (luaL_loadfile(L, configName.c_str()))
-	{
-		LOGE("ServerConfig can't load  file [" << configName << "]");
-		return false;
-	}
+    if (luaL_loadfile(L, configName.c_str()))
+    {
+        LOGE("ServerConfig can't load  file [" << configName << "]");
+        return false;
+    }
     if (lua_pcall(L, 0, LUA_MULTRET, 0))
     {
         LOGE("ServerConfig can't pcall  file [" << configName << "]");

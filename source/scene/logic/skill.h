@@ -32,12 +32,12 @@ public:
 
     //普攻的寻敌
     EntityPtr lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo & skill);
-	bool doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & clientDst = { 1, 1 }, 
+    bool doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & clientDst = { 1, 1 }, 
         EntityID clientFoe = InvalidEntityID, bool autoFoe = true, bool onlyFill = false);
-	bool doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe);
+    bool doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe);
 
-	bool updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
-	bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
+    bool updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
+    bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
     
 
     bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, std::vector<std::pair<EntityPtr, double>> & targets);
