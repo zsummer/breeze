@@ -167,7 +167,7 @@ void Skill::update()
 
             if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr, double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
             {
-                if (e._move.action == MOVE_ACTION_FOLLOW)
+                if (e._move.action != MOVE_ACTION_IDLE)
                 {
                     scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                 }
@@ -416,12 +416,14 @@ bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill)
 bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill,  std::vector<std::pair<EntityPtr, double>> & targets)
 {
     SceneEventNotice notice;
+    caster->_skillSys.breakoffAttackTime = getFloatSteadyNowTime();
     for (auto target : targets)
     {
         if (target.first->_state.state != ENTITY_STATE_ACTIVE)
         {
             continue;
         }
+        target.first->_skillSys.breakoffAttackTime = getFloatSteadyNowTime();
         //process harm     
         double harm = caster->_props.attack;  
         target.first->_state.curHP -= harm;

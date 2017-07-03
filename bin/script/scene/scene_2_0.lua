@@ -72,7 +72,7 @@ function onUpdate()
                 local dist = getDistance(e.control.spawnpoint, e.mv.position)
                 local rpos = {e.control.spawnpoint.x, e.control.spawnpoint.y}
                 if dist < (PATH_PRECISION + Dia/10) then
-                    rpos = getFarPos(rpos, {OriginPos[1] - e.control.spawnpoint.x, OriginPos[2] - e.control.spawnpoint.y}, Dia)
+                    rpos = getFarPos(rpos, getVector2(e.control.spawnpoint, OriginPos), Dia)
                     dump(rpos)
                 end
                 Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_PATH, 0, { rpos})

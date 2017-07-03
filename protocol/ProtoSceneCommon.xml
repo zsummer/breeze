@@ -268,6 +268,7 @@
         <member name="combating"  type="ui16" desc="战斗中"/>
         <member name="readySkillID"  type="ui64" desc=""/>
         <member name="normalSkillID"  type="ui64" desc=""/>
+        <member name="breakoffAttackTime"  type="double" desc=""/>
     </proto>
     <array name="EntitySkillSystemArray" type="EntitySkillSystem" desc="" />
 

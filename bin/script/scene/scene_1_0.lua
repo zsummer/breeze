@@ -2,11 +2,11 @@
 --process msg
 require("scene")
 
-function addMonster(pos)
-    local prop = {hp=1000, attack=100, attackQuick=1, moveSpeed=8}
+function addMonster(pos, camp, name)
+    local prop = {hp=800, attack=200, attackQuick=1, moveSpeed=8}
     local state = {modelID=math.random(1,20), 
                     avatarName="monster", 
-                    camp=Proto4z.ENTITY_CAMP_BLUE +100, 
+                    camp= camp or  (Proto4z.ENTITY_CAMP_BLUE +100) , 
                     maxHP=prop.hp, 
                     curHP=prop.hp, 
                     etype=Proto4z.ENTITY_AI, 
@@ -22,6 +22,11 @@ function addMonster(pos)
     return Scene.addEntity(propData, stateData, skillData, ctlData)
 end
 
+
+
+
+
+
 function fillObstacle()
     Scene.cleanObstacle()
     -- area map
@@ -34,9 +39,9 @@ function fillObstacle()
     Scene.addObstacle({ {-8.417503,22.44292}, {-4.417503,22.44292}, {-4.417503,26.44292}, {-8.417503,26.44292} })
     Scene.addObstacle({ {-46.01012,60.03914}, {-40.01012,60.03914}, {-40.01012,66.03914}, {-46.01012,66.03914} })
     -- right birth area guard
-    Scene.addObstacle({ {71,42.4}, {82.1,28.5}, {108.29,5}, {134,70}, {103,125}, {82.7,97}, {70.5,84.6}, {63,62} })
+    --Scene.addObstacle({ {71,42.4}, {82.1,28.5}, {108.29,5}, {134,70}, {103,125}, {82.7,97}, {70.5,84.6}, {63,62} })
     -- left birth area guard 
-    Scene.addObstacle({ {-90.3,5.4}, {-48.2,30}, {-36,43.3}, {-27.5,62.5}, {-37,83.8}, {-49,95.6}, {-96.55,118.5}, {-103,45} })
+    --Scene.addObstacle({ {-90.3,5.4}, {-48.2,30}, {-36,43.3}, {-27.5,62.5}, {-37,83.8}, {-49,95.6}, {-96.55,118.5}, {-103,45} })
     --right build 
     Scene.addObstacle({ {51.05,70.14}, {53.34,64.0}, {51.52,55.37}, {71.03,42.33}, {64.90,62.80}, {71.68,84.72} })
     Scene.addObstacle({ {-17,57.58},  {-21.23,61.90}, {-18.43,70},  {-37.45,86.0}, {-31.0,63.70}, {-36.25,42.88} })
@@ -45,8 +50,50 @@ function fillObstacle()
 end
 
 monster = {}
+walker = {}
 entitys = {}
 
+campWaypoints = {
+    [Proto4z.ENTITY_CAMP_BLUE] = {{86.8,90.4}, {44.7,95}, {-20.7,95},  {-52.7,90}},
+    [Proto4z.ENTITY_CAMP_RED] = {{-52.7,90}, {-20.7,95}, {44.7,95}, {86.8,90.4}}
+}
+
+local lastSpawnWalker = 0
+local lastWalkerback = 0
+function updateWalker()
+    local now = Scene.now()
+    if now - lastSpawnWalker > 30 then
+        lastSpawnWalker = now
+        local eid = addMonster({x=campWaypoints[Proto4z.ENTITY_CAMP_BLUE][1][1], y=campWaypoints[Proto4z.ENTITY_CAMP_BLUE][1][2]}, Proto4z.ENTITY_CAMP_BLUE)
+        walker[eid] = entitys[eid]
+        eid = addMonster({x=campWaypoints[Proto4z.ENTITY_CAMP_RED][1][1], y=campWaypoints[Proto4z.ENTITY_CAMP_RED][1][2]}, Proto4z.ENTITY_CAMP_RED)
+        walker[eid] = entitys[eid]
+    end
+    local removes = {}
+    for k,e in pairs(walker) do
+        if e.state.state ~= Proto4z.ENTITY_STATE_ACTIVE then
+            removes[k] = 1
+        else 
+            if now - lastWalkerback > 3.0 then
+                lastWalkerback = now
+                if  e.mv.action == Proto4z.MOVE_ACTION_IDLE or e.mv.action == Proto4z.MOVE_ACTION_FOLLOW then
+                    local way = Scene.wayFinding(e.mv.position, campWaypoints[e.state.camp])
+                    Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_FORCE_PATH, 0, {way[1]})
+                end
+            elseif e.mv.action == Proto4z.MOVE_ACTION_IDLE  and e.skill  and  now - e.skill.breakoffAttackTime  > 3.0  then
+                local way = Scene.wayFinding(e.mv.position, campWaypoints[e.state.camp])
+                if not way or not next(way) then
+                    removes[k] = 1
+                else
+                    Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_PATH, 0, way)
+                end
+            end
+        end
+    end
+    for k,_ in pairs(removes) do
+        Scene.removeEntity(k)
+    end
+end
 
 function fillMonster()
     local sps = {{51.92,80.98 },
@@ -90,6 +137,8 @@ function onUpdate()
         _sceneInit = true
         sceneInit()
     end
+    --updateWalker()
+
     for eid, e in pairs(monster) do
         if type(e) == "table" and e.control then
             local dist = getDistance(e.control.spawnpoint, e.mv.position)
@@ -136,6 +185,7 @@ function onRemoveEntityNotice(msg)
         logd("onRemoveEntityNotice sceneID=" .. Scene.sceneID .. ", remove eid=" .. eid)
         monster[eid] = nil
         entitys[eid] = nil
+        walker[eid] = nil
     end
 end
 

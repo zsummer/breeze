@@ -11,15 +11,22 @@ static void flushSceneToScript(Scene * scene, lua_State * L);
 static void safeDoString(ScenePtr scene, lua_State * L, const std::string & lua);
 
 static Scene* fetchScenePtr(lua_State * L);
+static EntityPtr fetchEntityPtr(lua_State * L, Scene * scene, int pos);
+static EPosition fetchEPosition(lua_State * L, int pos);
+static EPositionArray fetchWaypoints(lua_State * L, int pos);
+static void pushEPosition(lua_State * L, const EPosition& pos);
+static void pushWaypoints(lua_State * L, const EPositionArray& ways);
+
+
 
 static int lAddEntity(lua_State * L);
-
 static int lRemoveEntity(lua_State * L);
-
 static int lDoMove(lua_State * L);
 static int lAddObstacle(lua_State * L);
 static int lCleanObstacle(lua_State * L);
 static int lProcessObstacle(lua_State * L);
+static int lProcessObstacle(lua_State * L);
+static int lWayFinding(lua_State * L);
 
 static int lNow(lua_State * L)
 {
@@ -39,6 +46,7 @@ static luaL_Reg SceneReg[] = {
     { "addObstacle", lAddObstacle },
     { "cleanObstacle", lCleanObstacle },
     { "processObstacle", lProcessObstacle },
+    { "wayFinding", lWayFinding },
     { "now", lNow },
     { "sysNow", lSysNow },
     { NULL, NULL }
@@ -249,7 +257,7 @@ static void safeDoString(ScenePtr scene, lua_State * L, const std::string & lua)
     {
         const char *msg = lua_tostring(L, -1);
         if (msg == NULL) msg = "(error object is not a string)";
-        LOGW("load scene script error. scene Type=" << (int)scene->getSceneType() << ", scene map id=" << scene->getMapID() << ", error=" << msg);
+        LOGE("load scene script error. scene Type=" << (int)scene->getSceneType() << ", scene map id=" << scene->getMapID() << ", error=" << msg);
         lua_pop(L, 1);
     }
 }
@@ -277,6 +285,95 @@ static Scene* fetchScenePtr(lua_State * L)
     lua_settop(L, top);
     return scene;
 }
+
+
+static EntityPtr fetchEntityPtr(lua_State * L, Scene * scene, int pos)
+{
+    if (!lua_isnumber(L, pos))
+    {
+        return nullptr;
+    }
+    EntityID eid = (EntityID) luaL_checknumber(L, pos);
+    return scene->getEntity(eid);
+}
+
+static EPosition fetchEPosition(lua_State * L, int pos)
+{
+    double x = 0;
+    double y = 0;
+    int top = lua_gettop(L);
+    if (!lua_istable(L, pos))
+    {
+        return EPosition();
+    }
+
+    if (lua_geti(L, pos, 1) != LUA_TNUMBER)
+    {
+        lua_pop(L, 1);
+        if (lua_getfield(L, pos, "x") != LUA_TNUMBER)
+        {
+            lua_pop(L, 1);
+            return EPosition();
+        }
+    }
+    x = luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+
+    if (lua_geti(L, pos, 2) != LUA_TNUMBER)
+    {
+        lua_pop(L, 1);
+        if (lua_getfield(L, pos, "y") != LUA_TNUMBER)
+        {
+            lua_pop(L, 1);
+            return EPosition();
+        }
+    }
+    y = luaL_checknumber(L, -1);
+    lua_pop(L, 1);
+    return EPosition(x, y);
+}
+
+static EPositionArray fetchWaypoints(lua_State * L, int pos)
+{
+    EPositionArray waypoints;
+    if (!lua_istable(L, pos))
+    {
+        return waypoints;
+    }
+
+    lua_pushnil(L);
+    while (lua_next(L, pos) != 0)
+    {
+        int ptpos = lua_gettop(L);
+        if (lua_istable(L, ptpos))
+        {
+            waypoints.push_back(fetchEPosition(L, ptpos));
+        }
+        lua_pop(L, 1);
+    }
+    return waypoints;
+}
+
+static void pushEPosition(lua_State * L, const EPosition& pos)
+{
+    lua_newtable(L);
+    lua_pushnumber(L, pos.x);
+    lua_seti(L, -2, 1);
+    lua_pushnumber(L, pos.y);
+    lua_seti(L, -2, 2);
+}
+static void pushWaypoints(lua_State * L, const EPositionArray& ways)
+{
+    lua_newtable(L);
+    for (size_t i = 0; i < ways.size(); i++)
+    {
+        pushEPosition(L, ways[i]);
+        lua_seti(L, -2, i);
+    }
+}
+
+
+
 
 static int lAddEntity(lua_State * L)
 {
@@ -434,19 +531,16 @@ static int lDoMove(lua_State * L)
     }
 
     int top = lua_gettop(L);
-    ui64 eid;
+
     unsigned short  action;
     double speed;
     ui64 follow;
     EPositionArray waypoints;
-
-    eid = (ui64)luaL_checknumber(L, 1);
     action = (unsigned short)luaL_checknumber(L, 2);
-
-    auto entity = scene->getEntity(eid);
+    auto entity = fetchEntityPtr(L, scene, 1);
     if (!entity)
     {
-        LOGE("Script lDoMove  not found entity eid=" << eid);
+        LOGE("Script lDoMove  not found entity ");
         return 0;
     }
 
@@ -455,56 +549,21 @@ static int lDoMove(lua_State * L)
     {
         speed = entity->getSpeed();
         follow = (ui64)luaL_checknumber(L, 3);
-        if (lua_istable(L, 4))
-        {
-            lua_settop(L, 4);
-            lua_pushnil(L);
-            while (lua_next(L, 4) != 0)
-            {
-                EPosition pos;
-                lua_geti(L, 6, 1);
-                pos.x = luaL_checknumber(L, 7);
-                lua_pop(L, 1);
-                lua_geti(L, 6, 2);
-                pos.y = luaL_checknumber(L, 7);
-                waypoints.push_back(pos);
-                lua_pop(L, 1);
-                lua_settop(L, 5);
-            }
-        }
+        waypoints = fetchWaypoints(L, 4);
     }
     else if (top == 5)
     {
         speed = luaL_checknumber(L, 3);
         follow = (ui64)luaL_checknumber(L, 4);
-        if (lua_istable(L, 5))
-        {
-            lua_settop(L, 5);
-            lua_pushnil(L);
-            while (lua_next(L, 5) != 0)
-            {
-                EPosition pos;
-                lua_geti(L, 7, 1);
-                pos.x = luaL_checknumber(L, 8);
-                lua_pop(L, 1);
-                lua_geti(L, 7, 2);
-                pos.y = luaL_checknumber(L, 8);
-                waypoints.push_back(pos);
-                lua_pop(L, 1);
-                lua_settop(L, 6);
-            }
-        }
+        waypoints = fetchWaypoints(L, 5);
     }
     else
     {
         LOGE("Script lDoMove  lua_gettop(L)=" << lua_gettop(L));
         return 0;
     }
-
-
-    scene->_move->doMove(eid, (MOVE_ACTION)action, speed, follow, waypoints);
-
-
+    scene->_move->doMove(entity->_state.eid, (MOVE_ACTION)action, speed, follow, waypoints);
+    lua_pushboolean(L, 1);
     return 1;
 }
 
@@ -526,24 +585,16 @@ static int lAddObstacle(lua_State * L)
         LOGE("lDoMove fetchScenePtr error");
         return 0;
     }
-    lua_settop(L, 1);
-    lua_pushnil(L);
-    std::vector<RVO::Vector2>  ob;
-    while (lua_next(L, 1) != 0)
+    auto waypoints = fetchWaypoints(L, 1);
+    std::vector<RVO::Vector2> obs;
+    for (auto & pt : waypoints)
     {
-        RVO::Vector2 v;
-        lua_geti(L, 3, 1);
-        v.x(luaL_checknumber(L, 4));
-        lua_pop(L, 1);
-        lua_geti(L, 3, 2);
-        v.y(luaL_checknumber(L, 4));
-        lua_pop(L, 1);
-        ob.push_back(v);
-        lua_pop(L, 1);
+        obs.push_back(toRVOVector2(pt));
     }
-    scene->_move->addObstacle(ob);
+    scene->_move->addObstacle(obs);
     return 0;
 }
+
 static int lCleanObstacle(lua_State * L)
 {
     Scene * scene = fetchScenePtr(L);
@@ -568,6 +619,65 @@ static int lProcessObstacle(lua_State * L)
     return 0;
 }
 
+static int lWayFinding(lua_State * L)
+{
+    Scene * scene = fetchScenePtr(L);
+    if (!scene)
+    {
+        LOGE("lWayFinding fetchScenePtr error");
+        return 0;
+    }
+
+    if (!lua_istable(L, 1))
+    {
+        LOGE("lWayFinding not found org pos");
+        return 0;
+    }
+    if (!lua_istable(L, 2))
+    {
+        LOGE("lWayFinding not found waypoints");
+        return 0;
+    }
+    EPosition org = fetchEPosition(L, 1);
+    EPositionArray ways = fetchWaypoints(L, 2);
+    if (ways.empty())
+    {
+        LOGE("lWayFinding waypoints empty.");
+        return 0;
+    }
+    EPositionArray fdways;
+    if (ways.size() == 1)
+    {
+        fdways = ways;
+    }
+    else
+    {
+        double dist = 1E100;
+        EPosition fwp;
+        size_t index = 0;
+        for (size_t i = 0; i< ways.size() -1; i++)
+        {
+            EPosition spt = toEPosition(shortestLine(ways[i].x, ways[i].y, ways[i + 1].x, ways[i + 1].y, org.x, org.y));
+            double sdist = getDistance(spt, org);
+            if (sdist < dist)
+            {
+                fwp = spt;
+                dist = sdist;
+                index = i;
+            }
+        }
+        if (getDistance(ways[index+1], fwp) > 1)
+        {
+            fdways.push_back(fwp);
+        }
+        for (size_t i = index+1; i < ways.size(); i++)
+        {
+            fdways.push_back(ways[i]);
+        }
+    }
+    pushWaypoints(L, fdways);
+    return 1;
+}
 
 
 

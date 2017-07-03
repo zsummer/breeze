@@ -295,6 +295,7 @@ Proto4z.EntitySkillSystem[4] = {name="dictEquippedSkills", type="EntityEquippedS
 Proto4z.EntitySkillSystem[5] = {name="combating", type="ui16" } --战斗中 
 Proto4z.EntitySkillSystem[6] = {name="readySkillID", type="ui64" }  
 Proto4z.EntitySkillSystem[7] = {name="normalSkillID", type="ui64" }  
+Proto4z.EntitySkillSystem[8] = {name="breakoffAttackTime", type="double" }  
  
 Proto4z.EntitySkillSystemArray = {}  
 Proto4z.EntitySkillSystemArray.__protoName = "EntitySkillSystemArray" 

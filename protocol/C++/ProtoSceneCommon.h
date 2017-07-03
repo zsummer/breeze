@@ -931,14 +931,16 @@ struct EntitySkillSystem //EntitySkillSystem
     unsigned short combating; //战斗中  
     unsigned long long readySkillID;  
     unsigned long long normalSkillID;  
+    double breakoffAttackTime;  
     EntitySkillSystem() 
     { 
         eid = 0; 
         combating = 0; 
         readySkillID = 0; 
         normalSkillID = 0; 
+        breakoffAttackTime = 0.0; 
     } 
-    EntitySkillSystem(const unsigned long long & eid, const EntitySkillInfoMap & activeSkills, const EntityBuffInfoMap & activeBuffs, const EntityEquippedSkillMap & dictEquippedSkills, const unsigned short & combating, const unsigned long long & readySkillID, const unsigned long long & normalSkillID) 
+    EntitySkillSystem(const unsigned long long & eid, const EntitySkillInfoMap & activeSkills, const EntityBuffInfoMap & activeBuffs, const EntityEquippedSkillMap & dictEquippedSkills, const unsigned short & combating, const unsigned long long & readySkillID, const unsigned long long & normalSkillID, const double & breakoffAttackTime) 
     { 
         this->eid = eid; 
         this->activeSkills = activeSkills; 
@@ -947,6 +949,7 @@ struct EntitySkillSystem //EntitySkillSystem
         this->combating = combating; 
         this->readySkillID = readySkillID; 
         this->normalSkillID = normalSkillID; 
+        this->breakoffAttackTime = breakoffAttackTime; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntitySkillSystem & data) 
@@ -958,6 +961,7 @@ inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStrea
     ws << data.combating;  
     ws << data.readySkillID;  
     ws << data.normalSkillID;  
+    ws << data.breakoffAttackTime;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntitySkillSystem & data) 
@@ -969,6 +973,7 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
     rs >> data.combating;  
     rs >> data.readySkillID;  
     rs >> data.normalSkillID;  
+    rs >> data.breakoffAttackTime;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntitySkillSystem & info) 
@@ -981,6 +986,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "combating=" << info.combating << ","; 
     stm << "readySkillID=" << info.readySkillID << ","; 
     stm << "normalSkillID=" << info.normalSkillID << ","; 
+    stm << "breakoffAttackTime=" << info.breakoffAttackTime << ","; 
     stm << "]"; 
     return stm; 
 } 

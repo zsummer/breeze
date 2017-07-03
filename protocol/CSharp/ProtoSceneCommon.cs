@@ -1355,6 +1355,7 @@ namespace Proto4z
         public ushort combating; //战斗中  
         public ulong readySkillID;  
         public ulong normalSkillID;  
+        public double breakoffAttackTime;  
         public EntitySkillSystem()  
         { 
             eid = 0;  
@@ -1364,8 +1365,9 @@ namespace Proto4z
             combating = 0;  
             readySkillID = 0;  
             normalSkillID = 0;  
+            breakoffAttackTime = 0.0;  
         } 
-        public EntitySkillSystem(ulong eid, EntitySkillInfoMap activeSkills, EntityBuffInfoMap activeBuffs, EntityEquippedSkillMap dictEquippedSkills, ushort combating, ulong readySkillID, ulong normalSkillID) 
+        public EntitySkillSystem(ulong eid, EntitySkillInfoMap activeSkills, EntityBuffInfoMap activeBuffs, EntityEquippedSkillMap dictEquippedSkills, ushort combating, ulong readySkillID, ulong normalSkillID, double breakoffAttackTime) 
         { 
             this.eid = eid; 
             this.activeSkills = activeSkills; 
@@ -1374,6 +1376,7 @@ namespace Proto4z
             this.combating = combating; 
             this.readySkillID = readySkillID; 
             this.normalSkillID = normalSkillID; 
+            this.breakoffAttackTime = breakoffAttackTime; 
         } 
         public System.Collections.Generic.List<byte> __encode() 
         { 
@@ -1388,6 +1391,7 @@ namespace Proto4z
             data.AddRange(Proto4z.BaseProtoObject.encodeUI16(this.combating)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.readySkillID)); 
             data.AddRange(Proto4z.BaseProtoObject.encodeUI64(this.normalSkillID)); 
+            data.AddRange(Proto4z.BaseProtoObject.encodeDouble(this.breakoffAttackTime)); 
             return data; 
         } 
         public int __decode(byte[] binData, ref int pos) 
@@ -1402,6 +1406,7 @@ namespace Proto4z
             this.combating = Proto4z.BaseProtoObject.decodeUI16(binData, ref pos); 
             this.readySkillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
             this.normalSkillID = Proto4z.BaseProtoObject.decodeUI64(binData, ref pos); 
+            this.breakoffAttackTime = Proto4z.BaseProtoObject.decodeDouble(binData, ref pos); 
             return pos; 
         } 
     } 
