@@ -11,7 +11,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2013-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2013-2017 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -350,7 +350,7 @@ function Proto4z.dump(value, desciption, nesting, showULL)
     end
 
     local traceback = Proto4z.split(debug.traceback("", 2), "\n")
-    print("dump from: " .. Proto4z.trim(traceback[3]))
+    print("dump from: " .. Proto4z.trim(traceback[3]), false)
 
     local function _dump(value, desciption, indent, nest, keylen)
         desciption = desciption or "<var>"
@@ -396,7 +396,7 @@ function Proto4z.dump(value, desciption, nesting, showULL)
     _dump(value, desciption, "- ", 1)
 
     for i, line in ipairs(result) do
-        print(line)
+        print(line, false)
     end
 end
 

@@ -13,7 +13,7 @@ function addMonster(pos, camp, name)
                     state=Proto4z.ENTITY_STATE_ACTIVE}
 
     local skill = {dictEquippedSkills = {[2]=0}, readySkillID = 2 , combating = 1  }
-    local ctl = {spawnpoint = pos,  collision=1 }
+    local ctl = {spawnpoint = {x=pos.x or pos[1], y=pos.y or pos[2]},  collision=1 }
 
     local propData = Proto4z.encode(prop, "DictProp")
     local stateData = Proto4z.encode(state, "EntityState")
@@ -62,12 +62,17 @@ local lastSpawnWalker = 0
 local lastWalkerback = 0
 function updateWalker()
     local now = Scene.now()
-    if now - lastSpawnWalker > 30 then
+    if lastSpawnWalker == 0 then
         lastSpawnWalker = now
-        local eid = addMonster({x=campWaypoints[Proto4z.ENTITY_CAMP_BLUE][1][1], y=campWaypoints[Proto4z.ENTITY_CAMP_BLUE][1][2]}, Proto4z.ENTITY_CAMP_BLUE)
+        
+        dump(campWaypoints)
+        local blueSpPos = campWaypoints[Proto4z.ENTITY_CAMP_BLUE][1]
+        local eid = addMonster(blueSpPos, Proto4z.ENTITY_CAMP_BLUE)
         walker[eid] = entitys[eid]
-        eid = addMonster({x=campWaypoints[Proto4z.ENTITY_CAMP_RED][1][1], y=campWaypoints[Proto4z.ENTITY_CAMP_RED][1][2]}, Proto4z.ENTITY_CAMP_RED)
-        walker[eid] = entitys[eid]
+
+        local redSpPos = campWaypoints[Proto4z.ENTITY_CAMP_RED][1]
+        --eid = addMonster(redSpPos, Proto4z.ENTITY_CAMP_RED)
+        --walker[eid] = entitys[eid]
     end
     local removes = {}
     for k,e in pairs(walker) do
@@ -78,13 +83,21 @@ function updateWalker()
                 lastWalkerback = now
                 if  e.mv.action == Proto4z.MOVE_ACTION_IDLE or e.mv.action == Proto4z.MOVE_ACTION_FOLLOW then
                     local way = Scene.wayFinding(e.mv.position, campWaypoints[e.state.camp])
-                    Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_FORCE_PATH, 0, {way[1]})
+                    if not way or not way[1] or getDistance(way[#way], e.mv.position) < 1  then
+                        dump(way, "camp=" .. e.state.camp)
+                        removes[k] = 1
+                    else
+                        dump(way, "camp=" .. e.state.camp)
+                        Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_FORCE_PATH, 0, {way[1]})
+                    end
                 end
             elseif e.mv.action == Proto4z.MOVE_ACTION_IDLE  and e.skill  and  now - e.skill.breakoffAttackTime  > 3.0  then
                 local way = Scene.wayFinding(e.mv.position, campWaypoints[e.state.camp])
-                if not way or not next(way) then
+                if not way or not way[1] or getDistance(way[#way], e.mv.position) < 1  then
+                    dump(way, "camp=" .. e.state.camp)
                     removes[k] = 1
                 else
+                    dump(way, "camp=" .. e.state.camp)
                     Scene.doMove(e.state.eid, Proto4z.MOVE_ACTION_PATH, 0, way)
                 end
             end
@@ -116,8 +129,8 @@ end
 
 function sceneInit()
 
-    fillObstacle()
-    fillMonster()
+   -- fillObstacle()
+    --fillMonster()
 
 
 
@@ -137,7 +150,7 @@ function onUpdate()
         _sceneInit = true
         sceneInit()
     end
-    --updateWalker()
+    updateWalker()
 
     for eid, e in pairs(monster) do
         if type(e) == "table" and e.control then
@@ -164,8 +177,9 @@ function onUpdate()
 end
 
 function onAddEntityNotice(msg)
-    logd("onAddEntityNotice sceneID=" .. Scene.sceneID)
-    
+    if not msg.syncs or #msg.syncs == 0 then
+        loge("onAddEntityNotice sceneID=" .. Scene.sceneID)
+    end
     for _, client in pairs(msg.syncs) do
         logd("onAddEntityNotice sceneID=" .. Scene.sceneID .. ", add eid=" .. client.state.eid)
         local entity = entitys[client.state.eid] or {}
@@ -191,7 +205,7 @@ end
 
 
 function onSceneRefreshNotice(msg)
-    logd("onSceneRefreshNotice sceneID=" .. Scene.sceneID)
+    --logd("onSceneRefreshNotice sceneID=" .. Scene.sceneID)
 
 
     for _, state in pairs(msg.entityStates) do
@@ -212,7 +226,7 @@ end
 
 
 function onEntityScriptNotice(msg)
-    logd("onEntityScriptNotice sceneID=" .. Scene.sceneID)
+    --logd("onEntityScriptNotice sceneID=" .. Scene.sceneID)
 
     for _, ctl in pairs(msg.controls) do
         local entity =  entitys[ctl.eid]

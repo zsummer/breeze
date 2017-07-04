@@ -163,7 +163,10 @@ void Scene::addEntity(EntityPtr entity)
         _players[entity->_state.avatarID] = entity;
     }
 
-
+    LOGD("Scene::addEntity. eid[" << entity->_state.eid << "] aid[" << entity->_state.avatarID << "][" << entity->_state.avatarName
+        << "]  modleID=" << entity->_state.modelID << ", camp=" << entity->_state.camp << ", etype=" << entity->_state.etype << ", state=" << entity->_state.state 
+        << ", agentNo=" << entity->_control.agentNo  << ", hp=[" << entity->_state.curHP << "/" << entity->_state.maxHP 
+        << "], spawnpoint" << entity->_control.spawnpoint<< ", position=" << entity->_move.position);
     AddEntityNotice notice;
     notice.syncs.push_back(entity->getClientSyncData());
     broadcast(notice, entity->_state.avatarID);
