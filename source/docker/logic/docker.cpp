@@ -1225,6 +1225,8 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     else
     {
         LOGE("client unknow proto or wrong status. proto[" << rs.getProtoID() << "]= " << ProtoReflection::getProtoName(rs.getProtoID()) << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
+        session->close();
+        return;
     }
 }
 
