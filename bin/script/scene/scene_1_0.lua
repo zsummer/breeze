@@ -71,8 +71,8 @@ function updateWalker()
         walker[eid] = entitys[eid]
 
         local redSpPos = campWaypoints[Proto4z.ENTITY_CAMP_RED][1]
-        --eid = addMonster(redSpPos, Proto4z.ENTITY_CAMP_RED)
-        --walker[eid] = entitys[eid]
+        eid = addMonster(redSpPos, Proto4z.ENTITY_CAMP_RED)
+        walker[eid] = entitys[eid]
     end
     local removes = {}
     for k,e in pairs(walker) do
@@ -83,7 +83,7 @@ function updateWalker()
                 lastWalkerback = now
                 if  e.mv.action == Proto4z.MOVE_ACTION_IDLE or e.mv.action == Proto4z.MOVE_ACTION_FOLLOW then
                     local way = Scene.wayFinding(e.mv.position, campWaypoints[e.state.camp])
-                    if not way or not way[1] or getDistance(way[#way], e.mv.position) < 1  then
+                    if not way or not way[1] or getDistance(way[#way], e.mv.position) < (Scene.pathPrecision + e.control.collision)*1.2  then
                         dump(way, "camp=" .. e.state.camp)
                         removes[k] = 1
                     else
@@ -93,7 +93,7 @@ function updateWalker()
                 end
             elseif e.mv.action == Proto4z.MOVE_ACTION_IDLE  and e.skill  and  now - e.skill.breakoffAttackTime  > 3.0  then
                 local way = Scene.wayFinding(e.mv.position, campWaypoints[e.state.camp])
-                if not way or not way[1] or getDistance(way[#way], e.mv.position) < 1  then
+                if not way or not way[1] or getDistance(way[#way], e.mv.position) < (Scene.pathPrecision + e.control.collision)*1.2  then
                     dump(way, "camp=" .. e.state.camp)
                     removes[k] = 1
                 else

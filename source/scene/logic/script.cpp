@@ -213,6 +213,9 @@ void flushSceneToScript(Scene * scene, lua_State * L)
     lua_pushinteger(L, scene->getSceneType());
     lua_setfield(L, -2, "sceneType");
 
+    lua_pushinteger(L, PATH_PRECISION);
+    lua_setfield(L, -2, "pathPrecision");
+
     lua_pop(L, 1);
 }
 
@@ -368,7 +371,7 @@ static void pushWaypoints(lua_State * L, const EPositionArray& ways)
     for (size_t i = 0; i < ways.size(); i++)
     {
         pushEPosition(L, ways[i]);
-        lua_seti(L, -2, i);
+        lua_seti(L, -2, i+1);
     }
 }
 

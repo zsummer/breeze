@@ -194,7 +194,7 @@ void MoveSync::fixDirtyMove(double frame)
         auto &entity = *kv.second;
         if (entity._control.agentNo >= sim->getNumAgents())
         {
-            LOGE("move update no agentNo. entity id=" << entity._state.eid);
+            LOGE("MoveSync::fixDirtyMove no agentNo. eid=" << entity._state.eid << ", name=" << entity._state.avatarName);
             continue;
         }
         auto rvoPos = toEPosition(sim->getAgentPosition(entity._control.agentNo));
@@ -221,16 +221,16 @@ void MoveSync::fixDirtyMove(double frame)
         entity._move.position = rvoPos;
         entity._move.realSpeed = realDist / frame;
         entity._isMoveDirty = true;
-        /*
+        
         if (entity._move.waypoints.empty())
         {
-            LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << realMove);
+            LOGD("MoveSync::fixDirtyMove waypoints out.  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos);
         }
         else
         {
-            LOGD("RVO MOVE[" << entity._state.avatarName << "] old=" << entity._move.position << ", new=" << rvoPos << ", move=" << realMove
-             << ", dst=" << entity._move.waypoints.front());
-        } */
+//            LOGD("MoveSync::fixDirtyMove waypoints update.  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos
+//            << ", waypoints=" << entity._move.waypoints);
+        } 
 
 
 
@@ -241,6 +241,8 @@ void MoveSync::fixDirtyMove(double frame)
             if (entity._state.state != ENTITY_STATE_ACTIVE)
             {
                 moveEnd = true;
+                LOGD("MoveSync::fixDirtyMove move end. state not active .  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos
+                    << ", waypoints=" << entity._move.waypoints);
                 break;
             }
             if (entity._move.action == MOVE_ACTION_FOLLOW)
@@ -248,24 +250,31 @@ void MoveSync::fixDirtyMove(double frame)
                 if (entity._move.follow == InvalidEntityID)
                 {
                     moveEnd = true;
+                    LOGD("MoveSync::fixDirtyMove move end. invalid follow .  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos
+                        << ", waypoints=" << entity._move.waypoints);
                     break;
                 }
                 auto follow = scene->getEntity(entity._move.follow);
                 if (!follow || follow->_state.state != ENTITY_STATE_ACTIVE)
                 {
                     moveEnd = true;
+                    LOGD("MoveSync::fixDirtyMove move end.  the follow target not active .  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos
+                        << ", waypoints=" << entity._move.waypoints);
                     break;
                 }
                 if (getDistance(entity._move.position, follow->_move.position) <= entity._control.collision + follow->_control.collision + PATH_PRECISION)
                 {
                     moveEnd = true;
+                    LOGD("MoveSync::fixDirtyMove move end.  catch follow target.  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos
+                        << ", waypoints=" << entity._move.waypoints);
                     break;
                 }
                 break;
             }
             if (entity._move.waypoints.empty())
             {
-                LOGE("unintended flow.  entity move waypoints is empty but move state not idle.");
+                LOGE("MoveSync::fixDirtyMove unintended flow.  entity move waypoints is empty but move state not idle.  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos
+                    << ", waypoints=" << entity._move.waypoints);
                 moveEnd = true;
                 break;
             }
@@ -276,13 +285,14 @@ void MoveSync::fixDirtyMove(double frame)
                 if (dist <= entity._control.collision + PATH_PRECISION)
                 {
                     entity._move.waypoints.erase(entity._move.waypoints.begin());
+                    LOGD("MoveSync::fixDirtyMove pop one waypoint.  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos
+                        << ", waypoints=" << entity._move.waypoints);
                     continue;
                 }
                 break;
             }
             if (entity._move.waypoints.empty())
             {
-                entity._move.waypoints.push_back(entity._move.position);
                 moveEnd = true;
                 break;
             }
@@ -294,8 +304,9 @@ void MoveSync::fixDirtyMove(double frame)
             entity._move.action = MOVE_ACTION_IDLE;
             sim->setAgentMaxSpeed(entity._control.agentNo, 0);
             sim->setAgentPrefVelocity(entity._control.agentNo, RVO::Vector2(0, 0));
+            LOGD("MoveSync::fixDirtyMove broadcast end notice.  eid=" << entity._state.eid << ", name=" << entity._state.avatarName << " old" << entity._move.position << ", new" << rvoPos
+                << ", waypoints=" << entity._move.waypoints);
             scene->broadcast(MoveNotice(entity._move));
-            LOGD("RVO FIN MOVE[" << entity._state.avatarName << "] local=" << entity._move.position);
         }
     }
 }
