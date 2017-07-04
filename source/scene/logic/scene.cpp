@@ -441,7 +441,7 @@ bool Scene::searchMatched(const EntityPtr & master, const EntityPtr & caster, co
     {
         return true;
     }
-    if (getBitFlag(search.filter, FILTER_NEUTRAL_CAMP) && dst->_state.camp > ENTITY_CAMP_NEUTRAL)
+    if (getBitFlag(search.filter, FILTER_NEUTRAL_CAMP) && dst->_state.camp >= ENTITY_CAMP_NEUTRAL)
     {
         return true;
     }
