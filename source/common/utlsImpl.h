@@ -568,7 +568,7 @@ inline std::tuple<double, double> shortestLine(std::tuple<double, double> line1,
         double distL = distLine(line1, line2, pos);
         double distL1 = getDistance(line1, pos);
         double dist = std::sqrt(distL1*distL1 - distL*distL);
-        return normalize(line2 - line1)*dist;
+        return line1 + normalize(line2 - line1)*dist;
     }
     if (x1 < 0)
     {
