@@ -3,18 +3,21 @@
 require("scene")
 
 
-function addMonster(pos)
-    local prop = {hp=1000, attack=100, attackQuick=1, moveSpeed=8}
+function addMonster(pos, camp, name)
+    local prop = {hp=800, attack=200, attackQuick=1, moveSpeed=8}
     local state = {modelID=math.random(1,20), 
-                    avatarName="monster", 
-                    camp=Proto4z.ENTITY_CAMP_BLUE +100, 
+                    avatarName=name or "unknown", 
+                    camp= camp or  (Proto4z.ENTITY_CAMP_BLUE +100) , 
                     maxHP=prop.hp, 
                     curHP=prop.hp, 
                     etype=Proto4z.ENTITY_AI, 
                     state=Proto4z.ENTITY_STATE_ACTIVE}
 
-    local skill = {dictEquippedSkills = {[2]=0}, readySkillID = 2 , combating = 0  }
-    local ctl = {spawnpoint = pos,  collision=1 }
+    local skill = {dictEquippedSkills = {[3]=0}, readySkillID = 3 , combating = 1  }
+    if camp < Proto4z.ENTITY_CAMP_NEUTRAL then
+        skill = {dictEquippedSkills = {[4]=0}, readySkillID = 4 , combating = 1  }
+    end
+    local ctl = {spawnpoint = {x=pos.x or pos[1], y=pos.y or pos[2]},  collision=1 }
 
     local propData = Proto4z.encode(prop, "DictProp")
     local stateData = Proto4z.encode(state, "EntityState")
@@ -36,7 +39,7 @@ function fillMonster()
         table.insert(sps, getRemotePos(OriginPos, math.pi*2.0/(MonsterCount+1)*i,  Dia/2))
     end
     for _, sp in pairs(sps) do
-        local eid = addMonster({x=sp[1], y=sp[2]})
+        local eid = addMonster(sp, Proto4z.ENTITY_CAMP_NEUTRAL)
         monster[eid] = entitys[eid]
     end
 end
@@ -130,7 +133,7 @@ end
 
 
 function onEntityScriptNotice(msg)
-    logd("onEntityScriptNotice sceneID=" .. Scene.sceneID)
+    --logd("onEntityScriptNotice sceneID=" .. Scene.sceneID)
 
     for _, ctl in pairs(msg.controls) do
         local entity =  entitys[ctl.eid]

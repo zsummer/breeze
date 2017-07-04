@@ -5,14 +5,17 @@ require("scene")
 function addMonster(pos, camp, name)
     local prop = {hp=800, attack=200, attackQuick=1, moveSpeed=8}
     local state = {modelID=math.random(1,20), 
-                    avatarName="monster", 
+                    avatarName=name or "unknown", 
                     camp= camp or  (Proto4z.ENTITY_CAMP_BLUE +100) , 
                     maxHP=prop.hp, 
                     curHP=prop.hp, 
                     etype=Proto4z.ENTITY_AI, 
                     state=Proto4z.ENTITY_STATE_ACTIVE}
 
-    local skill = {dictEquippedSkills = {[2]=0}, readySkillID = 2 , combating = 1  }
+    local skill = {dictEquippedSkills = {[3]=0}, readySkillID = 3 , combating = 1  }
+    if camp < Proto4z.ENTITY_CAMP_NEUTRAL then
+        skill = {dictEquippedSkills = {[4]=0}, readySkillID = 4 , combating = 1  }
+    end
     local ctl = {spawnpoint = {x=pos.x or pos[1], y=pos.y or pos[2]},  collision=1 }
 
     local propData = Proto4z.encode(prop, "DictProp")
@@ -62,16 +65,16 @@ local lastSpawnWalker = 0
 local lastWalkerback = 0
 function updateWalker()
     local now = Scene.now()
-    if lastSpawnWalker == 0 then
+    if now - lastSpawnWalker > 15 then
         lastSpawnWalker = now
         
         dump(campWaypoints)
         local blueSpPos = campWaypoints[Proto4z.ENTITY_CAMP_BLUE][1]
-        local eid = addMonster(blueSpPos, Proto4z.ENTITY_CAMP_BLUE)
+        local eid = addMonster(blueSpPos, Proto4z.ENTITY_CAMP_BLUE, "blue_walker")
         walker[eid] = entitys[eid]
 
         local redSpPos = campWaypoints[Proto4z.ENTITY_CAMP_RED][1]
-        eid = addMonster(redSpPos, Proto4z.ENTITY_CAMP_RED)
+        eid = addMonster(redSpPos, Proto4z.ENTITY_CAMP_RED, "red_walker")
         walker[eid] = entitys[eid]
     end
     local removes = {}
@@ -121,7 +124,7 @@ function fillMonster()
                     {-17.07,80.59 }}
 
     for _, sp in pairs(sps) do
-        local eid = addMonster({x=sp[1], y=sp[2]})
+        local eid = addMonster(sp, Proto4z.ENTITY_CAMP_NEUTRAL, "monster")
         monster[eid] = entitys[eid]
     end
 
@@ -129,9 +132,8 @@ end
 
 function sceneInit()
 
-   -- fillObstacle()
-    --fillMonster()
-
+    fillObstacle()
+    fillMonster()
 
 
 

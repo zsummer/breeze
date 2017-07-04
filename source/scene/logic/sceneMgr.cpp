@@ -645,10 +645,12 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                     if (group.groupID %2 == 0)
                     {
                         entity->_control.spawnpoint = EPosition(-63.8 + rand() % 4 - 2, 62.5 + rand() % 4 - 2);
+                        entity->_state.camp = ENTITY_CAMP_RED;
                     }
                     else
                     {
                         entity->_control.spawnpoint = EPosition(99 + rand()%4-2, 61.5 + rand() % 4 - 2);
+                        entity->_state.camp = ENTITY_CAMP_BLUE;
                     }
                     
                     entity->_move.position = entity->_control.spawnpoint;
