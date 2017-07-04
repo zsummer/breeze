@@ -105,12 +105,12 @@ bool DBDict::finish()
         skill.aoeID = 2;
         _dictOneKeyDictSkill[skill.id] = skill;
 
-        skill.aosID = 3;
+        skill.aosID = 1;
         skill.aoeID = 3;
         skill.id = 3;
         _dictOneKeyDictSkill[skill.id] = skill; //monster  
 
-        skill.aosID = 4;
+        skill.aosID = 1;
         skill.aoeID = 4;
         skill.id = 4;
         _dictOneKeyDictSkill[skill.id] = skill; //walker  
