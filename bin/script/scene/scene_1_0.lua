@@ -3,18 +3,18 @@
 require("scene")
 
 function addMonster(pos, camp, name)
-    local prop = {hp=800, attack=200, attackQuick=1, moveSpeed=8}
+    local prop = {hp=1200, attack=200, attackQuick=1, moveSpeed=8}
     local state = {modelID=math.random(1,20), 
                     avatarName=name or "unknown", 
-                    camp= camp or  (Proto4z.ENTITY_CAMP_BLUE +100) , 
+                    camp= camp , 
                     maxHP=prop.hp, 
                     curHP=prop.hp, 
                     etype=Proto4z.ENTITY_AI, 
                     state=Proto4z.ENTITY_STATE_ACTIVE}
 
-    local skill = {dictEquippedSkills = {[3]=0}, readySkillID = 3 , combating = 1  }
+    local skill = {dictEquippedSkills = {[5]=0}, readySkillID = 5 , combating = 1  }
     if camp < Proto4z.ENTITY_CAMP_NEUTRAL then
-        skill = {dictEquippedSkills = {[4]=0}, readySkillID = 4 , combating = 1  }
+        skill = {dictEquippedSkills = {[3]=0}, readySkillID = 3 , combating = 1  }
     end
     local ctl = {spawnpoint = {x=pos.x or pos[1], y=pos.y or pos[2]},  collision=1 }
 

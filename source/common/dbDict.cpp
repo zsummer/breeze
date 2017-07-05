@@ -53,53 +53,65 @@ bool DBDict::finish()
         aoe.value3 = 0;
         aoe.clip = 0;
         aoe.compensate = 0;
-        aoe.etype = ENTITY_NONE;
         aoe.limitEntitys = 1;
+        aoe.etype = ENTITY_NONE;
         aoe.filter = setBitFlag(setBitFlag(aoe.filter, FILTER_ENEMY_CAMP), FILTER_NEUTRAL_CAMP);
-        aoe.id = 1;
+        aoe.id = 1; //player aos
         _dictOneKeyAOESearch[aoe.id] = aoe;
-
-
-        aoe.etype = ENTITY_PLAYER;
-        aoe.id = 2;
-        _dictOneKeyAOESearch[aoe.id] = aoe;
-
 
         aoe.value1 = 8;
         aoe.value2 = PI / 2;
         aoe.compensate = -3;
         aoe.clip = 2;
         aoe.limitEntitys = 1000;
-        aoe.etype = ENTITY_NONE;
-        aoe.filter = setBitFlag(setBitFlag(aoe.filter, FILTER_ENEMY_CAMP), FILTER_NEUTRAL_CAMP);
-        aoe.id = 3;
+        aoe.id = 2; //player aoe
         _dictOneKeyAOESearch[aoe.id] = aoe;
 
 
 
+        aoe.isRect = 0;
+        aoe.value1 = 10;
+        aoe.value2 = PI * 2;
+        aoe.value3 = 0;
+        aoe.clip = 0;
+        aoe.compensate = 0;
+        aoe.limitEntitys = 1;
+        aoe.etype = ENTITY_NONE;
+        aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
+        aoe.id = 3; //walker aos
+        _dictOneKeyAOESearch[aoe.id] = aoe;
 
-
-        aoe.value1 = 5;
+        aoe.value1 = 6;
         aoe.value2 = PI / 2;
         aoe.compensate = -2;
         aoe.clip = 1.5;
-        aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
+        aoe.limitEntitys = 1000;
+        aoe.id = 4; //walker aoe
+        _dictOneKeyAOESearch[aoe.id] = aoe;
+
+
+        aoe.isRect = 0;
+        aoe.value1 = 10;
+        aoe.value2 = PI * 2;
+        aoe.value3 = 0;
+        aoe.clip = 0;
+        aoe.compensate = 0;
+        aoe.limitEntitys = 1;
         aoe.etype = ENTITY_PLAYER;
-        aoe.id = 4;
-        aoe.limitEntitys = 1000;
+        aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
+        aoe.id = 5; //monster aos
         _dictOneKeyAOESearch[aoe.id] = aoe;
 
-        aoe.value1 = 5;
+        aoe.value1 = 6;
         aoe.value2 = PI / 2;
         aoe.compensate = -2;
         aoe.clip = 1.5;
-        aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
-        aoe.etype = ENTITY_NONE;
-        aoe.id = 5;
         aoe.limitEntitys = 1000;
+        aoe.id = 6; //monster aoe
         _dictOneKeyAOESearch[aoe.id] = aoe;
-        
     }
+
+
     if (true)
     {
         DictSkill skill;
@@ -111,19 +123,20 @@ bool DBDict::finish()
         skill.interval = 3.0;
         skill.aosType = 3;
         skill.aosID = 1;
-        skill.aoeID = 3;
+        skill.aoeID = 2;
         _dictOneKeyDictSkill[skill.id] = skill;
 
-        skill.aosID = 2;
-        skill.aoeID = 3;
+        skill.aosID = 3;
+        skill.aoeID = 4;
         skill.id = 3;
-        _dictOneKeyDictSkill[skill.id] = skill; //monster  
-
-        skill.aosID = 2;
-        skill.aoeID = 5;
-        skill.id = 4;
         _dictOneKeyDictSkill[skill.id] = skill; //walker  
+
+        skill.aosID = 5;
+        skill.aoeID = 6;
+        skill.id = 5;
+        _dictOneKeyDictSkill[skill.id] = skill; //monster  
     }
+
 
 
     for(auto &kv : _dictOneKeyDictSkill)
