@@ -33,8 +33,8 @@
 */
 
 
-#define LEVELS1	12	/* size of the first part of the stack */
-#define LEVELS2	10	/* size of the second part of the stack */
+#define LEVELS1    12    /* size of the first part of the stack */
+#define LEVELS2    10    /* size of the second part of the stack */
 
 
 
@@ -238,7 +238,7 @@ LUALIB_API int luaL_fileresult (lua_State *L, int stat, const char *fname) {
 }
 
 
-#if !defined(l_inspectstat)	/* { */
+#if !defined(l_inspectstat)    /* { */
 
 #if defined(LUA_USE_POSIX)
 
@@ -257,7 +257,7 @@ LUALIB_API int luaL_fileresult (lua_State *L, int stat, const char *fname) {
 
 #endif
 
-#endif				/* } */
+#endif                /* } */
 
 
 LUALIB_API int luaL_execresult (lua_State *L, int stat) {
@@ -439,7 +439,7 @@ LUALIB_API lua_Integer luaL_optinteger (lua_State *L, int arg,
 ** check whether buffer is using a userdata on the stack as a temporary
 ** buffer
 */
-#define buffonstack(B)	((B)->b != (B)->initb)
+#define buffonstack(B)    ((B)->b != (B)->initb)
 
 
 /*
@@ -527,7 +527,7 @@ LUALIB_API char *luaL_buffinitsize (lua_State *L, luaL_Buffer *B, size_t sz) {
 */
 
 /* index of free-list header */
-#define freelist	0
+#define freelist    0
 
 
 LUALIB_API int luaL_ref (lua_State *L, int t) {

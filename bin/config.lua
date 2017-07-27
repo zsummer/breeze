@@ -50,6 +50,7 @@ config.docker =
 
 config.world =
 {
+    dockerID = 3,
     dockerListenHost="::",
     dockerListenPort=16099,
     sceneListenHost="::",

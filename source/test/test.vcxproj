@@ -11,11 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aoeTest.h" />
-    <ClInclude Include="test.h" />
+    <ClInclude Include="aoeViewer.h" />
+    <ClInclude Include="utlsTest.h" />
+    <ClInclude Include="vectorViewer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0}</ProjectGuid>

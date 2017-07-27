@@ -95,22 +95,32 @@ public:
             break;
             case 2007:
             {
-                   return "EntityFullData";
+                   return "EntityControl";
             }
             break;
             case 2008:
             {
-                   return "SceneSection";
+                   return "EntityClientSync";
             }
             break;
             case 2009:
             {
-                   return "EntitySkillInfo";
+                   return "SceneSection";
             }
             break;
             case 2010:
             {
+                   return "EntitySkillInfo";
+            }
+            break;
+            case 2011:
+            {
                    return "EntityBuffInfo";
+            }
+            break;
+            case 2012:
+            {
+                   return "EntitySkillSystem";
             }
             break;
             case 3000:
@@ -190,45 +200,60 @@ public:
             break;
             case 3015:
             {
-                   return "DBDataResult";
+                   return "ReloadDBDictNotice";
             }
             break;
             case 3016:
             {
-                   return "DBQueryReq";
+                   return "ReloadDBDictFinish";
             }
             break;
             case 3017:
             {
-                   return "DBQueryResp";
+                   return "KickClientsNotice";
             }
             break;
             case 3018:
             {
-                   return "DBQueryArrayReq";
+                   return "DBDataResult";
             }
             break;
             case 3019:
             {
-                   return "DBQueryArrayResp";
+                   return "DBQueryReq";
             }
             break;
             case 3020:
             {
-                   return "WebAgentClientRequestAPI";
+                   return "DBQueryResp";
             }
             break;
             case 3021:
             {
-                   return "WebServerRequest";
+                   return "DBQueryArrayReq";
             }
             break;
             case 3022:
             {
-                   return "WebServerResponse";
+                   return "DBQueryArrayResp";
             }
             break;
             case 3023:
+            {
+                   return "WebAgentClientRequestAPI";
+            }
+            break;
+            case 3024:
+            {
+                   return "WebServerRequest";
+            }
+            break;
+            case 3025:
+            {
+                   return "WebServerResponse";
+            }
+            break;
+            case 3026:
             {
                    return "AvatarOffline";
             }
@@ -265,12 +290,17 @@ public:
             break;
             case 4006:
             {
-                   return "SceneServerGroupStateChangeIns";
+                   return "SceneServerGroupStateFeedback";
             }
             break;
             case 4007:
             {
-                   return "SceneServerGroupStateFeedback";
+                   return "EntityControlNotice";
+            }
+            break;
+            case 4008:
+            {
+                   return "EntityScriptNotice";
             }
             break;
             case 10000:
@@ -300,57 +330,27 @@ public:
             break;
             case 11001:
             {
-                   return "DictModelLevel";
+                   return "AOESearch";
             }
             break;
             case 11002:
             {
-                   return "DictModel";
+                   return "DictBuff";
             }
             break;
             case 11003:
             {
-                   return "AOESearch";
-            }
-            break;
-            case 11004:
-            {
-                   return "DictBuffEffect";
-            }
-            break;
-            case 11005:
-            {
-                   return "DictBuff";
-            }
-            break;
-            case 11006:
-            {
-                   return "DictSkillBehaviour";
-            }
-            break;
-            case 11007:
-            {
                    return "DictSkill";
             }
             break;
-            case 11008:
+            case 20000:
             {
-                   return "DictSpawnPoint";
+                   return "LogLogin";
             }
             break;
-            case 11009:
+            case 20001:
             {
-                   return "DictObstacle";
-            }
-            break;
-            case 11010:
-            {
-                   return "DictMonster";
-            }
-            break;
-            case 11011:
-            {
-                   return "DictMap";
+                   return "LogQuit";
             }
             break;
             case 50000:
@@ -636,6 +636,11 @@ public:
             case 55034:
             {
                    return "ChangeModeIDResp";
+            }
+            break;
+            case 55035:
+            {
+                   return "ClientDeviceInfoUpdate";
             }
             break;
 

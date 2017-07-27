@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,6 +62,7 @@ extern "C"
 #include <process.h>
 #pragma comment(lib, "shlwapi")
 #pragma warning(disable:4996)
+#pragma warning(disable:4503)
 
 #else
 #include <unistd.h>

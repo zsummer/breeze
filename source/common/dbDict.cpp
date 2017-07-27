@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -42,62 +42,127 @@ DBHelperPtr buildHelper(const std::string & db)
     return helper;
 }
 
-bool DBDict::fakeTestData()
+bool DBDict::finish()
 {
     if (true)
     {
         AOESearch aoe;
         aoe.isRect = 0;
-        aoe.value1 = 20;
+        aoe.value1 = 10;
         aoe.value2 = PI * 2;
         aoe.value3 = 0;
         aoe.clip = 0;
         aoe.compensate = 0;
-        aoe.etype = ENTITY_NONE;
         aoe.limitEntitys = 1;
-        aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
-        aoe.id = 1;
-        _dictOneKeyAOESearch[1] = aoe;
-
-        aoe.value1 = 7;
-        aoe.value2 = PI / 2;
-        aoe.compensate = 2;
-        aoe.clip = 1.5;
-        aoe.id = 2;
-        aoe.limitEntitys = 1000;
+        aoe.etype = ENTITY_NONE;
+        aoe.filter = setBitFlag(setBitFlag(aoe.filter, FILTER_ENEMY_CAMP), FILTER_NEUTRAL_CAMP);
+        aoe.id = 1; //player aos
         _dictOneKeyAOESearch[aoe.id] = aoe;
 
-        aoe.value1 = 12;
+        aoe.value1 = 8;
         aoe.value2 = PI / 2;
-        aoe.compensate = 3;
+        aoe.compensate = -3;
         aoe.clip = 2;
-        aoe.id = 3;
         aoe.limitEntitys = 1000;
+        aoe.id = 2; //player aoe
         _dictOneKeyAOESearch[aoe.id] = aoe;
-        
+
+
+
+        aoe.isRect = 0;
+        aoe.value1 = 10;
+        aoe.value2 = PI * 2;
+        aoe.value3 = 0;
+        aoe.clip = 0;
+        aoe.compensate = 0;
+        aoe.limitEntitys = 1;
+        aoe.etype = ENTITY_NONE;
+        aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
+        aoe.id = 3; //walker aos
+        _dictOneKeyAOESearch[aoe.id] = aoe;
+
+        aoe.value1 = 6;
+        aoe.value2 = PI / 2;
+        aoe.compensate = -2;
+        aoe.clip = 1.5;
+        aoe.limitEntitys = 1000;
+        aoe.id = 4; //walker aoe
+        _dictOneKeyAOESearch[aoe.id] = aoe;
+
+
+        aoe.isRect = 0;
+        aoe.value1 = 10;
+        aoe.value2 = PI * 2;
+        aoe.value3 = 0;
+        aoe.clip = 0;
+        aoe.compensate = 0;
+        aoe.limitEntitys = 1;
+        aoe.etype = ENTITY_PLAYER;
+        aoe.filter = setBitFlag(aoe.filter, FILTER_ENEMY_CAMP);
+        aoe.id = 5; //monster aos
+        _dictOneKeyAOESearch[aoe.id] = aoe;
+
+        aoe.value1 = 6;
+        aoe.value2 = PI / 2;
+        aoe.compensate = -2;
+        aoe.clip = 1.5;
+        aoe.limitEntitys = 1000;
+        aoe.id = 6; //monster aoe
+        _dictOneKeyAOESearch[aoe.id] = aoe;
     }
+
+
     if (true)
     {
         DictSkill skill;
         skill.id = 1;
         skill.stamp = 0;
-        skill.stamp = setBitFlag(skill.stamp, SKILL_AUTO_USE, true);
+        skill.stamp = setBitFlag(skill.stamp, SKILL_NORMAL, true);
         skill.stamp = setBitFlag(skill.stamp, SKILL_PHYSICAL, true);
-        skill.stamp = setBitFlag(skill.stamp, SKILL_HIT, true);
+        skill.stamp = setBitFlag(skill.stamp, SKILL_HARM, true);
         skill.interval = 3.0;
-        skill.orgType = 1;
-        skill.aoeID = 3;
-        skill.searchID = 1;
-        _dictOneKeyDictSkill[skill.id] = skill;
+        skill.aosType = 3;
+        skill.aosID = 1;
         skill.aoeID = 2;
-        skill.id = 2;
-        _dictOneKeyDictSkill[skill.id] = skill; //ai 
+        _dictOneKeyDictSkill[skill.id] = skill;
+
+        skill.aosID = 3;
+        skill.aoeID = 4;
+        skill.id = 3;
+        _dictOneKeyDictSkill[skill.id] = skill; //walker  
+
+        skill.aosID = 5;
+        skill.aoeID = 6;
+        skill.id = 5;
+        _dictOneKeyDictSkill[skill.id] = skill; //monster  
     }
 
 
 
+    for(auto &kv : _dictOneKeyDictSkill)
+    {
+        if  (kv.second.aosID != InvalidDictID)
+        {
+            auto  aos = getOneKeyAOESearch(kv.second.aosID);
+            if (!aos.first)
+            {
+                LOGE("DBDict finish dict check error. not found aos dict. skillID=" << kv.second.aosID);
+                return false;
+            }
+            kv.second.aosDict = aos.second;
+        }
+        if  (kv.second.aoeID != InvalidDictID)
+        {
+            auto  aoe = getOneKeyAOESearch(kv.second.aoeID);
+            if (!aoe.first)
+            {
+                LOGE("DBDict finish dict check error. not found aoe dict. skillID=" << kv.second.aosID);
+                return false;
+            }
+            kv.second.aoeDict = aoe.second;
+        }
 
-
+    }
     return true;
 }
 

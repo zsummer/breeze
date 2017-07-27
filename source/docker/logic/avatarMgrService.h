@@ -1,7 +1,7 @@
 ﻿
 /*
 * breeze License
-* Copyright (C) 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2016 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ struct AccountStatus
     ui64 _lastCreateTime = 0;
     std::map<ui64, AvatarStatusPtr> _players;
 };
-
+using AccountStatusPtr = std::shared_ptr<AccountStatus>;
 
 
 class AvatarMgrService : public Service
@@ -63,7 +63,7 @@ public:
     void onClientChange() override final;
     void onUnload() override final;
     void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
-    void checkFreeList();
+    void checkOfflineList();
     void systemAutoChat();
 
 private:
@@ -76,21 +76,34 @@ private:
     void onCreateAvatarReqFromDB(zsummer::proto4z::ReadStream &, const AvatarBaseInfo & ubi, const Tracing & trace, const CreateAvatarReq & req);
     void onAttachAvatarReq(const Tracing & trace, zsummer::proto4z::ReadStream &);
     void onRealClientClosedNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
+    void onKickClientsNotice(const Tracing & trace, zsummer::proto4z::ReadStream &);
 
 private:
 
 
 
 
-
+public:
+    AvatarStatusPtr getAvatarStatus(ServiceID avatarID);
+    AvatarStatusPtr getAvatarStatus(std::string avatarName);
+    AccountStatusPtr getAccountStatus(std::string account);
 private:
-    double _lastCheckFreeList = getFloatSteadyNowTime();
+    double _lastCheckOfflineList = getFloatSteadyNowTime();
     double _lastSystemChat = getFloatSteadyNowTime();
-    std::map<ui64, AvatarStatusPtr> _freeList;
-    std::map<ui64, AvatarStatusPtr> _userStatusByID;
-    std::map<std::string, AvatarStatusPtr> _userStatusByName;
-    std::map<std::string, AccountStatus> _accountStatus;
+    std::map<ui64, AvatarStatusPtr> _offlineAvatars;
+    std::map<ui64, AvatarStatusPtr> _avatarStatusByID;
+    std::map<std::string, AvatarStatusPtr> _avatarStatusByName;
+    std::map<std::string, AccountStatusPtr> _accountStatus;
     ui64 _nextAvatarID = 0;
+
+public:
+    bool isForbid(std::string account);
+    bool isForbid(ServiceID avatarID);
+private:
+    //kickclients with forbid.
+    time_t _tmpForbidAllClientTime = 0;
+    std::map<std::string, time_t> _tmpForbidAccount;
+    std::map<ServiceID, time_t> _tmpForbidAvatar;
 };
 
 

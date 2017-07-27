@@ -145,29 +145,25 @@ struct SceneRefreshNotice
 { 
     static const unsigned short getProtoID() { return 50004;} 
     static const std::string getProtoName() { return "SceneRefreshNotice";} 
-    DictPropArray entityProps;  
     EntityStateArray entityStates;  
     EntityMoveArray entityMoves;  
     SceneRefreshNotice() 
     { 
     } 
-    SceneRefreshNotice(const DictPropArray & entityProps, const EntityStateArray & entityStates, const EntityMoveArray & entityMoves) 
+    SceneRefreshNotice(const EntityStateArray & entityStates, const EntityMoveArray & entityMoves) 
     { 
-        this->entityProps = entityProps; 
         this->entityStates = entityStates; 
         this->entityMoves = entityMoves; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const SceneRefreshNotice & data) 
 { 
-    ws << data.entityProps;  
     ws << data.entityStates;  
     ws << data.entityMoves;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, SceneRefreshNotice & data) 
 { 
-    rs >> data.entityProps;  
     rs >> data.entityStates;  
     rs >> data.entityMoves;  
     return rs; 
@@ -175,7 +171,6 @@ inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const SceneRefreshNotice & info) 
 { 
     stm << "["; 
-    stm << "entityProps=" << info.entityProps << ","; 
     stm << "entityStates=" << info.entityStates << ","; 
     stm << "entityMoves=" << info.entityMoves << ","; 
     stm << "]"; 
@@ -217,29 +212,29 @@ struct AddEntityNotice //一批实体加入场景时, 把这些实体的数据�
 { 
     static const unsigned short getProtoID() { return 50006;} 
     static const std::string getProtoName() { return "AddEntityNotice";} 
-    EntityFullDataArray entitys;  
+    EntityClientSyncArray syncs;  
     AddEntityNotice() 
     { 
     } 
-    AddEntityNotice(const EntityFullDataArray & entitys) 
+    AddEntityNotice(const EntityClientSyncArray & syncs) 
     { 
-        this->entitys = entitys; 
+        this->syncs = syncs; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AddEntityNotice & data) 
 { 
-    ws << data.entitys;  
+    ws << data.syncs;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AddEntityNotice & data) 
 { 
-    rs >> data.entitys;  
+    rs >> data.syncs;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AddEntityNotice & info) 
 { 
     stm << "["; 
-    stm << "entitys=" << info.entitys << ","; 
+    stm << "syncs=" << info.syncs << ","; 
     stm << "]"; 
     return stm; 
 } 

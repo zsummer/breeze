@@ -37,6 +37,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scene", "scene\scene.vcxproj", "{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AE557081-EA4D-49A7-A629-49EA151806DF} = {AE557081-EA4D-49A7-A629-49EA151806DF}
+		{3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0} = {3FC7DAAE-BE8C-4A83-8ED8-BCB11AD123F0}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "opengl", "opengl\opengl.vcxproj", "{C1229E9B-43B6-4B6C-BF41-9FADC1829E77}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AE557081-EA4D-49A7-A629-49EA151806DF} = {AE557081-EA4D-49A7-A629-49EA151806DF}
 	EndProjectSection
 EndProject
 Global
@@ -73,6 +79,10 @@ Global
 		{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}.Debug|x64.Build.0 = Debug|x64
 		{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}.Release|x64.ActiveCfg = Release|x64
 		{DD3DDA93-FEE5-47F6-AFE3-6E2ED6FBB8D5}.Release|x64.Build.0 = Release|x64
+		{C1229E9B-43B6-4B6C-BF41-9FADC1829E77}.Debug|x64.ActiveCfg = Debug|x64
+		{C1229E9B-43B6-4B6C-BF41-9FADC1829E77}.Debug|x64.Build.0 = Debug|x64
+		{C1229E9B-43B6-4B6C-BF41-9FADC1829E77}.Release|x64.ActiveCfg = Release|x64
+		{C1229E9B-43B6-4B6C-BF41-9FADC1829E77}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

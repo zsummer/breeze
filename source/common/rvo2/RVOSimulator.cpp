@@ -41,47 +41,47 @@
 #endif
 
 namespace RVO {
-	RVOSimulator::RVOSimulator() : defaultAgent_(NULL), globalTime_(0.0), kdTree_(NULL), timeStep_(0.0)
-	{
-		kdTree_ = new KdTree(this);
-	}
+    RVOSimulator::RVOSimulator() : defaultAgent_(NULL), globalTime_(0.0), kdTree_(NULL), timeStep_(0.0)
+    {
+        kdTree_ = new KdTree(this);
+    }
 
-	RVOSimulator::RVOSimulator(double timeStep, double neighborDist, size_t maxNeighbors, double timeHorizon, double timeHorizonObst, double radius, double maxSpeed, const Vector2 &velocity) : defaultAgent_(NULL), globalTime_(0.0), kdTree_(NULL), timeStep_(timeStep)
-	{
-		kdTree_ = new KdTree(this);
-		defaultAgent_ = new Agent(this);
+    RVOSimulator::RVOSimulator(double timeStep, double neighborDist, size_t maxNeighbors, double timeHorizon, double timeHorizonObst, double radius, double maxSpeed, const Vector2 &velocity) : defaultAgent_(NULL), globalTime_(0.0), kdTree_(NULL), timeStep_(timeStep)
+    {
+        kdTree_ = new KdTree(this);
+        defaultAgent_ = new Agent(this);
 
-		defaultAgent_->maxNeighbors_ = maxNeighbors;
-		defaultAgent_->maxSpeed_ = maxSpeed;
-		defaultAgent_->neighborDist_ = neighborDist;
-		defaultAgent_->radius_ = radius;
-		defaultAgent_->timeHorizon_ = timeHorizon;
-		defaultAgent_->timeHorizonObst_ = timeHorizonObst;
-		defaultAgent_->velocity_ = velocity;
-	}
+        defaultAgent_->maxNeighbors_ = maxNeighbors;
+        defaultAgent_->maxSpeed_ = maxSpeed;
+        defaultAgent_->neighborDist_ = neighborDist;
+        defaultAgent_->radius_ = radius;
+        defaultAgent_->timeHorizon_ = timeHorizon;
+        defaultAgent_->timeHorizonObst_ = timeHorizonObst;
+        defaultAgent_->velocity_ = velocity;
+    }
 
-	RVOSimulator::~RVOSimulator()
-	{
-		if (defaultAgent_ != NULL) {
-			delete defaultAgent_;
-		}
+    RVOSimulator::~RVOSimulator()
+    {
+        if (defaultAgent_ != NULL) {
+            delete defaultAgent_;
+        }
 
-		for (size_t i = 0; i < agents_.size(); ++i) {
-			delete agents_[i];
-		}
+        for (size_t i = 0; i < agents_.size(); ++i) {
+            delete agents_[i];
+        }
 
-		for (size_t i = 0; i < obstacles_.size(); ++i) {
-			delete obstacles_[i];
-		}
+        for (size_t i = 0; i < obstacles_.size(); ++i) {
+            delete obstacles_[i];
+        }
 
-		delete kdTree_;
-	}
+        delete kdTree_;
+    }
 
-	size_t RVOSimulator::addAgent(const Vector2 &position)
-	{
-		if (defaultAgent_ == NULL) {
-			return RVO_ERROR;
-		}
+    size_t RVOSimulator::addAgent(const Vector2 &position)
+    {
+        if (defaultAgent_ == NULL) {
+            return RVO_ERROR;
+        }
         size_t agentNo = RVO_ERROR;
         Agent *agent = nullptr;
         if (freeAgents_.empty())
@@ -97,21 +97,21 @@ namespace RVO {
             freeAgents_.pop_back();
             agent = agents_.at(agentNo);
         }
-		
-		agent->position_ = position;
-		agent->maxNeighbors_ = defaultAgent_->maxNeighbors_;
-		agent->maxSpeed_ = defaultAgent_->maxSpeed_;
-		agent->neighborDist_ = defaultAgent_->neighborDist_;
-		agent->radius_ = defaultAgent_->radius_;
-		agent->timeHorizon_ = defaultAgent_->timeHorizon_;
-		agent->timeHorizonObst_ = defaultAgent_->timeHorizonObst_;
-		agent->velocity_ = defaultAgent_->velocity_;
+        
+        agent->position_ = position;
+        agent->maxNeighbors_ = defaultAgent_->maxNeighbors_;
+        agent->maxSpeed_ = defaultAgent_->maxSpeed_;
+        agent->neighborDist_ = defaultAgent_->neighborDist_;
+        agent->radius_ = defaultAgent_->radius_;
+        agent->timeHorizon_ = defaultAgent_->timeHorizon_;
+        agent->timeHorizonObst_ = defaultAgent_->timeHorizonObst_;
+        agent->velocity_ = defaultAgent_->velocity_;
 
         return agentNo;
-	}
+    }
 
-	size_t RVOSimulator::addAgent(const Vector2 &position, double neighborDist, size_t maxNeighbors, double timeHorizon, double timeHorizonObst, double radius, double maxSpeed, const Vector2 &velocity)
-	{
+    size_t RVOSimulator::addAgent(const Vector2 &position, double neighborDist, size_t maxNeighbors, double timeHorizon, double timeHorizonObst, double radius, double maxSpeed, const Vector2 &velocity)
+    {
         size_t agentNo = RVO_ERROR;
         Agent *agent = nullptr;
         if (freeAgents_.empty())
@@ -130,17 +130,17 @@ namespace RVO {
 
 
 
-		agent->position_ = position;
-		agent->maxNeighbors_ = maxNeighbors;
-		agent->maxSpeed_ = maxSpeed;
-		agent->neighborDist_ = neighborDist;
-		agent->radius_ = radius;
-		agent->timeHorizon_ = timeHorizon;
-		agent->timeHorizonObst_ = timeHorizonObst;
-		agent->velocity_ = velocity;
+        agent->position_ = position;
+        agent->maxNeighbors_ = maxNeighbors;
+        agent->maxSpeed_ = maxSpeed;
+        agent->neighborDist_ = neighborDist;
+        agent->radius_ = radius;
+        agent->timeHorizon_ = timeHorizon;
+        agent->timeHorizonObst_ = timeHorizonObst;
+        agent->velocity_ = velocity;
 
         return agentNo;
-	}
+    }
     void RVOSimulator::removeAgent(size_t agentNo)
     {
         if (agentNo < agents_.size())
@@ -155,253 +155,259 @@ namespace RVO {
         }
     }
 
-	size_t RVOSimulator::addObstacle(const std::vector<Vector2> &vertices)
-	{
-		if (vertices.size() < 2) {
-			return RVO_ERROR;
-		}
+    size_t RVOSimulator::addObstacle(const std::vector<Vector2> &vertices)
+    {
+        if (vertices.size() < 2) {
+            return RVO_ERROR;
+        }
 
-		const size_t obstacleNo = obstacles_.size();
+        const size_t obstacleNo = obstacles_.size();
 
-		for (size_t i = 0; i < vertices.size(); ++i) {
-			Obstacle *obstacle = new Obstacle();
-			obstacle->point_ = vertices[i];
+        for (size_t i = 0; i < vertices.size(); ++i) {
+            Obstacle *obstacle = new Obstacle();
+            obstacle->point_ = vertices[i];
 
-			if (i != 0) {
-				obstacle->prevObstacle_ = obstacles_.back();
-				obstacle->prevObstacle_->nextObstacle_ = obstacle;
-			}
+            if (i != 0) {
+                obstacle->prevObstacle_ = obstacles_.back();
+                obstacle->prevObstacle_->nextObstacle_ = obstacle;
+            }
 
-			if (i == vertices.size() - 1) {
-				obstacle->nextObstacle_ = obstacles_[obstacleNo];
-				obstacle->nextObstacle_->prevObstacle_ = obstacle;
-			}
+            if (i == vertices.size() - 1) {
+                obstacle->nextObstacle_ = obstacles_[obstacleNo];
+                obstacle->nextObstacle_->prevObstacle_ = obstacle;
+            }
 
-			obstacle->unitDir_ = normalize(vertices[(i == vertices.size() - 1 ? 0 : i + 1)] - vertices[i]);
+            obstacle->unitDir_ = normalize(vertices[(i == vertices.size() - 1 ? 0 : i + 1)] - vertices[i]);
 
-			if (vertices.size() == 2) {
-				obstacle->isConvex_ = true;
-			}
-			else {
-				obstacle->isConvex_ = (leftOf(vertices[(i == 0 ? vertices.size() - 1 : i - 1)], vertices[i], vertices[(i == vertices.size() - 1 ? 0 : i + 1)]) >= 0.0);
-			}
+            if (vertices.size() == 2) {
+                obstacle->isConvex_ = true;
+            }
+            else {
+                obstacle->isConvex_ = (leftOf(vertices[(i == 0 ? vertices.size() - 1 : i - 1)], vertices[i], vertices[(i == vertices.size() - 1 ? 0 : i + 1)]) >= 0.0);
+            }
 
-			obstacle->id_ = obstacles_.size();
+            obstacle->id_ = obstacles_.size();
 
-			obstacles_.push_back(obstacle);
-		}
+            obstacles_.push_back(obstacle);
+        }
 
-		return obstacleNo;
-	}
-
-	void RVOSimulator::doStep()
-	{
-		kdTree_->buildAgentTree();
-
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-		for (int i = 0; i < static_cast<int>(agents_.size()); ++i) {
-			agents_[i]->computeNeighbors();
-			agents_[i]->computeNewVelocity();
-		}
+        return obstacleNo;
+    }
+    void RVOSimulator::cleanObstacle()
+    {
+        for (size_t i = 0; i < obstacles_.size(); ++i) {
+            delete obstacles_[i];
+        }
+        obstacles_.clear();
+    }
+    void RVOSimulator::doStep()
+    {
+        kdTree_->buildAgentTree();
 
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int i = 0; i < static_cast<int>(agents_.size()); ++i) {
-			agents_[i]->update();
-		}
+        for (int i = 0; i < static_cast<int>(agents_.size()); ++i) {
+            agents_[i]->computeNeighbors();
+            agents_[i]->computeNewVelocity();
+        }
 
-		globalTime_ += timeStep_;
-	}
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+        for (int i = 0; i < static_cast<int>(agents_.size()); ++i) {
+            agents_[i]->update();
+        }
 
-	size_t RVOSimulator::getAgentAgentNeighbor(size_t agentNo, size_t neighborNo) const
-	{
-		return agents_[agentNo]->agentNeighbors_[neighborNo].second->id_;
-	}
+        globalTime_ += timeStep_;
+    }
 
-	size_t RVOSimulator::getAgentMaxNeighbors(size_t agentNo) const
-	{
-		return agents_[agentNo]->maxNeighbors_;
-	}
+    size_t RVOSimulator::getAgentAgentNeighbor(size_t agentNo, size_t neighborNo) const
+    {
+        return agents_[agentNo]->agentNeighbors_[neighborNo].second->id_;
+    }
 
-	double RVOSimulator::getAgentMaxSpeed(size_t agentNo) const
-	{
-		return agents_[agentNo]->maxSpeed_;
-	}
+    size_t RVOSimulator::getAgentMaxNeighbors(size_t agentNo) const
+    {
+        return agents_[agentNo]->maxNeighbors_;
+    }
 
-	double RVOSimulator::getAgentNeighborDist(size_t agentNo) const
-	{
-		return agents_[agentNo]->neighborDist_;
-	}
+    double RVOSimulator::getAgentMaxSpeed(size_t agentNo) const
+    {
+        return agents_[agentNo]->maxSpeed_;
+    }
 
-	size_t RVOSimulator::getAgentNumAgentNeighbors(size_t agentNo) const
-	{
-		return agents_[agentNo]->agentNeighbors_.size();
-	}
+    double RVOSimulator::getAgentNeighborDist(size_t agentNo) const
+    {
+        return agents_[agentNo]->neighborDist_;
+    }
 
-	size_t RVOSimulator::getAgentNumObstacleNeighbors(size_t agentNo) const
-	{
-		return agents_[agentNo]->obstacleNeighbors_.size();
-	}
+    size_t RVOSimulator::getAgentNumAgentNeighbors(size_t agentNo) const
+    {
+        return agents_[agentNo]->agentNeighbors_.size();
+    }
 
-	size_t RVOSimulator::getAgentNumORCALines(size_t agentNo) const
-	{
-		return agents_[agentNo]->orcaLines_.size();
-	}
+    size_t RVOSimulator::getAgentNumObstacleNeighbors(size_t agentNo) const
+    {
+        return agents_[agentNo]->obstacleNeighbors_.size();
+    }
 
-	size_t RVOSimulator::getAgentObstacleNeighbor(size_t agentNo, size_t neighborNo) const
-	{
-		return agents_[agentNo]->obstacleNeighbors_[neighborNo].second->id_;
-	}
+    size_t RVOSimulator::getAgentNumORCALines(size_t agentNo) const
+    {
+        return agents_[agentNo]->orcaLines_.size();
+    }
 
-	const Line &RVOSimulator::getAgentORCALine(size_t agentNo, size_t lineNo) const
-	{
-		return agents_[agentNo]->orcaLines_[lineNo];
-	}
+    size_t RVOSimulator::getAgentObstacleNeighbor(size_t agentNo, size_t neighborNo) const
+    {
+        return agents_[agentNo]->obstacleNeighbors_[neighborNo].second->id_;
+    }
 
-	const Vector2 &RVOSimulator::getAgentPosition(size_t agentNo) const
-	{
-		return agents_[agentNo]->position_;
-	}
+    const Line &RVOSimulator::getAgentORCALine(size_t agentNo, size_t lineNo) const
+    {
+        return agents_[agentNo]->orcaLines_[lineNo];
+    }
 
-	const Vector2 &RVOSimulator::getAgentPrefVelocity(size_t agentNo) const
-	{
-		return agents_[agentNo]->prefVelocity_;
-	}
+    const Vector2 &RVOSimulator::getAgentPosition(size_t agentNo) const
+    {
+        return agents_[agentNo]->position_;
+    }
 
-	double RVOSimulator::getAgentRadius(size_t agentNo) const
-	{
-		return agents_[agentNo]->radius_;
-	}
+    const Vector2 &RVOSimulator::getAgentPrefVelocity(size_t agentNo) const
+    {
+        return agents_[agentNo]->prefVelocity_;
+    }
 
-	double RVOSimulator::getAgentTimeHorizon(size_t agentNo) const
-	{
-		return agents_[agentNo]->timeHorizon_;
-	}
+    double RVOSimulator::getAgentRadius(size_t agentNo) const
+    {
+        return agents_[agentNo]->radius_;
+    }
 
-	double RVOSimulator::getAgentTimeHorizonObst(size_t agentNo) const
-	{
-		return agents_[agentNo]->timeHorizonObst_;
-	}
+    double RVOSimulator::getAgentTimeHorizon(size_t agentNo) const
+    {
+        return agents_[agentNo]->timeHorizon_;
+    }
 
-	const Vector2 &RVOSimulator::getAgentVelocity(size_t agentNo) const
-	{
-		return agents_[agentNo]->velocity_;
-	}
+    double RVOSimulator::getAgentTimeHorizonObst(size_t agentNo) const
+    {
+        return agents_[agentNo]->timeHorizonObst_;
+    }
 
-	double RVOSimulator::getGlobalTime() const
-	{
-		return globalTime_;
-	}
+    const Vector2 &RVOSimulator::getAgentVelocity(size_t agentNo) const
+    {
+        return agents_[agentNo]->velocity_;
+    }
 
-	size_t RVOSimulator::getNumAgents() const
-	{
-		return agents_.size();
-	}
+    double RVOSimulator::getGlobalTime() const
+    {
+        return globalTime_;
+    }
 
-	size_t RVOSimulator::getNumObstacleVertices() const
-	{
-		return obstacles_.size();
-	}
+    size_t RVOSimulator::getNumAgents() const
+    {
+        return agents_.size();
+    }
 
-	const Vector2 &RVOSimulator::getObstacleVertex(size_t vertexNo) const
-	{
-		return obstacles_[vertexNo]->point_;
-	}
+    size_t RVOSimulator::getNumObstacleVertices() const
+    {
+        return obstacles_.size();
+    }
 
-	size_t RVOSimulator::getNextObstacleVertexNo(size_t vertexNo) const
-	{
-		return obstacles_[vertexNo]->nextObstacle_->id_;
-	}
+    const Vector2 &RVOSimulator::getObstacleVertex(size_t vertexNo) const
+    {
+        return obstacles_[vertexNo]->point_;
+    }
 
-	size_t RVOSimulator::getPrevObstacleVertexNo(size_t vertexNo) const
-	{
-		return obstacles_[vertexNo]->prevObstacle_->id_;
-	}
+    size_t RVOSimulator::getNextObstacleVertexNo(size_t vertexNo) const
+    {
+        return obstacles_[vertexNo]->nextObstacle_->id_;
+    }
 
-	double RVOSimulator::getTimeStep() const
-	{
-		return timeStep_;
-	}
+    size_t RVOSimulator::getPrevObstacleVertexNo(size_t vertexNo) const
+    {
+        return obstacles_[vertexNo]->prevObstacle_->id_;
+    }
 
-	void RVOSimulator::processObstacles()
-	{
-		kdTree_->buildObstacleTree();
-	}
+    double RVOSimulator::getTimeStep() const
+    {
+        return timeStep_;
+    }
 
-	bool RVOSimulator::queryVisibility(const Vector2 &point1, const Vector2 &point2, double radius) const
-	{
-		return kdTree_->queryVisibility(point1, point2, radius);
-	}
+    void RVOSimulator::processObstacles()
+    {
+        kdTree_->buildObstacleTree();
+    }
 
-	void RVOSimulator::setAgentDefaults(double neighborDist, size_t maxNeighbors, double timeHorizon, double timeHorizonObst, double radius, double maxSpeed, const Vector2 &velocity)
-	{
-		if (defaultAgent_ == NULL) {
-			defaultAgent_ = new Agent(this);
-		}
+    bool RVOSimulator::queryVisibility(const Vector2 &point1, const Vector2 &point2, double radius) const
+    {
+        return kdTree_->queryVisibility(point1, point2, radius);
+    }
 
-		defaultAgent_->maxNeighbors_ = maxNeighbors;
-		defaultAgent_->maxSpeed_ = maxSpeed;
-		defaultAgent_->neighborDist_ = neighborDist;
-		defaultAgent_->radius_ = radius;
-		defaultAgent_->timeHorizon_ = timeHorizon;
-		defaultAgent_->timeHorizonObst_ = timeHorizonObst;
-		defaultAgent_->velocity_ = velocity;
-	}
+    void RVOSimulator::setAgentDefaults(double neighborDist, size_t maxNeighbors, double timeHorizon, double timeHorizonObst, double radius, double maxSpeed, const Vector2 &velocity)
+    {
+        if (defaultAgent_ == NULL) {
+            defaultAgent_ = new Agent(this);
+        }
 
-	void RVOSimulator::setAgentMaxNeighbors(size_t agentNo, size_t maxNeighbors)
-	{
-		agents_[agentNo]->maxNeighbors_ = maxNeighbors;
-	}
+        defaultAgent_->maxNeighbors_ = maxNeighbors;
+        defaultAgent_->maxSpeed_ = maxSpeed;
+        defaultAgent_->neighborDist_ = neighborDist;
+        defaultAgent_->radius_ = radius;
+        defaultAgent_->timeHorizon_ = timeHorizon;
+        defaultAgent_->timeHorizonObst_ = timeHorizonObst;
+        defaultAgent_->velocity_ = velocity;
+    }
 
-	void RVOSimulator::setAgentMaxSpeed(size_t agentNo, double maxSpeed)
-	{
-		agents_[agentNo]->maxSpeed_ = maxSpeed;
-	}
+    void RVOSimulator::setAgentMaxNeighbors(size_t agentNo, size_t maxNeighbors)
+    {
+        agents_[agentNo]->maxNeighbors_ = maxNeighbors;
+    }
 
-	void RVOSimulator::setAgentNeighborDist(size_t agentNo, double neighborDist)
-	{
-		agents_[agentNo]->neighborDist_ = neighborDist;
-	}
+    void RVOSimulator::setAgentMaxSpeed(size_t agentNo, double maxSpeed)
+    {
+        agents_[agentNo]->maxSpeed_ = maxSpeed;
+    }
 
-	void RVOSimulator::setAgentPosition(size_t agentNo, const Vector2 &position)
-	{
-		agents_[agentNo]->position_ = position;
-	}
+    void RVOSimulator::setAgentNeighborDist(size_t agentNo, double neighborDist)
+    {
+        agents_[agentNo]->neighborDist_ = neighborDist;
+    }
 
-	void RVOSimulator::setAgentPrefVelocity(size_t agentNo, const Vector2 &prefVelocity)
-	{
-		agents_[agentNo]->prefVelocity_ = prefVelocity;
-	}
+    void RVOSimulator::setAgentPosition(size_t agentNo, const Vector2 &position)
+    {
+        agents_[agentNo]->position_ = position;
+    }
+
+    void RVOSimulator::setAgentPrefVelocity(size_t agentNo, const Vector2 &prefVelocity)
+    {
+        agents_[agentNo]->prefVelocity_ = prefVelocity;
+    }
     double RVOSimulator::getAgentRadius(size_t agentNo)
     {
         return agents_[agentNo]->radius_;
     }
 
-	void RVOSimulator::setAgentRadius(size_t agentNo, double radius)
-	{
-		agents_[agentNo]->radius_ = radius;
-	}
+    void RVOSimulator::setAgentRadius(size_t agentNo, double radius)
+    {
+        agents_[agentNo]->radius_ = radius;
+    }
 
-	void RVOSimulator::setAgentTimeHorizon(size_t agentNo, double timeHorizon)
-	{
-		agents_[agentNo]->timeHorizon_ = timeHorizon;
-	}
+    void RVOSimulator::setAgentTimeHorizon(size_t agentNo, double timeHorizon)
+    {
+        agents_[agentNo]->timeHorizon_ = timeHorizon;
+    }
 
-	void RVOSimulator::setAgentTimeHorizonObst(size_t agentNo, double timeHorizonObst)
-	{
-		agents_[agentNo]->timeHorizonObst_ = timeHorizonObst;
-	}
+    void RVOSimulator::setAgentTimeHorizonObst(size_t agentNo, double timeHorizonObst)
+    {
+        agents_[agentNo]->timeHorizonObst_ = timeHorizonObst;
+    }
 
-	void RVOSimulator::setAgentVelocity(size_t agentNo, const Vector2 &velocity)
-	{
-		agents_[agentNo]->velocity_ = velocity;
-	}
+    void RVOSimulator::setAgentVelocity(size_t agentNo, const Vector2 &velocity)
+    {
+        agents_[agentNo]->velocity_ = velocity;
+    }
 
-	void RVOSimulator::setTimeStep(double timeStep)
-	{
-		timeStep_ = timeStep;
-	}
+    void RVOSimulator::setTimeStep(double timeStep)
+    {
+        timeStep_ = timeStep;
+    }
 }

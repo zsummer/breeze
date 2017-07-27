@@ -33,6 +33,9 @@
     <ClCompile Include="logic\ai.cpp">
       <Filter>logic</Filter>
     </ClCompile>
+    <ClCompile Include="logic\script.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\config.lua">
@@ -56,6 +59,9 @@
       <Filter>logic</Filter>
     </ClInclude>
     <ClInclude Include="logic\ai.h">
+      <Filter>logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic\script.h">
       <Filter>logic</Filter>
     </ClInclude>
   </ItemGroup>

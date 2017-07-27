@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2015 - 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2015 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -31,17 +31,16 @@ public:
     void update();
 
     //普攻的寻敌
-    void selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bool change);
-    bool isOutCD(EntityPtr caster, const EntitySkillInfo & skill, const DictSkill & dict);
-    bool updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
-    bool useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, ui16 foeFirst);
-    bool useSkill(ScenePtr scene, EntityID casterID, ui64 skillID);
+    EntityPtr lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo & skill);
+    bool doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & clientDst = { 1, 1 }, 
+        EntityID clientFoe = InvalidEntityID, bool autoFoe = true, bool onlyFill = false);
+    bool doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe);
 
-    bool triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
-    bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill);
+    bool updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
+    bool attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill);
     
 
-    bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets);
+    bool damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, std::vector<std::pair<EntityPtr, double>> & targets);
     bool addBuff();
     bool cleanBuff();
 };

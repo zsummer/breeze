@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>5f3d0df46dd76e7f064c98ca8b9a4d3b</cppmd5> 
-<luamd5>c63a44d7b0c028224673812d0cc02e42</luamd5> 
-<csharpmd5>503fb2d5ce03c98bc659783dddb86313</csharpmd5> 
-<xmlmd5>aba3eee5f089bc36d4aaf4b0527d11ad</xmlmd5> 
+<cppmd5>d71a2da0192b8c46d0afc15a43ccfa53</cppmd5> 
+<luamd5>c753e419bcd7c594827414d48f94e1d8</luamd5> 
+<csharpmd5>6364332e63a736c88d03b6abb227ba19</csharpmd5> 
+<xmlmd5>36f7bf78c539dfc775a9698bd264b2ca</xmlmd5> 
 <cacheNumber>
     <cache key = "EPosition" Number = "2002" /> 
-    <cache key = "EntityBuffInfo" Number = "2010" /> 
-    <cache key = "EntityFullData" Number = "2007" /> 
+    <cache key = "EntityBuffInfo" Number = "2011" /> 
+    <cache key = "EntityClientSync" Number = "2008" /> 
+    <cache key = "EntityControl" Number = "2007" /> 
     <cache key = "EntityMove" Number = "2005" /> 
     <cache key = "EntityReport" Number = "2006" /> 
-    <cache key = "EntitySkillInfo" Number = "2009" /> 
+    <cache key = "EntitySkillInfo" Number = "2010" /> 
+    <cache key = "EntitySkillSystem" Number = "2012" /> 
     <cache key = "EntityState" Number = "2004" /> 
     <cache key = "SceneEventInfo" Number = "2003" /> 
     <cache key = "SceneGroupAvatarInfo" Number = "2000" /> 
     <cache key = "SceneGroupInfo" Number = "2001" /> 
-    <cache key = "SceneSection" Number = "2008" /> 
+    <cache key = "SceneSection" Number = "2009" /> 
 </cacheNumber>

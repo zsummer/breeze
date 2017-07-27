@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2016 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -245,9 +245,16 @@ inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double r
 
 inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isClockwise);
 inline std::tuple<double, double> rotateVertical(std::tuple<double, double> vt, bool isClockwise);
-inline std::tuple<double, double> normalizeVector(double vx, double vy);
-inline std::tuple<double, double> normalizeVector(std::tuple<double, double> vt);
-
+inline std::tuple<double, double> normalize(double vx, double vy);
+inline std::tuple<double, double> normalize(std::tuple<double, double> vt);
+inline double dot(std::tuple<double, double> vt1, std::tuple<double, double> vt2);
+inline double det(std::tuple<double, double> vt1, std::tuple<double, double> vt2);
+inline double dot(double vx1, double vy1, double vx2, double vy2);
+inline double det(double vx1, double vy1, double vx2, double vy2);
+inline double distLine(double linex1, double liney1, double linex2, double liney2, double cx, double cy);
+inline double distLine(std::tuple<double, double> line1, std::tuple<double, double> line2, std::tuple<double, double> pos);
+inline std::tuple<double, double> shortestLine(std::tuple<double, double> line1, std::tuple<double, double> line2, std::tuple<double, double> pos);
+inline std::tuple<double, double> shortestLine(double linex1, double liney1, double linex2, double liney2, double cx, double cy);
 
 //bit
 //==========================================================================

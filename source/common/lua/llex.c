@@ -32,7 +32,7 @@
 
 
 
-#define currIsNewline(ls)	(ls->current == '\n' || ls->current == '\r')
+#define currIsNewline(ls)    (ls->current == '\n' || ls->current == '\r')
 
 
 /* ORDER RESERVED */
@@ -222,11 +222,11 @@ static void buffreplace (LexState *ls, char from, char to) {
 
 
 #if !defined(l_getlocaledecpoint)
-#define l_getlocaledecpoint()	(localeconv()->decimal_point[0])
+#define l_getlocaledecpoint()    (localeconv()->decimal_point[0])
 #endif
 
 
-#define buff2num(b,o)	(luaO_str2num(luaZ_buffer(b), o) != 0)
+#define buff2num(b,o)    (luaO_str2num(luaZ_buffer(b), o) != 0)
 
 /*
 ** in case of format error, try to change decimal point separator to

@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2015 - 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2015 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -37,9 +37,12 @@ public:
 
     ui64 addAgent(EPosition pos, double collision);
     void delAgent(ui64 agent);
+    void addObstacle(const std::vector<RVO::Vector2> &vertices);
+    void cleanObstacle();
+    void processObstacles();
     bool isValidAgent(ui64 agent);
     bool setAgentPosition(ui64 agent, EPosition pos);
-    bool doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPositionArray dsts);
+    bool doMove(ui64 eid, MOVE_ACTION action, double speed, ui64 follow, EPositionArray waypoints);
 };
 
 using MoveSyncPtr = std::shared_ptr<MoveSync>;

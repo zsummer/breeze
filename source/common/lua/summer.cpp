@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,54 +34,136 @@
  * (end of COPYRIGHT)
  */
 
-#include "summer.h"
 #include <zsummerX/zsummerX.h>
+#include "summer.h"
+
 #include <chrono>
 using namespace zsummer::proto4z;
 using namespace zsummer::network;
 
 
 
+
+
 static int logt(lua_State * L)
 {
-    const char * log = luaL_checkstring(L, 1);
-    LOGT("from lua: " << log);
+    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
+    {
+        lua_Debug ld = { 0 };
+        lua_getstack(L, 1, &ld);
+        lua_getinfo(L, "lS", &ld);
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_TRACE, ld.source, ld.currentline, log);
+    }
+    else
+    {
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_TRACE, NULL, 0, log);
+    }
+
     return 0;
 }
 static int logd(lua_State * L)
 {
-    const char * log = luaL_checkstring(L, 1);
-    LOGD("from lua: " << log);
+    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
+    {
+        lua_Debug ld = { 0 };
+        lua_getstack(L, 1, &ld);
+        lua_getinfo(L, "lS", &ld);
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_DEBUG, ld.source, ld.currentline, log);
+    }
+    else
+    {
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_DEBUG, NULL, 0, log);
+    }
     return 0;
 }
 static int logi(lua_State * L)
 {
-    const char * log = luaL_checkstring(L, 1);
-    LOGI("from lua: " << log);
+    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
+    {
+        lua_Debug ld = { 0 };
+        lua_getstack(L, 1, &ld);
+        lua_getinfo(L, "lS", &ld);
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_INFO, ld.source, ld.currentline, log);
+    }
+    else
+    {
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_INFO, NULL, 0, log);
+    }
     return 0;
 }
 static int logw(lua_State * L)
 {
-    const char * log = luaL_checkstring(L, 1);
-    LOGW("from lua: " << log);
+    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
+    {
+        lua_Debug ld = { 0 };
+        lua_getstack(L, 1, &ld);
+        lua_getinfo(L, "lS", &ld);
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN, ld.source, ld.currentline, log);
+    }
+    else
+    {
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN, NULL, 0, log);
+    }
     return 0;
 }
 static int loge(lua_State * L)
 {
-    const char * log = luaL_checkstring(L, 1);
-    LOGE("from lua: " << log);
+    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
+    {
+        lua_Debug ld = { 0 };
+        lua_getstack(L, 1, &ld);
+        lua_getinfo(L, "lS", &ld);
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ERROR, ld.source, ld.currentline, log);
+    }
+    else
+    {
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ERROR, NULL, 0, log);
+    }
     return 0;
 }
 static int logf(lua_State * L)
 {
-    const char * log = luaL_checkstring(L, 1);
-    LOGF("from lua: " << log);
+    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
+    {
+        lua_Debug ld = { 0 };
+        lua_getstack(L, 1, &ld);
+        lua_getinfo(L, "lS", &ld);
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_FATAL, ld.source, ld.currentline, log);
+    }
+    else
+    {
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_FATAL, NULL, 0, log);
+    }
+
     return 0;
 }
 static int loga(lua_State * L)
 {
-    const char * log = luaL_checkstring(L, 1);
-    LOGA("from lua: " << log);
+    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
+    {
+        lua_Debug ld = { 0 };
+        lua_getstack(L, 1, &ld);
+        lua_getinfo(L, "lS", &ld);
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ALARM, ld.source, ld.currentline, log);
+    }
+    else
+    {
+        const char * log = luaL_optstring(L, 1, "");
+        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ALARM, NULL, 0, log);
+    }
     return 0;
 }
 

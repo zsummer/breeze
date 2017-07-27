@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2015 - 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2015 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -23,8 +23,12 @@ class Scene;
 class AI : public std::enable_shared_from_this<AI>
 {
     std::weak_ptr<Scene> _scene;
-    std::map<EntityID, EntityPtr> _monsters;
-    double _lastCheckMonstr = 0.0;
+
+
+
+    std::vector<EntityPtr> _march;
+    EPosition _marchOrg;
+    double _lastMarch = 0;
 public:
     AI();
     ~AI();
@@ -32,6 +36,7 @@ public:
     void update();
 
 
+    void rebirthCheck();
 };
 
 using AIPtr = std::shared_ptr<AI>;

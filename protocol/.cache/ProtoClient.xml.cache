@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>cc79fcf21aacffb402d84c92537ded4d</cppmd5> 
-<luamd5>fed608f279efc7e2b7769475dec5343e</luamd5> 
-<csharpmd5>39ee82b0e6d4efef14f8ebc77f644ae3</csharpmd5> 
-<xmlmd5>c7bf046e718b301e12e9340d221f389f</xmlmd5> 
+<cppmd5>2c2fc3066e71685b59962040dacc4ee2</cppmd5> 
+<luamd5>078802be090be6ff03a7fb76155e3451</luamd5> 
+<csharpmd5>60332c707a2182f6ceeffb24e0a0baf3</csharpmd5> 
+<xmlmd5>680ebd872b3e9537197497f836af24b3</xmlmd5> 
 <cacheNumber>
     <cache key = "AttachAvatarReq" Number = "55005" /> 
     <cache key = "AttachAvatarResp" Number = "55006" /> 
@@ -17,6 +17,7 @@
     <cache key = "ChatResp" Number = "55028" /> 
     <cache key = "ClientAuthReq" Number = "55001" /> 
     <cache key = "ClientAuthResp" Number = "55002" /> 
+    <cache key = "ClientDeviceInfoUpdate" Number = "55035" /> 
     <cache key = "ClientPulse" Number = "55000" /> 
     <cache key = "CreateAvatarReq" Number = "55003" /> 
     <cache key = "CreateAvatarResp" Number = "55004" /> 

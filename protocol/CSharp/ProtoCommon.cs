@@ -216,6 +216,35 @@ namespace Proto4z
         } 
     } 
  
+ 
+    public class AccountArray : System.Collections.Generic.List<string>, Proto4z.IProtoObject  
+    { 
+        public System.Collections.Generic.List<byte> __encode() 
+        { 
+            var ret = new System.Collections.Generic.List<byte>(); 
+            int len = (int)this.Count; 
+            ret.AddRange(Proto4z.BaseProtoObject.encodeI32(len)); 
+            for (int i = 0; i < this.Count; i++ ) 
+            { 
+                ret.AddRange(Proto4z.BaseProtoObject.encodeString(this[i]));  
+            } 
+            return ret; 
+        } 
+ 
+        public int __decode(byte[] binData, ref int pos) 
+        { 
+            int len = Proto4z.BaseProtoObject.decodeI32(binData, ref pos); 
+            if(len > 0) 
+            { 
+                for (int i=0; i<len; i++) 
+                { 
+                    this.Add(Proto4z.BaseProtoObject.decodeString(binData, ref pos)); 
+                } 
+            } 
+            return pos; 
+        } 
+    } 
+ 
     public class AvatarPreview: Proto4z.IProtoObject //用户预览信息  
     {     
         //proto id   

@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2015 - 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2015 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,18 +21,20 @@
 #include "move.h"
 #include "skill.h"
 #include "ai.h"
+#include "script.h"
 
 class Scene : public std::enable_shared_from_this<Scene>
 {
     friend MoveSync;
     friend Skill;
     friend AI;
+    friend Script;
     //scene数据
 private:
-    SceneID _sceneID;
+    SceneID _sceneID ;
+    MapID _mapID = InvalidMapID;
     SCENE_TYPE _sceneType;
     SCENE_STATE _sceneStatus;
-    
     EntityID _lastEID;
     double _startTime;
     double _endTime;
@@ -43,7 +45,7 @@ private:
     
     
 public:
-    Scene(SceneID id);
+    Scene(SceneID sceneID);
     ~Scene();
     bool cleanScene();
     bool initScene(SCENE_TYPE sceneType, MapID mapID);
@@ -55,15 +57,17 @@ public:
     //消息队列 
 public:
     template <typename MSG>
-    void broadcast(const MSG & msg, ServiceID without = InvalidServiceID);
+    void broadcast(const MSG & msg, ServiceID without = InvalidServiceID, bool withScript = true);
     template<typename MSG>
     void sendToClient(ServiceID avatarID, const MSG &msg);
 public:
     MoveSyncPtr _move;
     AIPtr _ai;
     SkillPtr _skill;
+    ScriptPtr _script;
 public:
     inline SceneID getSceneID() { return _sceneID; }
+    inline MapID getMapID() { return _mapID; }
     inline SCENE_TYPE getSceneType() { return _sceneType; }
     inline SCENE_STATE getSceneState() { return _sceneStatus; }
     inline size_t getEntitysCount() { return _entitys.size(); }
@@ -84,9 +88,10 @@ public:
 
     std::vector<std::pair<EntityPtr, double>> searchTarget(EntityPtr caster, EPosition org, EPosition vt, ui64  searchID);
     std::vector<std::pair<EntityPtr, double>> searchTarget(EntityPtr caster, EPosition org, EPosition vt, const AOESearch & search);
-    //org起点, vt单位向量, isRect是否为矩形, value1向量单位, value2 矩形前端垂直宽度或者扇形弧度, value3矩形近端垂直宽度或者忽略,  compensate向后补偿一段距离, clip前向裁剪
+    //org起点, vt单位向量, isRect是否为矩形, value1向量单位, value2 矩形前端垂直宽度或者扇形弧度, value3矩形近端垂直宽度或者忽略,  compensate前向偏移原点并修正value1, clip前向裁剪
     std::vector<std::pair<EntityPtr, double>> searchTarget(EPosition org, EPosition vt, ui16 isRect, double value1, double value2, double value3, double compensate, double clip);
-
+    //根据AOESearch中的etype字段和filter过滤方法进行检测当前目标实体是否匹配
+    bool searchMatched(const EntityPtr & master, const EntityPtr & caster, const EntityPtr & dst, const AOESearch & search);
 
     void onSceneInit();
     void onAddEntity(EntityPtr entity);
@@ -148,16 +153,16 @@ void Scene::sendToClient(ServiceID avatarID, const MSG &msg)
         ws << msg;
         SessionManager::getRef().sendSessionData(founder->second->_clientSessionID, ws.getStream(), ws.getStreamLen());
     }
-    catch (...)
+    catch (const std::exception & e)
     {
-        LOGE("Scene::sendToClient ServiceID=" << avatarID << ",  protoid=" << MSG::getProtoID());
+        LOGE("Scene::sendToClient ServiceID=" << avatarID << ",  protoid=" << MSG::getProtoID() << ", e=" << e.what());
         return;
     }
 }
 
 
 template<typename MSG>
-void Scene::broadcast(const MSG &msg, ServiceID without)
+void Scene::broadcast(const MSG &msg, ServiceID without, bool withScript)
 {
     try
     {
@@ -172,11 +177,16 @@ void Scene::broadcast(const MSG &msg, ServiceID without)
             }
             SessionManager::getRef().sendSessionData(user.second->_clientSessionID, ws.getStream(), ws.getStreamLen());
         }
+        if (withScript)
+        {
+            _script->protoSync(MSG::getProtoName(), ws.pickStream());
+            return;
+        }
 
     }
-    catch (...)
+    catch (const std::exception & e)
     {
-        LOGE("Scene::broadcast protoid=" << MSG::getProtoID());
+        LOGE("Scene::broadcast protoid=" << MSG::getProtoID() << ", e=" << e.what());
         return;
     }
 }

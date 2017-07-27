@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -113,6 +113,10 @@ using namespace zsummer::network;
 using namespace zsummer::proto4z;
 using namespace std::placeholders;
 using namespace zsummer::mysql;
+
+//字典ID
+using DictID = unsigned long long;
+const DictID InvalidDictID = 0;
 
 //分区ID  跨服交互时需要该ID表名分区ID, 该ID因为要merge到ServiceID的头部, 表达范围不能超过20bit(100万以下)
 typedef ui64 AreaID;
@@ -290,6 +294,7 @@ struct DBConfig
 
 struct WorldConfig 
 {
+    DockerID _dockerID = InvalidDockerID;
     std::string _dockerListenHost;
     unsigned short _dockerListenPort = 0;
     std::string _sceneListenHost;
@@ -345,7 +350,7 @@ enum ClientSessionData
     UPARAM_LOGIN_TIME,
 
     UPARAM_AREA_ID, //world集群用
-	UPARAM_DOCKER_ID,
+    UPARAM_DOCKER_ID,
     UPARAM_SCENE_ID,
 
 };

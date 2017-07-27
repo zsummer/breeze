@@ -114,30 +114,42 @@
     <!-- SKILL类型 (组合位结构) -->
     <enum type="ui64" name="SKILL_STAMP" desc="">
         <member name="SKILL_NONE"  desc=""/>
-        <member name="SKILL_AUTO_USE" desc="自动施法"/>
+        <member name="SKILL_NORMAL" desc="普攻攻击技能"/>
+
         <member name="SKILL_PASSIVE"    desc="被动技能"/>
+        <member name="SKILL_PHYSICAL"    desc="物理伤害"/>
+        <member name="SKILL_MAGIC"    desc="魔法伤害"/>
+        <member name="SKILL_HARM"   desc="血量减损"/>
+        <member name="SKILL_REGEN"   desc="血量再生"/>
+
         <member name="SKILL_ON_HIT_BREAK"   desc="可被中断"/>
         <member name="SKILL_ON_MOVE_BREAK"   desc="可被中断"/>
         <member name="SKILL_CAN_MOVE"   desc="可移动"/>
-        <member name="SKILL_PHYSICAL"    desc="物理类型"/>
-        <member name="SKILL_MAGIC"    desc="魔法类型"/>
-        <member name="SKILL_HIT"   desc="攻击"/>
-        <member name="SKILL_HILL"   desc="治疗"/>
+
         <member name="SKILL_REMOVE_DEBUFF"   desc="驱散减益BUFF"/>
         <member name="SKILL_REMOVE_BUFF"   desc="驱散增益BUFF"/>
     </enum>
 
+
+    <!-- SKILL AOS type -->
+    <enum type="ui64" name="SKILL_AOS" desc="">
+        <member name="SKILL_LOCKED_POS"  desc="锁坐标"/>
+        <member name="SKILL_LOCKED_VECTOR"  desc="锁方向"/>
+        <member name="SKILL_LOCKED_ENTITY"  desc="永久锁目标"/>
+        <member name="SKILL_LOCKED_FREE"  desc="自由锁定"/>
+    </enum>
+
+
     <struct name="DictSkill" store="MyISAM" desc="">
         <member name="id" type="ui64" tag="key"   desc=""/>
         <member name="stamp" type="ui64"    desc=""/>
-        <member name="searchID" type="ui64"   desc="锁敌"/>
 
-        <member name="aoeID" type="ui64"   desc="AOI伤害"/>
+        <member name="aosID" type="ui64"   desc="锁敌范围"/>
+        <member name="aosDict" type="AOESearch"  tag="ignore" desc="锁敌"/>
+        <member name="aosType" type="ui16"   desc="0一次性锁坐标, 1一次性锁方向, 2永久锁目标, 3锁目标 超出范围外锁坐标"/>
 
-        <member name="orgType" type="ui16"   desc="1 施法者位置, 2 锁定的敌人位置或者目标位置"/>
-        <member name="orgFixed" type="ui16"   desc="1位置固定化成坐标, 0跟随自己或者目标位置实时变化"/>
-        <member name="orgLimitDistance" type="double"   desc="如果orgType为目标位置, 则目标位置不能超过玩家当前坐标向外的这个距离"/>
-
+        <member name="aoeID" type="ui64"   desc="AOE范围"/>
+        <member name="aoeDict" type="AOESearch"  tag="ignore" desc=""/>
 
         <member name="delay" type="double"  desc=""/>
         <member name="interval" type="double" desc="自动释放间隔,针对自动施法,被动技能有效"/>
@@ -161,9 +173,11 @@
         <member name="selfMoveTime" type="double" desc="附加给自己朝向目标的位移时间" />
         <member name="selfMoveSpeed" type="double" desc="附加给自己朝向目标的位移速度" />
 
-        <member name="appendBuffsAoeID" type="ui64"   desc="上buff的searchid"/>
+        
         <member name="appendBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
         <member name="appendBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>
+        <member name="appendBuffsAreaID" type="ui64"   desc="上buff的searchid"/>
+        <member name="appendBuffsAreaDict" type="AOESearch"  tag="ignore" desc=""/>
 
         <member name="harmBuffs" type="DictArrayKey"  tag="ignore" desc=""/>
         <member name="harmBuffsText" type="string"   desc="触发buff 格式 k,k,k, "/>

@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="UTF - 8"?>
 
-<cppmd5>606b4e9b73807914b0bbf65ae75f0c75</cppmd5> 
-<luamd5>ceeca830ff60b8fdcf04780e01c2f304</luamd5> 
-<csharpmd5>20d2bccf8efa9e77f2e0adee8af3a31c</csharpmd5> 
-<xmlmd5>9e3e6449bc6b48077aae1e9f127addbb</xmlmd5> 
+<cppmd5>c6469f8b606015eeece3cb39e1ce80f8</cppmd5> 
+<luamd5>f9c1fb73c131e861a0311f1887a7d018</luamd5> 
+<csharpmd5>cb8a65fec882a04c3576c3a5b139904f</csharpmd5> 
+<xmlmd5>f4730ebf61eb3dd5d2b6a1580251d185</xmlmd5> 
 <cacheNumber>
-    <cache key = "AvatarOffline" Number = "3023" /> 
-    <cache key = "DBDataResult" Number = "3015" /> 
-    <cache key = "DBQueryArrayReq" Number = "3018" /> 
-    <cache key = "DBQueryArrayResp" Number = "3019" /> 
-    <cache key = "DBQueryReq" Number = "3016" /> 
-    <cache key = "DBQueryResp" Number = "3017" /> 
+    <cache key = "AvatarOffline" Number = "3026" /> 
+    <cache key = "DBDataResult" Number = "3018" /> 
+    <cache key = "DBQueryArrayReq" Number = "3021" /> 
+    <cache key = "DBQueryArrayResp" Number = "3022" /> 
+    <cache key = "DBQueryReq" Number = "3019" /> 
+    <cache key = "DBQueryResp" Number = "3020" /> 
     <cache key = "DockerKnock" Number = "3000" /> 
     <cache key = "DockerPulse" Number = "3001" /> 
     <cache key = "ForwardToDocker" Number = "3014" /> 
     <cache key = "ForwardToRealClient" Number = "3013" /> 
     <cache key = "ForwardToService" Number = "3012" /> 
+    <cache key = "KickClientsNotice" Number = "3017" /> 
     <cache key = "KickRealClient" Number = "3007" /> 
     <cache key = "LoadService" Number = "3002" /> 
     <cache key = "LoadServiceNotice" Number = "3004" /> 
     <cache key = "RealClientClosedNotice" Number = "3008" /> 
     <cache key = "RefreshServiceToMgrNotice" Number = "3005" /> 
+    <cache key = "ReloadDBDictFinish" Number = "3016" /> 
+    <cache key = "ReloadDBDictNotice" Number = "3015" /> 
     <cache key = "ServiceInfo" Number = "3003" /> 
     <cache key = "ShutdownClusterServer" Number = "3011" /> 
     <cache key = "SwitchServiceClientNotice" Number = "3006" /> 
     <cache key = "UnloadServiceInDocker" Number = "3009" /> 
     <cache key = "UnloadedServiceNotice" Number = "3010" /> 
-    <cache key = "WebAgentClientRequestAPI" Number = "3020" /> 
-    <cache key = "WebServerRequest" Number = "3021" /> 
-    <cache key = "WebServerResponse" Number = "3022" /> 
+    <cache key = "WebAgentClientRequestAPI" Number = "3023" /> 
+    <cache key = "WebServerRequest" Number = "3024" /> 
+    <cache key = "WebServerResponse" Number = "3025" /> 
 </cacheNumber>

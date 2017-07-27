@@ -30,9 +30,8 @@ Proto4z.register(50004,"SceneRefreshNotice")
 Proto4z.SceneRefreshNotice = {}  
 Proto4z.SceneRefreshNotice.__protoID = 50004 
 Proto4z.SceneRefreshNotice.__protoName = "SceneRefreshNotice" 
-Proto4z.SceneRefreshNotice[1] = {name="entityProps", type="DictPropArray" }  
-Proto4z.SceneRefreshNotice[2] = {name="entityStates", type="EntityStateArray" }  
-Proto4z.SceneRefreshNotice[3] = {name="entityMoves", type="EntityMoveArray" }  
+Proto4z.SceneRefreshNotice[1] = {name="entityStates", type="EntityStateArray" }  
+Proto4z.SceneRefreshNotice[2] = {name="entityMoves", type="EntityMoveArray" }  
  
 Proto4z.register(50005,"SceneReportsNotice") 
 Proto4z.SceneReportsNotice = {}  
@@ -44,7 +43,7 @@ Proto4z.register(50006,"AddEntityNotice")
 Proto4z.AddEntityNotice = {} --一批实体加入场景时, 把这些实体的数据广播给其他玩家 
 Proto4z.AddEntityNotice.__protoID = 50006 
 Proto4z.AddEntityNotice.__protoName = "AddEntityNotice" 
-Proto4z.AddEntityNotice[1] = {name="entitys", type="EntityFullDataArray" }  
+Proto4z.AddEntityNotice[1] = {name="syncs", type="EntityClientSyncArray" }  
  
 Proto4z.register(50007,"RemoveEntityNotice") 
 Proto4z.RemoveEntityNotice = {} --实体离开场景时, 把该实体的数据广播给其他玩家 

@@ -61,7 +61,6 @@ inline std::list<SceneGroupInfoPool> matchingPool(SceneGroupInfoPool & org, size
 
 World::World()
 {
-    _matchPools.resize(SCENE_MAX);
 }
 
 bool World::init(const std::string & configName)
@@ -185,12 +184,12 @@ bool World::startSceneListen()
     options._sessionOptions._sessionPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
-		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0 )
-		{
-			LOGE("World check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
-			session->close();
-			return;
-		}
+        if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0 )
+        {
+            LOGE("World check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
+            session->close();
+            return;
+        }
         ScenePulse pulse;
         WriteStream ws(pulse.getProtoID());
         ws << pulse;
@@ -216,10 +215,10 @@ void World::sendViaSessionID(SessionID sessionID, const char * block, unsigned i
 
 void World::toService(SessionID sessionID, const Tracing &trace, const char * block, unsigned int len)
 {
-	WriteStream fd(ForwardToService::getProtoID());
-	fd << trace;
-	fd.appendOriginalData(block, len);
-	sendViaSessionID(sessionID, fd.getStream(), fd.getStreamLen());
+    WriteStream fd(ForwardToService::getProtoID());
+    fd << trace;
+    fd.appendOriginalData(block, len);
+    sendViaSessionID(sessionID, fd.getStream(), fd.getStreamLen());
 }
 
 bool World::start()
@@ -230,7 +229,7 @@ bool World::start()
 void World::event_onDockerLinked(TcpSessionPtr session)
 {
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
-	session->setUserParam(UPARAM_DOCKER_ID, InvalidDockerID);
+    session->setUserParam(UPARAM_DOCKER_ID, InvalidDockerID);
     session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     LoadServiceNotice notice;
     ServiceInfo info;
@@ -278,8 +277,8 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
         DockerKnock knock;
         rsShell >> knock;
         LOGA("DockerKnock sessionID=" << session->getSessionID() << ", areaID=" << knock.areaID << ",dockerID=" << knock.dockerID);
-		session->setUserParam(UPARAM_AREA_ID, knock.areaID);
-		session->setUserParam(UPARAM_DOCKER_ID, knock.dockerID);
+        session->setUserParam(UPARAM_AREA_ID, knock.areaID);
+        session->setUserParam(UPARAM_DOCKER_ID, knock.dockerID);
 
     }
     else if (rsShell.getProtoID() == LoadServiceNotice::getProtoID())
@@ -307,6 +306,31 @@ void World::event_onDockerMessage(TcpSessionPtr   session, const char * begin, u
         ReadStream rs(rsShell.getStreamUnread(), rsShell.getStreamUnreadLen());
         event_onServiceForwardMessage(session, trace, rs);
     }
+    else if (rsShell.getProtoID() == ReloadDBDictNotice::getProtoID())
+    {
+        size_t nowDate = getNowTime();
+        double now = getFloatSteadyNowTime();
+        DBDict::getRef().load();
+        now = getFloatSteadyNowTime() - now;
+        Tracing trace;
+        trace.routing.toServiceType = STWebAgent;
+        trace.routing.toServiceID = InvalidServiceID;
+        trace.routing.traceBackID = InvalidServiceID;
+        toService(session->getSessionID(), trace, ReloadDBDictFinish(ServerConfig::getRef().getDockerID(), (double)nowDate, now));
+
+        for (auto & l : _lines)
+        {
+            sendViaSessionID(l.second->sessionID, ReloadDBDictNotice());
+        }
+
+    }
+    else if (rsShell.getProtoID() == KickClientsNotice::getProtoID())
+    {
+        for (auto & l : _lines)
+        {
+            sendViaSessionID(l.second->sessionID, rsShell.getStream(), rsShell.getStreamLen());
+        }
+    }
 }
 
 SceneGroupInfoPtr World::getGroupInfoByAvatarID(ServiceID serviceID)
@@ -329,9 +353,9 @@ SceneLineInfoPtr World::getLineInfo(LineID lineID)
     return nullptr;
 }
 
-SceneLineInfoPtr World::pickHomeLineNode(double step, double autoAdd)
+SceneLineInfoPtr World::pickFreeLineNode(double step, double autoAdd)
 {
-    LineID id = _homeBalance.pickNode(step, autoAdd);
+    LineID id = _freeBalance.pickNode(step, autoAdd);
     if (id == InvalidLineID)
     {
         return nullptr;
@@ -339,9 +363,9 @@ SceneLineInfoPtr World::pickHomeLineNode(double step, double autoAdd)
     return getLineInfo(id);
 }
 
-SceneLineInfoPtr World::pickOtherLineNode(double step, double autoAdd)
+SceneLineInfoPtr World::pickClosureLineNode(double step, double autoAdd)
 {
-    LineID id = _otherBalance.pickNode(step, autoAdd);
+    LineID id = _closureBalance.pickNode(step, autoAdd);
     if (id == InvalidLineID)
     {
         return nullptr;
@@ -375,17 +399,17 @@ void World::pushGroupInfoToClient(SceneGroupInfoPtr groupPtr)
 
 void World::event_onServiceForwardMessage(TcpSessionPtr   session, const Tracing & trace, ReadStream & rs)
 {
-	AreaID areaID = (AreaID)session->getUserParamNumber(UPARAM_AREA_ID);
-	if (areaID == InvalidAreaID)
-	{
-		LOGE("event_onServiceForwardMessage: docker session not knock world. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
-		return;
-	}
-	if (trace.oob.clientAvatarID == InvalidServiceID)
-	{
-		LOGE("event_onServiceForwardMessage: trace have not oob. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
-		return;
-	}
+    AreaID areaID = (AreaID)session->getUserParamNumber(UPARAM_AREA_ID);
+    if (areaID == InvalidAreaID)
+    {
+        LOGE("event_onServiceForwardMessage: docker session not knock world. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
+        return;
+    }
+    if (trace.oob.clientAvatarID == InvalidServiceID)
+    {
+        LOGE("event_onServiceForwardMessage: trace have not oob. sessionID=" << session->getSessionID() << ", cur proto ID=" << rs.getProtoID());
+        return;
+    }
     if (rs.getProtoID() == SceneServerJoinGroupIns::getProtoID())
     {
         SceneServerJoinGroupIns ins;
@@ -472,18 +496,18 @@ void World::event_onSceneClosed(TcpSessionPtr session)
     }
     else
     {
-		while (session->getUserParamNumber(UPARAM_SCENE_ID) != InvalidSceneID)
-		{
-			auto founder = _lines.find((SceneID)session->getUserParamNumber(UPARAM_SCENE_ID));
-			if (founder == _lines.end() || !founder->second)
-			{
-				break;
-			}
+        while (session->getUserParamNumber(UPARAM_SCENE_ID) != InvalidSceneID)
+        {
+            auto founder = _lines.find((SceneID)session->getUserParamNumber(UPARAM_SCENE_ID));
+            if (founder == _lines.end() || !founder->second)
+            {
+                break;
+            }
             founder->second->sessionID = InvalidSessionID;
-            _homeBalance.disableNode(founder->second->knock.lineID);
-            _otherBalance.disableNode(founder->second->knock.lineID);
-			break;
-		}
+            _freeBalance.disableNode(founder->second->knock.lineID);
+            _closureBalance.disableNode(founder->second->knock.lineID);
+            break;
+        }
 
     }
 }
@@ -518,18 +542,18 @@ void World::event_onSceneMessage(TcpSessionPtr session, const char * begin, unsi
             //push report to client
         }
     }
-	else if (rs.getProtoID() == SceneKnock::getProtoID())
-	{
-		SceneKnock knock;
-		rs >> knock;
-		session->setUserParam(UPARAM_SCENE_ID, knock.lineID);
+    else if (rs.getProtoID() == SceneKnock::getProtoID())
+    {
+        SceneKnock knock;
+        rs >> knock;
+        session->setUserParam(UPARAM_SCENE_ID, knock.lineID);
         SceneLineInfoPtr line = std::make_shared<SceneLineInfo>();
         line->sessionID = session->getSessionID();
         line->knock = knock;
         _lines[knock.lineID] = line;
-        _homeBalance.enableNode(knock.lineID);
-        _otherBalance.enableNode(knock.lineID);
-	}
+        _freeBalance.enableNode(knock.lineID);
+        _closureBalance.enableNode(knock.lineID);
+    }
     else if (rs.getProtoID() == ScenePulse::getProtoID())
     {
         session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
@@ -564,19 +588,28 @@ void World::onMatchTimer()
     {
         _matchTimerID = SessionManager::getRef().createTimer(1000, std::bind(&World::onMatchTimer, this));
     }
-    onMatchHomeTimer();
-    onMatchMeleeTimer();
+    for (auto &kv : _matchPools)
+    {
+        if (kv.first == SCENE_HOME || kv.first == SCENE_MELEE)
+        {
+            for (auto & kvm : kv.second)
+            {
+                onMatchFreeTimer(kv.first, kvm.first);
+            }
+        }
+    }
+
     onMatchArenaTimer();
 }
 
-void World::onMatchHomeTimer()
+void World::onMatchFreeTimer(ui16 sceneType, ui64 mapID)
 {
-    auto &pool = _matchPools[SCENE_HOME];
+    auto &pool = _matchPools[sceneType][mapID];
     const size_t MatchCount = 1;
     auto matched = matchingPool(pool, MatchCount, 0);
     for (auto &one : matched)
     {
-        auto linePtr = pickHomeLineNode(30, 1);
+        auto linePtr = pickFreeLineNode(30, 1);
         if (!linePtr)
         {
             for (auto & group : one)
@@ -587,8 +620,8 @@ void World::onMatchHomeTimer()
             continue;;
         }
         SceneServerEnterSceneIns ins;
-        ins.mapID = InvalidMapID;
-        ins.sceneType = SCENE_HOME;
+        ins.mapID = mapID;
+        ins.sceneType = sceneType;
         for (auto & group : one)
         {
             group->sceneState = SCENE_STATE_CHOISE;
@@ -596,7 +629,6 @@ void World::onMatchHomeTimer()
             group->lineID = linePtr->knock.lineID;
             group->host = linePtr->knock.pubHost;
             group->port = linePtr->knock.pubPort;
-            ins.mapID = group->mapID;
             ins.groups.push_back(*group);
             pushGroupInfoToClient(group);
         }
@@ -604,44 +636,10 @@ void World::onMatchHomeTimer()
     }
 }
 
-void World::onMatchMeleeTimer()
-{
-    auto &pool = _matchPools[SCENE_MELEE];
-    const size_t MatchCount = 1;
-    auto matched = matchingPool(pool, MatchCount, 0);
-    for (auto &one : matched)
-    {
-        auto linePtr = pickOtherLineNode(30, 1);
-        if (!linePtr)
-        {
-            for (auto & group : one)
-            {
-                group->sceneType = SCENE_STATE_NONE;
-                group->sceneState = SCENE_STATE_NONE;
-            }
-            continue;;
-        }
-        SceneServerEnterSceneIns ins;
-        ins.mapID = InvalidMapID;
-        ins.sceneType = SCENE_MELEE;
-        for (auto & group : one)
-        {
-            group->sceneState = SCENE_STATE_CHOISE;
-            group->sceneState = SCENE_STATE_ALLOCATE;
-            group->lineID = linePtr->knock.lineID;
-            group->host = linePtr->knock.pubHost;
-            group->port = linePtr->knock.pubPort;
-            ins.mapID = group->mapID;
-            ins.groups.push_back(*group);
-            pushGroupInfoToClient(group);
-        }
-        sendViaSessionID(linePtr->sessionID, ins);
-    }
-}
 
 void World::onMatchArenaTimer()
 {
-    auto &pool = _matchPools[SCENE_ARENA];
+    auto &pool = _matchPools[SCENE_ARENA][InvalidMapID];
     const size_t MatchCount = 2;
     auto matched = matchingPool(pool, MatchCount, 1);
     auto matched2 = matchingPool(pool, MatchCount, 2);
@@ -650,7 +648,7 @@ void World::onMatchArenaTimer()
     matched.insert(matched.end(), matched3.begin(), matched3.end());
     for (auto &one : matched)
     {
-        auto linePtr = pickOtherLineNode(30, 1);
+        auto linePtr = pickClosureLineNode(30, 1);
         if (!linePtr)
         {
             for (auto & group : one)
@@ -787,7 +785,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
         group.sceneID = InvalidSceneID;
         group.lineID = InvalidLineID;
         group.mapID = InvalidMapID;
-        group.host;
+        group.host = group.host;
         group.port = 0;
         group.members.insert(std::make_pair(avatar.avatarID,avatar));
         
@@ -847,7 +845,7 @@ void World::onSceneServerJoinGroupIns(TcpSessionPtr session, const Tracing & tra
     else
     {
         founder->second.areaID = avatar.areaID;
-        founder->second.token;
+        founder->second.token = founder->second.token;
     }
     _avatars[req.avatarID] = groupPtr->groupID;
     backToService(session->getSessionID(), trace, ack); 
@@ -925,7 +923,7 @@ void World::onSceneGroupEnterReq(TcpSessionPtr session, const Tracing & trace, S
     groupPtr->sceneType = req.sceneType;
     groupPtr->sceneState = SCENE_STATE_MATCHING;
     groupPtr->mapID = req.mapID;
-    _matchPools[req.sceneType].push_back(groupPtr);
+    _matchPools[req.sceneType][groupPtr->mapID].push_back(groupPtr);
     backToService(session->getSessionID(), trace, SceneGroupEnterResp(EC_SUCCESS));
     pushGroupInfoToClient(groupPtr);
 }
@@ -955,22 +953,37 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
 
     if (groupPtr->sceneState == SCENE_STATE_MATCHING)
     {
-        auto founder = std::find_if(_matchPools[groupPtr->sceneType].begin(), _matchPools[groupPtr->sceneType].end(),
-                                    [groupPtr](SceneGroupInfoPtr gp) {return groupPtr->groupID == gp->groupID; });
-        if (founder != _matchPools[groupPtr->sceneType].end())
+        do 
         {
-            _matchPools[groupPtr->sceneType].erase(founder);
+            if (_matchPools.find(groupPtr->sceneType) == _matchPools.end())
+            {
+                break;
+            }
+            auto scenePool = _matchPools.at(groupPtr->sceneType);
+            if (scenePool.find(groupPtr->mapID) == scenePool.end())
+            {
+                break;
+            }
+            auto mapPool = scenePool.at(groupPtr->mapID);
+
+            auto founder = std::find_if(mapPool.begin(), mapPool.end(),
+                [groupPtr](SceneGroupInfoPtr gp) {return groupPtr->groupID == gp->groupID; });
+            if (founder == mapPool.end())
+            {
+                break;
+            }
+            mapPool.erase(founder);
+
             groupPtr->sceneType = SCENE_NONE;
             groupPtr->sceneState = SCENE_STATE_NONE;
             groupPtr->mapID = InvalidMapID;
             backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_SUCCESS));
             pushGroupInfoToClient(groupPtr);
-        }
-        else
-        {
-            backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
             return;
-        }
+        } while (false);
+        backToService(session->getSessionID(), trace, SceneGroupCancelResp(EC_ERROR));
+        return;
+
     }
     else if (groupPtr->sceneState == SCENE_STATE_ACTIVE && (groupPtr->sceneType == SCENE_HOME || groupPtr->sceneType == SCENE_MELEE))
     {
@@ -980,11 +993,6 @@ void World::onSceneGroupCancelReq(TcpSessionPtr session, const Tracing & trace, 
             sendViaSessionID(line->sessionID, SceneServerCancelSceneIns(groupPtr->sceneID, groupPtr->groupID));  // to scene server
         }
     }
-
-
-
-
-
 }
 
 

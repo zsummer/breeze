@@ -31,10 +31,10 @@
 ** the standard ones.
 */
 #define l_checkmode(mode) \
-	(*mode != '\0' && strchr("rwa", *(mode++)) != NULL &&	\
-	(*mode != '+' || ++mode) &&  /* skip if char is '+' */	\
-	(*mode != 'b' || ++mode) &&  /* skip if char is 'b' */	\
-	(*mode == '\0'))
+    (*mode != '\0' && strchr("rwa", *(mode++)) != NULL &&    \
+    (*mode != '+' || ++mode) &&  /* skip if char is '+' */    \
+    (*mode != 'b' || ++mode) &&  /* skip if char is 'b' */    \
+    (*mode == '\0'))
 
 #endif
 
@@ -45,47 +45,47 @@
 ** =======================================================
 */
 
-#if !defined(l_popen)		/* { */
+#if !defined(l_popen)        /* { */
 
-#if defined(LUA_USE_POSIX)	/* { */
+#if defined(LUA_USE_POSIX)    /* { */
 
-#define l_popen(L,c,m)		(fflush(NULL), popen(c,m))
-#define l_pclose(L,file)	(pclose(file))
+#define l_popen(L,c,m)        (fflush(NULL), popen(c,m))
+#define l_pclose(L,file)    (pclose(file))
 
-#elif defined(LUA_USE_WINDOWS)	/* }{ */
+#elif defined(LUA_USE_WINDOWS)    /* }{ */
 
-#define l_popen(L,c,m)		(_popen(c,m))
-#define l_pclose(L,file)	(_pclose(file))
+#define l_popen(L,c,m)        (_popen(c,m))
+#define l_pclose(L,file)    (_pclose(file))
 
-#else				/* }{ */
+#else                /* }{ */
 
 /* ISO C definitions */
 #define l_popen(L,c,m)  \
-	  ((void)((void)c, m), \
-	  luaL_error(L, "'popen' not supported"), \
-	  (FILE*)0)
-#define l_pclose(L,file)		((void)L, (void)file, -1)
+      ((void)((void)c, m), \
+      luaL_error(L, "'popen' not supported"), \
+      (FILE*)0)
+#define l_pclose(L,file)        ((void)L, (void)file, -1)
 
-#endif				/* } */
+#endif                /* } */
 
-#endif				/* } */
+#endif                /* } */
 
 /* }====================================================== */
 
 
-#if !defined(l_getc)		/* { */
+#if !defined(l_getc)        /* { */
 
 #if defined(LUA_USE_POSIX)
-#define l_getc(f)		getc_unlocked(f)
-#define l_lockfile(f)		flockfile(f)
-#define l_unlockfile(f)		funlockfile(f)
+#define l_getc(f)        getc_unlocked(f)
+#define l_lockfile(f)        flockfile(f)
+#define l_unlockfile(f)        funlockfile(f)
 #else
-#define l_getc(f)		getc(f)
-#define l_lockfile(f)		((void)0)
-#define l_unlockfile(f)		((void)0)
+#define l_getc(f)        getc(f)
+#define l_lockfile(f)        ((void)0)
+#define l_unlockfile(f)        ((void)0)
 #endif
 
-#endif				/* } */
+#endif                /* } */
 
 
 /*
@@ -94,50 +94,50 @@
 ** =======================================================
 */
 
-#if !defined(l_fseek)		/* { */
+#if !defined(l_fseek)        /* { */
 
-#if defined(LUA_USE_POSIX)	/* { */
+#if defined(LUA_USE_POSIX)    /* { */
 
 #include <sys/types.h>
 
-#define l_fseek(f,o,w)		fseeko(f,o,w)
-#define l_ftell(f)		ftello(f)
-#define l_seeknum		off_t
+#define l_fseek(f,o,w)        fseeko(f,o,w)
+#define l_ftell(f)        ftello(f)
+#define l_seeknum        off_t
 
 #elif defined(LUA_USE_WINDOWS) && !defined(_CRTIMP_TYPEINFO) \
-   && defined(_MSC_VER) && (_MSC_VER >= 1400)	/* }{ */
+   && defined(_MSC_VER) && (_MSC_VER >= 1400)    /* }{ */
 
 /* Windows (but not DDK) and Visual C++ 2005 or higher */
-#define l_fseek(f,o,w)		_fseeki64(f,o,w)
-#define l_ftell(f)		_ftelli64(f)
-#define l_seeknum		__int64
+#define l_fseek(f,o,w)        _fseeki64(f,o,w)
+#define l_ftell(f)        _ftelli64(f)
+#define l_seeknum        __int64
 
-#else				/* }{ */
+#else                /* }{ */
 
 /* ISO C definitions */
-#define l_fseek(f,o,w)		fseek(f,o,w)
-#define l_ftell(f)		ftell(f)
-#define l_seeknum		long
+#define l_fseek(f,o,w)        fseek(f,o,w)
+#define l_ftell(f)        ftell(f)
+#define l_seeknum        long
 
-#endif				/* } */
+#endif                /* } */
 
-#endif				/* } */
+#endif                /* } */
 
 /* }====================================================== */
 
 
-#define IO_PREFIX	"_IO_"
-#define IOPREF_LEN	(sizeof(IO_PREFIX)/sizeof(char) - 1)
-#define IO_INPUT	(IO_PREFIX "input")
-#define IO_OUTPUT	(IO_PREFIX "output")
+#define IO_PREFIX    "_IO_"
+#define IOPREF_LEN    (sizeof(IO_PREFIX)/sizeof(char) - 1)
+#define IO_INPUT    (IO_PREFIX "input")
+#define IO_OUTPUT    (IO_PREFIX "output")
 
 
 typedef luaL_Stream LStream;
 
 
-#define tolstream(L)	((LStream *)luaL_checkudata(L, 1, LUA_FILEHANDLE))
+#define tolstream(L)    ((LStream *)luaL_checkudata(L, 1, LUA_FILEHANDLE))
 
-#define isclosed(p)	((p)->closef == NULL)
+#define isclosed(p)    ((p)->closef == NULL)
 
 
 static int io_type (lua_State *L) {
@@ -362,7 +362,7 @@ static int io_lines (lua_State *L) {
 
 
 /* maximum length of a numeral */
-#define MAXRN		200
+#define MAXRN        200
 
 /* auxiliary structure used by 'read_number' */
 typedef struct {

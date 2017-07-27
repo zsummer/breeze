@@ -106,7 +106,20 @@
         </body>
     </packet>
 
+    <packet name="ReloadDBDictNotice" desc= "重新加载字典文件">
+    </packet>
+    <packet name="ReloadDBDictFinish" desc= "重新加载字典文件">
+         <member name="dockerID" type="ui64" desc="" />
+         <member name="activeTime" type="double" desc="" />
+         <member name="used" type="double" desc="" />
+    </packet>
 
+    <packet name="KickClientsNotice" desc= "踢人">
+        <member name="isAll" type="ui16" desc="" />
+        <member name="avatars" type="ServiceIDArray" desc="指定avatar" />
+        <member name="accounts" type="AccountArray" desc="指定account" />
+        <member name="forbidDuration" type="ui64" desc="限制登录的持续时间(关服前有效 不记录到数据库)" />
+    </packet>
     <!-------------------------------------------------------------------------------------------->
     <!--------------------------------   db service   -------------------------------------------->
     <!-------------------------------------------------------------------------------------------->

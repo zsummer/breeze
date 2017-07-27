@@ -16,236 +16,170 @@ void Skill::init(std::weak_ptr<Scene> scene)
 }
 
 
-bool Skill::isOutCD(EntityPtr caster, const EntitySkillInfo & skill, const DictSkill & dict)
+
+
+
+EntityPtr Skill::lockFoe(ScenePtr scene, EntityPtr caster, const EntitySkillInfo & skill)
 {
-    double now = getFloatSteadyNowTime();
-    if (skill.activeTime == 0.0)
+    EntityPtr foe;
+    while(caster->_state.foe != InvalidEntityID)
     {
-        return true;
-    }
-    double keep = dict.keep;
-    double interval = dict.interval / (1+caster->_props.attackQuick);
-    if (keep < interval)
-    {
-        keep = interval;
-    }
-    if (now <= skill.activeTime + dict.cd)
-    {
-        return false;
-    }
-    if (now <= skill.activeTime + dict.delay + keep)
-    {
-        return false;
-    }
-    if (now <= skill.lastTriggerTime + interval)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool Skill::updateSkillPos(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
-{
-    if (skill->activeOrgEID != InvalidEntityID)
-    {
-        EntityPtr orgE = scene->getEntity(skill->activeOrgEID);
-        if (orgE)
+        EntityPtr locked;
+        locked = scene->getEntity(caster->_state.foe);
+        if (!locked)
         {
-            skill->activeOrg = orgE->_move.position;
-        }
-        else
-        {
-            skill->activeOrgEID = InvalidEntityID;
-        }
-    }
-    if (skill->activeFoeFirst && caster->_state.foe != InvalidEntityID)
-    {
-        EntityPtr dstE = scene->getEntity(caster->_state.foe);
-        if (dstE)
-        {
-            skill->activeDst = dstE->_move.position;
-        }
-    }
-    return true;
-}
-
-void Skill::selectFoe(ScenePtr scene, EntityPtr caster, bool onlyCancelCheck, bool change)
-{
-
-    if (onlyCancelCheck && caster->_state.foe == InvalidEntityID)
-    {
-        return; 
-    }
-
-    DictID searchID = InvalidDictID;
-    for (auto id : caster->_skillSys.dictBootSkills)
-    {
-        auto dict = DBDict::getRef().getOneKeyDictSkill(id);
-        if (dict.first && dict.second.searchID != InvalidDictID)
-        {
-            searchID = dict.second.searchID;
             break;
         }
-    }
-
-    auto dictSearch = DBDict::getRef().getOneKeyAOESearch(searchID);
-    if (!dictSearch.first)
-    {
-        if (caster->_state.foe != InvalidEntityID)
+        if (locked->_state.state != ENTITY_STATE_ACTIVE)
         {
-            caster->_state.foe = InvalidEntityID;
-            caster->_isInfoDirty = true;
+            break;
         }
-        LOGE("can not found searchID config . searchID=" << searchID);
-        return;
-    }
-
-
-
-    if (caster->_state.foe != InvalidEntityID )
-    {
-        auto dst = scene->getEntity(caster->_state.foe);
-        if (!dst || dst->_state.state != ENTITY_STATE_ACTIVE)
+        EntityPtr master = caster;
+        if (caster->_state.etype == ENTITY_FLIGHT )
         {
-            caster->_state.foe = InvalidEntityID;
-            caster->_isInfoDirty = true;
-        }
-        else
-        {
-            double dis = getDistance(caster->_move.position, dst->_move.position) - dst->_state.collision;
-            if (dis > dictSearch.second.value1)
+            if (caster->_state.master != InvalidEntityID)
             {
-                caster->_state.foe = InvalidEntityID;
-                caster->_isInfoDirty = true;
+                master = scene->getEntity(caster->_state.master);
+            }
+            else
+            {
+                master = nullptr;
             }
         }
-    }
 
-    if (onlyCancelCheck)
-    {
-        return;
-    }
-
-    if (caster->_state.foe != InvalidEntityID && !change)
-    {
-        return; //needn't change foe .  
-    }
-
-    auto result = scene->searchTarget(caster, caster->_move.position,  EPosition(0, 1), dictSearch.second);
-    if (!result.empty())
-    {
-        for (auto dst : result)
+        if (!scene->searchMatched(master, caster,locked, skill.dict.aosDict))
         {
-            if (caster->_state.foe != dst.first->_state.eid)
+            break;
+        }
+        if (skill.dict.aosType == SKILL_LOCKED_ENTITY)
+        {
+            return locked;
+        }
+        if (skill.dict.aosType == SKILL_LOCKED_FREE)
+        {
+            double dist = getDistance(caster, locked);
+            if (dist > skill.dict.aoeDict.value1)
             {
-                caster->_state.foe = dst.first->_state.eid;
-                caster->_isInfoDirty = true;
-                return;
+                break;
             }
         }
+        foe = locked;
+        break;
     }
-}
+    if (!foe && caster->_state.foe != InvalidEntityID)
+    {
+        caster->_state.foe = InvalidEntityID;
+        caster->_isStateDirty = true;
+    }
+    if (!foe)
+    {
+        auto foeList = scene->searchTarget(caster, caster->_move.position, EPosition(1, 1), skill.dict.aosDict);
+        if (!foeList.empty())
+        {
+            foe = foeList.front().first;
+            caster->_state.foe = foe->_state.eid;
+            caster->_isStateDirty = true;
+        }
+    }
+    return foe;
+};
+
 
 void Skill::update()
 {
-    double now = getFloatNowTime();
+
     auto scene = _scene.lock();
     if (! scene)
     {
         return;
     }
-    std::map<EntityID, EntityPtr> entitys = scene->_entitys;
-    for (auto pr : entitys)
+
+    for (auto pr : scene->_entitys)
     {
         Entity & e = *pr.second;
 
-        //check boot skill 
-        for (auto id : e._skillSys.dictBootSkills)
+        //check equipped skill 
+        for (auto iter = e._skillSys.dictEquippedSkills.begin(); iter != e._skillSys.dictEquippedSkills.end();)
         {
-            if (e._skillSys.activeSkills.find(id) == e._skillSys.activeSkills.end())
+            if (e._skillSys.activeSkills.find(iter->first) == e._skillSys.activeSkills.end())
             {
-                auto ptr = std::make_shared<EntitySkillInfo>();
-                ptr->skillID = id;
-                ptr->isFinish = 1;
-                e._skillSys.activeSkills[id] = ptr;
+                if (!doSkill(scene, e._state.eid, iter->first, { 1,1 }, InvalidEntityID, false, true))
+                {
+                    LOGE("Skill::update auto fill skill info error. skillid=" << iter->first);
+                    iter = e._skillSys.dictEquippedSkills.erase(iter);
+                    continue;
+                }
             }
+            iter++;
         }
 
-
-        //check select
-        if (e._skillSys.autoAttack)
+        //check active skill 
+        //only this can erase iter.
+        EntitySkillInfo * skill = nullptr;
+        for (auto iter = e._skillSys.activeSkills.begin(); iter != e._skillSys.activeSkills.end();)
         {
-            selectFoe(scene, pr.second, false, false);
+            if (e._skillSys.dictEquippedSkills.find(iter->first) == e._skillSys.dictEquippedSkills.end())
+            {
+                if (iter->second.activeState == ENTITY_SKILL_NONE)
+                {
+                    iter = e._skillSys.activeSkills.erase(iter);
+                    continue;
+                }
+            }
+            if (getBitFlag(iter->second.dict.stamp, SKILL_NORMAL))
+            {
+                e._skillSys.normalSkillID = iter->second.skillID;
+                if (e._skillSys.readySkillID == InvalidDictID)
+                {
+                    e._skillSys.readySkillID = iter->second.skillID;
+                }
+            }
+            if (iter->first == e._skillSys.readySkillID)
+            {
+                skill = &iter->second;
+            }
+            iter++;
         }
-        else if (e._state.foe != InvalidEntityID)
+
+        EntityPtr foe;
+        if (skill)
         {
-            selectFoe(scene, pr.second, true, false);
+            foe = lockFoe(scene, pr.second, *skill);
         }
 
 
         //自动攻击
-        while (e._skillSys.autoAttack && e._state.foe != InvalidEntityID)
+        while (skill && foe && e._state.state == ENTITY_STATE_ACTIVE && e._skillSys.combating)
         {
-            auto foe = scene->getEntity(e._state.foe);
-            if (!foe || foe->_state.state != ENTITY_STATE_ACTIVE)
+            double distance = getDistance(pr.second, foe);
+            if (e._move.action == MOVE_ACTION_FORCE_PATH || e._move.action == MOVE_ACTION_PASV_PATH)
             {
                 break;
             }
-            double distance = getDistance(e._move.position, foe->_move.position);
-            for (auto id : e._skillSys.dictBootSkills)
+
+            if (e._move.action == MOVE_ACTION_FOLLOW &&
+                distance > (std::max(skill->dict.aoeDict.value1, skill->dict.aoeDict.value2) + foe->_control.collision)*0.8)
             {
-                auto dict = DBDict::getRef().getOneKeyDictSkill(id);
-                if (!dict.first)
+                break;
+            }
+
+            auto ret = scene->searchTarget(pr.second, e._move.position, foe->_move.position - e._move.position, skill->dict.aoeDict);
+
+            if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr, double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
+            {
+                if (e._move.action != MOVE_ACTION_IDLE)
                 {
-                    LOGE("");
-                    continue;
+                    scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
                 }
-
-                if (getBitFlag(dict.second.stamp, SKILL_AUTO_USE)
-                    && e._move.action != MOVE_ACTION_FORCE_PATH
-                    && e._move.action != MOVE_ACTION_PASV_PATH)
+                if (skill->activeState == ENTITY_SKILL_NONE )
                 {
-                    auto finder = e._skillSys.activeSkills.find(id);
-                    if (finder == e._skillSys.activeSkills.end())
-                    {
-                        LOGE("error. boot skill not fill. skill id=" << dict.second.id);
-                        continue;
-                    }
-                    else
-                    {
-                        
-
-                        auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(dict.second.aoeID);
-                        if (!aoeSearch.first)
-                        {
-                            LOGE("error");
-                            continue;
-                        }
-
-                        if (e._move.action == MOVE_ACTION_FOLLOW && distance > (std::max(aoeSearch.second.value1, aoeSearch.second.value2) + foe->_state.collision)*0.8)
-                        {
-                            continue;
-                        }
-
-                        auto ret = scene->searchTarget(pr.second, e._move.position, foe->_move.position - e._move.position, aoeSearch.second);
-
-                        if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr,double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
-                        {
-                            if (e._move.action == MOVE_ACTION_FOLLOW)
-                            {
-                                scene->_move->doMove(e._state.eid, MOVE_ACTION_IDLE, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
-                            }
-                            if (isOutCD(pr.second, *finder->second, dict.second) && finder->second->isFinish)
-                            {
-                                useSkill(scene, e._state.eid, id);
-                            }
-                        }
-                        else if (e._move.action == MOVE_ACTION_IDLE)
-                        {
-                            scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
-                        }
-                    }
+                    doSkill(scene, pr.second, *skill, { 1,1 }, true);
                 }
+                
+            }
+            else if (e._move.action == MOVE_ACTION_IDLE)
+            {
+                scene->_move->doMove(e._state.eid, MOVE_ACTION_FOLLOW, e.getSpeed(), foe->_state.eid, std::vector<EPosition>());
             }
 
             break; // once  
@@ -254,77 +188,33 @@ void Skill::update()
 
 
         //被动技能 
-        for (auto id : e._skillSys.dictBootSkills)
+        for (auto &kv : e._skillSys.activeSkills)
         {
-            auto dict = DBDict::getRef().getOneKeyDictSkill(id);
-            if (!dict.first)
-            {
-                LOGE("");
-                continue;
-            }
 
-            if (getBitFlag(dict.second.stamp, SKILL_PASSIVE) )
+            if (getBitFlag(kv.second.dict.stamp, SKILL_PASSIVE) )
             {
-                auto finder = e._skillSys.activeSkills.find(dict.second.id);
-                if (finder != e._skillSys.activeSkills.end())
+                if (kv.second.activeState == ENTITY_SKILL_NONE )
                 {
-                    if (isOutCD(pr.second,*finder->second, dict.second) && finder->second->isFinish)
-                    {
-                        useSkill(scene, e._state.eid, id);
-                    }
+                    doSkill(scene, pr.second, kv.second, { 1,1 }, true);
                 }
             }
         }
 
-        //trigger skill 
-        std::map<DictID, EntitySkillInfoPtr> skills = e._skillSys.activeSkills;
-        for (auto prSkill: skills)
+        for (auto & kv : e._skillSys.activeSkills)
         {
-            auto dictSkill = DBDict::getRef().getOneKeyDictSkill(prSkill.first);
-            if (dictSkill.first)
+            if (kv.second.activeState == ENTITY_SKILL_PREFIX || kv.second.activeState == ENTITY_SKILL_ACTIVE || kv.second.activeState == ENTITY_SKILL_CD)
             {
-                triggerSkill(scene, pr.second, prSkill.second, dictSkill.second);
+                updateSkill(scene, pr.second, kv.second);
             }
-            
         }
 
         //trigger buff
-
     }
 }
 
-//填充默认的技能参数
-bool  Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID)
-{
-    auto e = scene->getEntity(casterID);
-    if (!e)
-    {
-        LOGE("not found caster. casterID=" << casterID << ", skillID=" << skillID);
-        return false;
-    }
-    auto dictSkill =  DBDict::getRef().getOneKeyDictSkill(skillID);
-    if (!dictSkill.first)
-    {
-        LOGE("not found skill. casterID=" << casterID << ", skillID=" << skillID);
-        return false;
-    }
-    if (dictSkill.second.aoeID == InvalidDictID)
-    {
-        LOGE("not found aoeid. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
-        return false;
-    }
-    auto aoeSearch = DBDict::getRef().getOneKeyAOESearch(dictSkill.second.aoeID);
-    if (!aoeSearch.first)
-    {
-        LOGE("not found aoeid. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
-        return false;
-    }
-
-    return useSkill(scene, casterID, skillID, EPosition(0, 1), true);
-}
 
 
-bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & dst, ui16 foeFirst)
+bool Skill::doSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPosition & clientDst, EntityID clientFoe, bool autoFoe, bool onlyFill)
 {
     auto e = scene->getEntity(casterID);
     if (!e)
@@ -332,162 +222,160 @@ bool Skill::useSkill(ScenePtr scene, EntityID casterID, ui64 skillID, const EPos
         LOGE("Skill::useSkill not found caster. casterID=" << casterID << ", skillID=" << skillID);
         return false;
     }
-    auto dictSkill = DBDict::getRef().getOneKeyDictSkill(skillID);
-    if (!dictSkill.first)
-    {
-        LOGE("Skill::useSkill not found skill. casterID=" << casterID << ", skillID=" << skillID);
-        return false;
-    }
-    if (dictSkill.second.aoeID == InvalidDictID)
-    {
-        LOGE("Skill::useSkill not found aoeid. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
-        return false;
-    }
-    if (getBitFlag(dictSkill.second.stamp, SKILL_AUTO_USE))
-    {
-        e->_skillSys.autoAttack = true;
-    }
 
-    EntitySkillInfoPtr skill;
-    auto finder = e->_skillSys.activeSkills.find(dictSkill.second.id);
+    EntitySkillInfo * skill = nullptr;
+    auto finder = e->_skillSys.activeSkills.find(skillID);
     if (finder != e->_skillSys.activeSkills.end())
     {
-        skill = finder->second;
-        if (!isOutCD(e, *skill, dictSkill.second))
-        {
-            LOGE("Skill::useSkill cd ing. casterID=" << casterID << ", skillID=" << skillID << ", aoeID=" << dictSkill.second.aoeID);
-            return false;
-        }
+        skill = &finder->second;
     }
     if (!skill)
     {
-        skill = std::make_shared<EntitySkillInfo>();
-        skill->skillID = dictSkill.second.id;
-        if (e->_skillSys.dictBootSkills.find(dictSkill.first) != e->_skillSys.dictBootSkills.end())
+        auto dictSkill = DBDict::getRef().getOneKeyDictSkill(skillID);
+        if (!dictSkill.first)
         {
-            LOGE("Skill::useSkill boot skill only fill in skill system update. skillID=" << dictSkill.second.id);
+            LOGE("Skill::useSkill not found skill dict. casterID=" << casterID << ", skillID=" << skillID);
             return false;
         }
-        e->_skillSys.activeSkills.insert(std::make_pair(dictSkill.second.id, skill));
-    }
-    if (!skill)
-    {
-        LOGF("");
-        return false;
-    }
-//    if (e->_move.action == MOVE_ACTION_FOLLOW || e->_move.action == MOVE_ACTION_PATH)
-//    {
-//        scene->_move->doMove(casterID, MOVE_ACTION_IDLE, 0, InvalidEntityID, EPositionArray());
-//    }
-    skill->activeCount++;
-    skill->activeTime = getFloatSteadyNowTime();
-    skill->lastTriggerTime = skill->activeTime - 1;
-    skill->isFinish = 0;
-    skill->activeFoeFirst = foeFirst;
-    selectFoe(scene, e, false, false);
-    auto foe = scene->getEntity(e->_state.foe);
-    if (dictSkill.second.orgType == 1)
-    {
-        // 普通类型的技能 施法位置以施法者为中心  以客户端传来的目标位置dst或者锁定的敌人为目标(方向) . 
-        // 根据orgFixed选项可以选择施法中心是否跟随施法者(如果不是引导技能 跟随不跟随的没有区别) 
-        // 飞行道具类的技能也必须配置为该类型.  (只支持从自身位置飞向锁定敌人或者目标方向的飞行道具)  
-        skill->activeOrgEID = casterID;
-        skill->activeOrg = e->_move.position;
-        skill->activeDst = dst;
 
-        if (foeFirst && foe)
-        {
-            skill->activeDst = foe->_move.position;
-        }
-        if (dictSkill.second.orgFixed)
-        {
-            skill->activeFoeFirst = 0;
-        }
+        auto inst = e->_skillSys.activeSkills.insert(std::make_pair(skillID, EntitySkillInfo()));
+        skill = &inst.first->second;
+        skill->skillID = skillID;
+        skill->activeState = ENTITY_SKILL_NONE;
+        skill->dict = dictSkill.second;
     }
-    else
+    if (onlyFill)
     {
-        //在指定的目标位置为中心进行施法 
-        //例如 鲁班七号的手雷(王者荣耀), 人族大法的暴风雪(war3 引导技能)  
-        skill->activeOrgEID = InvalidEntityID;
-        skill->activeOrg = dst;
-        //fix foe   
-        if (foe)
-        {
-            skill->activeOrgEID = foe->_state.eid;
-            skill->activeOrg = foe->_move.position;
-        }
-        double radian = getRadian(skill->activeDst.x - e->_move.position.x, skill->activeDst.y - e->_move.position.y);
-        if (getDistance(e->_move.position, skill->activeOrg) > dictSkill.second.orgLimitDistance)
-        {
-            auto pos = getFarPoint(e->_move.position.x, e->_move.position.y, radian, dictSkill.second.orgLimitDistance);
-            skill->activeOrg.x = std::get<0>(pos);
-            skill->activeOrg.y = std::get<1>(pos);
-            skill->activeOrgEID = InvalidEntityID; //这种情况要退化成fixed dst, 否则外挂可以造成地图炮. 
-        }
-        auto pos = getFarPoint(skill->activeOrg.x, skill->activeOrg.y, radian, 10.0/*这里只是起到radian作用*/); 
-        skill->activeDst.x = std::get<0>(pos);
-        skill->activeDst.y = std::get<1>(pos);
-        skill->activeFoeFirst = 0;
+        return true;
+    }
+    if (clientFoe != InvalidEntityID && autoFoe)
+    {
+        e->_state.eid = clientFoe;
     }
 
-    scene->broadcast(UseSkillNotice(casterID, *skill));
 
-    triggerSkill(scene, e, skill, dictSkill.second);
+    return doSkill(scene, e, *skill, clientDst, autoFoe);
+}
+
+bool Skill::doSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill, const EPosition & clientDst, bool autoFoe)
+{
+    if (skill.activeState != ENTITY_SKILL_NONE )
+    {
+        LOGE("Skill::doSkill error. state not none . casterID="<< caster->_state.eid << ", skillID=" << skill.skillID 
+            << ", state=" << skill.activeState << ", trace=" << proto4z_traceback());        return false;
+    }
+
+    if (getBitFlag(skill.dict.stamp, SKILL_NORMAL))
+    {
+        caster->_skillSys.combating = true;
+        caster->_skillSys.normalSkillID = skill.skillID;
+    }
+    caster->_skillSys.readySkillID = skill.skillID;
+
+    auto foe = lockFoe(scene, caster, skill);
+    if (foe && getBitFlag(skill.dict.stamp, SKILL_NORMAL))
+    {
+        auto ret = scene->searchTarget(caster, caster->_move.position, foe->_move.position - caster->_move.position, skill.dict.aoeDict);
+
+        if (std::find_if(ret.begin(), ret.end(), [foe](const std::pair<EntityPtr, double> & ep) {return ep.first->_state.eid == foe->_state.eid; }) != ret.end())
+        {
+            if (caster->_move.action == MOVE_ACTION_FOLLOW)
+            {
+                scene->_move->doMove(caster->_state.eid, MOVE_ACTION_IDLE, caster->getSpeed(), foe->_state.eid, std::vector<EPosition>());
+            }
+        }
+        else if (caster->_move.action == MOVE_ACTION_IDLE)
+        {
+            scene->_move->doMove(caster->_state.eid, MOVE_ACTION_FOLLOW, caster->getSpeed(), foe->_state.eid, std::vector<EPosition>());
+            return true;
+        }
+    }
+
+
+    skill.activeCount++;
+    skill.lastActiveTime = getFloatSteadyNowTime();
+    skill.lastTriggerTime = skill.lastActiveTime;
+    skill.activeState = ENTITY_SKILL_PREFIX;
+    skill.activeFoeFirst = autoFoe ? 1: 0;
+    skill.activeDst = clientDst;
+    if (autoFoe && foe)
+    {
+        skill.activeDst = foe->_move.position;
+    }
+
+    scene->broadcast(UseSkillNotice(caster->_state.eid, skill));
+
+    updateSkill(scene, caster, skill);
     return true;
 }
 
-
-
-bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
+bool Skill::updateSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill)
 {
-    if (skill->isFinish)
+    if (skill.activeState != ENTITY_SKILL_PREFIX && skill.activeState != ENTITY_SKILL_ACTIVE
+        && skill.activeState != ENTITY_SKILL_CD)
     {
+        LOGE("Skill::updateSkill error. state not prefix or active or cd. casterID="
+            << caster->_state.eid << ", skillID=" << skill.skillID);
         return false;
     }
     double now = getFloatSteadyNowTime();
-
     int damageCount = 0;
-    //check first trigger 
-    //isOutCD can assure  all active skill (lastTriggerTime < activeTime) is true after active skill. 
-    if (skill->lastTriggerTime < skill->activeTime + dictSkill.delay && now >= skill->activeTime + dictSkill.delay)
+    if (skill.activeState == ENTITY_SKILL_PREFIX && skill.lastActiveTime + 0 <= now)
     {
-        for (auto skillID : dictSkill.combSkills)
+        skill.lastTriggerTime = skill.lastActiveTime + 0;
+        skill.activeState = ENTITY_SKILL_ACTIVE;
+        //consume MP 
+        //combSkills
+        for (auto combID : skill.dict.combSkills)
         {
-
+            doSkill(scene, caster->_state.eid, combID, skill.activeDst, caster->_state.foe, skill.activeFoeFirst != 0);
         }
-        if (dictSkill.appendBuffsAoeID != InvalidDictID)
-        {
-            auto dictAoeBuff = DBDict::getRef().getOneKeyAOESearch(dictSkill.appendBuffsAoeID);
-            if (dictAoeBuff.first)
-            {
-                for (auto buffID: dictSkill.appendBuffs)
-                {
+        damageCount++;
+    }
 
-                }
+
+    if (skill.activeState == ENTITY_SKILL_ACTIVE && skill.dict.interval > 0 && skill.dict.keep > 0 && now > skill.lastTriggerTime)
+    {
+        double endtime = std::min(skill.lastActiveTime + 0 + skill.dict.keep, now);
+        double intv = std::min(endtime - skill.lastTriggerTime, skill.dict.keep);
+        double spd = std::max(skill.dict.interval / (1 + caster->_props.attackQuick), 0.05);
+        int addCount = (int)floor(std::max(intv, 0.0) / spd);
+        if (addCount > 0)
+        {
+            skill.lastTriggerTime += spd*addCount;
+        }
+        damageCount += addCount;
+    }
+
+    for (int i=0; i < damageCount; i++)
+    {
+        if (skill.dict.appendBuffsAreaID != InvalidDictID)
+        {
+            for (auto buffID : skill.dict.appendBuffs)
+            {
+
             }
         }
-
-        attack(scene, caster, skill, dictSkill);
-        skill->lastTriggerTime = skill->activeTime + dictSkill.delay;
+        attack(scene, caster, skill);
     }
 
-    //引导技能
-    double interval = dictSkill.interval / (1 + caster->_props.attackQuick);
-    while (interval > 0
-        && skill->lastTriggerTime >= skill->activeTime + dictSkill.delay
-        && dictSkill.keep > interval
-        && now - skill->lastTriggerTime > interval)
+    //进入CD  
+    if (skill.activeState == ENTITY_SKILL_ACTIVE 
+        && now > skill.lastActiveTime + 0 + std::max(std::max(skill.dict.interval / (1 + caster->_props.attackQuick), 0.05), skill.dict.keep))
     {
-        attack(scene, caster, skill, dictSkill);
-        skill->lastTriggerTime += interval;
+        skill.activeState = ENTITY_SKILL_CD;
+        if (skill.skillID == caster->_skillSys.readySkillID)
+        {
+            caster->_skillSys.readySkillID = InvalidDictID;
+        }
     }
 
-    //结束判断
-    if (skill->lastTriggerTime >= skill->activeTime + dictSkill.delay //已经触发过一次 
-        && isOutCD(caster, *skill, dictSkill) )
+    //CD结束 
+    if (skill.activeState == ENTITY_SKILL_CD
+        && now > skill.lastActiveTime + 0 + std::max(std::max(std::max(skill.dict.interval / (1 + caster->_props.attackQuick), 0.05), skill.dict.keep), skill.dict.cd))
     {
-        skill->isFinish = 1;
-        for (auto skillID : dictSkill.followSkills)
+        skill.activeState = ENTITY_SKILL_NONE;
+        for (auto buffID : skill.dict.followSkills)
         {
 
         }
@@ -497,46 +385,56 @@ bool Skill::triggerSkill(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr sk
 
 
 
-bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill)
+bool Skill::attack(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill)
 {
     //update skill pos  
-    updateSkillPos(scene, caster,skill, dictSkill);
-
-    auto dictAoe = DBDict::getRef().getOneKeyAOESearch(dictSkill.aoeID);
-    if (!dictAoe.first)
+    auto foe = lockFoe(scene, caster, skill);
+    if (skill.activeFoeFirst && foe)
     {
-        return false;
+        skill.activeDst = foe->_move.position;
+    }
+    std::vector<std::pair<EntityPtr, double>> targets;
+    if (foe && skill.dict.aoeID == InvalidDictID)
+    {
+        targets.push_back(std::make_pair(foe, getDistance(caster, foe)));
+    }
+    if (skill.dict.aoeID != InvalidDictID)
+    {
+        targets = scene->searchTarget(caster, caster->_move.position,
+            normalize(skill.activeDst - caster->_move.position), skill.dict.aoeDict);
     }
 
-    auto result = scene->searchTarget(caster, skill->activeOrg,skill->activeDst - skill->activeOrg, dictAoe.second);
-
-   if (result.empty())
+   if (targets.empty())
    {
        return true;
    }
    
-   return damage(scene, caster, skill, dictSkill, result);
+   return damage(scene, caster, skill, targets);
 }
 
 
-bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, const DictSkill & dictSkill, std::vector<std::pair<EntityPtr, double>> & targets)
+bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfo & skill,  std::vector<std::pair<EntityPtr, double>> & targets)
 {
     SceneEventNotice notice;
+    caster->_skillSys.breakoffAttackTime = getFloatSteadyNowTime();
     for (auto target : targets)
     {
         if (target.first->_state.state != ENTITY_STATE_ACTIVE)
         {
             continue;
         }
-        target.first->_state.curHP -= 80;
-        target.first->_isInfoDirty = true;
+        target.first->_skillSys.breakoffAttackTime = getFloatSteadyNowTime();
+        //process harm     
+        double harm = caster->_props.attack;  
+        target.first->_state.curHP -= harm;
+        target.first->_isStateDirty = true;
         if (caster->_state.etype != ENTITY_FLIGHT)
         {
-            notice.info.push_back(SceneEventInfo(caster->_state.eid, target.first->_state.eid, SCENE_EVENT_HARM_ATTACK, 80, ""));
+            notice.info.push_back(SceneEventInfo(caster->_state.eid, target.first->_state.eid, SCENE_EVENT_HARM_ATTACK, harm, ""));
         }
         else
         {
-            notice.info.push_back(SceneEventInfo(caster->_state.master, target.first->_state.eid, SCENE_EVENT_HARM_ATTACK, 80, ""));
+            notice.info.push_back(SceneEventInfo(caster->_state.master, target.first->_state.eid, SCENE_EVENT_HARM_ATTACK, harm, ""));
         }
 
         if (target.first->_state.curHP <= 0)
@@ -558,8 +456,13 @@ bool Skill::damage(ScenePtr scene, EntityPtr caster, EntitySkillInfoPtr skill, c
                 notice.info.push_back(SceneEventInfo(caster->_state.master, target.first->_state.eid, SCENE_EVENT_LIE, 0, ""));
             }
         }
+        target.first->_isStateDirty = true;
     }
-    scene->broadcast(notice);
+    if (!notice.info.empty())
+    {
+        scene->broadcast(notice);
+    }
+    
     return true;
 }
 

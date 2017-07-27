@@ -33,7 +33,7 @@ function Session:whenLinked(sID, remoteIP, remotePort)
 end
 
 function Session:onDisconnect(sID, remoteIP, remotePort)
-	logi("session is on disconnect. sID=" .. sID .. ", remoteIP=" .. remoteIP .. ", remotePort=" .. remotePort)
+    logi("session is on disconnect. sID=" .. sID .. ", remoteIP=" .. remoteIP .. ", remotePort=" .. remotePort)
 end
 
 function Session:onClientAuthResp(sID, msg)
@@ -45,7 +45,7 @@ function Session:onClientAuthResp(sID, msg)
             send(sID, "CreateAvatarReq", {avatarName=self.avatarName})
         end
     else
-	dump(msg, "error Session:onClientAuthResp")
+    dump(msg, "error Session:onClientAuthResp")
     end
 end
 

@@ -11,15 +11,15 @@
 #include "lobject.h"
 
 
-#define sizeCclosure(n)	(cast(int, sizeof(CClosure)) + \
+#define sizeCclosure(n)    (cast(int, sizeof(CClosure)) + \
                          cast(int, sizeof(TValue)*((n)-1)))
 
-#define sizeLclosure(n)	(cast(int, sizeof(LClosure)) + \
+#define sizeLclosure(n)    (cast(int, sizeof(LClosure)) + \
                          cast(int, sizeof(TValue *)*((n)-1)))
 
 
 /* test whether thread is in 'twups' list */
-#define isintwups(L)	(L->twups != L)
+#define isintwups(L)    (L->twups != L)
 
 
 /*
@@ -37,7 +37,7 @@ struct UpVal {
   } u;
 };
 
-#define upisopen(up)	((up)->v != &(up)->u.value)
+#define upisopen(up)    ((up)->v != &(up)->u.value)
 
 
 LUAI_FUNC Proto *luaF_newproto (lua_State *L);

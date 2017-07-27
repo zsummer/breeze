@@ -1,7 +1,7 @@
 ﻿#include "entity.h"
 Entity::Entity()
 {
-
+    _control.agentNo = RVO::RVO_ERROR;
 }
 
 Entity::~Entity()
@@ -25,10 +25,9 @@ double Entity::getAttack()
 {
     return 1.0;
 }
-
-EntityFullData Entity::getFullData()
+EntityClientSync Entity::getClientSyncData()
 {
-    return EntityFullData(_props, _state, _move, _report);
+    return EntityClientSync(_props, _state, _move, _report);
 }
 
 

@@ -58,6 +58,13 @@
     </proto>
 
 
+    <proto name="EntityScriptNotice" desc= "同步给脚本">
+        <member name="controls"  type="EntityControlArray" desc=""/>
+        <member name="skills"  type="EntitySkillSystemArray" desc=""/>
+    </proto>
+
+
+
 
 
 </Proto>

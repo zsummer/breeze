@@ -92,12 +92,9 @@ void SceneMgr::onTimer()
                 kv.second->getSceneSection(notice.section);
                 //status ins
                 std::set<GroupID> groups;
-                for (auto &entity : notice.section.entitys)
+                for (auto &ekv : kv.second->getPlayers())
                 {
-                    if (entity.state.etype == ENTITY_PLAYER)
-                    {
-                        groups.insert(entity.state.groupID);
-                    }
+                    groups.insert(ekv.second->_state.groupID);
                 }
                 for (auto key : groups)
                 {
@@ -122,10 +119,6 @@ void SceneMgr::onTimer()
     for (auto scene : frees)
     {
         _frees.push(scene);
-        if (scene->getSceneType() == SCENE_HOME || scene->getSceneType() == SCENE_MELEE)
-        {
-            _homes.erase(scene->getSceneID());
-        }
         _actives.erase(scene->getSceneID());
         scene->cleanScene();
     }
@@ -223,13 +216,13 @@ bool SceneMgr::startWorldConnect()
     options._sessionPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
     options._onSessionPulse = [](TcpSessionPtr session)
     {
-		if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0  )
-		{
-			LOGE("SceneMgr check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
-			session->close();
-			return;
-		}
-		ScenePulse pulse;
+        if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0  )
+        {
+            LOGE("SceneMgr check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
+            session->close();
+            return;
+        }
+        ScenePulse pulse;
         WriteStream ws(pulse.getProtoID());
         ws << pulse;
         session->send(ws.getStream(), ws.getStreamLen());
@@ -283,12 +276,12 @@ void SceneMgr::event_onWorldLinked(TcpSessionPtr session)
     session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
     session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
     session->getOptions()._reconnects = 0;
-	SceneKnock notice;
+    SceneKnock notice;
     notice.lineID = ServerConfig::getRef().getSceneConfig()._lineID;
-	notice.pubHost = ServerConfig::getRef().getSceneConfig()._clientPubHost;
-	notice.pubPort = ServerConfig::getRef().getSceneConfig()._clientListenPort;
-	sendViaSessionID(session->getSessionID(), notice);
-	LOGI("event_onWorldLinked cID=" << session->getSessionID() );
+    notice.pubHost = ServerConfig::getRef().getSceneConfig()._clientPubHost;
+    notice.pubPort = ServerConfig::getRef().getSceneConfig()._clientListenPort;
+    sendViaSessionID(session->getSessionID(), notice);
+    LOGI("event_onWorldLinked cID=" << session->getSessionID() );
 }
 
 
@@ -319,6 +312,15 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         onSceneGroupAvatarInfo(session, info);
         return;
     }
+    else if (rsShell.getProtoID() == ReloadDBDictNotice::getProtoID())
+    {
+        LOGI("ReloadDBDictNotice Hotupdate begin.");
+        double now = getFloatSteadyNowTime();
+        DBDict::getRef().load();
+        now = getFloatSteadyNowTime() - now;
+        LOGI("ReloadDBDictNotice Hotupdate success. usedTime=" << now);
+        return;
+    }
     else if (rsShell.getProtoID() == SceneServerEnterSceneIns::getProtoID())
     {
         SceneServerEnterSceneIns ins;
@@ -341,6 +343,41 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
         onForwardToService(session, trace, rs);
         return;
     }
+    else if (rsShell.getProtoID() == KickClientsNotice::getProtoID())
+    {
+        KickClientsNotice notice;
+        rsShell >> notice;
+        time_t endTime = getNowTime() + notice.forbidDuration;
+        if (notice.isAll)
+        {
+            _forbidAll = endTime;
+            SessionManager::getRef().kickClientSession(_clientListen);
+        }
+        else
+        {
+            for (auto id : notice.avatars)
+            {
+                _forbids[id] = endTime;
+                auto iter = _tokens.find(id);
+                if (iter != _tokens.end() && iter->second.second != InvalidSceneID)
+                {
+                    auto scene = getActiveScene(iter->second.second);
+                    if (scene)
+                    {
+                        auto e = scene->getEntityByAvatarID(id);
+                        if (e)
+                        {
+                            if (e->_clientSessionID != InvalidSessionID)
+                            {
+                                SessionManager::getRef().kickSession(e->_clientSessionID);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     else if (rsShell.getProtoID() == ChatResp::getProtoID())
     {
       
@@ -449,8 +486,22 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
     {
         AttachSceneReq req;
         rs >> req;
+        if (true)
+        {
+            if (getNowTime() < _forbidAll)
+            {
+                sendViaSessionID(session->getSessionID(), AttachSceneResp(EC_PERMISSION_DENIED, req.avatarID, req.sceneID));
+                return;
+            }
+            auto finder = _forbids.find(req.avatarID);
+            if (finder != _forbids.end() && getNowTime() < finder->second)
+            {
+                sendViaSessionID(session->getSessionID(), AttachSceneResp(EC_PERMISSION_DENIED, req.avatarID, req.sceneID));
+                return;
+            }
+        }
         auto founder = _tokens.find(req.avatarID);
-        if (founder != _tokens.end() && founder->second.first == req.token  && _actives.find(req.sceneID) != _actives.end())
+        if (founder != _tokens.end() && founder->second.first == req.token  && _actives.find(req.sceneID) != _actives.end() )
         {
             session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
             session->setUserParam(UPARAM_AVATAR_ID, req.avatarID);
@@ -531,7 +582,7 @@ void SceneMgr::onSceneGroupAvatarInfo(TcpSessionPtr session, SceneGroupAvatarInf
     }
     entity->_state.avatarName = info.avatarName;
     entity->_state.modelID = info.modelID;
-    entity->_isInfoDirty = true;
+    entity->_isStateDirty = true;
 }
 void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnterSceneIns & ins)
 {
@@ -539,16 +590,18 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
     //如果类型是主城并且存在未满人的主城 直接丢进去
     if (ins.sceneType == SCENE_HOME || ins.sceneType == SCENE_MELEE)
     {
-        for (auto &kv : _homes)
+        for (auto & scn : _actives)
         {
-            if( kv.second->getPlayerCount() < 30  && kv.second->getSceneType() == ins.sceneType)
+            if (scn.second->getSceneType() == ins.sceneType 
+                && scn.second->getMapID() == ins.mapID
+                && scn.second->getPlayerCount() < 20)
             {
-                scene = kv.second;
+                scene = scn.second;
                 break;
             }
         }
     }
-   
+
     if (!scene )
     {
         if (_frees.empty())
@@ -561,10 +614,6 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
         _frees.pop();
         scene->initScene((SCENE_TYPE)ins.sceneType, ins.mapID);
         _actives.insert(std::make_pair(scene->getSceneID(), scene));
-        if (ins.sceneType == SCENE_HOME || ins.sceneType == SCENE_MELEE)
-        {
-            _homes.insert(std::make_pair(scene->getSceneID(), scene));
-        }
     }
     for (auto & group : ins.groups)
     {
@@ -583,8 +632,8 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                 entity->_state.maxHP = entity->_props.hp;
                 entity->_state.curHP = entity->_state.maxHP;
                 entity->_state.camp = ENTITY_CAMP_BLUE + rand() % 100;
-                entity->_state.collision = 1.5;
-                entity->_skillSys.dictBootSkills.insert(1);
+                entity->_control.collision = 1.0;
+                entity->_skillSys.dictEquippedSkills[1] = 0;
 
                 if (scene->getSceneType() == SCENE_MELEE)
                 {
@@ -596,10 +645,12 @@ void SceneMgr::onSceneServerEnterSceneIns(TcpSessionPtr session, SceneServerEnte
                     if (group.groupID %2 == 0)
                     {
                         entity->_control.spawnpoint = EPosition(-63.8 + rand() % 4 - 2, 62.5 + rand() % 4 - 2);
+                        entity->_state.camp = ENTITY_CAMP_RED;
                     }
                     else
                     {
                         entity->_control.spawnpoint = EPosition(99 + rand()%4-2, 61.5 + rand() % 4 - 2);
+                        entity->_state.camp = ENTITY_CAMP_BLUE;
                     }
                     
                     entity->_move.position = entity->_control.spawnpoint;

@@ -259,7 +259,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
  
 struct SceneServerGroupStateFeedback //scene ==> world  
 { 
-    static const unsigned short getProtoID() { return 4007;} 
+    static const unsigned short getProtoID() { return 4006;} 
     static const std::string getProtoName() { return "SceneServerGroupStateFeedback";} 
     unsigned long long sceneID;  
     unsigned long long groupID;  
@@ -297,6 +297,42 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "sceneID=" << info.sceneID << ","; 
     stm << "groupID=" << info.groupID << ","; 
     stm << "state=" << info.state << ","; 
+    stm << "]"; 
+    return stm; 
+} 
+ 
+struct EntityScriptNotice //同步给脚本  
+{ 
+    static const unsigned short getProtoID() { return 4008;} 
+    static const std::string getProtoName() { return "EntityScriptNotice";} 
+    EntityControlArray controls;  
+    EntitySkillSystemArray skills;  
+    EntityScriptNotice() 
+    { 
+    } 
+    EntityScriptNotice(const EntityControlArray & controls, const EntitySkillSystemArray & skills) 
+    { 
+        this->controls = controls; 
+        this->skills = skills; 
+    } 
+}; 
+inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const EntityScriptNotice & data) 
+{ 
+    ws << data.controls;  
+    ws << data.skills;  
+    return ws; 
+} 
+inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, EntityScriptNotice & data) 
+{ 
+    rs >> data.controls;  
+    rs >> data.skills;  
+    return rs; 
+} 
+inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const EntityScriptNotice & info) 
+{ 
+    stm << "["; 
+    stm << "controls=" << info.controls << ","; 
+    stm << "skills=" << info.skills << ","; 
     stm << "]"; 
     return stm; 
 } 

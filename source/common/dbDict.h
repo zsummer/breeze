@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
 #include <ProtoSceneCommon.h>
 #include <ProtoClient.h>
 #include <ProtoDocker.h>
-
+#include <LogCommon.h>
 
 /*
 服务器引擎的配置走数据库
@@ -159,6 +159,8 @@ public:
         auto helper = buildHelper("STLogDBMgr");
         if (!helper) return false;
         buildTable<LogChat>(helper);
+        buildTable<LogQuit>(helper);
+        buildTable<LogLogin>(helper);
         return true;
     }
 
@@ -178,10 +180,9 @@ public:
         LOAD_ONE_KEY_DICT(AOESearch);
         LOAD_ONE_KEY_DICT(DictBuff);
         LOAD_ONE_KEY_DICT(DictSkill);
-        fakeTestData();
-        return true;
+        return finish();
     }
-    bool fakeTestData();
+    bool finish();
     
     MAKE_ONE_KEY_DICT(DictGlobal, ui64, id);
     MAKE_ONE_KEY_DICT(DictDrop, ui64, id);

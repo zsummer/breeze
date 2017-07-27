@@ -566,7 +566,11 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         event_onSwitchServiceClientNotice(session, rsShell);
         return;
     }
-
+    else if (rsShell.getProtoID() == KickClientsNotice::getProtoID())
+    {
+        event_onKickClientsNotice(session, rsShell);
+        return;
+    }
 
     else if (rsShell.getProtoID() == KickRealClient::getProtoID())
     {
@@ -601,6 +605,18 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
     else if (rsShell.getProtoID() == WebServerRequest::getProtoID())
     {
         event_onWebServerRequest(session, rsShell);
+    }
+    else if (rsShell.getProtoID() == ReloadDBDictNotice::getProtoID())
+    {
+        size_t nowDate = getNowTime();
+        double now = getFloatSteadyNowTime();
+        DBDict::getRef().load();
+        now = getFloatSteadyNowTime() - now;
+        Tracing trace;
+        trace.routing.toServiceType = STWebAgent;
+        trace.routing.toServiceID = InvalidServiceID;
+        trace.routing.traceBackID = InvalidServiceID;
+        toService(trace, ReloadDBDictFinish(ServerConfig::getRef().getDockerID(), (double)nowDate, now));
     }
 
     
@@ -900,6 +916,7 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
 
             ChatResp resp;
             resp.channelID = CC_SYSTEM;
+            resp.chatTime = getNowTime();
             resp.msg = "player <color=blue>[" + toString(onlineAvatar->getServiceName()) + "]</color> is online.  online client["
                 + toString(Docker::getRef().peekService(STAvatar).size()) + "].";
             for (auto kv : peekService(STAvatar))
@@ -1018,6 +1035,16 @@ void Docker::event_onKickRealClient(TcpSessionPtr session, ReadStream & rs)
     SessionManager::getRef().kickSession(notice.clientSessionID);
 }
 
+void Docker::event_onKickClientsNotice(TcpSessionPtr session, ReadStream & rs)
+{
+    KickClientsNotice notice;
+    rs >> notice;
+    LOGI("Docker::event_onKickClientsNotice kick all client .  ");
+    if (_widelisten != InvalidAccepterID)
+    {
+        SessionManager::getRef().kickClientSession(_widelisten);
+    }
+}
 
 void Docker::event_onUnloadServiceInDocker(TcpSessionPtr session, ReadStream & rs)
 {
@@ -1198,6 +1225,8 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     else
     {
         LOGE("client unknow proto or wrong status. proto[" << rs.getProtoID() << "]= " << ProtoReflection::getProtoName(rs.getProtoID()) << ", status=" << sessionStatus << ", sessionID=" << session->getSessionID());
+        session->close();
+        return;
     }
 }
 

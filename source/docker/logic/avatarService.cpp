@@ -1,14 +1,16 @@
 ﻿#include "avatarService.h"
 #include <ProtoClient.h>
 #include <ProtoSceneServer.h>
+#include <LogCommon.h>
 
 AvatarService::AvatarService()
 {
+
     slotting<ChatReq>(std::bind(&AvatarService::onChatReq, this, _1, _2));
     slotting<ChatResp>(std::bind(&AvatarService::onChatResp, this, _1, _2));
-	slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
-	slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
-	slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
+    slotting<PingPongReq>(std::bind(&AvatarService::onPingPongReq, this, _1, _2));
+    slotting<ChangeIconIDReq>(std::bind(&AvatarService::onChangeIconIDReq, this, _1, _2));
+    slotting<ChangeModeIDReq>(std::bind(&AvatarService::onChangeModeIDReq, this, _1, _2));
     
     _scene.onModuleInit(*this);
 
@@ -38,17 +40,32 @@ void AvatarService::onClientChange()
     }
     if (getClientSessionID() == InvalidSessionID)
     {
-        do
+        if (true)
         {
             ChatResp resp;
             resp.channelID = CC_SYSTEM;
+            resp.chatTime = getNowTime();
             resp.msg = "player <color=blue>[" + toString(getServiceName()) + "]</color> is offline. now online client["
                 + toString(Docker::getRef().peekService(STAvatar).size()) + "].";
             for (auto kv : Docker::getRef().peekService(STAvatar))
             {
                 toService(STClient, kv.second->getServiceID(), resp);
             }
-        } while (false);
+        } 
+
+
+        if (true)
+        {
+            LogQuit lq;
+            lq.avatarID = _baseInfo._data.avatarID;
+            lq.avatarName = _baseInfo._data.avatarName;
+            lq.logTime = getNowTime();
+            lq.id = 0;
+
+            DBQueryReq req(lq.getDBInsert());
+            toService(STLogDBMgr, req, NULL);
+        }
+
     }
 }
 
@@ -80,19 +97,19 @@ void AvatarService::onModuleLoad(bool success, const std::string & moduleName)
     }
     if (_curLoadModuleCount == _totalModuleCount)
     {
-		//process prop
-// 		if (_baseInfo._data.level > 0)
-// 		{
-// 			refreshProp("hp", 1000);
-// 			refreshProp("hpRegen", 1);
-// 			refreshProp("attack", 100);
-// 			refreshProp("defense", 0.2);
-// 			refreshProp("crit", 0.1);
-// 			refreshProp("toughness", 0.1);
-// 			refreshProp("moveSpeed", 7);
-// 			refreshProp("attackQuick", 1);
-// 			refreshProp("vampirk", 0.2);
-// 		}
+        //process prop
+//         if (_baseInfo._data.level > 0)
+//         {
+//             refreshProp("hp", 1000);
+//             refreshProp("hpRegen", 1);
+//             refreshProp("attack", 100);
+//             refreshProp("defense", 0.2);
+//             refreshProp("crit", 0.1);
+//             refreshProp("toughness", 0.1);
+//             refreshProp("moveSpeed", 7);
+//             refreshProp("attackQuick", 1);
+//             refreshProp("vampirk", 0.2);
+//         }
         finishLoad();
         AttachAvatarResp resp(EC_SUCCESS, _baseInfo._data);
         toDocker(getClientDockerID(), resp);
@@ -194,6 +211,8 @@ void AvatarService::onChatReq(const Tracing & trace, zsummer::proto4z::ReadStrea
     
 }
 
+
+
 void AvatarService::onChatResp(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
     toService(STClient, trace.oob, rs.getStream(), rs.getStreamLen());
@@ -216,22 +235,22 @@ void AvatarService::onPingPongReq(const Tracing & trace, zsummer::proto4z::ReadS
 }
 void AvatarService::onChangeIconIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-	ChangeIconIDReq req;
-	rs >> req;
-	_baseInfo._data.iconID = req.iconID;
-	_baseInfo.writeToDB();
+    ChangeIconIDReq req;
+    rs >> req;
+    _baseInfo._data.iconID = req.iconID;
+    _baseInfo.writeToDB();
     toService(STClient, getServiceID(), AvatarBaseInfoNotice(_baseInfo._data));
-	toService(STClient, getServiceID(), ChangeIconIDResp(EC_SUCCESS, req.iconID));
+    toService(STClient, getServiceID(), ChangeIconIDResp(EC_SUCCESS, req.iconID));
 }
 void AvatarService::onChangeModeIDReq(const Tracing & trace, zsummer::proto4z::ReadStream &rs)
 {
-	ChangeModeIDReq req;
-	rs >> req;
-	_baseInfo._data.modeID = req.modeID;
-	_baseInfo.writeToDB();
+    ChangeModeIDReq req;
+    rs >> req;
+    _baseInfo._data.modeID = req.modeID;
+    _baseInfo.writeToDB();
     _scene.refreshGroupInfo(*this);
     toService(STClient, getServiceID(), AvatarBaseInfoNotice(_baseInfo._data));
-	toService(STClient, getServiceID(), ChangeModeIDResp(EC_SUCCESS, req.modeID));
+    toService(STClient, getServiceID(), ChangeModeIDResp(EC_SUCCESS, req.modeID));
 }
 
 

@@ -52,58 +52,58 @@
 const double RVO_EPSILON = 0.00001;
 
 namespace RVO {
-	class Agent;
-	class Obstacle;
-	class RVOSimulator;
+    class Agent;
+    class Obstacle;
+    class RVOSimulator;
 
-	/**
-	 * \brief      Computes the squared distance from a line segment with the
-	 *             specified endpoints to a specified point.
-	 * \param      a               The first endpoint of the line segment.
-	 * \param      b               The second endpoint of the line segment.
-	 * \param      c               The point to which the squared distance is to
-	 *                             be calculated.
-	 * \return     The squared distance from the line segment to the point.
-	 */
-	inline double distSqPointLineSegment(const Vector2 &a, const Vector2 &b,
-										const Vector2 &c)
-	{
-		const double r = ((c - a) * (b - a)) / absSq(b - a);
+    /**
+     * \brief      Computes the squared distance from a line segment with the
+     *             specified endpoints to a specified point.
+     * \param      a               The first endpoint of the line segment.
+     * \param      b               The second endpoint of the line segment.
+     * \param      c               The point to which the squared distance is to
+     *                             be calculated.
+     * \return     The squared distance from the line segment to the point.
+     */
+    inline double distSqPointLineSegment(const Vector2 &a, const Vector2 &b,
+                                        const Vector2 &c)
+    {
+        const double r = ((c - a) * (b - a)) / absSq(b - a);
 
-		if (r < 0.0) {
-			return absSq(c - a);
-		}
-		else if (r > 1.0) {
-			return absSq(c - b);
-		}
-		else {
-			return absSq(c - (a + r * (b - a)));
-		}
-	}
+        if (r < 0.0) {
+            return absSq(c - a);
+        }
+        else if (r > 1.0) {
+            return absSq(c - b);
+        }
+        else {
+            return absSq(c - (a + r * (b - a)));
+        }
+    }
 
-	/**
-	 * \brief      Computes the signed distance from a line connecting the
-	 *             specified points to a specified point.
-	 * \param      a               The first point on the line.
-	 * \param      b               The second point on the line.
-	 * \param      c               The point to which the signed distance is to
-	 *                             be calculated.
-	 * \return     Positive when the point c lies to the left of the line ab.
-	 */
-	inline double leftOf(const Vector2 &a, const Vector2 &b, const Vector2 &c)
-	{
-		return det(a - c, b - a);
-	}
+    /**
+     * \brief      Computes the signed distance from a line connecting the
+     *             specified points to a specified point.
+     * \param      a               The first point on the line.
+     * \param      b               The second point on the line.
+     * \param      c               The point to which the signed distance is to
+     *                             be calculated.
+     * \return     Positive when the point c lies to the left of the line ab.
+     */
+    inline double leftOf(const Vector2 &a, const Vector2 &b, const Vector2 &c)
+    {
+        return det(a - c, b - a);
+    }
 
-	/**
-	 * \brief      Computes the square of a double.
-	 * \param      a               The double to be squared.
-	 * \return     The square of the double.
-	 */
-	inline double sqr(double a)
-	{
-		return a * a;
-	}
+    /**
+     * \brief      Computes the square of a double.
+     * \param      a               The double to be squared.
+     * \return     The square of the double.
+     */
+    inline double sqr(double a)
+    {
+        return a * a;
+    }
 }
 
 #endif /* RVO_DEFINITIONS_H_ */

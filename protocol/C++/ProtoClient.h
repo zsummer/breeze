@@ -185,32 +185,39 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     return stm; 
 } 
  
+ 
+typedef std::map<std::string, std::string> DeviceInfo;  
+ 
 struct AttachAvatarReq //选角色请求  
 { 
     static const unsigned short getProtoID() { return 55005;} 
     static const std::string getProtoName() { return "AttachAvatarReq";} 
     std::string accountName; //这个字段会被服务器填充.客户端可以不填写  
     unsigned long long avatarID;  
+    DeviceInfo di;  
     AttachAvatarReq() 
     { 
         avatarID = 0; 
     } 
-    AttachAvatarReq(const std::string & accountName, const unsigned long long & avatarID) 
+    AttachAvatarReq(const std::string & accountName, const unsigned long long & avatarID, const DeviceInfo & di) 
     { 
         this->accountName = accountName; 
         this->avatarID = avatarID; 
+        this->di = di; 
     } 
 }; 
 inline zsummer::proto4z::WriteStream & operator << (zsummer::proto4z::WriteStream & ws, const AttachAvatarReq & data) 
 { 
     ws << data.accountName;  
     ws << data.avatarID;  
+    ws << data.di;  
     return ws; 
 } 
 inline zsummer::proto4z::ReadStream & operator >> (zsummer::proto4z::ReadStream & rs, AttachAvatarReq & data) 
 { 
     rs >> data.accountName;  
     rs >> data.avatarID;  
+    rs >> data.di;  
     return rs; 
 } 
 inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & stm, const AttachAvatarReq & info) 
@@ -218,6 +225,7 @@ inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream & 
     stm << "["; 
     stm << "accountName=" << info.accountName << ","; 
     stm << "avatarID=" << info.avatarID << ","; 
+    stm << "di=" << info.di << ","; 
     stm << "]"; 
     return stm; 
 } 

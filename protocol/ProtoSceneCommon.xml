@@ -149,13 +149,12 @@
 
 
 
-    <!-- 实体动态属性, 差异广播 -->
+    <!-- 实体状态数据 -->
     <struct name="EntityState" desc="EntityState">
         <member name="eid" type="ui64"  desc=""/>
         <member name="avatarID" type="ui64"  desc=""/>
         <member name="avatarName" type="string"  desc=""/>
         <member name="modelID" type="ui64"  desc=""/>
-        <member name="collision"  type="double" desc="collision radius"/>
         <member name="camp" type="ui16"  desc="阵营"/>
         <member name="groupID" type="ui64"  desc="组队ID"/>
         <member name="etype" type="ui16"  desc="实体类型"/>
@@ -167,7 +166,7 @@
     </struct>
     <array name="EntityStateArray" type="EntityState" desc="" />
 
-    <!-- 实体动态属性, 差异广播 -->
+    <!-- 实体移动数据 -->
     <struct name="EntityMove" desc="EntityMove">
         <member name="eid" type="ui64"  desc="eid"/>
         <member name="position"  type="EPosition" desc="当前坐标"/>
@@ -176,12 +175,11 @@
         <member name="expectSpeed" type="double"  desc="期望速度"/>
         <member name="waypoints"  type="EPositionArray" desc="移动路点"/>
         <member name="follow"  type="ui64" desc="eid"/>
-        
     </struct>
     <array name="EntityMoveArray" type="EntityMove" desc="" />
 
 
-    <!-- 实体战报 -->
+    <!-- 实体战报数据 -->
     <struct name="EntityReport" desc="EntityReport">
         <member name="eid" type="ui64"  desc="eid"/>
         <member name="killOtherCount" type="ui64"  desc="杀死其他玩家次数"/>
@@ -192,14 +190,27 @@
     </struct>
     <array name="EntityReportArray" type="EntityReport" desc="" />
 
-    <!-- 一个实体的完整同步数据 -->
-    <struct name="EntityFullData" desc="EntityFullData">
+    <!-- 实体内部控制数据不对客户端开放数据 -->
+    <struct name="EntityControl" desc="EntityControl">
+        <member name="eid" type="ui64"   desc=""/>
+        <member name="agentNo" type="ui64"  desc=""/>
+        <member name="collision"  type="double" desc=""/>
+        <member name="stateChageTime" type="double"  desc=""/>
+        <member name="spawnpoint" type="EPosition"  desc=""/>
+        <member name="blockMoveCount" type="double"  desc=""/>
+    </struct>
+    <array name="EntityControlArray" type="EntityControl" desc="" />
+
+
+    <!-- 实体的客户端同步数据 -->
+    <struct name="EntityClientSync" desc="EntityClientSync">
         <member name="props" type="DictProp"   desc="战斗属性"/>
         <member name="state" type="EntityState"  desc=""/>
         <member name="mv" type="EntityMove"  desc=""/>
         <member name="report" type="EntityReport"  desc=""/>
     </struct>
-    <array name="EntityFullDataArray" type="EntityFullData" desc="" />
+    <array name="EntityClientSyncArray" type="EntityClientSync" desc="" />
+
 
     <proto name="SceneSection" desc= "场景全景切片数据">
         <member name="sceneID"  type="ui64" desc=""/>
@@ -208,21 +219,31 @@
         <member name="sceneStartTime"  type="double" desc="服务器战场开始时间"/>
         <member name="sceneEndTime"  type="double" desc="服务器战场结束时间"/>
         <member name="serverTime"  type="double" desc="服务器当前时间"/>
-        <member name="entitys"  type="EntityFullDataArray" desc="这里包含有所有当前场景下的实体属性和状态数据"/>
     </proto>
 
+     <!-- SKILL state -->
+    <enum type="ui16" name="ENTITY_SKILL_STATE" desc="" >
+        <member name="ENTITY_SKILL_NONE" value="0"   desc="无效"/>
+        <member name="ENTITY_SKILL_PREFIX" desc="前摇"/>
+        <member name="ENTITY_SKILL_ACTIVE" desc="执行中"/>
+        <member name="ENTITY_SKILL_CD"  desc="冷却中"/>
+    </enum>
 
     <proto name="EntitySkillInfo" desc= "技能">
         <member name="skillID"  type="ui64" desc=""/>
-        <member name="activeOrg"  type="EPosition" desc=""/>
-        <member name="activeOrgEID"  type="ui64" desc=""/>
         <member name="activeDst"  type="EPosition" desc=""/>
         <member name="activeFoeFirst"  type="ui16" desc=""/>
-        <member name="activeTime"  type="double" desc=""/>
+        <member name="lastActiveTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
-        <member name="isFinish"  type="ui16" desc=""/>
+        <member name="activeState"  type="ui16" desc="ENTITY_SKILL_STATE"/>
         <member name="activeCount"  type="double" desc=""/>
+        <member name="dict"  type="DictSkill" desc=""/>
     </proto>
+
+    <map name="EntitySkillInfoMap" key="ui64" value="EntitySkillInfo" desc="已装备的SKILL ID, 技能执行数据" />
+
+    <map name="EntityEquippedSkillMap" key="ui64" value="ui64" desc="已装备的SKILL ID, value保留" />
+
 
     <proto name="EntityBuffInfo" desc= "BUFF">
         <member name="buffID"  type="ui64" desc=""/>
@@ -230,11 +251,26 @@
         <member name="activeOrgEID"  type="ui64" desc=""/>
         <member name="activeDst"  type="EPosition" desc=""/>
         <member name="activeDstEID"  type="ui64" desc=""/>
-        <member name="activeTime"  type="double" desc=""/>
+        <member name="lastActiveTime"  type="double" desc=""/>
         <member name="lastTriggerTime"  type="double" desc=""/>
         <member name="activeCount"  type="double" desc=""/>
-    </proto>
+        <member name="dict"  type="DictBuff" desc=""/>
+   </proto>
+    <map name="EntityBuffInfoMap" key="ui64" value="EntityBuffInfo" desc="附加到entity上的buff" />
 
+
+
+    <proto name="EntitySkillSystem" desc= "EntitySkillSystem">
+        <member name="eid" type="ui64"   desc=""/>
+        <member name="activeSkills"  type="EntitySkillInfoMap" desc=""/>
+        <member name="activeBuffs"  type="EntityBuffInfoMap" desc=""/>
+        <member name="dictEquippedSkills"  type="EntityEquippedSkillMap" desc=""/>
+        <member name="combating"  type="ui16" desc="战斗中"/>
+        <member name="readySkillID"  type="ui64" desc=""/>
+        <member name="normalSkillID"  type="ui64" desc=""/>
+        <member name="breakoffAttackTime"  type="double" desc=""/>
+    </proto>
+    <array name="EntitySkillSystemArray" type="EntitySkillSystem" desc="" />
 
 
 </Proto>

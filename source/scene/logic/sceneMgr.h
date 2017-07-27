@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2015 - 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2015 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -86,12 +86,13 @@ private:
 private:
 
 
-    std::map<SceneID, ScenePtr> _homes;
     std::map<SceneID, ScenePtr> _actives;
     std::queue<ScenePtr> _frees; //队列
     std::map<SceneID, ScenePtr> _scenes;
     
     std::map<ServiceID, std::pair<std::string, SceneID>> _tokens;
+    std::map<ServiceID, time_t> _forbids;
+    time_t _forbidAll = 0;
 
     SessionID _worldSessionID = InvalidSessionID;
     AccepterID _clientListen = InvalidAccepterID;

@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -208,11 +208,11 @@ bool ServerConfig::parseDB(std::string configName)
     }
     luaL_openlibs(L);  /* open libraries */
     lua_atpanic(L, panichHandler);
-	if (luaL_loadfile(L, configName.c_str()))
-	{
-		LOGE("ServerConfig can't load  file [" << configName << "]");
-		return false;
-	}
+    if (luaL_loadfile(L, configName.c_str()))
+    {
+        LOGE("ServerConfig can't load  file [" << configName << "]");
+        return false;
+    }
     if (lua_pcall(L, 0, LUA_MULTRET, 0))
     {
         LOGE("ServerConfig can't pcall  file [" << configName << "]");
@@ -286,6 +286,11 @@ bool ServerConfig::parseWorld(std::string configName)
         return false;
     }
     lua_getfield(L, -1, "world");
+
+    lua_getfield(L, -1, "dockerID");
+    _worldConfig._dockerID = (DockerID)luaL_checkinteger(L, -1);
+    _dockerID = _worldConfig._dockerID;
+    lua_pop(L, 1);
 
     lua_getfield(L, -1, "dockerListenHost");
     _worldConfig._dockerListenHost = luaL_checkstring(L, -1);

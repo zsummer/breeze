@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2014-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -499,12 +499,35 @@ inline int checkFloat()
     {
         return 20;
     }
-
-
     if (!isEqual(calcELORatingUpper(1500, 1800, 1), 1527, 1E0))
+    {
+        return 21;
+    }
+    if (det(1,0, 0, 1) <= 0)
+    {
+        return 22;
+    }
+    if (det(1, 0, 0, -1) >= 0)
+    {
+        return 23;
+    }
+    if (!isEqual(det(1, 0, 1, 0)+1 , 1, 1E-10))
+    {
+        return 24;
+    }
+    if (!isEqual(dot(1, 0, 0, 1) + 1, 1, 1E-10))
+    {
+        return 25;
+    }
+    if (dot(1, 0, 1, 1) <= 0 )
+    {
+        return 26;
+    }
+    if (dot(1, 0, -1, 1) >= 0)
     {
         return 27;
     }
+
     if (true)
     {
         double vx, vy, s;
@@ -526,7 +549,7 @@ inline int checkFloat()
             {
                 ret = rotateVertical(vx, vy, false);
             }
-            ret = normalizeVector(std::get<0>(ret), std::get<1>(ret));
+            ret = normalize(std::get<0>(ret), std::get<1>(ret));
             s = std::get<0>(ret)*vx + std::get<1>(ret)*vy;
             if (s < -1E-12 || s > 1E-12)
             {
@@ -564,8 +587,76 @@ inline int checkFloat()
             dst = newDst;
         }
     }
+
+
     if (true)
     {
+        auto line1 = std::tuple<double, double>(0, 0);
+        auto line2 = std::tuple<double, double>(1, 1);
+        if (true)
+        {
+            auto pos = std::tuple<double, double>(0, -1);
+            auto spos = shortestLine(line1, line2, pos);
+            if (getDistance(line1, spos) > 0.0000001)
+            {
+                return 30;
+            }
+        }
+        if (true)
+        {
+            auto pos = std::tuple<double, double>(0, 0);
+            auto spos = shortestLine(line1, line2, pos);
+            if (getDistance(line1, spos) > 0.0000001)
+            {
+                return 31;
+            }
+        }
+        if (true)
+        {
+            auto pos = std::tuple<double, double>(1, 0);
+            auto spos = shortestLine(line1, line2, pos);
+            if (getDistance(std::tuple<double, double>(0.5, 0.5), spos) > 0.0000001)
+            {
+                return 32;
+            }
+        }
+        if (true)
+        {
+            auto pos = std::tuple<double, double>(1, 1);
+            auto spos = shortestLine(line1, line2, pos);
+            if (getDistance(line2, spos) > 0.0000001)
+            {
+                return 33;
+            }
+        }
+        if (true)
+        {
+            auto pos = std::tuple<double, double>(2, 0);
+            auto spos = shortestLine(line1, line2, pos);
+            if (getDistance(line2, spos) > 0.0000001)
+            {
+                return 34;
+            }
+        }
+        if (true)
+        {
+            auto pos = std::tuple<double, double>(100, 0);
+            auto spos = shortestLine(line1, line2, pos);
+            if (getDistance(line2, spos) > 0.0000001)
+            {
+                return 35;
+            }
+        }
+
+        double now = getFloatSteadyNowTime();
+        double salt = 0.0;
+        for (size_t i = 0; i < 10*10000; i++)
+        {
+            auto pos = std::tuple<double, double>(1, 0);
+            auto spos = shortestLine(line1, line2, pos);
+            salt += getDistance(pos, spos);
+        }
+        LOGD("check shortestPos usetime=" << getFloatSteadyNowTime() - now << ", salt=" << salt);
     }
 
 

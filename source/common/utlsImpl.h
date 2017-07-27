@@ -2,7 +2,7 @@
 
 /*
 * breeze License
-* Copyright (C) 2016 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2016 - 2017 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -465,7 +465,7 @@ inline double getRadian(double vx, double vy)
 
 inline double getRadian(double vx1, double vy1, double vx2, double vy2)
 {
-    return acos((vx1*vx2 + vy1*vy2) / sqrt((vx1*vx1 + vy1*vy1)*(vx2*vx2 + vy2*vy2)));
+    return acos(dot(vx1,vy1, vx2, vy2) / sqrt( dot(vx1, vy1, vx1,vy1)*dot(vx2, vy2, vx2, vy2)));
 }
 
 inline double getRadian(const std::tuple<double, double> & v)
@@ -476,7 +476,6 @@ inline double getRadian(const std::tuple<double, double> & v1, const std::tuple<
 {
     return getRadian(std::get<0>(v1), std::get<1>(v1), std::get<0>(v2), std::get<1>(v2));
 }
-
 
 inline std::tuple<double, double> getFarPoint(double orgx, double orgy, double radian, double distance)
 {
@@ -498,12 +497,88 @@ inline std::tuple<double, double> rotateVertical(double vx, double vy, bool isCl
     return std::make_tuple(vy*-1, vx);
 }
 
-inline std::tuple<double, double> normalizeVector(std::tuple<double, double> vt) { return normalizeVector(std::get<0>(vt), std::get<1>(vt)); }
-inline std::tuple<double, double> normalizeVector(double vx, double vy)
+inline std::tuple<double, double> normalize(std::tuple<double, double> vt) { return normalize(std::get<0>(vt), std::get<1>(vt)); }
+inline std::tuple<double, double> normalize(double vx, double vy)
 {
     double mode = std::sqrt(vx*vx + vy*vy);
     return std::make_tuple(vx / mode, vy / mode);
 }
+
+inline double dot(std::tuple<double, double> vt1, std::tuple<double, double> vt2)
+{
+    return dot(std::get<0>(vt1),  std::get<0>(vt1),  std::get<0>(vt2), std::get<1>(vt2));
+}
+inline double det(std::tuple<double, double> vt1, std::tuple<double, double> vt2)
+{
+    return det(std::get<0>(vt1), std::get<1>(vt1), std::get<0>(vt2),  std::get<1>(vt2));
+}
+
+inline double dot(double vx1, double vy1, double vx2, double vy2)
+{
+    return vx1 * vx2 + vy1 * vy2;
+}
+inline double det(double vx1, double vy1, double vx2, double vy2)
+{
+    return vx1 * vy2 - vx2 * vy1;
+}
+inline double distLine(double linex1, double liney1, double linex2, double liney2, double cx, double cy)
+{
+    double vx1 = linex2 - linex1;
+    double vy1 = liney2 - liney1;
+    double vx2 = cx - linex1;
+    double vy2 = cy - liney1;
+    return det(vx1, vy1, vx2, vy2) / std::sqrt(vx1*vx1 + vy1*vy1);
+}
+inline double distLine(std::tuple<double, double> line1, std::tuple<double, double> line2, std::tuple<double, double> pos)
+{
+    return distLine(std::get<0>(line1), std::get<1>(line1), std::get<0>(line2), std::get<1>(line2), std::get<0>(pos), std::get<1>(pos));
+}
+inline std::tuple<double, double> shortestLine(double linex1, double liney1, double linex2, double liney2, double cx, double cy)
+{
+    return shortestLine(std::tuple<double, double>(linex1, liney1), std::tuple<double, double>(linex2, liney2), std::tuple<double, double>(cx, cy));
+}
+
+inline std::tuple<double, double> shortestLine(std::tuple<double, double> line1, std::tuple<double, double> line2, std::tuple<double, double> pos)
+{
+    const double prec = 0.001;
+    std::tuple<double, double> ret;
+    double distl1 = getDistance(line1, pos);
+    double distl2 = getDistance(line2, pos);
+    if (distl1 < prec)
+    {
+        return line1;
+    }
+    if (distl2 < prec)
+    {
+        return line2;
+    }
+
+    double x1 = dot(line2 - line1, pos - line1); 
+    if (std::abs(x1) < prec)
+    {
+        return line1;
+    }
+    double x2 = dot(line1 - line2, pos - line2);
+    if (std::abs(x2) < prec)
+    {
+        return line2;
+    }
+    if (x2 > 0.0 && x1 > 0.0)
+    {
+        double distL = distLine(line1, line2, pos);
+        double distL1 = getDistance(line1, pos);
+        double dist = std::sqrt(distL1*distL1 - distL*distL);
+        return line1 + normalize(line2 - line1)*dist;
+    }
+    if (x1 < 0)
+    {
+        return line1;
+    }
+    return line2;
+}
+
+
+
 
 template<class Integer, class Pos>
 inline bool getBitFlag(Integer bin, Pos pos)

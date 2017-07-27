@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2013-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2013-2017 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -1454,11 +1454,7 @@ inline std::string proto4z_traceback()
 #ifdef WIN32
     ss << "\r\n";
     SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
-    if (!SymInitialize(GetCurrentProcess(), NULL, TRUE))
-    {
-        ss << "SymInitialize returned error " << GetLastError();
-        return ss.str();
-    }
+	SymInitialize(GetCurrentProcess(), NULL, TRUE);
 
     //     typedef USHORT(WINAPI *CaptureStackBackTraceType)(__in ULONG, __in ULONG, __out PVOID*, __out_opt PULONG);
     //     CaptureStackBackTraceType capture = (CaptureStackBackTraceType)(GetProcAddress(LoadLibraryA("kernel32.dll"), "RtlCaptureStackBackTrace"));
