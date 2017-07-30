@@ -52,57 +52,31 @@ function Dot(x, y)
     ctx.closePath();
     ctx.stroke();
 }
-var canvas=document.getElementById('myCanvas');
 
+var canvas=document.getElementById('myCanvas');
 var canvasX = canvas.width;
 var canvasY = canvas.height;
 
 var scalaf = canvasX/4;
 //var scalaf = Math.log(canvasX)/Math.log(10);
 
-var x = 0;
-var y = 0;
+var triangle = [[0.5, 0], [0, 1], [1,1]];
+var curPos = [5,1];
 
 
-var cx = -0.75;
-var cy = 0.0;
-
-
-
-
-/*
-var cx = 0.49;
-var cy = -0.56;
-
-var cx = 0.49;
-var cy = -0.75;
-*/
-
-function JuliaSet()
+function Sierpinski()
 {
-    var rdf = Math.random();
-    var theta = 0
-    x= x - cx;
-    y = y - cy;
-    if (x == 0)
-        theta = Math.PI/2;
-    else if(x > 0 )
-        theta = Math.atan(y/x);
-    else if(x < 0)
-        theta = Math.PI - Math.atan(y/x);
-    theta /= 2;
+    var rd = Math.random()*10;
+    rd = Math.floor(rd);
+    rd = rd % 3;
+    var dst = triangle[rd];
 
-    var r = Math.sqrt(x*x + y*y);
-    if (rdf < 0.5) r = Math.sqrt(r);
-    else r = - Math.sqrt(r);
+    var pos = [(dst[0] - curPos[0])/2, (dst[1] - curPos[1])/2];
+    curPos = [pos[0]+curPos[0], pos[1]+curPos[1]];
 
-    x = r*Math.cos(theta);
-    y = r*Math.sin(theta);
-    //document.write(x, y);
 
     var canvas=document.getElementById('myCanvas');
- //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-    Dot(x* scalaf + canvasX/2,y*scalaf+canvasY/2);
+    Dot(curPos[0]* scalaf + canvasX/2, curPos[1]*scalaf+canvasY/2);
 }
 
 
@@ -118,7 +92,7 @@ function looping()
     {
         frameCount += 1;
         //Dot(0+frameCount, 0+frameCount);
-        for (var i = 1; i <  120; i++) JuliaSet();
+        for (var i = 1; i <  120; i++) Sierpinski();
         
     }
     else
