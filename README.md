@@ -19,8 +19,6 @@ breeze is a lightweight, fast, distributed server engine. greatly inspired by do
   
 - 日志库使用log4z.  
   
-- breeze的**理论最大规模为252个docker节点**, 推荐为1-150个节点,具体根据自己需求调整.  
-  
 - breeze的单组服务器设计容量在实际项目中, **轻度游戏10~100万同时在线**, 有大量交互的模块和丰富的外围系统的**中度/重度游戏1~10万+在线**(瓶颈在于交互模块的单例service的负载能力, 通过对业务的把握尽量拆分更多的单例service, 转移负载到负载均衡的动态service上可以有效提升和突破这个上限), 数据库注册容量<=1000万(大于这个容量要考虑对数据库进行sharding, 垂直sharding直接根据业务进行分割, 添加更多的数据库service类型和配置即可, 而单表大于1000万需要水平sharding, 这个对dbhelper进行扩展后可以对业务层透明,但暂无需求 并没有去实现. , 另外需要注意减小不需要装载的service的驻留资源, 超规模使用资源不好挥霍的.).  
   
 
@@ -41,8 +39,7 @@ docker是用来托管service的专用vm:
 docker的资源消耗:  
 > docker集群的socket数量开销= (docker个数的平方)*2  
 > docker集群的总端口占用数量开销=docker个数的平方  
-> 操作系统的可用端口数量小于64k, 也就是docker无法突破的理论上限是252个docker进程.  
-  
+
   
 ### service:  
 --- 
