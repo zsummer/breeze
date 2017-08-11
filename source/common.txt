@@ -6,7 +6,7 @@ set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/../bin/${BINNAME}/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
 add_executable(${BINNAME} ${source})
-
+add_dependencies(${BINNAME} common${LIB_SUFFIX})
 if(APPLE)
   target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX_select${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread)
 else()
