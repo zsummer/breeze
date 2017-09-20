@@ -148,7 +148,7 @@ void Script::update()
     }
 }
 
-void Script::protoSync(const std::string & protoName, const std::string & data)
+void Script::protoSync(const std::string & protoName, const char * data, unsigned int len)
 {
     auto scene = _scene.lock();
     if (!scene)
@@ -173,7 +173,7 @@ void Script::protoSync(const std::string & protoName, const std::string & data)
     }
 
     lua_pushstring(_luaState, protoName.c_str());
-    lua_pushlstring(_luaState, data.c_str(), data.size());
+    lua_pushlstring(_luaState, data, len);
     int status = lua_pcall(_luaState, 2, 0, 1);
     lua_remove(_luaState, 1);
     if (status)

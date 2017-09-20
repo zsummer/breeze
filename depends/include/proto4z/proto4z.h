@@ -40,7 +40,7 @@
  * VERSION:  1.0
  * PURPOSE:  A lightweight library for process protocol .
  * CREATION: 2013.07.04
- * LCHANGE:  2016.06.16
+ * LCHANGE:  2017.09.18
  * LICENSE:  Expat/MIT License, See Copyright Notice at the begin of this file.
  */
 
@@ -65,6 +65,7 @@
 #include <assert.h>
 #include <sstream>
 #include <algorithm>
+#include <type_traits>
 #ifndef WIN32
 #include <stdexcept>
 #include <unistd.h>
@@ -95,11 +96,7 @@ _ZSUMMER_PROTO4Z_BEGIN
 #pragma warning(disable:4996)
 #endif
 
-enum ZSummer_EndianType
-{
-    BigEndian,
-    LittleEndian,
-};
+
 
 inline std::string proto4z_traceback();
 
@@ -131,15 +128,10 @@ const static Integer MaxPackLen = (Integer)(-1) > 1024 * 1024 ? 1024 * 1024 : (I
 
 //stream translate to Integer with endian type.
 template<class BaseType>
-BaseType streamToBaseType(const char stream[sizeof(BaseType)]);
+typename std::enable_if<true, BaseType>::type streamToBaseType(const char stream[sizeof(BaseType)]);
+template<class T>
+void baseTypeToStream(char *stream, T v);
 
-//integer translate to stream with endian type.
-template<class BaseType>
-void baseTypeToStream(char *stream, BaseType v);
-
-//!get runtime local endian type. 
-static const unsigned short __gc_localEndianType = 1;
-inline ZSummer_EndianType __localEndianType();
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,21 +156,56 @@ enum INTEGRITY_RET_TYPE
 inline std::pair<INTEGRITY_RET_TYPE, Integer>
 checkBuffIntegrity(const char * buff, Integer curBuffLen, Integer boundLen, Integer maxBuffLen);
 
-
+template<class T>
+class TLSQueue
+{
+public:
+    TLSQueue()
+    {
+    }
+    ~TLSQueue()
+    {
+        while (!_que.empty())
+        {
+            T * ptr = _que.back();
+            _que.pop_back();
+            delete ptr;
+        }
+    }
+    inline T * pop()
+    {
+        if (!_que.empty())
+        {
+            T * ptr = _que.back();
+            _que.pop_back();
+            return ptr;
+        }
+        return new T();
+    }
+    inline void push(T * ptr)
+    {
+        _que.push_back(ptr);
+    }
+protected:
+private:
+    std::vector<T*> _que;
+};
 
 //////////////////////////////////////////////////////////////////////////
-//! class WriteStream: serializes the specified data to byte stream.
+//! class WriteStreamImpl: serializes the specified data to byte stream.
 //////////////////////////////////////////////////////////////////////////
 //StreamHeadTrait: User-Defined like DefaultStreamHeadTrait
 
-
-class WriteStream
+template<class T = std::string>
+class WriteStreamImpl
 {
+private:
+    thread_local static TLSQueue<T> _tlsque;
 public:
-    //! testStream : if true then WriteStream will not do any write operation.
+    //! testStream : if true then WriteStreamImpl will not do any write operation.
     //! attach : the existing memory.
-    inline WriteStream(ProtoInteger pID, char * attach = NULL, Integer attachLen = 0, bool testStream = false);
-    ~WriteStream(){}
+    WriteStreamImpl(ProtoInteger pID);
+    ~WriteStreamImpl();
 public:
     //get total stream buff, the pointer must be used immediately.
     inline char* getStream();
@@ -190,56 +217,44 @@ public:
     //get body stream length.
     inline Integer getStreamBodyLen(){ return _cursor - _headLen; }
 
-    inline std::string pickStream();
     
     //write original data.
-    inline WriteStream & appendOriginalData(const void * data, Integer len);
-    template<class T>
-    inline WriteStream & fixOriginalData(Integer offset, T unit);
-    inline WriteStream & fixOriginalData(Integer offset, const void * data, Integer len);
+    inline WriteStreamImpl & appendOriginalData(const void * data, Integer len);
+    template<class U>
+    inline WriteStreamImpl & fixOriginalData(Integer offset, U unit);
+    inline WriteStreamImpl & fixOriginalData(Integer offset, const void * data, Integer len);
 
 
-    inline WriteStream & setReserve(ReserveInteger n);
+    inline WriteStreamImpl & setReserve(ReserveInteger n);
 
-    inline WriteStream & operator << (bool data) { return writeSimpleData(data); }
-    inline WriteStream & operator << (char data) { return writeSimpleData(data); }
-    inline WriteStream & operator << (unsigned char data) { return writeSimpleData(data); }
-    inline WriteStream & operator << (short data) { return writeIntegerData(data); }
-    inline WriteStream & operator << (unsigned short data) { return writeIntegerData(data); }
-    inline WriteStream & operator << (int data) { return writeIntegerData(data); }
-    inline WriteStream & operator << (unsigned int data) { return writeIntegerData(data); }
-    inline WriteStream & operator << (long data) { return writeIntegerData((long long)data); }
-    inline WriteStream & operator << (unsigned long data) { return writeIntegerData((unsigned long long)data); }
-    inline WriteStream & operator << (long long data) { return writeIntegerData(data); }
-    inline WriteStream & operator << (unsigned long long data) { return writeIntegerData(data); }
-    inline WriteStream & operator << (float data) { return writeIntegerData(data); }
-    inline WriteStream & operator << (double data) { return writeIntegerData(data); }
+    template<class U>
+    inline typename std::enable_if<std::is_arithmetic<U>::value, WriteStreamImpl>::type & operator << (U data)
+    {
+        checkMoveCursor(sizeof(U));
+        _attach->append((const char*)&data, sizeof(U));
+        _cursor += sizeof(U);
+        baseTypeToStream(&(*_attach)[0], _cursor);
+        return *this;
+    }
+
 
 protected:
     //! check move cursor is valid. if invalid then throw exception.
     inline void checkMoveCursor(Integer unit = (Integer)0);
 
-    //! fix pack len.
-    inline void fixPackLen();
 
-    //! write integer data with endian type.
-    template <class T>
-    inline WriteStream & writeIntegerData(T t);
-
-    //! write some types of data with out endian type. It's relative to writeIntegerData method.
-    template <class T>
-    inline WriteStream & writeSimpleData(T t);
 private:
 
-    std::string _auto; //! If not attach any memory, class WriteStream will used this to managing memory.
-    char * _attach;//! attach memory pointer
+    T * _attach; //! If not attach any memory, class WriteStreamImpl will used this to managing memory.
     Integer _attachLen; //! can write max size
     Integer _cursor; //! current move cursor.
     ReserveInteger _reserve;
     ProtoInteger _pID; //! proto ID
     Integer _headLen;
-    bool  _testStream; //! if true then WriteStream will not do any write operation.
 };
+//http://zh.cppreference.com/w/cpp/language/storage_duration 
+template<class T>
+thread_local  TLSQueue<T> WriteStreamImpl<T>::_tlsque;
 
 //////////////////////////////////////////////////////////////////////////
 //class ReadStream: De-serialization the specified data from byte stream.
@@ -277,26 +292,19 @@ public:
     inline const char * peekOriginalData(Integer unit);
     inline void skipOriginalData(Integer unit);
 
-
-    inline ReadStream & operator >> (bool & data) { return readSimpleData(data); }
-    inline ReadStream & operator >> (char & data) { return readSimpleData(data); }
-    inline ReadStream & operator >> (unsigned char & data) { return readSimpleData(data); }
-    inline ReadStream & operator >> (short & data) { return readIntegerData(data); }
-    inline ReadStream & operator >> (unsigned short & data) { return readIntegerData(data); }
-    inline ReadStream & operator >> (int & data) { return readIntegerData(data); }
-    inline ReadStream & operator >> (unsigned int & data) { return readIntegerData(data); }
-    inline ReadStream & operator >> (long & data){ long long tmp = 0;ReadStream & ret = readIntegerData(tmp);data =(long) tmp;return ret;}
-    inline ReadStream & operator >> (unsigned long & data){ unsigned long long tmp = 0;ReadStream & ret = readIntegerData(tmp);data = (unsigned long)tmp;return ret;}
-    inline ReadStream & operator >> (long long & data) { return readIntegerData(data); }
-    inline ReadStream & operator >> (unsigned long long & data) { return readIntegerData(data); }
-    inline ReadStream & operator >> (float & data) { return readIntegerData(data); } 
-    inline ReadStream & operator >> (double & data) { return readIntegerData(data); }
+    template <class T>
+    inline typename std::enable_if<std::is_arithmetic<T>::value, ReadStream>::type & 
+        operator >> (T & data)
+    {
+        checkMoveCursor(sizeof(T));
+        memcpy(&data, &_attach[_cursor], sizeof(T));
+        _cursor += sizeof(T);
+        return *this;
+    }
+   
 protected:
     inline void checkMoveCursor(Integer unit);
-    template <class T>
-    inline ReadStream & readIntegerData(T & t);
-    template <class T>
-    inline ReadStream & readSimpleData(T & t);
+
 
 private:
     const char * _attach;
@@ -313,8 +321,8 @@ private:
 //////////////////////////////////////////////////////////////////////////
 
 //write c-style string
-
-inline WriteStream & operator << (WriteStream & ws, const char *const data)
+template<class T>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const char *const data)
 {
     Integer len = (Integer)strlen(data);
     ws << len;
@@ -323,8 +331,8 @@ inline WriteStream & operator << (WriteStream & ws, const char *const data)
 }
 
 //write std::string
-template<class _Traits, class _Alloc>
-inline WriteStream & operator << (WriteStream & ws, const std::basic_string<char, _Traits, _Alloc> & data)
+template<class T, class _Traits, class _Alloc>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const std::basic_string<char, _Traits, _Alloc> & data)
 {
     Integer len = (Integer)data.length();
     ws << len;
@@ -344,11 +352,11 @@ inline ReadStream & operator >> (ReadStream & rs, std::basic_string<char, _Trait
 
 
 //std::vector
-template<class T, class _Alloc>
-inline WriteStream & operator << (WriteStream & ws, const std::vector<T, _Alloc> & vct)
+template<class T, class U, class _Alloc>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const std::vector<U, _Alloc> & vct)
 {
     ws << (Integer)vct.size();
-    for (typename std::vector<T, _Alloc>::const_iterator iter = vct.begin(); iter != vct.end(); ++iter)
+    for (typename std::vector<U, _Alloc>::const_iterator iter = vct.begin(); iter != vct.end(); ++iter)
     {
         ws << *iter;
     }
@@ -362,10 +370,11 @@ inline ReadStream & operator >> (ReadStream & rs, std::vector<T, _Alloc> & vct)
     rs >> totalCount;
     if (totalCount > 0)
     {
+        T t;
+        vct.clear();
         vct.reserve(totalCount > 100 ? 100 : totalCount);
         for (Integer i = 0; i < totalCount; ++i)
         {
-            T t;
             rs >> t;
             vct.push_back(t);
         }
@@ -374,8 +383,8 @@ inline ReadStream & operator >> (ReadStream & rs, std::vector<T, _Alloc> & vct)
 }
 
 //std::set
-template<class Key, class _Pr, class _Alloc>
-inline WriteStream & operator << (WriteStream & ws, const std::set<Key, _Pr, _Alloc> & k)
+template<class T, class Key, class _Pr, class _Alloc>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const std::set<Key, _Pr, _Alloc> & k)
 {
     ws << (Integer)k.size();
     for (typename std::set<Key, _Pr, _Alloc>::const_iterator iter = k.begin(); iter != k.end(); ++iter)
@@ -390,9 +399,10 @@ inline ReadStream & operator >> (ReadStream & rs, std::set<Key, _Pr, _Alloc> & k
 {
     Integer totalCount = 0;
     rs >> totalCount;
+    Key t;
+    k.clear();
     for (Integer i = 0; i < totalCount; ++i)
     {
-        Key t;
         rs >> t;
         k.insert(t);
     }
@@ -400,8 +410,8 @@ inline ReadStream & operator >> (ReadStream & rs, std::set<Key, _Pr, _Alloc> & k
 }
 
 //std::multiset
-template<class Key, class _Pr, class _Alloc>
-inline WriteStream & operator << (WriteStream & ws, const std::multiset<Key, _Pr, _Alloc> & k)
+template<class T, class Key, class _Pr, class _Alloc>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const std::multiset<Key, _Pr, _Alloc> & k)
 {
     ws << (Integer)k.size();
     for (typename std::multiset<Key, _Pr, _Alloc>::const_iterator iter = k.begin(); iter != k.end(); ++iter)
@@ -416,9 +426,10 @@ inline ReadStream & operator >> (ReadStream & rs, std::multiset<Key, _Pr, _Alloc
 {
     Integer totalCount = 0;
     rs >> totalCount;
+    Key t;
+    k.clear();
     for (Integer i = 0; i < totalCount; ++i)
     {
-        Key t;
         rs >> t;
         k.insert(t);
     }
@@ -426,8 +437,8 @@ inline ReadStream & operator >> (ReadStream & rs, std::multiset<Key, _Pr, _Alloc
 }
 
 //std::map
-template<class Key, class Value, class _Pr, class _Alloc>
-inline WriteStream & operator << (WriteStream & ws, const std::map<Key, Value, _Pr, _Alloc> & kv)
+template<class T, class Key, class Value, class _Pr, class _Alloc>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const std::map<Key, Value, _Pr, _Alloc> & kv)
 {
     ws << (Integer)kv.size();
     for (typename std::map<Key, Value, _Pr, _Alloc>::const_iterator iter = kv.begin(); iter != kv.end(); ++iter)
@@ -443,9 +454,10 @@ inline ReadStream & operator >> (ReadStream & rs, std::map<Key, Value, _Pr, _All
 {
     Integer totalCount = 0;
     rs >> totalCount;
+    std::pair<Key, Value> pr;
+    kv.clear();
     for (Integer i = 0; i < totalCount; ++i)
     {
-        std::pair<Key, Value> pr;
         rs >> pr.first;
         rs >> pr.second;
         kv.insert(pr);
@@ -454,8 +466,8 @@ inline ReadStream & operator >> (ReadStream & rs, std::map<Key, Value, _Pr, _All
 }
 
 //std::multimap
-template<class Key, class Value, class _Pr, class _Alloc>
-inline WriteStream & operator << (WriteStream & ws, const std::multimap<Key, Value, _Pr, _Alloc> & kv)
+template<class T, class Key, class Value, class _Pr, class _Alloc>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const std::multimap<Key, Value, _Pr, _Alloc> & kv)
 {
     ws << (Integer)kv.size();
     for (typename std::multimap<Key, Value, _Pr, _Alloc>::const_iterator iter = kv.begin(); iter != kv.end(); ++iter)
@@ -471,9 +483,10 @@ inline ReadStream & operator >> (ReadStream & rs, std::multimap<Key, Value, _Pr,
 {
     Integer totalCount = 0;
     rs >> totalCount;
+    std::pair<Key, Value> pr;
+    kv.clear();
     for (Integer i = 0; i < totalCount; ++i)
     {
-        std::pair<Key, Value> pr;
         rs >> pr.first;
         rs >> pr.second;
         kv.insert(pr);
@@ -483,8 +496,8 @@ inline ReadStream & operator >> (ReadStream & rs, std::multimap<Key, Value, _Pr,
 
 
 //std::list
-template<class Value, class _Alloc>
-inline WriteStream & operator << (WriteStream & ws, const std::list<Value, _Alloc> & l)
+template<class T, class Value, class _Alloc>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const std::list<Value, _Alloc> & l)
 {
     ws << (Integer)l.size();
     for (typename std::list<Value,_Alloc>::const_iterator iter = l.begin(); iter != l.end(); ++iter)
@@ -499,17 +512,18 @@ inline ReadStream & operator >> (ReadStream & rs, std::list<Value, _Alloc> & l)
 {
     Integer totalCount = 0;
     rs >> totalCount;
+    Value t;
+    l.clear();
     for (Integer i = 0; i < totalCount; ++i)
     {
-        Value t;
         rs >> t;
         l.push_back(t);
     }
     return rs;
 }
 //std::deque
-template<class Value, class _Alloc>
-inline WriteStream & operator << (WriteStream & ws, const std::deque<Value, _Alloc> & l)
+template<class T, class Value, class _Alloc>
+inline WriteStreamImpl<T> & operator << (WriteStreamImpl<T> & ws, const std::deque<Value, _Alloc> & l)
 {
     ws << (Integer)l.size();
     for (typename std::deque<Value,_Alloc>::const_iterator iter = l.begin(); iter != l.end(); ++iter)
@@ -524,9 +538,10 @@ inline ReadStream & operator >> (ReadStream & rs, std::deque<Value, _Alloc> & l)
 {
     Integer totalCount = 0;
     rs >> totalCount;
+    Value t;
+    l.clear();
     for (Integer i = 0; i < totalCount; ++i)
     {
-        Value t;
         rs >> t;
         l.push_back(t);
     }
@@ -539,71 +554,23 @@ inline ReadStream & operator >> (ReadStream & rs, std::deque<Value, _Alloc> & l)
 //! implement 
 //////////////////////////////////////////////////////////////////////////
 
-inline ZSummer_EndianType __localEndianType()
-{
-    if (*(const unsigned char *)&__gc_localEndianType == 1)
-    {
-        return LittleEndian;
-    }
-    return BigEndian;
-}
-template<class BaseType>
-BaseType byteRevese(BaseType n)
-{
-    BaseType ret = 0;
-    int integerLen = sizeof(n);
-    unsigned char *dst = (unsigned char*)&ret;
-    unsigned char *src = (unsigned char*)&n + integerLen;
-    while (integerLen > 0)
-    {
-        *dst++ = *--src;
-        integerLen --;
-    }
-    return ret;
-}
+
+
 
 template<class BaseType>
-BaseType streamToBaseType(const char stream[sizeof(BaseType)])
+typename std::enable_if<true, BaseType>::type streamToBaseType(const char stream[sizeof(BaseType)])
 {
-    if (stream == NULL)
-    {
-        PROTO4Z_THROW("streamToBaseType stream is NULL");
-    }
-    
-    unsigned short bytes = sizeof(BaseType);
     BaseType v = 0;
-    if (bytes == 1)
-    {
-        v = (BaseType)stream[0];
-    }
-    else
-    {
-        memcpy(&v, stream, bytes);
-        if (LittleEndian != __localEndianType())
-        {
-            v = byteRevese(v);
-        }
-    }
+    memcpy(&v, stream, sizeof(BaseType));
     return v;
 }
 
-template<class BaseType>
-void baseTypeToStream(char *stream, BaseType v)
+template<class T>
+void baseTypeToStream(char *stream, T v)
 {
-    unsigned short bytes = sizeof(BaseType);
-    if (bytes == 1)
-    {
-        stream[0] = (char)v;
-    }
-    else
-    {
-        if (LittleEndian != __localEndianType())
-        {
-            v = byteRevese(v);
-        }
-        memcpy(stream, &v, bytes);
-    }
+    memcpy(stream, &v, sizeof(T));
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 //! implement 
@@ -663,48 +630,34 @@ inline std::pair<INTEGRITY_RET_TYPE, Integer> checkBuffIntegrity(const char * bu
 //! implement 
 //////////////////////////////////////////////////////////////////////////
 
-
-inline WriteStream::WriteStream(ProtoInteger pID, char * attach, Integer attachLen, bool testStream)
+template<class T>
+WriteStreamImpl<T>::WriteStreamImpl(ProtoInteger pID)
 {
     _reserve = 0;
     _pID = pID;
-    _attach = attach;
-    _attachLen = attachLen;
     _headLen = sizeof(Integer)+ sizeof(ReserveInteger) + sizeof(ProtoInteger);
     _cursor = _headLen;
-    _testStream = testStream;
-    if (_attach == NULL)
-    {
-        _attach = NULL;
-        _auto.reserve(1200);
-        _auto.resize(_cursor, '\0');
-        _attachLen = MaxPackLen;
-    }
-    if (_attachLen > MaxPackLen)
-    {
-        _attachLen = MaxPackLen;
-    }
+    _attach = _tlsque.pop();
+    _attach->reserve(1200);
+    _attach->resize(_cursor, '\0');
+    _attachLen = MaxPackLen;
 
-    //write header
-    char *dst = NULL;
-    if (_attach) 
-        dst = &attach[0];
-    else 
-        dst = &_auto[0];
-    baseTypeToStream(dst, _headLen);
-    baseTypeToStream(dst + sizeof(Integer), _reserve);
-    baseTypeToStream(dst + sizeof(Integer) + sizeof(ReserveInteger), pID);
+    baseTypeToStream(&(*_attach)[0], _headLen);
+    baseTypeToStream(&(*_attach)[0] + sizeof(Integer), _reserve);
+    baseTypeToStream(&(*_attach)[0] + sizeof(Integer) + sizeof(ReserveInteger), pID);
 
 }
 
-
-
-inline void WriteStream::checkMoveCursor(Integer unit)
+template<class T>
+WriteStreamImpl<T>::~WriteStreamImpl()
 {
-    if (_attachLen < _headLen)
-    {
-        PROTO4Z_THROW("construction param error. attach memory size less than mini size. _attachLen=" << _attachLen << ", _headLen=" << _headLen);
-    }
+    _tlsque.push(_attach);
+}
+
+
+template<class T>
+inline void WriteStreamImpl<T>::checkMoveCursor(Integer unit)
+{
     if (_cursor > _attachLen)
     {
         PROTO4Z_THROW("bound over. cursor in end-of-data. _attachLen=" << _attachLen << ", _cursor=" << _cursor);
@@ -720,187 +673,60 @@ inline void WriteStream::checkMoveCursor(Integer unit)
 }
 
 
-inline void WriteStream::fixPackLen()
+template<class T>
+inline char* WriteStreamImpl<T>::getStream()
 {
-    if (_testStream)
-    {
-        return;
-    }
-    Integer packLen = _cursor;
-    if (_attach)
-    {
-        baseTypeToStream(&_attach[0], packLen);
-    }
-    else
-    {
-        baseTypeToStream(&_auto[0], packLen);
-    }
+    return &(*_attach)[0];
 }
 
-
-inline std::string WriteStream::pickStream()
+template<class T>
+inline char* WriteStreamImpl<T>::getStreamBody()
 {
-    if (_attach)
-    {
-        return std::string(_attach, _cursor);
-    }
-    else
-    {
-        return std::move(_auto);
-    }
+    return &(*_attach)[0] + _headLen;
 }
 
-inline char* WriteStream::getStream()
-{
-    if (_testStream)
-    {
-        return NULL;
-    }
-    if (_attach)
-    {
-        return _attach;
-    }
-    else
-    {
-        return &_auto[0];
-    }
-    return NULL;
-}
-
-
-inline char* WriteStream::getStreamBody()
-{
-    if (_testStream)
-    {
-        return NULL;
-    }
-    if (_attach)
-    {
-        return _attach + _headLen;
-    }
-    else
-    {
-        return &_auto[0] + _headLen;
-    }
-    return NULL;
-}
-
-
-inline WriteStream & WriteStream::appendOriginalData(const void * data, Integer len)
+template<class T>
+inline WriteStreamImpl<T> & WriteStreamImpl<T>::appendOriginalData(const void * data, Integer len)
 {
     checkMoveCursor(len);
-    if (!_testStream)
-    {
-        if (_attach)
-        {
-            memcpy(&_attach[_cursor], data, len);
-        }
-        else
-        {
-            _auto.append((const char*)data, len);
-        }
-    }
+    T & attach = *_attach;
+    attach.append((const char*)data, len);
     _cursor += len;
-    fixPackLen();
+    baseTypeToStream(&attach[0], _cursor);
     return *this;
 }
+
 template<class T>
-inline WriteStream & WriteStream::fixOriginalData(Integer offset, T unit)
+template<class U>
+inline WriteStreamImpl<T> & WriteStreamImpl<T>::fixOriginalData(Integer offset, U unit)
 {
     if (offset + sizeof(unit) > _cursor)
     {
         PROTO4Z_THROW("fixOriginalData over stream. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", unit=" << unit << ", offset=" << offset);
     }
-    if (_attach)
-    {
-        baseTypeToStream(&_attach[offset], unit);
-    }
-    else
-    {
-        baseTypeToStream(&_auto[offset], unit);
-    }
+    baseTypeToStream(&(*_attach)[offset], unit);
     return *this;
 }
 
-inline WriteStream & WriteStream::fixOriginalData(Integer offset, const void * data, Integer len)
+template<class T>
+inline WriteStreamImpl<T> & WriteStreamImpl<T>::fixOriginalData(Integer offset, const void * data, Integer len)
 {
     if (offset + len > _cursor)
     {
         PROTO4Z_THROW("fixOriginalData over stream. _attachLen=" << _attachLen << ", _cursor=" << _cursor << ", data len=" << len << ", offset=" << offset);
     }
-    if (_attach)
-    {
-        memcpy(&_attach[offset], data, len);
-    }
-    else
-    {
-        memcpy(&_auto[offset], data, len);
-    }
-    return *this;
-}
-inline WriteStream & WriteStream::setReserve(ReserveInteger n)
-{
-    if (!_testStream)
-    {
-        if (_attach)
-        {
-            baseTypeToStream(&_attach[sizeof(Integer)], n);
-        }
-        else
-        {
-            baseTypeToStream(&_auto[sizeof(Integer)], n);
-        }
-    }
+    memcpy(&(*_attach)[offset], data, len);
     return *this;
 }
 
- template <class T> 
-inline WriteStream & WriteStream::writeIntegerData(T t)
+template<class T>
+inline WriteStreamImpl<T> & WriteStreamImpl<T>::setReserve(ReserveInteger n)
 {
-    Integer unit = sizeof(T);
-    checkMoveCursor(unit);
-    if (!_testStream)
-    {
-        if (_attach)
-        {
-            baseTypeToStream(&_attach[_cursor], t);
-        }
-        else
-        {
-            _auto.append((const char*)&t, unit);
-            if (LittleEndian != __localEndianType())
-            {
-                baseTypeToStream(&_auto[_cursor], t);
-            }
-        }
-    }
-    _cursor += unit;
-    fixPackLen();
-    return * this;
+    baseTypeToStream(&(*_attach)[sizeof(Integer)], n);
+    return *this;
 }
 
 
- template <class T>
-inline WriteStream & WriteStream::writeSimpleData(T t)
-{
-    Integer unit = sizeof(T);
-    checkMoveCursor(unit);
-    if (!_testStream)
-    {
-        if (_attach)
-        {
-            memcpy(&_attach[_cursor], &t, unit);
-        }
-        else
-        {
-            _auto.append((const char*)&t, unit);
-        }
-    }
-
-    _cursor += unit;
-    fixPackLen();
-    return * this;
-}
 
 
 
@@ -1019,24 +845,7 @@ inline Integer ReadStream::getStreamUnreadLen()
     return getStreamLen()  - _cursor;
 }
 
- template <class T>
-inline ReadStream & ReadStream::readIntegerData(T & t)
-{
-    Integer unit = sizeof(T);
-    checkMoveCursor(unit);
-    t = streamToBaseType<T>(&_attach[_cursor]);
-    _cursor += unit;
-    return * this;
-}
- template <class T>
-inline ReadStream & ReadStream::readSimpleData(T & t)
-{
-    Integer unit = sizeof(T);
-    checkMoveCursor(unit);
-    memcpy(&t, &_attach[_cursor], unit);
-    _cursor += unit;
-    return * this;
-}
+
 
 inline const char * ReadStream::peekOriginalData(Integer unit)
 {
@@ -1526,7 +1335,7 @@ inline std::string proto4z_traceback()
 }
 
 
-
+using WriteStream = WriteStreamImpl<std::string>;
 
 
 

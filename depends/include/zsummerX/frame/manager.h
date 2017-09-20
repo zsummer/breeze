@@ -158,7 +158,7 @@ namespace zsummer
             SessionBlock * CreateBlock();
             void FreeBlock(SessionBlock * sb);
         private:
-            std::queue<SessionBlock*> _freeBlock;
+            std::deque<SessionBlock*> _freeBlock;
         private:
             friend class TcpSession;
             // 一个established状态的session已经关闭. 
