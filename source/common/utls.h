@@ -122,34 +122,28 @@ std::string genFileMD5(std::string filename);
 
 //string
 //==========================================================================
-template<class T>
-std::string toString(const T &t);
+/* template<class T>
+std::string toString(const T &t); */
+/*
 template<class To>
-typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t, To def);
+typename To fromString(const std::string & t);*/
 
-//both 1 left, 2right, 3 both
-std::string trim(const std::string &str, const std::string& ign = " ", int both = 3);
-std::string trim(std::string &&str, const std::string & ign, int both);
-
-template<class First, class Second>
-typename std::enable_if<std::is_integral<int>::value, std::pair<First, Second>>::type splitPairString(const std::string & str, const std::string & delimiter);
+inline void trimImpl(const char * buf, size_t len, const char ign, size_t & offset, size_t & outLen, int flag);
+inline void trimL(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 1); }
+inline void trimR(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 2); }
+inline void trim(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 0); }
 
 
 template<class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, const std::string & ign);
+typename std::enable_if<true, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, char ign);
 
 template<class ... T>
 typename std::enable_if<std::is_integral<int>::value, std::vector<std::tuple<T ...> >>::type 
-splitArrayString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign);
+splitArrayString(const std::string & text, const std::string & deli, const std::string & subDeli);
 
 template<class Key, class ... T>
 typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<Key, T ...> >>::type 
-splitDictString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign);
-
-
-template<class Value>
-typename std::enable_if<std::is_integral<int>::value, std::vector<Value>>::type
-splitString(std::string text, const std::string & deli, const std::string & ign);
+splitDictString(const std::string & text, const std::string & deli, const std::string & subDeli);
 
 
 

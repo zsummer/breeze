@@ -337,108 +337,8 @@ void sleepMillisecond(unsigned int ms)
 #endif
 }
 
-std::string trim(const std::string &str, const std::string & ign, int both)
-{
-    if (str.empty() ){ return ""; }
-    if (ign.empty()) { return str; }
-    size_t length = str.length();
-    size_t posBegin = 0;
-    size_t posEnd = 0;
-
-    //trim character 
-    for (size_t i = posBegin; i < length; i++)
-    {
-        bool bCheck = false;
-        for (size_t j = 0; j < ign.length(); j++)
-        {
-            if (str.at(i) == ign.at(j))
-            {
-                bCheck = true;
-            }
-        }
-        if (bCheck)
-        {
-            if (i == posBegin)
-            {
-                posBegin++;
-            }
-        }
-        else
-        {
-            posEnd = i + 1;
-        }
-    }
-    if (both == 1)
-    {
-        posEnd = length;
-    }
-    else if (both == 2)
-    {
-        posBegin = 0;
-    }
-
-    if (posBegin == 0 && posEnd == length)
-    {
-        return str;
-    }
-    else if (posBegin < posEnd)
-    {
-        return str.substr(posBegin, posEnd - posBegin);
-    }
-    return "";
-}
 
 
-std::string trim(std::string &&str, const std::string & ign, int both)
-{
-    if (str.empty()) { return ""; }
-    if (ign.empty()) { return std::move(str); }
-    size_t length = str.length();
-    size_t posBegin = 0;
-    size_t posEnd = 0;
-
-    //trim character 
-    for (size_t i = posBegin; i < length; i++)
-    {
-        bool bCheck = false;
-        for (size_t j = 0; j < ign.length(); j++)
-        {
-            if (str.at(i) == ign.at(j))
-            {
-                bCheck = true;
-            }
-        }
-        if (bCheck)
-        {
-            if (i == posBegin)
-            {
-                posBegin++;
-            }
-        }
-        else
-        {
-            posEnd = i + 1;
-        }
-    }
-    if (both == 1)
-    {
-        posEnd = length;
-    }
-    else if (both == 2)
-    {
-        posBegin = 0;
-    }
-
-    if (posBegin == 0 && posEnd == length)
-    {
-        return std::move(str);
-    }
-    else if (posBegin < posEnd)
-    {
-        return str.substr(posBegin, posEnd - posBegin);
-    }
-    return "";
-}
 
 std::pair<std::string,std::string> subString(const std::string & text, const std::string & deli, bool preStore, bool isGreedy)
 {
@@ -663,100 +563,38 @@ time_t getUTCTimeFromLocalString(const std::string & str)
 {
     std::string sdate;
     std::string stime;
-    if (str.find(' ') != std::string::npos)
+    size_t offset = 0;
+    size_t len = 0;
+    trim(str.c_str(), str.length(), ' ', offset, len);
+    if (len == 0)
     {
-        auto sp = splitString<std::string>(trim(str, " "), " ", " ");
-        if (sp.size() < 2)
-        {
-            return 0;
-        }
-        sdate = sp.front();
-        stime = sp.back();
+        return 0;
     }
-    else
-    {
-        if (str.find(':') != std::string::npos)
-        {
-            stime = trim(str, " ");
-        }
-        else
-        {
-            sdate = trim(str, " ");
-        }
-    }
+
+    std::tuple<std::string, std::string> ret;
+    splitTupleStringImpl<decltype(ret)>(ret, str, offset, len, " ", ' ');
+
     struct tm st;
     memset(&st, 0, sizeof(st));
-    if (!sdate.empty())
+    using DateFmt = std::tuple<int, int, int>;
+    DateFmt dateTuple;
+    DateFmt timeTuple;
+    if (true)
     {
-        std::string deli;
-        if (sdate.find('-') != std::string::npos)
-        {
-            deli = "-";
-        }
-        else if (sdate.find('/') != std::string::npos)
+        std::string deli = "-";
+        if (std::get<0>(ret).find('/') != std::string::npos)
         {
             deli = "/";
         }
-        else if (sdate.find('\\') != std::string::npos)
+        else if (std::get<0>(ret).find('\\') != std::string::npos)
         {
             deli = "\\";
         }
-        std::vector<std::string> spdate;
-        if (!deli.empty())
-        {
-            spdate = splitString<std::string>(sdate, deli, " ");
-        }
-        else if (sdate.size() == 8)
-        {
-            spdate.push_back(sdate.substr(0, 4));
-            spdate.push_back(sdate.substr(4, 2));
-            spdate.push_back(sdate.substr(6, 2));
-        }
-        if (!spdate.empty())
-        {
-            if (spdate.back().size() == 4)
-            {
-                st.tm_year = fromString<int>(spdate.back(), 1900) - 1900;
-                if (spdate.size() >= 2)
-                {
-                    st.tm_mon = fromString<int>(spdate[spdate.size() - 2], 1) - 1;
-                }
-                if (spdate.size() >= 3)
-                {
-                    st.tm_mday = fromString<int>(spdate[spdate.size() - 3], 1);
-                }
-            }
-            else
-            {
-                st.tm_year = fromString<int>(spdate.front(), 1900) - 1900;
-                if (spdate.size() >= 2)
-                {
-                    st.tm_mon = fromString<int>(spdate[1], 1) - 1;
-                }
-                if (spdate.size() >= 3)
-                {
-                    st.tm_mday = fromString<int>(spdate[2], 1);
-                }
-            }
-        }
-    } //sdate
-    if (!stime.empty())
-    {
-        auto sptime = splitString<std::string>(stime, ":", " ");
-        if (sptime.size() >= 1)
-        {
-            st.tm_hour = fromString<int>(sptime[0], 0);
-        }
-        if (sptime.size() >= 2)
-        {
-            st.tm_min = fromString<int>(sptime[1], 0);
-        }
-        if (sptime.size() >= 3)
-        {
-            st.tm_sec = fromString<int>(sptime[2], 0);
-        }
+        dateTuple = splitTupleString<int, int, int>(std::get<0>(ret), deli, ' ');
     }
-    st.tm_year = pruning(st.tm_year, 70, 200);
+
+    timeTuple = splitTupleString<int, int, int>(std::get<1>(ret), ":", ' ');
+    st.tm_year = pruning(st.tm_year, 1971, 2034);
     st.tm_mon = pruning(st.tm_mon, 0, 11);
     st.tm_mday = pruning(st.tm_mday, 1, 31);
     st.tm_hour = pruning(st.tm_hour, 0, 23);
@@ -767,26 +605,8 @@ time_t getUTCTimeFromLocalString(const std::string & str)
 
 time_t getSecondFromTimeString(const std::string & str)
 {
-    auto sptime = splitString<std::string>(str, ":", " ");
-    int hour = 0;
-    int minute = 0;
-    int second = 0;
-    if (sptime.size() >= 1)
-    {
-        hour = fromString<int>(sptime[0], 0);
-    }
-    if (sptime.size() >= 2)
-    {
-        minute = fromString<int>(sptime[1], 0);
-    }
-    if (sptime.size() >= 3)
-    {
-        second = fromString<int>(sptime[2], 0);
-    }
-    hour = pruning(hour, 0, 23);
-    minute = pruning(minute, 0, 59);
-    second = pruning(second, 0, 59);
-    return hour * 3600 + minute * 60 + second;
+    auto ret = splitTupleString<int, int, int>(str, ":", ' ');
+    return pruning(std::get<0>(ret), 0, 23) * 3600 + pruning(std::get<1>(ret), 0, 59) * 60 + pruning(std::get<2>(ret), 0, 59);
 }
 
 std::string getProcessID()

@@ -28,24 +28,29 @@ using namespace zsummer::mysql;
 
 inline int checkString()
 {
-    std::string t1 = "%^&123^=&";
-    auto ret = splitString<std::string>(t1, "=", "&%^");
-    if (ret.size() != 2)
+    if (true)
     {
-        return 1;
+        auto ret = splitTupleString<int, int>("=", "=", 0);
+        if (std::get<0>(ret) != 0 || std::get<1>(ret) != 0)
+        {
+            return 1;
+        }
     }
-    if (ret.front() != "123")
+    if (true)
     {
-        return 2;
+        auto ret = splitTupleString<std::string, std::string>(" 1 =  ", "=", 0);
+        if (std::get<0>(ret) != " 1 " || std::get<1>(ret) != "  ")
+        {
+            return 2;
+        }
+        ret = splitTupleString<std::string, std::string>(" 1 =", "=", 0);
+        if (std::get<0>(ret) != " 1 " || !std::get<1>(ret).empty())
+        {
+            return 3;
+        }
     }
-    if (!ret.back().empty())
-    {
-        return 3;
-    }
-    if (splitString<std::string>("==", "==", "adf123").size() != 2)
-    {
-        return 4;
-    }
+
+
     if (true)
     {
         std::vector<int> array = { 1,2,3,4 };
@@ -67,7 +72,7 @@ inline int checkString()
          auto now = getFloatNowTime();
          for (int i=0; i<10000; i++)
          {
-             auto v = splitDictString<int, short, float, std::string>("1|2|3|a,|||,2|2|3|a,|||,3|2|3|a,|||,4|2|3|a,|||,5|2|3|a,|||,6|2|3|a,|||,7|2|3|a,|||,8|2|3|a,|||,8|2|3|a,|||,", ",", "|", " ");
+             auto v = splitDictString<0, int, short, float, std::string>("1|2|3|a,|||,2|2|3|a,|||,3|2|3|a,|||,4|2|3|a,|||,5|2|3|a,|||,6|2|3|a,|||,7|2|3|a,|||,8|2|3|a,|||,8|2|3|a,|||,", ",", "|");
              std::get<0>(v.begin()->second) = 0;
          }
          LOGA("splitDictString used time=" << getFloatNowTime() - now);
@@ -99,19 +104,19 @@ inline int checkString()
     {
         return 12;
     }
-    if (!isEqual(fromString<float>("0.1", 0.0), 0.1, 1e-5))
+    if (!isEqual(fromString<float>("0.1"), 0.1, 1e-5))
     {
         return 13;
     }
-    if (!isEqual(fromString<double>("1e-1", 0.0), 0.1))
+    if (!isEqual(fromString<double>("1e-1"), 0.1))
     {
         return 14;
     }
-    if (fromString<int>("-1", 0) != -1)
+    if (fromString<int>("-1") != -1)
     {
         return 15;
     }
-    if (fromString<unsigned long long>("18446744073709551615", 0) != 18446744073709551615U)
+    if (fromString<unsigned long long>("18446744073709551615") != 18446744073709551615U)
     {
         return 16;
     }
@@ -140,11 +145,11 @@ inline int checkString()
         double now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
-            if (fromString<unsigned long long>("18446744073709551615", 0) != 18446744073709551615U)
+            if (fromString<unsigned long long>("18446744073709551615") != 18446744073709551615U)
             {
                 return 16;
             }
-            if (fromString<long long>("-8446744073709551615", 0) != -8446744073709551615L)
+            if (fromString<long long>("-8446744073709551615") != -8446744073709551615L)
             {
                 return 16;
             }
@@ -191,6 +196,10 @@ inline int checkString()
     if (subString("aa", "/", true).first != "aa")
     {
         return 30;
+    }
+    if (true)
+    {
+        auto ret = splitDictString<0, int, int>("2:3, 4:6", ",", ":");
     }
 
 

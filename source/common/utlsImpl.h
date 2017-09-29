@@ -23,253 +23,221 @@
 #define _UTLS_IMPL_H_
 
 
+inline void trimImpl(const char * buf, size_t len, const char ign, size_t & offset, size_t & outLen, int flag)
+{
+    const char * begin = buf;
+    const char * end = begin + len;
+    if (flag == 0 || flag == 1)
+    {
+        while (begin != end && *begin == ign) ++begin;
+    }
+    if (flag == 0 || flag == 2)
+    {
+        while (begin != end && *(end - 1) == ign) --end;
+    }
+    offset = begin - buf;
+    outLen = end - begin;
+}
+
+
+
 //string
 template<class T>
-std::string toString(const T &t)
+typename std::enable_if<std::is_integral<T>::value, std::string>::type toString(const T &t)
 {
-    std::stringstream os;
-    os.precision(16);
-    os << t;
-    return os.str();
+    return std::to_string(t);
+}
+
+template<class T>
+typename std::enable_if<std::is_floating_point<T>::value, std::string>::type toString(const T &t)
+{
+    return std::to_string(t);
+}
+
+template<class T>
+typename std::enable_if<std::is_same<T, bool>::value, std::string>::type toString(const T &t)
+{
+    return t ? "1" : "0";
 }
 
 
-
-
-template<class To>
-typename std::enable_if<std::is_floating_point<To>::value, To>::type fromString(const std::string & t, To def)
+inline std::string toString(const std::string & str)
 {
-    if (t.empty()) return def;
-    return (To)atof(t.c_str());
+    return str;
 }
-template<class To>
-typename std::enable_if<std::is_floating_point<To>::value, To>::type fromString(const std::string & t)
+
+inline std::string toString(std::string && str)
 {
-    return (To)atof(t.c_str());
+    return std::string(str);
 }
 
 template<class To>
-typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t, To def)
+typename std::enable_if<std::is_same<To, short>::value 
+    || std::is_same<To, int>::value
+    || std::is_same<To, long>::value
+    || std::is_same<To, long long>::value, To > ::type fromString(const std::string & t)
 {
-    if (t.empty()) return def;
-    if (t.length()>= 19)
-    {
-        if (typeid(To) == typeid(unsigned long long))
-        {
-            char *cursor = nullptr;
-            return (To)strtoull(t.c_str(), &cursor, 10);
-        }
-    }
-    return (To)atoll(t.c_str());
+    return (To)std::stoll(t);
 }
 
 template<class To>
-typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t)
+typename std::enable_if<std::is_same<To, unsigned char>::value
+    || std::is_same<To, unsigned short>::value
+    || std::is_same<To, unsigned int>::value
+    || std::is_same<To, unsigned long>::value
+    || std::is_same<To, unsigned long long>::value, To > ::type fromString(const std::string & t)
 {
-    if (t.length() >= 19)
-    {
-        if (typeid(To) == typeid(unsigned long long))
-        {
-            char *cursor = nullptr;
-            return (To)strtoull(t.c_str(), &cursor, 10);
-        }
-    }
-    return (To)atoll(t.c_str());
+    return (To)std::stoull(t);
 }
 
 template<class To>
-typename std::enable_if<std::is_pointer<To>::value, To>::type fromString(const std::string & t, To def)
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type fromString(const std::string & t)
 {
-    if (t.empty()) return def;
-    return t.c_str();
-}
-template<class To>
-typename std::enable_if<std::is_pointer<To>::value, To>::type fromString(const std::string & t)
-{
-    return t.c_str();
+    return (To)std::stod(t);
 }
 
 template<class To>
-typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std::string & t, To def)
-{
-    if (t.empty()) return def;
-    return t;
-}
-template<class To>
-typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std::string & t)
+typename std::enable_if<std::is_same<std::string, To>::value, To > ::type fromString(const std::string & t)
 {
     return t;
 }
 
-template<class To>
-typename std::enable_if<std::is_class<To>::value, To>::type fromString(std::string && t, To def)
-{
-    if (t.empty()) return def;
-    return std::move(t);
-}
-template<class To>
-typename std::enable_if<std::is_class<To>::value, To>::type fromString(std::string && t)
-{
-    return std::move(t);
-}
 
 
 template<class _Tuple>
-void splitTupleStringImpl(_Tuple & ret, const std::string & text, const std::string & deli, const std::string & ign)
+void splitTupleStringImpl(_Tuple & ret, const std::string & text, size_t offset, size_t remainLen, const std::string & deli, char ign)
 {
 }
 
 template<class _Tuple, class _This, class ... _Rest>
-void splitTupleStringImpl(_Tuple & ret, const std::string & text, const std::string & deli, const std::string & ign)
+void splitTupleStringImpl(_Tuple & ret, const std::string & text, size_t offset, size_t remainLen,  const std::string & deli, char ign)
 {
     std::size_t which = std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest);
-    std::size_t firstCursor = 0;
-    std::size_t secondCursor = 0;
-    std::size_t curFinder = 0;
-    while (curFinder <= which)
+    size_t trimOffset = 0;
+    size_t trimLen = 0;
+    trimL(text.c_str() + offset, remainLen, ign, trimOffset, trimLen);
+    if (trimLen == 0 || remainLen == 0 )
     {
-        auto pos = text.find(deli, firstCursor);
-        if (curFinder < which &&  pos == std::string::npos)
+        if (remainLen != 0)
         {
-            // not found
-            return;
+            remainLen = 0;
         }
-        else if (curFinder < which)
+        //empty string
+        std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = _This();
+    }
+    else
+    {
+        auto pos = text.find(deli, offset + trimOffset);
+        if (pos >= offset + remainLen)
         {
-            curFinder++;
-            firstCursor = pos + deli.size();
+            pos = offset + remainLen;
+        }
+        if (pos - offset  - trimOffset == 0)
+        {
+            remainLen = 0;
+            std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = _This();
         }
         else
         {
-            secondCursor = pos;
-            break;
+            std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret)
+                = fromString<_This>(text.substr(offset+trimOffset, pos - offset - trimOffset));
+            remainLen -= pos - offset - trimOffset;
+            remainLen -= deli.length();
+            offset += pos - offset - trimOffset;
+            offset += deli.length();
         }
     }
-    std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(trim(text.substr(firstCursor, secondCursor - firstCursor), ign));
-    splitTupleStringImpl<_Tuple, _Rest ...>(ret, text, deli, ign);
+    splitTupleStringImpl<_Tuple, _Rest ...>(ret, text, offset, remainLen, deli, ign);
 }
 
 
 
 
 template<class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, const std::string & ign)
+typename std::enable_if<true, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, char ign)
 {
     std::tuple<T ... > ret;
-    splitTupleStringImpl<std::tuple<T ... >, T ...>(ret, text, deli, ign);
+    splitTupleStringImpl<std::tuple<T ... >, T ...>(ret, text, 0, text.length(), deli, ign);
     return ret;
 }
 
-template<class First, class Second>
-typename std::enable_if<std::is_integral<int>::value, std::pair<First, Second>>::type splitPairString(const std::string & str, const std::string & delimiter)
-{
-    auto tp = splitTupleString<First, Second>(str, delimiter, "");
-    return std::make_pair(std::get<0>(tp), std::get<1>(tp));
-}
 
 
 template<class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::vector<std::tuple<T ...> >>::type
-splitArrayString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign)
+typename std::enable_if<true, std::vector<std::tuple<T ...> >>::type
+splitArrayString(const std::string & text, const std::string & deli, const std::string & subDeli)
 {
-    std::vector<std::tuple<T ...> > ret;
-    size_t beginPos = 0;
-    std::string matched;
-    for (size_t i = 0; i < text.length(); i++)
+    using Tuple = std::tuple<T ...>;
+    std::vector<Tuple> ret;
+    Tuple one;
+    size_t pos = 0;
+    do 
     {
-        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
+        auto fpos = text.find(deli, pos);
+        size_t remainLen = text.length();
+        if (fpos == std::string::npos)
         {
-            matched.push_back(text[i]);
+            remainLen = text.length() - pos;
         }
-        if (matched == deli)
+        else
         {
-            auto one = trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign);
-            if (!one.empty())
-            {
-                ret.push_back(splitTupleString<T...>(one, deliMeta, ign));
-            }
-            beginPos = i + 1;
-            matched.clear();
+            remainLen = fpos - pos;
         }
-    }
-    auto one = trim(text.substr(beginPos, text.length() - beginPos), ign);
-    if (!one.empty())
-    {
-        ret.push_back(splitTupleString<T...>(std::move(one), deliMeta, ign));
-    }
-    return std::move(ret);
+        if (remainLen == 0)
+        {
+            break;
+        }
+        splitTupleStringImpl<Second, T ...>(one, text, pos, remainLen, subDeli, 0);
+        ret.push_back(one);
+        pos += remainLen;
+        if (fpos != std::string::npos)
+        {
+            pos += deli.length();
+        }
+    } while (true);
+
+    return ret;
 }
 
 
-template<class Key, class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<Key, T ...> >>::type
-splitDictString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign)
+template<size_t Key, class ... T>
+typename std::enable_if<true, std::map<typename std::tuple_element<Key, std::tuple<T ...>>::type, std::tuple<T ...> >>::type
+splitDictString(const std::string & text, const std::string & deli, const std::string & subDeli)
 {
-    std::map<Key, std::tuple<Key, T ...> > ret;
-    size_t beginPos = 0;
-    std::string matched;
-    for (size_t i = 0; i < text.length(); i++)
+    using Second = std::tuple<T ...>;
+    using First = typename std::tuple_element<Key, std::tuple<T ...>>::type;
+    std::map<First, Second> ret;
+    Second one;
+    size_t pos = 0;
+    do
     {
-        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
+        auto fpos = text.find(deli, pos);
+        size_t remainLen = text.length();
+        if (fpos == std::string::npos)
         {
-            matched.push_back(text[i]);
+            remainLen = text.length() - pos;
         }
-        if (matched == deli)
+        else
         {
-            auto one = trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign);
-            if (!one.empty())
-            {
-                auto tp = splitTupleString<Key, T...>(one, deliMeta, ign);
-                auto k = std::get<0>(tp);
-                auto founder = ret.find(k);
-                if (founder == ret.end())
-                {
-                    ret.insert(std::make_pair(k, std::move(tp)));
-                }
-                else
-                {
-                    founder->second = std::move(tp);
-                }
-            }
-            beginPos = i + 1;
-            matched.clear();
+            remainLen = fpos - pos;
         }
-    }
-    auto one = trim(text.substr(beginPos, text.length() - beginPos), ign);
-    if (!one.empty())
-    {
-        auto tp = splitTupleString<Key, T...>(one, deliMeta, ign);
-        auto k = std::get<0>(tp);
-        ret[k] = std::move(tp);
-    }
-    return std::move(ret);
+        if (remainLen == 0)
+        {
+            break;
+        }
+        splitTupleStringImpl<Second, T ...>(one, text, pos, remainLen, subDeli, 0);
+        ret.insert(std::make_pair(std::get<Key>(one), one));
+        pos += remainLen;
+        if (fpos != std::string::npos)
+        {
+            pos += deli.length();
+        }
+    } while (true);
+
+    return ret;
 }
 
 
-
-template<class Value>
-typename std::enable_if<std::is_integral<int>::value, std::vector<Value>>::type
-splitString(std::string text, const std::string & deli, const std::string & ign)
-{
-    std::vector<Value> ret;
-    size_t beginPos = 0;
-    std::string matched;
-    for (size_t i = 0; i < text.length(); i++)
-    {
-        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
-        {
-            matched.push_back(text[i]);
-        }
-        if (matched == deli)
-        {
-            ret.push_back(fromString<Value>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign)));
-            beginPos = i + 1;
-            matched.clear();
-        }
-    }
-    ret.push_back(fromString<Value>(trim(text.substr(beginPos, text.length() - beginPos), ign)));
-    return std::move(ret);
-}
 
 
 inline double getFloatNowTime()
@@ -665,7 +633,7 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, bool 
             iter++;
         }
     }
-    return std::move(ret);
+    return ret;
 }
 
 template<class RandIt, class GetProbabilityFunc> // func example  [](RandIt iter){return iter->probability;}
@@ -687,7 +655,7 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetPr
         }
         cur++;
     }
-    return std::move(ret);
+    return ret;
 }
 
 inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag)

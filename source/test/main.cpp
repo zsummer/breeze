@@ -76,15 +76,15 @@ int main(int argc, char* argv[])
     auto ret =getHostByName("github.com", 3389);
     LOGA("getHostByName=" << ret);
 
-    std::tuple<double, int, std::string> kvv = splitTupleString<double, int, std::string>("1.0:2:aha", ":", "");
+    std::tuple<double, int, std::string> kvv = splitTupleString<double, int, std::string>("1.0:2:aha", ":", ' ');
 
     LOGA("1=" << std::get<0>(kvv) << ", 2=" << std::get<1>(kvv) << ", 3=" << std::get<2>(kvv));
 
     LOGI("0second" << formatDateTimeString(0));
     LOGI("now" << formatDateTimeString(getNowTime()));
     LOGA("version released by " << __DATE__ << " " << __TIME__);
-    //TestUtls(checkString);
-    //TestUtls(checkFile);
+    TestUtls(checkString);
+    TestUtls(checkFile);
     TestUtls(checkFloat);
     TestUtls(checkBalance);
     TestUtls(checkRandom);
