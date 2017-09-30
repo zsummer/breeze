@@ -127,23 +127,12 @@ std::string toString(const T &t); */
 /*
 template<class To>
 typename To fromString(const std::string & t);*/
-
 inline void trimImpl(const char * buf, size_t len, const char ign, size_t & offset, size_t & outLen, int flag);
 inline void trimL(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 1); }
 inline void trimR(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 2); }
 inline void trim(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 0); }
 
 
-template<class ... T>
-typename std::enable_if<true, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, char ign);
-
-template<class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::vector<std::tuple<T ...> >>::type 
-splitArrayString(const std::string & text, const std::string & deli, const std::string & subDeli);
-
-template<class Key, class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<Key, T ...> >>::type 
-splitDictString(const std::string & text, const std::string & deli, const std::string & subDeli);
 
 
 

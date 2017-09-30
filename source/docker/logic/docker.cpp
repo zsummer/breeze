@@ -917,7 +917,7 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
             ChatResp resp;
             resp.channelID = CC_SYSTEM;
             resp.chatTime = getNowTime();
-            resp.msg = "player <color=blue>[" + toString(onlineAvatar->getServiceName()) + "]</color> is online.  online client["
+            resp.msg = "player <color=blue>[" + onlineAvatar->getServiceName() + "]</color> is online.  online client["
                 + toString(Docker::getRef().peekService(STAvatar).size()) + "].";
             for (auto kv : peekService(STAvatar))
             {

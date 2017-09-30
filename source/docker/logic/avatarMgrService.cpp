@@ -135,7 +135,7 @@ bool AvatarMgrService::onLoad()
 {
     _nextAvatarID = ServerConfig::getRef().getMinServiceID()+1;
 
-    std::string sql = AvatarPreview().getDBSelectPure(), " ";
+    std::string sql = AvatarPreview().getDBSelectPure();
     sql = subString(sql, " ", true, true).first;
     sql += " `tb_AvatarBaseInfo` ";
     int curLimit = 0;

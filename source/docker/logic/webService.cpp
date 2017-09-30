@@ -117,9 +117,9 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
                 uri = urlDecode(notice.body);;
             }
         }
-        auto pr = splitTupleString<std::string,std::string>(uri, "?", 0);
+        auto pr = splitStringTuple<std::string,std::string>(uri, "?", 0);
         uri = std::get<0>(pr);
-        params = splitDictString<0, std::string, std::string>(std::get<1>(pr), "&", "=");
+        params = splitStringTupleDict<0, std::string, std::string>(std::get<1>(pr), "&", "=");
 
 
         if (compareStringIgnCase(uri, "/getonline"))
@@ -187,7 +187,7 @@ void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::m
         }
         else if (compareStringIgnCase(kv.first, "avatars"))
         {
-            notice.avatars = splitString<ui64>(kv.second, ",", " ");
+            notice.avatars = splitStringSimpleArray<ui64>(kv.second, ",");
 
         }
         else if (compareStringIgnCase(kv.first, "avatars"))

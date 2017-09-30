@@ -569,7 +569,7 @@ time_t getUTCTimeFromLocalString(const std::string & str)
         return 0;
     }
     std::tuple<std::string, std::string> ret;
-    splitTupleStringImpl<std::tuple<std::string, std::string>, std::string, std::string>(ret, str, offset, len, " ", ' ');
+    splitStringTupleImpl<std::tuple<std::string, std::string>, std::string, std::string>(ret, str.c_str()+offset, str.c_str() + offset + len, ' ');
 
 
     struct tm st;
@@ -579,21 +579,21 @@ time_t getUTCTimeFromLocalString(const std::string & str)
     DateFmt timeTuple;
     if (true)
     {
-        std::string deli = "-";
+        char deli = '-';
         if (std::get<0>(ret).find('/') != std::string::npos)
         {
-            deli = "/";
+            deli = '/';
         }
         else if (std::get<0>(ret).find('\\') != std::string::npos)
         {
-            deli = "\\";
+            deli = '\\';
         }
         trim(std::get<0>(ret).c_str(), std::get<0>(ret).length(), ' ', offset, len);
-        splitTupleStringImpl<DateFmt, int, int, int>(dateTuple, std::get<0>(ret), offset, len, deli, ' ');
+        splitStringTupleImpl<DateFmt, int, int, int>(dateTuple, std::get<0>(ret).c_str() + offset, std::get<0>(ret).c_str() + offset + len, deli);
     }
 
     trim(std::get<1>(ret).c_str(), std::get<0>(ret).length(), ' ', offset, len);
-    splitTupleStringImpl<DateFmt, int, int, int>(timeTuple, std::get<1>(ret), offset, len, ":", ' ');    
+    splitStringTupleImpl<DateFmt, int, int, int>(timeTuple, std::get<1>(ret).c_str() + offset, std::get<1>(ret).c_str() + offset + len, ':');
     st.tm_year = pruning(std::get<0>(dateTuple) - 1900, 71, 135);
     st.tm_mon = pruning(std::get<1>(dateTuple) - 1, 0, 11);
     st.tm_mday = pruning(std::get<2>(dateTuple), 1, 31);
@@ -605,7 +605,7 @@ time_t getUTCTimeFromLocalString(const std::string & str)
 
 time_t getSecondFromTimeString(const std::string & str)
 {
-    auto ret = splitTupleString<int, int, int>(str, ":", ' ');
+    auto ret = splitStringTuple<int, int, int>(str, ':');
     return pruning(std::get<0>(ret), 0, 23) * 3600 + pruning(std::get<1>(ret), 0, 59) * 60 + pruning(std::get<2>(ret), 0, 59);
 }
 

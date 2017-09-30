@@ -30,7 +30,7 @@ inline int checkString()
 {
     if (true)
     {
-        auto ret = splitTupleString<int, int>("=", "=", 0);
+        auto ret = splitStringTuple<int, int>("=", '=');
         if (std::get<0>(ret) != 0 || std::get<1>(ret) != 0)
         {
             return 1;
@@ -38,12 +38,12 @@ inline int checkString()
     }
     if (true)
     {
-        auto ret = splitTupleString<std::string, std::string>(" 1 =  ", "=", 0);
+        auto ret = splitStringTuple<std::string, std::string>(" 1 =  ", '=');
         if (std::get<0>(ret) != " 1 " || std::get<1>(ret) != "  ")
         {
             return 2;
         }
-        ret = splitTupleString<std::string, std::string>(" 1 =", "=", 0);
+        ret = splitStringTuple<std::string, std::string>(" 1 =", '=');
         if (std::get<0>(ret) != " 1 " || !std::get<1>(ret).empty())
         {
             return 3;
@@ -72,10 +72,10 @@ inline int checkString()
          auto now = getFloatNowTime();
          for (int i=0; i<10000; i++)
          {
-             auto v = splitDictString<0, int, short, float, std::string>("1|2|3|a,|||,2|2|3|a,|||,3|2|3|a,|||,4|2|3|a,|||,5|2|3|a,|||,6|2|3|a,|||,7|2|3|a,|||,8|2|3|a,|||,8|2|3|a,|||,", ",", "|");
+             auto v = splitStringTupleDict<0, int, short, float, std::string>("1|2|3|a,|||,2|2|3|a,|||,3|2|3|a,|||,4|2|3|a,|||,5|2|3|a,|||,6|2|3|a,|||,7|2|3|a,|||,8|2|3|a,|||,8|2|3|a,|||,", ',', '|');
              std::get<0>(v.begin()->second) = 0;
          }
-         LOGA("splitDictString used time=" << getFloatNowTime() - now);
+         LOGA("splitStringTupleDict used time=" << getFloatNowTime() - now);
 
     }
 
@@ -199,7 +199,7 @@ inline int checkString()
     }
     if (true)
     {
-        auto ret = splitDictString<0, int, int>("2:3, 4:6", ",", ":");
+        auto ret = splitStringTupleDict<0, int, int>("2:3, 4:6", ',', ':');
     }
 
 
