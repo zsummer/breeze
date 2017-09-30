@@ -60,16 +60,13 @@ typename std::enable_if<std::is_same<T, bool>::value, std::string>::type toStrin
     return t ? "1" : "0";
 }
 
-
-inline std::string toString(const std::string & str)
+template<class T>
+typename std::enable_if<std::is_same<T, std::string>::value, std::string>::type toString(const std::string & str)
 {
     return str;
 }
 
-inline std::string toString(std::string && str)
-{
-    return std::string(str);
-}
+
 
 template<class To>
 typename std::enable_if<std::is_same<To, short>::value 
@@ -97,11 +94,84 @@ typename std::enable_if<std::is_floating_point<To>::value, To > ::type fromStrin
 }
 
 template<class To>
-typename std::enable_if<std::is_same<std::string, To>::value, To > ::type fromString(const std::string & t)
+typename std::enable_if<std::is_same<To, short>::value
+    || std::is_same<To, int>::value
+    || std::is_same<To, long>::value
+    || std::is_same<To, long long>::value, To > ::type fromString(const char * buf, size_t len)
 {
-    return t;
+    if (len == 0)
+    {
+        return (To)0;
+    }
+    char buff[50];
+    if (len >= 50)
+    {
+        len = 50-1;
+    }
+    memcpy(buff, buf, len);
+    buff[len] = '\0';
+
+    const char * begin = buff;
+    while (*begin == ' ') ++begin;
+    
+    return (To)strtoll(begin, NULL, 10);
 }
 
+template<class To>
+typename std::enable_if<std::is_same<To, unsigned char>::value
+    || std::is_same<To, unsigned short>::value
+    || std::is_same<To, unsigned int>::value
+    || std::is_same<To, unsigned long>::value
+    || std::is_same<To, unsigned long long>::value, To > ::type fromString(const char * buf, size_t len)
+{
+    if (len == 0)
+    {
+        return (To)0;
+    }
+    char buff[50];
+    if (len >= 50)
+    {
+        len = 50 - 1;
+    }
+    memcpy(buff, buf, len);
+    buff[len] = '\0';
+    const char * begin = buff;
+    while (*begin == ' ') ++begin;
+
+    return (To)strtoull(begin, NULL, 10);
+}
+
+template<class To>
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type fromString(const char * buf, size_t len)
+{
+    if (len == 0)
+    {
+        return (To)0;
+    }
+    char buff[50];
+    if (len >= 50)
+    {
+        len = 50 - 1;
+    }
+    memcpy(buff, buf, len);
+    buff[len] = '\0';
+    const char * begin = buff;
+    while (*begin == ' ') ++begin;
+
+    return (To)strtod(begin, NULL);
+}
+
+
+template<class To>
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type fromString(const char * buf, size_t len)
+{
+    return std::string(buf, len);
+}
+template<class To>
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type fromString(const std::string & str)
+{
+    return str;
+}
 
 
 template<class _Tuple>
@@ -140,7 +210,8 @@ void splitTupleStringImpl(_Tuple & ret, const std::string & text, size_t offset,
         else
         {
             std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret)
-                = fromString<_This>(text.substr(offset+trimOffset, pos - offset - trimOffset));
+//                = fromString<_This>(text.substr(offset + trimOffset, pos - offset - trimOffset));
+                  = fromString<_This>(text.c_str() + offset + trimOffset, pos - offset - trimOffset);
             remainLen -= pos - offset - trimOffset;
             remainLen -= deli.length();
             offset += pos - offset - trimOffset;

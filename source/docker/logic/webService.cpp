@@ -103,7 +103,7 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
     if (compareStringIgnCase(notice.method, "get") || compareStringIgnCase(notice.method, "post"))
     {
         std::string uri;
-        std::vector<std::pair<std::string,std::string>> params;
+        std::map<std::string, std::tuple<std::string, std::string>> params;
         if (compareStringIgnCase(notice.method, "get"))
         {
             uri = urlDecode(notice.methodLine);
@@ -117,15 +117,10 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
                 uri = urlDecode(notice.body);;
             }
         }
-        auto pr = splitPairString<std::string,std::string>(uri, "?");
-        uri = pr.first;
-        auto spts = splitString<std::string>(pr.second, "&", "");
-        for (auto & pm : spts)
-        {
-            pr = splitPairString<std::string, std::string>(pm, "=");
-            params.push_back(pr);
+        auto pr = splitTupleString<std::string,std::string>(uri, "?", 0);
+        uri = std::get<0>(pr);
+        params = splitDictString<0, std::string, std::string>(std::get<1>(pr), "&", "=");
 
-        }
 
         if (compareStringIgnCase(uri, "/getonline"))
         {
@@ -165,7 +160,7 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
 
     
 }
-void WebService::getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
+void WebService::getonline(DockerID dockerID, SessionID clientID, const std::map<std::string, std::tuple<std::string, std::string>> &params)
 {
     responseSuccess(dockerID, clientID, R"({"result":"success","online":)" + toString(Docker::getRef().peekService(STAvatar).size()) + "}");
 }
@@ -180,7 +175,7 @@ void WebService::onReloadState(Tracing trace, ReadStream &rs)
     std::get<1>(val) = f.used;
 }
 
-void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
+void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::map<std::string, std::tuple<std::string, std::string>> &params)
 {
     KickClientsNotice notice;
 
@@ -188,7 +183,7 @@ void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::v
     {
         if (compareStringIgnCase(kv.first, "isAll"))
         {
-            notice.isAll = fromString<ui16>(kv.second);
+            notice.isAll = fromString<ui16>(std::get<1>(kv.second));
         }
         else if (compareStringIgnCase(kv.first, "avatars"))
         {
@@ -215,7 +210,7 @@ void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::v
     toService(STAvatarMgr, notice);
 }
 
-void WebService::reload(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
+void WebService::reload(DockerID dockerID, SessionID clientID, const sstd::map<std::string, std::tuple<std::string, std::string>> &params)
 {
     double now = (double)getNowTime();
     auto makeState = [this, now]()

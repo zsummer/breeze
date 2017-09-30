@@ -354,18 +354,15 @@ inline int checkTime()
     {
         return 8;
     }
-    if (getUTCTimeFromLocalString("     31-12-2015    23:59        ") != 1451577599 - 59)
+    if (getUTCTimeFromLocalString("     2015-12-31   23:59        ") != 1451577599 - 59)
     {
         return 9;
     }
-    if (getUTCTimeFromLocalString("12-2015    23:59") != 1451577599 - (31-1)*24*3600 - 59)
+    if (getUTCTimeFromLocalString("2015-12    23:59") != 1451577599 - (31-1)*24*3600 - 59)
     {
         return 10;
     }
-    if (getUTCTimeFromLocalString("20151231") != 1451577599 -  24 * 3600 + 1)
-    {
-        return 10;
-    }
+
 
     //hypothesis server is GMT+9, unknown client time area, utc second is 1451577599, in client get server's localtime.
     if (gettm(1451577599 + (9 * 3600 - getTZZoneOffset())).tm_hour != 0)

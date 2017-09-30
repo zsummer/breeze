@@ -561,8 +561,6 @@ bool hadIllegalChar(const std::string & str) // return true when have invisible 
 
 time_t getUTCTimeFromLocalString(const std::string & str)
 {
-    std::string sdate;
-    std::string stime;
     size_t offset = 0;
     size_t len = 0;
     trim(str.c_str(), str.length(), ' ', offset, len);
@@ -570,9 +568,9 @@ time_t getUTCTimeFromLocalString(const std::string & str)
     {
         return 0;
     }
-
     std::tuple<std::string, std::string> ret;
-    splitTupleStringImpl<decltype(ret)>(ret, str, offset, len, " ", ' ');
+    splitTupleStringImpl<std::tuple<std::string, std::string>, std::string, std::string>(ret, str, offset, len, " ", ' ');
+
 
     struct tm st;
     memset(&st, 0, sizeof(st));
@@ -590,16 +588,18 @@ time_t getUTCTimeFromLocalString(const std::string & str)
         {
             deli = "\\";
         }
-        dateTuple = splitTupleString<int, int, int>(std::get<0>(ret), deli, ' ');
+        trim(std::get<0>(ret).c_str(), std::get<0>(ret).length(), ' ', offset, len);
+        splitTupleStringImpl<DateFmt, int, int, int>(dateTuple, std::get<0>(ret), offset, len, deli, ' ');
     }
 
-    timeTuple = splitTupleString<int, int, int>(std::get<1>(ret), ":", ' ');
-    st.tm_year = pruning(st.tm_year, 1971, 2034);
-    st.tm_mon = pruning(st.tm_mon, 0, 11);
-    st.tm_mday = pruning(st.tm_mday, 1, 31);
-    st.tm_hour = pruning(st.tm_hour, 0, 23);
-    st.tm_min = pruning(st.tm_min, 0, 59);
-    st.tm_sec = pruning(st.tm_sec, 0, 59);
+    trim(std::get<1>(ret).c_str(), std::get<0>(ret).length(), ' ', offset, len);
+    splitTupleStringImpl<DateFmt, int, int, int>(timeTuple, std::get<1>(ret), offset, len, ":", ' ');    
+    st.tm_year = pruning(std::get<0>(dateTuple) - 1900, 71, 135);
+    st.tm_mon = pruning(std::get<1>(dateTuple) - 1, 0, 11);
+    st.tm_mday = pruning(std::get<2>(dateTuple), 1, 31);
+    st.tm_hour = pruning(std::get<0>(timeTuple), 0, 23);
+    st.tm_min = pruning(std::get<1>(timeTuple), 0, 59);
+    st.tm_sec = pruning(std::get<2>(timeTuple), 0, 59);
     return mktime(&st);
 }
 

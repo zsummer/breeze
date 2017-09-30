@@ -135,7 +135,7 @@ bool AvatarMgrService::onLoad()
 {
     _nextAvatarID = ServerConfig::getRef().getMinServiceID()+1;
 
-    std::string sql = trim(AvatarPreview().getDBSelectPure(), " ");
+    std::string sql = AvatarPreview().getDBSelectPure(), " ";
     sql = subString(sql, " ", true, true).first;
     sql += " `tb_AvatarBaseInfo` ";
     int curLimit = 0;
@@ -272,7 +272,7 @@ void AvatarMgrService::onClientAuthReq(const Tracing & trace, zsummer::proto4z::
         return;
     }
 
-    std::string sql = trim(AvatarPreview().getDBSelectPure(), " ");
+    std::string sql = AvatarPreview().getDBSelectPure();
     sql = subString(sql, " ", true, true).first;
     sql += " `tb_AvatarBaseInfo` where account=?;";
 
