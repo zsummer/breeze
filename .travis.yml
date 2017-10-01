@@ -1,11 +1,24 @@
 sudo: true
 language: cpp
-compiler: 
-  - g++ 
-  - clang
-os:
-  - linux
-  - osx
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      sudo: required
+      env: 
+        - TARGET="trusty"
+
+    - os: osx
+      osx_image: xcode8.3
+      env: 
+        - TOOL="xcode-osx"
 
 before_install:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
