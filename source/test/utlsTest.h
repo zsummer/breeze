@@ -28,6 +28,143 @@ using namespace zsummer::mysql;
 
 inline int checkString()
 {
+    if (true)
+    {
+        if (toString(true) != toString(fromString<bool>("true")))
+        {
+            return 888;
+        }
+        if (toString(false) != toString(fromString<bool>("false")))
+        {
+            return 888;
+        }
+        if (toString(true) != toString(fromString<bool>("23")))
+        {
+            return 888;
+        }
+        if (toString(false) != toString(fromString<bool>("0")))
+        {
+            return 888;
+        }
+        if (toString(false) != toString(fromString<bool>("")))
+        {
+            return 888;
+        }
+
+        if (toString((char)'a') != toString("a"))
+        {
+            return 888;
+        }
+        if (toString((unsigned char)'a') != toString((int)(unsigned char)'a'))
+        {
+            return 888;
+        }
+
+
+
+        if (toString(UINT8_MAX) != toString(fromString<unsigned char>(toString(UINT8_MAX))))
+        {
+            return 888;
+        }
+
+        if (toString(INT16_MAX) != toString(fromString<short>(toString(INT16_MAX))))
+        {
+            return 888;
+        }
+        if (toString(INT16_MIN) != toString(fromString<short>(toString(INT16_MIN))))
+        {
+            return 888;
+        }
+        if (toString(UINT16_MAX) != toString(fromString<unsigned short>(toString(UINT16_MAX))))
+        {
+            return 888;
+        }
+
+        if (toString(INT32_MAX) != toString(fromString<int>(toString(INT32_MAX))))
+        {
+            return 888;
+        }
+        if (toString(INT32_MIN) != toString(fromString<int>(toString(INT32_MIN))))
+        {
+            return 888;
+        }
+        if (toString(UINT32_MAX) != toString(fromString<unsigned int>(toString(UINT32_MAX))))
+        {
+            return 888;
+        }
+
+
+
+        if (toString(LONG_MAX) != toString(fromString<long>(toString(LONG_MAX))))
+        {
+            return 888;
+        }
+        if (toString(LONG_MIN) != toString(fromString<long>(toString(LONG_MIN))))
+        {
+            return 888;
+        }
+        if (toString(ULONG_MAX) != toString(fromString<unsigned long>(toString(ULONG_MAX))))
+        {
+            return 888;
+        }
+
+        if (toString(INT64_MAX) != toString(fromString<long long>(toString(INT64_MAX))))
+        {
+            return 888;
+        }
+        if (toString(INT64_MIN) != toString(fromString<long long>(toString(INT64_MIN))))
+        {
+            return 888;
+        }
+        if (toString(UINT64_MAX) != toString(fromString<unsigned long long>(toString(UINT64_MAX))))
+        {
+            return 888;
+        }
+
+
+
+        if (toString(FLT_MAX) != toString(fromString<float>(toString(FLT_MAX))))
+        {
+            return 888;
+        }
+        if (toString(FLT_MIN) != toString(fromString<float>(toString(FLT_MIN))))
+        {
+            return 888;
+        }
+
+        if (toString(FLT_MAX*FLT_MAX) != toString(fromString<float>(toString(FLT_MAX*FLT_MAX))))
+        {
+            return 888;
+        }
+        if (toString(FLT_MIN/2.0f) != toString(fromString<float>(toString(FLT_MIN / 2.0f))))
+        {
+            return 888;
+        }
+
+
+
+        if (toString(DBL_MAX) != toString(fromString<double>(toString(DBL_MAX))))
+        {
+            return 888;
+        }
+        if (toString(DBL_MIN) != toString(fromString<double>(toString(DBL_MIN))))
+        {
+            return 888;
+        }
+        if (toString(DBL_MAX*DBL_MAX) != toString(fromString<float>(toString(DBL_MAX*DBL_MAX))))
+        {
+            return 888;
+        }
+        if (toString(DBL_MIN / 2.0) != toString(fromString<float>(toString(DBL_MIN / 2.0))))
+        {
+            return 888;
+        }
+
+
+
+
+
+    }
     toString(true);
     toString(false);
     toString((short)1);
@@ -40,6 +177,12 @@ inline int checkString()
     toString((float)1);
     toString("a");
     toString(std::string("a"));
+
+//     fromString<bool>(" true");
+//     fromString<bool>(" false ");
+//     fromString<short>(" false ");
+//     fromString<long long>(" false ");
+//     fromString<float>(" false ");
 
     if (true)
     {
@@ -67,7 +210,7 @@ inline int checkString()
     if (true)
     {
         std::vector<int> array = { 1,2,3,4 };
-        std::string dstString = mergeToString(array, ",");
+        std::string dstString = mergeToString(array, ',');
         if (dstString.length() != 7)
         {
             return 5;
@@ -75,7 +218,7 @@ inline int checkString()
         dstString.clear();
         for (auto i : array)
         {
-            mergeToString(dstString, ",", i);
+            mergeToString(dstString, ',', i);
         }
         if (dstString.length() != 7)
         {

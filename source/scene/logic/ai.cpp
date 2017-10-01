@@ -61,8 +61,8 @@ void AI::rebirthCheck()
                 ev.dst = kv.second->_state.eid;
                 ev.ev = SCENE_EVENT_REBIRTH;
                 ev.val = kv.second->_state.curHP;
-                mergeToString(ev.mix, ",", kv.second->_move.position.x);
-                mergeToString(ev.mix, ",", kv.second->_move.position.y);
+                mergeToString(ev.mix, ',', kv.second->_move.position.x);
+                mergeToString(ev.mix, ',', kv.second->_move.position.y);
                 eventNotice.info.push_back(ev);
             }
         }

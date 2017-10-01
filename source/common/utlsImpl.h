@@ -40,6 +40,90 @@ inline void trimImpl(const char * buf, size_t len, const char ign, size_t & offs
 }
 
 
+template<class T>
+typename std::enable_if<std::is_unsigned<T>::value, T>::type
+lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, size_t & outLen,  T t)
+{
+    const char * lut = "0123456789abcdef";
+    const T tbase = (T)base;
+    char * begin = buf;
+    char * end = buf + len;
+    if (len < 70)
+    {
+        offset = 0;
+        outLen = 0;
+        return t;
+    }
+
+    *--end = '\0';
+    do 
+    {
+        *--end = lut[t % tbase];
+        t /= tbase;
+        if (t == 0) break;
+    } while (true);
+    
+    while (begin + len - 1 - end < (long long)fill0)
+    {
+        *--end = '0';
+    }
+
+    offset = end - begin;
+    outLen = begin + len - 1 - end;
+    return t;
+}
+
+template<class T>
+typename std::enable_if<std::is_signed<T>::value, T>::type
+lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, size_t & outLen, T t)
+{
+    const char * lut = "0123456789abcdef";
+    const T tbase = (T)base;
+    char * begin = buf;
+    char * end = buf + len;
+    if (len < 70)
+    {
+        offset = 0;
+        outLen = 0;
+        return t;
+    }
+
+    *--end = '\0';
+    if (t < (T)0)
+    {
+        do
+        {
+            *--end = lut[-(t % tbase)];
+            t /= tbase;
+            if (t == 0) break;
+        } while (true);
+
+        while (begin + len - 1 - end < (long long)fill0)
+        {
+            *--end = '0';
+        }
+        *--end = '-';
+    }
+    else
+    {
+        do
+        {
+            *--end = lut[t % tbase];
+            t /= tbase;
+            if (t == 0) break;
+        } while (true);
+
+        while (begin + len - 1 - end < (long long)fill0)
+        {
+            *--end = '0';
+        }
+    }
+
+    offset = end - begin;
+    outLen = begin + len - 1 - end;
+    return t;
+}
+
 
 template<class T>
 typename std::enable_if<std::is_same<T, bool>::value, std::string>::type
@@ -49,11 +133,27 @@ toString(const T &t)
 }
 
 template<class T>
-typename std::enable_if<std::is_integral<T>::value && !std::is_same<T, bool>::value, std::string>::type 
+typename std::enable_if<std::is_same<T, char>::value, std::string>::type
 toString(const T &t)
 {
-    return std::to_string(t);
+    return std::string(1, t);
 }
+
+template<class T>
+typename std::enable_if<std::is_integral<T>::value && !std::is_same<T, bool>::value && !std::is_same<T, char>::value, std::string>::type
+toString(const T &t)
+{
+    char buf[80];
+    size_t offset = 0;
+    size_t len = 0;
+    lutToString<T>(buf, 80, 10, 0, offset, len, t);
+    if (len == 0)
+    {
+        return std::string();
+    }
+    return std::string(buf+offset, len);
+}
+
 
 template<class T>
 typename std::enable_if<std::is_floating_point<T>::value, std::string>::type 
@@ -79,72 +179,70 @@ toString(const T * t)
 
 
 template<class To>
-typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_floating_point<To>::value, To > ::type 
-fromString(const std::string & t)
-{
-    return (To)std::stoll(t);
-}
-
-template<class To>
-typename std::enable_if<std::is_unsigned<To>::value, To > ::type 
-fromString(const std::string & t)
-{
-    return (To)std::stoull(t);
-}
-
-template<class To>
-typename std::enable_if<std::is_floating_point<To>::value, To > ::type 
-fromString(const std::string & t)
-{
-    return (To)std::stod(t);
-}
-template<class To>
-typename std::enable_if<std::is_same<To, std::string>::value, To > ::type 
-fromString(const std::string & str)
-{
-    return str;
-}
-
-
-template<class To>
-typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_floating_point<To>::value, To > ::type 
+typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_same<To, char>::value && !std::is_floating_point<To>::value, To > ::type
 fromString(const char * buf, size_t len)
 {
-    if (len == 0)
+    const char * begin = buf;
+    const char * end = buf + len;
+    const char * next = begin;
+    while (begin != end &&
+        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+    {
+        ++begin;
+    }
+    next = begin;
+    while (next != end &&
+        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+    {
+        ++next;
+    }
+
+    if (begin == next)
     {
         return (To)0;
     }
-    char buff[50];
-    if (len >= 50)
+    char buff[80];
+    if (begin - next > 80 - 1)
     {
-        len = 50-1;
+        next = begin + 80 - 1;
     }
-    memcpy(buff, buf, len);
-    buff[len] = '\0';
+    memcpy(buff, begin, next - begin);
+    buff[next - begin] = '\0';
 
-    const char * begin = buff;
-    while (*begin == ' ') ++begin;
     
     return (To)strtoll(begin, NULL, 10);
 }
 
 template<class To>
-typename std::enable_if<std::is_unsigned<To>::value, To > ::type 
+typename std::enable_if<std::is_unsigned<To>::value && ! std::is_same<To, bool>::value, To > ::type 
 fromString(const char * buf, size_t len)
 {
-    if (len == 0)
+    const char * begin = buf;
+    const char * end = buf + len;
+    const char * next = begin;
+    while (begin != end &&
+        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+    {
+        ++begin;
+    }
+    next = begin;
+    while (next != end &&
+        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+    {
+        ++next;
+    }
+
+    if (begin == next)
     {
         return (To)0;
     }
-    char buff[50];
-    if (len >= 50)
+    char buff[80];
+    if (begin - next > 80 - 1)
     {
-        len = 50 - 1;
+        next = begin + 80 - 1;
     }
-    memcpy(buff, buf, len);
-    buff[len] = '\0';
-    const char * begin = buff;
-    while (*begin == ' ') ++begin;
+    memcpy(buff, begin, next - begin);
+    buff[next - begin] = '\0';
 
     return (To)strtoull(begin, NULL, 10);
 }
@@ -153,21 +251,50 @@ template<class To>
 typename std::enable_if<std::is_floating_point<To>::value, To > ::type 
 fromString(const char * buf, size_t len)
 {
-    if (len == 0)
+    size_t offset = 0;
+    size_t outlen = 0;
+    trim(buf, len, ' ', offset, outlen);
+    const char * begin = buf + offset;
+    const char * end = begin + outlen;
+    if (end - begin >= 3)
+    {
+        if (memcmp(begin, "inf", 3) == 0)
+        {
+            return INFINITE;
+        }
+        if (memcmp(begin, "nan", 3) == 0)
+        {
+            return NAN;
+        }
+    }
+
+
+    const char * next = begin;
+    while (begin != end && 
+        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+    {
+        ++begin;
+    }
+    next = begin;
+    while (next != end &&
+        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+    {
+        ++next;
+    }
+
+    if (begin == next)
     {
         return (To)0;
     }
-    char buff[50];
-    if (len >= 50)
+    char buff[80];
+    if (begin - next > 80 -1)
     {
-        len = 50 - 1;
+        next = begin + 80 - 1;
     }
-    memcpy(buff, buf, len);
-    buff[len] = '\0';
-    const char * begin = buff;
-    while (*begin == ' ') ++begin;
+    memcpy(buff, begin, next - begin);
+    buff[next - begin] = '\0';
 
-    return (To)strtod(begin, NULL);
+    return (To)strtod(buff, NULL);
 }
 
 
@@ -177,6 +304,136 @@ fromString(const char * buf, size_t len)
 {
     return std::string(buf, len);
 }
+
+template<class To>
+typename std::enable_if<std::is_same<To, char>::value, To > ::type
+fromString(const char * buf, size_t len)
+{
+    return buf[0];
+}
+template<class To>
+typename std::enable_if<std::is_same<To, bool>::value, To > ::type
+fromString(const char * buf, size_t len)
+{
+    size_t offset = 0;
+    size_t outlen = 0;
+    trim(buf, len, ' ', offset, outlen);
+    if (outlen == 0)
+    {
+        return false;
+    }
+    if ((outlen == 5 && memcmp(buf, "false", 5) == 0) || buf[0] == '0')
+    {
+        return false;
+    }
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+template<class To>
+typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_same<To, char>::value && !std::is_floating_point<To>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+
+template<class To>
+typename std::enable_if<std::is_unsigned<To>::value && ! std::is_same<To, bool>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+
+template<class To>
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+
+
+template<class To>
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type
+fromString(const std::string & str)
+{
+    return str;
+}
+
+template<class To>
+typename std::enable_if<std::is_same<To, char>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+template<class To>
+typename std::enable_if<std::is_same<To, bool>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+
+
+
+
+
+/*
+
+template<class To>
+typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_same<To, char>::value && !std::is_floating_point<To>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+
+template<class To>
+typename std::enable_if<std::is_unsigned<To>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+
+template<class To>
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+
+
+template<class To>
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type
+fromString(const char * str)
+{
+    return std::string(str);
+}
+
+template<class To>
+typename std::enable_if<std::is_same<To, char>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+template<class To>
+typename std::enable_if<std::is_same<To, bool>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+*/
+
+
+
 
 
 
@@ -782,7 +1039,7 @@ inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag
 
 
 template<class Container>
-std::string mergeToString(const Container & contariner, const std::string& deli)
+std::string mergeToString(const Container & contariner, char deli)
 {
     std::string ret;
     for (const auto &t : contariner)
@@ -790,20 +1047,17 @@ std::string mergeToString(const Container & contariner, const std::string& deli)
         ret += toString(t);
         ret += deli;
     }
-    if (!deli.empty())
+    if (!ret.empty())
     {
-        for (size_t i = 0; i < deli.size(); i++)
-        {
-            ret.pop_back();
-        }
+        ret.pop_back();
     }
     return ret;
 }
 
 template<class T>  //example: Container = std::vector<int>
-void mergeToString(std::string & dstString, const std::string& deli, const T & t)
+void mergeToString(std::string & dstString, char deli, const T & t)
 {
-    if (!dstString.empty())
+    if (!dstString.empty() && dstString.back() != deli)
     {
         dstString += deli;
     }

@@ -137,9 +137,9 @@ inline void trim(const char * begin, size_t len, const char ign, size_t & offset
 
 
 template<class Container>  //example: Container = std::vector<int>
-std::string mergeToString(const Container & contariner, const std::string& deli);
+std::string mergeToString(const Container & contariner, char deli);
 template<class T>  //example: Container = std::vector<int>
-void mergeToString(std::string & dstString, const std::string& deli, const T & t);
+void mergeToString(std::string & dstString, char deli, const T & t);
 
 // text, deli, store text in pair.first when not found deli, greedy search
 std::pair<std::string, std::string> subString(const std::string & text, const std::string & deli, bool preStore = true, bool isGreedy = false);
