@@ -19,7 +19,7 @@
 
 
 
-
+#pragma once
 #ifndef _UTLS_H_
 #define _UTLS_H_
 

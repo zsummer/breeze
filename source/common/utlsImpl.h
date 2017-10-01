@@ -18,7 +18,7 @@
 */
 
 
-
+#pragma once
 #ifndef _UTLS_IMPL_H_
 #define _UTLS_IMPL_H_
 
@@ -41,59 +41,74 @@ inline void trimImpl(const char * buf, size_t len, const char ign, size_t & offs
 
 
 
-//string
 template<class T>
-typename std::enable_if<std::is_integral<T>::value, std::string>::type toString(const T &t)
-{
-    return std::to_string(t);
-}
-
-template<class T>
-typename std::enable_if<std::is_floating_point<T>::value, std::string>::type toString(const T &t)
-{
-    return std::to_string(t);
-}
-
-template<class T>
-typename std::enable_if<std::is_same<T, bool>::value, std::string>::type toString(const T &t)
+typename std::enable_if<std::is_same<T, bool>::value, std::string>::type
+toString(const T &t)
 {
     return t ? "1" : "0";
 }
 
 template<class T>
-typename std::enable_if<std::is_same<T, std::string>::value, std::string>::type toString(const std::string & str)
+typename std::enable_if<std::is_integral<T>::value && !std::is_same<T, bool>::value, std::string>::type 
+toString(const T &t)
 {
-    return str;
+    return std::to_string(t);
+}
+
+template<class T>
+typename std::enable_if<std::is_floating_point<T>::value, std::string>::type 
+toString(const T &t)
+{
+    return std::to_string(t);
 }
 
 
+template<class T>
+typename std::enable_if<std::is_same<T, std::string>::value, std::string>::type 
+toString(const T & t)
+{
+    return t;
+}
+
+template<class T>
+typename std::enable_if<std::is_same<T, char>::value, std::string>::type
+toString(const T * t)
+{
+    return std::string(t);
+}
+
 
 template<class To>
-typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_floating_point<To>::value, To > ::type fromString(const std::string & t)
+typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_floating_point<To>::value, To > ::type 
+fromString(const std::string & t)
 {
     return (To)std::stoll(t);
 }
 
 template<class To>
-typename std::enable_if<std::is_unsigned<To>::value, To > ::type fromString(const std::string & t)
+typename std::enable_if<std::is_unsigned<To>::value, To > ::type 
+fromString(const std::string & t)
 {
     return (To)std::stoull(t);
 }
 
 template<class To>
-typename std::enable_if<std::is_floating_point<To>::value, To > ::type fromString(const std::string & t)
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type 
+fromString(const std::string & t)
 {
     return (To)std::stod(t);
 }
 template<class To>
-typename std::enable_if<std::is_same<To, std::string>::value, To > ::type fromString(const std::string & str)
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type 
+fromString(const std::string & str)
 {
     return str;
 }
 
 
 template<class To>
-typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_floating_point<To>::value, To > ::type fromString(const char * buf, size_t len)
+typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_floating_point<To>::value, To > ::type 
+fromString(const char * buf, size_t len)
 {
     if (len == 0)
     {
@@ -114,7 +129,8 @@ typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::va
 }
 
 template<class To>
-typename std::enable_if<std::is_unsigned<To>::value, To > ::type fromString(const char * buf, size_t len)
+typename std::enable_if<std::is_unsigned<To>::value, To > ::type 
+fromString(const char * buf, size_t len)
 {
     if (len == 0)
     {
@@ -134,7 +150,8 @@ typename std::enable_if<std::is_unsigned<To>::value, To > ::type fromString(cons
 }
 
 template<class To>
-typename std::enable_if<std::is_floating_point<To>::value, To > ::type fromString(const char * buf, size_t len)
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type 
+fromString(const char * buf, size_t len)
 {
     if (len == 0)
     {
@@ -155,7 +172,8 @@ typename std::enable_if<std::is_floating_point<To>::value, To > ::type fromStrin
 
 
 template<class To>
-typename std::enable_if<std::is_same<To, std::string>::value, To > ::type fromString(const char * buf, size_t len)
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type 
+fromString(const char * buf, size_t len)
 {
     return std::string(buf, len);
 }
@@ -186,6 +204,7 @@ void splitStringTupleImpl(_Tuple & ret, const char * begin, const char * end, ch
     const char * next = end;
     do
     {
+        while (begin != end && *begin == deli) ++begin; // merge and ignore the first, last deli multi-deli, and merge the mid multi-deli  
         if (begin == end) //empty
         {
             std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = _This();
@@ -194,10 +213,6 @@ void splitStringTupleImpl(_Tuple & ret, const char * begin, const char * end, ch
         next = splitStringSearch(begin, end, deli);
         std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(begin, next - begin);
         begin = next;
-        if (begin != end)
-        {
-            ++begin; //ignore deli character.  
-        }
     } while (false);
     splitStringTupleImpl<_Tuple, _Rest ...>(ret, begin, end, deli);
 }
@@ -221,19 +236,20 @@ splitStringTupleArray(const std::string & text, char deli, char subDeli)
 {
     using Tuple = std::tuple<T ...>;
     std::vector<Tuple> ret;
-    Tuple one;
+    
     const char * begin = text.c_str();
     const char * end = text.c_str() + text.length();
-    
+
     do
     {
         if (begin == end)
         {
             break;
         }
+        Tuple one;
         const char * next = splitStringSearch(begin, end, deli);
         splitStringTupleImpl<Tuple, T ...>(one, begin, next, subDeli);
-        ret.push_back(one);
+        ret.push_back(std::move(one));
         begin = next;
         if (begin != end)
         {
@@ -243,13 +259,13 @@ splitStringTupleArray(const std::string & text, char deli, char subDeli)
     return ret;
 }
 
-template<class Value>
-typename std::enable_if<true, std::vector<Value>> ::type
+template<class _Value>
+typename std::enable_if<true, std::vector<_Value>> ::type
 splitStringSimpleArray(const std::string & text, char deli)
 {
-    using Tuple = std::tuple<Value>;
-    std::vector<Value> ret;
-    Tuple one;
+    using _Tuple = std::tuple<_Value>;
+    std::vector<_Value> ret;
+    
     const char * begin = text.c_str();
     const char * end = text.c_str() + text.length();
 
@@ -259,9 +275,10 @@ splitStringSimpleArray(const std::string & text, char deli)
         {
             break;
         }
+        _Tuple one;
         const char * next = splitStringSearch(begin, end, deli);
-        splitStringTupleImpl<Tuple, T ...>(one, begin, next, subDeli);
-        ret.push_back(std::get<0>(one));
+        splitStringTupleImpl<_Tuple, _Value>(one, begin, next, deli);
+        ret.push_back(std::move(std::get<0>(one)));
         begin = next;
         if (begin != end)
         {
@@ -272,14 +289,14 @@ splitStringSimpleArray(const std::string & text, char deli)
 }
 
 
-template<size_t Key, class ... T>
-typename std::enable_if<true, std::map<typename std::tuple_element<Key, std::tuple<T ...>>::type, std::tuple<T ...> >>::type
+template<size_t _Key, class ... T>
+typename std::enable_if<true, std::map<typename std::tuple_element<_Key, std::tuple<T ...>>::type, std::tuple<T ...> >>::type
 splitStringTupleDict(const std::string & text, char deli, char subDeli)
 {
-    using Second = std::tuple<T ...>;
-    using First = typename std::tuple_element<Key, std::tuple<T ...>>::type;
-    std::map<First, Second> ret;
-    Second one;
+    using _Second = std::tuple<T ...>;
+    using _First = typename std::tuple_element<_Key, std::tuple<T ...>>::type;
+    std::map<_First, _Second> ret;
+    
     const char * begin = text.c_str();
     const char * end = text.c_str() + text.length();
 
@@ -289,9 +306,12 @@ splitStringTupleDict(const std::string & text, char deli, char subDeli)
         {
             break;
         }
+        _First first;
+        _Second one;
         const char * next = splitStringSearch(begin, end, deli);
-        splitStringTupleImpl<Second, T ...>(one, begin, next, subDeli);
-        ret.insert(std::make_pair(std::get<Key>(one), one));
+        splitStringTupleImpl<_Second, T ...>(one, begin, next, subDeli);
+        first = std::get<_Key>(one);
+        ret.insert(std::make_pair(std::move(first), std::move(one)));
         begin = next;
         if (begin != end)
         {
@@ -302,13 +322,13 @@ splitStringTupleDict(const std::string & text, char deli, char subDeli)
     return ret;
 }
 
-template<class Key, class Value>
-typename std::enable_if<true, std::map<Key, Value>>::type
+template<class _Key, class _Value>
+typename std::enable_if<true, std::map<_Key, _Value>>::type
 splitStringSimpleDict(const std::string & text, char deli, char subDeli)
 {
-    using Second = std::tuple<Key, Value>;
-    std::map<Key, Second> ret;
-    Second one;
+    using Second = std::tuple<_Key, _Value>;
+    std::map<_Key, Second> ret;
+    
     const char * begin = text.c_str();
     const char * end = text.c_str() + text.length();
 
@@ -318,9 +338,10 @@ splitStringSimpleDict(const std::string & text, char deli, char subDeli)
         {
             break;
         }
+        Second one;
         const char * next = splitStringSearch(begin, end, deli);
-        splitStringTupleImpl<Second, Key, Value>(one, begin, next, subDeli);
-        ret.insert(std::make_pair(std::get<0>(one), std::get<1>(one)));
+        splitStringTupleImpl<Second, _Key, _Value>(one, begin, next, subDeli);
+        ret.insert(std::make_pair(std::move(std::get<0>(one)), std::move(std::get<1>(one))));
         begin = next;
         if (begin != end)
         {

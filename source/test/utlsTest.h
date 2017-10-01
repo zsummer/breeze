@@ -28,6 +28,19 @@ using namespace zsummer::mysql;
 
 inline int checkString()
 {
+    toString(true);
+    toString(false);
+    toString((short)1);
+    toString((unsigned short)1);
+    toString((int)1);
+    toString((unsigned int)1);
+    toString((long)1);
+    toString((unsigned long)1);
+    toString((double)1);
+    toString((float)1);
+    toString("a");
+    toString(std::string("a"));
+
     if (true)
     {
         auto ret = splitStringTuple<int, int>("=", '=');
