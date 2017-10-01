@@ -217,13 +217,24 @@ inline int checkString()
         now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
+            if (toString(-84467440) != "-84467440")
+            {
+                return STRING_BEGIN + 203;
+            }
+        }
+        LOGD("toString int used time=" << (getFloatNowTime() - now));
+
+
+        now = getFloatNowTime();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
             if (true)
             {
                 char buf[100];
                 sprintf(buf, "%d", atoi("84467440"));
                 if (std::string(buf) != "84467440")
                 {
-                    return STRING_BEGIN + 203;
+                    return STRING_BEGIN + 205;
                 }
             }
         }
@@ -237,12 +248,25 @@ inline int checkString()
                 sprintf(buf, "%.0lf", atof("-844674407"));
                 if (std::string(buf) != "-844674407")
                 {
-                    return STRING_BEGIN + 204;
+                    return STRING_BEGIN + 206;
                 }
             }
         }
         LOGD("toString(fromString) double used time=" << (getFloatNowTime() - now));
-
+        now = getFloatNowTime();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            if (true)
+            {
+                char buf[100];
+                sprintf(buf, "%d", -84467440);
+                if (std::string(buf) != "-84467440")
+                {
+                    return STRING_BEGIN + 207;
+                }
+            }
+        }
+        LOGD("toString int used time=" << (getFloatNowTime() - now));
     }
 
 
