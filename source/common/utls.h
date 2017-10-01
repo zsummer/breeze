@@ -59,12 +59,14 @@
 #include <string.h>
 #include <signal.h>
 #include <time.h>
+#include <cstdint>
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <utility>
 #include <algorithm>
+#include <limits>
 
 #include <functional>
 #include <memory>

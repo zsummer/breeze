@@ -146,6 +146,11 @@ lutToString(char *buf, size_t len, size_t fixedInt, size_t fixedfrac, size_t &of
     char * ret = gcvt(t, (int)fixedInt, buf);
     offset = ret - buf;
     outLen = strlen(ret);
+    if (outLen > 0 && buf[offset+outLen-1] == '.')
+    {
+        buf[offset + outLen - 1] = '\0';
+        outLen--;
+    }
     return t;
 }
 
@@ -212,13 +217,13 @@ fromString(const char * buf, size_t len)
     const char * end = buf + len;
     const char * next = begin;
     while (begin != end &&
-        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '-')))
+        !((*begin >= '0' && *begin <= '9') || (*begin == 'x' || *begin == 'X') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
     {
         ++begin;
     }
     next = begin;
     while (next != end &&
-        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '-')))
+        ((*begin >= '0' && *begin <= '9') || (*begin == 'x' && *begin == 'X') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
     {
         ++next;
     }
@@ -247,13 +252,13 @@ fromString(const char * buf, size_t len)
     const char * end = buf + len;
     const char * next = begin;
     while (begin != end &&
-        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '-')))
+        !((*begin >= '0' && *begin <= '9') || (*begin == 'x' || *begin == 'X') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
     {
         ++begin;
     }
     next = begin;
     while (next != end &&
-        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '-')))
+        ((*begin >= '0' && *begin <= '9') || (*begin == 'x' || *begin == 'X') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
     {
         ++next;
     }
@@ -297,13 +302,13 @@ fromString(const char * buf, size_t len)
 
     const char * next = begin;
     while (begin != end && 
-        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
+        !((*begin >= '0' && *begin <= '9') || (*begin == 'e' || *begin == 'E') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
     {
         ++begin;
     }
     next = begin;
     while (next != end &&
-        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
+        ((*begin >= '0' && *begin <= '9') || (*begin == 'e' || *begin == 'E') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
     {
         ++next;
     }
