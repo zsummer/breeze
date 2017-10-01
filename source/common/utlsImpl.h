@@ -41,20 +41,13 @@ inline void trimImpl(const char * buf, size_t len, const char ign, size_t & offs
 
 
 template<class T>
-typename std::enable_if<std::is_unsigned<T>::value, T>::type
-lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, size_t & outLen,  T t)
+typename std::enable_if<std::is_unsigned<T>::value && !std::is_floating_point<T>::value, T>::type
+lutToString(char *buf, size_t len, size_t base, size_t fixed0, size_t &offset, size_t & outLen,  T t)
 {
     const char * lut = "0123456789abcdef";
     const T tbase = (T)base;
     char * begin = buf;
     char * end = buf + len;
-    if (len < 70)
-    {
-        offset = 0;
-        outLen = 0;
-        return t;
-    }
-
     *--end = '\0';
     do 
     {
@@ -63,7 +56,7 @@ lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, si
         if (t == 0) break;
     } while (true);
     
-    while (begin + len - 1 - end < (long long)fill0)
+    while (begin + len - 1 - end < (long long)fixed0)
     {
         *--end = '0';
     }
@@ -73,21 +66,15 @@ lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, si
     return t;
 }
 
+
 template<class T>
-typename std::enable_if<std::is_signed<T>::value, T>::type
-lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, size_t & outLen, T t)
+typename std::enable_if<std::is_signed<T>::value && ! std::is_floating_point<T>::value, T>::type
+lutToString(char *buf, size_t len, size_t base, size_t fixed0, size_t &offset, size_t & outLen, T t)
 {
     const char * lut = "0123456789abcdef";
     const T tbase = (T)base;
     char * begin = buf;
     char * end = buf + len;
-    if (len < 70)
-    {
-        offset = 0;
-        outLen = 0;
-        return t;
-    }
-
     *--end = '\0';
     if (t < (T)0)
     {
@@ -98,7 +85,7 @@ lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, si
             if (t == 0) break;
         } while (true);
 
-        while (begin + len - 1 - end < (long long)fill0)
+        while (begin + len - 1 - end < (long long)fixed0)
         {
             *--end = '0';
         }
@@ -113,7 +100,7 @@ lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, si
             if (t == 0) break;
         } while (true);
 
-        while (begin + len - 1 - end < (long long)fill0)
+        while (begin + len - 1 - end < (long long)fixed0)
         {
             *--end = '0';
         }
@@ -123,6 +110,45 @@ lutToString(char *buf, size_t len, size_t base, size_t fill0, size_t &offset, si
     outLen = begin + len - 1 - end;
     return t;
 }
+
+
+
+
+template<class T>
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
+lutToString(char *buf, size_t len, size_t fixedInt, size_t fixedfrac, size_t &offset, size_t & outLen, T t)
+{
+    using std::isinf;
+    using std::isnan;
+    if (isinf(t))
+    {
+        buf[0] = 'i';
+        buf[1] = 'n';
+        buf[2] = 'f';
+        buf[3] = '\0';
+        offset = 0;
+        outLen = 3;
+        return t;
+    }
+    if (isnan(t))
+    {
+        buf[0] = 'n';
+        buf[1] = 'a';
+        buf[2] = 'n';
+        buf[3] = '\0';
+        offset = 0;
+        outLen = 3;
+        return t;
+    }
+    size_t fi = sizeof(T) == 4 ? 6 : 15;
+    fixedInt = fixedInt > fi ? fi : fixedInt;
+    fixedfrac = fixedfrac > fixedInt ? fixedInt : fixedfrac;
+    char * ret = gcvt(t, (int)fixedInt, buf);
+    offset = ret - buf;
+    outLen = strlen(ret);
+    return t;
+}
+
 
 
 template<class T>
@@ -147,10 +173,6 @@ toString(const T &t)
     size_t offset = 0;
     size_t len = 0;
     lutToString<T>(buf, 80, 10, 0, offset, len, t);
-    if (len == 0)
-    {
-        return std::string();
-    }
     return std::string(buf+offset, len);
 }
 
@@ -159,7 +181,11 @@ template<class T>
 typename std::enable_if<std::is_floating_point<T>::value, std::string>::type 
 toString(const T &t)
 {
-    return std::to_string(t);
+    char buf[80];
+    size_t offset = 0;
+    size_t len = 0;
+    lutToString<T>(buf, 80, sizeof(T) == 4 ? 6 : 15, sizeof(T) == 4 ? 6 : 15, offset, len, t);
+    return std::string(buf + offset, len);
 }
 
 
@@ -186,13 +212,13 @@ fromString(const char * buf, size_t len)
     const char * end = buf + len;
     const char * next = begin;
     while (begin != end &&
-        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '-')))
     {
         ++begin;
     }
     next = begin;
     while (next != end &&
-        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '-')))
     {
         ++next;
     }
@@ -221,13 +247,13 @@ fromString(const char * buf, size_t len)
     const char * end = buf + len;
     const char * next = begin;
     while (begin != end &&
-        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '-')))
     {
         ++begin;
     }
     next = begin;
     while (next != end &&
-        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '-')))
     {
         ++next;
     }
@@ -258,26 +284,26 @@ fromString(const char * buf, size_t len)
     const char * end = begin + outlen;
     if (end - begin >= 3)
     {
-        if (memcmp(begin, "inf", 3) == 0)
+        if ((begin[0] == 'i' || begin[0] == 'I') && (begin[1] == 'n' || begin[1] == 'N') && (begin[2] == 'f' || begin[2] == 'F') )
         {
-            return INFINITE;
+            return (To)(1e300*1e300);
         }
-        if (memcmp(begin, "nan", 3) == 0)
+        if ((begin[0] == 'n' || begin[0] == 'N') && (begin[1] == 'a' || begin[1] == 'A') && (begin[2] == 'n' || begin[2] == 'N'))
         {
-            return NAN;
+            return (To)(((To)(1e300*1e300))*0.0);
         }
     }
 
 
     const char * next = begin;
     while (begin != end && 
-        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+        !((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
     {
         ++begin;
     }
     next = begin;
     while (next != end &&
-        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-')))
+        ((*begin >= '0' && *begin <= '9') || (*begin >= 'a' && *begin <= 'f') || (*begin >= 'A'  && *begin <= 'F') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
     {
         ++next;
     }

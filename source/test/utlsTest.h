@@ -28,136 +28,149 @@ using namespace zsummer::mysql;
 
 inline int checkString()
 {
+    const int STRING_BEGIN = 10000;
     if (true)
     {
         if (toString(true) != toString(fromString<bool>("true")))
         {
-            return 888;
+            return STRING_BEGIN + 101;
         }
         if (toString(false) != toString(fromString<bool>("false")))
         {
-            return 888;
+            return STRING_BEGIN + 102;
         }
         if (toString(true) != toString(fromString<bool>("23")))
         {
-            return 888;
+            return STRING_BEGIN + 103;
         }
         if (toString(false) != toString(fromString<bool>("0")))
         {
-            return 888;
+            return STRING_BEGIN + 104;
         }
         if (toString(false) != toString(fromString<bool>("")))
         {
-            return 888;
+            return STRING_BEGIN + 105;
         }
 
         if (toString((char)'a') != toString("a"))
         {
-            return 888;
+            return STRING_BEGIN + 106;
         }
         if (toString((unsigned char)'a') != toString((int)(unsigned char)'a'))
         {
-            return 888;
+            return STRING_BEGIN + 107;
         }
-
+        if (fromString<unsigned int>("-1") != (unsigned int)-1)
+        {
+            return STRING_BEGIN + 108;
+        }
 
 
         if (toString(UINT8_MAX) != toString(fromString<unsigned char>(toString(UINT8_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 201;
         }
 
         if (toString(INT16_MAX) != toString(fromString<short>(toString(INT16_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 202;
         }
         if (toString(INT16_MIN) != toString(fromString<short>(toString(INT16_MIN))))
         {
-            return 888;
+            return STRING_BEGIN + 203;
         }
         if (toString(UINT16_MAX) != toString(fromString<unsigned short>(toString(UINT16_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 204;
         }
 
         if (toString(INT32_MAX) != toString(fromString<int>(toString(INT32_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 205;
         }
         if (toString(INT32_MIN) != toString(fromString<int>(toString(INT32_MIN))))
         {
-            return 888;
+            return STRING_BEGIN + 206;
         }
         if (toString(UINT32_MAX) != toString(fromString<unsigned int>(toString(UINT32_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 207;
         }
 
 
 
         if (toString(LONG_MAX) != toString(fromString<long>(toString(LONG_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 208;
         }
         if (toString(LONG_MIN) != toString(fromString<long>(toString(LONG_MIN))))
         {
-            return 888;
+            return STRING_BEGIN + 209;
         }
         if (toString(ULONG_MAX) != toString(fromString<unsigned long>(toString(ULONG_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 210;
         }
 
         if (toString(INT64_MAX) != toString(fromString<long long>(toString(INT64_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 211;
         }
         if (toString(INT64_MIN) != toString(fromString<long long>(toString(INT64_MIN))))
         {
-            return 888;
+            return STRING_BEGIN + 212;
         }
         if (toString(UINT64_MAX) != toString(fromString<unsigned long long>(toString(UINT64_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 213;
         }
 
 
+        using std::isnan;
+        using std::isinf;
 
         if (toString(FLT_MAX) != toString(fromString<float>(toString(FLT_MAX))))
         {
-            return 888;
+            return STRING_BEGIN + 301;
         }
         if (toString(FLT_MIN) != toString(fromString<float>(toString(FLT_MIN))))
         {
-            return 888;
+            return STRING_BEGIN + 302;
+        }
+        if (toString((float)(1e300*1e300)) != toString(fromString<float>(toString(1e300*1e300))))
+        {
+            return STRING_BEGIN + 303;
+        }
+        if (toString((float)(1e300*1e300) * 0.0f) != toString(fromString<float>(toString((float)(1e300*1e300) * 0.0f))))
+        {
+            return STRING_BEGIN + 304;
+        }
+        if (isinf(fromString<float>(toString(FLT_MAX))) || isnan(fromString<float>(toString(FLT_MAX))))
+        {
+            return STRING_BEGIN + 305;
         }
 
-        if (toString(FLT_MAX*FLT_MAX) != toString(fromString<float>(toString(FLT_MAX*FLT_MAX))))
+        //loss of significance (carry bit)  when to string. so it's cant use DBL_MAX to this test.
+        if (toString(1.7976931348623158e+307) != toString(fromString<double>(toString(1.7976931348623158e+307))))
         {
-            return 888;
-        }
-        if (toString(FLT_MIN/2.0f) != toString(fromString<float>(toString(FLT_MIN / 2.0f))))
-        {
-            return 888;
-        }
-
-
-
-        if (toString(DBL_MAX) != toString(fromString<double>(toString(DBL_MAX))))
-        {
-            return 888;
+            return STRING_BEGIN + 401;
         }
         if (toString(DBL_MIN) != toString(fromString<double>(toString(DBL_MIN))))
         {
-            return 888;
+            return STRING_BEGIN + 402;
         }
-        if (toString(DBL_MAX*DBL_MAX) != toString(fromString<float>(toString(DBL_MAX*DBL_MAX))))
+
+        if (toString((double)(1e300*1e300)) != toString(fromString<double>(toString(1e300*1e300))))
         {
-            return 888;
+            return STRING_BEGIN + 403;
         }
-        if (toString(DBL_MIN / 2.0) != toString(fromString<float>(toString(DBL_MIN / 2.0))))
+        if (toString((double)(1e300*1e300) * 0.0f) != toString(fromString<double>(toString((double)(1e300*1e300) * 0.0f))))
         {
-            return 888;
+            return STRING_BEGIN + 404;
+        }
+        if (isinf(fromString<double>(toString(FLT_MAX))) || isnan(fromString<double>(toString(FLT_MAX))))
+        {
+            return STRING_BEGIN + 405;
         }
 
 
