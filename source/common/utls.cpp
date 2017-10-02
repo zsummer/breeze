@@ -664,33 +664,13 @@ std::string getProcessName()
     return name;
 }
 
-#ifdef __APPLE__
-//std::mt19937 __genRandom; // not thread safe - -!
-#elif defined(WIN32)
-//__declspec(thread) char __genRandomBacking[sizeof(std::mt19937)];
-//__declspec(thread) std::mt19937* __genRandom; //vs2013 support
-//__declspec(thread) bool __genRandomInited = false;
-#else
-thread_local std::mt19937 __genRandom; //vs2015 support
-#endif
+thread_local std::mt19937 __genRandom;
+
 //rand
 //==========================================================================
 unsigned int realRand()
 {
-    return (rand() &0x7fff) << 30 | (rand() & 0x7fff) << 15 | (rand() & 0x7fff);
-#ifdef WIN32
-    return (rand() << 20) | (rand() << 8) | (rand() &0xff);
-//    if (!__genRandomInited)
-//    {
-//        __genRandom = new(__genRandomBacking)std::mt19937();
-//        __genRandomInited = true;
-//    }
-//    return (*__genRandom)();
-#elif defined(__APPLE__)
-    return (rand() << 20) |(rand() << 8)  | rand(); 
-#else
     return __genRandom();
-#endif
 }
 unsigned int realRand(unsigned int mi, unsigned int mx)
 {

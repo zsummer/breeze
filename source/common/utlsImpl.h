@@ -615,7 +615,7 @@ typename std::enable_if<true, std::map<_Key, _Value>>::type
 splitStringSimpleDict(const std::string & text, char deli, char subDeli)
 {
     using Second = std::tuple<_Key, _Value>;
-    std::map<_Key, Second> ret;
+    std::map<_Key, _Value> ret;
     
     const char * begin = text.c_str();
     const char * end = text.c_str() + text.length();

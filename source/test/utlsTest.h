@@ -321,7 +321,9 @@ inline int checkString()
          LOGA("splitStringTupleDict used time=" << getFloatNowTime() - now);
          if (true)
          {
-             auto ret = splitStringTupleDict<0, int, int>("2:3, 4:6", ',', ':');
+             auto ret = splitStringSimpleDict<int, int>("2:3, 4:6", ',', ':');
+             auto ret2 = splitStringSimpleArray<int>("2,3,4,5,6,2,3", ',');
+             auto ret3 = splitStringTupleArray<int, double>("2:3, 4:6", ',', ':');
          }
 
     }
@@ -976,7 +978,7 @@ inline int checkRandom()
             }
         }
         LOGD("realRand 1-100.  1=" << sum1 << ", 50=" << sum50 << ", sum100=" << sum100);
-        if (abs(sum1 - loop/100) > loop/100*20/100 || abs(sum50 - loop / 100) > loop / 100 * 20 / 100 || abs(sum100 - loop / 100) > loop / 100 * 20 / 100 )
+        if (abs(sum1 - loop/100) > loop/100*30/100 || abs(sum50 - loop / 100) > loop / 100 * 30 / 100 || abs(sum100 - loop / 100) > loop / 100 * 30 / 100 )
         {
             return 2;
         }
@@ -1069,14 +1071,14 @@ inline int checkRandom()
         auto diff = fabs(sumRaffle - loopCount* (1.0 / 100.0)*takeCount);
         auto target = loopCount* (1.0 / 100.0)*takeCount * 0.2;
         LOGD("diff=" << diff << ", target=" << target);
-        if (fabs(sumRaffle - loopCount* (1.0 / 100.0)*takeCount) > loopCount* (1.0 / 100.0)*takeCount * 0.2)
+        if (fabs(sumRaffle - loopCount* (1.0 / 100.0)*takeCount) > loopCount* (1.0 / 100.0)*takeCount * 0.3)
         {
             return 11;
         }
         diff = fabs(sumRaffleWeight - loopCount* (100.0 / 5050.0)*takeCount);
         target = loopCount* (1.0 / 5050.0)*takeCount * 0.2;
         LOGD("diff=" << diff << ", target=" << target);
-        if (fabs(sumRaffleWeight - loopCount *(100.0 / 5050.0)*takeCount) > loopCount *(100.0 / 5050.0)*takeCount * 0.2)
+        if (fabs(sumRaffleWeight - loopCount *(100.0 / 5050.0)*takeCount) > loopCount *(100.0 / 5050.0)*takeCount * 0.3)
         {
             return 12;
         }
@@ -1123,11 +1125,11 @@ inline int checkRandom()
         {
             return 20;
         }
-        if (abs(sum1 - loop*takeCount/100) > (loop*takeCount/100*20/100))
+        if (abs(sum1 - loop*takeCount/100) > (loop*takeCount/100*30/100))
         {
             return 21;
         }
-        if (abs(sum50 - loop*takeCount / 2) > (loop*takeCount / 2 * 20 / 100))
+        if (abs(sum50 - loop*takeCount / 2) > (loop*takeCount / 2 * 30 / 100))
         {
             return 22;
         }
