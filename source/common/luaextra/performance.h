@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ extern "C"
 #include "lualib.h"
 #include "lauxlib.h"
 }
-
+#include <string.h>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -55,12 +55,17 @@ extern "C"
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <deque>
+#include <array>
+#include <unordered_map>
+#include <cmath>
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <io.h>
 #include <shlwapi.h>
 #include <process.h>
+#include <direct.h>
 #pragma comment(lib, "shlwapi")
 #pragma warning(disable:4996)
 
@@ -85,214 +90,192 @@ extern "C"
 #endif
 
 
-
+uint64_t MurmurHash64A(const void * key, uint64_t len, uint64_t seed);
 void luaopen_performence(lua_State * L);
 
 namespace zsummer
 {
-    class Timestamp
+    namespace luaperf
     {
-    public:
-        inline Timestamp(){_timpstamp = now();}
-    public:
-        //get lapse time. millisecond.
-        inline double lapse(){return std::chrono::duration_cast<std::chrono::duration<double>>(now() - _timpstamp).count()*1000.0;}
-        inline std::chrono::steady_clock::time_point now(){return std::chrono::steady_clock::now();}
-        inline void flush(){_timpstamp = now();}
-    private:
-        std::chrono::steady_clock::time_point _timpstamp;
-    };
-
-    class LuaStack
-    {
-    public:
-        using Param = std::tuple<std::string, std::chrono::steady_clock::time_point, double/* inc memory */>;
-        using Stack = std::vector<Param>;
-    public:
-        void push(const std::string & func, double mem){ _stack.push_back(std::make_tuple(func, std::chrono::steady_clock::now(), mem)); }
-        std::tuple<bool, double, double> pop(const std::string & func, double mem)
+        inline double getSteadyNow()
         {
-            if (_stack.end() != std::find_if(_stack.begin(), _stack.end(), [&func](const Param & p){return std::get<0>(p) == func; }))
+            return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
+        }
+
+        class Timestamp
+        {
+        public:
+            inline Timestamp() { _last = getSteadyNow(); }
+        public:
+            //get lapse time. millisecond.
+            inline double lapse() { return getSteadyNow() - _last; }
+            inline void flush() { _last = getSteadyNow(); }
+        private:
+            double _last;
+        };
+
+        const size_t LUA_STACK_DEPTH = 10000;
+        const bool PERF_MEM = true;
+        class LuaStack
+        {
+        public:
+            
+            struct Layer
             {
-                while (!_stack.empty())
+                char buf[300];
+                size_t len = 0;
+                uint64_t hash = 0;
+                double mem = 0;
+                double sec = 0;
+            };
+            std::array<Layer, LUA_STACK_DEPTH> _stack;
+            size_t _offset = 0;
+
+        public:
+            inline bool empty() { return _offset == 0; }
+            inline Layer & back() 
+            {
+                if (_offset == 0)
                 {
-                    if (std::get<0>(_stack.back()) == func)
+                    throw std::runtime_error("LuaStack stack no any Layer");
+                }
+                return _stack[_offset - 1]; 
+            }
+            inline Layer & push() 
+            {
+                if (_offset >= LUA_STACK_DEPTH)
+                {
+                    throw std::runtime_error("LuaStack stack overflow");
+                }
+                return _stack[_offset++];
+            }
+            inline void pop()
+            {
+                if (_offset <= 0)
+                {
+                    throw std::runtime_error("LuaStack stack empty can't pop");
+                }
+                _offset--;
+            }
+        };
+
+
+
+        class Performence
+        {
+        public:
+            struct Collect
+            {
+                char buf[300];
+                size_t len = 0;
+                uint64_t hash = 0;
+
+                double count = 0;
+                double sec = 0;
+                double maxsec = 0;
+                double avgsec = 0;
+                double mem = 0;
+            };
+
+            void call(const LuaStack::Layer & param);
+
+            inline void toString(char *buf, unsigned long long &len, unsigned long long t,  bool minus, 
+                unsigned long long deci, unsigned long long fill0)
+            {
+                const char * dec = "0123456789abcdef";
+
+                char * end = buf + len;
+                *--end = '\0';
+                char * cur = end;
+                do 
+                {
+                    *--cur = dec[t % deci];
+                    t /= deci;
+                    if (t == 0)
                     {
-                        auto ret = std::make_tuple(true, 
-                            std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - std::get<1>(_stack.back())).count()*1000.0,
-                            mem - std::get<2>(_stack.back()));
-                        _stack.pop_back();
-                        return std::move(ret);
+                        break;
                     }
-                    _stack.pop_back();
-                }
-            }
-            return std::make_tuple(false, 0.0, 0.0);
-        }
-    private:
-        Stack _stack;
-    };
-
-
-
-    class Performence
-    {
-    public:
-        using Param = std::tuple<std::string, double, double, double, double>;
-        inline void call(const std::string & func, double usetime, double mem)
-        {
-            auto founder = _perf.find(func);
-            if (founder == _perf.end())
-            {
-                _perf[func] = std::make_tuple(func, usetime, 1.0, usetime, mem);
-            }
-            else
-            {
-                std::get<1>(founder->second) += usetime;
-                std::get<2>(founder->second) += 1.0;
-                if (std::get<3>(founder->second) < usetime)
+                } while (true);
+                while ((unsigned long long)(end - cur) < fill0)
                 {
-                    std::get<3>(founder->second) = usetime;
+                    *--cur = '0';
                 }
-                std::get<4>(founder->second) += mem;
-            }
-        }
-        template<class T>
-        inline std::string toString(const T & t)
-        {
-            std::stringstream ss;
-            ss << t;
-            std::string temp = std::move(ss.str());
-            if (temp.length() < 15)
-            {
-                temp.append(15 - temp.length(), ' ');
-            }
-            return std::move(temp);
-        }
-
-        inline std::string getProcessName()
-        {
-            std::string name = "MainLog";
-            char buf[260] = { 0 };
-#ifdef WIN32
-            if (GetModuleFileNameA(NULL, buf, 259) > 0)
-            {
-                name = buf;
-            }
-            std::string::size_type pos = name.rfind("\\");
-            if (pos != std::string::npos)
-            {
-                name = name.substr(pos + 1, std::string::npos);
-            }
-            pos = name.rfind(".");
-            if (pos != std::string::npos)
-            {
-                name = name.substr(0, pos - 0);
+                if (minus)
+                {
+                    *--cur = '-';
+                }
+                memmove(buf, cur, end - cur + 1);
+                len = end - cur;
             }
 
-#elif defined(__APPLE__)
-
-            proc_name(getpid(), buf, 260);
-            name = buf;
-            return name;;
-#else
-            sprintf(buf, "/proc/%d/cmdline", (int)getpid());
-            std::fstream f(buf, std::ios::in);
-            if (f.is_open())
+            inline std::string toString(double t)
             {
-                std::getline(f, name);
-                f.close();
-            }
-            std::string::size_type pos = name.rfind("/");
-            if (pos != std::string::npos)
-            {
-                name = name.substr(pos + 1, std::string::npos);
-            }
-            name.pop_back();
+#if __cplusplus >= 201103L
+                using std::isnan;
+                using std::isinf;
 #endif
-            return name;
-        }
-
-        inline void serialize(const std::list<Param> & l, const std::string & prefix, const std::string & head, int maxCount)
-        {
-            std::string filename;
-            if (true)
-            {
-                char buf[100];
-                time_t cur = time(NULL);
-                struct tm *  t = localtime(&cur);
-                sprintf(buf, "%04d%02d%02d_%02d%02d%02d_", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);
-                filename += buf;
-            }
-            filename += getProcessName();
-            filename += "_";
-            filename += prefix;
-            filename += ".log";
-
-            std::fstream f(filename, std::ios::out);
-            if (!f.is_open())
-            {
-                return;
-            }
-            f.write(head.c_str(), head.length());
-            std::string temp;
-            for (const auto & o : l)
-            {
-                if (maxCount <= 0)
+                if (isnan(t))
                 {
-                    break;
+                    return "nan";
                 }
-                maxCount--;
-
-                temp = std::get<0>(o);
-                if (temp.length() < 70)
+                else if (isinf(t))
                 {
-                    temp.append(70 - temp.length(), ' ');
+                    return "inf";
                 }
-                temp += "\t\t" + toString(std::get<1>(o)) + "\t\t" + toString(std::get<2>(o)) + "\t\t" + toString(std::get<3>(o)) + "\t\t" + toString(std::get<4>(o)) + "\n";
-                f.write(temp.c_str(), temp.length());
+
+                double fabst = fabs(t);
+                char buf[80];
+                if (fabst < 0.000001 ||  fabst >= 4503599627370495ULL)
+                {
+                    gcvt(t, 12, buf);
+                    return std::string(buf);
+                }
+                else 
+                {
+                    unsigned long long integ = (unsigned long long)fabst;
+                    unsigned long long len = 80;
+                    toString(buf, len, (unsigned long long)fabst, t < 0, 10, 0);
+
+                    unsigned long long fn = (unsigned long long)(( fabst - integ*1.0) * 1000000.0);
+                    if (fn > 0)
+                    {
+                        buf[len] = '.';
+                        len++;
+                        unsigned long long nlen = 20;
+                        toString(buf + len, nlen, fn, false, 10, 6);
+                        len += nlen;
+                    }
+                    return std::string(buf, len);
+ 
+                }
             }
-            f.close();
-        }
-        inline void dump(int maxCount)
-        {
-            std::string head = "total perf function size is[" + toString(_perf.size()) + "] \n";
-            std::list<Param> orderList;
-            for (auto & kv : _perf)
+
+            std::string getProcessID();
+            std::string getProcessName();
+
+            void serialize(const std::vector<std::unordered_map<uint64_t, Collect>::iterator> & l, 
+                const std::string & prefix, const std::string & head, int maxCount);
+            void dump(int maxCount);
+            inline bool expire(double interval)
             {
-                orderList.push_back(kv.second);
+                if (_lastPerf.lapse() > interval)
+                {
+                    _lastPerf.flush();
+                    return true;
+                }
+                return false;
             }
-            orderList.sort([](const Param & first, const Param & second){return std::get<1>(first) > std::get<1>(second); });
-            serialize(orderList, "alltime", head, maxCount);
-            orderList.sort([](const Param & first, const Param & second){return std::get<2>(first) > std::get<2>(second); });
-            serialize(orderList, "allcount", head, maxCount);
-            orderList.sort([](const Param & first, const Param & second){return std::get<1>(first) / std::get<2>(first) > std::get<1>(second) / std::get<2>(second); });
-            serialize(orderList, "avetime", head, maxCount);
-            orderList.sort([](const Param & first, const Param & second){return std::get<3>(first) > std::get<3>(second); });
-            serialize(orderList, "maxtime", head, maxCount);
-            orderList.sort([](const Param & first, const Param & second){return std::get<4>(first) > std::get<4>(second); });
-            serialize(orderList, "allmem", head, maxCount);
-        }
-        inline bool expire(double interval)
-        {
-            if (_lastPerf.lapse() > interval)
-            {
-                _lastPerf.flush();
-                return true;
-            }
-            return false;
-        }
-    public:
-        LuaStack _stack;
-    private:
-        std::map<std::string, Param > _perf;
-        std::map<std::string, Param > _once;
-        Timestamp _lastPerf;
+        public:
+            LuaStack _stack;
+        private:
+            std::unordered_map<uint64_t, Collect> _collected;
+            std::string _processID;
+            std::string _processName;
+            std::deque<std::string> _historyFile;
+            Timestamp _lastPerf;
+        };
     };
-
-
-   
-
+    
 
 };
 
