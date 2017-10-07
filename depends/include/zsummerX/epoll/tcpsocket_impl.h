@@ -9,7 +9,7 @@
 * 
 * ===============================================================================
 * 
-* Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +53,7 @@ namespace zsummer
             TcpSocket();
             ~TcpSocket();
             bool setNoDelay();
+            inline void setFloodSendOptimize(bool enable){_floodSendOptimize = enable;}
             bool initialize(const EventLoopPtr& summer);
             inline bool getPeerInfo(std::string& remoteIP, unsigned short &remotePort)
             {
@@ -62,7 +63,7 @@ namespace zsummer
             }
             bool doConnect(const std::string &remoteIP, unsigned short remotePort, _OnConnectHandler && handler);
             bool doSend(char * buf, unsigned int len, _OnSendHandler && handler);
-            bool doRecv(char * buf, unsigned int len, _OnRecvHandler && handler);
+            bool doRecv(char * buf, unsigned int len, _OnRecvHandler && handler, bool daemonRecv = false);
             bool doClose();
 
             
@@ -77,17 +78,20 @@ namespace zsummer
             std::string _remoteIP;
             unsigned short _remotePort = 0;
             bool _isIPV6 = false;
+            bool _daemonRecv = false;
+            bool _floodSendOptimize = true;
             EventData _eventData;
             
             _OnConnectHandler _onConnectHandler;
 
             _OnRecvHandler _onRecvHandler;
-            unsigned int _iRecvLen = 0;
-            char    *     _pRecvBuf = NULL;
+            unsigned int _recvLen = 0;
+            char    *     _recvBuf = NULL;
+            unsigned int _recvOffset = 0;
 
             _OnSendHandler _onSendHandler;
-            unsigned int _iSendLen = 0;
-            char *         _pSendBuf = NULL;
+            unsigned int _sendLen = 0;
+            char *         _sendBuf = NULL;
         };
         using TcpSocketPtr = std::shared_ptr<TcpSocket>;
     }

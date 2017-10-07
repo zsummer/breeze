@@ -336,11 +336,15 @@ end
 --[[--
 dump table with nesting
 ]]
-function Proto4z.dump(value, desciption, nesting, showULL)
-    if type(nesting) ~= "number" then nesting = 5 end
+function Proto4z.dump(value, desciption, nesting, logcall, stack)
+    local nesting = nesting or 5
+    local stack = stack or 0
+    local log = print
+    if logcall then
+        log = function(x) logcall(x, false) end
+    end
 
     local lookupTable = {}
-    local result = {}
 
     local function _v(v)
         if type(v) == "string" then
@@ -349,8 +353,13 @@ function Proto4z.dump(value, desciption, nesting, showULL)
         return tostring(v)
     end
 
-    local traceback = Proto4z.split(debug.traceback("", 2), "\n")
-    print("dump from: " .. Proto4z.trim(traceback[3]), false)
+    local traceback = Proto4z.split(debug.traceback("", 2 + stack), "\n")
+    if logcall then
+        logcall("dump from: " .. Proto4z.trim(traceback[3]), false)
+    else
+        print("dump from: " .. Proto4z.trim(traceback[3]))
+    end
+    
 
     local function _dump(value, desciption, indent, nest, keylen)
         desciption = desciption or "<var>"
@@ -359,15 +368,15 @@ function Proto4z.dump(value, desciption, nesting, showULL)
             spc = string.rep(" ", keylen - string.len(_v(desciption)))
         end
         if type(value) ~= "table" then
-            result[#result +1 ] = string.format("%s%s%s = %s", indent, _v(desciption), spc, _v(value))
+            log(string.format("%s%s%s = %s", indent, _v(desciption), spc, _v(value)))
         elseif lookupTable[value] then
-            result[#result +1 ] = string.format("%s%s%s = *REF*", indent, desciption, spc)
+            log(string.format("%s%s%s = *REF*", indent, desciption, spc))
         else
             lookupTable[value] = true
             if nest > nesting then
-                result[#result +1 ] = string.format("%s%s = *MAX NESTING*", indent, desciption)
+                log(string.format("%s%s = *MAX NESTING*", indent, desciption))
             else
-                result[#result +1 ] = string.format("%s%s = {", indent, _v(desciption))
+                log(string.format("%s%s = {", indent, _v(desciption)))
                 local indent2 = indent.."    "
                 local keys = {}
                 local keylen = 0
@@ -389,14 +398,11 @@ function Proto4z.dump(value, desciption, nesting, showULL)
                 for i, k in ipairs(keys) do
                     _dump(values[k], k, indent2, nest + 1, keylen)
                 end
-                result[#result +1] = string.format("%s}", indent)
+                log(string.format("%s}", indent))
             end
         end
     end
     _dump(value, desciption, "- ", 1)
 
-    for i, line in ipairs(result) do
-        print(line, false)
-    end
 end
 

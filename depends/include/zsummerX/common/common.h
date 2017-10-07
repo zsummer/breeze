@@ -9,7 +9,7 @@
 * 
 * ===============================================================================
 * 
-* Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -103,7 +103,8 @@ namespace zsummer
         using _OnConnectHandler = std::function<void(NetErrorCode)>;
         //send or recv callback  @int : translate bytes.
         using _OnSendHandler = std::function<void(NetErrorCode, int)>;
-        using _OnRecvHandler = std::function<void(NetErrorCode, int)>;
+        //return the offset that the first call doRecv with param daemon mod.
+        using _OnRecvHandler = std::function<unsigned int(NetErrorCode, int)>;
 
         //udp callback
         //! @const char *: remote ip
@@ -157,6 +158,7 @@ namespace zsummer
 
 
 
+#define LCT( log ) LOG_TRACE( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
 #define LCD( log ) LOG_DEBUG( zsummer::network::g_appEnvironment.getNetCoreLogger(), log )
 #define LCI( log ) LOG_INFO( zsummer::network::g_appEnvironment.getNetCoreLogger(),  log )
 #define LCW( log ) LOG_WARN( zsummer::network::g_appEnvironment.getNetCoreLogger(),  log )

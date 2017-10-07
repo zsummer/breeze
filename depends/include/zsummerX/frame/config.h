@@ -168,10 +168,10 @@ namespace zsummer
         using OnBlockCheck = std::function<OnBlockCheckResult(const char * /*begin*/, unsigned int /*len*/, unsigned int /*bound*/, unsigned int /*blockLimit*/)>;
 
         //!dispatch one integrity block 
-        using OnBlockDispatch = std::function<void(TcpSessionPtr   /*session*/, const char * /*begin*/, unsigned int /*len*/)>;
+        using OnBlockDispatch = std::function<void(const TcpSessionPtr &  /*session*/, const char * /*begin*/, unsigned int /*len*/)>;
 
         //!event linked, closed, ontimer
-        using OnSessionEvent = std::function<void(TcpSessionPtr   /*session*/)>;
+        using OnSessionEvent = std::function<void(const TcpSessionPtr &  /*session*/)>;
 
  
         //!HTTP unpack, hadHeader used by 'chunked', commonLine can be GET, POST RESPONSE.  
@@ -189,7 +189,8 @@ namespace zsummer
             ProtoType       _protoType = PT_TCP;
             std::string     _rc4TcpEncryption = ""; //empty is not encryption 
             bool            _openFlashPolicy = false; //check falsh client  
-            bool            _setNoDelay = true; 
+            bool            _setNoDelay = true;
+            bool            _floodSendOptimize = true;
             bool            _joinSmallBlock = true; //merge small block  
             unsigned int    _sessionPulseInterval = 30000;  
             unsigned int    _connectPulseInterval = 5000;  

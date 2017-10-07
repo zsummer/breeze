@@ -152,7 +152,7 @@ namespace zsummer
         public:
             //statistical information
             inline unsigned long long getStatInfo(int stat){ return _statInfo[stat]; }
-            unsigned long long _statInfo[STAT_SIZE];
+            alignas(unsigned long long) unsigned long long _statInfo[STAT_SIZE];
 
         public:
             SessionBlock * CreateBlock();
