@@ -180,6 +180,7 @@ bool SceneMgr::startClientListen()
     }
     auto &options = SessionManager::getRef().getAccepterOptions(_clientListen);
     options._maxSessions = 1000;
+    options._sessionOptions._floodSendOptimize = false;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
         SceneClientPulse pulse;
