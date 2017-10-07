@@ -145,6 +145,7 @@ void mergeToString(std::string & dstString, char deli, const T & t);
 
 // text, deli, store text in pair.first when not found deli, greedy search
 std::pair<std::string, std::string> subString(const std::string & text, const std::string & deli, bool preStore = true, bool isGreedy = false);
+std::string replaceString(const std::string & text, const std::string & pattern, const std::string &rep, bool once);
 
 
 

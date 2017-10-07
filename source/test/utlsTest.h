@@ -29,6 +29,15 @@ using namespace zsummer::mysql;
 inline int checkString()
 {
     const int STRING_BEGIN = 10000;
+
+    std::tuple<double, int, std::string> kvv = splitStringTuple<double, int, std::string>("1.0:2:aha", ':');
+
+    LOGI("1=" << std::get<0>(kvv) << ", 2=" << std::get<1>(kvv) << ", 3=" << std::get<2>(kvv));
+
+    LOGI("0second" << formatDateTimeString(0));
+    LOGI("now" << formatDateTimeString(getNowTime()));
+
+
     if (true)
     {
         if (toString(true) != toString(fromString<bool>("true")))
@@ -195,34 +204,36 @@ inline int checkString()
     if (true)
     {
         double now = getFloatNowTime();
+        std::string snum = "-844674407";
+        int inum = -844674407;
         for (int i = 0; i < 10 * 10000; i++)
         {
-            if (toString(fromString<int>("84467440")) != "84467440")
+            if (toString(fromString<int>(snum)) != snum)
             {
                 return STRING_BEGIN + 201;
             }
         }
-        LOGD("toString(fromString) int used time=" << (getFloatNowTime() - now));
+        LOGD("fast toString(fromString) int used time=" << (getFloatNowTime() - now));
 
         now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
-            if (toString(fromString<double>("-844674407")) != "-844674407")
+            if (toString(fromString<double>(snum)) != snum)
             {
                 return STRING_BEGIN + 202;
             }
         }
-        LOGD("toString(fromString) double used time=" << (getFloatNowTime() - now));
+        LOGD("fast toString(fromString) double used time=" << (getFloatNowTime() - now));
 
         now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
-            if (toString(-84467440) != "-84467440")
+            if (toString(inum) != snum)
             {
                 return STRING_BEGIN + 203;
             }
         }
-        LOGD("toString int used time=" << (getFloatNowTime() - now));
+        LOGD("fast toString int used time=" << (getFloatNowTime() - now));
 
 
         now = getFloatNowTime();
@@ -231,42 +242,42 @@ inline int checkString()
             if (true)
             {
                 char buf[100];
-                sprintf(buf, "%d", atoi("84467440"));
-                if (std::string(buf) != "84467440")
+                sprintf(buf, "%d", atoi(snum.c_str()));
+                if (std::string(buf) != snum)
                 {
                     return STRING_BEGIN + 205;
                 }
             }
         }
-        LOGD("toString(fromString) int used time=" << (getFloatNowTime() - now));
+        LOGD("old toString(fromString) int used time=" << (getFloatNowTime() - now));
         now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
             if (true)
             {
                 char buf[100];
-                sprintf(buf, "%.0lf", atof("-844674407"));
-                if (std::string(buf) != "-844674407")
+                sprintf(buf, "%.0lf", atof(snum.c_str()));
+                if (std::string(buf) != snum)
                 {
                     return STRING_BEGIN + 206;
                 }
             }
         }
-        LOGD("toString(fromString) double used time=" << (getFloatNowTime() - now));
+        LOGD("old toString(fromString) double used time=" << (getFloatNowTime() - now));
         now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
             if (true)
             {
                 char buf[100];
-                sprintf(buf, "%d", -84467440);
-                if (std::string(buf) != "-84467440")
+                sprintf(buf, "%d", inum);
+                if (std::string(buf) != snum)
                 {
                     return STRING_BEGIN + 207;
                 }
             }
         }
-        LOGD("toString int used time=" << (getFloatNowTime() - now));
+        LOGD("old toString int used time=" << (getFloatNowTime() - now));
     }
 
 
@@ -318,7 +329,7 @@ inline int checkString()
              auto v = splitStringTupleDict<0, int, short, float, std::string>("1|2|3|a,|||,2|2|3|a,|||,3|2|3|a,|||,4|2|3|a,|||,5|2|3|a,|||,6|2|3|a,|||,7|2|3|a,|||,8|2|3|a,|||,8|2|3|a,|||,", ',', '|');
              std::get<0>(v.begin()->second) = 0;
          }
-         LOGA("splitStringTupleDict used time=" << getFloatNowTime() - now);
+         LOGI("splitStringTupleDict used time=" << getFloatNowTime() - now);
          if (true)
          {
              auto ret = splitStringSimpleDict<int, int>("2:3, 4:6", ',', ':');
@@ -426,8 +437,18 @@ inline int checkString()
         return STRING_BEGIN + 630;
     }
 
-
-
+    if (replaceString(" aabbccaa", "aa", "cc", true) != " ccbbccaa")
+    {
+        return STRING_BEGIN + 631;
+    }
+    if (replaceString(" aabbccaa", "aa", "cc", false) != " ccbbcccc")
+    {
+        return STRING_BEGIN + 632;
+    }
+    if (replaceString(" aabbccaa", "ee", "cc", false) != " aabbccaa")
+    {
+        return STRING_BEGIN + 633;
+    }
     if (true)
     {
         //蓝天and҉😌   
@@ -1137,5 +1158,14 @@ inline int checkRandom()
     return 0;
 }
 
+
+
+inline int checkOther()
+{
+    checkBalance();
+    auto ret = getHostByName("github.com", 3389);
+    LOGA("getHostByName=" << ret);
+    return 0;
+}
 
 

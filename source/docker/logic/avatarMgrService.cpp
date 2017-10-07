@@ -134,10 +134,7 @@ void AvatarMgrService::onClientChange()
 bool AvatarMgrService::onLoad()
 {
     _nextAvatarID = ServerConfig::getRef().getMinServiceID()+1;
-
-    std::string sql = AvatarPreview().getDBSelectPure();
-    sql = subString(sql, " ", true, true).first;
-    sql += " `tb_AvatarBaseInfo` ";
+    std::string sql = replaceString(AvatarPreview().getDBSelectPure(), "tb_AvatarPreview", "tb_AvatarBaseInfo", false);
     int curLimit = 0;
     DBQueryReq req(sql + "limit 0, 100");
     toService(STInfoDBMgr, req,
@@ -272,9 +269,8 @@ void AvatarMgrService::onClientAuthReq(const Tracing & trace, zsummer::proto4z::
         return;
     }
 
-    std::string sql = AvatarPreview().getDBSelectPure();
-    sql = subString(sql, " ", true, true).first;
-    sql += " `tb_AvatarBaseInfo` where account=?;";
+    std::string sql = replaceString(AvatarPreview().getDBSelectPure(), "tb_AvatarPreview", "tb_AvatarBaseInfo", false);
+    sql += " where account=?;";
 
     DBQuery q(sql);
     q << req.account;

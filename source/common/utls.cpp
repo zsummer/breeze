@@ -362,6 +362,35 @@ std::pair<std::string,std::string> subString(const std::string & text, const std
     return std::make_pair(text.substr(0, pos - 0), text.substr(pos+deli.length()));
 }
 
+std::string replaceString(const std::string & text, const std::string & pattern, const std::string &rep, bool once)
+{
+    std::string ret;
+    size_t pos = 0;
+    do 
+    {
+        size_t next = text.find(pattern, pos);
+        if (next != std::string::npos)
+        {
+            ret += text.substr(pos, next - pos);
+            ret += rep;
+            pos = next + pattern.length();
+            if (once)
+            {
+                ret += text.substr(pos);
+                pos = std::string::npos;
+            }
+        }
+        else
+        {
+            ret += text.substr(pos);
+            pos = std::string::npos;
+        }
+
+    } while (pos != std::string::npos);
+    return ret;
+}
+
+
 
 std::string toUpperString(std::string  org)
 {
