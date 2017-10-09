@@ -112,25 +112,23 @@ lutToString(char *buf, size_t len, size_t base, size_t fixed0, size_t &offset, s
 }
 
 
-inline void floatToString(char *buf, size_t len, size_t frac, size_t &offset1, size_t & outLen1, size_t &offset2, size_t &outLen2, double t)
+inline void floatToString(char *buf, size_t len, size_t frac, size_t &offset, size_t & outLen, double t)
 {
-    offset2 = 0;
-    outLen2 = 0;
 
     switch (std::fpclassify(t)) 
     {
     case FP_INFINITE:
     {
         memcpy(buf, "inf", 4);
-        offset1 = 0;
-        outLen1 = 3;
+        offset = 0;
+        outLen = 3;
         return ;
     }
     case FP_NAN:
     {
         memcpy(buf, "nan", 4);
-        offset1 = 0;
-        outLen1 = 3;
+        offset = 0;
+        outLen = 3;
         return;
     }
     case FP_NORMAL:
@@ -140,15 +138,14 @@ inline void floatToString(char *buf, size_t len, size_t frac, size_t &offset1, s
     {
         buf[0] = '0';
         buf[1] = '\0';
-        offset1 = 0;
-        outLen1 = 1;
+        offset = 0;
+        outLen = 1;
         return;
     }
     default:
         memcpy(buf, "undefined", sizeof("undefined"));
-        offset1 = 0;
-        outLen1 = sizeof("undefined") - 1;
-        offset1 = 0;
+        offset = 0;
+        outLen = sizeof("undefined") - 1;
         return;
     }
 
@@ -159,9 +156,9 @@ inline void floatToString(char *buf, size_t len, size_t frac, size_t &offset1, s
         double f;
         double x;
         f = std::modf(t, &x);
-        lutToString<long long>(buf, len / 2, 10, 0, offset1, outLen1, (long long)x);
+        lutToString<long long>(buf, len / 2, 10, 0, offset, outLen, (long long)x);
         frac = frac > 16 ? 16 : frac;
-        frac = frac > outLen1 ? frac - outLen1 : 0;
+        frac = frac > outLen ? frac - outLen : 0;
         if (frac > 0)
         {
             f = std::fabs(f);
@@ -195,27 +192,38 @@ inline void floatToString(char *buf, size_t len, size_t frac, size_t &offset1, s
                 f *= pw;
             }
             f += 0.5;
-            char * begin = buf + offset1 + outLen1 + 1;
-            lutToString<long long>(begin, len / 2, 10, frac, offset2, outLen2, (long long)f);
-            offset2 += offset1 + outLen1 + 1;
-            begin = buf + offset2;
-            char * end = begin + outLen2;
-            while (begin != end && *(end -1) == '0')
+            long long llf = (long long)f;
+            if (llf > 0)
             {
-                --end;
+                char * begin = buf + offset;
+                char * end = buf + offset + outLen;
+                *end++ = '.';
+
+                lutToString<long long>(end, len / 2 - 1, 10, frac, offset, outLen, llf);
+
+                char * fbegin = end + offset;
+                char * fend = fbegin + outLen;
+                while (fbegin != fend && *(fend - 1) == '0')
+                {
+                    --fend;
+                }
+
+                memmove(end, fbegin, fend - fbegin);
+                offset = begin - buf;
+                outLen = (fend - fbegin) + end - begin;
             }
-            outLen2 = (size_t)(end - begin);
+
         }
     }
     else
     {
         char * ret = gcvt(t, (int)frac, buf);
-        offset1 = ret - buf;
-        outLen1 = strlen(ret);
-        if (outLen1 > 0 && buf[offset1 + outLen1 - 1] == '.')
+        offset = ret - buf;
+        outLen = strlen(ret);
+        if (outLen > 0 && buf[offset + outLen - 1] == '.')
         {
-            buf[offset1 + outLen1 - 1] = '\0';
-            outLen1--;
+            buf[offset + outLen - 1] = '\0';
+            outLen--;
         }
     }
 }
@@ -254,19 +262,10 @@ typename std::enable_if<std::is_floating_point<T>::value, std::string>::type
 toString(const T &t)
 {
     char buf[80];
-    size_t offset1 = 0;
-    size_t outLen1 = 0;
-    size_t offset2 = 0;
-    size_t outLen2 = 0;
-    floatToString(buf, 80, sizeof(T) == 4 ? 6 : 15, offset1, outLen1, offset2, outLen2, (double)t);
-    std::string ret(buf + offset1, outLen1);
-    if (outLen2 > 0)
-    {
-        ret += '.';
-        ret.append(buf + offset2, outLen2);
-    }
-
-    return ret;
+    size_t offset = 0;
+    size_t outLen = 0;
+    floatToString(buf, 80, sizeof(T) == 4 ? 6 : 15, offset, outLen, (double)t);
+    return std::string(buf + offset, outLen);
 }
 
 

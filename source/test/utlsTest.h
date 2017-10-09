@@ -216,6 +216,7 @@ inline int checkString()
         std::string snum = "-844674407";
         int inum = -844674407;
         std::string sfloat = "-844674407.625";
+        double ffloat = -844674407.625;
         for (int i = 0; i < 10 * 10000; i++)
         {
             if (toString(fromString<int>(snum)) != snum)
@@ -228,9 +229,26 @@ inline int checkString()
         now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
+            if (true)
+            {
+                char buf[100];
+                sprintf(buf, "%d", atoi(snum.c_str()));
+                if (std::string(buf) != snum)
+                {
+                    return STRING_BEGIN + 202;
+                }
+            }
+        }
+        LOGD("old toString(fromString) int used time=" << (getFloatNowTime() - now));
+
+
+
+        now = getFloatNowTime();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
             if (toString(fromString<double>(sfloat)) != sfloat)
             {
-                return STRING_BEGIN + 202;
+                return STRING_BEGIN + 203;
             }
         }
         LOGD("fast toString(fromString) double1 used time=" << (getFloatNowTime() - now));
@@ -238,12 +256,72 @@ inline int checkString()
         now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
         {
+            if (true)
+            {
+                char buf[100];
+                sprintf(buf, "%.15g", atof(sfloat.c_str()));
+                if (std::string(buf) != sfloat)
+                {
+                    return STRING_BEGIN + 204;
+                }
+            }
+        }
+        LOGD("old toString(fromString) double1 used time=" << (getFloatNowTime() - now));
+
+
+        now = getFloatNowTime();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
             if (toString(fromString<double>(snum)) != snum)
             {
-                return STRING_BEGIN + 203;
+                return STRING_BEGIN + 205;
             }
         }
         LOGD("fast toString(fromString) double2 used time=" << (getFloatNowTime() - now));
+
+        now = getFloatNowTime();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            if (true)
+            {
+                char buf[100];
+                sprintf(buf, "%.15g", atof(snum.c_str()));
+                if (std::string(buf) != snum)
+                {
+                    return STRING_BEGIN + 206;
+                }
+            }
+        }
+        LOGD("old toString(fromString) double2 used time=" << (getFloatNowTime() - now));
+
+
+
+        now = getFloatNowTime();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            if (toString(ffloat) != sfloat)
+            {
+                return STRING_BEGIN + 207;
+            }
+        }
+        LOGD("fast toString double3 used time=" << (getFloatNowTime() - now));
+
+        now = getFloatNowTime();
+        for (int i = 0; i < 10 * 10000; i++)
+        {
+            if (true)
+            {
+                char buf[100];
+                sprintf(buf, "%.15g", ffloat);
+                if (std::string(buf) != sfloat)
+                {
+                    return STRING_BEGIN + 208;
+                }
+            }
+        }
+        LOGD("old toString double3 used time=" << (getFloatNowTime() - now));
+
+
 
         now = getFloatNowTime();
         for (int i = 0; i < 10 * 10000; i++)
@@ -254,7 +332,7 @@ inline int checkString()
             lutToString(buf, 50, 10, 0, offset, len, inum);
             if (strcmp(buf+offset, snum.c_str()) != 0)
             {
-                return STRING_BEGIN + 204;
+                return STRING_BEGIN + 209;
             }
         }
         LOGD("fast toString int used time=" << (getFloatNowTime() - now));
@@ -266,54 +344,10 @@ inline int checkString()
             if (true)
             {
                 char buf[100];
-                sprintf(buf, "%d", atoi(snum.c_str()));
-                if (std::string(buf) != snum)
-                {
-                    return STRING_BEGIN + 205;
-                }
-            }
-        }
-        LOGD("old toString(fromString) int used time=" << (getFloatNowTime() - now));
-        now = getFloatNowTime();
-        for (int i = 0; i < 10 * 10000; i++)
-        {
-            if (true)
-            {
-                char buf[100];
-                sprintf(buf, "%.15g", atof(sfloat.c_str()));
-                if (std::string(buf) != sfloat)
-                {
-                    return STRING_BEGIN + 206;
-                }
-            }
-        }
-        LOGD("old toString(fromString) double1 used time=" << (getFloatNowTime() - now));
-
-        now = getFloatNowTime();
-        for (int i = 0; i < 10 * 10000; i++)
-        {
-            if (true)
-            {
-                char buf[100];
-                sprintf(buf, "%.15g", atof(snum.c_str()));
-                if (std::string(buf) != snum)
-                {
-                    return STRING_BEGIN + 207;
-                }
-            }
-        }
-        LOGD("old toString(fromString) double2 used time=" << (getFloatNowTime() - now));
-
-        now = getFloatNowTime();
-        for (int i = 0; i < 10 * 10000; i++)
-        {
-            if (true)
-            {
-                char buf[100];
                 sprintf(buf, "%d", inum);
                 if (strcmp(buf, snum.c_str()) != 0)
                 {
-                    return STRING_BEGIN + 208;
+                    return STRING_BEGIN + 210;
                 }
             }
         }
