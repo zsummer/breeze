@@ -191,7 +191,6 @@ inline void floatToString(char *buf, size_t len, size_t frac, size_t &offset, si
                 }
                 f *= pw;
             }
-            f += 0.5;
             long long llf = (long long)f;
             if (llf > 0)
             {
