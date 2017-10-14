@@ -42,130 +42,115 @@ using namespace zsummer::proto4z;
 using namespace zsummer::network;
 
 
+static int logimpl(lua_State * L, int level, bool isFileLine)
+{
+    if (zsummer::log4z::ILog4zManager::getRef().prePushLog(LOG4Z_MAIN_LOGGER_ID, level))
+    {
+
+        zsummer::log4z::LogData * __pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(LOG4Z_MAIN_LOGGER_ID, level);
+        zsummer::log4z::Log4zStream __ss(__pLog->_content + __pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - __pLog->_contentLen);
+        int top = lua_gettop(L);
+        for (int i=1; i <= top; i++)
+        {
+            switch (lua_type(L, i))
+            {
+            case LUA_TNIL:
+            {
+                __ss.writeString("#nil#", sizeof("#nil#")-1);
+            }
+            break;
+            case LUA_TBOOLEAN:
+            {
+                int b = lua_toboolean(L, i);
+                __ss << (b != 0);
+            }
+            break;
+            case LUA_TLIGHTUSERDATA:
+            {
+                __ss.writeString("#lightuserdata#", sizeof("#lightuserdata#") - 1);
+            }
+            break;
+            case LUA_TNUMBER:
+            {
+                if (lua_isinteger(L, i))
+                {
+                    lua_Integer n = luaL_checkinteger(L, i);
+                    __ss << n;
+                }
+                else
+                {
+                    double f = luaL_optnumber(L, i, 0.0);
+                    __ss << f;
+                }
+            }
+            break;
+            case LUA_TSTRING:
+            {
+                size_t len = 0;
+                const char * str = luaL_checklstring(L, i, &len);
+                __ss.writeString(str, len);
+            }
+            break;
+            case LUA_TTABLE:
+            {
+                __ss.writeString("#table#", sizeof("#table#") - 1);
+            }
+            break;
+            case LUA_TFUNCTION:
+            {
+                __ss.writeString("#function#", sizeof("#function#") - 1);
+            }
+            break;
+            case LUA_TUSERDATA:
+            {
+                __ss.writeString("#userdata#", sizeof("#userdata#") - 1);
+            }
+            break;
+            case LUA_TTHREAD:
+            {
+                __ss.writeString("#thread#", sizeof("#thread#") - 1);
+            }
+            break;
+
+            default:
+                break;
+            }
+        }
+        __pLog->_contentLen += __ss.getCurrentLen();
+        if (isFileLine)
+        {
+            lua_Debug ld = { 0 };
+            lua_getstack(L, 1, &ld);
+            lua_getinfo(L, "lS", &ld);
+            zsummer::log4z::ILog4zManager::getPtr()->pushLog(__pLog, ld.source, ld.currentline);
+        }
+        else
+        {
+            zsummer::log4z::ILog4zManager::getPtr()->pushLog(__pLog, NULL, 0);
+        }
+
+    }
+    return 0;
+}
 
 
+static int logt(lua_State * L) { return logimpl(L, LOG_LEVEL_TRACE, true); }
+static int logd(lua_State * L) { return logimpl(L, LOG_LEVEL_DEBUG, true); }
+static int logi(lua_State * L) { return logimpl(L, LOG_LEVEL_INFO, true); }
+static int logw(lua_State * L) { return logimpl(L, LOG_LEVEL_WARN, true); }
+static int loge(lua_State * L) { return logimpl(L, LOG_LEVEL_ERROR, true); }
+static int logf(lua_State * L) { return logimpl(L, LOG_LEVEL_FATAL, true); }
+static int loga(lua_State * L) { return logimpl(L, LOG_LEVEL_ALARM, true); }
 
-static int logt(lua_State * L)
-{
-    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
-    {
-        lua_Debug ld = { 0 };
-        lua_getstack(L, 1, &ld);
-        lua_getinfo(L, "lS", &ld);
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_TRACE, ld.source, ld.currentline, log);
-    }
-    else
-    {
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_TRACE, NULL, 0, log);
-    }
+static int logtt(lua_State * L) { return logimpl(L, LOG_LEVEL_TRACE, false); }
+static int logdd(lua_State * L) { return logimpl(L, LOG_LEVEL_DEBUG, false); }
+static int logii(lua_State * L) { return logimpl(L, LOG_LEVEL_INFO, false); }
+static int logww(lua_State * L) { return logimpl(L, LOG_LEVEL_WARN, false); }
+static int logee(lua_State * L) { return logimpl(L, LOG_LEVEL_ERROR, false); }
+static int logff(lua_State * L) { return logimpl(L, LOG_LEVEL_FATAL, false); }
+static int logaa(lua_State * L) { return logimpl(L, LOG_LEVEL_ALARM, false); }
 
-    return 0;
-}
-static int logd(lua_State * L)
-{
-    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
-    {
-        lua_Debug ld = { 0 };
-        lua_getstack(L, 1, &ld);
-        lua_getinfo(L, "lS", &ld);
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_DEBUG, ld.source, ld.currentline, log);
-    }
-    else
-    {
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_DEBUG, NULL, 0, log);
-    }
-    return 0;
-}
-static int logi(lua_State * L)
-{
-    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
-    {
-        lua_Debug ld = { 0 };
-        lua_getstack(L, 1, &ld);
-        lua_getinfo(L, "lS", &ld);
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_INFO, ld.source, ld.currentline, log);
-    }
-    else
-    {
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_INFO, NULL, 0, log);
-    }
-    return 0;
-}
-static int logw(lua_State * L)
-{
-    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
-    {
-        lua_Debug ld = { 0 };
-        lua_getstack(L, 1, &ld);
-        lua_getinfo(L, "lS", &ld);
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN, ld.source, ld.currentline, log);
-    }
-    else
-    {
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN, NULL, 0, log);
-    }
-    return 0;
-}
-static int loge(lua_State * L)
-{
-    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
-    {
-        lua_Debug ld = { 0 };
-        lua_getstack(L, 1, &ld);
-        lua_getinfo(L, "lS", &ld);
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ERROR, ld.source, ld.currentline, log);
-    }
-    else
-    {
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ERROR, NULL, 0, log);
-    }
-    return 0;
-}
-static int logf(lua_State * L)
-{
-    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
-    {
-        lua_Debug ld = { 0 };
-        lua_getstack(L, 1, &ld);
-        lua_getinfo(L, "lS", &ld);
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_FATAL, ld.source, ld.currentline, log);
-    }
-    else
-    {
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_FATAL, NULL, 0, log);
-    }
 
-    return 0;
-}
-static int loga(lua_State * L)
-{
-    if (lua_isnil(L, 2) || lua_isnone(L, 2) || lua_toboolean(L, 2))
-    {
-        lua_Debug ld = { 0 };
-        lua_getstack(L, 1, &ld);
-        lua_getinfo(L, "lS", &ld);
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ALARM, ld.source, ld.currentline, log);
-    }
-    else
-    {
-        const char * log = luaL_optstring(L, 1, "");
-        LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ALARM, NULL, 0, log);
-    }
-    return 0;
-}
 
 static int pcall_error(lua_State *L) 
 {
@@ -627,8 +612,8 @@ static int _status(lua_State * L)
 
 static int _steadyTime(lua_State * L)
 {
-    unsigned int now = (unsigned int)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    lua_pushinteger(L, now);
+    double now = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
+    lua_pushnumber(L, now);
     return 1;
 }
 
@@ -641,6 +626,14 @@ static luaL_Reg summer[] = {
     { "loge", loge },
     { "logf", logf },
     { "loga", loga },
+
+    { "logdd", logdd },
+    { "logii", logii },
+    { "logtt", logtt },
+    { "logww", logww },
+    { "logee", logee },
+    { "logff", logff },
+    { "logaa", logaa },
 
     { "start", start }, //start network
     { "stop", stop }, //stop network
@@ -661,7 +654,7 @@ static luaL_Reg summer[] = {
     { "kick", kick }, // kick session. 
     { "post", _post }, // kick session. 
     { "status", _status }, // get session status. 
-    { "now", _steadyTime }, // get now tick. 
+    { "now", _steadyTime }, // get now second. 
 
     { NULL, NULL }
 };

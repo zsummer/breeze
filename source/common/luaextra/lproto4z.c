@@ -161,19 +161,19 @@ static int pack(lua_State * L)
         if (tp[2] == '8' && tp[3] == 0)
         {
             if (lua_isnil(L, 1)) printPackError(L, tp, desc);
-            unsigned char v = (unsigned char)(unsigned LUA_INTEGER)luaL_optinteger(L, 1, 0);
+            unsigned char v = (unsigned char)(unsigned long long)luaL_optinteger(L, 1, 0);
             lua_pushlstring(L, (const char *)&v, 1);
         }
         else if (tp[2] == '1' && tp[3] == '6' && tp[4] == 0)
         {
             if (lua_isnil(L, 1)) printPackError(L, tp, desc);
-            unsigned short v = (unsigned short)(unsigned LUA_INTEGER)luaL_optinteger(L, 1, 0);
+            unsigned short v = (unsigned short)(unsigned long long)luaL_optinteger(L, 1, 0);
             lua_pushlstring(L, (const char *)&v, 2);
         }
         else if (tp[2] == '3' && tp[3] == '2' && tp[4] == 0)
         {
             if (lua_isnil(L, 1)) printPackError(L, tp, desc);
-            unsigned int v = (unsigned int)(unsigned LUA_INTEGER)luaL_optinteger(L, 1, 0);
+            unsigned int v = (unsigned int)(unsigned long long)luaL_optinteger(L, 1, 0);
             lua_pushlstring(L, (const char *)&v, 4);
         }
         else if (tp[2] == '6' && tp[3] == '4' && tp[4] == 0)
@@ -182,11 +182,11 @@ static int pack(lua_State * L)
             unsigned long long v = 0;
             if (lua_isinteger(L, 1))
             {
-                v = (unsigned long long)(unsigned LUA_INTEGER)luaL_optinteger(L, 1, 0);
+                v = (unsigned long long)luaL_optinteger(L, 1, 0);
             }
             else
             {
-                v = (unsigned long long)(unsigned LUA_INTEGER)luaL_optnumber(L, 1, 0);
+                v = (unsigned long long)luaL_optnumber(L, 1, 0);
             }
             lua_pushlstring(L, (char*)&v, 8);
         }
