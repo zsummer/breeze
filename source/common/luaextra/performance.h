@@ -88,7 +88,7 @@ extern "C"
 #include <dispatch/dispatch.h>
 #include <libproc.h>
 #endif
-
+#include <log4z/log4z.h>
 
 uint64_t MurmurHash64A(const void * key, uint64_t len, uint64_t seed);
 void luaopen_performence(lua_State * L);
@@ -145,7 +145,14 @@ namespace zsummer
             {
                 if (_offset >= LUA_STACK_DEPTH)
                 {
-                    throw std::runtime_error("LuaStack stack overflow");
+                    LOGE("WARNING DUMP STACK BEGIN (LuaStack stack overflow). ");
+                    for (size_t i=_offset; i> 0; i--)
+                    {
+                        LOGD("STACK[" << _offset - i << "] " << zsummer::log4z::Log4zString(_stack[i - 1].buf, _stack[i - 1].len));
+                    }
+                    LOGE("WARNING DUMP STACK END (LuaStack stack overflow). ");
+                    LOGE("WARNING stack clean.");
+                    _offset = 0;
                 }
                 return _stack[_offset++];
             }

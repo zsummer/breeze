@@ -48,20 +48,17 @@ static int newindex(lua_State * L)
     lua_pop(L, 1);
     const char * key = luaL_checkstring(L, 2);
     const char * v = luaL_typename(L, 3);
-    std::stringstream ss;
-    ss << "catch one operation that it's set a global value. key=" << key << ", type(v)=" << v << ", is it correct ?";
-    if (lua_getglobal(L, "summer") == LUA_TTABLE && lua_getfield(L, -1, "logw") == LUA_TFUNCTION)
-    {
-        lua_pushstring(L, ss.str().c_str());
-        lua_pcall(L, 1, 0, 0);
-    }
-    else if (lua_getglobal(L, "print") == LUA_TFUNCTION)
-    {
-        lua_pushstring(L, ss.str().c_str());
-        lua_pcall(L, 1, 0, 0);
-    }
-    lua_pop(L, lua_gettop(L) - 3);
-    
+
+    luaL_traceback(L, L, NULL, 0);
+    const char * stack = luaL_checkstring(L, -1);
+
+    zsummer::log4z::LogData * __pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_WARN);
+    zsummer::log4z::Log4zStream __ss(__pLog->_content + __pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - __pLog->_contentLen);
+    __ss << "catch one operation that it's set a global value. key=" << key << ", type(v)=" << v
+        << ", is it correct ? \n" << stack;
+    __pLog->_contentLen += __ss.getCurrentLen();
+    zsummer::log4z::ILog4zManager::getPtr()->pushLog(__pLog, NULL, 0);
+
     return 0;
 }
 
@@ -81,15 +78,15 @@ void luaopen_performence(lua_State * L)
 
 void hook_run_fn(lua_State *L, lua_Debug *ar)
 {
+    if (ar->event != LUA_HOOKRET && ar->event != LUA_HOOKCALL )
+    {
+        return;
+    }
     auto & stack = __perf._stack.push();
     stack.len = 0;
     // 获取Lua调用信息
     lua_getinfo(L, "Sn", ar);
-    if (!ar->name)
-    {
-        __perf._stack.pop();
-        return;
-    }
+
     if (ar->what)
     {
         size_t len = strlen(ar->what);
@@ -121,11 +118,6 @@ void hook_run_fn(lua_State *L, lua_Debug *ar)
     if (ar->name)
     {
         size_t len = strlen(ar->name);
-        if (len == 0)
-        {
-            __perf._stack.pop();
-            return;
-        }
         if (len > 0 && len + stack.len < 300)
         {
             memcpy(stack.buf + stack.len, ar->name, len);
@@ -159,7 +151,17 @@ void hook_run_fn(lua_State *L, lua_Debug *ar)
 
     if (stack.len == 0)
     {
+        if (ar->event == LUA_HOOKRET)
+        {
+            LOGE("hook_run_fn when event LUA_HOOKRET have not function name. stack size=" << __perf._stack._offset );
+        }
         __perf._stack.pop();
+
+        if (__perf._stack._offset >= 1)
+        {
+            LOGE("hook_run_fn when event LUA_HOOKRET have not function name. stack size=" << __perf._stack._offset 
+                << ",  parrent function:" << zsummer::log4z::Log4zString(__perf._stack.back().buf, __perf._stack.back().len));
+        }
         return;
     }
     if (PERF_MEM)
@@ -168,13 +170,8 @@ void hook_run_fn(lua_State *L, lua_Debug *ar)
     }
     stack.hash = MurmurHash64A(stack.buf, stack.len, (uint64_t)0);
     stack.sec = getSteadyNow();
-    if (ar->event == LUA_HOOKCALL)
+    if (ar->event == LUA_HOOKRET)
     {
-        
-    }
-    else if (ar->event == LUA_HOOKRET)
-    {
-        //lua_gc(L, LUA_GCCOLLECT, 0);
         for (size_t i = __perf._stack._offset - 1; i > 0; i--) //back is current.  
         {
             auto & param = __perf._stack._stack[i - 1];
@@ -193,15 +190,30 @@ void hook_run_fn(lua_State *L, lua_Debug *ar)
             stack.mem -= param.mem;
             stack.sec -= param.sec;
             __perf.call(stack);
-            __perf._stack._offset = i; //not i-1 that next code will pop(1)
-            break;
+            __perf._stack._offset = i - 1; 
+            if (__perf.expire(50))
+            {
+                __perf.dump(100);
+            }
+            return;
         }
-        __perf._stack.pop(); //pop stack pop(1)
-
-        if (__perf.expire(50))
+        if (__perf._stack._offset >= 2)
         {
-            __perf.dump(100);
+            auto & parrent = __perf._stack._stack[__perf._stack._offset - 2];
+            LOGW("hook_run_fn when return not found call function. stack size=" << __perf._stack._offset 
+                <<",  current function:" << zsummer::log4z::Log4zString(stack.buf, stack.len));
+            LOGW("hook_run_fn when return not found call function. stack size=" << __perf._stack._offset 
+                << ",  parrent function:" << zsummer::log4z::Log4zString(parrent.buf, parrent.len));
+            stack.mem -= parrent.mem;
+            stack.sec -= parrent.sec;
+            parrent.mem = stack.mem;
+            parrent.sec = stack.sec;
+            __perf.call(parrent);
+            __perf._stack._offset -= 2;
+            return;
         }
+        LOGE("hook_run_fn when return not found call function. stack size=" << __perf._stack._offset << ",  current function:" << zsummer::log4z::Log4zString(stack.buf, stack.len));
+        __perf._stack.pop();
     }
 }
 
@@ -412,6 +424,7 @@ void zsummer::luaperf::Performence::dump(int maxCount)
 {
     std::string head = "function name |  call count |  max second | avg second |  total second |  function memory (M)  \n" 
                         "-- | -- | -- | -- | -- | --  \n";
+    head +=  "stack  | stack size=" + toString(_stack._offset) + " | total funcs=" + toString(_collected.size()) + " | | |  \n ";
     using PerfIter = std::unordered_map<uint64_t, Collect>::iterator;
     std::vector<PerfIter> orderList;
     for (auto iter = _collected.begin(); iter != _collected.end(); iter++)
