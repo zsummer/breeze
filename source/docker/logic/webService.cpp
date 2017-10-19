@@ -103,7 +103,7 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
     if (compareStringIgnCase(notice.method, "get") || compareStringIgnCase(notice.method, "post"))
     {
         std::string uri;
-        std::vector<std::pair<std::string,std::string>> params;
+        _Params params;
         if (compareStringIgnCase(notice.method, "get"))
         {
             uri = urlDecode(notice.methodLine);
@@ -117,15 +117,10 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
                 uri = urlDecode(notice.body);;
             }
         }
-        auto pr = splitPairString<std::string,std::string>(uri, "?");
-        uri = pr.first;
-        auto spts = splitString<std::string>(pr.second, "&", "");
-        for (auto & pm : spts)
-        {
-            pr = splitPairString<std::string, std::string>(pm, "=");
-            params.push_back(pr);
+        auto pr = splitStringTuple<std::string,std::string>(uri, '?');
+        uri = std::get<0>(pr);
+        params = splitStringTupleDict<0, std::string, std::string>(std::get<1>(pr), '&', '=');
 
-        }
 
         if (compareStringIgnCase(uri, "/getonline"))
         {
@@ -165,7 +160,7 @@ void WebService::onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs)
 
     
 }
-void WebService::getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
+void WebService::getonline(DockerID dockerID, SessionID clientID, const _Params &params)
 {
     responseSuccess(dockerID, clientID, R"({"result":"success","online":)" + toString(Docker::getRef().peekService(STAvatar).size()) + "}");
 }
@@ -180,7 +175,7 @@ void WebService::onReloadState(Tracing trace, ReadStream &rs)
     std::get<1>(val) = f.used;
 }
 
-void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
+void WebService::KickClients(DockerID dockerID, SessionID clientID, const _Params &params)
 {
     KickClientsNotice notice;
 
@@ -188,20 +183,20 @@ void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::v
     {
         if (compareStringIgnCase(kv.first, "isAll"))
         {
-            notice.isAll = fromString<ui16>(kv.second);
+            notice.isAll = fromString<ui16>(std::get<1>(kv.second));
         }
         else if (compareStringIgnCase(kv.first, "avatars"))
         {
-            notice.avatars = splitString<ui64>(kv.second, ",", " ");
+            notice.avatars = splitStringSimpleArray<ui64>(std::get<1>(kv.second), ',');
 
         }
         else if (compareStringIgnCase(kv.first, "avatars"))
         {
-            notice.accounts = splitString<std::string>(kv.second, ",", " ");
+            notice.accounts = splitStringSimpleArray<std::string>(std::get<1>(kv.second), ',');
         }
         else if (compareStringIgnCase(kv.first, "forbidDuration"))
         {
-            notice.forbidDuration = fromString<ui64>(kv.second);
+            notice.forbidDuration = fromString<ui64>(std::get<1>(kv.second));
         }
     }
 
@@ -215,7 +210,7 @@ void WebService::KickClients(DockerID dockerID, SessionID clientID, const std::v
     toService(STAvatarMgr, notice);
 }
 
-void WebService::reload(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
+void WebService::reload(DockerID dockerID, SessionID clientID, const _Params &params)
 {
     double now = (double)getNowTime();
     auto makeState = [this, now]()
@@ -270,7 +265,7 @@ void WebService::reload(DockerID dockerID, SessionID clientID, const std::vector
 
 
 
-void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params)
+void WebService::offlinechat(DockerID dockerID, SessionID clientID, const _Params &params)
 {
     ChatReq req;
     req.channelID = CC_PRIVATE;
@@ -278,11 +273,11 @@ void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::v
     {
         if (pm.first == "serviceID")
         {
-            req.targetID = fromString<ui64>(pm.second, InvalidServiceID);
+            req.targetID = fromString<ui64>(std::get<1>(pm.second));
         }
         if (pm.first == "msg")
         {
-            req.msg = pm.second;
+            req.msg = std::get<1>(pm.second);
         }
     }
     if (req.targetID != InvalidServiceID)
@@ -293,7 +288,7 @@ void WebService::offlinechat(DockerID dockerID, SessionID clientID, const std::v
         offline.timestamp = getNowTime();
         WriteStream ws(ChatReq::getProtoID());
         ws << req;
-        offline.streamBlob = ws.pickStream();
+        offline.streamBlob.assign(ws.getStream(), ws.getStreamLen());
         toService(STOfflineMgr, offline);
         responseSuccess(dockerID, clientID, R"({"result":"success"})");
 

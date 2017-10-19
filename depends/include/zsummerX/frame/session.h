@@ -61,7 +61,7 @@ namespace zsummer
         private:
 
             bool doRecv();
-            void onRecv(zsummer::network::NetErrorCode ec, int received);
+            unsigned int onRecv(zsummer::network::NetErrorCode ec, int received);
             void onSend(zsummer::network::NetErrorCode ec, int sent);
             void onConnected(zsummer::network::NetErrorCode ec);
             void onPulse();
@@ -78,14 +78,16 @@ namespace zsummer
             inline void setRemotePort(unsigned short remotePort){ _remotePort = remotePort; }
             inline std::size_t getSendQueSize(){ return _sendque.size(); }
             inline zsummer::network::NetErrorCode getLastError(){ return _lastRecvError; }
-            TupleParam getUserParam(size_t index);
-            double getUserParamDouble(size_t index);
-            unsigned long long getUserParamNumber(size_t index);
-            std::string getUserParamString(size_t index);
-            void setUserParam(size_t index, const TupleParam &tp);
-            void setUserParamDouble(size_t index, double d);
-            void setUserParam(size_t index, unsigned long long ull);
-            void setUserParam(size_t index, const std::string & str);
+
+            inline const TupleParam& getUserParam(size_t index) { return peekTupleParamImpl(index); }
+            inline void setUserParam(size_t index, const TupleParam &tp) { autoTupleParamImpl(index) = tp; }
+            inline bool isUserParamInited(size_t index) { return std::get<TupleParamInited>(peekTupleParamImpl(index)); }
+            inline double getUserParamNumber(size_t index) { return std::get<TupleParamNumber>(peekTupleParamImpl(index)); }
+            inline void setUserParamNumber(size_t index, double f) { std::get<TupleParamNumber>(autoTupleParamImpl(index)) = f; }
+            inline unsigned long long getUserParamInteger(size_t index) { return std::get<TupleParamInteger>(peekTupleParamImpl(index)); }
+            inline void setUserParamInteger(size_t index, unsigned long long ull) { std::get<TupleParamInteger>(autoTupleParamImpl(index)) = ull; }
+            inline const std::string & getUserParamString(size_t index) { return std::get<TupleParamString>(peekTupleParamImpl(index)); }
+            inline void setUserParamString(size_t index, const std::string & str) { std::get<TupleParamString>(autoTupleParamImpl(index)) = str; }
 
         private:
             SessionOptions _options;
@@ -106,7 +108,7 @@ namespace zsummer
             unsigned int _sendingLen = 0;
 
             //! send data queue
-            std::queue<SessionBlock *> _sendque;
+            std::deque<SessionBlock *> _sendque;
             unsigned long long _reconnects = 0;
 
             //! rc encrypt
@@ -128,7 +130,9 @@ namespace zsummer
             
             //! user param
             std::vector<TupleParam> _param;
-            
+            TupleParam & autoTupleParamImpl(size_t index);
+            const TupleParam & peekTupleParamImpl(size_t index) const;
+
         };
         using TcpSessionPtr = std::shared_ptr<TcpSession>;
     }

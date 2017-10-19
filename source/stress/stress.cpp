@@ -84,6 +84,8 @@ int main(int argc, char* argv[])
         lua_setglobal(L, "print");
         lua_pop(L, 1);
 
+        //luaopen_performence(L);
+
         status = luaL_dostring(L, R"(package.path = package.path .. ";" .. "../?.lua" .. ";" .. "../script/stress/?.lua" .. ";" .. "../../protocol/lua/?.lua" )");
         if (status && !lua_isnil(L, -1))
         {

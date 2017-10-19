@@ -20,6 +20,8 @@
     <ClInclude Include="dbDict.h" />
     <ClInclude Include="genID.h" />
     <ClInclude Include="defined.h" />
+    <ClInclude Include="luaextra\performance.h" />
+    <ClInclude Include="luaextra\summer.h" />
     <ClInclude Include="lua\fpconv.h" />
     <ClInclude Include="lua\lapi.h" />
     <ClInclude Include="lua\lauxlib.h" />
@@ -49,7 +51,6 @@
     <ClInclude Include="lua\lvm.h" />
     <ClInclude Include="lua\lzio.h" />
     <ClInclude Include="lua\strbuf.h" />
-    <ClInclude Include="lua\summer.h" />
     <ClInclude Include="md5\md5.h" />
     <ClInclude Include="rvo2\Agent.h" />
     <ClInclude Include="rvo2\Definitions.h" />
@@ -68,6 +69,9 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dbAsync.cpp" />
     <ClCompile Include="dbDict.cpp" />
+    <ClCompile Include="luaextra\lproto4z.c" />
+    <ClCompile Include="luaextra\performance.cpp" />
+    <ClCompile Include="luaextra\summer.cpp" />
     <ClCompile Include="lua\fpconv.c" />
     <ClCompile Include="lua\lapi.c" />
     <ClCompile Include="lua\lauxlib.c" />
@@ -92,7 +96,6 @@
     <ClCompile Include="lua\lopcodes.c" />
     <ClCompile Include="lua\loslib.c" />
     <ClCompile Include="lua\lparser.c" />
-    <ClCompile Include="lua\lproto4z.c" />
     <ClCompile Include="lua\lstate.c" />
     <ClCompile Include="lua\lstring.c" />
     <ClCompile Include="lua\lstrlib.c" />
@@ -105,7 +108,6 @@
     <ClCompile Include="lua\lvm.c" />
     <ClCompile Include="lua\lzio.c" />
     <ClCompile Include="lua\strbuf.c" />
-    <ClCompile Include="lua\summer.cpp" />
     <ClCompile Include="md5\md5.cpp" />
     <ClCompile Include="rvo2\Agent.cpp" />
     <ClCompile Include="rvo2\KdTree.cpp" />

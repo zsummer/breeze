@@ -179,7 +179,7 @@ void Scene::broadcast(const MSG &msg, ServiceID without, bool withScript)
         }
         if (withScript)
         {
-            _script->protoSync(MSG::getProtoName(), ws.pickStream());
+            _script->protoSync(MSG::getProtoName(), ws.getStream(), ws.getStreamLen());
             return;
         }
 

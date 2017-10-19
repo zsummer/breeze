@@ -180,6 +180,7 @@ bool SceneMgr::startClientListen()
     }
     auto &options = SessionManager::getRef().getAccepterOptions(_clientListen);
     options._maxSessions = 1000;
+    options._sessionOptions._floodSendOptimize = false;
     options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
     {
         SceneClientPulse pulse;
@@ -216,9 +217,9 @@ bool SceneMgr::startWorldConnect()
     options._sessionPulseInterval = (unsigned int)(ServerPulseInterval * 1000);
     options._onSessionPulse = [](TcpSessionPtr session)
     {
-        if (getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0  )
+        if (getFloatSteadyNowTime() - session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME) > ServerPulseInterval *3.0  )
         {
-            LOGE("SceneMgr check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME));
+            LOGE("SceneMgr check session last active timeout. diff=" << getFloatSteadyNowTime() - session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME));
             session->close();
             return;
         }
@@ -273,8 +274,8 @@ bool SceneMgr::start()
 
 void SceneMgr::event_onWorldLinked(TcpSessionPtr session)
 {
-    session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
-    session->setUserParam(UPARAM_AREA_ID, InvalidAreaID);
+    session->setUserParamNumber(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+    session->setUserParamInteger(UPARAM_AREA_ID, InvalidAreaID);
     session->getOptions()._reconnects = 0;
     SceneKnock notice;
     notice.lineID = ServerConfig::getRef().getSceneConfig()._lineID;
@@ -302,7 +303,7 @@ void SceneMgr::event_onWorldMessage(TcpSessionPtr   session, const char * begin,
 
     if (rsShell.getProtoID() == ScenePulse::getProtoID())
     {
-        session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+        session->setUserParamNumber(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
     else if (rsShell.getProtoID() == SceneGroupAvatarInfo::getProtoID())
@@ -443,7 +444,7 @@ void SceneMgr::event_onClientLinked(TcpSessionPtr session)
 
 void SceneMgr::event_onClientPulse(TcpSessionPtr session)
 {
-    auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+    auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
     if (getFloatSteadyNowTime() - last > ClientPulseInterval * 3)
     {
         LOGW("client timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
@@ -461,10 +462,10 @@ void SceneMgr::event_onClientClosed(TcpSessionPtr session)
         return;
     }
 
-    if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
+    if (session->getUserParamInteger(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
     {
-        SceneID sceneID = (SceneID)session->getUserParamNumber(UPARAM_SCENE_ID);
-        ServiceID avatarID = (ServiceID)session->getUserParamNumber(UPARAM_AVATAR_ID);
+        SceneID sceneID = (SceneID)session->getUserParamInteger(UPARAM_SCENE_ID);
+        ServiceID avatarID = (ServiceID)session->getUserParamInteger(UPARAM_AVATAR_ID);
         auto scene = getActiveScene(sceneID);
         if (scene)
         {
@@ -478,9 +479,9 @@ void SceneMgr::event_onClientClosed(TcpSessionPtr session)
 void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, unsigned int len)
 {
     ReadStream rs(begin, len);
-    SessionStatus sessionStatus = (SessionStatus)session->getUserParamNumber(UPARAM_SESSION_STATUS);
-    ServiceID avatarID = (ServiceID)session->getUserParamNumber(UPARAM_AVATAR_ID);
-    SceneID sceneID = (SceneID)session->getUserParamNumber(UPARAM_SCENE_ID);
+    SessionStatus sessionStatus = (SessionStatus)session->getUserParamInteger(UPARAM_SESSION_STATUS);
+    ServiceID avatarID = (ServiceID)session->getUserParamInteger(UPARAM_AVATAR_ID);
+    SceneID sceneID = (SceneID)session->getUserParamInteger(UPARAM_SCENE_ID);
 
     if (sessionStatus == SSTATUS_UNKNOW && rs.getProtoID() == AttachSceneReq::getProtoID())
     {
@@ -503,9 +504,9 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
         auto founder = _tokens.find(req.avatarID);
         if (founder != _tokens.end() && founder->second.first == req.token  && _actives.find(req.sceneID) != _actives.end() )
         {
-            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
-            session->setUserParam(UPARAM_AVATAR_ID, req.avatarID);
-            session->setUserParam(UPARAM_SCENE_ID, req.sceneID);
+            session->setUserParamInteger(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
+            session->setUserParamInteger(UPARAM_AVATAR_ID, req.avatarID);
+            session->setUserParamInteger(UPARAM_SCENE_ID, req.sceneID);
             auto scene = _actives.find(req.sceneID)->second;
             sendViaSessionID(session->getSessionID(), AttachSceneResp(EC_SUCCESS, req.avatarID, req.sceneID));
             scene->playerAttach(req.avatarID, session->getSessionID());
@@ -519,7 +520,7 @@ void SceneMgr::event_onClientMessage(TcpSessionPtr session, const char * begin, 
     {
         if (rs.getProtoID() == SceneClientPulse::getProtoID())
         {
-            session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+            session->setUserParamNumber(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
             return;
         }
         auto foundScene = _actives.find(sceneID);

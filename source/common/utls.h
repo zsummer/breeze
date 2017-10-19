@@ -19,7 +19,7 @@
 
 
 
-
+#pragma once
 #ifndef _UTLS_H_
 #define _UTLS_H_
 
@@ -59,12 +59,14 @@
 #include <string.h>
 #include <signal.h>
 #include <time.h>
+#include <cstdint>
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <utility>
 #include <algorithm>
+#include <limits>
 
 #include <functional>
 #include <memory>
@@ -122,44 +124,28 @@ std::string genFileMD5(std::string filename);
 
 //string
 //==========================================================================
-template<class T>
-std::string toString(const T &t);
+/* template<class T>
+std::string toString(const T &t); */
+/*
 template<class To>
-typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t, To def);
-
-//both 1 left, 2right, 3 both
-std::string trim(const std::string &str, const std::string& ign = " ", int both = 3);
-std::string trim(std::string &&str, const std::string & ign, int both);
-
-template<class First, class Second>
-typename std::enable_if<std::is_integral<int>::value, std::pair<First, Second>>::type splitPairString(const std::string & str, const std::string & delimiter);
+typename To fromString(const std::string & t);*/
+inline void trimImpl(const char * buf, size_t len, const char ign, size_t & offset, size_t & outLen, int flag);
+inline void trimL(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 1); }
+inline void trimR(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 2); }
+inline void trim(const char * begin, size_t len, const char ign, size_t & offset, size_t & outLen) { return trimImpl(begin, len, ign, offset, outLen, 0); }
 
 
-template<class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, const std::string & ign);
-
-template<class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::vector<std::tuple<T ...> >>::type 
-splitArrayString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign);
-
-template<class Key, class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<Key, T ...> >>::type 
-splitDictString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign);
-
-
-template<class Value>
-typename std::enable_if<std::is_integral<int>::value, std::vector<Value>>::type
-splitString(std::string text, const std::string & deli, const std::string & ign);
 
 
 
 template<class Container>  //example: Container = std::vector<int>
-std::string mergeToString(const Container & contariner, const std::string& deli);
+std::string mergeToString(const Container & contariner, char deli);
 template<class T>  //example: Container = std::vector<int>
-void mergeToString(std::string & dstString, const std::string& deli, const T & t);
+void mergeToString(std::string & dstString, char deli, const T & t);
 
 // text, deli, store text in pair.first when not found deli, greedy search
 std::pair<std::string, std::string> subString(const std::string & text, const std::string & deli, bool preStore = true, bool isGreedy = false);
+std::string replaceString(const std::string & text, const std::string & pattern, const std::string &rep, bool once);
 
 
 

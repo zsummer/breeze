@@ -9,7 +9,7 @@
 * 
 * ===============================================================================
 * 
-* Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -76,8 +76,8 @@ namespace zsummer
             epoll_event _events[MAX_EPOLL_WAIT] = {};
             int        _sockpair[2] = {};
             EventData _eventData;
-            MessageStack _stackMessages;
-            std::mutex     _stackMessagesLock;
+            MessageStack _postQueue;
+            std::mutex     _postQueueLock;
             Timer _timer;
         };
         using EventLoopPtr = std::shared_ptr<EventLoop>;

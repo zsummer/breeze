@@ -24,23 +24,24 @@ int screenY = 50;
 #include "aoeViewer.h"
 #include "vectorViewer.h"
 
-#define TestUtls(func) do \
-{ \
-    LOGA("begin " << #func); \
-    double now = getFloatNowTime(); \
-    int ret = func(); \
-    if (ret == 0) \
-    { \
-        LOGA("end " << #func << ", used second=" <<getFloatNowTime() - now); \
-    } \
-    else \
-    { \
-        LOGE("end " << #func << ", used second=" <<getFloatNowTime() - now << ", ret=" << ret); \
-        return ret; \
-    } \
-} while (false)
 
 
+void TestUtls(std::function<int(void)> fun, std::string name)
+{
+    LOG_STREAM(LOG4Z_MAIN_LOGGER_ID, LOG_LEVEL_ALARM, nullptr, 0, "");
+    LOGA("begin test ----[" << name << "]----"); 
+    double now = getFloatNowTime();
+    int ret = fun();
+    if (ret == 0)
+    {
+        LOGA("end test ----[" << name << "](0)----" << " used second=" << getFloatNowTime() - now);
+    }
+    else
+    {
+        LOGE("end test ----[" << name << "](" << ret << ")----" << " used second=" << getFloatNowTime() - now );
+        exit(ret);
+    }
+}
 
 
 
@@ -70,25 +71,15 @@ int main(int argc, char* argv[])
     ILog4zManager::getPtr()->start();
     SessionManager::getRef().start();
 
-    
-
-    checkBalance();
-    auto ret =getHostByName("github.com", 3389);
-    LOGA("getHostByName=" << ret);
-
-    std::tuple<double, int, std::string> kvv = splitTupleString<double, int, std::string>("1.0:2:aha", ":", "");
-
-    LOGA("1=" << std::get<0>(kvv) << ", 2=" << std::get<1>(kvv) << ", 3=" << std::get<2>(kvv));
-
-    LOGI("0second" << formatDateTimeString(0));
-    LOGI("now" << formatDateTimeString(getNowTime()));
     LOGA("version released by " << __DATE__ << " " << __TIME__);
-    //TestUtls(checkString);
-    //TestUtls(checkFile);
-    TestUtls(checkFloat);
-    TestUtls(checkBalance);
-    TestUtls(checkRandom);
-    TestUtls(checkTime);
+
+    TestUtls(checkOther, "checkOther");
+    TestUtls(checkString, "checkString");
+    TestUtls(checkFile, "checkFile");
+    TestUtls(checkFloat, "checkFloat");
+    TestUtls(checkBalance, "checkBalance");
+    TestUtls(checkRandom, "checkRandom");
+    TestUtls(checkTime, "checkTime");
     LOGA("check all success.");
     sleepMillisecond(3000);
     return 0;

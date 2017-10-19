@@ -45,7 +45,7 @@ void AvatarService::onClientChange()
             ChatResp resp;
             resp.channelID = CC_SYSTEM;
             resp.chatTime = getNowTime();
-            resp.msg = "player <color=blue>[" + toString(getServiceName()) + "]</color> is offline. now online client["
+            resp.msg = "player <color=blue>[" + getServiceName() + "]</color> is offline. now online client["
                 + toString(Docker::getRef().peekService(STAvatar).size()) + "].";
             for (auto kv : Docker::getRef().peekService(STAvatar))
             {

@@ -259,7 +259,7 @@ bool Docker::startDockerConnect()
         options._reconnectClean = false;
         options._onSessionPulse = [](TcpSessionPtr session)
         {
-            auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+            auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
             if(getFloatSteadyNowTime() - last >ServerPulseInterval *3.0)
             {
                 LOGE("docker timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
@@ -273,8 +273,8 @@ bool Docker::startDockerConnect()
             return false;
         }
         LOGA("Docker::startDockerConnect success. remote ip=" << docker._dockerPubHost << ", remote port=" << docker._dockerListenPort << ", cID=" << cID);
-        session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
-        session->setUserParam(UPARAM_REMOTE_DOCKERID, docker._dockerID);
+        session->setUserParamInteger(UPARAM_SESSION_STATUS, SSTATUS_TRUST);
+        session->setUserParamInteger(UPARAM_REMOTE_DOCKERID, docker._dockerID);
         auto &ds = _dockerSession[docker._dockerID];
         ds.dokerID = docker._dockerID;
         ds.sessionID = cID;
@@ -367,7 +367,7 @@ bool Docker::startDockerWebListen()
         options._sessionOptions._sessionPulseInterval = (unsigned int)(WebPulseTimeout * 1000);
         options._sessionOptions._onSessionPulse = [](TcpSessionPtr session)
         {
-            auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+            auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
             if (getFloatSteadyNowTime() - last > ServerPulseInterval *3.0)
             {
                 LOGW("web client timeout diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
@@ -376,7 +376,7 @@ bool Docker::startDockerWebListen()
         };
         options._sessionOptions._onSessionLinked = [](TcpSessionPtr session)
         {
-            session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+            session->setUserParamInteger(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
             LOGD("Docker::event_onWebLinked. SessionID=" << session->getSessionID()
                 << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
         };
@@ -410,8 +410,8 @@ bool Docker::start()
 
 void Docker::event_onServiceLinked(TcpSessionPtr session)
 {
-    session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
-    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
+    session->setUserParamNumber(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+    DockerID ci = (DockerID)session->getUserParamInteger(UPARAM_REMOTE_DOCKERID);
     auto founder = _dockerSession.find(ci);
     if (founder == _dockerSession.end())
     {
@@ -484,7 +484,7 @@ void Docker::event_onServiceLinked(TcpSessionPtr session)
 
 void Docker::event_onServiceClosed(TcpSessionPtr session)
 {
-    DockerID ci = (DockerID)session->getUserParamNumber(UPARAM_REMOTE_DOCKERID);
+    DockerID ci = (DockerID)session->getUserParamInteger(UPARAM_REMOTE_DOCKERID);
     auto founder = _dockerSession.find(ci);
     if (founder == _dockerSession.end())
     {
@@ -538,11 +538,11 @@ void Docker::event_onServiceMessage(TcpSessionPtr   session, const char * begin,
         rsShell >> knock;
         LOGA("event_onServiceMessage sessionID=" << session->getSessionID()
             << ", areaID=" << knock.areaID << ", dockerID=" << knock.dockerID);
-        session->setUserParam(UPARAM_AREA_ID, knock.areaID);
+        session->setUserParamInteger(UPARAM_AREA_ID, knock.areaID);
     }
     else if (rsShell.getProtoID() == DockerPulse::getProtoID())
     {
-        session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+        session->setUserParamNumber(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
     else if (rsShell.getProtoID() == ShutdownClusterServer::getProtoID())
@@ -872,12 +872,12 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
         }
         if (resp.retCode == EC_SUCCESS)
         {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
-            clientSession->setUserParam(UPARAM_ACCOUNT, resp.account);
+            clientSession->setUserParamInteger(UPARAM_SESSION_STATUS, SSTATUS_AUTHED);
+            clientSession->setUserParamString(UPARAM_ACCOUNT, resp.account);
         }
         else
         {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+            clientSession->setUserParamInteger(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
         }
         sendViaSessionID(trace.oob.clientSessionID, rs.getStream(), rs.getStreamLen());
         return;
@@ -894,9 +894,9 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
         }
         if (resp.retCode == EC_SUCCESS)
         {
-            clientSession->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
-            clientSession->setUserParam(UPARAM_AVATAR_ID, resp.baseInfo.avatarID);
-            clientSession->setUserParam(UPARAM_LOGIN_TIME, getNowTime());
+            clientSession->setUserParamInteger(UPARAM_SESSION_STATUS, SSTATUS_ATTACHED);
+            clientSession->setUserParamInteger(UPARAM_AVATAR_ID, resp.baseInfo.avatarID);
+            clientSession->setUserParamInteger(UPARAM_LOGIN_TIME, getNowTime());
         }
         sendViaSessionID(trace.oob.clientSessionID, rs.getStream(), rs.getStreamLen());
         do
@@ -917,7 +917,7 @@ void Docker::event_onForwardToDocker(TcpSessionPtr session, ReadStream & rsShell
             ChatResp resp;
             resp.channelID = CC_SYSTEM;
             resp.chatTime = getNowTime();
-            resp.msg = "player <color=blue>[" + toString(onlineAvatar->getServiceName()) + "]</color> is online.  online client["
+            resp.msg = "player <color=blue>[" + onlineAvatar->getServiceName() + "]</color> is online.  online client["
                 + toString(Docker::getRef().peekService(STAvatar).size()) + "].";
             for (auto kv : peekService(STAvatar))
             {
@@ -1078,27 +1078,27 @@ void Docker::event_onUnloadedServiceNotice(TcpSessionPtr session, ReadStream & r
 
 void Docker::event_onClientLinked(TcpSessionPtr session)
 {
-    session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
-    session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
-    session->setUserParam(UPARAM_ACCOUNT, "");
-    session->setUserParam(UPARAM_AVATAR_ID, InvalidServiceID);
+    session->setUserParamInteger(UPARAM_SESSION_STATUS, SSTATUS_UNKNOW);
+    session->setUserParamNumber(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+    session->setUserParamString(UPARAM_ACCOUNT, "");
+    session->setUserParamInteger(UPARAM_AVATAR_ID, InvalidServiceID);
     LOGD("Docker::event_onClientLinked. SessionID=" << session->getSessionID()
         << ", remoteIP=" << session->getRemoteIP() << ", remotePort=" << session->getRemotePort());
 }
 void Docker::event_onClientPulse(TcpSessionPtr session)
 {
-    auto last = session->getUserParamDouble(UPARAM_LAST_ACTIVE_TIME);
+    auto last = session->getUserParamNumber(UPARAM_LAST_ACTIVE_TIME);
     if (getFloatSteadyNowTime() - last > ClientPulseInterval *3.0)
     {
         LOGW("client timeout . diff time=" << getFloatSteadyNowTime() - last << ", sessionID=" << session->getSessionID());
         session->close();
         return;
     }
-    SessionStatus sStatus = (SessionStatus)session->getUserParamNumber(UPARAM_SESSION_STATUS);
+    SessionStatus sStatus = (SessionStatus)session->getUserParamInteger(UPARAM_SESSION_STATUS);
     if (sStatus == SSTATUS_ATTACHED)
     {
         const auto & services = peekService(STAvatar);
-        ServiceID serviceID = session->getUserParamNumber(UPARAM_AVATAR_ID);
+        ServiceID serviceID = session->getUserParamInteger(UPARAM_AVATAR_ID);
         auto iter = services.find(serviceID);
         if (iter == services.end())
         {
@@ -1117,17 +1117,17 @@ void Docker::event_onClientClosed(TcpSessionPtr session)
     }
     else
     {
-        if (session->getUserParamNumber(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
+        if (session->getUserParamInteger(UPARAM_SESSION_STATUS) == SSTATUS_ATTACHED)
         {
             Tracing trace;
             trace.routing.fromServiceType = STClient;
-            trace.routing.fromServiceID = session->getUserParamNumber(UPARAM_AVATAR_ID);
+            trace.routing.fromServiceID = session->getUserParamInteger(UPARAM_AVATAR_ID);
 
             trace.routing.toServiceType = STAvatarMgr;
             trace.routing.toServiceID = InvalidServiceID;
 
             RealClientClosedNotice notice;
-            notice.serviceID = session->getUserParamNumber(UPARAM_AVATAR_ID);
+            notice.serviceID = session->getUserParamInteger(UPARAM_AVATAR_ID);
             notice.clientDockerID = ServerConfig::getRef().getDockerID();
             notice.clientSessionID = session->getSessionID();
             toService(trace, notice);
@@ -1146,10 +1146,10 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         return;
     }
     ReadStream rs(begin, len);
-    SessionStatus sessionStatus = (SessionStatus) session->getUserParamNumber(UPARAM_SESSION_STATUS);
+    SessionStatus sessionStatus = (SessionStatus) session->getUserParamInteger(UPARAM_SESSION_STATUS);
     if (rs.getProtoID() == ClientPulse::getProtoID())
     {
-        session->setUserParamDouble(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
+        session->setUserParamNumber(UPARAM_LAST_ACTIVE_TIME, getFloatSteadyNowTime());
         return;
     }
     if (!_dockerServiceWorking || (!peekService(STAvatarMgr, InvalidServiceID)) || peekService(STAvatarMgr, InvalidServiceID)->getStatus() != SS_WORKING)
@@ -1159,7 +1159,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
     }
     Tracing trace;
     trace.routing.fromServiceType = STClient;
-    trace.routing.fromServiceID = session->getUserParamNumber(UPARAM_AVATAR_ID);
+    trace.routing.fromServiceID = session->getUserParamInteger(UPARAM_AVATAR_ID);
     trace.oob.clientDockerID = ServerConfig::getRef().getDockerID();
     trace.oob.clientSessionID = session->getSessionID();
     trace.oob.clientAvatarID = trace.routing.fromServiceID;
@@ -1177,7 +1177,7 @@ void Docker::event_onClientMessage(TcpSessionPtr session, const char * begin, un
         trace.routing.toServiceID = InvalidServiceID;
 
         toService(trace, clientReq);
-        session->setUserParam(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
+        session->setUserParamInteger(UPARAM_SESSION_STATUS, SSTATUS_AUTHING);
         return;
     }
     else if (rs.getProtoID() == CreateAvatarReq::getProtoID())

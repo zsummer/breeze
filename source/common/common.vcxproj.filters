@@ -96,9 +96,6 @@
     <ClInclude Include="lua\strbuf.h">
       <Filter>lua</Filter>
     </ClInclude>
-    <ClInclude Include="lua\summer.h">
-      <Filter>lua</Filter>
-    </ClInclude>
     <ClInclude Include="utls.h" />
     <ClInclude Include="utlsImpl.h" />
     <ClInclude Include="balance.h" />
@@ -130,6 +127,12 @@
     </ClInclude>
     <ClInclude Include="bcui\bcui.h">
       <Filter>bcui</Filter>
+    </ClInclude>
+    <ClInclude Include="luaextra\performance.h">
+      <Filter>luaextra</Filter>
+    </ClInclude>
+    <ClInclude Include="luaextra\summer.h">
+      <Filter>luaextra</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -209,9 +212,6 @@
     <ClCompile Include="lua\lparser.c">
       <Filter>lua</Filter>
     </ClCompile>
-    <ClCompile Include="lua\lproto4z.c">
-      <Filter>lua</Filter>
-    </ClCompile>
     <ClCompile Include="lua\lstate.c">
       <Filter>lua</Filter>
     </ClCompile>
@@ -248,9 +248,6 @@
     <ClCompile Include="lua\strbuf.c">
       <Filter>lua</Filter>
     </ClCompile>
-    <ClCompile Include="lua\summer.cpp">
-      <Filter>lua</Filter>
-    </ClCompile>
     <ClCompile Include="utls.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dbDict.cpp" />
@@ -272,6 +269,15 @@
     <ClCompile Include="bcui\bcui.cpp">
       <Filter>bcui</Filter>
     </ClCompile>
+    <ClCompile Include="luaextra\lproto4z.c">
+      <Filter>luaextra</Filter>
+    </ClCompile>
+    <ClCompile Include="luaextra\performance.cpp">
+      <Filter>luaextra</Filter>
+    </ClCompile>
+    <ClCompile Include="luaextra\summer.cpp">
+      <Filter>luaextra</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lua">
@@ -288,6 +294,9 @@
     </Filter>
     <Filter Include="bcui">
       <UniqueIdentifier>{51b01437-6480-49ae-b3c0-723580e69304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="luaextra">
+      <UniqueIdentifier>{ff0142ea-70de-456c-acc4-b26acbe98ece}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@
 * 
 * ===============================================================================
 * 
-* Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal

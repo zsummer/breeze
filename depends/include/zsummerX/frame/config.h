@@ -91,7 +91,7 @@ namespace zsummer
         inline AccepterID nextAccepterID(AccepterID AccepterID){ return AccepterID + 1 >= __MIDDLE_SEGMENT_VALUE ? 1 : AccepterID + 1; }
 
 
-        const unsigned int SESSION_BLOCK_SIZE = 200 * 1024;
+        const unsigned int SESSION_BLOCK_SIZE = 20 * 1024;
 
         enum ProtoType
         {
@@ -168,10 +168,10 @@ namespace zsummer
         using OnBlockCheck = std::function<OnBlockCheckResult(const char * /*begin*/, unsigned int /*len*/, unsigned int /*bound*/, unsigned int /*blockLimit*/)>;
 
         //!dispatch one integrity block 
-        using OnBlockDispatch = std::function<void(TcpSessionPtr   /*session*/, const char * /*begin*/, unsigned int /*len*/)>;
+        using OnBlockDispatch = std::function<void(const TcpSessionPtr &  /*session*/, const char * /*begin*/, unsigned int /*len*/)>;
 
         //!event linked, closed, ontimer
-        using OnSessionEvent = std::function<void(TcpSessionPtr   /*session*/)>;
+        using OnSessionEvent = std::function<void(const TcpSessionPtr &  /*session*/)>;
 
  
         //!HTTP unpack, hadHeader used by 'chunked', commonLine can be GET, POST RESPONSE.  
@@ -189,7 +189,8 @@ namespace zsummer
             ProtoType       _protoType = PT_TCP;
             std::string     _rc4TcpEncryption = ""; //empty is not encryption 
             bool            _openFlashPolicy = false; //check falsh client  
-            bool            _setNoDelay = true; 
+            bool            _setNoDelay = true;
+            bool            _floodSendOptimize = true;
             bool            _joinSmallBlock = true; //merge small block  
             unsigned int    _sessionPulseInterval = 30000;  
             unsigned int    _connectPulseInterval = 5000;  
@@ -225,13 +226,14 @@ namespace zsummer
             SessionOptions _sessionOptions;
         };
 
-        using TupleParam = std::tuple<double, unsigned long long, std::string>;
+        using TupleParam = std::tuple<bool, double, unsigned long long, std::string>;
 
         enum TupleParamType
         {
-            TupleParamDouble = 0,
+            TupleParamInited = 0,
             TupleParamNumber = 1,
-            TupleParamString = 2,
+            TupleParamInteger = 2,
+            TupleParamString = 3,
         };
 
         inline zsummer::log4z::Log4zStream & operator << (zsummer::log4z::Log4zStream &os, const SessionOptions & traits)

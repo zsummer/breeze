@@ -116,6 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\bin\config.lua" />
+    <None Include="..\..\bin\script\scene\scene.lua" />
+    <None Include="..\..\bin\script\scene\scene_1_0.lua" />
+    <None Include="..\..\bin\script\scene\scene_2_0.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

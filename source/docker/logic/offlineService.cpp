@@ -47,7 +47,7 @@ void OfflineService::onLoadMaxOfflineID(zsummer::proto4z::ReadStream &rs)
     }
     else
     {
-        _offlineNextID = fromString<ui64>(resp.result.fields.front(), 0)+1;
+        _offlineNextID = fromString<ui64>(resp.result.fields.front())+1;
     }
     if (_offlineNextID < ServerConfig::getRef().getMinServiceID())
     {

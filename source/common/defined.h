@@ -106,7 +106,8 @@ extern "C"
     int luaopen_proto4z_util(lua_State *L);
     int luaopen_cjson(lua_State *l);
 }
-#include "lua/summer.h"
+#include "luaextra/summer.h"
+#include "luaextra/performance.h"
 
 using namespace zsummer::log4z;
 using namespace zsummer::network;

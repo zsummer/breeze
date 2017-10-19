@@ -10,7 +10,7 @@
 *
 * ===============================================================================
 *
-* Copyright (C) 2013-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2013-2016 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@
 
 namespace Proto4z
 {
-    sealed  class RC4Encryption //rc4 encrypt
+    sealed class RC4Encryption //rc4 encrypt
     {
         private int _x;
         private int _y;
@@ -74,14 +74,14 @@ namespace Proto4z
             }
         }
 
-        public void encryption(byte[] data, int length)
+        public void encryption(byte[] data, int offset, int length)
         {
-            int  x, y;
+            int x, y;
 
             x = _x;
             y = _y;
 
-            for (int i = 0; i < length; i++)
+            for (int i = offset; i < offset + length; i++)
             {
                 x = (byte)(x + 1);
                 int a = m_box[x];
@@ -97,7 +97,7 @@ namespace Proto4z
 
 
 
-       
+
     }
 
     interface IProtoObject
@@ -198,7 +198,7 @@ namespace Proto4z
             }
             else
             {
-                byte[] reverBin = { binData[pos + 3], binData[pos +2], binData[pos +1], binData[pos] };
+                byte[] reverBin = { binData[pos + 3], binData[pos + 2], binData[pos + 1], binData[pos] };
                 v = System.BitConverter.ToInt32(reverBin, 0);
             }
             pos += 4;

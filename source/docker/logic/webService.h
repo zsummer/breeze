@@ -34,6 +34,7 @@ WebService
 class WebService : public Service
 {
 public:
+    using _Params = std::map<std::string, std::tuple<std::string, std::string>>;
     WebService();
     ~WebService();
     bool onLoad() override final;
@@ -42,17 +43,17 @@ public:
     void onTick(TimerID tID, ui32 count, ui32 repeat) override final;
 private:
     void onWebAgentClientRequestAPI(Tracing trace, ReadStream &rs);
-    void getonline(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
-    void offlinechat(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
+    void getonline(DockerID dockerID, SessionID clientID, const _Params &params);
+    void offlinechat(DockerID dockerID, SessionID clientID, const _Params &params);
 
 
     std::map<DockerID, std::tuple<double, double>> _reloadState;
     double _lastReloadTick = 0;
-    void reload(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
+    void reload(DockerID dockerID, SessionID clientID, const _Params &params);
     void onReloadState(Tracing trace, ReadStream &rs);
 
 
-    void KickClients(DockerID dockerID, SessionID clientID, const std::vector<std::pair<std::string, std::string>> &params);
+    void KickClients(DockerID dockerID, SessionID clientID, const _Params &params);
 
 private:
     void onWebServerRequest(Tracing trace, ReadStream &rs);

@@ -9,7 +9,7 @@
  * 
  * ===============================================================================
  * 
- * Copyright (C) 2010-2016 YaweiZhang <yawei.zhang@foxmail.com>.
+ * Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,10 +37,10 @@
 
 /*
  * AUTHORS:  YaweiZhang <yawei.zhang@foxmail.com>
- * VERSION:  3.3.0
+ * VERSION:  3.5.0
  * PURPOSE:  A lightweight library for error reporting and logging to file and screen .
  * CREATION: 2010.10.4
- * LCHANGE:  2016.02.29
+ * LCHANGE:  2017.08.20
  * LICENSE:  Expat/MIT License, See Copyright Notice at the begin of this file.
  */
 
@@ -174,6 +174,9 @@
  *  new method to read whole content of file.
  *  check configure's checksum when auto update it.
  *  some other optimize.
+ * 
+ * VERSION 3.5 <DATE: 2017.08.20>
+ *  optimization
  *
  */
 
@@ -186,6 +189,9 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
+#include <cmath>
+#include <stdlib.h>
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -245,7 +251,7 @@ const int LOG4Z_LOG_BUF_SIZE = 1024 * 8;
 //! the max stl container depth.
 const int LOG4Z_LOG_CONTAINER_DEPTH = 5;
 //! the log queue length limit size.
-const int LOG4Z_LOG_QUEUE_LIMIT_SIZE = 10000;
+const int LOG4Z_LOG_QUEUE_LIMIT_SIZE = 20000;
 
 //! all logger synchronous output or not
 const bool LOG4Z_ALL_SYNCHRONOUS_OUTPUT = false;
@@ -293,8 +299,9 @@ struct LogData
     int    _level;    //log level
     time_t _time;        //create time
     unsigned int _precise; //create time 
+    unsigned int _threadID;
     int _contentLen;
-    char _content[LOG4Z_LOG_BUF_SIZE]; //content
+    char _content[1]; //content
 };
 
 //! log4z class
@@ -383,11 +390,11 @@ _ZSUMMER_END
 do{\
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
-        zsummer::log4z::LogData * pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
-        zsummer::log4z::Log4zStream ss(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen);\
-        ss << log;\
-        pLog->_contentLen += ss.getCurrentLen(); \
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line);\
+        zsummer::log4z::LogData * __pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
+        zsummer::log4z::Log4zStream __ss(__pLog->_content + __pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - __pLog->_contentLen);\
+        __ss << log;\
+        __pLog->_contentLen += __ss.getCurrentLen(); \
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(__pLog, file, line);\
     }\
 } while (0)
 
@@ -418,11 +425,11 @@ do{\
 do{ \
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
-        zsummer::log4z::LogData * pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
-        int len = _snprintf_s(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen, _TRUNCATE, logformat, ##__VA_ARGS__); \
-        if (len < 0) len = LOG4Z_LOG_BUF_SIZE - pLog->_contentLen; \
-        pLog->_contentLen += len; \
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line); \
+        zsummer::log4z::LogData * __pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
+        int __logLen = _snprintf_s(__pLog->_content + __pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - __pLog->_contentLen, _TRUNCATE, logformat, ##__VA_ARGS__); \
+        if (__logLen < 0) __logLen = LOG4Z_LOG_BUF_SIZE - __pLog->_contentLen; \
+        __pLog->_contentLen += __logLen; \
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(__pLog, file, line); \
     }\
 } while (0)
 #else
@@ -430,12 +437,12 @@ do{ \
 do{ \
     if (zsummer::log4z::ILog4zManager::getPtr()->prePushLog(id,level)) \
     {\
-        zsummer::log4z::LogData * pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
-        int len = snprintf(pLog->_content + pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - pLog->_contentLen,logformat, ##__VA_ARGS__); \
-        if (len < 0) len = 0; \
-        if (len > LOG4Z_LOG_BUF_SIZE - pLog->_contentLen) len = LOG4Z_LOG_BUF_SIZE - pLog->_contentLen; \
-        pLog->_contentLen += len; \
-        zsummer::log4z::ILog4zManager::getPtr()->pushLog(pLog, file, line); \
+        zsummer::log4z::LogData * __pLog = zsummer::log4z::ILog4zManager::getPtr()->makeLogData(id, level); \
+        int __logLen = snprintf(__pLog->_content + __pLog->_contentLen, LOG4Z_LOG_BUF_SIZE - __pLog->_contentLen,logformat, ##__VA_ARGS__); \
+        if (__logLen < 0) __logLen = 0; \
+        if (__logLen > LOG4Z_LOG_BUF_SIZE - __pLog->_contentLen) __logLen = LOG4Z_LOG_BUF_SIZE - __pLog->_contentLen; \
+        __pLog->_contentLen += __logLen; \
+        zsummer::log4z::ILog4zManager::getPtr()->pushLog(__pLog, file, line); \
     } \
 }while(0)
 #endif
@@ -485,48 +492,59 @@ _ZSUMMER_LOG4Z_BEGIN
 class Log4zBinary
 {
 public:
-    Log4zBinary(const void * buf, int len)
+    Log4zBinary(const void * buf, size_t len)
     {
-        _buf = (const char *)buf;
-        _len = len;
+        this->buf = (const char *)buf;
+        this->len = len;
     }
-    const char * _buf;
-    int  _len;
+    const char * buf;
+    size_t  len;
 };
+
+class Log4zString
+{
+public:
+    Log4zString(const char * buf, size_t len)
+    {
+        this->buf = (const char *)buf;
+        this->len = len;
+    }
+    const char * buf;
+    size_t  len;
+};
+
 class Log4zStream
 {
 public:
     inline Log4zStream(char * buf, int len);
     inline int getCurrentLen(){return (int)(_cur - _begin);}
-private:
-    template<class T>
-    inline Log4zStream & writeData(const char * ft, T t);
-    inline Log4zStream & writeLongLong(long long t);
-    inline Log4zStream & writeULongLong(unsigned long long t);
+public:
+    inline Log4zStream & writeLongLong(long long t, int width = 0, int dec = 10);
+    inline Log4zStream & writeULongLong(unsigned long long t, int width = 0, int dec = 10);
+    inline Log4zStream & writeDouble(double t, bool isSimple);
     inline Log4zStream & writePointer(const void * t);
+    inline Log4zStream & writeString(const char * t) { return writeString(t, strlen(t)); };
     inline Log4zStream & writeString(const char * t, size_t len);
-    inline Log4zStream & writeWString(const wchar_t* t);
+    inline Log4zStream & writeChar(char ch);
     inline Log4zStream & writeBinary(const Log4zBinary & t);
 public:
     inline Log4zStream & operator <<(const void * t){ return  writePointer(t); }
 
-    inline Log4zStream & operator <<(const char * t){return writeString(t, strlen(t));}
-#ifdef WIN32
-    inline Log4zStream & operator <<(const wchar_t * t){ return writeWString(t);}
-#endif
-    inline Log4zStream & operator <<(bool t){ return (t ? writeData("%s", "true") : writeData("%s", "false"));}
+    inline Log4zStream & operator <<(const char * t){return writeString(t);}
 
-    inline Log4zStream & operator <<(char t){return writeData("%c", t);}
+    inline Log4zStream & operator <<(bool t){ return (t ? writeString("true", 4) : writeString("false", 5));}
 
-    inline Log4zStream & operator <<(unsigned char t){return writeData("%u",(unsigned int)t);}
+    inline Log4zStream & operator <<(char t){return writeChar(t);}
 
-    inline Log4zStream & operator <<(short t){ return writeData("%d", (int)t); }
+    inline Log4zStream & operator <<(unsigned char t){return writeULongLong(t);}
 
-    inline Log4zStream & operator <<(unsigned short t){ return writeData("%u", (unsigned int)t); }
+    inline Log4zStream & operator <<(short t){ return writeLongLong(t); }
 
-    inline Log4zStream & operator <<(int t){return writeData("%d", t);}
+    inline Log4zStream & operator <<(unsigned short t){ return writeULongLong(t); }
 
-    inline Log4zStream & operator <<(unsigned int t){return writeData("%u", t);}
+    inline Log4zStream & operator <<(int t){return writeLongLong(t);}
+
+    inline Log4zStream & operator <<(unsigned int t){return writeULongLong(t);}
 
     inline Log4zStream & operator <<(long t) { return writeLongLong(t); }
 
@@ -536,14 +554,16 @@ public:
 
     inline Log4zStream & operator <<(unsigned long long t){ return writeULongLong(t); }
 
-    inline Log4zStream & operator <<(float t){return writeData("%.4f", t);}
+    inline Log4zStream & operator <<(float t){return writeDouble(t, true);}
 
-    inline Log4zStream & operator <<(double t){return writeData("%.4lf", t);}
+    inline Log4zStream & operator <<(double t){return writeDouble(t, false);}
 
     template<class _Elem,class _Traits,class _Alloc> //support std::string, std::wstring
     inline Log4zStream & operator <<(const std::basic_string<_Elem, _Traits, _Alloc> & t){ return writeString(t.c_str(), t.length()); }
 
-    inline Log4zStream & operator << (const zsummer::log4z::Log4zBinary & binary){ return writeBinary(binary); }
+    inline Log4zStream & operator << (const zsummer::log4z::Log4zBinary & binary) { return writeBinary(binary); }
+
+    inline Log4zStream & operator << (const zsummer::log4z::Log4zString & str) { return writeString(str.buf, str.len); }
 
     template<class _Ty1, class _Ty2>
     inline Log4zStream & operator <<(const std::pair<_Ty1, _Ty2> & t){ return *this << "pair(" << t.first << ":" << t.second << ")"; }
@@ -669,140 +689,235 @@ inline Log4zStream::Log4zStream(char * buf, int len)
     _cur = _begin;
 }
 
-template<class T>
-inline Log4zStream& Log4zStream::writeData(const char * ft, T t)
+
+
+inline Log4zStream & Log4zStream::writeLongLong(long long t, int width, int dec)
 {
-    if (_cur < _end)
+    if (t < 0 )
     {
-        int len = 0;
-        int count = (int)(_end - _cur);
-#ifdef WIN32
-        len = _snprintf(_cur, count, ft, t);
-        if (len == count || len < 0)
+        t = -t;
+        writeChar('-');
+    }
+    writeULongLong((unsigned long long)t, width, dec);
+    return *this;
+}
+
+inline Log4zStream & Log4zStream::writeULongLong(unsigned long long t, int width, int dec)
+{
+    static const char * lut = 
+        "0123456789abcdef";
+
+    static const char *lutDec = 
+        "00010203040506070809"
+        "10111213141516171819"
+        "20212223242526272829"
+        "30313233343536373839"
+        "40414243444546474849"
+        "50515253545556575859"
+        "60616263646566676869"
+        "70717273747576777879"
+        "80818283848586878889"
+        "90919293949596979899";
+
+    static const char *lutHex = 
+        "000102030405060708090A0B0C0D0E0F"
+        "101112131415161718191A1B1C1D1E1F"
+        "202122232425262728292A2B2C2D2E2F"
+        "303132333435363738393A3B3C3D3E3F"
+        "404142434445464748494A4B4C4D4E4F"
+        "505152535455565758595A5B5C5D5E5F"
+        "606162636465666768696A6B6C6D6E6F"
+        "707172737475767778797A7B7C7D7E7F"
+        "808182838485868788898A8B8C8D8E8F"
+        "909192939495969798999A9B9C9D9E9F"
+        "A0A1A2A3A4A5A6A7A8A9AAABACADAEAF"
+        "B0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF"
+        "C0C1C2C3C4C5C6C7C8C9CACBCCCDCECF"
+        "D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF"
+        "E0E1E2E3E4E5E6E7E8E9EAEBECEDEEEF"
+        "F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF";
+
+    const unsigned long long cacheSize = 64;
+
+    if ((unsigned long long)(_end - _cur) > cacheSize)
+    {
+        char buf[cacheSize];
+        unsigned long long val = t;
+        unsigned long long i = cacheSize;
+        unsigned long long digit = 0;
+
+
+
+        if (dec == 10)
         {
-            len = count;
-            *(_end - 1) = '\0';
+            do
+            {
+                const unsigned long long m2 = (unsigned long long)((val % 100) * 2);
+                *(buf + i - 1) = lutDec[m2 + 1];
+                *(buf + i - 2) = lutDec[m2];
+                i -= 2;
+                val /= 100;
+                digit += 2;
+            } while (val && i >= 2);
+            if (digit >= 2 && buf[cacheSize - digit] == '0')
+            {
+                digit--;
+            }
         }
-#else
-        len = snprintf(_cur, count, ft, t);
-        if (len < 0)
+        else if (dec == 16)
         {
-            *_cur = '\0';
-            len = 0;
+            do
+            {
+                const unsigned long long m2 = (unsigned long long)((val % 256) * 2);
+                *(buf + i - 1) = lutHex[m2 + 1];
+                *(buf + i - 2) = lutHex[m2];
+                i -= 2;
+                val /= 256;
+                digit += 2;
+            } while (val && i >= 2);
+            if (digit >= 2 && buf[cacheSize - digit] == '0')
+            {
+                digit--;
+            }
         }
-        else if (len >= count)
+        else
         {
-            len = count;
-            *(_end - 1) = '\0';
+            do
+            {
+                buf[--i] = lut[val % dec];
+                val /= dec;
+                digit++;
+            } while (val && i > 0);
         }
-#endif
-        _cur += len;
+
+        while (digit < (unsigned long long)width)
+        {
+            digit++;
+            buf[cacheSize - digit] = '0';
+        }
+
+        writeString(buf + (cacheSize - digit), (size_t)digit);
     }
     return *this;
 }
-
-inline Log4zStream & Log4zStream::writeLongLong(long long t)
+inline Log4zStream & Log4zStream::writeDouble(double t, bool isSimple)
 {
-#ifdef WIN32  
-    writeData("%I64d", t);
-#else
-    writeData("%lld", t);
-#endif
-    return *this;
-}
 
-inline Log4zStream & Log4zStream::writeULongLong(unsigned long long t)
-{
-#ifdef WIN32  
-    writeData("%I64u", t);
-#else
-    writeData("%llu", t);
+#if __cplusplus >= 201103L
+                using std::isnan;
+                using std::isinf;
 #endif
+    if (isnan(t))
+    {
+        writeString("nan", 3);
+        return *this;
+    }
+    else if (isinf(t))
+    {
+        writeString("inf", 3);
+        return *this;
+    }
+
+
+
+    size_t count = _end - _cur;
+    double fabst = fabs(t);
+    if (count > 30)
+    {
+        if ( fabst < 0.0001 || (!isSimple && fabst > 4503599627370495ULL) || (isSimple && fabst > 8388607))
+        {
+            gcvt(t, isSimple ? 7 : 16, _cur);
+            size_t len = strlen(_cur);
+            if (len > count) len = count;
+            _cur += len;
+            return *this;
+        }
+        else
+        {
+            if (t < 0.0)
+            {
+                writeChar('-');
+            }
+            double intpart = 0;
+            unsigned long long fractpart = (unsigned long long)(modf(fabst, &intpart) * 10000);
+            writeULongLong((unsigned long long)intpart);
+            if (fractpart > 0)
+            {
+                writeChar('.');
+                writeULongLong(fractpart, 4);
+            }
+        }
+    }
+
     return *this;
 }
 
 inline Log4zStream & Log4zStream::writePointer(const void * t)
 {
-#ifdef WIN32
-    sizeof(t) == 8 ? writeData("%016I64x", (unsigned long long)t) : writeData("%08I64x", (unsigned long long)t);
-#else
-    sizeof(t) == 8 ? writeData("%016llx", (unsigned long long)t) : writeData("%08llx", (unsigned long long)t);
-#endif
+    sizeof(t) == 8 ?  writeULongLong((unsigned long long)t, 16, 16): writeULongLong((unsigned long long)t, 8, 16);
     return *this;
 }
 
 inline Log4zStream & Log4zStream::writeBinary(const Log4zBinary & t)
 {
-    writeData("%s", "\r\n\t[");
-    for (int i=0; i<(t._len / 16)+1; i++)
+    writeString("\r\n\t[");
+    for (size_t i=0; i<(t.len / 32)+1; i++)
     {
-        writeData("%s", "\r\n\t");
-        *this << (void*)(t._buf + i*16);
-        writeData("%s", ": ");
-        for (int j=i*16; j < (i+1)*16 && j < t._len; j++)
+        writeString("\r\n\t");
+        *this << (void*)(t.buf + i*32);
+        writeString(": ");
+        for (size_t j = i * 32; j < (i + 1) * 32 && j < t.len; j++)
         {
-            writeData("%02x ", (unsigned char)t._buf[j]);
-        }
-        writeData("%s", "\r\n\t");
-        *this << (void*)(t._buf + i*16);
-        writeData("%s", ": ");
-        for (int j = i * 16; j < (i + 1) * 16 && j < t._len; j++)
-        {
-            if (isprint((unsigned char)t._buf[j]))
+            if (isprint((unsigned char)t.buf[j]))
             {
-                writeData(" %c ", t._buf[j]);
+                writeChar(' ');
+                writeChar(t.buf[j]);
+                writeChar(' ');
             }
             else
             {
                 *this << " . ";
             }
         }
+        writeString("\r\n\t");
+        *this << (void*)(t.buf + i * 32);
+        writeString(": ");
+        for (size_t j = i * 32; j < (i + 1) * 32 && j < t.len; j++)
+        {
+            writeULongLong((unsigned long long)(unsigned char)t.buf[j], 2, 16);
+            writeChar(' ');
+        }
     }
 
-    writeData("%s", "\r\n\t]\r\n\t");
+    writeString("\r\n\t]\r\n\t");
     return *this;
 }
+inline Log4zStream & zsummer::log4z::Log4zStream::writeChar(char ch)
+{
+    if (_end - _cur > 1)
+    {
+        _cur[0] = ch;
+        _cur++;
+    }
+    return *this;
+}
+
 inline Log4zStream & zsummer::log4z::Log4zStream::writeString(const char * t, size_t len)
 {
-    if (_cur < _end)
+    size_t count = _end - _cur;
+    if (len > count)
     {
-        size_t count = (size_t)(_end - _cur);
-        if (len > count)
-        {
-            len = count;
-        }
+        len = count;
+    }
+    if (len > 0)
+    {
         memcpy(_cur, t, len);
         _cur += len;
-        if (_cur >= _end - 1)
-        {
-            *(_end - 1) = '\0';
-        }
-        else
-        {
-            *(_cur + 1) = '\0';
-        }
     }
+    
     return *this;
 }
-inline zsummer::log4z::Log4zStream & zsummer::log4z::Log4zStream::writeWString(const wchar_t* t)
-{
-#ifdef WIN32
-    DWORD dwLen = WideCharToMultiByte(CP_ACP, 0, t, -1, NULL, 0, NULL, NULL);
-    if (dwLen < LOG4Z_LOG_BUF_SIZE)
-    {
-        std::string str;
-        str.resize(dwLen, '\0');
-        dwLen = WideCharToMultiByte(CP_ACP, 0, t, -1, &str[0], dwLen, NULL, NULL);
-        if (dwLen > 0)
-        {
-            writeData("%s", str.c_str());
-        }
-    }
-#else
-    //not support
-#endif
-    return *this;
-}
+
 
 
 

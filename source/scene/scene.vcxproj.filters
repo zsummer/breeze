@@ -10,6 +10,9 @@
     <Filter Include="config">
       <UniqueIdentifier>{fffa076f-2d53-440c-b3db-e36ad5907fec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{e32ade0a-c49f-4f0b-8680-61270be7beee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -40,6 +43,15 @@
   <ItemGroup>
     <None Include="..\..\bin\config.lua">
       <Filter>config</Filter>
+    </None>
+    <None Include="..\..\bin\script\scene\scene.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\bin\script\scene\scene_1_0.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\bin\script\scene\scene_2_0.lua">
+      <Filter>lua</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

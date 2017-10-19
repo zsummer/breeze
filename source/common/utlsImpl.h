@@ -18,258 +18,686 @@
 */
 
 
-
+#pragma once
 #ifndef _UTLS_IMPL_H_
 #define _UTLS_IMPL_H_
 
 
-//string
+inline void trimImpl(const char * buf, size_t len, const char ign, size_t & offset, size_t & outLen, int flag)
+{
+    const char * begin = buf;
+    const char * end = begin + len;
+    if (flag == 0 || flag == 1)
+    {
+        while (begin != end && *begin == ign) ++begin;
+    }
+    if (flag == 0 || flag == 2)
+    {
+        while (begin != end && *(end - 1) == ign) --end;
+    }
+    offset = begin - buf;
+    outLen = end - begin;
+}
+
+
 template<class T>
-std::string toString(const T &t)
+typename std::enable_if<std::is_unsigned<T>::value && !std::is_floating_point<T>::value, T>::type
+lutToString(char *buf, size_t len, size_t base, size_t fixed0, size_t &offset, size_t & outLen,  T t)
 {
-    std::stringstream os;
-    os.precision(16);
-    os << t;
-    return os.str();
-}
-
-
-
-
-template<class To>
-typename std::enable_if<std::is_floating_point<To>::value, To>::type fromString(const std::string & t, To def)
-{
-    if (t.empty()) return def;
-    return (To)atof(t.c_str());
-}
-template<class To>
-typename std::enable_if<std::is_floating_point<To>::value, To>::type fromString(const std::string & t)
-{
-    return (To)atof(t.c_str());
-}
-
-template<class To>
-typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t, To def)
-{
-    if (t.empty()) return def;
-    if (t.length()>= 19)
+    const T tbase = (T)base;
+    char * begin = buf;
+    char * end = buf + len;
+    *--end = '\0';
+    do 
     {
-        if (typeid(To) == typeid(unsigned long long))
-        {
-            char *cursor = nullptr;
-            return (To)strtoull(t.c_str(), &cursor, 10);
-        }
-    }
-    return (To)atoll(t.c_str());
-}
-
-template<class To>
-typename std::enable_if<std::is_integral<To>::value, To>::type fromString(const std::string & t)
-{
-    if (t.length() >= 19)
+        *--end = "0123456789abcdef"[t % tbase];
+        t /= tbase;
+        if (t == 0) break;
+    } while (true);
+    
+    while (begin + len - 1 - end < (long long)fixed0)
     {
-        if (typeid(To) == typeid(unsigned long long))
-        {
-            char *cursor = nullptr;
-            return (To)strtoull(t.c_str(), &cursor, 10);
-        }
+        *--end = '0';
     }
-    return (To)atoll(t.c_str());
-}
 
-template<class To>
-typename std::enable_if<std::is_pointer<To>::value, To>::type fromString(const std::string & t, To def)
-{
-    if (t.empty()) return def;
-    return t.c_str();
-}
-template<class To>
-typename std::enable_if<std::is_pointer<To>::value, To>::type fromString(const std::string & t)
-{
-    return t.c_str();
-}
-
-template<class To>
-typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std::string & t, To def)
-{
-    if (t.empty()) return def;
-    return t;
-}
-template<class To>
-typename std::enable_if<std::is_class<To>::value, To>::type fromString(const std::string & t)
-{
+    offset = end - begin;
+    outLen = begin + len - 1 - end;
     return t;
 }
 
-template<class To>
-typename std::enable_if<std::is_class<To>::value, To>::type fromString(std::string && t, To def)
+
+template<class T>
+typename std::enable_if<std::is_signed<T>::value && ! std::is_floating_point<T>::value, T>::type
+lutToString(char *buf, size_t len, size_t base, size_t fixed0, size_t &offset, size_t & outLen, T t)
 {
-    if (t.empty()) return def;
-    return std::move(t);
+    const T tbase = (T)base;
+    char * begin = buf;
+    char * end = buf + len;
+    *--end = '\0';
+    *--end = "0123456789abcdef"[abs(t % tbase)];
+    
+    if (t < (T)0)
+    {
+        t = -(t / tbase);
+
+        while (t != 0)
+        {
+            *--end = "0123456789abcdef"[t % tbase];
+            t /= tbase;
+        } 
+        while (begin + len - 1 - end < (long long)fixed0)
+        {
+            *--end = '0';
+        }
+        *--end = '-';
+    }
+    else
+    {
+        t = (t / tbase);
+        while (t != 0)
+        {
+            *--end = "0123456789abcdef"[t % tbase];
+            t /= tbase;
+        }
+
+        while (begin + len - 1 - end < (long long)fixed0)
+        {
+            *--end = '0';
+        }
+    }
+
+    offset = end - begin;
+    outLen = begin + len - 1 - end;
+    return t;
+}
+
+
+inline void floatToString(char *buf, size_t len, size_t frac, size_t &offset, size_t & outLen, double t)
+{
+
+    switch (std::fpclassify(t)) 
+    {
+    case FP_INFINITE:
+    {
+        memcpy(buf, "inf", 4);
+        offset = 0;
+        outLen = 3;
+        return ;
+    }
+    case FP_NAN:
+    {
+        memcpy(buf, "nan", 4);
+        offset = 0;
+        outLen = 3;
+        return;
+    }
+    case FP_NORMAL:
+        break;
+    case FP_SUBNORMAL:
+    case FP_ZERO:
+    {
+        buf[0] = '0';
+        buf[1] = '\0';
+        offset = 0;
+        outLen = 1;
+        return;
+    }
+    default:
+        memcpy(buf, "undefined", sizeof("undefined"));
+        offset = 0;
+        outLen = sizeof("undefined") - 1;
+        return;
+    }
+
+
+    double sign = std::fabs(t);
+    if (sign > 0 && sign <= 0xFFFFFFFFFFFFF)
+    {
+        double f;
+        double x;
+        f = std::modf(t, &x);
+        lutToString<long long>(buf, len / 2, 10, 0, offset, outLen, (long long)x);
+        frac = frac > 16 ? 16 : frac;
+        frac = frac > outLen ? frac - outLen : 0;
+        if (frac > 0)
+        {
+            f = std::fabs(f);
+            if (true)
+            {
+                size_t frac2 = frac;
+                unsigned long long pw = 1;
+                while (frac2 != 0)
+                {
+                    if (frac2 >= 10)
+                    {
+                        pw *= 10000000000;
+                        frac2 -= 10;
+                    }
+                    else if (frac2 >= 5)
+                    {
+                        pw *= 100000;
+                        frac2 -= 5;
+                    }
+                    else if (frac2 >= 2)
+                    {
+                        pw *= 100;
+                        frac2 -= 2;
+                    }
+                    else
+                    {
+                        pw *= 10;
+                        frac2 -= 1;
+                    }
+                }
+                f *= pw;
+            }
+            long long llf = (long long)f;
+            if (llf > 0)
+            {
+                char * begin = buf + offset;
+                char * end = buf + offset + outLen;
+                *end++ = '.';
+
+                lutToString<long long>(end, len / 2 - 1, 10, frac, offset, outLen, llf);
+
+                char * fbegin = end + offset;
+                char * fend = fbegin + outLen;
+                while (fbegin != fend && *(fend - 1) == '0')
+                {
+                    --fend;
+                }
+
+                memmove(end, fbegin, fend - fbegin);
+                offset = begin - buf;
+                outLen = (fend - fbegin) + end - begin;
+            }
+
+        }
+    }
+    else
+    {
+        char * ret = gcvt(t, (int)frac, buf);
+        offset = ret - buf;
+        outLen = strlen(ret);
+        if (outLen > 0 && buf[offset + outLen - 1] == '.')
+        {
+            buf[offset + outLen - 1] = '\0';
+            outLen--;
+        }
+    }
+}
+
+
+
+
+template<class T>
+typename std::enable_if<std::is_same<T, bool>::value, std::string>::type
+toString(const T &t)
+{
+    return t ? "1" : "0";
+}
+
+template<class T>
+typename std::enable_if<std::is_same<T, char>::value, std::string>::type
+toString(const T &t)
+{
+    return std::string(1, t);
+}
+
+template<class T>
+typename std::enable_if<std::is_integral<T>::value && !std::is_same<T, bool>::value && !std::is_same<T, char>::value, std::string>::type
+toString(const T &t)
+{
+    char buf[80];
+    size_t offset = 0;
+    size_t len = 0;
+    lutToString<T>(buf, 80, 10, 0, offset, len, t);
+    return std::string(buf+offset, len);
+}
+
+
+template<class T>
+typename std::enable_if<std::is_floating_point<T>::value, std::string>::type 
+toString(const T &t)
+{
+    char buf[80];
+    size_t offset = 0;
+    size_t outLen = 0;
+    floatToString(buf, 80, sizeof(T) == 4 ? 6 : 15, offset, outLen, (double)t);
+    return std::string(buf + offset, outLen);
+}
+
+
+template<class T>
+typename std::enable_if<std::is_same<T, std::string>::value, std::string>::type 
+toString(const T & t)
+{
+    return t;
+}
+
+template<class T>
+typename std::enable_if<std::is_same<T, char>::value, std::string>::type
+toString(const T * t)
+{
+    return std::string(t);
+}
+
+
+template<class To>
+typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_same<To, char>::value && !std::is_floating_point<To>::value, To > ::type
+fromString(const char * buf, size_t len)
+{
+    const char * begin = buf;
+    const char * end = buf + len;
+    const char * next = begin;
+
+    while (next != end &&
+        ((*begin >= '0' && *begin <= '9') || (*begin == '-') || (*begin == '+')))
+    {
+        ++next;
+    }
+
+    if (begin == next)
+    {
+        return (To)0;
+    }
+    char buff[80];
+    if (begin - next > 80 - 1)
+    {
+        next = begin + 80 - 1;
+    }
+    memcpy(buff, begin, next - begin);
+    buff[next - begin] = '\0';
+
+    
+    return (To)strtoll(begin, NULL, 10);
+}
+
+template<class To>
+typename std::enable_if<std::is_unsigned<To>::value && ! std::is_same<To, bool>::value, To > ::type 
+fromString(const char * buf, size_t len)
+{
+    const char * begin = buf;
+    const char * end = buf + len;
+    const char * next = begin;
+    while (next != end &&
+        ((*begin >= '0' && *begin <= '9') || (*begin == '-') || (*begin == '+')))
+    {
+        ++next;
+    }
+
+    if (begin == next)
+    {
+        return (To)0;
+    }
+    char buff[80];
+    if (begin - next > 80 - 1)
+    {
+        next = begin + 80 - 1;
+    }
+    memcpy(buff, begin, next - begin);
+    buff[next - begin] = '\0';
+
+    return (To)strtoull(begin, NULL, 10);
+}
+
+template<class To>
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type 
+fromString(const char * buf, size_t len)
+{
+    size_t offset = 0;
+    size_t outlen = 0;
+    trim(buf, len, ' ', offset, outlen);
+    const char * begin = buf + offset;
+    const char * end = begin + outlen;
+
+
+    if (end - begin >= 3)
+    {
+        if ((begin[0] == 'i' || begin[0] == 'I') && (begin[1] == 'n' || begin[1] == 'N') && (begin[2] == 'f' || begin[2] == 'F') )
+        {
+            return (To)(1e300*1e300);
+        }
+        if ((begin[0] == 'n' || begin[0] == 'N') && (begin[1] == 'a' || begin[1] == 'A') && (begin[2] == 'n' || begin[2] == 'N'))
+        {
+            return (To)(((To)(1e300*1e300))*0.0);
+        }
+    }
+
+    const char * next = begin;
+    while (next != end &&
+        ((*begin >= '0' && *begin <= '9') || (*begin == 'e' || *begin == 'E') || (*begin == '.') || (*begin == '-') || (*begin == '+')))
+    {
+        ++next;
+    }
+
+    if (begin == next)
+    {
+        return (To)0;
+    }
+    char buff[80];
+    if (begin - next > 80 -1)
+    {
+        next = begin + 80 - 1;
+    }
+    memcpy(buff, begin, next - begin);
+    buff[next - begin] = '\0';
+
+    return (To)strtod(buff, NULL);
+}
+
+
+template<class To>
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type 
+fromString(const char * buf, size_t len)
+{
+    return std::string(buf, len);
+}
+
+template<class To>
+typename std::enable_if<std::is_same<To, char>::value, To > ::type
+fromString(const char * buf, size_t len)
+{
+    return buf[0];
 }
 template<class To>
-typename std::enable_if<std::is_class<To>::value, To>::type fromString(std::string && t)
+typename std::enable_if<std::is_same<To, bool>::value, To > ::type
+fromString(const char * buf, size_t len)
 {
-    return std::move(t);
+    size_t offset = 0;
+    size_t outlen = 0;
+    trim(buf, len, ' ', offset, outlen);
+    if (outlen == 0)
+    {
+        return false;
+    }
+    if ((outlen == 5 && memcmp(buf, "false", 5) == 0) || buf[0] == '0')
+    {
+        return false;
+    }
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+template<class To>
+typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_same<To, char>::value && !std::is_floating_point<To>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+
+template<class To>
+typename std::enable_if<std::is_unsigned<To>::value && ! std::is_same<To, bool>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+
+template<class To>
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+
+
+template<class To>
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type
+fromString(const std::string & str)
+{
+    return str;
+}
+
+template<class To>
+typename std::enable_if<std::is_same<To, char>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+template<class To>
+typename std::enable_if<std::is_same<To, bool>::value, To > ::type
+fromString(const std::string & str)
+{
+    return fromString<To>(str.c_str(), str.length());
+}
+
+
+
+
+
+/*
+
+template<class To>
+typename std::enable_if<std::is_signed<To>::value && !std::is_same<To, bool>::value && !std::is_same<To, char>::value && !std::is_floating_point<To>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+
+template<class To>
+typename std::enable_if<std::is_unsigned<To>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+
+template<class To>
+typename std::enable_if<std::is_floating_point<To>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+
+
+template<class To>
+typename std::enable_if<std::is_same<To, std::string>::value, To > ::type
+fromString(const char * str)
+{
+    return std::string(str);
+}
+
+template<class To>
+typename std::enable_if<std::is_same<To, char>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+template<class To>
+typename std::enable_if<std::is_same<To, bool>::value, To > ::type
+fromString(const char * str)
+{
+    return fromString<To>(str, strlen(str));
+}
+*/
+
+
+
+
+
+
+inline const char * splitStringSearch(const char * begin, const char * end, char deli)
+{
+    while (begin != end && *begin != deli) ++begin;
+    return begin;
 }
 
 
 template<class _Tuple>
-void splitTupleStringImpl(_Tuple & ret, const std::string & text, const std::string & deli, const std::string & ign)
+void splitStringTupleImpl(_Tuple & ret, const char * begin, const char * end, char deli)
 {
 }
 
+/*  
+_Tuple is completion std::tuple<...T> .  
+_This is current type.
+    * if (std::is_arithmetic<_This>::value)  then  begin must had null-terminal char and this  deli not arithmetic value,   otherwise this impl will overwrid when call fromString .
+    * when trans string to arithmetic will ignore bland char. 
+*/
 template<class _Tuple, class _This, class ... _Rest>
-void splitTupleStringImpl(_Tuple & ret, const std::string & text, const std::string & deli, const std::string & ign)
+void splitStringTupleImpl(_Tuple & ret, const char * begin, const char * end, char deli)
 {
-    std::size_t which = std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest);
-    std::size_t firstCursor = 0;
-    std::size_t secondCursor = 0;
-    std::size_t curFinder = 0;
-    while (curFinder <= which)
+    const char * next = end;
+    do
     {
-        auto pos = text.find(deli, firstCursor);
-        if (curFinder < which &&  pos == std::string::npos)
+        while (begin != end && *begin == deli) ++begin; // merge and ignore the first, last deli multi-deli, and merge the mid multi-deli  
+        if (begin == end) //empty
         {
-            // not found
-            return;
-        }
-        else if (curFinder < which)
-        {
-            curFinder++;
-            firstCursor = pos + deli.size();
-        }
-        else
-        {
-            secondCursor = pos;
+            std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = _This();
             break;
         }
-    }
-    std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(trim(text.substr(firstCursor, secondCursor - firstCursor), ign));
-    splitTupleStringImpl<_Tuple, _Rest ...>(ret, text, deli, ign);
+        next = splitStringSearch(begin, end, deli);
+        std::get< std::tuple_size<_Tuple>::value - 1 - sizeof ...(_Rest) >(ret) = fromString<_This>(begin, next - begin);
+        begin = next;
+    } while (false);
+    splitStringTupleImpl<_Tuple, _Rest ...>(ret, begin, end, deli);
 }
 
 
 
 
 template<class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::tuple<T ... >>::type splitTupleString(const std::string & text, const std::string & deli, const std::string & ign)
+typename std::enable_if<true, std::tuple<T ... >>::type splitStringTuple(const std::string & text, char deli)
 {
     std::tuple<T ... > ret;
-    splitTupleStringImpl<std::tuple<T ... >, T ...>(ret, text, deli, ign);
+    splitStringTupleImpl<std::tuple<T ... >, T ...>(ret, text.c_str(), text.c_str()+text.length(), deli);
     return ret;
 }
 
-template<class First, class Second>
-typename std::enable_if<std::is_integral<int>::value, std::pair<First, Second>>::type splitPairString(const std::string & str, const std::string & delimiter)
-{
-    auto tp = splitTupleString<First, Second>(str, delimiter, "");
-    return std::make_pair(std::get<0>(tp), std::get<1>(tp));
-}
 
 
 template<class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::vector<std::tuple<T ...> >>::type
-splitArrayString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign)
+typename std::enable_if<true, std::vector<std::tuple<T ...> >>::type
+splitStringTupleArray(const std::string & text, char deli, char subDeli)
 {
-    std::vector<std::tuple<T ...> > ret;
-    size_t beginPos = 0;
-    std::string matched;
-    for (size_t i = 0; i < text.length(); i++)
+    using Tuple = std::tuple<T ...>;
+    std::vector<Tuple> ret;
+    
+    const char * begin = text.c_str();
+    const char * end = text.c_str() + text.length();
+
+    do
     {
-        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
+        if (begin == end)
         {
-            matched.push_back(text[i]);
+            break;
         }
-        if (matched == deli)
+        Tuple one;
+        const char * next = splitStringSearch(begin, end, deli);
+        splitStringTupleImpl<Tuple, T ...>(one, begin, next, subDeli);
+        ret.push_back(std::move(one));
+        begin = next;
+        if (begin != end)
         {
-            auto one = trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign);
-            if (!one.empty())
-            {
-                ret.push_back(splitTupleString<T...>(one, deliMeta, ign));
-            }
-            beginPos = i + 1;
-            matched.clear();
+            ++begin; //ignore deli character
         }
-    }
-    auto one = trim(text.substr(beginPos, text.length() - beginPos), ign);
-    if (!one.empty())
+    } while (true);
+    return ret;
+}
+
+template<class _Value>
+typename std::enable_if<true, std::vector<_Value>> ::type
+splitStringSimpleArray(const std::string & text, char deli)
+{
+    using _Tuple = std::tuple<_Value>;
+    std::vector<_Value> ret;
+    
+    const char * begin = text.c_str();
+    const char * end = text.c_str() + text.length();
+
+    do
     {
-        ret.push_back(splitTupleString<T...>(std::move(one), deliMeta, ign));
-    }
-    return std::move(ret);
+        if (begin == end)
+        {
+            break;
+        }
+        _Tuple one;
+        const char * next = splitStringSearch(begin, end, deli);
+        splitStringTupleImpl<_Tuple, _Value>(one, begin, next, deli);
+        ret.push_back(std::move(std::get<0>(one)));
+        begin = next;
+        if (begin != end)
+        {
+            ++begin; //ignore deli character
+        }
+    } while (true);
+    return ret;
 }
 
 
-template<class Key, class ... T>
-typename std::enable_if<std::is_integral<int>::value, std::map<Key, std::tuple<Key, T ...> >>::type
-splitDictString(const std::string & text, const std::string & deli, const std::string & deliMeta, const std::string & ign)
+template<size_t _Key, class ... T>
+typename std::enable_if<true, std::map<typename std::tuple_element<_Key, std::tuple<T ...>>::type, std::tuple<T ...> >>::type
+splitStringTupleDict(const std::string & text, char deli, char subDeli)
 {
-    std::map<Key, std::tuple<Key, T ...> > ret;
-    size_t beginPos = 0;
-    std::string matched;
-    for (size_t i = 0; i < text.length(); i++)
+    using _Second = std::tuple<T ...>;
+    using _First = typename std::tuple_element<_Key, std::tuple<T ...>>::type;
+    std::map<_First, _Second> ret;
+    
+    const char * begin = text.c_str();
+    const char * end = text.c_str() + text.length();
+
+    do
     {
-        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
+        if (begin == end)
         {
-            matched.push_back(text[i]);
+            break;
         }
-        if (matched == deli)
+        _First first;
+        _Second one;
+        const char * next = splitStringSearch(begin, end, deli);
+        splitStringTupleImpl<_Second, T ...>(one, begin, next, subDeli);
+        first = std::get<_Key>(one);
+        ret.insert(std::make_pair(std::move(first), std::move(one)));
+        begin = next;
+        if (begin != end)
         {
-            auto one = trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign);
-            if (!one.empty())
-            {
-                auto tp = splitTupleString<Key, T...>(one, deliMeta, ign);
-                auto k = std::get<0>(tp);
-                auto founder = ret.find(k);
-                if (founder == ret.end())
-                {
-                    ret.insert(std::make_pair(k, std::move(tp)));
-                }
-                else
-                {
-                    founder->second = std::move(tp);
-                }
-            }
-            beginPos = i + 1;
-            matched.clear();
+            ++begin; //ignore deli character
         }
-    }
-    auto one = trim(text.substr(beginPos, text.length() - beginPos), ign);
-    if (!one.empty())
-    {
-        auto tp = splitTupleString<Key, T...>(one, deliMeta, ign);
-        auto k = std::get<0>(tp);
-        ret[k] = std::move(tp);
-    }
-    return std::move(ret);
+    } while (true);
+
+    return ret;
 }
 
-
-
-template<class Value>
-typename std::enable_if<std::is_integral<int>::value, std::vector<Value>>::type
-splitString(std::string text, const std::string & deli, const std::string & ign)
+template<class _Key, class _Value>
+typename std::enable_if<true, std::map<_Key, _Value>>::type
+splitStringSimpleDict(const std::string & text, char deli, char subDeli)
 {
-    std::vector<Value> ret;
-    size_t beginPos = 0;
-    std::string matched;
-    for (size_t i = 0; i < text.length(); i++)
+    using Second = std::tuple<_Key, _Value>;
+    std::map<_Key, _Value> ret;
+    
+    const char * begin = text.c_str();
+    const char * end = text.c_str() + text.length();
+
+    do
     {
-        if ((matched.empty() && text[i] == deli[0]) || !matched.empty())
+        if (begin == end)
         {
-            matched.push_back(text[i]);
+            break;
         }
-        if (matched == deli)
+        Second one;
+        const char * next = splitStringSearch(begin, end, deli);
+        splitStringTupleImpl<Second, _Key, _Value>(one, begin, next, subDeli);
+        ret.insert(std::make_pair(std::move(std::get<0>(one)), std::move(std::get<1>(one))));
+        begin = next;
+        if (begin != end)
         {
-            ret.push_back(fromString<Value>(trim(text.substr(beginPos, i + 1 - deli.length() - beginPos), ign)));
-            beginPos = i + 1;
-            matched.clear();
+            ++begin; //ignore deli character
         }
-    }
-    ret.push_back(fromString<Value>(trim(text.substr(beginPos, text.length() - beginPos), ign)));
-    return std::move(ret);
+    } while (true);
+
+    return ret;
 }
+
 
 
 inline double getFloatNowTime()
@@ -665,7 +1093,7 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, bool 
             iter++;
         }
     }
-    return std::move(ret);
+    return ret;
 }
 
 template<class RandIt, class GetProbabilityFunc> // func example  [](RandIt iter){return iter->probability;}
@@ -687,7 +1115,7 @@ inline std::vector<RandIt> raffle(RandIt first, RandIt end, int takeCount, GetPr
         }
         cur++;
     }
-    return std::move(ret);
+    return ret;
 }
 
 inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag)
@@ -700,7 +1128,7 @@ inline double calcELORatingUpper(double ownerScore, double dstScore, int winFlag
 
 
 template<class Container>
-std::string mergeToString(const Container & contariner, const std::string& deli)
+std::string mergeToString(const Container & contariner, char deli)
 {
     std::string ret;
     for (const auto &t : contariner)
@@ -708,20 +1136,17 @@ std::string mergeToString(const Container & contariner, const std::string& deli)
         ret += toString(t);
         ret += deli;
     }
-    if (!deli.empty())
+    if (!ret.empty())
     {
-        for (size_t i = 0; i < deli.size(); i++)
-        {
-            ret.pop_back();
-        }
+        ret.pop_back();
     }
     return ret;
 }
 
 template<class T>  //example: Container = std::vector<int>
-void mergeToString(std::string & dstString, const std::string& deli, const T & t)
+void mergeToString(std::string & dstString, char deli, const T & t)
 {
-    if (!dstString.empty())
+    if (!dstString.empty() && dstString.back() != deli)
     {
         dstString += deli;
     }

@@ -336,11 +336,11 @@ end
 --[[--
 dump table with nesting
 ]]
-function Proto4z.dump(value, desciption, nesting, showULL)
-    if type(nesting) ~= "number" then nesting = 5 end
+function Proto4z.dump(value, desciption, nesting)
+    local nesting = nesting or 5
+    local log = (summer and summer.logdd) or print
 
     local lookupTable = {}
-    local result = {}
 
     local function _v(v)
         if type(v) == "string" then
@@ -350,7 +350,8 @@ function Proto4z.dump(value, desciption, nesting, showULL)
     end
 
     local traceback = Proto4z.split(debug.traceback("", 2), "\n")
-    print("dump from: " .. Proto4z.trim(traceback[3]), false)
+    log("dump from: ", Proto4z.trim(traceback[3]))
+
 
     local function _dump(value, desciption, indent, nest, keylen)
         desciption = desciption or "<var>"
@@ -359,15 +360,15 @@ function Proto4z.dump(value, desciption, nesting, showULL)
             spc = string.rep(" ", keylen - string.len(_v(desciption)))
         end
         if type(value) ~= "table" then
-            result[#result +1 ] = string.format("%s%s%s = %s", indent, _v(desciption), spc, _v(value))
+            log(indent, _v(desciption), spc, " = ", _v(value))
         elseif lookupTable[value] then
-            result[#result +1 ] = string.format("%s%s%s = *REF*", indent, desciption, spc)
+            log(indent, desciption, spc, " = *REF*")
         else
             lookupTable[value] = true
             if nest > nesting then
-                result[#result +1 ] = string.format("%s%s = *MAX NESTING*", indent, desciption)
+                log(indent, desciption, " = *MAX NESTING*")
             else
-                result[#result +1 ] = string.format("%s%s = {", indent, _v(desciption))
+                log(indent, _v(desciption), " = {")
                 local indent2 = indent.."    "
                 local keys = {}
                 local keylen = 0
@@ -389,14 +390,58 @@ function Proto4z.dump(value, desciption, nesting, showULL)
                 for i, k in ipairs(keys) do
                     _dump(values[k], k, indent2, nest + 1, keylen)
                 end
-                result[#result +1] = string.format("%s}", indent)
+                log(indent, "}")
             end
         end
     end
     _dump(value, desciption, "- ", 1)
 
-    for i, line in ipairs(result) do
-        print(line, false)
+end
+
+
+--[[--
+fastdump table with nesting
+]]
+function Proto4z.fastdump(value, desciption, nesting)
+    local nesting = nesting or 5
+    local log = (summer and summer.logdd) or print
+
+    local lookupTable = {}
+
+
+
+    local traceback = Proto4z.split(debug.traceback("", 2), "\n")
+    log("dump from: ", Proto4z.trim(traceback[3]))
+
+    local function fastIndent(nest)
+        if nest <= 1 then return "- "
+        elseif nest == 2 then return "-     "
+        elseif nest == 3 then return "-         "
+        elseif nest == 4 then return "-             "
+        elseif nest == 5 then return "-                 "
+        else return "- " .. string.rep("    ", nest - 1) 
+        end
     end
+
+    local function _dump(value, desciption, nest)
+        desciption = desciption or "<var>"
+        if type(value) ~= "table" then
+            log(fastIndent(nest), desciption, " = ", value)
+        elseif lookupTable[value] then
+            log(fastIndent(nest), desciption, " = *REF*")
+        else
+            lookupTable[value] = true
+            if nest > nesting then
+                log(fastIndent(nest), desciption, " = *MAX NESTING*")
+            else
+                log(fastIndent(nest), desciption, " = {")
+                for k, v in pairs(value) do
+                    _dump(v, k, nest + 1)
+                end
+                log(fastIndent(nest), "}")
+            end
+        end
+    end
+    _dump(value, desciption, 1)
 end
 

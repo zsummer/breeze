@@ -152,13 +152,13 @@ namespace zsummer
         public:
             //statistical information
             inline unsigned long long getStatInfo(int stat){ return _statInfo[stat]; }
-            unsigned long long _statInfo[STAT_SIZE];
+            alignas(unsigned long long) unsigned long long _statInfo[STAT_SIZE];
 
         public:
             SessionBlock * CreateBlock();
             void FreeBlock(SessionBlock * sb);
         private:
-            std::queue<SessionBlock*> _freeBlock;
+            std::deque<SessionBlock*> _freeBlock;
         private:
             friend class TcpSession;
             // 一个established状态的session已经关闭. 

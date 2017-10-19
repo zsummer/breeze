@@ -33,7 +33,7 @@ public:
 public:
     void init(std::weak_ptr<Scene> scene);
     void update();
-    void protoSync(const std::string & protoName, const std::string & data);
+    void protoSync(const std::string & protoName, const char * data, unsigned int len);
     template<class Proto>
     void protoSync(const Proto & proto);
 };
@@ -68,7 +68,7 @@ void Script::protoSync(const Proto & proto)
     {
         WriteStream ws(Proto::getProtoID());
         ws << proto;
-        protoSync(Proto::getProtoName(), ws.pickStream());
+        protoSync(Proto::getProtoName(), ws.getStream(), ws.getStreamLen());
     }
     catch (const std::exception & e)
     {

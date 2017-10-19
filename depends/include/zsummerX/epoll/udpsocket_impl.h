@@ -9,7 +9,7 @@
 * 
 * ===============================================================================
 * 
-* Copyright (C) 2010-2015 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2010-2017 YaweiZhang <yawei.zhang@foxmail.com>.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -62,8 +62,8 @@ namespace zsummer
             EventData _eventData;
 
             _OnRecvFromHandler _onRecvFromHandler;
-            unsigned int _iRecvLen;
-            char    *     _pRecvBuf;
+            unsigned int _recvLen;
+            char    *     _recvBuf;
         };
         using UdpSocketPtr = std::shared_ptr<UdpSocket>;
     }
