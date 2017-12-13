@@ -34,7 +34,7 @@ else()
 	add_definitions(-Wall  -O2 -DNDEBUG  -D_GLIBCXX_USE_NANOSLEEP -static -Wno-deprecated-declarations -Wno-strict-aliasing)
 	set(LIB_SUFFIX "")
 endif()
-set(CMAKE_CXX_FLAGS "-std=c++11 -fpermissive")
+set(CMAKE_CXX_FLAGS "-std=c++1y -fpermissive")
 
 
 

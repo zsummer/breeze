@@ -23,8 +23,9 @@ int screenY = 50;
 
 #include "aoeViewer.h"
 #include "vectorViewer.h"
-
-
+#include "arith_prime.h"
+#include "arith_gray_code.h"
+#include "arith_sort.h"
 
 void TestUtls(std::function<int(void)> fun, std::string name)
 {
@@ -73,6 +74,9 @@ int main(int argc, char* argv[])
 
     LOGA("version released by " << __DATE__ << " " << __TIME__);
 
+    arith_prime();
+    arith_gray_code();
+    arith_sort();
     TestUtls(checkOther, "checkOther");
     TestUtls(checkString, "checkString");
     TestUtls(checkFile, "checkFile");
