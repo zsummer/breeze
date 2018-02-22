@@ -3,18 +3,24 @@ language: cpp
 matrix:
   include:
     - os: linux
-      dist: trusty
-      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+      env:
+        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
+    - os: linux
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
-      sudo: required
-      env: 
-        - TARGET="trusty"
-
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
     - os: osx
       osx_image: xcode8.3
       env: 
@@ -23,11 +29,9 @@ matrix:
 before_install:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then sudo apt-get update -qq; fi
-
+  - eval "${MATRIX_EVAL}"
 install:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then  sudo apt-get install -qq cmake; fi
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then sudo apt-get install -qq g++-4.9; fi
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then export CXX="g++-4.9"; fi
 
 script:
   - cmake --version
