@@ -1,6 +1,6 @@
 ﻿/*
 * breeze License
-* Copyright (C) 2014-2017 YaweiZhang <yawei.zhang@foxmail.com>.
+* Copyright (C) 2014-2018 YaweiZhang <yawei.zhang@foxmail.com>.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@
 #define _GLFW_WIN32
 #include <common.h>
 #include <utls.h>
-#include <balance.h>
 using namespace zsummer::log4z;
-using namespace zsummer::mysql;
+
  
 #include <glad/glad.h>
 #include <gl/GL.h>
@@ -37,6 +36,8 @@ using namespace zsummer::mysql;
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "GLu32")
 
+#define SCREEN_X 640
+#define SCREEN_Y 640
 
 static void error_callback(int error, const char* description)
 {
@@ -49,6 +50,25 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
+
+
+
+struct Pixel
+{
+    float r;
+    float g;
+    float b;
+
+    float x;
+    float y;
+    float z;
+};
+std::vector<Pixel> g_pixels;
+
+
+
+
+void example();
 int main(void)
 {
 #ifndef _WIN32
@@ -70,11 +90,8 @@ int main(void)
 
 
     ILog4zManager::getPtr()->start();
-    SessionManager::getRef().start();
 
     GLFWwindow* window;
-
-
     glfwSetErrorCallback(error_callback);
 
     if (!glfwInit())
@@ -83,7 +100,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-    window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+    window = glfwCreateWindow(SCREEN_X, SCREEN_Y, "Simple example", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -100,83 +117,25 @@ int main(void)
 
     while (!glfwWindowShouldClose(window))
     {
+        g_pixels.clear();
         glShadeModel(GL_SMOOTH);
+        example();
+        double begin_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
+        static double last_time = begin_time;
+        static double frame_count = 0;
+        frame_count++;
+        if (true)
+        {
 
-        /* Draw a triangle */
-        glBegin(GL_TRIANGLES);
-
-        glColor3f(1.0, 0.0, 0.0);    // Red
-        glVertex3f(0.0, 1.0, 0.0);
-
-        glColor3f(0.0, 1.0, 0.0);    // Green
-        glVertex3f(-1.0, -1.0, 0.0);
-
-        glColor3f(0.0, 0.0, 1.0);    // Blue
-        glVertex3f(1.0, -1.0, 0.0);
-
-        glEnd();
-
-
-        //glEnable(GL_LINE_STIPPLE);
-        //glLineStipple(1, 1);
-        glColor3f(1.0, 1.0, 1.0);    // Red
-        glLineWidth(1);
-
-
-        glBegin(GL_LINES);
-        glVertex2f(0, 0);
-        glColor3f(1.0, 0.0, 1.0);    // Red
-        glVertex2f(1,1);
-        glEnd();
-
-
-        glBegin(GL_LINES);
-        glVertex3f(0, 1, 0);
-        glColor3f(0.0, 0.0, 1.0);    // Red
-        glVertex3f(1, 0, 1);
-        glEnd();
-
-
+        }
+        double now = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
         glBegin(GL_POINTS);
-        glColor3f(0.0, 1.0f, 1.0f);   
-        glVertex3f(0, 0, 0);
+        for (const auto & pixel : g_pixels)
+        {
+            glColor3f(pixel.r, pixel.g, pixel.b);
+            glVertex3f(pixel.x, pixel.y, pixel.z);
+        }
         glEnd();
-
-        glBegin(GL_POINTS);
-        glColor3f(0.0, 1.0f, 1.0f);
-        glVertex3f(0.8f, 0.8f, 0.8f);
-        glEnd();
-
-        glBegin(GL_POINTS);
-        glColor3f(0.0, 1.0f, 1.0f);
-        glVertex3f(0, 0.8f, 0);
-        glEnd();
-
-        glBegin(GL_POINTS);
-        glColor3f(0.0, 1.0f, 1.0f);
-        glVertex3f(0, 0, 0.8f);
-        glEnd();
-
-        glBegin(GL_POINTS);
-        glColor3f(0.0, 1.0f, 1.0f);
-        glVertex3f(0.8f, 0, 0);
-        glEnd();
-
-        glBegin(GL_POINTS);
-        glColor3f(0.0, 1.0f, 1.0f);
-        glVertex3f(0.8f, 0.8f, 0);
-        glEnd();
-
-        glBegin(GL_POINTS);
-        glColor3f(0.0, 1.0f, 1.0f);
-        glVertex3f(0, 0.8f, 0.8f);
-        glEnd();
-
-        glBegin(GL_POINTS);
-        glColor3f(0.0, 1.0f, 1.0f);
-        glVertex3f(0.8f, 0, 0.8f);
-        glEnd();
-
 
 
         glfwSwapBuffers(window);
@@ -189,3 +148,45 @@ int main(void)
     exit(EXIT_SUCCESS);
 }
 
+void example()
+{
+    /* Draw a triangle */
+    glBegin(GL_TRIANGLES);
+
+    glColor3f(1.0, 0.0, 0.0);    // Red
+    glVertex3f(0.0, 1.0, 0.0);
+
+    glColor3f(0.0, 1.0, 0.0);    // Green
+    glVertex3f(-1.0, -1.0, 0.0);
+
+    glColor3f(0.0, 0.0, 1.0);    // Blue
+    glVertex3f(1.0, -1.0, 0.0);
+
+    glEnd();
+
+
+    //glEnable(GL_LINE_STIPPLE);
+    //glLineStipple(1, 1);
+    glColor3f(1.0, 1.0, 1.0);    // Red
+    glLineWidth(1);
+
+
+    glBegin(GL_LINES);
+    glVertex2f(0, 0);
+    glColor3f(1.0, 0.0, 1.0);    // Red
+    glVertex2f(1, 1);
+    glEnd();
+
+
+    glBegin(GL_LINES);
+    glVertex3f(0, 1, 0);
+    glColor3f(0.0, 0.0, 1.0);    // Red
+    glVertex3f(1, 0, 1);
+    glEnd();
+
+
+    glBegin(GL_POINTS);
+    glColor3f(0.0, 1.0f, 1.0f);
+    glVertex3f(0, 0, 0);
+    glEnd();
+}
