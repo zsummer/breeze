@@ -16,8 +16,49 @@
 */
 
 #define _GLFW_WIN32
-#include <common.h>
-#include <utls.h>
+#pragma warning(disable:4996)
+#pragma warning(disable:4819)
+#define WIN32_LEAN_AND_MEAN
+#include <WS2tcpip.h>
+#include <WinSock2.h>
+#include <windows.h>
+#include <io.h>
+#include <shlwapi.h>
+#include <process.h>
+#include <direct.h>
+#include <glad/glad.h>
+#include <gl/GL.h>
+
+
+#include <iomanip>
+#include <string.h>
+#include <signal.h>
+#include <time.h>
+#include <cstdint>
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <utility>
+#include <algorithm>
+#include <limits>
+
+#include <functional>
+#include <memory>
+#include <unordered_map>
+#include <chrono>
+#include <random>
+
+#include <string>
+#include <set>
+#include <vector>
+#include <list>
+#include <map>
+#include <array>
+
+
+
+#include "log4z/log4z.h"
 using namespace zsummer::log4z;
 
  
@@ -36,6 +77,8 @@ using namespace zsummer::log4z;
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "GLu32")
 
+
+
 #define SCREEN_X 640
 #define SCREEN_Y 640
 
@@ -50,25 +93,55 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-
-
-
 struct Pixel
 {
-    float r;
-    float g;
-    float b;
+    double r;
+    double g;
+    double b;
 
-    float x;
-    float y;
-    float z;
+    double x;
+    double y;
+    double z;
 };
-std::vector<Pixel> g_pixels;
+
+using Vector3 = std::tuple<double, double, double>;
+
+class TestRange
+{
+public:
+    TestRange() {}
+    ~TestRange() {}
+public:
+    static const int SCALAR_NUM = 1000;
+    static const int SCALAR_BEGIN = SCALAR_NUM / -2;
+    static const int SCALAR_END = SCALAR_NUM / 2;
+    static const int PIXELS_SIZE = SCALAR_NUM* SCALAR_NUM*2;
+    
+    void Test(Vector3 dir)
+    {
+        for (int i = SCALAR_BEGIN; i < SCALAR_END; i++)
+        {
+            for (int j = SCALAR_BEGIN; j < SCALAR_END; j++)
+            {
+                if (_len < PIXELS_SIZE)
+                {
+                    _pixels[_len++] = { 0.0f, 1.0f, 1.0f, i*2.0f / SCALAR_NUM, 0.0f, j * 2.0f / SCALAR_NUM };
+                }
+                if (_len < PIXELS_SIZE)
+                {
+                    _pixels[_len++] = { 1.0f, 1.0f, 1.0f, i*2.0f / SCALAR_NUM, 0.0f, j * 2.0f / SCALAR_NUM };
+                }
+            }
+        }
+    }
+
+public:
+    std::array<Pixel, PIXELS_SIZE>  _pixels;
+    size_t _len = 0;
+};
+TestRange g_tr;
 
 
-
-
-void example();
 int main(void)
 {
 #ifndef _WIN32
@@ -86,12 +159,16 @@ int main(void)
 #else
     //system("chcp 65001");
 #endif
-    srand((ui32)time(NULL));
+    srand((unsigned int)time(NULL));
 
 
     ILog4zManager::getPtr()->start();
 
-    GLFWwindow* window;
+
+
+    GLFWwindow * window;
+
+
     glfwSetErrorCallback(error_callback);
 
     if (!glfwInit())
@@ -114,32 +191,46 @@ int main(void)
     glfwSwapInterval(1);
 
     LOGI("GL_VERSION:" << (const char*)glGetString(GL_VERSION));
-
+    
     while (!glfwWindowShouldClose(window))
     {
-        g_pixels.clear();
+        glClear(GL_COLOR_BUFFER_BIT);
         glShadeModel(GL_SMOOTH);
-        example();
+        g_tr._len = 0;
         double begin_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
         static double last_time = begin_time;
         static double frame_count = 0;
+        static double last_count = 0;
         frame_count++;
-        if (true)
-        {
-
-        }
+        Vector3 dir = { 0, 0, 0 };
+        double radian = (float)fmod(begin_time, 20.0) / 20.0f * 3.141592654*2.0f;
+        std::get<0>(dir) = cos(radian);
+        std::get<2>(dir) = sin(radian);
+        double begin_time2 = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
+        g_tr.Test(dir);
         double now = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now().time_since_epoch()).count();
+        
         glBegin(GL_POINTS);
-        for (const auto & pixel : g_pixels)
+        for (int i=0; i < g_tr._len; i++)
         {
-            glColor3f(pixel.r, pixel.g, pixel.b);
-            glVertex3f(pixel.x, pixel.y, pixel.z);
+            glColor3f(g_tr._pixels[i].r, g_tr._pixels[i].g, g_tr._pixels[i].b);
+            glVertex3f(g_tr._pixels[i].x, g_tr._pixels[i].z, g_tr._pixels[i].y);
         }
         glEnd();
-
-
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        if (now - last_time  > 1.0f)
+        {
+            char title[100] = { 0 };
+            sprintf(title, "fps:<%lf>  lapse1:<%lf> lapse2:<%lf> lapse:<%lf> count:<%lf>", 
+                frame_count /(now - last_time), begin_time2 - begin_time, now - begin_time2, now - begin_time
+                , (g_tr._len - last_count)/ (now - last_time));
+            glfwSetWindowTitle(window, title);
+            last_time = now;
+            last_count = g_tr._len;
+            frame_count = 0.0f;
+        }
     }
 
     glfwDestroyWindow(window);
