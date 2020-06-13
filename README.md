@@ -37,8 +37,9 @@ docker是用来托管service的专用vm:
 > 上层只需关注docker所装载的service.   
   
 docker的资源消耗:  
-> docker集群的socket数量开销= (docker个数的平方)*2  
-> docker集群的总端口占用数量开销=docker个数的平方  
+> docker集群的socket数量开销= (docker个数的平方)\*2   
+> docker集群的总端口占用数量开销=docker个数的平方   
+
 
   
 ### service:  

@@ -9,32 +9,44 @@ project(breeze)
 #link_directories(${GLIBC_LIB})
 
 include_directories(${breeze_SOURCE_DIR}/../depends/include)
-if (APPLE)
-include_directories(${breeze_SOURCE_DIR}/../depends_mac/include)
-include_directories(${breeze_SOURCE_DIR}/../depends_mac/include/mysqlclient)
-link_directories(${breeze_SOURCE_DIR}/../depends_mac/lib/)
-else()
-include_directories(${breeze_SOURCE_DIR}/../depends_linux/include)
-include_directories(${breeze_SOURCE_DIR}/../depends_linux/include/mysqlclient)
-link_directories(${breeze_SOURCE_DIR}/../depends_linux/lib/)
-endif()
-
 include_directories(${breeze_SOURCE_DIR}/../protocol/C++)
 include_directories(${breeze_SOURCE_DIR}/common)
 include_directories(${breeze_SOURCE_DIR}/common/lua)
-
 link_directories(${breeze_SOURCE_DIR}/lib/)
 
-
-set(LIB_SUFFIX "")
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_definitions(-Wall -g -ggdb -O0  -D_GLIBCXX_USE_NANOSLEEP -static -Wno-deprecated-declarations -Wno-strict-aliasing)
-	set(LIB_SUFFIX "_d")
+if (APPLE)
+    include_directories(${breeze_SOURCE_DIR}/../depends_mac/include)
+    include_directories(${breeze_SOURCE_DIR}/../depends_mac/include/mysqlclient)
+    link_directories(${breeze_SOURCE_DIR}/../depends_mac/lib/)
+    add_definitions(-D__SELECT__=1)
+elseif(UNIX)
+    include_directories(${breeze_SOURCE_DIR}/../depends_linux/include)
+    include_directories(${breeze_SOURCE_DIR}/../depends_linux/include/mysqlclient)
+    link_directories(${breeze_SOURCE_DIR}/../depends_linux/lib/)
 else()
-	add_definitions(-Wall  -O2 -DNDEBUG  -D_GLIBCXX_USE_NANOSLEEP -static -Wno-deprecated-declarations -Wno-strict-aliasing)
-	set(LIB_SUFFIX "")
+    include_directories(${breeze_SOURCE_DIR}/../depends_win/include)
+    include_directories(${breeze_SOURCE_DIR}/../depends_win/include/mysqlclient)
+    link_directories(${breeze_SOURCE_DIR}/../depends_win/lib/)
 endif()
-set(CMAKE_CXX_FLAGS "-std=c++1y -fpermissive")
+
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(LIB_SUFFIX "_d")
+endif()
+
+if(UNIX)
+    set(CMAKE_CXX_FLAGS "-std=c++14 -fpermissive")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_definitions(-Wall -g -ggdb -O0  -D_GLIBCXX_USE_NANOSLEEP -static -Wno-deprecated-declarations -Wno-strict-aliasing)
+    else()
+        add_definitions(-Wall  -O2 -DNDEBUG  -D_GLIBCXX_USE_NANOSLEEP -static -Wno-deprecated-declarations -Wno-strict-aliasing)
+    endif()
+else()
+    ADD_DEFINITIONS(-DWIN32 -W3 /EHsc)
+    SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON) 
+endif(UNIX)
+
+
 
 
 

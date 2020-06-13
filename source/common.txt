@@ -5,13 +5,23 @@ set(BINNAME ${PROJECT_NAME})
 set(EXECUTABLE_OUTPUT_PATH ${breeze_SOURCE_DIR}/../bin/${BINNAME}/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
 
-add_executable(${BINNAME} ${source})
-add_dependencies(${BINNAME} common${LIB_SUFFIX})
-if(APPLE)
-  target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX_select${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread)
-else()
-  target_link_libraries(${BINNAME} common${LIB_SUFFIX}  mysqlclient.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} tcmalloc_minimal pthread rt dl m )
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(LIB_SUFFIX "_d")
 endif()
 
-#set_target_properties (${BINNAME} PROPERTIES LINK_FLAGS "${GLIBC_FLAG}")
+MESSAGE("LIB SUFFIX IS" ${LIB_SUFFIX})
+
+add_executable(${BINNAME}${LIB_SUFFIX} ${source})
+
+# add_dependencies(${BINNAME} common${LIB_SUFFIX})
+
+if(APPLE)
+  target_link_libraries(${BINNAME}${LIB_SUFFIX} common${LIB_SUFFIX}  mysqlclient${LIB_SUFFIX}.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX} pthread)
+elseif(UNIX)
+  target_link_libraries(${BINNAME}${LIB_SUFFIX} common${LIB_SUFFIX}  mysqlclient${LIB_SUFFIX}.a zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX}  pthread rt dl m )
+else()
+  target_link_libraries(${BINNAME}${LIB_SUFFIX} common${LIB_SUFFIX}  mysqlclient${LIB_SUFFIX}.lib zsummerX${LIB_SUFFIX} log4z${LIB_SUFFIX})
+endif()
+
+#set_target_properties (${BINNAME}${LIB_SUFFIX} PROPERTIES LINK_FLAGS "${GLIBC_FLAG}")
 
