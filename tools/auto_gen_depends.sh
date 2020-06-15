@@ -2,6 +2,9 @@
 if [ ! -d zsummerX ]; then
     git clone --depth=1 https://github.com/zsummer/zsummerX
 fi
+cd zsummerX
+git pull
+cd ..
 if [ $? -ne 0 ]; then
     echo "git clone depends zsummerX error"
     exit 2
@@ -32,6 +35,7 @@ if [ $? -ne 0 ]; then
   exit 5
 fi
 
+sed -i 's/-Werror//g' ./mysql-connector-c-unix/cmake/maintainer.cmake
 sh make_mysqlclient.sh
 if [ $? -ne 0 ]; then
   echo "build mysqlclient error"
